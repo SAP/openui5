@@ -57,7 +57,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 		Cache._isOn = bActive;
 	};
 
-
 	/**
 	 * Returns the entries stored in the cache.
 	 *
@@ -67,6 +66,31 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 */
 	Cache.getEntries = function () {
 		return Cache._entries;
+	};
+
+	/**
+	 * Returns the entry stored in the cache and creates an entry if needed.
+	 *
+	 * @param {string} sComponentName - Name of the application component
+	 * @param {string} sAppVersion - Current running version of application
+	 * @return {object} Cache entry of specific application component and application version
+	 *
+	 * @protected
+	 */
+	Cache.getEntry = function (sComponentName, sAppVersion) {
+		if (!Cache._entries[sComponentName]) {
+			Cache._entries[sComponentName] = {};
+		}
+		if (!Cache._entries[sComponentName][sAppVersion]) {
+			Cache._entries[sComponentName][sAppVersion] = {
+				file: {
+					changes: {
+						changes: []
+					}
+				}
+			};
+		}
+		return Cache._entries[sComponentName][sAppVersion];
 	};
 
 	/**
@@ -104,19 +128,12 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 					changes : [],
 					contexts : []
 				},
-				componentClassName: sComponentName,
-				dummy: true
+				componentClassName: sComponentName
 			});
 		}
 
-		var sVersionEntry = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
-		if (!Cache._entries[sComponentName]) {
-			Cache._entries[sComponentName] = {};
-		}
-		if (!Cache._entries[sComponentName][sVersionEntry]) {
-			Cache._entries[sComponentName][sVersionEntry] = {};
-		}
-		var oCacheEntry = Cache._entries[sComponentName][sVersionEntry];
+		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
 
 		if (oCacheEntry.promise) {
 			return oCacheEntry.promise;
@@ -153,15 +170,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	Cache._getChangeArray = function (oComponent) {
 		var sComponentName = oComponent.name;
 		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
-		if (!Cache._entries[sComponentName] || !Cache._entries[sComponentName][sAppVersion]) {
-			return [];
-		}
-		var oEntry = Cache._entries[sComponentName][sAppVersion];
-		if (oEntry) {
-			if (oEntry.file) {
-				return oEntry.file.changes.changes;
-			}
-		}
+		var oEntry = Cache.getEntry(sComponentName, sAppVersion);
+		return oEntry.file.changes.changes;
 	};
 
 	/**

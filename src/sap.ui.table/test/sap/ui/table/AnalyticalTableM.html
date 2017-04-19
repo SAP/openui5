@@ -179,6 +179,23 @@ TABLESETTINGS.init(oTable, function(oButton) {
 				}
 			}
 		}
+	},
+	ROWSETTINGS: {
+		group: {
+			HIGHLIGHTS: {
+				action: function(oTable, bValue) {
+					if (bValue) {
+						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+							highlight: sap.ui.core.MessageType.Success
+						}));
+					} else {
+						oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+							highlight: sap.ui.core.MessageType.None
+						}));
+					}
+				}
+			}
+		}
 	}
 });
 

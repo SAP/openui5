@@ -120,7 +120,6 @@ sap.ui.define([
 	 */
 	function getOrFetchSchema(oMetaModel, mScope, sSchema, fnLog) {
 		var oPromise,
-			sReferenceUri,
 			sUrl;
 
 		/**
@@ -135,11 +134,11 @@ sap.ui.define([
 				sKey;
 
 			if (!(sSchema in mReferencedScope)) {
-				fnLog(WARNING, sReferenceUri, " does not contain ", sSchema);
+				fnLog(WARNING, sUrl, " does not contain ", sSchema);
 				return;
 			}
 
-			fnLog(DEBUG, "Including ", sSchema, " from ", sReferenceUri);
+			fnLog(DEBUG, "Including ", sSchema, " from ", sUrl);
 			for (sKey in mReferencedScope) {
 				// $EntityContainer can be ignored; $Reference, $Version is handled above
 				if (sKey[0] !== "$" && schema(sKey) === sSchema) {
@@ -154,15 +153,13 @@ sap.ui.define([
 			return mScope[sSchema];
 		}
 
-		sReferenceUri = oMetaModel.mSchema2ReferenceUri[sSchema];
-		if (sReferenceUri) {
-			fnLog(DEBUG, "Namespace ", sSchema, " found in $Include of ", sReferenceUri);
-			oPromise = oMetaModel.mReferenceUri2Promise[sReferenceUri];
+		sUrl = oMetaModel.mSchema2MetadataUrl[sSchema];
+		if (sUrl) {
+			fnLog(DEBUG, "Namespace ", sSchema, " found in $Include of ", sUrl);
+			oPromise = oMetaModel.mMetadataUrl2Promise[sUrl];
 			if (!oPromise) {
-				// interpret reference URI relative to metadata URL
-				sUrl = new URI(sReferenceUri).absoluteTo(oMetaModel.sUrl).toString();
-				fnLog(DEBUG, "Reading ", sReferenceUri, " from ", sUrl);
-				oPromise = oMetaModel.mReferenceUri2Promise[sReferenceUri]
+				fnLog(DEBUG, "Reading ", sUrl);
+				oPromise = oMetaModel.mMetadataUrl2Promise[sUrl]
 					= _SyncPromise.resolve(oMetaModel.oRequestor.read(sUrl))
 						.then(oMetaModel.validate.bind(oMetaModel, sUrl));
 			}
@@ -494,9 +491,10 @@ sap.ui.define([
 			this.sDefaultBindingMode = BindingMode.OneTime;
 			this.oMetadataPromise = null;
 			this.oModel = oModel;
-			this.mReferenceUri2Promise = {};
+			this.mMetadataUrl2Promise = {};
 			this.oRequestor = oRequestor;
-			this.mSchema2ReferenceUri = {};
+			// map from schema name to the same URL that _MetadataRequestor#read() takes
+			this.mSchema2MetadataUrl = {};
 			this.mSupportedBindingModes = {"OneTime" : true, "OneWay" : true};
 			this.bSupportReferences = bSupportReferences !== false; // default is true
 			this.sUrl = sUrl;
@@ -525,7 +523,7 @@ sap.ui.define([
 		mScope.$Annotations = {};
 		Object.keys(mScope).forEach(function (sElement) {
 			if (mScope[sElement].$kind === "Schema") {
-				that.mSchema2ReferenceUri[sElement] = that.sUrl;
+				that.mSchema2MetadataUrl[sElement] = that.sUrl;
 				mergeAnnotations(mScope[sElement], mScope.$Annotations);
 			}
 		});
@@ -545,7 +543,7 @@ sap.ui.define([
 					oElement = mAnnotationScope[sQualifiedName];
 					mScope[sQualifiedName] = oElement;
 					if (oElement.$kind === "Schema") {
-						that.mSchema2ReferenceUri[sQualifiedName] = that.aAnnotationUris[i];
+						that.mSchema2MetadataUrl[sQualifiedName] = that.aAnnotationUris[i];
 						mergeAnnotations(oElement, mScope.$Annotations);
 					}
 				}
@@ -2044,10 +2042,10 @@ sap.ui.define([
 	/**
 	 * Validates the given scope. Checks the OData version, searches for forbidden
 	 * $IncludeAnnotations and conflicting $Include. Uses and fills
-	 * <code>this.mSchema2ReferenceUri</code>.
+	 * <code>this.mSchema2MetadataUrl</code>.
 	 *
 	 * @param {string} sUrl
-	 *   The $metadata URL
+	 *   The same $metadata URL that _MetadataRequestor#read() takes
 	 * @param {object} mScope
 	 *   The $metadata "JSON"
 	 * @returns {object}
@@ -2072,6 +2070,9 @@ sap.ui.define([
 		}
 		for (sReferenceUri in mScope.$Reference) {
 			oReference = mScope.$Reference[sReferenceUri];
+			// interpret reference URI relative to metadata URL
+			sReferenceUri = new URI(sReferenceUri).absoluteTo(this.sUrl).toString();
+
 			if ("$IncludeAnnotations" in oReference) {
 				logAndThrowError("Unsupported IncludeAnnotations", sUrl);
 			}
@@ -2081,14 +2082,14 @@ sap.ui.define([
 					logAndThrowError("A schema cannot span more than one document: " + sSchema
 						+ " - is both included and defined",
 						sUrl);
-				} else if (sSchema in this.mSchema2ReferenceUri
-					&& this.mSchema2ReferenceUri[sSchema] !== sReferenceUri) {
+				} else if (sSchema in this.mSchema2MetadataUrl
+					&& this.mSchema2MetadataUrl[sSchema] !== sReferenceUri) {
 					logAndThrowError("A schema cannot span more than one document: " + sSchema
-						+ " - expected reference URI " + this.mSchema2ReferenceUri[sSchema]
+						+ " - expected reference URI " + this.mSchema2MetadataUrl[sSchema]
 						+ " but instead saw " + sReferenceUri,
 						sUrl);
 				}
-				this.mSchema2ReferenceUri[sSchema] = sReferenceUri;
+				this.mSchema2MetadataUrl[sSchema] = sReferenceUri;
 			}
 		}
 

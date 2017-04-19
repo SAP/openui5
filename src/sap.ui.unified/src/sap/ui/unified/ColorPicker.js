@@ -201,6 +201,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	// Create truly immutable constant properties
 	Object.defineProperties(CONSTANTS, {
+		RGB: {value: "RGB"},
 		CPResponsiveClass: {value: "sapUnifiedColorPicker"},
 		CPMatrixClass: {value: "sapUiColorPicker-ColorPickerMatrix"},
 		HSLClass: {value: "sapUiColorPickerHSL"},
@@ -799,7 +800,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.oRGBorHSLRBGroup = oFactory.createRadioButtonGroup({
 			columns: 2,
 			buttons: [
-				oFactory.createRadioButtonItem({text: Library.ColorPickerMode.RGB}),
+				oFactory.createRadioButtonItem({text: CONSTANTS.RGB}),
 				oFactory.createRadioButtonItem({text: Library.ColorPickerMode.HSL})
 			],
 			select: this._handleRGBorHSLValueChange.bind(this),

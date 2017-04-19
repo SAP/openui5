@@ -82,6 +82,24 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
+	QUnit.test('getEntry shall create an empty entry if it is not initiated', function(assert) {
+		var oInitEntry = {
+			file: {
+				changes: {
+					changes: []
+				}
+			}
+		}
+		assert.deepEqual(Cache.getEntries(), {});
+		var oEntry = Cache.getEntry("test", "1.2.3");
+		assert.deepEqual(oEntry, oInitEntry);
+		assert.deepEqual(Cache.getEntries(), {
+			"test" : {
+				"1.2.3": oInitEntry
+			}
+		});
+	});
+
 	QUnit.test('if error occours, subsequent calls in their own execution path should get the chance to make a new request', function(assert) {
 		var that = this;
 		var oErrorFromFirstCall;

@@ -186,6 +186,7 @@
 				QUnit.module("Rendering", {
 					beforeEach: function () {
 						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
 					},
 					afterEach: function () {
 						this.oM.destroy();
@@ -228,6 +229,18 @@
 
 				});
 
+				QUnit.test("Testing if showWeekNumbers property works properly", function (oAssert) {
+
+					oAssert.strictEqual(this.oM.$().hasClass("sapUiCalNoWeekNum"), false, "When showWeekNumbers property is 'true', the class that hides the week numbers should not be 'visible'");
+					// Act
+					this.oM.setShowWeekNumbers(false);
+					sap.ui.getCore().applyChanges();
+
+					// Assert
+					oAssert.strictEqual(this.oM.$().hasClass("sapUiCalNoWeekNum"), true, "When showWeekNumbers property is 'false', the class that hides the week numbers should be 'visible'");
+				});
+
+
 				QUnit.module("Internals", {
 					beforeEach: function () {
 						this.oM = new sap.ui.unified.calendar.Month();
@@ -258,7 +271,6 @@
 					oAssert.strictEqual(this.oM._bNoFocus, true, "When invalidating with origin DateRange and parent " +
 						"aggregation 'specialDates' focus should not be returned");
 				});
-
 			})();
 
 		</script>

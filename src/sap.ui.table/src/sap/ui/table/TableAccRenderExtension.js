@@ -153,8 +153,23 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
 
 			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow._bHidden ? "" : sText, ["sapUiTableAriaRowSel"]);
-		}
+		},
 
+		/*
+		 * Renders the default row highlight content.
+		 * @see sap.ui.table.TableRenderer#writeRowHighlightContent
+		 * @public (Part of the API for Table control only!)
+		 */
+		writeAccRowHighlightText: function(oRm, oTable, oRow, iRowIndex) {
+			if (!oTable._getAccExtension().getAccMode()) {
+				return;
+			}
+
+			var oRowSettings = oRow.getAggregation("_settings");
+			var sHighlightText = oRowSettings._getHighlightText();
+
+			_writeAccText(oRm, oRow.getId(), "highlighttext", sHighlightText);
+		}
 	});
 
 	return AccRenderExtension;

@@ -474,10 +474,7 @@
 							bFirstFailure = false;
 							oElement.dispatchEvent(new ErrorEvent('error'));
 
-							//check the module state
-							var oModule = jQuery.sap.isResourceLoaded("testlibs/scenario9/lib1/library-preload.js");
-							var LOADING = 1;
-							assert.equal(LOADING, oModule.state, "Module should be in loading state");
+							// TODO check the module state (no API available)
 						}
 					}
 				}

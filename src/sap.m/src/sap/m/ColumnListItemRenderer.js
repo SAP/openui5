@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			oCell.removeAssociation("ariaLabelledBy", oCell.data("ariaLabelledBy") || undefined, true);
 		}
 
-		/* add the header as a aria-labelled by association for the cells */
+		/* add the header as an aria-labelled by association for the cells */
 		if (oHeader &&
 			oCell.getAriaLabelledBy &&
 			this.isTextualControl(oHeader)) {

@@ -97,18 +97,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	CalendarDateInterval.prototype.setStartDate = function(oStartDate){
 
-		if (!(oStartDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oStartDate);
 
 		if (jQuery.sap.equal(this.getStartDate(), oStartDate)) {
 			return this;
 		}
 
 		var iYear = oStartDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		if (oStartDate.getTime() < this._oMinDate.getTime() || oStartDate.getTime() > this._oMaxDate.getTime()) {
 			throw new Error("Date must not be in valid range (minDate and maxDate); " + this);

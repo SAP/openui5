@@ -90,7 +90,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * Width of Month
 			 * @since 1.38.0
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * Determines whether the week numbers in the months are displayed.
+			 *
+			 * <b>Note:</b> For Islamic calendars, the week numbers are not displayed
+			 * regardless of what is set to this property.
+			 * @since 1.48
+			 */
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true}
+
 		},
 		aggregations : {
 
@@ -1115,9 +1125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	Month.prototype.checkDateFocusable = function(oDate){
 
-		if (!(oDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oDate);
 
 		var oMonthDate = this._getDate();
 		var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
@@ -1128,6 +1136,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return false;
 		}
 
+	};
+
+	/**
+	 * Overrides the applyFocusInfo in order to focus the given html element.
+	 * Focus handler does not work with DOM elements, but with UI5 controls only. That's why we need to take care that
+	 * when focus is being restored back (e.g. after rerendering), we focus the needed DOM element (in this case day)
+	 *
+	 * @param {object} oInfo the focus info
+	 * @returns {sap.ui.unified.calendar.Month} <code>this</code> for method chaining.
+	 */
+	Month.prototype.applyFocusInfo = function(oInfo){
+		this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
+		return this;
 	};
 
 	Month.prototype._renderHeader = function(){
@@ -1408,14 +1429,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _changeDate (oDate, bNoFocus){
 
-		if (!(oDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oDate);
 
 		var iYear = oDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		var bFocusable = true; // if date not changed it is still focusable
 		if (!jQuery.sap.equal(this.getDate(), oDate)) {

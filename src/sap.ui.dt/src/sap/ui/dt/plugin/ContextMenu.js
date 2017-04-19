@@ -108,7 +108,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when an context menu item gets selected by user
+	 * Called when a context menu item gets selected by user
 	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @override
@@ -142,8 +142,9 @@ sap.ui.define([
 		document.activeElement.blur();
 
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var sTargetClasses = oEvent.target.className;
 
-		if (oOverlay && oOverlay.isSelectable()) {
+		if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1) {
 			if (!oOverlay.isSelected()) {
 				oOverlay.setSelected(true);
 			}

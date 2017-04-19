@@ -2,7 +2,7 @@
 				xmlns:core="sap.ui.core">
 	<m:HBox>
 		<m:Text text="{$this>text}"
-						width="10rem" />
+						width="10rem" class="sapUiSmallMarginTop"/>
 		<m:Input value="{$this>value}"
 						width="10rem" />
 	</m:HBox>

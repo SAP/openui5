@@ -59,7 +59,7 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		 * Used for retrieving the correct $ to execute your action on.
 		 * This will check the following conditions in order:
 		 * <ol>
-		 *     <li>The user provided a idSuffix - return</li>
+		 *     <li>The user provided an idSuffix - return</li>
 		 *     <li>There is a control adapter for the action (most of them are provided out of the box) - use the adapter see {@link sap.ui.test.Press.controlAdapters} for an example</li>
 		 *     <li>The focusDomRef of the control is taken as fallback</li>
 		 * </ol>

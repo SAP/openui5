@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 		properties : {
 			/**
 			 * CSS width of the matrix layout.
-			 * If the LayoutFixed = true a adequate width should be provided.
+			 * If the LayoutFixed = true an adequate width should be provided.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 			/**
 			 * Sets the table layout. If fixed the width parameter of a column has priority, if not the width of the content of the colums has priority.
 			 * The default is "fixed".
-			 * If the fixed layout is used a adequate width of the MatrixLayout should be provided. Otherwise the column width displayed could be different than the given ones because of browser dependend optimazations.
+			 * If the fixed layout is used an adequate width of the MatrixLayout should be provided. Otherwise the column width displayed could be different than the given ones because of browser dependend optimazations.
 			 */
 			layoutFixed : {type : "boolean", group : "Appearance", defaultValue : true},
 

@@ -285,10 +285,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			/**
 			 * Template for row actions. A template is decoupled from the row or table. Each time
-			 * the template's properties or aggregations have been changed, the template has to be applied again via
+			 * the template's properties or aggregations are changed, the template has to be applied again via
 			 * <code>setRowActionTemplate</code> for the changes to take effect.
 			 */
-			rowActionTemplate : {type : "sap.ui.table.RowAction", multiple : false}
+			rowActionTemplate : {type : "sap.ui.table.RowAction", multiple : false},
+
+			/**
+			 * Template for row settings. A template is decoupled from the row or table. Each time
+			 * the template's properties or aggregations are changed, the template has to be applied again via
+			 * <code>setRowSettingsTemplate</code> for the changes to take effect.
+			 */
+			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false}
 		},
 		associations : {
 
@@ -626,7 +633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		this._lastCalledUpdateRows = 0;
 		this._iBindingTimerDelay = 50;
-		this._iMaxScrollbarHeight = 1000000; // maximum px height of an DOM element in FF/IE/Chrome
+		this._iMaxScrollbarHeight = 1000000; // maximum px height of a DOM element in FF/IE/Chrome
 		this._aRowHeights = [];
 		this._iRowHeightsDelta = 0;
 		this._iRenderedFirstVisibleRow = 0;
@@ -802,24 +809,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (bRtlChanged) {
 			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 		}
+
 		if (bLangChanged) {
-			// Update bundle
+			var aRows = this.getRows();
+			var i;
+
+			// Update the resource bundle.
 			this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 
-			// Update bundle of row actions
-			var aRows = this.getRows();
+			// Update the resource bundle of row actions.
 			var oRowAction;
-			for (var i = 0; i < aRows.length; i++) {
+			for (i = 0; i < aRows.length; i++) {
 				oRowAction = aRows[i].getAggregation("_rowAction");
 				if (oRowAction) {
 					oRowAction._oResBundle = this._oResBundle;
 				}
 			}
 
-			//Clear Cell Context Menu
+			// Update the resource bundle of row settings.
+			var oRowSettings;
+			for (i = 0; i < aRows.length; i++) {
+				oRowSettings = aRows[i].getAggregation("_settings");
+				if (oRowSettings) {
+					oRowSettings._oResBundle = this._oResBundle;
+				}
+			}
+
+			// Clear the cell context menu.
 			TableUtils.Menu.cleanupDataCellContextMenu(this);
 
-			//Update Column Menus
+			// Update the column menus.
 			this._invalidateColumnMenus(true);
 		}
 	};
@@ -3385,16 +3404,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype._getRowClone = function(iIndex) {
-		var oClone = new Row(this.getId() + "-rows" + "-row" + iIndex);
+		var oRowClone = new Row(this.getId() + "-rows" + "-row" + iIndex);
+
+		// Add cells to the row clone.
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
 			if (aColumns[i].getVisible()) {
 				var oColumnTemplateClone = aColumns[i].getTemplateClone(i);
 				if (oColumnTemplateClone) {
-					oClone.addCell(oColumnTemplateClone);
+					oRowClone.addCell(oColumnTemplateClone);
 				}
 			}
 		}
+
+		// Add the row actions to the row clone.
 		var oRowActionTemplate = this.getRowActionTemplate();
 		if (oRowActionTemplate) {
 			var oRowAction = oRowActionTemplate.clone();
@@ -3402,9 +3425,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oRowAction._setCount(this.getRowActionCount());
 			oRowAction._setIconLabel(this.getId() + "-rowacthdr");
 			oRowAction._show = true; //TBD: Remove the _show flag, only needed to protect misuse in dev phase
-			oClone.setAggregation("_rowAction", oRowAction, true);
+			oRowClone.setAggregation("_rowAction", oRowAction, true);
 		}
-		return oClone;
+
+		// Add the row settings to the row clone.
+		var oRowSettingsTemplate = this.getRowSettingsTemplate();
+		if (oRowSettingsTemplate) {
+			var oRowSetting = oRowSettingsTemplate.clone();
+			oRowClone.setAggregation("_settings", oRowSetting, true);
+		}
+
+		return oRowClone;
 	};
 
 	/**
@@ -3447,7 +3478,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
 			// One additional row was created for half-scrolled rows at the bottom.,
-			// this should not lead to a increase of the visibleRowCount defined by the user.
+			// this should not lead to an increase of the visibleRowCount defined by the user.
 			this.setProperty("visibleRowCount", iNumberOfRows - 1, true);
 		} else {
 			this.setProperty("visibleRowCount", iNumberOfRows, true);
@@ -3783,6 +3814,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._toggleSelectAll = function() {
+		if (!TableUtils.hasData(this)) {
+			return;
+		}
+
 		// in order to fire the rowSelectionChanged event, the SourceRowIndex mus be set to -1
 		// to indicate that the selection was changed by user interaction
 		if (TableUtils.areAllRowsSelected(this)) {
@@ -3949,6 +3984,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				oRowAction._setCount(iCount);
 			}
 		}
+		return this;
+	};
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Table.prototype.setRowSettingsTemplate = function(oTemplate) {
+		this.setAggregation("rowSettingsTemplate", oTemplate);
+		this.invalidateRowsAggregation();
 		return this;
 	};
 

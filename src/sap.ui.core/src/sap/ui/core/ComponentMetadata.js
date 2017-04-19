@@ -813,7 +813,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	};
 
-
 	return ComponentMetadata;
 
 }, /* bExport= */ true);

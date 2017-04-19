@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>OPA sample passing URL parameters</title>
+
+		<script id="sap-ui-bootstrap"
+		        src="../../../../../../../../resources/sap-ui-core.js"
+		        data-sap-ui-libs="sap.m"
+		        data-sap-ui-theme='sap_belize'
+		        data-sap-ui-resourceroots='{
+				"sap.ui.sample.appUnderTest" : "./applicationUnderTest",
+				"sap.ui.sample.appUnderTest.view" : "./applicationUnderTest/view",
+				"sap.ui.demo.mock" : "../../../../../../../sap/ui/demokit/explored/"
+			}'>
+		</script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+
+			QUnit.config.autostart = false;
+			var oAppParams = {
+				"key": "value"
+			};
+
+			sap.ui.require([
+				'sap/ui/test/Opa5',
+				'sap/ui/test/opaQunit',
+				'sap/ui/thirdparty/URI'
+			], function (Opa5, opaTest, URI) {
+				Opa5.extendConfig({
+					viewNamespace : "sap.ui.sample.appUnderTest.view.",
+					autoWait : true,
+					appParams: oAppParams
+				});
+
+				QUnit.module("iStartMyUIComponent");
+
+				opaTest("Should start with URL parameter and teardown a component", function (Given, When, Then) {
+
+					// Loads the component with the given name
+					Given.iStartMyUIComponent({
+						componentConfig: {
+							name: "sap.ui.sample.appUnderTest"
+						}
+					});
+
+					// Check that application parameters are passed to the URL
+					Then.waitFor({
+						success: function () {
+							assert.ok(new URI(window.location.href).search(true)["key"],
+								oAppParams["key"], "Component was started with app params");
+						}
+					}).
+					// Removes the component
+					and.iTeardownMyApp();
+
+				});
+				QUnit.start();
+
+			});
+
+		</script>
+
+	</head>
+
+	<script src="README.js"></script>
+
+	<body>
+
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="readme"></div>
+
+	</body>
+</html>

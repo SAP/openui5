@@ -577,10 +577,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (!oStartDate) {
 			//set default value
 			oStartDate = new Date();
-		}
-
-		if (!(oStartDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
+		} else {
+			CalendarUtils._checkJSDateObject(oStartDate);
 		}
 
 		if (this.getViewKey() ===  sap.ui.unified.CalendarIntervalType.Week) {
@@ -615,9 +613,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		var iYear = oStartDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		var oMinDate = this.getMinDate();
 		if (oMinDate && oMinDate.getTime() > oStartDate.getTime()) {
@@ -668,14 +664,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oMaxDate = this.getMaxDate();
 
 		if (oDate) {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			var iYear = oDate.getFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			this.setProperty("minDate", oDate, true);
 			this._bNoStartDateChange = true; // set the start date after all calendars are updated
@@ -734,14 +726,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var oMinDate = this.getMinDate();
 
 		if (oDate) {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			var iYear = oDate.getFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			this.setProperty("maxDate", oDate, true);
 			this._bNoStartDateChange = true; // set the start date after all calendars are updated

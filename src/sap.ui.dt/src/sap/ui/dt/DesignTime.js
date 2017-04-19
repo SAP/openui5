@@ -298,7 +298,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 	/**
 	 * Returns a designTimeMetadata for the element or className
-	 * @param {string|sap.ui.core.Element}
+	 * @param {string|sap.ui.core.Element} vElement element or string witch is needed to expect classname
 	 * @return {object} designTimeMetadata for a specific element or className
 	 * @protected
 	 */
@@ -363,13 +363,11 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	/**
 	 * Creates and returns the created instance of ElementOverlay for an element
 	 * @param {string|sap.ui.core.Element} oElement to create ElementOverlay for
-	 * @param {object} oDesignTimeMetadata to create ElementOverlay with
 	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
 	 * @protected
 	 */
-	DesignTime.prototype.createElementOverlay = function(oElement, bInHiddenTree) {
+	DesignTime.prototype.createElementOverlay = function(oElement) {
 		return new ElementOverlay({
-			inHiddenTree : bInHiddenTree,
 			element : oElement
 		});
 	};
@@ -391,11 +389,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
-	 * @param {boolean} bInHiddenTree boolean value
 	 * @return {sap.ui.dt.ElementOverlay} created or already existing instance of ElementOverlay for oElement
 	 * @private
 	 */
-	DesignTime.prototype._createElementOverlay = function(oElement, bInHiddenTree) {
+	DesignTime.prototype._createElementOverlay = function(oElement) {
 		oElement = ElementUtil.fixComponentContainerElement(oElement);
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElement && !oElement.bIsDestroyed && !oElementOverlay) {
@@ -404,7 +401,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 			}
 			this._iOverlaysPending++;
 
-			oElementOverlay = this.createElementOverlay(oElement, bInHiddenTree);
+			oElementOverlay = this.createElementOverlay(oElement);
 			if (oElementOverlay) {
 				oElementOverlay.attachRequestElementOverlaysForAggregation(this._onRequestElementOverlaysForAggregation, this);
 				oElementOverlay.attachElementModified(this._onElementModified, this);
@@ -474,18 +471,20 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	};
 
 	/**
+	 * @param {sap.ui.core.ElementOverlay} oElementOverlay element overlay
+	 * @param {string} sAggregationName name of the aggregation for which element overlays has to be created
 	 * @private
 	*/
 	DesignTime.prototype._createChildOverlaysForAggregation = function(oElementOverlay, sAggregationName) {
-		var oAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
 		var oElement = oElementOverlay.getElementInstance();
 		var vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
 		ElementUtil.iterateOverElements(vChildren, function(oChild) {
-			this._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
+			this._createElementOverlay(oChild);
 		}.bind(this));
 	};
 
 	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	*/
 	DesignTime.prototype._onRequestElementOverlaysForAggregation = function(oEvent) {
@@ -539,17 +538,20 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	};
 
 	/**
-	 * @param {sap.ui.core.Element} oElement which was added
+	 * @param {sap.ui.core.Element} oChild which was added
 	 * @private
 	 */
 	DesignTime.prototype._onElementOverlayAddAggregation = function(oChild, oParent, sAggregationName) {
+		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
+		var oParentAggregationOverlay = oParentOverlay.getAggregationOverlay(sAggregationName);
 		// oElement can be of an alternative type (setLabel(sText) for example)
 		if (oChild instanceof sap.ui.core.Element) {
 			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
 			if (!oChildElementOverlay) {
-				var bIsInHiddenTree = OverlayRegistry.getOverlay(oParent).getAggregationOverlay(sAggregationName).isInHiddenTree();
-				this._createElementOverlay(oChild, bIsInHiddenTree);
+				this._createElementOverlay(oChild);
 			} else {
+				// element overlay needs to have a correct parent for propagation
+				oParentAggregationOverlay.addChild(oChildElementOverlay);
 				oChildElementOverlay.setDesignTimeMetadata(oChildElementOverlay._oOriginalDesignTimeMetadata);
 			}
 		}
@@ -588,6 +590,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 	/**
 	 * @param {function} fnStep function called with every root element
+	 * @param {object} oScope provides scope object
 	 * @private
 	 */
 	DesignTime.prototype._iterateRootElements = function(fnStep, oScope) {

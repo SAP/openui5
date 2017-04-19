@@ -9,6 +9,9 @@ sap.ui.define([
 		'sap/ui/test/_autoWaiter'
 	], function (jQuery, URI, Device, _LogCollector, _autoWaiter) {
 	"use strict";
+
+	/*global CollectGarbage */
+
 	var sLogPrefix = "sap.ui.test.Opa5",
 		$ = jQuery,
 		oFrameWindow = null,
@@ -261,6 +264,14 @@ sap.ui.define([
 	function destroyFrame () {
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
 		oFrameWindow.onerror = $.noop;
+		for (var i = 0; i < $Frame.length; i++) {
+			$Frame[0].src = "about:blank";
+			$Frame[0].contentWindow.document.write('');
+			$Frame[0].contentWindow.close();
+		}
+		if ( typeof CollectGarbage == "function") {
+			CollectGarbage(); // eslint-disable-line
+		}
 		$Frame.remove();
 		oFrameJQuery = null;
 		oFramePlugin = null;

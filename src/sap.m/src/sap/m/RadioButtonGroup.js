@@ -208,6 +208,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oItemNavigation.setColumns(this.getColumns());
 				this._oItemNavigation.setSelectedIndex(this.getSelectedIndex());
 				this._oItemNavigation.setFocusedIndex(this.getSelectedIndex());
+				this._oItemNavigation.setDisabledModifiers({
+					sapnext : ["alt", "meta"],
+					sapprevious : ["alt", "meta"]
+				});
 			};
 
 			/**
@@ -411,7 +415,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					return null;
 				}
 
-				this.aRBs[iIndex].destroy();
 				this.aRBs.splice(iIndex, 1);
 
 				if (!this._bUpdateButtons) {

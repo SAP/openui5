@@ -1,4 +1,9 @@
-sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', "sap/ui/test/launchers/iFrameLauncher"], function ($, Opa5, IFrameLauncher) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/test/Opa5',
+	"sap/ui/test/launchers/iFrameLauncher",
+	'sap/ui/thirdparty/URI'
+	], function ($, Opa5, IFrameLauncher,URI) {
 	"use strict";
 
 	QUnit.module("Launchers and teardown");
@@ -49,6 +54,105 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', "sap/ui/test/launchers/i
 		});
 	});
 
+	QUnit.module("Launchers and app params");
+
+	QUnit.test("Should start a component with app params", function(assert) {
+		// System under Test
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+
+		Opa5.extendConfig({
+			appParams: {
+				key: "value"
+			}
+		});
+
+		oOpa5.iStartMyUIComponent({
+			componentConfig: {
+				name: "samples.components.button"
+			}
+		});
+
+		oOpa5.waitFor({
+			success: function () {
+				// should not check for while appParams object
+				// as the test itself could be started with some params
+				var oUriParams = new URI(window.location.href).search(true);
+				assert.strictEqual(oUriParams.key, "value",
+					"App param should be presented");
+			}
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Should start an IFrame with app params", function(assert) {
+		// System under Test
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+
+		Opa5.extendConfig({
+			appParams: {
+				key: "value"
+			}
+		});
+
+		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+
+		oOpa5.waitFor({
+			success: function () {
+				// should not check for while appParams object
+				// as the test itself could be started with some params
+				var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
+				assert.strictEqual(oUriParams.key, "value",
+					"App param should be presented");
+			}
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Should start an IFrame with app params and non-string uri", function(assert) {
+		// System under Test
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+
+		Opa5.extendConfig({
+			appParams: {
+				key: "value"
+			}
+		});
+
+		oOpa5.iStartMyAppInAFrame(["../testdata/emptySite.html"]);
+
+		oOpa5.waitFor({
+			success: function () {
+				// should not check for while appParams object
+				// as the test itself could be started with some params
+				var oUriParams = new URI(Opa5.getWindow().location.href).search(true);
+				assert.strictEqual(oUriParams.key, "value",
+					"App param should be presented");
+			}
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			Opa5.resetConfig();
+			fnDone();
+		});
+	});
+
 	var aAutoWaiterStubs = [];
 
 	function stubAutoWaiter () {
@@ -56,7 +160,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', "sap/ui/test/launchers/i
 		aAutoWaiterStubs.push(sinon.stub(oAutoWaiter, "hasToWait").returns(false));
 	}
 
-	QUnit.module("Launchers and teardown", {
+	QUnit.module("Launchers and autoWait", {
 		beforeEach: function () {
 			Opa5.extendConfig({
 				autoWait: true

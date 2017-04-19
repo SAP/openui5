@@ -14,9 +14,28 @@
 		<img src="images/sampleonly.png" class="btn" style="right:250px;" onclick="top.setFrameLayout('sampleonly');" title="Sample Only">
 		<img src="images/controltree.png" class="btn" style="right:220px;" onclick="top.setFrameLayout('controltree');" title="Control Tree">
 		<img src="images/full.png" class="btn" style="right:190px;" onclick="top.setFrameLayout('full');" title="Full Testsuite">
-		<img src="images/res.png" class="btn" style="right:160px;" onclick="top.openInDeviceSimulator();" title="Open in Device Resolution Emulator">
-		<img src="images/edit.png" class="btn" style="right:130px;" onclick="top.editInSnippix();" title="Edit in Snippix">
+		<img src="images/res.png" class="btn" style="right:160px;" onclick="top.openInDeviceSimulator();" title="Open in Device Resolution Emulator">#
+		<!-- here goes the snippix link, if available -->
 		<img src="images/jsunit.png" class="btn" style="right:100px;" onclick="top.redirectToTestrunner();" title="Open QUnit Testrunner">
 		<img src="../../resources/sap/ui/core/mimes/logo/sap_73x36.gif" style="position:absolute; right:10px;height:30px;" alt="SAP SE">
+
+		<script>
+			var request = new XMLHttpRequest();
+			request.open('HEAD', '/snippix');
+			request.onreadystatechange = function() {
+				if (this.readyState == this.DONE) {
+					if (this.status == 200) {
+						var snippixLink = document.createElement("img");
+						snippixLink.setAttribute("src", "images/edit.png");
+						snippixLink.setAttribute("class", "btn");
+						snippixLink.setAttribute("style", "right:130px;");
+						snippixLink.setAttribute("onclick", "top.editInSnippix();");
+						snippixLink.setAttribute("title", "Edit in Snippix");
+						document.body.appendChild(snippixLink);
+					}
+				}
+			};
+			request.send();
+		</script>
 	</body>
 </html>

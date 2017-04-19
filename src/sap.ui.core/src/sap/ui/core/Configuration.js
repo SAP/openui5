@@ -537,7 +537,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * suggested dashes ('-') and not taking the case of letters into account.
 		 *
 		 * The exceptions mentioned above affect languages that have been specified via the URL parameter
-		 * <code>sap-language</code>. That parameter by definition represents a SAP logon language code
+		 * <code>sap-language</code>. That parameter by definition represents an SAP logon language code
 		 * ('ABAP language'). Most but not all of these language codes are valid ISO639 two-letter languages
 		 * and as such are valid BCP47 language tags. For better BCP47 compliance, the framework
 		 * maps the following non-BCP47 SAP logon codes to a BCP47 substitute:
@@ -573,7 +573,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns a SAP logon language for the current language.
+		 * Returns an SAP logon language for the current language.
 		 *
 		 * @return {string} The SAP logon language code for the current language
 		 * @public
@@ -608,7 +608,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * <ul>
 		 * <li>date and number data types that are used in property bindings or composite
 		 *     bindings in existing Elements, Controls, UIAreas or Components</li>
-		 * <li>ResourceModels currently assigned to the Core, an UIArea, Component,
+		 * <li>ResourceModels currently assigned to the Core, a UIArea, Component,
 		 *     Element or Control</li>
 		 * <li>Elements or Controls that implement the <code>onlocalizationChanged</code> hook
 		 *     (note the lowercase 'l' in onlocalizationChanged)</li>
@@ -624,7 +624,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * </ul>
 		 *
 		 * This method does not accept SAP language codes for <code>sLanguage</code>. Instead, a second
-		 * parameter <code>sSAPLogonLanguage</code> can be provided with a SAP language code corresponding
+		 * parameter <code>sSAPLogonLanguage</code> can be provided with an SAP language code corresponding
 		 * to the given language. A given value will be returned by the {@link #getSAPLogonLanguage} method.
 		 * It is up to the caller to provide a consistent pair of BCP47 language and SAP language code.
 		 * The SAP language code is only checked to be of length 2 and must consist of letters or digits only.
@@ -681,7 +681,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns a SAP parameter by it's name (e.g. sap-client, sap-system, sap-server).
+		 * Returns an SAP parameter by it's name (e.g. sap-client, sap-system, sap-server).
 		 *
 		 * @experimental
 		 * @since 1.45.0

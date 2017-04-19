@@ -20,6 +20,7 @@
 				{ "name" : "vertical-bar-chart-2" },
 				{ "name" : "horizontal-bar-chart-2" },
 				{ "name" : "horizontal-stacked-chart" },
+				{ "name" : "horizontal-combination-chart" },
 				{ "name" : "vertical-stacked-chart" },
 				{ "name" : "choropleth-chart" },
 				{ "name" : "geographic-bubble-chart" },
@@ -124,7 +125,8 @@
 				{ "name" : "user-edit" },
 				{ "name" : "switch-classes" },
 				{ "name" : "user-settings" },
-				{ "name" : "visits" }
+				{ "name" : "visits" },
+				{ "name" : "add-employee" }
 			]
 		},
 		{
@@ -368,7 +370,9 @@
 				{ "name" : "italic-text" },
 				{ "name" : "decrease-line-height" },
 				{ "name" : "indent" },
-				{ "name" : "cursor-arrow" }
+				{ "name" : "cursor-arrow" },
+				{ "name" : "fx" },
+				{ "name" : "text-color" }
 			]
 		},
 		{
@@ -478,6 +482,8 @@
 				{ "name" : "begin" },
 				{ "name" : "add-filter" },
 				{ "name" : "add" },
+				{ "name" : "add-folder" },
+				{ "name" : "add-employee" },
 				{ "name" : "action" },
 				{ "name" : "accept" },
 				{ "name" : "favorite" },
@@ -708,7 +714,10 @@
 				{ "name" : "sys-help-2" },
 				{ "name" : "add-coursebook" },
 				{ "name" : "slim-arrow-right" },
-				{ "name" : "negative" }
+				{ "name" : "negative" },
+				{ "name" : "fx" },
+				{ "name" : "blur" },
+				{ "name" : "pixelate" }
 			]
 		},
 		{
@@ -831,7 +840,10 @@
 				{ "name" : "cancel-share" },
 				{ "name" : "private" },
 				{ "name" : "trip-report" },
-				{ "name" : "permission" }
+				{ "name" : "permission" },
+				{ "name" : "away" },
+				{ "name" : "busy" },
+				{ "name" : "appear-offline" }
 			]
 		},
 		{

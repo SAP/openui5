@@ -263,7 +263,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Registers the handler from a aggregation.
+	 * Registers the handler for an aggregation.
 	 * @param {sap.ui.base.ManagedObject} oObject the object for the property
 	 * @param {object} oAggregation the aggregation object from the metadata of the object
 	 * @private
@@ -312,7 +312,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the handler from a aggregation.
+	 * Deregisters the handler from an aggregation.
 	 * @param {sap.ui.base.ManagedObject} oObject the object for the property
 	 * @param {object} oAggregation the aggregation object from the metadata of the object
 	 * @private

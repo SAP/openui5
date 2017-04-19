@@ -3,8 +3,9 @@ sap.ui.define([
 		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit",
 		"jquery.sap.global",
-		"sap/m/Button"
-	], function (Opa, Opa5, opaTest, $, Button) {
+		"sap/m/Button",
+		"sap/ui/thirdparty/URI"
+	], function (Opa, Opa5, opaTest, $, Button, URI) {
 	QUnit.module("wait for basics", {
 		beforeEach: function () {
 			this.oOpa5 = new Opa5();
@@ -25,7 +26,7 @@ sap.ui.define([
 		assert.strictEqual(oOpaContext, oOpa5InstanceContext, "Opa and Opa5 instance share a context");
 	});
 
-	QUnit.module("extend config",{
+	QUnit.module("OPA5 Config",{
 		afterEach: function () {
 			Opa5.resetConfig();
 		}
@@ -89,6 +90,40 @@ sap.ui.define([
 		});
 		assert.strictEqual(Opa.config.pollingInterval, 5, "extended pollingInterval");
 		assert.strictEqual(Opa.config.timeout, 10, "extended timeout");
+	});
+
+	QUnit.test("Should read a config value from URL parameter", function (assert) {
+		var fnDone = assert.async();
+		var oStub = sinon.stub(URI.prototype, "search", function () {
+			return {
+				"newKey": "value",		// should parse unprefixed params
+				"opaSpecific": "value",	// should exclude opa params
+				"existingKey": "value"	// uri params should override defaults
+			};
+		});
+		$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
+
+		sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
+			assert.strictEqual(Opa.config.appParams.newKey, "value");
+			assert.strictEqual(Opa.config.appParams.specific, undefined);
+			Opa5.extendConfig({
+				appParams: {
+					existingKey: "oldValue"
+				}
+			});
+			assert.strictEqual(Opa.config.appParams.existingKey, "value");
+
+			// restore the stub and reload OPA5 so empty app params are loaded
+			oStub.restore();
+			$.sap.unloadResources("sap/ui/test/Opa5.js", false, true, true);
+			sap.ui.require(["sap/ui/test/Opa5","sap/ui/test/Opa"], function (Opa5,Opa) {
+				// should not check for empty appParams
+				// as the test itself could be started with some params
+				assert.strictEqual(Opa.config.appParams.existingKey, undefined,
+					"App params should be cleared now");
+				fnDone();
+			});
+		});
 	});
 
 	function createXmlView(sViewName) {

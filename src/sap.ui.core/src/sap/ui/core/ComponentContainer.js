@@ -75,10 +75,14 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Lifecycle behavior for the Component associated by the ComponentContainer.
-			 * By default the behavior is "Legacy" which means that the ComponentContainer
-			 * takes care to destroy the Component once the ComponentContainer is destroyed
-			 * but not when a new Component is associated.
+			 * Lifecycle behavior for the Component associated by the <code>ComponentContainer</code>.
+			 * The default behavior is <code>Legacy</code>. This  means that the <code>ComponentContainer</code>
+			 * takes care that the Component is destroyed when the <code>ComponentContainer</code> is destroyed,
+			 * but it is <b>not</b> destroyed when a new Component is associated.
+			 * If you use the <code>usage</code> property to create the Component,
+			 * the default behavior is <code>Container</code>. This means that
+			 * the Component is destroyed when the <code>ComponentContainer</code> is destroyed or a new
+			 * Component is associated.
 			 */
 			lifecycle : {type : "sap.ui.core.ComponentLifecycle", defaultValue : ComponentLifecycle.Legacy},
 
@@ -154,14 +158,17 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 *
 	 * Once the component is associated with the container the cross connection
 	 * to the component will be set and the models will be propagated if defined.
+	 * If the <code>usage</code> property is set the ComponentLifecycle is processed like a "Container" lifecycle.
 	 *
-	 * @param {string|sap.ui.core.UIComponent} vComponent Id of an element which becomes the new target of this component association. Alternatively, an element instance may be given.
+	 * @param {string|sap.ui.core.UIComponent} vComponent ID of an element which becomes the new target of this component association. Alternatively, an element instance may be given.
 	 * @return {sap.ui.core.ComponentContainer} the reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ComponentContainer.prototype.setComponent = function(vComponent, bSuppressInvalidate) {
 		setContainerComponent(this, vComponent, bSuppressInvalidate,
-			this.getLifecycle() === ComponentLifecycle.Container);
+			this.getLifecycle() === ComponentLifecycle.Container
+			|| (typeof this.getUsage() === "string" && this.getUsage() && this.getLifecycle() === ComponentLifecycle.Legacy)
+		);
 		return this;
 	};
 

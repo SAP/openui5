@@ -106,6 +106,14 @@
 		assert.strictEqual(this.oSpies.stepChanged.callCount, 5, "Event should be fired 5 times");
 	});
 
+	QUnit.test("alt + right/left is not handled", function(assert) {
+		var oModifiers = this.oProgressNavigator._anchorNavigation.getDisabledModifiers();
+		assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+		assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+		assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
+		assert.equal(oModifiers["sapprevious"][0], "alt", "alt is not handled when left is pressed");
+	});
+
 	QUnit.test("NextStep() should not overflow", function (assert) {
 		this.oProgressNavigator._currentStep = 5;
 

@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 
 				/**
 				 * Defines the icon, which belongs to the item.
-				 * This can be an URI to an image or an icon font URI.
+				 * This can be a URI to an image or an icon font URI.
 				 */
 				icon : {type : "string", group : "Appearance", defaultValue : null},
 

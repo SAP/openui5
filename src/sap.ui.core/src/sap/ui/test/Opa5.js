@@ -18,7 +18,8 @@ sap.ui.define([
 		'./pipelines/MatcherPipeline',
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator',
-		'./_LogCollector'
+		'./_LogCollector',
+		'sap/ui/thirdparty/URI'
 	],
 	function($,
 			 Opa,
@@ -35,7 +36,8 @@ sap.ui.define([
 			 MatcherPipeline,
 			 ActionPipeline,
 			 _ParameterValidator,
-			 _LogCollector) {
+			 _LogCollector,
+			 URI) {
 		"use strict";
 
 		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
@@ -54,6 +56,53 @@ sap.ui.define([
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
 				"check", "error", "success"
 			].concat(Opa._aConfigValuesForWaitFor);
+
+
+		Opa._extractAppParams = function() {
+			// extract all uri parameters except opa* and qunit parameters
+			var aBlacklistPatterns = [
+				/opa.*/,
+				/hidepassed/,
+				/noglobals/,
+				/notrycatch/,
+				/coverage/,
+				/module/,
+				/filter/
+			];
+			var oParams = {};
+			var oUriParams = new URI().search(true);
+			for (var sUriParamName in oUriParams) {
+				var bBlacklistedPattern = false;
+				for (var iPatternIndex = 0; iPatternIndex < aBlacklistPatterns.length; iPatternIndex++) {
+					if (sUriParamName.match(aBlacklistPatterns[iPatternIndex])) {
+						oLogger.debug("Skipping uri parameter: " + sUriParamName +
+							" as blacklisted with pattern: " + aBlacklistPatterns[iPatternIndex]);
+						bBlacklistedPattern = true;
+						break;
+					}
+				}
+				if (!bBlacklistedPattern) {
+					oParams[sUriParamName] = Opa._parseParam(oUriParams[sUriParamName]);
+				}
+			}
+			return oParams;
+		};
+
+		var reduce = function(oTarget, oExcesive) {
+			for (var sKey in oExcesive) {
+				if (oTarget.hasOwnProperty(sKey) && oExcesive.hasOwnProperty(sKey)) {
+					if (typeof oTarget[sKey] == "object" && typeof oExcesive[sKey] == "object") {
+						reduce(oTarget[sKey], oExcesive[sKey]);
+					} else {
+						delete oTarget[sKey];
+					}
+				}
+			}
+			return oTarget;
+		};
+
+		// parse app params from uri
+		var appParams = Opa._extractAppParams();
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -79,6 +128,14 @@ sap.ui.define([
 		);
 
 		function iStartMyAppInAFrame (sSource, iTimeout) {
+			// merge appParams over sSource search params
+			if (sSource && typeof sSource !== "string") {
+				sSource = sSource.toString();
+			}
+			var uri = new URI(sSource);
+			uri.search($.extend(
+				uri.search(true),Opa.config.appParams));
+
 			this.waitFor({
 				// make sure no controls are searched by the defaults
 				viewName: null,
@@ -86,7 +143,7 @@ sap.ui.define([
 				id: null,
 				searchOpenDialogs: false,
 				success : function () {
-					addFrame(sSource);
+					addFrame(uri.toString());
 				}
 			});
 
@@ -107,12 +164,26 @@ sap.ui.define([
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - "".
 		 * @param {number} [oOptions.timeout=15] The timeout for loading the UIComponent in seconds - {@link sap.ui.test.Opa5#waitFor}.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 *
+		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
+		 * applied to the current URL.
+		 *
 		 * @public
 		 * @function
 		 */
 		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
 			var bComponentLoaded = false;
 			oOptions = oOptions || {};
+
+			// apply the appParams to this frame URL so the application under test uses appParams
+			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
+			oParamsWaitForOptions.success = function() {
+				var uri = new URI();
+				uri.search($.extend(
+					uri.search(true),Opa.config.appParams));
+				window.history.replaceState({},"",uri.toString());
+			};
+			this.waitFor(oParamsWaitForOptions);
 
 			var oFirstWaitForOptions = createWaitForObjectWithoutDefaults();
 			oFirstWaitForOptions.success = function () {
@@ -146,6 +217,10 @@ sap.ui.define([
 
 		/**
 		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects
+		 *
+		 * @since 1.48 If appParams were applied to the current URL, they will be removed
+		 * after UIComponent is destroyed
+		 *
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -156,8 +231,17 @@ sap.ui.define([
 			oOptions.success = function () {
 				componentLauncher.teardown();
 			};
-			return this.waitFor(oOptions);
+			this.waitFor(oOptions);
 
+			// remove appParams from this frame URL as application under test is stopped
+			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
+			oParamsWaitForOptions.success = function() {
+				var uri = new URI();
+				uri.search(reduce(
+					uri.search(true),Opa.config.appParams));
+				window.history.replaceState({},"",uri.toString());
+			};
+			this.waitFor(oParamsWaitForOptions);
 		};
 
 		/**
@@ -187,6 +271,10 @@ sap.ui.define([
 
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 *
+		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
+		 * merged in the query params of app URL
+		 *
 		 * @param {string} sSource The source of the IFrame
 		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -197,6 +285,10 @@ sap.ui.define([
 
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 *
+		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
+		 * merged in the query params of app URL
+		 *
 		 * @param {string} sSource The source of the IFrame
 		 * @param {int} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -429,6 +521,10 @@ sap.ui.define([
 		 * </code>
 		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
 		 * will time out and finally disable autoWait in these Tests.
+		 *
+		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
+		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
+		 *
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
@@ -659,11 +755,20 @@ sap.ui.define([
 		 *     </code>
 		 * </pre>
 		 *
+		 * @since 1.48 Application config parameters could be overwritten from URL.
+		 * Every parameter that is not prefixed with 'opa' and is not blacklisted as QUnit
+		 * parameter is parsed and overwrites respective 'appParams' value.
+		 *
 		 * @param {object} options The values to be added to the existing config
 		 * @public
 		 * @function
 		 */
-		Opa5.extendConfig = Opa.extendConfig;
+		Opa5.extendConfig = function(options) {
+			Opa.extendConfig(options);
+			Opa.extendConfig({
+				appParams: appParams
+			});
+		};
 
 		/**
 		 * Resets Opa.config to its default values.
@@ -679,6 +784,7 @@ sap.ui.define([
 		 * 	<li>pollingInterval: 400 milliseconds</li>
 		 * 	<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 		 * 	<li>autoWait: false - since 1.42</li>
+		 * 	<li>appParams: object with URI parameters for the tested app - since 1.48</li>
 		 * </ul>
 		 * @public
 		 * @since 1.25
@@ -693,6 +799,9 @@ sap.ui.define([
 				visible : true,
 				autoWait : false,
 				_stackDropCount : 1
+			});
+			Opa.extendConfig({
+				appParams: appParams
 			});
 		};
 

@@ -37,7 +37,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 		properties : {
 
 			/**
-			 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with a Icon name parameter and an optional collection parameter which is required when using application extended Icons. A list of standard FontIcon is available here.
+			 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with an Icon name parameter and an optional collection parameter which is required when using application extended Icons. A list of standard FontIcon is available here.
 			 */
 			src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 

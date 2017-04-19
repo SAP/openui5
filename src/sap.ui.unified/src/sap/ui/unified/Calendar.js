@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
-               './calendar/Header', './calendar/Month', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library'],
-               function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, Month, MonthPicker, YearPicker, UniversalDate, library) {
+			   './calendar/Header', './calendar/Month', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/core/date/UniversalDate', './library'],
+			   function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, Month, MonthPicker, YearPicker, UniversalDate, library) {
 	"use strict";
 
 	/*
@@ -64,6 +64,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * If set, the provided weekdays are displayed as non-working days.
 			 * Valid values inside the array are 0 to 6.
 			 * If not set, the weekend defined in the locale settings is displayed as non-working days.
+			 *
+			 * <b>Note:</b> Keep in mind that this property sets only weekly-recurring days
+			 * as non-working. If you need specific dates or dates ranges, such as national
+			 * holidays, use the <code>specialDates</code> aggregation to set them.
+			 * Both the non-working days (from property) and dates (from aggregation) are
+			 * visualized the same.
+			 *
 			 * @since 1.28.9
 			 */
 			nonWorkingDays : {type : "int[]", group : "Appearance", defaultValue : null},
@@ -112,25 +119,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * the <code>minDate</code> is set to the begin of the month of the <code>maxDate</code>.
 			 * @since 1.38.0
 			 */
-			maxDate : {type : "object", group : "Misc", defaultValue : null}
+			maxDate : {type : "object", group : "Misc", defaultValue : null},
+
+			/**
+			 * Determines whether the week numbers in the months are displayed.
+			 *
+			 * <b>Note:</b> For Islamic calendars, the week numbers are not displayed
+			 * regardless of what is set to this property.
+			 * @since 1.48
+			 */
+			showWeekNumbers : {type : "boolean", group : "Appearance", defaultValue : true}
 
 		},
 		aggregations : {
 
 			/**
-			 * Date Ranges for selected dates of the DatePicker
+			 * Dates or date ranges for selected dates.
+			 *
+			 * To set a single date (instead of a range), set only the <code>startDate</code> property
+			 * of the {@link sap.ui.unified.DateRange} class.
 			 */
 			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
 
 			/**
-			 * Date Range with type to visualize special days in the Calendar.
+			 * Dates or date ranges with type, to visualize special days in the <code>Calendar</code>.
 			 * If one day is assigned to more than one Type, only the first one will be used.
+			 *
+			 * To set a single date (instead of a range), set only the <code>startDate</code> property
+			 * of the {@link sap.ui.unified.DateRange} class.
+			 *
+			 * <b>Note:</b> Keep in mind that the <code>NonWorking</code> type is for marking specific
+			 * dates or date ranges as non-working, where if you need a weekly-reccuring non-working days
+			 * (weekend), you should use the <code>nonWorkingDays</code> property. Both the non-working
+			 * days (from property) and dates (from aggregation) are visualized the same.
+			 *
 			 * @since 1.24.0
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
 			/**
-			 * Date Ranges for disabled dates
+			 * Dates or date ranges for disabled dates.
+			 *
+			 * To set a single date (instead of a range), set only the <code>startDate</code> property
+			 * of the {@link sap.ui.unified.DateRange} class.
+			 *
 			 * @since 1.38.0
 			 */
 			disabledDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "disabledDate"},
@@ -253,7 +285,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	Calendar.prototype._createMonth = function(sId){
-
 		var oMonth = new Month(sId, {width: "100%"});
 
 		return oMonth;
@@ -287,6 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oDisplayDate = oFocusedDate;
 			}
 			aMonths[i].displayDate(CalendarUtils._createLocalDate(oDisplayDate));
+			aMonths[i].setShowWeekNumbers(this.getShowWeekNumbers());
 		}
 
 		this._updateHeader(oDate);
@@ -673,20 +705,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!oDate) {
 			// restore default
-			this._oMinDate.getJSDate().setUTCFullYear(1);
-			this._oMinDate.getJSDate().setUTCMonth(0);
-			this._oMinDate.getJSDate().setUTCDate(1);
+			CalendarUtils._updateUTCDate(this._oMinDate.getJSDate(), 1, 0, 1);
 		} else {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			this._oMinDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
 
 			var iYear = this._oMinDate.getUTCFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			if (this._oMaxDate.getTime() < this._oMinDate.getTime()) {
 				jQuery.sap.log.warning("minDate > maxDate -> maxDate set to end of the month", this);
@@ -715,20 +741,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!oDate) {
 			// restore default
-			this._oMaxDate.getJSDate().setUTCFullYear(9999);
-			this._oMaxDate.getJSDate().setUTCMonth(11);
-			this._oMaxDate.getJSDate().setUTCDate(31);
+			CalendarUtils._updateUTCDate(this._oMaxDate.getJSDate(), 9999, 11, 31);
 		} else {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			this._oMaxDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
 
 			var iYear = this._oMaxDate.getUTCFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			if (this._oMinDate.getTime() > this._oMaxDate.getTime()) {
 				jQuery.sap.log.warning("maxDate < minDate -> minDate set to begin of the month", this);
@@ -1744,16 +1764,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	function _displayDate (oDate, bNoFocus){
 
 		if (oDate && (!this._oFocusedDate || this._oFocusedDate.getTime() != oDate.getTime())) {
-			if (!(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
+			CalendarUtils._checkJSDateObject(oDate);
 
 			oDate = CalendarUtils._createUniversalUTCDate(oDate, this.getPrimaryCalendarType());
 
 			var iYear = oDate.getUTCFullYear();
-			if (iYear < 1 || iYear > 9999) {
-				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-			}
+			CalendarUtils._checkYearInValidRange(iYear);
 
 			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime()) {
 				throw new Error("Date must not be in valid range (minDate and maxDate); " + this);

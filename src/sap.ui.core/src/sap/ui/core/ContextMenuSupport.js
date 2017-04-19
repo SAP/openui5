@@ -58,7 +58,7 @@ sap.ui.define(["./Control"],
 				return;
 			}
 
-			// prevent default context Menu if we have an UI5 CM attached
+			// prevent default context Menu if we have a UI5 CM attached
 			oEvent.preventDefault();
 			this._oContextMenu.openAsContextMenu(oEvent, this);
 		}

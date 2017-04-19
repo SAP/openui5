@@ -298,15 +298,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 		 */
 		FixFlex.prototype.onBeforeRendering = function () {
 			var oScroller = this._scroller,
-				oInnerScroller = this._innerScroller;
+				oInnerScroller = this._innerScroller,
+				bScrolling = this.getMinFlexSize() != 0;
 
 			this._deregisterControl();
 
 			oScroller.setVertical(false);
 			oScroller.setHorizontal(false);
 
-			oInnerScroller.setVertical(true);
-			oInnerScroller.setHorizontal(true);
+			oInnerScroller.setVertical(bScrolling);
+			oInnerScroller.setHorizontal(bScrolling);
 		};
 
 		/**

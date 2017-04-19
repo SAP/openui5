@@ -24,7 +24,7 @@
 						<l:PaneContainer>
 							<l:SplitPane requiredParentWidth="400" id="default">
 								<ScrollContainer>
-									<OverFlowToolbar>
+									<OverflowToolbar>
 												<SearchField
 												width="auto"
 												id="searchField"
@@ -54,7 +54,7 @@
 										<ToolbarSeparator/>
 											<ToggleButton type="Transparent" id="tbExpert" press="onPressExpert"  text="{i18n>ToggleButtonExpertText}" />
 											<ToggleButton type="Transparent" id="tbQuick" press="onPressQuick"  text="{i18n>ToggleButtonQuickText}" />
-									</OverFlowToolbar>
+									</OverflowToolbar>
 
 									<Table id="oTable"
 									       inset="false"

@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	};
 
 	/**
-	 * Check if the given DOM reference is part of a SAPUI5 popup
+	 * Check if the given DOM reference is part of an SAPUI5 popup
 	 * @param {oDOMNode}
 	 * DOM node reference
 	 * @private

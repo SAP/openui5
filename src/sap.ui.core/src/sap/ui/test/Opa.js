@@ -7,8 +7,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/Device',
 	'./_LogCollector',
-	'./_ParameterValidator'
-], function ($, Device, _LogCollector, _ParameterValidator) {
+	'./_ParameterValidator',
+	'sap/ui/thirdparty/URI'
+], function ($, Device, _LogCollector, _ParameterValidator,URI) {
 	"use strict";
 
 	///////////////////////////////
@@ -239,6 +240,9 @@ sap.ui.define([
 	 *     </code>
 	 * </pre>
 	 *
+	 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
+	 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
+	 *
 	 * @param {object} options The values to be added to the existing config
 	 * @public
 	 */
@@ -256,14 +260,34 @@ sap.ui.define([
 			});
 		});
 
-		Opa.config = $.extend(Opa.config, options);
+		// URI params overwrite default
+		// deep extend is necessary so appParams object is not overwritten but merged
+		Opa.config = $.extend(true, Opa.config, options, opaUriParams);
 	};
 
-	var iExecutionDelay, sExecutionDelayFromUrl = $.sap.getUriParameters().get("opaExecutionDelay");
+	Opa._parseParam = function(sParam) {
+		var iValue = parseInt(sParam,10);
+		return (typeof iValue === 'number' && isNaN(iValue)) ? sParam : iValue;
+	};
 
-	if (sExecutionDelayFromUrl){
-		iExecutionDelay = parseInt(sExecutionDelayFromUrl, 10);
-	}
+	Opa._extractOpaUriParams = function() {
+		var sPrefix = 'opa';
+		// extract all uri parameters starting with prefix, strip the prefix,
+		// de-capitalize the result and return them
+		var oParams = {};
+		var oUriParams = new URI().search(true);
+		for (var sUriParamName in oUriParams) {
+			if (sUriParamName.indexOf(sPrefix) == 0) {
+				oParams[sUriParamName.substr(sPrefix.length,1).toLowerCase() +
+					sUriParamName.substr(sPrefix.length + 1)] =
+						this._parseParam(oUriParams[sUriParamName]);
+			}
+		}
+		return oParams;
+	};
+
+	// parse opa params from uri
+	var opaUriParams = Opa._extractOpaUriParams();
 
 	// These browsers are not executing Promises as microtasks so slow down OPA a bit to let mircotasks before other tasks.
 	// TODO: A proper solution would be waiting for all the active timeouts in the synchronization part until then this is a workaround
@@ -272,18 +296,13 @@ sap.ui.define([
 	// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
 	// Therefore the core code throws exceptions, when functions like setTimeout are called.
 	// I don't have a proper explanation for this.
-	if (!iExecutionDelay) {
-		// phantom is flagged as safari but actually we do not want to set the tiemout higher in phantomjs
-		var bIsSafariButNotPhantom = Device.browser.safari && !Device.browser.phantomJS;
+	var executionDelayDefault = 0;
 
-		if (Device.browser.msie || Device.browser.edge || bIsSafariButNotPhantom) {
-			iExecutionDelay = 50;
-		} else {
-			iExecutionDelay = 0;
-		}
+	// phantom is flagged as safari but actually we do not want to set the tiemout higher in phantomjs
+	var bIsSafariButNotPhantom = Device.browser.safari && !Device.browser.phantomJS;
+	if (Device.browser.msie || Device.browser.edge || bIsSafariButNotPhantom) {
+		executionDelayDefault = 50;
 	}
-
-
 
 	/**
 	 * Reset Opa.config to its default values.
@@ -298,8 +317,7 @@ sap.ui.define([
 	 * 		<li>pollingInterval: 400 milliseconds</li>
 	 * 		<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 	 * 		<li>
-	 * 			executionDelay: 0 or 50 (depending on the browser) or coming from an URL parameter opaExecutionDelay.
-	 * 			The URL parameter takes priority over the browser value. The value is a number representing milliseconds.
+	 * 			executionDelay: 0 or 50 (depending on the browser). The value is a number representing milliseconds.
 	 * 			The executionDelay will slow down the execution of every single waitFor statement to be delayed by the number of milliseconds.
 	 * 			This does not effect the polling interval it just adds an initial pause.
 	 * 			Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
@@ -311,16 +329,16 @@ sap.ui.define([
 	 * @since 1.25
 	 */
 	Opa.resetConfig = function () {
-		Opa.config = {
+		Opa.config = $.extend({
 			arrangements : new Opa(),
 			actions : new Opa(),
 			assertions : new Opa(),
-			executionDelay : iExecutionDelay,
 			timeout : 15,
 			pollingInterval : 400,
 			debugTimeout: 0,
-			_stackDropCount : 0 //Internal use. Specify numbers of additional stack frames to remove for logging
-		};
+			_stackDropCount : 0, //Internal use. Specify numbers of additional stack frames to remove for logging
+			executionDelay: executionDelayDefault
+		},opaUriParams);
 	};
 
 	/**
@@ -580,6 +598,7 @@ sap.ui.define([
 		};
 	};
 
+	/* config values from opa.config that will be used in waitFor */
 	Opa._aConfigValuesForWaitFor = [
 		"errorMessage",
 		"timeout",
@@ -588,6 +607,7 @@ sap.ui.define([
 		"_stackDropCount"
 	];
 
+	/* all config values  that will be used in waitFor */
 	Opa._validationInfo = {
 		error: "func",
 		check: "func",

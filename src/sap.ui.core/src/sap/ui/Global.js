@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * In case of the version info file is not available an error will occur when
 	 * calling this function.
 	 *
-	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or a object map (see below)
+	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or an object map (see below)
 	 * @param {boolean} [mOptions.library] name of the library (e.g. "sap.ui.core")
 	 * @param {boolean} [mOptions.async=false] whether "sap-ui-version.json" should be loaded asynchronously
 	 * @param {boolean} [mOptions.failOnError=true] whether to propagate load errors or not (not relevant for async loading)
@@ -397,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * equally named subfolder of the <b>application root folder</b>.
 	 * If the resource name consists of multiple segments (separated by a dot), each segment
 	 * is assumed to represent an individual folder. In other words: when a resource name is
-	 * converted to an URL, any dots ('.') are converted to slashes ('/').
+	 * converted to a URL, any dots ('.') are converted to slashes ('/').
 	 *
 	 * <b>Limitation:</b> For the time being, the <b>application root folder</b> is assumed to be
 	 * the same as the folder where the current page resides in.
