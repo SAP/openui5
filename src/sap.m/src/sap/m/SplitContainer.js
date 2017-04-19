@@ -1987,8 +1987,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 								fnCallBack(oPage);
 							}
 						}
-						this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnShow", false);
-						this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnHide", true);
+						this._oShowMasterBtn.destroy();
 						/*eslint-disable no-loop-func */
 						this._oShowMasterBtn.$().parent().bind("webkitAnimationEnd animationend", function(){
 							jQuery(this).unbind("webkitAnimationEnd animationend");
