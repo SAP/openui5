@@ -124,7 +124,7 @@ sap.ui.define([
 				}
 			}
 
-			return Utils._getComponentName(oAppComponent);
+			return Utils.getComponentName(oAppComponent);
 		},
 
 		/**
@@ -279,7 +279,7 @@ sap.ui.define([
 		isApplicationVariant: function (oControl) {
 			var sFlexReference = Utils.getComponentClassName(oControl);
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var sComponentName = Utils._getComponentName(oAppComponent);
+			var sComponentName = Utils.getComponentName(oAppComponent);
 			return sFlexReference !== sComponentName;
 		},
 
@@ -364,9 +364,9 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Component} oComponent component instance
 		 * @returns {String} component name
-		 * @private
+		 * @public
 		 */
-		_getComponentName: function (oComponent) {
+		getComponentName: function (oComponent) {
 			var sComponentName = "";
 			if (oComponent) {
 				sComponentName = oComponent.getMetadata().getName();
@@ -476,7 +476,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
 		 * @returns {sap.ui.base.Component} found component
-		 * private
+		 * @private
 		 */
 		_getAppComponentForComponent: function (oComponent) {
 			var oSapApp = null;
