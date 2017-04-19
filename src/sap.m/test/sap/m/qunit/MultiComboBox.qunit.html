@@ -3582,6 +3582,56 @@
 		this.clock.reset();
 	});
 
+	test("Scenario OPEN_VALUE: Type valid letter into InputField, delete it and recieve other valid value", function () {
+
+		var oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false
+		};
+		this.stub(sap.ui.Device, "system", oSystem);
+		this.stub(jQuery.device, "is", oSystem);
+
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			value: "Bar",
+			items: [new sap.ui.core.Item({
+				key: "DZ",
+				text: "Algeria"
+			}), new sap.ui.core.Item({
+				key: "BA",
+				text: "Barahin"
+			}), new sap.ui.core.Item({
+				key: "AR",
+				text: "Armenia"
+			})]
+		});
+
+		// arrange
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+		sap.ui.qunit.QUnitUtils.triggerEvent("input", oMultiComboBox.getFocusDomRef());
+		this.clock.tick(500);
+
+		// assertions
+		ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
+		strictEqual(oMultiComboBox.getList().$().length, 1, "the list has one value");
+		strictEqual(oMultiComboBox.getList().$()[0].textContent, "Barahin", "suggestion is correct");
+		strictEqual(oMultiComboBox.getValue(), "Bar", "MultiComboBOx value is correct");
+
+		oMultiComboBox.setValue("ar");
+		sap.ui.test.qunit.triggerEvent("input", oMultiComboBox.getFocusDomRef());
+		this.clock.tick(1);
+
+		strictEqual(oMultiComboBox.getList().$().length, 1, "the list has one value");
+		strictEqual(oMultiComboBox.getList().$()[0].textContent, "Armenia", "suggestion is correct");
+		strictEqual(oMultiComboBox.getValue(), "ar", "MultiComboBOx value is correct");
+
+		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
+
 	test("Scenario OPEN_VALUE: Type valid letter into InputField and delete it", function() {
 
 		var oSystem = {
@@ -4260,7 +4310,7 @@
 		// cleanup
 		oMultiComboBox.destroy();
 		this.clock.reset();
-	});	
+	});
 
 	QUnit.test("setSelection + Popover close race condition", function (assert) {
 		// system under test
