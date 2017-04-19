@@ -5845,6 +5845,43 @@
 			oModel.destroy();
 		});
 
+		QUnit.test("it should open the dropdown list and preselect first item if there is such", function(assert) {
+			// arrange
+			var oItem = new sap.ui.core.Item({
+					text: "Example"
+				}),
+				oComboBox = new sap.m.ComboBox({
+					items: [oItem]
+				}), oFakeEvent = {
+					setMarked: function () {},
+					keyCode: 111 // dummy code (not F4 - 115)
+				},
+				oSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange"),
+				oSelectionSpy = this.spy(oComboBox, "setSelection"),
+				oDomUpdateSpy = this.spy(oComboBox, "updateDomValue"),
+				oSelectTextSpy = this.spy(oComboBox, "selectText");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oComboBox.onsapshow(oFakeEvent);
+			this.clock.tick(300);
+
+			// assert
+			assert.ok(oSelectionChangeSpy.called, "Selection should be triggered");
+			assert.ok(oSelectionSpy.calledWith(oItem), "First item should be selected");
+			assert.ok(oDomUpdateSpy.calledWith("Example"), "Dom value should be updated with first item's text");
+			assert.ok(oSelectTextSpy.calledWith(0, 7), "Text selection should be performed for the first 7 symbols");
+
+			// cleanup
+			oComboBox.destroy();
+			oSelectionChangeSpy.restore();
+			oSelectionSpy.restore();
+			oDomUpdateSpy.restore();
+			oSelectTextSpy.restore();
+		});
+
 		QUnit.module("onsaphide");
 
 		QUnit.test("onsaphide Alt + UP - open control's picker pop-up", function(assert) {
