@@ -330,9 +330,9 @@ sap.ui.define([
 					};
 					this._oFeedbackDialog.updateContextData = function() {
 						if (this.contextCheckBox.getSelected()) {
-							this.contextData.setText("Location: " + that._getCurrentPageRelativeURL() + "\n" + that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+							this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
 						} else {
-							this.contextData.setText(that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+							this.contextData.setValue(that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
 						}
 					};
 
