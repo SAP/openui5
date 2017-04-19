@@ -519,4 +519,56 @@ sap.ui.require([
 		assert.strictEqual(oMetadataPropertyText.appData.invalidate, "template", "This test should fail once core also has an invalidate");
 		oFragmentControl.destroy();
 	});
-});
+
+	QUnit.test("clone", function(assert) {
+		var oFragmentControl = new fragments.TextToggleButton("Frag1");
+		var sId;
+		var iCount = 0;
+
+		oFragmentControl.attachTextChanged(function(oEvent) {
+			iCount++;
+			sId = oEvent.oSource.getId();
+		});
+
+		var fnVBoxCloneSpy = sinon.spy(oFragmentControl.getAggregation("_content"), "clone");
+
+		var oClone = oFragmentControl.clone("MyClone");
+		assert.equal(oClone.getId(), "Frag1-MyClone", "FragmentControl cloned");
+		var oContent = oClone.getAggregation("_content");
+		assert.notOk(fnVBoxCloneSpy.called, "VBox clone function not called");
+		assert.equal(oContent.getId(), "Frag1-MyClone--myVBox", "VBox created, not cloned");
+
+		oFragmentControl.placeAt("content");
+		oClone.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerTouchEvent("tap", oContent.getItems()[1].getDomRef());
+		assert.equal(sId, "Frag1-MyClone", "Event fired on clone");
+		assert.equal(iCount, 1, "Event fired only once");
+
+		oFragmentControl.destroy();
+		oClone.destroy();
+	});
+
+	QUnit.test("clone list", function(assert) {
+		var oFragmentControl = new fragments.TextList("Frag1", {
+			texts: [ new sap.ui.core.Item("I1", {key: "K1", text: "Text 1"}),
+			         new sap.ui.core.Item("I2", {key: "K2", text: "Text 2"}),
+			         new sap.ui.core.Item("I3", {key: "K3", text: "Text 3"})
+			        ]
+		});
+
+		var oClone = oFragmentControl.clone("MyClone");
+		assert.equal(oClone.getId(), "Frag1-MyClone", "FragmentControl cloned");
+		var aItems = oClone.getTexts();
+		assert.equal(aItems.length, 3, "Clone has 3 Items");
+		assert.equal(aItems[0].getId(), "I1-MyClone", "Item cloned");
+
+		var aTexts = oClone.getAggregation("_content").getItems()[1].getItems();
+		assert.equal(aTexts.length, 3, "Clone has 3 Texts");
+
+		oFragmentControl.destroy();
+		oClone.destroy();
+	});
+
+	});
