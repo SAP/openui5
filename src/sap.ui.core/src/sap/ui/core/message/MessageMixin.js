@@ -55,8 +55,12 @@ sap.ui.define([], function() {
 
 			// propagate messages
 			if (aMessages && aMessages.length > 0) {
-				this.setValueState(aMessages[0].type);
-				this.setValueStateText(aMessages[0].message);
+				var oMessage = aMessages[0];
+				// check if the message type is a valid sap.ui.core.ValueState
+				if (sap.ui.core.ValueState[oMessage.type]) {
+					this.setValueState(oMessage.type);
+					this.setValueStateText(oMessage.message);
+				}
 			} else {
 				this.setValueState(sap.ui.core.ValueState.None);
 				this.setValueStateText('');
