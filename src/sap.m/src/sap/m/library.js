@@ -313,11 +313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.Bar": {
 					"moveControls": "default"
 				},
-				"sap.m.ListItemBase": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
-				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
+				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
 				"sap.m.ColumnListItem": {
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -327,35 +323,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.m.InputListItem": "sap/m/flexibility/InputListItem",
 				"sap.m.DatePicker": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
-				"sap.m.Input": {
+				"sap.m.FlexBox": {
 					"hideControl": "default",
-					"unhideControl": "default"
+					"unhideControl": "default",
+					"moveControls": "default"
+				},
+				"sap.m.HBox": {
+					"hideControl": "default",
+					"unhideControl": "default",
+					"moveControls": "default"
 				},
 				"sap.m.Image": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.Input": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+
 				"sap.m.InputBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.InputListItem": "sap/m/flexibility/InputListItem",
 				"sap.m.Label": "sap/m/flexibility/Label",
 				"sap.m.MultiInput": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.MaskInput": {
+				"sap.m.ListItemBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
-				},
-				"sap.m.OverflowToolbar": {
-					"moveControls": "default"
 				},
 				"sap.m.Link": {
 					"hideControl": "default",
@@ -369,6 +372,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.ListBase": {
 					"hideControl": "default",
 					"unhideControl": "default",
+					"moveControls": "default"
+				},
+				"sap.m.MaskInput": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.OverflowToolbar": {
 					"moveControls": "default"
 				},
 				"sap.m.Page": "sap/m/flexibility/Page",
@@ -391,10 +401,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
 				"sap.m.Table": "sap/m/flexibility/Table",
 				"sap.m.Text": "sap/m/flexibility/Text",
 				"sap.m.Title": "sap/m/flexibility/Title",
 				"sap.m.Toolbar": {
+					"moveControls": "default"
+				},
+				"sap.m.VBox": {
+					"hideControl": "default",
+					"unhideControl": "default",
 					"moveControls": "default"
 				}
 			}
