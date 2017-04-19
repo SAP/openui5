@@ -273,7 +273,7 @@ sap.ui.define([
 					}
 				};
 
-			this.$().find("#" + this.getId() + "-step-container").animate(scrollProps, animProps);
+			jQuery(this.getDomRef("step-container")).animate(scrollProps, animProps);
 
 			return this;
 		};

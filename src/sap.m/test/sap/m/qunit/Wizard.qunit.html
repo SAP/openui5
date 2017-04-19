@@ -103,6 +103,25 @@
 			assert.strictEqual(text, sText, "Default text of finish button should be equal to '" + sText + "'");
 		});
 
+		QUnit.test("goToStep should be applied on id, containing with special symbols (::)", function (assert) {
+			var oWizard = new sap.m.Wizard({
+				id: "wizard::complex::id",
+				steps: [ new sap.m.WizardStep(), new sap.m.WizardStep(), new sap.m.WizardStep() ]
+			});
+			var oSpy = sinon.spy(oWizard, "goToStep");
+
+			oWizard._getNextStep();
+			oWizard._getNextStep();
+			oWizard.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+			oWizard.goToStep(oWizard.getSteps()[0]);
+
+			assert.ok(oSpy.returned(oWizard), "goToStep is executed");
+
+			oWizard.destroy();
+		});
+
 		QUnit.test("setFinishLabel() should change the finish button text", function (assert) {
 			this.oWizard.setFinishButtonText("changed_finish");
 			this.oWizard.nextStep();
