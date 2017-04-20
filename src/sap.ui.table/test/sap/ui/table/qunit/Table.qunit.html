@@ -2149,17 +2149,20 @@
 		var sNoDataClassOfTable = "sapUiTableEmpty";
 		var oEvent = {};
 		var oBinding = oTable.getBinding("rows");
+		var oGetBindingLength = this.stub(oBinding, "getLength");
+		var oClock = sinon.useFakeTimers();
+
 		oEvent.getSource = function() {
 			return oBinding;
 		};
+
 		oEvent.getParameter = function() {
 			return false;
 		};
-		var clock = sinon.useFakeTimers();
 
 		function testDataReceivedListener(bNoDataVisible) {
 			oTable._onBindingDataReceivedListener.call(oTable, oEvent);
-			clock.tick(1);
+			oClock.tick(1);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
@@ -2168,8 +2171,8 @@
 			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible, "Test: NoData is visible: " + bNoDataVisible);
 		}
 
-		function testBindingLengthChanged(bNoDataVisible) {
-			oTable._onBindingLengthChange.call(oTable);
+		function testUpdateBindingLength(bNoDataVisible) {
+			oTable._updateBindingLength.call(oTable);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
@@ -2196,22 +2199,23 @@
 
 		// Client Binding without data: NoData area becomes visible.
 		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
-		oTable._iBindingLength = 0;
-		testBindingLengthChanged(true);
+		oGetBindingLength.returns(0);
+		testUpdateBindingLength(true);
 
 		// Client Binding with data: NoData area will be hidden.
 		sap.ui.table.TableUtils.isInstanceOf.restore();
 		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
-		oTable._iBindingLength = 1;
-		testBindingLengthChanged(false);
+		oGetBindingLength.returns(1);
+		testUpdateBindingLength(false);
 
 		// Binding removed: NoData area becomes visible.
 		sap.ui.table.TableUtils.isInstanceOf.restore();
+		oGetBindingLength.restore();
 		oTable.unbindRows();
-		testBindingLengthChanged(true);
+		testUpdateBindingLength(true);
 
 		// Cleanup
-		clock.restore();
+		oClock.restore();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
