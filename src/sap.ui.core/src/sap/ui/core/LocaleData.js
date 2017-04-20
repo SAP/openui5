@@ -356,7 +356,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
 			var aTokens = this._parseSkeletonFormat(sSkeleton),
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
-				sPattern,
+				sPattern, sSinglePattern,
+				oAvailableDateTimeFormats,
 				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
 			var bSymbolFound;
 
@@ -411,8 +412,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				// If no pattern could be found, get the best availableFormat for the skeleton
 				// and use the fallbackIntervalFormat to create the pattern
 				if (!sPattern) {
-					sPattern = this.getCombinedIntervalPattern(
-						this.getCustomDateTimePattern(sSkeleton, sCalendarType), sCalendarType);
+					oAvailableDateTimeFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "availableFormats");
+					// If it is a mixed skeleton and the greatest interval on time, create a mixed pattern
+					if (rMixedSkeleton.test(sSkeleton) && "ahHkKjJms".indexOf(sIntervalDiff) >= 0) {
+						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType, sIntervalDiff);
+					} else {
+						sSinglePattern = this._getFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType);
+						sPattern = this.getCombinedIntervalPattern(sSinglePattern, sCalendarType);
+					}
 				}
 			} else if (!oBestMatch) {
 				sPattern = sSkeleton;
@@ -672,7 +679,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return sPattern;
 		},
 
-		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType) {
+		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
 			var rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				rWideMonth = /MMMM|LLLL/,
 				rAbbrevMonth = /MMM|LLL/,
@@ -686,7 +693,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			sTimeSkeleton = oResult[2];
 			// Get patterns for date and time separately
 			sDatePattern = this._getFormatPattern(sDateSkeleton, oAvailableFormats, sCalendarType);
-			sTimePattern = this._getFormatPattern(sTimeSkeleton, oAvailableFormats, sCalendarType);
+			if (sIntervalDiff) {
+				sTimePattern = this.getCustomIntervalPattern(sTimeSkeleton, sIntervalDiff, sCalendarType);
+			} else {
+				sTimePattern = this._getFormatPattern(sTimeSkeleton, oAvailableFormats, sCalendarType);
+			}
 			// Combine patterns with datetime pattern, dependent on month and weekday
 			if (rWideMonth.test(sDateSkeleton)) {
 				sStyle = rWeekDay.test(sDateSkeleton) ? "full" : "long";
