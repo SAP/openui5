@@ -67,6 +67,14 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				focusable : {
 					type : "boolean",
 					defaultValue : false
+				},
+
+				/**
+				 * Whether the Overlay is enabled
+				 */
+				enabled: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			associations : {
@@ -288,6 +296,10 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function() {
+
+		if (!this.getEnabled()) {
+			return;
+		}
 
 		var fnDeleteDummyContainer = function() {
 			if (this._oDummyScrollContainer) {
