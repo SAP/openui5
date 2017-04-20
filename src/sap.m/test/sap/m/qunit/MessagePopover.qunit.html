@@ -94,7 +94,6 @@
 					markupDescription: true
 				});
 
-				this.oButton.addDependent(this.oMessagePopover);
 				this.oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -177,7 +176,6 @@
 				callCount += 1;
 			});
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 			this.server.restore();
@@ -187,7 +185,6 @@
 			var sInterlListItemDescription, sMessagePopoverItemSubtitle;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 
 			sInterlListItemDescription = this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getDescription();
@@ -201,7 +198,6 @@
 			var iMPItemCounter, iInterListItemCounter;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 
 			iMPItemCounter = this.oMessagePopover.getItems()[0].getCounter();
@@ -214,9 +210,11 @@
 		QUnit.test("No Navigation arrow should be shown if there is no description", function (assert) {
 			var oStandardListItem;
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
-			this.oMessagePopover.getItems()[1].setMarkupDescription(false);
 			this.oMessagePopover.openBy(this.oButton);
+
+			this.oMessagePopover.getItems()[1].setMarkupDescription(false);
+			sap.ui.getCore().applyChanges();
+
 			oStandardListItem = this.oMessagePopover._oMessageView._oLists.all.getItems()[1];
 
 			assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");
@@ -237,7 +235,6 @@
 
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
@@ -515,7 +512,6 @@
 					})
 			);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 
 			this.clock.tick(500);
@@ -555,7 +551,6 @@
 				aItems;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 			aItems = this.oMessagePopover._oMessageView._oLists.all.getItems();
@@ -595,7 +590,6 @@
 					text: "Show MessagePopover"
 				});
 
-				this.oButton.addDependent(this.oMessagePopover);
 				this.oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
@@ -683,7 +677,6 @@
 
 			// Act
 			// Open the popover normally
-			this.oButton.addDependent(oMessagePopover);
 			oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
@@ -840,7 +833,6 @@
 
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
@@ -858,7 +850,6 @@
 
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
@@ -872,7 +863,6 @@
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
@@ -894,7 +884,6 @@
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
@@ -918,7 +907,6 @@
 				text: "Show MessagePopover"
 			});
 
-			oButton.addDependent(oMessagePopover);
 			oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -949,7 +937,6 @@
 			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
 			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
-			oButton.addDependent(oMessagePopover);
 			oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -977,7 +964,6 @@
 			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
 			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
-			oButton.addDependent(oMessagePopover);
 			oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -1009,7 +995,6 @@
 			oMessagePopover._oPopover.getAggregation("_popup").setShowArrow = function () {};
 			var spySetShowArrow = sinon.spy(oMessagePopover._oPopover.getAggregation("_popup"), "setShowArrow");
 
-			oButton.addDependent(oMessagePopover);
 			oToolbar.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -1021,6 +1006,20 @@
 			oMessagePopover.destroy();
 			oToolbar.destroy();
 			spySetShowArrow.restore();
+		});
+
+		QUnit.test("Invalidate should be forwarded to the internal popover control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oPopover = oMessagePopover._oPopover;
+			var popoverInvalidateSpy = sinon.spy();
+
+			oPopover.invalidate = popoverInvalidateSpy;
+
+			oMessagePopover.invalidate();
+
+			assert.strictEqual(popoverInvalidateSpy.callCount, 1, "The popover should be invalidated");
+
+			oMessagePopover.destroy();
 		});
 
 		QUnit.module("Binding", {
@@ -1046,7 +1045,6 @@
 					"target": "/Headers(NodeKey=guid'e41d2de5-37a0-1ee6-8784-60396f9b5305',State='01')/InvoicingParty"
 				}]));
 
-				this.oButton2.addDependent(this.oMessagepopover2);
 				this.oButton2.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 			},
@@ -1077,7 +1075,6 @@
 
 			oMessagePopover.addItem(oMessagePopoverItem);
 
-			oButton.addDependent(oMessagePopover);
 			oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 

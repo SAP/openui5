@@ -189,7 +189,6 @@
 					oMessagePopover.toggle(this);
 				}
 			});
-			oMessagePopoverButton.addDependent(oMessagePopover);
 
 			var oMessagePopoverCButton = new sap.m.Button("mPopoverCButton", {
 				icon: sap.ui.core.IconPool.getIconURI("message-popup"),
@@ -199,7 +198,6 @@
 					oMessagePopoverCollapsed.toggle(this);
 				}
 			});
-			oMessagePopoverCButton.addDependent(oMessagePopoverCollapsed);
 
 			var getPositions = function () {
 				return [{key: "Default", text: "Default"}]
