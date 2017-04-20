@@ -10,10 +10,11 @@ sap.ui.define([
 	'sap/ui/dt/Selection',
 	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/Overlay',
 	'sap/ui/dt/OverlayUtil',
 	'./library'
 ],
-function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesignTimeMetadata, ElementUtil, OverlayUtil) {
+function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesignTimeMetadata, ElementUtil, Overlay, OverlayUtil) {
 	"use strict";
 
 	/**
@@ -57,6 +58,15 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				 */
 				 designTimeMetadata : {
 					type : "object"
+				 },
+
+				/**
+				 * Whether overlays of DT is being enabled (hidden from the screen). Please note DT is still
+				 * working in this mode, if you need to stop it, destroy its instance.
+				 */
+				 enabled: {
+					type: "boolean",
+					defaultValue: false
 				 }
 			},
 			associations : {
@@ -326,7 +336,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		// to prevent rerendering of UIArea during async loading process
 		this.attachEventOnce("synced", function() {
 			oRootOverlay.placeInOverlayContainer();
-		});
+		}, this);
 
 		return this;
 	};
@@ -617,6 +627,24 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		}
 
 		return aElementOverlays;
+	};
+
+	/**
+	 * Custom setter for property 'enabled'
+	 * @public
+	 */
+	DesignTime.prototype.setEnabled = function (bValue) {
+		var $OverlayContainer = jQuery(Overlay.getOverlayContainer());
+		$OverlayContainer[bValue ? 'show' : 'hide']();
+
+		this.getElementOverlays().forEach(function (oOverlay) {
+			oOverlay.setEnabled(bValue);
+			oOverlay.getChildren().forEach(function (oOverlayChild) {
+				oOverlayChild.setEnabled(bValue);
+			});
+		});
+
+		this.setProperty('enabled', bValue);
 	};
 
 	return DesignTime;

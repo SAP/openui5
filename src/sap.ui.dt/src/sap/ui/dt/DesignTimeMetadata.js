@@ -170,6 +170,7 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 			}
 		}
 	};
+
 	/**
 	 * Returns a locale-specific string value for the given key sKey.
 	 *
@@ -192,5 +193,22 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName());
 		return oLibResourceBundle.getText(sKey, aArgs);
 	};
+
+	/**
+	 * Returns all available triggers from designtime metadata
+	 * @return {array.<Object>} array of available triggers
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getTriggers = function() {
+		var mData = this.getData();
+		var aTriggers = [];
+
+		if (mData && Array.isArray(mData.triggers)) {
+			aTriggers = mData.triggers;
+		}
+
+		return aTriggers;
+	};
+
 	return DesignTimeMetadata;
 }, /* bExport= */ true);
