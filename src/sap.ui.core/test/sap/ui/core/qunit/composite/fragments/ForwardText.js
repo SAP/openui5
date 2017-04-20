@@ -1,8 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/FragmentControl'],
-    function(jQuery, FragmentControl) {
+	'sap/ui/core/FragmentControl'
+], function(FragmentControl) {
 	"use strict";
-	var ForwardText = sap.ui.core.FragmentControl.extend("fragments.ForwardText", {
+	return FragmentControl.extend("fragments.ForwardText", {
 		metadata: {
 			aggregations: {
 				textItems: {
@@ -18,6 +18,4 @@ sap.ui.define([
 		},
 		alias: "forwardtext"
 	});
-	
-	return ForwardText;
 }, /* bExport= */true);

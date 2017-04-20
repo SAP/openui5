@@ -1,8 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/FragmentControl'],
-	function(jQuery, FragmentControl) {
+	'jquery.sap.global', 'sap/ui/core/FragmentControl'
+], function(jQuery, FragmentControl) {
 	"use strict";
-	var TextList = FragmentControl.extend("fragments.TextList", {
+	return FragmentControl.extend("fragments.TextList", {
 		metadata: {
 			aggregations: {
 				texts: {
@@ -20,5 +20,4 @@ sap.ui.define([
 			}
 		}
 	});
-	return TextList;
 }, /* bExport= */true);
