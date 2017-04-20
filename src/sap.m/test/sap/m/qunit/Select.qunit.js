@@ -8509,3 +8509,64 @@ QUnit.test("it should close the value state message popup when the dropdown list
 	// cleanup
 	oSelect.destroy();
 });
+
+QUnit.test("it should open the value state message popup on setValueState to Error", function(assert) {
+
+	this.stub(sap.ui.Device, "system", {
+		desktop: true,
+		phone: false,
+		tablet: false
+	});
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		valueState: sap.ui.core.ValueState.None
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// act
+	oSelect.focus();
+	oSelect.setValueState(sap.ui.core.ValueState.Error);
+	this.clock.tick(101);
+
+	// assert
+	var oValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
+	assert.ok(oValueStateMessageDomRef);
+	assert.strictEqual(getComputedStyle(oValueStateMessageDomRef).getPropertyValue("display"), "block");
+
+	// cleanup
+	oSelect.destroy();
+});
+
+QUnit.test("it should close the value state message popup on setValueState to None", function(assert) {
+
+	this.stub(sap.ui.Device, "system", {
+		desktop: true,
+		phone: false,
+		tablet: false
+	});
+
+	// system under test
+	var oSelect = new sap.m.Select({
+		valueState: sap.ui.core.ValueState.Error
+	});
+
+	// arrange
+	oSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// act
+	oSelect.focus();
+	oSelect.setValueState(sap.ui.core.ValueState.None);
+	this.clock.tick(101);
+
+	// assert
+	var oValueStateMessageDomRef = document.getElementById(oSelect.getValueStateMessageId());
+	assert.strictEqual(oValueStateMessageDomRef, null);
+
+	// cleanup
+	oSelect.destroy();
+});
