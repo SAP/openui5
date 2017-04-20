@@ -196,9 +196,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var oDomRef = this.get(0);
 
 		try {
-			if (typeof (oDomRef.selectionStart) === "number") { // Firefox and IE9+
-
-				oDomRef.setSelectionRange(iStart, iEnd);
+			// In Chrome 58 and above selection start is set to selection end when the first parameter of a setSelectionRange call is negative.
+			if (typeof (oDomRef.selectionStart) === "number") {
+				oDomRef.setSelectionRange(iStart > 0 ? iStart : 0, iEnd);
 			} else if (oDomRef.createTextRange) { // IE
 				var oTextEditRange = oDomRef.createTextRange();
 				oTextEditRange.collapse();
