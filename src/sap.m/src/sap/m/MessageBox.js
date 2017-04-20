@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.MessageBox
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-		function (jQuery, Button, Dialog, Text, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/core/IconPool', 'sap/ui/layout/VerticalLayout', 'sap/ui/core/theming/Parameters'],
+		function (jQuery, Button, Dialog, Text, IconPool, VerticalLayout, Parameters) {
 			"use strict";
 
 
@@ -317,7 +317,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						oLink.addStyleClass("sapMMessageBoxLinkText");
 						oTextArea.addStyleClass("sapMMessageBoxDetails");
 
-						var oLayout = new sap.ui.layout.VerticalLayout({
+						var oLayout = new VerticalLayout({
 							width: "100%",
 							content: [
 								oContent,
