@@ -140,9 +140,15 @@
 											</l:FixFlex>
 										</Panel>
 										<Panel headerText="{i18n>previewIconTitle}" backgroundDesign="Solid" class="sapUiContentPadding">
-											<content>
-												<core:Icon id="previewIcon" src="sap-icon://{name}" class="previewIcon" />
-											</content>
+											<l:BlockLayout
+													class="centeredBlockCells"
+													background="Accent">
+												<l:BlockLayoutRow>
+													<l:BlockLayoutCell>
+														<core:Icon id="previewIcon" src="sap-icon://{name}" class="previewIcon" />
+													</l:BlockLayoutCell>
+												</l:BlockLayoutRow>
+											</l:BlockLayout>
 										</Panel>
 										<Panel id="previewUseCases" headerText="{i18n>previewUseCasesTitle}">
 											<l:BlockLayout
