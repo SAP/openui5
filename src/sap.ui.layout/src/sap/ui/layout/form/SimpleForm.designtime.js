@@ -251,27 +251,8 @@ sap.ui.define([], function() {
 				ignore : true
 			},
 			form : {
-				childNames : {
-					singular : "GROUP_CONTROL_NAME",
-					plural : "GROUP_CONTROL_NAME_PLURAL"
-				},
-				getIndex : function(oSimpleForm, oForm) {
-					var iIndex = 0;
-					var aFormContainers = oForm.getFormContainers();
-
-					var oTitle = aFormContainers[aFormContainers.length - 1].getTitle();
-					// if there is no Title in the FormContainer, the SimpleForm is empty and
-					// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
-					if (oTitle !== null ) {
-						iIndex = aFormContainers.length;
-					}
-
-					return iIndex;
-				},
 				ignore : false,
 				propagateMetadata : function(oElement){
-					//TODO clarify merge & override with real Design Time Metadata from internal controls works (e.g. domRef + actions override)
-					//no hidden tree anymore
 					var sType = oElement.getMetadata().getName();
 					if (sType === "sap.ui.layout.form.Form") {
 						return oFormPropagatedMetadata;
