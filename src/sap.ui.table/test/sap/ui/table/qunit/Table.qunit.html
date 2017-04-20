@@ -595,6 +595,7 @@
 		var oRowAction = new sap.ui.table.RowAction();
 		oRowAction.addItem(new sap.ui.table.RowActionItem({type: "Navigation"}));
 		oTable.setRowActionTemplate(oRowAction);
+		oTable.setRowActionCount(1);
 		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings());
 		oTable.setVisibleRowCount(2);
 		oTable.getColumns().forEach(function(oColumn, iIndex) {

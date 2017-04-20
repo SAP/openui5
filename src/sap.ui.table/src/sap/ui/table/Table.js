@@ -3439,21 +3439,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// Add the row actions to the row clone.
-		var oRowActionTemplate = this.getRowActionTemplate();
-		if (oRowActionTemplate) {
-			var oRowAction = oRowActionTemplate.clone();
+		if (TableUtils.hasRowActions(this)) {
+			var oRowAction = this.getRowActionTemplate().clone();
 			oRowAction._setFixedLayout(true);
 			oRowAction._setCount(this.getRowActionCount());
 			oRowAction._setIconLabel(this.getId() + "-rowacthdr");
-			oRowAction._show = true; //TBD: Remove the _show flag, only needed to protect misuse in dev phase
 			oRowClone.setAggregation("_rowAction", oRowAction, true);
 		}
 
 		// Add the row settings to the row clone.
 		var oRowSettingsTemplate = this.getRowSettingsTemplate();
 		if (oRowSettingsTemplate) {
-			var oRowSetting = oRowSettingsTemplate.clone();
-			oRowClone.setAggregation("_settings", oRowSetting, true);
+			var oRowSettings = oRowSettingsTemplate.clone();
+			oRowClone.setAggregation("_settings", oRowSettings, true);
 		}
 
 		return oRowClone;
