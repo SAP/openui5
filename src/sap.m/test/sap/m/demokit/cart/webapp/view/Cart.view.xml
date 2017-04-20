@@ -30,8 +30,8 @@
 				<Button
 					id="proceedButton"
 					type="Accept"
-					text="{i18n>CART_PROCEED_BUTTON_TEXT}"
-					tooltip="{i18n>CART_PROCEED_BUTTON_TOOLTIP}"
+					text="{i18n>cartProceedButtonText}"
+					tooltip="{i18n>cartProceedButtonTooltip}"
 					enabled="{
 						path: 'cartProducts>/cartEntries',
 						formatter: '.formatter.hasItems'
@@ -40,8 +40,8 @@
 					press="onProceedButtonPress" />
 				<Button
 					id="doneButton"
-					text="{i18n>CART_DONE_BUTTON_TEXT}"
-					tooltip="{i18n>CART_DONE_BUTTON_TOOLTIP}"
+					text="{i18n>cartDoneButtonText}"
+					tooltip="{i18n>cartDoneButtonTooltip}"
 					icon="sap-icon://accept"
 					enabled="true"
 					visible="{cfg>/inDelete}"
@@ -58,7 +58,7 @@
 				mode="{cfg>/listMode}"
 				delete="onCartEntriesDelete"
 				select="onEntryListSelect"
-				noDataText="{i18n>CART_NO_DATA}"
+				noDataText="{i18n>cartNoData}"
 				items="{
 					path : 'cartProducts>/cartEntries',
 					sorter : {
@@ -86,7 +86,7 @@
 							<ObjectAttribute
 								active="true"
 								press="onSaveForLater"
-								text="{i18n>CART_SAVE_FOR_LATER_LINK_TEXT}" />
+								text="{i18n>cartSaveForLaterLinkText}" />
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -134,7 +134,7 @@
 							<ObjectAttribute
 								active="true"
 								press="onAddBackToBasket"
-								text="{i18n>CART_ADD_TO_CART_LINK_TEXT}" />
+								text="{i18n>cartAddToCartLinkText}" />
 						</attributes>
 						<firstStatus>
 							<ObjectStatus

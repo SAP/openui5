@@ -74,6 +74,6 @@ sap.ui.define([
 		When.onTheCart.iPressOnTheAcceptButton();
 
 		// Assertions
-		Then.onTheCart.theEditButtonShouldBeDisabled().and.iTeardownMyApp();
+		Then.onTheCart.theEditButtonShouldBeEnabled().and.iTeardownMyApp();
 	});
 });
