@@ -41,8 +41,15 @@ sap.ui.define([
 			_onTopicMatched: function (event) {
 				var that = this,
 					sQuery = event.getParameter("arguments").searchParam;
-					this.dataObject.searchTerm = sQuery;
-					this.oSearchModel.refresh();
+				this.dataObject.searchTerm = sQuery;
+				this.oSearchModel.refresh();
+
+				try {
+					this.hideMasterSide();
+				} catch (e) {
+					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
+					jQuery.sap.log.error(e);
+				}
 
 				jQuery.ajax({
 					url: "search?q=" + sQuery, // TODO escaping
