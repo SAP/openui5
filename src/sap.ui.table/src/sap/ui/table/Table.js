@@ -751,7 +751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._detachExtensions();
 
 		// cleanup
-		if (this._dataReceivedHandlerId) {
+		if (this._dataReceivedHandlerId != null) {
 			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
@@ -3911,11 +3911,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype._onBindingDataRequestedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			this._bPendingRequest = true;
+
 			if (this.getEnableBusyIndicator()) {
 				this.setBusy(true);
 			}
-			this._bPendingRequest = true;
-			if (this._dataReceivedHandlerId) {
+
+			if (this._dataReceivedHandlerId != null) {
 				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
 				delete this._dataReceivedHandlerId;
 			}
@@ -3929,7 +3931,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
 		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			this._bPendingRequest = false;
-			if (this._dataReceivedHandlerId) {
+
+			if (this._dataReceivedHandlerId != null) {
 				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
 				delete this._dataReceivedHandlerId;
 			}
