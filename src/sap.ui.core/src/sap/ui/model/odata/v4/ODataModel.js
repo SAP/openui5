@@ -49,7 +49,11 @@ sap.ui.define([
 			synchronizationMode : true,
 			updateGroupId : true
 		},
+		// system query options allowed in mParameters
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
+			"$select"],
+		// system query options allowed within a $expand query option
+		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
 			"$select"];
 
 	/**
@@ -186,8 +190,8 @@ sap.ui.define([
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {
-								sap.ui.getCore()
-									.addPrerenderingTask(that._submitBatch.bind(that, sGroupId));
+								sap.ui.getCore().addPrerenderingTask(
+									that._submitBatch.bind(that, sGroupId));
 							}
 						});
 
@@ -254,9 +258,9 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $apply, $count, $filter, $orderby and
-	 *   $search inside resource paths that identify a collection. In our case here, this means you
+	 *   <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
+	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $orderby and $search
+	 *   inside resource paths that identify a collection. In our case here, this means you
 	 *   can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
@@ -346,7 +350,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search, and $select
+	 *   <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search, and $select
 	 *   "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
@@ -492,19 +496,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Constructs a map of query options from the given options. Options starting with '$$' indicate
-	 * binding-specific parameters, which must not be part of a back end query; they are ignored and
-	 * not added to the map. The following query options are disallowed:
+	 * Constructs a map of query options from the given binding parameters.
+	 * Parameters starting with '$$' indicate binding-specific parameters, which must not be part
+	 * of a back end query; they are ignored and not added to the map.
+	 * The following query options are disallowed:
 	 * <ul>
 	 * <li> System query options (key starts with "$"), unless
 	 * <code>bSystemQueryOptionsAllowed</code> is set
 	 * <li> Parameter aliases (key starts with "@")
 	 * <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
 	 * </ul>
-
 	 *
-	 * @param {object} [mOptions={}]
-	 *   Map of query options
+	 * @param {object} [mParameters={}]
+	 *   Map of binding parameters
 	 * @param {boolean} [bSystemQueryOptionsAllowed=false]
 	 *   Whether system query options are allowed
 	 * @param {boolean} [bSapAllowed=false]
@@ -516,69 +520,66 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.buildQueryOptions = function (mOptions, bSystemQueryOptionsAllowed,
+	ODataModel.prototype.buildQueryOptions = function (mParameters, bSystemQueryOptionsAllowed,
 			bSapAllowed) {
-		var mResult = {};
+		var sParameterName,
+			mTransformedOptions = jQuery.extend(true, {}, mParameters);
 
 		/**
-		 * Validates an expand item.
+		 * Parses the query options for the given option name "sOptionName" in the given map of
+		 * query options "mOptions" to an object if necessary.
+		 * Validates if the given query option name is allowed.
 		 *
-		 * @param {boolean|object} vExpandOptions
-		 *   The expand options (the value for the "$expand" in the hierarchical options);
-		 *   either a map or simply true if there are no options
+		 * @param {object} mOptions Map of query options by name
+		 * @param {string} sOptionName Name of the query option
+		 * @param {string[]} aAllowed The allowed system query options
+		 * @throws {error} If the given query option name is not allowed
 		 */
-		function validateExpandItem(vExpandOptions) {
-			var sOption;
+		function parseAndValidateSystemQueryOption (mOptions, sOptionName, aAllowed) {
+			var sExpandOptionName,
+				mExpandOptions,
+				sExpandPath,
+				vValue = mOptions[sOptionName];
 
-			if (typeof vExpandOptions === "object") {
-				for (sOption in vExpandOptions) {
-					validateSystemQueryOption(sOption, vExpandOptions[sOption]);
-				}
+			if (!bSystemQueryOptionsAllowed || aAllowed.indexOf(sOptionName) < 0) {
+					throw new Error("System query option " + sOptionName + " is not supported");
 			}
-		}
-
-		/**
-		 * Validates a system query option.
-		 * @param {string} sOption The name of the option
-		 * @param {any} vValue The value of the option
-		 */
-		function validateSystemQueryOption(sOption, vValue) {
-			var sPath;
-
-			if (!bSystemQueryOptionsAllowed || aSystemQueryOptions.indexOf(sOption) < 0) {
-				throw new Error("System query option " + sOption + " is not supported");
+			if ((sOptionName === "$expand" || sOptionName === "$select")
+					&& typeof vValue === "string") {
+				vValue = _Parser.parseSystemQueryOption(sOptionName + "=" + vValue)[sOptionName];
+				mOptions[sOptionName] = vValue;
 			}
-			if (sOption === "$expand") {
-				for (sPath in vValue) {
-					validateExpandItem(vValue[sPath]);
-				}
-			}
-		}
-
-		if (mOptions) {
-			Object.keys(mOptions).forEach(function (sKey) {
-				var vValue = mOptions[sKey];
-
-				if (sKey.indexOf("$$") === 0) {
-					return;
-				}
-
-				if (sKey[0] === "@") {
-					throw new Error("Parameter " + sKey + " is not supported");
-				}
-				if (sKey[0] === "$") {
-					if ((sKey === "$expand" || sKey === "$select")
-							&& typeof vValue === "string") {
-						vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+			if (sOptionName === "$expand") {
+				for (sExpandPath in vValue) {
+					mExpandOptions = vValue[sExpandPath];
+					if (mExpandOptions === null || typeof mExpandOptions !== "object") {
+						// normalize empty expand options to {}
+						mExpandOptions = vValue[sExpandPath] = {};
 					}
-					validateSystemQueryOption(sKey, vValue);
-				} else if (!bSapAllowed && sKey.indexOf("sap-") === 0) {
-					throw new Error("Custom query option " + sKey + " is not supported");
+					for (sExpandOptionName in mExpandOptions) {
+						parseAndValidateSystemQueryOption(mExpandOptions, sExpandOptionName,
+							aExpandQueryOptions);
+					}
 				}
-				mResult[sKey] = vValue;
-			});
+			}
 		}
-		return mResult;
+
+		if (mParameters) {
+			for (sParameterName in mParameters) {
+				if (sParameterName.indexOf("$$") === 0) { // binding-specific parameter
+					delete mTransformedOptions[sParameterName];
+				} else if (sParameterName[0] === "@") { // OData parameter alias
+					throw new Error("Parameter " + sParameterName + " is not supported");
+				} else if (sParameterName[0] === "$") { // OData system query option
+					parseAndValidateSystemQueryOption(mTransformedOptions, sParameterName,
+						aSystemQueryOptions);
+				// OData custom query option
+				} else if (!bSapAllowed && sParameterName.indexOf("sap-") === 0) {
+					throw new Error("Custom query option " + sParameterName + " is not supported");
+				}
+			}
+		}
+		return mTransformedOptions;
 	};
 
 	/**

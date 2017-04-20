@@ -11,6 +11,7 @@ sap.ui.define([
 	var rAmpersand = /&/g,
 		rEquals = /\=/g,
 		rHash = /#/g,
+		rNumber = /^-?\d+$/,
 		rPlus = /\+/g,
 		rSingleQuote = /'/g,
 		Helper;
@@ -281,6 +282,31 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the properties that have been selected for the given path.
+		 *
+		 * @param {objekt} mQueryOptions
+		 *   A map of query options as returned by
+		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
+		 * @param {string} sPath
+		 *   The path of the cache value in the cache
+		 * @returns {string[]} aSelect
+		 *   The properties that have been selected for the given path or undefined otherwise
+		 *
+		 * @private
+		 */
+		getSelectForPath : function (mQueryOptions, sPath) {
+			if (sPath) {
+				sPath.split("/").some(function (sSegment) {
+					if (!rNumber.test(sSegment)) {
+						mQueryOptions = mQueryOptions && mQueryOptions.$expand
+							&& mQueryOptions.$expand[sSegment];
+					}
+				});
+			}
+			return mQueryOptions && mQueryOptions.$select;
+		},
+
+		/**
 		 * Checks that the value is a safe integer.
 		 *
 		 * @param {number} iNumber The value
@@ -341,16 +367,22 @@ sap.ui.define([
 
 		/**
 		 * Updates the cache with the object sent to the PATCH request or the object returned by the
-		 * PATCH response. Fires change events for all changed properties. The function recursively
-		 * handles modified, added or removed structural properties and fires change events for all
-		 * modified/added/removed primitive properties therein.
+		 * PATCH/POST response. The function recursively handles modified, added or removed
+		 * structural properties and fires change events for all modified/added/removed primitive
+		 * properties therein.
 		 *
-		 * @param {object} mChangeListeners A map of change listeners by path.
-		 * @param {string} sPath The path of the cache value in the cache
-		 * @param {object} oCacheValue The object in the cache
-		 * @param {object} oPatchValue The value of the patch request/response
+		 * @param {object} mChangeListeners
+		 *   A map of change listeners by path
+		 * @param {string} sPath
+		 *   The path of the cache value in the cache
+		 * @param {object} oCacheValue
+		 *   The object in the cache
+		 * @param {object} oPatchValue
+		 *   The value of the PATCH request or PATCH/POST response
+		 * @param {string[]} [aProperties]
+		 *   The properties to be updated in the cache; default is all existing properties
 		 */
-		updateCache : function (mChangeListeners, sPath, oCacheValue, oPatchValue) {
+		updateCache : function (mChangeListeners, sPath, oCacheValue, oPatchValue, aProperties) {
 
 			/*
 			 * Fires a change event to all listeners for the given path in mChangeListeners.
@@ -389,8 +421,8 @@ sap.ui.define([
 				});
 			}
 
-			// iterate over all properties in the cache
-			Object.keys(oCacheValue).forEach(function (sProperty) {
+			// iterate over the given properties or over all properties in the cache
+			(aProperties || Object.keys(oCacheValue)).forEach(function (sProperty) {
 				var sPropertyPath = Helper.buildPath(sPath, sProperty),
 					vOldValue = oCacheValue[sProperty],
 					vNewValue;
@@ -421,6 +453,34 @@ sap.ui.define([
 					}
 				}
 			});
+		},
+
+		/**
+		 * Updates the cache with the given values for the selected properties (see
+		 * {@link #updateCache}). If no selected properties are given or if "*" is contained in the
+		 * selected properties, then all properties are selected. <code>@odata.etag</code> is always
+		 * selected. Fires change events for all changed properties.
+		 *
+		 * @param {object} mChangeListeners
+		 *   A map of change listeners by path
+		 * @param {string} sPath
+		 *   The path of the cache value in the cache
+		 * @param {object} oCacheValue
+		 *   The object in the cache
+		 * @param {object} oPostValue
+		 *   The value of the POST response
+		 * @param {string[]} [aSelect]
+		 *   The properties to be updated in the cache; default is all properties from the response
+		 */
+		updateAfterPost : function (mChangeListeners, sPath, oCacheValue, oPostValue, aSelect) {
+			if (!aSelect || aSelect.indexOf("*") >= 0) {
+				// no individual properties selected, fetch all properties of the result
+				aSelect = Object.keys(oPostValue);
+			} else {
+				// fetch the selected properties plus the ETag
+				aSelect = aSelect.concat("@odata.etag");
+			}
+			Helper.updateCache(mChangeListeners, sPath, oCacheValue, oPostValue, aSelect);
 		}
 	};
 

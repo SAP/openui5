@@ -3644,10 +3644,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {function} fnPrerenderingTask
 	 *   A function that is called before the rendering
+	 * @param {boolean} [bFirst=false]
+	 *   Whether the task should become the first one, not the last one
 	 * @private
 	 */
-	Core.prototype.addPrerenderingTask = function (fnPrerenderingTask) {
-		this.aPrerenderingTasks.push(fnPrerenderingTask);
+	Core.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
+		if (bFirst) {
+			this.aPrerenderingTasks.unshift(fnPrerenderingTask);
+		} else {
+			this.aPrerenderingTasks.push(fnPrerenderingTask);
+		}
 		this.addInvalidatedUIArea(); // to trigger rendering
 	};
 
