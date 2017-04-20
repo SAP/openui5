@@ -74,7 +74,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				resolve(oFileContent);
 			}
 		);
-		var oComponent = {
+		var oAppComponent = {
 			getManifest: function () {
 				return {
 					"sap.app" : {
@@ -86,7 +86,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 		sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
-		sandbox.stub(sap.ui, "component").returns(oComponent);
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+		sandbox.stub(Utils, "getComponentName").returns("ui.s2p.mm.purchorder.approve.Component");
 
 		// decode
 		var oExtensionProvider = new PreprocessorImpl();
@@ -177,7 +178,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oComp = sap.ui.component({
 			name: "sap.ui.fl.PreprocessorImpl.testResources"
 		});
-        sandbox.stub(sap.ui, "component").returns(oComp);
+		sandbox.stub(sap.ui, "component").returns(oComp);
 
 		var view1 = sap.ui.view({
 			viewName: "sap.ui.fl.PreprocessorImpl.testResources.view1",
