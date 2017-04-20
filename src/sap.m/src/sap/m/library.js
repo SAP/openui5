@@ -3847,10 +3847,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		createLabel: function(sText){
 			return new sap.m.Label({text: sText});
 		},
-		createButton: function(sId, fPressFunction){
-			var oButton = new sap.m.Button(sId, {type: sap.m.ButtonType.Transparent});
-			oButton.attachEvent('press', fPressFunction, this); // attach event this way to have the right this-reference in handler
-			return oButton;
+		createButton: function(sId, fPressFunction, fnCallback){
+			var that = this;
+			var _createButton = function(Button){
+				var oButton = new Button(sId, {type: sap.m.ButtonType.Transparent});
+				oButton.attachEvent('press', fPressFunction, that); // attach event this way to have the right this-reference in handler
+				fnCallback.call(that, oButton);
+			};
+			var fnButtonClass = sap.ui.require("sap/m/Button");
+			if (fnButtonClass) {
+				// already loaded -> execute synchron
+				_createButton(fnButtonClass);
+			} else {
+				sap.ui.require(["sap/m/Button"], _createButton);
+			}
 		},
 		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
 			oButton.setText(sText);
