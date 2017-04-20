@@ -59,8 +59,8 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search and $select "5.1 System Query
-	 *     Options"
+	 *   <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search and $select
+	 *     "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
 	 *   Query options specified for the binding overwrite model query options.
@@ -114,7 +114,10 @@ sap.ui.define([
 
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCachePromise = _SyncPromise.resolve();
-				this.sChangeReason = undefined;
+				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
+				// auto-$expand/$select: promises to wait until child bindings have provided
+				// their path and query options
+				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
@@ -524,8 +527,8 @@ sap.ui.define([
 	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
 	 * this binding.
 	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance to be used
 	 * @returns {SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
@@ -533,11 +536,15 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
 		var sOrderby = this.getOrderby(this.mQueryOptions.$orderby),
+			aPromises = [
+				this.fetchQueryOptionsWithKeys(oContext),
+				this.fetchFilter(oContext, this.mQueryOptions.$filter)
+			],
 			that = this;
 
-		return this.fetchFilter(oContext, this.mQueryOptions.$filter)
-			.then(function (sFilter) {
-				return that.mergeQueryOptions(that.mQueryOptions, sOrderby, sFilter);
+		return _SyncPromise.all(aPromises)
+			.then(function (aResults) {
+				return that.mergeQueryOptions(aResults[0], sOrderby, aResults[1]);
 			});
 	};
 
@@ -871,6 +878,7 @@ sap.ui.define([
 			oRange,
 			bRefreshEvent = !!this.sChangeReason,
 			iStartInModel, // in model coordinates
+			oVirtualContext,
 			that = this;
 
 		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
@@ -894,6 +902,23 @@ sap.ui.define([
 
 		sChangeReason = this.sChangeReason || ChangeReason.Change;
 		this.sChangeReason = undefined;
+
+		if (sChangeReason === "AddVirtualContext") {
+			// Note: this task is queued _before_ any $auto submit task!
+			sap.ui.getCore().addPrerenderingTask(function () {
+				// Note: first result of getContexts after refresh is ignored
+				that.sChangeReason = "RemoveVirtualContext";
+				that._fireChange({reason : ChangeReason.Change});
+				that.reset(ChangeReason.Refresh);
+			}, true);
+			oVirtualContext = Context.create(this.oModel, this,
+				this.oModel.resolve(this.sPath, this.oContext) + "/-2", -2);
+			return [oVirtualContext];
+		}
+
+		if (sChangeReason === "RemoveVirtualContext") {
+			return [];
+		}
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
@@ -1313,6 +1338,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
+	 * @throws {Error}
+	 *   For relative bindings containing created entities
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
@@ -1326,6 +1353,12 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
+				if (this.aContexts && this.aContexts[-1]) {
+					// to allow switching the context for new created entities (transient or not)
+					// we first have to implement a store/restore mechanism for the -1 entry
+					throw new Error("setContext on relative binding is forbidden if created " +
+						"entity exists: " + this);
+				}
 				this.reset();
 				this.fetchCache(oContext);
 				if (oContext) {

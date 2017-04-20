@@ -17,35 +17,6 @@ sap.ui.define([
 	function ODataBinding() {}
 
 	/**
-	 * Creates the query options map to create the cache for this binding as a deep copy from the
-	 * model's parameters and the given binding's local query options. In auto-mode, the $select
-	 * array in the resulting map is extended from the $select option defined by dependent bindings.
-	 *
-	 * @param {object} mLocalQueryOptions The binding's local query options
-	 * @returns {object} The map of query options for cache creation
-	 *
-	 * @private
-	 */
-	ODataBinding.prototype.createCacheQueryOptions = function (mLocalQueryOptions) {
-		var mCacheQueryOptions = jQuery.extend(true, {}, this.oModel.mUriParameters,
-				mLocalQueryOptions),
-			aDependentSelect;
-
-		if (this.oModel.bAutoExpandSelect) {
-			aDependentSelect = this.mDependentQueryOptions && this.mDependentQueryOptions.$select;
-			if (aDependentSelect) {
-				mCacheQueryOptions.$select = mCacheQueryOptions.$select || [];
-				aDependentSelect.forEach(function (sPropertyName) {
-					if (mCacheQueryOptions.$select.indexOf(sPropertyName) < 0) {
-						mCacheQueryOptions.$select.push(sPropertyName);
-					}
-				});
-			}
-		}
-		return mCacheQueryOptions;
-	};
-
-	/**
 	 * Creates a cache for this binding if a cache is needed and updates <code>oCachePromise</code>.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
@@ -56,7 +27,6 @@ sap.ui.define([
 	ODataBinding.prototype.fetchCache = function (oContext) {
 		var oCachePromise,
 			oCurrentCache,
-			aPromises,
 			that = this;
 
 		if (this.oOperation) { // operation binding manages its cache on its own
@@ -72,17 +42,10 @@ sap.ui.define([
 				oCurrentCache.setActive(false);
 			}
 		}
-		aPromises = [this.fetchQueryOptionsForOwnCache(oContext)];
-		// in auto-mode wait for query options of dependent bindings to be available; this is only
-		// done for parent bindings => this.fetchIfChildCanUseCache
-		if (this.oModel.bAutoExpandSelect && this.fetchIfChildCanUseCache) {
-			aPromises.push(Promise.resolve());
-		}
-		oCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
-			var vCanonicalPath,
-				mLocalQueryOptions = aResult[0];
+		oCachePromise = this.fetchQueryOptionsForOwnCache(oContext).then(function (mQueryOptions) {
+			var vCanonicalPath;
 
-			if (mLocalQueryOptions) {
+			if (mQueryOptions) {
 				vCanonicalPath = _SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
 					? oContext.fetchCanonicalPath() : oContext.getPath()));
 				return vCanonicalPath.then(function (sCanonicalPath) {
@@ -92,7 +55,8 @@ sap.ui.define([
 
 					// create cache only if oCachePromise has not been changed in the meantime
 					if (!oCachePromise || that.oCachePromise === oCachePromise) {
-						mCacheQueryOptions = that.createCacheQueryOptions(mLocalQueryOptions);
+						mCacheQueryOptions = jQuery.extend(true, {}, that.oModel.mUriParameters,
+							mQueryOptions);
 						if (sCanonicalPath) { // quasi-absolute or relative binding
 							// mCacheByContext has to be reset if parameters are changing
 							that.mCacheByContext = that.mCacheByContext || {};
@@ -129,54 +93,80 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether this binding needs an own cache.
+	 * Fetches the query options to create the cache for this binding or <code>undefined</code> if
+	 * no cache is to be created.
 	 *
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be undefined for absolute bindings
 	 * @returns {SyncPromise}
-	 *   A promise which resolves with the binding's local query options if an own cache is needed,
-	 *   or with undefined otherwise
+	 *   A promise which resolves with the query options to create the cache for this binding,
+	 *   or with <code>undefined</code> if no cache is to be created
 	 *
 	 * @private
 	 */
 	ODataBinding.prototype.fetchQueryOptionsForOwnCache = function (oContext) {
-		var that = this;
+		var bHasNonSystemQueryOptions,
+			oQueryOptionsPromise,
+			that = this;
 
+		// operation binding
 		if (this.oOperation) {
 			return _SyncPromise.resolve(undefined);
 		}
 
-		if (this.bRelative && !oContext) { // unresolved
+		// unresolved binding
+		if (this.bRelative && !oContext) {
 			return _SyncPromise.resolve(undefined);
 		}
 
-		return this.doFetchQueryOptions(oContext).then(function (mQueryOptions) {
-			var bHasNonSystemQueryOptions;
+		// auto-$expand/$select and binding is a parent binding, so that it needs to wait until all
+		// its child bindings know via the corresponding promise in this.aChildCanUseCachePromises
+		// if they can use the parent binding's cache
+		if (this.oModel.bAutoExpandSelect && this.aChildCanUseCachePromises) {
+			// For auto-$expand/$select, wait for query options of dependent bindings:
+			// Promise.resolve() ensures all dependent bindings are created and have sent their
+			// query options promise to this binding via fetchIfChildCanUseCache.
+			// The aggregated query options of this binding and its dependent bindings are available
+			// in that.mAggregatedQueryOptions once all these promises are fulfilled.
+			oQueryOptionsPromise = _SyncPromise.resolve(Promise.resolve().then(function () {
+				return _SyncPromise.all(that.aChildCanUseCachePromises).then(function () {
+					that.aChildCanUseCachePromises = [];
+					return that.mAggregatedQueryOptions;
+				});
+			}));
+		} else {
+			oQueryOptionsPromise = this.doFetchQueryOptions(oContext);
+		}
 
-			if (!that.bRelative || oContext && !oContext.fetchValue) { // (quasi-)absolute
-				return mQueryOptions;
-			}
+		// (quasi-)absolute binding
+		if (!that.bRelative || oContext && !oContext.fetchValue) {
+			return oQueryOptionsPromise;
+		}
 
-			if (that.oModel.bAutoExpandSelect) {
-				bHasNonSystemQueryOptions = that.mParameters
-					&& Object.keys(that.mParameters).some(function (sKey) {
-						return sKey[0] !== "$" || sKey[1] == "$";
-					});
-				if (bHasNonSystemQueryOptions) {
-					return mQueryOptions;
-				}
-				return oContext.getBinding()
-					.fetchIfChildCanUseCache(oContext, that.sPath, mQueryOptions)
-					.then(function (bCanUseCache) {
-						return bCanUseCache ? undefined : mQueryOptions;
-					});
+		// auto-$expand/$select: Use parent binding's cache if possible
+		if (this.oModel.bAutoExpandSelect) {
+			bHasNonSystemQueryOptions = that.mParameters
+				&& Object.keys(that.mParameters).some(function (sKey) {
+					return sKey[0] !== "$" || sKey[1] == "$";
+				});
+			if (bHasNonSystemQueryOptions) {
+				return oQueryOptionsPromise;
 			}
-			if (that.mParameters && Object.keys(that.mParameters).length) {
-				// relative with parameters
-				return mQueryOptions;
-			}
-			return Object.keys(mQueryOptions).length === 0
-				? undefined : mQueryOptions;
+			return oContext.getBinding()
+				.fetchIfChildCanUseCache(oContext, that.sPath, oQueryOptionsPromise)
+				.then(function (bCanUseCache) {
+					return bCanUseCache ? undefined : oQueryOptionsPromise;
+				});
+		}
+
+		// relative binding with parameters which are not query options (such as $$groupId)
+		if (this.mParameters && Object.keys(this.mParameters).length) {
+			return oQueryOptionsPromise;
+		}
+
+		// relative binding which may have query options from UI5 filter or sorter objects
+		return oQueryOptionsPromise.then(function (mQueryOptions) {
+			return Object.keys(mQueryOptions).length === 0 ? undefined : mQueryOptions;
 		});
 	};
 

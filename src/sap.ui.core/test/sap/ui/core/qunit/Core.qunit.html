@@ -246,16 +246,48 @@
 
 		QUnit.test("prerendering tasks", function (assert) {
 			var done = assert.async(),
-				bCalled = false,
+				bCalled1 = false,
+				bCalled2 = false,
 				oCore = sap.ui.getCore();
 
-			function task () {
-				bCalled = true;
+			function task1 () {
+				bCalled1 = true;
+				assert.ok(!bCalled2, "not yet called");
+			}
+
+			function task2 () {
+				assert.ok(bCalled1, "first task called");
+				bCalled2 = true;
 				oCore.addPrerenderingTask(done);
 			}
 
-			oCore.addPrerenderingTask(task);
-			assert.ok(!bCalled, "not called synchronously");
+			oCore.addPrerenderingTask(task1);
+			oCore.addPrerenderingTask(task2);
+			assert.ok(!bCalled1, "not called synchronously");
+			assert.ok(!bCalled2, "not called synchronously");
+		});
+
+		QUnit.test("prerendering tasks: reverse order", function (assert) {
+			var done = assert.async(),
+				bCalled1 = false,
+				bCalled2 = false,
+				oCore = sap.ui.getCore();
+
+			function task1 () {
+				bCalled1 = true;
+				assert.ok(!bCalled2, "not yet called");
+			}
+
+			function task2 () {
+				assert.ok(bCalled1, "first task called");
+				bCalled2 = true;
+				oCore.addPrerenderingTask(done);
+			}
+
+			oCore.addPrerenderingTask(task2);
+			oCore.addPrerenderingTask(task1, true);
+			assert.ok(!bCalled1, "not called synchronously");
+			assert.ok(!bCalled2, "not called synchronously");
 		});
 
 
