@@ -480,7 +480,7 @@
 					// Run less build
 					window.less.refresh();
 
-					// Update Theming Parameters without triggering an library-parameters.json request
+					// Update Theming Parameters without triggering a library-parameters.json request
 					var Parameters = sap.ui.requireSync('sap/ui/core/theming/Parameters');
 					Parameters._setOrLoadParameters(mLibVariables);
 

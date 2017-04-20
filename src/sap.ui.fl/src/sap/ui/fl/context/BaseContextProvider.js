@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	/**
 	 * Abstract context provider.
 	 *
-	 * Do not create an instance of this. Instead extend this abstract class with an custom implementation and instantiate
+	 * Do not create an instance of this. Instead extend this abstract class with a custom implementation and instantiate
 	 * that.
 	 *
 	 * @class

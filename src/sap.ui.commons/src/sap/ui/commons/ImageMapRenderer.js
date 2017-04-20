@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global'],
 				var sAlt = aAreas[index].getAlt();
 				var sTitle = aAreas[index].getTooltip_AsString();
 
-				// Render Shape Attribute. It can an be only rect, circle, poly and default
+				// Render shape attribute. It can only be rect, circle, poly or default
 				if ( (sShape === "rect") || (sShape === "circle") || (sShape === "poly")) {
 					rm.writeAttribute("shape", sShape);
 				} else {

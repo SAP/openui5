@@ -531,7 +531,7 @@ QUnit.test("Creation of a new FileUploader Instance during rerendering" , functi
 QUnit.test("uploadComplete", function(assert) {
 	var oFileUploaderEventMock = {
 		fileName : "file1",
-		reponse : { "propertyOne" : "ValueOne" },
+		response : { "propertyOne" : "ValueOne" },
 		readyStateXHR : 4,
 		status : 200,
 		responseRaw : '{ "propertyOne" : "ValueOne" }',
@@ -543,6 +543,7 @@ QUnit.test("uploadComplete", function(assert) {
 	function uploadComplete(oEvent) {
 		assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event of pending upload");
 		assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event of pending upload");
+		assert.equal(oEvent.getParameter("files")[0].reponse, oFileUploaderEventMock.response, "Correct response in complete event of pending upload - deprecated event property");
 		assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event of pending upload");
 		assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event of pending upload");
 		assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event of pending upload");

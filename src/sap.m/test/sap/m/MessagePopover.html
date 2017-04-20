@@ -50,7 +50,8 @@
 				messages: [{
 					type: "Error",
 					title: "Error message",
-					description: "First Error message description"
+					description: "First Error message description",
+					subtitle: "Example subtitle"
 				}, {
 					type: "Warning",
 					title: "Warning without description",
@@ -72,7 +73,8 @@
 					type: "Information",
 					title: "Information message (Long) 2",
 					description: "Just some text description",
-					longtextUrl: "./SampleHTML.html"
+					longtextUrl: "./SampleHTML.html",
+					subtitle: "Just simple subtitle"
 				}]
 			};
 
@@ -83,24 +85,25 @@
 				type: "{type}",
 				title: "{title}",
 				description: "{description}",
-				longtextUrl: "{longtextUrl}"
+				longtextUrl: "{longtextUrl}",
+				subtitle: "{subtitle}"
 			});
 
 			jQuery.sap.require("sap.m.MessagePopover");
 
 			sap.m.MessagePopover.setDefaultHandlers({
 
-                // to have all links in the longtextdescription validated by default
-                // use this commented out version of asyncURLHandler instead
+				// to have all links in the longtextdescription validated by default
+				// use this commented out version of asyncURLHandler instead
 
-                /*
-                asyncURLHandler: function(config) {
-                    config.promise.resolve({
-                        allowed: true,
-                        id: config.id
-                    });
-                }
-                */
+				/*
+				 asyncURLHandler: function(config) {
+				 config.promise.resolve({
+				 allowed: true,
+				 id: config.id
+				 });
+				 }
+				 */
 
 				asyncURLHandler: function(config) {
 					// put async validation here
@@ -145,7 +148,35 @@
 				},
 				listSelect: function (oEvt) {
 					console.log("listSelected", oEvt.getParameters());
-				}
+				},
+				initiallyExpanded: true
+			});
+
+			var oMessagePopoverCollapsed = new sap.m.MessagePopover("mPopoverCollapsed", {
+				items: {
+					path: "/messages",
+					template: oMessageTemplate
+				},
+				headerButton: headerButton,
+				beforeOpen: function (oEvt) {
+					console.log("beforeOpen", oEvt.getParameters());
+				},
+				beforeClose: function (oEvt) {
+					console.log("beforeClose", oEvt.getParameters());
+				},
+				afterOpen: function (oEvt) {
+					console.log("afterOpen", oEvt.getParameters());
+				},
+				afterClose: function (oEvt) {
+					console.log("afterClose", oEvt.getParameters());
+				},
+				itemSelect: function (oEvt) {
+					console.log("itemSelected", oEvt.getParameters());
+				},
+				listSelect: function (oEvt) {
+					console.log("listSelected", oEvt.getParameters());
+				},
+				initiallyExpanded: false
 			});
 
 			core.setModel(oModel);
@@ -158,8 +189,17 @@
 					oMessagePopover.toggle(this);
 				}
 			});
-
 			oMessagePopoverButton.addDependent(oMessagePopover);
+
+			var oMessagePopoverCButton = new sap.m.Button("mPopoverCButton", {
+				icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+				text: "{/count}",
+				type: sap.m.ButtonType.Emphasized,
+				press: function () {
+					oMessagePopoverCollapsed.toggle(this);
+				}
+			});
+			oMessagePopoverCButton.addDependent(oMessagePopoverCollapsed);
 
 			var getPositions = function () {
 				return [{key: "Default", text: "Default"}]
@@ -234,10 +274,10 @@
 							};
 
 							if (position === "Default") {
-								//oMessagePopover.addAggregation("items", message, true);
+								oMessagePopover.addAggregation("items", message, true);
 								oModelTemp.messages.splice(oModelTemp.length, 0, oObjectMessage);
 							} else {
-								//oMessagePopover.insertAggregation("items", message, position, true);
+								oMessagePopover.insertAggregation("items", message, position, true);
 								oModelTemp.messages.splice(position, 0, oObjectMessage);
 							}
 
@@ -245,6 +285,7 @@
 
 							oModel.setData(oModelTemp);
 							oMessagePopover.setModel(oModel);
+							oMessagePopoverCollapsed.setModel(oModel);
 							core.byId("msg-model-input").setValue(JSON.stringify(core.getModel().getData(), null, 4));
 
 							updateSelect(core.byId("msg-position-select"));
@@ -297,8 +338,9 @@
 				content: [oSimpleForm],
 				footer: new sap.m.Toolbar({
 					content: [
-						new sap.m.ToolbarSpacer(),
 						oMessagePopoverButton,
+						new sap.m.ToolbarSpacer(),
+						oMessagePopoverCButton,
 						sap.m.CheckBox("compactMode", {
 							selected: false,
 							text: "Compact mode",

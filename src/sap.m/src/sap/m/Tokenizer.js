@@ -612,7 +612,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oFocusedElement = jQuery(document.activeElement).control()[0];
 
-		// oFocusedElement could be undefined since the focus element might not correspond to a SAPUI5 Control
+		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 
 		if (index == 0) {
@@ -661,7 +661,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		// oFocusedElement could be undefined since the focus element might not correspond to a SAPUI5 Control
+		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? this.getTokens().indexOf(oFocusedElement) : -1;
 
 		if (index < iLength - 1) {
@@ -684,7 +684,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Function adds an validation callback called before any new token gets added to the tokens aggregation
+	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
 	 *
 	 * @public
 	 * @param {function}
@@ -697,7 +697,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Function removes an validation callback
+	 * Function removes a validation callback
 	 *
 	 * @public
 	 * @param {function}

@@ -81,7 +81,9 @@ sap.ui.define([
 					iInsertIndex = oChange.content.group.index;
 				} else {
 					iRelativeIndex = oChange.content.group.relativeIndex;
-					iInsertIndex = fnMapGroupIndexToContentAggregationIndex(oModifier, ["sap.ui.core.Title"], aContent, iRelativeIndex);
+					iInsertIndex = fnMapGroupIndexToContentAggregationIndex(oModifier,
+						["sap.ui.core.Title", "sap.m.Title", "sap.m.Toolbar", "sap.m.OverflowToolbar"],
+						aContent, iRelativeIndex);
 				}
 
 				var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);

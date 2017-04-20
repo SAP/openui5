@@ -62,13 +62,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					defaultValue : true
 				},
 				/**
-				 * Whether the overlay is created for an element or aggregation, which is not accessible via the public tree
-				 */
-				inHiddenTree : {
-					type : "boolean",
-					defaultValue : false
-				},
-				/**
 				 * Whether the Overlay can get the browser focus (has tabindex)
 				 */
 				focusable : {
@@ -239,7 +232,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 
 	/**
 	 * Returns a DOM reference for the associated Element or null, if it can't be found
-	 * @return {Element} DOM element or null
 	 * @public
 	 */
 	Overlay.prototype.getAssociatedDomRef = function() {
@@ -419,6 +411,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	};
 
 	/**
+	 * @param {object} oDomRef element's DOM reference
 	 * @private
 	 */
 	Overlay.prototype._detachDomRefScrollHandler = function(oDomRef) {
@@ -431,7 +424,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
-	Overlay.prototype._onSyncScrollWithDomRef = function(oEvt) {
+	Overlay.prototype._onSyncScrollWithDomRef = function() {
 		window.clearTimeout(this._iSyncScrollWithDomRef);
 		// timeout needed so that scroll wheel in chrome windows works fast
 		this._iSyncScrollWithDomRef = window.setTimeout(function() {
@@ -443,7 +436,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
-	Overlay.prototype._syncScrollWithDomRef = function(oEvent) {
+	Overlay.prototype._syncScrollWithDomRef = function() {
 		DOMUtil.syncScroll(this._oDomRefWithScrollHandler, this.$());
 	};
 
@@ -484,6 +477,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	};
 
 	/**
+	 * @param {object} oDomRef element's DOM reference to be cloned
 	 * @private
 	 */
 	Overlay.prototype._cloneDomRef = function(oDomRef) {
@@ -601,34 +595,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 	};
 
-
-	/**
-	 * Sets whether the Overlay is for an element/aggregation in a hidden tree (not accessible via public aggregations)
-	 * @param {boolean} bInHiddenTree if the Overlay is inHiddenTree
-	 * @returns {sap.ui.dt.Overlay} returns this
-	 * @public
-	 */
-	Overlay.prototype.setInHiddenTree = function(bInHiddenTree) {
-		bInHiddenTree = !!bInHiddenTree;
-		if (bInHiddenTree !== this.isInHiddenTree()) {
-
-			this.toggleStyleClass("sapUiDtOverlayInHiddenTree", bInHiddenTree);
-			this.setProperty("inHiddenTree", bInHiddenTree);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Returns if the Overlay is for an element/aggregation in a hidden tree (not accessible via public aggregations)
-	 * @public
-	 * @return {boolean} if the Overlay is in hidden tree
-	 */
-	Overlay.prototype.isInHiddenTree = function() {
-		return this.getInHiddenTree();
-	};
-
-
 	/**
 	 * Sets whether the Overlay is visible
 	 * @param {boolean} bVisible if the Overlay is visible
@@ -676,6 +642,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * Returns if overlay is root
 	 * @public
+	 * @return {boolean} if the Overlay is root
 	 */
 	Overlay.prototype.isRoot = function() {
 		var oParent = this.getParent();
@@ -683,25 +650,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			if (!oParent.getDomRef) {
 				return true;
 			}
-		}
-	};
-
-	/**
-	 * Returns child of first ancestor overlay not flagged as inHiddenTree
-	 *
-	 * @return {sap.ui.dt.ElementOverlay} ElementOverlay public parents child
-	 * @public
-	 */
-	Overlay.prototype.getFirstHiddenAggregationOverlay = function() {
-		var oPreviousOverlay = this; // eslint-disable-line consistent-this
-		var oParentOverlay = this.getParentElementOverlay();
-		while (oParentOverlay && oParentOverlay.isInHiddenTree()
-				&& ElementUtil.isInstanceOf(oParentOverlay, "sap.ui.dt.ElementOverlay")) {
-			oPreviousOverlay = oParentOverlay;
-			oParentOverlay = oParentOverlay.getParentElementOverlay();
-		}
-		if (ElementUtil.isInstanceOf(oParentOverlay, "sap.ui.dt.ElementOverlay")) {
-			return oPreviousOverlay.getParent();
 		}
 	};
 

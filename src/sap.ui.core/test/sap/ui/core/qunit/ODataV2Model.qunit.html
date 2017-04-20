@@ -192,6 +192,8 @@
 	});
 
 	QUnit.test("metadata failed handling", function(assert){
+		assert.expect(3);
+
 		var done = assert.async();
 		var that = this;
 		var mOptions = {
@@ -206,9 +208,9 @@
 			var oModel2 = initModel("/DOESNOTEXIST", mOptions);
 			oModel2.attachMetadataFailed(function(){
 				assert.ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+				done();
 			});
 			oModel.detachMetadataFailed(handleFailed);
-			done();
  		};
 		oModel.attachMetadataFailed(handleFailed);
 	});

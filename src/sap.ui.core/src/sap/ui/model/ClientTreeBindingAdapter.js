@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
 		 * @override
 		 */
@@ -217,7 +217,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
 		 * @override
 		 */
@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
 		 * @override
 		 */
@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a addSelectionInterval operation.
+		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
 		 * @override
 		 */

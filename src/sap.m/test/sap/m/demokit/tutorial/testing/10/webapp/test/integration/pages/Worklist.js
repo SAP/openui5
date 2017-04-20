@@ -22,6 +22,7 @@ sap.ui.require([
 				baseClass: Common,
 				actions: {
 					iPressOnMoreData: function () {
+						// Press action hits the "more" trigger on a table
 						return this.waitFor({
 							id: sTableId,
 							viewName: sViewName,
@@ -43,11 +44,26 @@ sap.ui.require([
 					}
 				},
 				assertions: {
+					theTableShouldHavePagination: function () {
+						return this.waitFor({
+							id: sTableId,
+							viewName: sViewName,
+							matchers: new AggregationLengthEquals({
+								name: "items",
+								length: 20
+							}),
+							success: function () {
+								Opa5.assert.ok(true, "The table has 20 items on the first page");
+							},
+							errorMessage: "Table does not have all entries."
+						});
+					},
+
 					theTableShouldHaveAllEntries: function () {
 						return this.waitFor({
 							id: sTableId,
 							viewName: sViewName,
-							matchers:  new AggregationLengthEquals({
+							matchers: new AggregationLengthEquals({
 								name: "items",
 								length: 23
 							}),

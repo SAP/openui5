@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				jQuery.sap.log.warning("ODataUtils.setAnnotationOrigin: Annotation url is missing $value segment.");
 				sFinalAnnotationURL = sAnnotationURL;
 			} else {
-				// if the annotation URL is a SAP specific annotation url, we add the origin path segment...
+				// if the annotation URL is an SAP specific annotation url, we add the origin path segment...
 				var sAnnotationUrlBase =  sAnnotationURL.substring(0, iAnnotationIndex);
 				var sAnnotationUrlRest =  sAnnotationURL.substring(iAnnotationIndex, sAnnotationURL.length);
 				var sAnnotationWithOrigin = ODataUtils.setOrigin(sAnnotationUrlBase, vParameters);

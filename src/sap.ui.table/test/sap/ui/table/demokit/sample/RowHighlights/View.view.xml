@@ -1,0 +1,74 @@
+<mvc:View
+		controllerName="sap.ui.table.sample.RowHighlights.Controller"
+		xmlns="sap.ui.table"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:unified="sap.ui.unified"
+		xmlns:core="sap.ui.core"
+		xmlns:m="sap.m"
+		height="100%">
+	<m:Page
+			showHeader="false"
+			enableScrolling="false"
+			class="sapUiContentPadding">
+		<m:content>
+			<Table
+					id="table"
+					rows="{/ProductCollection}"
+					selectionMode="MultiToggle"
+					visibleRowCount="7"
+					setEnableGrouping="true"
+					ariaLabelledBy="title">
+				<toolbar>
+					<m:Toolbar>
+						<m:Title id="title" text="Products" height="100%"/>
+						<m:ToolbarSpacer/>
+						<m:Label text="SelectionMode:"/>
+						<m:Select id="select" selectedKey="MultiToggle" change="onSelectionModeChange">
+							<m:items>
+								<core:Item key="MultiToggle" text="MultiToggle"/>
+								<core:Item key="Single" text="Single"/>
+								<core:Item key="None" text="None"/>
+							</m:items>
+						</m:Select>
+						<m:ToggleButton text="Toggle Highlights" pressed="true" press="onHighlightToggle"/>
+					</m:Toolbar>
+				</toolbar>
+				<rowSettingsTemplate>
+					<RowSettings highlight="{Status}"/>
+				</rowSettingsTemplate>
+				<columns>
+					<Column>
+						<m:Label text="Status"/>
+						<template>
+							<m:Text text="{Status}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Product Name"/>
+						<template>
+							<m:Text text="{Name}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Product Id"/>
+						<template>
+							<m:Text text="{ProductId}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column hAlign="End">
+						<m:Label text="Quantity"/>
+						<template>
+							<m:Text text="{Quantity}" wrapping="false"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Price"/>
+						<template>
+							<unified:Currency value="{Price}" currency="{CurrencyCode}"/>
+						</template>
+					</Column>
+				</columns>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

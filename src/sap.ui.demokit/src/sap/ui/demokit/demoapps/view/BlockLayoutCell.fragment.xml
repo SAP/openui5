@@ -5,7 +5,7 @@
 	<l:BlockLayoutCell
 		class="sapUiContentPadding"
 		width="2">
-		<l:VerticalLayout>
+		<l:VerticalLayout width="100%">
 			<core:Icon
 				src="{icon}"
 				size="2rem"

@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adds a Button with a text as title, an URI for an icon, enabled and textDirection.
+	 * Adds a Button with a text as title, a URI for an icon, enabled and textDirection.
 	 * Only one is allowed.
 	 *
 	 * @param {string} sText
@@ -631,8 +631,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Setter for association <code>selectedButton</code>.
 	 *
 	 * @param {string | sap.m.Button | null | undefined} vButton New value for association <code>setSelectedButton</code>
-	 *    A sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
-	 *    Alternatively, the ID of a sap.m.Button instance may be given as a string.
+	 *    An sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
+	 *    Alternatively, the ID of an sap.m.Button instance may be given as a string.
 	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
 	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
 	 * @public

@@ -638,7 +638,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			"</layout:SimpleForm>" +
 			"</mvc:View>";
 
-		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 10, assert);
+		_testApplyChangeWithXMLTreeModifier.call(this, oXmlString, this.oLegacyChangeWrapper, "New Control", 5, assert);
 	});
 
 })();

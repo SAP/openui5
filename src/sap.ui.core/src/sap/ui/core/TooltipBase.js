@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 				jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
 			}
 			TooltipBase.sOpenTimeout = jQuery.sap.delayedCall(this.getOpenDelay(), this, "openPopup", [this._currentControl]);
-			// We need this for the scenario if the both a child and his parent have an RichTooltip
+			// We need this for the scenario if the both a child and his parent have a RichTooltip
 			oEvent.stopPropagation();
 			oEvent.preventDefault();
 		}

@@ -314,7 +314,7 @@ sap.ui.define([
 		 * Updates the binding of the master list and applies filters and groups
 		 *
 		 * Dear maintainer having more time than i currently have -
-		 * this function does way too much an gets called everywhere the list gets rerendered a lot of times.
+		 * this function does way too much and gets called everywhere the list gets rerendered a lot of times.
 		 * So i build in some very small detection to at least reduce the rerenderings when starting the app.
 		 * For future refactorings this has to be split up into functions responsible for filtering sorting and only
 		 * trigger those filters if a user really changed them. currently everytime the list items will be destroyed.

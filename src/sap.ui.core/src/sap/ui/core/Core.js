@@ -1183,7 +1183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns true, if the styles of the current theme are already applied, false otherwise.
 	 *
 	 * This function must not be used before the init event of the Core.
-	 * If the styles are not yet applied an theme changed event will follow when the styles will be applied.
+	 * If the styles are not yet applied a theme changed event will follow when the styles will be applied.
 	 *
 	 * @return {boolean} whether the styles of the current theme are already applied
 	 * @public
@@ -2277,7 +2277,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Informs the core about an UIArea that just became invalid.
+	 * Informs the core about a UIArea that just became invalid.
 	 *
 	 * The core might use this information to minimize the set of
 	 * re-rendered UIAreas. But for the time being it just registers
@@ -3014,7 +3014,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Notifies the listeners that a event on a control occures
+	 * Notifies the listeners that an event on a control occurs
 	 * @param {map} mParameters { browserEvent: jQuery.EventObject }
 	 * @private
 	 */
@@ -3717,7 +3717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * This is a shortcut for <code>sap.ui.getCore().setRoot()</code>.
 	 *
-	 * Internally, if a string is given that does not identify an UIArea or a control
+	 * Internally, if a string is given that does not identify a UIArea or a control
 	 * then implicitly a new <code>UIArea</code> is created for the given DOM reference
 	 * and the given control is added.
 	 *

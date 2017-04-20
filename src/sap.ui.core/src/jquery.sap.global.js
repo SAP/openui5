@@ -431,7 +431,7 @@
 									return fnHandler.call(oProxy, oEvent);
 								}
 							}
-							// If this is a asynchronous request and a sync request is ongoing,
+							// If this is an asynchronous request and a sync request is ongoing,
 							// the execution of all following handler calls needs to be delayed
 							if (!bSync && bSyncRequestOngoing) {
 								bDelay = true;
@@ -454,7 +454,7 @@
 						return deactivate(fnHandler.wrappedHandler);
 					}
 
-					// When a event handler is removed synchronously, it needs to be deactivated
+					// When an event handler is removed synchronously, it needs to be deactivated
 					// to avoid the situation, where the handler has been triggered while
 					// the sync request was ongoing, but removed afterwards.
 					function deactivate(fnWrappedHandler) {
@@ -2688,7 +2688,7 @@
 		 * Whether sap.ui.define calls could be executed asynchronously in the current context.
 		 *
 		 * The initial value is determined by the preload flag. This is necessary to make
-		 * hard coded script tags work when their scripts include a sap.ui.define call and if
+		 * hard coded script tags work when their scripts include an sap.ui.define call and if
 		 * some later incline script expects the results of sap.ui.define.
 		 * Most prominent example: unit tests that include QUnitUtils as a script tag and use qutils
 		 * in one of their inline scripts.
@@ -3539,7 +3539,7 @@
 		}
 
 		/**
-		 * Constructs an URL to load the module with the given name and file type (suffix).
+		 * Constructs a URL to load the module with the given name and file type (suffix).
 		 *
 		 * Searches the longest prefix of the given module name for which a registration
 		 * exists (see {@link jQuery.sap.registerModulePath}) and replaces that prefix
@@ -3574,7 +3574,7 @@
 		 * <b>Unified Resource Names</b><br>
 		 * Several UI5 APIs use <i>Unified Resource Names (URNs)</i> as naming scheme for resources that
 		 * they deal with (e.h. Javascript, CSS, JSON, XML, ...). URNs are similar to the path
-		 * component of an URL:
+		 * component of a URL:
 		 * <ul>
 		 * <li>they consist of a non-empty sequence of name segments</li>
 		 * <li>segments are separated by a forward slash '/'</li>
@@ -3614,7 +3614,7 @@
 		jQuery.sap.getResourcePath = getResourcePath;
 
 		/**
-		 * Registers an URL prefix for a module name prefix.
+		 * Registers a URL prefix for a module name prefix.
 		 *
 		 * Before a module is loaded, the longest registered prefix of its module name
 		 * is searched for and the associated URL prefix is used as a prefix for the request URL.
@@ -3657,7 +3657,7 @@
 		};
 
 		/**
-		 * Registers an URL prefix for a resource name prefix.
+		 * Registers a URL prefix for a resource name prefix.
 		 *
 		 * Before a resource is loaded, the longest registered prefix of its unified resource name
 		 * is searched for and the associated URL prefix is used as a prefix for the request URL.
@@ -3972,7 +3972,7 @@
 		 *         // use a function from the dependency 'Helper' in the same package (e.g. 'sap/mylib/Helper' )
 		 *         var mSettings = Helper.foo();
 		 *
-		 *         // create and return a sap.m.Bar (using its local name 'Bar')
+		 *         // create and return an sap.m.Bar (using its local name 'Bar')
 		 *         return new Bar(mSettings);
 		 *
 		 *     }

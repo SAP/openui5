@@ -472,7 +472,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	FacetFilter.prototype.onAfterRendering = function() {
 
 		if (this.getType() !== sap.m.FacetFilterType.Light && !sap.ui.Device.system.phone) {
-			// Attach a interval timer that periodically checks overflow of the "head" div in the event that the window is resized or the device orientation is changed. This is ultimately to
+			// Attach an interval timer that periodically checks overflow of the "head" div in the event that the window is resized or the device orientation is changed. This is ultimately to
 			// see if carousel arrows should be displayed.
 			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this); // proxy() is needed for the additional parameters, not for "this"
 		}
@@ -547,7 +547,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		}
 
 		oButton = sap.ui.getCore().byId(oEvent.target.id);
-		if (!oButton) { //not an UI5 object
+		if (!oButton) { //not a UI5 object
 			return;
 		}
 

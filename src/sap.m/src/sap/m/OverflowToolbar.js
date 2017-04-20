@@ -280,7 +280,7 @@ sap.ui.define([
 		}, this);
 
 		// If the system is a phone sometimes due to specificity in the flex the content can be rendered 1px larger that it should be.
-		// This causes a overflow of the last element/button
+		// This causes an overflow of the last element/button
 		if (sap.ui.Device.system.phone) {
 			this._iContentSize -= 1;
 		}

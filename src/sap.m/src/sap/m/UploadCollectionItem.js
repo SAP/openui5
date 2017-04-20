@@ -303,7 +303,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 		}
 		// If there isn't URL, download is not possible
 		if (!this.getUrl()) {
-			jQuery.sap.log.warning("Items to download do not have an URL.");
+			jQuery.sap.log.warning("Items to download do not have a URL.");
 			return false;
 		} else if (askForLocation) {
 			var oBlob = null;

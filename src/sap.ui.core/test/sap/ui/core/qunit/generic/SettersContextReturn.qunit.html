@@ -73,7 +73,10 @@
 				"sap.ui.dev2",
 				"sap.ui.mdc",
 				"sap.ui.support",
-				"sap.diagram"
+				"sap.diagram",
+				"sap.zen.crosstab",
+				"sap.zen.dsh",
+				"sap.zen.commons"
 			];
 
 			oLibraries = getLibraries(aExcludedLibraries);
@@ -163,7 +166,7 @@
 								// but as there is no type "date" in our metadata API we need to identify it here
 								// and provide a javascript Date so we can test the setter
 								sName = oProperty.name;
-								bDateInName = sName.indexOf("Date", sName.length - 4) !== -1;
+								bDateInName = sName.indexOf("Date", sName.length - 4) !== -1 || sName.substring(0, 4) === "date";
 								if ((sName === "date" || bDateInName) && oProperty.type === "object") {
 									fnAssert.ok(oControl === oProperty.set(oControl, new Date()),
 											sClassName + "." + sSetterName + "({js date}) should always return <this>");

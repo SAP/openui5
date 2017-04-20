@@ -126,6 +126,20 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 
+		function getRootFontSize() {
+			var oRootDomRef = document.documentElement;
+
+			if (!oRootDomRef) {
+				return 16; // browser default font size
+			}
+
+			return parseFloat(window.getComputedStyle(oRootDomRef).getPropertyValue("font-size"));
+		}
+
+		function remToPx(vRem) {
+			return parseFloat(vRem) * getRootFontSize();
+		}
+
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
 		AlignedFlowLayout.prototype._onResize = function(oEvent, oDomRef, oEndItemDomRef) {
@@ -264,6 +278,43 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 		AlignedFlowLayout.prototype.getLastVisibleDomRef = function() {
 			return this.getDomRef("endItem") || this.getLastItemDomRef();
+		};
+
+		AlignedFlowLayout.prototype.getNumberOfSpacers = function() {
+			var iContentLength = this.getContent().length;
+
+			// spacers are only needed when some content is rendered
+			if (iContentLength === 0) {
+				return 0;
+			}
+
+			var iSpacers = iContentLength,
+				sMinItemWidth = this.getMinItemWidth(),
+				fMinItemWidth;
+
+			// the CSS unit of the minItemWidth control property is in rem
+			if (sMinItemWidth.lastIndexOf("rem") !== -1) {
+				fMinItemWidth = remToPx(sMinItemWidth);
+
+				// the CSS unit of the minItemWidth control property is in px
+			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
+				fMinItemWidth = parseFloat(sMinItemWidth);
+			}
+			// else, the CSS unit is not in rem or px, in this case a conversion to px is not made and
+			// more spacers are rendered (worst case, but unusual in UI5)
+
+			if (fMinItemWidth) {
+
+				// we do not need more spacers than (documentElement.clientWidth / minItemWidth)
+				iSpacers = Math.abs(document.documentElement.clientWidth / fMinItemWidth);
+			}
+
+			// we do not need more spacers than items
+			iSpacers = Math.min(iSpacers, iContentLength - 2);
+
+			// we need at least 1 spacer, to prevent collision of the content with the endContent aggregation
+			iSpacers = Math.max(1, iSpacers);
+			return Math.floor(iSpacers);
 		};
 
 		return AlignedFlowLayout;

@@ -5,7 +5,7 @@
         <template:if test="{= ${this>textFirst} === 'x'}">
             <template:then>
                 <m:Text text="{$this>text}"
-                    width="10rem" />
+                    width="10rem" class="sapUiSmallMarginTop"/>
                 <m:Input value="{$this>value}"
                     width="10rem" />
             </template:then>
@@ -13,7 +13,7 @@
                 <m:Input value="{$this>value}"
                     width="10rem" />
                 <m:Text text="{$this>text}"
-                    width="10rem" />
+                    width="10rem" class="sapUiSmallMarginTop"/>
             </template:else>
         </template:if>
     </m:HBox>

@@ -226,11 +226,20 @@
 	QUnit.test("TextDirectionRtlOk", function(assert) {
 		var $btnText = jQuery(b13.getDomRef()).find('.sapMBtnContent');
 		assert.equal($btnText.attr("dir"), "rtl", "Control text has 'dir' property set to right-to-left");
+		var $btnBDITag = document.getElementById('b13-content').firstChild.nodeName.toLowerCase() === "bdi";
+		assert.ok(!$btnBDITag, "Control doesn't have bidi tag set when it has explicitly set direction");
 	});
 
 	QUnit.test("TextDirectionLtrOk", function(assert) {
 		var $btnText = jQuery(b14.getDomRef()).find('.sapMBtnContent');
 		assert.equal($btnText.attr("dir"), "ltr", "Control text has 'dir' property set to left-to-right");
+		var $btnBDITag = document.getElementById('b14-content').firstChild.nodeName.toLowerCase() === "bdi";
+		assert.ok(!$btnBDITag, "Control doesn't have bidi tag set when it has explicitly set direction");
+	});
+
+	QUnit.test("BDI set when no textdirection is given explicitly", function(assert) {
+		var $btnBDITag = document.getElementById('b1-content').firstChild.nodeName;
+		assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bidi tag set");
 	});
 
 	QUnit.test("PressOk", function(assert) {

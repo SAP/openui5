@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 			/**
 			 * Visualizes warnings or errors related to the InPlaceEdit. Possible values: Warning, Error, Success.
-			 * If the content control has a own valueState property this will be used.
+			 * If the content control has an own valueState property this will be used.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 

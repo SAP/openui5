@@ -90,7 +90,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	/**
-	 * Creates a aggregation DT metadata class for an aggregation,
+	 * Creates an aggregation DT metadata class for an aggregation,
 	 * ensure to destroy it if it is no longer needed, otherwise you get memory leak.
 	 * @param {string} sAggregationName an aggregation name
 	 * @return {sap.ui.dt.AggregationDesignTimeMetadata} returns the aggregation DT metadata for an aggregation with a given name

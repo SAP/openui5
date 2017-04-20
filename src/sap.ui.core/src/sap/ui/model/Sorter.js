@@ -24,7 +24,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
 	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function
 	 *        is provided it must either return a primitive type value as the group key or an object containing
-	 *        a "key" property an may contain additional properties needed for group visualization.
+	 *        a "key" property and additional properties needed for group visualization.
 	 * @param {function} [fnComparator] a custom comparator function, which is used for clientside sorting instead
 	 *        of the default comparator method.
 	 * @public

@@ -14,7 +14,7 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A container control used to aggregate user input controls as part of a sap.m.Wizard.
+	 * A container control used to aggregate user input controls as part of an sap.m.Wizard.
 	 * <h3>Overview</h3>
 	 * WizardStep gives the developer the ability to validate, invalidate the step and define subsequent steps.
 	 * The WizardStep control control is supposed to be used only as an aggregation of the {@link sap.m.Wizard Wizard} control,

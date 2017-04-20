@@ -33,7 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/core/routing/Has
 		var oOpa5 = new Opa5();
 		var stub = this.stub(oOpa5, "waitFor", function(){});
 
-
 		oOpa5.iStartMyUIComponent({
 			componentConfig: {
 				name: "samples.components.button"
@@ -42,7 +41,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/core/routing/Has
 			timeout: 40
 		});
 
-		assert.equal(stub.lastCall.args[0].timeout, 40, "Timeout was increased to 40 seconds")
+		assert.equal(stub.thirdCall.args[0].timeout, 40, "Timeout was increased to 40 seconds")
 	});
 
 	function componentHashTestCase (oOptions){

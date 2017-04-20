@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	"use strict";
 
 	/**
-	 * Constructor for a sap.m.semantic.ShareMenu.
+	 * Constructor for an sap.m.semantic.ShareMenu.
 	 *
 	 * @class
 	 * Encapsulates the functionality of a ShareMenu control.

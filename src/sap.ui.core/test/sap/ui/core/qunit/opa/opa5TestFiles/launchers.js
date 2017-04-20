@@ -185,20 +185,11 @@ sap.ui.define([
 
 		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
 
-		oOpa5.waitFor({
-			success: function () {
-				// waiter in the inner frame
-				stubAutoWaiter();
-			}
-		});
-
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
-			// called once because of the success before teardown
-			sinon.assert.calledOnce(aAutoWaiterStubs[0]);
-			sinon.assert.notCalled(aAutoWaiterStubs[1]);
+			sinon.assert.notCalled(aAutoWaiterStubs[0]);
 			fnDone();
 		});
 	});
@@ -216,6 +207,7 @@ sap.ui.define([
 		});
 
 		oOpa5.iTeardownMyApp();
+
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
 			sinon.assert.notCalled(aAutoWaiterStubs[0]);

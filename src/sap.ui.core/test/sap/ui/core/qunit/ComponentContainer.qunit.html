@@ -249,8 +249,7 @@
 				// create the container within the context of the owner component
 				var oComponentContainer = oOwnerComponent.runAsOwner(function() {
 					return new ComponentContainer({
-						usage: "myUsage",
-						lifecycle: ComponentLifecycle.Container
+						usage: "myUsage"
 					});
 				});
 
@@ -260,22 +259,33 @@
 				var done = (function() {
 					var asyncDone = assert.async();
 					return function cleanup() {
+						var oNestedComponent = oComponentContainer.getComponentInstance();
 						oComponentContainer.destroy();
+						assert.ok(oNestedComponent.bIsDestroyed, "Nested Component must be destroyed");
 						oOwnerComponent.destroy();
 						asyncDone();
 					};
 				})();
 
 				sap.ui.require([
-					"sap/ui/core/Component",
 					"samples/components/button/Component"
-				], function(Component, UsedComponent) {
+				], function(UsedComponent) {
 
 					var oComponentUsage = oComponentContainer.getComponentInstance();
 
+					var oNewComponent = sap.ui.component({
+						name: "samples.components.button"
+					});
+
+					assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "ComponentLifecycle is Legacy by default");
 					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
 					assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+
+					// Overwrite nested component
+					oComponentContainer.setComponent(oNewComponent);
+					assert.ok(oComponentUsage.bIsDestroyed, "Old component should be destroyed");
+
 					done();
 
 				});
@@ -292,8 +302,7 @@
 				var oComponentContainer = oOwnerComponent.runAsOwner(function() {
 					return new ComponentContainer({
 						usage: "myUsage",
-						async: true,
-						lifecycle: ComponentLifecycle.Container
+						async: true
 					});
 				});
 
@@ -303,19 +312,75 @@
 				var done = (function() {
 					var asyncDone = assert.async();
 					return function cleanup() {
+						var oNestedComponent = oComponentContainer.getComponentInstance();
 						oComponentContainer.destroy();
+						assert.ok(oNestedComponent.bIsDestroyed, "Nested Component must be destroyed");
 						oOwnerComponent.destroy();
 						asyncDone();
 					};
 				})();
 
 				sap.ui.require([
-					"sap/ui/core/Component",
 					"samples/components/button/Component"
-				], function(Component, UsedComponent) {
+				], function(UsedComponent) {
 
 					var oComponentUsage = oComponentContainer.getComponentInstance();
 
+					var oNewComponent = sap.ui.component({
+						name: "samples.components.button"
+					});
+
+					assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "ComponentLifecycle is Legacy by default");
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
+					assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+
+					// Overwrite nested component
+					oComponentContainer.setComponent(oNewComponent);
+					assert.ok(oComponentUsage.bIsDestroyed, "Old component should be destroyed");
+
+					done();
+
+				});
+
+			});
+
+			QUnit.test("Container with ComponentLifecycle=Application", function (assert) {
+
+				var oOwnerComponent = sap.ui.component({
+					name: "my.usage"
+				});
+
+				// create the container within the context of the owner component
+				var oComponentContainer = oOwnerComponent.runAsOwner(function() {
+					return new ComponentContainer({
+						usage: "myUsage",
+						lifecycle: ComponentLifecycle.Application
+					});
+				});
+
+				// simulate onBeforeRendering to force to create the component
+				oComponentContainer.onBeforeRendering();
+
+				var done = (function() {
+					var asyncDone = assert.async();
+					return function cleanup() {
+						var oNestedComponent = oComponentContainer.getComponentInstance();
+						oComponentContainer.destroy();
+						assert.ok(!oNestedComponent.bIsDestroyed, "Nested Component must not be destroyed");
+						oNestedComponent.destroy();
+						oOwnerComponent.destroy();
+						asyncDone();
+					};
+				})();
+
+				sap.ui.require([
+					"samples/components/button/Component"
+				], function(UsedComponent) {
+
+					var oComponentUsage = oComponentContainer.getComponentInstance();
+
+					assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Application, "ComponentLifecycle is Application!");
 					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
 					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
 					assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");

@@ -2,7 +2,14 @@
 	<head>
 		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.ui.commons"></script>
+				data-sap-ui-libs="sap.ui.commons"
+				data-sap-ui-resourceroots='{
+				"sampleOpaExtension" : "../opa/",
+				"testResources" : "../../../../../../test-resources"
+				}'></script>
+		<script>
+			sap.ui.require("testResources.sap.ui.core.qunit.opa.opaExtensions.SampleOpaExtension");
+		</script>
 	</head>
 	<body id="body"></body>
 </html>

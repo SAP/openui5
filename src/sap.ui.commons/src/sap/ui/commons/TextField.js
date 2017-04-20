@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Renders a input field for text input.
+	 * Renders an input field for text input.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.commons.ToolbarItem
 	 *

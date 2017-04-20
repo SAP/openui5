@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 	 * - For each FormContainer there is an entry inside the object. (this.mContainers[FormContainerId])
 	 * - For each FormContainer there is an array with 3 entries:
 	 *   - [0]: The Panel that renders the Container (undefined if no panel is used)
-	 *          - It's not the standard Panel, is an special panel defined for the ResponsiveLayout
+	 *          - It's not the standard Panel, is a special panel defined for the ResponsiveLayout
 	 *   - [1]: The ResponsiveFlowLayout that holds the Containers content
 	 *          - the getLayoutData function of this ResponsiveFlowLayouts is overwritten to get the LayoutData of the FormContainer
 	 *            (If no panel is used)
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 	 */
 
 	/*
-	 * as the panel can not be used in mobile environment a own internal control is needed to render the containers
+	 * as the panel can not be used in mobile environment an own internal control is needed to render the containers
 	 * use FormContainer as association to have access to it's content directly. So no mapping of properties and aggregations needed
 	 */
 	sap.ui.core.Control.extend("sap.ui.layout.form.ResponsiveLayoutPanel", {
@@ -684,7 +684,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 	}
 
 	/*
-	 * If a ResponsiveFlowLayout for the fields of an FormElement is used it must get the weight
+	 * If a ResponsiveFlowLayout for the fields of a FormElement is used it must get the weight
 	 * of all fields to have the right weight relative to the label.
 	 */
 	function _updateLayoutDataOfContentResponsiveFlowLayout( oLayout, oRFLayout, aFields ) {
@@ -767,7 +767,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 	function _checkElementMoved(oLayout, oContainer, oElement, mRFLayouts, oContainerLayout, iIndex){
 
-		// if a Element is just moved from one Container to an other this is not recognized
+		// if an Element is just moved from one Container to another this is not recognized
 		// so the ResponsiveFlowLayouts must be updated and the control object must be adjusted
 		var sElementId = oElement.getId();
 		var sId = sElementId + "--RFLayout";

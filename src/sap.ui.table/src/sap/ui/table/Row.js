@@ -3,10 +3,9 @@
  */
 
 // Provides control sap.ui.table.Row.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context', './library'],
-	function(jQuery, Element, Context, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context'],
+	function(jQuery, Element, Context) {
 	"use strict";
-
 
 
 	/**
@@ -39,7 +38,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			/*
 			 * Hidden aggregation for row actions
 			 */
-			_rowAction : {type : "sap.ui.table.RowAction", multiple: false, visibility: "hidden"}
+			_rowAction : {type : "sap.ui.table.RowAction", multiple: false, visibility: "hidden"},
+
+			/*
+			 * Hidden aggregation for the settings.
+			 */
+			_settings : {type : "sap.ui.table.RowSettings", multiple: false, visibility: "hidden"}
 		}
 	}});
 

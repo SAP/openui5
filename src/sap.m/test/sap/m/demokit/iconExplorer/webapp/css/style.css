@@ -44,7 +44,7 @@
 	font-size: 1.125rem;
 }
 
-/* styles for the icon copy area (similar to an inpu field) */
+/* styles for the icon copy area (similar to an input field) */
 .sapUiDemoIconExplorer .sapUiCopyIcon {
 	font-size: 0.875rem;
 	line-height: 2.375rem;
@@ -79,10 +79,23 @@
 	padding-right: 0.5rem;
 }
 
+.sapUiDemoIconExplorer .sapUiCopyCode input {
+	text-overflow: ellipsis;
+}
+
+/* Styles for FixFlex layout inside panel */
+.sapUiDemoIconExplorer .previewCopy .sapUiFixFlexFlexibleContainer {
+	width: 100%;
+	position: inherit;
+}
+
+/* Styles for icon preview area */
 .sapUiDemoIconExplorer .previewIcon {
 	font-size: 100px;
 	display: inline-block;
 	width: 100%;
+	padding: 1rem;
+	margin: -1rem;
 }
 
 html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)

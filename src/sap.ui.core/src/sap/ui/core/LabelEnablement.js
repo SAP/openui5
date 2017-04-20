@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 
 		var oControl = toControl(sControlId);
 		if (oControl && oControl.getIdForLabel) {
-			// for some controls the label must point to an special HTML element, not the outer one.
+			// for some controls the label must point to a special HTML element, not the outer one.
 			sControlId = oControl.getIdForLabel();
 		}
 
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	};
 
 	function checkRequired(oElem) {
-		return !!(oElem && oElem.getMetadata().getProperty("required") && oElem.getRequired());
+		return !!(oElem && oElem.getRequired && oElem.getRequired());
 	}
 
 	/**

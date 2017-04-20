@@ -163,7 +163,7 @@ sap.ui.define(["jquery.sap.global"], function ($) {
      * Convenience function that loads the feature file at the given path and executes {@link #parse} on it, returning
      * the result.
      *
-     * @param {string} sPath - the path to the feature file to load, as a SAPUI5 module path. The ".feature" extension is
+     * @param {string} sPath - the path to the feature file to load, as an SAPUI5 module path. The ".feature" extension is
      *                         assumed and should not be included.
      * @returns {object} the parsed Gherkin feature object
      * @see {@link #parse}

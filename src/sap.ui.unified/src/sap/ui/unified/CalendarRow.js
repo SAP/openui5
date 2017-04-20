@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A calendar row with an header and appointments. The Appointments will be placed in the defined interval.
+	 * A calendar row with a header and appointments. The Appointments will be placed in the defined interval.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -364,14 +364,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate = new Date();
 		}
 
-		if (!(oStartDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oStartDate);
 
 		var iYear = oStartDate.getFullYear();
-		if (iYear < 1 || iYear > 9999) {
-			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
-		}
+		CalendarUtils._checkYearInValidRange(iYear);
 
 		this.setProperty("startDate", oStartDate);
 
@@ -571,7 +567,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * For this, each <code>CalendarRow</code> can trigger the resize check for it's own DOM.
 	 * But if multiple <code>CalendarRow</code>s are used in one container (e.g. <code>PlanningCalendar</code>),
-	 * it is better if the container triggers the resize check once an then calls this function
+	 * it is better if the container triggers the resize check once and then calls this function
 	 * of each <code>CalendarRow</code>.
 	 *
 	 * @param {jQuery.Event} oEvent The event object of the resize handler.
@@ -602,7 +598,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * For this, each <code>CalendarRow</code> can trigger a timer.
 	 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. <code>PlanningCalendar</code>),
-	 * it is better if the container triggers the interval once an then calls this function
+	 * it is better if the container triggers the interval once and then calls this function
 	 * of each <code>CalendarRow</code>.
 	 *
 	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
@@ -731,9 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	CalendarRow.prototype.focusNearestAppointment = function(oDate) {
 
-		if (!oDate || !(oDate instanceof Date)) {
-			throw new Error("Date must be a JavaScript date object; " + this);
-		}
+		CalendarUtils._checkJSDateObject(oDate);
 
 		var aAppointments = _getAppointmentsSorted.call(this);
 		var oNextAppointment;
@@ -912,7 +906,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/*
-	 * returns a array of visible appointments
+	 * returns an array of visible appointments
 	 * each entry is an object with the following properties
 	 * - appointment: the appointment object
 	 * - begin: begin position in %
@@ -1217,7 +1211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/*
-	 * returns a array of visible intervalHeaders
+	 * returns an array of visible intervalHeaders
 	 * each entry is an object with the following properties
 	 * - interval: number of the interval
 	 * - appointment: the appointment object

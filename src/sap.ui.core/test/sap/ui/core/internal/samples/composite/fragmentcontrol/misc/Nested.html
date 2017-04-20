@@ -22,7 +22,6 @@
 	<script>
 		//jQuery.sap.require("sap.ui.mdc.model.GenericType");
 		jQuery.sap.require("sap.ui.core.FragmentControl");
-		jQuery.sap.require("sap.ui.core.FragmentControlMetadata");
 		jQuery.sap.declare("sap.mdc.InfoButton");
 
 		//TODO: move to another file !
@@ -41,7 +40,7 @@
 					infoText: {
 						type: "string",
 						defaultValue: "y",
-						invalidate: sap.ui.core.FragmentControlMetadata.Render
+						invalidate: true
 					}
 				}
 			},

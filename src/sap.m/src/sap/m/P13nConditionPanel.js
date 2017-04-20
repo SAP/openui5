@@ -2572,7 +2572,7 @@ sap.ui.define([
 	 * @param {string} sOperation the operation type sap.m.P13nConditionOperation
 	 * @param {string} sValue1 text of the first condition field
 	 * @param {string} sValue2 text of the seoncd condition field
-	 * @param {boolean} bExclude indicates if the condition is a Exclude condition
+	 * @param {boolean} bExclude indicates if the condition is an Exclude condition
 	 * @param {string} sKeyField id
 	 * @returns {string} the condition text
 	 */

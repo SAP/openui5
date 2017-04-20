@@ -1,7 +1,6 @@
 /*!
  * ${copyright}
  */
-
 // Provides control sap.m.SelectionDetails.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', "sap/ui/Device"],
 	function(jQuery, library, Control, Button, Interface, Device) {
@@ -14,13 +13,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The control provides a popover which displays the details of the items selected in the chart. This control should be used in toolbar suite.ui.commons.ChartContainer and sap.ui.comp.smartchart.SmartChart controls. At first the control is rendered as a button, that opens the popup after clicking on it.
+	 * The protected control provides a popover that displays the details of the items selected in the chart. This control should only be used in the suite.ui.commons.ChartContainer toolbar and sap.ui.comp.smartchart.SmartChart controls. Initially, the control is rendered as a button that opens the popup after clicking on it.
+	 * <b><i>Note:<i></b>It is protected and should ony be used within the framework itself.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
+	 * @extends sap.ui.core.Control
 	 * @constructor
-	 * @private
+	 * @protected
+	 * @since 1.48.0
 	 * @experimental Since 1.48.0 The control is currently under development. The API could be changed at any point in time. Please take this into account when using it.
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 * @alias sap.m.SelectionDetails
@@ -109,7 +111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @type {int}
 	 * @private
 	 */
-	SelectionDetails._MAX_ACTIONGROUPS = 5;
+	SelectionDetails._MAX_ACTIONGROUPS = 5; // This number is also implemented as a rule within the sap.ui.support namespace.
 
 	/* =========================================================== */
 	/* Lifecycle methods                                           */
@@ -140,6 +142,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * Returns true if the SelectionDetails is open, otherwise false.
 	 * @returns {boolean} True if the SelectionDetails is open, otherwise false.
 	 * @public
+	 * @function
+	 * @name sap.m.SelectionDetailsFacade#isOpen
 	 */
 	SelectionDetails.prototype.isOpen = function() {
 		var oPopover = this.getAggregation("_popover");
@@ -150,6 +154,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * Returns true if the SelectionDetails is enabled, otherwise false.
 	 * @returns {boolean} True if the SelectionDetails contains items, otherwise false.
 	 * @public
+	 * @function
+	 * @name sap.m.SelectionDetailsFacade#isEnabled
 	 */
 	SelectionDetails.prototype.isEnabled = function() {
 		return this.getItems().length > 0;
@@ -159,6 +165,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * Closes SelectionDetails if open.
 	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
 	 * @public
+	 * @function
+	 * @name sap.m.SelectionDetailsFacade#close
 	 */
 	SelectionDetails.prototype.close = function() {
 		var oPopover = this.getAggregation("_popover");
@@ -177,6 +185,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @param {sap.ui.core.Control} content The content of the control to which the navigation should occur.
 	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
 	 * @public
+	 * @function
+	 * @name sap.m.SelectionDetailsFacade#navTo
 	 */
 	SelectionDetails.prototype.navTo = function(title, content) {
 		if (this.isOpen()) {
@@ -241,7 +251,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 		if (showBackButton) {
 			var oBackButton = new Button({
-				type: library.ButtonType.Transparent,
 				icon: "sap-icon://nav-back",
 				press: this._oNavContainer.back.bind(this._oNavContainer)
 			});
@@ -330,9 +339,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @private
 	 */
 	SelectionDetails.prototype._updateButton = function () {
-		var sText,
-			oButton = this.getAggregation("_button"),
-			iCount = this._oSelectionData && this._oSelectionData.length || this.getItems().length;
+		var sText, iCount, oButton = this.getAggregation("_button");
+		if (this._oSelectionData && this._oSelectionData.length >= 0) {
+			iCount = this._oSelectionData.length;
+		} else {
+			iCount = this.getItems().length;
+		}
 
 		if (iCount > 0) {
 			sText = this._oRb.getText("SELECTIONDETAILS_BUTTON_TEXT_WITH_NUMBER", [ iCount ]);
@@ -519,7 +531,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 */
 	SelectionDetails.prototype._createMainContainer = function(FixFlex) {
 		return new FixFlex(this.getId() + "-mainContainer", {
-			fixFirst: false
+			fixFirst: false,
+			minFlexSize: -1 // use -1 to enable scrolling. If minFlexSize is not set, scrolling is disabled
 		});
 	};
 
@@ -629,7 +642,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 			oButton = new Button(this.getId() + "-action-" + i, {
 				text: oAction.getText(),
 				enabled: oAction.getEnabled(),
-				type : library.ButtonType.Transparent,
 				press: [{
 					action: oAction,
 					level: library.SelectionDetailsActionLevel.List
@@ -649,7 +661,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 		this.fireActionPress({
 			action: oData && oData.action || oEvent.getParameter("action"),
-			items: this.getItems(),
+			items: oEvent.getParameter("items") || this.getItems(),
 			level: oData && oData.level || oEvent.getParameter("level")
 		});
 	};

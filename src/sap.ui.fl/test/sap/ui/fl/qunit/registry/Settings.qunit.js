@@ -63,7 +63,31 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		QUnit.equal(bIsAtoEnabled, false);
 	});
 
-	QUnit.test("load from cache without app version", function(assert) {
+	QUnit.test("get instance from flex settings request", function(assert) {
+		var done = assert.async();
+
+		var oSetting = {
+			isKeyUser: true,
+			isAtoAvailable: true
+		};
+		var oStubCreateConnector = this.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
+			loadSettings : function(){
+				return Promise.resolve(oSetting);
+			}
+		});
+		Settings.getInstance().then(function(oSettings) {
+			assert.equal(oStubCreateConnector.callCount, 1);
+			QUnit.equal(oSettings.isKeyUser(), true);
+			QUnit.equal(oSettings.isModelS(), true);
+			Settings.getInstance('anotherComponent').then(function(oSettings2) {
+				assert.equal(oStubCreateConnector.callCount, 1);
+				QUnit.equal(oSettings, oSettings2);
+				done();
+			});
+		});
+	});
+
+	QUnit.test("get instance from cache without app version", function(assert) {
 		var done = assert.async();
 
 		var oFileContent = {
@@ -88,7 +112,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
-	QUnit.test("load from cache with app version", function(assert) {
+	QUnit.test("get instance from cache with app version", function(assert) {
 		var done = assert.async();
 
 		var oFileContent = {
@@ -116,24 +140,23 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	QUnit.test("getInstanceOrUndef", function(assert) {
 		var done = assert.async();
 
-		var oFileContent = {
-			changes: {
-				settings: {
-					isKeyUser: true,
-					isAtoAvailable: true
-				}
+		var oSetting = {
+			isKeyUser: true,
+			isAtoAvailable: true
+		};
+		var oStubCreateConnector = this.stub(sap.ui.fl.LrepConnector, "createConnector").returns({
+			loadSettings : function(){
+				return Promise.resolve(oSetting);
 			}
-		};
-		Cache._entries['testcomponent'] = {};
-		Cache._entries['testcomponent'][Utils.DEFAULT_APP_VERSION] = {
-			promise: Promise.resolve(oFileContent)
-		};
+		});
 		var oSettings0 = Settings.getInstanceOrUndef();
 		QUnit.ok(!oSettings0);
-		Settings.getInstance('testcomponent').then(function(oSettings1) {
+		Settings.getInstance().then(function(oSettings1) {
 			QUnit.ok(oSettings1);
+			assert.equal(oStubCreateConnector.callCount, 1);
 			var oSettings2 = Settings.getInstanceOrUndef();
 			QUnit.equal(oSettings1, oSettings2);
+			assert.equal(oStubCreateConnector.callCount, 1);
 			done();
 		});
 	});

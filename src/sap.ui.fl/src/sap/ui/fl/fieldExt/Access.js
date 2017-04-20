@@ -129,7 +129,7 @@ sap.ui.define(["jquery.sap.storage"], function(Storage) {
 	 * Extracts ServiceName and ServiceVersion out of Service URI
 	 *
 	 * @private
-	 * @param {string} 		sServiceUri			URI to a OData service document
+	 * @param {string} 		sServiceUri			URI to an OData service document
 	 * @returns {object} 						An object with serviceName and serviceVersion
 	 */
 	Access._parseServiceUri = function(sServiceUri) {
