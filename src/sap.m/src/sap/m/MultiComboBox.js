@@ -183,6 +183,48 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	};
 
 	/**
+	 * Handles the <code>onsapshow</code> event when either F4 is pressed or Alt + Down arrow are pressed.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	MultiComboBox.prototype.onsapshow = function(oEvent) {
+		var oList = this.getList(),
+			oPicker = this.getPicker(),
+			aSelectableItems = this.getSelectableItems(),
+			aSelectedItems = this.getSelectedItems(),
+			oItemToFocus, oItemNavigation = oList.getItemNavigation(),
+			iItemToFocus, oCurrentFocusedControl;
+
+		oCurrentFocusedControl = jQuery(document.activeElement).control()[0];
+
+		if (oCurrentFocusedControl instanceof sap.m.Token) {
+			oItemToFocus = this._getItemByToken(oCurrentFocusedControl);
+		} else {
+			// we need to take the list's first selected item not the first selected item by the combobox user
+			oItemToFocus = aSelectedItems.length ? this._getItemByListItem(this.getList().getSelectedItems()[0]) : aSelectableItems[0];
+		}
+
+		iItemToFocus = this.getItems().indexOf(oItemToFocus);
+
+		if (oItemNavigation) {
+			oItemNavigation.setSelectedIndex(iItemToFocus);
+		} else {
+			this._bListItemNavigationInvalidated = true;
+			this._iInitialItemFocus = iItemToFocus;
+		}
+
+		oPicker.setInitialFocus(oList);
+		ComboBoxBase.prototype.onsapshow.apply(this, arguments);
+	};
+
+	/**
+	 * Handles when Alt + Up arrow are pressed.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 */
+	MultiComboBox.prototype.onsaphide = MultiComboBox.prototype.onsapshow;
+
+	/**
 	 * Handles the item selection when user triggers an item selection via key press (TAB, ENTER etc.).
 	 *
 	 * @param {jQuery.Event} oEvent The key event object.
@@ -668,6 +710,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 */
 	MultiComboBox.prototype.onAfterOpen = function() {
 
+		// reset the initial focus back to the input
+		if (!this.isPlatformTablet()) {
+			this.getPicker().setInitialFocus(this);
+		}
+
 		// close error message when the list is open, otherwise the list can be covered by the message
 		this.closeValueStateMessage();
 	};
@@ -836,7 +883,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		.attachItemPress(this._handleItemPress, this);
 
 		this._oList.addEventDelegate({
-			onAfterRendering: this.onAfterRenderingList
+			onAfterRendering: this.onAfterRenderingList,
+			onfocusin: this.onFocusinList
 		}, this);
 	};
 
@@ -1476,6 +1524,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		if (this._iFocusedIndex != null && oList.getItems().length > this._iFocusedIndex) {
 			oList.getItems()[this._iFocusedIndex].focus();
 			this._iFocusedIndex = null;
+		}
+	};
+
+	/**
+	 * As the ItemNavigation of the list is created onfocusin we need handle this and set some initial root focus dome ref
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype.onFocusinList = function() {
+		if (this._bListItemNavigationInvalidated) {
+			this.getList().getItemNavigation().setSelectedIndex(this._iInitialItemFocus);
+			this._bListItemNavigationInvalidated = false;
 		}
 	};
 
@@ -2386,6 +2446,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		 *
 		 */
 		this.bItemsUpdated = false;
+
+		// To detect whether the List's item navigation is inited
+		this._bListItemNavigationInvalidated = false;
+
+		// Defines the initial selected index of List's item navigation
+		this._iInitialItemFocus = -1;
 
 		/**
 		 * To detect whether a checkbox or an item body is clicked.
