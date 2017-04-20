@@ -180,12 +180,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		if (this.bRefresh) {
-			// if refreshing and length is 0, pretend a request to be fired to make a refresh with
-			// with preceding $count request look like a request with $inlinecount=allpages
-			if (this.bLengthFinal && this.iLength === 0) {
-				this.loadData(oSection.startIndex, oSection.length, true);
-				aContexts.dataRequested = true;
-			}
 			this.bRefresh = false;
 		} else {
 			// Do not create context data and diff in case of refresh, only if real data has been received
@@ -479,15 +473,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 *
 	 * @param {int} iStartIndex The start index
 	 * @param {int} iLength The count of data to be requested
-	 * @param {boolean} bPretend Pretend
 	 * Load list data from the server
 	 * @private
 	 */
-	ODataListBinding.prototype.loadData = function(iStartIndex, iLength, bPretend) {
+	ODataListBinding.prototype.loadData = function(iStartIndex, iLength) {
 
 		var that = this,
 		bInlineCountRequested = false,
-		sUrl, sGuid = jQuery.sap.uid(),
+		sGuid = jQuery.sap.uid(),
 		sGroupId;
 
 		// create range parameters and store start index for sort/filter requests
@@ -651,29 +644,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			sPath = this.oModel.resolve(sPath,oContext);
 		}
 		if (sPath) {
-			if (bPretend) {
-				// Pretend to send a request by firing the appropriate events
-				sUrl = this.oModel._createRequestUrl(sPath, aParams);
+			// Execute the request and use the metadata if available
+			this.bPendingRequest = true;
+			if (!this.bSkipDataEvents) {
 				this.fireDataRequested();
-				this.oModel.fireRequestSent({url: sUrl, method: "GET", async: true});
-				setTimeout(function() {
-					// If request is originating from this binding, change must be fired afterwards
-					that.bNeedsUpdate = true;
-					that.checkUpdate();
-					that.oModel.fireRequestCompleted({url: sUrl, method: "GET", async: true, success: true});
-					that.fireDataReceived({data: {}});
-				}, 0);
-			} else {
-				// Execute the request and use the metadata if available
-				this.bPendingRequest = true;
-				if (!this.bSkipDataEvents) {
-					this.fireDataRequested();
-				}
-				this.bSkipDataEvents = false;
-				//if load is triggered by a refresh we have to check the refreshGroup
-				sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
-				this.mRequestHandles[sGuid] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 			}
+			this.bSkipDataEvents = false;
+			//if load is triggered by a refresh we have to check the refreshGroup
+			sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
+			this.mRequestHandles[sGuid] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
 		}
 
 	};
