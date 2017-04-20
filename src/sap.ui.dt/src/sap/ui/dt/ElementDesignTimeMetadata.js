@@ -217,6 +217,15 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		}
 	};
 
+	/**
+	 * Returns the scroll containers or an empty array
+	 *
+	 * @return {array} scrollContainers or empty array
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.getScrollContainers = function() {
+		return this.getData().scrollContainers || [];
+	};
 
 	return ElementDesignTimeMetadata;
 }, /* bExport= */ true);
