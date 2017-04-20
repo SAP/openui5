@@ -3,7 +3,7 @@
  */
 
 /**
- * Initialization Code and shared classes of library sap.ui.demokit.
+ * Initialization Code and shared classes of library sap.ui.documentation.
  */
 sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/library', 'sap/m/library'], // library dependency

@@ -1,5 +1,5 @@
 .sapUiBody#content {
-	padding-left: 0; /* overrides the padding of demokit */
+	padding-left: 0; /* overrides the padding of documentation */
 }
 
 #CompactModeLabel, #RTLLabel {
@@ -58,12 +58,6 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 	content:"\e047";
 	color: #666666;
 	width: 1.5rem;
-}
-
-pre.sapUiCodeViewer.sapUiExploredCodeViewer {
-	background-color: white;
-	word-wrap: break-word;
-	white-space: pre-wrap; /*for firefox*/
 }
 
 /* explored entity view */

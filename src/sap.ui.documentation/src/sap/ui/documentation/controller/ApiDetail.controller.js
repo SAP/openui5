@@ -6,8 +6,9 @@
 sap.ui.define([
 		"sap/ui/documentation/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/controller/util/JSDocUtil"
-	], function (BaseController, JSONModel, JSDocUtil) {
+		"sap/ui/documentation/controller/util/JSDocUtil",
+		"sap/ui/Device"
+	], function (BaseController, JSONModel, JSDocUtil, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.controller.ApiDetail", {
@@ -55,15 +56,15 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onAfterRendering: function() {
-				sap.ui.Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onExit: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			/* =========================================================== */

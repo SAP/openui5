@@ -8,14 +8,14 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/controller/util/ControlsInfo",
-		"sap/ui/demokit/EntityInfo",
+		"sap/ui/documentation/controller/util/EntityInfo",
 		"sap/ui/documentation/controller/util/JSDocUtil",
-		"sap/ui/demokit/util/APIInfo",
 		"sap/ui/documentation/util/ObjectSearch",
 		"sap/ui/core/util/LibraryInfo",
-		"sap/ui/documentation/util/ToggleFullScreenHandler"
+		"sap/ui/documentation/util/ToggleFullScreenHandler",
+		"sap/ui/Device"
 	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo,
-				 EntityInfo, JSDocUtil, APIInfo, ObjectSearch, LibraryInfo, ToggleFullScreenHandler) {
+				 EntityInfo, JSDocUtil, ObjectSearch, LibraryInfo, ToggleFullScreenHandler, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.controller.Entity", {
@@ -25,8 +25,6 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-
-				APIInfo._setRoot('./resources/');
 
 				this.router = this.getRouter();
 				this.router.getRoute("entity").attachPatternMatched(this.onRouteMatched, this);
@@ -38,15 +36,15 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onAfterRendering: function() {
-				sap.ui.Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onExit: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
@@ -155,7 +153,7 @@ sap.ui.define([
 				// var bEntityIsInIndex = !!sPath;
 				// var oHistory = sap.ui.core.routing.History.getInstance();
 				// var oPrevHash = oHistory.getPreviousHash();
-				// var bShowNavButton = sap.ui.Device.system.phone || (!bEntityIsInIndex && !!oPrevHash);
+				// var bShowNavButton = Device.system.phone || (!bEntityIsInIndex && !!oPrevHash);
 				// this.getView().byId("page").setShowNavButton(bShowNavButton);
 
 				// set data model

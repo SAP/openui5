@@ -129,7 +129,7 @@ sap.ui.define([
 
 			_onControlsMasterMatched: function(event) {
 				this.showMasterSide();
-				if (!sap.ui.Device.system.phone) {
+				if (!Device.system.phone) {
 					this.getRouter().navTo("controls");
 				}
 			},

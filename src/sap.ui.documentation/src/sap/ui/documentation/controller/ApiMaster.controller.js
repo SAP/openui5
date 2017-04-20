@@ -147,7 +147,7 @@ sap.ui.define([
 
 				var tree = this.byId("tree");
 				var oldModel = tree.getModel();
-				var newModel = new sap.ui.model.json.JSONModel(aTreeContent);
+				var newModel = new JSONModel(aTreeContent);
 				newModel.setSizeLimit(iTreeModelLimit);
 				tree.setModel(newModel);
 				oldModel.destroy();

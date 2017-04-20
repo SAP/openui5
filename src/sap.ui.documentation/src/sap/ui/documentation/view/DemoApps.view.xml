@@ -10,7 +10,7 @@
 		showFooter="false"
 		showHeader="false">
 		<content>
-			<core:ComponentContainer name="sap.ui.demokit.demoapps" />
+			<core:ComponentContainer name="sap.ui.documentation.demoapps" />
 		</content>
 	</Page>
 </mvc:View>

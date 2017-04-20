@@ -15,9 +15,6 @@
     <dependency>
       <libraryName>sap.m</libraryName>
     </dependency>
-    <dependency>
-          <libraryName>sap.ui.demokit</libraryName>
-        </dependency>
   </dependencies>
 
   <appData>

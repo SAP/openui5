@@ -5,8 +5,9 @@
 /*global location */
 sap.ui.define([
 		"sap/ui/documentation/controller/BaseController",
-		"sap/ui/model/json/JSONModel"
-	], function (BaseController, JSONModel) {
+		"sap/ui/model/json/JSONModel",
+		"sap/m/GroupHeaderListItem"
+	], function (BaseController, JSONModel, GroupHeaderListItem) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.controller.SearchPage", {
@@ -131,7 +132,7 @@ sap.ui.define([
 			},
 
 			getGroupHeader : function (oGroup) {
-				return new sap.m.GroupHeaderListItem( {
+				return new GroupHeaderListItem( {
 					title: oGroup.key,
 					upperCase: false
 				} );

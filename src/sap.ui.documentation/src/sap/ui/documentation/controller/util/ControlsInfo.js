@@ -3,8 +3,8 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo'],
-	function(jQuery, LibraryInfo) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/documentation/library'],
+	function(jQuery, LibraryInfo, library) {
 		"use strict";
 
 		var ControlsInfo = {
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo'],
 
 				var that = this;
 
-				sap.ui.demokit._loadAllLibInfo(
+				library._loadAllLibInfo(
 					"", "_getDocuIndex",
 					function (aLibs, oDocIndicies) {
 						ControlsInfo._getIndices(aLibs, oDocIndicies);

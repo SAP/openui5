@@ -8,8 +8,8 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/controller/util/JSDocUtil",
 		"sap/ui/documentation/controller/util/XML2JSONUtils",
-		"sap/uxap/ObjectPageSubSection"
-	], function (BaseController, JSONModel, JSDocUtil, XML2JSONUtils, ObjectPageSubSection) {
+		"sap/ui/Device"
+	], function (BaseController, JSONModel, JSDocUtil, XML2JSONUtils, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.controller.TopicDetail", {
@@ -24,7 +24,7 @@ sap.ui.define([
 				this.oPage.addStyleClass('docuPage');
 
 				if ( !window.prettyPrint ) {
-					jQuery.sap.require("sap.ui.demokit.js.google-code-prettify.prettify");
+					jQuery.sap.require("sap.ui.documentation.controller.util.google-code-prettify.prettify");
 				}
 
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);
@@ -35,15 +35,15 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onAfterRendering: function() {
-				sap.ui.Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onExit: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			/* =========================================================== */

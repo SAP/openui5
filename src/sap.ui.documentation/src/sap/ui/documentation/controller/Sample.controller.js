@@ -5,12 +5,17 @@
 /*global location */
 sap.ui.define([
 		"sap/ui/documentation/controller/BaseController",
-		"sap/ui/model/json/JSONModel", "sap/ui/core/ComponentContainer",
+		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/controller/util/ControlsInfo",
 		"sap/ui/documentation/util/ToggleFullScreenHandler",
 		"sap/ui/fl/FakeLrepConnectorLocalStorage",
-		"sap/ui/fl/Utils"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, FakeLrepConnectorLocalStorage, Utils) {
+		"sap/ui/fl/Utils",
+		"sap/m/Text",
+		"sap/ui/core/HTML",
+		"sap/ui/Device",
+		"sap/ui/core/routing/History"
+	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, FakeLrepConnectorLocalStorage, Utils, Text, HTML, Device, History) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.controller.Sample", {
@@ -40,15 +45,15 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onAfterRendering: function() {
-				sap.ui.Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onExit: function() {
-				sap.ui.Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			/* =========================================================== */
@@ -80,9 +85,9 @@ sap.ui.define([
 
 				// set nav button visibility
 				var oPage = this.getView().byId("page");
-				var oHistory = sap.ui.core.routing.History.getInstance();
+				var oHistory = History.getInstance();
 				var oPrevHash = oHistory.getPreviousHash();
-				oModelData.showNavButton = sap.ui.Device.system.phone || !!oPrevHash;
+				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;
 
@@ -93,7 +98,7 @@ sap.ui.define([
 					var oContent = this._createComponent();
 				} catch (ex) {
 					oPage.removeAllContent();
-					oPage.addContent(new sap.m.Text({ text : "Error while loading the sample: " + ex }));
+					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
 					return;
 				}
 
@@ -165,7 +170,7 @@ sap.ui.define([
 					return;
 				}
 
-				var oHtmlControl = new sap.ui.core.HTML({
+				var oHtmlControl = new HTML({
 					content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
 				}).addEventDelegate({
 						onAfterRendering : function () {
@@ -195,7 +200,7 @@ sap.ui.define([
 					name : sCompName
 				});
 				// create component container
-				return new sap.ui.core.ComponentContainer({
+				return new ComponentContainer({
 					component: this._oComp
 				});
 			},

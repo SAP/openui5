@@ -1,9 +1,0 @@
-<mvc:View
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:core="sap.ui.core"
-		xmlns="sap.m"
-		width="100%"
-		controllerName="sap.ui.documentation.controls.HTMLBlockController">
-
-		<core:HTML content="{path: 'p_content', formatter: '._wrapInSpanTag'}"/>
-</mvc:View>

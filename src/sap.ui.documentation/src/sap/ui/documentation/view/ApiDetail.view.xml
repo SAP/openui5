@@ -4,10 +4,10 @@
 		xmlns:m="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:demokit="sap.ui.demokit"
+		xmlns:ce="sap.ui.codeeditor"
 		xmlns:layout="sap.ui.layout">
 
-		<m:Page
+	<m:Page
 			id="apiDetailPage"
 			navButtonPress="onNavBack"
 			showHeader="{device>/orientation/portrait}"
@@ -89,9 +89,8 @@
 									<layout:VerticalLayout>
 										<core:HTML content="{parts: [{path: 'topics>/constructor/description'}],
 																	  formatter: '.formatDescription'}{}"/>
-										<demokit:CodeViewer	visible="{topics>/hasConstructor}"
-															lineNumbering="true"
-															source="{parts: [{path: 'topics>/name' },
+										<ce:CodeEditor height="2rem" width="800px" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
+													   value="{parts: [{path: 'topics>/name' },
 																			 {path: 'topics>/constructor/parameters' }],
 																	 		  formatter: '.formatConstructor'}"/>
 									</layout:VerticalLayout>

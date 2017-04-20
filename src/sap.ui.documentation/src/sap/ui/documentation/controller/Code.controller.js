@@ -208,7 +208,8 @@ sap.ui.define([
 
 			_openGeneratedFile : function (oContent) {
 				jQuery.sap.require("sap.ui.core.util.File");
-				sap.ui.core.util.File.save(oContent, this._sId, "zip", "application/zip");
+				var File = sap.ui.require("sap/ui/core/util/File");
+				File.save(oContent, this._sId, "zip", "application/zip");
 			},
 
 			createIndexFile : function(oData) {
@@ -216,7 +217,7 @@ sap.ui.define([
 				var sHeight,
 					bScrolling;
 
-				var sRef = jQuery.sap.getModulePath("sap.ui.demokit.explored.tmpl");
+				var sRef = jQuery.sap.getModulePath("sap.ui.documentation.tmpl");
 				var sIndexFile = this.fetchSourceFile(sRef, "index.html.tmpl");
 
 				sIndexFile = sIndexFile.replace(/{{TITLE}}/g, oData.name);
