@@ -5,14 +5,9 @@ sap.ui.define([
 	'sap/ui/core/FragmentControl'
 ], function(FragmentControl) {
 	"use strict";
-	return FragmentControl.extend("fragments.TemplateTest", {
+	return FragmentControl.extend("fragments.Abstract", {
 		metadata: {
-			properties: {
-				text: {
-					type: "string",
-					invalidate: "template"
-				}
-			}
+			"abstract": true
 		}
 	});
 }, /* bExport= */true);
