@@ -3943,6 +3943,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
 				}
+				this._updateBindingLength(true);
 				this._updateNoData();
 				delete this._dataReceivedHandlerId;
 			});

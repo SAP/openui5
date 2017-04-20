@@ -2150,6 +2150,7 @@
 		var oEvent = {};
 		var oBinding = oTable.getBinding("rows");
 		var oGetBindingLength = this.stub(oBinding, "getLength");
+		var oIsInstanceOf = this.stub(sap.ui.table.TableUtils, "isInstanceOf");
 		var oClock = sinon.useFakeTimers();
 
 		oEvent.getSource = function() {
@@ -2190,32 +2191,33 @@
 		assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), false, "Test: NoData is visible: false");
 
 		// No data received: NoData area becomes visible.
-		oTable._iBindingLength = 0;
+		oGetBindingLength.returns(0);
 		testDataReceivedListener(true);
 
 		// Data received: NoData area will be hidden.
-		oTable._iBindingLength = 1;
+		oGetBindingLength.returns(1);
 		testDataReceivedListener(false);
 
 		// Client Binding without data: NoData area becomes visible.
-		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
+		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
 		oGetBindingLength.returns(0);
 		testUpdateBindingLength(true);
 
 		// Client Binding with data: NoData area will be hidden.
 		sap.ui.table.TableUtils.isInstanceOf.restore();
-		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
+		oIsInstanceOf.restore();
+		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
 		oGetBindingLength.returns(1);
 		testUpdateBindingLength(false);
 
 		// Binding removed: NoData area becomes visible.
-		sap.ui.table.TableUtils.isInstanceOf.restore();
-		oGetBindingLength.restore();
+		oIsInstanceOf.restore();
 		oTable.unbindRows();
 		testUpdateBindingLength(true);
 
 		// Cleanup
 		oClock.restore();
+		oGetBindingLength.restore();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
