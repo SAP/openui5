@@ -417,7 +417,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 			// TBD: Move this to the table code
 			this._setRowContentHeight(iNewHeight);
-			this._adjustRows(this._calculateRowsToDisplay(iNewHeight));
+			this._updateRows(this._calculateRowsToDisplay(iNewHeight), TableUtils.RowsUpdateReason.Resize);
 
 			$Ghost.remove();
 			this.$("rzoverlay").remove();
