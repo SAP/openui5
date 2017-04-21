@@ -50,9 +50,8 @@ sap.ui.define([
 				var fnHandleUserMenuItemPress = function (oEvent) {
 					MessageToast.show(oEvent.getSource().getText() + " was pressed");
 				};
-				var oActionSheet = new ActionSheet(this.getView().createId("userMessagePopover"), {
+				var oActionSheet = new ActionSheet(this.getView().createId("userMessageActionSheet"), {
 					title: oBundle.getText("userHeaderTitle"),
-					placement: sap.m.PlacementType.Button,
 					showCancelButton: false,
 					buttons: [
 						new Button({
