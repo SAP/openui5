@@ -13,7 +13,7 @@ sap.ui.define([
 
 				iPressTheProductLink: function () {
 					return this.waitFor({
-						controlType: "sap.m.Link",
+						controlType: "sap.m.ObjectIdentifier",
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
