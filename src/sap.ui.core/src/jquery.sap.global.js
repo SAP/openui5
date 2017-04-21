@@ -594,6 +594,7 @@
 			// To reboot an alternative core just step down a few lines and set sRebootUrl
 			/*eslint-disable no-debugger */
 			debugger;
+			/*eslint-enable no-debugger */
 		}
 
 		// Check local storage for booting a different core
