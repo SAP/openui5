@@ -16,6 +16,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			this.byId("DP6").setMinDate(new Date(2016, 0, 1));
 			this.byId("DP6").setMaxDate(new Date(2016, 11, 31));
 			this.byId("DP6").setDateValue(new Date(2016, 1, 16));
+			this.byId("DP7").addSpecialDate(new sap.ui.unified.DateTypeRange({
+				startDate: new Date(2015, 10, 5),
+				endDate: new Date(2015, 10, 25),
+				type: sap.ui.unified.CalendarDayType.NonWorking
+			}));
 
 			this._iEvent = 0;
 
