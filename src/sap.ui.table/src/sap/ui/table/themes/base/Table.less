@@ -596,6 +596,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
 	width: @_sapUiTableRowHdrWidth;
 	box-sizing: border-box;
 	min-height: @_sapUiTableRowHeight;
+    touch-action: none; /* for touch scrolling */
 }
 
 .sapUiSizeCondensed .sapUiTableRowHdrScr {
@@ -718,6 +719,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
 	box-sizing: border-box;
 	min-height: @_sapUiTableRowHeight;
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars*/
+	touch-action: pan-x; /* for touch scrolling, vertical only */
 }
 
 .sapUiTableRActS .sapUiTableRowActionHeader,
@@ -862,6 +864,17 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
 	margin: 0;
 	overflow: hidden;
 	box-sizing: border-box;
+}
+
+/* disable default touch move behavior on scrollable table rows,
+   vertical and horizontal scrolling is done in TableScrollExtensions.js */
+.sapUiTableCtrlRowScroll {
+	touch-action: none;
+}
+/* disable horizontal touch move behavior on fixed table rows
+   horizontal scrolling is done in in TableScrollExtensions.js */
+.sapUiTableCtrlRowFixed, .sapUiTableCtrlRowFixedBottom {
+	touch-action: pan-y;
 }
 
 .sapUiTableVScr .sapUiTableCtrlScr {
