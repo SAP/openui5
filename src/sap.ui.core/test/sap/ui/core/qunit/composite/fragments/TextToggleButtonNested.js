@@ -10,8 +10,10 @@ sap.ui.define([
 		}
 	});
 	TextToggleButtonNested.prototype.onPressRefresh = function() {
-		this.getAggregation("_content").getItems()[0].setText(undefined);
-		this.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].setPressed(false);
+        var sDefault = this.getAggregation("_content").getItems()[0].getMetadata().getProperty("text").getDefaultValue();
+
+        this.getAggregation("_content").getItems()[0].setText(undefined);
+        this.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].setPressed(false);
 		this.fireRefreshed();
 	};
 	return TextToggleButtonNested;
