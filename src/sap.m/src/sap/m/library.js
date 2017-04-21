@@ -1955,7 +1955,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
 		 * @public
 		 */
-		NeverOverflow : "Never",
+		NeverOverflow : "NeverOverflow",
+
+		/**
+		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.NeverOverflow</code> instead
+		 * @deprecated Since version 1.48
+		 * @public
+		 */
+		Never : "Never",
 
 		/**
 		 * High priority OverflowToolbar items overflow after the items with lower priority
@@ -1979,7 +1986,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
 		 * @public
 		 */
-		AlwaysOverflow : "Always"
+		AlwaysOverflow : "AlwaysOverflow",
+
+		/**
+		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.AlwaysOverflow</code> instead
+		 * @deprecated Since version 1.48
+		 * @public
+		 */
+		Always : "Always"
 
 	};
 
