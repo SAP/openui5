@@ -699,7 +699,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			return;
 		}
 
-		this.$()
+		this.$().find(".sapUiTableColCell")
 			.toggleClass("sapUiTableColSF", bSorted || bFiltered)
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)
