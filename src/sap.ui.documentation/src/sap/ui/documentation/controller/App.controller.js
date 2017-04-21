@@ -24,6 +24,7 @@ sap.ui.define([
 						bPhoneSize: false,
 						bLandscape: Device.orientation.landscape,
 						bHasMaster: false,
+						bSearchMode: false,
 						version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
 						fullVersion: sap.ui.version,
 						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
@@ -462,11 +463,11 @@ sap.ui.define([
 				oViewModel.setProperty("/bLandscape", Device.orientation.landscape);
 			},
 
-			switchHeaderControlsVisibility : function () {
-				var oSearchField = this._oView.byId("searchField"),
-					bSearchFieldVisible = oSearchField.getVisible();
+			onToggleSearchMode : function(oEvent) {
+				var bSearchMode = oEvent.getParameter("isOpen"),
+				oViewModel = this.getModel("appView");
 
-				oSearchField.setVisible(!bSearchFieldVisible);
+				oViewModel.setProperty("/bSearchMode", bSearchMode);
 			},
 
 			/**

@@ -4,6 +4,7 @@
 		xmlns:tnt="sap.tnt"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:custom="sap.ui.documentation.controls"
 		displayBlock="true"
 		busy="{appView>/busy}"
 		busyIndicatorDelay="{appView>/delay}">
@@ -30,7 +31,8 @@
 						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
 						mode="Inline"
-						select="navigateToSection">
+						select="navigateToSection"
+						visible="{=!${appView>/bPhoneSize} || !${appView>/bSearchMode}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
 					</layoutData>
@@ -48,28 +50,22 @@
 					</items>
 				</IconTabHeader>
 
-				<ToolbarSpacer>
+				<ToolbarSpacer visible="{=!${appView>/bPhoneSize}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px" />
 					</layoutData>
 				</ToolbarSpacer>
-				<SearchField id="searchField" search="onSearch" showSearchButton="false" width="20%" class="sdkHeaderSearchField" visible="false">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</SearchField>
-				<ToggleButton id="search" icon="sap-icon://search" class="sdkHeaderSearchButton" type="Transparent" press="switchHeaderControlsVisibility">
-					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" />
-					</layoutData>
-				</ToggleButton>
-				<Button icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize}}" press="feedbackDialogOpen">
+
+				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
+
+				<Button icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
 
-				<MenuButton icon="sap-icon://hint" type="Transparent">
+				<MenuButton icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>

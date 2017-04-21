@@ -28,7 +28,9 @@ sap.ui.define(['jquery.sap.global',
 		dependencies : ['sap.ui.core','sap.m'],
 		types: [],
 		interfaces: [],
-		controls: [],
+		controls: [
+			"sap.ui.documentation.controls.Search"
+		],
 		elements: []
 	});
 
