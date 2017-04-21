@@ -1484,6 +1484,34 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("no actionSheet when actionSheet content is not visible", function (assert) {
+			var oToolbarOnlyControl = new sap.m.Text({
+					maxLines: 1, wrapping: true, text: "Sales and Total sales by Product and Quarter",
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						shrinkable: true
+					})
+				}),
+				oMovableControl = new sap.m.OverflowToolbarButton({text: 'text1', visible: false}),
+				aContent = [
+					oToolbarOnlyControl,
+					oMovableControl
+				],
+				oOverflowTB = createOverflowToolbar({
+					width: "300px" // width is purposely smaller that the content width
+				}, aContent);
+
+			assert.strictEqual(oOverflowTB._aMovableControls.length, 0, "invisible buttons are skipped");
+
+			oMovableControl.setVisible(true);
+
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oOverflowTB._aMovableControls.length, 1, "movable visible button is inclided");
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.module("Resize handling");
 
 		QUnit.test("Handling of resizes that don't move elements around", function (assert) {
