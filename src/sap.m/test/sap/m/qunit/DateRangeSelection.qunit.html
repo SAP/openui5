@@ -149,10 +149,12 @@
 			});
 
 			QUnit.test("focused element after picker close", function(assert) {
-				var bOrigTouch = sap.ui.Device.support.touch;
+				var bOrigTouch = sap.ui.Device.support.touch,
+					bOrigDesktop = sap.ui.Device.system.desktop;
 
 				// On a desktop (non-touch) device
 				sap.ui.Device.support.touch = false;
+				sap.ui.Device.system.desktop = true;
 				qutils.triggerEvent("click", "DRS2-icon");
 				jQuery("#DRS2-cal--Month0-20140406").focus();
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -166,6 +168,7 @@
 
 				// On a touch device
 				sap.ui.Device.support.touch = true;
+				sap.ui.Device.system.desktop = false;
 				qutils.triggerEvent("click", "DRS2-icon");
 				jQuery("#DRS2-cal--Month0-20140406").focus();
 				qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -177,6 +180,7 @@
 				jQuery("#DRS2-cal").control(0).fireCancel();
 				assert.notEqual(document.activeElement.id, "DRS2-inner", "Focus is NOT on the input field after cancel");
 
+				sap.ui.Device.system.desktop = bOrigDesktop;
 				sap.ui.Device.support.touch = bOrigTouch;
 			});
 
