@@ -1,170 +1,289 @@
 /*******************************************************************************
 Related UI5 Projects
 *******************************************************************************/
+html, body{
+	overflow-x:hidden;
+}
 .main-container {
-    background-color: white;
+	background-color: white;
 }
 
 .header-container {
-    background: #F5F5F5;
-    min-height: 220px;
+	background: #F5F5F5;
+	min-height: 220px;
 }
 
 .part-container {
-    display: -webkit-flex;
-    display: flex;
-    justify-content: center;
+	display: -webkit-flex;
+	display: flex;
+	justify-content: center;
 }
 .paragraph {
-    width: 66%;
+	width: 66%;
 }
 
 .projects-table {
-    text-align: center;
-    margin-bottom: 1rem;
-    margin-top: 3rem;
-    width: 66%;
-    background-color: white;
-    font-size: 14px;
-    border-collapse: collapse;
+	text-align: center;
+	margin-bottom: 1rem;
+	margin-top: 3rem;
+	width: 66%;
+	background-color: white;
+	font-size: 14px;
+	border-collapse: collapse;
 }
 
 .projects-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+	background-color: #f2f2f2;
 }
 
 .projects-table td {
-    border: none;
-    vertical-align: middle;
+	border: none;
+	vertical-align: middle;
 }
 
 .projects-table th {
-    background-color: rgb(148, 148, 148);
+	background-color: rgb(148, 148, 148);
 }
 
 .centered-content {
-    text-align: center;
+	text-align: center;
 }
 
 .description-container {
-    padding: 0 25px;
+	padding: 0 25px;
 }
 
 
 .tutorial li {
-    margin: 0.7rem 0;
-    text-align: left;
+	margin: 0.7rem 0;
+	text-align: left;
 }
 .tutorial li:hover {
-    cursor: text;
+	cursor: text;
 }
 
 pre {
-    white-space: pre-line;
-    background-color: transparent;
-    color: #3f3f3f;
+	white-space: pre-line;
+	background-color: transparent;
+	color: #3f3f3f;
 }
 
 .code-block {
-    padding: 15px;
-    white-space: pre;
-
+	width: 50%
 }
 .flex-container img:hover {
-    -webkit-transform: scale(1.10); /* Chrome */
-    -ms-transform: scale(1.10); /* Internet Explorer */
-    -moz-transform: scale(1.10); /* Mozila*/
-    transition-duration: 1s; /* Mozila and Internet Explorer */
+	-webkit-transform: scale(1.10); /* Chrome */
+	-ms-transform: scale(1.10); /* Internet Explorer */
+	-moz-transform: scale(1.10); /* Mozila*/
+	transition-duration: 1s; /* Mozila and Internet Explorer */
 }
 
 .flex-container img:not(hover) {
-    -webkit-transform: scale(1); /* Chrome */
-    -ms-transform: scale(1); /* Internet Explorer */
-    -moz-transform: scale(1); /* Mozila*/
-    transition-duration: 1s; /* Mozila and Internet Explorer */
+	-webkit-transform: scale(1); /* Chrome */
+	-ms-transform: scale(1); /* Internet Explorer */
+	-moz-transform: scale(1); /* Mozila*/
+	transition-duration: 1s; /* Mozila and Internet Explorer */
 }
 
 .h-centered-content {
-    width: 150px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+	width: 150px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .image-link {
-    height: 150px;
-    display: table-cell;
-    vertical-align: middle;
+	height: 150px;
+	display: table-cell;
+	vertical-align: middle;
 }
 
 a.tutorial-link:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .flex-container {
-    display: -webkit-flex;
-    display: flex;
-    width: 66%;
+	display: -webkit-flex;
+	display: flex;
+	width: 66%;
 }
 
 .flex-item {
-    display: inline-block;
-    flex: 1 1 33%;
-    margin: 20px 0 10px 0;
+	display: inline-block;
+	flex: 1 1 33%;
+	margin: 20px 0 10px 0;
 }
 
 .project-image {
-    width: 150px;
+	width: 150px;
+}
+.addProject-title {
+	justify-content: flex-start;
+	margin-left: 17%;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 600px) {
 
-    .headertitle {
-        display: block;
-        padding-right: 18px;
-    }
+	.headertitle {
+		display: block;
+		padding-right: 18px;
+	}
 
-    .headerdivide {
-        display: none;
-    }
+	.headerdivide {
+		display: none;
+	}
 
-    #header_wrap .inner {
-        padding-top: 30px;
-    }
+	#header_wrap .inner {
+		padding-top: 30px;
+	}
 
-    #project_title {
-        font-size: 33px;
-    }
+	#project_title {
+		font-size: 33px;
+	}
 
-    .corset {
+	.corset {
+		width: 100%;
+	}
+	#main_content {
+		padding: 12px 10px 80px 10px;
+	}
+	.ui5logo {
+		height: 50px;
+		margin-left: -2px;
+	}
+
+	h4 {
+		font-size: 16px;
+	}
+
+	.project-image {
+		width: 80px;
+	}
+
+	.h-centered-content {
+		width: 80px;
+	}
+
+	.description-container {
+		padding: 0 20px;
+		font-size: 13px;
+	}
+
+	.projects-table td, tr, th {
+		font-size: 10px;
+	}
+	.projects-table {
+		margin-left: -4%;
+	}
+	.flex-container {
+		display: -webkit-box;
+		width: 66%;
+		margin-left: 15%;
+	}
+
+	.part-container {
+		display: -webkit-flex;
+		display: flex;
+		justify-content: flex-start;
+		margin-left: 5%;
+	}
+	.phone-cells {
+		display: none;
+	}
+	.code-block {
+		overflow-x: scroll;
+        width: 100%;
+        marg-left: -3%;
+	}
+	.project-image {
+		width: 80px;
+		height: 80%;
+	}
+	.addProject-title {
+		justify-content: flex-start;
+		margin-left: 7%;
+	}
+	.paragraph {
+		width: 100%;
+		padding: 0 5px 0 5px;
+		font-size: 13px;
+	}
+}
+/* Meduim Secreens Size */
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {
+	.tablet-cells {
+		display: none;
+	}
+	.description-container {
+		font-size: 14px;
+		padding: 0;
+	}
+	.flex-container {
+		display: -webkit-flex;
+		width: 85%;
+	}
+	.projects-table {
+		text-align: center;
+		margin-bottom: 1rem;
+		margin-top: 3rem;
+		width: 85%;
+		background-color: white;
+		font-size: 14px;
+		border-collapse: collapse;
+	}
+	.description-container {
+		font-size: 18px;
+		padding: 0 7% 0 7%;
+	}
+	.headertitle {
+		display: inline-block;
+		padding-right: 18px;
+	}
+	.projects-table td, tr, th {
+		font-size: 18px;
+	}
+	.addProject-title {
+		justify-content: flex-start;
+		margin-left: 8%;
+	}
+	.paragraph {
+		width: 77%;
+		padding: 0 5px 0 5px;
+		font-size: 26px;
+	}
+	h4 {
+		font-size: 26px;
+	}
+	code, pre {
+		font-size: 17px;
+	}
+	.description-container h4 {
+		padding: 0 25px;
+		font-size: 18px;
+	}
+    .code-block {
         width: 100%;
     }
-    #main_content {
-        padding: 12px 10px 80px 10px;
+}
+@media only screen and (min-device-width : 375px) and (max-device-width : 667px) {
+	.projects-table {
+		margin-left: 3%;
+	}
+	.description-container h4 {
+		font-size: 16px;
+	}
+	.description-container {
+		font-size: 14px;
+	}
+    .paragraph {
+        width: 100%;
+        padding: 0 5px 0 5px;
+        font-size: 14px;
     }
-    .ui5logo {
-        height: 50px;
-        margin-left: -2px;
-    }
-
     h4 {
-        font-size: 16px;
+        font-size: 14px;
     }
-
-    .project-image {
-        width: 80px;
-    }
-
-    .h-centered-content {
-        width: 80px;
-    }
-
-    .description-container {
-        padding: 0 20px;
-        font-size: 13px;
-    }
-
-    .projects-table td, tr, th {
-        font-size: 12px;
+    .addProject-title {
+        margin-left: 9%;
     }
 }
