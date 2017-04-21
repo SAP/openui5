@@ -3,13 +3,17 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/m/ColumnListItem",
+	"sap/m/Text",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Filter, FilterOperator, OperationMode, ODataModel, Sorter, TestUtils) {
+], function (jQuery, ColumnListItem, Text, Controller, Filter, FilterOperator, OperationMode,
+		ODataModel, Sorter, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -199,6 +203,31 @@ sap.ui.require([
 		},
 
 		/**
+		 * Checks that the given value is the expected one for the control.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {string} sValue The value
+		 * @param {string} sControlId The control ID
+		 * @param {number|string} [vRow] The row index in case the control's binding is below a
+		 *   list binding or the path of the row's context (for example in the tests of the
+		 *   ODataMetaModel), otherwise <code>undefined</code>.
+		 */
+		checkValue : function (assert, sValue, sControlId, vRow) {
+			var aExpectedValues = vRow === undefined
+					? this.mChanges[sControlId]
+					: this.mListChanges[sControlId][vRow],
+				sVisibleId = vRow === undefined ? sControlId : sControlId + "[" + vRow + "]";
+
+			if (!aExpectedValues || !aExpectedValues.length) {
+				assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
+			} else  {
+				assert.strictEqual(sValue, aExpectedValues.shift(),
+					sVisibleId + ": " + JSON.stringify(sValue));
+			}
+			this.checkFinish();
+		},
+
+		/**
 		 * Creates the view and attaches it to the model. Checks that the expected requests (see
 		 * {@link #expectRequest} are fired and the controls got the expected changes (see
 		 * {@link #expectChange}).
@@ -208,10 +237,12 @@ sap.ui.require([
 		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
 		 *   and to the test instance.
 		 *   If no model is given, the <code>TEA_BUSI</code> model is created and used.
+		 * @param {object} [oController]
+		 *   An object defining the methods and properties of the controller
 		 * @returns {Promise} A promise that is resolved when the view is created and all expected
 		 *   values for controls have been set
 		 */
-		createView : function (assert, sViewXML, oModel) {
+		createView : function (assert, sViewXML, oModel, oController) {
 			var that = this;
 
 			/*
@@ -239,45 +270,31 @@ sap.ui.require([
 				return Promise.resolve(oResponse);
 			}
 
-			/*
-			 * Checks that the given value is the expected one for the control.
-			 */
-			function checkValue(sValue, sControlId, i) {
-				var aExpectedValues = i === undefined ? that.mChanges[sControlId]
-						: that.mListChanges[sControlId][i],
-					sVisibleId = i === undefined ? sControlId : sControlId + "[" + i + "]";
-
-				if (!aExpectedValues || !aExpectedValues.length) {
-					assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
-				} else  {
-					assert.strictEqual(sValue, aExpectedValues.shift(),
-						sVisibleId + ": " + JSON.stringify(sValue));
-				}
-				that.checkFinish();
-			}
-
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.oRequestor.request) {
 				this.stub(this.oModel.oRequestor, "request", checkRequest);
 			}
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.oView = sap.ui.xmlview({
-				viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
+				controller : oController
+					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
+					viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
 					+ sViewXML
 					+ '</mvc:View>'
 			});
 			Object.keys(this.mChanges).forEach(function (sControlId) {
-				that.oView.byId(sControlId).getBindingInfo("text").formatter = function (sValue) {
-					checkValue(sValue, sControlId);
-				};
+				var oControl = that.oView.byId(sControlId);
+
+				if (oControl) {
+					that.setFormatter(assert, oControl, sControlId);
+				}
 			});
 			Object.keys(this.mListChanges).forEach(function (sControlId) {
-				that.oView.byId(sControlId).getBindingInfo("text").formatter = function (sValue) {
-					checkValue(sValue, sControlId,
-						this.getBindingContext().getIndex
-							? this.getBindingContext().getIndex()
-							: this.getBindingContext().getPath());
-				};
+				var oControl = that.oView.byId(sControlId);
+
+				if (oControl) {
+					that.setFormatterInList(assert, oControl, sControlId);
+				}
 			});
 
 			this.oView.setModel(that.oModel);
@@ -314,7 +331,7 @@ sap.ui.require([
 		 * @param {string|string[]|boolean} [vValue] The expected value, a list of expected values
 		 *   or <code>false</code> to enforce listening to a template control.
 		 * @param {number|string} [vRow] The row index (for the model) or the path of its parent
-		 *   context (for the metamodel) in case that a change is expected for a single row of a
+		 *   context (for the metamodel), in case that a change is expected for a single row of a
 		 *   list (in this case <code>vValue</code> must be a string).
 		 * @returns {object} The test instance for chaining
 		 */
@@ -370,6 +387,43 @@ sap.ui.require([
 			vRequest.response = oResponse;
 			this.aRequests.push(vRequest);
 			return this;
+		},
+
+		/**
+		 * Sets the formatter function which calls {@link #checkValue} for the given control.
+		 * Note that you may only use controls that have a 'text' property.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {sap.ui.base.ManagedObject} oControl The control
+		 * @param {string} sControlId The (symbolic) control ID for which changes are expected
+		 */
+		setFormatter : function (assert, oControl, sControlId) {
+			var that = this;
+
+			oControl.getBindingInfo("text").formatter = function (sValue) {
+				that.checkValue(assert, sValue, sControlId);
+			};
+		},
+
+		/**
+		 * Sets the formatter function which calls {@link #checkValue} for the given control within
+		 * a list item.
+		 * Note that you may only use controls that have a 'text' property.
+		 *
+		 * @param {object} assert The QUnit assert object
+		 * @param {object} oControl The control
+		 * @param {string} sControlId The control ID for which changes are expected
+		 */
+		setFormatterInList : function (assert, oControl, sControlId) {
+			var that = this;
+
+			oControl.getBindingInfo("text").formatter = function (sValue) {
+				that.checkValue(assert, sValue, sControlId,
+					this.getBindingContext()
+					&& (this.getBindingContext().getIndex
+						? this.getBindingContext().getIndex()
+						: this.getBindingContext().getPath()));
+			};
 		},
 
 		/**
@@ -1915,6 +1969,53 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for use with factory function to create a listBinding
+	QUnit.test("Auto-$expand/$select: use factory function",
+			function (assert) {
+		var that = this,
+			sView = '\
+<Table id="table" items="{\
+		factory: \'.employeesListFactory\',\
+		parameters : {\
+			$select : \'AGE,ID\'\
+		},\
+		path: \'/EMPLOYEES\'\
+	}">\
+</Table>',
+			oController = {
+				employeesListFactory : function (sID, oContext) {
+					var sAge,
+						oListItem;
+
+					sAge = oContext.getProperty("AGE");
+					if (sAge > 30) {
+						oListItem = new Text(sID, {
+							text : "{AGE}"
+						});
+					} else {
+						oListItem = new Text(sID, {
+							text : "{ID}"
+						});
+					}
+					that.setFormatterInList(assert, oListItem, "text");
+					return new ColumnListItem({cells : [oListItem]});
+				}
+			};
+
+		this.expectRequest("EMPLOYEES?$select=AGE,ID&$skip=0&$top=100",
+			{ "value" :
+				[
+					{"AGE" : 29, "ID" : "R2D2"},
+					{"AGE" : 36, "ID" : "C3PO"}
+				]
+			})
+			.expectChange("text", ["R2D2", "36"]);
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}),
+			oController);
 	});
 });
 //TODO $batch?
