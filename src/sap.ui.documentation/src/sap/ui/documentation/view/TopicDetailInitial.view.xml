@@ -25,13 +25,10 @@
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="What's New?">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="What's New?"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Read All about the latest updates for each new release of SAPUI5."
 								class="sapUiLargeMarginBottom"/>
@@ -40,13 +37,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="Read Me First">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="Read Me First"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Complete explanaitions of all the things you need to know before diving into UI5."
 								class="sapUiLargeMarginBottom"/>
@@ -56,13 +50,10 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						width="2">
+						width="2"
+						title="Tutorials">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="Tutorials"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="The SAPUI5 tutorials introduce you all major development paradigms of SAPUI5 using practical examples in an interactive format."
 								class="sapUiLargeMarginBottom"/>
@@ -74,13 +65,10 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						width="2">
+						width="2"
+						title="Developing Apps">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="Developing Apps"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="This section contains the practical part, details and best practises that will help you while developing your apps, and what pitfalls you should look out for along the way."
 								class="sapUiLargeMarginBottom"/>
@@ -89,13 +77,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="... with SAP Fiori Elements">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="... with SAP Fiori Elements"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Developing SAP Fiori apps using SAP Fiori elements, and how to use them to save time and development costs."
 								class="sapUiLargeMarginBottom"/>
@@ -104,13 +89,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="... with Analysis Path Framework">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="... with Analysis Path Framework"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Build and enhance interactive analytical Web applications"
 								class="sapUiLargeMarginBottom"/>
@@ -121,13 +103,10 @@
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="Essentials">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="Essentials"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="This sections explains the development concepts of SAPUI5."
 								class="sapUiLargeMarginBottom"/>
@@ -136,13 +115,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="More About Controls">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="More About Controls"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Detailed information about UI5 controls and the libraries they live in."
 								class="sapUiLargeMarginBottom"/>
@@ -151,13 +127,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="Extending Apps">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="Extending Apps"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Adapt or replace views, extend or replace controllers and so much more."
 								class="sapUiLargeMarginBottom"/>
@@ -166,13 +139,10 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
-				<l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="Developing Content">
 					<l:VerticalLayout
 							width="100%">
-						<Title
-								text="Developing Content"
-								titleStyle="H2"
-								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="Learn more about creating your own controls or contributing to UI5."
 								class="sapUiLargeMarginBottom"/>
