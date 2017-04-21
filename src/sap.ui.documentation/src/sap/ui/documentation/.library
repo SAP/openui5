@@ -6,11 +6,14 @@
   <copyright>${copyright}</copyright>
   <version>${version}</version>
 
-  <documentation>SAPUI5 library with responsive controls.</documentation>
+  <documentation>SAPUI5 library for the Demokit 2.0.</documentation>
 
   <dependencies>
     <dependency>
       <libraryName>sap.ui.core</libraryName>
+    </dependency>
+    <dependency>
+      <libraryName>sap.ui.layout</libraryName>
     </dependency>
     <dependency>
       <libraryName>sap.m</libraryName>
@@ -18,7 +21,43 @@
   </dependencies>
 
   <appData>
-
+    <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
+      <exclude name="sap.ui.documentation.controller.util.google-code-prettify." />
+      <exclude name="sap.ui.documentation.controller.util.jsanalyzer." />
+    </jsdoc>
+    <!-- excludes for the JSCoverage -->
+    <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
+      <exclude name="sap.ui.documentation.controller.util.google-code-prettify." />
+      <exclude name="sap.ui.documentation.controller.util.jsanalyzer." />
+    </jscoverage>
+    <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
+      <module-infos>
+        <raw-module name="sap/ui/documentation/controller/util/jsanalyzer/esprima.js" />
+        <raw-module name="sap/ui/documentation/controller/util/google-code-prettify/lang-css.js" depends="sap/ui/demokit/js/google-code-prettify/prettify.js" />
+        <raw-module name="sap/ui/documentation/controller/util/google-code-prettify/prettify.js"/>
+        <raw-module name="sap/ui/documentation/controller/util/google-code-prettify/run_prettify.js"/>
+      </module-infos>
+      <all-in-one>
+        <exclude name="sap/ui/documentation/controller/util/google-code-prettify/run_prettify.js" />
+      </all-in-one>
+    </packaging>
+    <!-- Thirdparty references -->
+    <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
+      <lib name="esprima" displayName="Esprima" homepage="http://esprima.org">
+        <license url="http://esprima.org/doc/index.html#license" type="BSD License" file="./controller/util/licenses/esprima-BSD-LICENSE.txt" />
+      </lib>
+      <lib name="google-code-prettify" displayName="google-code-prettify" homepage="https://code.google.com/p/google-code-prettify/">
+        <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="./controller/util/licenses/google-code-prettify-Apache-LICENSE.txt" />
+      </lib>
+    </thirdparty>
+	<!-- TO BE DONE
+    <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+        url="../../../../test-resources/sap/ui/documentation/relnotes/changes-{major}.{minor}.json"
+        resolve="lib" />
+    <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+        <component>CA-UI5-CTR</component><!- - default component for library, embedded text as a shortcut for <name>text</name> - - >
+    </ownership>
+	-->
   </appData>
 
 </library>

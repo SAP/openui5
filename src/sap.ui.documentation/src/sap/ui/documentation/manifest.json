@@ -75,7 +75,7 @@
 		},
 
 		"config": {
-			"docuPath": "./docs/guide/",
+			"docuPath": "./docs/topics/",
 			"exploredURI": "./",
 			"topicHtmlMainDivId": "d4h5-main-container"
 		},
