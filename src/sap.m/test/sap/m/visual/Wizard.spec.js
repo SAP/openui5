@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.m.Wizard", function() {
+	"use strict";
 
 	it("should load test page", function () {
 		// disable CSS animations as they are messing with intrinsic waits

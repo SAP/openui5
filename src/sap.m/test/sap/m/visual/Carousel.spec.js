@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.m.Carousel", function() {
+	"use strict";
+
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.Carousel';
 
 	var myCarousel = element(by.id("myCarousel"));

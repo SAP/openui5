@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.m.ObjectHeaderVisualTest", function() {
+	"use strict";
+
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.ObjectHeader';
 
 	it("OH with 2 states and property fullScreenOptimized set to true",function() {

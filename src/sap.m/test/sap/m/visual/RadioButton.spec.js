@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.RadioButton", function() {
+	"use strict";
 
 	it('should load test page',function(){
 		expect(takeScreenshot(element(by.id('vboxStates')))).toLookAs('initial');

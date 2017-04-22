@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.Page", function () {
+	"use strict";
 
 	it("Should load test page", function () {
 		expect(takeScreenshot()).toLookAs("initial");

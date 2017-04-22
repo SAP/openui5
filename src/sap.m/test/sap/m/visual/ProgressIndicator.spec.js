@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.ProgressIndicator", function() {
+	"use strict";
 
 	it("ProgressIndicator initial rendering", function() {
 		expect(takeScreenshot()).toLookAs("initial-rendering");

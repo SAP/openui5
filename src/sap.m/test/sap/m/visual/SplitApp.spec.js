@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe('sap.m.SplitApp', function() {
+	"use strict";
 
 	it("SplitApp initial rendering",function() {
 		expect(takeScreenshot()).toLookAs("SplitApp-InitialRendering");

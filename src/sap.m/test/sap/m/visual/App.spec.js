@@ -1,11 +1,14 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.App", function () {
+	"use strict";
 
 	var fnClickThenCompare = function (sId, sImageName, sTestMessage) {
 		it(sTestMessage, function () {
 			element(by.id(sId)).click();
 			expect(takeScreenshot()).toLookAs(sImageName);
 		});
-	}
+	};
 
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("initial");

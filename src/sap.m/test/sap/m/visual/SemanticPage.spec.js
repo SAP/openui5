@@ -1,5 +1,18 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.m.SemanticPage", function() {
+	"use strict";
+
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.semantic.SemanticPage';
+
+	var fnEnsureOverflowVisible = function() {
+		var overflowBtn = element(by.id("detail-footer-overflowButton"));
+		overflowBtn.isPresent().then(function(isPresent) {
+			if (isPresent) {
+				overflowBtn.click(); // we ensure that any buttons in overflow are also visible
+			}
+		});
+	};
 
 	var fnClickThenCompare = function (sId, sImageName, sTestMessage, bEnsureOverflowVisible) {
 		it(sTestMessage, function () {
@@ -10,17 +23,7 @@ describe("sap.m.SemanticPage", function() {
 			element(by.id(sId)).click();
 			expect(takeScreenshot()).toLookAs(sImageName);
 		});
-	}
-
-	var fnEnsureOverflowVisible = function() {
-		var overflowBtn = element(by.id("detail-footer-overflowButton"));
-		overflowBtn.isPresent().then(function(isPresent) {
-			if(isPresent) {
-				overflowBtn.click(); // we ensure that any buttons in overflow are also visible
-			}
-		})
-
-	}
+	};
 
 	it("Should load test page",function(){
 		expect(takeScreenshot()).toLookAs("semantic-initial");
