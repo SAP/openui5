@@ -37,7 +37,7 @@ sap.ui.define([
 
 			// select random carousel page at start
 			var oWelcomeCarousel = this.byId("welcomeCarousel");
-			var iRandomIndex = Math.floor(Math.random() * oWelcomeCarousel.getPages().length);
+			var iRandomIndex = Math.floor(Math.random() * oWelcomeCarousel.getPages().length - 1);
 			oWelcomeCarousel.setActivePage(oWelcomeCarousel.getPages()[iRandomIndex]);
 		},
 
