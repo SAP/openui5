@@ -1,230 +1,236 @@
-sinon.config.useFakeTimers = true;
-sap.ui.test.qunit.delayTestStart();
+/*global QUnit,sinon*/
 
-QUnit.module("getId");
+(function () {
+	"use strict";
+
+	sinon.config.useFakeTimers = true;
+	sap.ui.test.qunit.delayTestStart();
+
+	QUnit.module("getId");
 
 
-QUnit.test("it should return a empty value state message ID", function(assert) {
+	QUnit.test("it should return a empty value state message ID", function (assert) {
 
-	// system under test
-	var oInput = new sap.m.InputBase();
-	var oValueStateMessage = new sap.m.delegate.ValueState();
+		// system under test
+		var oInput = new sap.m.InputBase();
+		var oValueStateMessage = new sap.m.delegate.ValueState();
 
-	// assert
-	assert.strictEqual(oValueStateMessage.getId(), "");
+		// assert
+		assert.strictEqual(oValueStateMessage.getId(), "");
 
-	// cleanup
-	oInput.destroy();
-});
-
-QUnit.test("it should return the value state message ID", function(assert) {
-
-	// system under test
-	var oSelect = new sap.m.Select("ipsum");
-	var oValueStateMessage = new sap.m.delegate.ValueState(oSelect);
-
-	// assert
-	assert.strictEqual(oValueStateMessage.getId(), "ipsum-message");
-
-	// cleanup
-	oSelect.destroy();
-});
-
-QUnit.test("it should return the value state message ID", function(assert) {
-
-	// system under test
-	var CustomControl = sap.m.Select.extend("CustomControl", {
-		renderer: {}
+		// cleanup
+		oInput.destroy();
 	});
 
-	CustomControl.prototype.getValueStateMessageId = function() {
-		return this.getId() + "-lorem";
-	};
+	QUnit.test("it should return the value state message ID", function (assert) {
 
-	var oCustomSelect = new CustomControl("ipsum");
+		// system under test
+		var oSelect = new sap.m.Select("ipsum");
+		var oValueStateMessage = new sap.m.delegate.ValueState(oSelect);
 
-	// act
-	var oValueStateMessage = new sap.m.delegate.ValueState(oCustomSelect);
+		// assert
+		assert.strictEqual(oValueStateMessage.getId(), "ipsum-message");
 
-	// assert
-	assert.strictEqual(oValueStateMessage.getId(), "ipsum-lorem");
-
-	// cleanup
-	oCustomSelect.destroy();
-	CustomControl = null;
-	delete window.CustomControl;
-	delete window.CustomControlRenderer;
-});
-
-QUnit.module("getOpenDuration");
-
-QUnit.test("it should return the open duration of the value state message popup", function(assert) {
-
-	// arrange
-	var CustomControl = sap.ui.core.Control.extend("CustomControl", {
-		renderer: {}
+		// cleanup
+		oSelect.destroy();
 	});
 
-	CustomControl.prototype.iOpenMessagePopupDuration = 5;
+	QUnit.test("it should return the value state message ID", function (assert) {
 
-	var oCustomControl = new CustomControl();
+		// system under test
+		var CustomControl = sap.m.Select.extend("CustomControl", {
+			renderer: {}
+		});
 
-	// system under test + act
-	var oValueStateMessage = new sap.m.delegate.ValueState(oCustomControl);
+		CustomControl.prototype.getValueStateMessageId = function () {
+			return this.getId() + "-lorem";
+		};
 
-	// assert
-	assert.strictEqual(oValueStateMessage.getOpenDuration(), 5);
+		var oCustomSelect = new CustomControl("ipsum");
 
-	// cleanup
-	oCustomControl.destroy();
-	CustomControl = null;
-	delete window.CustomControl;
-	delete window.CustomControlRenderer;
-});
+		// act
+		var oValueStateMessage = new sap.m.delegate.ValueState(oCustomSelect);
 
-QUnit.test("it should return the open duration of the value state message popup", function(assert) {
+		// assert
+		assert.strictEqual(oValueStateMessage.getId(), "ipsum-lorem");
 
-	// arrange
-	var CustomControl = sap.ui.core.Control.extend("CustomControl", {
-		renderer: {}
+		// cleanup
+		oCustomSelect.destroy();
+		CustomControl = null;
+		delete window.CustomControl;
+		delete window.CustomControlRenderer;
 	});
 
-	var oCustomControl = new CustomControl();
+	QUnit.module("getOpenDuration");
 
-	// system under test + act
-	var oValueStateMessage = new sap.m.delegate.ValueState(oCustomControl);
+	QUnit.test("it should return the open duration of the value state message popup", function (assert) {
 
-	// assert
-	assert.strictEqual(oValueStateMessage.getOpenDuration(), 0);
+		// arrange
+		var CustomControl = sap.ui.core.Control.extend("CustomControl", {
+			renderer: {}
+		});
 
-	// cleanup
-	oCustomControl.destroy();
-	CustomControl = null;
-	delete window.CustomControl;
-	delete window.CustomControlRenderer;
-});
+		CustomControl.prototype.iOpenMessagePopupDuration = 5;
 
-QUnit.test("it should return the open duration of the value state message popup", function(assert) {
+		var oCustomControl = new CustomControl();
 
-	// system under test + act
-	var oValueStateMessage = new sap.m.delegate.ValueState(null);
+		// system under test + act
+		var oValueStateMessage = new sap.m.delegate.ValueState(oCustomControl);
 
-	// assert
-	assert.strictEqual(oValueStateMessage.getOpenDuration(), 0);
+		// assert
+		assert.strictEqual(oValueStateMessage.getOpenDuration(), 5);
 
-	// cleanup
-	oValueStateMessage.destroy();
-});
-
-QUnit.module("destroy");
-
-QUnit.test("it should clean up the internal objects", function(assert) {
-
-	// system under test
-	var oInput = new sap.m.InputBase();
-	var oValueStateMessage = new sap.m.delegate.ValueState(oInput);
-
-	// arrange
-	oInput.placeAt("content");
-	sap.ui.getCore().applyChanges();
-	oInput.focus();
-	oValueStateMessage.open();
-	oValueStateMessage.close();
-
-	// act
-	oValueStateMessage.destroy();
-
-	// assert
-	assert.strictEqual(oValueStateMessage._oPopup, null);
-	assert.strictEqual(oValueStateMessage._oControl, null);
-
-	// cleanup
-	oInput.destroy();
-});
-
-QUnit.module("createDom");
-
-QUnit.test("it should create the DOM for the value state message popup (test case 1)", function(assert) {
-
-	// arrange
-	var oInputBase = new sap.m.InputBase({
-		valueState: sap.ui.core.ValueState.Warning,
-		valueStateText: "lorem ipsum"
+		// cleanup
+		oCustomControl.destroy();
+		CustomControl = null;
+		delete window.CustomControl;
+		delete window.CustomControlRenderer;
 	});
 
-	// system under test + act
-	var oValueStateMessage = new sap.m.delegate.ValueState(oInputBase);
+	QUnit.test("it should return the open duration of the value state message popup", function (assert) {
 
-	// act
-	var oDomRef = oValueStateMessage.createDom();
+		// arrange
+		var CustomControl = sap.ui.core.Control.extend("CustomControl", {
+			renderer: {}
+		});
 
-	// assert
-	assert.strictEqual(oDomRef.className, "sapMValueStateMessage sapMValueStateMessageWarning");
-	assert.strictEqual(oDomRef.getAttribute("role"), "tooltip");
-	assert.strictEqual(oDomRef.getAttribute("aria-live"), "assertive");
-	assert.strictEqual(oDomRef.firstElementChild.className, "sapUiHidden");
-	assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), "true");
-	assert.strictEqual(oDomRef.firstElementChild.textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + oInputBase.getValueState().toUpperCase()));
+		var oCustomControl = new CustomControl();
 
-	// cleanup
-	oInputBase.destroy();
-});
+		// system under test + act
+		var oValueStateMessage = new sap.m.delegate.ValueState(oCustomControl);
 
-QUnit.test("it should create the DOM for the value state message popup (test case 2)", function(assert) {
+		// assert
+		assert.strictEqual(oValueStateMessage.getOpenDuration(), 0);
 
-	// arrange
-	var oInputBase = new sap.m.InputBase({
-		valueState: sap.ui.core.ValueState.Success,
-		valueStateText: "lorem ipsum"
+		// cleanup
+		oCustomControl.destroy();
+		CustomControl = null;
+		delete window.CustomControl;
+		delete window.CustomControlRenderer;
 	});
 
-	// system under test + act
-	var oValueStateMessage = new sap.m.delegate.ValueState(oInputBase);
+	QUnit.test("it should return the open duration of the value state message popup", function (assert) {
 
-	// act
-	var oDomRef = oValueStateMessage.createDom();
+		// system under test + act
+		var oValueStateMessage = new sap.m.delegate.ValueState(null);
 
-	// assert
-	assert.strictEqual(oDomRef.className, "sapUiInvisibleText");
+		// assert
+		assert.strictEqual(oValueStateMessage.getOpenDuration(), 0);
 
-	// cleanup
-	oInputBase.destroy();
-});
-
-QUnit.test("it should create the DOM for the value state and it should be smaller than the width of the control", function(assert) {
-
-	// arrange
-	var oInputBase = new sap.m.InputBase({
-		width: "30%",
-		valueState: sap.ui.core.ValueState.Error,
-		valueStateText: "Invalid SAP Fiori URL. Please enter the SAP Fiori configuration again. A list of correct configuration can be found at http://sap.com/configurations/."
+		// cleanup
+		oValueStateMessage.destroy();
 	});
 
-	oInputBase.placeAt("content");
-	sap.ui.getCore().applyChanges();
+	QUnit.module("destroy");
 
-	// act
-	oInputBase.openValueStateMessage();
+	QUnit.test("it should clean up the internal objects", function (assert) {
 
-	// assert
-	var oValueStateMessage = document.getElementById(oInputBase.getValueStateMessageId());
-	assert.ok(oValueStateMessage.offsetWidth <= oInputBase.getDomRef().offsetWidth, "The ValueStateMessage has correct width.")
+		// system under test
+		var oInput = new sap.m.InputBase();
+		var oValueStateMessage = new sap.m.delegate.ValueState(oInput);
 
-	// cleanup
-	oInputBase.destroy();
-});
+		// arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oInput.focus();
+		oValueStateMessage.open();
+		oValueStateMessage.close();
 
-QUnit.test("it should not throw an exeption", function(assert) {
+		// act
+		oValueStateMessage.destroy();
 
-	// system under test + act
-	var oValueStateMessage = new sap.m.delegate.ValueState(null);
+		// assert
+		assert.strictEqual(oValueStateMessage._oPopup, null);
+		assert.strictEqual(oValueStateMessage._oControl, null);
 
-	// act
-	var oDomRef = oValueStateMessage.createDom();
+		// cleanup
+		oInput.destroy();
+	});
 
-	// assert
-	assert.strictEqual(oDomRef, null);
+	QUnit.module("createDom");
 
-	// cleanup
-	oValueStateMessage.destroy();
-});
+	QUnit.test("it should create the DOM for the value state message popup (test case 1)", function (assert) {
+
+		// arrange
+		var oInputBase = new sap.m.InputBase({
+			valueState: sap.ui.core.ValueState.Warning,
+			valueStateText: "lorem ipsum"
+		});
+
+		// system under test + act
+		var oValueStateMessage = new sap.m.delegate.ValueState(oInputBase);
+
+		// act
+		var oDomRef = oValueStateMessage.createDom();
+
+		// assert
+		assert.strictEqual(oDomRef.className, "sapMValueStateMessage sapMValueStateMessageWarning");
+		assert.strictEqual(oDomRef.getAttribute("role"), "tooltip");
+		assert.strictEqual(oDomRef.getAttribute("aria-live"), "assertive");
+		assert.strictEqual(oDomRef.firstElementChild.className, "sapUiHidden");
+		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), "true");
+		assert.strictEqual(oDomRef.firstElementChild.textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + oInputBase.getValueState().toUpperCase()));
+
+		// cleanup
+		oInputBase.destroy();
+	});
+
+	QUnit.test("it should create the DOM for the value state message popup (test case 2)", function (assert) {
+
+		// arrange
+		var oInputBase = new sap.m.InputBase({
+			valueState: sap.ui.core.ValueState.Success,
+			valueStateText: "lorem ipsum"
+		});
+
+		// system under test + act
+		var oValueStateMessage = new sap.m.delegate.ValueState(oInputBase);
+
+		// act
+		var oDomRef = oValueStateMessage.createDom();
+
+		// assert
+		assert.strictEqual(oDomRef.className, "sapUiInvisibleText");
+
+		// cleanup
+		oInputBase.destroy();
+	});
+
+	QUnit.test("it should create the DOM for the value state and it should be smaller than the width of the control", function (assert) {
+
+		// arrange
+		var oInputBase = new sap.m.InputBase({
+			width: "30%",
+			valueState: sap.ui.core.ValueState.Error,
+			valueStateText: "Invalid SAP Fiori URL. Please enter the SAP Fiori configuration again. A list of correct configuration can be found at http://sap.com/configurations/."
+		});
+
+		oInputBase.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oInputBase.openValueStateMessage();
+
+		// assert
+		var oValueStateMessage = document.getElementById(oInputBase.getValueStateMessageId());
+		assert.ok(oValueStateMessage.offsetWidth <= oInputBase.getDomRef().offsetWidth, "The ValueStateMessage has correct width.");
+
+		// cleanup
+		oInputBase.destroy();
+	});
+
+	QUnit.test("it should not throw an exeption", function (assert) {
+
+		// system under test + act
+		var oValueStateMessage = new sap.m.delegate.ValueState(null);
+
+		// act
+		var oDomRef = oValueStateMessage.createDom();
+
+		// assert
+		assert.strictEqual(oDomRef, null);
+
+		// cleanup
+		oValueStateMessage.destroy();
+	});
+}());
