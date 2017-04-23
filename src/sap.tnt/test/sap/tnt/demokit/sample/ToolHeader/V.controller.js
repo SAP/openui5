@@ -1,18 +1,18 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/Controller',
-		'sap/m/Popover',
-		'sap/m/Button'
-	], function(jQuery, Controller, Popover, Button) {
+	'jquery.sap.global',
+	'sap/ui/core/mvc/Controller',
+	'sap/m/Popover',
+	'sap/m/Button'
+], function(jQuery, Controller, Popover, Button) {
 	"use strict";
 
-	var Controller = Controller.extend("sap.tnt.sample.ToolHeader.V", {
+	return Controller.extend("sap.tnt.sample.ToolHeader.V", {
 
 		onInit: function () {
 
 		},
 
-		handleUserNamePress: function (event) {
+		onUserNamePress: function (event) {
 			var popover = new Popover({
 				showHeader: false,
 				placement: sap.m.PlacementType.Bottom,
@@ -35,8 +35,5 @@ sap.ui.define([
 			popover.openBy(event.getSource());
 		}
 	});
-
-
-	return Controller;
 
 });

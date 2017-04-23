@@ -1,7 +1,7 @@
 sap.ui.define([
-	"sap/ui/core/Control",
-	"sap/ui/thirdparty/d3"
-], function (Control, d3) {
+	"jquery.sap.global",
+	"sap/ui/core/Control"
+], function ($, Control) {
 	"use strict";
 
 	return Control.extend("sap.ui.demo.toolpageapp.control.D3Chart", {
