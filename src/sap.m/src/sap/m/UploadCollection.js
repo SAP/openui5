@@ -2103,9 +2103,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Handling of termination of an uploading process
-	 * @param {object} oEvent Event of the upload termination
-	 * @param {object} oContext Context of the upload termination
+	 * Handling of termination of an uploading process
+	 * @param {sap.ui.base.Event} oEvent Event of the upload termination
+	 * @param {sap.m.UploadCollectionItem} oItem Context of the upload termination
 	 * @private
 	 */
 	UploadCollection.prototype._handleTerminate = function(oEvent, oItem) {
@@ -3237,7 +3237,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Helper function for better Event API. This reference points to the oEvent comming from the FileUploader
-	 * @param {string} Header parameter name (optional)
+	 * @param {string} sHeaderParameterName Header parameter name (optional)
 	 * @returns {UploadCollectionParameter} || {UploadCollectionParameter[]}
 	 * @private
 	 */
@@ -3429,4 +3429,4 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	return UploadCollection;
 
-}, /* bExport= */ true);
+});
