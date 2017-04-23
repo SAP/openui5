@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.DefaultVariant");
 jQuery.sap.require("sap.ui.fl.Change");
 
@@ -118,7 +118,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 		new Array(5).forEach(function(index) {
 			oChanges[index] = new Change({
 				changeType: 'hubbabubba',
-				fileType: 'change',
+				fileType: 'change'
 			});
 		});
 

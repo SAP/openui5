@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 jQuery.sap.require("sap.ui.fl.changeHandler.HideControl");
 jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.require("sap.ui.core.Element");
@@ -6,7 +8,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 (function(HideControlChangeHandler, Control, Element, Change, JsControlTreeModifier, XmlTreeModifier) {
-
 	"use strict";
 
 	QUnit.module("sap.ui.fl.changeHandler.HideControl", {

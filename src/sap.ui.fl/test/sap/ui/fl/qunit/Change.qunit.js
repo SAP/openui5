@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require("sap.ui.base.EventProvider");

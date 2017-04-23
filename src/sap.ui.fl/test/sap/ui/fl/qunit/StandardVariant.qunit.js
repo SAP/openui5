@@ -1,4 +1,5 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
+
 jQuery.sap.require("sap.ui.fl.StandardVariant");
 jQuery.sap.require("sap.ui.fl.Change");
 
@@ -56,7 +57,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 
 	QUnit.test("getExecuteOnSelect - GIVEN multiple standardVariant changes WHEN getting the id THEN the id of the newest change should be returned and the rest deleted", function(assert) {
 		var expectedFlag = true;
-		var otherExpectedFlag= false;
+		var otherExpectedFlag = false;
 
 		var mChanges = {
 			firstChange: new Change({
@@ -85,7 +86,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 
 	QUnit.test("getExecuteOnSelect - GIVEN multiple standardVariant changes, one with an empty string as creation WHEN getting the id THEN the id of the change with empty string as creation should be returned", function(assert) {
 		var expectedFlag = true;
-		var otherExpectedFlag= false;
+		var otherExpectedFlag = false;
 
 		var oChanges = {
 			firstChange: new Change({
@@ -118,7 +119,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 		new Array(5).forEach(function(index) {
 			oChanges[index] = new Change({
 				changeType: 'hubbabubba',
-				fileType: 'change',
+				fileType: 'change'
 			});
 		});
 
@@ -218,7 +219,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 	});
 
 	QUnit.test('updateStandardVariantChange shall return undefined if no standard variant change has been found', function(assert) {
-		var newExecuteOnSelect= true;
+		var newExecuteOnSelect = true;
 
 		var mChanges = {};
 

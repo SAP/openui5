@@ -1,4 +1,4 @@
-/*global sinon, Promise*/
+/*global QUnit,sinon,Promise*/
 
 jQuery.sap.require("sap.ui.fl.FlexController");
 jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
@@ -76,7 +76,8 @@ jQuery.sap.require('sap.ui.core.mvc.View');
 
 			this.oControl = new TestingControl("testingID1");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
+			var done = assert.async();
 			QUnit.stop();
 
 			var stubs = this.stubs;

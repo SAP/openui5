@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit,sinon*/
 
 jQuery.sap.require("sap.ui.fl.changeHandler.MoveElements");
 jQuery.sap.require("sap.m.Button");
@@ -15,7 +15,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 	jQuery.sap.registerModulePath("testComponent", "../testComponent");
 
 	var sandbox = sinon.sandbox.create();
-	var oComponent = new sap.ui.getCore().createComponent({
+	var oComponent = sap.ui.getCore().createComponent({
 		name : "testComponent",
 		id : "testComponent"
 	});
@@ -248,7 +248,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("No source aggregation supplied via selector for move"), "missing source aggregation error captured");
 
-		var oChange = new Change({
+		oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : {
 				movedElements : [{
@@ -266,7 +266,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("No target supplied for move"), "missing target error captured");
 
-		var oChange = new Change({
+		oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : {
 				movedElements : [{
@@ -289,7 +289,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Move target parent not found"), "unkown target error captured");
 
-		var oChange = new Change({
+		oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : {
 				movedElements : [{
@@ -311,7 +311,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("No target aggregation supplied for move"), "missing target aggregation error captured");
 
-		var oChange = new Change({
+		oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : {
 				target : {
@@ -327,7 +327,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			MoveElementsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier});
 		}, new Error("Change format invalid"), "missing moved elements error captured");
 
-		var oChange = new Change({
+		oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : {
 				movedElements : [{

@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"
 ], function (ErrorUtils){

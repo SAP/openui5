@@ -1,4 +1,5 @@
 /*global QUnit */
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 QUnit.config.autostart = false;
@@ -91,10 +92,10 @@ sap.ui.require(["sap/ui/fl/FakeLrepLocalStorage"], function(FakeLrepLocalStorage
 		assert.expect(3);
 
 		var fnDeleteCallback = function(){
-			assert.ok(true,"Callback called after delete")
+			assert.ok(true,"Callback called after delete");
 		};
 		var fnSaveCallback = function(){
-			assert.ok(true,"Callback called after save changes")
+			assert.ok(true,"Callback called after save changes");
 		};
 
 		FakeLrepLocalStorage.attachModifyCallback(fnDeleteCallback);

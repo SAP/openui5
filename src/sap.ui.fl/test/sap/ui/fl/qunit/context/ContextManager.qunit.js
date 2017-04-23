@@ -1,5 +1,8 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
+
 sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/fl/Utils"], function(ContextManager, Change, Utils) {
+	"use strict";
+
 	var sandbox = sinon.sandbox.create();
 
 	var oRuntimeContext = {
@@ -453,7 +456,7 @@ sap.ui.require(["sap/ui/fl/context/ContextManager", "sap/ui/fl/Change", "sap/ui/
 		var sReference = "anReference";
 		var sGeneratedId = "id_123_0";
 		this.stub(Utils, "createDefaultFileName").returns(sGeneratedId);
-		var sExpectedUrl = "/sap/bc/lrep/content/apps/" + sReference + "/contexts/"+ sGeneratedId + ".context?layer=CUSTOMER";
+		var sExpectedUrl = "/sap/bc/lrep/content/apps/" + sReference + "/contexts/" + sGeneratedId + ".context?layer=CUSTOMER";
 		var oPropertyBag = {
 			reference: sReference,
 			namespace: "apps/" + sReference + "/contexts/"

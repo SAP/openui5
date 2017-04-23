@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit*/
 jQuery.sap.require("sap.ui.layout.changeHandler.UnhideSimpleForm");
 jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 jQuery.sap.require("sap.ui.layout.form.FormElement");

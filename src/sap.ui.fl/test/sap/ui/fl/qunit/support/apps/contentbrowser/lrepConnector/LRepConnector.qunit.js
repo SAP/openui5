@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector"
 ], function (LRepConnector){

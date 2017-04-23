@@ -1,10 +1,12 @@
-/*globals QUnit */
+/*global QUnit */
 
 jQuery.sap.require("sap.ui.fl.changeHandler.Base");
 jQuery.sap.require('sap.ui.core.Control');
 jQuery.sap.require("sap.ui.core.LayoutData");
 
 (function (Base, Control, LayoutData) {
+	"use strict";
+
 	var oControl;
 
 	QUnit.module("sap.ui.fl.changeHandler.Base", {

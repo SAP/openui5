@@ -1,4 +1,4 @@
-/*global sinon, Promise*/
+/*global QUnit,sinon,Promise*/
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
@@ -88,7 +88,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				isUserDependend: true
 			};
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
+			var done = assert.async();
 			stop();
 
 			var stubs = this.stubs;

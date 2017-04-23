@@ -1,4 +1,5 @@
-/*globals QUnit*/
+/*global QUnit,sinon*/
+
 jQuery.sap.require("sap.ui.fl.registry.ChangeHandlerRegistration");
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 

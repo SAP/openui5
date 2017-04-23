@@ -1,9 +1,12 @@
+/*global QUnit,sinon*/
+
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require("sap.ui.layout.VerticalLayout");
 jQuery.sap.require("sap.ui.layout.HorizontalLayout");
 jQuery.sap.require("sap.m.Button");
 
 (function (Utils, HorizontalLayout, VerticalLayout, Button) {
+	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 
@@ -14,7 +17,7 @@ jQuery.sap.require("sap.m.Button");
 		afterEach: function () {
 			aControls.forEach(function (oControl) {
 				oControl.destroy();
-			})
+			});
 		}
 	});
 
@@ -230,7 +233,7 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("_getComponentIdForControl shall walk up the control tree until it finds a component id", function (assert) {
-		var sComponentId, oControl1, oControl2, oControl3, f_getOwnerIdForControl;
+		var sComponentId, oControl1, oControl2, oControl3, fnGetOwnerIdForControl;
 		oControl1 = {};
 		oControl2 = {
 			getParent: this.stub().returns(oControl1)
@@ -239,41 +242,43 @@ jQuery.sap.require("sap.m.Button");
 			getParent: this.stub().returns(oControl2)
 		};
 
-		f_getOwnerIdForControl = this.stub(Utils, "_getOwnerIdForControl");
-		f_getOwnerIdForControl.withArgs(oControl3).returns("");
-		f_getOwnerIdForControl.withArgs(oControl2).returns("");
-		f_getOwnerIdForControl.withArgs(oControl1).returns("sodimunk");
+		fnGetOwnerIdForControl = this.stub(Utils, "_getOwnerIdForControl");
+		fnGetOwnerIdForControl.withArgs(oControl3).returns("");
+		fnGetOwnerIdForControl.withArgs(oControl2).returns("");
+		fnGetOwnerIdForControl.withArgs(oControl1).returns("sodimunk");
 
 		// Call CUT
 		sComponentId = Utils._getComponentIdForControl(oControl3);
 
 		assert.equal(sComponentId, 'sodimunk');
-		sinon.assert.calledThrice(f_getOwnerIdForControl);
+		sinon.assert.calledThrice(fnGetOwnerIdForControl);
 		Utils._getOwnerIdForControl.restore();
 	});
 
 	QUnit.test("_getComponentIdForControl shall stop walking up the control tree after 100 iterations", function (assert) {
-		var sComponentId, aControls, i, f_getOwnerIdForControl, previous;
+		var sComponentId, aControls, i, fnGetOwnerIdForControl, previous;
 		aControls = [];
-		for (i = 0; i < 200; i++) {
+		/*eslint-disable no-loop-func */
+		 for (i = 0; i < 200; i++) {
 			previous = (i >= 1) ? aControls[i - 1] : null;
 			(function (previous, i) {
 				aControls[i] = {
 					getParent: function () {
-						return previous
+						return previous;
 					}
-				}
+				};
 			})(previous, i);
 		}
+		/*eslint-enable no-loop-func */
 
-		f_getOwnerIdForControl = this.stub(Utils, "_getOwnerIdForControl").returns("");
+		fnGetOwnerIdForControl = this.stub(Utils, "_getOwnerIdForControl").returns("");
 
 		// Call CUT
 		sComponentId = Utils._getComponentIdForControl(aControls[199]);
 
 		assert.strictEqual(sComponentId, '');
-		sinon.assert.callCount(f_getOwnerIdForControl, 100);
-		f_getOwnerIdForControl.restore();
+		sinon.assert.callCount(fnGetOwnerIdForControl, 100);
+		fnGetOwnerIdForControl.restore();
 	});
 
 	QUnit.test("getComponentName shall return the component name for a component", function (assert) {
@@ -346,7 +351,7 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("_getXSRFTokenFromModel shall return an empty string if the retrieval failed", function (assert) {
-		var oModel, sXSRFToken, fStub;
+		var oModel, sXSRFToken;
 		oModel = {};
 
 		// Call CUT
@@ -356,12 +361,12 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("_getXSRFTokenFromModel shall return the XSRF Token from the OData model", function (assert) {
-		var oModel, sXSRFToken, fStub;
+		var oModel, sXSRFToken;
 		oModel = {
 			getHeaders: function () {
 				return {
 					"x-csrf-token": "gungalord"
-				}
+				};
 			}
 		};
 
@@ -662,13 +667,10 @@ jQuery.sap.require("sap.m.Button");
 			return sParameter === "sap.app" ? oSapAppEntry : undefined;
 		};
 
-		var fnOriginal = Utils.getAppComponentForControl;
-		var bCalled = false;
-
 		var oStub = this.stub(Utils, "getAppComponentForControl");
-		var oGetComponentForControlStub = this.stub(Utils, "_getComponentForControl").returns(oParentComponent);
+		this.stub(Utils, "_getComponentForControl").returns(oParentComponent);
 
-		var oDeterminedAppComponent = Utils._getAppComponentForComponent(oComponent);
+		Utils._getAppComponentForComponent(oComponent);
 
 		assert.ok(oStub.calledOnce, "the function was called once");
 		assert.equal(oStub.firstCall.args[0], oParentComponent, "the function was called with the parent component the first time");
@@ -708,7 +710,7 @@ jQuery.sap.require("sap.m.Button");
 			getManifestEntry: function () {
 				return {
 					type: "component"
-				}
+				};
 			}
 		};
 
@@ -998,7 +1000,7 @@ jQuery.sap.require("sap.m.Button");
 
 		assert.equal(Utils.getFlexReference(oManifest), sAppId + ".Component");
 	});
-	
+
 	QUnit.test("isCustomerDependentLayer", function(assert) {
 		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER"), "'CUSTOMER' layer is detected as customer dependent");
 		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER_BASE"), "'CUSTOMER_BASE' layer is detected as customer dependent");

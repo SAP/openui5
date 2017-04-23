@@ -1,5 +1,4 @@
-/*globals QUnit, sinon*/
-
+/*global QUnit*/
 
 (function(XmlTreeModifier) {
 	"use strict";

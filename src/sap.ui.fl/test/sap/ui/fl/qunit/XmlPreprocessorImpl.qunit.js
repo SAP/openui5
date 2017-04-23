@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit*/
 jQuery.sap.require("sap.ui.fl.XmlPreprocessorImpl");
 jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
 jQuery.sap.require("sap.ui.fl.ChangePersistence");

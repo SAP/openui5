@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.FlexController");
 jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
@@ -88,7 +88,6 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 	QUnit.test('createAndApplyChange shall not crash if no change handler can be found', function (assert) {
 
 		var oUtilsLogStub = this.stub(Utils.log, "warning");
-		var exceptionThrown = false;
 		var oChangeSpecificData = {};
 		var oControlType = {};
 		var oControl = {};
@@ -440,7 +439,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			saveDirtyChanges: sinon.stub().returns(Promise.resolve())
 		};
 		var aChanges = [];
-		for (var i = 0; i < 5 ; i++){
+		for (var i = 0; i < 5; i++){
 			aChanges.push(new Change({
 				fileName: "Gizorillus" + i,
 				layer: "CUSTOMER",
@@ -462,7 +461,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 	QUnit.test("discardChanges (with array items deletion) with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function(assert) {
 		var aChanges = [];
-		for (var i = 0; i < 6 ; i++){
+		for (var i = 0; i < 6; i++){
 			aChanges.push(new Change({
 				fileName: "Gizorillus" + i,
 				layer: "VENDOR",
@@ -477,7 +476,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		aChanges[3]._oDefinition.layer = "CUSTOMER_BASE";
 		aChanges[4]._oDefinition.layer = "PARTNER";
 
-		var oChangePersistence = this.oFlexController._oChangePersistence = {
+		this.oFlexController._oChangePersistence = {
 				aChanges: aChanges,
 				deleteChange: function(oChange) {
 					var nIndexInMapElement = aChanges.indexOf(oChange);
@@ -495,7 +494,9 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 	QUnit.test("discardChangesForId without personalized only option shall delete the changes from the persistence and save the deletion only for CUSTOMER layer", function(assert) {
 		var aChangesForSomeId = [];
-		for (var i = 0; i < 5 ; i++) {
+		var i;
+
+		for (i = 0; i < 5; i++) {
 			aChangesForSomeId.push(new Change({
 				fileName: "Gizorillus" + i,
 				layer: "CUSTOMER",
@@ -509,7 +510,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		aChangesForSomeId[3]._oDefinition.layer = "VENDOR";
 
 		var aChangesForSomeOtherId = [];
-		for (var i = 0; i < 5 ; i++) {
+		for (i = 0; i < 5; i++) {
 			aChangesForSomeOtherId.push(new Change({
 				fileName: "Gizorillus" + i,
 				layer: "CUSTOMER",
@@ -548,7 +549,9 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 	QUnit.test("discardChangesForId with personalized only option shall delete the changes from the persistence and save the deletion only for USER layer", function(assert) {
 		var aChangesForSomeId = [];
-		for (var i = 0; i < 5 ; i++) {
+		var i;
+
+		for (i = 0; i < 5; i++) {
 			aChangesForSomeId.push(new Change({
 				fileName: "Gizorillus" + i,
 				layer: "CUSTOMER",
@@ -563,7 +566,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		aChangesForSomeId[3]._oDefinition.layer = "VENDOR";
 
 		var aChangesForSomeOtherId = [];
-		for (var i = 0; i < 5 ; i++) {
+		for (i = 0; i < 5; i++) {
 			aChangesForSomeOtherId.push(new Change({
 				fileName: "Gizorillus" + i,
 				layer: "CUSTOMER",
@@ -833,7 +836,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		};
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group3", "group2"];
@@ -870,7 +873,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				"mChanges": mChanges,
 				"mDependencies": mDependencies,
 				"mDependentChangesOnMe": mDependentChangesOnMe
-			}
+			};
 		};
 		var oAppComponent = {};
 
@@ -891,7 +894,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group3", "group2"];
@@ -935,7 +938,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				"mChanges": mChanges,
 				"mDependencies": mDependencies,
 				"mDependentChangesOnMe": mDependentChangesOnMe
-			}
+			};
 		};
 		var oAppComponent = {};
 
@@ -957,7 +960,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getDependentIdList: function () {
 				return ["ReversalReasonName", "Reversal", "Dates"];
@@ -1028,7 +1031,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				"mChanges": mChanges,
 				"mDependencies": mDependencies,
 				"mDependentChangesOnMe": mDependentChangesOnMe
-			}
+			};
 		};
 		var oAppComponent = {};
 
@@ -1051,7 +1054,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group1", "group2"];
@@ -1086,7 +1089,7 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				"mChanges": mChanges,
 				"mDependencies": mDependencies,
 				"mDependentChangesOnMe": mDependentChangesOnMe
-			}
+			};
 		};
 		var oAppComponent = {};
 
@@ -1103,16 +1106,9 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		var oControlField1 = new sap.ui.core.Control("field5");
 		var iStubCalls = 0;
 
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange", function(oChange, oControl, mPropertyBag) {
-			if (oControl === oControlForm1 && iStubCalls === 1) {
-				this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
-			}
-			iStubCalls++;
-		}.bind(this));
-
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getDependentIdList: function () {
 				return ["field3-2", "group1", "group2"];
@@ -1159,9 +1155,17 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 				"mChanges": mChanges,
 				"mDependencies": mDependencies,
 				"mDependentChangesOnMe": mDependentChangesOnMe
-			}
+			};
 		};
+
 		var oAppComponent = {};
+
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange", function(oChange, oControl, mPropertyBag) {
+			if (oControl === oControlForm1 && iStubCalls === 1) {
+				this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
+			}
+			iStubCalls++;
+		}.bind(this));
 
 		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
 

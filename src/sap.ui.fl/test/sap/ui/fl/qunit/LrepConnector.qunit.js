@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 (function() {
 	"use strict";
 	jQuery.sap.require("sap.ui.fl.LrepConnector");
@@ -91,7 +91,7 @@
 
 	QUnit.test("_getDefaultOptions", function(assert) {
 		//Arrange
-		var defaultHeaderStub = sandbox.stub(this.oLrepConnector, "_getDefaultHeader").returns({
+		sandbox.stub(this.oLrepConnector, "_getDefaultHeader").returns({
 			headers: {
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			}
@@ -866,9 +866,7 @@
 	QUnit.test("upsert - all params", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedOptions = {contentType: "text/plain"};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer&changelist=myChangelist";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
 
 		//Act
 		return this.oLrepConnector.upsert("myNamespace/mySubNamespace/", "myName", "myType", "myLayer", "testcontent", "text/plain", "myChangelist").then(function(result) {
@@ -880,9 +878,7 @@
 	QUnit.test("upsert - required only", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedOptions = {contentType: "application/json"};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
 
 		//Act
 		return this.oLrepConnector.upsert("myNamespace/mySubNamespace/", "myName", "myType", "myLayer", "{}").then(function(result) {
@@ -894,8 +890,7 @@
 	QUnit.test("deleteFile - all params", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer&changelist=myChangelist";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
 
 		//Act
 		return this.oLrepConnector.deleteFile("myNamespace/mySubNamespace", "myName", "myType", "myLayer", "myChangelist").then(function(result) {
@@ -907,8 +902,7 @@
 	QUnit.test("deleteFile - required only", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
 
 		//Act
 		return this.oLrepConnector.deleteFile("myNamespace/mySubNamespace", "myName", "myType", "myLayer").then(function(result) {

@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.PreprocessorImpl");
 jQuery.sap.require("sap.ui.core.Component");
 jQuery.sap.require("sap.ui.base.ManagedObject");
@@ -16,9 +16,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	var sandbox = sinon.sandbox.create();
 	var controls = [];
-	var mProperties = {
-		componentId: "preprocessorTest.Component"
-	};
 
 	QUnit.module("sap.ui.fl.PreprocessorImpl", {
 		beforeEach: function() {

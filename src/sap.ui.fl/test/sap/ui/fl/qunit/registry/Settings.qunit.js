@@ -1,4 +1,5 @@
-﻿/*globals QUnit*/
+/*global QUnit,sinon*/
+
 sinon.config.useFakeTimers = false;
 jQuery.sap.require("sap.ui.fl.registry.Settings");
 jQuery.sap.require("sap.ui.fl.Cache");
@@ -46,21 +47,21 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	});
 
 	QUnit.test("isKeyUser", function(assert) {
-		QUnit.equal(this.cut._oSettings.isKeyUser, false);
+		assert.equal(this.cut._oSettings.isKeyUser, false);
 		var bIsKeyUser = this.cut.isKeyUser();
-		QUnit.equal(bIsKeyUser, false);
+		assert.equal(bIsKeyUser, false);
 	});
 
 	QUnit.test("isModelS", function(assert) {
-		QUnit.equal(this.cut._oSettings.isAtoAvailable, false);
+		assert.equal(this.cut._oSettings.isAtoAvailable, false);
 		var bIsModelS = this.cut.isModelS();
-		QUnit.equal(bIsModelS, false);
+		assert.equal(bIsModelS, false);
 	});
 
 	QUnit.test("isAtoEnabled", function(assert) {
-		QUnit.equal(this.cut._oSettings.isAtoEnabled, false);
+		assert.equal(this.cut._oSettings.isAtoEnabled, false);
 		var bIsAtoEnabled = this.cut.isAtoEnabled();
-		QUnit.equal(bIsAtoEnabled, false);
+		assert.equal(bIsAtoEnabled, false);
 	});
 
 	QUnit.test("get instance from flex settings request", function(assert) {
@@ -77,11 +78,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 		Settings.getInstance().then(function(oSettings) {
 			assert.equal(oStubCreateConnector.callCount, 1);
-			QUnit.equal(oSettings.isKeyUser(), true);
-			QUnit.equal(oSettings.isModelS(), true);
+			assert.equal(oSettings.isKeyUser(), true);
+			assert.equal(oSettings.isModelS(), true);
 			Settings.getInstance('anotherComponent').then(function(oSettings2) {
 				assert.equal(oStubCreateConnector.callCount, 1);
-				QUnit.equal(oSettings, oSettings2);
+				assert.equal(oSettings, oSettings2);
 				done();
 			});
 		});
@@ -103,10 +104,10 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			promise: Promise.resolve(oFileContent)
 		};
 		Settings.getInstance('testcomponent').then(function(oSettings) {
-			QUnit.equal(oSettings.isKeyUser(), true);
-			QUnit.equal(oSettings.isModelS(), true);
+			assert.equal(oSettings.isKeyUser(), true);
+			assert.equal(oSettings.isModelS(), true);
 			Settings.getInstance('anotherComponent').then(function(oSettings2) {
-				QUnit.equal(oSettings, oSettings2);
+				assert.equal(oSettings, oSettings2);
 				done();
 			});
 		});
@@ -128,10 +129,10 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			promise: Promise.resolve(oFileContent)
 		};
 		Settings.getInstance('testcomponent', '1.2.3').then(function(oSettings) {
-			QUnit.equal(oSettings.isKeyUser(), true);
-			QUnit.equal(oSettings.isModelS(), true);
+			assert.equal(oSettings.isKeyUser(), true);
+			assert.equal(oSettings.isModelS(), true);
 			Settings.getInstance('anotherComponent').then(function(oSettings2) {
-				QUnit.equal(oSettings, oSettings2);
+				assert.equal(oSettings, oSettings2);
 				done();
 			});
 		});
@@ -155,7 +156,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			QUnit.ok(oSettings1);
 			assert.equal(oStubCreateConnector.callCount, 1);
 			var oSettings2 = Settings.getInstanceOrUndef();
-			QUnit.equal(oSettings1, oSettings2);
+			assert.equal(oSettings1, oSettings2);
 			assert.equal(oStubCreateConnector.callCount, 1);
 			done();
 		});
@@ -163,7 +164,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.test("_isFlexChangeModeFromUrl", function(assert) {
 		var bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
-		QUnit.equal(bFlexChangeMode, undefined);
+		assert.equal(bFlexChangeMode, undefined);
 		var oUriParams = {
 			mParams: {
 				"sap-ui-fl-changeMode": ["true"]
@@ -171,23 +172,23 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		this.stub(jQuery.sap, "getUriParameters").returns(oUriParams);
 		bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
-		QUnit.equal(bFlexChangeMode, true);
+		assert.equal(bFlexChangeMode, true);
 		oUriParams.mParams["sap-ui-fl-changeMode"] = ["false"];
 		bFlexChangeMode = Settings._isFlexChangeModeFromUrl();
-		QUnit.equal(bFlexChangeMode, false);
+		assert.equal(bFlexChangeMode, false);
 	});
 
 	QUnit.test("isFlexChangeMode", function(assert) {
 		var bFlexChangeMode = Settings.isFlexChangeMode();
-		QUnit.equal(bFlexChangeMode, true); //default is true
+		assert.equal(bFlexChangeMode, true); //default is true
 
 		Settings.leaveFlexChangeMode();
-		var bFlexChangeMode = Settings.isFlexChangeMode();
-		QUnit.equal(bFlexChangeMode, false);
+		bFlexChangeMode = Settings.isFlexChangeMode();
+		assert.equal(bFlexChangeMode, false);
 
 		Settings.activateFlexChangeMode();
-		var bFlexChangeMode = Settings.isFlexChangeMode();
-		QUnit.equal(bFlexChangeMode, true);
+		bFlexChangeMode = Settings.isFlexChangeMode();
+		assert.equal(bFlexChangeMode, true);
 
 		var oUriParams = {
 			mParams: {
@@ -196,19 +197,19 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		this.stub(jQuery.sap, "getUriParameters").returns(oUriParams);
 		bFlexChangeMode = Settings.isFlexChangeMode();
-		QUnit.equal(bFlexChangeMode, false);
+		assert.equal(bFlexChangeMode, false);
 	});
 
 	QUnit.test("leave flexChangeMode eventing", function(assert) {
 		var done = assert.async();
 
 		var bFlexChangeMode = Settings.isFlexChangeMode();
-		QUnit.equal(bFlexChangeMode, true); //default is true
+		assert.equal(bFlexChangeMode, true); //default is true
 
 		var fOnChangeModeUpdated = function(oEvent) {
 			Settings.detachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
-			QUnit.equal(oEvent.getParameter("bFlexChangeMode"), false);
-			QUnit.equal(sap.ui.fl.registry.Settings.isFlexChangeMode(), false);
+			assert.equal(oEvent.getParameter("bFlexChangeMode"), false);
+			assert.equal(sap.ui.fl.registry.Settings.isFlexChangeMode(), false);
 			done();
 		};
 		Settings.attachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
@@ -219,12 +220,12 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var done = assert.async();
 
 		var bFlexChangeMode = Settings.isFlexChangeMode();
-		QUnit.equal(bFlexChangeMode, true); //default is true
+		assert.equal(bFlexChangeMode, true); //default is true
 
 		var fOnChangeModeUpdated = function(oEvent) {
 			Settings.detachEvent(sap.ui.fl.registry.Settings.events.changeModeUpdated, fOnChangeModeUpdated.bind(this));
-			QUnit.equal(oEvent.getParameter("bFlexChangeMode"), true);
-			QUnit.equal(Settings.isFlexChangeMode(), true);
+			assert.equal(oEvent.getParameter("bFlexChangeMode"), true);
+			assert.equal(Settings.isFlexChangeMode(), true);
 			done();
 		};
 		Settings.leaveFlexChangeMode();
@@ -235,7 +236,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	QUnit.test("returns by default adaptation button disllowed", function (assert) {
 		var bFlexibilityAdaptationButtonAllowed = sap.ui.fl.registry.Settings.isFlexibilityAdaptationButtonAllowed();
 
-		QUnit.equal(bFlexibilityAdaptationButtonAllowed, false);
+		assert.equal(bFlexibilityAdaptationButtonAllowed, false);
 	});
 
 	QUnit.test("changes adaptation button allowed", function (assert) {
@@ -245,11 +246,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		Settings.setFlexibilityAdaptationButtonAllowed(bFlexibilityAdaptationButtonDisallowed);
 		bRetrievedAdaptationButtonAllowed = Settings.isFlexibilityAdaptationButtonAllowed();
-		QUnit.equal(bRetrievedAdaptationButtonAllowed, bFlexibilityAdaptationButtonDisallowed);
+		assert.equal(bRetrievedAdaptationButtonAllowed, bFlexibilityAdaptationButtonDisallowed);
 
 		Settings.setFlexibilityAdaptationButtonAllowed(bFlexibilityAdaptationButtonAllowed);
 		bRetrievedAdaptationButtonAllowed = Settings.isFlexibilityAdaptationButtonAllowed();
-		QUnit.equal(bRetrievedAdaptationButtonAllowed, bFlexibilityAdaptationButtonAllowed);
+		assert.equal(bRetrievedAdaptationButtonAllowed, bFlexibilityAdaptationButtonAllowed);
 	});
 
 	QUnit.test("fires adaptation mode event on an adaptation button activation and the button is active", function(assert) {

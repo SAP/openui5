@@ -1,4 +1,4 @@
-/*global sinon, Promise*/
+/*global QUnit,sinon,Promise*/
 
 jQuery.sap.require("sap.ui.fl.Persistence");
 jQuery.sap.require("sap.ui.fl.Utils");
@@ -89,7 +89,8 @@ jQuery.sap.require('sap.ui.fl.Cache');
 				isUserDependend: true
 			};
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
+			var done = assert.async();
 			stop();
 
 			var stubs = this.stubs;
@@ -161,18 +162,17 @@ jQuery.sap.require('sap.ui.fl.Cache');
 	});
 
 	QUnit.test('Create a non-user dependant variant, it should be created in the current layer setting (VENDOR); delete it afterwards', function(assert) {
-		var done = assert.async();
 		var expectedLayer = 'VENDOR';
-		execlayerTestCase.call(this, expectedLayer);
+		execlayerTestCase.call(this, assert, expectedLayer);
 	});
 
 	QUnit.test('Create a non-user dependant variant, it should be created in the current layer setting (CUSTOMER); delete it afterwards', function(assert) {
-		var done = assert.async();
 		var expectedLayer = 'CUSTOMER';
-		execlayerTestCase.call(this, expectedLayer);
+		execlayerTestCase.call(this, assert, expectedLayer);
 	});
 
-	function execlayerTestCase(expectedLayer) {
+	function execlayerTestCase(assert, expectedLayer) {
+		var done = assert.async();
 		var getLayerStub = sinon.stub(utils, 'getCurrentLayer').returns(expectedLayer);
 		this.stubs.push(getLayerStub);
 

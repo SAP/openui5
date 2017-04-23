@@ -1,4 +1,5 @@
-/*globals QUnit, sinon*/
+/*global QUnit,sinon*/
+
 sap.ui.require([
 		"sap/ui/core/support/Support",
 		"sap/ui/fl/support/Flexibility",
@@ -13,7 +14,7 @@ sap.ui.require([
 		"sap/ui/thirdparty/sinon-qunit"
 	],
 	function (support, Flexibility, Cache, ContextManager) {
-		'use strict';
+		"use strict";
 
 		var sandbox = sinon.sandbox.create();
 
@@ -109,28 +110,28 @@ sap.ui.require([
 			var done = assert.async();
 			var sReference1 = "ref1";
 			var sAppVersion = "1.1.1";
-			var oChange1_1 = {};
-			var oContext1_1 = {};
-			var oContext1_2 = {};
+			var oChange1Action1 = {};
+			var oContext1Action1 = {};
+			var oContext1Action2 = {};
 			Cache._entries[sReference1] = {};
 			Cache._entries[sReference1][sAppVersion] = {
 				file: {
 					changes: {
-						changes: [oChange1_1],
-						contexts: [oContext1_1, oContext1_2]
+						changes: [oChange1Action1],
+						contexts: [oContext1Action1, oContext1Action2]
 					}
 				}
 			};
 			var sReference2 = "ref2";
-			var oChange2_1 = {};
-			var oChange2_2 = {};
-			var oContext2_1 = {};
+			var oChange2Action1 = {};
+			var oChange2Action2 = {};
+			var oContext2Action1 = {};
 			Cache._entries[sReference2] = {};
 			Cache._entries[sReference2][sAppVersion] = {
 				file: {
 					changes: {
-						changes: [oChange2_1, oChange2_2],
-						contexts: [oContext2_1]
+						changes: [oChange2Action1, oChange2Action2],
+						contexts: [oContext2Action1]
 					}
 				}
 			};
@@ -161,47 +162,47 @@ sap.ui.require([
 			var sReference1 = "ref1";
 			var sAppVersion1 = "1.1.1";
 			var sAppVersion2 = "2.2.2";
-			var oChange1_1 = {};
-			var oChange1_2 = {};
-			var oContext1_1 = {};
-			var oContext1_2 = {};
+			var oChange1Action1 = {};
+			var oChange1Action2 = {};
+			var oContext1Action1 = {};
+			var oContext1Action2 = {};
 			Cache._entries[sReference1] = {};
 			Cache._entries[sReference1][sAppVersion1] = {
 				file: {
 					changes: {
-						changes: [oChange1_1],
-						contexts: [oContext1_1, oContext1_2]
+						changes: [oChange1Action1],
+						contexts: [oContext1Action1, oContext1Action2]
 					}
 				}
 			};
 			Cache._entries[sReference1][sAppVersion2] = {
 				file: {
 					changes: {
-						changes: [oChange1_1, oChange1_2],
+						changes: [oChange1Action1, oChange1Action2],
 						contexts: []
 					}
 				}
 			};
 
 			var sReference2 = "ref2";
-			var oChange2_1 = {};
-			var oChange2_2 = {};
-			var oChange2_3 = {};
-			var oContext2_1 = {};
+			var oChange2Action1 = {};
+			var oChange2Action2 = {};
+			var oChange2Action3 = {};
+			var oContext2Action1 = {};
 			Cache._entries[sReference2] = {};
 			Cache._entries[sReference2][sAppVersion1] = {
 				file: {
 					changes: {
-						changes: [oChange2_1, oChange2_2],
-						contexts: [oContext2_1]
+						changes: [oChange2Action1, oChange2Action2],
+						contexts: [oContext2Action1]
 					}
 				}
 			};
 			Cache._entries[sReference2][sAppVersion2] = {
 				file: {
 					changes: {
-						changes: [oChange2_1, oChange2_2, oChange2_3],
-						contexts: [oContext2_1]
+						changes: [oChange2Action1, oChange2Action2, oChange2Action3],
+						contexts: [oContext2Action1]
 					}
 				}
 			};
@@ -213,10 +214,10 @@ sap.ui.require([
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 4, "four object were passed");
-				var oPassedFlexData1 = oPayload[0];
-				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion1);
-				assert.equal(oPassedFlexData1.changes.length, 1, "a change was passed");
-				assert.equal(oPassedFlexData1.contexts.length, 2, "two contexts were passed");
+				var oPassedFlexData0 = oPayload[0];
+				assert.equal(oPassedFlexData0.reference, sReference1 + " - " + sAppVersion1);
+				assert.equal(oPassedFlexData0.changes.length, 1, "a change was passed");
+				assert.equal(oPassedFlexData0.contexts.length, 2, "two contexts were passed");
 				var oPassedFlexData1 = oPayload[1];
 				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion2);
 				assert.equal(oPassedFlexData1.changes.length, 2, "two changes was passed");
@@ -225,10 +226,10 @@ sap.ui.require([
 				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion1);
 				assert.equal(oPassedFlexData2.changes.length, 2, "two changes were passed");
 				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
-				var oPassedFlexData2 = oPayload[3];
-				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion2);
-				assert.equal(oPassedFlexData2.changes.length, 3, "three changes were passed");
-				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
+				var oPassedFlexData3 = oPayload[3];
+				assert.equal(oPassedFlexData3.reference, sReference2 + " - " + sAppVersion2);
+				assert.equal(oPassedFlexData3.changes.length, 3, "three changes were passed");
+				assert.equal(oPassedFlexData3.contexts.length, 1, "a context was passed");
 				done();
 			});
 
@@ -241,15 +242,13 @@ sap.ui.require([
 			var sAppVersion1 = "1.2.02";
 			var sAppVersion2 = "1.2.1";
 			var sDefaultAppVersion = "DEFAULT_APP_VERSION";
-			var oChange1_1 = {};
-			var oChange1_2 = {};
-			var oContext1_1 = {};
-			var oContext1_2 = {};
+			var oChange1Action1 = {};
+			var oChange1Action2 = {};
 			Cache._entries[sReference1] = {};
 			Cache._entries[sReference1][sAppVersion1] = {
 				file: {
 					changes: {
-						changes: [oChange1_1],
+						changes: [oChange1Action1],
 						contexts: []
 					}
 				}
@@ -257,7 +256,7 @@ sap.ui.require([
 			Cache._entries[sReference1][sAppVersion2] = {
 				file: {
 					changes: {
-						changes: [oChange1_1, oChange1_2],
+						changes: [oChange1Action1, oChange1Action2],
 						contexts: []
 					}
 				}
@@ -265,22 +264,21 @@ sap.ui.require([
 			Cache._entries[sReference1][sDefaultAppVersion] = {
 				file: {
 					changes: {
-						changes: [oChange1_1, oChange1_2],
+						changes: [oChange1Action1, oChange1Action2],
 						contexts: []
 					}
 				}
 			};
 
 			var sReference2 = "ref02";
-			var oChange2_1 = {};
-			var oChange2_2 = {};
-			var oChange2_3 = {};
-			var oContext2_1 = {};
+			var oChange2Action1 = {};
+			var oChange2Action2 = {};
+			var oChange2Action3 = {};
 			Cache._entries[sReference2] = {};
 			Cache._entries[sReference2][sAppVersion1] = {
 				file: {
 					changes: {
-						changes: [oChange2_1, oChange2_2],
+						changes: [oChange2Action1, oChange2Action2],
 						contexts: []
 					}
 				}
@@ -288,7 +286,7 @@ sap.ui.require([
 			Cache._entries[sReference2][sAppVersion2] = {
 				file: {
 					changes: {
-						changes: [oChange2_1, oChange2_2, oChange2_3],
+						changes: [oChange2Action1, oChange2Action2, oChange2Action3],
 						contexts: []
 					}
 				}
@@ -301,16 +299,16 @@ sap.ui.require([
 				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 5, "five object were passed");
-				var oPassedFlexData1 = oPayload[0];
-				assert.equal(oPassedFlexData1.reference, sReference2 + " - " + sAppVersion2);
+				var oPassedFlexData0 = oPayload[0];
+				assert.equal(oPassedFlexData0.reference, sReference2 + " - " + sAppVersion2);
 				var oPassedFlexData1 = oPayload[1];
 				assert.equal(oPassedFlexData1.reference, sReference2 + " - " + sAppVersion1);
-				var oPassedFlexData1 = oPayload[2];
-				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + "Version independent");
-				var oPassedFlexData2 = oPayload[3];
-				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + sAppVersion2);
-				var oPassedFlexData2 = oPayload[4];
-				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + sAppVersion1);
+				var oPassedFlexData2 = oPayload[2];
+				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + "Version independent");
+				var oPassedFlexData3 = oPayload[3];
+				assert.equal(oPassedFlexData3.reference, sReference1 + " - " + sAppVersion2);
+				var oPassedFlexData4 = oPayload[4];
+				assert.equal(oPassedFlexData4.reference, sReference1 + " - " + sAppVersion1);
 				done();
 			});
 

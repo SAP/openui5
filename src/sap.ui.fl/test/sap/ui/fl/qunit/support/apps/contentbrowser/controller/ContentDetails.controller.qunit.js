@@ -1,10 +1,12 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
-		"sap/ui/fl/support/apps/contentbrowser/controller/ContentDetails.controller",
-		"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
-		"sap/ui/core/UIComponent",
-		"sap/ui/core/routing/Router",
-		"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
-	], function (ContentDetails, LRepConnector, UIComponent, Router, DataUtils){
+	"sap/ui/fl/support/apps/contentbrowser/controller/ContentDetails.controller",
+	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/routing/Router",
+	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
+], function (ContentDetails, LRepConnector, UIComponent, Router, DataUtils){
 	"use strict";
 
 	var oController;

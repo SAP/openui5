@@ -1,6 +1,9 @@
+/*global QUnit,sinon */
+
 jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 
 (function(ChangeTypeMetadata) {
+	"use strict";
 
 	QUnit.module("sap.ui.fl.registry.ChangeTypeMetadata", {
 		beforeEach: function() {
@@ -29,7 +32,9 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 		var errorLogStub = sinon.stub(jQuery.sap.log, "error");
 
 		//Act
-		var instance = new ChangeTypeMetadata({});
+		/*eslint-disable no-new*/
+		new ChangeTypeMetadata({});
+		/*eslint-enable no-new*/
 
 		//Assert
 		sinon.assert.calledTwice(errorLogStub);

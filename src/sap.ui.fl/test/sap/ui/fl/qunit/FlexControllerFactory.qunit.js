@@ -1,4 +1,4 @@
-/*globals QUnit*/
+/*global QUnit*/
 jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
 jQuery.sap.require("sap.ui.fl.FlexController");
 jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
@@ -37,21 +37,21 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	});
 
 	 QUnit.test("does not propagate if there are no changes for the component", function (assert) {
-		 this.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve({}));
-		 this.stub(Utils, "isApplication").returns(true);
+		this.stub(ChangePersistenceFactory, "_getChangesForComponentAfterInstantiation").returns(Promise.resolve({}));
+		this.stub(Utils, "isApplication").returns(true);
 
-		 var oComponent = {
-			 getManifestObject: function () {
-			 	return {};
-			 },
-			 addPropagationListener: function () {}
-		 };
+		var oComponent = {
+			getManifestObject: function () {
+				return {};
+			},
+			addPropagationListener: function () {}
+		};
 
-		 var oAddPropagationListenerStub = this.stub(oComponent, "addPropagationListener");
+		var oAddPropagationListenerStub = this.stub(oComponent, "addPropagationListener");
 
-		 FlexControllerFactory.getChangesAndPropagate(oComponent, {});
+		FlexControllerFactory.getChangesAndPropagate(oComponent, {});
 
-		 assert.equal(oAddPropagationListenerStub.callCount, 0, "no propagation was triggered");
+		assert.equal(oAddPropagationListenerStub.callCount, 0, "no propagation was triggered");
 	 });
 
 	 QUnit.test("does propagate if there are changes for the component", function (assert) {

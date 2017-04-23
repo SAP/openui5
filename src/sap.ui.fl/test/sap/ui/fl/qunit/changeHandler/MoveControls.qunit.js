@@ -1,4 +1,5 @@
 /*global QUnit, sinon*/
+
 sap.ui.require([
 	"sap/ui/fl/changeHandler/MoveControls",
 	"sap/ui/core/UIComponent",
@@ -26,7 +27,7 @@ function(MoveControlsHandler, UIComponent, ComponentContainer,
 	jQuery.sap.registerModulePath("testComponent", "../testComponent");
 
 	var sandbox = sinon.sandbox.create();
-	var oComponent = new sap.ui.getCore().createComponent({
+	var oComponent = sap.ui.getCore().createComponent({
 		name : "testComponent",
 		id : "testComponent"
 	});

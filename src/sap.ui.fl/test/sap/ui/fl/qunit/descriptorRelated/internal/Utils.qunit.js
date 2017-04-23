@@ -1,4 +1,4 @@
-/*globals QUnit*/
+/*global QUnit*/
 jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 
 (function(Utils) {
@@ -10,9 +10,9 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 		afterEach : function() {
 		}
 	});
-	
+
 	QUnit.test("getNameAndNameSpace", function(assert) {
-		assert.deepEqual(Utils.getNameAndNameSpace("id", "reference"), { 
+		assert.deepEqual(Utils.getNameAndNameSpace("id", "reference"), {
 			"fileName": "manifest",
 			"namespace": "apps/reference/changes/id/"
 			});
@@ -47,45 +47,45 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 			}
 		}), undefined);
 	});
-	
+
 	QUnit.test("checkEntityPropertyChange failure", function (assert) {
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
 				}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
-					"propertyPath": "signature/parameters/id/required",
+					"propertyPath": "signature/parameters/id/required"
 				}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
 					"propertyPath": "signature/parameters/id/required",
 					"operation": "UPSERT"
 				}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
 					"propertyPath": "signature/parameters/id/required",
 					"propertyValue": false
 				}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
 					"operation": "UPSERT",
 					"propertyValue": false
 				}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
@@ -93,8 +93,8 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 					"operation": "UPSERT",
 					"propertyValue": false
 				}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			Utils.checkEntityPropertyChange({
 				"entityPropertyChange": {
@@ -102,10 +102,10 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 					"operation": "HUGO",
 					"propertyValue": false
 				}
-			})
-		}.bind(this));
+			});
+		});
 	});
-	
+
 	QUnit.test("checkTexts", function(assert) {
 		assert.equal(Utils.checkTexts(), undefined);
 		assert.equal(Utils.checkTexts({
@@ -122,12 +122,12 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 			}
 		}), undefined);
 	});
-	
+
 	QUnit.test("checkTexts failure", function(assert) {
 		assert.throws(function(){
-			Utils.checkTexts("wrong type")
-		}.bind(this));
+			Utils.checkTexts("wrong type");
+		});
 	});
-	
-	
+
+
 }(sap.ui.fl.descriptorRelated.internal.Utils));

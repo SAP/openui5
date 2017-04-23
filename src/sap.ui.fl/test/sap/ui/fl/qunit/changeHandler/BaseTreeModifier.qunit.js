@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit*/
 
 
 (function(JsControlTreeModifier, XmlTreeModifier) {

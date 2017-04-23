@@ -112,7 +112,7 @@ sap.ui.define([
 		 * Sets the received data to the current content model, updates the icon tab bar, and releases the busy mode of the current page.
 		 * @param {Object} oModelData - model data of current page
 		 * @param {Object} oPage - current page used to set display busy mode on/off
-		 * @param {Object} oData - metadata which is received from <code>LRepConnector<code> "getContent" promise
+		 * @param {Object} oMetadata - metadata which is received from <code>LRepConnector<code> "getContent" promise
 		 * @private
 		 */
 		_onContentMetadataReceived: function (oModelData, oPage, oMetadata) {
