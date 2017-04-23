@@ -1,9 +1,10 @@
 /*Factory for a unified Options Page on all testpages which uses the Shell*/
 
-/* eslint-disable no-unused-vars */
 /* This file is only used to declare the function */
 
-function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
+window.getShellOptionsPanel = function(oShell, aAdditionalContent, bVertical){
+	"use strict";
+
 	var c = sap.ui.commons; /* shorthand */
 	var aContent = [];
 
@@ -144,5 +145,4 @@ function getShellOptionsPanel(oShell, aAdditionalContent, bVertical){
 	}
 
 	return oPanel;
-}
-/* eslint-enable no-unused-vars */
+};
