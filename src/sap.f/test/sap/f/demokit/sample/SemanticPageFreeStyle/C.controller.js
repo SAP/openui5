@@ -53,7 +53,7 @@ sap.ui.define([
 		},
 
 		showFooter: function() {
-			this.oSemanticPage.setShowFooter(!this.oSemanticPage.getShowFooter())
+			this.oSemanticPage.setShowFooter(!this.oSemanticPage.getShowFooter());
 		}
 	});
 });

@@ -1,3 +1,5 @@
+/* global QUnit,sinon*/
+
 jQuery.sap.require("sap.f.FlexibleColumnLayout");
 (function ($, QUnit, sinon, FlexibleColumnLayout, Page, Button, NavContainer, LT, bDebugMode) {
 	"use strict";
@@ -36,41 +38,41 @@ jQuery.sap.require("sap.f.FlexibleColumnLayout");
 
 	/**
 	 * Utility function to easily verify the visibility of the 3 columns with less code
-	 * @param assert - the assert object passed to the test case
-	 * @param oFCL - the instance that is tested upon
-	 * @param vBeginVisible - whether we expect the begin column to be visible or not
-	 * @param vMidVisible - whether we expect the mid column to be visible or not
-	 * @param vEndVisible - whether we expect the end column to be visible or not
+	 * @param {object} assert - the assert object passed to the test case
+	 * @param {object} oFCL - the instance that is tested upon
+	 * @param {int} iBeginVisible - whether we expect the begin column to be visible or not
+	 * @param {int} iMidVisible - whether we expect the mid column to be visible or not
+	 * @param {int} iEndVisible - whether we expect the end column to be visible or not
 	 */
-	var assertColumnsVisibility = function(assert, oFCL, vBeginVisible, vMidVisible, vEndVisible) {
-		var bBeginOK = (oFCL.$("beginColumn").width() > 0) === !!vBeginVisible,
-			bMidOK = (oFCL.$("midColumn").width() > 0) === !!vMidVisible,
-			bEndOK = (oFCL.$("endColumn").width() > 0) === !!vEndVisible;
+	var assertColumnsVisibility = function(assert, oFCL, iBeginVisible, iMidVisible, iEndVisible) {
+		var bBeginOK = (oFCL.$("beginColumn").width() > 0) === !!iBeginVisible,
+			bMidOK = (oFCL.$("midColumn").width() > 0) === !!iMidVisible,
+			bEndOK = (oFCL.$("endColumn").width() > 0) === !!iEndVisible;
 
-		assert.ok(bBeginOK, "The begin column is " + (vBeginVisible ? "" : " not ") +  " visible");
-		assert.ok(bMidOK, "The mid column is " + (vMidVisible ? "" : " not ") +  " visible");
-		assert.ok(bEndOK, "The end column is " + (vEndVisible ? "" : " not ") +  " visible");
+		assert.ok(bBeginOK, "The begin column is " + (iBeginVisible ? "" : " not ") +  " visible");
+		assert.ok(bMidOK, "The mid column is " + (iMidVisible ? "" : " not ") +  " visible");
+		assert.ok(bEndOK, "The end column is " + (iEndVisible ? "" : " not ") +  " visible");
 	};
 
 	/**
 	 * Utility function to easily verify arrows visibility
-	 * @param assert - the assert object passed to the test case
-	 * @param oFCL - the instance that is tested upon
-	 * @param vBeginColumnBackArrowVisible - whether we expect the _beginColumnBackArrow to be visible or not
-	 * @param vMidColumnBackArrowVisible - whether we expect the _midColumnBackArrow to be visible or not
-	 * @param vMidColumnForwardArrowVisible - whether we expect the _midColumnForwardArrow to be visible or not
-	 * @param vEndColumnForwardArrowVisible - whether we expect the _endColumnForwardArrow to be visible or not
+	 * @param {object} assert - the assert object passed to the test case
+	 * @param {object} oFCL - the instance that is tested upon
+	 * @param {int} iBeginColumnBackArrowVisible - whether we expect the _beginColumnBackArrow to be visible or not
+	 * @param {int} iMidColumnBackArrowVisible - whether we expect the _midColumnBackArrow to be visible or not
+	 * @param {int} iMidColumnForwardArrowVisible - whether we expect the _midColumnForwardArrow to be visible or not
+	 * @param {int} iEndColumnForwardArrowVisible - whether we expect the _endColumnForwardArrow to be visible or not
 	 */
-	var assertArrowsVisibility = function(assert, oFCL, vBeginColumnBackArrowVisible, vMidColumnBackArrowVisible, vMidColumnForwardArrowVisible, vEndColumnForwardArrowVisible) {
-		var bBBArrowOK = oFCL.getAggregation("_beginColumnBackArrow").$().is(":visible") === !!vBeginColumnBackArrowVisible,
-			bMBArrowOK = oFCL.getAggregation("_midColumnBackArrow").$().is(":visible") === !!vMidColumnBackArrowVisible,
-			bMFArrowOK = oFCL.getAggregation("_midColumnForwardArrow").$().is(":visible") === !!vMidColumnForwardArrowVisible,
-			bEFArrowOK = oFCL.getAggregation("_endColumnForwardArrow").$().is(":visible") === !!vEndColumnForwardArrowVisible;
+	var assertArrowsVisibility = function(assert, oFCL, iBeginColumnBackArrowVisible, iMidColumnBackArrowVisible, iMidColumnForwardArrowVisible, iEndColumnForwardArrowVisible) {
+		var bBBArrowOK = oFCL.getAggregation("_beginColumnBackArrow").$().is(":visible") === !!iBeginColumnBackArrowVisible,
+			bMBArrowOK = oFCL.getAggregation("_midColumnBackArrow").$().is(":visible") === !!iMidColumnBackArrowVisible,
+			bMFArrowOK = oFCL.getAggregation("_midColumnForwardArrow").$().is(":visible") === !!iMidColumnForwardArrowVisible,
+			bEFArrowOK = oFCL.getAggregation("_endColumnForwardArrow").$().is(":visible") === !!iEndColumnForwardArrowVisible;
 
-		assert.ok(bBBArrowOK, "The _beginColumnBackArrow is " + (vBeginColumnBackArrowVisible ? "" : " not ") +  " visible");
-		assert.ok(bMBArrowOK, "The _midColumnBackArrow is " + (vMidColumnBackArrowVisible ? "" : " not ") +  " visible");
-		assert.ok(bMFArrowOK, "The _midColumnForwardArrow is " + (vMidColumnForwardArrowVisible ? "" : " not ") +  " visible");
-		assert.ok(bEFArrowOK, "The _endColumnForwardArrow is " + (vEndColumnForwardArrowVisible ? "" : " not ") +  " visible");
+		assert.ok(bBBArrowOK, "The _beginColumnBackArrow is " + (iBeginColumnBackArrowVisible ? "" : " not ") +  " visible");
+		assert.ok(bMBArrowOK, "The _midColumnBackArrow is " + (iMidColumnBackArrowVisible ? "" : " not ") +  " visible");
+		assert.ok(bMFArrowOK, "The _midColumnForwardArrow is " + (iMidColumnForwardArrowVisible ? "" : " not ") +  " visible");
+		assert.ok(bEFArrowOK, "The _endColumnForwardArrow is " + (iEndColumnForwardArrowVisible ? "" : " not ") +  " visible");
 
 	};
 
@@ -747,7 +749,7 @@ jQuery.sap.require("sap.f.FlexibleColumnLayout");
 
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
-			this.oFCL = oFactory.createFCL()
+			this.oFCL = oFactory.createFCL();
 		},
 		afterEach: function () {
 			this.oFCL = null;

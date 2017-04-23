@@ -18,7 +18,9 @@ sap.ui.define([
 			var sLayout = oEvent.getParameters().arguments.layout;
 
 			// Update the layout of the FlexibleColumnLayout
-			sLayout && oModel.setProperty("/layout", sLayout);
+			if (sLayout) {
+				oModel.setProperty("/layout", sLayout);
+			}
 		},
 
 		onRouteMatched: function (oEvent) {

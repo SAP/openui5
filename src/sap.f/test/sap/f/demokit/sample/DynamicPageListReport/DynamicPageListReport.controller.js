@@ -76,7 +76,9 @@ sap.ui.define([
 		},
 		getFilterCriteria : function (aCurrentFilterValues){
 			return this.aKeys.filter(function (el, i) {
-				if (aCurrentFilterValues[i] !== "") return  el;
+				if (aCurrentFilterValues[i] !== "") {
+					return  el;
+				}
 			});
 		},
 		getFormattedSummaryText : function (aFilterCriterias) {

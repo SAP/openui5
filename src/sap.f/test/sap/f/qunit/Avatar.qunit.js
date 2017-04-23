@@ -1,9 +1,11 @@
+/* global QUnit*/
+
 (function () {
 	"use strict";
 
 	var sControlId = "AvatarId",
 		sImagePath = "../images/Woman_avatar_01.png",
-		sIconPath ="sap-icon://lab",
+		sIconPath = "sap-icon://lab",
 		sPreAvatarSize = "Avatar's size is ",
 		sPreAvatarShape = "Avatar's shape is ",
 		sPreAvatarType = "Avatar's type is ",
@@ -15,7 +17,9 @@
 		var oAvatarProps = {};
 		sId = sId || sControlId;
 
-		oProps && jQuery.extend(oAvatarProps, oProps);
+		if (oProps) {
+			jQuery.extend(oAvatarProps, oProps);
+		}
 
 		return new sap.f.Avatar(sId, oAvatarProps);
 	}
