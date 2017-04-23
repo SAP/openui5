@@ -1,4 +1,4 @@
-var testData = (function () {
+window.testData = (function () {
 	"use strict";
 
 	var aStandardModeConfig = [{
@@ -682,5 +682,5 @@ var testData = (function () {
 		aTwoColumnInLConfig: aTwoColumnInLConfig,
 		aTitleOnTheLeftConfig: aTitleOnTheLeftConfig,
 		aTitleOnTheLeftConfigAndTwoColumnInL: aTitleOnTheLeftConfigAndTwoColumnInL
-	}
+	};
 }());

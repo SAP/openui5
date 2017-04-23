@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/Controller"
 ], function (JSONModel, Controller) {
 	"use strict";
 
@@ -10,4 +10,4 @@ sap.ui.define([
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 		}
 	});
-}, true)
+}, true);

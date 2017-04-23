@@ -1,18 +1,19 @@
-(function ($, QUnit) {
+/*global QUnit*/
 
-	var core = sap.ui.getCore();
+(function ($, QUnit) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
 
 
 
 	QUnit.module("API", {
-    	beforeEach: function () {
-    		this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
-    			viewName: "view.UxAP-ObjectPageHeaderContent"
-    		});
-    		this.contentView.placeAt('qunit-fixture');
-		    sap.ui.getCore().applyChanges();
+		beforeEach: function () {
+			this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
+				viewName: "view.UxAP-ObjectPageHeaderContent"
+			});
+			this.contentView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.contentView.destroy();
@@ -43,12 +44,12 @@
 	});
 
 	QUnit.module("ObjectPageHeaderContent integration inside ObjectPageLayout", {
-    	beforeEach: function () {
-    		this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
-    			viewName: "view.UxAP-ObjectPageHeaderContent"
-    		});
-    		this.contentView.placeAt('qunit-fixture');
-		    sap.ui.getCore().applyChanges();
+		beforeEach: function () {
+			this.contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
+				viewName: "view.UxAP-ObjectPageHeaderContent"
+			});
+			this.contentView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.contentView.destroy();

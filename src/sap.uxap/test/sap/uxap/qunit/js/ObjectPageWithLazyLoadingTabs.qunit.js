@@ -1,10 +1,15 @@
+/*global QUnit,sinon*/
+
 (function (jQuery, QUnit, sinon, core, controller, xmlview, JSONModel) {
+	"use strict";
+
 	jQuery.sap.registerModulePath("view", "view");
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
 
 	var oController = controller("viewController", {});
 
 	sinon.config.useFakeTimers = true;
+	var iLoadingDelay = 2500;
 
 	// utility function that will be used in these tests
 	var fnGetOneBlock = function () {
@@ -35,7 +40,7 @@
 					"externalPath": "/Employee/5",
 					"internalModelName": "emp6"
 				}]
-			}
+			};
 		},
 		fnLoadMoreBlocks = function (oData) {
 			oData.sections.forEach(function (oSection, iIndexSection) {
@@ -46,7 +51,7 @@
 						oSubSection.moreBlocks = [fnGetOneBlock()];
 					}
 				});
-			})
+			});
 		},
 		fnBlockIsConnected = function (oBlock) {
 			return !!oBlock._bConnected;
@@ -67,7 +72,7 @@
 		},
 		fnAssertTabsAreLoaded = function (assert, aSections, aExpectedTabIndicedToBeLoaded) {
 			aSections.forEach(function (oSection, iIndex) {
-				fnAssertTabLoaded(assert, oSection, iIndex, aExpectedTabIndicedToBeLoaded.indexOf(iIndex) >= 0)
+				fnAssertTabLoaded(assert, oSection, iIndex, aExpectedTabIndicedToBeLoaded.indexOf(iIndex) >= 0);
 			});
 		},
 		fnTestSection = function (oObjectPageLayout, iIndex, aLoadedSections, assert, testContext) {
@@ -79,7 +84,6 @@
 			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};
 
-	var iLoadingDelay = 2500;
 	var oConfigModel = new JSONModel();
 	oConfigModel.loadData("model/OPLazyLoadingWithTabs.json", {}, false);
 

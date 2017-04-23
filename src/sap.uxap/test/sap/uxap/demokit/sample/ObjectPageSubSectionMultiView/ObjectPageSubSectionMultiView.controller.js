@@ -1,8 +1,9 @@
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/m/SplitContainer",
 	"sap/ui/Device",
-	"sap/ui/core/mvc/Controller",
-], function (SplitContainer, Device, Controller) {
+	"sap/ui/core/mvc/Controller"
+], function ($, SplitContainer, Device, Controller) {
 	"use strict";
 	return Controller.extend("sap.uxap.sample.ObjectPageSubSectionMultiView.ObjectPageSubSectionMultiView", {
 		onInit: function () {
@@ -26,7 +27,7 @@ sap.ui.define([
 		},
 		onAfterRendering: function () {
 			//demokit specific
-			$(".sapUiSimpleForm").css("backgroundColor", "green")
+			$(".sapUiSimpleForm").css("backgroundColor", "green");
 		}
 	});
 }, true);

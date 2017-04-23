@@ -1,4 +1,7 @@
+/*global QUnit*/
+
 (function ($, QUnit) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
 	jQuery.sap.registerModulePath("sap.uxap.sample", "../demokit/sample");
@@ -11,16 +14,16 @@
 	jQuery.sap.require("sap.uxap.ObjectPageHeader");
 
 	QUnit.module("aat_UxAP-ManageDisplay", {
-    	beforeEach: function () {
-    		//aat_UxAP-331_ObjectPageRules1
-    		this.objectPageSampleView1 = sap.ui.xmlview("UxAP-331_ObjectPageRules1", {
-    			viewName: "view.UxAP-331_ObjectPageRules1"
-    		});
-    		this.objectPageSampleView1.placeAt('qunit-fixture');
+		beforeEach: function () {
+			//aat_UxAP-331_ObjectPageRules1
+			this.objectPageSampleView1 = sap.ui.xmlview("UxAP-331_ObjectPageRules1", {
+				viewName: "view.UxAP-331_ObjectPageRules1"
+			});
+			this.objectPageSampleView1.placeAt('qunit-fixture');
 
-		    sap.ui.getCore().applyChanges();
+			sap.ui.getCore().applyChanges();
 
-		    this.referencedObjectPage1 = this.objectPageSampleView1.byId("objectPage1");
+			this.referencedObjectPage1 = this.objectPageSampleView1.byId("objectPage1");
 		},
 		afterEach: function () {
 			this.objectPageSampleView1.destroy();
@@ -74,15 +77,15 @@
 	});
 
 	QUnit.module("Single section", {
-    	beforeEach: function () {
-    		//aat_UxAP-331_ObjectPageRules2
-    		this.objectPageSampleView2 = sap.ui.xmlview("UxAP-331_ObjectPageRules2", {
-    			viewName: "view.UxAP-331_ObjectPageRules2"
-    		});
-    		this.objectPageSampleView2.placeAt('qunit-fixture');
-		    sap.ui.getCore().applyChanges();
+		beforeEach: function () {
+			//aat_UxAP-331_ObjectPageRules2
+			this.objectPageSampleView2 = sap.ui.xmlview("UxAP-331_ObjectPageRules2", {
+				viewName: "view.UxAP-331_ObjectPageRules2"
+			});
+			this.objectPageSampleView2.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 
-		    this.referencedObjectPage2 = this.objectPageSampleView2.byId("objectPage2");
+			this.referencedObjectPage2 = this.objectPageSampleView2.byId("objectPage2");
 		},
 		afterEach: function () {
 			this.objectPageSampleView2.destroy();

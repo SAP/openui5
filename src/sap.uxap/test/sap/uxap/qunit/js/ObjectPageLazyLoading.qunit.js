@@ -1,4 +1,7 @@
+/*global QUnit*/
+
 (function ($, QUnit) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
@@ -40,7 +43,7 @@
 			}
 
 			]
-		}
+		};
 	};
 
 	var _loadBlocksData = function (oData) {

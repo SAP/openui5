@@ -1,4 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Importance) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "./view");
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
@@ -14,7 +17,6 @@
 		var ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
 			viewName: "view.UxAP-13_ObjectPageSection"
 		});
-		var iRenderingDelay = 1000;
 
 		ObjectPageSectionView.placeAt('qunit-fixture');
 		sap.ui.getCore().applyChanges();
@@ -142,12 +144,12 @@
 	});
 
 	QUnit.test("Behavior with different importance levels", function (assert) {
-		fnGenerateTest = function (sImportance, sCurrentImportanceLevel, bExpectToBeHidden, assert) {
+		var fnGenerateTest = function (sImportance, sCurrentImportanceLevel, bExpectToBeHidden, assert) {
 			var sShouldBeHidden = "The section should be hidden",
 				sShouldBeVisible = "The section should be visible",
 				oMockSection = {
 					setImportance: function (sImportance) {
-						this.getImportance = sinon.stub().returns(sImportance)
+						this.getImportance = sinon.stub().returns(sImportance);
 					}
 				};
 
@@ -199,7 +201,7 @@
 				_sContainerSelector: '.someClass',
 				_getIsHidden: sinon.stub().returns(this._isHidden),
 				setImportance: function (sImportance) {
-					this.getImportance = sinon.stub().returns(sImportance)
+					this.getImportance = sinon.stub().returns(sImportance);
 				},
 				_updateShowHideState: sinon.spy(),
 				$: sinon.stub().returns(jQueryObject)
@@ -290,6 +292,6 @@
 
 		assert.equal(fnGetClosestSection(oFirstSubSection).getId(), oSectionWithTwoSubSection.getId());
 		assert.equal(fnGetClosestSection(oSectionWithTwoSubSection).getId(), oSectionWithTwoSubSection.getId());
-	})
+	});
 
 }(jQuery, QUnit, sinon, sap.uxap.Importance));

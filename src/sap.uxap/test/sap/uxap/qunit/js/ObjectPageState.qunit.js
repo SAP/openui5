@@ -1,4 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Importance) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
 
@@ -94,12 +97,12 @@
 			}),
 			done = assert.async();
 
-        sinon.spy(oApp, "invalidate");
+		sinon.spy(oApp, "invalidate");
 
 		oTextArea.addEventDelegate({
 			onAfterRendering: function(oEvent) {
 				assert.strictEqual(oTextArea.getDomRef().scrollHeight > 0, true, "textarea on after rendering has scrollHeight greater than 0");
-                assert.strictEqual(oApp.invalidate.called, false, "invalidate not called");
+				assert.strictEqual(oApp.invalidate.called, false, "invalidate not called");
 			}
 		});
 
@@ -107,13 +110,12 @@
 		sap.ui.getCore().applyChanges();
 
 
-		var afterNavigatePage2 = function() {
+		var afterBackToPage1 = function() {
+				done();
+			},afterNavigatePage2 = function() {
 				oApp.detachAfterNavigate(afterNavigatePage2);
 				oApp.attachAfterNavigate(afterBackToPage1);
 				oApp.to("page01");
-			},
-			afterBackToPage1 = function() {
-				done();
 			};
 
 		oApp.attachAfterNavigate(afterNavigatePage2);
@@ -183,8 +185,6 @@
 			done = assert.async();
 
 		setTimeout(function() {
-
-			var oScrollPositionBeforeResize = oPage._$opWrapper.scrollTop();
 			//act
 			oBlock.setHeight("600px"); //add 300px more
 			setTimeout(function() {
@@ -202,7 +202,7 @@
 
 	function runParameterizedTests (bUseIconTabBar) {
 
-		var sModulePrefix = bUseIconTabBar ? "IconTabBar": "AnchorBar"
+		var sModulePrefix = bUseIconTabBar ? "IconTabBar" : "AnchorBar";
 
 		QUnit.module(sModulePrefix + "Mode", {
 			beforeEach: function () {
@@ -223,8 +223,7 @@
 		QUnit.test("Hide first section preserves expanded state", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
-				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
+				oFirstSection = oPage.getSections()[0];
 
 			var done = assert.async();
 			setTimeout(function() {
@@ -245,8 +244,7 @@
 			//setup
 			var oPage = this.oObjectPage,
 				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
-			oAnchorBar = this.oObjectPage.getAggregation("_anchorBar");
+				oAnchorBar = this.oObjectPage.getAggregation("_anchorBar");
 
 			var done = assert.async();
 			setTimeout(function() {
@@ -336,8 +334,8 @@
 			//setup
 			var oPage = this.oObjectPage,
 				oFirstSection = oPage.getSections()[0],
-				oFirstSubsection = oFirstSection.getSubSections()[0];
-			oAnchorBar = oPage.getAggregation("_anchorBar");
+				oFirstSubsection = oFirstSection.getSubSections()[0],
+				oAnchorBar = oPage.getAggregation("_anchorBar");
 
 			var done = assert.async();
 			setTimeout(function() {

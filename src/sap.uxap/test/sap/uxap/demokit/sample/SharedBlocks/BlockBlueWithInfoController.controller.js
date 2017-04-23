@@ -9,7 +9,11 @@ sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
 		onAfterRendering: function () {
 			var oText = this.getView().byId("moreContentText");
 			var sMode = this.getView().getParent().getMode();
-			(sMode === "Expanded") ? oText.setText("...More Content") : oText.setText("");
+			if (sMode === "Expanded") {
+				oText.setText("...More Content");
+			} else {
+				oText.setText("");
+			}
 		},
 
 

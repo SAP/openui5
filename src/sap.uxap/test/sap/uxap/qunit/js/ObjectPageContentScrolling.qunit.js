@@ -1,4 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "./view");
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
@@ -21,7 +24,9 @@
 		var oObjectPage = oObjectPageContentScrollingView.byId("ObjectPageLayout");
 
 		for (var section in oObjectPage._oSectionInfo) {
-			if (!oObjectPage._oSectionInfo.hasOwnProperty(section)) continue;
+			if (!oObjectPage._oSectionInfo.hasOwnProperty(section)) {
+				continue;
+			}
 
 			//Scroll to section
 			oObjectPage.scrollToSection(section,0,0);

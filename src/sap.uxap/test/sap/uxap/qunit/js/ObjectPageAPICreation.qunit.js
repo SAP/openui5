@@ -1,4 +1,7 @@
+/*global QUnit*/
+
 (function ($, QUnit) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
 	jQuery.sap.registerModulePath("view", "view");
@@ -21,7 +24,7 @@
 			getBlocks: function (sText) {
 				return [
 					new sap.m.Text({text: sText || "some text"})
-				]
+				];
 			},
 			getObjectPage: function () {
 				return new sap.uxap.ObjectPageLayout();
@@ -48,7 +51,7 @@
 
 		helpers = {
 			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
-				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar(): oFactory.getObjectPage(),
+				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar() : oFactory.getObjectPage(),
 					oSection,
 					oSubSection;
 
@@ -402,7 +405,7 @@
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", function (assert) {
 		var oObjectPageSectionTitleLevel = sap.ui.core.TitleLevel.H1,
-			oObjectPageMinimumSectionTitleLevel= sap.ui.core.TitleLevel.H6,
+			oObjectPageMinimumSectionTitleLevel = sap.ui.core.TitleLevel.H6,
 			oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(oObjectPageSectionTitleLevel),
 			oSection,
 			$sectionHeader,
@@ -676,7 +679,6 @@
 		var oHeader = new sap.uxap.ObjectPageHeader("header");
 		oObjectPage.addHeaderContent(new sap.m.Text({text: "test"}));
 		oObjectPage.setHeaderTitle(oHeader);
-		var oHeader2 = oObjectPage.getHeaderTitle();
 		var aContent = oObjectPage.getHeaderContent();
 		assert.equal(aContent[0].getText(), "test");
 	});

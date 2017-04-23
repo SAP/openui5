@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Importance) {
 	"use strict";
 
