@@ -1,5 +1,9 @@
-sap.ui.define(['sap/ui/test/Opa5'],
-	function(Opa5) {
+/*global QUnit*/
+
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"sap/ui/test/opaQunit"
+], function (Opa5, opaTest) {
 	"use strict";
 
 	QUnit.module("EditSave");

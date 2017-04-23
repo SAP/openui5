@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				rootView: "sap.ui.layout.sample.ResponsiveSplitter.V",
 				dependencies: {
 					libs: [
-						"sap.ui.layout",
+						"sap.ui.layout"
 					]
 				},
 				config: {

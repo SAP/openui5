@@ -64,9 +64,9 @@ sap.ui.define([
 	/**
 	 * Completes the change by adding change handler specific content
 	 *
-	 * @param {sap.ui.fl.Change} oChangeWrapper - change object to be completed
-	 * @param {object} - oSpecificChangeInfo with attribute sUnhideId, the id of the control to unhide
-	 * @param {object} mPropertyBag - map containing the application component
+	 * @param {sap.ui.fl.Change} oChangeWrapper Change object to be completed
+	 * @param {object} oSpecificChangeInfo With attribute sUnhideId, the id of the control to unhide
+	 * @param {object} mPropertyBag Map containing the application component
 	 * @public
 	 */
 	UnhideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {

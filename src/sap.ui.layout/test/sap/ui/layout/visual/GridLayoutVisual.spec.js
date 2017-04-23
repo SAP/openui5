@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.ui.layout.GridLayoutVisual", function() {
+	"use strict";
+
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.layout.form.GridLayout';
 	var sFormId = "SF1";
 	var oForm = element(by.id(sFormId));
