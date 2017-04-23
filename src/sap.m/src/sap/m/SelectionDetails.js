@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 
 	/**
 	 * Builds a mapping of items to their respective facades via calling getFacade() on each item.
-	 * @returns {sap.ui.base.Interface} An array containing the interfaces to the items with all their relevant public methods
+	 * @returns {sap.ui.base.Interface[]} An array containing the interfaces to the items with all their relevant public methods
 	 * @private
 	 */
 	SelectionDetails.prototype._getItemFacades = function() {
@@ -424,7 +424,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		});
 		this.destroyAggregation("items", true);
 		for (var i = 0; i < aSelection.length; i++) {
-			oResult = fnFactory(aSelection[i].displayData, aSelection[i].data, oData);
+			oResult = fnFactory(aSelection[i].displayData, aSelection[i].data, aSelection[i].context, oData);
 			this.addAggregation("items", oResult, true);
 		}
 		this.fireEvent("afterUpdate", {
@@ -705,7 +705,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * The factory function is called for every selected entry separately with three parameters.
 	 * First parameter is the display data array for each item out of the selection.
 	 * Second parameter is the data array for each item out of the selection.
-	 * Third parameter is <code>oData</code>. Can be undefined.
+	 * Third parameter is the binding context for each item in the selection. This is undefined if no binding is used.
+	 * Fourth parameter is <code>oData</code>. Can be undefined.
 	 * @protected
 	 * @param {any} data Data to be passed to the factory function
 	 * @param {function} factory The item factory function that returns SelectionDetailsItems
