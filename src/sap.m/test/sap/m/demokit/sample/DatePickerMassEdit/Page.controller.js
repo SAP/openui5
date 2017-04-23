@@ -74,7 +74,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller',
 				var oCalendar = oEvent.getSource(),
 					oSelectedDate = oCalendar.getSelectedDates()[0].getStartDate();
 
-				if(oSelectedDate){
+				if (oSelectedDate){
 					this._oSelectNewDateDialog.getBeginButton().setEnabled(true);
 				}
 			}

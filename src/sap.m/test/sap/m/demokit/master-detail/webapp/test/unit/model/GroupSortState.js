@@ -1,7 +1,9 @@
+/*global QUnit*/
+
 sap.ui.define([
-		"sap/ui/demo/masterdetail/model/GroupSortState",
-		"sap/ui/model/json/JSONModel"
-	], function (GroupSortState, JSONModel) {
+	"sap/ui/demo/masterdetail/model/GroupSortState",
+	"sap/ui/model/json/JSONModel"
+], function (GroupSortState, JSONModel) {
 	"use strict";
 
 	QUnit.module("GroupSortState - grouping and sorting", {

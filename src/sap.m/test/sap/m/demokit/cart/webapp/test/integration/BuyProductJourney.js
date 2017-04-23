@@ -1,9 +1,5 @@
-/*!
- * ${copyright}
- */
-/*
- global QUnit
- */
+/* global QUnit */
+
 sap.ui.define([
 	'sap/ui/test/opaQunit',
 	'sap/ui/test/Opa5'

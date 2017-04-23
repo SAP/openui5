@@ -560,7 +560,7 @@ sap.ui.define(['jquery.sap.global',
 				currentRow = oEvent.getParameter("row");
 				sPersonName = currentRow.getTitle();
 				oSelect = this.oNewAppointmentDialog.getContent()[0].getContent()[1];
-				oSelectedItem = oSelect.getItems().filter(function(oItem) { return oItem.getText() === sPersonName })[0];
+				oSelectedItem = oSelect.getItems().filter(function(oItem) { return oItem.getText() === sPersonName; })[0];
 				oSelect.setSelectedItem(oSelectedItem);
 
 				oSelectedIntervalStart = oEvent.getParameter("startDate");
@@ -583,7 +583,7 @@ sap.ui.define(['jquery.sap.global',
 			},
 
 			_validateDateTimePicker: function (sValue, oDateTimePicker) {
-				if(sValue === "") {
+				if (sValue === "") {
 					oDateTimePicker.setValueState("Error");
 				} else {
 					oDateTimePicker.setValueState("None");
@@ -622,7 +622,6 @@ sap.ui.define(['jquery.sap.global',
 			_createDialog: function () {
 				var oFrag =  sap.ui.core.Fragment,
 					that = this,
-					sSelectedItem,
 					oStartDate,
 					oEndDate,
 					sTitle,
@@ -643,14 +642,12 @@ sap.ui.define(['jquery.sap.global',
 							text: 'Create',
 							enabled: false,
 							press: function () {
-								sSelectedItem = oFrag.byId("myFrag", "selectPerson").getSelectedItem().getText();
 								oStartDate = oFrag.byId("myFrag", "startDate").getDateValue();
 								oEndDate = oFrag.byId("myFrag", "endDate").getDateValue();
 								sTitle = oFrag.byId("myFrag", "inputTitle").getValue();
 								sInfoResponse = oFrag.byId("myFrag", "moreInfo").getValue();
 
-
-								if(oFrag.byId("myFrag", "startDate").getValueState() !== "Error"
+								if (oFrag.byId("myFrag", "startDate").getValueState() !== "Error"
 									&& oFrag.byId("myFrag", "endDate").getValueState() !== "Error") {
 
 									oNewAppointment = {

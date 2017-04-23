@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.require(
 	["sap/ui/test/opaQunit"],
 	function (opaTest) {
