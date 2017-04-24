@@ -1200,7 +1200,14 @@ sap.ui.define([
 									// select the key from the condition above
 									if (iPos > 0 && !sKey) {
 										oGrid = oTargetGrid.getContent()[iPos - 1];
-										oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
+										if (oGrid.keyField.getSelectedKey()) {
+											oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
+										} else {
+											// if no item is selected, we have to select at least the first keyFieldItem
+											if (!oControl.getSelectedItem() && oControl.getItems().length > 0) {
+												oControl.setSelectedItem(oControl.getItems()[0]);
+											}
+										}
 									} else {
 										this._aKeyFields.some(function(oKeyField, index) {
 											if (oKeyField.isDefault) {
