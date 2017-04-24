@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	// external:
 	'jquery.sap.global',
@@ -33,7 +35,7 @@ function(
 		var bResult = false;
 
 		var aOverlays = oDesignTime.getElementOverlays();
-		var aFoundOverlay = jQuery.each(aOverlays, function(iIndex, oOverlay) {
+		jQuery.each(aOverlays, function(iIndex, oOverlay) {
 			if (oOverlay.getElementInstance() === oElement) {
 				bResult = true;
 				return false;
@@ -129,8 +131,6 @@ function(
 
 		var oButton = new Button();
 		var oLayout = new VerticalLayout({content : [oButton]});
-
-		var aOverlay = [];
 
 		var bSyncingCalled = false;
 		this.oDesignTime.attachEventOnce("syncing", function() {

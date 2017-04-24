@@ -9,20 +9,20 @@ sap.ui.define(["sap/m/Button","sap/m/Label","sap/m/DatePicker","sap/m/Slider","s
 				var ControlType = null;
 
 				for (var i = iFrom; i <= iTo; i++){
-					ControlType = aControlTypes[i%aControlTypes.length];
+					ControlType = aControlTypes[i % aControlTypes.length];
 
 					oControl = new ControlType( "Control" + i, {
-						visible: bVisible,
+						visible: bVisible
 					});
 					if (oControl.setText){
 						oControl.setText("Control " + i);
 					}
 
 					oLayout.addContent(oControl);
-				};
+				}
 			},
 
-			startDesignTime: function(){
+			startDesignTime: function(oHorizontalLayout){
 				// Create DesignTime in other tick
 				return new Promise(function(resolve, reject){
 					//will result in custom timer in webPageTest
@@ -72,7 +72,7 @@ sap.ui.define(["sap/m/Button","sap/m/Label","sap/m/DatePicker","sap/m/Slider","s
 					});
 					oDesignTime.addRootElement(oHorizontalLayout);
 				}).then(function(){
-					document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true")
+					document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true");
 				});
 			}
 		};

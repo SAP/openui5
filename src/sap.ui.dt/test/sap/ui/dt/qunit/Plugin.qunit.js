@@ -1,5 +1,8 @@
+/*global QUnit*/
+
 (function(){
 	"use strict";
+
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
 	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -65,12 +68,12 @@
 		var aButtonAggregationNames = Object.keys(this.oButton.getMetadata().getAllAggregations());
 
 		aLayoutAggregationNames.forEach(function(sAggregationName) {
-			if(this.oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
+			if (this.oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
 				iAggregationCount += 1;
 			}
 		}.bind(this));
 		aButtonAggregationNames.forEach(function(sAggregationName) {
-			if(this.oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
+			if (this.oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
 				iAggregationCount += 1;
 			}
 		}.bind(this));
@@ -94,8 +97,6 @@
 		sap.ui.getCore().applyChanges();
 
 		this.oDesignTime.attachEventOnce("synced", function() {
-			var iAggregationCount = 0;
-
 			var aLayoutAggregationNames = Object.keys(this.oLayout.getMetadata().getAllAggregations());
 			var aButtonAggregationNames = Object.keys(this.oButton.getMetadata().getAllAggregations());
 			var oButtonDTMetadata = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
@@ -104,12 +105,12 @@
 			this.iButtonAggregationCount = 0;
 
 			aLayoutAggregationNames.forEach(function(sAggregationName) {
-				if(oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
+				if (oLayoutDTMetadata.isAggregationIgnored(this.oLayout, sAggregationName) === false) {
 					this.iLayoutAggregationCount += 1;
 				}
 			}.bind(this));
 			aButtonAggregationNames.forEach(function(sAggregationName) {
-				if(oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
+				if (oButtonDTMetadata.isAggregationIgnored(this.oButton, sAggregationName) === false) {
 					this.iButtonAggregationCount += 1;
 				}
 			}.bind(this));

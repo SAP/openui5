@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
@@ -21,8 +21,6 @@ jQuery.sap.require("sap.ui.dt.command.CommandFactory");
 	"use strict";
 
 	var CommandFactory = sap.ui.dt.command.CommandFactory;
-
-	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a command factory", {
 		beforeEach : function(assert) {
@@ -49,7 +47,7 @@ jQuery.sap.require("sap.ui.dt.command.CommandFactory");
 			this.oInput1 = new sap.m.Input();
 			this.oInput2 = new sap.m.Input();
 			this.oInput3 = new sap.m.Input();
-			
+
 			this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
 				layout : "ResponsiveGridLayout",
 				title : "Simple Form",
