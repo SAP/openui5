@@ -32,7 +32,7 @@ sap.ui.define([
 	 * three columns (referred to as <code>Begin</code>, <code>Mid</code> and <code>End</code>) rather than two
 	 * (<code>Master</code>, <code>Detail</code>). The width of the three columns is variable.
 	 *
-	 * There are several possible layouts that can be changed either with the control's API, or by the user with the help of navigation arrows.
+	 * There are several possible layouts that can be changed either with the control's API, or by the user with the help of layout arrows.
 	 *
 	 * Internally the control makes use of three instances of {@link sap.m.NavContainer}, thus forming the three columns.
 	 *
@@ -150,7 +150,7 @@ sap.ui.define([
 				 * Fired when there is a change in the <code>layout</code> property or in the maximum number of columns that can be displayed at once.
 				 * <br/></br>
 				 * <ul>The interactions that may lead to a state change are:
-				 *  <li>the property <code>layout</code> was changed indirectly by the user clicking a navigation arrow</li>
+				 *  <li>the property <code>layout</code> was changed indirectly by the user clicking a layout arrow</li>
 				 *  <li>the user resized the browser beyond a breakpoint, thus changing the maximum number of columns that can be displayed at once.</li></ul>
 				 * <br/><br/>
 				 * <b>Note: </b>The event is suppressed while the control has zero width and will be fired the first time it gets a non-zero width
@@ -176,7 +176,7 @@ sap.ui.define([
 							type: "int"
 						},
 						/**
-						 * Indicates whether the layout changed as a result of the user clicking a navigation arrow
+						 * Indicates whether the layout changed as a result of the user clicking a layout arrow
 						 */
 						isNavigationArrow: {
 							type: "boolean"
@@ -593,7 +593,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Proxies the navigation events from the internal nav containers to the app
+	 * Proxies the navigation events from the internal nav containers to the app.
 	 * @param oEvent
 	 * @param bAfter
 	 * @param sColumn
@@ -727,7 +727,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the buttons for the arrows, which are initially hidden and will only be shown on demand without rerendering
+	 * Creates the buttons for the layout arrows, which are initially hidden and will only be shown on demand without re-rendering.
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._initButtons = function () {
@@ -761,7 +761,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Saves the DOM references of the columns and arrows
+	 * Saves the DOM references of the columns and layout arrows.
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._cacheDOMElements = function () {
@@ -1006,7 +1006,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Called when the navigation arrows were clicked
+	 * Called when the layout arrows were clicked.
 	 * @param sShiftDirection - left/right (direction of the arrow)
 	 * @private
 	 */
@@ -1045,7 +1045,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the visibility of the arrows according to the current layout
+	 * Updates the visibility of the layout arrows according to the current layout.
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._hideShowArrows = function () {
@@ -1082,7 +1082,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Changes the visibility of a navigation button
+	 * Changes the visibility of a navigation button.
 	 * @param sButton
 	 * @param bShow
 	 * @private
@@ -1247,7 +1247,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Navigates back to a page in the FlexibleColumnLayout.
+	 * Navigates back to a page in the <code>FlexibleColumnLayout</code>.
 	 * Columns are scanned for the page in the following order: <code>Begin</code>, <code>Mid</code>, <code>End</code>.
 	 *
 	 * Calling this navigation method, first triggers the (cancelable) navigate event on the SplitContainer,
