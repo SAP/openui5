@@ -430,7 +430,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// Assert Button is shown
-				ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
+				assert.ok(oToolbar.getContent()[0].$(), "the master button is shown");
 
 
 				// Act 2 - change orientation
@@ -438,7 +438,7 @@
 				oSplitContainer._fnResize();
 
 				// Asset Button is removed
-				ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
+				assert.ok(!oToolbar.getContent()[0], "the master button is removed");
 
 				oSplitContainer.destroy();
 			});
