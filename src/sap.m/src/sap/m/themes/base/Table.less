@@ -231,6 +231,11 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	font-size: @sapUiListTableTextSize;
 }
 
+/* Ensuring that the row height is not smaller that 3rem in Cozy mode */
+.sapMListTblRow {
+	height: 3rem;
+}
+
 .sapMListTblCell.sapMListTblCellNoData {
 	font-size: 1rem;
 	padding-top: .75rem;
@@ -277,7 +282,6 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 /* table column header */
 .sapMListTbl th {
 	background: @sapUiListHeaderBackground;
-	border-bottom: 1px solid @sapUiListHeaderBorderColor;
 }
 
 /* table footer */
@@ -295,8 +299,8 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 
 /* overwite cell style */
 .sapUiSizeCompact .sapMListTblCell {
-	padding-top: 0;
-	padding-bottom: 0;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
 	vertical-align: middle;
 }
 
