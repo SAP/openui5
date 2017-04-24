@@ -10,7 +10,8 @@
 			enableScrolling="true"
 			showFooter="false"
 			navButtonPress="onNavBack"
-			showNavButton="false">
+			showNavButton="false"
+			class="sapUiDocumentationTopicsPage">
 
 		<customHeader>
 			<Toolbar width="100%">

@@ -449,9 +449,9 @@ code, kbd, pre, samp {
 	content: "\e076";
 }
 
-/* TODO: remove this after sap.m.Tree selection is corrected */
+/* Fix for sap.m.Tree selection TODO: remove this after sap.m.Tree selection is corrected */
 .sapUiTheme-sap_belize .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
-	background: #e8eff6;
+	background: #496b8a;
 }
 .sapUiTheme-sap_belize_plus .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
 	background: #496b8a;
@@ -461,4 +461,12 @@ code, kbd, pre, samp {
 }
 .sapUiTheme-sap_belize_hcw .sapMTreeItemBase.sapMTreeItemBaseChildren.sapMLIBSelected {
 	background: #8fb5ff;
+}
+
+/* Fix for sap.m.Tree not taking up 100% height (the containing page's background is modified instead) */
+.sapUiTheme-sap_belize .sapUiDocumentationTopicsPage {
+	background: #3b4c5b;
+}
+.sapUiTheme-sap_belize_plus .sapUiDocumentationTopicsPage {
+	background: #3b4c5b;
 }
