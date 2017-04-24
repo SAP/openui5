@@ -1,11 +1,39 @@
-body { 
-   background-color: #232323; 
+@font-face {
+	font-family: 'SAP-icons';
+	src: url('resources/SAP-icons.woff2') format('woff2'),
+		 url('resources/SAP-icons.woff') format('woff'),
+		 url('resources/SAP-icons.ttf') format('truetype');
+	font-style: normal;
+	font-weight: normal;
+}
+
+
+body {
+   background-color: #fff;
    font-family: Arial, sans-serif;
  } 
  
 header{
 	height: 810px;
 	width: 100%;
+}
+
+.icon {
+	display: inline-block;
+	font-size: 70px;
+	font-family: SAP-icons;
+}
+
+.icon.learn:before {
+	content: '\e0dc';
+}
+
+.icon.explore:before {
+	content: '\e11e';
+}
+
+.icon.connect:before {
+	content: '\e20c';
 }
 
 .divleft{
@@ -28,10 +56,21 @@ header{
     padding-top: 3px;
 }
 
-a{
+a {
      display: inline-block;
      font-size: 18px;
-     color: #FFFFFF;
+     color: #db5846;
+}
+a:hover {
+	text-decoration: underline;
+	color: #db5846;
+}
+
+.flex-container a {
+	color: #fff;
+}
+.flex-container a:hover {
+	color: #fff;
 }
 
 li {
@@ -52,6 +91,7 @@ li {
 
 .header_container{
 	height: 810px;
+	background-color: #232323;
 }
 
 .logo{
@@ -119,7 +159,7 @@ li {
  
  h5{ 
 	margin-top: 20px;
-	font-size: 20px;
+	font-size: 30px;
 	font-weight: 200;
 	color: #FFA52D;
  } 	
@@ -136,7 +176,7 @@ li {
  p {
  	font-size: 20px;
  	font-weight: 300;
- 	color: #FFFFFF;
+ 	color: #fff;
  }
  
  Title { 
@@ -151,10 +191,7 @@ li {
     background-color: #232323;
     margin: 10px;
  }
- 
- a:hover{
- 	color: #FEFEFE;
- }
+
  
  main{
  	top: 65%;
@@ -164,6 +201,9 @@ li {
  	position: relative;
  	z-index: 2;
  }
+.container.mod_info * {
+	color: #000;
+}
  
  #info{
  	width: 100%;
@@ -243,6 +283,10 @@ li {
 .footerdiv{
 	text-align: center;
 	padding: 30px;
+	background-color: #232323;
+}
+.footerdiv a {
+	color: #444;
 }
 
 .copyright{
@@ -252,8 +296,6 @@ li {
 
 .legal{
 	margin: 0 15px;
-	color: #444444;
-	font-weight: 200;
 }
 
 @media (min-width: 1200px) {
@@ -306,9 +348,6 @@ li {
 	}
 	.disclaimer {
 		margin: 0px;
-	}
-	.ui5communityimg {
-		height: 100px;
 	}
 }
 
