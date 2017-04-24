@@ -8,12 +8,13 @@ sap.ui.define([
 	'sap/m/Page',
 	// internal:
 	'sap/ui/dt/Overlay',
+	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/dt/ElementUtil',
 	// should be last:
-	'sap/ui/qunit/qunit-coverage',
 	'sap/ui/thirdparty/sinon',
+	'sap/ui/qunit/qunit-coverage',
 	'sap/ui/thirdparty/sinon-ie',
 	'sap/ui/thirdparty/sinon-qunit'
 ],
@@ -23,9 +24,11 @@ function(
 	VerticalLayout,
 	Page,
 	Overlay,
+	ElementOverlay,
 	OverlayRegistry,
 	DesignTime,
-	ElementUtil
+	ElementUtil,
+	sinon
 ) {
 	"use strict";
 
@@ -314,6 +317,25 @@ function(
 			false,
 			'then the aggregation overlay of outer overlay if disabled'
 		);
+	});
+
+	QUnit.test("when oInnerLayout is extended by new button element without existing overlay", function(assert) {
+		var done = assert.async();
+		var oParentOfNewOverlay,
+			oButton = new Button("button3"),
+			oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oInnerLayout);
+
+		// parentElementOverlay should be available before sync with renderAndCreateAggregation
+		sinon.stub(ElementOverlay.prototype, "_renderAndCreateAggregation", function() {});
+		this.oDesignTime.attachEventOnce("elementOverlayCreated", function(oEvent) {
+			oParentOfNewOverlay = oEvent.getParameter("elementOverlay").getParentElementOverlay();
+			assert.notEqual(oParentOfNewOverlay, undefined, "then new button overlay is created and knows his parent overlay");
+			assert.strictEqual(oParentOfNewOverlay.getId(), oInnerLayoutOverlay.getId(), "then the parent overlay of the new button is the oInnerLayoutOverlay");
+			oParentOfNewOverlay.destroy();
+			done();
+		});
+
+		this.oInnerLayout.insertAggregation("content", oButton, 2);
 	});
 
 	QUnit.module("Given that the DesignTime is created for two root controls", {

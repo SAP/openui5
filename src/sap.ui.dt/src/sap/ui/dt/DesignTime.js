@@ -558,7 +558,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		if (oChild instanceof sap.ui.core.Element) {
 			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
 			if (!oChildElementOverlay) {
-				this._createElementOverlay(oChild);
+				oChildElementOverlay = this._createElementOverlay(oChild);
+				oParentAggregationOverlay.addChild(oChildElementOverlay);
 			} else {
 				// element overlay needs to have a correct parent for propagation
 				oParentAggregationOverlay.addChild(oChildElementOverlay);
