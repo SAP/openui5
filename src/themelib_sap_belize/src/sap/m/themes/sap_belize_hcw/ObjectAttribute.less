@@ -3,9 +3,10 @@
 /* Belize High Contrast White theme       */
 /* ====================================== */
 
-html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
+html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
+	text-decoration: none;
 }
 
 .sapMObjectAttributeActive .sapMText {
@@ -16,6 +17,15 @@ html.sap-desktop .sapMObjectAttributeActive:focus > .sapMText {
 
 .sapMObjectAttributeActive .sapMText:hover {
 	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText:hover,
+.sapMObjectAttributeActive .sapMText:hover {
+	text-decoration: none;
+}
+
+.sapMObjectAttributeActive .sapMObjectAttributeText {
+	text-decoration: underline;
 }
 
 /*=========================================== */
