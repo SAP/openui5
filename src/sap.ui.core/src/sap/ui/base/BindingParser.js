@@ -250,8 +250,9 @@ sap.ui.define([
 			}
 
 			if ( v && typeof v === 'object' ) {
-				resolveRef(v, "test");
-				resolveFilters(v, "filters");
+				resolveRef(v, 'test');
+				resolveFilters(v, 'filters');
+				resolveFilters(v, 'condition');
 				o[sProp] = new Filter(v);
 			}
 		}

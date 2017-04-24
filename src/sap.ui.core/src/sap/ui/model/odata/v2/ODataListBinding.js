@@ -70,6 +70,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.bSkipDataEvents = false;
 			this.bUseExpandedList = false;
 
+			// check filter integrity
+			this.oModel.checkFilterOperation(this.aApplicationFilters);
+
 			if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
@@ -1145,6 +1148,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
+
+		// check filter integrity
+		this.oModel.checkFilterOperation(aFilters);
 
 		if (sFilterType === FilterType.Application) {
 			this.aApplicationFilters = aFilters;
