@@ -928,7 +928,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{$kind : "notAProperty"}, undefined].forEach(function (oNotAProperty, i) {
+	[{
+		oProperty : {$kind : "notAProperty"},
+		sPath : "/EMPLOYEE_2_TEAM/INVALID"
+	}, {
+		oProperty : undefined,
+		sPath : "/EMPLOYEE_2_TEAM/My$count"
+	}].forEach(function (oFixture, i) {
 		QUnit.test("fetchIfChildCanUseCache, error handling, " + i, function (assert) {
 			var oMetaModel = {
 					fetchObject : function () {},
@@ -948,25 +954,27 @@ sap.ui.require([
 				}),
 				oContext = Context.create(this.oModel, oBinding, "/EMPLOYEES('2')"),
 				oMetaModelMock = this.mock(oMetaModel),
+				sPath = oFixture.sPath,
 				oPromise;
 
 			oMetaModelMock.expects("getMetaPath")
 				.withExactArgs("/EMPLOYEES('2')")
 				.returns("/EMPLOYEES");
 			oMetaModelMock.expects("getMetaPath")
-			.withExactArgs("/EMPLOYEE_2_TEAM/INVALID")
-			.returns("/EMPLOYEE_2_TEAM/INVALID");
+				.withExactArgs(sPath)
+				.returns(sPath);
 			oMetaModelMock.expects("fetchObject")
-				.withExactArgs("/EMPLOYEES/EMPLOYEE_2_TEAM/INVALID")
-				.returns(_SyncPromise.resolve(oNotAProperty));
+				.withExactArgs("/EMPLOYEES" + sPath)
+				.returns(_SyncPromise.resolve(oFixture.oProperty));
 			this.oLogMock.expects("error").withExactArgs(
 				"Failed to enhance query options for auto-$expand/$select as the child "
-					+ "binding's path 'EMPLOYEE_2_TEAM/INVALID' does not point to a property",
-				JSON.stringify(oNotAProperty),
+					+ "binding's path '" + sPath.slice(1)
+					+ "' does not point to a property",
+				JSON.stringify(oFixture.oProperty),
 				"sap.ui.model.odata.v4.ODataParentBinding");
 
 			// code under test
-			oPromise = oBinding.fetchIfChildCanUseCache(oContext,"EMPLOYEE_2_TEAM/INVALID");
+			oPromise = oBinding.fetchIfChildCanUseCache(oContext, sPath.slice(1));
 
 			return oPromise.then(function (bUseCache) {
 				assert.strictEqual(bUseCache, false);
@@ -976,12 +984,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchIfChildCanUseCache: child path is $count", function (assert) {
+	QUnit.test("fetchIfChildCanUseCache: $count in child path", function (assert) {
 		var oBinding = new ODataParentBinding();
 
 		// code under test
 		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
-		//TODO make it work for EMPLOYEE_2_EQUIPMENTS/$count
+		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "EMPLOYEE_2_EQUIPMENTS/$count")
+			.getResult(), true);
 	});
 
 	//*********************************************************************************************

@@ -297,7 +297,7 @@ sap.ui.define([
 			aPromises,
 			that = this;
 
-		if (sChildPath === "$count") {
+		if (sChildPath === "$count" || sChildPath.slice(-7) === "/$count") {
 			return _SyncPromise.resolve(true);
 		}
 
