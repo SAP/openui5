@@ -183,5 +183,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "e7374e3ef73e89dd7309571ed4be80dae645f6e9",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: corrected checks for detecting Japanese and Chinese",
+        "references": []
+      },
+      {
+        "id": "95a98bd09a7b38270c4f181e1548e366b5fc4fa9",
+        "type": "FIX",
+        "text": ": sap.ui.unified.calendar controls. - focused item is preserved after rerendering.",
+        "references": []
+      }
+    ]
   }
 }

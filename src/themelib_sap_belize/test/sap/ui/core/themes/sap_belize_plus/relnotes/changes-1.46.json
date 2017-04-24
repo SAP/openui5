@@ -623,5 +623,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "cc3d81836d9a27f2da9b573234af53879b452676",
+        "type": "FIX",
+        "text": " sap.m.MessageView: High contrast styles on hover adjusted",
+        "references": []
+      },
+      {
+        "id": "ea918c43090dade663dca08e8f67e8035cde785f",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: HCB and HCW styles fixed",
+        "references": []
+      }
+    ]
   }
 }

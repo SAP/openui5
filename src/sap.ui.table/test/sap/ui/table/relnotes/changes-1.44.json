@@ -565,5 +565,46 @@
         "references": []
       }
     ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "35df21673f9baecc409ccbbd6e43da9645d90cbd",
+        "type": "FIX",
+        "text": " Table: Prevent scrolling and a second request on a binding refresh",
+        "references": []
+      },
+      {
+        "id": "817228ce9e2eef039918500c8f3f53d1a54dc8f4",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - CSS corrections for column headers",
+        "references": []
+      },
+      {
+        "id": "9efef0a7592bf0207082bdd7cacd373dad39fd1a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - column header spans in XLM views",
+        "references": []
+      },
+      {
+        "id": "e778369cec7e6b59f66f42a086dbdc993257a56a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - row selection column is too wide in IE/Edge",
+        "references": []
+      },
+      {
+        "id": "b6cf7facaf0f8908aec1a6a9fd6953689ff33de9",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - sort and filter icons in IE",
+        "references": []
+      },
+      {
+        "id": "a60db56a3a0295f68f0001292d4d2bab42b1a4bc",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - touch scrolling in IE and Edge",
+        "references": []
+      }
+    ]
   }
 }

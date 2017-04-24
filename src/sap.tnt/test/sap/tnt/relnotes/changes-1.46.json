@@ -32,5 +32,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "e38774f578cd7bb2f5fb1e3fed48bf5c350ed15c",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Hidden footer when XmlView\u0027s height is 100% now corrected",
+        "references": []
+      }
+    ]
   }
 }

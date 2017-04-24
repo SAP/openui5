@@ -2020,5 +2020,58 @@
         "references": []
       }
     ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ce897be2158904274be251be26104484b1f628cf",
+        "type": "FIX",
+        "text": " sap.m.Bar fix the styling",
+        "references": []
+      },
+      {
+        "id": "14d16fb22179585fb638e7cfd1af522930f588ce",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter - downloaded explored app sample is fully operational.",
+        "references": []
+      },
+      {
+        "id": "8aa7c1d0df6f1d1c315e0d0511b36d0e0bcda155",
+        "type": "FIX",
+        "text": " sap.m.List: Leaving the list with tab navigation should not load more data.",
+        "references": []
+      },
+      {
+        "id": "0a16d73448816b4dbb9db5b4f01a4bf78e8d3341",
+        "type": "FIX",
+        "text": " sap.m.MaskInput - RTL behavior on Chrome ver \u003e\u003d58 when the cursor is at the beginning of the string",
+        "references": []
+      },
+      {
+        "id": "5fb4a975030f83a9f12beb80ae398d7f89956e66",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover - improve invalidation behavior",
+        "references": []
+      },
+      {
+        "id": "3883c43ca99887ad4ac0bfa80959dee493ab1d49",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Overflowed items delete button works in IE",
+        "references": []
+      },
+      {
+        "id": "aff4f98a93bee793d288b6800bc54005e03b06fb",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Has search field when the FilterItem multiSelect property is set to false",
+        "references": []
+      },
+      {
+        "id": "1a80778eab769a2d607c6367d4fd22114a95fc70",
+        "type": "FIX",
+        "text": "sap.m.Wizard: jQuery handling of incorrectly escaped symbols fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -2039,5 +2039,100 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "4496384d19c00145d0c3eac1bd56ca332bfe2dd8",
+        "type": "FIX",
+        "text": " Select: ValueState message open/close on mouse click fixed",
+        "references": []
+      },
+      {
+        "id": "2954f5adab6d6a87ed7632e4b3590656ef19c962",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Padding is now set to Popover\u0027s content",
+        "references": []
+      },
+      {
+        "id": "09ba588afbfcdec60428db424ed9a752e2513171",
+        "type": "FIX",
+        "text": " sap.m.Button: Disabled button icon shown correct in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "647c6fc2afb6349afc61c3f646ffb2c32b8c0574",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter - downloaded explored app sample is fully operational.",
+        "references": []
+      },
+      {
+        "id": "3fc86d35e01953ba285ba07f91c8ae583b296016",
+        "type": "FIX",
+        "text": " sap.m.List: Leaving the list with tab navigation should not load more data.",
+        "references": []
+      },
+      {
+        "id": "c5dab6de33bce7bc9242938a78e710dbf1a77fe1",
+        "type": "FIX",
+        "text": " sap.m.MaskInput - RTL behavior on Chrome ver \u003e\u003d58 when the cursor is at the beginning of the string",
+        "references": []
+      },
+      {
+        "id": "1a79a1ad11558ce046c6b95811d2a0b81804c951",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover - improve invalidation behavior",
+        "references": []
+      },
+      {
+        "id": "cc3d81836d9a27f2da9b573234af53879b452676",
+        "type": "FIX",
+        "text": " sap.m.MessageView: High contrast styles on hover adjusted",
+        "references": []
+      },
+      {
+        "id": "94e2292f5c54a7222a0683af544b3ce5832c2cb8",
+        "type": "FIX",
+        "text": " sap.m.Panel: Box-sizing property changed",
+        "references": []
+      },
+      {
+        "id": "ec375585f2bdb9805515bdb438dffb1f6740758b",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Overflowed items delete button works in IE",
+        "references": []
+      },
+      {
+        "id": "82b91942eec76d2245be355656fc3390358cc204",
+        "type": "FIX",
+        "text": " sap.m.Token: Tokens in cosy mode can be deleted",
+        "references": []
+      },
+      {
+        "id": "c2c518e8e9a8ddac964e5b0d78862da9b2c6b223",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Has search field when the FilterItem multiSelect property is set to false",
+        "references": []
+      },
+      {
+        "id": "fdb07ed29f7f25f235d0b3846ff2d091b7a57a02",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Unique id for none preset filter item",
+        "references": []
+      },
+      {
+        "id": "c994212cab784162d46880209e2db6ee83b7e3c4",
+        "type": "FIX",
+        "text": " sap.m.Wizard - Improved step rendering order in branched mode.",
+        "references": []
+      },
+      {
+        "id": "a2340ed1cce11f2971026bb31a3f0e732f57ab62",
+        "type": "FIX",
+        "text": "sap.m.Wizard: jQuery handling of incorrectly escaped symbols fixed",
+        "references": []
+      }
+    ]
   }
 }
