@@ -14,7 +14,6 @@ sap.ui.define([
 
 		onInit : function () {
 			var oComponent = this.getOwnerComponent();
-
 			this._router = oComponent.getRouter();
 			this._router.getRoute("product").attachPatternMatched(this._routePatternMatched, this);
 			this._router.getRoute("cartProduct").attachPatternMatched(this._routePatternMatched, this);

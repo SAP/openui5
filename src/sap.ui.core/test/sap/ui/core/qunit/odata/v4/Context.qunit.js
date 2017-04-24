@@ -140,6 +140,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchValue for a virtual context", function (assert) {
+		var oContext = Context.create(null, {}, "/foo/-2", -2),
+			oResult;
+
+		// code under test
+		oResult = oContext.fetchValue("bar");
+
+		assert.strictEqual(oResult.isFulfilled(), true);
+		assert.strictEqual(oResult.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchAbsoluteValue", function (assert) {
 		var oBinding = {
 				fetchAbsoluteValue : function () {}

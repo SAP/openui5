@@ -61,6 +61,7 @@
 			"" : {
 				"dataSource" : "default",
 				"settings" : {
+					"autoExpandSelect" : true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",
 					"updateGroupId" : "UpdateGroup"

@@ -35,6 +35,10 @@ import javax.servlet.ServletContextListener;
 public final class DiscoveryService implements ServletContextListener {
 
 
+  /** context init parameter for application name (used for version information) */
+  private static final String INIT_PARAM_APP_NAME = DiscoveryService.class.getName() + ".APP_NAME";
+
+
   /** default prefix for the classpath */
   private static final String CLASSPATH_PREFIX = "META-INF";
 
@@ -226,7 +230,11 @@ public final class DiscoveryService implements ServletContextListener {
     for (Entry lib : this.getAllLibraries()) {
       libraries.add(new Artifact(lib.entry.replace('/', '.'), "${version}", "${buildtime}", "${lastchange}", ""));
     }
-    return new VersionInfo(this.context.getContextPath().substring(1), "${version}", "${buildtime}", "${lastchange}", "", libraries);
+    String appName = this.context.getInitParameter(INIT_PARAM_APP_NAME);
+    if (appName == null) {
+      appName = this.context.getContextPath().substring(1);
+    }
+    return new VersionInfo(appName, "${version}", "${buildtime}", "${lastchange}", "", libraries);
   } // method: getVersionInfo
 
 

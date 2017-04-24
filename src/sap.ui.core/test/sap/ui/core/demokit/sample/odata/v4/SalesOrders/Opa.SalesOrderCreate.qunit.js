@@ -25,11 +25,6 @@ sap.ui.require([
 				level : jQuery.sap.log.Level.ERROR,
 				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
 			},
-			oExpectedLogChangeParameters = {
-				component : "sap.ui.model.odata.v4.lib._Cache",
-				level : jQuery.sap.log.Level.ERROR,
-				message : "Failed to drill-down into Note, invalid segment: Note"
-			},
 			sModifiedNote = "Modified by OPA",
 			bRealOData = TestUtils.isRealOData();
 
@@ -44,11 +39,18 @@ sap.ui.require([
 		if (!bRealOData) {
 			Then.onTheMainPage.checkSalesOrdersCount(10);
 		}
+
+		// check value helps within sales order line items
+		When.onTheMainPage.selectFirstSalesOrder();
+		When.onTheMainPage.pressValueHelpOnProductCategory();
+		When.onTheMainPage.pressValueHelpOnProductTypeCode();
+
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
 		Then.onTheCreateNewSalesOrderDialog.checkCurrencyCodeIsValueHelp();
 		When.onTheCreateNewSalesOrderDialog.pressValueHelpOnCurrencyCode();
+		When.onTheValueHelpPopover.close();
 		Then.onTheMainPage.checkNote(0);
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote);
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
@@ -176,7 +178,7 @@ sap.ui.require([
 		When.onTheMainPage.pressSetBindingContextButton();
 		Then.onTheMainPage.checkFavoriteProductID();
 
-		if (bRealOData) {
+		if (false/*bRealOData*/) { //TODO re-enable once CPOUI5UISERVICESV3-591 is done
 			// Filter and then sort: filter is not lost on sort
 			When.onTheMainPage.filterGrossAmount("1000");
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
@@ -196,9 +198,6 @@ sap.ui.require([
 			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
 			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID descending
 			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
-			// Change SalesOrderDetails $select via API
-			When.onTheMainPage.unselectSODetailsNoteWithChangeParameters();
-			Then.onTheMainPage.checkSalesOrderDetailsNote();
 		}
 
 		if (!bRealOData) {
@@ -221,15 +220,16 @@ sap.ui.require([
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			Then.onTheMainPage.checkSupplierPhoneNumber("0622734567");
-			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
-			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
-			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
+			//TODO re-enable once CPOUI5UISERVICESV3-591 is done
+//			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
+//			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
+//			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
 		}
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
 		Then.onTheMainPage.checkLog(bRealOData
-			? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
+			? [oExpectedLog, oExpectedLog, oExpectedLog]
 			: undefined);
 		Then.iTeardownMyUIComponent();
 	});

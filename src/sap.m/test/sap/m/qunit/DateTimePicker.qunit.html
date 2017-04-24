@@ -147,6 +147,33 @@
 				}, 400);
 			});
 
+			QUnit.test("_fillDateRange works with min date when the current date is out of range", function(assert) {
+				var oDateTimePicker = new sap.m.DateTimePicker("DTPMinMax").placeAt("uiArea1"),
+					oNewMinDate = new Date(2014, 0, 1),
+					oNewMaxDate = new Date(2014, 11, 31),
+					oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate())),
+					oFocusedDate;
+
+				//arrange
+				oDateTimePicker.setMinDate(oNewMinDate);
+				oDateTimePicker.setMaxDate(oNewMaxDate);
+				sap.ui.getCore().applyChanges();
+
+
+
+				//act
+				oDateTimePicker.focus();
+				qutils.triggerEvent("click", "DTPMinMax-icon");
+
+				oFocusedDate = oDateTimePicker._oCalendar._getFocusedDate().getJSDate();
+
+				//assert
+				assert.ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "oDateTimePicker: focused date equals min date when current date is out of the min/max range");
+
+				//clean
+				oDateTimePicker.destroy();
+			});
+
 			QUnit.module("interaction");
 
 			QUnit.test("change date by typing", function(assert) {

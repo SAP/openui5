@@ -2,16 +2,14 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/demo/cart/model/LocalStorageModel'
-], function (UIComponent,
-			JSONModel,
-			LocalStorageModel) {
+], function (UIComponent, JSONModel, LocalStorageModel) {
 
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
 
-		metadata : {
-			manifest : "json"
+		metadata: {
+			manifest: "json"
 		},
 
 		init: function () {
@@ -39,26 +37,25 @@ sap.ui.define([
 			this.setModel(oDeviceModel, "device");
 
 			this.getRouter().initialize();
-			this._router = this.getRouter();
+			this._oRouter = this.getRouter();
 		},
 
-		myNavBack : function () {
+		myNavBack: function () {
 			var oHistory = sap.ui.core.routing.History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				this._router.navTo("home", {}, true);
+				this._oRouter.navTo("home", {}, true);
 			}
 		},
 
 		createContent: function () {
 			// create root view
-			return sap.ui.view({
+			return sap.ui.view("AppView", {
 				viewName: "sap.ui.demo.cart.view.App",
 				type: "XML"
 			});
 		}
 	});
-
 });

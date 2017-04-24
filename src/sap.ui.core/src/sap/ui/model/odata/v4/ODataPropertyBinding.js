@@ -297,13 +297,15 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
-		var oCache = this.oCachePromise.getResult(); // cache promise is always fulfilled
+		var that = this;
 
-		if (oCache) {
-			oCache.deregisterChange(undefined, this);
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(this.sPath, this);
-		}
+		this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				oCache.deregisterChange(undefined, that);
+			} else if (that.oContext) {
+				that.oContext.deregisterChange(that.sPath, that);
+			}
+		});
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
 		PropertyBinding.prototype.destroy.apply(this, arguments);

@@ -61,6 +61,42 @@ sap.ui.require([
 			mModelParameters);
 	}
 
+	/**
+	 *  Create a view with a relative ODataListBinding which is ready to create a new entity.
+	 *
+	 * @param {object} oTest The QUnit test object
+	 * @param {object} assert The QUnit assert object
+	 * @returns {Promise} A Promise that is resolved when the view is created and ready to create
+	 *   a relative entity
+	 */
+	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
+		var oModel = createTeaBusiModel({updateGroupId : "update"}),
+			sView = '\
+<VBox id="vbox" binding="{path : \'/TEAMS(42)\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
+	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="id" text="{ID}" />\
+					<Text id="text" text="{Name}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</VBox>';
+
+		oTest.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+				"TEAM_2_EMPLOYEES" : [
+					{"ID" : "2", "Name" : "Frederic Fall"}
+				]
+			})
+			.expectChange("id", ["2"])
+			.expectChange("text", ["Frederic Fall"]);
+
+		return oTest.createView(assert, sView, oModel);
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
@@ -193,7 +229,8 @@ sap.ui.require([
 					oResponse;
 
 				if (!oExpectedRequest) {
-					assert.ok(false, sMethod + " " + sUrl + " (unexpected)");
+					assert.ok(false, sMethod + " " + sUrl + " for group " + sGroupId
+						+ " (unexpected)");
 				} else {
 					oResponse = oExpectedRequest.response;
 					delete oExpectedRequest.response;
@@ -327,7 +364,9 @@ sap.ui.require([
 				};
 			}
 			// ensure that these properties are defined (required for deepEqual)
-			vRequest.headers = vRequest.headers || undefined;
+			if (!("headers" in vRequest)) { // to allow null for vRequest.headers
+				vRequest.headers = undefined;
+			}
 			vRequest.payload = vRequest.payload || undefined;
 			vRequest.response = oResponse;
 			this.aRequests.push(vRequest);
@@ -500,7 +539,7 @@ sap.ui.require([
 	// Scenario: Nested list binding with own parameters causes a second request.
 	// This scenario is similar to the "Sales Order Line Items" in the SalesOrders application.
 	testViewStart("Absolute ODCB with parameters and relative ODLB with parameters", '\
-<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
+<VBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
 		<items>\
@@ -511,7 +550,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</form:SimpleForm>',
+</VBox>',
 		{
 			"EMPLOYEES('2')?$select=Name" : {"Name" : "Frederic Fall"},
 			"EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS?$select=Category&$skip=0&$top=100" :
@@ -545,8 +584,8 @@ sap.ui.require([
 	// In this test dynamic filters are used instead of dynamic sorters
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
 		var sView = '\
-<form:SimpleForm binding="{path : \'/TEAMS(42)\',\
-		parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
+<VBox binding="{path : \'/TEAMS(42)\',\
+	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<items>\
 			<ColumnListItem>\
@@ -556,7 +595,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</form:SimpleForm>',
+</VBox>',
 			that = this;
 
 		this.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
@@ -1048,7 +1087,7 @@ sap.ui.require([
 	// The key point is that the parent of the list is a ContextBinding.
 	QUnit.test("ODLB: refresh via parent context binding, shared cache", function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
+<VBox id="vbox" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<items>\
@@ -1059,7 +1098,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</form:SimpleForm>',
+</VBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)",
@@ -1103,7 +1142,7 @@ sap.ui.require([
 				.expectChange("item", "0000000030", 1);
 
 			// code under test
-			that.oView.byId("form").getObjectBinding().refresh();
+			that.oView.byId("vbox").getObjectBinding().refresh();
 
 			return that.waitForChanges(assert);
 		});
@@ -1113,14 +1152,14 @@ sap.ui.require([
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// The SalesOrders application does not have such a scenario.
-	QUnit.test("Auto-mode: Absolute ODCB with relative ODPB", function (assert) {
+	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
 		var sView = '\
 <form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
 </form:SimpleForm>';
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,Name,LOCATION/City/CITYNAME", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,ID,Name,LOCATION/City/CITYNAME", {
 				"Name" : "Frederic Fall",
 				"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
 			})
@@ -1137,14 +1176,14 @@ sap.ui.require([
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings. Refreshing the view is also working.
 	// The SalesOrders application does not have such a scenario.
-	QUnit.test("Auto-mode: Absolute ODCB, refresh", function (assert) {
+	QUnit.test("Auto-$expand/$select: Absolute ODCB, refresh", function (assert) {
 		var sView = '\
 <form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
 	<Text id="name" text="{Name}" />\
 </form:SimpleForm>',
 			that = this;
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 				"Name" : "Jonathan Smith"
 			})
 // TODO unexpected change
@@ -1154,7 +1193,7 @@ sap.ui.require([
 		return this.createView(
 			assert, sView, createTeaBusiModel({autoExpandSelect : true})
 		).then(function () {
-			that.expectRequest("EMPLOYEES('2')?$select=AGE,Name", {
+			that.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 					"Name" : "Jonathan Schmidt"
 				})
 				.expectChange("name", "Jonathan Schmidt");
@@ -1316,7 +1355,7 @@ sap.ui.require([
 
 		oModel.setDefaultBindingMode("OneWay");
 		this.expectChange("item", false);
-		this.createView(assert, sView, oModel).then(function () {
+		return this.createView(assert, sView, oModel).then(function () {
 			that.expectChange("item", "ID", "/MANAGERS/ID")
 				.expectChange("item", "TEAM_ID", "/MANAGERS/TEAM_ID")
 				.expectChange("item", "Manager_to_Team", "/MANAGERS/Manager_to_Team");
@@ -1338,8 +1377,287 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
+	// ODataPropertyBindings where the paths of the relative bindings lead to a $expand
+	// The SalesOrders application does not have such a scenario.
+	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB, $expand required",
+			function (assert) {
+		var sView = '\
+<form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+			parameters : {\
+				$expand : {\
+					EMPLOYEE_2_TEAM : {$select : \'Team_Id\'}\
+				},\
+				$select : \'AGE\'\
+			}\
+		}">\
+	<Text id="name" text="{EMPLOYEE_2_TEAM/Name}" />\
+	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}" />\
+</form:SimpleForm>';
+
+		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
+				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=TEAM_ID))&$select=AGE,ID",
+				{
+					"AGE": 32,
+					"EMPLOYEE_2_TEAM": {
+						"Name": "SAP NetWeaver Gateway Content",
+						"Team_Id": "TEAM_03",
+						"TEAM_2_MANAGER" : {
+							"TEAM_ID" : "TEAM_03"
+						}
+					}
+				})
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("TEAM_ID", "TEAM_03")
+// TODO unexpected changes
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("TEAM_ID", "TEAM_03");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
+	// ODataContextBinding can use its parent binding's cache => it creates no own request.
+	QUnit.test("Auto-$expand/$select: Nested ODCB",
+			function (assert) {
+		var sView = '\
+<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+			parameters : {\
+				$expand : {\
+					EMPLOYEE_2_MANAGER : {$select : \'ID\'}\
+				},\
+				$select : \'AGE\'\
+			}\
+		}">\
+	<form:SimpleForm binding="{EMPLOYEE_2_TEAM}">\
+		<Text id="name" text="{Name}" />\
+	</form:SimpleForm>\
+</form:SimpleForm>';
+
+		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
+					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name)&$select=AGE,ID",
+				{
+					"AGE": 32,
+					"EMPLOYEE_2_MANAGER": {
+						"ID": "2"
+					},
+					"EMPLOYEE_2_TEAM": {
+						"Name": "SAP NetWeaver Gateway Content"
+					}
+				})
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+// TODO unexpected changes
+			.expectChange("name", "SAP NetWeaver Gateway Content");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+	});
+
+	//*********************************************************************************************
+	// Scenario: create an entity on a relative binding without an own cache and check that
+	// hasPendingChanges is working
+	// None of our applications has such a scenario.
+	QUnit.test("Create on a relative binding; check hasPendingChanges()", function (assert) {
+		var fnResolve,
+			oTeam2EmployeesBinding,
+			oTeamBinding,
+			that = this;
+
+		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
+			oTeamBinding = that.oView.byId("vbox").getObjectBinding();
+			that.expectRequest({
+					headers : null,
+					method : "POST",
+					url : "TEAMS(42)/TEAM_2_EMPLOYEES",
+					payload : {
+						"@$ui5.transient": "update",
+						"ID" : null,
+						"Name" : "John Doe"
+					}
+				}, new Promise(function (resolve, reject) {
+					fnResolve = resolve;
+				}))
+				// insert new employee at first row
+				.expectChange("id", "", 0)
+				.expectChange("text", "John Doe", 0)
+				.expectChange("id", "2", 1)
+				.expectChange("text", "Frederic Fall", 1);
+			oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
+
+			// code under test
+			assert.ok(oTeam2EmployeesBinding.hasPendingChanges(), "pending changes; new entity");
+			assert.ok(oTeamBinding.hasPendingChanges(), "pending changes; new entity");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectChange("id", "7", 0);
+			fnResolve({"ID" : "7", "Name" : "John Doe"});
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// code under test
+			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
+			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
+			assert.throws(function () {
+				that.oView.byId("vbox").bindElement("/TEAMS(43)",
+					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
+			}, new Error("setContext on relative binding is forbidden if created entity" +
+				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS(42)|TEAM_2_EMPLOYEES"));
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: create an entity on a relative binding without an own cache and reset changes or
+	// delete the newly created entity again
+	// None of our applications has such a scenario.
+	[true, false].forEach(function (bUseReset) {
+		QUnit.test("Create on a relative binding; " + (bUseReset ? "resetChanges()" : "delete"),
+				function (assert) {
+			var oNewContext,
+				oTeam2EmployeesBinding,
+				oTeamBinding,
+				that = this;
+
+			return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
+				oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
+				oTeamBinding = that.oView.byId("vbox").getObjectBinding();
+
+				// restore requestor to test proper cancel handling without simulating the requestor
+				that.oModel.oRequestor.request.restore();
+				that.expectChange("id", "", 0)
+					.expectChange("text", "John Doe", 0)
+					.expectChange("id", "2", 1)
+					.expectChange("text", "Frederic Fall", 1);
+
+				oNewContext = oTeam2EmployeesBinding.create({"ID" : null, "Name" : "John Doe"});
+				assert.ok(oTeam2EmployeesBinding.hasPendingChanges(),
+					"binding has pending changes");
+				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectChange("id", "2", 0)
+					.expectChange("text", "Frederic Fall", 0)
+					// TODO why do we get events twice?
+					.expectChange("id", "2", 0)
+					.expectChange("text", "Frederic Fall", 0);
+
+				// code under test
+				if (bUseReset) {
+					oTeam2EmployeesBinding.resetChanges();
+				} else {
+					oNewContext.delete("$direct");
+				}
+
+				assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no pending changes");
+				assert.notOk(oTeamBinding.hasPendingChanges(), "parent has no pending changes");
+				return that.waitForChanges(assert);
+			}).then(function () {
+				return oNewContext.created().then(function () {
+					assert.notOk("unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.canceled, true, "Create canceled");
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect on an operation
+	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<form:SimpleForm id="function" binding="{/GetEmployeeByID(...)}">\
+	<Text id="name" text="{Name}" />\
+</form:SimpleForm>',
+			that = this;
+
+		this.expectChange("name");
+		return this.createView(assert, sView, oModel).then(function () {
+// TODO the query options for the function import are not enhanced
+//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
+			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
+					"Name" : "Jonathan Smith"
+				})
+				.expectChange("name", "Jonathan Smith")
+				.expectChange("name", "Jonathan Smith"); // TODO unexpected 2nd change
+
+			that.oView.byId("function").getObjectBinding()
+				.setParameter("EmployeeID", "1")
+				.execute();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Enable autoExpandSelect mode for nested ODataContextBindings. The inner
+	// ODataContextBinding *cannot* use its parent binding's cache due to conflicting query options
+	// => it creates an own cache and request.
+	QUnit.test("Auto-$expand/$select: Nested ODCB with own request",
+			function (assert) {
+		var sView = '\
+<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+			parameters : {\
+				$expand : {\
+					EMPLOYEE_2_MANAGER : {$select : \'ID\'},\
+					EMPLOYEE_2_TEAM : {\
+						$expand : {\
+							TEAM_2_EMPLOYEES : {\
+								$orderby : \'AGE\'\
+							}\
+						}\
+					}\
+				}\
+			}\
+		}">\
+	<form:SimpleForm binding="{path : \'EMPLOYEE_2_TEAM\',\
+		parameters : {\
+			$expand : {\
+				TEAM_2_EMPLOYEES : {\
+					$orderby : \'AGE desc\'\
+				}\
+			}\
+		}\
+	}">\
+		<Text id="name" text="{Name}" />\
+	</form:SimpleForm>\
+	<Text id="age" text="{AGE}" />\
+</form:SimpleForm>';
+
+		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
+					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name",
+				{
+					"Name": "SAP NetWeaver Gateway Content",
+					"TEAM_2_EMPLOYEES": [
+						{ "AGE" : 32},
+						{ "AGE" : 29}
+					]
+				})
+			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
+					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE",
+				{
+					"AGE": 32,
+					"EMPLOYEE_2_MANAGER": {
+						"ID": "2"
+					},
+					"EMPLOYEE_2_TEAM": {
+						"TEAM_2_EMPLOYEES": [
+							{ "AGE" : 29},
+							{ "AGE" : 32}
+						]
+					}
+				})
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("age", "32")
+// TODO unexpected changes
+			.expectChange("name", "SAP NetWeaver Gateway Content")
+			.expectChange("age", "32");
+
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
+	});
 	//TODO $batch?
 	//TODO test bound action
-	//TODO test create
 	//TODO test delete
 });

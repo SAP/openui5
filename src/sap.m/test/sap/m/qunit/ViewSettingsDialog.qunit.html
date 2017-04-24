@@ -1428,7 +1428,7 @@
 					return oItem.getVisible();
 				};
 
-				
+
 			this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 			this.oVSD.open();
@@ -2558,11 +2558,11 @@
 				this.oVSD.bindAggregation("groupItems", "/groupData", template2);
 				this.oVSD.bindAggregation("filterItems", "/filterData", template3);
 			},
-			clickOnItem: function (sItemId) {
-				jQuery("#" + sItemId).focus().trigger("touchstart").trigger("mousedown").trigger("mouseup").trigger("touchend");
+			focusItem: function (sItemId) {
+				jQuery("#" + sItemId).focus();
 			},
 			checkItemFocus: function (sItemId) {
-				assert.strictEqual(jQuery("#" + sItemId).is(":focus"), true, "The proper item is focused");
+				assert.strictEqual(document.activeElement.id, sItemId, "The proper item is focused");
 			}
 		});
 
@@ -2576,7 +2576,8 @@
 			oListItem = this.oVSD._getListItem("sort", aSortItems[1]);
 
 			setTimeout(function () {
-				this.clickOnItem(oListItem.getId());
+				this.focusItem(oListItem.getId());
+				this.oVSD._dialog.rerender();
 				this.checkItemFocus(oListItem.getId());
 				done();
 			}.bind(this), 500);
@@ -2592,7 +2593,8 @@
 			sItemToSelect = aSortItems[1].getId();
 
 			setTimeout(function () {
-				this.clickOnItem(sItemToSelect + "-list-item");
+				this.focusItem(sItemToSelect + "-list-item");
+				this.oVSD._dialog.rerender();
 				this.checkItemFocus(sItemToSelect + "-list-item");
 				done();
 			}.bind(this), 500);

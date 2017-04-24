@@ -595,6 +595,7 @@
 		var oRowAction = new sap.ui.table.RowAction();
 		oRowAction.addItem(new sap.ui.table.RowActionItem({type: "Navigation"}));
 		oTable.setRowActionTemplate(oRowAction);
+		oTable.setRowActionCount(1);
 		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings());
 		oTable.setVisibleRowCount(2);
 		oTable.getColumns().forEach(function(oColumn, iIndex) {
@@ -1342,12 +1343,12 @@
 			var cell;
 
 			if (aSortedColumns.length === 2) {
-				cell = aSortedColumns[0].$();
+				cell = aSortedColumns[0].$().find(".sapUiTableColCell");
 				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(!cell.hasClass("sapUiTableColSortedD"), "sort icon is ascending");
 
-				cell = aSortedColumns[1].$();
+				cell = aSortedColumns[1].$().find(".sapUiTableColCell");
 				assert.ok(cell.hasClass("sapUiTableColSF"), "Icons are shown");
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(cell.hasClass("sapUiTableColSortedD"), "sort icon is descending");
@@ -2149,17 +2150,21 @@
 		var sNoDataClassOfTable = "sapUiTableEmpty";
 		var oEvent = {};
 		var oBinding = oTable.getBinding("rows");
+		var oGetBindingLength = this.stub(oBinding, "getLength");
+		var oIsInstanceOf = this.stub(sap.ui.table.TableUtils, "isInstanceOf");
+		var oClock = sinon.useFakeTimers();
+
 		oEvent.getSource = function() {
 			return oBinding;
 		};
+
 		oEvent.getParameter = function() {
 			return false;
 		};
-		var clock = sinon.useFakeTimers();
 
 		function testDataReceivedListener(bNoDataVisible) {
 			oTable._onBindingDataReceivedListener.call(oTable, oEvent);
-			clock.tick(1);
+			oClock.tick(1);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
@@ -2168,8 +2173,8 @@
 			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible, "Test: NoData is visible: " + bNoDataVisible);
 		}
 
-		function testBindingLengthChanged(bNoDataVisible) {
-			oTable._onBindingLengthChange.call(oTable);
+		function testUpdateBindingLength(bNoDataVisible) {
+			oTable._updateBindingLength.call(oTable);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
@@ -2187,31 +2192,33 @@
 		assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), false, "Test: NoData is visible: false");
 
 		// No data received: NoData area becomes visible.
-		oTable._iBindingLength = 0;
+		oGetBindingLength.returns(0);
 		testDataReceivedListener(true);
 
 		// Data received: NoData area will be hidden.
-		oTable._iBindingLength = 1;
+		oGetBindingLength.returns(1);
 		testDataReceivedListener(false);
 
 		// Client Binding without data: NoData area becomes visible.
-		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
-		oTable._iBindingLength = 0;
-		testBindingLengthChanged(true);
+		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
+		oGetBindingLength.returns(0);
+		testUpdateBindingLength(true);
 
 		// Client Binding with data: NoData area will be hidden.
 		sap.ui.table.TableUtils.isInstanceOf.restore();
-		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
-		oTable._iBindingLength = 1;
-		testBindingLengthChanged(false);
+		oIsInstanceOf.restore();
+		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
+		oGetBindingLength.returns(1);
+		testUpdateBindingLength(false);
 
 		// Binding removed: NoData area becomes visible.
-		sap.ui.table.TableUtils.isInstanceOf.restore();
+		oIsInstanceOf.restore();
 		oTable.unbindRows();
-		testBindingLengthChanged(true);
+		testUpdateBindingLength(true);
 
 		// Cleanup
-		clock.restore();
+		oClock.restore();
+		oGetBindingLength.restore();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {

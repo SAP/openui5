@@ -46,21 +46,13 @@ sap.ui.define([
 				case "$expand":
 					vValue = Cache.convertExpand(vValue);
 					break;
-				case "$apply":
-				case "$count":
-				case "$filter":
-				case "$orderby":
-				case "$search":
-					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
 						vValue = vValue.join(",");
 					}
 					break;
 				default:
-					if (sKey[0] === '$') {
-						throw new Error("Unsupported system query option " + sKey);
-					}
+					// nothing to do
 			}
 			fnResultHandler(sKey, vValue);
 		});
@@ -195,7 +187,8 @@ sap.ui.define([
 	function Cache(oRequestor, sResourcePath, mQueryOptions) {
 		this.bActive = true;
 		this.mChangeListeners = {};
-		this.mPatchRequests = {};
+		this.mPatchRequests = {}; //map path to an array of (PATCH) promises
+		this.mPostRequests = {}; //map path to an array of entity data (POST bodies)
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
@@ -339,6 +332,7 @@ sap.ui.define([
 
 		// Clean-up when the create has been canceled.
 		function cleanUp() {
+			that.removeByPath(that.mPostRequests, sPath, oEntityData);
 			delete aCollection[-1];
 			fnCancelCallback();
 		}
@@ -352,15 +346,18 @@ sap.ui.define([
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
 			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
 				sPostPath += Cache.buildQueryString(that.mQueryOptions, true);
+				that.addByPath(that.mPostRequests, sPath, oEntityData);
 				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 						setCreatePending, cleanUp)
 					.then(function (oResult) {
 						delete oEntityData["@$ui5.transient"];
 						// now the server has one more element
 						addToCount(that.mChangeListeners, sPath, aCollection, 1);
+						that.removeByPath(that.mPostRequests, sPath, oEntityData);
 						// update the cache with the POST response
-						_Helper.updateCache(that.mChangeListeners, _Helper.buildPath(sPath, "-1"),
-							oEntityData, oResult);
+						_Helper.updateAfterPost(that.mChangeListeners,
+								_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+								_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					}, function (oError) {
 						if (oError.canceled) {
 							// for cancellation no error is reported via fnErrorCallback
@@ -388,8 +385,6 @@ sap.ui.define([
 		}
 		aCollection[-1] = oEntityData;
 
-		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
-		oEntityData["@odata.etag"] = undefined;
 		return request(sGroupId);
 	};
 
@@ -464,6 +459,8 @@ sap.ui.define([
 	Cache.prototype.hasPendingChangesForPath = function (sPath) {
 		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath);
+		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
+			return isSubPath(sRequestPath, sPath);
 		});
 	};
 
@@ -513,17 +510,34 @@ sap.ui.define([
 	 *   yet.
 	 */
 	Cache.prototype.resetChangesForPath = function (sPath) {
+		var that = this;
+
 		Object.keys(this.mPatchRequests).forEach(function (sRequestPath) {
 			var i, aPromises;
 
 			if (isSubPath(sRequestPath, sPath)) {
-				aPromises = this.mPatchRequests[sRequestPath];
+				aPromises = that.mPatchRequests[sRequestPath];
 				for (i = aPromises.length - 1; i >= 0; i--) {
-					this.oRequestor.removePatch(aPromises[i]);
+					that.oRequestor.removePatch(aPromises[i]);
 				}
-				delete this.mPatchRequests[sRequestPath];
+				delete that.mPatchRequests[sRequestPath];
 			}
-		}, this);
+		});
+
+		Object.keys(this.mPostRequests).forEach(function (sRequestPath) {
+			var aEntities, i, sTransientGroup;
+
+			if (isSubPath(sRequestPath, sPath)) {
+				aEntities = that.mPostRequests[sRequestPath];
+				for (i = aEntities.length - 1; i >= 0; i--) {
+					sTransientGroup = aEntities[i]["@$ui5.transient"];
+					if (sTransientGroup) {
+						that.oRequestor.removePost(sTransientGroup, aEntities[i]);
+					}
+				}
+				delete that.mPostRequests[sRequestPath];
+			}
+		});
 	};
 
 	/**
@@ -669,7 +683,6 @@ sap.ui.define([
 	// make CollectionCache a Cache
 	CollectionCache.prototype = Object.create(Cache.prototype);
 
-
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
@@ -712,19 +725,6 @@ sap.ui.define([
 			that.registerChange(sPath, oListener);
 			return that.drillDown(that.aElements, sPath);
 		});
-	};
-
-	/**
-	 * Returns <code>true</code> if there are pending changes below the given path.
-	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 * @returns {boolean}
-	 *   <code>true</code> if there are pending changes
-	 */
-	CollectionCache.prototype.hasPendingChangesForPath = function (sPath) {
-		return !!(sPath === "" && this.aElements[-1] && this.aElements[-1]["@$ui5.transient"])
-			|| Cache.prototype.hasPendingChangesForPath.call(this, sPath);
 	};
 
 	/**
@@ -800,27 +800,6 @@ sap.ui.define([
 			}
 			return oResult;
 		});
-	};
-
-	/**
-	 * Resets all pending changes below the given path.
-	 *
-	 * @param {string} [sPath]
-	 *   The path
-	 * @throws {Error}
-	 *   If there is a change which has been sent to the server and for which there is no response
-	 *   yet.
-	 */
-	CollectionCache.prototype.resetChangesForPath = function (sPath) {
-		var sTransientGroup;
-
-		if (sPath === "" && this.aElements[-1]) {
-			sTransientGroup = this.aElements[-1]["@$ui5.transient"];
-			if (sTransientGroup) {
-				this.oRequestor.removePost(sTransientGroup, this.aElements[-1]);
-			}
-		}
-		Cache.prototype.resetChangesForPath.call(this, sPath);
 	};
 
 	//*********************************************************************************************
