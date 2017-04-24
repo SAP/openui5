@@ -170,11 +170,7 @@ sap.ui.define([
 			window.oTable = oTable;
 
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
-				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
-			});
-
-			var aRenderMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
-				return oMeasurement.categories.indexOf("Render") > -1? oMeasurement : null;
+				return oMeasurement.categories.indexOf("JS") > -1 ? oMeasurement : null;
 			});
 
 			function getValue(attributeName, oObject) {
@@ -186,7 +182,7 @@ sap.ui.define([
 			}
 
 			//set test result
-			var iCreateRows = Math.round(getValue("duration", aJSMeasure[0])* 1) / 1;
+			var iCreateRows = Math.round(getValue("duration", aJSMeasure[0]) * 1) / 1;
 			var iUpdateTableContent = Math.round(getValue("duration", aJSMeasure[1]) * 1) / 1;
 			var iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
 			var iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
@@ -233,9 +229,9 @@ sap.ui.define([
 			var sCSV = "Run;VisibleRowCount;VisibleRowCountMode;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
 
 			for (var i = 0; i < iRun; i++) {
-				sCSV += (i+1) + ";"
-						+ this.aVisibleRow[i].VisibleRowCount +";"
-						+ this.aVisibleRow[i].VisibleRowCountMode +";"
+				sCSV += (i + 1) + ";"
+						+ this.aVisibleRow[i].VisibleRowCount + ";"
+						+ this.aVisibleRow[i].VisibleRowCountMode + ";"
 						+ this.aRenderResults[i].overall + ";"
 						+ this.aRenderResults[i].onBeforeRendering + ";"
 						+ this.aRenderResults[i].rendering + ";"
@@ -287,10 +283,9 @@ sap.ui.define([
 			var sFileName = "TableODataPerformanceTestResults.csv";
 			var oBlob = new Blob([sCSV], { type: 'application/csv;charset=utf-8' });
 
-			if (navigator.appVersion.toString().indexOf('.NET') > 0)
+			if (navigator.appVersion.toString().indexOf('.NET') > 0) {
 				window.navigator.msSaveBlob(oBlob, sFileName);
-			else
-			{
+			} else {
 				var oLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
 				oLink.href = URL.createObjectURL(oBlob);
 				oLink.download = sFileName;

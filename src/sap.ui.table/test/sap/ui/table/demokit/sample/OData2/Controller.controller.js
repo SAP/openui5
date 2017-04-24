@@ -60,7 +60,7 @@ sap.ui.define([
 			var sSemantics = oContext.getProperty("sap:semantics");
 			var bVisible = oContext.getProperty("sap:visible") != "false";
 			var iLen = oContext.getProperty("maxLength");
-			iLen = iLen ? parseInt(iLen, 10) : 10;
+			var sColumnWidth = "5rem";
 
 			function specialTemplate() {
 				var sUnit = oContext.getProperty("sap:unit");
@@ -73,11 +73,19 @@ sap.ui.define([
 				return null;
 			}
 
+			iLen = iLen ? parseInt(iLen, 10) : 10;
+
+			if (iLen > 50) {
+				sColumnWidth = "15rem";
+			} else if (iLen > 9) {
+				sColumnWidth = "10rem";
+			}
+
 			return new Column(sId, {
 				visible: bVisible && sSemantics != "unit-of-measure" && sSemantics != "currency-code",
 				sortProperty: oContext.getProperty("sap:sortable") == "true" ? sName : null,
 				filterProperty: oContext.getProperty("sap:filterable") == "true" ? sName : null,
-				width: (iLen > 9 ? (iLen > 50 ? 15 : 10) : 5) + "rem",
+				width: sColumnWidth,
 				label: new sap.m.Label({text: "{/#Product/" + sName + "/@sap:label}"}),
 				hAlign: sType && sType.indexOf("Decimal") >= 0 ? "End" : "Begin",
 				template: specialTemplate() || new Text({text: {path: sName}})

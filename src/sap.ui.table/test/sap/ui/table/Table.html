@@ -17,7 +17,7 @@
 	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.ui.unified"
 	data-sap-ui-theme="sap_bluecrystal"
 	src="../../../../resources/sap-ui-core.js"></script>
-	
+
 <script src="Settings.js"></script>
 
 <script>
@@ -283,7 +283,7 @@
 	oCustomMenu.addItem(new sap.ui.commons.MenuItem({
 		text:"Custom Menu",
 		select:function() {
-			alert("Custom Menu");
+			sap.ui.commons.MessageBox.show("Custom Menu");
 		}
 	}));
 	oColumn.setMenu(oCustomMenu);
@@ -302,7 +302,7 @@
 	oTable.addColumn(new sap.ui.table.Column({label: new sap.ui.commons.Label({text: "Rating"}), template: oControl, sortProperty: "rating", filterProperty: "rating", showFilterMenuEntry: false, headerSpan: 3}));
 	oControl = new sap.ui.commons.Button({text: "What is my row index?", press: function(oEvent) {
 		var iRowIndex = this.getParent().getIndex();
-		alert(iRowIndex);
+		sap.ui.commons.MessageBox.show(iRowIndex.toString());
 	}});
 	oTable.addColumn(new sap.ui.table.Column({label: "Test", template: oControl, width: "200px", hAlign: "Center"}));
 
