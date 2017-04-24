@@ -26,7 +26,7 @@
 			jQuery(function() {
 				sap.ui.require(["dt/performance/PerformanceTestUtil"], function(PerformanceTestUtil){
 					//create Vertical Layout
-					window.oLayout1 = new sap.ui.layout.VerticalLayout("Layout1");
+					var oLayout1 = new sap.ui.layout.VerticalLayout("Layout1");
 					PerformanceTestUtil.addMixedControlsTo(oLayout1, 1, 30, true /*visible*/);
 					PerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /*invisible*/);
 					window.oContainerLayout1 = new sap.ui.layout.VerticalLayout({
@@ -38,7 +38,7 @@
 							oLayout1
 						]
 					});
-					window.oLayout2 = new sap.ui.layout.VerticalLayout("Layout2");
+					var oLayout2 = new sap.ui.layout.VerticalLayout("Layout2");
 					PerformanceTestUtil.addMixedControlsTo(oLayout2, 61, 90, true /*visible*/);
 					PerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /*invisible*/);
 					window.oContainerLayout2 = new sap.ui.layout.VerticalLayout({
@@ -50,7 +50,7 @@
 							oLayout2
 						]
 					});
-					window.oLayout3 = new sap.ui.layout.VerticalLayout("Layout3");
+					var oLayout3 = new sap.ui.layout.VerticalLayout("Layout3");
 					PerformanceTestUtil.addMixedControlsTo(oLayout3, 121, 150, true /*visible*/);
 					PerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /*invisible*/);
 					window.oContainerLayout3 = new sap.ui.layout.VerticalLayout({
@@ -63,13 +63,13 @@
 						]
 					});
 
-					window.oHorizontalLayout = new sap.ui.layout.HorizontalLayout("HorizontalLayout", {
+					var oHorizontalLayout = new sap.ui.layout.HorizontalLayout("HorizontalLayout", {
 						content : [oContainerLayout1, oContainerLayout2, oContainerLayout3]
 					});
 					oHorizontalLayout.placeAt("content");
 					sap.ui.getCore().applyChanges();
 
-					PerformanceTestUtil.startDesignTime();
+					PerformanceTestUtil.startDesignTime(oHorizontalLayout);
 				})
 
 			});

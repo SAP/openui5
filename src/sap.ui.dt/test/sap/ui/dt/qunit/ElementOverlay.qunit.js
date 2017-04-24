@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/Overlay",
@@ -89,14 +91,14 @@ function(
 
 		//Overlay enabled by default
 		sWidth = fnGetWidth(this.oOverlay);
-		this.oButton.setText('Lorem ipsum dolor sit amet...')
+		this.oButton.setText('Lorem ipsum dolor sit amet...');
 		sap.ui.getCore().applyChanges();
 		assert.notStrictEqual(sWidth, fnGetWidth(this.oOverlay), "overlay changes its width");
 
 		//Explicitly disable overlay
 		sWidth = fnGetWidth(this.oOverlay);
 		this.oOverlay.setEnabled(false);
-		this.oButton.setText('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...')
+		this.oButton.setText('Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi...');
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(sWidth, fnGetWidth(this.oOverlay), "overlay didn't change its width");
 	});
