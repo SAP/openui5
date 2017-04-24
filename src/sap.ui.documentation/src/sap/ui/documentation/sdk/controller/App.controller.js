@@ -54,31 +54,8 @@ sap.ui.define([
 				// apply content density mode to root view
 				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
 
-				// subscribe to app events
-				this._component = Component.getOwnerComponentFor(this._oView);
-				this._component.getEventBus().subscribe("app", "applyAppConfiguration", this._applyAppConfiguration, this);
-
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
-			},
-
-			onAfterRendering : function () {
-				var contentDensity = this.getOwnerComponent().getContentDensityClass();
-
-				if (jQuery(document.body).hasClass("sapUiSizeCozy") || contentDensity == "sapUiSizeCozy") {
-					this._oView.byId('contentId').setHeight('calc(100% - 2rem)');
-				} else {
-					this._oView.byId('contentId').setHeight('calc(100% - 3rem)');
-				}
-
-				if (this.hasOwnProperty("_compactOn")) {
-					this._switchContentDensity(this._compactOn);
-				}
-
-				if (this.hasOwnProperty("_themeActive") && !jQuery.sap.getUriParameters().get("sap-theme") && !jQuery.sap.getUriParameters().get("sap-ui-theme")) {
-					this._oCore.applyTheme(this._themeActive);
-				}
-				this._afterRenderingDone = true;
 			},
 
 			onRouteChange: function (oEvent) {
@@ -468,33 +445,6 @@ sap.ui.define([
 				oViewModel = this.getModel("appView");
 
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
-			},
-
-			/**
-			 * Apply content configuration
-			 * @param {object} oData with settings to apply
-			 * @param {string} sChannelId Channel ID
-			 * @param {string} sEventId Event ID
-			 * @private
-			 */
-			_applyAppConfiguration: function(sChannelId, sEventId, oData){
-				if (this._afterRenderingDone){
-					this._oCore.applyTheme(oData.themeActive);
-					this._switchContentDensity(oData.compactOn);
-				} else {
-					this._themeActive = oData.themeActive;
-					this._compactOn = oData.compactOn;
-				}
-			},
-
-			/**
-			 * Switch the view density mode
-			 * @param {boolean} bCompactOn mode
-			 * @private
-			 */
-			_switchContentDensity: function (bCompactOn) {
-				this._oView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
-					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
 			},
 
 			/**

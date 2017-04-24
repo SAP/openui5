@@ -12,13 +12,32 @@ sap.ui.define([
 		"sap/m/GroupHeaderListItem",
 		"sap/ui/core/Component",
 		"sap/ui/model/Filter",
-		"sap/ui/model/Sorter"
+		"sap/ui/model/Sorter",
+		"jquery.sap.storage"
 	], function (jQuery, Device, BaseController, APIInfo, JSONModel, ControlsInfo, GroupHeaderListItem, Component,
-				 Filter, Sorter) {
+				 Filter, Sorter, jQueryStorage) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ControlsMaster", {
 
+			_oStorage: jQueryStorage.sap.storage(jQueryStorage.sap.storage.Type.local),
+			_sStorageKey: "UI5_EXPLORED_LIST_SETTINGS_FROM_1_48",
+			_oViewSettings: {
+				compactOn: false,
+				themeActive: "sap_belize",
+				rtl: false
+			},
+			_oDefaultSettings: {
+				compactOn: false,
+				themeActive: "sap_belize",
+				rtl: false
+			},
+			_oListSettings: {
+				filter: {},
+				groupProperty: "category",
+				groupDescending: false,
+				version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor()
+			},
 			_mGroupFunctions: {
 				"name": function (oContext) {
 					var sKey = oContext.getProperty("name").charAt(0);
@@ -102,6 +121,69 @@ sap.ui.define([
 				this._oView.addEventDelegate({
 					onBeforeFirstShow: jQuery.proxy(this.onBeforeFirstShow, this)
 				});
+
+				// subscribe to app events
+				var oComponent = this.getOwnerComponent();
+				this._oRootView = oComponent.byId(oComponent.getManifestEntry("/sap.ui5/rootView").id);
+
+				this._oViewSettings.compactOn = oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
+					this._oRootView.hasStyleClass("sapUiSizeCompact");
+
+				// Keep default settings for compact mode up to date
+				this._oDefaultSettings.compactOn = this._oViewSettings.compactOn;
+
+				this._initListSettings();
+			},
+
+			_viewSettingsResetOnNavigation: function (oEvent) {
+				var sRouteName = oEvent.getParameter("name");
+				if (["group", "entity", "sample", "code", "controls", "controlsMaster"].indexOf(sRouteName) === -1) {
+					// Reset view settings
+					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
+						this._oDefaultSettings.compactOn);
+
+					// When we restore the default settings we don't need the event any more
+					this.getRouter().detachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
+				}
+			},
+
+			/**
+			 * Initialize the list settings. At first local storage is checked. If this is empty defaults are used.
+			 * @private
+			 */
+			_initListSettings: function () {
+				var sJson = this._oStorage.get(this._sStorageKey);
+				if (sJson) {
+					this._oListSettings = JSON.parse(sJson);
+				}
+			},
+
+			/**
+			 * Apply content configuration
+			 * @param {string} sThemeActive name of the theme
+			 * @param {boolean} bCompactOn compact mode
+			 * @private
+			 */
+			_applyAppConfiguration: function(sThemeActive, bCompactOn){
+				var oSampleFrameContent,
+					$SampleFrame;
+
+				// Switch theme if necessary
+				this._oCore.applyTheme(sThemeActive);
+				// Switch content density
+				this._oRootView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
+					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
+
+				// Apply theme and compact mode also to iframe samples
+				$SampleFrame = jQuery("#sampleFrame");
+				if ($SampleFrame.length > 0) {
+					oSampleFrameContent = $SampleFrame[0].contentWindow;
+					if (oSampleFrameContent) {
+						oSampleFrameContent.sap.ui.getCore().applyTheme(sThemeActive);
+						oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
+							.toggleClass("sapUiSizeCozy", !bCompactOn);
+					}
+				}
 			},
 
 			_onGroupMatched: function (event) {
@@ -259,14 +341,14 @@ sap.ui.define([
 				var oGroupItem = oEvent.getParameter("groupItem");
 
 				// store filter settings
-				this._oViewSettings.filter = oEvent.getParameter("filterCompoundKeys");
+				this._oListSettings.filter = oEvent.getParameter("filterCompoundKeys");
 
 				// store group settings
-				this._oViewSettings.groupProperty = oGroupItem ? oGroupItem.getKey() : null;
-				this._oViewSettings.groupDescending = oEvent.getParameter("groupDescending");
+				this._oListSettings.groupProperty = oGroupItem ? oGroupItem.getKey() : null;
+				this._oListSettings.groupDescending = oEvent.getParameter("groupDescending");
 
 				// update local storage
-				this._oStorage.put(this._sStorageKey, JSON.stringify(this._oViewSettings));
+				this._oStorage.put(this._sStorageKey, JSON.stringify(this._oListSettings));
 
 				// update view
 				this._updateView();
@@ -275,23 +357,23 @@ sap.ui.define([
 			handleListSettings: function () {
 				// create dialog on demand
 				if (!this._oVSDialog) {
-					this._oVSDialog = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.documentation.sdk.view.viewSettingsDialog", this);
+					this._oVSDialog = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.documentation.view.viewSettingsDialog", this);
 					this.getView().addDependent(this._oVSDialog);
 				}
 
-				this._oVSDialog.setSelectedFilterCompoundKeys(this._oViewSettings.filter);
-				this._oVSDialog.setSelectedGroupItem(this._oViewSettings.groupProperty);
-				this._oVSDialog.setGroupDescending(this._oViewSettings.groupDescending);
+				this._oVSDialog.setSelectedFilterCompoundKeys(this._oListSettings.filter);
+				this._oVSDialog.setSelectedGroupItem(this._oListSettings.groupProperty);
+				this._oVSDialog.setGroupDescending(this._oListSettings.groupDescending);
 
-				jQuery('body').toggleClass("sapUiSizeCompact", this._oViewSettings.compactOn)
-					.toggleClass("sapUiSizeCozy", !this._oViewSettings.compactOn);
+				jQuery('body').toggleClass("sapUiSizeCompact", this._oListSettings.compactOn)
+					.toggleClass("sapUiSizeCozy", !this._oListSettings.compactOn);
 
 				// open
 				this._oVSDialog.open();
 
 			},
 
-			hadnleListFilter: function (oEvent) {
+			handleListFilter: function (oEvent) {
 				this._sFilterValue = oEvent.getParameter("newValue").trim();
 				this._updateView();
 			},
@@ -311,7 +393,7 @@ sap.ui.define([
 				aFilters.push(new Filter("searchTags", "Contains", this._sFilterValue));
 
 				// add filters for view settings
-				jQuery.each(this._oViewSettings.filter, function (sProperty, oValues) {
+				jQuery.each(this._oListSettings.filter, function (sProperty, oValues) {
 					var aPropertyFilters = [];
 
 					jQuery.each(oValues, function (sKey, bValue) {
@@ -331,25 +413,25 @@ sap.ui.define([
 					oBinding.filter(oFilter, "Application");
 				}
 
-				if (this._oViewSettings.groupProperty && this._oViewSettings.groupProperty !== this._sCurrentGroup) {
+				if (this._oListSettings.groupProperty && this._oListSettings.groupProperty !== this._sCurrentGroup) {
 					bGroupChanged = true;
-				} else if (this._oViewSettings.groupProperty && this._oViewSettings.groupDescending !== this._bCurrentlyGroupedDescending) {
+				} else if (this._oListSettings.groupProperty && this._oListSettings.groupDescending !== this._bCurrentlyGroupedDescending) {
 					bGroupChanged = true;
 				}
 
 				// group
 				if (bGroupChanged) {
 					oSorter = new Sorter(
-						this._oViewSettings.groupProperty,
-						this._oViewSettings.groupDescending,
-						this._mGroupFunctions[this._oViewSettings.groupProperty]);
+						this._oListSettings.groupProperty,
+						this._oListSettings.groupDescending,
+						this._mGroupFunctions[this._oListSettings.groupProperty]);
 					aSorters.push(oSorter);
 					aSorters.push(new Sorter("name", false));
 					oBinding.sort(aSorters);
 				}
 
-				this._sCurrentGroup = this._oViewSettings.groupProperty;
-				this._bCurrentlyGroupedDescending = this._oViewSettings.groupDescending;
+				this._sCurrentGroup = this._oListSettings.groupProperty;
+				this._bCurrentlyGroupedDescending = this._oListSettings.groupDescending;
 
 				// memorize that this function was executed at least once
 				this._bIsViewUpdatedAtLeastOnce = true;
@@ -359,8 +441,6 @@ sap.ui.define([
 			 * Makes sure the view settings are initialized and updates the filter bar dispay and list binding
 			 */
 			_updateView: function () {
-				this._applyViewConfigurations();
-
 				// update the filter bar
 				this._updateFilterBarDisplay();
 
@@ -372,7 +452,7 @@ sap.ui.define([
 				// calculate text
 				var aFilterTexts = [];
 
-				jQuery.each(this._oViewSettings.filter, function (sProperty, oValues) {
+				jQuery.each(this._oListSettings.filter, function (sProperty, oValues) {
 					aFilterTexts = aFilterTexts.concat(Object.keys(oValues));
 				});
 
@@ -450,23 +530,43 @@ sap.ui.define([
 					this._oBusyDialog.close();
 				});
 
-				// write new settings into local storage
 				this._oViewSettings.compactOn = bCompact;
 				this._oViewSettings.themeActive = sTheme;
 				this._oViewSettings.rtl = bRTL;
-				this._oViewSettings.version = this._oDefaultSettings.version;
-				this._oStorage.put(this._sStorageKey, JSON.stringify(this._oViewSettings));
 
 				// handle settings change
-				this._component = Component.getOwnerComponentFor(this._oView);
-				this._component.getEventBus().publish("app", "applyAppConfiguration", {
-					themeActive: sTheme,
-					compactOn: bCompact
-				});
+				this._applyAppConfiguration(sTheme, bCompact);
+
+				// If we are navigating outside the Explored App section: view settings should be reset
+				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
 
 				if (bRTLChanged) {
 					this._handleRTL(bRTL);
 				}
+			},
+
+			/**
+			 * Handles RTL|LTR mode switch of the Explored App
+			 * @param {boolean} bSwitch to RTL mode
+			 * @private
+			 */
+			_handleRTL: function (bSwitch) {
+				// Include HashChanger only in this case
+				jQuery.sap.require("sap.ui.core.routing.HashChanger");
+
+				var HashChanger = sap.ui.require("sap/ui/core/routing/HashChanger"),
+					oHashChanger = new HashChanger(),
+					sHash = oHashChanger.getHash(),
+					oUri = window.location;
+
+				// TODO: remove this fix when microsoft fix this under IE11 on Win 10
+				if (!oUri.origin) {
+					oUri.origin = oUri.protocol + "//" + oUri.hostname + (oUri.port ? ':' + oUri.port : '');
+				}
+
+				// Add or remove the switch - Keep in mind that we are using window.location directly instead of the
+				// reference. Changing the reference won't redirect the browser to the new URL.
+				window.location = oUri.origin + oUri.pathname + (bSwitch ? "?sap-ui-rtl=true#" + sHash : "#/" + sHash);
 			}
 		});
 	}

@@ -24,7 +24,7 @@
 						id="searchField"
 						placeholder="Filter"
 						width="100%"
-						liveChange="hadnleListFilter">
+						liveChange="handleListFilter">
 				</SearchField>
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://drop-down-list" press="handleListSettings" />

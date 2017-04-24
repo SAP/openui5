@@ -5,25 +5,13 @@
 /*global history */
 sap.ui.define([
 		"sap/ui/core/mvc/Controller",
-		"sap/ui/core/routing/History",
-		"jquery.sap.storage"
-	], function (Controller, History, jQueryStorage) {
+		"sap/ui/core/routing/History"
+	], function (Controller, History) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
 
 			// Prerequisites
-			_oStorage: jQueryStorage.sap.storage(jQueryStorage.sap.storage.Type.local),
-			_sStorageKey: "UI5_EXPLORED_VIEW_SETTINGS_FROM_1_48",
-			_oDefaultSettings: {
-				filter: {},
-				groupProperty: "category",
-				groupDescending: false,
-				compactOn: false,
-				themeActive: "sap_belize",
-				rtl: false,
-				version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor()
-			},
 			_oCore: sap.ui.getCore(),
 
 			hideMasterSide : function() {
@@ -123,65 +111,6 @@ sap.ui.define([
 				} else {
 					oButton.setVisible(false);
 				}
-			},
-
-			/**
-			 * Makes sure the view settings are initialized and apply application settings
-			 * @private
-			 */
-			_applyViewConfigurations: function () {
-				if (!this._oViewSettings) {
-					this._initViewSettings();
-
-					// Apply app settings
-					this.getOwnerComponent().getEventBus().publish("app", "applyAppConfiguration", {
-						themeActive: this._oViewSettings.themeActive,
-						compactOn: this._oViewSettings.compactOn
-					});
-				}
-			},
-
-			/**
-			 * Initialize the view settings. At first local storage is checked. If this is empty defaults are applied.
-			 * @private
-			 */
-			_initViewSettings: function () {
-				var sJson = this._oStorage.get(this._sStorageKey);
-				if (!sJson) {
-					// local storage is empty, apply default settings
-					this._oViewSettings = this._oDefaultSettings;
-				} else {
-					this._oViewSettings = JSON.parse(sJson);
-
-					// handle RTL-on in settings as this needs a reload
-					if (this._oViewSettings.rtl && !jQuery.sap.getUriParameters().get('sap-ui-rtl')) {
-						this._handleRTL(true);
-					}
-				}
-			},
-
-			/**
-			 * Handles RTL|LTR mode switch of the Explored App
-			 * @param {boolean} bSwitch to RTL mode
-			 * @private
-			 */
-			_handleRTL: function (bSwitch) {
-				// Include HashChanger only in this case
-				jQuery.sap.require("sap.ui.core.routing.HashChanger");
-
-				var HashChanger = sap.ui.require("sap/ui/core/routing/HashChanger"),
-					oHashChanger = new HashChanger(),
-					sHash = oHashChanger.getHash(),
-					oUri = window.location;
-
-				// TODO: remove this fix when microsoft fix this under IE11 on Win 10
-				if (!oUri.origin) {
-					oUri.origin = oUri.protocol + "//" + oUri.hostname + (oUri.port ? ':' + oUri.port : '');
-				}
-
-				// Add or remove the switch - Keep in mind that we are using window.location directly instead of the
-				// reference. Changing the reference won't redirect the browser to the new URL.
-				window.location = oUri.origin + oUri.pathname + (bSwitch ? "?sap-ui-rtl=true#" + sHash : "#/" + sHash);
 			}
 
 		});
