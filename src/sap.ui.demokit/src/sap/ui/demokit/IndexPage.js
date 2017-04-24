@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/RichTooltip', './DemokitApp'
 		this.oHexGroup = new HexagonButtonGroup({colspan: (iCols || 5)});
 		if ( sCategory && oDemokit ) {
 			var aPages = oDemokit.getPagesForCategory(sCategory);
-			for (var i = 0;i < aPages.length; i++) {
+			for (var i = 0; i < aPages.length; i++) {
 				this.add(true, aPages[i].text, '', this.sPathToRoot + aPages[i].ico, undefined, aPages[i].ref);
 			}
 		}

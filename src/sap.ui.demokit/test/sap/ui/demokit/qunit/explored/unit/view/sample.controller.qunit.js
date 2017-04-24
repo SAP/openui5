@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"jquery.sap.global",
 	"codeUnterTest/view/sample.controller"

@@ -633,10 +633,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				var fnOpenReleaseDialog = function openReleaseDialog() {
 
 					var oNotesModel;
+					var oText;
 					var oNotesView = sap.ui.getCore().byId("notesView");
 					var oNotesDialog = sap.ui.getCore().byId("notesDialog");
 					if (!oNotesDialog) {
-						var oText = new TextView({text: "No changes for this library!", id: "noRelNote"});
+						oText = new TextView({text: "No changes for this library!", id: "noRelNote"});
 						oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:ViewType.Template});
 						oNotesModel = new JSONModel();
 						oNotesView.setModel(oNotesModel);
@@ -658,7 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					oNotesDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
 
 					var oVersion = jQuery.sap.Version(this.getBindingContext().getProperty("version"));
-					var sVersion = oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch() + oVersion.getSuffix() ;
+					var sVersion = oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch() + oVersion.getSuffix();
 
 					oLibInfo._getReleaseNotes(this.getBindingContext().getProperty("library"), sVersion, function(oRelNotes, sVersion) {
 						oNotesDialog.removeAllContent();
@@ -1035,12 +1036,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					}
 					oSplitter.setSplitterBarVisible(false);
 				}
-			} else {
-				if (!oSplitter.getSplitterBarVisible()) {
-					sOldPos = oSplitter._oldPos || "20%";
-					oSplitter.setSplitterPosition(sOldPos);
-					oSplitter.setSplitterBarVisible(true);
-				}
+			} else if (!oSplitter.getSplitterBarVisible()) {
+				sOldPos = oSplitter._oldPos || "20%";
+				oSplitter.setSplitterPosition(sOldPos);
+				oSplitter.setSplitterBarVisible(true);
 			}
 
 			this._sCurrentContent = sPageName;

@@ -102,11 +102,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	 * @param oBrowserEvent the forwarded sap.ui.core.BrowserEvent
 	 * @private
 	 */
-	CodeViewer.prototype.onclick = function(e) {
+	CodeViewer.prototype.onclick = function(oBrowserEvent) {
 		if (!this.getEditable()) {
 			this.firePress({id:this.getId()});
-			e.preventDefault();
-			e.stopPropagation();
+			oBrowserEvent.preventDefault();
+			oBrowserEvent.stopPropagation();
 		}
 	};
 

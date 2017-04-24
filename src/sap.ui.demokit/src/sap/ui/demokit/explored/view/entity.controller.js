@@ -139,7 +139,8 @@ sap.ui.define([
 			this.getView().byId("page").setShowNavButton(bShowNavButton);
 
 			// set data model
-			var oData;
+			var oModel,
+				oData;
 			if (this._sId !== sNewId) {
 
 				// retrieve entity docu from server
@@ -155,7 +156,7 @@ sap.ui.define([
 				oData = this._getViewData(sNewId, oDoc, oEntity);
 
 				// set view model
-				var oModel = new JSONModel(oData);
+				oModel = new JSONModel(oData);
 				this.getView().setModel(oModel);
 
 				// set also the binding context for entity data
@@ -165,7 +166,7 @@ sap.ui.define([
 				this._sId = sNewId;
 
 			} else {
-				var oModel = this.getView().getModel();
+				oModel = this.getView().getModel();
 				oModel.refresh(true);
 				// get existing data model
 				oData = oModel.getData();

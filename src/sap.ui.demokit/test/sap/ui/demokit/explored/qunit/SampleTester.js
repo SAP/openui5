@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 		'sap/ui/core/Component',
 		'sap/ui/core/ComponentContainer',
