@@ -245,7 +245,6 @@ xhr.onCreate = function(request) {
 
 			default:
 				// You used the wrong URL, dummy!
-				debugger;
 				break;
 		}
 

@@ -366,6 +366,7 @@ sap.ui.require([
 				oFixture.sTarget === "base" ? oCache : undefined);
 		});
 	});
+	//TODO cache promise is NOT always fulfilled
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bForceUpdate) {
@@ -1333,7 +1334,7 @@ sap.ui.require([
 		var oPropertyBinding = this.oModel.bindProperty("/absolute");
 
 		this.oSandbox.mock(oPropertyBinding.oCachePromise.getResult()).expects("deregisterChange")
-			.withExactArgs(undefined, oPropertyBinding);
+			.withExactArgs(undefined, sinon.match.same(oPropertyBinding));
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding)
 			.withExactArgs("foo", 42);
 		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
@@ -1351,15 +1352,17 @@ sap.ui.require([
 				deregisterChange : function () {},
 				getPath : function () {return "Name";}
 			},
+			oPromise = Promise.resolve(),
 			oPropertyBinding;
 
 		this.stub(ODataPropertyBinding.prototype, "fetchCache", function (oContext0) {
 			assert.strictEqual(oContext0, oContext);
-			this.oCachePromise = _SyncPromise.resolve();
+			// we might become asynchronous due to auto $expand/$select reading $metadata
+			this.oCachePromise = _SyncPromise.resolve(oPromise);
 		});
 		oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 		this.oSandbox.mock(oContext).expects("deregisterChange")
-			.withExactArgs("Name", oPropertyBinding);
+			.withExactArgs("Name", sinon.match.same(oPropertyBinding));
 		this.oSandbox.mock(PropertyBinding.prototype).expects("destroy").on(oPropertyBinding);
 		this.oSandbox.mock(this.oModel).expects("bindingDestroyed")
 			.withExactArgs(sinon.match.same(oPropertyBinding));
@@ -1368,6 +1371,8 @@ sap.ui.require([
 		oPropertyBinding.destroy();
 
 		assert.strictEqual(oPropertyBinding.oCachePromise, undefined);
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************

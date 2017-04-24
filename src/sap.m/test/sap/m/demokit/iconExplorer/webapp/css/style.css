@@ -92,16 +92,6 @@
 /* Styles for icon preview area */
 .sapUiDemoIconExplorer .previewIcon {
 	font-size: 100px;
-	display: inline-block;
-	width: 100%;
-	padding: 1rem;
-	margin: -1rem;
-}
-
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
-.sapUiDemoIconExplorer .previewIcon {
-	background-color: #116464;
-	color: #ffffff;
 }
 
 html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)

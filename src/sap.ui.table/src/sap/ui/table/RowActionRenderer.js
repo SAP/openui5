@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/table/Row'],
 		rm.write("<div");
 		rm.writeControlData(oAction);
 		rm.addClass("sapUiTableAction");
-		if (!(oAction.getParent() instanceof Row) || !oAction._show) { //TBD: Remove the _show flag, only needed to protect misuse in dev phase
+		if (!(oAction.getParent() instanceof Row)) {
 			rm.addStyle("display", "none");
 		}
 		if (!oAction.getVisible()) {

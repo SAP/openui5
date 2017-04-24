@@ -165,6 +165,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			/**
 			 * Date Range with type to visualize special days in the Calendar.
 			 * If one day is assigned to more than one Type, only the first one will be used.
+			 *
+			 * To set a single date (instead of a range), set only the startDate property of the sap.ui.unified.DateRange class.
+			 *
+			 * <b>Note:</b> Since 1.48 you could set a non-working day via the sap.ui.unified.CalendarDayType.NonWorking
+			 * enum type just as any other special date type using sap.ui.unified.DateRangeType.
+			 *
 			 * @since 1.38.5
 			 */
 			specialDates : {type : "sap.ui.core.Element", multiple : true, singularName : "specialDate"}

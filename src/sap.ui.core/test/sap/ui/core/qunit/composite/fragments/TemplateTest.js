@@ -2,17 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/FragmentControl'], function(jQuery, FragmentControl) {
+	'sap/ui/core/FragmentControl'
+], function(FragmentControl) {
 	"use strict";
-	var Field = FragmentControl.extend("fragments.TemplateTest", {
+	return FragmentControl.extend("fragments.TemplateTest", {
 		metadata: {
 			properties: {
 				text: {
-                    type: "string",
+					type: "string",
 					invalidate: "template"
-                }
+				}
 			}
 		}
 	});
-	return Field;
-}, /* bExport= */ true);
+}, /* bExport= */true);

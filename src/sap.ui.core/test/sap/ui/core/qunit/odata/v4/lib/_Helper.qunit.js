@@ -298,6 +298,58 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		aSelect : undefined,
+		aKeys : ["Param1", "Param2"]
+	}, {
+		aSelect : "*",
+		aKeys : ["Param1", "Param2"]
+	}, {
+		aSelect : ["Param"],
+		aKeys : ["Param", "@odata.etag"]
+	}].forEach(function (oFixture) {
+		QUnit.test("updateAfterPost: aSelect = " + oFixture.aSelect, function (assert) {
+			var mChangeListeners = {},
+				sPath = "path",
+				oCacheValue = {},
+				oPostValue = {Param1 : "", Param2 : ""};
+
+			this.mock(_Helper).expects("updateCache")
+				.withExactArgs(sinon.match.same(mChangeListeners), sPath,
+					sinon.match.same(oCacheValue),sinon.match.same(oPostValue),
+					oFixture.aKeys);
+
+			// code under test
+			_Helper.updateAfterPost(
+				mChangeListeners, sPath, oCacheValue, oPostValue, oFixture.aSelect
+			);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("updateAfterPost: add structured attribute", function (assert) {
+		var oCacheData = {
+				Address : {
+					City : "Walldorf"
+				}
+			};
+
+		_Helper.updateAfterPost({}, "SO_2_BP", oCacheData, {
+			Address : {
+				City : "Walldorf",
+				PostalCode : "69190"
+			}
+		});
+
+		assert.deepEqual(oCacheData, {
+			Address : {
+				City : "Walldorf",
+				PostalCode : "69190"
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateCache: simple", function (assert) {
 		var mChangeListeners = {
 				"SO_2_SOITEM/Note" : [{onChange : function () {}}, {onChange : function () {}}],
@@ -595,5 +647,84 @@ sap.ui.require([
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products"), "zui5_epm_sample.v1");
 		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products/Category/type.cast"),
 			"zui5_epm_sample.v1");
+	});
+
+	//*********************************************************************************************
+	[{
+		options : {
+			$select : ["Param1", "Param2"]
+		},
+		sPath : "",
+		result: ["Param1", "Param2"]
+	}, {
+		options : {},
+		sPath : "",
+		result : undefined
+	}, {
+		options : undefined,
+		sPath : "",
+		result : undefined
+	}, {
+		options : undefined,
+		sPath : "FooSet",
+		result : undefined
+	}, {
+		options : {
+			$select : ["Param1", "Param2"]
+		},
+		sPath : "FooSet",
+		result: undefined
+	}, {
+		options : {
+			$expand : {
+				FooSet : {
+					$select : ["Param1", "Param2"]
+				}
+			}
+		},
+		sPath : "FooSet",
+		result : ["Param1", "Param2"]
+	}, {
+		options : {
+			$expand : {
+				FooSet : true
+			}
+		},
+		sPath : "FooSet/BarSet",
+		result : undefined
+	}, {
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : ["Param1", "Param2"]
+						}
+					},
+					$select : ["Param3", "Param4"]
+				}
+			}
+		},
+		sPath : "FooSet/42/BarSet",
+		result : ["Param1", "Param2"]
+	}, {
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : ["Param1", "Param2"]
+						}
+					},
+					$select : ["Param3", "Param4"]
+				}
+			}
+		},
+		sPath : "FooSet/-1/BarSet",
+		result : ["Param1", "Param2"]
+	}].forEach(function (o) {
+		QUnit.test("getSelectForPath: " + o.sPath, function (assert) {
+			assert.deepEqual(_Helper.getSelectForPath(o.options, o.sPath), o.result);
+		});
 	});
 });

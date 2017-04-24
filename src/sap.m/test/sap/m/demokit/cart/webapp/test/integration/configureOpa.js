@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/demo/cart/test/pageobjects/Category",
 	"sap/ui/demo/cart/test/pageobjects/Product",
 	"sap/ui/demo/cart/test/pageobjects/Cart",
-	"sap/ui/demo/cart/test/pageobjects/Dialog"
+	"sap/ui/demo/cart/test/pageobjects/Dialog",
+	"sap/ui/demo/cart/test/pageobjects/Checkout",
+	"sap/ui/demo/cart/test/pageobjects/OrderCompleted"
 ], function (Opa5, Arrangement) {
 	"use strict";
 

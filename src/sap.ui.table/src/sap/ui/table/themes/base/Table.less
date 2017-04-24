@@ -503,16 +503,17 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: normal;
+	position: relative;
 	padding: 0 0.5rem;
 }
 
-.sapUiTableCol.sapUiTableColSorted,
-.sapUiTableCol.sapUiTableColFiltered {
-	padding-right: 1rem;
+.sapUiTableColSorted,
+.sapUiTableColFiltered {
+	padding-right: 1.5rem;
 }
 
-.sapUiTableCol.sapUiTableColSorted.sapUiTableColFiltered {
-	padding-right: 2rem;
+.sapUiTableColSorted.sapUiTableColFiltered {
+	padding-right: 2.5rem;
 }
 
 .sapUiTableColSF::after {
@@ -530,12 +531,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
 
 .sapUiTableColSF:active::after {
 	color: @sapUiListActiveTextColor;
-}
-
-/* IE does not calculate % of height correctly */
-html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
-	top: 0;
-	transform: none;
 }
 
 .sapUiSizeCozy .sapUiTableColSF::after {
@@ -614,6 +609,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
 	left: 0;
 	box-sizing: border-box;
 	min-height: @_sap_ui_table_RowHeight;
+	touch-action: none; /* for touch scrolling */
 
 	.sapUiTableRowSelectors &,
 	.sapUiTableRowHighlights & {
@@ -804,6 +800,7 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
 	box-sizing: border-box;
 	min-height: @_sap_ui_table_RowHeight;
 	z-index: 4; /* Ensure Action Area before Resize/Reorder bars*/
+	touch-action: pan-x; /* for touch scrolling, vertical only */
 }
 
 .sapUiTableRActS .sapUiTableRowActionHeader,
@@ -948,6 +945,17 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColSF::after {
 	margin: 0;
 	overflow: hidden;
 	box-sizing: border-box;
+}
+
+/* disable default touch move behavior on scrollable table rows,
+   vertical and horizontal scrolling is done in TableScrollExtensions.js */
+.sapUiTableCtrlRowScroll {
+	touch-action: none;
+}
+/* disable horizontal touch move behavior on fixed table rows
+   horizontal scrolling is done in in TableScrollExtensions.js */
+.sapUiTableCtrlRowFixed, .sapUiTableCtrlRowFixedBottom {
+	touch-action: pan-y;
 }
 
 .sapUiTableVScr .sapUiTableCtrlScr {

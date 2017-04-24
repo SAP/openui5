@@ -20,23 +20,16 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {
-
-		// check no warnings and errors
-		function checkLog() {
-			Then.waitFor({
-				success : function (oControl) {
-					jQuery.sap.log.getLogEntries().forEach(function (oLog) {
-						var sComponent = oLog.component || "";
-						if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-								|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-								&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-							Opa5.assert.ok(false, "Warning or error found: " + sComponent
-									+ " Level: " + oLog.level + " Message: " + oLog.message );
-						}
-					});
-				}
-			});
-		}
+		// TODO: take care about TestUtils log message like this:
+		//   "changeset_id-1490715882516-48 - No mock data found sap.ui.test.TestUtils"
+		//   support changesets in $batch
+		var oExpectedLogChangeSetID = {
+				component : "sap.ui.test.TestUtils",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "--changeset_id-",
+				details : "No mock data found"
+			},
+			bRealOData = TestUtils.isRealOData();
 
 		// close schedules dialog
 		function closeSchedules() {
@@ -309,7 +302,7 @@ sap.ui.require([
 
 		verifyTypeDetermination();
 
-		if (TestUtils.isRealOData()) {
+		if (bRealOData) {
 			Opa5.assert.ok(true, "Deletion test skipped because unstable real keys");
 		} else {
 
@@ -405,8 +398,8 @@ sap.ui.require([
 			deleteBusinessPartner();
 
 		}
-
-		checkLog();
+		Then.onTheMainPage.checkLog(!bRealOData ?
+			[oExpectedLogChangeSetID, oExpectedLogChangeSetID] : undefined);
 		Then.iTeardownMyUIComponent();
 	});
 });

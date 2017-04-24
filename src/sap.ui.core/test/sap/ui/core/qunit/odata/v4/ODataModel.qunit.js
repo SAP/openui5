@@ -272,7 +272,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("Property access from ManagedObject w/o context binding", function (assert) {
+	QUnit.test("Property access from ManagedObject w/o context binding", function (assert) {
 		var oModel = createModel(),
 			oControl = new TestControl({models : oModel}),
 			done = assert.async();
@@ -319,23 +319,6 @@ sap.ui.require([
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
 			assert.strictEqual(sCanonicalPath, "/EMPLOYEES(ID='1')");
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.skip("requestCanonicalPath, context from different model", function (assert) {
-		var oModel = createModel(),
-			oModel2 = createModel(),
-			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42");
-
-		this.mock(oEntityContext).expects("requestCanonicalPath").withExactArgs()
-			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
-		//TODO this check cannot reliably detect whether assert() is active in our code
-		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
-			this.mock(jQuery.sap).expects("assert")
-				.withExactArgs(false, "oEntityContext must belong to this model");
-		}
-
-		oModel.requestCanonicalPath(oEntityContext);
 	});
 
 	//*********************************************************************************************
@@ -921,12 +904,25 @@ sap.ui.require([
 		}, new Error("Unsupported value for binding parameter '$$updateGroupId': ~invalid"));
 	});
 
-	//*********************************************************************************************
 	[{
-		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
+		mParameters : {
+			"$expand" : {
+				"foo" : {
+					"$count" : true,
+					"$expand" : {"bar" : {}},
+					"$filter" : "baz eq 0",
+					"$levels" : "max",
+					"$orderby" : "qux",
+					"$search" : "key",
+					"$select" : ["*"]
+				}
+			},
+			"$select" : ["bar"],
+			"custom" : "baz"
+		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {
+		mParameters : {
 			"$apply" : "apply",
 			"$count" : true,
 			"$filter" : "foo eq 42",
@@ -935,22 +931,71 @@ sap.ui.require([
 		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {"custom" : "foo"}
+		mParameters : {"custom" : "foo"}
 	}, {
-		mOptions : undefined
+		mParameters : undefined
 	}, {
-		mOptions : {"sap-client" : "111"},
+		mParameters : {"sap-client" : "111"},
 		bSapAllowed : true
-	}].forEach(function (o) {
-		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
+	},{
+		mParameters : {
+			$expand : { "TEAM_2_MANAGER" : {} },
+			$select : "bar"
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : { "TEAM_2_MANAGER" : {} },
+			$select : ["bar"]
+		}
+	}, {
+		mParameters : {
+			$expand : { "TEAM_2_MANAGER" : {
+				$expand : "TEAM_2_EMPLOYEES($select=Name)",
+				$select : "Team_Id"
+			}}
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : { "TEAM_2_MANAGER" : {
+				$expand : {
+					TEAM_2_EMPLOYEES : {
+						$select : ["Name"]
+					}
+				},
+				$select : ["Team_Id"]
+			}}
+		}
+	}, {
+		mParameters : {
+			$expand : {
+				"TEAM_2_MANAGER" : true,
+				"TEAM_2_EMPLOYEES" : null,
+				"FOO1" : 42,
+				"FOO2" : false
+//TODO undefined values are removed by jQuery.extend, but should also be normalized to {}
+				//"FOO3" : undefined
+			}
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : {
+				"TEAM_2_MANAGER" : {},
+				"TEAM_2_EMPLOYEES" : {},
+				"FOO1" : {},
+				"FOO2" : {}
+//				"FOO3" : {}
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("buildQueryOptions success " + JSON.stringify(oFixture), function (assert) {
 			var mOptions,
-				mOriginalOptions = clone(o.mOptions);
+				mOriginalParameters = clone(oFixture.mParameters);
 
-			mOptions = ODataModel.prototype.buildQueryOptions(o.mOptions,
-				o.bSystemQueryOptionsAllowed, o.bSapAllowed);
+			mOptions = ODataModel.prototype.buildQueryOptions(oFixture.mParameters,
+				oFixture.bSystemQueryOptionsAllowed, oFixture.bSapAllowed);
 
-			assert.deepEqual(mOptions, jQuery.extend({}, o.mOptions));
-			assert.deepEqual(o.mOptions, mOriginalOptions);
+			assert.deepEqual(mOptions, oFixture.expected || oFixture.mParameters || {});
+			assert.deepEqual(oFixture.mParameters, mOriginalParameters, "unchanged");
 		});
 	});
 
@@ -961,7 +1006,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
-		var oExpand = {"foo" : true},
+		var oExpand = {"foo" : null},
 			oParserMock = this.mock(_Parser),
 			aSelect = ["bar"];
 
@@ -999,6 +1044,22 @@ sap.ui.require([
 		mOptions : {"$expand" : {"foo" : {"select" : "bar"}}},
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option select is not supported"
+	}, {
+		mOptions : {"$levels" : 2},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $levels is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$apply" : "bar"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $apply is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$skip" : "10"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $skip is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$top" : "10"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $top is not supported"
 	}, {
 		mOptions : {"sap-foo" : "300"},
 		error : "Custom query option sap-foo is not supported"

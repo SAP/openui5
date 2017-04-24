@@ -28,9 +28,8 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function () {
-			this._router = sap.ui.core.UIComponent.getRouterFor(this);
-			this._router.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
-
+			this._oRouter = this.getRouter();
+			this._oRouter.getRoute("cart").attachPatternMatched(this._routePatternMatched, this);
 			// set initial ui configuration model
 			var oCfgModel = new JSONModel({});
 			this.getView().setModel(oCfgModel, "cfg");
@@ -75,21 +74,13 @@ sap.ui.define([
 			var bDataNoSetYet = !oData.hasOwnProperty("inDelete");
 			var bInDelete = (bDataNoSetYet) ? true : oData.inDelete;
 
-			var sListMode = "Delete";
-			if (bInDelete) {
-				sListMode = (Device.system.phone ? "None" : "SingleSelectMaster");
-			}
-			var sListItemType = "Inactive";
-			if (bInDelete) {
-				sListItemType = (Device.system.phone ? "Active" : "Inactive");
-			}
-
+			var oBundle = this.getResourceBundle();
 			oCfgModel.setData({
 				inDelete: !bInDelete,
 				notInDelete: bInDelete,
-				listMode: sListMode,
-				listItemType: sListItemType,
-				pageTitle: (bInDelete ? oBundle.getText("CART_TITLE_DISPLAY") : oBundle.getText("CART_TITLE_EDIT"))
+				listMode: bInDelete ? Device.system.phone ? "None" : "SingleSelectMaster" : "Delete",
+				listItemType: bInDelete ? Device.system.phone ? "Active" : "Inactive" : "Inactive",
+				pageTitle: (bInDelete) ? oBundle.getText("cartTitleDisplay") : oBundle.getText("cartTitleEdit")
 			});
 		},
 
@@ -163,11 +154,11 @@ sap.ui.define([
 			var oEntry = this.getView().getModel(sCartModelName).getProperty(sPath);
 			var sId = oEntry.ProductId;
 			if (!sap.ui.Device.system.phone) {
-				this._router.getTargets().display("productView");
+				this._oRouter.getTargets().display("productView");
 				var bus = sap.ui.getCore().getEventBus();
 				bus.publish("shoppingCart", "updateProduct", {productId: sId});
 			} else {
-				this._router.navTo("cartProduct", {productId: sId});
+				this._oRouter.navTo("cartProduct", {productId: sId});
 			}
 		},
 
@@ -186,96 +177,41 @@ sap.ui.define([
 		 * @param {string} sCollection the collection name
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
-		_deleteProduct : function (sCollection, oEvent) {
+		_deleteProduct: function (sCollection, oEvent) {
 			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName);
 			var sEntryId = oBindingContext.getObject().ProductId;
 			var oModel = oBindingContext.getModel();
 			var oBundle = this.getResourceBundle();
 
 			// show confirmation dialog
-			MessageBox.show(
-				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
-					title: oBundle.getText("CART_DELETE_DIALOG_TITLE"),
-					actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
-					onClose: function (oAction) {
-						if (oAction !== MessageBox.Action.DELETE) {
-							return;
-						}
-						var oCartModel = oBindingContext.getModel();
-						var oCollectionEntries = $.extend({}, oCartModel.getData()[sCollection]);
-
-						delete oCollectionEntries[sEntryId];
-
-						// update model
-						oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
+			MessageBox.show(oBundle.getText("cartDeleteDialogMsg"), {
+				title: oBundle.getText("cartDeleteDialogTitle"),
+				actions: [
+					MessageBox.Action.DELETE,
+					MessageBox.Action.CANCEL
+				],
+				onClose: function (oAction) {
+					if (oAction !== MessageBox.Action.DELETE) {
+						return;
 					}
+					var oCartModel = oBindingContext.getModel();
+					var oCollectionEntries = $.extend({}, oCartModel.getData()[sCollection]);
+
+					delete oCollectionEntries[sEntryId];
+
+					// update model
+					oCartModel.setProperty("/" + sCollection, $.extend({}, oCollectionEntries));
 				}
-			);
+			});
 		},
 
 		/**
 		 * Called when the proceed button in the cart is pressed.
-		 * An order dialog will open.
+		 * Navigates to the checkout wizard
 		 * @public
-		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
-		onProceedButtonPress: function (oEvent) {
-			if (!this._orderDialog) {
-
-				// create busy dialog
-				var oBundle = this.getResourceBundle();
-				this._orderBusyDialog = new sap.m.BusyDialog({
-					title: oBundle.getText("CART_BUSY_DIALOG_TITLE"),
-					text: oBundle.getText("CART_BUSY_DIALOG_TEXT"),
-					showCancelButton: false,
-					close: function () {
-						sap.m.MessageBox.show(
-							oBundle.getText("CART_ORDER_SUCCESS_MSG"), {
-								title: oBundle.getText("CART_ORDER_SUCCESS_TITLE")
-							});
-					}
-				});
-
-				// create order dialog
-				var oInputView = sap.ui.view({
-					id: "Order",
-					viewName: "sap.ui.demo.cart.view.Order",
-					type: "XML"
-				});
-				this._orderDialog = new Dialog({
-					title: oBundle.getText("CART_ORDER_DIALOG_TITLE"),
-					stretch: Device.system.phone,
-					content: [
-						oInputView
-					],
-					// Accept button
-					leftButton: new Button({
-						text: oBundle.getText("CART_ORDER_DIALOG_CONFIRM_ACTION"),
-						type: "Accept",
-						press: function () {
-							var bInputValid = oInputView.getController()._checkInput();
-							if (bInputValid) {
-								this._orderDialog.close();
-								var msg = "Your order was placed.";
-								this._resetCart();
-								MessageToast.show(msg, {});
-							}
-						}.bind(this)
-					}),
-					// Cancel button
-					rightButton: new Button({
-						text: oBundle.getText("DIALOG_CANCEL_ACTION"),
-						press: function () {
-							this._orderDialog.close();
-						}.bind(this)
-					})
-				});
-
-				this.getView().addDependent(this._orderDialog);
-			}
-
-			// open order dialog
-			this._orderDialog.open();
+		onProceedButtonPress: function () {
+			this._oRouter.navTo("checkout");
 		},
 
 		/**
@@ -291,9 +227,9 @@ sap.ui.define([
 			oCartModel.setProperty("/totalPrice", "0");
 
 			//navigates back to home screen
-			this._router.navTo("home");
+			this._oRouter.navTo("home");
 			if (!Device.system.phone) {
-				this._router.getTargets().display("welcome");
+				this._oRouter.getTargets().display("welcome");
 			}
 		}
 	});

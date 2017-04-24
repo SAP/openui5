@@ -2075,6 +2075,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				oDomRef.removeAttribute("aria-invalid");
 			}
 
+			if (this.shouldValueStateMessageBeOpened() && document.activeElement === oDomRef) {
+				this.openValueStateMessage();
+			} else {
+				this.closeValueStateMessage();
+			}
+
 			this.updateValueStateClasses(sValueState, sOldValueState);
 			return this;
 		};

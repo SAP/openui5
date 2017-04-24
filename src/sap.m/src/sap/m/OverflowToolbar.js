@@ -988,7 +988,17 @@ sap.ui.define([
 				return OverflowToolbarPriority.AlwaysOverflow;
 			}
 
-			return oLayoutData.getPriority();
+			var sPriority = oLayoutData.getPriority();
+
+			if (sPriority === OverflowToolbarPriority.Never) {
+				return OverflowToolbarPriority.NeverOverflow;
+			}
+
+			if (sPriority === OverflowToolbarPriority.Always) {
+				return OverflowToolbarPriority.AlwaysOverflow;
+			}
+
+			return sPriority;
 		}
 
 		return OverflowToolbarPriority.High;

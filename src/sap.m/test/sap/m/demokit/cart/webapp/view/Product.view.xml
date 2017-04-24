@@ -11,16 +11,15 @@
 			<Button
 				icon="sap-icon://cart"
 				visible="{device>/isPhone}"
-				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
+				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress" />
 		</headerContent>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
-					icon="sap-icon://add"
-					text="{i18n>PRODUCT_ADD_BUTTON_TEXT}"
-					tooltip="{i18n>PRODUCT_ADD_BUTTON_TOOLTIP}"
+					icon="sap-icon://cart-3"
+					tooltip="{i18n>productAddButtonTooltip}"
 					press="onAddButtonPress" />
 			</Toolbar>
 		</footer>
@@ -34,16 +33,16 @@
 				numberUnit="EUR">
 				<attributes>
 					<ObjectAttribute
-						title="{i18n>PRODUCT_SUPPLIER_ATTRIBUTE_TEXT}"
+						title="{i18n>productSupplierAttributeText}"
 						text="{SupplierName}" />
 					<ObjectAttribute
-						title="{i18n>PRODUCT_DESCRIPTION_ATTRIBUTE_TEXT}"
+						title="{i18n>productDescriptionAttributeText}"
 						text="{ShortDescription}" />
 					<ObjectAttribute
-						title="{i18n>PRODUCT_WEIGHT_ATTRIBUTE_TEXT}"
+						title="{i18n>productWeightAttributeText}"
 						text="{Weight} {WeightUnit}"/>
 					<ObjectAttribute
-						title="{i18n>PRODUCT_MEASURES_ATTRIBUTE_TEXT}"
+						title="{i18n>productMeasuresAttributeText}"
 						text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
 				</attributes>
 				<firstStatus>

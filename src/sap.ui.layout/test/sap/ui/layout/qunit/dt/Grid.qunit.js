@@ -58,15 +58,11 @@
 						}],
 						source: {
 							aggregation: "content",
-							parent: oView.byId("myGrid"),
-							publicAggregation: "content",
-							publicParent: oView.byId("myGrid")
+							parent: oView.byId("myGrid")
 						},
 						target: {
 							aggregation: "content",
-							parent: oView.byId("myGrid"),
-							publicAggregation: "content",
-							publicParent: oView.byId("myGrid")
+							parent: oView.byId("myGrid")
 						}
 					};
 				}

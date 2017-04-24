@@ -9,6 +9,9 @@ sap.ui.define([
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Welcome", {
 
+		_iCarouselTimeout: 0, // a pointer to the current timeout
+		_iCarouselLoopTime : 8000, // loop to next picture after 8 seconds
+
 		formatter : formatter,
 
 		_mFilters: {
@@ -19,7 +22,10 @@ sap.ui.define([
 
 		onInit: function () {
 			var oViewModel = new JSONModel({
-				welcomePictureUrl: 'img/Welcome.jpg',
+				welcomeCarouselShipping: 'img/ShopCarouselShipping.jpg',
+				welcomeCarouselInviteFriend: 'img/ShopCarouselInviteFriend.jpg',
+				welcomeCarouselTablet: 'img/ShopCarouselTablet.jpg',
+				welcomeCarouselCreditCard: 'img/ShopCarouselCreditCard.jpg',
 				Promoted: [],
 				Viewed: [],
 				Favorite: [],
@@ -28,6 +34,18 @@ sap.ui.define([
 			this.getView().setModel(oViewModel, "view");
 			this.getRouter().attachRouteMatched(this._onRouteMatched, this);
 			this.getRouter().getTarget("welcome").attachDisplay(this._onRouteMatched, this);
+
+			// select random carousel page at start
+			var oWelcomeCarousel = this.byId("welcomeCarousel");
+			var iRandomIndex = Math.floor(Math.random() * oWelcomeCarousel.getPages().length);
+			oWelcomeCarousel.setActivePage(oWelcomeCarousel.getPages()[iRandomIndex]);
+		},
+
+		/**
+		 * lifecycle hook that will initialize the welcome carousel
+		 */
+		onAfterRendering: function() {
+			this.onCarouselPageChanged();
 		},
 
 		_onRouteMatched: function (oEvent) {
@@ -52,6 +70,20 @@ sap.ui.define([
 					}.bind(this));
 				}
 			}
+		},
+
+		/**
+		 * clear previous animation and initialize the loop animation of the welcome carousel
+		 */
+		onCarouselPageChanged: function() {
+			clearTimeout(this._iCarouselTimeout);
+			this._iCarouselTimeout = setTimeout(function () {
+				var oWelcomeCarousel = this.byId("welcomeCarousel");
+				if (oWelcomeCarousel) {
+					oWelcomeCarousel.next();
+					this.onCarouselPageChanged();
+				}
+			}.bind(this), this._iCarouselLoopTime);
 		},
 
 		/**

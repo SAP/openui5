@@ -13,7 +13,7 @@ sap.ui.define([
 				iAddTheDisplayedProductToTheCart: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://add"}),
+						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://cart-3"}),
 						actions : new Press(),
 						errorMessage: "The press action could not be executed"
 					});

@@ -55,8 +55,9 @@ sap.ui.define([
 				return Promise.resolve(oView);
 			}
 
-			var sFlexReference = Utils.getComponentClassName(oComponent);
-			var sAppVersion = Utils.getAppVersionFromManifest(oComponent.getManifest());
+			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			var sFlexReference = Utils.getComponentName(oAppComponent);
+			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 			var cacheKey = oChangePersistence.getCacheKey();
 
@@ -89,8 +90,9 @@ sap.ui.define([
 	 */
 	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
 		var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
-		var sFlexReference = Utils.getComponentClassName(oComponent);
-		var sAppVersion = Utils.getAppVersionFromManifest(oComponent.getManifest());
+		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		var sFlexReference = Utils.getComponentName(oAppComponent);
+		var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 		return oChangePersistence.getCacheKey();
 	};
