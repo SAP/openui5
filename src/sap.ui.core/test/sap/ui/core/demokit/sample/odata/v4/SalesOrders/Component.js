@@ -69,7 +69,7 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
 					"$metadata?custom-option=value" : {source : "metadata.xml"},
-					"BusinessPartnerList?custom-option=value&$select=CompanyName,BusinessPartnerID&$skip=0&$top=100" : {
+					"BusinessPartnerList?custom-option=value&$select=BusinessPartnerID,CompanyName&$skip=0&$top=100" : {
 						source : "BusinessPartnerList.json"
 					},
 					"BusinessPartnerList('0100000000')?custom-option=value" : {
@@ -81,88 +81,88 @@ sap.ui.define([
 					"ProductList('HT-1000')/ProductID?custom-option=value" : {
 						source : "ProductListId.json"
 					},
-					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=0&$top=5" : {
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
 						source : "SalesOrderList_skip0.json"
 					},
-					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=5&$top=5" : {
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=5&$top=5" : {
 						source : "SalesOrderList_skip5.json"
 					},
-					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=5&$top=4" : {
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=5&$top=4" : {
 						source : "SalesOrderList_skip5_top4.json"
 					},
-					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=0&$top=10" : {
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=10" : {
 						source : "SalesOrderList_skip0_top10.json"
 					},
-					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=4&$top=1" : {
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,LifecycleStatus,Note,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=4&$top=1" : {
 						source : "SalesOrderListReplacementForDelete.json"
 					},
 					"SalesOrderList('0500000000')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_0.json"
 					},
-					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_0.json"
 					},
-					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=Product/ProductID%20eq%20'HT-1001'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=Product/ProductID%20eq%20'HT-1001'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_0_changedFilter.opa.json"
 					},
 					"SalesOrderList('0500000001')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_1.json"
 					},
-					"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000001')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_1.json"
 					},
 					"SalesOrderList('0500000002')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_2.json"
 					},
-					"SalesOrderList('0500000002')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000002')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_2.json"
 					},
 					"SalesOrderList('0500000003')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_3.json"
 					},
-					"SalesOrderList('0500000003')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000003')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_3.json"
 					},
 					"SalesOrderList('0500000004')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_4.json"
 					},
-					"SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000004')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_4.json"
 					},
 					"SalesOrderList('0500000005')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_5.json"
 					},
-					"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_5.json"
 					},
 					"SalesOrderList('0500000006')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_6.json"
 					},
-					"SalesOrderList('0500000006')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000006')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_6.json"
 					},
 					"SalesOrderList('0500000007')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_7.json"
 					},
-					"SalesOrderList('0500000007')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000007')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_7.json"
 					},
 					"SalesOrderList('0500000008')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_8.json"
 					},
-					"SalesOrderList('0500000008')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000008')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_8.json"
 					},
 					"SalesOrderList('0500000009')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_9.json"
 					},
-					"SalesOrderList('0500000009')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('0500000009')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_9.json"
 					},
 					"SalesOrderList('')?custom-option=value&$select=SalesOrderID,CreatedAt,ChangedAt,LifecycleStatusDesc,Note&$expand=SO_2_SCHDL($select=ScheduleKey,DeliveryDate),SO_2_BP($select=BusinessPartnerID,CompanyName,PhoneNumber,Address/City,Address/PostalCode)" : {
 						source : "SalesOrderList_new.json"
 					},
-					"SalesOrderList('')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
+					"SalesOrderList('')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=ProductID,Category,TypeCode,SupplierName)&$filter=ItemPosition%20gt%20'0000000000'&$select=SalesOrderID,ItemPosition,Product/ProductID,Product/ProductName,GrossAmount,DeliveryDate,Note&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_new.json"
 					},
 					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/h_tcurc-sh/0001;ps=%27default-zui5_epm_sample-0001%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0001.ET-SALESORDER.CURRENCY_CODE%27/$metadata" : {

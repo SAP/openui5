@@ -286,14 +286,6 @@ sap.ui.require([
 
 			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
-			//TODO Remove the below mock which avoids access to $metadata as soon as addition
-			// of key properties takes place in fetchIfChildCanUseCache (CPOUI5UISERVICESV3-590)
-			if (bAutoExpandSelect) {
-				this.mock(ODataListBinding.prototype).expects("fetchQueryOptionsWithKeys")
-					.withExactArgs(undefined)
-					.returns(_SyncPromise.resolve({}));
-			}
-
 			// code under test
 			oBinding = this.oModel.bindList("/EMPLOYEES");
 
@@ -3520,11 +3512,9 @@ sap.ui.require([
 		oBindingMock.expects("fetchFilter")
 			.withExactArgs(sinon.match.same(oContext), "staticFilter")
 			.returns(_SyncPromise.resolve("resolvedFilter"));
-		oBindingMock.expects("fetchQueryOptionsWithKeys")
-			.withExactArgs(sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve("queryOptionsWithKey"));
 		oBindingMock.expects("mergeQueryOptions")
-			.withExactArgs("queryOptionsWithKey", "resolvedOrderby", "resolvedFilter")
+			.withExactArgs(sinon.match.same(oBinding.mQueryOptions), "resolvedOrderby",
+				"resolvedFilter")
 			.returns(mQueryOptions);
 
 		// code under test

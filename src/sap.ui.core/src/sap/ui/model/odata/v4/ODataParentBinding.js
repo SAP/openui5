@@ -26,6 +26,23 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.ODataParentBinding";
 
 	/**
+	 * Adds the given paths to $select of the given query options.
+	 *
+	 * @param {object} mQueryOptions The query options
+	 * @param {string[]} aSelectPaths The paths to add to $select
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.addToSelect = function (mQueryOptions, aSelectPaths) {
+		mQueryOptions.$select = mQueryOptions.$select || [];
+		aSelectPaths.forEach(function (sPath) {
+			if (mQueryOptions.$select.indexOf(sPath) < 0 ) {
+				mQueryOptions.$select.push(sPath);
+			}
+		});
+	};
+
+	/**
 	 * Changes this binding's parameters and refreshes the binding.
 	 *
 	 * If there are pending changes an error is thrown. Use {@link #hasPendingChanges} to check if
@@ -180,8 +197,9 @@ sap.ui.define([
 
 	/**
 	 * Creates the query options for a child binding with the meta path given by its base
-	 * meta path and relative meta path. Requires that meta data for the meta path is already
-	 * loaded so that synchronous access to all prefixes of the relative meta path is possible.
+	 * meta path and relative meta path. Adds the key properties to $select of all expanded
+	 * navigation properties. Requires that meta data for the meta path is already loaded so that
+	 * synchronous access to all prefixes of the relative meta path is possible.
 	 * If the relative meta path contains segments which are not a structural property or a
 	 * navigation property, the child query options cannot be created and the method returns
 	 * undefined.
@@ -221,6 +239,7 @@ sap.ui.define([
 					= (i === aMetaPathSegments.length - 1) // last segment in path
 						? mChildQueryOptions
 						: {};
+				this.selectKeyProperties(mQueryOptionsForPathPrefix, sPropertyMetaPath);
 				sExpandSelectPath = "";
 			} else if (oProperty.$kind !== "Property") {
 				return undefined;
@@ -236,7 +255,7 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataParentBinding");
 				return undefined;
 			}
-			mQueryOptionsForPathPrefix.$select = [sExpandSelectPath];
+			this.addToSelect(mQueryOptionsForPathPrefix, [sExpandSelectPath]);
 		}
 		if ("$apply" in mChildQueryOptions) {
 			jQuery.sap.log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
@@ -297,7 +316,7 @@ sap.ui.define([
 	 * the cache of this binding or one of its ancestor bindings. If this is the case, enhances
 	 * the aggregated query options of this binding with the query options computed from the child
 	 * binding's path; the aggregated query options initially hold the binding's local query
-	 * options.
+	 * options with the entity type's key properties added to $select.
 	 *
 	 * @param {sap.ui.model.Context} oContext The child binding's context
 	 * @param {string} sChildPath The child binding's binding path
@@ -313,21 +332,44 @@ sap.ui.define([
 		var sBaseMetaPath,
 			oCanUseCachePromise,
 			sChildMetaPath,
+			oMetaModel = this.oModel.oMetaModel,
 			aPromises,
 			that = this;
+
+		/*
+		 * Fetches the property that is reached by the calculated meta path and (if necessary) its
+		 * type.
+		 * @returns {SyncPromise} A promise that is resolved with the property
+		 */
+		function fetchPropertyAndType() {
+			var sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
+
+			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
+				if (oProperty && oProperty.$kind === "NavigationProperty") {
+					// Ensure that the target type of the navigation property is available
+					// synchronously. This is only necessary for navigation properties and may only
+					// be done for them because it would fail for properties with a simple type like
+					// "Edm.String".
+					return oMetaModel.fetchObject(sFullMetaPath + "/").then(function () {
+						return oProperty;
+					});
+				}
+				return oProperty;
+			});
+		}
 
 		if (sChildPath === "$count" || sChildPath.slice(-7) === "/$count") {
 			return _SyncPromise.resolve(true);
 		}
 
-		sBaseMetaPath = this.oModel.oMetaModel.getMetaPath(oContext.getPath());
-		sChildMetaPath = this.oModel.oMetaModel.getMetaPath("/" + sChildPath).slice(1);
+		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
+		sChildMetaPath = oMetaModel.getMetaPath("/" + sChildPath).slice(1);
 		aPromises = [
 			this.doFetchQueryOptions(this.oContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
 			// is loaded so that synchronous access in wrapChildQueryOptions via getObject is
 			// possible
-			this.oModel.oMetaModel.fetchObject(_Helper.buildPath(sBaseMetaPath, sChildMetaPath)),
+			fetchPropertyAndType(),
 			oChildQueryOptionsPromise
 		];
 		oCanUseCachePromise = _SyncPromise.all(aPromises).then(function (aResult) {
@@ -336,6 +378,10 @@ sap.ui.define([
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1];
 
+			if (!that.oOperation) {
+				// Note: Operation bindings do not support auto-$expand/$select yet
+				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
+			}
 			// this.mAggregatedQueryOptions contains the aggregated query options of all child
 			// bindings which can use the cache of this binding or an ancestor binding merged
 			// with this binding's local query options
@@ -361,42 +407,6 @@ sap.ui.define([
 		});
 		that.aChildCanUseCachePromises.push(oCanUseCachePromise);
 		return oCanUseCachePromise;
-	};
-
-	/**
-	 * Returns a promise on the binding's query options. In auto-$expand/$select mode the $select is
-	 * enriched with the key properties if there was a $select before.
-	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used
-	 * @returns {SyncPromise}
-	 *   A promise resolving with the binding's query options
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.fetchQueryOptionsWithKeys = function (oContext) {
-		var oMetaModel,
-			sMetaPath,
-			sResolvedPath = this.oModel.resolve(this.sPath, oContext),
-			that = this;
-
-		if (!sResolvedPath || !this.oModel.bAutoExpandSelect) {
-			return _SyncPromise.resolve(this.mQueryOptions);
-		}
-		oMetaModel = this.oModel.getMetaModel();
-		sMetaPath = oMetaModel.getMetaPath(sResolvedPath);
-		return oMetaModel.fetchObject(sMetaPath + "/").then(function (oType) {
-			var aSelect = that.mQueryOptions && that.mQueryOptions.$select;
-
-			if (aSelect && oType.$Key) {
-				oType.$Key.forEach(function (sKey) {
-					if (aSelect.indexOf(sKey) < 0) {
-						aSelect.push(sKey);
-					}
-				});
-			}
-			return that.mQueryOptions;
-		});
 	};
 
 	/**
@@ -493,7 +503,7 @@ sap.ui.define([
 			/**
 			 * Recursively merges the expand path into the aggregated query options.
 			 * @param {string} sExpandPath The expand path
-		 	 * @returns {boolean} Whether the query options could be merged
+			 * @returns {boolean} Whether the query options could be merged
 			 */
 			function mergeExpandPath(sExpandPath) {
 				if (mAggregatedQueryOptions.$expand[sExpandPath]) {
@@ -538,6 +548,24 @@ sap.ui.define([
 			this.mAggregatedQueryOptions = mAggregatedQueryOptions;
 		}
 		return bCanMerge;
+	};
+
+	/**
+	 * Adds the key properties of the entity reached by the given navigation property path to
+	 * $select of the query options. Expects that the type has already been loaded so that it can
+	 * be accessed synchronously.
+	 *
+	 * @param {object} mQueryOptions The query options
+	 * @param {string} sMetaPath The path to the navigation property
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
+		var oType = this.oModel.oMetaModel.getObject(sMetaPath + "/");
+
+		if (oType.$Key) {
+			this.addToSelect(mQueryOptions, oType.$Key);
+		}
 	};
 
 	/**

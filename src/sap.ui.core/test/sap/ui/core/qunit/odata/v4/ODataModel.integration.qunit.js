@@ -1397,7 +1397,7 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
-				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=TEAM_ID))&$select=AGE,ID",
+				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_TEAM": {
@@ -1437,7 +1437,7 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
-					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name)&$select=AGE,ID",
+					+ "($select=ID),EMPLOYEE_2_TEAM($select=Team_Id,Name)&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1576,7 +1576,7 @@ sap.ui.require([
 		this.expectChange("name");
 		return this.createView(assert, sView, oModel).then(function () {
 // TODO the query options for the function import are not enhanced
-//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
+//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
@@ -1626,7 +1626,7 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
-					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name",
+					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Team_Id,Name",
 				{
 					"Name": "SAP NetWeaver Gateway Content",
 					"TEAM_2_EMPLOYEES": [
@@ -1635,7 +1635,7 @@ sap.ui.require([
 					]
 				})
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
-					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE",
+					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=ID,AGE",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1738,10 +1738,8 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-//TODO auto-$select of key properties should $select Team_id and ID
-//		this.expectRequest("TEAMS('2')?$select=Team_Id,Name&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
-		this.expectRequest("TEAMS('2')?$select=Name"
-					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=Name)", {
+		this.expectRequest("TEAMS('2')?$select=Team_Id,Name"
+					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
 					"Name" : "Team 2",
 					"Team_Id" : "2",
 					"TEAM_2_EMPLOYEES" : [
@@ -1756,10 +1754,7 @@ sap.ui.require([
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
-//TODO auto-$select of key properties should $select Team_id and ID
-//			that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name&$filter=AGE%20gt%2042&$skip=0&$top=100",
-//					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
-				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=Name"
+				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
 							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
 						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
 					.expectChange("text", "Peter Burke", 1);
@@ -1791,7 +1786,7 @@ sap.ui.require([
 			that = this;
 
 		this.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
-				+ "&$select=Name&$skip=0&$top=100", {
+				+ "&$select=ID,Name&$skip=0&$top=100", {
 					"value" : [
 						{"Name" : "Frederic Fall"},
 						{"Name" : "Peter Burke"}
@@ -1824,13 +1819,13 @@ sap.ui.require([
 	</items>\
 </Table>';
 
-		this.expectRequest("TEAMS?$skip=0&$top=100", {
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
 					"value" : [
 						{"Team_Id" : "TEAM_01"}
 					]
 				})
 			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
-				+ "&$select=Name&$skip=0&$top=100", {
+				+ "&$select=ID,Name&$skip=0&$top=100", {
 					"value" : [
 						{"Name" : "Frederic Fall"},
 						{"Name" : "Peter Burke"}

@@ -536,15 +536,11 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.doFetchQueryOptions = function (oContext) {
 		var sOrderby = this.getOrderby(this.mQueryOptions.$orderby),
-			aPromises = [
-				this.fetchQueryOptionsWithKeys(oContext),
-				this.fetchFilter(oContext, this.mQueryOptions.$filter)
-			],
 			that = this;
 
-		return _SyncPromise.all(aPromises)
-			.then(function (aResults) {
-				return that.mergeQueryOptions(aResults[0], sOrderby, aResults[1]);
+		return this.fetchFilter(oContext, this.mQueryOptions.$filter)
+			.then(function (sFilter) {
+				return that.mergeQueryOptions(that.mQueryOptions, sOrderby, sFilter);
 			});
 	};
 

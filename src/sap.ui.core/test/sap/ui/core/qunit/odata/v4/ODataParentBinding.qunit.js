@@ -558,12 +558,34 @@ sap.ui.require([
 		childQueryOptions : {},
 		expected : {$select : ["Property"]}
 	}, {
+		childPath : "NavigationProperty",
+		childQueryOptions : {
+			$select : ["Property"]
+		},
+		expected : {
+			$expand : {
+				"NavigationProperty" : {
+					$select: ["Property", "Property_1", "Property_2"]
+				}
+			}
+		}
+	}, {
 		childPath : "NavigationProperty/Property",
 		childQueryOptions : {},
 		expected : {
 			$expand : {
 				"NavigationProperty" : {
-					$select: ["Property"]
+					$select: ["Property_1", "Property_2", "Property"]
+				}
+			}
+		}
+	}, {
+		childPath : "NavigationProperty/Property_1",
+		childQueryOptions : {},
+		expected : {
+			$expand : {
+				"NavigationProperty" : {
+					$select: ["Property_1", "Property_2"]
 				}
 			}
 		}
@@ -572,7 +594,9 @@ sap.ui.require([
 		childQueryOptions : {},
 		expected : {
 			$expand : {
-				"Property/NavigationProperty" : {}
+				"Property/NavigationProperty" : {
+					$select: ["Property_1", "Property_2"]
+				}
 			}
 		}
 	}, {
@@ -587,9 +611,11 @@ sap.ui.require([
 				"NavigationProperty_1" : {
 					$expand : {
 						"NavigationProperty_2" : {
-							$foo : "bar"
+							$foo : "bar",
+							$select: ["Property_1", "Property_2"]
 						}
-					}
+					},
+					$select: ["Property_1", "Property_2"]
 				}
 			}
 		}
@@ -612,11 +638,17 @@ sap.ui.require([
 				oMetaModelMock = this.mock(oMetaModel);
 
 			aMetaPathSegments.forEach(function (sSegment, j, aMetaPathSegments) {
-				var sPropertyMetaPath = "/EMPLOYEES/" + aMetaPathSegments.slice(0, j + 1).join("/");
+				var sPropertyMetaPath = "/EMPLOYEES/" + aMetaPathSegments.slice(0, j + 1).join("/"),
+					sKind = sSegment.split("_")[0];
 
 				oMetaModelMock.expects("getObject")
 					.withExactArgs(sPropertyMetaPath)
-					.returns({$kind : sSegment.split("_")[0]});
+					.returns({$kind : sKind});
+				if (sKind === "NavigationProperty") {
+					oMetaModelMock.expects("getObject")
+						.withExactArgs(sPropertyMetaPath + "/")
+						.returns({$Key : ["Property_1", "Property_2"]});
+				}
 			});
 
 			// code under test
@@ -635,13 +667,17 @@ sap.ui.require([
 			oMetaModel = {
 				getObject : function () {}
 			},
+			oMetaModelMock = this.mock(oMetaModel),
 			oBinding = new ODataParentBinding({
 				oModel : {oMetaModel : oMetaModel}
 			});
 
-		this.mock(oMetaModel).expects("getObject")
+		oMetaModelMock.expects("getObject")
 			.withExactArgs("/EMPLOYEES/NavigationProperty")
 			.returns({$kind : "NavigationProperty"});
+		oMetaModelMock.expects("getObject")
+			.withExactArgs("/EMPLOYEES/NavigationProperty/")
+			.returns({});
 		this.oLogMock.expects("debug").withExactArgs(
 			"Cannot wrap $apply into $expand: NavigationProperty",
 			JSON.stringify(mChildQueryOptions), "sap.ui.model.odata.v4.ODataParentBinding"
@@ -959,13 +995,25 @@ sap.ui.require([
 				oBindingMock.expects("doFetchQueryOptions")
 					.withExactArgs(sinon.match.same(oBinding.oContext))
 					.returns(_SyncPromise.resolve(mLocalQueryOptions));
+				oMetaModelMock.expects("fetchObject")
+					.withExactArgs("/EMPLOYEES/childMetaPath")
+					.returns(_SyncPromise.resolve({$kind : oFixture.$kind}));
 				this.mock(jQuery).expects("extend")
 					.exactly(Object.keys(oFixture.aggregatedQueryOptions).length ? 0 : 1)
 					.withExactArgs(true, {}, sinon.match.same(mLocalQueryOptions))
 					.returns(mAggregatedQueryOptions);
-				oMetaModelMock.expects("fetchObject")
-					.withExactArgs("/EMPLOYEES/childMetaPath")
-					.returns(_SyncPromise.resolve({$kind : oFixture.$kind}));
+				if (oFixture.$kind === "NavigationProperty") {
+					oBindingMock.expects("selectKeyProperties").never();
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs("/EMPLOYEES/childMetaPath/")
+						.returns(Promise.resolve().then(function () {
+							oBindingMock.expects("selectKeyProperties")
+								.withExactArgs(sinon.match.same(mLocalQueryOptions), "/EMPLOYEES");
+						}));
+				} else {
+					oBindingMock.expects("selectKeyProperties")
+						.withExactArgs(sinon.match.same(mLocalQueryOptions), "/EMPLOYEES");
+				}
 				oBindingMock.expects("wrapChildQueryOptions")
 					.withExactArgs("/EMPLOYEES", "childMetaPath",
 						sinon.match.same(mChildLocalQueryOptions))
@@ -1028,6 +1076,8 @@ sap.ui.require([
 			oMetaModelMock.expects("fetchObject")
 				.withExactArgs("/EMPLOYEES" + sPath)
 				.returns(_SyncPromise.resolve(oFixture.oProperty));
+			this.mock(oBinding).expects("selectKeyProperties")
+				.withExactArgs(sinon.match.object, "/EMPLOYEES");
 			this.oLogMock.expects("error").withExactArgs(
 				"Failed to enhance query options for auto-$expand/$select as the child "
 					+ "binding's path '" + sPath.slice(1)
@@ -1047,7 +1097,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: $count in child path", function (assert) {
-		var oBinding = new ODataParentBinding();
+		var oBinding = new ODataParentBinding({oModel : {}});
 
 		// code under test
 		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
@@ -1514,134 +1564,54 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchQueryOptionsWithKeys: unresolved", function(assert) {
-		var oBinding = new ODataParentBinding({
-				oModel : {
-					bAutoExpandSelect : true,
-					resolve : function () {}
-				},
-				sPath : "EMPLOYEE_2_TEAM",
-				mQueryOptions : {"$select" : "foo"}
-			});
-
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, undefined)
-			.returns(undefined);
-
-		// code under test
-		assert.strictEqual(oBinding.fetchQueryOptionsWithKeys(undefined).getResult(),
-			oBinding.mQueryOptions);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchQueryOptionsWithKeys: no auto-$expand/$select", function(assert) {
-		var oBinding = new ODataParentBinding({
-				oModel : {
-					bAutoExpandSelect : false,
-					resolve : function () {}
-				},
-				sPath : "EMPLOYEE_2_TEAM",
-				mQueryOptions : {"$select" : "foo"}
-			}),
-			oContext = {};
-
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
-			.returns("~resolved~");
-
-		// code under test
-		assert.strictEqual(oBinding.fetchQueryOptionsWithKeys(oContext).getResult(),
-			oBinding.mQueryOptions);
-	});
-
-	//*********************************************************************************************
 	[{
-		title: "no query options",
-		key : ["key1", "key2"],
-		result: undefined // TODO change when system properties of dependents are aggregated
-//		result : {
-//			$select : ["key1", "key2"]
-//		}
+		before : [],
+		merge : ["foo"],
+		after : ["foo"]
 	}, {
-		title: "no $select",
-		key : ["key1", "key2"],
-		queryOptions : {foo: "bar"},
-		result: undefined // TODO change when system properties of dependents are aggregated
-//		result : {
-//			foo : "bar",
-//			$select : ["key1", "key2"]
-//		}
+		before : ["foo"],
+		merge : ["bar"],
+		after : ["foo", "bar"]
 	}, {
-		title: "extend $select",
-		key : ["key1", "key2"],
-		queryOptions : {
-			foo: "bar",
-			$select : ["nonkey1", "nonkey2"]
-		},
-		result : {
-			foo : "bar",
-			$select : ["nonkey1", "nonkey2", "key1", "key2"]
-		}
+		before : ["foo", "bar"],
+		merge : ["bar", "baz"],
+		after : ["foo", "bar", "baz"]
 	}, {
-		title: "extend $select with key",
-		key : ["key1", "key2"],
-		queryOptions : {
-			foo: "bar",
-			$select : ["key1", "nonkey"]
-		},
-		result : {
-			foo : "bar",
-			$select : ["key1", "nonkey", "key2"]
-		}
-	}, {
-		title: "$select with only keys",
-		key : ["key1", "key2"],
-		queryOptions : {
-			foo: "bar",
-			$select : ["key1", "key2"]
-		}
-	}, {
-		title: "no key",
-		queryOptions : {
-			foo: "bar",
-			$select : ["nonkey1", "nonkey2"]
-		}
+		before : undefined,
+		merge : ["foo", "bar"],
+		after : ["foo", "bar"]
 	}].forEach(function (oFixture) {
-		QUnit.test("fetchQueryOptionsWithKeys: " + oFixture.title, function(assert) {
-			var oMetaModel = {
-					fetchObject : function () {},
-					getMetaPath: function () {}
-				},
-				oBinding = new ODataParentBinding({
+		QUnit.test("addToSelect", function (assert) {
+			var oBinding = new ODataParentBinding(),
+				mQueryOptions = {$foo : "bar"};
+
+			mQueryOptions.$select = oFixture.before;
+			oBinding.addToSelect(mQueryOptions, oFixture.merge);
+			assert.deepEqual(mQueryOptions.$select, oFixture.after);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bKeys) {
+		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
+			var oBinding = new ODataParentBinding({
 					oModel : {
-						bAutoExpandSelect : true,
-						getMetaModel : function () {return oMetaModel;},
-						resolve : function () {}
-					},
-					sPath : "EMPLOYEE_2_TEAM",
-					mQueryOptions : oFixture.queryOptions
+						oMetaModel : {
+							getObject : function () {},
+						}
+					}
 				}),
-				oContext = {},
+				sMetaPath = "~",
+				mQueryOptions = {},
+				oType = bKeys ? {$Key : []} : {};
 
-				oType = oFixture.key ? {$Key : oFixture.key} : {};
-
-			this.mock(oBinding.oModel).expects("resolve")
-				.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
-				.returns("~resolved~");
-			this.mock(oMetaModel).expects("getMetaPath")
-				.withExactArgs("~resolved~")
-				.returns("~meta~");
-			this.mock(oMetaModel).expects("fetchObject")
-				.withExactArgs("~meta~/")
-				.returns(Promise.resolve(oType));
+			this.mock(oBinding.oModel.oMetaModel).expects("getObject")
+				.withExactArgs(sMetaPath + "/").returns(oType);
+			this.mock(oBinding).expects("addToSelect").exactly(bKeys ? 1 : 0)
+				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oType.$Key));
 
 			// code under test
-			return oBinding.fetchQueryOptionsWithKeys(oContext).then(function (oResult) {
-				assert.strictEqual(oResult, oBinding.mQueryOptions, "binding options returned");
-				if (oFixture.result) {
-					assert.deepEqual(oResult, oFixture.result, "added key properties");
-				}
-			});
+			oBinding.selectKeyProperties(mQueryOptions, sMetaPath);
 		});
 	});
 
