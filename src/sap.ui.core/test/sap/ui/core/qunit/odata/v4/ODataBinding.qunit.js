@@ -956,6 +956,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchCache: relative to virtual context", function (assert) {
+		var oBinding = new ODataBinding({
+				oCachePromise : _SyncPromise.resolve(),
+				bRelative : true
+			}),
+			oContext = {
+				getIndex : function () {}
+			};
+
+		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+			.returns(_SyncPromise.resolve({}));
+		this.mock(oContext).expects("getIndex").withExactArgs()
+			.returns(-2);
+
+		// code under test
+		oBinding.fetchCache(oContext);
+
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchCache: operation binding", function (assert) {
 		var oCachePromise = {},
 			oBinding = new ODataBinding({

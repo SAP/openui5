@@ -45,7 +45,8 @@ sap.ui.define([
 		oCachePromise = this.fetchQueryOptionsForOwnCache(oContext).then(function (mQueryOptions) {
 			var vCanonicalPath;
 
-			if (mQueryOptions) {
+			// Note: do not create a cache for a virtual context
+			if (mQueryOptions && !(oContext && oContext.getIndex && oContext.getIndex() === -2)) {
 				vCanonicalPath = _SyncPromise.resolve(oContext && (oContext.fetchCanonicalPath
 					? oContext.fetchCanonicalPath() : oContext.getPath()));
 				return vCanonicalPath.then(function (sCanonicalPath) {

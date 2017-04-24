@@ -251,6 +251,9 @@ sap.ui.define([
 					that.fireDataRequested();
 				}, that);
 			}
+			if (that.oContext.getIndex() === -2) {
+				bForceUpdate = false; // no "change" event for virtual parent context
+			}
 			return that.oContext.fetchValue(that.sPath, that);
 		});
 		aPromises.push(oReadPromise.then(function (vValue) {

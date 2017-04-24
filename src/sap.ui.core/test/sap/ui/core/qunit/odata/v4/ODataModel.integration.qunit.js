@@ -1779,8 +1779,7 @@ sap.ui.require([
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <VBox binding="{/TEAMS(\'42\')}">\
-	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\',\
-				parameters : {$apply : \'filter(AGE lt 42)\'}}">\
+	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
 		<items>\
 			<ColumnListItem>\
 				<cells>\
@@ -1803,6 +1802,43 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: child binding cannot use its parent list binding's cache (for whatever reason)
+	// but must not compute the canonical path for the virtual context
+	QUnit.test("Auto-$expand/$select: no canonical path for virtual context", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<List items="{path : \'TEAM_2_EMPLOYEES\',\
+					parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
+					<CustomListItem>\
+						<Text id="text" text="{Name}" />\
+					</CustomListItem>\
+				</List>\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("TEAMS?$skip=0&$top=100", {
+					"value" : [
+						{"Team_Id" : "TEAM_01"}
+					]
+				})
+			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
+				+ "&$select=Name&$skip=0&$top=100", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Peter Burke"}
+					]
+				})
+			.expectChange("text", ["Frederic Fall", "Peter Burke"]);
+		return this.createView(assert, sView, oModel);
 	});
 });
 //TODO $batch?
