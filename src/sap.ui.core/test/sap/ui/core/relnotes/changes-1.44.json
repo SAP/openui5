@@ -850,5 +850,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "3ced108b162f07f1a37df1f8f5c9cafa5a2cef32",
+        "type": "FIX",
+        "text": " MessageMixin - Ignore Message with type \u0027Information\u0027",
+        "references": []
+      },
+      {
+        "id": "d8fdb1af113c892aa780b48ba7834dc8e2958c2c",
+        "type": "FIX",
+        "text": " ODataMessageParser: propertyRef and target in messages",
+        "references": []
+      },
+      {
+        "id": "24401d9208e626db8c1ee87ecf5e755e4509496b",
+        "type": "FIX",
+        "text": " core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
+        "references": []
+      },
+      {
+        "id": "3fc11e807e8babfc48eb42c73675a2a1fe512fbe",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t cache failed metadata object",
+        "references": []
+      }
+    ]
   }
 }

@@ -723,5 +723,76 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "1631b1a20744788294d77b792e9b25ec1b0c5474",
+        "type": "FIX",
+        "text": " MessageManager: exception when adding message without processor",
+        "references": []
+      },
+      {
+        "id": "c58285492130e4f1562df9a578b12affa67dc13a",
+        "type": "FIX",
+        "text": " MessageMixin - Ignore Message with type \u0027Information\u0027",
+        "references": []
+      },
+      {
+        "id": "4537a15c2b5edf4cfa1e8196b56e1e09440a0aee",
+        "type": "FIX",
+        "text": " ODataListBinding: Update expanded list array",
+        "references": []
+      },
+      {
+        "id": "13430ac9eb1283a7b0865ac1723a7e8b1184d31c",
+        "type": "FIX",
+        "text": " ODataMessageParser: propertyRef and target in messages",
+        "references": []
+      },
+      {
+        "id": "0c15bb3e4f78a95d06772f8a52db9079de0825d3",
+        "type": "FIX",
+        "text": " ResourceModel: apply enhancements after localization change",
+        "references": []
+      },
+      {
+        "id": "0f732c8fb78d0e57039401853d0c4f8789f97a97",
+        "type": "FIX",
+        "text": " core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
+        "references": []
+      },
+      {
+        "id": "a4b60e1c720cfce9a896db732808e9fe47111f5c",
+        "type": "FIX",
+        "text": " core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
+        "references": []
+      },
+      {
+        "id": "ce3d4a20c770e640885d6d06e8998644604384b3",
+        "type": "FIX",
+        "text": " v2.ODataAnnotations.js: Improve robustness of the annotations loaded method",
+        "references": []
+      },
+      {
+        "id": "e41a94e99d653e11c30a5992a283cc7e91cc1971",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Check whether a refresh is needed",
+        "references": []
+      },
+      {
+        "id": "22c46c0ad817030d7717d42c158cd9c6e0f0808c",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t cache failed metadata object",
+        "references": []
+      },
+      {
+        "id": "745438e8040f693a45591caaefef1f4ce85e9cf4",
+        "type": "FIX",
+        "text": " v2.ODataModel: Make abort call error handler sync",
+        "references": []
+      }
+    ]
   }
 }

@@ -163,5 +163,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "202eb3ce7a4d1c65aa8345c80f7b6e0ac57e363e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: corrected checks for detecting Japanese and Chinese",
+        "references": []
+      },
+      {
+        "id": "7efc998ff03d4e4c46e49c83d3293926b9ffed1c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: displayed correctly in Japanese and Chinese",
+        "references": []
+      },
+      {
+        "id": "00e8971558fcd9ba2141413ef68985f7b9c744db",
+        "type": "FIX",
+        "text": ": sap.ui.unified.calendar controls. - focused item is preserved after rerendering.",
+        "references": []
+      }
+    ]
   }
 }

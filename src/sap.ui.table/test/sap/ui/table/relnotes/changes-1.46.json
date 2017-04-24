@@ -437,5 +437,58 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "ecaeb1856c5da0eb2a8c8f3702691e2585a18bf6",
+        "type": "FIX",
+        "text": " Table: Prevent scrolling and a second request on a binding refresh",
+        "references": []
+      },
+      {
+        "id": "8d65f280ba8b6ab3501d4b459c3b581b7cd6163c",
+        "type": "FIX",
+        "text": " TreeTable: Remove leaf icons from the tab chain in edit mode",
+        "references": []
+      },
+      {
+        "id": "a88dcad48ba6f4380debba0a6703cd03fe9c0076",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Suppress select all on empty table",
+        "references": []
+      },
+      {
+        "id": "574371c1a991f3a936e66dc48529e5dfe2777996",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - CSS corrections for column headers",
+        "references": []
+      },
+      {
+        "id": "85623122cb8e6daefcef248af39e5530583b7de8",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - column header spans in XLM views",
+        "references": []
+      },
+      {
+        "id": "0e40576cf4d960033dab2a948f10714277782c4b",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - row selection column is too wide in IE/Edge",
+        "references": []
+      },
+      {
+        "id": "cd9358136bde6c3540af9a938f190f7991c8c452",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - sort and filter icons in IE",
+        "references": []
+      },
+      {
+        "id": "ea89cdbab44955730764ecf5a1291c23f4a5da3f",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - touch scrolling in IE and Edge",
+        "references": []
+      }
+    ]
   }
 }

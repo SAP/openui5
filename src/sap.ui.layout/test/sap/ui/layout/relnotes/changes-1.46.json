@@ -144,5 +144,34 @@
         "references": []
       }
     ]
+  },
+  "1.46.7": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "f065c5fc239db6f0ea7c6182c20e7ad908e20d16",
+        "type": "FIX",
+        "text": " sap.ui.dt: corrections on SimpleForm change handlers",
+        "references": []
+      },
+      {
+        "id": "42d18fa210a04cefb6f49dd53792b16a5d7b775b",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
+        "references": []
+      },
+      {
+        "id": "3481f35aa0fd67e8b31d08a1a7edffe173be7d16",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn\u0027t have scrolling any more",
+        "references": []
+      },
+      {
+        "id": "ea918c43090dade663dca08e8f67e8035cde785f",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: HCB and HCW styles fixed",
+        "references": []
+      }
+    ]
   }
 }
