@@ -44,7 +44,7 @@
 							info="{path}"
 							app:path="{path}"/>
 						</List>
-						</VBox>		
+						</VBox>
 					</op:blocks>
 				</op:ObjectPageSubSection>
 			</op:subSections>

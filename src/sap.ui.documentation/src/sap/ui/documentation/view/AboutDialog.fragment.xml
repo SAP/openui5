@@ -23,13 +23,13 @@
 					<Text text="UI5 Demo Kit - UI Development Toolkit for HTML5" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
 					<Text text="© Copyright 2009-2017 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
 					<Text text="© 2009-2017 SAP SE or an SAP affiliate company." visible="{appView>/isOpenUI5}"/>
-					<l:HorizontalLayout class="sapUiMediumMarginBottom" visible="{appView>/isOpenUI5}" allowWrapping="true">					
+					<l:HorizontalLayout class="sapUiMediumMarginBottom" visible="{appView>/isOpenUI5}" allowWrapping="true">
 						<Text text="Licensed under the Apache License, Version 2.0 – see" class="sapUiTinyMarginEnd"/>
 						<Link text="LICENSE.txt" href="LICENSE.txt" target="_blank" class="aboutLink"/>
 					</l:HorizontalLayout>
 					<Text text="UI5 Version {appView>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
 					<Text text="This software includes the folloing library versions"/>
-					<l:HorizontalLayout class="sapUiSmallMarginBottom" allowWrapping="true">					
+					<l:HorizontalLayout class="sapUiSmallMarginBottom" allowWrapping="true">
 						<Text text="(a full change log for all libraries can be found" class="sapUiTinyMarginEnd"/>
 						<Link text="here" href="releasenotes.html" target="_blank" class="aboutLink"/>
 						<Text text=")."/>
@@ -47,7 +47,7 @@
 				<l:VerticalLayout class="sapUiSmallMargin" content="{path: 'appView>/oVersionInfo/libs'}">
 					<f:Form width="100%" editable="false">
 						<f:title>
-							<core:Title text="{appView>library}"/>													
+							<core:Title text="{appView>library}"/>
 						</f:title>
 						<f:layout>
 							<f:GridLayout/>
@@ -94,7 +94,7 @@
 				<l:VerticalLayout class="sapUiSmallMargin" content="{path: 'appView>/oThirdPartyInfo/thirdparty'}">
 					<f:Form width="100%" editable="false">
 						<f:title>
-							<core:Title text="{appView>displayName}"/>													
+							<core:Title text="{appView>displayName}"/>
 						</f:title>
 						<f:layout>
 							<f:GridLayout/>
