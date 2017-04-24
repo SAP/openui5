@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect,protractor*/
+
 describe("sap.ui.unified.CalendarVisual", function() {
+	"use strict";
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.unified.Calendar';
 
 	var sCalId = "Cal1";
@@ -19,7 +22,7 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 		it("should select a date by click", function () {
 			_pressDate(sCalId, "20150120"); // 20 selected an focused (2 unselected)
-			expect(takeScreenshot(oCal)).toLookAs("001_press_date"); 
+			expect(takeScreenshot(oCal)).toLookAs("001_press_date");
 		});
 
 		it("should select a date in other month by click to other month", function () {
@@ -42,9 +45,9 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		it("should handle the month picker", function () {
 			_initCalendar("1");
 			_pressMonthPicker(sCalId);  // month picker opened, January selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("005_MonthPicker"); 
+			expect(takeScreenshot(oCal)).toLookAs("005_MonthPicker");
 			_pressPrev(sCalId); // year changed to 2014
-			expect(takeScreenshot(oCal)).toLookAs("006_MonthPicker_Previous"); 
+			expect(takeScreenshot(oCal)).toLookAs("006_MonthPicker_Previous");
 			_pressMonth(sCalId, "1"); // month picker closed, February 2014 shown, 2 focused
 			browser.actions().mouseMove(element(by.css("#B1"))).perform();
 			expect(takeScreenshot(oCal)).toLookAs("007_MonthPicker_Select");
@@ -53,9 +56,9 @@ describe("sap.ui.unified.CalendarVisual", function() {
 		it("should handle the year picker", function () {
 			_initCalendar("1");
 			_pressYearPicker(sCalId);  // year Picker shown, 2015 selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("008_YearPicker"); 
+			expect(takeScreenshot(oCal)).toLookAs("008_YearPicker");
 			_pressPrev(sCalId); // years changed to 1985-2004, 1995 focused
-			expect(takeScreenshot(oCal)).toLookAs("009_YearPicker_Previous"); 
+			expect(takeScreenshot(oCal)).toLookAs("009_YearPicker_Previous");
 			_pressYear(sCalId, "1990"); // year picker closed, January 1990 shown, 2 focused
 			browser.actions().mouseMove(element(by.css("#B1"))).perform();
 			expect(takeScreenshot(oCal)).toLookAs("010_YearPicker_Select");
@@ -199,9 +202,9 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			expect(takeScreenshot(oCal)).toLookAs("070_interval_selection_initial");
 
 			_pressDate(sCalId, "20150120"); // old interval unselected, 20 selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("071_select_interval_start"); 
+			expect(takeScreenshot(oCal)).toLookAs("071_select_interval_start");
 			_pressDate(sCalId, "20150122"); // 20-22 selected, 22 focused
-			expect(takeScreenshot(oCal)).toLookAs("072_select_interval_end"); 
+			expect(takeScreenshot(oCal)).toLookAs("072_select_interval_end");
 
 			_initCalendar("2");
 			var sStartDateId = sCalId + "--Month0-" + "20150120";
@@ -217,11 +220,11 @@ describe("sap.ui.unified.CalendarVisual", function() {
 			expect(takeScreenshot(oCal)).toLookAs("080_multiple_day_selection_initilal");
 
 			_pressDate(sCalId, "20150120"); // 2 and 20 selected, 20 focused
-			expect(takeScreenshot(oCal)).toLookAs("081_multiple_day_selection_press_date1"); 
+			expect(takeScreenshot(oCal)).toLookAs("081_multiple_day_selection_press_date1");
 			_pressDate(sCalId, "20150122"); // 2, 20, 22 selected, 22 focused
-			expect(takeScreenshot(oCal)).toLookAs("082_multiple_day_selection_press_date2"); 
+			expect(takeScreenshot(oCal)).toLookAs("082_multiple_day_selection_press_date2");
 			_pressDate(sCalId, "20150120"); // 2 and 22 selected, 20 focused
-			expect(takeScreenshot(oCal)).toLookAs("083_multiple_day_selection_press_date3"); 
+			expect(takeScreenshot(oCal)).toLookAs("083_multiple_day_selection_press_date3");
 		});
 	}
 
@@ -239,14 +242,14 @@ describe("sap.ui.unified.CalendarVisual", function() {
 
 			_initCalendar("6");
 			_pressMonthPicker(sCalId);  // month picker opened, January selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("093_multiple_month_MonthPicker"); 
+			expect(takeScreenshot(oCal)).toLookAs("093_multiple_month_MonthPicker");
 			_pressMonth(sCalId, "1"); // month picker closed, February 28 focused
 			browser.actions().mouseMove(element(by.css("#B1"))).perform();
 			expect(takeScreenshot(oCal)).toLookAs("094_multiple_month_MonthPicker_Select");
 
 			_initCalendar("6");
 			_pressYearPicker(sCalId);   // year Picker shown, 2015 selected and focused
-			expect(takeScreenshot(oCal)).toLookAs("095_multiple_month_YearPicker"); 
+			expect(takeScreenshot(oCal)).toLookAs("095_multiple_month_YearPicker");
 			_pressYear(sCalId, "2014"); // year picker closed, January-April 2014 shown, January 31 focused
 			browser.actions().mouseMove(element(by.css("#B1"))).perform();
 			expect(takeScreenshot(oCal)).toLookAs("096_multiple_month_YearPicker_Select");

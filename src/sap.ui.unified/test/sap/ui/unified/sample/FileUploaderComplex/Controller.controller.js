@@ -9,10 +9,10 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 				var sMsg = "";
 				var m = /^\[(\d\d\d)\]:(.*)$/.exec(sResponse);
 				if (m[1] == "200") {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2], "SUCCESS", "Upload Success";
+					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Success)";
 					oEvent.getSource().setValue("");
 				} else {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2], "ERROR", "Upload Error";
+					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Error)";
 				}
 
 				MessageToast.show(sMsg);
@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 
 		handleUploadPress: function(oEvent) {
 			var oFileUploader = this.getView().byId("fileUploader");
-			if(!oFileUploader.getValue()) {
+			if (!oFileUploader.getValue()) {
 				MessageToast.show("Choose a file first");
 				return;
 			}
@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global','sap/m/MessageToast','sap/ui/core/mvc/Control
 
 		handleTypeMissmatch: function(oEvent) {
 			var aFileTypes = oEvent.getSource().getFileType();
-			jQuery.each(aFileTypes, function(key, value) {aFileTypes[key] = "*." +  value});
+			jQuery.each(aFileTypes, function(key, value) {aFileTypes[key] = "*." +  value;});
 			var sSupportedFileTypes = aFileTypes.join(", ");
 			MessageToast.show("The file type *." + oEvent.getParameter("fileType") +
 									" is not supported. Choose one of the following types: " +

@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 	function(Controller, DateRange) {
 	"use strict";
 
-	var CalendarDateIntervalBasicController = Controller.extend("sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic", {
+	return Controller.extend("sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic", {
 		oFormatYyyymmdd: null,
 
 		onInit: function() {
@@ -33,7 +33,5 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/unified/DateRange'],
 			this._updateText(oCalendar);
 		}
 	});
-
-	return CalendarMultipleMonthController;
 
 });
