@@ -29,10 +29,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * move to the previous/next interval using arrows.
 	 *
 	 * <b>Note:</b> The <code>PlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
-	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>PlanningCalendar</code>
-	 * is loaded, it will be loaded after the <code>PlanningCalendar</code> is loaded.
-	 * This could lead to a waiting time before a <code>PlanningCalendar</code> is used for the first time.
-	 * To prevent this, applications using the <code>PlanningCalendar</code> should also load the
+	 * This library will be loaded after the <code>PlanningCalendar</code>, if it wasn't loaded first.
+	 * This could lead to a waiting time when a <code>PlanningCalendar</code> is used for the first time.
+	 * To prevent this, apps that use the <code>PlanningCalendar</code> should also load the
 	 * <code>sap.ui.unified</code> library.
 	 *
 	 * <h3>Usage</h3>
