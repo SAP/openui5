@@ -51,7 +51,7 @@
 			</HBox>
 			<TextArea id="feedbackInput" width="100%" placeholder="Describe what you like or what needs to be improved.You can share your feedback for the overall Demokit experience or for the specific page you are currently viewing."
 						rows="8" class="sapUiTinyMarginBottom"/>
-			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapUiTinyMarginBottom" select="onContextSelect"/>
+			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapUiTinyMarginBottom contextCheckBoxAlign" select="onContextSelect"/>
 			<Link text="Show context Data" class="sapUiSmallMarginBottom" press="onShowHideContextData"/>
 			<Text id="contextData" text="Details/ descriptive text..." visible="false" class="sapUiSmallMarginBottom"/>
 			<Text text="Your feedback is anonymous, we do not collect any personal data. For more information see the following links" class="sapUiTinyMarginBottom"/>
