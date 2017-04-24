@@ -191,8 +191,8 @@ sap.ui.define([
 	 * @param {string} sChildMetaPath The relative meta path
 	 * @param {object} mChildQueryOptions The child binding's query options
 	 *
-	 * @returns {object} The query options for the child binding or undefined in case the query
-	 *   options cannot be created
+	 * @returns {object} The query options for the child binding or <code>undefined</code> in case
+	 *   the query options cannot be created, e.g. because $apply cannot be wrapped into $expand
 	 *
 	 * @private
 	 */
@@ -237,6 +237,12 @@ sap.ui.define([
 				return undefined;
 			}
 			mQueryOptionsForPathPrefix.$select = [sExpandSelectPath];
+		}
+		if ("$apply" in mChildQueryOptions) {
+			jQuery.sap.log.debug("Cannot wrap $apply into $expand: " + sChildMetaPath,
+				JSON.stringify(mChildQueryOptions),
+				"sap.ui.model.odata.v4.ODataParentBinding");
+			return undefined;
 		}
 		return mQueryOptions;
 	};

@@ -72,7 +72,7 @@ sap.ui.require([
 	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
 		var oModel = createTeaBusiModel({updateGroupId : "update"}),
 			sView = '\
-<VBox id="vbox" binding="{path : \'/TEAMS(42)\',\
+<VBox id="vbox" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<items>\
@@ -86,7 +86,7 @@ sap.ui.require([
 	</Table>\
 </VBox>';
 
-		oTest.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+		oTest.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				"TEAM_2_EMPLOYEES" : [
 					{"ID" : "2", "Name" : "Frederic Fall"}
 				]
@@ -584,7 +584,7 @@ sap.ui.require([
 	// In this test dynamic filters are used instead of dynamic sorters
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
 		var sView = '\
-<VBox binding="{path : \'/TEAMS(42)\',\
+<VBox binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<items>\
@@ -598,7 +598,7 @@ sap.ui.require([
 </VBox>',
 			that = this;
 
-		this.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
+		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
 				"TEAM_2_EMPLOYEES" : [
 					{"Name" : "Frederic Fall"},
 					{"Name" : "Jonathan Smith"},
@@ -608,7 +608,7 @@ sap.ui.require([
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest(
-					"TEAMS(42)/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042"
+					"TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042"
 						+ "&$skip=0&$top=100",
 					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
 				.expectChange("text", "Peter Burke", 1);
@@ -1471,7 +1471,7 @@ sap.ui.require([
 			that.expectRequest({
 					headers : null,
 					method : "POST",
-					url : "TEAMS(42)/TEAM_2_EMPLOYEES",
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES",
 					payload : {
 						"@$ui5.transient": "update",
 						"ID" : null,
@@ -1501,10 +1501,10 @@ sap.ui.require([
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
 			assert.throws(function () {
-				that.oView.byId("vbox").bindElement("/TEAMS(43)",
+				that.oView.byId("vbox").bindElement("/TEAMS('43')",
 					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
 			}, new Error("setContext on relative binding is forbidden if created entity" +
-				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS(42)|TEAM_2_EMPLOYEES"));
+				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
 			return that.waitForChanges(assert);
 		});
 	});
@@ -1771,7 +1771,40 @@ sap.ui.require([
 				return that.waitForChanges(assert);
 			});
 	});
-	//TODO $batch?
-	//TODO test bound action
-	//TODO test delete
+
+	//*********************************************************************************************
+	// Scenario: child binding has $apply and would need $expand therefore it cannot use its
+	// parent binding's cache
+	QUnit.test("Auto-$expand/$select: no $apply inside $expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<VBox binding="{/TEAMS(\'42\')}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\',\
+				parameters : {$apply : \'filter(AGE lt 42)\'}}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="text" text="{Name}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</VBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
+				+ "&$select=Name&$skip=0&$top=100", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Peter Burke"}
+					]
+				})
+			.expectChange("text",  ["Frederic Fall", "Peter Burke"]);
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.waitForChanges(assert);
+		});
+	});
 });
+//TODO $batch?
+//TODO test bound action
+//TODO test delete

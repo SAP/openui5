@@ -628,6 +628,32 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("wrapChildQueryOptions, returns undefined if $apply is present", function (assert) {
+		var mChildQueryOptions = {
+				$apply : "filter(Amount gt 3)"
+			},
+			oMetaModel = {
+				getObject : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {oMetaModel : oMetaModel}
+			});
+
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("/EMPLOYEES/NavigationProperty")
+			.returns({$kind : "NavigationProperty"});
+		this.oLogMock.expects("debug").withExactArgs(
+			"Cannot wrap $apply into $expand: NavigationProperty",
+			JSON.stringify(mChildQueryOptions), "sap.ui.model.odata.v4.ODataParentBinding"
+		);
+
+		// code under test
+		assert.strictEqual(
+			oBinding.wrapChildQueryOptions("/EMPLOYEES", "NavigationProperty", mChildQueryOptions),
+			undefined);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("wrapChildQueryOptions, child path with bound function", function (assert) {
 		var oMetaModel = {
 				getObject : function () {}
@@ -642,7 +668,7 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(
-			oBinding.wrapChildQueryOptions("/EMPLOYEES", "name.space.boundFunction/Property"),
+			oBinding.wrapChildQueryOptions("/EMPLOYEES", "name.space.boundFunction/Property", {}),
 			undefined);
 	});
 
@@ -654,7 +680,7 @@ sap.ui.require([
 			oBinding = new ODataParentBinding({
 				oModel : {oMetaModel : oMetaModel}
 			}),
-			mChildLocalQueryOptions = {$filter : "AGE gt 42"};
+			mChildLocalQueryOptions = {$apply : "filter(AGE gt 42)"};
 
 		this.mock(oMetaModel).expects("getObject")
 			.withExactArgs("/EMPLOYEES/Property")
