@@ -959,5 +959,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.21": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "71958a2b5b679f2aef6552cf2e41cb496df80993",
+        "type": "FIX",
+        "text": " Table: Issues with zooming in Chrome",
+        "references": []
+      },
+      {
+        "id": "ef28140b1f29cd875b87d85600f4a2e2a60dfb37",
+        "type": "FIX",
+        "text": " Table: Navigation with CTRL+End",
+        "references": []
+      },
+      {
+        "id": "9f3999632ca236828d19163c4a00c3355c184d4a",
+        "type": "FIX",
+        "text": " Table: The firstVisibleRow property can no longer be less than 0",
+        "references": []
+      }
+    ]
   }
 }

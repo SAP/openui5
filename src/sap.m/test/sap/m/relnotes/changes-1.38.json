@@ -3254,5 +3254,64 @@
         "references": []
       }
     ]
+  },
+  "1.38.21": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "a63f25878da929d1543104dd761ccadef9f73cc6",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Generates valid HTML",
+        "references": []
+      },
+      {
+        "id": "66bb572ceab87af7804200c2f4a0098eee938905",
+        "type": "FIX",
+        "text": " sap.m.MaskInput - RTL behavior on Chrome ver \u003e\u003d58 when the cursor is at the beginning of the string",
+        "references": []
+      },
+      {
+        "id": "cb734a1dec91864b2af32a09476d152f3e43d6c3",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover - improve invalidation behavior",
+        "references": []
+      },
+      {
+        "id": "2bdde3a72a66304c8bc36181a5f1d858eeee9126",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Generates valid HTML",
+        "references": []
+      },
+      {
+        "id": "3fa354f9d2df6a69df2fb26715f2a0e74d1847c9",
+        "type": "FIX",
+        "text": " sap.m.Select: better fix for BCP: 1680168526",
+        "references": []
+      },
+      {
+        "id": "668fad0fbc4e2277d5ab44ebd4f20485b5b5dbb1",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Has search field when the FilterItem multiSelect property is set to false",
+        "references": []
+      },
+      {
+        "id": "b0905c04ef33393823ca923da7ee9f0c7eae3c1c",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Unique id for none preset filter item",
+        "references": []
+      },
+      {
+        "id": "5bb22a8f759d77e3a03ea9ef00812fcfce9c9f35",
+        "type": "FIX",
+        "text": " sap.m.Wizard - Improved step rendering order in branched mode.",
+        "references": []
+      },
+      {
+        "id": "62d5f8632b96e662e19424cc2bcc6a0f9a466843",
+        "type": "FIX",
+        "text": " sap.m.Wizard - destroySteps() now longer throws an error",
+        "references": []
+      }
+    ]
   }
 }
