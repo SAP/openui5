@@ -29,6 +29,7 @@ sap.ui.require([
 	jQuery.sap.require("fragments.ChildOfAbstract");
 	jQuery.sap.require("fragments.TextToggleButton");
 	jQuery.sap.require("fragments.TextToggleButtonNested");
+	jQuery.sap.require("fragments.TextToggleButtonForwarded");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.FragmentControl: Simple Text Fragment Control", {
@@ -413,23 +414,66 @@ sap.ui.require([
 		oFragmentControl.destroy();
 	});
 
-	// QUnit.test("nested", function(assert) {
-	// 	var oFragmentControl = new fragments.TextToggleButtonNested();
-	// 	oFragmentControl.placeAt("content");
-	// 	sap.ui.getCore().applyChanges();
-	// 	// var done = assert.async();
-	// 	//
-	// 	// oFragmentControl.attachTextChanged(function() {
-	// 	//     assert.equal(oFragmentControl.getText(), "On");
-	// 	//     assert.equal(oFragmentControl.getPressed(), true);
-	// 	//     assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "On");
-	// 	//     assert.equal(oFragmentControl.getAggregation("_content").getItems()[1].getPressed(), true);
-	// 	//     done();
-	// 	// });
-	// 	// oFragmentControl.getAggregation("_content").getItems()[1].firePress();
-	// 	//
-	// 	// oFragmentControl.destroy();
-	// });
+	QUnit.test("nested", function(assert) {
+		var oFragmentControl = new fragments.TextToggleButtonNested();
+		oFragmentControl.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var done = assert.async();
+
+		// Initial state of the nested controls
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of fragment control");
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of sap.m.Text");
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), false);
+
+		// Click on ToggleButton
+		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
+
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "On", "property 'text' of fragment control");
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[0].getText(), "On", "property 'text' of sap.m.Text");
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), true);
+
+		oFragmentControl.attachRefreshed(function() {
+			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of fragment control");
+			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of sap.m.Text");
+			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), false);
+			done();
+		});
+
+		// Click on 'Refresh' button
+		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[1].getDomRef());
+
+		oFragmentControl.destroy();
+	});
+
+	QUnit.test("forwarded", function(assert) {
+		var oFragmentControl = new fragments.TextToggleButtonForwarded({
+			textToggleButton: new fragments.TextToggleButton()
+		});
+		oFragmentControl.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var done = assert.async();
+
+		// Initial state of the forwarded controls
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[0].getText(), "Default Text");
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].getPressed(), false);
+
+		// Click on ToggleButton
+		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].getDomRef());
+
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[0].getText(), "On");
+		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].getPressed(), true);
+
+		oFragmentControl.attachRefreshed(function() {
+			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[0].getText(), "Default Text");
+			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].getPressed(), false);
+			done();
+		});
+
+		// Click on 'Refresh' button
+		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[1].getDomRef());
+
+		oFragmentControl.destroy();
+	});
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.FragmentControl", {
