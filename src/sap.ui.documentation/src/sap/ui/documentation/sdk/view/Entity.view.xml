@@ -1,0 +1,111 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Entity"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:m="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns="sap.uxap">
+	<ObjectPageLayout
+			id="ObjectPageLayout"
+			useIconTabBar="true"
+			selectedSection="samples">
+		<headerTitle>
+			<ObjectPageHeader
+					id="entityHeader"
+					objectTitle="{/name}">
+				<actions>
+					<ObjectPageHeaderActionButton
+						id="toggleFullScreenBtn"
+						class="sapUiHideOnPhone"
+						icon="sap-icon://full-screen"
+						tooltip="{i18n>sampleFullScreenTooltip}"
+						press="onToggleFullScreen" />
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<l:Grid defaultSpan="L4 M6 S12">
+				<l:VerticalLayout class="sapUiLargeMarginEnd" width="100%">
+					<m:ObjectAttribute
+							class="sapUiTinyMarginBottom"
+							title="Inherited from"
+							text="{/baseTypeText}"
+							active="true"
+							press="onTypeLinkPress" >
+						<m:customData>
+							<core:CustomData key="type" value="{/baseType}" />
+						</m:customData>
+					</m:ObjectAttribute>
+
+					<m:ObjectAttribute
+							class="sapUiTinyMarginBottom"
+							title="Application Component"
+							text="{/appComponent}" />
+
+					<m:ObjectAttribute
+							title="Available since"
+							text="{/entity/since}" />
+				</l:VerticalLayout>
+
+				<l:VerticalLayout class="sapUiLargeMarginLeft" width="100%">
+					<m:ObjectAttribute
+							class="sapUiTinyMarginBottom"
+							title="API Reference"
+							text="{/name}"
+							active="true"
+							press="onAPIRefPress" >
+						<m:customData>
+							<core:CustomData key="name" value="{/name}" />
+						</m:customData>
+					</m:ObjectAttribute>
+
+					<m:ObjectAttribute
+							class="sapUiTinyMarginBottom"
+							title="Category"
+							text="{/entity/category}" />
+
+					<m:ObjectAttribute
+							title="Content Density"
+							text="{/entity/formFactors}" />
+				</l:VerticalLayout>
+			</l:Grid>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection id="about" title="About">
+				<subSections>
+					<ObjectPageSubSection>
+						<core:HTML content="{/description}" />
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="samples" title="Samples ({/count/samples})">
+				<subSections>
+					<ObjectPageSubSection>
+						<m:Table
+								class="myTable"
+								id="table"
+								items="{/entity/samples}"
+								fixedLayout="false"
+								showSeparators="Inner" >
+							<m:columns>
+								<m:Column><m:Label text="Name" /></m:Column>
+								<m:Column minScreenWidth="Tablet"><m:Label text="Description" /></m:Column>
+							</m:columns>
+							<m:items>
+								<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
+									<m:cells>
+										<m:Text text="{name}" class="entitySampleName" wrapping="false" />
+										<m:Text text="{description}" />
+									</m:cells>
+								</m:ColumnListItem>
+							</m:items>
+						</m:Table>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</mvc:View>

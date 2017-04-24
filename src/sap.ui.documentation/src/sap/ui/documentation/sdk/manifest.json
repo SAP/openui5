@@ -1,0 +1,282 @@
+{
+	"_version": "1.3.0",
+
+	"sap.app": {
+		"_version": "1.3.0",
+		"id": "sap.ui.documentation.sdk",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui": {
+		"_version": "1.3.0",
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://detail-view",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_belize",
+			"sap_hcb",
+			"sap_bluecrystal"
+		]
+	},
+
+	"sap.ui5": {
+		"_version": "1.2.0",
+		"rootView": {
+			"viewName": "sap.ui.documentation.sdk.view.App",
+			"type": "XML",
+			"id": "app"
+		},
+
+		"dependencies": {
+			"minUI5Version": "1.36.0",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "1.36.0"
+				},
+				"sap.m": {
+					"minVersion": "1.36.0"
+				},
+				"sap.ui.layout" : {
+					"minVersion": "1.36.0"
+				}
+			}
+		},
+
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.documentation.sdk.i18n.i18n"
+				}
+			}
+		},
+
+		"config": {
+			"docuPath": "./docs/topics/",
+			"exploredURI": "./",
+			"topicHtmlMainDivId": "d4h5-main-container"
+		},
+
+	  "routing": {
+		"config": {
+		  "routerClass": "sap.ui.documentation.sdk.util.DocumentationRouter",
+		  "viewType": "XML",
+		  "viewPath": "sap.ui.documentation.sdk.view",
+		  "controlId": "splitApp",
+		  "controlAggregation": "detailPages",
+		  "bypassed": {
+			"target": ["welcome"]
+		  },
+		  "async": true,
+		  "clearTarget" : false
+		},
+
+		"routes": [
+		  {
+			"pattern": "",
+			"name": "welcome",
+			"target": ["welcome"]
+		  },
+		  {
+			"pattern": "controlsMaster",
+			"name": "controlsMaster",
+			"target": ["controlsMaster"]
+		  },
+		  {
+			"pattern": "controls",
+			"name": "controls",
+			"target": ["controlsMaster", "controls"]
+		  },
+		  {
+			"pattern": "group/{id}",
+			"name": "group",
+			"target": ["controlsMaster", "group"]
+		  },
+		  {
+			"pattern": "entity/{id}",
+			"name": "entity",
+			"target": ["controlsMaster", "entity"]
+		  },
+		  {
+			"pattern": "sample/{id}/preview",
+			"name": "sample",
+			"target": ["controlsMaster", "sample"]
+		  },
+		  {
+			"pattern": "sample/{id}/code",
+			"name": "code",
+			"target": ["controlsMaster", "code"]
+		  },
+		  {
+			"pattern": "sample/{id}/code/{fileName}",
+			"name": "code_file",
+			"target": ["controlsMaster", "code"]
+		  },
+		  {
+			"pattern": "downloads",
+			"name": "downloads",
+			"target": ["downloads"]
+		  },
+		  {
+			"pattern": "api",
+			"name": "api",
+			"target": ["apiMaster", "apiDetailInitial"]
+		  },
+		  {
+			"pattern": "api/{id}",
+			"name": "apiId",
+			"target": ["apiMaster", "apiDetail"]
+		  },
+		  {
+			"pattern": "topic",
+			"name": "topic",
+			"target": ["topicMaster", "topicDetailInitial"]
+		  },
+		  {
+			"pattern": "topic/{id}",
+			"name": "topicId",
+			"target": ["topicMaster", "topicDetail"]
+		  },
+		  {
+			"pattern": "demoapps",
+			"name": "demoapps",
+			"target": ["demoApps"]
+		  },
+		  {
+			"pattern": "search/{searchParam}",
+			"name": "search",
+			"target": ["searchPage"]
+		  }
+		],
+
+		"targets": {
+		  "empty": {
+			"viewName": "Empty",
+			"viewLevel": 1,
+			"viewId": "empty",
+			"controlAggregation": "masterPages"
+		  },
+		  "welcome": {
+			"viewName": "Welcome",
+			"viewLevel": 2,
+			"viewId": "welcome"
+		  },
+		  "controls": {
+			"viewName": "Controls",
+			"viewLevel": 2,
+			"viewId": "controls"
+		  },
+		  "controlsMaster": {
+			"viewName": "ControlsMaster",
+			"viewLevel": 1,
+			"viewId": "controlsMaster",
+			"controlAggregation": "masterPages"
+		  },
+		  "group": {
+			"viewName": "Group",
+			"viewLevel": 2,
+			"viewId": "group"
+		  },
+		  "entity": {
+			"viewName": "Entity",
+			"viewLevel": 2,
+			"viewId": "entity"
+		  },
+		   "sample": {
+			"viewName": "Sample",
+			"viewLevel": 2,
+			"viewId": "sample"
+		  },
+		  "code": {
+			"viewName": "Code",
+			"viewLevel": 2,
+			"viewId": "code",
+			"transition": "flip"
+		  },
+		  "downloads": {
+			"viewName": "Downloads",
+			"viewLevel": 2,
+			"viewId": "downloads"
+		  },
+		  "apiMaster": {
+			"viewName": "ApiMaster",
+			"viewLevel": 1,
+			"viewId": "apiMaster",
+			"controlAggregation": "masterPages"
+		  },
+		  "demoApps": {
+				"viewName": "DemoApps",
+				"viewLevel": 2,
+				"viewId": "demoApps"
+		  },
+		  "apiDetailInitial": {
+			"viewName": "ApiDetailInitial",
+			"viewId": "apiDetailInitial",
+			"viewLevel": 2
+		  },
+		  "apiDetail": {
+			"viewName": "ApiDetail",
+			"viewId": "apiDetail",
+			"viewLevel": 2
+		  },
+		  "topicMaster": {
+			"viewName": "TopicMaster",
+			"viewLevel": 1,
+			"viewId": "topicMaster",
+			"controlAggregation": "masterPages"
+		  },
+		  "topicDetailInitial": {
+			"viewName": "TopicDetailInitial",
+			"viewId": "topicDetailInitial",
+			"viewLevel": 2
+		  },
+		  "topicDetail": {
+			"viewName": "TopicDetail",
+			"viewId": "topicDetail",
+			"viewLevel": 2
+		  },
+		  "searchPage": {
+			"viewName": "SearchPage",
+			"viewId": "searchPage",
+			"viewLevel": 2,
+			"controlAggregation": "detailPages"
+		  },
+		  "detailObjectNotFound": {
+			"viewName": "DetailObjectNotFound",
+			"viewId": "detailObjectNotFound"
+		  },
+		  "detailNoObjectsAvailable": {
+			"viewName": "DetailNoObjectsAvailable",
+			"viewId": "detailNoObjectsAvailable"
+		  },
+		  "notFound": {
+			"viewName": "NotFound",
+			"viewId": "notFound"
+		  }
+		}
+	  }
+	}
+}

@@ -1,0 +1,120 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.SearchPage"
+		xmlns="sap.m"
+		xmlns:op="sap.uxap"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+		<op:ObjectPageLayout id="searchPage"
+							useIconTabBar="true">
+		<op:headerTitle>
+			<op:ObjectPageHeader objectTitle='Search Results for "{/searchTerm}"'>
+			</op:ObjectPageHeader>
+		</op:headerTitle>
+		<op:headerContent>
+			<ObjectAttribute title="" text="Search results are displayed in categories."/>
+		</op:headerContent>
+ 		<op:sections>
+			<op:ObjectPageSection title="All ({/AllLength})">
+			<op:subSections>
+				<op:ObjectPageSubSection>
+					<op:blocks>
+						<VBox>
+						<OverflowToolbar design="Transparent" height="3rem">
+							<Title text="ALL (0 - {/visibleAllLength} of {/AllLength})"/>
+						</OverflowToolbar>
+						<List
+							width="100%"
+							growing="true"
+							growingThreshold="25"
+							updateFinished="onAllLoadMore"
+							items="{
+							path: '/data',
+							sorter: {
+								path: 'category',
+								descending: false,
+								group: true
+							},
+							groupHeaderFactory: '.getGroupHeader'
+						}">
+						<FeedListItem
+							sender="{title}"
+							senderPress="openSearchResult"
+							text="{summary}"
+							showIcon="false"
+							info="{path}"
+							app:path="{path}"/>
+						</List>
+						</VBox>
+					</op:blocks>
+				</op:ObjectPageSubSection>
+			</op:subSections>
+			</op:ObjectPageSection>
+ 			<op:ObjectPageSection title="API Reference ({/APILength})" visible="{=!!${/APILength}}">
+				<op:subSections>
+					<op:ObjectPageSubSection>
+						<op:blocks>
+							<VBox>
+							<OverflowToolbar design="Transparent" height="3rem">
+								<Title text="API Reference (0 - {/visibleAPILength} of {/APILength})"/>
+							</OverflowToolbar>
+							<List
+								growing="true"
+								growingThreshold="25"
+								updateFinished="onAPILoadMore"
+								items="{
+								path: '/dataAPI',
+								sorter: {
+									path: 'title',
+									descending: false
+								}
+							}">
+							<FeedListItem
+								visible="{path:'category', formatter:'.categoryAPIFormatter'}"
+								sender="{title}"
+								senderPress="openSearchResult"
+								text="{summary}"
+								showIcon="false"
+								info="{path}"
+								app:path="{path}"/>
+							</List>
+							</VBox>
+						</op:blocks>
+					</op:ObjectPageSubSection>
+				</op:subSections>
+			</op:ObjectPageSection>
+			<op:ObjectPageSection title="Documentation ({/DocLength})" visible="{=!!${/DocLength}}">
+				<op:subSections>
+					<op:ObjectPageSubSection>
+						<op:blocks>
+							<VBox>
+							<OverflowToolbar design="Transparent" height="3rem">
+								<Title text="Documentation (0 - {/visibleDocLength} of {/DocLength})"/>
+							</OverflowToolbar>
+							<List
+								growing="true"
+								growingThreshold="25"
+								updateFinished="onDocLoadMore"
+								items="{
+								path: '/dataDoc',
+								sorter: {
+									path: 'title',
+									descending: false
+								}
+							}">
+							<FeedListItem
+								visible="{path:'category', formatter:'.categoryDocFormatter'}"
+								sender="{title}"
+								senderPress="openSearchResult"
+								text="{summary}"
+								showIcon="false"
+								info="{path}"
+								app:path="{path}"/>
+							</List>
+							</VBox>
+						</op:blocks>
+					</op:ObjectPageSubSection>
+ 				</op:subSections>
+			</op:ObjectPageSection>
+		</op:sections>
+	</op:ObjectPageLayout>
+</mvc:View>

@@ -21,13 +21,13 @@
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
-			sap.ui.require(['sap/ui/documentation/controller/util/APIInfo'], function(APIInfo) {
+			sap.ui.require(['sap/ui/documentation/sdk/controller/util/APIInfo'], function(APIInfo) {
 				//APIInfo._setRoot("http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/test-resources/");
 				APIInfo._setRoot("http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/test-resources/");
 			});
 
-			sap.ui.require(['sap/ui/documentation/Component'], function(Comp) {
-				Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = "./resources/sap/ui/documentation/model/data/guide/";
+			sap.ui.require(['sap/ui/documentation/sdk/Component'], function(Comp) {
+				Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = "./resources/sap/ui/documentation/sdk/model/data/guide/";
 			});
 
 			sap.ui.require([
@@ -39,7 +39,7 @@
 					showHeader: false,
 					content: new ComponentContainer({
 						height : "100%",
-						name : "sap.ui.documentation"
+						name : "sap.ui.documentation.sdk"
 					})
 				}).placeAt("content");
 			});

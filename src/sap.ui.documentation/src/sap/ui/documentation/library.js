@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global',
 		types: [],
 		interfaces: [],
 		controls: [
-			"sap.ui.documentation.controls.Search"
+			"sap.ui.documentation.sdk.controls.Search"
 		],
 		elements: []
 	});

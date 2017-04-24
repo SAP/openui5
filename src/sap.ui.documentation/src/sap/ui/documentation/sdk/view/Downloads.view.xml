@@ -1,0 +1,6 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Downloads"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<Label text="Downloads" />
+</mvc:View>

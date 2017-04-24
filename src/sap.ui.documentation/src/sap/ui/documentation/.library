@@ -22,23 +22,23 @@
 
   <appData>
     <jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc" >
-      <exclude name="sap.ui.documentation.controller.util.google-code-prettify." />
-      <exclude name="sap.ui.documentation.controller.util.jsanalyzer." />
+      <exclude name="sap.ui.documentation.sdk.controller.util.google-code-prettify." />
+      <exclude name="sap.ui.documentation.sdk.controller.util.jsanalyzer." />
     </jsdoc>
     <!-- excludes for the JSCoverage -->
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
-      <exclude name="sap.ui.documentation.controller.util.google-code-prettify." />
-      <exclude name="sap.ui.documentation.controller.util.jsanalyzer." />
+      <exclude name="sap.ui.documentation.sdk.controller.util.google-code-prettify." />
+      <exclude name="sap.ui.documentation.sdk.controller.util.jsanalyzer." />
     </jscoverage>
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
-        <raw-module name="sap/ui/documentation/controller/util/jsanalyzer/esprima.js" />
-        <raw-module name="sap/ui/documentation/controller/util/google-code-prettify/lang-css.js" depends="sap/ui/demokit/js/google-code-prettify/prettify.js" />
-        <raw-module name="sap/ui/documentation/controller/util/google-code-prettify/prettify.js"/>
-        <raw-module name="sap/ui/documentation/controller/util/google-code-prettify/run_prettify.js"/>
+        <raw-module name="sap/ui/documentation/sdk/controller/util/jsanalyzer/esprima.js" />
+        <raw-module name="sap/ui/documentation/sdk/controller/util/google-code-prettify/lang-css.js" depends="sap/ui/demokit/js/google-code-prettify/prettify.js" />
+        <raw-module name="sap/ui/documentation/sdk/controller/util/google-code-prettify/prettify.js"/>
+        <raw-module name="sap/ui/documentation/sdk/controller/util/google-code-prettify/run_prettify.js"/>
       </module-infos>
       <all-in-one>
-        <exclude name="sap/ui/documentation/controller/util/google-code-prettify/run_prettify.js" />
+        <exclude name="sap/ui/documentation/sdk/controller/util/google-code-prettify/run_prettify.js" />
       </all-in-one>
     </packaging>
     <!-- Thirdparty references -->

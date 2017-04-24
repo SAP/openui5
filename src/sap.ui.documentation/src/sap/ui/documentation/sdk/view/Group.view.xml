@@ -1,0 +1,27 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Group"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:layout="sap.ui.layout"
+		xmlns:controls="sap.ui.documentation.sdk.controls">
+
+	<m:Page
+			id="controlsDetailPage"
+			navButtonPress="onNavBack"
+			showHeader="{device>/orientation/portrait}"
+			showSubHeader="false"
+			showFooter="false"
+			showNavButton="{device>/system/phone}"
+			busy="{detailView>/busy}"
+			busyIndicatorDelay="{detailView>/delay}">
+
+		<m:content>
+
+
+		</m:content>
+
+	</m:Page>
+
+</mvc:View>

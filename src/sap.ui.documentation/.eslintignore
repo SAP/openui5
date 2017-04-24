@@ -1,6 +1,6 @@
 # Note: Changes to this file also must be applied to the top level .eslintignore file.
-src/sap/ui/documentation/model/data/guide
-src/sap/ui/documentation/controller/util/google-code-prettify
-src/sap/ui/documentation/controller/util/jsanalyzer
+src/sap/ui/documentation/sdk/model/data/guide
+src/sap/ui/documentation/sdk/controller/util/google-code-prettify
+src/sap/ui/documentation/sdk/controller/util/jsanalyzer
 target
 test
