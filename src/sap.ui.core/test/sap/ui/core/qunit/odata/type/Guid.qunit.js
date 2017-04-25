@@ -111,7 +111,7 @@ sap.ui.require([
 			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "GUID with separators at wrong places");
 		assert.strictEqual(oType.parseValue("0050568d-393c-1ed4-9d97-e65f0f3fcc23", "string"),
 			"0050568D-393C-1ED4-9D97-E65F0F3FCC23", "real GUID lower case");
-		assert.strictEqual(oType.parseValue("  0050\u180E568D 393C\t1ED49D97-E65F0F3FCC23 \n",
+		assert.strictEqual(oType.parseValue("  0050\uFEFF568D 393C\t1ED49D97-E65F0F3FCC23 \n",
 			"string"), "0050568D-393C-1ED4-9D97-E65F0F3FCC23", "real GUID");
 		assert.strictEqual(oType.parseValue("0050568D-393C-1", "string"),
 			"0050568D-393C-1", "parse invalid GUID");
