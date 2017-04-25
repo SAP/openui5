@@ -5221,6 +5221,8 @@
 		}});
 	});
 
+	QUnit.module("Model: Response headers");
+
 	QUnit.test("Bindable response headers in metadata", function(assert) {
 		var done = assert.async();
 		assert.expect(4);
@@ -5363,7 +5365,9 @@
 		});
 	});
 
-  QUnit.test("Normalize key", function(assert) {
+	QUnit.module("Model: Key normalization");
+
+ 	QUnit.test("Normalize key", function(assert) {
 		var oModel = initModel(sURI);
 		assert.equal(oModel._normalizeKey("Entity(123M)"), "Entity(123m)", "Number types normalized, single key");
 		assert.equal(oModel._normalizeKey("Entity(a=123M,b=123F,c=123L,d=123D)"), "Entity(a=123m,b=123f,c=123l,d=123d)", "Number types normalized, mutiple keys");
@@ -5374,6 +5378,7 @@
 		assert.equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST')"), "Entity('%2FTEST%2FTEST')", "No double encoding");
 		assert.equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2FTEST%2FTEST%3D123M')", "No double encoding");
 		assert.equal(oModel._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
+		assert.equal(oModel._normalizeKey("Entity(X'AFFE')"), "Entity(binary'AFFE')", "Binary normalized");
 	});
 
   QUnit.test("Normalize key, model access", function(assert) {

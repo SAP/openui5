@@ -2032,14 +2032,18 @@ sap.ui.define([
 	// Define regular expression and function outside function to avoid instatiation on every call
 	var rNormalizeString = /([(=,])('.*?')([,)])/g,
 		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
+		rNormalizeBinary = /([(=,])(X')/g,
 		fnNormalizeString = function(value, p1, p2, p3) {
 			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
 		},
 		fnNormalizeCase = function(value) {
 			return value.toLowerCase();
+		},
+		fnNormalizeBinary = function(value, p1) {
+			return p1 + "binary'";
 		};
 	ODataModel.prototype._normalizeKey = function(sKey) {
-		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase);
+		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
 	};
 
 	/**
