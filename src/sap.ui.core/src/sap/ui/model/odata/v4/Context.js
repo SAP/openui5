@@ -568,7 +568,7 @@ sap.ui.define([
 			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
 		}
 
-		return this.requestCanonicalPath().then(function (sEditUrl) {
+		return this.fetchCanonicalPath().then(function (sEditUrl) {
 			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
 				sPath);
 		});
