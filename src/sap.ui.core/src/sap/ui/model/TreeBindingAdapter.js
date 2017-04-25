@@ -1177,33 +1177,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			if (this._oRootNode && this._oRootNode.nodeState.selectAllMode) {
 				var sGroupId, iVisibleDeselectedNodeCount, oParent, oGroupNodeState;
 
+				var oContext, aVisibleGroupIds = [];
+				if (this.filterInfo && this.aAllFilters) {
+					// If we are filtering, we need to map the filtered (visible) contexts to group IDs.
+					// With that we can check whether a node state is actually a visible node
+					for (var i = this.filterInfo.aFilteredContexts.length - 1; i >= 0; i--) {
+						oContext = this.filterInfo.aFilteredContexts[i];
+						aVisibleGroupIds.push(this._calculateGroupID({
+							context: oContext
+						}));
+					}
+				}
+
 				iVisibleDeselectedNodeCount = 0;
 				// If we implicitly deselect all nodes under a group node,
 				//	we need to count them as "visible deselected nodes"
 				for (sGroupId in this._mTreeState.expanded) {
-					oGroupNodeState = this._mTreeState.expanded[sGroupId];
-					if (!oGroupNodeState.selectAllMode && oGroupNodeState.leafCount !== undefined) {
-						iVisibleDeselectedNodeCount += oGroupNodeState.leafCount;
+					if (!this.aAllFilters || aVisibleGroupIds.indexOf(sGroupId) !== -1) { // Not filtering or part of the visible nodes if filtering
+						oGroupNodeState = this._mTreeState.expanded[sGroupId];
+						if (!oGroupNodeState.selectAllMode && oGroupNodeState.leafCount !== undefined) {
+							iVisibleDeselectedNodeCount += oGroupNodeState.leafCount;
+						}
 					}
 				}
 
 				// Except those who got explicitly selected after the parent got collapsed
 				//	and expanded again (and while the root is still in select-all mode)
 				for (sGroupId in this._mTreeState.selected) {
-					oGroupNodeState = this._mTreeState.selected[sGroupId];
-					oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
-					if (oParent && !oParent.selectAllMode) {
-						iVisibleDeselectedNodeCount--;
+					if (!this.aAllFilters || aVisibleGroupIds.indexOf(sGroupId) !== -1) { // Not filtering or part of the visible nodes if filtering
+						oGroupNodeState = this._mTreeState.selected[sGroupId];
+						oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
+						if (oParent && !oParent.selectAllMode) {
+							iVisibleDeselectedNodeCount--;
+						}
 					}
 				}
 
 				// Add those which are explicitly deselected and whose parents *are* in selectAllMode (not covered by the above)
 				for (sGroupId in this._mTreeState.deselected) {
-					oGroupNodeState = this._mTreeState.deselected[sGroupId];
-					oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
-					// If parent is expanded check if its in select all mode
-					if (oParent && oParent.selectAllMode) {
-						iVisibleDeselectedNodeCount++;
+					if (!this.aAllFilters || aVisibleGroupIds.indexOf(sGroupId) !== -1) { // Not filtering or part of the visible nodes if filtering
+						oGroupNodeState = this._mTreeState.deselected[sGroupId];
+						oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
+						// If parent is expanded check if its in select all mode
+						if (oParent && oParent.selectAllMode) {
+							iVisibleDeselectedNodeCount++;
+						}
 					}
 				}
 

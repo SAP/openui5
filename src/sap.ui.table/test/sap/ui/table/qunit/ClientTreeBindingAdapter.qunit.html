@@ -640,6 +640,25 @@
 			done();
 		});
 
+		QUnit.test("getSelectedNodesCount with filter", function(assert){
+			var done = assert.async();
+			createTreeBindingAdapter("/bing/root", [], null, {
+				displayRootNode: true,
+				numberOfExpandedLevels: 3
+			});
+
+			oBinding.getContexts(0, 100);
+			oBinding.filter(new	sap.ui.model.Filter({
+					path: "name",
+					operator: sap.ui.model.FilterOperator.EQ,
+					value1: "Hip-Hop"
+				}));
+			oBinding.selectAll();
+			assert.equal(oBinding.getSelectedNodesCount(), 2, "Correct selected nodes count after selectAll call");
+			assert.equal(oBinding.getLength(), 2, "Correct binding length");
+			done();
+		});
+
 		/**
 		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
 		 * Data should already be present, since prebuildTree already requested a big set

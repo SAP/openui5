@@ -128,7 +128,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				if (jQuery.sap.startsWith(sGroupId,"/")) {
 					sGroupId = sGroupId.substring(1, sGroupId.length);
 				}
-				sGroupId = oNode.parent.groupID + sGroupId.replace(/\//g, "_") + "/";
+
+				var sParentGroupId;
+				if (!oNode.parent) {
+					// If there is no parent object we expect that:
+					//   1. the parent group id is unknown and
+					//   2. the parent context is known (added in ClientTreeBinding._applyFilterRecursive)
+					//
+					// We use the parent context to recursively calculate the parent group id
+					// In case the parent context is empty, we expect this node to be a child of the root node (which has a context of null)
+					sParentGroupId = this._calculateGroupID({
+						context: oNode.context._parentContext || null
+					});
+				} else {
+					// "Normal" case: We know the parent group id
+					sParentGroupId = oNode.parent.groupID;
+				}
+				sGroupId = sParentGroupId + sGroupId.replace(/\//g, "_") + "/";
 
 			} else if (oNode.context === null) {
 				// only the root node should have null as context
