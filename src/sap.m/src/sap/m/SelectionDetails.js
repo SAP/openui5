@@ -403,8 +403,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		this._oNavContainer.to(this._oInitialPage);
 		this._oNavContainer.setProperty("defaultTransitionName", "slide", true);
 
-		oPopover.invalidate(); //trigger a rendering of the updated lists and toolbars
 		oPopover.openBy(this.getAggregation("_button"));
+		oPopover.invalidate(); //trigger a rendering of the updated lists and toolbars
 	};
 
 	/**
