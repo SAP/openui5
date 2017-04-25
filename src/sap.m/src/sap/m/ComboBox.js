@@ -1087,6 +1087,41 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		};
 
 		/**
+		 * Handles the <code>onsapshow</code> event when either F4 is pressed or Alt + Down arrow are pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		ComboBox.prototype.onsapshow = function(oEvent) {
+			var aSelectableItems, oItem;
+			ComboBoxBase.prototype.onsapshow.apply(this, arguments);
+
+			if (!this.getValue()) {
+				aSelectableItems = this.getSelectableItems();
+				oItem = aSelectableItems[0];
+
+				if (oItem) {
+					this.setSelection(oItem);
+					this.updateDomValue(oItem.getText());
+
+					this.fireSelectionChange({
+						selectedItem: oItem
+					});
+
+					setTimeout(function() {
+						this.selectText(0, oItem.getText().length);
+					}.bind(this), 0);
+				}
+			}
+		};
+
+		/**
+		 * Handles when Alt + Up arrow are pressed.
+		 *
+		 * @param {jQuery.Event} oEvent The event object.
+		 */
+		ComboBox.prototype.onsaphide = ComboBox.prototype.onsapshow;
+
+		/**
 		 * Handles the <code>focusin</code> event.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
