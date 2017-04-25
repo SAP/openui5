@@ -13,7 +13,10 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell class="sapUiNoContentPadding">
 					<Image
-						src="./images/homeImage.png"
+						src="{
+							path: 'view>/isPhone',
+							formatter: '.formatter.srcImageValue'
+						}"
 						width="100%"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
