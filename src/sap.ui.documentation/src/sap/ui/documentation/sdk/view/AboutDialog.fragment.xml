@@ -35,8 +35,8 @@
 						<Text text=")."/>
 					</l:HorizontalLayout>
 					<Link text="Version Details" press="onAboutVersionDetails" class="sapUiMediumMarginBottom"/>
-					<Text text="This software includes third-party open source software." class="sapUiSmallMarginBottom" visible="{appView>/isOpenUI5}"/> <!-- should be NOT here -->
-					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{appView>/isOpenUI5}"/> <!-- should be NOT here -->
+					<Text text="This software includes third-party open source software." class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
+					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
 				</l:VerticalLayout>
 			</Page>
 			<Page

@@ -19,7 +19,7 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/sap_logo.png"
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/OpenUI5_logo_only.png"
 					visible="{=!${appView>/bPhoneSize}}"
 					height="2rem"
 					class="sapLogo"
@@ -58,7 +58,7 @@
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
-				<Button icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+				<Button press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
 
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
@@ -75,9 +75,9 @@
 								<MenuItem text="Version {appView>/version}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
-								<MenuItem text="Legal" visible="{appView>/isOpenUI5}"/> <!-- should be NOT here -->
-								<MenuItem text="Privacy" visible="{appView>/isOpenUI5}"/> <!-- should be NOT here -->
-								<MenuItem text="Terms of Use" visible="{appView>/isOpenUI5}"> <!-- should be NOT here -->
+								<MenuItem text="Legal" visible="{=!${appView>/isOpenUI5}}"/>
+								<MenuItem text="Privacy" visible="{=!${appView>/isOpenUI5}}"/>
+								<MenuItem text="Terms of Use" visible="{=!${appView>/isOpenUI5}}">
 									<items>
 										<MenuItem text="Terms of Use" />
 										<MenuItem text="Copyright" />
