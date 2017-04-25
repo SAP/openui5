@@ -125,3 +125,8 @@ html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 html[data-sap-ui-animation='on'][data-sap-ui-browser^="ie"] .sapMPanelContent {
 	transform: translate(0, 0);
 }
+
+/* workaround for drawing issue in Edge - ensures that the content will be redrawn */
+html[data-sap-ui-animation='on'][data-sap-ui-browser^="ed"] .sapMPanelContent {
+	transform: translate(0, 0);
+}
