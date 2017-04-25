@@ -172,9 +172,21 @@
 			assert.equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
 			assert.ok(!(oElement.getAggregation("label") instanceof sap.m.Label), "Label as text entered must not be an control in aggregation");
 			assert.ok(oElement.getLabelControl() instanceof sap.m.Label, "Label as text endeted must be an control in getLabelControl");
+			oElement.destroyLabel();
+			assert.notOk(oElement.getLabel(), "getLabel(): no Label");
+			assert.notOk(!!oElement.getLabelControl(), "no Label in getLabelControl");
+			oElement.setLabel("Label1");
+
 			oElement = sap.ui.getCore().byId("C1E2");
 			assert.ok(oElement.getLabel() instanceof sap.m.Label, "getLabel(): Label as control entered must return control");
 			assert.equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+
+			oElement.destroyLabel();
+			assert.notOk(oElement.getLabel(), "getLabel(): no Label");
+			assert.notOk(!!oElement.getLabelControl(), "no Label in getLabelControl");
+			oElement.setLabel(new sap.m.Label("L1",{text:"Label2"}));
+
+			sap.ui.getCore().applyChanges();
 
 			assert.equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
 		});
