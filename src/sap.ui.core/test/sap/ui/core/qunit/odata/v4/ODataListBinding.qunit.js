@@ -266,6 +266,7 @@ sap.ui.require([
 		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", oContext, vSorters, vFilters,
 			mParameters);
 
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
@@ -284,6 +285,14 @@ sap.ui.require([
 			var oBinding;
 
 			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+
+			//TODO Remove the below mock which avoids access to $metadata as soon as addition
+			// of key properties takes place in fetchIfChildCanUseCache (CPOUI5UISERVICESV3-590)
+			if (bAutoExpandSelect) {
+				this.mock(ODataListBinding.prototype).expects("fetchQueryOptionsWithKeys")
+					.withExactArgs(undefined)
+					.returns(_SyncPromise.resolve({}));
+			}
 
 			// code under test
 			oBinding = this.oModel.bindList("/EMPLOYEES");

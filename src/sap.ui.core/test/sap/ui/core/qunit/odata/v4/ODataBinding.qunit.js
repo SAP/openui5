@@ -601,20 +601,26 @@ sap.ui.require([
 		function (assert) {
 			var oBinding = new ODataBinding({
 					mAggregatedQueryOptions : {},
-					aChildCanUseCachePromises : [],
+					aChildCanUseCachePromises : [], // binding is a parent binding
+					doFetchQueryOptions : function () {},
 					oModel : {bAutoExpandSelect : true},
 					sPath : "relative",
-					bRelative : true
+					bRelative : true,
+					updateAggregatedQueryOptions : function () {} // binding is a parent binding
 				}),
+				mCurrentBindingQueryOptions = {},
 				oExpectation,
-//TODO remove aChildCanUseCachePromises when list binding supports auto-$expand, also in below tests
 				oParentBinding = {
-					aChildCanUseCachePromises : [],
 					fetchIfChildCanUseCache : function () {}
 				},
 				oContext = Context.create({}, oParentBinding, "/v4Context"),
 				oQueryOptionsForOwnCachePromise;
 
+			this.mock(oBinding).expects("doFetchQueryOptions")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(_SyncPromise.resolve(mCurrentBindingQueryOptions));
+			this.mock(oBinding).expects("updateAggregatedQueryOptions")
+				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			oExpectation = this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(_SyncPromise.resolve(true));
@@ -634,21 +640,28 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchQueryOptionsForOwnCache, auto-$expand/$select: can't use parent binding cache",
 		function (assert) {
-			var mAggregatedQueryOptions = {},
-				oBinding = new ODataBinding({
-					aChildCanUseCachePromises : [],
+			var oBinding = new ODataBinding({
+					mAggregatedQueryOptions : {},
+					aChildCanUseCachePromises : [], // binding is a parent binding
+					doFetchQueryOptions : function () {},
 					oModel : {bAutoExpandSelect : true},
 					sPath : "relative",
-					bRelative : true
+					bRelative : true,
+					updateAggregatedQueryOptions : function () {} // binding is a parent binding
 				}),
+				mCurrentBindingQueryOptions = {},
 				aChildCanUseCachePromises,
 				oParentBinding = {
-					aChildCanUseCachePromises : [],
 					fetchIfChildCanUseCache : function () {}
 				},
 				oContext = Context.create({}, oParentBinding, "/v4Context"),
 				oQueryOptionsForOwnCachePromise;
 
+			this.mock(oBinding).expects("doFetchQueryOptions")
+				.withExactArgs(sinon.match.same(oContext))
+				.returns(_SyncPromise.resolve(mCurrentBindingQueryOptions));
+			this.mock(oBinding).expects("updateAggregatedQueryOptions")
+				.withExactArgs(sinon.match.same(mCurrentBindingQueryOptions));
 			this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 				.withArgs(sinon.match.same(oContext), "relative")
 				.returns(_SyncPromise.resolve(false));
@@ -662,12 +675,11 @@ sap.ui.require([
 				_SyncPromise.resolve(Promise.resolve()),
 				_SyncPromise.resolve(Promise.resolve())
 			];
-			oBinding.mAggregatedQueryOptions = mAggregatedQueryOptions;
 
 			return oQueryOptionsForOwnCachePromise.then(function (mQueryOptionsForOwnCache) {
 				assert.strictEqual(aChildCanUseCachePromises[0].isFulfilled(), true);
 				assert.strictEqual(aChildCanUseCachePromises[1].isFulfilled(), true);
-				assert.strictEqual(mQueryOptionsForOwnCache, mAggregatedQueryOptions);
+				assert.strictEqual(mQueryOptionsForOwnCache, oBinding.mAggregatedQueryOptions);
 				assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 			});
 	});
@@ -684,7 +696,6 @@ sap.ui.require([
 					}),
 					mLocalQueryOptions = {},
 					oParentBinding = {
-						aChildCanUseCachePromises : [],
 						fetchIfChildCanUseCache : function () {}
 					},
 					oQueryOptionsPromise = _SyncPromise.resolve(mLocalQueryOptions),

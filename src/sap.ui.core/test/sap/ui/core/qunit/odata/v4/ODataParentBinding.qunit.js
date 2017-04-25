@@ -518,6 +518,42 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		name : "$select",
+		parameters : {$select : "foo"}
+	}, {
+		name : "$expand",
+		parameters : {$expand : "foo"}
+	}, {
+		name : "$expand",
+		parameters : {$expand : undefined}
+	}, {
+		name : "$expand",
+		parameters : {$expand : {foo : {}}}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("changeParameters: auto-$expand/$select, " + i, function (assert) {
+			var oBinding = new ODataParentBinding({
+					oModel : {
+						bAutoExpandSelect : true
+					},
+					mParameters : {},
+					applyParameters : function () {}
+				});
+
+			this.mock(oBinding).expects("applyParameters").never();
+
+			// code under test
+			assert.throws(function () {
+				oBinding.changeParameters(oFixture.parameters);
+			}, new Error("Cannot change $expand or $select parameter in auto-$expand/$select mode: "
+				+ oFixture.name + "=" + JSON.stringify(oFixture.parameters[oFixture.name]))
+			);
+
+			assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged on error");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
 		childPath : "Property",
 		childQueryOptions : {},
 		expected : {$select : ["Property"]}
@@ -825,22 +861,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		aggregatedQueryOptions : undefined,
-		canMergeQueryOptions : true,
-		hasChildQueryOptions : true,
-		$kind : "Property"
-	}, {
 		aggregatedQueryOptions : {},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "Property"
 	}, {
-		aggregatedQueryOptions : undefined,
+		aggregatedQueryOptions : {$select : "foo"},
+		canMergeQueryOptions : true,
+		hasChildQueryOptions : true,
+		$kind : "Property"
+	}, {
+		aggregatedQueryOptions : {},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "NavigationProperty"
 	}, {
-		aggregatedQueryOptions : {},
+		aggregatedQueryOptions : {$select : "foo"},
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		$kind : "NavigationProperty"
@@ -898,7 +934,7 @@ sap.ui.require([
 					.withExactArgs(sinon.match.same(oBinding.oContext))
 					.returns(_SyncPromise.resolve(mLocalQueryOptions));
 				this.mock(jQuery).expects("extend")
-					.exactly(oFixture.aggregatedQueryOptions ? 0 : 1)
+					.exactly(Object.keys(oFixture.aggregatedQueryOptions).length ? 0 : 1)
 					.withExactArgs(true, {}, sinon.match.same(mLocalQueryOptions))
 					.returns(mAggregatedQueryOptions);
 				oMetaModelMock.expects("fetchObject")
@@ -1580,6 +1616,38 @@ sap.ui.require([
 					assert.deepEqual(oResult, oFixture.result, "added key properties");
 				}
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		aggregated : {$filter : "foo"},
+		current : {$filter : "bar"},
+		result : {$filter : "bar"}
+	}, {
+		aggregated : {$select: ["foo", "bar"]},
+		current : {$select : ["foo"]},
+		result : {$select: ["foo", "bar"]}
+	}, {
+		aggregated : {$expand: {foo : {}, bar : {}}},
+		current : {$expand: {foo : {}}},
+		result : {$expand: {foo : {}, bar : {}}}
+	}, {
+		aggregated : {$filter : "foo"},
+		current : {},
+		result : {}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("updateAggregatedQueryOptions " + i, function(assert) {
+			var oBinding = new ODataParentBinding({
+					mAggregatedQueryOptions : oFixture.aggregated
+				}),
+				mCurrentQueryOptions = oFixture.current;
+
+			// code under test
+			assert.deepEqual(oBinding.updateAggregatedQueryOptions(mCurrentQueryOptions),
+				undefined);
+
+			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
 		});
 	});
 });

@@ -1657,6 +1657,120 @@ sap.ui.require([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
+
+	//*********************************************************************************************
+	// Scenario: Auto-$expand/$select: Absolute ODataListBinding considers $filter set via API,
+	// i.e. it changes the initially aggregated query options. Note: It is also possible to remove
+	// a filter which must lead to removal of the $filter option.
+	QUnit.test("Absolute ODLB with auto-$expand/$select: filter via API", function (assert) {
+		var sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			filters: {path: \'AGE\', operator: \'LT\', value1: \'77\'},\
+			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
+		}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$filter=AGE%20lt%2077"
+					+ "&$skip=0&$top=100",
+				{
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Jonathan Smith"},
+						{"Name" : "Peter Burke"}
+					]
+				}
+			)
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name"
+							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
+						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+					.expectChange("text", "Peter Burke", 1);
+
+				// code under test
+				that.oView.byId("table").getBinding("items")
+					.filter(new Filter("AGE", FilterOperator.GT, 42));
+				return that.waitForChanges(assert);
+			})
+			.then(function () {
+				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$skip=0&$top=100", {
+						"value" : [
+							{"Name" : "Frederic Fall"},
+							{"Name" : "Jonathan Smith"},
+							{"Name" : "Peter Burke"}
+						]
+					})
+					.expectChange("text", "Jonathan Smith", 1)
+					.expectChange("text", "Peter Burke", 2);
+
+				// code under test
+				that.oView.byId("table").getBinding("items").filter(/*no filter*/);
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Auto-$expand/$select: Relative ODataListBinding considers $filter set via API, i.e.
+	// it changes the initially aggregated query options and creates a separate cache/request.
+	QUnit.test("ODLB with auto-$expand/$select below ODCB: filter via API", function (assert) {
+		var sView = '\
+<VBox binding="{/TEAMS(\'2\')}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="text" text="{Name}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+	<Text id="name" text="{Name}" />\
+</VBox>',
+			that = this;
+
+//TODO auto-$select of key properties should $select Team_id and ID
+//		this.expectRequest("TEAMS('2')?$select=Team_Id,Name&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
+		this.expectRequest("TEAMS('2')?$select=Name"
+					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=Name)", {
+					"Name" : "Team 2",
+					"Team_Id" : "2",
+					"TEAM_2_EMPLOYEES" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Jonathan Smith"},
+						{"Name" : "Peter Burke"}
+					]
+				}
+			)
+			.expectChange("name", "Team 2")
+			.expectChange("name", "Team 2") // TODO unexpected change
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+//TODO auto-$select of key properties should $select Team_id and ID
+//			that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name&$filter=AGE%20gt%2042&$skip=0&$top=100",
+//					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=Name"
+							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
+						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+					.expectChange("text", "Peter Burke", 1);
+
+				// code under test
+				that.oView.byId("table").getBinding("items")
+					.filter(new Filter("AGE", FilterOperator.GT, 42));
+				return that.waitForChanges(assert);
+			});
+	});
 	//TODO $batch?
 	//TODO test bound action
 	//TODO test delete

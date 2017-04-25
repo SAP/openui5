@@ -122,20 +122,23 @@ sap.ui.define([
 		// auto-$expand/$select and binding is a parent binding, so that it needs to wait until all
 		// its child bindings know via the corresponding promise in this.aChildCanUseCachePromises
 		// if they can use the parent binding's cache
+		oQueryOptionsPromise = this.doFetchQueryOptions(oContext);
 		if (this.oModel.bAutoExpandSelect && this.aChildCanUseCachePromises) {
 			// For auto-$expand/$select, wait for query options of dependent bindings:
 			// Promise.resolve() ensures all dependent bindings are created and have sent their
 			// query options promise to this binding via fetchIfChildCanUseCache.
 			// The aggregated query options of this binding and its dependent bindings are available
 			// in that.mAggregatedQueryOptions once all these promises are fulfilled.
-			oQueryOptionsPromise = _SyncPromise.resolve(Promise.resolve().then(function () {
-				return _SyncPromise.all(that.aChildCanUseCachePromises).then(function () {
-					that.aChildCanUseCachePromises = [];
-					return that.mAggregatedQueryOptions;
-				});
-			}));
-		} else {
-			oQueryOptionsPromise = this.doFetchQueryOptions(oContext);
+			oQueryOptionsPromise = _SyncPromise.all([
+				oQueryOptionsPromise,
+				Promise.resolve().then(function () {
+					return _SyncPromise.all(that.aChildCanUseCachePromises);
+				})
+			]).then(function (aResult) {
+				that.aChildCanUseCachePromises = [];
+				that.updateAggregatedQueryOptions(aResult[0]);
+				return that.mAggregatedQueryOptions;
+			});
 		}
 
 		// (quasi-)absolute binding

@@ -128,6 +128,7 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 
+				this.mAggregatedQueryOptions = {};
 				this.oCachePromise = _SyncPromise.resolve();
 				this.mCacheByContext = undefined;
 				this.sGroupId = undefined;
