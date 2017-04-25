@@ -1,0 +1,11 @@
+<FragmentDefinition
+		xmlns:m="sap.m"
+		xmlns="sap.ui.core">
+	<m:HBox id="MyHBox" items="{path:'$this>items', sorter:{path:'text', descending:true}}">
+		<m:Button id="MyButton" text="{$this>text}" press="_handleButtonPress">
+			<m:customData>
+				<CustomData key="key" value="{$this>key}"/>
+			</m:customData>
+		</m:Button>
+	</m:HBox>
+</FragmentDefinition>
