@@ -32,8 +32,9 @@
 		},
 		"supportedThemes": [
 			"sap_belize",
-			"sap_hcb",
-			"sap_bluecrystal"
+			"sap_belize_plus",
+			"sap_belize_hcb",
+			"sap_belize_hcw"
 		]
 	},
 
@@ -46,16 +47,28 @@
 		},
 
 		"dependencies": {
-			"minUI5Version": "1.36.0",
+			"minUI5Version": "1.46.0",
 			"libs": {
 				"sap.ui.core": {
-					"minVersion": "1.36.0"
+					"minVersion": "1.46.0"
 				},
 				"sap.m": {
-					"minVersion": "1.36.0"
+					"minVersion": "1.46.0"
 				},
 				"sap.ui.layout" : {
-					"minVersion": "1.36.0"
+					"minVersion": "1.46.0"
+				},
+				"sap.f" : {
+					"minVersion": "1.46.0"
+				},
+				"sap.uxap" : {
+					"minVersion": "1.46.0"
+				},
+				"sap.tnt" : {
+					"minVersion": "1.46.0"
+				},
+				"sap.ui.codeeditor" : {
+					"minVersion": "1.46.0"
 				}
 			}
 		},
