@@ -489,6 +489,7 @@ sap.ui.define([
 			this.aAnnotationUris = vAnnotationUri && !Array.isArray(vAnnotationUri)
 				? [vAnnotationUri] : vAnnotationUri;
 			this.sDefaultBindingMode = BindingMode.OneTime;
+			this.dLastModified = new Date(0);
 			this.oMetadataPromise = null;
 			this.oModel = oModel;
 			this.mMetadataUrl2Promise = {};
@@ -1420,6 +1421,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the maximum value of all "Last-Modified" response headers seen so far.
+	 *
+	 * @returns {Date}
+	 *   The maximum value of all "Last-Modified" (or, as a fallback, "Date") response headers seen
+	 *   so far when loading $metadata or annotation files. It is <code>new Date(0)</code> initially
+	 *   as long as no such files have been loaded. It becomes <code>new Date()</code> as soon as a
+	 *   file without such a header is loaded. Note that this value may change due to load-on-demand
+	 *   of "cross-service references" (see parameter "bSupportReferences" of
+	 *   {@link sap.ui.model.odata.v4.ODataMetaModel}).
+	 *
+	 * @public
+	 * @since 1.47.0
+	 */
+	ODataMetaModel.prototype.getLastModified = function () {
+		return this.dLastModified;
+	};
+
+	/**
 	 * Returns the OData metadata model context corresponding to the given OData data model path.
 	 *
 	 * @param {string} sPath
@@ -2042,7 +2061,7 @@ sap.ui.define([
 	/**
 	 * Validates the given scope. Checks the OData version, searches for forbidden
 	 * $IncludeAnnotations and conflicting $Include. Uses and fills
-	 * <code>this.mSchema2MetadataUrl</code>.
+	 * <code>this.mSchema2MetadataUrl</code>. Computes <code>this.dLastModified</code>.
 	 *
 	 * @param {string} sUrl
 	 *   The same $metadata URL that _MetadataRequestor#read() takes
@@ -2057,6 +2076,7 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.validate = function (sUrl, mScope) {
 		var i,
+			dLastModified,
 			sSchema,
 			oReference,
 			sReferenceUri;
@@ -2092,6 +2112,12 @@ sap.ui.define([
 				this.mSchema2MetadataUrl[sSchema] = sReferenceUri;
 			}
 		}
+
+		dLastModified = mScope.$LastModified ? new Date(mScope.$LastModified) : new Date();
+		if (this.dLastModified < dLastModified) {
+			this.dLastModified = dLastModified;
+		}
+		delete mScope.$LastModified;
 
 		return mScope;
 	};

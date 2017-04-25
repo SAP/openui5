@@ -24,19 +24,37 @@ sap.ui.require([
 	 *
 	 * @param {object} oPayload
 	 *   the response payload
-	 * @param {boolean} bFail
+	 * @param {boolean} [bFail=false]
 	 *   fail if true
+	 * @param {string} [sDate=null]
+	 *   value of "Date" response header
+	 * @param {string} [sLastModified=null]
+	 *   value of "Last-Modified" response header
 	 * @returns {object}
 	 *   a mock for jQuery's XHR wrapper
 	 */
-	function createMock(oPayload, bFail) {
+	function createMock(oPayload, bFail, sDate, sLastModified) {
 		var jqXHR = new jQuery.Deferred();
 
 		setTimeout(function () {
 			if (bFail) {
 				jqXHR.reject(oPayload);
 			} else {
-				jqXHR.resolve(oPayload);
+				jqXHR.resolve(oPayload, "OK", { // mock jqXHR for success handler
+					getResponseHeader : function (sName) {
+						// Note: getResponseHeader treats sName case insensitive!
+						// Thus productive code can safely use the nice capitalization only.
+						// Mock does not need to implement case insensitivity!
+						switch (sName) {
+						case "Date":
+							return sDate || null;
+						case "Last-Modified":
+							return sLastModified || null;
+						default:
+							assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
+						}
+					}
+				});
 			}
 		}, 0);
 
@@ -72,20 +90,20 @@ sap.ui.require([
 		var oExpectedJson = {},
 			oExpectedXml = "xml",
 			oJQueryMock = this.mock(jQuery),
-			oHeaders = {},
-			oQueryParams = {
+			mHeaders = {},
+			mQueryParams = {
 				"sap-client" :"300"
 			},
 			oMetadataRequestor,
 			sUrl = "/~/";
 
 		this.mock(_Helper).expects("buildQuery")
-			.withExactArgs(sinon.match.same(oQueryParams))
+			.withExactArgs(sinon.match.same(mQueryParams))
 			.returns("?...");
 
 		oJQueryMock.expects("ajax")
 			.withExactArgs(sUrl + "?...", {
-				headers : sinon.match.same(oHeaders),
+				headers : sinon.match.same(mHeaders),
 				method : "GET"
 			}).returns(createMock(oExpectedXml));
 
@@ -93,7 +111,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oExpectedXml))
 			.returns(oExpectedJson);
 
-		oMetadataRequestor = _MetadataRequestor.create(oHeaders, oQueryParams);
+		oMetadataRequestor = _MetadataRequestor.create(mHeaders, mQueryParams);
 		assert.strictEqual(typeof oMetadataRequestor, "object");
 
 		return oMetadataRequestor.read(sUrl).then(function (oResult) {
@@ -101,12 +119,51 @@ sap.ui.require([
 
 			oJQueryMock.expects("ajax")
 				.withExactArgs(sUrl, {
-					headers : sinon.match.same(oHeaders),
+					headers : sinon.match.same(mHeaders),
 					method : "GET"
 				}).returns(createMock(oExpectedXml));
 
 			// code under test
 			return oMetadataRequestor.read(sUrl, true); //no query string
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bHasLastModified) {
+		var sTitle = bHasLastModified
+			? "read: success with Last-Modified"
+			: "read: success with Date only, no Last-Modified";
+
+		QUnit.test(sTitle, function (assert) {
+			var sDate = "Tue, 18 Apr 2017 14:40:29 GMT",
+				oExpectedJson = {
+					"$Version" : "4.0",
+					"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>"
+				},
+				oExpectedXml = "xml",
+				oJQueryMock = this.mock(jQuery),
+				mHeaders = {},
+				sLastModified = bHasLastModified ? "Fri, 07 Apr 2017 11:21:50 GMT" : null,
+				oMetadataRequestor = _MetadataRequestor.create(mHeaders),
+				sUrl = "/~/";
+
+			oJQueryMock.expects("ajax")
+				.withExactArgs(sUrl, {
+					headers : sinon.match.same(mHeaders),
+					method : "GET"
+				}).returns(createMock(oExpectedXml, false, sDate, sLastModified));
+			this.mock(_MetadataConverter).expects("convertXMLMetadata")
+				.withExactArgs(sinon.match.same(oExpectedXml))
+				.returns(oExpectedJson);
+
+			// code under test
+			return oMetadataRequestor.read(sUrl).then(function (oResult) {
+				assert.deepEqual(oResult, {
+					"$Version" : "4.0",
+					"$EntityContainer" : "<5.1.1 Schema Namespace>.<13.1.1 EntityContainer Name>",
+					"$LastModified" : bHasLastModified ? sLastModified : sDate
+				});
+			});
 		});
 	});
 
