@@ -593,10 +593,6 @@ QUnit.test("Event beforeUploadStarts", function(assert) {
 });
 
 QUnit.test("Drop file in UploadCollection", function(assert) {
-	if (sap.ui.Device.browser.phantomJS) {
-		assert.expect(0);
-		return;
-	}
 	//Arrange
 	var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 	var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
@@ -624,10 +620,6 @@ QUnit.test("Drop file in UploadCollection", function(assert) {
 });
 
 QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
-	if (sap.ui.Device.browser.phantomJS) {
-		assert.expect(0);
-		return;
-	}
 	//Arrange
 	this.oUploadCollection.setMultiple(false);
 	sap.ui.getCore().applyChanges();
@@ -745,10 +737,6 @@ QUnit.test("Check file list", function(assert) {
 });
 
 QUnit.test("Delete PendingUpload item which comes from drag and drop", function(assert) {
-	if (sap.ui.Device.browser.phantomJS) {
-		assert.expect(0);
-		return;
-	}
 	//Arrange
 	var oStubCheckForFiles = sinon.stub(this.oUploadCollection, "_checkForFiles").returns(true);
 	var oEvent = jQuery.Event("drop", {
