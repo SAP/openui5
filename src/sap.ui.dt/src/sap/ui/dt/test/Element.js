@@ -62,14 +62,15 @@ function(jQuery, ElementUtil, OverlayRegistry) {
 			overlayGeometryCalculatedByChildren : false,
 			overlayVisible : false
 		};
+		var oDesignTimeMetadata;
 
 		var mElementInfo = this.getInfo(oElement);
 		var oAggregationOverlay = mElementInfo.overlay.getAggregationOverlay(sAggregationName);
 		if (oAggregationOverlay) {
-			var oDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
+			oDesignTimeMetadata = oAggregationOverlay.getDesignTimeMetadata();
 		}
 
-		if (oDesignTimeMetadata && !oDesignTimeMetadata.isIgnored()) {
+		if (oDesignTimeMetadata && !oDesignTimeMetadata.isIgnored(oElement)) {
 			mAggregationTest.ignored = false;
 			mAggregationTest.domRefDeclared = !!oDesignTimeMetadata.getDomRef();
 			var oAggregationDomRef = oAggregationOverlay.getAssociatedDomRef();
