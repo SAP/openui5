@@ -20,9 +20,6 @@
     <jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage" >
       <exclude name="sap.ui.dt.js." />
     </jscoverage>
-    <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
-        indexUrl="../../../../test-resources/sap/ui/dt/demokit/docuindex.json"
-        resolve="lib" />
     <releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
         url="../../../../test-resources/sap/ui/dt/relnotes/changes-{major}.{minor}.json"
         resolve="lib" />
