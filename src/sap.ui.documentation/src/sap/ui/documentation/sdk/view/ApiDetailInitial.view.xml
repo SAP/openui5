@@ -11,9 +11,15 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							class="sapUiNoContentPadding">
-						<Image
-								src="./resources/sap/ui/documentation/sdk/images/M_and_L_cropped_277889.png"
-								width="100%"/>
+						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
+								width="100%"
+								densityAware="false"
+								visible="{device>/system/phone}"/>
+						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_M_and_L_cropped.jpg"
+								width="100%"
+								visible="{=!${device>/system/phone}}"/>
+						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderTitleText" text="API Reference" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderSubText" text="Application programming interface references for the UI5 control libraries" width="100%" textAlign="Left"/>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 

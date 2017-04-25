@@ -9,15 +9,23 @@
 			height="100%"
 			horizontal="false"
 			vertical="true">
-		<l:BlockLayout
-				background="Mixed">
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="sapUiNoContentPadding">
-					<Image
-							src="./resources/sap/ui/documentation/sdk/images/M_and_L_Cropped_274115.png"
-							width="100%"/>
-				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
+
+			<l:BlockLayout
+					background="Mixed">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell class="sapUiNoContentPadding">
+						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
+								width="100%"
+								densityAware="false"
+								visible="{device>/system/phone}"/>
+						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped.jpg"
+								width="100%"
+								densityAware="false"
+								visible="{=!${device>/system/phone}}"/>
+						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText" text="Explored" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText" text="Explore the samples, code snippets and download options" width="100%" textAlign="Left"/>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
