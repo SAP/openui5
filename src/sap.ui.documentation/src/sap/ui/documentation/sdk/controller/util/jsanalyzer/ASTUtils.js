@@ -3,7 +3,7 @@
  */
 
 // Provides implementation of sap.ui.documentation.sdk.controller.util.jsanalyzer.ASTUtils
-sap.ui.define(['jquery.sap.global', './esprima'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/controller/util/esprima'],
 	function(jQuery, esprima_) {
 	"use strict";
 

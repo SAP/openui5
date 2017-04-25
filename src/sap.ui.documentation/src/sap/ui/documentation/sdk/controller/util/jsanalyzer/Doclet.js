@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-// Provides implementation of sap.ui.documentation.sdk.controller.util.jsanalyzer.Doclet
+// Provides implementation of sap.ui.documentation.sdk.util.jsanalyzer.Doclet
 sap.ui.define(['jquery.sap.global'],
-	function (jQuery, esprima_) {
+	function (jQuery) {
 
 		"use strict";
 

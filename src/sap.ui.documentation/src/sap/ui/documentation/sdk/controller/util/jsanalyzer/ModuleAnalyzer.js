@@ -3,7 +3,8 @@
  */
 
 // Provides implementation of sap.ui.documentation.sdk.controller.util.jsanalyzer.EntityParser
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTUtils', './Doclet', './esprima'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTUtils', './Doclet',
+	'sap/ui/documentation/sdk/controller/util/esprima'],
 	function (jQuery, MOMetadata, ASTUtils, Doclet, esprima_) {
 
 		"use strict";
