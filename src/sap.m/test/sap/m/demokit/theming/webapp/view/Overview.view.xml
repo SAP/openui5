@@ -7,58 +7,34 @@
 	xmlns:f="sap.f"
 	xmlns:semantic="sap.m.semantic"
 	xmlns:mylib="sap.ui.demo.theming.control">
-
 	<semantic:FullscreenPage
 		id="page"
 		showFooter="false"
 		title="{i18n>semanticFullscreenPageTitle}">
 		<semantic:content>
-			<IconTabBar>
+			<IconTabBar
+				stretchContentHeight="true"
+				expandable="false">
 				<items>
 					<IconTabFilter
 						text="{i18n>IconTabFilterText}"
-						tooltip="{i18n>IconTabFilterTooltip}"/>
+						tooltip="{i18n>IconTabFilterTooltip}"
+						icon="sap-icon://list"
+						/>
 				</items>
 				<content>
 					<l:ResponsiveSplitter id="splitter" defaultPane="default">
 						<l:PaneContainer>
 							<l:SplitPane requiredParentWidth="400" id="default">
 								<ScrollContainer>
-									<OverflowToolbar>
-												<SearchField
-												width="auto"
-												id="searchField"
-												tooltip="{i18n>masterSearchTooltip}"
-												liveChange="onSearch">
-												<layoutData>
-													<OverflowToolbarLayoutData/>
-												</layoutData>
-												</SearchField>
-												<ComboBox
-												width="auto"
-												id="comboBox"
-												items="{/items}"
-												change="onThemeChange"
-												placeholder="{i18n>ComboBoxPlaceholder}"
-												tooltip="{i18n>ComboBoxTooltip}">
-													<core:Item key="{key}" text="{text}"/>
-													<layoutData>
-													<OverflowToolbarLayoutData />
-												</layoutData>
-												</ComboBox>
-										<ToolbarSpacer/>
-											<ToggleButton  type="Transparent" id="tbColor" press="onPressColor" icon="sap-icon://palette" text="{i18n>ToggleButtonColorText}" />
-											<ToggleButton  type="Transparent" id="tbDimension" press="onPressDimension"  icon="sap-icon://dimension" text="{i18n>ToggleButtonDimensionText}" />
-											<ToggleButton  type="Transparent" id="tbImage" press="onPressImage"  icon="sap-icon://background" text="{i18n>ToggleButtonImageText}" />
-											<ToggleButton  type="Transparent" id="tbOpacity" press="onPressOpacity"  icon="sap-icon://customize" text="{i18n>ToggleButtonOpacityText}" />
-										<ToolbarSeparator/>
-											<ToggleButton type="Transparent" id="tbExpert" press="onPressExpert"  text="{i18n>ToggleButtonExpertText}" />
-											<ToggleButton type="Transparent" id="tbQuick" press="onPressQuick"  text="{i18n>ToggleButtonQuickText}" />
-									</OverflowToolbar>
-
-									<Table id="oTable"
-									       inset="false"
-								   	       items="{path: '/Data'}">
+									<Panel id="idPanel" class="padding">
+									</Panel>
+									<Table
+									 id="oTable"
+									 inset="false"
+								     items="{path: '/Data'}"
+								   	 class="alignment"
+								   	 mode= "SingleSelectMaster">
 										<headerToolbar>
 											<OverflowToolbar>
 												<Title id="title" text="">
@@ -76,18 +52,14 @@
 												<ToggleButton  type="Transparent" id="tbShell" press="onPressShell"  text="{i18n>ToggleButtonShellText}" />
 												<ToggleButton  type="Transparent" id="tbTile" press="onPressTile"  text="{i18n>ToggleButtonTileText}" />
 												<ToggleButton  type="Transparent" id="tbToolbar" press="onPressToolbar"  text="{i18n>ToggleButtonToolbarText}" />
-												<ToggleButton  icon="sap-icon://sort" tooltip="Sort Class" press="sortClass"/>
-										</OverflowToolbar>
+												<ToggleButton  icon="sap-icon://sort" tooltip="{i18n>ToggleButtonGroupTooltip}" press="sortClass"/>
+											</OverflowToolbar>
 										</headerToolbar>
 										<columns>
-											<Column
-												minScreenWidth="Tablet"
-												demandPopin="true">
-												<Text text="{i18n>TableColumnPreviewText}" />
+											<Column>
+												<Text  text="{i18n>TableColumnPreviewText}" />
 											</Column>
-											<Column
-												minScreenWidth="Tablet"
-												demandPopin="true">
+											<Column>
 												<Text text="{i18n>TableColumnUI5ParameterText}" />
 											</Column>
 											<Column
@@ -113,14 +85,24 @@
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<Text text="{i18n>TableColumnClassText}" />
+												<FlexBox alignItems="Center" justifyContent="Start">
+												<items>
+												<Text text="{i18n>TableColumnClassText}" class="sapUiSmallMarginEnd"/>
+												<Button
+												id="showInformation"
+												icon="sap-icon://hint"
+												tooltip="{i18n>ToggleButtonGroupTooltip}"
+												press="onPressInformation"
+												class="sapUiHideOnPhone"/>
+												</items>
+												</FlexBox>
 											</Column>
 										</columns>
 										<items>
-											<ColumnListItem id="oTableItem" vAlign="Middle" >
+											<ColumnListItem id="oTableItem" vAlign="Middle">
 												<cells>
 													<mylib:ColorPreview id="ColorPreview" color="{colors}"/>
-													<Text text="{name}"/>
+													<Label text="{name}" design="Bold"/>
 													<Text text="{color}"/>
 													<Text text="{controlgroup}"/>
 													<Text text="{parameter}"/>

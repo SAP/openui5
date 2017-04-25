@@ -1,0 +1,25 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<QuickView id="quickView" navigate=".onNavigate" placement="Left">
+		<QuickViewPage
+				header="{i18n>QuickViewPageHeader}">
+			<QuickViewGroup>
+				<QuickViewGroupElement
+						label="{i18n>LabelQuickViewClass1}"
+						value="{i18n>ValueQuickViewClass1}">
+				</QuickViewGroupElement>
+				<QuickViewGroupElement
+						label="{i18n>LabelQuickViewClass2}"
+						value="{i18n>ValueQuickViewClass2}">
+				</QuickViewGroupElement>
+				<QuickViewGroupElement
+						label="{i18n>LabelQuickViewClass3}"
+						value="{i18n>ValueQuickViewClass3}">
+				</QuickViewGroupElement>
+				<QuickViewGroupElement
+						label="{i18n>LabelQuickViewClass4}"
+						value="{i18n>ValueQuickViewClass4}">
+				</QuickViewGroupElement>
+			</QuickViewGroup>
+		</QuickViewPage>
+	</QuickView>
+</core:FragmentDefinition>
