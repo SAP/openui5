@@ -1580,8 +1580,8 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", "Jonathan Smith")
-				.expectChange("name", "Jonathan Smith"); // TODO unexpected 2nd change
+				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
 				.setParameter("EmployeeID", "1")
@@ -1833,6 +1833,88 @@ sap.ui.require([
 				})
 			.expectChange("text", ["Frederic Fall", "Peter Burke"]);
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: master/detail where the detail does not need additional $expand/$select and thus
+	// should reuse its parent's cache
+	QUnit.test("Auto-$expand/$select: simple master/detail", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text0" text="{Team_Id}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="detail" binding="{}">\
+	<Text id="text1" text="{Team_Id}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+					"value" : [{
+						"Team_Id" : "TEAM_01"
+					}]
+				})
+			.expectChange("text0", ["TEAM_01"])
+			.expectChange("text1"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+
+			that.expectChange("text1", "TEAM_01");
+
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: master/detail where the detail needs additional $expand/$select and thus cannot
+	// reuse its parent's cache
+	QUnit.test("Auto-$expand/$select: master/detail with separate requests", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text0" text="{Team_Id}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="detail" binding="{}">\
+	<Text id="text1" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				"value" : [{
+					"Team_Id" : "TEAM_01"
+				}]
+			})
+			.expectChange("text0", ["TEAM_01"])
+			.expectChange("text1"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id,Name", {
+					"Team_Id" : "TEAM_01",
+					"Name" : "Team #1"
+				})
+				.expectChange("text1", "Team #1");
+
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
 	});
 });
 //TODO $batch?

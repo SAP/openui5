@@ -219,20 +219,19 @@ sap.ui.define([
 		var sExpandSelectPath = "",
 			i,
 			aMetaPathSegments = sChildMetaPath.split("/"),
-			oMetaModel = this.oModel.oMetaModel,
 			oProperty,
 			sPropertyMetaPath = sBaseMetaPath,
 			mQueryOptions = {},
 			mQueryOptionsForPathPrefix = mQueryOptions;
 
 		if (sChildMetaPath === "") {
-			return {};
+			return mChildQueryOptions;
 		}
 
 		for (i = 0; i < aMetaPathSegments.length; i += 1) {
 			sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
 			sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
-			oProperty = oMetaModel.getObject(sPropertyMetaPath);
+			oProperty = this.oModel.oMetaModel.getObject(sPropertyMetaPath);
 			if (oProperty.$kind === "NavigationProperty") {
 				mQueryOptionsForPathPrefix.$expand = {};
 				mQueryOptionsForPathPrefix = mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
@@ -358,7 +357,7 @@ sap.ui.define([
 			});
 		}
 
-		if (sChildPath === "$count" || sChildPath.slice(-7) === "/$count") {
+		if (this.oOperation || sChildPath === "$count" || sChildPath.slice(-7) === "/$count") {
 			return _SyncPromise.resolve(true);
 		}
 
@@ -388,8 +387,9 @@ sap.ui.define([
 			if (Object.keys(that.mAggregatedQueryOptions).length === 0) {
 				that.mAggregatedQueryOptions = jQuery.extend(true, {}, mLocalQueryOptions);
 			}
-			if (oProperty && (oProperty.$kind === "Property"
-					|| oProperty.$kind === "NavigationProperty")) {
+			if (sChildMetaPath === ""
+				|| oProperty
+				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
 				mWrappedChildQueryOptions = that.wrapChildQueryOptions(sBaseMetaPath,
 					sChildMetaPath, mChildQueryOptions);
 				if (mWrappedChildQueryOptions){
@@ -485,11 +485,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.aggregateQueryOptions = function (mQueryOptions) {
-		var bCanMerge,
-			mAggregatedQueryOptions = jQuery.extend(true, {}, this.mAggregatedQueryOptions);
+		var mAggregatedQueryOptionsClone = jQuery.extend(true, {}, this.mAggregatedQueryOptions),
+			// changes to mAggregatedQueryOptions are allowed only if no cache is created yet;
+			// the case that cache creation already failed is treated the same here (intentionally!)
+			bIsCacheCreated = !(this.oCachePromise && this.oCachePromise.isPending());
 
 		/*
 		 * Recursively merges the given query options into the given aggregated query options.
+		 *
 		 * @param {object} mAggregatedQueryOptions The aggregated query options
 		 * @param {object} mQueryOptions The query options to merge into the aggregated query
 		 *   options
@@ -500,8 +503,9 @@ sap.ui.define([
 			var mExpandValue,
 				aSelectValue;
 
-			/**
+			/*
 			 * Recursively merges the expand path into the aggregated query options.
+			 *
 			 * @param {string} sExpandPath The expand path
 			 * @returns {boolean} Whether the query options could be merged
 			 */
@@ -510,7 +514,26 @@ sap.ui.define([
 					return merge(mAggregatedQueryOptions.$expand[sExpandPath],
 						mQueryOptions.$expand[sExpandPath], true);
 				}
+				if (bIsCacheCreated) {
+					return false;
+				}
 				mAggregatedQueryOptions.$expand[sExpandPath] = mExpandValue[sExpandPath];
+				return true;
+			}
+
+			/*
+			 * Merges the select path into the aggregated query options.
+			 *
+			 * @param {string} sSelectPath The select path
+			 * @returns {boolean} Whether the query options could be merged
+			 */
+			function mergeSelectPath(sSelectPath) {
+				if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
+					if (bIsCacheCreated) {
+						return false;
+					}
+					mAggregatedQueryOptions.$select.push(sSelectPath);
+				}
 				return true;
 			}
 
@@ -524,11 +547,9 @@ sap.ui.define([
 			aSelectValue = mQueryOptions && mQueryOptions.$select;
 			if (aSelectValue) {
 				mAggregatedQueryOptions.$select = mAggregatedQueryOptions.$select || [];
-				aSelectValue.forEach(function (sSelectPath) {
-					if (mAggregatedQueryOptions.$select.indexOf(sSelectPath) < 0) {
-						mAggregatedQueryOptions.$select.push(sSelectPath);
-					}
-				});
+				if (!aSelectValue.every(mergeSelectPath)) {
+					return false;
+				}
 			}
 			if (mQueryOptions && mQueryOptions.$count) {
 				mAggregatedQueryOptions.$count = true;
@@ -543,11 +564,11 @@ sap.ui.define([
 				});
 		}
 
-		bCanMerge = merge(mAggregatedQueryOptions, mQueryOptions);
-		if (bCanMerge) {
-			this.mAggregatedQueryOptions = mAggregatedQueryOptions;
+		if (merge(mAggregatedQueryOptionsClone, mQueryOptions)) {
+			this.mAggregatedQueryOptions = mAggregatedQueryOptionsClone;
+			return true;
 		}
-		return bCanMerge;
+		return false;
 	};
 
 	/**
