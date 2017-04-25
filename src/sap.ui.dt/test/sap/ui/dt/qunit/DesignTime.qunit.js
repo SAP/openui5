@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/plugin/TabHandling',
 	// should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/qunit/qunit-coverage',
@@ -28,6 +29,7 @@ function(
 	OverlayRegistry,
 	DesignTime,
 	ElementUtil,
+	TabHandling,
 	sinon
 ) {
 	"use strict";
@@ -241,10 +243,18 @@ function(
 	});
 
 	QUnit.test("when the DesignTime is destroyed", function(assert) {
+		var oTabHandlingPlugin = new TabHandling();
+		var oRegisterPluginSpy = sinon.spy(oTabHandlingPlugin, "registerElementOverlay");
+		var oDeregisterPluginSpy = sinon.spy(oTabHandlingPlugin, "deregisterElementOverlay");
+
+		this.oDesignTime.addPlugin(oTabHandlingPlugin);
+		assert.strictEqual(oRegisterPluginSpy.called, true, "then the registerElementOverlay method was called");
+
 		this.oDesignTime.destroy();
 		assert.strictEqual(isOverlayForElementInDesignTime(this.oOuterLayout, this.oDesignTime), false, "overlay for layout destroyed");
 		assert.strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "overlay for button1 destroyed");
 		assert.strictEqual(isOverlayForElementInDesignTime(this.oButton2, this.oDesignTime), false, "overlay for button2 destroyed");
+		assert.strictEqual(oDeregisterPluginSpy.called, true, "then the deregisterElementOverlay method was called after destroy");
 	});
 
 	QUnit.test("when the element inside of the DesignTime is destroyed", function(assert) {

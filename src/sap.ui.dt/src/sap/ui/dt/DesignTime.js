@@ -181,6 +181,12 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	DesignTime.prototype.exit = function() {
 		delete this._iOverlaysPending;
 		delete this._aOverlaysCreatedInLastBatch;
+
+		// The plugins need to be destroyed before the overlays in order to go through the deregisterElementOverlay Methods
+		this.getPlugins().forEach(function(oPlugin) {
+			oPlugin.destroy();
+		});
+
 		this._destroyAllOverlays();
 		this._oSelection.destroy();
 	};
