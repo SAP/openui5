@@ -6,13 +6,14 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<meta charset="utf-8">
 
+	<script src="documentation-config.js"></script>
 	<script
 			id='sap-ui-bootstrap'
 			type='text/javascript'
 			src='resources/sap-ui-core.js'
 			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-theme='sap_belize'
-			data-sap-ui-libs='sap.ui.layout, sap.m'
+			data-sap-ui-libs='sap.ui.layout, sap.m, sap.uxap, sap.f, sap.tnt, sap.ui.codeeditor'
 			data-sap-ui-compatVersion="1.16"
 			data-sap-ui-resourceroots='{
 			"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"
@@ -21,14 +22,19 @@
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
-			sap.ui.require(['sap/ui/documentation/sdk/controller/util/APIInfo'], function(APIInfo) {
-				//APIInfo._setRoot("http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/test-resources/");
-				APIInfo._setRoot("http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/test-resources/");
-			});
 
-			sap.ui.require(['sap/ui/documentation/sdk/Component'], function(Comp) {
-				Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = "./resources/sap/ui/documentation/sdk/model/data/guide/";
-			});
+
+			if (typeof window['sap-ui-documentation-config'] === "object") {
+				sap.ui.require(['sap/ui/documentation/sdk/controller/util/APIInfo'], function (APIInfo) {
+					APIInfo._setRoot(window['sap-ui-documentation-config'].apiInfoRoot);
+				});
+
+				sap.ui.require(['sap/ui/documentation/sdk/Component'], function (Comp) {
+					Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = window['sap-ui-documentation-config'].docuPath;
+				});
+			} else {
+				jQuery.sap.log.error("No local documentation configuration found");
+			}
 
 			sap.ui.require([
 				"sap/m/Page",
