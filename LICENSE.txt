@@ -306,11 +306,11 @@ Licensor: Various
 Website: http://code.google.com/p/google-code-prettify/
 License: Apache License 2.0
 
-Component: Handlebars 3.0.3
+Component: Handlebars 4.0.5
 Licensor: Yehuda Katz
 Website: http://handlebarsjs.com/
 License: MIT License
-<year> = 2011-2014
+<year> = 2011-2015
 <copyright holders> = Yehuda Katz
 
 Component: Hasher 1.2.0
