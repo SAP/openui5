@@ -165,10 +165,10 @@
 				oDateTimePicker.focus();
 				qutils.triggerEvent("click", "DTPMinMax-icon");
 
-				oFocusedDate = oDateTimePicker._oCalendar._getFocusedDate().getJSDate();
+				oFocusedDate = oDateTimePicker._oCalendar._getFocusedDate().toUTCJSDate();
 
 				//assert
-				assert.ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "oDateTimePicker: focused date equals min date when current date is out of the min/max range");
+				assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "oDateTimePicker: focused date equals min date when current date is out of the min/max range");
 
 				//clean
 				oDateTimePicker.destroy();

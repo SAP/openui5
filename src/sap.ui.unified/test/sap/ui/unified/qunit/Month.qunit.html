@@ -17,8 +17,9 @@
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 		<script>
-
+			jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 			(function () {
+				var CalendarDate = sap.ui.unified.calendar.CalendarDate;
 				/**
 				 * Generate correct Date even for years before 1901
 				 * @param iYear {int} [0..9999] Full Year
@@ -39,6 +40,26 @@
 						oDate.setFullYear(iYear);
 					}
 					return oDate;
+				};
+
+				/**
+				 * Generate correct Date even for years before 1901
+				 * @param iYear {int} [0..9999] Full Year
+				 * @param iMonth {int} [0..11] Zero based month index
+				 * @param iDay {int} [1..31] Day of the month
+				 * @param [bUTC=false] {boolean} Should the returned date be a UTC date
+				 * @returns {sap.ui.unified.calendar.CalendarDate} Date
+				 */
+				var createCalendarDate = function (iYear, iMonth, iDay, bUTC) {
+					var oCalDate;
+					// Note setFullYear/setUTCFullYear needed to explicitly switch to years before 1901 which is not supported with the constructor
+					// or with the deprecated setYear setter
+					if (bUTC) {
+						oCalDate = new CalendarDate(iYear, iMonth, iDay);
+					} else {
+						oCalDate = CalendarDate.fromLocalJSDate(new Date(iYear, iMonth, iDay));
+					}
+					return oCalDate;
 				};
 
 				QUnit.module("Rendering", {
@@ -91,22 +112,22 @@
 					},
 					/**
 					 * Assert the date range returned for rendering from the method.
-					 * @param oFocusDate {Date} The first day of the target month.
-					 * @param oFirstVisibleDate {Date} Expected first visible day.
-					 * @param oLastVisibleDate {Date} Expected last visible day.
-					 * @param iVisibleDays {int} Expected visible days.
+					 * @param {sap.ui.unified.calendar.CalendarDate} oFocusDate The first day of the target month.
+					 * @param {sap.ui.unified.calendar.CalendarDate} oFirstVisibleDate Expected first visible day.
+					 * @param {sap.ui.unified.calendar.CalendarDate} oLastVisibleDate Expected last visible day.
+					 * @param {int} iVisibleDaysExpected visible days.
 					 * @param sTargetMonthName {string} Name of the target month used for test description.
 					 * @param {boolean} [bForRendering=false] should days before 0001-01-01 be included in the returned array.
 					 */
 					assertByDate: function (oFocusDate, oFirstVisibleDate, oLastVisibleDate, iVisibleDays, sTargetMonthName, bForRendering) {
 						var aDays = this.oM._getVisibleDays(oFocusDate, bForRendering),
-							sExpectedFirstDay = oFirstVisibleDate.toUTCString(),
-							sExpectedLastDay = oLastVisibleDate.toUTCString();
+							sExpectedFirstDay = oFirstVisibleDate.toString(),
+							sExpectedLastDay = oLastVisibleDate.toString();
 
 						// Assert
-						assert.strictEqual(aDays[0].oDate.toUTCString(), sExpectedFirstDay,
+						assert.strictEqual(aDays[0].toString(), sExpectedFirstDay,
 							"For " + sTargetMonthName + " the first day should be: " + sExpectedFirstDay);
-						assert.strictEqual(aDays[aDays.length - 1].oDate.toUTCString(), sExpectedLastDay,
+						assert.strictEqual(aDays[aDays.length - 1].toString(), sExpectedLastDay,
 							"For " + sTargetMonthName + " the last day should be: " + sExpectedLastDay);
 						assert.strictEqual(aDays.length, iVisibleDays, "There should be " + iVisibleDays + " returned.");
 					}
@@ -114,9 +135,9 @@
 
 				QUnit.test("Days in front and in back of the month should be added", function (assert) {
 					this.assertByDate(
-						createDate(2016, 10, 1, true),
-						createDate(2016, 9, 30, true),
-						createDate(2016, 11, 3, true),
+						createCalendarDate(2016, 10, 1, true),
+						createCalendarDate(2016, 9, 30, true),
+						createCalendarDate(2016, 11, 3, true),
 						35,
 						"November 2016"
 					);
@@ -124,9 +145,9 @@
 
 				QUnit.test("Days in front of the month should be added", function (assert) {
 					this.assertByDate(
-						createDate(2016, 11, 1, true),
-						createDate(2016, 10, 27, true),
-						createDate(2016, 11, 31, true),
+						createCalendarDate(2016, 11, 1, true),
+						createCalendarDate(2016, 10, 27, true),
+						createCalendarDate(2016, 11, 31, true),
 						35,
 						"December 2016"
 					);
@@ -134,9 +155,9 @@
 
 				QUnit.test("Days in back of the month should be added", function (assert) {
 					this.assertByDate(
-						createDate(2017, 0, 1, true),
-						createDate(2017, 0, 1, true),
-						createDate(2017, 1, 4, true),
+						createCalendarDate(2017, 0, 1, true),
+						createCalendarDate(2017, 0, 1, true),
+						createCalendarDate(2017, 1, 4, true),
 						35,
 						"January 2017"
 					);
@@ -144,9 +165,9 @@
 
 				QUnit.test("Only days corresponding to the current month", function (assert) {
 					this.assertByDate(
-						createDate(2015, 1, 1, true),
-						createDate(2015, 1, 1, true),
-						createDate(2015, 1, 28, true),
+						createCalendarDate(2015, 1, 1, true),
+						createCalendarDate(2015, 1, 1, true),
+						createCalendarDate(2015, 1, 28, true),
 						28,
 						"February 2015"
 					);
@@ -154,9 +175,9 @@
 
 				QUnit.test("Corner case for January year 0001", function (assert) {
 					this.assertByDate(
-						createDate(1, 0, 1, true),
-						createDate(1, 0, 1, true),
-						createDate(1, 1, 3, true),
+						createCalendarDate(1, 0, 1, true),
+						createCalendarDate(1, 0, 1, true),
+						createCalendarDate(1, 1, 3, true),
 						34,
 						"January 0001"
 					);
@@ -164,9 +185,9 @@
 
 				QUnit.test("Corner case for January year 0001 called with parameter for rendering", function (assert) {
 					this.assertByDate(
-						createDate(1, 0, 1, true),
-						createDate(0, 11, 31, true),
-						createDate(1, 1, 3, true),
+						createCalendarDate(1, 0, 1, true),
+						createCalendarDate(0, 11, 31, true),
+						createCalendarDate(1, 1, 3, true),
 						35,
 						"January 0001",
 						true
@@ -175,9 +196,9 @@
 
 				QUnit.test("Corner case December year 9999 there should be no day returned from year 10000", function (assert) {
 					this.assertByDate(
-						createDate(9999, 11, 1, true),
-						createDate(9999, 10, 28, true),
-						createDate(9999, 11, 31, true),
+						createCalendarDate(9999, 11, 1, true),
+						createCalendarDate(9999, 10, 28, true),
+						createCalendarDate(9999, 11, 31, true),
 						34,
 						"December 2015"
 					);

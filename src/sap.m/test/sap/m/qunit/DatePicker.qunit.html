@@ -415,7 +415,7 @@
 				oDP3.setDateValue();
 				oDP3._fillDateRange();
 				var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
-				var oFocusedDate = oDP3._oCalendar._getFocusedDate().getJSDate();
+				var oFocusedDate = oDP3._oCalendar._getFocusedDate().toUTCJSDate();
 				assert.ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "DP3: focused date equals min date when current date is out of the min/max range");
 
 				oNewDate = new Date(2014, 0, 1);

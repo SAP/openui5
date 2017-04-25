@@ -26,8 +26,9 @@
 	<![endif]-->
 	<script>
 		jQuery.sap.require("sap.ui.unified.calendar.CalendarUtils");
+		jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 		var CalendarUtils = sap.ui.unified.calendar.CalendarUtils,
-				UniversalDate = sap.ui.core.date.UniversalDate;
+				CalendarDate = sap.ui.unified.calendar.CalendarDate;
 
 		//the SUT won't be destroyed when single test is run
 		var bSkipDestroy = !!jQuery.sap.getUriParameters().get("testId");
@@ -169,7 +170,7 @@
 			var oSut = this.oPC._oOneMonthInterval,
 					oSpyDatesRow_setDate = this.spy(this.sutMonth, "setDate"),
 					oSpy_setFocusedDate = this.spy(oSut, "_setFocusedDate");
-			oSut._oFocusDateOneMonth = new UniversalDate(Date.UTC(2015, 0, 31));
+			oSut._oFocusDateOneMonth = new CalendarDate(2015, 0, 31);
 
 			//act
 			oSut._focusDateExtend();
@@ -177,7 +178,7 @@
 			//assert
 			assert.equal(oSpy_setFocusedDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set as focused date " +
 			"(call to _setFocusedDate)");
-			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].getJSDate().toString(), new Date(Date.UTC(2015, 0, 31)).toString(),
+			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].toUTCJSDate().toString(), new Date(Date.UTC(2015, 0, 31)).toString(),
 					"_setFocusedDate should be called with certain date parameter");
 
 			assert.equal(oSpyDatesRow_setDate.callCount, 1, "When this._oFocusedDateOneMonth present, it is set to " +
@@ -191,18 +192,18 @@
 			var oSut = this.oPC._oOneMonthInterval,
 				oSpy_setFocusedDate = this.spy(oSut, "_setFocusedDate"),
 				oSpy_setStartDate = this.spy(oSut, "_setStartDate"),
-				oStartDate = new UniversalDate(Date.UTC(2014, 11, 1)),
-				oFocusedDate = new UniversalDate(Date.UTC(2014, 11, 1)),
+				oStartDate = new CalendarDate(2014, 11, 1),
+				oFocusedDate = new CalendarDate(2014, 11, 1),
 				iDays;
 
 			iDays = 31; //to move to the next month
 			oSut._shiftStartFocusDates(oStartDate, oFocusedDate, iDays);
 
 			//assert
-			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].getJSDate().toString(),
+			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].toUTCJSDate().toString(),
 					new Date(Date.UTC(2015, 0, 1)).toString(),
 					"_setFocusedDate should be called with certain date parameter");
-			assert.equal(oSpy_setStartDate.getCall(0).args[0].toString(),
+			assert.equal(oSpy_setStartDate.getCall(0).args[0].toUTCJSDate().toString(),
 					new Date(Date.UTC(2015, 0, 1)).toString(),
 					"_setStartDate should be called with certain date parameter");
 
@@ -210,10 +211,10 @@
 			oSut._shiftStartFocusDates(oStartDate, oFocusedDate, iDays);
 
 			//assert
-			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].getJSDate().toString(),
+			assert.equal(oSpy_setFocusedDate.getCall(0).args[0].toUTCJSDate().toString(),
 					new Date(Date.UTC(2014, 11, 1)).toString(),
 					"_setFocusedDate should be called with certain date parameter");
-			assert.equal(oSpy_setStartDate.getCall(0).args[0].toString(),
+			assert.equal(oSpy_setStartDate.getCall(0).args[0].toUTCJSDate().toString(),
 					new Date(Date.UTC(2014, 11, 1)).toString(),
 					"_setStartDate should be called with certain date parameter");
 		});

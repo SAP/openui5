@@ -10,15 +10,15 @@
  * @public
  */
 
-// Provides class sap.ui.unified.caledar.CalendarUtils
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
-	function (jQuery, UniversalDate) {
+// Provides class sap.ui.unified.calendar.CalendarUtils
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', './CalendarDate'],
+	function (jQuery, UniversalDate, CalendarDate) {
 		"use strict";
 
 		// Static class
 
 		/**
-		 * @alias sap.ui.unified.caledar.CalendarUtils
+		 * @alias sap.ui.unified.calendar.CalendarUtils
 		 * @namespace
 		 * @private
 		 */
@@ -30,6 +30,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		 * @private
 		 */
 		CalendarUtils.MAX_MILLISECONDS = 8640000000000000;
+
+		/**
+		 * 24 hours as milliseconds
+		 * @type {number} milliseconds
+		 * @private
+		 */
+		CalendarUtils.HOURS24 = 1000 * 3600 * 24;
 
 		/**
 		 * Creates a Date in local timezone from UTC timezone
@@ -285,20 +292,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			return oNextDay.getUTCDate() < oDate.getUTCDate();
 		};
 
-		/**
-		 * Returns the last day in a month
-		 * @param {Date} local date
-		 * @returns {Date } the JS Date corresponding to the last day for the given month
-		 * @private
-		 */
-		CalendarUtils._getLastDayInMonth = function(oDate) {
-			var oUniversalDate = this._createUniversalUTCDate(oDate);
-
-			oUniversalDate.setUTCMonth(oUniversalDate.getUTCMonth() + 1);
-			oUniversalDate.setUTCDate(0);
-
-			return this._createLocalDate(oUniversalDate);
-		};
 
 		/**
 		 * Sets the given values to the Date
@@ -344,8 +337,197 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		 */
 		CalendarUtils._checkYearInValidRange = function(iYear) {
 			if (!jQuery.isNumeric(iYear) || (iYear < 1 || iYear > 9999)) {
-				 throw new Error("Year must be in valid range (between year 0001 and year 9999).");
+				throw new Error("Year must be in valid range (between year 0001 and year 9999).");
 			}
+		};
+
+		/**
+		 * Compares the given month and the one from the <code>startDate</code>.
+		 *
+		 * @param {Date} oDate1 JavaScript date
+		 * @param {Date} oDate2 JavaScript date
+		 * @return {boolean} true if the first date's month is chronologically after the second
+		 * @private
+		 */
+		CalendarUtils._isNextMonth = function(oDate1, oDate2) {
+			return (oDate1.getMonth() > oDate2.getMonth() && oDate1.getFullYear() === oDate2.getFullYear())
+				|| oDate1.getFullYear() > oDate2.getFullYear();
+		};
+
+		 // Utilities for working with sap.ui.unified.calendar.CalendarDate
+
+		/**
+		 * Calculates how many days are in a given month.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate
+		 * @returns {int} the number of days in the month for the given oCalendarDate
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._daysInMonth = function (oCalendarDate) {
+			this._checkCalendarDate(oCalendarDate);
+
+			oCalendarDate = new CalendarDate(oCalendarDate);
+			oCalendarDate.setDate(1);
+			oCalendarDate.setMonth(oCalendarDate.getMonth() + 1);
+			oCalendarDate.setDate(0);
+			return oCalendarDate.getDate();
+		};
+
+		/**
+		 * Checks if the given date is the last date of the same month.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate
+		 * @returns {boolean} true if the provided date is the last date in the same month, false otherwise
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._isLastDateInMonth = function (oCalendarDate) {
+			return oCalendarDate.getDate() === CalendarUtils._daysInMonth(oCalendarDate);
+		};
+
+		/**
+		 * Retrieves the first date of the same week in which is the given date.
+		 * <br><br>
+		 * The US weeks at the end of December and at the beginning of January(53th and 0th), are not considered.
+		 * If a given date is in the beginning of January (e.g. Friday, 2 Jan 2015, week 0), the function will return
+		 * week start date in the previous year(e.g. Sunday, 28 Dec 2014, week 53).
+		 *
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate the input date for which we search the first week date.
+		 * @returns {sap.ui.unified.calendar.CalendarDate} first date of the same week as the given <code>oDate</code> in local timezone.
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._getFirstDateOfWeek = function (oCalendarDate) {
+			this._checkCalendarDate(oCalendarDate);
+			var oJSDate = CalendarUtils.getFirstDateOfWeek(oCalendarDate.toUTCJSDate());
+			oJSDate.setFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
+
+			return CalendarDate.fromLocalJSDate(oJSDate, oCalendarDate.getCalendarType());
+		};
+
+		/**
+		 * Gets the first day of a given month.
+		 *
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate date
+		 * @returns {sap.ui.unified.calendar.CalendarDate} date corresponding to the first date of the month
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._getFirstDateOfMonth = function(oCalendarDate) {
+			this._checkCalendarDate(oCalendarDate);
+
+			var oJSDate = CalendarUtils.getFirstDateOfMonth(oCalendarDate.toUTCJSDate()).getJSDate();
+			oJSDate.setFullYear(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
+
+			return CalendarDate.fromLocalJSDate(oJSDate, oCalendarDate.getCalendarType());
+		};
+
+		/**
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @returns {sap.ui.unified.calendar.CalendarDate} the minimal date that this calendar supports.
+		 * @private
+		 */
+		CalendarUtils._minDate = function (sCalendarType) {
+			return new CalendarDate(1, 0, 1, sCalendarType);
+		};
+
+		/**
+		 * @param {sap.ui.core.CalendarType} [sCalendarType]
+		 * @returns {sap.ui.unified.calendar.CalendarDate} the maximum date that this calendar supports.
+		 * @private
+		 */
+		CalendarUtils._maxDate = function (sCalendarType) {
+			var oCalDate = new CalendarDate(9999, 11, 1, sCalendarType);
+			oCalDate.setDate(this._daysInMonth(oCalDate));// 31st for Gregorian Calendar
+			return new CalendarDate(oCalDate);
+		};
+
+		/**
+		 * Check if given date matches given date range.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate the date to check.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate the start of the date range
+		 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate the end of the date range
+		 * @param (boolean} inclusive if true the given date interval is closed (includes the endpoints), otherwise the
+		 * given date interval is open(excludes the endpoints)
+		 * @returns {boolean} true if the given date is between the start and end date of the range(inclusive), false otherwise.
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._isBetween = function (oDate, oStartDate, oEndDate, inclusive) {
+			this._checkCalendarDate(oDate);
+			this._checkCalendarDate(oStartDate);
+			this._checkCalendarDate(oEndDate);
+
+			if (inclusive) {
+				return oDate.isSameOrAfter(oStartDate) && oDate.isSameOrBefore(oEndDate);
+			} else {
+				return oDate.isAfter(oStartDate) && oDate.isBefore(oEndDate);
+			}
+		};
+
+		/**
+		 * Calculates the difference between two calendar dates in days.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oFirstDate the first date
+		 * @param {sap.ui.unified.calendar.CalendarDate} oSecondDate the second date
+		 * @returns {int} days (positive or negative) corresponding to the delta between oFirstDate and oSecondDate
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._daysBetween = function (oFirstDate, oSecondDate) {
+			this._checkCalendarDate(oFirstDate);
+			this._checkCalendarDate(oSecondDate);
+
+			return Math.ceil((oFirstDate.valueOf() - oSecondDate.valueOf()) / (this.HOURS24));
+		};
+
+		/**
+		 * Check if given date does not match given date range.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate the date to check.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oStartCalendarDate the start of the date range
+		 * @param {sap.ui.unified.calendar.CalendarDate} oEndCalendarDate the end of the date range
+		 * @returns {boolean} true if the given date is between the start and end date of the range(inclusive), false otherwise.
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._isOutside = function (oCalendarDate, oStartCalendarDate, oEndCalendarDate) {
+			return !this._isBetween(oCalendarDate, oStartCalendarDate, oEndCalendarDate, true);
+		};
+
+		/**
+		 * Checks if given first date has the same month and year as the given second date.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate1 the first date
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate2 the second date
+		 * @return {boolean} true if month and year matches for both given dates, false otherwise
+		 * @throws Will throw an error if the arguments are null or are not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._isSameMonthAndYear = function (oCalendarDate1, oCalendarDate2) {
+			this._checkCalendarDate(oCalendarDate1);
+			this._checkCalendarDate(oCalendarDate2);
+
+			return oCalendarDate1.getYear() === oCalendarDate2.getYear() && oCalendarDate1.getMonth() === oCalendarDate2.getMonth();
+		};
+
+		/**
+		 * Checks if given date is non null and of type sap.ui.unified.calendar.CalendarDate.
+		 * @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate the date to check
+		 * @throws Will throw an error if the argument is null or is not of the correct type.
+		 * @private
+		 */
+		CalendarUtils._checkCalendarDate = function (oCalendarDate) {
+			if (!oCalendarDate || !(oCalendarDate instanceof CalendarDate)) {
+				throw "Invalid calendar date: [" + oCalendarDate + "]. Expected: sap.ui.unified.calendar.CalendarDate";
+			}
+		};
+
+		/**
+		* Returns week information for given calendar date
+		* @param {sap.ui.unified.calendar.CalendarDate} oCalendarDate the date
+		* @return {{year, week}}
+		* @private
+		*/
+		CalendarUtils._getWeek = function (oCalendarDate) {
+			this._checkCalendarDate(oCalendarDate);
+			return UniversalDate.getWeekByDate(oCalendarDate.getCalendarType(), oCalendarDate.getYear(), oCalendarDate.getMonth(), oCalendarDate.getDate());
 		};
 
 		return CalendarUtils;

@@ -378,7 +378,7 @@
 				oCal4._getFocusedDate(true);
 
 				//Assert
-				assert.equal(oCal4._oFocusedDate.oDate.toString(), oNewDate.toString(),
+				assert.equal(oCal4._oFocusedDate.toUTCJSDate().toString(), oNewDate.toString(),
 						"_getFocusedDate() changes the oFocusedDate if it's called with parameter bForceRecalculate = true");
 
 				var oSpy = sinon.spy(oCal4, "_getFocusedDate");
