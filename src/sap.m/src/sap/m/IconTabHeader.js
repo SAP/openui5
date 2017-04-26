@@ -725,13 +725,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// scroll to selected item if it is out of screen and we render the control the first time
 		if (this.oSelectedItem) {
-			if (!this._bDoThisOnlyOnce) {
-				jQuery.sap.delayedCall(1000, this, "_scrollIntoView", [this.oSelectedItem, 0]); // needs some delay to have correct position info
-				this._bDoThisOnlyOnce = true;
-			} else if (this._scrollAfterRendering) {
-				this._scrollIntoView(this.oSelectedItem, 500);
-				this._scrollAfterRendering = false;
-			}
+			this._scrollIntoView(this.oSelectedItem, 500);
 		}
 
 		this._initItemNavigation();
@@ -1239,7 +1233,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype._fnResize = function() {
 		this._checkOverflow();
 
-		if (this._bCheckIfIntoView) {
+		if (this.oSelectedItem && this._bCheckIfIntoView) {
 			this._scrollIntoView(this.oSelectedItem, 0);
 			this._bCheckIfIntoView = false;
 		}
