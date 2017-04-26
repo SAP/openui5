@@ -125,7 +125,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * @param {int|string} [oConstraints.maxLength]
 	 *   the maximal allowed length of the string; unlimited if not defined
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted. The constraint
+	 *   <code>nullable=false</code> is interpreted as "input is mandatory"; empty user input is
+	 *   rejected then.
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -174,13 +176,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
 	 * leading zeros, if <code>maxLength</code> constraint is given, or leading zeros are removed
 	 * from parsed string.
 	 *
+	 * Note: An empty input string (<code>""</code>) is parsed to <code>null</code>. This value will
+	 * be rejected with a {@link sap.ui.model.ValidateException ValidateException} by
+	 * {@link #validateValue} if the constraint <code>nullable</code> is <code>false</code>.
+	 *
 	 * @param {string|number|boolean} vValue
-	 *   the value to be parsed, maps <code>""</code> to <code>null</code>
+	 *   the value to be parsed
 	 * @param {string} sSourceType
 	 *   the source type (the expected type of <code>vValue</code>).
 	 *   See {@link sap.ui.model.odata.type} for more information.
 	 * @returns {string}
-	 *   the parsed value
+	 *   the parsed value or <code>null</code> if <code>vValue</code> is <code>""</code>
 	 * @throws {sap.ui.model.ParseException}
 	 *   if <code>sSourceType</code> is unsupported
 	 * @public
