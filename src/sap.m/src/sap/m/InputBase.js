@@ -16,6 +16,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * The <code>sap.m.InputBase</code> control provides a basic functionality for input controls.
 	 *
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -28,6 +29,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	var InputBase = Control.extend("sap.m.InputBase", /** @lends sap.m.InputBase.prototype */ { metadata: {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library: "sap.m",
 		properties: {
 

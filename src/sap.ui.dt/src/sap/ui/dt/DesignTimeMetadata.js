@@ -97,11 +97,17 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 
 	/**
 	 * Returns property "ignore" of the DT metadata
+	 * @param {Object} oElement Element instance
 	 * @return {boolean} if ignored
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.isIgnored = function() {
-		return this.getData().ignore;
+	DesignTimeMetadata.prototype.isIgnored = function(oElement) {
+		var vIgnore = this.getData().ignore;
+		if (!vIgnore || (vIgnore && typeof vIgnore === "function" && !vIgnore(oElement))) {
+			return false;
+		} else {
+			return true;
+		}
 	};
 
 	/**

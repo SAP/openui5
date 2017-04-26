@@ -298,7 +298,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				}
 			}).addStyleClass(CSS_CLASS);
 
-			this.addDependent(this._oPopover);
 			this._oPopover.addContent(this._oMessageView);
 			this._oPopover.addAssociation("ariaLabelledBy", this.getId() + "-messageView-HeadingDescr", true);
 
@@ -447,6 +446,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		/**
 		 * Creates new internal MessageView control
 		 *
+		 * @returns {sap.m.MessageView} The newly instantiated message view control
 		 * @private
 		 */
 		MessagePopover.prototype._initMessageView = function () {
@@ -593,7 +593,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		MessagePopover.prototype.setAsyncDescriptionHandler = function (asyncDescriptionHandler) {
 			// MessagePopover is just a proxy to the MessageView
 			this.setProperty('asyncDescriptionHandler', asyncDescriptionHandler, true);
-			//this._oMessageView.setAsyncDescriptionHandler.apply(this._oMessageView, arguments);
 			this._oMessageView.setProperty('asyncDescriptionHandler', asyncDescriptionHandler, true);
 
 			return this;
@@ -602,86 +601,31 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		MessagePopover.prototype.setAsyncURLHandler = function (asyncURLHandler) {
 			// MessagePopover is just a proxy to the MessageView
 			this.setProperty('asyncURLHandler', asyncURLHandler, true);
-			//this._oMessageView.setAsyncURLHandler.apply(this._oMessageView, arguments);
 			this._oMessageView.setProperty('asyncURLHandler', asyncURLHandler, true);
 
 			return this;
 		};
 
-		/*
-		 * =========================================
-		 * MessagePopover headerButton aggregation
-		 * proxy methods
-		 * =========================================
-		 */
-		MessagePopover.prototype.getHeaderButton = function() {
-			// MessagePopover is just a proxy to the MessageView
-			// return the instance of the headerButton from the MessageView
-			return this._oMessageView.getHeaderButton();
-		};
-
-		MessagePopover.prototype.setHeaderButton = function(oButton) {
-			// MessagePopover is just a proxy to the MessageView
-			this._oMessageView.setHeaderButton(oButton, true);
-
-			return this;
-		};
-
-		/*
-		 * =========================================
-		 * MessagePopover items aggregation
-		 * proxy methods
-		 * =========================================
-		 */
-		MessagePopover.prototype.addItem = function () {
-			// MessagePopover is just a proxy to the MessageView
-			this._oMessageView.addItem.apply(this._oMessageView, arguments);
-
-			return this;
-		};
-
-		MessagePopover.prototype.destroyItems = function () {
-			// MessagePopover is just a proxy to the MessageView
-			this._oMessageView.destroyItems.apply(this._oMessageView, arguments);
-
-			return this;
-		};
-
-		MessagePopover.prototype.getItems = function() {
-			// MessagePopover is just a proxy to the MessageView
-			// Return the MessageView's items aggregation
-			return this._oMessageView.getItems.apply(this._oMessageView, arguments);
-		};
-
-		MessagePopover.prototype.insertItem = function () {
-			// MessagePopover is just a proxy to the MessageView
-			this._oMessageView.insertItem.apply(this._oMessageView, arguments);
-
-			return this;
-		};
-
-		MessagePopover.prototype.removeAllItems = function () {
-			// MessagePopover is just a proxy to the MessageView
-			// Return array with all removed items
-			return this._oMessageView.removeAllItems.apply(this._oMessageView, arguments);
-		};
-
-		MessagePopover.prototype.removeItem = function () {
-			// MessagePopover is just a proxy to the MessageView
-			// Return object containing the removed items
-			return this._oMessageView.removeItem.apply(this._oMessageView, arguments);
-		};
-
-		["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
+		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
 			"setBusyIndicatorDelay", "getVisible", "setVisible", "getBusy", "setBusy"].forEach(function(sName){
-				MessagePopover.prototype[sName] = function() {
-					if (this._oPopover && this._oPopover[sName]) {
-						var oPopover = this._oPopover;
-						var res = oPopover[sName].apply(oPopover, arguments);
-						return res === oPopover ? this : res;
-					}
-				};
-			});
+			MessagePopover.prototype[sName] = function() {
+				if (this._oPopover && this._oPopover[sName]) {
+					var oPopover = this._oPopover;
+					var res = oPopover[sName].apply(oPopover, arguments);
+					return res === oPopover ? this : res;
+				}
+			};
+		});
+
+		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
+		["setModel", "getModel", "bindAggregation", "getAggregation", "setAggregation", "insertAggregation", "addAggregation",
+			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+			// Once they are called
+			MessagePopover.prototype[sFuncName] = function () {
+				// Proxying the above methods directly to the MessageView control
+				return this._oMessageView[sFuncName].apply(this._oMessageView, arguments);
+			};
+		}, this);
 
 		return MessagePopover;
 

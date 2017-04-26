@@ -886,8 +886,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	MaskInput.prototype._keyDownHandler = function (oEvent, oKey) {
 		var sDirection,
 			oSelection,
-			iBegin,
-			iEnd,
 			iCursorPos,
 			iNextCursorPos,
 			oKey = oKey || this._parseKeyBoardEvent(oEvent);
@@ -931,26 +929,64 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			(oKey.bShift && oKey.bInsert)) {
 			InputBase.prototype.onkeydown.apply(this, arguments);
 		} else if ((!oKey.bShift && oKey.bDelete) || oKey.bBackspace) {
-			oSelection = this._getTextSelection();
-			iBegin = oSelection.iFrom;
+			this._revertKey(oKey);
+			oEvent.preventDefault();
+		} else if (sap.ui.Device.browser.chrome && sap.ui.Device.os.android) {
+/*
+			 Needs a special handling for Chrome on Android, where keyrpess event is not firing.
+			 If the digit "9" is pressed, when the caret is at the beginning (0),
+			 when "SAP-" is the prefix, the order of events and its handling is the following:
+
+Event	     Desktop/iPhone		                    Android:
+-----------------------------------------------------------------------------------------------
+keydown		 9 arrives, nothing is                 	9 arrives,
+			 happening							    caret is moved to the
+			 										first free pos for user input(4)
+
+keypress	 9 arrived;								<does not trigger>
+			 caret is moved to the
+			 first free
+			 for user input position(4);
+			 9 is being applied at the
+			 position 4,
+			 which ends with the final
+			 result "SAP-9"
+
+
+oninput      <does not trigger>						the dom is "SAP9",
+													since the caret has moved to 4,
+													the call to this._applyMask() applies
+													the "9" at position 4, which ends with
+													the same final result "SAP-9"
+*/
+			this._setCursorPosition(Math.max(this._iUserInputStartPosition, this._getTextSelection().iFrom));
+		}
+	};
+
+	/**
+	 * Reverts the value, as if no key down.
+	 * In case of backspace, just reverts to the previous temp value.
+	 * @param {object} oKey All the info for a key in a keydown event
+	 * @private
+	 */
+	MaskInput.prototype._revertKey = function(oKey) {
+		var oSelection = this._getTextSelection(),
+			iBegin = oSelection.iFrom,
 			iEnd = oSelection.iTo;
 
-			if (!oSelection.bHasSelection) {
-				if (oKey.bBackspace) {
-					iBegin = this._oRules.previousTo(iBegin);
-				}
+		if (!oSelection.bHasSelection) {
+			if (oKey.bBackspace) {
+				iBegin = this._oRules.previousTo(iBegin);
 			}
-
-			if (oKey.bBackspace || (oKey.bDelete && oSelection.bHasSelection)) {
-				iEnd = iEnd - 1;
-			}
-
-			this._resetTempValue(iBegin, iEnd);
-			this.updateDomValue(this._oTempValue.toString());
-			this._setCursorPosition(Math.max(this._iUserInputStartPosition, iBegin));
-
-			oEvent.preventDefault();
 		}
+
+		if (oKey.bBackspace || (oKey.bDelete && oSelection.bHasSelection)) {
+			iEnd = iEnd - 1;
+		}
+
+		this._resetTempValue(iBegin, iEnd);
+		this.updateDomValue(this._oTempValue.toString());
+		this._setCursorPosition(Math.max(this._iUserInputStartPosition, iBegin));
 	};
 
 	/**

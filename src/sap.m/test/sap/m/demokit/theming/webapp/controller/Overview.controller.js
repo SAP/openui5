@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/demo/theming/model/formatter",
 	"sap/m/MessageToast"
-	], function (BaseController, JSONModel,Filter, FilterOperator, Device, formatter, MessageToast) {
+		], function (BaseController, JSONModel,Filter, FilterOperator, Device, formatter, MessageToast) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -30,7 +30,20 @@ sap.ui.define([
 			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
 
-			//keeps the filter and search state
+			//Chooses the right fragment depending on the device which is used
+			var sFragment;
+			if (sap.ui.Device.system.desktop){
+				sFragment ="sap.ui.demo.theming.view.Desktop";
+			}
+			else if (sap.ui.Device.system.phone){
+				sFragment ="sap.ui.demo.theming.view.Phone";
+        	}
+			else {
+				sFragment ="sap.ui.demo.theming.view.Tablet";
+			}
+      		this.getView().byId("idPanel").addContent(sap.ui.xmlfragment(sFragment, this));
+
+			//Keeps the filter and search state
 			this._oTableFilterState = {
 				aFilter : [],
 				aSearch : [],
@@ -82,7 +95,7 @@ sap.ui.define([
 			var oData = this.createDataStructure();
 			oModel.setData(oData);
 
-			//Called when the user chooses a new theme in the combobox
+			//Called when the user chooses a new theme in the ComboBox
 			//Creates a new Data Structure for the table including the updated theme data
 			sap.ui.getCore().attachThemeChanged(function(){
 				var oData = this.createDataStructure();
@@ -1765,8 +1778,8 @@ sap.ui.define([
 			return oData;
 		},
 
-		//Sets the other controlgroup ToggleButtons to unpressed
-		//Sets a new filter(controlgroup)
+		//Sets the other Control Group ToggleButtons to unpressed
+		//Sets a new filter (Control Group)
 
 		onPressButton: function(evt){
 			if (evt.getSource().getPressed()) {
@@ -2009,13 +2022,13 @@ sap.ui.define([
 		},
 
 		//Sets the other parameter ToggleButtons to unpressed
-		//Sets a new filter(parameter)
+		//Sets a new filter (parameter)
 
 		onPressColor: function(evt){
 			if (evt.getSource().getPressed()) {
-				this.byId("tbDimension").setPressed();
-				this.byId("tbImage").setPressed();
-				this.byId("tbOpacity").setPressed();
+				sap.ui.getCore().byId("tbDimension").setPressed();
+				sap.ui.getCore().byId("tbImage").setPressed();
+				sap.ui.getCore().byId("tbOpacity").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Color")]
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -2025,9 +2038,9 @@ sap.ui.define([
 
 		onPressDimension: function(evt){
 			if (evt.getSource().getPressed()) {
-				this.byId("tbColor").setPressed();
-				this.byId("tbImage").setPressed();
-				this.byId("tbOpacity").setPressed();
+				sap.ui.getCore().byId("tbColor").setPressed();
+				sap.ui.getCore().byId("tbImage").setPressed();
+				sap.ui.getCore().byId("tbOpacity").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Dimension")]
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -2037,9 +2050,9 @@ sap.ui.define([
 
 		onPressImage: function(evt){
 			if (evt.getSource().getPressed()) {
-				this.byId("tbColor").setPressed();
-				this.byId("tbDimension").setPressed();
-				this.byId("tbOpacity").setPressed();
+				sap.ui.getCore().byId("tbColor").setPressed();
+				sap.ui.getCore().byId("tbDimension").setPressed();
+				sap.ui.getCore().byId("tbOpacity").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Image")]
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -2049,9 +2062,9 @@ sap.ui.define([
 
 		onPressOpacity: function(evt){
 			if (evt.getSource().getPressed()) {
-				this.byId("tbColor").setPressed();
-				this.byId("tbDimension").setPressed();
-				this.byId("tbImage").setPressed();
+				sap.ui.getCore().byId("tbColor").setPressed();
+				sap.ui.getCore().byId("tbDimension").setPressed();
+				sap.ui.getCore().byId("tbImage").setPressed();
 				this._oTableFilterState.aCharacteristic = [new Filter("parameter", FilterOperator.EQ, "Opacity")]
 			} else {
 				this._oTableFilterState.aCharacteristic = [];
@@ -2060,10 +2073,10 @@ sap.ui.define([
 		},
 
 		//Sets the other theming ToggleButton to unpressed
-		//Sets a new filter(theming)
+		//Sets a new filter (theming)
 		onPressExpert: function(evt){
 			if (evt.getSource().getPressed()) {
-				this.byId("tbQuick").setPressed();
+				sap.ui.getCore().byId("tbQuick").setPressed();
 				this._oTableFilterState.aTheming = [new Filter("theming", FilterOperator.EQ, "Base")]
 			} else {
 				this._oTableFilterState.aTheming = [];
@@ -2073,42 +2086,65 @@ sap.ui.define([
 
 		onPressQuick: function(evt){
 			if (evt.getSource().getPressed()) {
-				this.byId("tbExpert").setPressed();
+				sap.ui.getCore().byId("tbExpert").setPressed();
 				this._oTableFilterState.aTheming = [new Filter("theming", FilterOperator.EQ, "Quick")]
 			} else {
 				this._oTableFilterState.aTheming = [];
 			}
 			this._applyFilterSearch();
 		},
+		//Event handler for the class information Button
+		//Opens a QuickView with detailed information about the semantic parameter structure
+		openQuickView: function (oEvent, oModel) {
+			this.createPopover();
+			this._oQuickView.setModel(oModel);
+
+		//Delay because addDependent will do a async rerendering and the actionSheet will immediately close without it
+			var oButton = oEvent.getSource();
+			jQuery.sap.delayedCall(0, this, function () {
+				this._oQuickView.openBy(oButton);
+			});
+		},
+		onPressInformation: function (oEvent) {
+			this.openQuickView(oEvent);
+		},
+		createPopover: function() {
+			if (!this._oQuickView) {
+				this._oQuickView = sap.ui.xmlfragment("sap.ui.demo.theming.view.QuickViewClass", this);
+				this.getView().addDependent(this._oQuickView);
+			}
+		},
 
 		//Event handler for the ComboBox
 		//Applies a new theme and sets the Text for the current theme
+
 		onThemeChange: function(oEvent) {
+
 			var value = oEvent.getParameter("value");
 			switch(value){
 			case "Belize":
 				sap.ui.getCore().applyTheme("sap_belize");
-				this.byId("title").setText("Details for ''Belize''");
+				sap.ui.getCore().byId("title").setText("Details for ''Belize''");
 				break;
 			case "Blue Crystal":
 				sap.ui.getCore().applyTheme("sap_bluecrystal");
-				this.byId("title").setText("Details for ''Blue Crystal''");
+				sap.ui.getCore().byId("title").setText("Details for ''Blue Crystal''");
 				break;
 			case "High Contrast White":
 				sap.ui.getCore().applyTheme("sap_belize_hcw");
-				this.byId("title").setText("Details for ''High Contrast White''");
+				sap.ui.getCore().byId("title").setText("Details for ''High Contrast White''");
 				break;
 			case "Belize Plus":
 				sap.ui.getCore().applyTheme("sap_belize_plus");
-				this.byId("title").setText("Details for ''Belize Plus''");
+				sap.ui.getCore().byId("title").setText("Details for ''Belize Plus''");
 				break;
 			case "High Contrast Black":
 				sap.ui.getCore().applyTheme("sap_belize_hcb");
-				this.byId("title").setText("Details for ''High Contrast Black''");
+				sap.ui.getCore().byId("title").setText("Details for ''High Contrast Black''");
 				break;
 			}
 		},
-		//Event handler for the search field
+		//Event handler for the Search Field
 		onSearch: function (oEvt) {
 			var sQuery = oEvt.getSource().getValue();
 			if (sQuery && sQuery.length > 0) {
@@ -2123,7 +2159,7 @@ sap.ui.define([
 			var aFilters = this._oTableFilterState.aSearch.concat(this._oTableFilterState.aFilter,this._oTableFilterState.aControlgroup,this._oTableFilterState.aCharacteristic, this._oTableFilterState.aTheming);
 			this._oTable.getBinding("items").filter(aFilters);
 		},
-		//Event handler for the class toggle button
+		//Event handler for the class ToggleButton
 		//Sorts the list ascending by class
 		sortClass : function(oEvent)  {
 			var oTable = this.byId("oTable");

@@ -29,7 +29,6 @@ sap.ui.define([
 				};
 
 				// ensure that the app is busy until the icon meta data is loaded
-				//this.getOwnerComponent().iconsLoaded().then(fnSetAppNotBusy);
 				fnSetAppNotBusy();
 				// apply content density mode to root view
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());

@@ -13,6 +13,10 @@
 		"model/formatter.js",
 		"model/models.js",
 		"view/App.view.xml",
+		"view/Phone.fragment.xml",
+		"view/Desktop.fragment.xml",
+		"view/Tablet.fragment.xml",
+		"view/QuickViewClass.fragment.xml",
 		"view/Overview.view.xml"
 	]
 }

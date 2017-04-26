@@ -1,4 +1,4 @@
-QUnit.module("PendingUpload", {
+QUnit.module("PendingUpload: public and private methods", {
 	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {});
 		this.oUploadCollection.placeAt("qunit-fixture");
@@ -373,7 +373,7 @@ QUnit.test("File upload button is visible after setting the uploadButtonInvisibl
 	assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 });
 
-QUnit.module("PendingUpload", {
+QUnit.module("PendingUpload: upload method", {
 
 	beforeEach : function() {
 		this.oUploadCollection = new sap.m.UploadCollection({instantUpload : false});

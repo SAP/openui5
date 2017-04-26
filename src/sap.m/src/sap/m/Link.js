@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * A hyperlink control which can be used to trigger actions or to navigate to other applications or web pages.
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -32,7 +32,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var Link = Control.extend("sap.m.Link", /** @lends sap.m.Link.prototype */ { metadata : {
 
 		interfaces : [
-			"sap.ui.core.IShrinkable"
+			"sap.ui.core.IShrinkable",
+			"sap.ui.core.IFormContent"
 		],
 		library : "sap.m",
 		properties : {
@@ -378,6 +379,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()
 		};
+	};
+
+	/*
+	 * Link must not be stretched in Form because this would stretch the size of the focus outline
+	 */
+	Link.prototype.getFormShouldNotAdjustWidth = function() {
+		return true;
 	};
 
 	return Link;

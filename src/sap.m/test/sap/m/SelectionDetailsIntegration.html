@@ -99,7 +99,7 @@
 	});
 
 	oSelectionDetails.registerSelectionDetailsItemFactory(["MyFirstData", "MySecondData"],
-		function (aDisplayData, aData, oData) {
+		function (aDisplayData, aData, oContext, oData) {
 			var aLines = [];
 			for (var i = 0; i < aDisplayData.length; i++) {
 				aLines.push(new sap.m.SelectionDetailsItemLine({

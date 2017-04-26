@@ -2467,6 +2467,23 @@
 				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBSelected').length, 0, "No tab is selected");
 			});
 
+			QUnit.test("ScrollIntoView after initial resize", function (assert) {
+				this.oIconTabHeader.setSelectedKey('5');
+				sap.ui.getCore().applyChanges();
+
+				this.clock.tick(1000);
+
+				this.oIconTabHeader.$().width('200px');
+				this.oIconTabHeader._fnResize();
+
+				this.clock.tick(5000);
+				var oTab = this.oIconTabHeader.getItems()[5];
+
+				var bVisible = this.oIconTabHeader._isTabIntoView(oTab.$());
+
+				assert.ok(bVisible, "Selected tab is visible");
+			});
+
 			QUnit.module("IconTabBar Selected Key",{
 				beforeEach: function () {
 

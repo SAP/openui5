@@ -6,3 +6,9 @@
 	border-width:1px;
 	border-style: solid;
 }
+.alignment .sapMListTblHeader th{
+	vertical-align: middle;
+}
+.padding .sapMPanelContent {
+	padding: 0rem;
+}

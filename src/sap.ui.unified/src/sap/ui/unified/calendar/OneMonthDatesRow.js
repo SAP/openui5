@@ -1,9 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/library'],
-	function(jQuery, DatesRow, CalendarUtils, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
+	function(jQuery, DatesRow, CalendarUtils, CalendarDate, library) {
 		"use strict";
+
+	/*
+	 * Inside the OneMonthDatesRow CalendarDate objects are used. But in the API JS dates are used.
+	 * So conversion must be done on API functions.
+	 */
 
 	/**
 	 * Constructor for a new <code>OneMonthDatesRow</code>.
@@ -67,12 +72,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/
 		return this.iMode;
 	};
 
+	/**
+	 * Selects a given date.
+	 * @param {Date} oDate a JavaScript date
+	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 */
 	OneMonthDatesRow.prototype.selectDate = function(oDate) {
 		if (this.iMode < 2 && this.getSelectedDates().length) {
 			this.getSelectedDates()[0].setStartDate(oDate);
 		}
+		return this;
 	};
 
+	/**
+	 * Sets a given date.
+	 * @param {Date} oDate a JavaScript date
+	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 */
 	OneMonthDatesRow.prototype.setDate = function(oDate) {
 		// check if in visible date range
 		if (!this._bNoRangeCheck && !this.checkDateFocusable(oDate)) {
@@ -84,6 +100,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/
 		return this;
 	};
 
+
+	/**
+	 * Displays a given date.
+	 * @param {Date} oDate a JavaScript date
+	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 */
 	OneMonthDatesRow.prototype.displayDate = function(oDate){
 		// check if in visible date range
 		if (!this._bNoRangeCheck && !this.checkDateFocusable(oDate)) {
@@ -97,37 +119,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/DatesRow', 'sap/ui/
 	};
 
 	/**
-	 * Hanldes [HOME] key to focus the 1st day of the month regardless any dates from other months
+	 * Handles [HOME] key to focus the 1st day of the month regardless any dates from other months
 	 * @param oEvent the event
 	 */
 	OneMonthDatesRow.prototype.onsaphome = function(oEvent) {
-		var oUniversalStartDate = CalendarUtils._createUniversalUTCDate(this.getStartDate());
+		var oCalStartDate = CalendarDate.fromLocalJSDate(this.getStartDate());
 
 		//prevent item navigation to focus the 1st visible item, because this item may correspond to an item from other month
 		interruptEvent(oEvent);
 
-		this._setDate(oUniversalStartDate);//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
-		this._focusDate(oUniversalStartDate);
+		this._setDate(oCalStartDate);//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this._focusDate(oCalStartDate);
 
-		this.fireFocus({date: this.getStartDate(), otherMonth: false});
+		this.fireFocus({date: oCalStartDate.toLocalJSDate(), otherMonth: false});
 	};
 
 	/**
-	 * Hanldes [END] key to focus the last day of the month regardless any dates from other months
+	 * Handles [END] key to focus the last day of the month regardless any dates from other months
 	 * @param oEvent the event
 	 */
 	OneMonthDatesRow.prototype.onsapend = function (oEvent) {
 		var oStartDate = this.getStartDate(),
-			oLastDay = CalendarUtils._getLastDayInMonth(oStartDate),
-			oUniversalLastDay = CalendarUtils._createUniversalUTCDate(oLastDay);
+			oLastDay;
+
+		oLastDay = CalendarDate.fromLocalJSDate(oStartDate);
+		oLastDay.setDate(CalendarUtils._daysInMonth(oLastDay));
 
 		//prevent item navigation to focus the last visible item, because this item may correspond to an item from other month
 		interruptEvent(oEvent);
 
-		this._setDate(oUniversalLastDay); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
-		this._focusDate(oUniversalLastDay);
+		this._setDate(oLastDay); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this._focusDate(oLastDay);
 
-		this.fireFocus({date: oLastDay, otherMonth: false});
+		this.fireFocus({date: oLastDay.toLocalJSDate(), otherMonth: false});
 	};
 
 	function interruptEvent(oEvent) {

@@ -63,7 +63,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.Label",
 			"sap.ui.core.PopupInterface",
 			"sap.ui.core.Toolbar",
-			"sap.ui.core.IContextMenu"
+			"sap.ui.core.IContextMenu",
+			"sap.ui.core.IFormContent"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1469,6 +1470,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 *
 	 * @function
 	 * @name sap.ui.core.IContextMenu.openAsContextMenu
+	 */
+
+	/**
+	 * Marker interface for controls that can be used as content of an <code>sap.ui.layout.form.Form</code>
+	 * or <code>sap.ui.layout.form.SimpleForm</code>.
+	 *
+	 * If the control's width should not be adjusted by the <code>Form</code> to meet the cell's width, the
+	 * control must implement the <code>getFormDoNotAdjustWidth</code> function and return <code>true</code>.
+	 *
+	 * @since 1.48.0
+	 * @name sap.ui.core.IFormContent
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * In the <code>Form</code> all content controls are positioned on a grid cell base. By default
+	 * the controls should use the full width of the used grid cell. But for some controls (like image controls) this
+	 * is not the wanted behaviour. In this case the control should keep its original width.
+	 *
+	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cells width
+	 * @since 1.48.0
+	 * @public
+	 * @function
+	 * @name sap.ui.core.IFormContent.getFormShouldNotAdjustWidth
 	 */
 
 	/**

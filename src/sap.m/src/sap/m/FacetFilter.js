@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			type : {type : "sap.m.FacetFilterType", group : "Appearance", defaultValue : sap.m.FacetFilterType.Simple},
 
 			/**
-			 * Enables/disables live search on all search fields except for the FacetFilterList search.
+			 * Enables/disables live search in the search field of all <code>sap.m.FacetFilterList</code> instances.
 			 */
 			liveSearch : {type : "boolean", group : "Behavior", defaultValue : true},
 

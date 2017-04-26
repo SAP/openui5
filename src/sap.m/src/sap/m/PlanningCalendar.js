@@ -4,9 +4,11 @@
 
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './PlanningCalendarRow',
-		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval', 'sap/ui/unified/CalendarOneMonthInterval'],
-		function(jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval) {
-	"use strict";
+		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
+		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval', 'sap/ui/unified/CalendarOneMonthInterval'],
+	function (jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
+			  CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval) {
+		"use strict";
 
 	/**
 	 * Constructor for a new <code>PlanningCalendar</code>.
@@ -527,10 +529,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Verifies if the given date matches the range of currently visible intervals,
 	 * based on the visibility of the current date.
+	 * @param {Date} oDateTime
 	 * @private
 	 */
-	PlanningCalendar.prototype._dateMatchesVisibleRange = function(oDate, sViewKey) {
-		var	oView = this._getView(sViewKey, !this._bBeforeRendering);
+	PlanningCalendar.prototype._dateMatchesVisibleRange = function(oDateTime, sViewKey) {
+		var oView = this._getView(sViewKey, !this._bBeforeRendering);
 
 		if (!oView) {
 			return false;
@@ -542,7 +545,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			bResult = false;
 
 		if (oInterval && oInterval._dateMatchesVisibleRange) {
-			bResult = oInterval._dateMatchesVisibleRange(oDate);
+			bResult = oInterval._dateMatchesVisibleRange(oDateTime);
 		}
 
 		return bResult;
@@ -743,7 +746,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (oMinDate && oMinDate.getTime() > oDate.getTime()) {
 				jQuery.sap.log.warning("maxDate < minDate -> maxDate set to begin of the month", this);
 				oMinDate = new Date(oDate.getTime());
-				oMinDate.setUTCDate(1);
+				oMinDate.setDate(1);
 				oMinDate.setHours(0);
 				oMinDate.setMinutes(0);
 				oMinDate.setSeconds(0);
@@ -930,7 +933,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (this._oOneMonthInterval && sKey === sap.ui.unified.CalendarIntervalType.OneMonth) {
 			this._oOneMonthInterval._setDisplayMode(this._iSize);
-			this._oOneMonthInterval._adjustSelectedDate(oOldStartDate);
+			this._oOneMonthInterval._adjustSelectedDate(CalendarDate.fromLocalJSDate(oOldStartDate));
 			if (this._iSize < 2) {
 				this._setRowsStartDate(oOldStartDate);
 			}
@@ -1608,7 +1611,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		// the calendar should start from the 1st date of the current month
 		if (sViewKey === sap.ui.unified.CalendarIntervalType.OneMonth) {
 			oStartDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUniversalUTCDate(oDate, undefined, true));
-			this._oOneMonthInterval._adjustSelectedDate(CalendarUtils._createUniversalUTCDate(oDate, undefined, true), false);
+			this._oOneMonthInterval._adjustSelectedDate(CalendarDate.fromLocalJSDate(oDate), false);
 
 			oDate = CalendarUtils._createLocalDate(oStartDate, true);
 		}
@@ -1671,7 +1674,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 				this._setRowsStartDate(oFocusedDate);
 				this._oOneMonthInterval.getAggregation('month')[0]._focusDate(CalendarUtils._createUniversalUTCDate(oFocusedDate), true);
-			} else if (this._isNextMonth(oEvtSelectedStartDate)) {
+			} else if (CalendarUtils._isNextMonth(oEvtSelectedStartDate, this.getStartDate())) {
 				this._oOneMonthInterval._handleNext();
 				return;
 			}
@@ -1701,7 +1704,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var sIntervalType = oView.getIntervalType();
 
 		if (sIntervalType === sap.ui.unified.CalendarIntervalType.OneMonth
-			&& this._isNextMonth(oStartDate)) {
+			&& CalendarUtils._isNextMonth(oStartDate, this.getStartDate())) {
 			this._oOneMonthInterval._handleNext();
 			return;
 		}
@@ -1713,18 +1716,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.fireIntervalSelect({startDate: oStartDate, endDate: oEndDate, subInterval: bSubInterval, row: oRow});
 
 	}
-
-	/**
-	 * Compares the given month and the one from the <code>startDate</code>.
-	 *
-	 * @param {Date} oDate JavaScript date
-	 * @return {boolean} true if the given date's month is chronologically after the one from the <code>startDate</code>
-	 * @private
-	 */
-	PlanningCalendar.prototype._isNextMonth = function(oDate) {
-		return (oDate.getMonth() > this.getStartDate().getMonth() && oDate.getFullYear() === this.getStartDate().getFullYear())
-			|| oDate.getFullYear() > this.getStartDate().getFullYear();
-	};
 
 	PlanningCalendar.prototype._applyContextualSettings = function () {
 		return Control.prototype._applyContextualSettings.call(this, {contextualWidth: this.$().width()});
@@ -1844,16 +1835,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Sets the start dates of all calendar rows to a given date.
+	 * @param {Date} oDateTime
 	 * @private
 	 */
-	PlanningCalendar.prototype._setRowsStartDate = function(oDate) {
+	PlanningCalendar.prototype._setRowsStartDate = function(oDateTime) {
 		var aRows = this.getRows(),
 			oRow,
 			i;
 
 		for (i = 0; i < aRows.length; i++) {
 			oRow = aRows[i];
-			oRow.getCalendarRow().setStartDate(oDate);
+			oRow.getCalendarRow().setStartDate(oDateTime);
 		}
 	};
 

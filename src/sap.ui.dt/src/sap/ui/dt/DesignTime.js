@@ -181,6 +181,12 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	DesignTime.prototype.exit = function() {
 		delete this._iOverlaysPending;
 		delete this._aOverlaysCreatedInLastBatch;
+
+		// The plugins need to be destroyed before the overlays in order to go through the deregisterElementOverlay Methods
+		this.getPlugins().forEach(function(oPlugin) {
+			oPlugin.destroy();
+		});
+
 		this._destroyAllOverlays();
 		this._oSelection.destroy();
 	};
@@ -558,7 +564,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		if (oChild instanceof sap.ui.core.Element) {
 			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
 			if (!oChildElementOverlay) {
-				this._createElementOverlay(oChild);
+				oChildElementOverlay = this._createElementOverlay(oChild);
+				oParentAggregationOverlay.addChild(oChildElementOverlay);
 			} else {
 				// element overlay needs to have a correct parent for propagation
 				oParentAggregationOverlay.addChild(oChildElementOverlay);

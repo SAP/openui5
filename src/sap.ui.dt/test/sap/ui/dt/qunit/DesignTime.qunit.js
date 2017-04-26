@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	// external:
 	'jquery.sap.global',
@@ -6,12 +8,14 @@ sap.ui.define([
 	'sap/m/Page',
 	// internal:
 	'sap/ui/dt/Overlay',
+	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/DesignTime',
 	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/plugin/TabHandling',
 	// should be last:
-	'sap/ui/qunit/qunit-coverage',
 	'sap/ui/thirdparty/sinon',
+	'sap/ui/qunit/qunit-coverage',
 	'sap/ui/thirdparty/sinon-ie',
 	'sap/ui/thirdparty/sinon-qunit'
 ],
@@ -21,9 +25,12 @@ function(
 	VerticalLayout,
 	Page,
 	Overlay,
+	ElementOverlay,
 	OverlayRegistry,
 	DesignTime,
-	ElementUtil
+	ElementUtil,
+	TabHandling,
+	sinon
 ) {
 	"use strict";
 
@@ -33,7 +40,7 @@ function(
 		var bResult = false;
 
 		var aOverlays = oDesignTime.getElementOverlays();
-		var aFoundOverlay = jQuery.each(aOverlays, function(iIndex, oOverlay) {
+		jQuery.each(aOverlays, function(iIndex, oOverlay) {
 			if (oOverlay.getElementInstance() === oElement) {
 				bResult = true;
 				return false;
@@ -129,8 +136,6 @@ function(
 
 		var oButton = new Button();
 		var oLayout = new VerticalLayout({content : [oButton]});
-
-		var aOverlay = [];
 
 		var bSyncingCalled = false;
 		this.oDesignTime.attachEventOnce("syncing", function() {
@@ -238,10 +243,18 @@ function(
 	});
 
 	QUnit.test("when the DesignTime is destroyed", function(assert) {
+		var oTabHandlingPlugin = new TabHandling();
+		var oRegisterPluginSpy = sinon.spy(oTabHandlingPlugin, "registerElementOverlay");
+		var oDeregisterPluginSpy = sinon.spy(oTabHandlingPlugin, "deregisterElementOverlay");
+
+		this.oDesignTime.addPlugin(oTabHandlingPlugin);
+		assert.strictEqual(oRegisterPluginSpy.called, true, "then the registerElementOverlay method was called");
+
 		this.oDesignTime.destroy();
 		assert.strictEqual(isOverlayForElementInDesignTime(this.oOuterLayout, this.oDesignTime), false, "overlay for layout destroyed");
 		assert.strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "overlay for button1 destroyed");
 		assert.strictEqual(isOverlayForElementInDesignTime(this.oButton2, this.oDesignTime), false, "overlay for button2 destroyed");
+		assert.strictEqual(oDeregisterPluginSpy.called, true, "then the deregisterElementOverlay method was called after destroy");
 	});
 
 	QUnit.test("when the element inside of the DesignTime is destroyed", function(assert) {
@@ -314,6 +327,25 @@ function(
 			false,
 			'then the aggregation overlay of outer overlay if disabled'
 		);
+	});
+
+	QUnit.test("when oInnerLayout is extended by new button element without existing overlay", function(assert) {
+		var done = assert.async();
+		var oParentOfNewOverlay,
+			oButton = new Button("button3"),
+			oInnerLayoutOverlay = OverlayRegistry.getOverlay(this.oInnerLayout);
+
+		// parentElementOverlay should be available before sync with renderAndCreateAggregation
+		sinon.stub(ElementOverlay.prototype, "_renderAndCreateAggregation", function() {});
+		this.oDesignTime.attachEventOnce("elementOverlayCreated", function(oEvent) {
+			oParentOfNewOverlay = oEvent.getParameter("elementOverlay").getParentElementOverlay();
+			assert.notEqual(oParentOfNewOverlay, undefined, "then new button overlay is created and knows his parent overlay");
+			assert.strictEqual(oParentOfNewOverlay.getId(), oInnerLayoutOverlay.getId(), "then the parent overlay of the new button is the oInnerLayoutOverlay");
+			oParentOfNewOverlay.destroy();
+			done();
+		});
+
+		this.oInnerLayout.insertAggregation("content", oButton, 2);
 	});
 
 	QUnit.module("Given that the DesignTime is created for two root controls", {

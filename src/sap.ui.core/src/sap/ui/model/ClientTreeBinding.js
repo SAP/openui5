@@ -306,6 +306,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 
 		if (aUnfilteredContexts.length > 0) {
 			jQuery.each(aUnfilteredContexts, function(i, oContext){
+				// Add parentContext reference for later use (currently to calculate correct group IDs in the adapter)
+				oContext._parentContext = oParentContext;
 				that._applyFilterRecursive(oContext);
 			});
 

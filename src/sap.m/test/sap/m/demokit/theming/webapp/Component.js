@@ -1,9 +1,10 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/demo/theming/model/models",
 	"sap/ui/demo/theming/controller/ErrorHandler"
-], function (UIComponent, Device, models, ErrorHandler) {
+], function (UIComponent,JSONModel, Device, models, ErrorHandler) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.theming.Component", {
@@ -24,8 +25,10 @@ sap.ui.define([
 
 
 
-			// set the device model
-			this.setModel(models.createDeviceModel(), "device");
+			// set device model
+			var oDeviceModel = new JSONModel(Device);
+			oDeviceModel.setDefaultBindingMode("OneWay");
+			this.setModel(oDeviceModel, "device");
 
 			// initialize the error handler with the component
 			this._oErrorHandler = new ErrorHandler(this);

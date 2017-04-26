@@ -27,7 +27,7 @@
 		<script>
 			jQuery.sap.require("sap.ui.unified.calendar.CalendarUtils");
 			var CalendarUtils = sap.ui.unified.calendar.CalendarUtils,
-				UniversalDate = sap.ui.core.date.UniversalDate;
+				CalendarDate = sap.ui.unified.calendar.CalendarDate;
 
 			QUnit.module("Events", {
 				beforeEach: function () {
@@ -163,7 +163,7 @@
 				var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
 					_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
 					_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
-					oDate = CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 2, 19, 15, 0));
+					oDate = new Date(2015, 0, 2, 19, 15, 0);
 				//act
 				this.sutMonth.fireFocus({
 					date : oDate,
@@ -176,7 +176,7 @@
 				assert.strictEqual(_focusDateExtendWeekDateSpy.callCount, 1, "CalendarWeekInterval '_focusDateExtend()' was called for first time");
 				//act
 				this.sutMonth.fireFocus({
-					date : CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 2, 19, 15, 0)),
+					date : new Date(2015, 0, 2, 19, 15, 0),
 					otherMonth : false,
 					restoreOldDate : false,
 					_outsideBorder: true
@@ -189,7 +189,7 @@
 			QUnit.test("'_focusDateExtend()' has correct output", function (assert) {
 				//prepare
 				var _focusDateExtendSpy = this.spy(this.sut, "_focusDateExtend"),
-					oExpectedDate = CalendarUtils._createUniversalUTCDate(new Date(2015, 0, 3, 12, 0, 0));
+					oExpectedDate = CalendarDate.fromLocalJSDate(new Date(2015, 0, 3, 12, 0, 0));
 
 				//act
 				this.sut._focusDate(oExpectedDate, false, true);
@@ -235,61 +235,61 @@
 				//prepare
 				var oTestData = {
 						"en-US": {
-							"oTestDate": CalendarUtils._createUniversalUTCDate(new Date(2011, 11, 28)),
+							"oTestDate":  CalendarDate.fromLocalJSDate(new Date(2011, 11, 28)),
 							"o53to53Test": [
 								{
 									oTargetYear: 2005,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2005, 11, 25))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2005, 11, 25))
 								},
 								{
 									oTargetYear: 2000,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2000, 11, 24))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2000, 11, 24))
 								}
 							],
 							"o53to52Test": [
 								{
 									oTargetYear: 2000,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2000, 11, 24))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2000, 11, 24))
 								}
 							],
 							"o52to52Test": [
 								{
 									oTargetYear: 2002,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2002, 11, 22))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2002, 11, 22))
 								},
 								{
 									oTargetYear: 2008,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2008, 11, 21))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2008, 11, 21))
 								},
 								{
 									oTargetYear: 2006,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2006, 11, 24))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2006, 11, 24))
 								},
 								{
 									oTargetYear: 2011,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2011, 11, 18))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2011, 11, 18))
 								},
 								{
 									oTargetYear: 2007,
-									oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2007, 11, 23))
+									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2007, 11, 23))
 								}
 							]
 						},
 						"en-GB": {
-							"oTestDate": CalendarUtils._createUniversalUTCDate(new Date(2015, 11, 30)),
+							"oTestDate":  CalendarDate.fromLocalJSDate(new Date(2015, 11, 30)),
 							"o53to53Test": [
-								{ oTargetYear: 2009, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2009, 11, 28)) },
-								{ oTargetYear: 2004, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2004, 11, 27)) }
+								{ oTargetYear: 2009, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2009, 11, 28)) },
+								{ oTargetYear: 2004, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2004, 11, 27)) }
 							],
 							"o53to52Test": [
-								{ oTargetYear: 1999, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(1999, 11, 27)) }
+								{ oTargetYear: 1999, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(1999, 11, 27)) }
 							],
 							"o52to52Test": [
-								{ oTargetYear: 2007, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2007, 11, 24)) },
-								{ oTargetYear: 2006, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2006, 11, 25)) },
-								{ oTargetYear: 2010, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2010, 11, 27)) },
-								{ oTargetYear: 2008, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2008, 11, 22)) },
-								{ oTargetYear: 2007, oExpectedFirstDate: CalendarUtils._createUniversalUTCDate(new Date(2007, 11, 24)) }
+								{ oTargetYear: 2007, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2007, 11, 24)) },
+								{ oTargetYear: 2006, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2006, 11, 25)) },
+								{ oTargetYear: 2010, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2010, 11, 27)) },
+								{ oTargetYear: 2008, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2008, 11, 22)) },
+								{ oTargetYear: 2007, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2007, 11, 24)) }
 							]
 						}
 					},
@@ -308,13 +308,13 @@
 					fnPerformTestCase = function (sLocaleId, sTestName) {
 						for (var iIndex = 0; iIndex < oTestData[sLocaleId][sTestName].length; iIndex++) {
 							oTestDate = oTestData[sLocaleId]["oTestDate"];
-							oTestFocusedDateFullYear = oTestDate.getUTCFullYear();
+							oTestFocusedDateFullYear = oTestDate.getYear();
 							oTargetYear = oTestData[sLocaleId][sTestName][iIndex]["oTargetYear"];
 							oExpectedFirstDate = oTestData[sLocaleId][sTestName][iIndex]["oExpectedFirstDate"];
 
 							this.sut._adjustFocusedDateUponYearChange(oTestDate, oTargetYear);
 							//assert
-							assert.strictEqual(oTestDate.getTime(), oExpectedFirstDate.getTime(),
+							assert.strictEqual(oTestDate.toString(), oExpectedFirstDate.toString(),
 								sTestName + ": '_adjustFocusedDateUponMonthChange()' calculated correctly oFocusedDate when trying to navigate from " + oTestFocusedDateFullYear + " to " + oTargetYear + " for en-US locale");
 						}
 						fnRestartTestEnv();
@@ -325,7 +325,7 @@
 				/* Case 1: When going from CW53 to CW53 weeks in it the focused date is the first day of the target's CW#53 */
 				//act
 				this.sutMonth.fireFocus({
-					date : oTestData["en-US"].oTestDate,
+					date : oTestData["en-US"].oTestDate.toLocalJSDate(),
 					otherMonth : false,
 					restoreOldDate : false,
 					_outsideBorder: true
@@ -345,7 +345,7 @@
 				//act
 				sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
 				this.sutMonth.fireFocus({
-					date : oTestData["en-GB"].oTestDate,
+					date : oTestData["en-GB"].oTestDate.toLocalJSDate(),
 					otherMonth : false,
 					restoreOldDate : false,
 					_outsideBorder: true

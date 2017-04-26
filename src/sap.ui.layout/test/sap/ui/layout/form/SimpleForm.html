@@ -79,7 +79,7 @@
 						new sap.m.TextArea({layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({linebreak:true,weight:8}),value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text"}),
 						new sap.ui.core.Title({text:"Title 3"}),
 						new sap.m.Label({text:"Label 1"}),
-						new sap.m.Text({text:"Text 1"}),
+						new sap.m.Link({text:"Text 1", href:"http://www.sap.com"}),
 						new sap.m.Label({text:"Label 2"}),
 						new sap.m.Input({value:"Value 2/1"}),
 						new sap.m.Text({text:"Text 2/2"}),
@@ -93,7 +93,7 @@
 						new sap.m.Label({text:"This was invisible"}),
 						new sap.m.CheckBox("myCB",{selected:false,visible:false}),
 						new sap.m.Label({text:"a nice image"}),
-						new sap.m.Image({src: "../../commons/images/SAPLogo.gif", width: "73px"}),
+						new sap.m.Image({src: "../../commons/images/SAPLogo.gif"}),
 						new sap.m.Label({text:"Change the visibility"}),
 						new sap.m.ToggleButton("myButton1",{text:"Hide Fields",press:function(oEvent) {
 							if (oEvent.getParameter("pressed")) {
