@@ -234,7 +234,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RatingIndicator.prototype.onBeforeRendering = function () {
 		var fVal = this.getValue(),
-			iMVal = this.getMaxValue();
+			iMVal = this.getMaxValue(),
+			sIconSizeLessParameter;
 
 		if (fVal > iMVal) {
 			this.setValue(iMVal);
@@ -244,8 +245,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery.sap.log.warning("Set value to 0 because value is < 0 (" + fVal + " < 0).");
 		}
 
-		this._iPxIconSize = this._toPx(this.getIconSize()) || 16;
-		this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding" + this._getIconSizeLabel(this._iPxIconSize))) || 2;
+		if (this.getIconSize()) {
+			this._iPxIconSize = this._toPx(this.getIconSize());
+			sIconSizeLessParameter = "sapUiRIIconPadding" + this._getIconSizeLabel(this._iPxIconSize);
+			this._iPxPaddingSize = this._toPx(Parameters.get(sIconSizeLessParameter));
+		} else {
+			var sDensityMode = this._getDensityMode();
+			this._iPxIconSize = this._toPx(Parameters.get("sapUiRIIconSize" + sDensityMode));
+			this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding" + sDensityMode));
+		}
 	};
 
 	/**
@@ -281,13 +289,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* =========================================================== */
 
 	/**
-	 * Check if is it in Condensed mode
+	 * get the form factor (Cozy/Compact/Condensed)
 	 *
 	 * @private
 	 */
-	RatingIndicator.prototype._checkCondensedMode = function (oRef) {
-		//this check is made before control rendering
-		return jQuery('html').hasClass('sapUiSizeCondensed');
+	RatingIndicator.prototype._getDensityMode = function () {
+		var aDensityModes = [
+			{name: "Cozy", style: "sapUiSizeCozy"},
+			{name: "Compact",  style: "sapUiSizeCompact"},
+			{name: "Condensed", style: "sapUiSizeCondensed"}
+		],
+		sDensityMode;
+
+		aDensityModes.forEach(function(mode){
+			if (jQuery("html").hasClass(mode.style) || this.$().is("." + mode.style) || this.$().closest("." + mode.style).length > 0) {
+				sDensityMode = mode.name;
+				return;
+			}
+		}, this);
+
+		return sDensityMode || aDensityModes[0].name;
 	};
 
 		/**
