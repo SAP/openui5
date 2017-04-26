@@ -468,9 +468,9 @@ code, kbd, pre, samp {
 }
 
 /* Fix for sap.m.Tree not taking up 100% height (the containing page's background is modified instead) */
-.sapUiTheme-sap_belize .sapUiDocumentationTopicsPage {
+.sapUiTheme-sap_belize .sapUiDocumentationTreePage {
 	background: #3b4c5b;
 }
-.sapUiTheme-sap_belize_plus .sapUiDocumentationTopicsPage {
+.sapUiTheme-sap_belize_plus .sapUiDocumentationTreePage {
 	background: #3b4c5b;
 }
