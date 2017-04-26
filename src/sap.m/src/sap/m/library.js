@@ -310,9 +310,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		],
 		extensions: {
 			flChangeHandlers: {
-				"sap.m.Bar": {
-					"moveControls": "default"
-				},
+				"sap.m.Bar": "sap/m/flexibility/Bar",
+				"sap.m.Button": "sap/m/flexibility/Button",
 				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
 				"sap.m.ColumnListItem": {
 					"hideControl": "default",
@@ -405,9 +404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.Table": "sap/m/flexibility/Table",
 				"sap.m.Text": "sap/m/flexibility/Text",
 				"sap.m.Title": "sap/m/flexibility/Title",
-				"sap.m.Toolbar": {
-					"moveControls": "default"
-				},
+				"sap.m.Toolbar": "sap/m/flexibility/Toolbar",
 				"sap.m.VBox": {
 					"hideControl": "default",
 					"unhideControl": "default",
