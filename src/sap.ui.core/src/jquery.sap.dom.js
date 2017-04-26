@@ -65,6 +65,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return true;
 	};
 
+	function getRootFontSize() {
+		var oRootDomRef = document.documentElement;
+
+		if (!oRootDomRef) {
+			return 16; // browser default font size
+		}
+
+		return parseFloat(window.getComputedStyle(oRootDomRef).getPropertyValue("font-size"));
+	}
+
+	/*
+	 * Convert <code>px</code> values to <code>rem</code>.
+	 *
+	 * @param {string|float} vPx The value in <code>px</code> units. E.g.: <code>"16px"</code> or <code>16</code>
+	 * @returns {float} The converted value in <code>rem</code> units. E.g.: <code>1</code>
+	 * @protected
+	 * @since 1.48
+	 */
+	jQuery.sap.pxToRem = function(vPx) {
+		jQuery.sap.assert(((typeof vPx === "string") && (vPx !== "") && !isNaN(parseFloat(vPx)) && (typeof parseFloat(vPx) === "number")) || ((typeof vPx === "number") && !isNaN(vPx)), 'jQuery.sap.pxToRem: either the "vPx" parameter must be an integer, or a string e.g.: "16px"');
+		return parseFloat(vPx) / getRootFontSize();
+	};
+
+	/*
+	 * Convert <code>rem</code> values to <code>px</code>.
+	 *
+	 * @param {string|float} vRem The value in <code>rem</code>. E.g.: <code>"1rem"</code> or <code>1</code>
+	 * @returns {float} The converted value in <code>px</code> units. E.g.: <code>16</code>
+	 * @protected
+	 * @since 1.48
+	 */
+	jQuery.sap.remToPx = function(vRem) {
+		jQuery.sap.assert(((typeof vRem === "string") && (vRem !== "") && !isNaN(parseFloat(vRem)) && (typeof parseFloat(vRem) === "number")) || ((typeof vRem === "number") && !isNaN(vRem)), 'jQuery.sap.remToPx: either the "vRem" parameter must be an integer, or a string e.g.: "1rem"');
+		return parseFloat(vRem) * getRootFontSize();
+	};
 
 	/**
 	 * Sets or gets the position of the cursor in an element that supports cursor positioning
