@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListIte
 		rm.writeAttribute("id", oControl.getId(sAreaId));
 		rm.writeAttribute("tabindex", iTabIndex);
 
-		if (sap.ui.Device.browser.msie) {
+		if (sap.ui.Device.system.desktop) {
 			rm.addClass("sapMListDummyArea").writeClasses();
 		}
 

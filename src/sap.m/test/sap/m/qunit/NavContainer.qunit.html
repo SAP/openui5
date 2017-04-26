@@ -236,8 +236,10 @@
 		});
 
 		QUnit.test("_applyAutoFocusTo method should't be called when the focus was not on from page", function (oAssert) {
+			var oNC = new sap.m.NavContainer();
+
 			// Act
-			nc._applyAutoFocus({
+			oNC._applyAutoFocus({
 				isTo: true,
 				toId: this.pageId,
 				bFocusInsideFromPage: false // We emulate focus not inside the current page
@@ -248,7 +250,7 @@
 				"The method should not be called when focus is not inside the current page");
 
 			// Act
-			nc._applyAutoFocus({
+			oNC._applyAutoFocus({
 				isTo: true,
 				toId: this.pageId,
 				bFocusInsideFromPage: true // We emulate focus inside the current page
@@ -262,14 +264,14 @@
 		QUnit.test("Auto focus should't be modified when the focus was not inside the current page", function (oAssert) {
 			// Arrange
 			var fnDone = oAssert.async(),
-				oOutsideButton = new sap.m.Button({text: "Outside Button"}).placeAt("content"),
+				oOutsideButton = new sap.m.Button({text: "Outside Button"}).placeAt("qunit-fixture"),
 				oInsideButton = new sap.m.Button({text: "Inside Button"}),
 				oNavContainer = new sap.m.NavContainer({
 					pages : [
 						new sap.m.Page("firstPage"),
 						new sap.m.Page("secondPage", { content : [oInsideButton] })
 					]
-				}).placeAt("content");
+				}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 

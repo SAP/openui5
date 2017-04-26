@@ -505,7 +505,7 @@ QUnit.test("Imitating touch", function(assert) {
 	var iTouchPosition;
 	var iCurrentScrollPosition = this.oHSb.scrollLeft;
 	var oScrollDelegate = oTable._getScrollExtension()._ExtensionDelegate;
-	var oTarget;
+	var oTarget = oTable.getDomRef("tableCCnt");
 	var iAssertionDelay = 100;
 
 	function touchStart(oTarget, iPageX) {
@@ -513,13 +513,13 @@ QUnit.test("Imitating touch", function(assert) {
 
 		var oTouchStartEventData = jQuery.Event("touchstart", {
 			target: oTarget,
-			targetTouches: [{
+			touches: [{
 				pageX: iPageX,
 				pageY: 0
 			}],
 			originalEvent: {touches: true}
 		});
-		oScrollDelegate.ontouchstart.call(oTable, oTouchStartEventData);
+		oScrollDelegate._ontouchstart.call(oTable, oTouchStartEventData);
 	}
 
 	function touchMove(oTarget, iScrollDelta, iExpectedScrollPosition) {
@@ -529,13 +529,13 @@ QUnit.test("Imitating touch", function(assert) {
 
 				var oTouchMoveEventData = jQuery.Event("touchmove", {
 					target: oTarget,
-					targetTouches: [{
+					touches: [{
 						pageX: iTouchPosition,
 						pageY: 0
 					}],
 					originalEvent: {touches: true}
 				});
-				oScrollDelegate.ontouchmove.call(oTable, oTouchMoveEventData);
+				oScrollDelegate._ontouchmove.call(oTable, oTouchMoveEventData);
 
 				window.setTimeout(function() {
 					that.assertSynchronization(assert, iExpectedScrollPosition);
@@ -548,45 +548,8 @@ QUnit.test("Imitating touch", function(assert) {
 
 	document.ontouchstart = "dummy";
 
-	oTarget = getCell(0, 0); // Cell in fixed column.
 	touchStart(oTarget, 200);
 	touchMove(oTarget, 150, iCurrentScrollPosition + 150).then(function() {
-		return touchMove(oTarget, 50, iCurrentScrollPosition + 50);
-	}).then(function() {
-		return touchMove(oTarget, -150, iCurrentScrollPosition - 150);
-	}).then(function() {
-		return touchMove(oTarget, -50, iCurrentScrollPosition - 50);
-	}).then(function() {
-
-		oTarget = getCell(2, 2); // Cell in scrollable column.
-		touchStart(oTarget, 200);
-		return touchMove(oTarget, 150, iCurrentScrollPosition + 150);
-	}).then(function() {
-		return touchMove(oTarget, 50, iCurrentScrollPosition + 50);
-	}).then(function() {
-		return touchMove(oTarget, -150, iCurrentScrollPosition - 150);
-	}).then(function() {
-		return touchMove(oTarget, -50, iCurrentScrollPosition - 50);
-	}).then(function() {
-
-		oTarget = getSelectAll();
-		touchStart(oTarget, 200);
-		return touchMove(oTarget, 150, iCurrentScrollPosition);
-	}).then(function() {
-		return touchMove(oTarget, -150, iCurrentScrollPosition);
-	}).then(function() {
-
-		oTarget = getColumnHeader(1);
-		touchStart(oTarget, 200);
-		return touchMove(oTarget, 150, iCurrentScrollPosition);
-	}).then(function() {
-		return touchMove(oTarget, -150, iCurrentScrollPosition);
-	}).then(function() {
-
-		oTarget = getRowHeader(0);
-		touchStart(oTarget, 200);
-		return touchMove(oTarget, 150, iCurrentScrollPosition + 150);
-	}).then(function() {
 		return touchMove(oTarget, 50, iCurrentScrollPosition + 50);
 	}).then(function() {
 		return touchMove(oTarget, -150, iCurrentScrollPosition - 150);

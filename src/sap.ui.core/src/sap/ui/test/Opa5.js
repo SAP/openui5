@@ -19,7 +19,8 @@ sap.ui.define([
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator',
 		'./_LogCollector',
-		'sap/ui/thirdparty/URI'
+		'sap/ui/thirdparty/URI',
+		'sap/ui/base/EventProvider'
 	],
 	function($,
 			 Opa,
@@ -37,7 +38,8 @@ sap.ui.define([
 			 ActionPipeline,
 			 _ParameterValidator,
 			 _LogCollector,
-			 URI) {
+			 URI,
+			 EventProvider) {
 		"use strict";
 
 		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
@@ -55,8 +57,9 @@ sap.ui.define([
 			].concat(Opa._aConfigValuesForWaitFor),
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
 				"check", "error", "success"
-			].concat(Opa._aConfigValuesForWaitFor);
-
+			].concat(Opa._aConfigValuesForWaitFor),
+			aExtensions = [],
+			aEventProvider = new EventProvider();
 
 		Opa._extractAppParams = function() {
 			// extract all uri parameters except opa* and qunit parameters
@@ -128,6 +131,7 @@ sap.ui.define([
 		);
 
 		function iStartMyAppInAFrame (sSource, iTimeout) {
+			var that = this;
 			// merge appParams over sSource search params
 			if (sSource && typeof sSource !== "string") {
 				sSource = sSource.toString();
@@ -136,24 +140,26 @@ sap.ui.define([
 			uri.search($.extend(
 				uri.search(true),Opa.config.appParams));
 
-			this.waitFor({
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				success : function () {
-					addFrame(uri.toString());
-				}
-			});
+			// kick starting the frame
+			var oCreateFrameOptions = createWaitForObjectWithoutDefaults();
+			oCreateFrameOptions.success = function() {
+				addFrame(uri.toString());
+			};
+			this.waitFor(oCreateFrameOptions);
 
-			var oOptions = createWaitForObjectWithoutDefaults();
+			// wait till the frame is started
+			var oFrameCreatedOptions = createWaitForObjectWithoutDefaults();
+			oFrameCreatedOptions.check = iFrameLauncher.hasLaunched;
+			oFrameCreatedOptions.timeout = iTimeout || 80;
+			oFrameCreatedOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
+			that.waitFor(oFrameCreatedOptions);
 
-			oOptions.check = iFrameLauncher.hasLaunched;
-			oOptions.timeout = iTimeout || 80;
-			oOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
-
-			return this.waitFor(oOptions);
+			// load extensions
+			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
+			oLoadExtensionOptions.success = function() {
+				that._loadExtensions(iFrameLauncher.getWindow());
+			};
+			return this.waitFor(oLoadExtensionOptions);
 		}
 
 		/**
@@ -172,6 +178,7 @@ sap.ui.define([
 		 * @function
 		 */
 		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
+			var that = this;
 			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
@@ -185,8 +192,9 @@ sap.ui.define([
 			};
 			this.waitFor(oParamsWaitForOptions);
 
-			var oFirstWaitForOptions = createWaitForObjectWithoutDefaults();
-			oFirstWaitForOptions.success = function () {
+			// kick starting the component
+			var oStartComponentOptions = createWaitForObjectWithoutDefaults();
+			oStartComponentOptions.success = function () {
 				// include stylesheet
 				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
 				$.sap.includeStyleSheet(sComponentStyleLocation);
@@ -197,21 +205,25 @@ sap.ui.define([
 					bComponentLoaded = true;
 				});
 			};
-			// wait for starting of component launcher
-			this.waitFor(oFirstWaitForOptions);
+			this.waitFor(oStartComponentOptions);
 
-			var oPropertiesForWaitFor = createWaitForObjectWithoutDefaults();
-			oPropertiesForWaitFor.errorMessage = "Unable to load the component with the name: " + oOptions.name;
-			oPropertiesForWaitFor.check = function () {
+			// wait till component is started
+			var oComponentStartedOptions = createWaitForObjectWithoutDefaults();
+			oComponentStartedOptions.errorMessage = "Unable to load the component with the name: " + oOptions.name;
+			oComponentStartedOptions.check = function () {
 				return bComponentLoaded;
 			};
-
-			// add timeout to object for waitFor when timeout is specified
 			if (oOptions.timeout) {
-				oPropertiesForWaitFor.timeout = oOptions.timeout;
+				oComponentStartedOptions.timeout = oOptions.timeout;
 			}
+			that.waitFor(oComponentStartedOptions);
 
-			return this.waitFor(oPropertiesForWaitFor);
+			// load extensions
+			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
+			oLoadExtensionOptions.success = function() {
+				that._loadExtensions(window);
+			};
+			return this.waitFor(oLoadExtensionOptions);
 		};
 
 
@@ -252,6 +264,15 @@ sap.ui.define([
 		 * @returns {jQuery.promise|*|{result, arguments}}
 		 */
 		Opa5.prototype.iTeardownMyApp = function () {
+			var that = this;
+
+			// unload all extensions, schedule unload on flow so to be synchronized with waitFor's
+			var oExtensionOptions = createWaitForObjectWithoutDefaults();
+			oExtensionOptions.success = function () {
+				that._unloadExtensions(iFrameLauncher.getWindow() || window);
+			};
+			this.waitFor(oExtensionOptions);
+
 			var oOptions = createWaitForObjectWithoutDefaults();
 			oOptions.success = function () {
 				if (iFrameLauncher.hasLaunched()) {
@@ -264,7 +285,6 @@ sap.ui.define([
 					throw new Error(sErrorMessage);
 				}
 			}.bind(this);
-
 
 			return this.waitFor(oOptions);
 		};
@@ -975,6 +995,130 @@ sap.ui.define([
 			searchOpenDialogs: "bool",
 			autoWait: "bool"
 		}, Opa._validationInfo);
+
+		Opa5._getEventProvider = function() {
+			return aEventProvider;
+		};
+
+		//// Extensions
+		Opa5.prototype._loadExtensions = function(oAppWindow) {
+			var that = this;
+
+			// get extension names from config
+			var aExtensionNames =
+				Opa.config.extensions ? Opa.config.extensions : [];
+
+			// load all required extensions in the app frame
+			var oExtensionsPromise = $.when($.map(aExtensionNames,function(sExtensionName) {
+				var oExtension;
+				var oExtensionDeferred = $.Deferred();
+
+				oAppWindow.sap.ui.require([
+					sExtensionName
+				], function (oOpaExtension) {
+					oExtension = new oOpaExtension();
+					oExtension.name = sExtensionName;
+
+					// execute the onAfterInit hook
+					that._executeExtensionOnAfterInit(oExtension,oAppWindow)
+						.done(function(){
+							// notify test framework adapters so it could hook custom assertions
+							Opa5._getEventProvider().fireEvent('onExtensionAfterInit',{
+								extension: oExtension,
+								appWindow: oAppWindow
+							});
+							that._addExtension(oExtension);
+							oExtensionDeferred.resolve();
+						}).fail(function(error) {
+							// log the error and continue with other extensions
+							oLogger.error(new Error("Error during extension init: " +
+								error), "Opa");
+							oExtensionDeferred.resolve();
+						});
+
+				});
+
+				return oExtensionDeferred.promise();
+			}));
+
+			// schedule the extension loading promise on flow so waitFor's are synchronized
+			// return waitFor-like promise to comply with the caller return
+			return this._schedulePromiseOnFlow(oExtensionsPromise);
+		};
+
+		Opa5.prototype._unloadExtensions = function(oAppWindow) {
+			var that = this;
+
+			var oExtensionsPromise = $.when($.map(this._getExtensions(),function(oExtension) {
+				var oExtensionDeferred = $.Deferred();
+
+				Opa5._getEventProvider().fireEvent('onExtensionBeforeExit',{
+					extension: oExtension
+				});
+				that._executeExtensionOnBeforeExit(oExtension,oAppWindow)
+					.done(function() {
+						oExtensionDeferred.resolve();
+					})
+					.fail(function(error) {
+						// log the error and continue with other extensions
+						oLogger.error(new Error("Error during extension init: " +
+							error), "Opa");
+						oExtensionDeferred.resolve();
+					});
+				return oExtensionDeferred.promise();
+			}));
+
+			// schedule the extension uploading promise on flow so waitFor's are synchronized
+			this._schedulePromiseOnFlow(oExtensionsPromise);
+		};
+
+		Opa5.prototype._addExtension = function(oExtension) {
+			aExtensions.push(oExtension);
+		};
+
+		Opa5.prototype._getExtensions = function() {
+			return aExtensions;
+		};
+
+		Opa5.prototype._executeExtensionOnAfterInit = function(oExtension,oAppWindow) {
+			var oDeferred = $.Deferred();
+
+			var fnOnAfterInit = oExtension.onAfterInit;
+			if (fnOnAfterInit) {
+				// onAfterInit will return app-frame promise, need to convert it to test-frame promise
+				fnOnAfterInit.bind(oAppWindow)().done(function() {
+					oDeferred.resolve();
+				}).fail(function(error) {
+					oDeferred.reject(
+						new Error("Error while waiting for extension: " + oExtension.name +
+							" to init, details: " + error));
+				});
+			} else {
+				oDeferred.resolve();
+			}
+			return oDeferred.promise();
+		};
+
+		Opa5.prototype._executeExtensionOnBeforeExit = function(oExtension,oAppWindow) {
+			var oDeferred = $.Deferred();
+
+			var fnOnBeforeExit = oExtension.onBeforeExit;
+			if (fnOnBeforeExit) {
+				// onBeforeExit will return app-frame promise, need to convert it to test-frame promise
+				fnOnBeforeExit.bind(oAppWindow)().done(function() {
+					oDeferred.resolve();
+				}).fail(function(error) {
+					oDeferred.reject(
+						new Error("Error while waiting for extension: " + oExtension.name +
+							" to exit, details: " + error));
+				});
+			} else {
+				oDeferred.resolve();
+			}
+
+			return oDeferred.promise();
+		};
+
 
 		return Opa5;
 }, /* export= */ true);

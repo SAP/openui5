@@ -17,7 +17,6 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
-
 	function addItems(list, nItems){
 		var n = list.getItems().length + 1;
 		for(var i = 0; i < nItems; i++){
@@ -50,6 +49,8 @@
 		}
 	});
 
+	oP2R._bTouchMode = true;
+
 	var oPage1 = new sap.m.Page("page1", {
 		title: "PullToRefresh Control",
 		enableScrolling: true,
@@ -71,6 +72,7 @@
 	});
 
 	QUnit.module("Check HTML");
+
 	QUnit.test("HTML", function(assert) {
 		var $P2R = oP2R.$();
 		var iScroller = oPage1.getScrollDelegate()._scroller;

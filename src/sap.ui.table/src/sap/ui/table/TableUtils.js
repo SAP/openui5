@@ -135,7 +135,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		hasRowActions : function(oTable) {
-			return !!oTable.getRowActionTemplate() && TableUtils.getRowActionCount(oTable) > 0;
+			var oRowActionTemplate = oTable.getRowActionTemplate();
+
+			return oRowActionTemplate != null
+				   && (oRowActionTemplate.isBound("visible") || oRowActionTemplate.getVisible())
+				   && TableUtils.getRowActionCount(oTable) > 0;
 		},
 
 		/**

@@ -567,6 +567,35 @@ sap.ui.define([
 				validationInfo: Opa._validationInfo,
 				inputToValidate: oParameters
 			});
+		},
+
+		_schedulePromiseOnFlow: function (oPromise) {
+			// as the waitFor flow is driven by the polling, the only way to schedule
+			// a promise on it is to insert a waitFor that polls the result.
+			// an promised-based way will require a full rework of the flow management
+			var bPromiseDone = false;
+			var oPromiseErrorMessage;
+			oPromise.done(function() {
+				bPromiseDone = true;
+			}).fail(function(error) {
+				oPromiseErrorMessage = "Error while waiting for promise scheduled on flow" +
+					(error ? ", details: " + error : "");
+			});
+			var oOptions = {
+					// make sure no controls are searched by the defaults
+					viewName: null,
+					controlType: null,
+					id: null,
+					searchOpenDialogs: false,
+					autoWait: false
+			};
+			oOptions.check = function() {
+				if (oPromiseErrorMessage) {
+					throw new Error(oPromiseErrorMessage);
+				}
+				return bPromiseDone;
+			};
+			return this.waitFor(oOptions);
 		}
 	};
 

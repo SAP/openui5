@@ -261,7 +261,6 @@
 		try {
 			sap.ui.core.DeclarativeSupport.compile($("#data-attributes"));
 		} catch (exc) {
-			debugger;
 			bThrown = true;
 		}
 		assert.ok(bThrown, "Missing data-* prefix for attributes throws error");

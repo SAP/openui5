@@ -4,14 +4,14 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		title="{i18n>HOME_TITLE}"
+		title="{i18n>homeTitle}"
 		showNavButton="{device>/isPhone}"
 		navButtonPress="onNavButtonPress"
 		showFooter="{device>/isNoPhone}" >
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"
-				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
+				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress">
 			</Button>
 		</headerContent>
@@ -19,10 +19,10 @@
 			<Toolbar id="searchBar">
 				<SearchField
 					id="searchField"
+					liveChange="onSearch"
 					showRefreshButton="{device>/isNoTouch}"
-					placeholder="{i18n>HOME_SEARCH_PLACEHOLDER}"
-					search="onSearch"
-					tooltip="{i18n>HOME_SEARCH_TOOLTIP}"
+					placeholder="{i18n>homeSearchPlaceholder}"
+					tooltip="{i18n>homeSearchTooltip}"
 					width="100%">
 				</SearchField>
 			</Toolbar>
@@ -38,7 +38,7 @@
 				id="productList"
 				mode="{device>/listMode}"
 				select="onProductListSelect"
-				noDataText="{i18n>HOME_NO_DATA}"
+				noDataText="{i18n>homeNoData}"
 				items="{
 					path : '/Products',
 					sorter : {
@@ -81,7 +81,7 @@
 			<!-- This list shows the product categories -->
 			<List
 				id="categoryList"
-				headerText="{i18n>HOME_CATEGORY_LIST_HEADER}"
+				headerText="{i18n>homeCategoryListHeader}"
 				mode="None"
 				items="{
 					path : '/ProductCategories',

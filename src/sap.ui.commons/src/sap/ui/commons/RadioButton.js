@@ -23,6 +23,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * the user makes a change of the selection.
 	 *
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -35,6 +36,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 */
 	var RadioButton = Control.extend("sap.ui.commons.RadioButton", /** @lends sap.ui.commons.RadioButton.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.ui.commons",
 		properties : {
 

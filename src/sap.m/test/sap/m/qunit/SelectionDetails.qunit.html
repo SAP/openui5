@@ -770,7 +770,7 @@
 		oGetItemFacadeSpy.restore();
 	});
 
-	QUnit.module("Factory Function", {
+	QUnit.module("Factory function registration", {
 		beforeEach : function() {
 			this.oSelectionDetails = new sap.m.SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
@@ -1099,7 +1099,7 @@
 	QUnit.module("Factory integration", {
 		beforeEach : function() {
 			this.aCreatedItems = [];
-			this.fnFactory = function (aDisplayData, aData, oData) {
+			this.fnFactory = function (aDisplayData, aData, oContext, oData) {
 				var oItem = new sap.m.SelectionDetailsItem();
 				this.aCreatedItems.push(oItem);
 				return oItem;
@@ -1227,6 +1227,32 @@
 		function onAfterUpdate(oEvent) {
 			assert.deepEqual(oEvent.getParameter("items"), this.aCreatedItems, "Event includes new items as parameter");
 		}
+	});
+
+	QUnit.test("Factory function is called with correct parameters", function(assert) {
+		//Arrange
+		var oEventParam = {
+			data: [{
+				data: [],
+				displayData: [],
+				context: {}
+			}]
+		};
+		this.oSelectionDetails._handleSelectionChange({
+			getParameter: function () {
+				return oEventParam.data;
+			}
+		});
+		this.oSelectionDetails._oItemFactory.factory = factory;
+		//Act
+		this.oSelectionDetails._callFactory();
+
+		//Assert
+		function factory (displayData, data, context) {
+			assert.deepEqual(displayData, oEventParam.data[0].displayData, displayData, "'displayData' as parameter provided");
+			assert.deepEqual(data, oEventParam.data[0].data, data, "'data' as parameter provided");
+			assert.deepEqual(context, oEventParam.data[0].context, "'context' as parameter provided");
+		};
 	});
 
 </script>

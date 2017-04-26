@@ -193,16 +193,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				sVersion = iMajor + "." + iMinor + "." + iPatch;
 			}
 
-			// replace the placeholders for major, minor and patch
-			sUrl = sUrl.replace("{major}", iMajor);
-			sUrl = sUrl.replace("{minor}", iMinor);
-			sUrl = sUrl.replace("{patch}", iPatch);
-
 			// if the URL should be resolved against the library the URL
 			// is relative to the library root path
 			if ($Doc.attr("resolve") == "lib") {
-				sUrl = oData.url + sUrl;
+				sUrl = "{major}.{minor}.{patch}/" + oData.url + sUrl;
 			}
+
+			// replace the placeholders for major, minor and patch
+			sUrl = sUrl.replace(/\{major\}/g, iMajor);
+			sUrl = sUrl.replace(/\{minor\}/g, iMinor);
+			sUrl = sUrl.replace(/\{patch\}/g, iPatch);
 
 			// load the changelog/releasenotes
 			jQuery.ajax({

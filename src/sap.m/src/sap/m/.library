@@ -65,6 +65,7 @@
                 <module>sap/m/SelectionDetails</module>
                 <module>sap/m/SelectionDetailsFacade</module>
                 <module>sap/m/SelectionDetailsItem</module>
+                <module>sap/m/SelectionDetailsItemFacade</module>
                 <module>sap/m/SelectionDetailsLine</module>
             </modules>
         </component>

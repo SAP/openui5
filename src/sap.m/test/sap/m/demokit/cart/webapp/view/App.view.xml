@@ -1,8 +1,5 @@
-<mvc:View
-	xmlns:mvc="sap.ui.core.mvc"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	displayBlock="true">
-	<SplitApp
-		id="splitApp"
-		class="sapUiDemoCart"/>
+	<App id="App" class="sapUiDemoCart"/>
 </mvc:View>

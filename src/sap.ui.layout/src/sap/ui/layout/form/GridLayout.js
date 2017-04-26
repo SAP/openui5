@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 			var aContainers = oForm.getFormContainers();
 			for ( var i = 0; i < aContainers.length; i++) {
 				var oContainer = aContainers[i];
-				if (oContainer.getExpandable()) {
+				if (oContainer.getExpandable() && oContainer._oExpandButton) {
 					oContainer._oExpandButton.$().attr("tabindex", "-1");
 				}
 			}
@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 
 		FormLayout.prototype.contentOnAfterRendering.apply(this, arguments);
 
-		if (oControl.getMetadata().getName() != "sap.ui.commons.Image" ) {
+		if (!oControl.getFormShouldNotAdjustWidth || !oControl.getFormShouldNotAdjustWidth()) {
 			oControl.$().css("width", "100%");
 		}
 

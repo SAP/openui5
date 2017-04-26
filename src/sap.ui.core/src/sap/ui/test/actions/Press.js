@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 *     <li>sap.m.Table - More Button</li>
 	 *     <li>sap.m.StandardTile</li>
 	 *     <li>sap.m.ComboBox</li>
+	 *     <li>sap.m.ObjectIdentifier</li>
 	 *     <li>sap.ui.comp.smartfilterbar.SmartFilterBar - Go Button</li>
 	 * </ul>
 	 *
@@ -114,6 +115,8 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	 * @public
 	 * @static
 	 * @name sap.ui.test.actions.Press.controlAdapters
+	 * You can specify an Id suffix for specific controls in this map.
+	 * The press action will be triggered on the DOM element with the specified suffix
 	 * @type map
 	 */
 	Press.controlAdapters = {};
@@ -126,6 +129,7 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 	Press.controlAdapters["sap.m.ComboBox"] = "arrow";
 	Press.controlAdapters["sap.ui.comp.smartfilterbar.SmartFilterBar"] = "btnGo";
 	Press.controlAdapters["sap.m.ObjectAttribute"] = "text";
+	Press.controlAdapters["sap.m.ObjectIdentifier"] = "link";
 
 	return Press;
 

@@ -34,7 +34,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 
 
 	QUnit.test("when asking for move action for an aggregation", function(assert) {
-		assert.strictEqual(this.oAggregationDesignTimeMetadata.getMoveAction(), "moveElements", "then move change handler type is returned");
+		assert.strictEqual(this.oAggregationDesignTimeMetadata.getAction("move").changeType, "moveElements", "then move change handler type is returned");
 	});
 
 	QUnit.module("Given AggregationDesignTimeMetadata without an action", {
@@ -51,7 +51,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 	});
 
 	QUnit.test("when asking for move action for an aggregation", function(assert) {
-		assert.strictEqual(this.oAggregationDesignTimeMetadata.getMoveAction(), undefined, "then undefined is returned");
+		assert.strictEqual(this.oAggregationDesignTimeMetadata.getAction("move"), undefined, "then undefined is returned");
 	});
 
 	QUnit.module("Given AggregationDesignTimeMetadata without a move action", {
@@ -71,7 +71,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 	});
 
 	QUnit.test("when asking for move action for an aggregation", function(assert) {
-		assert.strictEqual(this.oAggregationDesignTimeMetadata.getMoveAction(), undefined, "then undefined is returned");
+		assert.strictEqual(this.oAggregationDesignTimeMetadata.getAction("move"), undefined, "then undefined is returned");
 	});
 
 	QUnit.module("Given AggregationDesignTimeMetadata with a move action as function", {
@@ -93,7 +93,7 @@ function(AggregationDesignTimeMetadata, Button, Page, VerticalLayout) {
 	});
 
 	QUnit.test("when asking for move action for an aggregation", function(assert) {
-		assert.strictEqual(this.oAggregationDesignTimeMetadata.getMoveAction("hugo", "foo"), "otherChangeType", "then the function is executed");
+		assert.strictEqual(this.oAggregationDesignTimeMetadata.getAction("move", "hugo", "foo").changeType, "otherChangeType", "then the function is executed");
 	});
 
 	QUnit.module("Given 'AggregationDesignTimeMetadata' with empty metadata is created", {

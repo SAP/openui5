@@ -932,7 +932,7 @@ sap.ui.define([
 
 		/* obtain the currently selected section in the navBar before navBar is destroyed,
 		 in order to reselect that section after that navBar is reconstructed */
-		var sSelectedSectionId = this._getSelectedSectionId(),
+		var sSelectedSectionId = this.getSelectedSection(),
 			oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId),
 			bSelectionChanged = false;
 
@@ -959,19 +959,6 @@ sap.ui.define([
 				}.bind(this));
 		}
 	};
-
-	ObjectPageLayout.prototype._getSelectedSectionId = function () {
-
-		var oAnchorBar = this.getAggregation("_anchorBar"),
-			sSelectedSectionId;
-
-		if (oAnchorBar && oAnchorBar.getSelectedSection()) {
-			sSelectedSectionId = oAnchorBar.getSelectedSection().getId();
-		}
-
-		return sSelectedSectionId;
-	};
-
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
 		var oAnchorBar = this.getAggregation("_anchorBar"),
@@ -1661,7 +1648,7 @@ sap.ui.define([
 				iScrollTop = this._$opWrapper.scrollTop();
 				iPageHeight = this.iScreenHeight;
 				sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
-				sSelectedSectionId = this._getSelectedSectionId();
+				sSelectedSectionId = this.getSelectedSection();
 
 
 				if (sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar

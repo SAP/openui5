@@ -23,6 +23,13 @@ sap.ui.define([
 		ALT: 4
 	};
 
+	/**
+	 * The selectors which define whether an element is interactive. Due to the usage of pseudo selectors this can only be used in jQuery.
+	 *
+	 * @type {string}
+	 */
+	var INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
+
 	// Workaround until (if ever) these values can be set by applications.
 	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
 	var COLUMN_RESIZE_STEP_CSS_SIZE = "1em";
@@ -89,8 +96,9 @@ sap.ui.define([
 	 *
 	 * @param {KeyboardEvent} oEvent The event object.
 	 * @param {int|string|null} key The key code integer, or character string, of the key which should have been pressed.
-	 * 								If an <code>integer</code> is passed, the value will be compared with the <code>keyCode</code> value.
-	 * 								If a <code>string</code> is passed, the value will be compared with the string representation of the <code>charCode</code>.
+	 *                              If an <code>integer</code> is passed, the value will be compared with the <code>keyCode</code> value.
+	 *                              If a <code>string</code> is passed, the value will be compared with the string representation of the
+	 * 								<code>charCode</code>.
 	 * 								If no value is passed only the modifier keys will be checked.
 	 * @param {int} [modifierKeyMask=0] The modifier key bitmask.
 	 * @example
@@ -243,9 +251,13 @@ sap.ui.define([
 	 * @private
 	 */
 	TableKeyboardDelegate._isElementGroupToggler = function(oTable, oElement) {
-		return TableUtils.Grouping.isInGroupingRow(oElement) ||
-			   (TableUtils.Grouping.isTreeMode(oTable) && oElement.classList.contains("sapUiTableTdFirst")) ||
-			   oElement.classList.contains("sapUiTableTreeIcon");
+		return TableUtils.Grouping.isInGroupingRow(oElement)
+			   || (TableUtils.Grouping.isTreeMode(oTable)
+				   && oElement.classList.contains("sapUiTableTdFirst")
+				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen") != null
+					   || oElement.querySelector(".sapUiTableTreeIconNodeClosed") != null))
+			   || oElement.classList.contains("sapUiTableTreeIconNodeOpen")
+			   || oElement.classList.contains("sapUiTableTreeIconNodeClosed");
 	};
 
 	/**
@@ -260,7 +272,7 @@ sap.ui.define([
 			return false;
 		}
 
-		return jQuery(oElement).is(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
+		return jQuery(oElement).is(INTERACTIVE_ELEMENT_SELECTORS);
 	};
 
 	/**
@@ -278,7 +290,7 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo($Cell);
 
 		if (oCellInfo !== null && (oCellInfo.type === TableUtils.CELLTYPES.DATACELL || oCellInfo.type === TableUtils.CELLTYPES.ROWACTION)) {
-			var $InteractiveElements = $Cell.find(":sapTabbable, input:sapFocusable, .sapUiTableTreeIcon");
+			var $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTORS);
 			if ($InteractiveElements.length > 0) {
 				return $InteractiveElements;
 			}
@@ -374,7 +386,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
 	 * @param {jQuery|HTMLElement} oElement An interactive element in a row.
-	 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the first interactive element in the row.
+	 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the first interactive element in
+	 * 						  the row.
 	 * @private
 	 */
 	TableKeyboardDelegate._getPreviousInteractiveElement = function(oTable, oElement) {
@@ -451,7 +464,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
 	 * @param {jQuery|HTMLElement} oElement An interactive element in a row.
-	 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the last interactive element in the row.
+	 * @returns {jQuery|null} Returns <code>null</code> if the passed element is not an interactive element, or is the last interactive element in
+	 * 						  the row.
 	 * @private
 	 */
 	TableKeyboardDelegate._getNextInteractiveElement = function(oTable, oElement) {

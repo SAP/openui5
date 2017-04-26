@@ -8,6 +8,11 @@
 
 	<display-name>testsuite</display-name>
 
+	<context-param>
+		<param-name>com.sap.openui5.DiscoveryService.APP_NAME</param-name>
+		<param-value>OpenUI5 TestSuite</param-value>
+	</context-param>
+
 	<filter>
 		<filter-name>RewriteFilter</filter-name>
 		<filter-class>com.sap.openui5.RewriteFilter</filter-class>

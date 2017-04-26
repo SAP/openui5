@@ -649,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("minDate", oDate, false); // re-render TimesRow because visualization can change
 
 		var oYearPicker = this.getAggregation("yearPicker");
-		oYearPicker._oMinDate.setUTCFullYear(this._oMinDate.getUTCFullYear());
+		oYearPicker._oMinDate.setYear(this._oMinDate.getUTCFullYear());
 
 		return this;
 
@@ -709,7 +709,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this.setProperty("maxDate", oDate, false); // re-render TimesRow because visualization can change
 
 		var oYearPicker = this.getAggregation("yearPicker");
-		oYearPicker._oMaxDate.setUTCFullYear(this._oMaxDate.getUTCFullYear());
+		oYearPicker._oMaxDate.setYear(this._oMaxDate.getUTCFullYear());
 
 		return this;
 

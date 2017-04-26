@@ -313,11 +313,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.Bar": {
 					"moveControls": "default"
 				},
-				"sap.m.ListItemBase": {
-					"hideControl": "default",
-					"unhideControl": "default"
-				},
-				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
+				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
 				"sap.m.ColumnListItem": {
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -327,35 +323,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"unhideControl": "default",
 					"moveControls": "default"
 				},
-				"sap.m.InputListItem": "sap/m/flexibility/InputListItem",
 				"sap.m.DatePicker": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.CheckBox": "sap/m/flexibility/CheckBox",
-				"sap.m.Input": {
+				"sap.m.FlexBox": {
 					"hideControl": "default",
-					"unhideControl": "default"
+					"unhideControl": "default",
+					"moveControls": "default"
+				},
+				"sap.m.HBox": {
+					"hideControl": "default",
+					"unhideControl": "default",
+					"moveControls": "default"
 				},
 				"sap.m.Image": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.Input": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+
 				"sap.m.InputBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.InputListItem": "sap/m/flexibility/InputListItem",
 				"sap.m.Label": "sap/m/flexibility/Label",
 				"sap.m.MultiInput": {
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.MaskInput": {
+				"sap.m.ListItemBase": {
 					"hideControl": "default",
 					"unhideControl": "default"
-				},
-				"sap.m.OverflowToolbar": {
-					"moveControls": "default"
 				},
 				"sap.m.Link": {
 					"hideControl": "default",
@@ -369,6 +372,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				"sap.m.ListBase": {
 					"hideControl": "default",
 					"unhideControl": "default",
+					"moveControls": "default"
+				},
+				"sap.m.MaskInput": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.m.OverflowToolbar": {
 					"moveControls": "default"
 				},
 				"sap.m.Page": "sap/m/flexibility/Page",
@@ -391,10 +401,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
 				"sap.m.Table": "sap/m/flexibility/Table",
 				"sap.m.Text": "sap/m/flexibility/Text",
 				"sap.m.Title": "sap/m/flexibility/Title",
 				"sap.m.Toolbar": {
+					"moveControls": "default"
+				},
+				"sap.m.VBox": {
+					"hideControl": "default",
+					"unhideControl": "default",
 					"moveControls": "default"
 				}
 			}
@@ -1955,7 +1971,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
 		 * @public
 		 */
-		NeverOverflow : "Never",
+		NeverOverflow : "NeverOverflow",
+
+		/**
+		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.NeverOverflow</code> instead
+		 * @deprecated Since version 1.48
+		 * @public
+		 */
+		Never : "Never",
 
 		/**
 		 * High priority OverflowToolbar items overflow after the items with lower priority
@@ -1979,7 +2002,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
 		 * @public
 		 */
-		AlwaysOverflow : "Always"
+		AlwaysOverflow : "AlwaysOverflow",
+
+		/**
+		 * Deprecated - Use <code>sap.m.OverflowToolbarPriority.AlwaysOverflow</code> instead
+		 * @deprecated Since version 1.48
+		 * @public
+		 */
+		Always : "Always"
 
 	};
 
@@ -3847,10 +3877,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		createLabel: function(sText){
 			return new sap.m.Label({text: sText});
 		},
-		createButton: function(sId, fPressFunction){
-			var oButton = new sap.m.Button(sId, {type: sap.m.ButtonType.Transparent});
-			oButton.attachEvent('press', fPressFunction, this); // attach event this way to have the right this-reference in handler
-			return oButton;
+		createButton: function(sId, fPressFunction, fnCallback){
+			var that = this;
+			var _createButton = function(Button){
+				var oButton = new Button(sId, {type: sap.m.ButtonType.Transparent});
+				oButton.attachEvent('press', fPressFunction, that); // attach event this way to have the right this-reference in handler
+				fnCallback.call(that, oButton);
+			};
+			var fnButtonClass = sap.ui.require("sap/m/Button");
+			if (fnButtonClass) {
+				// already loaded -> execute synchron
+				_createButton(fnButtonClass);
+			} else {
+				sap.ui.require(["sap/m/Button"], _createButton);
+			}
 		},
 		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
 			oButton.setText(sText);

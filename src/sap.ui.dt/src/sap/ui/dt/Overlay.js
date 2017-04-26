@@ -67,6 +67,14 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				focusable : {
 					type : "boolean",
 					defaultValue : false
+				},
+
+				/**
+				 * Whether the Overlay is enabled
+				 */
+				enabled: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			associations : {
@@ -288,6 +296,10 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function() {
+
+		if (!this.getEnabled()) {
+			return;
+		}
 
 		var fnDeleteDummyContainer = function() {
 			if (this._oDummyScrollContainer) {
@@ -623,7 +635,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				return true;
 			}
 			var oDesignTimeMetadata = this.getDesignTimeMetadata();
-			return oDesignTimeMetadata ? !oDesignTimeMetadata.isIgnored() : false;
+			return oDesignTimeMetadata ? !oDesignTimeMetadata.isIgnored(this.getElementInstance()) : false;
 		} else {
 			return this.getProperty("visible");
 		}

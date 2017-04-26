@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.description = mParameters.description;
 			this.descriptionUrl = mParameters.descriptionUrl;
 			this.additionalText = mParameters.additionalText;
-			this.type = mParameters.type;
+			this.setType(mParameters.type);
 			this.code = mParameters.code;
 			this.target = mParameters.target;
 			this.processor = mParameters.processor;

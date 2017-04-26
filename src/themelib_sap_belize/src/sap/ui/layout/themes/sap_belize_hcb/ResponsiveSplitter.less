@@ -3,20 +3,48 @@
 /* Belize High Contrast Black theme                  */
 /* ================================================= */
 
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
-.sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
-	background-color: @sapUiHcReducedAltForeground;
-}
-
 .sapUiResponsiveSplitterPaginatorButton {
-	&:focus:before {
-		border: 1px dotted @sapUiContentFocusColor;
-		margin: 2px 0 0 2px;
+	background-color: transparent;
+
+	&:after {
+		background-color: @sapUiHcReducedAltForeground;
+	}
+
+	&:hover {
+		background-color: @sapUiHcHighlightBackground;
+
+		&:after {
+			background-color: @sapUiHcStandardForeground;
+		}
+	}
+
+	&:focus {
+
+		&:before {
+			border: 1px dotted @sapUiContentFocusColor;
+		}
 	}
 }
 
-.sapUiResponsiveSplitterPaginatorButton {
+.sapUiResponsiveSplitterPaginatorSelectedButton {
 	&:after {
-		background-color: @sapUiHcReducedAltForeground;
-	};
+		background-color: @sapUiHcStandardForeground;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterBar,
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		background-color: @sapUiHcStandardBackground;
+		border-color: @sapUiHcStandardForeground;
+	}
+}
+
+html.sap-phone .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar,
+html.sap-tablet .sapUiResponsiveSplitter > .sapUiResponsiveSplitterPage > .sapUiLoSplitter .sapUiLoSplitterOverlayBar {
+	& .sapUiLoSplitterBarIcon:after {
+		background-color: @sapUiHcHighlightBackground;
+	}
 }

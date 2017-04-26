@@ -1,8 +1,8 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/FragmentControl'],
-    function(jQuery, FragmentControl) {
+	'sap/ui/core/FragmentControl'
+], function(FragmentControl) {
 	"use strict";
-	var SimpleText = FragmentControl.extend("fragments.SimpleText", {
+	return FragmentControl.extend("fragments.SimpleText", {
 		metadata: {
 			properties: {
 				text: {
@@ -12,5 +12,4 @@ sap.ui.define([
 			}
 		}
 	});
-	return SimpleText;
 }, /* bExport= */true);

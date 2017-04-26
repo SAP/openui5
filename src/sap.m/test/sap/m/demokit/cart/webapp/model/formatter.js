@@ -38,7 +38,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 				fTotalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
 			});
 
-			return oBundle.getText("CART_TOTAL_PRICE", [formatter.price(fTotalPrice)]);
+			return oBundle.getText("cartTotalPrice", [formatter.price(fTotalPrice)]);
 		},
 
 		/**
@@ -50,9 +50,9 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 			var oBundle = this.getResourceBundle();
 
 			var mStatusText = {
-				"A": oBundle.getText("STATUS_A"),
-				"O": oBundle.getText("STATUS_O"),
-				"D": oBundle.getText("STATUS_D")
+				"A": oBundle.getText("statusA"),
+				"O": oBundle.getText("statusO"),
+				"D": oBundle.getText("statusD")
 			};
 
 			return mStatusText[sStatus] || sStatus;
@@ -87,7 +87,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat"], function (NumberFormat) {
 			if (Object.keys(oSavedForLaterEntries).length === 0) {
 				return "";
 			}
-			return oBundle.getText("CART_SAVED_FOR_LATER_FOOTER_TEXT");
+			return oBundle.getText("cartSavedForLaterFooterText");
 		},
 
 		/**

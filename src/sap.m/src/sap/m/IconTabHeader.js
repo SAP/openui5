@@ -751,6 +751,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._sResizeListenerNoFlexboxSupportId = sap.ui.core.ResizeHandler.register(oParent.getDomRef(), jQuery.proxy(this._fnResizeNoFlexboxSupport, this));
 			this._fnResizeNoFlexboxSupport();
 		}
+
+		this._bCheckIfIntoView = true;
 	};
 
 	/*
@@ -1236,6 +1238,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	*/
 	IconTabHeader.prototype._fnResize = function() {
 		this._checkOverflow();
+
+		if (this._bCheckIfIntoView) {
+			this._scrollIntoView(this.oSelectedItem, 0);
+			this._bCheckIfIntoView = false;
+		}
 	};
 
 	/**
@@ -1299,6 +1306,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	IconTabHeader.prototype._isTabIntoView = function($tab, skipRightSide) {
+
+		if (!$tab.length) {
+			return false;
+		}
 
 		var iScrollLeft = this._oScroller.getScrollLeft(),
 			iContainerWidth = this.$("scrollContainer").width(),

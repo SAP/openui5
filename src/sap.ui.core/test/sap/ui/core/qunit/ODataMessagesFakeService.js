@@ -798,6 +798,7 @@ var mPredefinedServiceResponses = {
 				for (var n = 0; n < oColData.itemMessages.length; ++n) {
 					mMessage = jQuery.extend({}, oColData.itemMessages[n]);
 					mMessage.target = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
+					mMessage.propertyRef = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
 					aMessages.push(mMessage);
 				}
 			}

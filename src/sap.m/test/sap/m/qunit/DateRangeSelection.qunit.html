@@ -188,6 +188,44 @@
 				assert.strictEqual(oDRS1.$().length + oDRS2.$().length + oDRS3.$().length, 0, "DateRangeSelection is destroyed");
 			});
 
+			//BCP: 1770061639
+			QUnit.test("Single date validity", function(assert) {
+				//arrange, act
+				var oDateRangeSelection = new sap.m.DateRangeSelection({
+						displayFormat: "dd.MM.yyyy",
+						displayFormatType: sap.ui.core.CalendarType.Gregorian
+					}),
+					oDate = oDateRangeSelection._parseValue("12.04.2017 - ");
+
+				//assert
+				assert.ok(oDate[0], "the first value is successfully parsed");
+				assert.ok(!oDate[1], "the second value does not exist");
+
+				//act
+				oDate = oDateRangeSelection._parseValue("12.04.2017 -");
+
+				//assert
+				assert.ok(oDate[0], "the first value is successfully parsed");
+				assert.ok(!oDate[1], "the second value does not exist");
+
+				//act
+				oDate = oDateRangeSelection._parseValue("12.04.2017 ");
+
+				//assert
+				assert.ok(oDate[0], "the first value is successfully parsed");
+				assert.ok(!oDate[1], "the second value does not exist");
+
+				//act
+				oDate = oDateRangeSelection._parseValue("12.04.2017");
+
+				//assert
+				assert.ok(oDate[0], "the first value is successfully parsed");
+				assert.ok(!oDate[1], "the second value does not exist");
+
+				//clean
+				oDateRangeSelection.destroy();
+			});
+
 			QUnit.module("Accessibility");
 
 			QUnit.test("getAccessibilityInfo", function(assert) {

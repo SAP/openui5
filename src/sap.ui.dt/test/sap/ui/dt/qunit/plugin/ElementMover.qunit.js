@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 

@@ -359,7 +359,6 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		if ( oDocument ) {
 			var oControlNode = oDocument.getElementsByTagName("control")[0];
 			if ( oControlNode ) {
-				// debugger;
 				var get = function(oXMLNode, sName) {
 					var result = [];
 					var oCandidate = oXMLNode.firstChild;

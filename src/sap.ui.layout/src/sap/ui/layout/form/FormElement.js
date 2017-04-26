@@ -147,8 +147,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.addField = function(oField) {
 
 		this.addAggregation("fields", oField);
-		_attachDelegate.call(this, oField);
-		_updateLabelFor(this);
+
+		if (oField) {
+			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+			}
+			_attachDelegate.call(this, oField);
+			_updateLabelFor(this);
+		}
 
 		return this;
 
@@ -157,8 +163,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.insertField = function(oField, iIndex) {
 
 		this.insertAggregation("fields", oField, iIndex);
-		_attachDelegate.call(this, oField);
-		_updateLabelFor(this);
+
+		if (oField) {
+			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+			}
+			_attachDelegate.call(this, oField);
+			_updateLabelFor(this);
+		}
 
 		return this;
 

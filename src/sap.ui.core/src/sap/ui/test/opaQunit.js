@@ -2,7 +2,11 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Opa',
+	'./Opa5'
+], function ($, Opa, Opa5) {
 	"use strict";
 
 	QUnit.testDone(function( details ) {
@@ -118,6 +122,33 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 		},
 		label: "Opa speed",
 		tooltip: "Each waitFor will be delayed by a number of milliseconds. If it is not set Opa will execute the tests as fast as possible"
+	});
+
+	// synchronously hook QUnit custom async assertions from extension
+	Opa5._getEventProvider().attachEvent('onExtensionAfterInit',function(oEvent) {
+		var oParams = oEvent.getParameters();
+		if (oParams.extension.getAssertions) {
+			var oAssertions = oParams.extension.getAssertions();
+			$.each(oAssertions,function(sName,fnAssertion) {
+				QUnit.assert[sName] = function() {
+					var qunitThis = this;
+					// call the assertion in the app window
+					// assertion is async, push results when ready
+					var oAssertionPromise = fnAssertion.bind(oParams.appWindow)(arguments)
+						.always(function (oResult) {
+							qunitThis.push(
+								oResult.result,
+								oResult.actual,
+								oResult.expected,
+								oResult.message
+							);
+						});
+
+					// schedule async assertion promise on waitFor flow so test waits till assertion is ready
+					Opa.config.assertions._schedulePromiseOnFlow(oAssertionPromise);
+				};
+			});
+		}
 	});
 
 	return opaTest;

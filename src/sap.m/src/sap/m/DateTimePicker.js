@@ -492,6 +492,11 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			oDate = new Date(oDate.getTime());
 		} else {
 			oDate = new Date();
+			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
+
+			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
+				oDate = this._oMinDate;
+			}
 		}
 
 		this._oCalendar.focusDate(oDate);

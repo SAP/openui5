@@ -16,6 +16,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		 * @class
 		 * The <code>StepInput</code> control allows the user to change the input values with predefined increments (steps).
 		 * @extends sap.ui.core.Control
+		 * @implements sap.ui.core.IFormContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -29,6 +30,7 @@ sap.ui.define(["jquery.sap.global", "./Button", "./Input", "sap/ui/core/Control"
 		var StepInput = Control.extend("sap.m.StepInput", /** @lends sap.m.StepInput.prototype */ {
 			metadata: {
 
+				interfaces: ["sap.ui.core.IFormContent"],
 				library: "sap.m",
 				properties: {
 

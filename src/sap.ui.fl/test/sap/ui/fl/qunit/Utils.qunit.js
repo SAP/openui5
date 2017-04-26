@@ -276,7 +276,7 @@ jQuery.sap.require("sap.m.Button");
 		f_getOwnerIdForControl.restore();
 	});
 
-	QUnit.test("_getComponentName shall return the component name for a component", function (assert) {
+	QUnit.test("getComponentName shall return the component name for a component", function (assert) {
 		var oMetadata = {
 			_sComponentName: 'testcomponent.Component',
 			getName: function () {
@@ -292,15 +292,15 @@ jQuery.sap.require("sap.m.Button");
 			}
 		};
 		// 1. simple check
-		var sComponentName = Utils._getComponentName(oComponent);
+		var sComponentName = Utils.getComponentName(oComponent);
 		assert.equal(sComponentName, 'testcomponent.Component');
 
 		// 2. check that .Component is added if the actual component name has no .Component suffix
 		oMetadata._sComponentName = 'testcomponent';
-		sComponentName = Utils._getComponentName(oComponent);
+		sComponentName = Utils.getComponentName(oComponent);
 		assert.equal(sComponentName, 'testcomponent.Component');
 
-		//Commented out since method _getComponentName is always called from getComponentClassName and this method already includes the check for smart templates.
+		//Commented out since method getComponentName is always called from getComponentClassName and this method already includes the check for smart templates.
 		// 3. check that in case of a smart templating component the app component is retrieved
 		/*var oAppCompMetadata = {
 		 _sComponentName: 'app.testcomponent.Component',
@@ -316,7 +316,7 @@ jQuery.sap.require("sap.m.Button");
 		 oComponent.getAppComponent = function() {
 		 return oAppComponent;
 		 };
-		 sComponentName = Utils._getComponentName(oComponent);
+		 sComponentName = Utils.getComponentName(oComponent);
 		 assert.equal(sComponentName, 'app.testcomponent.Component');*/
 	});
 
@@ -846,7 +846,7 @@ jQuery.sap.require("sap.m.Button");
 				"appVariantId": this.sAppVariantId
 			};
 			sandbox.stub(this.oComponentOfVariant, "getManifestEntry").returns(this.oStubbedManifestEntryUi5WithVariantId);
-			sandbox.stub(Utils, "_getComponentName").returns(this.sComponentName);
+			sandbox.stub(Utils, "getComponentName").returns(this.sComponentName);
 		},
 
 		afterEach: function () {
