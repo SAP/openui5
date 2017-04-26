@@ -22,10 +22,13 @@ sap.ui.define([], function () {
 		var oActions = oDynamicPageTitle._getOverflowToolbar(),
 			oLeftContent = oDynamicPageTitle.getHeading(),
 			aSnapContent = oDynamicPageTitle.getSnappedContent(),
-			aExpandContent = oDynamicPageTitle.getExpandedContent();
+			aExpandContent = oDynamicPageTitle.getExpandedContent(),
+			sId = oDynamicPageTitle.getId(),
+			sAriaText = oDynamicPageTitle._oRB.getText("TOGGLE_HEADER");
 
 		// Dynamic Page Layout Title Root DOM Element.
 		oRm.write("<div");
+		oRm.writeAttribute("tabindex", 0);
 		oRm.writeControlData(oDynamicPageTitle);
 		// ACC State
 		oRm.writeAccessibilityState({
@@ -84,6 +87,7 @@ sap.ui.define([], function () {
 
 		oRm.write("</div>");
 		oRm.write("</div>");
+		oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" + sAriaText + "</span>");
 		oRm.write("</div>"); //Root end.
 	};
 

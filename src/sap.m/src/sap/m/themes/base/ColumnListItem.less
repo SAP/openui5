@@ -7,8 +7,11 @@
 	vertical-align: top;
 }
 
+/* Adapt padding for vAlign="Middle" according to UX vAlign specs */
 .sapMListTblRow.sapMListTblRowMiddle > td {
 	vertical-align: middle;
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
 }
 
 .sapMListTblRow.sapMListTblRowBottom > td {
@@ -129,10 +132,4 @@
 .sapUiSizeCompact .sapMListModeMultiSelect .sapMListTblSubCnt,
 .sapUiSizeCompact .sapMListModeSingleSelectLeft .sapMListTblSubCnt {
 	padding-left: 2.5rem;
-}
-
-/* add extra margin for top aligned rows */
-.sapUiSizeCompact .sapMListTblRowTop > .sapMListTblCell > *{
-	margin-top: .5rem;
-	margin-bottom: .5rem;
 }

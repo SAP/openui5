@@ -66,7 +66,6 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 						oJSDate.setHours(oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds(), oJSDate.getUTCMilliseconds());
 
 						this._oUDate = createUniversalUTCDate(oJSDate, sCalendarType);
-						this._sUDate = this.toString();
 						break;
 
 					case 3: // year, month, date
@@ -82,7 +81,6 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 							sCalendarType = aArgs[3];
 						}
 						this._oUDate = createUniversalUTCDate(oJSDate, sCalendarType);
-						this._sUDate = this.toString();
 						break;
 
 					default:
@@ -110,7 +108,6 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		CalendarDate.prototype.setYear = function (year) {
 			checkNumericLike(year, "Invalid year: " + year);
 			this._oUDate.setUTCFullYear(year);
-			this._sUDate = this.toString();
 			return this;
 		};
 
@@ -133,7 +130,6 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		CalendarDate.prototype.setMonth = function (month) {
 			checkNumericLike(month, "Invalid month: " + month);
 			this._oUDate.setUTCMonth(month);
-			this._sUDate = this.toString();
 			return this;
 		};
 
@@ -156,7 +152,6 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		CalendarDate.prototype.setDate = function (date) {
 			checkNumericLike(date, "Invalid date: " + date);
 			this._oUDate.setUTCDate(date);
-			this._sUDate = this.toString();
 			return this;
 		};
 
