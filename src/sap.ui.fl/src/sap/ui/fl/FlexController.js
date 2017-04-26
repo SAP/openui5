@@ -252,6 +252,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag
 	 * @param {object} mPropertyBag.view - the view to process as XML tree
+	 * @param {string} mPropertyBag.viewId - id of the processed view
 	 * @param {object} mPropertyBag.modifier - polymorph reuse operations handling the changes on the given view type
 	 * @param {string} mPropertyBag.appComponent - app component
 	 * @returns {Promise} without parameters. Promise resolves once all changes of the view have been applied
@@ -259,7 +260,6 @@ sap.ui.define([
 	 */
 	FlexController.prototype.processViewByModifier = function (mPropertyBag) {
 
-		mPropertyBag.viewId = mPropertyBag.modifier.getId(mPropertyBag.view);
 		mPropertyBag.siteId = Utils.getSiteId(mPropertyBag.appComponent);
 
 		return this._oChangePersistence.getChangesForView(mPropertyBag.viewId, mPropertyBag).then(
