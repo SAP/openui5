@@ -37,6 +37,7 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.ui.core namespace"
+									href="#/api/sap.ui.core"
 									class="sapUiMediumMarginBottom"/>
 							<Title
 									text="Further Links"
@@ -44,6 +45,7 @@
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.ui.core.Control"
+									href="#/api/sap.ui.core.Control"
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.ui.core.Core"/>
@@ -62,6 +64,7 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.f namespace"
+									href="#/api/sap.f"
 									class="sapUiMediumMarginBottom"/>
 							<Title
 									text="Further Links"
@@ -69,9 +72,11 @@
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.f.DynamicPage"
+									href="#/api/sap.f.DynamicPage"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sap.f.FlexibleColumnLayout"/>
+									text="sap.f.FlexibleColumnLayout"
+									href="#/api/sap.f.FlexibleColumnLayout"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -87,6 +92,7 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.tnt namespace"
+									href="#/api/sap.tnt"
 									class="sapUiMediumMarginBottom"/>
 							<Title
 									text="Further Links"
@@ -94,9 +100,11 @@
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.tnt.ToolPage"
+									href="#/api/sap.tnt.ToolPage"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sap.tnt.ToolHeader"/>
+									text="sap.tnt.ToolHeader"
+									href="#/api/sap.tnt.ToolHeader"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -114,6 +122,7 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.ui.layout namespace"
+									href="#/api/sap.ui.layout"
 									class="sapUiMediumMarginBottom"/>
 							<Title
 									text="Further Links"
@@ -121,9 +130,11 @@
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.ui.layout.form"
+									href="#/api/sap.ui.layout.form.Form"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sap.ui.layout.BlockLayout"/>
+									text="sap.ui.layout.BlockLayout"
+									href="#/api/sap.ui.layout.BlockLayout"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -139,6 +150,7 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.uxap namespace"
+									href="#/api/sap.uxap"
 									class="sapUiMediumMarginBottom"/>
 							<Title
 									text="Further Links"
@@ -146,9 +158,11 @@
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.uxap.ObjectPageLayout"
+									href="#/api/sap.uxap.ObjectPageLayout"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sap.uxap.ObjectPageHeaderContent"/>
+									text="sap.uxap.ObjectPageHeaderContent"
+									href="#/api/sap.uxap.ObjectPageHeaderContent"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 
@@ -165,6 +179,7 @@
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.m namespace"
+									href="#/api/sap.m"
 									class="sapUiMediumMarginBottom"/>
 							<Title
 									text="Further Links"
@@ -172,9 +187,11 @@
 									class="sapUiTinyMarginBottom"/>
 							<Link
 									text="sap.m.Page"
+									href="#/api/sap.m.Page"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sap.m.NavContainer"/>
+									text="sap.m.NavContainer"
+									href="#/api/sap.m.NavContainer"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -182,56 +199,6 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							width="2">
-						<l:VerticalLayout
-								width="100%">
-							<Title
-									text="Smart Controls"
-									titleStyle="H2"
-									class="sapUiSmallMarginBottom"/>
-							<Text
-									text="The sap.ui namespace is the central OpenAjax compliant entry point for UI related JavaScript functionality provided by SAP."
-									class="sapUiSmallMarginBottom"/>
-							<Link
-									text="sap.ui.comp namespace"
-									class="sapUiMediumMarginBottom"/>
-							<Title
-									text="Further Links"
-									titleStyle="H5"
-									class="sapUiTinyMarginBottom"/>
-							<Link
-									text="sap.ui.comp.smartform"
-									class="sapUiTinyMarginBottom"/>
-							<Link
-									text="sap.ui.comp.smartfilterbar"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
-
-					<l:BlockLayoutCell>
-						<l:VerticalLayout
-								width="100%">
-							<Title
-									text="Charts"
-									titleStyle="H2"
-									class="sapUiSmallMarginBottom"/>
-							<Text
-									text="Chart controls based on the SAP BI CVOM charting library"
-									class="sapUiSmallMarginBottom"/>
-							<Link
-									text="sap.ui.comp namespace"
-									class="sapUiMediumMarginBottom"/>
-							<Title
-									text="Further Links"
-									titleStyle="H5"
-									class="sapUiTinyMarginBottom"/>
-							<Link
-									text="Link to API reference page"
-									class="sapUiTinyMarginBottom"/>
-							<Link
-									text="Link to API reference page"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
-
-					<l:BlockLayoutCell>
 						<l:VerticalLayout
 								width="100%">
 							<Title
@@ -249,36 +216,97 @@
 									titleStyle="H5"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sao.ui.table.Table"
+									text="sap.m.Table"
+									href="#/api/sap.m.Table"
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="sap.ui.table.AnalyticalTable"/>
+									text="sap.ui.table.AnalyticalTable"
+									href="#/api/sap.ui.table.AnalyticalTable"/>
+
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Models"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="The SAPUI5 Data Binding API"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.model namespace"
+									href="#/api/sap.ui.model"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.model.Binding"
+									href="#/api/sap.ui.model.Binding"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.model.Model"
+									href="#/api/sap.ui.model.Model"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Unified Controls"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Unified controls intended from both, mobile and desktop scenarious."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.unified namespace"
+									href="#/api/sap.ui.unified"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.unified.FileUploader"
+									href="#/api/sap.ui.unified.FileUploader"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.unified.ColorPicker"
+									href="#/api/sap.ui.unified.ColorPicker"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							class="colorPatternFContrast">
-						<Image
-								src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
-								height="2.5rem">
-						</Image>
-					</l:BlockLayoutCell>
-					<l:BlockLayoutCell
-							class="colorPatternFContrast">
+							class="demokitInitialPagesColorPatternFContrast">
 						<HBox
-								width="100%"
-								justifyContent="End">
-							<Link
-									class="brightLink sapUiLargeMarginEnd"
-									text="Legal Disclosure"/>
-							<Link
-									class="brightLink sapUiLargeMarginEnd"
-									text="Privacy"/>
-							<Link
-									class="brightLink"
-									text="Terms of use"/>
+								justifyContent="SpaceBetween"
+								alignItems="Center">
+							<Image
+									src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+									height="2.5rem">
+							</Image>
+							<HBox
+									width="100%"
+									justifyContent="End"
+									wrap="Wrap">
+								<Link
+										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+										text="Legal Disclosure"/>
+								<Link
+										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+										text="Privacy"/>
+								<Link
+										class="demokitInitialPagesBrightLink"
+										text="Terms of use"/>
+							</HBox>
 						</HBox>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
