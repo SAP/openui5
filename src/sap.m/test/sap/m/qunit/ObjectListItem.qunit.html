@@ -257,9 +257,9 @@
 
 	QUnit.test("Number properties create a private sap.m.ObjectNumber control", function (assert) {
 		var oObjectNumberAggregation = showTextDir.getAggregation("_objectNumber");
-		assert.ok(oObjectNumberAggregation && oObjectNumberAggregation instanceof sap.m.ObjectNumber, "An instance of sap.m.ObjectNumber is created out of number, numberUnit, numberState, numberTextDirection properties");
+		assert.ok(oObjectNumberAggregation && oObjectNumberAggregation instanceof sap.m.ObjectNumber, "An instance of sap.m.ObjectNumber is created out of number, unit, numberState, numberTextDirection properties");
 		assert.strictEqual(oObjectNumberAggregation.getNumber(), showTextDir.getNumber(), "Both 'number' properties are in sync");
-		assert.strictEqual(oObjectNumberAggregation.getNumberUnit(), showTextDir.getNumberUnit(), "Both 'numberUnit' properties are in sync");
+		assert.strictEqual(oObjectNumberAggregation.getUnit(), showTextDir.getNumberUnit(), "Both 'unit' properties are in sync");
 		assert.strictEqual(oObjectNumberAggregation.getState(), showTextDir.getNumberState(), "Both 'ValueStates' properties are in sync");
 		assert.strictEqual(oObjectNumberAggregation.getTextDirection(), showTextDir.getNumberTextDirection(), "Both 'ValueStates' properties are in sync");
 	});
