@@ -15,17 +15,18 @@
 					objectTitle="{/name}">
 				<actions>
 					<ObjectPageHeaderActionButton
-						id="toggleFullScreenBtn"
-						class="sapUiHideOnPhone"
-						icon="sap-icon://full-screen"
-						tooltip="{i18n>sampleFullScreenTooltip}"
-						press="onToggleFullScreen" />
+							id="toggleFullScreenBtn"
+							class="sapUiHideOnPhone"
+							visible="{=!${device>/system/phone}}"
+							icon="sap-icon://full-screen"
+							tooltip="{i18n>sampleFullScreenTooltip}"
+							press="onToggleFullScreen" />
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>
 
 		<headerContent>
-			<l:Grid defaultSpan="L4 M6 S12">
+			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
 				<l:VerticalLayout class="sapUiLargeMarginEnd" width="100%">
 					<m:ObjectAttribute
 							class="sapUiTinyMarginBottom"

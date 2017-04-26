@@ -5,8 +5,10 @@
 /*global history */
 sap.ui.define([
 		"sap/ui/core/mvc/Controller",
-		"sap/ui/core/routing/History"
-	], function (Controller, History) {
+		"sap/ui/core/routing/History",
+		"sap/ui/core/util/LibraryInfo",
+		"sap/ui/documentation/sdk/controller/util/ControlsInfo"
+	], function (Controller, History, LibraryInfo, ControlsInfo) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
@@ -111,8 +113,18 @@ sap.ui.define([
 				} else {
 					oButton.setVisible(false);
 				}
-			}
+			},
 
+			/**
+			 * Retrieves the actual component for the control.
+			 * @param {string} sControlName
+			 * @return {string} the actual component
+			 */
+			_getControlComponent: function (sControlName) {
+				var oLibComponentModel = ControlsInfo.data.libComponentInfos,
+					oLibInfo = new LibraryInfo();
+				return oLibInfo._getActualComponent(oLibComponentModel, sControlName);
+			}
 		});
 
 	}
