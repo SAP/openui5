@@ -122,7 +122,7 @@ sap.ui.define([
 				});
 			},
 
-			_TAB_KEYS: ["samples", "about", "properties", "aggregations", "associations", "events", "methods"],
+			_TAB_KEYS: ["samples", "about"],
 
 			_loadSample: function () {
 
@@ -153,7 +153,7 @@ sap.ui.define([
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
-					var oDoc = EntityInfo.getEntityDocu(sNewId);
+					var oDoc = EntityInfo.getEntityDocu(sNewId, oEntity.namespace);
 
 					// route to not found page IF there is NO index entry AND NO docu from server
 					if (!oEntity && !oDoc) {
@@ -249,38 +249,18 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
-					properties: [],
-					events: [],
-					methods: [],
-					aggregations: [],
-					associations: [],
 					values: [], // for enums!
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
 						about: !!oDoc,
-						// computed later in this function
-						properties: false,
-						events: false,
-						methods: false,
-						aggregations: false,
-						associations: false,
 						values: false,
 						introActive: false
 					},
 					count: {
-						properties: 0,
-						events: 0,
-						methods: 0,
-						aggregations: 0,
-						associations: 0
+						samples: 0
 					},
 					appComponent: this._getControlComponent(sId)
 				};
-
-				var methodsCount = 0,
-					eventsCount = 0;
-
-				var sBaseName = sId.slice(sId.lastIndexOf('.') + 1);
 
 				// no documentation !
 				if (!oDoc) {
@@ -288,105 +268,7 @@ sap.ui.define([
 				}
 
 				// fill data
-				var key = null;
-				for (key in oDoc.properties) {
-					if (oDoc.properties.hasOwnProperty(key) && key.indexOf("_") !== 0) {
-						var oProp = oDoc.properties[key];
-						oProp.name = key;
-						oProp.deprecatedDescription = this._formatDeprecatedDescription(oProp.deprecation);
-						oProp.deprecated = this._formatDeprecated(oProp.deprecation);
-						oProp.doc = this._wrapInSpanTag(oProp.doc);
-						oProp.typeText = this._formatTypeText(oProp.type);
-						oProp.typeNav = this._formatTypeNav(oProp.type);
-						oProp.type = this._formatType(oProp.type);
-						oProp.defaultValue = (oProp.defaultValue) ? String(oProp.defaultValue).replace("empty/undefined", "-") : "";
-						oData.properties.push(oProp);
-					}
-				}
-				for (key in oDoc.events) {
-					if (oDoc.events.hasOwnProperty(key) && key.indexOf("_") !== 0) {
-						var oEvent = oDoc.events[key];
-						oEvent.name = key;
-						oEvent.deprecatedDescription = this._formatDeprecatedDescription(oEvent.deprecation);
-						oEvent.deprecated = this._formatDeprecated(oEvent.deprecation);
-						oEvent.doc = this._wrapInSpanTag(oEvent.doc);
-						oData.events.push(oEvent);
-						eventsCount++;
-						for (var p in oEvent.parameters) { // TODO why is parameters not an array ???
-							if (oEvent.parameters.hasOwnProperty(p) && p.indexOf("_") !== 0) {
-								oData.events.push({
-									param: p,
-									since: oEvent.parameters[p].since,
-									typeText: this._formatTypeText(oEvent.parameters[p].type),
-									typeNav: this._formatTypeNav(oEvent.parameters[p].type),
-									type: this._formatType(oEvent.parameters[p].type),
-									doc: this._wrapInSpanTag(oEvent.parameters[p].doc),
-									deprecatedDescription: this._formatDeprecatedDescription(oEvent.parameters[p].deprecation),
-									deprecated: this._formatDeprecated(oEvent.parameters[p].deprecation)
-								});
-							}
-						}
-					}
-				}
-				for (key in oDoc.methods) {
-					if (oDoc.methods.hasOwnProperty(key) && key.indexOf("_") !== 0 && !oDoc.methods[key].synthetic ) {
-						var oMethod = oDoc.methods[key];
-						oMethod.name = oDoc.methods[key].static ? sBaseName + "." + key : key;
-						oMethod.deprecatedDescription = this._formatDeprecatedDescription(oMethod.deprecation);
-						oMethod.deprecated = this._formatDeprecated(oMethod.deprecation);
-						oMethod.doc = this._wrapInSpanTag(oMethod.doc);
-						oMethod.param = "returnValue";
-						oMethod.typeText = this._formatTypeText(oMethod.type);
-						oMethod.typeNav = this._formatTypeNav(oMethod.type);
-						oMethod.type = this._formatType(oMethod.type);
-						oData.methods.push(oMethod);
-						methodsCount++;
-						for (var i = 0; i < oMethod.parameters.length; i++) {
-							var sParamName = oMethod.parameters[i].name;
-							if (sParamName.indexOf("_") !== 0) {
-								oData.methods.push({
-									param: sParamName,
-									since: oMethod.parameters[i].since,
-									typeText: this._formatTypeText(oMethod.parameters[i].type),
-									typeNav: this._formatTypeNav(oMethod.parameters[i].type),
-									type: this._formatType(oMethod.parameters[i].type),
-									doc: this._wrapInSpanTag(oMethod.parameters[i].doc),
-									deprecatedDescription: this._formatDeprecatedDescription(oMethod.parameters[i].deprecation),
-									deprecated: this._formatDeprecated(oMethod.parameters[i].deprecation)
-								});
-							}
-						}
-					}
-				}
-				for (key in oDoc.aggregations) {
-
-					var oAggr = oDoc.aggregations[key];
-					var bNotHidden = (!oAggr.hasOwnProperty("visibility") || oAggr.visibility !== "hidden");
-					if (oDoc.aggregations.hasOwnProperty(key) && key.indexOf("_") !== 0 && bNotHidden) {
-						oAggr.name = key;
-						oAggr.deprecated = this._formatDeprecated(oAggr.deprecation);
-						oAggr.deprecatedDescription = this._formatDeprecatedDescription(oAggr.deprecation);
-						oAggr.doc = this._wrapInSpanTag(oAggr.doc);
-						oAggr.typeText = this._formatTypeText(oAggr.type);
-						oAggr.typeNav = this._formatTypeNav(oAggr.type);
-						oAggr.type = this._formatType(oAggr.type);
-						oData.aggregations.push(oAggr);
-					}
-				}
-				for (key in oDoc.associations) {
-					if (oDoc.associations.hasOwnProperty(key) && key.indexOf("_") !== 0) {
-						var oAssoc = oDoc.associations[key];
-						oAssoc.name = key;
-						oAssoc.deprecatedDescription = this._formatDeprecatedDescription(oAssoc.deprecation);
-						oAssoc.deprecated = this._formatDeprecated(oAssoc.deprecation);
-						oAssoc.doc = this._wrapInSpanTag(oAssoc.doc);
-						oAssoc.typeText = this._formatTypeText(oAssoc.type);
-						oAssoc.typeNav = this._formatTypeNav(oAssoc.type);
-						oAssoc.type = this._formatType(oAssoc.type);
-						oData.associations.push(oAssoc);
-					}
-				}
-				for (key in oDoc.values) {
+				for (var key in oDoc.values) {
 					if (oDoc.values.hasOwnProperty(key) && key.indexOf("_") !== 0) {
 						var oValue = oDoc.values[key];
 						oValue.name = key;
@@ -397,19 +279,7 @@ sap.ui.define([
 				}
 
 				// determine if the parts shall be shown
-				oData.show.properties = oData.properties.length > 0;
-				oData.show.events = eventsCount > 0;
-				oData.show.methods = methodsCount > 0;
-				oData.show.aggregations = oData.aggregations.length > 0;
-				oData.show.associations = oData.associations.length > 0;
 				oData.show.values = oData.values.length > 0;
-
-				// set counts
-				oData.count.properties = oData.properties.length;
-				oData.count.events = eventsCount;
-				oData.count.methods = methodsCount;
-				oData.count.aggregations = oData.aggregations.length;
-				oData.count.associations = oData.associations.length;
 
 				return oData;
 			},
