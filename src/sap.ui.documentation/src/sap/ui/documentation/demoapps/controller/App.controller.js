@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global JSZip, Promise*/
+/*global Promise*/
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"jquery.sap.global",
@@ -63,7 +63,7 @@ sap.ui.define([
 			sap.ui.require([
 				"sap/ui/core/util/File",
 				"sap/ui/thirdparty/jszip"
-			], function (oFile) {
+			], function (File, JSZip) {
 				var oZipFile = new JSZip();
 
 				// load the config file from the custom data attached to the list item
@@ -102,7 +102,7 @@ sap.ui.define([
 
 						// still make the available files ready for download
 						var oContent = oZipFile.generate({type:"blob"});
-						this._createArchive(oFile, oContent, oListItem.getLabel());
+						this._createArchive(File, oContent, oListItem.getLabel());
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -152,13 +152,13 @@ sap.ui.define([
 
 		/**
 		 * Archive creation function that can be stubbed easily in tests
-		 * @param {object} oFile the jszip file handle
+		 * @param {object} File the jszip file handle
 		 * @param {object} oContent the blob for the zip file
 		 * @param {string} sFilename the file name
 		 * @private
 		 */
-		_createArchive: function (oFile, oContent, sFilename) {
-			oFile.save(oContent, sFilename, "zip", "application/zip");
+		_createArchive: function (File, oContent, sFilename) {
+			File.save(oContent, sFilename, "zip", "application/zip");
 		},
 
 		/**
