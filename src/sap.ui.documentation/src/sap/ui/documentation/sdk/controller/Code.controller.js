@@ -153,57 +153,50 @@ sap.ui.define([
 
 			onDownload : function (evt) {
 
-				// if (Device.browser.internet_explorer && Device.browser.version < 10) {
-				// 	MessageToast.show('Download action is not supported in Internet Explorer 9', {
-				// 		autoClose: true,
-				// 		duration: 3000
-				// 	});
-				// 	return;
-				// }
-				//
-				// jQuery.sap.require("sap.ui.thirdparty.jszip");
-				// var oZipFile = new JSZip();
-				//
-				// // zip files
-				// var oData = this.oModel.getData();
-				// for (var i = 0 ; i < oData.files.length ; i++) {
-				// 	var oFile = oData.files[i],
-				// 		sRawFileContent = oFile.raw;
-				//
-				// 	// change the bootstrap URL to the current server for all HTML files of the sample
-				// 	if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
-				// 		sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
-				// 	}
-				//
-				// 	oZipFile.file(oFile.name, sRawFileContent);
-				//
-				// 	// mock files
-				// 	for (var j = 0; j < this._aMockFiles.length; j++) {
-				// 		var sMockFile = this._aMockFiles[j];
-				// 		if (oFile.raw.indexOf(sMockFile) > -1){
-				// 			oZipFile.file("mockdata/" + sMockFile, this.downloadMockFile(sMockFile));
-				// 		}
-				// 	}
-				// }
-				//
-				// var sRef = jQuery.sap.getModulePath(this._sId),
-				// 	aExtraFiles = oData.includeInDownload || [],
-				// 	that = this;
-				//
-				// // iframe examples have a separate index file and a component file to describe it
-				// if (!oData.iframe) {
-				// 	oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
-				// 	oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData)));
-				// }
-				//
-				// // add extra download files
-				// aExtraFiles.forEach(function(sFileName) {
-				// 	oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
-				// });
-				//
-				// var oContent = oZipFile.generate({type:"blob"});
-				//
-				// this._openGeneratedFile(oContent);
+				jQuery.sap.require("sap.ui.thirdparty.jszip");
+				var JSZip = sap.ui.require("sap/ui/thirdparty/jszip");
+				var oZipFile = new JSZip();
+
+				// zip files
+				var oData = this.oModel.getData();
+				for (var i = 0 ; i < oData.files.length ; i++) {
+					var oFile = oData.files[i],
+						sRawFileContent = oFile.raw;
+
+					// change the bootstrap URL to the current server for all HTML files of the sample
+					if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
+						sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
+					}
+
+					oZipFile.file(oFile.name, sRawFileContent);
+
+					// mock files
+					for (var j = 0; j < this._aMockFiles.length; j++) {
+						var sMockFile = this._aMockFiles[j];
+						if (oFile.raw.indexOf(sMockFile) > -1){
+							oZipFile.file("mockdata/" + sMockFile, this.downloadMockFile(sMockFile));
+						}
+					}
+				}
+
+				var sRef = jQuery.sap.getModulePath(this._sId),
+					aExtraFiles = oData.includeInDownload || [],
+					that = this;
+
+				// iframe examples have a separate index file and a component file to describe it
+				if (!oData.iframe) {
+					oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+					oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData)));
+				}
+
+				// add extra download files
+				aExtraFiles.forEach(function(sFileName) {
+					oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+				});
+
+				var oContent = oZipFile.generate({type:"blob"});
+
+				this._openGeneratedFile(oContent);
 			},
 
 			_openGeneratedFile : function (oContent) {
@@ -277,13 +270,17 @@ sap.ui.define([
 			},
 
 			_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
-				// var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/;
-				// var oCurrentURI = new URI(window.location.href).search("");
-				// var oRelativeBootstrapURI = new URI(jQuery.sap.getResourcePath("", "/sap-ui-core.js"));
-				// var sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
-				//
-				// // replace the bootstrap path of the sample with the current to the core
-				// return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
+
+				jQuery.sap.require("sap.ui.thirdparty.URI");
+				var URI = sap.ui.require("sap/ui/thirdparty/URI");
+
+				var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/;
+				var oCurrentURI = new URI(window.location.href).search("");
+				var oRelativeBootstrapURI = new URI(jQuery.sap.getResourcePath("", "/sap-ui-core.js"));
+				var sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
+
+				// replace the bootstrap path of the sample with the current to the core
+				return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
 			},
 
 			handleTabSelectEvent: function(oEvent) {
