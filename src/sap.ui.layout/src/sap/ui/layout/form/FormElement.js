@@ -126,6 +126,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 	};
 
+	FormElement.prototype.destroyLabel = function() {
+
+		this.destroyAggregation("label");
+
+		if (this._oLabel) {
+			this._oLabel.destroy();
+			delete this._oLabel;
+		}
+
+		return this;
+
+	};
+
 	/**
 	 * Returns the <code>Label</code> of the <code>FormElement</code>, even if the <code>Label</code> is assigned as string.
 	 * The <code>FormLayout</code> needs the information of the label to render the <code>Form</code>.
