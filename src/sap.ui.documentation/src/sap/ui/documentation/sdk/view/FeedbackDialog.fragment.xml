@@ -57,7 +57,7 @@
 			<Text text="Your feedback is anonymous, we do not collect any personal data. For more information see the following links" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
 			<Link text="Privacy" href="https://help.hana.ondemand.com/privacy.htm" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
 			<Link text="Term of Use" href="https://help.hana.ondemand.com/terms_of_use.html" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
-			<Link text="Legal Agreement" href="./legal_agreement_with_privacy.html" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
+			<Link text="Legal Agreement" href="resources/sap/ui/documentation/sdk/legal_agreement_with_privacy.html" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
 		</VBox>
 		</content>
 		<beginButton>
