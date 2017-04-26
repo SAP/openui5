@@ -6,6 +6,7 @@ sap.ui.define([
 		'sap/ui/model/json/JSONModel',
 		'sap/m/ResponsivePopover',
 		'sap/m/MessagePopover',
+		'sap/m/ActionSheet',
 		'sap/m/Button',
 		'sap/m/Link',
 		'sap/m/Bar',
@@ -14,7 +15,7 @@ sap.ui.define([
 		'sap/m/MessagePopoverItem',
 		'sap/ui/core/CustomData',
 		'sap/m/MessageToast'
-	], function (BaseController, jQuery, Fragment, Controller, JSONModel, ResponsivePopover, MessagePopover, Button, Link, Bar, VerticalLayout, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
+	], function (BaseController, jQuery, Fragment, Controller, JSONModel, ResponsivePopover, MessagePopover, ActionSheet, Button, Link, Bar, VerticalLayout, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.toolpageapp.controller.App", {
@@ -40,7 +41,7 @@ sap.ui.define([
 			onItemSelect: function(oEvent) {
 				var oItem = oEvent.getParameter('item');
 				var sKey = oItem.getKey();
-				if(sKey !== "home" && sKey !=="systemSettings" && sKey!== "statistics")   {
+				if(sKey !== "home" && sKey !=="systemSettings" && sKey!== "statistics") {
 					MessageToast.show(sKey);
 				}
 				else {
@@ -58,48 +59,43 @@ sap.ui.define([
 				var fnHandleUserMenuItemPress = function (oEvent) {
 					MessageToast.show(oEvent.getSource().getText() + " was pressed");
 				};
-				var oPopover = new ResponsivePopover(this.getView().createId("userMessagePopover"), {
-					showHeader: sap.ui.Device.system.phone,
+				var oActionSheet = new ActionSheet(this.getView().createId("userMessageActionSheet"), {
 					title: oBundle.getText("userHeaderTitle"),
-					placement: sap.m.PlacementType.Bottom,
-					content:[
-						new VerticalLayout({
-							content: [
-								new Button({
-									text: 'User Settings',
-									type: sap.m.ButtonType.Transparent,
-									press: fnHandleUserMenuItemPress
-								}),
-								new Button ({
-									text: "Online Guide",
-									type: sap.m.ButtonType.Transparent,
-									press: fnHandleUserMenuItemPress
-								}),
-								new Button({
-									text: 'Feedback',
-									type: sap.m.ButtonType.Transparent,
-									press: fnHandleUserMenuItemPress
-								}),
-								new Button({
-									text: 'Help',
-									type: sap.m.ButtonType.Transparent,
-									press: fnHandleUserMenuItemPress
-								}),
-								new Button({
-									text: 'Logout',
-									type: sap.m.ButtonType.Transparent,
-									press: fnHandleUserMenuItemPress
-								})
-							]
+					showCancelButton: false,
+					buttons: [
+						new Button({
+							text: 'User Settings',
+							type: sap.m.ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button ({
+							text: "Online Guide",
+							type: sap.m.ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: 'Feedback',
+							type: sap.m.ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: 'Help',
+							type: sap.m.ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
+						}),
+						new Button({
+							text: 'Logout',
+							type: sap.m.ButtonType.Transparent,
+							press: fnHandleUserMenuItemPress
 						})
 					],
 					afterClose: function () {
-						oPopover.destroy();
+						oActionSheet.destroy();
 					}
-				}).addStyleClass('sapMOTAPopover sapTntToolHeaderPopover');
+				});
 				// forward compact/cozy style into dialog
-				jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oPopover);
-				oPopover.openBy(oEvent.getSource());
+				jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oActionSheet);
+				oActionSheet.openBy(oEvent.getSource());
 			},
 
 			onSideNavButtonPress: function() {
