@@ -63,6 +63,8 @@ sap.ui.require([
 		When.onTheMainPage.pressSaveSalesOrderButton();
 		When.onTheSuccessInfo.confirm();
 		Then.onTheMainPage.checkSalesOrderItemsCount(1);
+		Then.onTheMainPage.checkNewSalesOrderItemProductName(
+			TestUtils.isRealOData() ? "Notebook Basic 15" : "");
 		// update note of new sales order item
 		When.onTheMainPage.changeSalesOrderLineItemNote(0, "OPA: Changed item note after save");
 		When.onTheMainPage.pressSaveSalesOrderButton();
