@@ -674,6 +674,19 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						}
 					});
 				},
+				checkNewSalesOrderItemProductName : function (sExpectProductName) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderItemsTable) {
+							var oRow = oSalesOrderItemsTable.getItems()[0];
+
+							Opa5.assert.strictEqual(oRow.getCells()[3].getText(),
+								sExpectProductName, "Product name of new created SOItem");
+						},
+						viewName : sViewName
+					});
+				},
 				checkNote : function (iRow, sExpectedNote) {
 					return this.waitFor({
 						controlType : "sap.m.Table",

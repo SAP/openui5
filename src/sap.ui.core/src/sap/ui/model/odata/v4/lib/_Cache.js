@@ -355,9 +355,9 @@ sap.ui.define([
 						addToCount(that.mChangeListeners, sPath, aCollection, 1);
 						that.removeByPath(that.mPostRequests, sPath, oEntityData);
 						// update the cache with the POST response
-						_Helper.updateAfterPost(that.mChangeListeners,
-								_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
-								_Helper.getSelectForPath(that.mQueryOptions, sPath));
+						_Helper.updateCacheAfterPost(that.mChangeListeners,
+							_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+							_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					}, function (oError) {
 						if (oError.canceled) {
 							// for cancellation no error is reported via fnErrorCallback
