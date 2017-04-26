@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 
 		FormLayout.prototype.contentOnAfterRendering.apply(this, arguments);
 
-		if (oControl.getMetadata().getName() != "sap.ui.commons.Image" ) {
+		if (!oControl.getFormShouldNotAdjustWidth || !oControl.getFormShouldNotAdjustWidth()) {
 			oControl.$().css("width", "100%");
 		}
 

@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Provides an absolute or relative reference to an internal or external URL. The classical target parameters are supported.
 	 * Another usage scenario is triggering an action, for example to open a popup window. In both cases, the link is a hypertext link.
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.commons.ToolbarItem,sap.ui.commons.FormattedTextViewControl
+	 * @implements sap.ui.commons.ToolbarItem,sap.ui.commons.FormattedTextViewControl, sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -35,7 +35,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		interfaces : [
 			"sap.ui.commons.ToolbarItem",
-			"sap.ui.commons.FormattedTextViewControl"
+			"sap.ui.commons.FormattedTextViewControl",
+			"sap.ui.core.IFormContent"
 		],
 		library : "sap.ui.commons",
 		properties : {
