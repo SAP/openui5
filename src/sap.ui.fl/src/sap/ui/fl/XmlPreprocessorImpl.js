@@ -32,6 +32,7 @@ sap.ui.define([
 	 * @param {Node} oView XML node of the view to process
 	 * @param {object} mProperties
 	 * @param {string} mProperties.componentId - id of the component creating the view
+	 * @param {string} mPropertyBag.id - id of the processed view
 	 *
 	 * @returns {jquery.sap.promise} result of the processing, promise if executed asynchronously
 	 *
