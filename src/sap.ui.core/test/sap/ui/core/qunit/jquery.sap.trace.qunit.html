@@ -21,8 +21,24 @@
 	<script>
 
 		var bPerformanceSupported = !!(window.performance && window.performance.getEntries);
+		jQuery.sap.measure.clearInteractionMeasurements();
 
-		QUnit.module("Activation");
+		function getHeaderContent(aHeaders, sHeaderName) {
+			var sHeaderContent;
+			aHeaders.forEach(function(_aHeaderFields) {
+				if (_aHeaderFields[0] === sHeaderName) {
+					oHeaderContent = _aHeaderFields[1];
+				}
+			});
+			return oHeaderContent;
+		}
+
+		QUnit.module("Activation", {
+			afterEach: function() {
+				jQuery.sap.measure.endInteraction(true);
+				jQuery.sap.measure.clearInteractionMeasurements();
+			}
+		});
 
 		QUnit.test("FESR - meta tag", function(assert) {
 			assert.ok(jQuery.sap.fesr.getActive(), "Meta tag was recognized successfully");
@@ -40,14 +56,14 @@
 				// first request without FESR header
 				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 				oReq.send();
-				jQuery.sap.interaction.notifyStepEnd(true);
+				jQuery.sap.interaction.notifyStepEnd();
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 				oReq = new XMLHttpRequest();
 				// second request with FESR header belonging to first interaction
 				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 				oReq.send();
-				jQuery.sap.interaction.notifyStepEnd(true);
+				jQuery.sap.interaction.notifyStepEnd();
 				// assertions
 				sinon.assert.calledWith(spy, "SAP-PASSPORT");
 				sinon.assert.calledWith(spy, "SAP-Perf-FESRec");
@@ -86,8 +102,8 @@
 				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 				oReq.setRequestHeader("test","test");
 				oReq.send();
-				jQuery.sap.interaction.notifyStepEnd(true);
-				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+				jQuery.sap.interaction.notifyStepEnd();
+				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements(true).pop();
 				assert.ok(oMeasurement.bytesSent, "bytesSent is set");
 				assert.ok(oMeasurement.bytesReceived, "bytesReceived is set");
 			} else {
@@ -101,7 +117,12 @@
 			assert.ok(!jQuery.sap.interaction.getActive(), "Deactivation successful");
 		});
 
-		QUnit.module("Passport Header");
+		QUnit.module("Passport Header", {
+			afterEach: function() {
+				jQuery.sap.measure.endInteraction(true);
+				jQuery.sap.measure.clearInteractionMeasurements();
+			}
+		});
 
 		QUnit.test("header length", function(assert) {
 			// setup
@@ -111,7 +132,7 @@
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 			oReq.send();
 			// assertions
-			assert.strictEqual(spy.args[0][1].length, 608, "header length is compliant - 304 bytes when decoded");
+			assert.strictEqual(getHeaderContent(spy.args, "SAP-PASSPORT").length, 608, "header length is compliant - 304 bytes when decoded");
 			jQuery.sap.passport.setActive(false);
 		});
 
@@ -142,26 +163,28 @@
 						// first request without FESR header
 						this.oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 						this.oReq.send();
-						jQuery.sap.interaction.notifyStepEnd(true);
+						jQuery.sap.interaction.notifyStepEnd();
 						jQuery.sap.interaction.notifyStepStart(null, true);
 						this.oReq = new XMLHttpRequest();
 						// second request with FESR header belonging to first interaction
 						this.oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 						this.oReq.send();
-						jQuery.sap.interaction.notifyStepEnd(true);
+						jQuery.sap.interaction.notifyStepEnd();
 					}
 				},
 				afterEach: function() {
-					jQuery.sap.fesr.setActive(false);
 					this.spy.restore();
 					this.stub.restore();
+					jQuery.sap.measure.endInteraction(true);
+					jQuery.sap.measure.clearInteractionMeasurements();
+					jQuery.sap.fesr.setActive(false);
 				}
 			});
 
 			QUnit.test("mandatory header properties", function(assert) {
 				this.start();
-				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(aFESR[0].length, 32, "root_context_id - length");
 				assert.strictEqual(aFESR[1].length, 32, "transaction_id - length");
@@ -179,8 +202,8 @@
 
 			QUnit.test("optional header properties", function(assert) {
 				this.start();
-				var sFESRopt = this.spy.args[1][1];
-				ok(sFESRopt, "optional header present");
+				var sFESRopt = getHeaderContent(this.spy.args, "SAP-Perf-FESRec-opt");
+				assert.ok(sFESRopt, "optional header present");
 				var aFESRopt = sFESRopt.split(",");
 				assert.ok(aFESRopt[0].length <= 20, "application_name - length");
 				assert.ok(aFESRopt[1].length <= 20, "step_name - length");
@@ -194,6 +217,9 @@
 				assert.ok(aFESRopt[9] === "X" || !aFESRopt[9], "compressed");
 			});
 
+
+			// Negative durations which are logged during the following tests are caused
+			// by the very simple mock of request timings.
 			QUnit.test("request timings with gap", function(assert) {
 				this.aRequests = [{
 					startTime: 1,
@@ -210,8 +236,8 @@
 				}];
 				this.start();
 
-				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
@@ -235,8 +261,8 @@
 				}];
 				this.start();
 
-				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 4, "client_round_trip_time");
@@ -261,8 +287,8 @@
 				}];
 				this.start();
 
-				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
@@ -286,8 +312,8 @@
 				this.oInteraction = aInteractions[aInteractions.length-1];
 
 				// sixth call of setRequestHeader
-				var sFESR = this.spy.args[0][1];
-				ok(sFESR, "mandatory header present");
+				var sFESR = getHeaderContent(this.spy.args, "SAP-Perf-FESRec");
+				assert.ok(sFESR, "mandatory header present");
 				var aFESR = sFESR.split(",");
 				assert.strictEqual(parseInt(aFESR[2]), 3, "client_navigation_time");
 				assert.strictEqual(parseInt(aFESR[3]), 6, "client_round_trip_time");
@@ -303,8 +329,10 @@
 					jQuery.sap.fesr.setActive(true);
 					jQuery.sap.interaction.notifyStepStart(null, true);
   			}, afterEach: function() {
-					jQuery.sap.interaction.notifyStepEnd(true);
+					jQuery.sap.interaction.notifyStepEnd();
+					jQuery.sap.measure.endInteraction(true);
 					jQuery.sap.fesr.setActive(false);
+					jQuery.sap.measure.clearInteractionMeasurements();
   			}
 			});
 
@@ -312,7 +340,7 @@
 			QUnit.test("Busy indicator without delay", function(assert) {
 				sap.ui.core.BusyIndicator.show(0);
 				sap.ui.core.BusyIndicator.hide();
-				jQuery.sap.interaction.notifyStepEnd(true);
+				jQuery.sap.interaction.notifyStepEnd();
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 				assert.ok(oMeasurement.busyDuration >= 0, "Global Busy duration is bigger than or equal to zero.");
@@ -320,8 +348,10 @@
 				var spy = this.spy(oReq, "setRequestHeader");
 				oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
 				oReq.send();
-				var iBusyDurationRequest = parseInt(spy.args[1][1].split(",")[14]);
-				assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
+				var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
+				assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration,
+						"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
+				spy.restore();
 			});
 
 			// Check if global busy indicator measurement works with delay
@@ -332,7 +362,7 @@
 				var fnSpy = this.spy;
 				setTimeout(function() {
 					sap.ui.core.BusyIndicator.hide();
-					jQuery.sap.interaction.notifyStepEnd(true);
+					jQuery.sap.interaction.notifyStepEnd();
 					jQuery.sap.interaction.notifyStepStart(null, true);
 					var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 					assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
@@ -340,13 +370,20 @@
 					var spy = fnSpy(oReq, "setRequestHeader");
 					oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
 					oReq.send();
-					var iBusyDurationRequest = parseInt(spy.args[1][1].split(",")[14]);
-					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration, "Request header contains global busy duration measurement");
+					var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
+					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration,
+						"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
+					spy.restore();
 					done();
 				}, 100);
 			});
 
-			QUnit.module("component integration");
+			QUnit.module("component integration", {
+				afterEach: function() {
+					jQuery.sap.measure.endInteraction(true);
+					jQuery.sap.measure.clearInteractionMeasurements();
+				}
+			});
 
 			QUnit.test("named component", function(assert) {
 				jQuery.sap.fesr.setActive(true);
@@ -355,10 +392,11 @@
 					// mock a component initialization
 					sap.ui.component({name:"foo"});
 				} catch(e) {/* we do not really want to load the component */}
-				jQuery.sap.interaction.notifyStepEnd(true);
+				jQuery.sap.interaction.notifyStepEnd();
 				jQuery.sap.interaction.notifyStepStart(null, true);
 				var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 				assert.equal(oMeasurement.component, "foo");
+				jQuery.sap.interaction.notifyStepEnd();
 				jQuery.sap.fesr.setActive(false);
 			});
 		}
