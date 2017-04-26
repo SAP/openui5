@@ -910,6 +910,28 @@
 			sap.ui.getCore().applyChanges();
 		});
 
+		QUnit.test("groupAppointmentsMode", function (assert) {
+			//Assert: default value
+			assert.equal(oPC1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Collapsed, "GroupAppointmentsMode is set to 'Collapsed' by default");
+			var aRows = oPC1.getRows();
+			for(var i = 0; i < aRows.length; i++) {
+				assert.ok(aRows[i].getCalendarRow().getGroupAppointmentsMode(), "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Collapsed'");
+			}
+
+			// Act
+			oPC1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+			sap.ui.getCore().applyChanges();
+			// Assert
+			assert.equal(oPC1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Expanded, "GroupAppointmentsMode is set to 'Expanded'");
+			for(var i = 0; i < aRows.length; i++) {
+				assert.equal(aRows[i].getCalendarRow().getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Expanded, "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Expanded'");
+			}
+
+			// Cleanup
+			oPC1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Collapsed);
+			sap.ui.getCore().applyChanges();
+		});
+
 		QUnit.test("appointmentsReducedHeight", function(assert) {
 			assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 			var aRows = oPC1.getRows();

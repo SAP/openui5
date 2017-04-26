@@ -381,6 +381,19 @@
 			}
 		});
 
+		var oGroupModeSelect = new sap.m.Select("Sel-Group", {
+			selectedKey: sap.ui.unified.GroupAppointmentsMode.Collapsed,
+			tooltip: "Group appointment mode",
+			items: [
+				new sap.ui.core.ListItem("GAM-I-1",{text:sap.ui.unified.GroupAppointmentsMode.Collapsed, key: sap.ui.unified.GroupAppointmentsMode.Collapsed}),
+				new sap.ui.core.ListItem("GAM-I-2",{text:sap.ui.unified.GroupAppointmentsMode.Expanded, key: sap.ui.unified.GroupAppointmentsMode.Expanded})
+			],
+			change: function(oEvent){
+				var sKey = oEvent.getParameter("selectedItem").getKey();
+				oPC1.setGroupAppointmentsMode(sKey);
+			}
+		});
+
 		var oTitle = new sap.m.Title("Title1", {
 			text: "Title"
 		});
@@ -806,7 +819,8 @@
 			                 oButtonReducedHeight,
 			                 oButtonToggleAlternatingRowColor,
 			                 oButtonMinMax,
-			                 oVisSelect],
+			                 oVisSelect,
+			                 oGroupModeSelect],
 			legend: "Legend1",
 			appointmentSelect: handleAppointmentSelect,
 			startDateChange: handleStartDateChange,
