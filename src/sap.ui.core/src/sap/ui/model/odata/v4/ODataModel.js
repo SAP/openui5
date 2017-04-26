@@ -259,8 +259,8 @@ sap.ui.define([
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *   <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $orderby and $search
-	 *   inside resource paths that identify a collection. In our case here, this means you
+	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $levels, $orderby and
+	 *   $search inside resource paths that identify a collection. In our case here, this means you
 	 *   can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
