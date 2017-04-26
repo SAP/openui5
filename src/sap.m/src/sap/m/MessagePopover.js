@@ -619,7 +619,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
 		["setModel", "getModel", "bindAggregation", "getAggregation", "setAggregation", "insertAggregation", "addAggregation",
-			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+			"removeAggregation", "removeAllAggregation", "destroyAggregation",
+			"getBinding", "getBindingContext", "getBindingInfo", "getBindingPath",
+			"setBinding", "setBindingContext"].forEach(function (sFuncName) {
 			// Once they are called
 			MessagePopover.prototype[sFuncName] = function () {
 				// Proxying the above methods directly to the MessageView control
