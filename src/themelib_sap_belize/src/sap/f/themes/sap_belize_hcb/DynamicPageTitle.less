@@ -1,0 +1,53 @@
+/* ======================================= */
+/* CSS for control sap.f/DynamicPageTitle  */
+/* High Contrast Black theme               */
+/* ======================================= */
+
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle:focus,
+.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle:focus {
+	box-shadow: none;
+}
+
+.sapFDynamicPageTitle:focus {
+	outline-width: 0.125rem;
+	outline-offset: -0.125rem;
+}
+
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapFDynamicPageTitle:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapFDynamicPageTitle:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
+
+/* Firefox fix due to focus cut out from top and left */
+html[data-sap-ui-browser^="ff"].sap-desktop {
+	.sapFDynamicPageTitle:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapFDynamicPageTitle:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+}
