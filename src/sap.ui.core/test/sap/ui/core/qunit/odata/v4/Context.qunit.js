@@ -459,10 +459,10 @@ sap.ui.require([
 
 			this.mock(_Helper).expects("buildPath").withExactArgs(42, "SO_2_SOITEM/42")
 				.returns("~");
-			this.mock(oContext).expects("requestCanonicalPath")
+			this.mock(oContext).expects("fetchCanonicalPath")
 				.exactly(sEditUrl ? 0 : 1)
 				.withExactArgs()
-				.returns(Promise.resolve("/edit('URL')"));
+				.returns(_SyncPromise.resolve("/edit('URL')"));
 			this.mock(oBinding).expects("updateValue")
 				.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "~")
 				.returns(Promise.resolve(oResult));
@@ -508,9 +508,9 @@ sap.ui.require([
 			oContext = Context.create(oModel, oBinding, "/foo", 0),
 			oError = new Error();
 
-		this.mock(oContext).expects("requestCanonicalPath")
+		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs()
-			.returns(Promise.reject(oError)); // rejected!
+			.returns(_SyncPromise.resolve(Promise.reject(oError))); // rejected!
 		this.mock(oBinding).expects("updateValue").never();
 
 		return oContext.updateValue("up", "bar", Math.PI).then(function (oResult0) {

@@ -1673,7 +1673,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this.setStartDate(oEvtSelectedStartDate);
 				}
 				this._setRowsStartDate(oFocusedDate);
-				this._oOneMonthInterval.getAggregation('month')[0]._focusDate(CalendarUtils._createUniversalUTCDate(oFocusedDate), true);
+				this._oOneMonthInterval.getAggregation('month')[0]._focusDate(CalendarDate.fromLocalJSDate(oFocusedDate), true);
 			} else if (CalendarUtils._isNextMonth(oEvtSelectedStartDate, this.getStartDate())) {
 				this._oOneMonthInterval._handleNext();
 				return;
