@@ -50,8 +50,12 @@ sap.ui.define([
 			},
 
 			_fetchDocuIndex : function () {
-				var oData = jQuery.sap.syncGetJSON(this.getConfig().docuPath + "index.json").data.links;
+				var oResponse = jQuery.sap.syncGetJSON(this.getConfig().docuPath + "index.json");
+				if (oResponse.data === undefined) {
+					return [];
+				}
 
+				var oData = oResponse.data.links;
 				// Remove all top-level entries with an empty text property
 				return oData.filter(function (oEntry) {
 					return oEntry.text !== "";
