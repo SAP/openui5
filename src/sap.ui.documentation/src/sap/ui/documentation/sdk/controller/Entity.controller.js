@@ -4,18 +4,17 @@
 
 /*global location */
 sap.ui.define([
-		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/ComponentContainer",
+		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/ui/documentation/sdk/util/ObjectSearch",
-		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/Device"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo,
-				 EntityInfo, JSDocUtil, ObjectSearch, LibraryInfo, ToggleFullScreenHandler, Device) {
+	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
+				 EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -149,13 +148,6 @@ sap.ui.define([
 				var sPath = ObjectSearch.getEntityPath(oEntData, sNewId);
 				var oEntity = sPath ?  oEntModel.getProperty(sPath) : null;
 
-				// set nav button visibility
-				// var bEntityIsInIndex = !!sPath;
-				// var oHistory = sap.ui.core.routing.History.getInstance();
-				// var oPrevHash = oHistory.getPreviousHash();
-				// var bShowNavButton = Device.system.phone || (!bEntityIsInIndex && !!oPrevHash);
-				// this.getView().byId("page").setShowNavButton(bShowNavButton);
-
 				// set data model
 				var oData;
 				if (this._sId !== sNewId) {
@@ -282,7 +274,7 @@ sap.ui.define([
 						aggregations: 0,
 						associations: 0
 					},
-					appComponent: this._takeControlComponent(sId)
+					appComponent: this._getControlComponent(sId)
 				};
 
 				var methodsCount = 0,
@@ -526,17 +518,6 @@ sap.ui.define([
 			],
 			_formatTypeNav: function (sType) {
 				return this._baseTypes.indexOf(sType) === -1;
-			},
-
-			/**
-			 * The the actual component for the control
-			 * @param {string} controlName
-			 * @return {string} sActualControlComponent
-			 */
-			_takeControlComponent: function (controlName) {
-				var oLibComponentModel = ControlsInfo.data.libComponentInfos,
-					oLibInfo = new LibraryInfo();
-				return oLibInfo._getActualComponent(oLibComponentModel, controlName);
 			}
 		});
 	}

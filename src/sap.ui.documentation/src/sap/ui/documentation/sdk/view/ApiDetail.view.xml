@@ -27,11 +27,64 @@
                                                                                                                                                                                                                                 formatter: '.formatSubtitle'}">
 						<actions>
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
+							<ObjectPageHeaderActionButton
+									id="toggleFullScreenBtn"
+									class="sapUiHideOnPhone"
+									visible="{=!${device>/system/phone}}"
+									icon="sap-icon://full-screen"
+									tooltip="{i18n>sampleFullScreenTooltip}"
+									press="onToggleFullScreen" />
 						</actions>
 					</ObjectPageHeader>
 					<core:ExtensionPoint name="customTitle" />
 				</headerTitle>
 
+				<headerContent>
+					<layout:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
+						<layout:VerticalLayout width="100%">
+							<m:ObjectAttribute
+									visible="{=${topics>/isClass}}"
+									title="Inherited from"
+									text="{topics>/extends}"
+									active="{topics>/isDerived}"
+									press="onTypeLinkPress"
+									class="sapUiTinyMarginBottom">
+								<m:customData>
+									<core:CustomData key="type" value="{topics>/extends}" />
+								</m:customData>
+							</m:ObjectAttribute>
+
+							<m:ObjectAttribute
+									title="Module"
+									text="{topics>/module}"
+									class="sapUiTinyMarginBottom"/>
+
+							<m:ObjectAttribute
+									title="Available since"
+									text="{topics>/since}" />
+						</layout:VerticalLayout>
+
+						<layout:VerticalLayout width="100%">
+							<m:ObjectAttribute
+									visible="{=${topics>/isClass}}"
+									title="Control Sample"
+									text="{entity>/sample}"
+									active="{entity>/hasSample}"
+									press="onSampleLinkPress"
+									class="sapUiTinyMarginBottom">
+								<m:customData>
+									<core:CustomData key="name" value="{topics>/name}" />
+								</m:customData>
+							</m:ObjectAttribute>
+
+							<m:ObjectAttribute
+									title="Application Component"
+									text="{entity>/appComponent}"
+									class="sapUiTinyMarginBottom"/>
+
+						</layout:VerticalLayout>
+					</layout:Grid>
+				</headerContent>
 
 				<sections>
 					<ObjectPageSection id="overview" title="Overview">

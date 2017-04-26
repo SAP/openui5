@@ -4,11 +4,15 @@
 
 /*global location */
 sap.ui.define([
+		"jquery.sap.global",
+		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
-		"sap/ui/Device"
-	], function (BaseController, JSONModel, JSDocUtil, Device) {
+		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+		"sap/ui/documentation/sdk/util/ObjectSearch",
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
+	], function (jQuery, Device, BaseController, JSONModel, JSDocUtil, ControlsInfo, ObjectSearch, ToggleFullScreenHandler) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -16,6 +20,8 @@ sap.ui.define([
 			METHOD: 'method',
 			EVENT: 'event',
 			PARAM: 'param',
+			NOT_AVAILABLE: 'N/A',
+
 			/**
 			 * Determines if the type can be navigated to
 			 */
@@ -49,10 +55,13 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-
 				this._objectPage = this.byId("apiDetailObjectPage");
-
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
+
+				ControlsInfo.listeners.push(function(){
+					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
+				}.bind(this));
+				ControlsInfo.init();
 			},
 
 			onBeforeRendering: function() {
@@ -67,6 +76,16 @@ sap.ui.define([
 				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
+			onSampleLinkPress: function (oEvent) {
+				// Navigate to Control Sample section
+				var sEntityName = oEvent.getSource().data("name");
+				this.getRouter().navTo("entity", {id: sEntityName, part: "samples"}, true);
+			},
+
+			onToggleFullScreen: function (oEvent) {
+				ToggleFullScreenHandler.updateMode(oEvent, this.getView(), this);
+			},
+
 			/* =========================================================== */
 			/* begin: internal methods									 */
 			/* =========================================================== */
@@ -74,16 +93,19 @@ sap.ui.define([
 			/**
 			 * Binds the view to the object path and expands the aggregated line items.
 			 * @function
-			 * @param {sap.ui.base.Event} event pattern match event in route 'api'
+			 * @param {sap.ui.base.Event} oEvent pattern match event in route 'api'
 			 * @private
 			 */
-			_onTopicMatched: function (event) {
-				var topicId = event.getParameter("arguments").id;
-				this._bindData(topicId);
+			_onTopicMatched: function (oEvent) {
+				this._sTopicid = oEvent.getParameter("arguments").id;
+				this._bindData(this._sTopicid);
+				this._bindEntityData();
+
 				this._scrollContentToTop();
 				this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+
 				if (this.extHookonTopicMatched) {
-					this.extHookonTopicMatched(topicId);
+					this.extHookonTopicMatched(this._sTopicid);
 				}
 			},
 
@@ -93,78 +115,130 @@ sap.ui.define([
 				}
 			},
 
-			_bindData : function (sTopicId) {
-				var controlData = sap.ui.getCore().getModel("libsData").getData()[sTopicId],
-					that = this,
-					model,
-					methodsModel = {methods: []},
-					eventsModel = {events: []},
-					ui5Metadata;
+			/**
+			 * Callback function, executed once the <code>ControlsInfo</code> is loaded.
+			 */
+			_onControlsInfoLoaded : function () {
+				this._bindEntityData();
+			},
 
-				if (!controlData) {
-					setTimeout(function() {
-						that._bindData(sTopicId);
-					}, 250);
+			/**
+			 * Creates the <code>Entity</code> model,
+			 * based on the <code>ControlsInfo</code> data.
+			 * <b>Note:</b>
+			 * The method is called in the <code>_onControlsInfoLoaded</code> callBack
+			 * just once, when the <code>ControlsInfo</code> is loaded.
+			 * After that, the method is called in <code>_onTopicMatched</code>,
+			 * whenever a different topic has been selected.
+			 */
+			_bindEntityData : function () {
+				if (!ControlsInfo || !ControlsInfo.data) {
 					return;
 				}
 
-				ui5Metadata = controlData['ui5-metadata'];
+				var oLibData = {
+					entityCount : ControlsInfo.data.entityCount,
+					entities : ControlsInfo.data.entities
+				}, oEntityModelData = this._getEntityData(oLibData);
+
+				if (!this._oEntityModel) {
+					this._oEntityModel = new JSONModel();
+					this.setModel(this._oEntityModel, "entity");
+				}
+
+				this._oEntityModel.setData(oEntityModelData);
+			},
+
+			_bindData : function (sTopicId) {
+				var oControlData = sap.ui.getCore().getModel("libsData").getData()[sTopicId],
+					oModel,
+					oMethodsModel = {methods: []},
+					oEventsModel = {events: []},
+					ui5Metadata;
+
+				if (!oControlData) {
+					jQuery.sap.delayedCall(250, this, this._bindData, [sTopicId]);
+					return;
+				}
+
+				ui5Metadata = oControlData['ui5-metadata'];
 
 				this.getView().byId('apiDetailPage').setBusy(false);
 				this.getView().byId('apiDetailObjectPage').setVisible(true);
 
-				if (controlData.hasOwnProperty('properties') && this.hasPublicElement(controlData.properties)) {
-					controlData.hasProperties = true;
+				if (oControlData.hasOwnProperty('properties') && this.hasPublicElement(oControlData.properties)) {
+					oControlData.hasProperties = true;
 				} else {
-					controlData.hasProperties = false;
+					oControlData.hasProperties = false;
 				}
 
-				controlData.hasConstructor = controlData.hasOwnProperty('constructor');
+				oControlData.hasConstructor = oControlData.hasOwnProperty('constructor');
 
 				if (ui5Metadata && ui5Metadata.properties && this.hasPublicElement(ui5Metadata.properties)) {
-					controlData.hasControlProperties = true;
+					oControlData.hasControlProperties = true;
 				} else {
-					controlData.hasControlProperties = false;
+					oControlData.hasControlProperties = false;
 				}
 
 				if (ui5Metadata && ui5Metadata.events) {
-					controlData.hasEvents = true;
+					oControlData.hasEvents = true;
 				} else {
-					controlData.hasEvents = false;
+					oControlData.hasEvents = false;
 				}
 
-				controlData.hasMethods = controlData.hasOwnProperty('methods') &&
-					this.hasPublicElement(controlData.methods);
+				oControlData.hasMethods = oControlData.hasOwnProperty('methods') &&
+					this.hasPublicElement(oControlData.methods);
 
 				if (ui5Metadata && ui5Metadata.associations && this.hasPublicElement(ui5Metadata.associations)) {
-					controlData.hasAssociations = true;
+					oControlData.hasAssociations = true;
 				} else {
-					controlData.hasAssociations = false;
+					oControlData.hasAssociations = false;
 				}
 
 				if (ui5Metadata && ui5Metadata.aggregations && this.hasPublicElement(ui5Metadata.aggregations)) {
-					controlData.hasAggregations = true;
+					oControlData.hasAggregations = true;
 				} else {
-					controlData.hasAggregations = false;
+					oControlData.hasAggregations = false;
 				}
 
-				if (controlData.hasMethods) {
-					methodsModel.methods = this.buildMethodsModel(controlData.methods);
+				if (oControlData.hasMethods) {
+					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
 				}
 
-				if (controlData.hasEvents) {
-					eventsModel.events = this.buildEventsModel(ui5Metadata.events);
+				if (oControlData.hasEvents) {
+					oEventsModel.events = this.buildEventsModel(ui5Metadata.events);
 				}
 
-				model = new JSONModel(controlData);
+				oControlData.isClass = oControlData.kind === "class";
+				oControlData.isDerived = !!oControlData.extends;
+				oControlData.extends = oControlData.extends || this.NOT_AVAILABLE;
+				oControlData.since = oControlData.since || this.NOT_AVAILABLE;
+				oModel = new JSONModel(oControlData);
 
-				this.setModel(model, "topics");
-				this.setModel(new JSONModel(methodsModel), 'methods');
-				this.setModel(new JSONModel(eventsModel), 'events');
+				this.setModel(oModel, "topics");
+				this.setModel(new JSONModel(oMethodsModel), 'methods');
+				this.setModel(new JSONModel(oEventsModel), 'events');
 
 				if (this.extHookbindData) {
-					this.extHookbindData(sTopicId, model);
+					this.extHookbindData(sTopicId, oModel);
 				}
+			},
+
+			/**
+			 * Retrieves the <code>Entity</code> model data.
+			 * @param {Object} oLibData
+			 * @return {Object}
+			 */
+			_getEntityData: function (oLibData) {
+				var sEntityName = this._sTopicid,
+					oEntity = ObjectSearch.getEntityById(oLibData, sEntityName),
+					sAppComponent = this._getControlComponent(sEntityName);
+
+				return {
+					appComponent: sAppComponent || this.NOT_AVAILABLE,
+					sample: (oEntity && sEntityName) || this.NOT_AVAILABLE,
+					hasSample: !!(oEntity && oEntity.sampleCount > 0)
+				};
 			},
 
 			_fnOrientationChange: function(e) {
