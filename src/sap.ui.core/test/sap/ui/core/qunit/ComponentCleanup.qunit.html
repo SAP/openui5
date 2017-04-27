@@ -153,6 +153,30 @@
 				});
 			}, true);
 
+			sap.ui.define("test5/Component", ['sap/ui/core/UIComponent'], function(UIComponent) {
+				return UIComponent.extend("test5.Component", {
+					metadata : {
+						includes : [ "style5.css" ]
+					}
+				});
+			}, true);
+
+			sap.ui.define("test6/Component", ['test5/Component'], function(Test5Component) {
+				return Test5Component.extend("test6.Component", {
+					metadata : {
+						includes : [ "style6.css" ]
+					}
+				});
+			}, true);
+
+			sap.ui.define("test7/Component", ['test5/Component'], function(Test5Component) {
+				return Test5Component.extend("test7.Component", {
+					metadata : {
+						includes : [ "style7.css" ]
+					}
+				});
+			}, true);
+
 			// Start testing
 			QUnit.test("Test cleanup of CSS styles after adding and removing", function(assert) {
 				var done = assert.async();
@@ -249,14 +273,14 @@
 
 					}).then(function(oComponent) {
 
-						// style4.css should be included but not style3.css
+						// style4.css and style3.css should be included
 						assert.equal(jQuery("link[href$='/style4.css']").length, 1, "style4.css should be available.");
-						assert.equal(jQuery("link[href$='/style3.css']").length, 0, "style3.css should be available.");
+						assert.equal(jQuery("link[href$='/style3.css']").length, 0, "style3.css should not be available.");
 						return oComponent;
 
 					}).then(function(oComponent) {
 
-						// Destroy "test3" component (created from Manifest Variant) and validate that style4.css has been removed
+						// Destroy "test3" component (created from Manifest Variant) and validate that style4.css and style3.css has been removed
 						oComponent.destroy();
 						assert.equal(jQuery("link[href$='/style4.css']").length, 0, "style4.css should be removed.");
 						return true;
@@ -360,6 +384,83 @@
 
 				});
 			});
+
+			QUnit.test("Test cleanup of CSS styles after adding and removing extended component", function(assert) {
+				var done = assert.async();
+				sap.ui.require(['sap/ui/core/Component'], function(Component) {
+
+					Promise.resolve(true).then(function() {
+
+						// Create a new component "test6" with style6.css and inherited style5.css
+						return sap.ui.component({
+							name: "test6"
+						});
+
+					}).then(function(oComponent) {
+
+						// style5.css and style6.css should be included
+						assert.equal(jQuery("link[href$='/style5.css']").length, 1, "style5.css should be available.");
+						assert.equal(jQuery("link[href$='/style6.css']").length, 1, "style6.css should be available.");
+						return oComponent;
+
+					}).then(function(oComponent) {
+
+						// Destroy "test5" component and validate that style5.css and style6.css have been removed
+						oComponent.destroy();
+						assert.equal(jQuery("link[href$='/style5.css']").length, 0, "style5.css should be removed.");
+						assert.equal(jQuery("link[href$='/style6.css']").length, 0, "style6.css should be removed.");
+						return true;
+
+					}).then(function() {
+
+						// Create a new component "test6" and ...
+						var oComponent6 = sap.ui.component({
+							name: "test6"
+						});
+
+						// ... create a new component "test7"
+						var oComponent7 = sap.ui.component({
+							name: "test7"
+						});
+
+						return [oComponent6, oComponent7];
+
+					}).then(function(aComponents) {
+
+						var oComponent6 = aComponents[0],
+						    oComponent7 = aComponents[1];
+
+						// style5.css, style6.css and style7.css should be included
+						assert.equal(jQuery("link[href$='/style5.css']").length, 1, "style5.css should be available.");
+						assert.equal(jQuery("link[href$='/style6.css']").length, 1, "style6.css should be available.");
+						assert.equal(jQuery("link[href$='/style7.css']").length, 1, "style7.css should be available.");
+
+						return aComponents;
+
+					}).then(function(aComponents) {
+
+						var oComponent6 = aComponents[0],
+						    oComponent7 = aComponents[1];
+
+						// destroy component "test7" and just style7.css should be removed
+						oComponent7.destroy()
+						assert.equal(jQuery("link[href$='/style5.css']").length, 1, "style5.css should be available.");
+						assert.equal(jQuery("link[href$='/style6.css']").length, 1, "style6.css should be available.");
+						assert.equal(jQuery("link[href$='/style7.css']").length, 0, "style7.css should be removed.");
+						
+						// destroy component "test7" and all css files should be removed
+						oComponent6.destroy()
+						assert.equal(jQuery("link[href$='/style5.css']").length, 0, "style5.css should be removed.");
+						assert.equal(jQuery("link[href$='/style6.css']").length, 0, "style6.css should be removed.");
+						assert.equal(jQuery("link[href$='/style7.css']").length, 0, "style7.css should be removed.");
+
+						done();
+
+					});
+
+				});
+			});
+
 		});
 
 	</script>

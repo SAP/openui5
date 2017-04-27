@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit,sinon*/
 
 jQuery.sap.require("sap.ui.fl.changeHandler.BaseRename");
 jQuery.sap.require("sap.ui.fl.changeHandler.Base");
@@ -13,7 +13,7 @@ jQuery.sap.require("sap.ui.core.LayoutData");
 
 	jQuery.sap.registerModulePath("testComponent", "../testComponent");
 	var sandbox = sinon.sandbox.create();
-	var oComponent = new sap.ui.getCore().createComponent({
+	var oComponent = sap.ui.getCore().createComponent({
 						name : "testComponent",
 						id : "testComponent"
 					});

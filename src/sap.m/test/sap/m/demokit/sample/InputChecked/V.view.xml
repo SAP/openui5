@@ -7,7 +7,6 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-
 			<Label text="Name" labelFor="nameInput"/>
 			<Input
 				id="nameInput"
@@ -22,23 +21,23 @@
 						minLength: 1,
 						maxLength: 10
 					}
-				}" />
+				}"/>
 
 			<Label text="EMail" labelFor="emailInput"/>
 			<Input
 				id="emailInput"
 				class="sapUiSmallMarginBottom"
 				type="Email"
-				placeholder="Enter EMail ..."
-				valueStateText="EMail must be a valid email address."
+				placeholder="Enter E-Mail ..."
+				valueStateText="E-Mail must be a valid email address."
 				value="{
 					path : '/email',
-					type : '.typeEMail'
-				}" />
+					type : '.customEMailType'
+				}"/>
 
 			<Button
 				text="Continue"
-				press="handleContinue" />
+				press="onContinue"/>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

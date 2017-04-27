@@ -1,10 +1,12 @@
+/*global QUnit,sinon*/
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 jQuery.sap.require("sap.ui.fl.context.BaseContextProvider");
 jQuery.sap.require("sap.ui.fl.context.Context");
 
-
 (function(BaseContextProvider, Context) {
+	"use strict";
 
 	var mUserContext = {
 		"settings" : {
@@ -158,7 +160,7 @@ jQuery.sap.require("sap.ui.fl.context.Context");
 		return oContextWithUserConfiguration.getValue().then(function(mValue) {
 			assert.deepEqual(mValue, {
 				user : mUserContext,
-				device : mDeviceContext,
+				device : mDeviceContext
 			}, " then all values from all ContextProviders are returned with the domain as key");
 		});
 	});

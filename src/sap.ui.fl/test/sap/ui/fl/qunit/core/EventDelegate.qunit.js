@@ -1,7 +1,10 @@
+/*global QUnit,sinon*/
+
 jQuery.sap.require("sap.ui.fl.core.EventDelegate");
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 
 (function(EventDelegate, ChangeRegistry) {
+	"use strict";
 
 	QUnit.module("sap.ui.fl.core.EventDelegate", {
 		beforeEach: function() {
@@ -29,7 +32,10 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 		//Arrange
 		var spyLog = sinon.spy(jQuery.sap.log, "error");
 		//Act
-		var instance = new EventDelegate();
+
+		/*eslint-disable no-new*/
+		new EventDelegate();
+		/*eslint-enable no-new*/
 
 		//Assert
 		assert.equal(spyLog.callCount, 2);
@@ -38,7 +44,6 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 
 	QUnit.test("registerControl - register control first time", function(assert) {
 		//Arrange
-		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
 		var registerExplicitStub = sinon.stub(EventDelegate, "registerExplicitChanges");
 		var oControl = {
 			aDelegates: []
@@ -52,14 +57,13 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 
 	QUnit.test("registerControl - register control, already registered", function(assert) {
 		//Arrange
-		var oSupportedRegistryItems = {"labelChange": "myLabelChange", "visibility": "myVisibilityChange"};
 		var registerExplicitStub = sinon.stub(EventDelegate, "registerExplicitChanges");
 		var oControl = {
 			aDelegates: [
 				{
 					oDelegate: {
 						getType: function() {
-							return "Flexibility"
+							return "Flexibility";
 						}
 					}
 				}
@@ -84,7 +88,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 					getElementName: function() {
 						return "My.Control.Name";
 					}
-				}
+				};
 			},
 			addEventDelegate: addEventDelegateStub
 		};
@@ -112,7 +116,7 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 					getElementName: function() {
 						return "My.Control.Name";
 					}
-				}
+				};
 			},
 			addEventDelegate: addEventDelegateStub
 		};

@@ -201,4 +201,47 @@
 		var $oAvatar = this.oAvatar.$();
 		assert.ok($oAvatar.hasClass("sapFAvatarImageContain"), sPreAvatarFitType + "Contain");
 	});
+
+	QUnit.module("Aggregations", {
+		beforeEach: function () {
+			this.oAvatar = new sap.f.Avatar();
+		},
+		afterEach: function () {
+			this.oAvatar.destroy();
+		}
+	});
+
+	QUnit.test("detailBox", 7, function (oAssert) {
+		// Arrange
+		var oLightBox = new sap.m.LightBox(),
+			fnDone = oAssert.async();
+
+		// Act
+		this.oAvatar.setDetailBox(oLightBox);
+
+		// Assert
+		oAssert.strictEqual(this.oAvatar.getDetailBox(), oLightBox, "Returned aggregation should be the same object");
+		oAssert.ok(this.oAvatar._fnLightBoxOpen, "Internal method for opening the LightBox should be available");
+		oAssert.ok(this.oAvatar.hasListeners("press"), "There should be a press event attached to the control");
+
+		// Arrange
+		this.oAvatar.setDetailBox(undefined);
+
+		// Assert
+		oAssert.notOk(this.oAvatar.getDetailBox(), "No LightBox is returned");
+		oAssert.notOk(this.oAvatar._fnLightBoxOpen, "No internal method for opening the LightBox should be assigned");
+		oAssert.notOk(this.oAvatar.hasListeners("press"), "There should no press listeners");
+
+		// Arrange
+		this.oAvatar.attachPress(function () {
+			// Assert
+			oAssert.ok(true, "Press event also fired");
+			fnDone();
+		});
+		this.oAvatar.setDetailBox(oLightBox);
+
+		// Act
+		this.oAvatar.firePress();
+	});
+
 })();

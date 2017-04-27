@@ -344,12 +344,12 @@ sap.ui.define(['jquery.sap.global'],
 			/**
 			 *
 			 */
-			ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement) {
+			ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement, bSuppressInvalidate) {
 				var sAggregationRemoveMutator = this.getAggregationAccessors(oParent, sAggregationName).remove;
 				if (sAggregationRemoveMutator) {
-					oParent[sAggregationRemoveMutator](oElement);
+					oParent[sAggregationRemoveMutator](oElement, bSuppressInvalidate);
 				} else {
-					oParent.removeAggregation(sAggregationName, oElement);
+					oParent.removeAggregation(sAggregationName, oElement, bSuppressInvalidate);
 				}
 			};
 
@@ -360,14 +360,14 @@ sap.ui.define(['jquery.sap.global'],
 				if (this.hasAncestor(oParent, oElement)) {
 					throw new Error("Trying to add an element to itself or its successors");
 				}
-				if (this.getAggregation(oParent, sAggregationName).indexOf(oElement) !== -1) {
+				if (this.getIndexInAggregation(oElement, oParent, sAggregationName) !== -1) {
 					// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
 					// therefore we need to remove the element and then insert it again. To prevent ManagedObjectObserver from
 					// firing
 					// setParent event with parent null, private flag is set.
 					oElement.__bSapUiDtSupressParentChangeEvent = true;
 					try {
-						oParent.removeAggregation(sAggregationName, oElement, true);
+						this.removeAggregation(oParent, sAggregationName, oElement, true);
 					} finally {
 						delete oElement.__bSapUiDtSupressParentChangeEvent;
 					}

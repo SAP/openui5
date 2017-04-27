@@ -358,8 +358,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
 				sPattern,
 				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
+			var bSymbolFound;
 
 			if (sIntervalDiff) {
+				// FieldGroup
+				if (sIntervalDiff.length > 1) {
+					// Find out the symbol of the given group
+					// and set the interval diff
+					bSymbolFound = aTokens.some(function(oToken) {
+						if (oToken.group === sIntervalDiff) {
+							sIntervalDiff = oToken.symbol;
+							return true;
+						}
+					});
+
+					// When no symbol is found
+					// an empty interval diff will be set
+					if (!bSymbolFound) {
+						sIntervalDiff = "";
+					}
+				}
+
+				// Special handling of "a" (Dayperiod)
+				if (sIntervalDiff === "a") {
+					// Find out whether dayperiod is needed
+					// If not, set the internal diff with the actual 'Hour' symbol
+					bSymbolFound = aTokens.some(function(oToken) {
+						if (oToken.group === "Hour") {
+							if (oToken.symbol !== "h" && oToken.symbol !== "K") {
+								sIntervalDiff = oToken.symbol;
+							}
+							return true;
+						}
+					});
+
+					// When no symbol is found
+					// an empty interval diff will be set
+					if (!bSymbolFound) {
+						sIntervalDiff = "";
+					}
+				}
+
 				// Only use best match, if there are no missing tokens, as there is no possibility
 				// to append items on interval formats
 				if (oBestMatch && oBestMatch.missingTokens.length === 0) {

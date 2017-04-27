@@ -1022,6 +1022,90 @@
 			oMessagePopover.destroy();
 		});
 
+		QUnit.test("getBinding should be forwarded to the internal messageView control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oMessageView = oMessagePopover._oMessageView;
+			var messageViewGetBindingSpy = sinon.spy();
+
+			oMessageView.getBinding = messageViewGetBindingSpy;
+
+			oMessagePopover.getBinding();
+
+			assert.strictEqual(messageViewGetBindingSpy.callCount, 1, "The getBinding function of the messageView should be called");
+
+			oMessagePopover.destroy();
+		});
+
+		QUnit.test("getBindingInfo should be forwarded to the internal messageView control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oMessageView = oMessagePopover._oMessageView;
+			var messageViewGetBindingInfoSpy = sinon.spy();
+
+			oMessageView.getBindingInfo = messageViewGetBindingInfoSpy;
+
+			oMessagePopover.getBindingInfo();
+
+			assert.strictEqual(messageViewGetBindingInfoSpy.callCount, 1, "The getBindingInfo function of the messageView should be called");
+
+			oMessagePopover.destroy();
+		});
+
+		QUnit.test("getBindingContext should be forwarded to the internal messageView control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oMessageView = oMessagePopover._oMessageView;
+			var messageViewGetBindingContextSpy = sinon.spy();
+
+			oMessageView.getBindingContext = messageViewGetBindingContextSpy;
+
+			oMessagePopover.getBindingContext();
+
+			assert.strictEqual(messageViewGetBindingContextSpy.callCount, 1, "The getBindingContext function of the messageView should be called");
+
+			oMessagePopover.destroy();
+		});
+
+		QUnit.test("getBindingPath should be forwarded to the internal messageView control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oMessageView = oMessagePopover._oMessageView;
+			var messageViewGetBindingPathSpy = sinon.spy();
+
+			oMessageView.getBindingPath = messageViewGetBindingPathSpy;
+
+			oMessagePopover.getBindingPath();
+
+			assert.strictEqual(messageViewGetBindingPathSpy.callCount, 1, "The getBindingPath function of the messageView should be called");
+
+			oMessagePopover.destroy();
+		});
+
+		QUnit.test("setBinding should be forwarded to the internal messageView control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oMessageView = oMessagePopover._oMessageView;
+			var messageViewSetBindingSpy = sinon.spy();
+
+			oMessageView.setBinding = messageViewSetBindingSpy;
+
+			oMessagePopover.setBinding();
+
+			assert.strictEqual(messageViewSetBindingSpy.callCount, 1, "The setBinding function of the messageView should be called");
+
+			oMessagePopover.destroy();
+		});
+
+		QUnit.test("setBindingContext should be forwarded to the internal messageView control", function (assert) {
+			var oMessagePopover = new sap.m.MessagePopover();
+			var oMessageView = oMessagePopover._oMessageView;
+			var messageViewSetBindingContextSpy = sinon.spy();
+
+			oMessageView.setBindingContext = messageViewSetBindingContextSpy;
+
+			oMessagePopover.setBindingContext();
+
+			assert.strictEqual(messageViewSetBindingContextSpy.callCount, 1, "The setBindingContext function of the messageView should be called");
+
+			oMessagePopover.destroy();
+		});
+
 		QUnit.module("Binding", {
 			beforeEach: function () {
 				this.oButton2 = new sap.m.Button({text: "Press me"});

@@ -67,6 +67,10 @@ sap.ui.define([],
 				oRm.writeEscaped(sInitials);
 				oRm.write("</span>");
 			}
+			// HTML element for the LightBox magnifying glass icon
+			if (oAvatar._fnLightBoxOpen) {
+				oRm.write("<span class=\"sapFAvatarMagnifyingGlass\"></span>");
+			}
 			oRm.write("</span>");
 		};
 
