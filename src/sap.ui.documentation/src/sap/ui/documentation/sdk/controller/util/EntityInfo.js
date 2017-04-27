@@ -3,7 +3,7 @@
  */
 
 // Provides reuse functionality for reading documentation from metamodel entities
-sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './LegacyAPIInfo'],
+sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './APIInfo'],
 	function(jQuery, analyzer, APIInfo) {
 	"use strict";
 
@@ -205,17 +205,35 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './LegacyAPII
 
 	}
 
-	function get(sEntityName, sType) {
+	function get(sEntityName, sLibraryName) {
 
-		var bControl = !sType || sType === "control";
-		var bType = !sType || sType === "type";
 		var oPackageInfo = getPackageInfo(sEntityName);
 		var oEntityDoc;
 
 		// api.json per library
 		if ( !oEntityDoc && !oPackageInfo.__noAPIJson ) {
-			oEntityDoc = APIInfo.getEntityInfo(sEntityName);
-			if ( oEntityDoc ) {
+			var oEntityCollection = APIInfo.getLibraryElementsJSONSync(sLibraryName),
+				oEntity;
+
+			// Find single entity entry
+			for (var i = 0, iLen = oEntityCollection.length; i < iLen; i++) {
+				if (oEntityCollection[i].name === sEntityName) {
+					oEntity = oEntityCollection[i];
+					break;
+				}
+			}
+
+			if (oEntity) {
+				// Create oEntityDoc
+				oEntityDoc = {
+					baseType: oEntity.extends,
+					deprecation: oEntity.deprecated ? oEntity.deprecated.text : null,
+					doc: oEntity.description,
+					module: oEntity.module,
+					name: oEntity.name,
+					since: oEntity.since
+				};
+
 				oPackageInfo.__noSource = true;
 				oPackageInfo.__noMetamodel = true;
 			}
@@ -225,10 +243,9 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './LegacyAPII
 
 		// legacy metamodel files
 		if ( !oEntityDoc && !oPackageInfo.__noMetamodel ) {
-			if ( !oEntityDoc && bControl ) {
-				oEntityDoc = load(sEntityName, ".control", "xml", parseControlMetamodel, sEntityName);
-			}
-			if ( !oEntityDoc && bType ) {
+			oEntityDoc = load(sEntityName, ".control", "xml", parseControlMetamodel, sEntityName);
+			// If not a control try to load type
+			if ( !oEntityDoc) {
 				oEntityDoc = load(sEntityName, ".type", "xml", parseTypeMetamodel, sEntityName);
 			}
 			if ( oEntityDoc ) {
@@ -240,12 +257,10 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './LegacyAPII
 
 		// source code analysis
 		if ( !oEntityDoc && !oPackageInfo.noSource ) {
-			if ( !oEntityDoc && bType ) {
-				var sLibraryName = sEntityName.replace(/\.[^.]+$/, ".library");
-				oEntityDoc = load(sLibraryName, ".js", "text", parseJavascript, sEntityName);
-			}
+			var sLibrary = sEntityName.replace(/\.[^.]+$/, ".library");
+			oEntityDoc = load(sLibrary, ".js", "text", parseJavascript, sEntityName);
 			if ( !oEntityDoc ) {
-				oEntityDoc = load(sEntityName, ".js", "text", parseJavascript, sEntityName);
+				oEntityDoc = load(sLibrary, ".js", "text", parseJavascript, sEntityName);
 			}
 			if ( oEntityDoc ) {
 				oPackageInfo.__noMetamodel = true;
@@ -260,36 +275,8 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './LegacyAPII
 
 	var EntityInfo = {
 
-		getEntityDocu : function (sEntityName, sType, bResolveInheritance) {
-
-			function merge(a,b) {
-				for (var n in b) {
-					if ( b.hasOwnProperty(n) && !a.hasOwnProperty(n) ) { // do not overwrite existing entries
-						a[n] = b[n];
-					}
-				}
-			}
-
-			// read info from first document
-			var oEntityDoc = get(sEntityName, sType);
-
-			// collect entries from base types
-			if ( bResolveInheritance ) {
-				var oDoc = oEntityDoc;
-				while ( oDoc && oDoc.baseType ) {
-					oDoc = get(oDoc.baseType, oDoc.metatype);
-					if ( oDoc ) {
-						merge(oEntityDoc.properties, oDoc.properties);
-						merge(oEntityDoc.aggregations, oDoc.aggregations);
-						merge(oEntityDoc.associations, oDoc.assocations);
-						merge(oEntityDoc.events, oDoc.events);
-						merge(oEntityDoc.methods, oDoc.methods);
-					}
-				}
-			}
-
-			return oEntityDoc;
-
+		getEntityDocu : function (sEntityName, sLibraryName) {
+			return get(sEntityName, sLibraryName);
 		}
 
 	};
