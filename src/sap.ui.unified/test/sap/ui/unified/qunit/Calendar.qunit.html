@@ -453,6 +453,31 @@
 				jQuery("#Cal2--MP").control(0).onsapspace(oEvent);
 				assert.strictEqual(oSpy.callCount, 1, "SPACE is pressed, preventDefault event was fired");
 
+				//Move to March to test <,> navigation through month with different days (e.g. March-April)
+				//Prepare
+				var oCal5 = new sap.ui.unified.Calendar("Cal5");
+				oCal5.setLocale("en-US");
+				oCal5.placeAt("uiArea5");
+				sap.ui.getCore().applyChanges();
+				oCal5.displayDate(new Date(2017, 3, 1));
+
+				//Act
+				qutils.triggerEvent("click", "Cal5--Head-prev");
+
+				//Assert
+				assert.equal(jQuery("#Cal5--Head-B1").text(), "March", "March is shown");
+				assert.equal(jQuery("#Cal5--Head-B2").text(), "2017", "year 2017 shown");
+
+				//Act
+				qutils.triggerEvent("click", "Cal5--Head-next");
+
+				//Assert
+				assert.equal(oCal5.getStartDate().toString(), new Date(2017, 3, 1).toString(), "1st of April 2017 should be shown");
+				assert.equal(jQuery("#Cal5--Head-B1").text(), "April", "April is shown");
+				assert.equal(jQuery("#Cal5--Head-B2").text(), "2017", "year 2017 shown");
+
+				//Cleanup
+				oCal5.destroy();
 			});
 
 			QUnit.test("year switch", function(assert) {
@@ -806,5 +831,7 @@
 		<div id="uiArea3"></div>
 		<br>
 		<div id="uiArea4"></div>
+		<br>
+		<div id="uiArea5"></div>
 	</body>
 </html>
