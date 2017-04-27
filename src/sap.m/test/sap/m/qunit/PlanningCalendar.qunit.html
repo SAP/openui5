@@ -723,15 +723,34 @@
 		});
 
 		test("showRowHeaders", function() {
-			ok(oPC1.getShowRowHeaders(), "ShowRowHeaders is enabled by default");
+			function getAppointmentsColumn() {
+				return oPC1.getAggregation("table").getColumns()[1];
+			}
+			//Assert
+			assert.ok(oPC1.getShowRowHeaders(), "ShowRowHeaders is enabled by default");
+			assert.equal(getAppointmentsColumn().getDemandPopin(), true, "By Default appointments column is in Popin mode");
+			assert.equal(getAppointmentsColumn().getMinScreenWidth().toLowerCase(), sap.m.ScreenSize.Desktop.toLowerCase(),
+					"By Default appointments column has minScreenWidth set to sap.m.ScreenSize.Desktop");
 
+			//Act
 			oPC1.setShowRowHeaders(false);
 			sap.ui.getCore().applyChanges();
-			ok(!jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header not visible");
 
+			//Assert
+			assert.ok(!jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header not visible");
+			assert.equal(getAppointmentsColumn().getDemandPopin(), false, "If showRowHeaders is false, appointments Column is NOT in Popin mode");
+			assert.equal(getAppointmentsColumn().getMinScreenWidth(), "",
+					"If showRowHeaders is false appointments column has minScreenWidth is empty");
+
+			//Act
 			oPC1.setShowRowHeaders(true);
 			sap.ui.getCore().applyChanges();
-			ok(jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header visible");
+
+			//Assert
+			assert.ok(jQuery("#PC1-Row1-Head").is(":visible"), "Row1 Header visible");
+			assert.equal(getAppointmentsColumn().getDemandPopin(), true, "If showRowHeaders is set to true, appointments column is in Popin mode");
+			assert.equal(getAppointmentsColumn().getMinScreenWidth().toLowerCase(), sap.m.ScreenSize.Desktop.toLowerCase(),
+					"If showRowHeaders is set to true, appointments column has minScreenWidth set to sap.m.ScreenSize.Desktop");
 		});
 
 		test("noDataText", function() {
