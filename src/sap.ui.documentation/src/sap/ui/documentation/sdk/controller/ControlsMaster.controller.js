@@ -357,7 +357,7 @@ sap.ui.define([
 			handleListSettings: function () {
 				// create dialog on demand
 				if (!this._oVSDialog) {
-					this._oVSDialog = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.documentation.view.viewSettingsDialog", this);
+					this._oVSDialog = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.documentation.sdk.view.viewSettingsDialog", this);
 					this.getView().addDependent(this._oVSDialog);
 				}
 
