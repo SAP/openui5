@@ -77,8 +77,10 @@ sap.ui.define([
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch; other values result in an error
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
-	 *   The default operation mode for sorting. Only
-	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported since 1.39.0.
+	 *   The operation mode for sorting and filtering with the model's operation mode as default.
+	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
+	 *   supported. All other operation modes including <code>undefined</code> lead to an error if
+	 *   'vFilters' or 'vSorters' are given or if {@link #filter} or {@link #sort} is called.
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
