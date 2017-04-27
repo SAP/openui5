@@ -97,6 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		var aIntervalHeaders = oRow._getVisibleIntervalHeaders();
 		var oStartDate = oRow._getStartDate();
 		var aNonWorkingItems = [];
+		var aNonWorkingDates = [];
 		var iStartOffset = 0;
 		var iNonWorkingMax = 0;
 		var aNonWorkingSubItems = [];
@@ -121,6 +122,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			case sap.ui.unified.CalendarIntervalType.Week:
 			case sap.ui.unified.CalendarIntervalType.OneMonth:
 				aNonWorkingItems = oRow._getNonWorkingDays();
+				aNonWorkingDates = oRow.getAggregation("_nonWorkingDates");
 				iStartOffset = oStartDate.getUTCDay();
 				iNonWorkingMax = 7;
 				aNonWorkingSubItems = oRow.getNonWorkingHours() || [];
@@ -178,7 +180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 						break;
 				}
 
-				this.renderInterval(oRm, oRow, i, iWidth, aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType);
+				this.renderInterval(oRm, oRow, i, iWidth, aIntervalHeaders, aNonWorkingItems, aNonWorkingDates, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType);
 			}
 
 			this.renderIntervalHeaders(oRm, oRow, iWidth, aIntervalHeaders, iIntervals);
@@ -196,13 +198,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		}
 	};
 
-	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
+	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, aNonWorkingDates, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
 
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i;
 		var bShowIntervalHeaders = oRow.getShowIntervalHeaders() && (oRow.getShowEmptyIntervalHeaders() || aIntervalHeaders.length > 0);
 		var iMonth = oRow.getStartDate().getMonth();
 		var iDaysLength = new Date(oRow.getStartDate().getFullYear(), iMonth + 1, 0).getDate();
+		var oRowStartDate = oRow.getStartDate();
+		var oCurrentDate;
+		var oNonWorkingStartDate;
+		var oNonWorkingEndDate;
 
 		oRm.write("<div id=\"" + sId + "\"");
 		oRm.addClass("sapUiCalendarRowAppsInt");
@@ -215,6 +221,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 			if ((iInterval + iStartOffset) % iNonWorkingMax == aNonWorkingItems[i]) {
 				oRm.addClass("sapUiCalendarRowAppsNoWork");
 				break;
+			}
+		}
+
+		if (aNonWorkingDates && aNonWorkingDates.length) {
+			oCurrentDate = new Date(oRowStartDate.getTime());
+			oCurrentDate.setHours(0,0,0);
+			oCurrentDate.setDate(oRowStartDate.getDate() + iInterval);
+			var fnDayMatchesCurrentDate = function(iDay) {
+				return iDay === oCurrentDate.getDay();
+			};
+
+			for (i = 0; i < aNonWorkingDates.length; i++){
+				if (aNonWorkingDates[i].getStartDate()) {
+					oNonWorkingStartDate = new Date(aNonWorkingDates[i].getStartDate().getTime());
+				}
+
+				if (aNonWorkingDates[i].getEndDate()){
+					oNonWorkingEndDate = new Date(aNonWorkingDates[i].getEndDate().getTime());
+				} else {
+					oNonWorkingEndDate = new Date(aNonWorkingDates[i].getStartDate().getTime());
+					oNonWorkingEndDate.setHours(23, 59, 59);
+				}
+
+				if (oCurrentDate.getTime() >= oNonWorkingStartDate.getTime() && oCurrentDate.getTime() <= oNonWorkingEndDate.getTime()){
+					var bAlreadyNonWorkingDate = aNonWorkingItems.some(fnDayMatchesCurrentDate);
+					if (!bAlreadyNonWorkingDate) {
+						oRm.addClass("sapUiCalendarRowAppsNoWork");
+					}
+				}
 			}
 		}
 

@@ -5,9 +5,10 @@
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './PlanningCalendarRow',
 		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
-		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval', 'sap/ui/unified/CalendarOneMonthInterval'],
+		'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval',
+		'sap/ui/unified/CalendarOneMonthInterval'],
 	function (jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDate,
-			  CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval) {
+			  DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval) {
 		"use strict";
 
 	/**
@@ -340,7 +341,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	//Defines the minimum screen width for the appointments column (it is a popin column)
 	var APP_COLUMN_MIN_SCREEN_WIDTH = sap.m.ScreenSize.Desktop;
 
-	var CalendarHeader = sap.ui.core.Control.extend("CalendarHeader", {
+	var CalendarHeader = Control.extend("CalendarHeader", {
 
 		metadata : {
 			aggregations: {
@@ -1333,7 +1334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	PlanningCalendar.prototype.invalidate = function(oOrigin) {
 
-		if (this._bDateRangeChanged || (oOrigin && oOrigin instanceof sap.ui.unified.DateRange)) {
+		if (this._bDateRangeChanged || (oOrigin && oOrigin instanceof DateRange)) {
 			// DateRange changed -> only invalidate calendar control
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
@@ -1384,20 +1385,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	PlanningCalendar.prototype.addSpecialDate = function(oSpecialDate) {
+		this._bDateRangeChanged = true;
+
+		// forward to PlanningCalendarRow
+		if (oSpecialDate.getType() === sap.ui.unified.CalendarDayType.NonWorking) {
+			this.getAggregation("rows").forEach(function (oRow){
+				oRow.addAggregation("_nonWorkingDates", this._buildPCRowDateRange(oSpecialDate));
+			}, this);
+		}
+
+		return Control.prototype.addAggregation.call(this, "specialDates", oSpecialDate);
+	};
+
+	PlanningCalendar.prototype.insertSpecialDate = function (oSpecialDate, iIndex) {
+		this._bDateRangeChanged = true;
+
+		// forward to PlanningCalendarRow
+		if (oSpecialDate.getType() === sap.ui.unified.CalendarDayType.NonWorking) {
+			this.getAggregation("rows").forEach(function (oRow){
+				oRow.insertAggregation("_nonWorkingDates", this._buildPCRowDateRange(oSpecialDate), iIndex);
+			}, this);
+		}
+
+		return Control.prototype.insertAggregation.call(this, "specialDates", oSpecialDate, iIndex);
+	};
+
+	PlanningCalendar.prototype.removeSpecialDate = function(oSpecialDate) {
+		var aRemovableNonWorkingDate;
+
+		if (typeof  oSpecialDate === "string") {
+			oSpecialDate = sap.ui.getCore().byId(oSpecialDate);
+		}
+		this._bDateRangeChanged = true;
+		// forward to PlanningCalendarRow
+		if (oSpecialDate && oSpecialDate.getType() === sap.ui.unified.CalendarDayType.NonWorking) {
+			this.getAggregation("rows").forEach(function (оPCRow){
+				if (оPCRow.getAggregation("_nonWorkingDates")) {
+					aRemovableNonWorkingDate = оPCRow.getAggregation("_nonWorkingDates").filter(function(oNonWorkingDate) {
+						return oNonWorkingDate.data(PlanningCalendarRow.PC_FOREIGN_KEY_NAME) === oSpecialDate.getId();
+					});
+					if (aRemovableNonWorkingDate.length) {
+						jQuery.sap.assert(aRemovableNonWorkingDate.length == 1, "Inconsistency between PlanningCalendar " +
+							"special date instance and PlanningCalendar nonWorkingDates instance. For PC instance " +
+							"there are more than one(" + aRemovableNonWorkingDate.length + ") nonWorkingDates in PlanningCalendarRow ");
+						оPCRow.removeAggregation("_nonWorkingDates", aRemovableNonWorkingDate[0]);
+					}
+				}
+			});
+		}
+
+		return Control.prototype.removeAggregation.call(this, "specialDates", oSpecialDate);
+	};
+
 	PlanningCalendar.prototype.removeAllSpecialDates = function() {
 
 		this._bDateRangeChanged = true;
-		var aRemoved = this.removeAllAggregation("specialDates");
-		return aRemoved;
-
+		if (this.getAggregation("rows")) {
+			this.getAggregation("rows").forEach(function (oRow) {
+				oRow.removeAllAggregation("_nonWorkingDates");
+			});
+		}
+		return this.removeAllAggregation("specialDates");
 	};
 
 	PlanningCalendar.prototype.destroySpecialDates = function() {
 
 		this._bDateRangeChanged = true;
-		var oDestroyed = this.destroyAggregation("specialDates");
-		return oDestroyed;
-
+		this.getAggregation("rows").forEach(function (oRow){
+			oRow.destroyAggregation("_nonWorkingDates");
+		});
+		return this.destroyAggregation("specialDates");
 	};
 
 	PlanningCalendar.prototype.removeAllViews = function() {
@@ -1721,6 +1779,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this.fireIntervalSelect({startDate: oEvtSelectedStartDate, endDate: oEndDate, subInterval: false, row: undefined});
 
+	};
+
+	/**
+	 * Clone from the passed DateRange and sets the foreign key to the source DateRange, that is used for cloning
+	 * @param {sap.ui.unified.DateRange} oSource
+	 * @returns {sap.ui.unified.DateRange}
+	 * @private
+	 */
+	PlanningCalendar.prototype._buildPCRowDateRange = function (oSource) {
+		var oRangeCopy = new DateRange();
+
+		if (oSource.getStartDate()) {
+			oRangeCopy.setStartDate(new Date(oSource.getStartDate().getTime()));
+		}
+		if (oSource.getEndDate()) {
+			oRangeCopy.setEndDate(new Date(oSource.getEndDate().getTime()));
+		}
+		oRangeCopy.data(PlanningCalendarRow.PC_FOREIGN_KEY_NAME, oSource.getId());
+
+		return oRangeCopy;
 	};
 
 	function _handleIntervalSelect(oEvent){
