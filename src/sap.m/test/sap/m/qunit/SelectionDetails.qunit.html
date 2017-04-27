@@ -1255,6 +1255,15 @@
 		};
 	});
 
+	QUnit.test("Change handler is detached during destroy to prevent runtime error", function(assert) {
+		//Arrange
+		var oSpy = sinon.spy(this.oSelectionDetails, "detachSelectionHandler");
+		//Act
+		this.oSelectionDetails.destroy();
+		//Assert
+		assert.equal(oSpy.callCount, 1, "Selection change handle detached");
+	});
+
 </script>
 </head>
 <body class="sapUiBody">

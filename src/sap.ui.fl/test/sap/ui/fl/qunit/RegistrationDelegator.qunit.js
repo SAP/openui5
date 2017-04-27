@@ -1,14 +1,16 @@
+/*global QUnit,sinon */
+
 jQuery.sap.require("sap.ui.fl.RegistrationDelegator");
 
 (function(RegistrationDelegator) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
-
 	QUnit.module("sap.ui.fl.RegistrationDelegator", {
 		beforeEach: function() {
+			this._oSandbox = sinon.sandbox.create();
 		},
 		afterEach: function() {
+			this._oSandbox.restore();
 		}
 	});
 

@@ -552,32 +552,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
 
-		if (this._oManifest) {
-
-			// activate the instance specific customizing if available
-			var oManifest = this.getManifest();
-			var oUI5 = oManifest && oManifest["sap.ui5"];
-			var oExtends = oUI5 && oUI5["extends"];
-			var oExtensions = oExtends && oExtends["extensions"];
-			if (oExtensions) {
-				var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
-				CustomizingConfiguration.activateForComponentInstance(this);
-			}
-
-		}
-
-		// register the component instance
-		if (this._isVariant()) {
-			this._oManifest.onInitComponent();
-		} else {
-			this.getMetadata().onInitComponent();
-		}
-
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
-		// static initialization
-		this.getMetadata().init();
+		// static initialization (loading dependencies, includes, ... / register customzing)
+		//   => either init the static or the instance manifest
+		if (!this._isVariant()) {
+			this.getMetadata().init();
+		} else {
+			this._oManifest.init(this);
+		}
 
 		// init the component models
 		this.initComponentModels();
@@ -650,19 +634,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// unregister for messaging (on MessageManager)
 		sap.ui.getCore().getMessageManager().unregisterObject(this);
 
-		// deactivate the instance specific customizing
-		if (this._oManifest) {
-			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-			if (CustomizingConfiguration) {
-				CustomizingConfiguration.deactivateForComponentInstance(this);
-			}
-		}
-
-		// unregister the component instance
-		if (this._isVariant()) {
-			this._oManifest.onExitComponent();
+		// static initialization (unload includes, ... / unregister customzing)
+		//   => either exit the static or the instance manifest
+		if (!this._isVariant()) {
+			this.getMetadata().exit();
 		} else {
-			this.getMetadata().onExitComponent();
+			this._oManifest.exit(this);
 		}
 
 	};
@@ -2100,7 +2077,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						promises.push(oPromise);
 					}
 				},
-				identity = function($) { return $; };
+				identity = function($) { return $; },
+				phase1Preloads,
+				libs;
 
 			if (oManifest && mOptions.createModels) {
 				collect(oManifest.then(function(oManifest) {
@@ -2161,17 +2140,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				}));
 			}
 
+			phase1Preloads = [];
+
 			// load any required preload bundles
 			if ( Array.isArray(hints.preloadBundles) ) {
 				hints.preloadBundles.forEach(function(vBundle) {
-					collect(jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true));
+					phase1Preloads.push(
+						jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
 				});
 			}
 
-			// preload required libraries
+			// preload any libraries
 			if ( Array.isArray(hints.libs) ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) ));
+				libs = hints.libs.map(processOptions).filter(identity);
+				phase1Preloads.push(
+					sap.ui.getCore().loadLibraries( libs, { preloadOnly: true } )
+				);
 			}
+
+			// sync preloadBundles and preloads of libraries first before requiring the libs
+			// Note: component preloads are assumed to be always independent from libs
+			// therefore those requests are not synchronized with the require calls for the libs
+			phase1Preloads = Promise.all( phase1Preloads );
+			if ( libs && !mOptions.preloadOnly ) {
+				phase1Preloads = phase1Preloads.then( function() {
+					return sap.ui.getCore().loadLibraries( libs );
+				});
+			}
+			collect( phase1Preloads );
 
 			// preload the component itself
 			if (!oManifest) {

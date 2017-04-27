@@ -1,4 +1,4 @@
-/*globals sinon, QUnit*/
+/*global sinon, QUnit*/
 jQuery.sap.require("sap.ui.fl.ChangePersistence");
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require("sap.ui.fl.Change");
@@ -485,7 +485,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test1", function(assert) {
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getSelector: function () {
 				return { id: "field3-2" };
@@ -567,7 +567,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		};
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getSelector: function () {
 				return { id: "field3-2" };
@@ -738,7 +738,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			this._oComponent = {
 				name : "saveChangeScenario",
 				appVersion : "1.2.3"
-			}
+			};
 			this.lrepConnectorMock = {
 				create: sinon.stub().returns(Promise.resolve()),
 				deleteChange: sinon.stub().returns(Promise.resolve()),

@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 			this.setAggregation("_objectNumber", new ObjectNumber(this.getId() + "-ObjectNumber", {
 				number: sNumber,
-				numberUnit: sNumberUnit,
+				unit: sNumberUnit,
 				state: oState,
 				textDirection: oTextDirection
 			}), true);
@@ -370,7 +370,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			//Do not rerender the whole control but only ObjectNumber control
 			this.setProperty('numberUnit', sNumberUnit, true);
 			//Rerender only the ObjectNumber internal private field
-			this.getAggregation('_objectNumber').setNumberUnit(sNumberUnit);
+			this.getAggregation('_objectNumber').setUnit(sNumberUnit);
 
 			return this;
 		};

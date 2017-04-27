@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define(["sap/ui/fl/support/apps/contentbrowser/utils/HtmlEscapeUtils"],
 	function (HtmlEscapeUtils){
 	"use strict";

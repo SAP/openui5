@@ -771,8 +771,8 @@ sap.ui.define([
 		 * Check if the control id is generated or maintained by the application
 		 *
 		 * @param {sap.ui.core.Control | string} vControl Control instance or id
-		 * @param {sap.ui.core.Component} (optional) oAppComponent application component, needed only if vControl is string (id)
-		 * @param {boolean} (optional) bSuppressLogging flag to suppress the warning in the console
+		 * @param {sap.ui.core.Component} [oAppComponent] oAppComponent application component, needed only if vControl is string (id)
+		 * @param {boolean} [bSuppressLogging] bSuppressLogging flag to suppress the warning in the console
 		 * @returns {boolean} Returns true if the id is maintained by the application
 		 */
 		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {

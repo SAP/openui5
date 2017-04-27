@@ -1,36 +1,49 @@
 /* global QUnit */
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+sap.ui.define([
+	"sap/ui/dt/plugin/ElementMover",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/DesignTime",
+	// controls
+	"sap/ui/comp/smartform/SmartForm",
+	"sap/ui/comp/smartform/GroupElement",
+	"sap/ui/comp/smartform/Group",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	// should be last
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-ie",
+	"sap/ui/thirdparty/sinon-qunit",
+	"sap/ui/qunit/qunit-coverage"
+], function(
+	ElementMover, OverlayRegistry, DesignTime,
+	SmartForm, GroupElement, Group, Button, VerticalLayout,
+	sinon) {
 
-jQuery.sap.require("sap.ui.comp.smartform.SmartForm");
-jQuery.sap.require("sap.ui.comp.smartform.GroupElement");
-jQuery.sap.require("sap.ui.comp.smartform.Group");
-jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
-
-(function() {
 	"use strict";
+
+	QUnit.start();
 
 	QUnit.module("Given smartform groups and groupElements", {
 		beforeEach : function(assert) {
-			this.oSmartForm1 = new sap.ui.comp.smartform.SmartForm("form1", {
+			this.oSmartForm1 = new SmartForm("form1", {
 				groups : [
-					new sap.ui.comp.smartform.Group("group1"),
-					new sap.ui.comp.smartform.Group("group2")
+					new Group("group1"),
+					new Group("group2")
 				]
 			});
 
 			this.oGroup1 = sap.ui.getCore().byId("group1");
 			this.oGroup2 = sap.ui.getCore().byId("group2");
-			this.oElementMover = new sap.ui.dt.plugin.ElementMover();
+			this.oElementMover = new ElementMover();
 
 			this.oSmartForm1.placeAt("test-view");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function(assert) {
+			this.oElementMover.destroy();
 			this.oSmartForm1.destroy();
 		}
 	});
@@ -117,4 +130,69 @@ jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
 		assert.strictEqual(this.oElementMover._compareSourceAndTarget(oSource, oTarget), false, "then there is a move operation and the command stack has been pushed with a move operation");
 	});
 
-})();
+	QUnit.module("Given verticalLayout, buttons and associated overlays", {
+		beforeEach : function(assert) {
+			this.oElementMover = new ElementMover();
+			this.oButton1 = new Button("button1");
+			this.oButton2 = new Button("button2");
+			this.oButton3 = new Button("button3");
+			this.oVerticalLayout = new VerticalLayout("layout1", {
+				content: [
+					this.oButton1,
+					this.oButton2,
+					this.oButton3
+				]
+			}).placeAt("test-view");
+
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVerticalLayout]
+			});
+
+			var done = assert.async();
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButton3Overlay = OverlayRegistry.getOverlay(this.oButton3);
+				done();
+			}.bind(this));
+
+		},
+		afterEach : function(assert) {
+			this.oButton1Overlay.destroy();
+			this.oButton2Overlay.destroy();
+			this.oButton3Overlay.destroy();
+			this.oVerticalLayoutOverlay.destroy();
+			this.oVerticalLayout.destroy();
+			this.oDesignTime.destroy();
+		}
+	});
+
+	QUnit.test("Calling repositionOn method with button1 as source and button2 as target overlay", function(assert) {
+		this.oElementMover.repositionOn(this.oButton1Overlay, this.oButton2Overlay);
+		var aContent = this.oVerticalLayout.getContent();
+		assert.strictEqual(aContent.indexOf(this.oButton1), 1, "then button1 is moved to position 1");
+		assert.strictEqual(aContent.indexOf(this.oButton2), 0, "then button2 is moved to position 0");
+		assert.strictEqual(aContent.indexOf(this.oButton3), 2, "then button3 is moved to position 2");
+	});
+
+	QUnit.test("Calling repositionOn method with button1 as source and button3 as target overlay", function(assert) {
+		this.oElementMover.repositionOn(this.oButton1Overlay, this.oButton3Overlay);
+		var aContent = this.oVerticalLayout.getContent();
+		assert.strictEqual(aContent.indexOf(this.oButton1), 2, "then button1 is moved to position 2");
+		assert.strictEqual(aContent.indexOf(this.oButton2), 0, "then button2 is moved to position 0");
+		assert.strictEqual(aContent.indexOf(this.oButton3), 1, "then button3 is moved to position 1");
+	});
+
+	QUnit.test("Calling repositionOn method with button3 as source and button2 as target overlay", function(assert) {
+		this.oElementMover.repositionOn(this.oButton3Overlay, this.oButton2Overlay);
+		var aContent = this.oVerticalLayout.getContent();
+		assert.strictEqual(aContent.indexOf(this.oButton1), 0, "then button1 is moved to position 0");
+		assert.strictEqual(aContent.indexOf(this.oButton2), 2, "then button2 is moved to position 2");
+		assert.strictEqual(aContent.indexOf(this.oButton3), 1, "then button3 is moved to position 1");
+	});
+
+});

@@ -13,6 +13,9 @@
 					columnLayout: sColumnLayout
 				});
 			},
+			getSubSection: function () {
+				return new sap.uxap.ObjectPageSubSection();
+			},
 			getLayoutProviderStub: function (bTwoColumnLayout) {
 				return {getUseTwoColumnsForLargeScreen: sinon.stub().returns(bTwoColumnLayout)};
 			},
@@ -77,6 +80,75 @@
 			}
 		},
 		aProperties = oHelpers.generateProperties(aPropertyTypes, aScreenTypes);
+
+	QUnit.module("Object Page SubSection - blocks aggregation");
+
+	QUnit.test("Generates correct layout Configuration", function (assert) {
+		var oSubSection = oHelpers.getSubSection(),
+			oBlock1 = oHelpers.getBlock(),
+			oBlock2 = oHelpers.getBlock(),
+			iBlockCount = 0,
+			iBlock2ExpectedIndex = 1;
+
+		// Assert default.
+		assert.equal(oSubSection.getBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+
+		// Act: add a block.
+		oSubSection.addBlock(oBlock1);
+		iBlockCount++;
+
+		// Assert: check if the block is added
+		assert.equal(oSubSection.getBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+
+		// Act: insert a block (index = 0)
+		oSubSection.insertBlock(oBlock2, 0);
+		iBlockCount++;
+
+		// Assert: check if the block is added.
+		assert.equal(oSubSection.getBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+		// Assert: check if the block is added to the end although it is being inserted at index 0.
+		assert.equal(oSubSection.indexOfBlock(oBlock2), iBlock2ExpectedIndex,
+			"There inserted block is added to the end of the blocks aggregation.");
+
+		oSubSection.removeAllBlocks();
+		iBlockCount = 0;
+		assert.equal(oSubSection.getBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+
+		oSubSection.destroy();
+	});
+
+	QUnit.module("Object Page SubSection - moreBlocks aggregation");
+
+	QUnit.test("Generates correct layout Configuration", function (assert) {
+		var oSubSection = oHelpers.getSubSection(),
+			oBlock1 = oHelpers.getBlock(),
+			oBlock2 = oHelpers.getBlock(),
+			iBlockCount = 0,
+			iBlock2ExpectedIndex = 1;
+
+		// Assert default.
+		assert.equal(oSubSection.getMoreBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+
+		// Act: add a block.
+		oSubSection.addMoreBlock(oBlock1);
+		iBlockCount++;
+		assert.equal(oSubSection.getMoreBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+
+		// Act: insert a block (index = 0).
+		oSubSection.insertMoreBlock(oBlock2, 0);
+		iBlockCount++;
+		// Assert: check if the block is added.
+		assert.equal(oSubSection.getMoreBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+		// Assert: check if the block is added to the end although it is being inserted at index 0.
+		assert.equal(oSubSection.indexOfMoreBlock(oBlock2), iBlock2ExpectedIndex,
+			"There inserted block is added to the end of the blocks aggregation.");
+
+		oSubSection.removeAllMoreBlocks();
+		iBlockCount = 0;
+		assert.equal(oSubSection.getMoreBlocks().length, iBlockCount, "There are: " + iBlockCount + " blocks.");
+
+		oSubSection.destroy();
+	});
 
 	QUnit.module("Object Page SubSection - Managing Block Layouts in Standard Mode", {
 		beforeEach: function () {

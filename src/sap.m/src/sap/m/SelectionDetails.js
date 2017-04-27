@@ -131,6 +131,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	};
 
 	SelectionDetails.prototype.exit = function () {
+		this.detachSelectionHandler();
 		this._oItemFactory = null;
 		this._oChangeHandler = null;
 	};

@@ -152,64 +152,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Static initialization of components. This function will be called by the
+	 * Static initialization of Components. This function will be called by the
 	 * Component and the metadata decides whether to execute the static init code
-	 * or not. It will be called the first time a Component is initialized.
+	 * or not. It will be called by each Component instance init.
 	 * @private
 	 */
 	ComponentMetadata.prototype.init = function() {
-		if (!this._bInitialized) {
+		if (this._iInstanceCount === 0) {
 			// first we load the dependencies of the parent
 			var oParent = this.getParent();
 			if (oParent instanceof ComponentMetadata) {
 				oParent.init();
 			}
-			// init the manifest and save initialize state
+			// init the manifest
 			this._oManifest.init();
 			this._bInitialized = true;
 		}
+		this._iInstanceCount++;
 	};
 
 	/**
-	 * Static termination of components.
-	 *
-	 * TODO: Right now it is unclear when this function should be called. Just to
-	 *       make sure that we do not forget this in future.
-	 *
+	 * Static termination of Components. This function will be called by the
+	 * Component and the metadata decides whether to execute the static exit code
+	 * or not. It will be called by each Component instance exit.
 	 * @private
 	 */
 	ComponentMetadata.prototype.exit = function() {
-		if (this._bInitialized) {
+		// ensure that the instance count is never negative
+		var iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
+		if (iInstanceCount === 0) {
+			// exit the manifest
+			this._oManifest.exit();
+			// unload the includes of parent components
 			var oParent = this.getParent();
 			if (oParent instanceof ComponentMetadata) {
 				oParent.exit();
 			}
-			// exit the manifest and save initialize state
-			this._oManifest.exit();
 			this._bInitialized = false;
 		}
+		this._iInstanceCount = iInstanceCount;
 	};
 
 	/**
 	 * Component instances need to register themselves in this method to enable
 	 * the customizing for this component. This will only be done for the first
 	 * instance and only if a customizing configuration is available.
+	 * @param {sap.ui.core.Component} oInstance reference to the Component instance
 	 * @private
 	 */
-	ComponentMetadata.prototype.onInitComponent = function() {
-		this.getManifestObject().onInitComponent();
-		this._iInstanceCount++;
+	ComponentMetadata.prototype.onInitComponent = function(oInstance) {
+		jQuery.sap.log.error("The function ComponentMetadata#onInitComponent will be removed soon!");
 	};
 
 	/**
 	 * Component instances need to unregister themselves in this method to disable
 	 * the customizing for this component. This will only be done for the last
 	 * instance and only if a customizing configuration is available.
+	 * @param {sap.ui.core.Component} oInstance reference to the Component instance
 	 * @private
 	 */
-	ComponentMetadata.prototype.onExitComponent = function() {
-		this.getManifestObject().onExitComponent();
-		this._iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
+	ComponentMetadata.prototype.onExitComponent = function(oInstance) {
+		jQuery.sap.log.error("The function ComponentMetadata#onExitComponent will be removed soon!");
 	};
 
 	/**

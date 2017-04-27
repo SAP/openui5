@@ -97,6 +97,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		this._fnActionSubstituteParentFunction = function () {
 			return this;
 		}.bind(this);
+
+		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
@@ -115,6 +117,24 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 */
 	DynamicPageTitle.prototype.ontap = function (oEvent) {
 		if (oEvent.srcControl === this || this.getAggregation("_overflowToolbar") === oEvent.srcControl) {
+			this.fireEvent("_titlePress");
+		}
+	};
+
+	/**
+	 * Fires the <code>DynamicPageTitle</code> press event.
+	 * @param {jQuery.Event} oEvent
+	 */
+	DynamicPageTitle.prototype.onsapspace = function (oEvent) {
+		this.onsapenter(oEvent);
+	};
+
+	/**
+	 * Fires the <code>DynamicPageTitle</code> press event.
+	 * @param {jQuery.Event} oEvent
+	 */
+	DynamicPageTitle.prototype.onsapenter = function (oEvent) {
+		if (oEvent.srcControl === this) {
 			this.fireEvent("_titlePress");
 		}
 	};

@@ -1,9 +1,12 @@
+/*global QUnit*/
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 jQuery.sap.require("sap.ui.fl.context.DeviceContextProvider");
 jQuery.sap.require("sap.ui.fl.context.Context");
 
 (function(DeviceContextProvider, Context) {
+	"use strict";
 
 	var mDeviceContextConfiguration = {
 		"device" : "sap/ui/fl/context/DeviceContextProvider"
