@@ -166,21 +166,38 @@ sap.ui.define([
 			},
 
 			_bindData : function (sTopicId) {
-				var oControlData = sap.ui.getCore().getModel("libsData").getData()[sTopicId],
+				var aLibsData = this.getOwnerComponent().getModel("libsData").getData(),
+					oControlData = aLibsData[sTopicId],
+					aTreeData = this.getOwnerComponent().getModel("treeData").getData(),
+					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
 					oMethodsModel = {methods: []},
 					oEventsModel = {events: []},
-					ui5Metadata;
+					oUi5Metadata;
 
-				if (!oControlData) {
+				if (!oControlData && !aControlChildren) {
 					jQuery.sap.delayedCall(250, this, this._bindData, [sTopicId]);
 					return;
 				}
 
-				ui5Metadata = oControlData['ui5-metadata'];
+				if (aControlChildren) {
+					if (!oControlData) {
+						oControlData = {};
+					}
+					oControlData.controlChildren = aControlChildren;
+					this._addChildrenDescription(aLibsData, oControlData.controlChildren);
+				}
+
+				oUi5Metadata = oControlData['ui5-metadata'];
 
 				this.getView().byId('apiDetailPage').setBusy(false);
 				this.getView().byId('apiDetailObjectPage').setVisible(true);
+
+				if (oControlData.controlChildren) {
+					oControlData.hasChildren = true;
+				} else {
+					oControlData.hasChildren = false;
+				}
 
 				if (oControlData.hasOwnProperty('properties') && this.hasPublicElement(oControlData.properties)) {
 					oControlData.hasProperties = true;
@@ -190,13 +207,13 @@ sap.ui.define([
 
 				oControlData.hasConstructor = oControlData.hasOwnProperty('constructor');
 
-				if (ui5Metadata && ui5Metadata.properties && this.hasPublicElement(ui5Metadata.properties)) {
+				if (oUi5Metadata && oUi5Metadata.properties && this.hasPublicElement(oUi5Metadata.properties)) {
 					oControlData.hasControlProperties = true;
 				} else {
 					oControlData.hasControlProperties = false;
 				}
 
-				if (ui5Metadata && ui5Metadata.events) {
+				if (oUi5Metadata && oUi5Metadata.events) {
 					oControlData.hasEvents = true;
 				} else {
 					oControlData.hasEvents = false;
@@ -205,16 +222,22 @@ sap.ui.define([
 				oControlData.hasMethods = oControlData.hasOwnProperty('methods') &&
 					this.hasPublicElement(oControlData.methods);
 
-				if (ui5Metadata && ui5Metadata.associations && this.hasPublicElement(ui5Metadata.associations)) {
+				if (oUi5Metadata && oUi5Metadata.associations && this.hasPublicElement(oUi5Metadata.associations)) {
 					oControlData.hasAssociations = true;
 				} else {
 					oControlData.hasAssociations = false;
 				}
 
-				if (ui5Metadata && ui5Metadata.aggregations && this.hasPublicElement(ui5Metadata.aggregations)) {
+				if (oUi5Metadata && oUi5Metadata.aggregations && this.hasPublicElement(oUi5Metadata.aggregations)) {
 					oControlData.hasAggregations = true;
 				} else {
 					oControlData.hasAggregations = false;
+				}
+
+				if (oUi5Metadata && oUi5Metadata.specialSettings && this.hasPublicElement(oUi5Metadata.specialSettings)) {
+					oControlData.hasSpecialSettings = true;
+				} else {
+					oControlData.hasSpecialSettings = false;
 				}
 
 				if (oControlData.hasMethods) {
@@ -222,7 +245,7 @@ sap.ui.define([
 				}
 
 				if (oControlData.hasEvents) {
-					oEventsModel.events = this.buildEventsModel(ui5Metadata.events);
+					oEventsModel.events = this.buildEventsModel(oUi5Metadata.events);
 				}
 
 				oControlData.isClass = oControlData.kind === "class";
@@ -237,6 +260,21 @@ sap.ui.define([
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
+				}
+			},
+
+			_getControlChildren : function (aTreeData, sTopicId) {
+				for (var i = 0; i < aTreeData.length; i++) {
+					if (aTreeData[i].name === sTopicId) {
+						return aTreeData[i].nodes;
+					}
+				}
+			},
+
+			_addChildrenDescription : function (aLibsData, aControlChildren) {
+				for (var i = 0; i < aControlChildren.length; i++) {
+					aControlChildren[i].description = aLibsData[aControlChildren[i].name].description;
+					aControlChildren[i].link = "{@link " + aControlChildren[i].name + "}";
 				}
 			},
 
@@ -441,6 +479,39 @@ sap.ui.define([
 				}
 
 				return result;
+			},
+
+			_formatChildDescription: function (description) {
+				if (description) {
+					description = this._extractFirstSentence(description);
+					description = this._wrapInSpanTag(description);
+					return "<div>" + description + "<\div>";
+				}
+			},
+
+			_extractFirstSentence: function (description) {
+				var descriptionCopy = description.slice(), iSkipPosition;
+
+				//Control description is not properly formatted and should be skipped.
+				if (description.lastIndexOf("}") > description.lastIndexOf(".")) {
+					return "";
+				}
+
+				descriptionCopy = this._sliceSpecialTags(descriptionCopy, "{", "}");
+				descriptionCopy = this._sliceSpecialTags(descriptionCopy, "<code>", "</code>");
+				iSkipPosition = description.length - descriptionCopy.length;
+				description = description.slice(0, descriptionCopy.indexOf(".") + ".".length + iSkipPosition);
+				return description;
+			},
+
+			_sliceSpecialTags: function (descriptionCopy, startSymbol, endSymbol) {
+				var startIndex, endIndex;
+				while (descriptionCopy.indexOf(startSymbol) !== -1 && descriptionCopy.indexOf(startSymbol) < descriptionCopy.indexOf(".")) {
+					startIndex = descriptionCopy.indexOf(startSymbol);
+					endIndex = descriptionCopy.indexOf(endSymbol);
+					descriptionCopy = descriptionCopy.slice(0, startIndex) + descriptionCopy.slice(endIndex + endSymbol.length, descriptionCopy.length);
+				}
+				return descriptionCopy;
 			},
 
 			/**

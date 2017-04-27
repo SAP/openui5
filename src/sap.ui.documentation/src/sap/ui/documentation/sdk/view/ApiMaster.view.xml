@@ -27,12 +27,12 @@
 					id="tree"
 					mode="SingleSelectMaster"
 					selectionChange="onNodeSelect"
-					items="{ path: '/' }">
+					items="{ path: 'treeData>/' }">
 				<StandardTreeItem
-						title="{text}"
-						selected="{isSelected}">
+						title="{treeData>text}"
+						selected="{treeData>isSelected}">
 					<customData>
-						<core:CustomData key="nodeId" value="{name}" />
+						<core:CustomData key="nodeId" value="{treeData>name}" />
 					</customData>
 				</StandardTreeItem>
 			</Tree>

@@ -126,11 +126,10 @@ sap.ui.define([
 				this._optimizeTreeContent();
 				this._sortTreeContent();
 
-				var tree = this.byId("tree");
-				var oldModel = tree.getModel();
-				var newModel = new JSONModel(aTreeContent);
+				var oldModel = this.getOwnerComponent().getModel("treeData");
+				var newModel = new sap.ui.model.json.JSONModel(aTreeContent);
 				newModel.setSizeLimit(iTreeModelLimit);
-				tree.setModel(newModel);
+				this.getOwnerComponent().setModel(newModel, "treeData");
 				oldModel.destroy();
 
 				this._expandTreeToNode(this._topicId);
@@ -260,13 +259,13 @@ sap.ui.define([
 			_bindAllLibsModel : function (oAllLibsData) {
 				var oLibsModel = new JSONModel(oAllLibsData);
 				oLibsModel.setSizeLimit(iTreeModelLimit);
-				sap.ui.getCore().setModel(oLibsModel, "libsData");
+				this.getOwnerComponent().setModel(oLibsModel, "libsData");
 			},
 
 			_bindTreeModel : function (oTree, aTreeContent) {
 				var treeModel = new JSONModel(aTreeContent);
 				treeModel.setSizeLimit(iTreeModelLimit);
-				oTree.setModel(treeModel);
+				this.getOwnerComponent().setModel(treeModel, "treeData");
 			},
 
 			onNodeSelect : function (oEvent) {

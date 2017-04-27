@@ -34,7 +34,7 @@ sap.ui.define([
 			 */
 			_expandTreeToNode: function (sTopicId) {
 				var oTree = this.byId("tree");
-				var oData = oTree.getModel().getData();
+				var oData = this.getOwnerComponent().getModel("treeData").getData();
 
 				// Find the path to the new node, traversing the model
 				var aTopicIds = this._oTreeUtil.getPathToNode(sTopicId, oData);

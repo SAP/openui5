@@ -95,6 +95,29 @@
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
 										<m:Text text="Since: {topics>/since}" visible="{= ${topics>/since} !== undefined}"/>
+
+										<m:Table visible="{topics>/hasChildren}"
+												 items="{ path : 'topics>/controlChildren'}"
+												 showSeparators="Inner"
+												 fixedLayout="false">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Namespaces &amp; Classes"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+													<m:Label text="Description"/>
+												</m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+														<core:HTML content="{parts: [{path: 'topics>link'}],
+																		 formatter: '.formatDescription'}"/>
+														<core:HTML content="{parts: [{path: 'topics>description'}],
+																		 formatter: '._formatChildDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+
 									</layout:VerticalLayout>
 								</blocks>
 							</ObjectPageSubSection>
@@ -358,6 +381,43 @@
 																				 {path: 'topics>deprecated/text'},
 																				 {path: 'topics>deprecated/since'}],
 																		 formatter: '.formatDescription'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="specialSettings"
+									   title="Special Settings"
+									   visible="{topics>/hasSpecialSettings}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:Table items="{ path : 'topics>/ui5-metadata/specialSettings'}"
+											 showSeparators="Inner"
+											 fixedLayout="false">
+										<m:columns>
+											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
+											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Label text="Description"/>
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Link text="{topics>type}"
+															enabled="{parts: [{path: 'topics>type'}],
+																		  formatter: '.formatLinkEnabled'}"
+															press="onTypeLinkPress"/>
+													<core:HTML content="{parts: [{path: 'topics>description'},
+																					 {path: 'topics>deprecated/text'},
+																					 {path: 'topics>deprecated/since'}],
+																			 	  formatter: '.formatDescription'}"/>
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
