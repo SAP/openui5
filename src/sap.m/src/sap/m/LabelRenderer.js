@@ -17,13 +17,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the renderer output buffer
 	 * @param {sap.ui.core.Control} oLabel An object representation of the control that should be rendered
 	 */
 	LabelRenderer.render = function(rm, oLabel){
 		// convenience variable
-		var r = LabelRenderer;
+		var r = LabelRenderer,
+			sTextDir = oLabel.getTextDirection(),
+			bRenderBDI = sTextDir === sap.ui.core.TextDirection.Inherit;
 
 		// write the HTML into the render manager
 		rm.write("<label");
@@ -48,7 +49,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		// text direction
-		var sTextDir = oLabel.getTextDirection();
 		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
@@ -86,9 +86,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.write(">");
 
 		// write the label text
-
 		if (sLabelText) {
-			rm.writeEscaped(sLabelText);
+			if (bRenderBDI) {
+				//TODO: To be removed after change completion of BLI incident #1770022720
+				rm.write('<bdi>');
+				rm.writeEscaped(sLabelText);
+				rm.write('</bdi>');
+			} else {
+				rm.writeEscaped(sLabelText);
+			}
 		}
 		rm.write("</label>");
 	};
