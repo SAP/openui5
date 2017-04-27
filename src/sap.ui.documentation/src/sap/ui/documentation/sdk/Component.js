@@ -27,7 +27,7 @@ sap.ui.define([
 					"controller/util/google-code-prettify/prettify.css",
 					"controller/util/google-code-prettify/prettify.js",
 					"controller/util/google-code-prettify/lang-css.js",
-					"css/FeedbackRatingFaces.less"
+					"css/FeedbackRatingFaces.css"
 				]
 			},
 
