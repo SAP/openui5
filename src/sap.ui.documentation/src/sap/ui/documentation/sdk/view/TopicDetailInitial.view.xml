@@ -30,7 +30,7 @@
 					<l:VerticalLayout
 							width="100%">
 						<Text
-								text="Read All about the latest updates for each new release of SAPUI5."
+								text="Read all about the latest updates for each new release of UI5."
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
@@ -57,7 +57,7 @@
 					<l:VerticalLayout
 							width="100%">
 						<Text
-								text="The SAPUI5 tutorials introduce you all major development paradigms of SAPUI5 using practical examples in an interactive format."
+								text="The UI5 tutorials provide you with all major development paradigms of UI5, using practical examples in an interactive format."
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
@@ -97,7 +97,7 @@
 					<l:VerticalLayout
 							width="100%">
 						<Text
-								text="Build and enhance interactive analytical Web applications"
+								text="Build and enhance interactive analytical web apps."
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"/>
@@ -111,7 +111,7 @@
 					<l:VerticalLayout
 							width="100%">
 						<Text
-								text="This sections explains the development concepts of SAPUI5."
+								text="This section explains the development concepts of UI5."
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"

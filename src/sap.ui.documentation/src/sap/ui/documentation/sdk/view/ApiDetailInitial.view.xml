@@ -56,11 +56,11 @@
 						<l:VerticalLayout
 								width="100%">
 							<Title
-									text="Fiori library"
+									text="SAP Fiori Library"
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>
 							<Text
-									text="SAPUI5 library with controls specialized for Fiori applications."
+									text="UI5 library with controls specialized for SAP Fiori apps."
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.f namespace"
@@ -84,11 +84,11 @@
 						<l:VerticalLayout
 								width="100%">
 							<Title
-									text="Fiori for Tools"
+									text="SAP Fiori for Tools"
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>
 							<Text
-									text="SAPUI5 library with controls specialized for administrative applications."
+									text="UI5 library with controls specialized for administrative apps."
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.tnt namespace"
@@ -118,7 +118,7 @@
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>
 							<Text
-									text="SAPUI5 library specialized for layout controls"
+									text="UI5 library specialized for layout controls"
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.ui.layout namespace"
@@ -146,7 +146,7 @@
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>
 							<Text
-									text="SAPUI5 library with controls specialized for Fiori applications."
+									text="UI5 library with controls specialized for SAP Fiori apps."
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.uxap namespace"
@@ -175,7 +175,7 @@
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>
 							<Text
-									text="The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers."
+									text="The main UI5 control library, with responsive controls that can be used in touch-enabled devices and desktop browsers."
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.m namespace"
@@ -206,7 +206,7 @@
 									titleStyle="H2"
 									class="sapUiSmallMarginBottom"/>
 							<Text
-									text="Table-like controls support touch and non touch desktop and tablet scenarios."
+									text="Table-like controls, supporting touch and non-touch desktop and tablet scenarios."
 									class="sapUiSmallMarginBottom"/>
 							<Link
 									text="sap.ui.table"

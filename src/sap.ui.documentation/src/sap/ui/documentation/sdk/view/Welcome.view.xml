@@ -33,11 +33,11 @@
 								size="2.5rem"
 								color="#346187"/>
 						<Title
-								text="Developer Guidelines"
+								text="Developer guidelines"
 								titleStyle="H2"
 								class="sapUiTinyMarginTopBottom"/>
 						<Text
-								text="The UI5 core offers a solid foundation that simplifies development by managing many aspects of modern development behind the scenes. It comes with built in support for architectual concepts like MVC, message handling, data binding, routing and many more."
+								text="The UI5 core offers a solid foundation that simplifies development by managing many aspects of modern development behind the scenes. It comes with built-in support for architectural concepts, such as, MVC, message handling, data binding, routing and many more."
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="Visit the developer guide"
@@ -73,7 +73,7 @@
 								size="2.5rem"
 								color="#346187"/>
 						<Title
-								text="API's for Feature-rich UI controls"
+								text="APIs for feature-rich UI controls"
 								titleStyle="H2"
 								class="sapUiTinyMarginTopBottom"/>
 						<Text
@@ -93,14 +93,14 @@
 								size="2.5rem"
 								color="#346187"/>
 						<Title
-								text="Demos and Walkthroughs"
+								text="Demos and walkthroughs"
 								titleStyle="H2"
 								class="sapUiTinyMarginTopBottom"/>
 						<Text
-								text="Familiar with JavaScript and common web standards? Than it's super-easy for you to get started with UI5. Make use of the ready-to-use app templates as a starting point for your app developing. They include generic application functionality and tests that can be easily extended with custom functionality if needed."
+								text="Familiar with JavaScript and common web standards? Then it's super-easy for you to get started with UI5. Make use of the ready-to-use app templates as a starting point for your app developing. They include generic application functionality and tests that can be easily extended with custom functionality if needed."
 								class="sapUiTinyMarginBottom"/>
 						<Link
-								text="View the Demo applications"
+								text="View the Demo Apps"
 								href="#/demoapps"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -137,7 +137,7 @@
 									titleStyle="H2"
 									class="demokitInitialPagesWhiteText sapUiTinyMarginTopBottom"/>
 							<Text
-									text="No need to worry about device specifics! UI5 applications run on smartphones, tables and desktops. The UI controls autoamtically adapt themselves to each device's capabilities and make the most of the real estate available."
+									text="No need to worry about device specifics! UI5 apps run on smartphones, tablets and desktops. The UI controls automatically adapt themselves to each device's capabilities and make the most of the real estate available."
 									class="demokitInitialPagesWhiteText"/>
 						</l:VerticalLayout>
 						<Image
@@ -164,10 +164,10 @@
 									titleStyle="H2"
 									class="sapUiTinyMarginTopBottom"/>
 							<Text
-									text="UI5 applications benefit from a consistent design language and predefined UX patterns across all fronend features. Use a predefined theme or the UI theme designer to create your own one."
+									text="UI5 apps benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or the UI Theme Designer to create your own."
 									class="sapUiTinyMarginBottom"/>
 							<Link
-									text="Visit the UI5 YouTube Channel"
+									text="Visit the UI5 YouTube channel"
 									href="https://www.youtube.com/playlist?list=PLWV533hWWvDmxJM4itQ9o--7rolKgy-1r"/>
 						</l:VerticalLayout>
 						<l:VerticalLayout
@@ -201,17 +201,17 @@
 								titleStyle="H2"
 								class="sapUiMediumMarginBottom" />
 						<Text
-								text="The original SAP Fiori user interface for web apps is based on the UI5 framework. SAP Firori apps follow the SAP Firori Design Guidelines to ensure a consistency of style and a high level of design quality."
+								text="The original SAP Fiori user interface for web apps is based on the UI5 framework. SAP Fiori apps follow the SAP Fiori Design Guidelines to ensure a consistency of style and high level of design quality."
 								class="sapUiSmallMarginBottom"/>
 						<Text
-								text="Now you can combine the unrivaled knowledge of both design and development experts, simply by diving into the guidelines featured in this UI development toolkit for HTML 5."
+								text="Now you can combine the unrivaled knowledge of both design and development experts, simply by diving into the guidelines featured in this UI development toolkit for HTML5."
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="SAP Fiori Design Guidelines"
 								href="https://experience.sap.com/fiori-design/"
 								class="sapUiTinyMarginBottom"/>
 						<Link
-								text="SAP UI5 Developer Guide"
+								text="SAPUI5 Developer Guide"
 								href="#/topic"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -232,7 +232,7 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 						class="demokitInitialPagesColorPatternA"
-						title="Under the hood"
+						title="Under the Hood"
 						titleAlignment="Center"/>
 			</l:BlockLayoutRow>
 
@@ -251,13 +251,13 @@
 								text="Apps developed with UI5 run in a browser on any device (mobile, tablet or desktop PC)."
 								class="sapUiSmallMarginTopBottom"/>
 						<Text
-								text="When users access an UI5 app, a request is sent to the respective server to load the application into the browser. The view accesses the relevant libraries. Usually the model is also instantiated amd business data is fetched from the database."
+								text="When users access an UI5 app, a request is sent to the respective server to load the app into the browser. The view accesses the relevant libraries. Usually, the model is also instantiated and business data is fetched from the database"
 								class="sapUiSmallMarginBottom"/>
 						<Text
-								text="Depending on the environment in which UI5 is used, the libraries or your applications can be stored, for example, on a SAP NetWeaver Application Server or an SAP Cloud Platform, and business data can be accessed, for example, using the OData model through a SAP Gateway"
+								text="Depending on the environment in which UI5 is used, the libraries or your apps can be stored, for example, on an SAP NetWeaver Application Server or on SAP Cloud Platform, and business data can be accessed using the OData model through an SAP Gateway."
 								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="More Details"
+								text="More details"
 								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -291,7 +291,7 @@
 								titleStyle="H2"
 								class="sapUiSmallMarginBottom"/>
 						<Text
-							text="Sign up to the free SAP Cloud Platform, developer edition and get a trial instance of SAP Web IDE, our recommended development environment for UI5. Use it to build your first UI5 apps and test the platform on the SAP global cloud network."
+							text="Sign up to the free SAP Cloud Platform developer edition and get a trial instance of SAP Web IDE, our recommended development environment for UI5. Use it to build your first UI5 apps and test the platform on the SAP global cloud network."
 							class="sapUiMediumMarginBottom"/>
 						<Title
 								text="Completely free for developer use."
@@ -302,7 +302,7 @@
 								href="https://www.sap.com/developer/topics/sap-webide.html"
 								class="sapUiSmallTinyBottom"/>
 						<Link
-								text="Sign up for a free HCP account"
+								text="Sign up for a free SAP Cloud Platform account"
 								href="https://www.sap.com/developer/tutorials/hcp-create-trial-account.html"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -335,10 +335,10 @@
 									color="#346187"
 									class="sapUiTinyMarginBegin sapUiMediumMarginEnd"/>
 							<Text
-									text="The &quot;latest stable&quot; version which is updated without prior notice."/>
+									text="The latest stable version which is updated without prior notice."/>
 						</l:HorizontalLayout>
 						<Text
-								text="There is a list of all available online versions you can refer to. In case this is not clear yet how it works, see this simple example for using the CDN."
+								text="There is a list of all available online versions you can refer to. In case it’s still not clear how it works, see this simple example for using the CDN."
 								class="sapUiSmallMarginBottom"/>
 						<Link
 							text="List of all available online versions"
@@ -361,7 +361,7 @@
 								text="Get OpenUI5, the open source version of UI5. It's available for free under the Apache 2.0 license on GitHub."
 								class="sapUiMediumMarginBottom"/>
 						<Title
-								text="Help us making OpenUI5 better."
+								text="Help us make OpenUI5 better"
 								titleStyle="H4"
 								class="sapUiTinyMarginBottom"/>
 						<l:HorizontalLayout
