@@ -31,9 +31,10 @@
 							width="100%">
 						<Text
 								text="Read All about the latest updates for each new release of SAPUI5."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -43,9 +44,10 @@
 							width="100%">
 						<Text
 								text="Complete explanaitions of all the things you need to know before diving into UI5."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -56,9 +58,10 @@
 							width="100%">
 						<Text
 								text="The SAPUI5 tutorials introduce you all major development paradigms of SAPUI5 using practical examples in an interactive format."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -71,7 +74,7 @@
 							width="100%">
 						<Text
 								text="This section contains the practical part, details and best practises that will help you while developing your apps, and what pitfalls you should look out for along the way."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"/>
 					</l:VerticalLayout>
@@ -83,7 +86,7 @@
 							width="100%">
 						<Text
 								text="Developing SAP Fiori apps using SAP Fiori elements, and how to use them to save time and development costs."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"/>
 					</l:VerticalLayout>
@@ -95,7 +98,7 @@
 							width="100%">
 						<Text
 								text="Build and enhance interactive analytical Web applications"
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"/>
 					</l:VerticalLayout>
@@ -109,9 +112,10 @@
 							width="100%">
 						<Text
 								text="This sections explains the development concepts of SAPUI5."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -121,9 +125,10 @@
 							width="100%">
 						<Text
 								text="Detailed information about UI5 controls and the libraries they live in."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -133,9 +138,10 @@
 							width="100%">
 						<Text
 								text="Adapt or replace views, extend or replace controllers and so much more."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -145,35 +151,38 @@
 							width="100%">
 						<Text
 								text="Learn more about creating your own controls or contributing to UI5."
-								class="sapUiLargeMarginBottom"/>
+								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="colorPatternFContrast">
-					<Image
-							src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
-							height="2.5rem">
-					</Image>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						class="colorPatternFContrast">
+						class="demokitInitialPagesColorPatternFContrast">
 					<HBox
-							width="100%"
-							justifyContent="End">
-						<Link
-								class="brightLink sapUiLargeMarginEnd"
-								text="Legal Disclosure"/>
-						<Link
-								class="brightLink sapUiLargeMarginEnd"
-								text="Privacy"/>
-						<Link
-								class="brightLink"
-								text="Terms of use"/>
+							justifyContent="SpaceBetween"
+							alignItems="Center">
+						<Image
+								src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+								height="2.5rem">
+						</Image>
+						<HBox
+								width="100%"
+								justifyContent="End"
+								wrap="Wrap">
+							<Link
+									class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+									text="Legal Disclosure"/>
+							<Link
+									class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+									text="Privacy"/>
+							<Link
+									class="demokitInitialPagesBrightLink"
+									text="Terms of use"/>
+						</HBox>
 					</HBox>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
