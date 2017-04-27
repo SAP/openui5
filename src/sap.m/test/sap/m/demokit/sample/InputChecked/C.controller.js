@@ -9,86 +9,78 @@ sap.ui.define([
 	], function(jQuery, MessageBox, MessageToast, Controller, SimpleType, ValidateException, JSONModel) {
 	"use strict";
 
-	var CController = Controller.extend("sap.m.sample.InputChecked.C", {
+	return Controller.extend("sap.m.sample.InputChecked.C", {
 
+		/**
+		 * Lifecycle hook that is called when the controller is instantiated
+		 */
 		onInit : function () {
-			this.getView().setModel(new JSONModel({
+			var oView = this.getView();
+
+			oView.setModel(new JSONModel({
 				name : "",
 				email : ""
 			}));
 
 			// attach handlers for validation errors
-			sap.ui.getCore().attachValidationError(function (evt) {
-				var control = evt.getParameter("element");
-				if (control && control.setValueState) {
-					control.setValueState("Error");
-				}
-			});
-			sap.ui.getCore().attachValidationSuccess(function (evt) {
-				var control = evt.getParameter("element");
-				if (control && control.setValueState) {
-					control.setValueState("None");
-				}
-			});
+			sap.ui.getCore().getMessageManager().registerObject(oView.byId("nameInput"), true);
+			sap.ui.getCore().getMessageManager().registerObject(oView.byId("emailInput"), true);
 		},
 
-		handleContinue : function (evt) {
-
+		/**
+		 * Event handler for the continue button
+		 */
+		onContinue : function () {
 			// collect input controls
-			var view = this.getView();
-			var inputs = [
-				view.byId("nameInput"),
-				view.byId("emailInput")
+			var oView = this.getView();
+			var aInputs = [
+				oView.byId("nameInput"),
+				oView.byId("emailInput")
 			];
+			var bValidationError = false;
 
 			// check that inputs are not empty
 			// this does not happen during data binding as this is only triggered by changes
-			jQuery.each(inputs, function (i, input) {
-				if (!input.getValue()) {
-					input.setValueState("Error");
-				}
-			});
-
-			// check states of inputs
-			var canContinue = true;
-			jQuery.each(inputs, function (i, input) {
-				if (input.getValueState() === "Error") {
-					canContinue = false;
-					return false;
+			jQuery.each(aInputs, function (i, oInput) {
+				var oBinding = oInput.getBinding("value");
+				try {
+					oBinding.getType().validateValue(oInput.getValue());
+				} catch (oException) {
+					oInput.setValueState("Error");
+					bValidationError = true;
 				}
 			});
 
 			// output result
-			if (canContinue) {
-				MessageToast.show("The input is correct. You could now continue to the next screen.");
+			if (!bValidationError) {
+				MessageToast.show("The input is validated. You could now continue to the next screen");
 			} else {
-				jQuery.sap.require("sap.m.MessageBox");
-				MessageBox.alert("Complete your input first.");
+				MessageBox.alert("A validation error has occured. Complete your input first");
 			}
 		},
 
 		/**
-		 * This is a custom model type for validating email
+		 * Custom model type for validating an E-Mail address
+		 * @class
+		 * @extends sap.ui.model.SimpleType
 		 */
-		typeEMail : SimpleType.extend("email", {
+		customEMailType : SimpleType.extend("email", {
 			formatValue: function (oValue) {
 				return oValue;
 			},
 			parseValue: function (oValue) {
-				//parsing step takes place before validating step, value can be altered
+				//parsing step takes place before validating step, value could be altered here
 				return oValue;
 			},
 			validateValue: function (oValue) {
 				// The following Regex is NOT a completely correct one and only used for demonstration purposes.
 				// RFC 5322 cannot even checked by a Regex and the Regex for RFC 822 is very long and complex.
-				var mailregex = /^\w+[\w-+\.]*\@\w+([-\.]\w+)*\.[a-zA-Z]{2,}$/;
-				if (!oValue.match(mailregex)) {
+				var rexMail = /^\w+[\w-+\.]*\@\w+([-\.]\w+)*\.[a-zA-Z]{2,}$/;
+				if (!oValue.match(rexMail)) {
 					throw new ValidateException("'" + oValue + "' is not a valid email address");
 				}
 			}
 		})
 	});
-
-	return CController;
 
 });
