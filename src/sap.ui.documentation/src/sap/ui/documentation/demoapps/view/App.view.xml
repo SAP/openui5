@@ -58,6 +58,43 @@
 						factory: '.createDemoAppRow'
 					}"/>
 				</l:BlockLayout>
+				<l:BlockLayout
+					id="demoAppsFooter">
+					<l:BlockLayoutRow>
+						<l:BlockLayoutCell
+								class="demokitInitialPagesColorPatternFContrast">
+							<HBox
+									justifyContent="SpaceBetween"
+									alignItems="Center">
+								<Image
+										src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+										height="2.5rem">
+								</Image>
+								<HBox
+										width="100%"
+										justifyContent="End"
+										wrap="Wrap"
+										visible="{=!${appView>/isOpenUI5}}">
+									<Link
+											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+											text="Legal Disclosure"
+											href="https://www.sap.com/corporate/en/legal/impressum.html"
+											target="_blank"/>
+									<Link
+											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+											text="Privacy"
+											href="https://help.hana.ondemand.com/privacy.htm"
+											target="_blank"/>
+									<Link
+											class="demokitInitialPagesBrightLink"
+											text="Terms of use"
+											href="https://help.hana.ondemand.com/terms_of_use.html"
+											target="_blank"/>
+								</HBox>
+							</HBox>
+						</l:BlockLayoutCell>
+					</l:BlockLayoutRow>
+				</l:BlockLayout>
 			</ScrollContainer>
 			<dependents>
 				<SelectDialog id="downloadDialog"

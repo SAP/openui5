@@ -34,6 +34,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/99ac68a5b1c3416ab5c84c99fefa250d"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -47,6 +48,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/167193ced54c41c3961d7df3479d7bbe"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -61,6 +63,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -76,7 +79,8 @@
 								text="This section contains the practical part, details and best practises that will help you while developing your apps, and what pitfalls you should look out for along the way."
 								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								href="#/topic/23cfd955f58142389fa7c9097e11559c"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -88,7 +92,8 @@
 								text="Developing SAP Fiori apps using SAP Fiori elements, and how to use them to save time and development costs."
 								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								href="#/topic/03265b0408e2432c9571d6b3feb6b1fd"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -100,7 +105,8 @@
 								text="Build and enhance interactive analytical Web applications"
 								class="sapUiMediumMarginBottom"/>
 						<Link
-								text="View Documentation"/>
+								text="View Documentation"
+								href="#/topic/1c457c53595a6655e10000000a423f68"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -115,6 +121,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -128,6 +135,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/3ec6808ff0f34a75a9f40748cf9989b9"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -141,6 +149,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -154,6 +163,7 @@
 								class="sapUiMediumMarginBottom"/>
 						<Link
 								text="View Documentation"
+								href="#/topic/8dcab0011d274051808f959800cabf9f"
 								class="demokitInitialPagesBrightLink"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -172,16 +182,23 @@
 						<HBox
 								width="100%"
 								justifyContent="End"
-								wrap="Wrap">
+								wrap="Wrap"
+								visible="{=!${appView>/isOpenUI5}}">
 							<Link
 									class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-									text="Legal Disclosure"/>
+									text="Legal Disclosure"
+									href="https://www.sap.com/corporate/en/legal/impressum.html"
+									target="_blank"/>
 							<Link
 									class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-									text="Privacy"/>
+									text="Privacy"
+									href="https://help.hana.ondemand.com/privacy.htm"
+									target="_blank"/>
 							<Link
 									class="demokitInitialPagesBrightLink"
-									text="Terms of use"/>
+									text="Terms of use"
+									href="https://help.hana.ondemand.com/terms_of_use.html"
+									target="_blank"/>
 						</HBox>
 					</HBox>
 				</l:BlockLayoutCell>

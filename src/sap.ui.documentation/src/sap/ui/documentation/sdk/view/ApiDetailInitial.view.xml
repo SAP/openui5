@@ -296,16 +296,23 @@
 							<HBox
 									width="100%"
 									justifyContent="End"
-									wrap="Wrap">
+									wrap="Wrap"
+									visible="{=!${appView>/isOpenUI5}}">
 								<Link
 										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-										text="Legal Disclosure"/>
+										text="Legal Disclosure"
+										href="https://www.sap.com/corporate/en/legal/impressum.html"
+										target="_blank"/>
 								<Link
 										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-										text="Privacy"/>
+										text="Privacy"
+										href="https://help.hana.ondemand.com/privacy.htm"
+										target="_blank"/>
 								<Link
 										class="demokitInitialPagesBrightLink"
-										text="Terms of use"/>
+										text="Terms of use"
+										href="https://help.hana.ondemand.com/terms_of_use.html"
+										target="_blank"/>
 							</HBox>
 						</HBox>
 					</l:BlockLayoutCell>

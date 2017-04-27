@@ -5,6 +5,7 @@
 /*global Promise*/
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/json/JSONModel",
 	"jquery.sap.global",
 	"sap/ui/documentation/demoapps/model/sourceFileDownloader",
 	"sap/ui/documentation/demoapps/model/formatter",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/library"
-], function (Controller, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
+], function (Controller, JSONModel, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("sap.ui.documentation.demoapps.controller.App", {
@@ -23,6 +24,15 @@ sap.ui.define([
 		/* =========================================================== */
 		/* event handlers                                              */
 		/* =========================================================== */
+
+		onInit: function() {
+			var oVersionInfo = sap.ui.getVersionInfo(),
+				oViewModel = new JSONModel({
+					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
+				});
+
+			this.getView().setModel(oViewModel, "appView");
+		},
 
 		/**
 		 * Opens the download dialog
