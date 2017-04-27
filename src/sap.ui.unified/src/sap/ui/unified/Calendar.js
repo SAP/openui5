@@ -1225,8 +1225,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._setFocusedDate(oFirstMonthDate);
 				oFocusedDate = this._getFocusedDate();
 			}
-			oFocusedDate.setMonth(oFocusedDate.getMonth() + iMonths);
 			oFocusedDate.setDate(1);
+			oFocusedDate.setMonth(oFocusedDate.getMonth() + iMonths);
 			_renderMonth.call(this);
 			break;
 
