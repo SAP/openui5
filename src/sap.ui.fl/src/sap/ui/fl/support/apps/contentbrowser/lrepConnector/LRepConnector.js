@@ -36,7 +36,7 @@ sap.ui.define([
 		var that = this;
 
 		var oGetContentPromise = new Promise(function (fnResolve, fnReject) {
-			sContentSuffix = HtmlEscapeUtils.unescapeSlashes(sContentSuffix);
+			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
 			var sContextSuffix = that._getContextSuffix(sLayerSuffix, bReadRuntimeContext, bReadContextMetadata);
 			var sUrl = LrepConnector.sContentPathPrefix + (sContentSuffix ? "" : "/") + sContentSuffix + sLayerSuffix + sContextSuffix;
