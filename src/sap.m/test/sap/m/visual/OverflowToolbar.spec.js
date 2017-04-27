@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.OverflowToolbar", function() {
+	"use strict";
 
 	it("OverflowToolar initial rendering",function() {
 		expect(takeScreenshot()).toLookAs("overflowToolbar-rendering");

@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.MessageToast", function () {
+	"use strict";
+
 	var sPosition,
 		fnScreenshotToast = function (sPosition) {
 			element(by.id("select-list")).click();

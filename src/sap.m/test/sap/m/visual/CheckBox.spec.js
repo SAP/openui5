@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.CheckBox", function() {
+	"use strict";
 
 	it('should load test page',function(){
 		expect(takeScreenshot()).toLookAs('initial');
@@ -92,5 +95,5 @@ describe("sap.m.CheckBox", function() {
 		element(by.id('cb_enable_disable_toolbar')).click();
 		expect(takeScreenshot(element(by.id('cb_in_toolbar')))).toLookAs('disabled_in_toolbar');
 	});
-	
+
 });
