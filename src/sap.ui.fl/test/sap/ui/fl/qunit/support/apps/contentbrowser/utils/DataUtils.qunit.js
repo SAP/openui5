@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils",
 	"sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"
@@ -39,7 +41,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("when cleanLeadingAndTrailingSlashes is called for a string with leading and trailing slashes", function(assert) {
-		var sNameSpace = "/path1/path2/"
+		var sNameSpace = "/path1/path2/";
 
 		assert.equal(DataUtils.cleanLeadingAndTrailingSlashes(sNameSpace), "path1/path2", "then a correct namespace string is returned");
 	});

@@ -78,7 +78,7 @@ sap.ui.define([
 	 *
 	 * @param {String} sLayer - determines the layer for deleting the content
 	 * @param {String} sNamespace - namespace of the file
-	 * @param {String} sFilename - name of the file
+	 * @param {String} sFileName - name of the file
 	 * @param {String} sFileType - type of the file
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
@@ -278,11 +278,11 @@ sap.ui.define([
 	 * @param {Function} fnReject - callback function if request was rejected
 	 * @private
 	 */
-	LrepConnector._sendDeletionRequest = function (sXcsrfToken, sUrl, fnResolve, fnReject) {
+	LrepConnector._sendDeletionRequest = function (oXcsrfToken, sUrl, fnResolve, fnReject) {
 		jQuery.ajax({
 			url: sUrl,
 			beforeSend: function (oRequest) {
-				oRequest.setRequestHeader("X-CSRF-Token", sXcsrfToken);
+				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);
 			},
 			type: "DELETE",
 			success: function (oData) {

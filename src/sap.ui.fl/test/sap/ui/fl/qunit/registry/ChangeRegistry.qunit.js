@@ -1,4 +1,4 @@
-/*globals QUnit*/
+/*global QUnit*/
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
