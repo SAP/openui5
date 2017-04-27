@@ -10,9 +10,16 @@
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell class="sapUiNoContentPadding">
-					<Image
-							src="./resources/sap/ui/documentation/sdk/images/L_and_M_landingPage_280279_v2.png"
-							width="100%"/>
+					<Image	src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped_280279.jpg"
+							width="100%"
+							densityAware="false"
+							visible="{device>/system/phone}"/>
+					<Image	src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
+							width="100%"
+							densityAware="false"
+							visible="{=!${device>/system/phone}}"/>
+					<Text class="sapUiDocumentationWelcomeHeaderText sapUiDocumentationWelcomeHeaderTitleText" text="You have arrived!" width="100%" textAlign="Center"/>
+					<Text class="sapUiDocumentationWelcomeHeaderText sapUiDocumentationWelcomeHeaderSubText" text="Welcome to the new Demo Kit" width="100%" textAlign="Center"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 

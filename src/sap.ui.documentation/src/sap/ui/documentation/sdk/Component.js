@@ -23,6 +23,7 @@ sap.ui.define([
 					"css/titles.css",
 					"css/welcome.css",
 					"css/landingPage.css",
+					"css/headers.css",
 					"controller/util/google-code-prettify/prettify.css",
 					"controller/util/google-code-prettify/prettify.js",
 					"controller/util/google-code-prettify/lang-css.js",
