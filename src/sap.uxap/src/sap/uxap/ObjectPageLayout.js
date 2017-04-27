@@ -1657,8 +1657,7 @@ sap.ui.define([
 				sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
 				sSelectedSectionId = this._getSelectedSectionId();
 
-
-				if (sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar
+				if (sClosestSectionId && sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar
 					// then change the selection to match the correct section
 					this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[sClosestSectionId].buttonId);
 				}
