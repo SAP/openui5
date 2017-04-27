@@ -19,6 +19,7 @@
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script>
 
 		QUnit.test("domById", function(assert) {
@@ -117,6 +118,24 @@
 
 			// result will be "false" in IE8 and "true" in other browsers, as they have no error
 			assert.ok(true, "jQuery.sap.focus() may not have caused an error for invisible elements"); // would never be reached in case of error
+		});
+
+		QUnit.test("it should convert px values to rem", function(assert) {
+			assert.strictEqual(jQuery.sap.pxToRem("0px"), 0);
+			assert.strictEqual(jQuery.sap.pxToRem("0"), 0);
+			assert.strictEqual(jQuery.sap.pxToRem(0), 0);
+			assert.strictEqual(jQuery.sap.pxToRem("16px"), 1);
+			assert.strictEqual(jQuery.sap.pxToRem("32"), 2);
+			assert.strictEqual(jQuery.sap.pxToRem(64), 4);
+		});
+
+		QUnit.test("it should convert rem values to px", function(assert) {
+			assert.strictEqual(jQuery.sap.remToPx("0rem"), 0);
+			assert.strictEqual(jQuery.sap.remToPx("0"), 0);
+			assert.strictEqual(jQuery.sap.remToPx(0), 0);
+			assert.strictEqual(jQuery.sap.remToPx("1rem"), 16);
+			assert.strictEqual(jQuery.sap.remToPx("2"), 32);
+			assert.strictEqual(jQuery.sap.remToPx(4), 64);
 		});
 
 		QUnit.test("SetGetCursorPos", function (assert) {

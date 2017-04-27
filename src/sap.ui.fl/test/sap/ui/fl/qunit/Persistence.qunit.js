@@ -674,7 +674,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 
 		var oGetOwnerOrViewOfControlSpy = sandbox.spy(this.oPersistence, "_getOwnerComponentOfControl");
 
-		var oResult = this.oPersistence._getOwnerComponentOfControl(oControl);
+		this.oPersistence._getOwnerComponentOfControl(oControl);
 
 		assert.ok(oGetOwnerOrViewOfControlSpy.calledThrice, "'_getOwnerComponentOfControl' was called thrice");
 		assert.equal(oGetOwnerOrViewOfControlSpy.getCall(0).args[0], oControl, "'_getOwnerComponentOfControl' was called with the initial control at the first time");
@@ -690,7 +690,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		this.oPersistence._resolveFillingCacheWithChanges(oMockedFile);
 		assert.equal(checkForMessagebundleBindingStub.callCount, 0);
 
-		var oMockedFile = {"changes": {/* no messagebundle property */}};
+		oMockedFile = {"changes": {/* no messagebundle property */}};
 		this.oPersistence._resolveFillingCacheWithChanges(oMockedFile);
 		assert.equal(checkForMessagebundleBindingStub.callCount, 0);
 	});

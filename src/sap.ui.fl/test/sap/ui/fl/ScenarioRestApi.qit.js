@@ -1,4 +1,4 @@
-/*global sinon, Promise*/
+/*global QUnit,sinon,Promise*/
 
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require('sap.ui.fl.LrepConnector');
@@ -71,7 +71,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 							name: "ghi",
 							value: "jkl"
 						}
-					],
+					]
 				},
 				originalLanguage: "EN",
 				support: {
@@ -88,15 +88,15 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		}
 	});
 
-	function checkCreateVariantResponseStatus(params) {
+	function checkCreateVariantResponseStatus(assert, params) {
 		return function(result) {
 			assert.equal(result.status, "success");
 			return params.connector.loadChanges(params.componentName);
-		}
+		};
 	}
-	;
 
-	function checkComponentChangesReturnsVariantAndDelete(params, deleteWithLayer) {
+
+	function checkComponentChangesReturnsVariantAndDelete(assert, params, deleteWithLayer) {
 		return function(result) {
 			var variantChange = result.changes.changes[0];
 			assert.equal(variantChange.changeType, "filterBarVariant");
@@ -117,29 +117,28 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			}
 
 			return params.connector.deleteChange(deleteParams, true);
-		}
+		};
 	}
-	;
 
-	function checkDeleteSendToBackend(params) {
+
+	function checkDeleteSendToBackend(assert, params) {
 		return function(result) {
 			assert.equal(result.status, "nocontent");
 			return params.connector.loadChanges(params.componentName);
-		}
+		};
 	}
-	;
 
-	function checkLoadingComponentChangesReturnsNothing() {
+
+	function checkLoadingComponentChangesReturnsNothing(assert) {
 		return function(result) {
 			assert.equal(result.changes.changes.length, 0);
 			QUnit.start();
-		}
+		};
 	}
-	;
+
 
 	QUnit.test('Create a user dependant variant in the user layer, read it and delete it afterwards', function(assert) {
 		var done = assert.async();
-		var that = this;
 		var connector = LrepConnector.createConnector();
 
 		var params = {
@@ -150,9 +149,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			expectedLayer: this.layer
 		};
 
-		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(params)).then(checkComponentChangesReturnsVariantAndDelete(params, false)).then(checkDeleteSendToBackend(params)).then(checkLoadingComponentChangesReturnsNothing())['catch'](function(err) {
+		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(assert, params)).then(checkComponentChangesReturnsVariantAndDelete(assert, params, false)).then(checkDeleteSendToBackend(assert, params)).then(checkLoadingComponentChangesReturnsNothing(assert))['catch'](function(err) {
 			assert.ok(false, err);
-			QUnit.start();
+			done();
 		});
 
 	});
@@ -164,7 +163,6 @@ jQuery.sap.require('sap.ui.fl.Cache');
 		var fileName = this.baseFileName + "_" + expectedLayer;
 		this.oChangeJson.fileName = fileName;
 
-		var that = this;
 		var connector = LrepConnector.createConnector();
 
 		var params = {
@@ -175,9 +173,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			expectedLayer: expectedLayer
 		};
 
-		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(params)).then(checkComponentChangesReturnsVariantAndDelete(params, true)).then(checkDeleteSendToBackend(params)).then(checkLoadingComponentChangesReturnsNothing())['catch'](function(err) {
+		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(assert, params)).then(checkComponentChangesReturnsVariantAndDelete(assert, params, true)).then(checkDeleteSendToBackend(assert, params)).then(checkLoadingComponentChangesReturnsNothing(assert))['catch'](function(err) {
 			assert.ok(false, err);
-			QUnit.start();
+			done();
 		});
 	});
 
@@ -196,9 +194,9 @@ jQuery.sap.require('sap.ui.fl.Cache');
 			componentName: this.componentName
 		};
 
-		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(params)).then(checkLoadingComponentChangesReturnsVariant).then(checkReturnedVariantWithChangedText).then(checkDeleteSendToBackend(params)).then(checkLoadingComponentChangesReturnsNothing())['catch'](function(err) {
+		connector.create(this.oChangeJson, null, true).then(checkCreateVariantResponseStatus(assert, params)).then(checkLoadingComponentChangesReturnsVariant).then(checkReturnedVariantWithChangedText).then(checkDeleteSendToBackend(assert, params)).then(checkLoadingComponentChangesReturnsNothing(assert))['catch'](function(err) {
 			assert.ok(false, err);
-			QUnit.start();
+			done();
 		});
 
 		function checkLoadingComponentChangesReturnsVariant(result) {
@@ -226,7 +224,7 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 			return connector.update(that.oChangeJson, that.oChangeJson.fileName, null, true);
 		}
-		;
+
 
 		function checkReturnedVariantWithChangedText(result) {
 			var variantChangedText = result.response;
@@ -241,6 +239,6 @@ jQuery.sap.require('sap.ui.fl.Cache');
 
 			return connector.deleteChange(params, true);
 		}
-		;
+
 	});
 }(sap.ui.fl.Utils, sap.ui.fl.LrepConnector));

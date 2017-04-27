@@ -27,6 +27,8 @@
 <script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <!-- Test functions -->
 <script>
@@ -1090,6 +1092,242 @@
 		doTestRelative(false, {style: "long", relativeRange: [1, 5], calendarType: sap.ui.core.CalendarType.Persian}, "en", "style long, range [1, 5], en with calendar type Persian");
 	});
 
+
+	QUnit.module("interval options validation", {
+		beforeEach: function() {
+			this.oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				interval: true
+			});
+
+			this.oFormat = sap.ui.core.format.DateFormat.getDateInstance();
+
+			this.oErrorSpy = sinon.spy(jQuery.sap.log, "error");
+		},
+		afterEach: function() {
+			this.oErrorSpy.restore();
+		}
+	});
+
+	QUnit.test("Interval format with no array", function(assert) {
+		this.oIntervalFormat.format(new Date());
+		assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
+		assert.equal(this.oErrorSpy.getCall(0).args[0], "Interval DateFormat expects an array with two dates for the first argument but only one date is given.", "Correct log message");
+	});
+
+	QUnit.test("Interval format with array but length != 2", function(assert) {
+		this.oIntervalFormat.format([new Date()]);
+		assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
+		assert.equal(this.oErrorSpy.getCall(0).args[0], "Interval DateFormat can only format with 2 date instances but 1 is given.");
+	});
+
+	QUnit.test("Interval format with invalid date", function(assert) {
+		this.oIntervalFormat.format([new Date(), new Date("abc")]);
+		assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
+		assert.equal(this.oErrorSpy.getCall(0).args[0], "At least one date instance which is passed to the interval DateFormat isn't valid.");
+	});
+
+	QUnit.test("DateFormat with array", function(assert) {
+		this.oFormat.format([]);
+		assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
+		assert.equal(this.oErrorSpy.getCall(0).args[0], "Non-interval DateFormat can't format more than one date instance.");
+	});
+
+	QUnit.test("DateFormat with invalid date", function(assert) {
+		this.oFormat.format();
+		assert.equal(this.oErrorSpy.callCount, 1, "Error is logged");
+		assert.equal(this.oErrorSpy.getCall(0).args[0], "The given date instance isn't valid.");
+	});
+
+	QUnit.module("interval behavior");
+
+	QUnit.test("Greatest Diff Group: Date instance", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yMd"
+		});
+
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Day", "correct diff field group returned");
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		oDate = new Date(2017, 3, 11);
+		oDate1 = new Date(oDate.getTime() + 12 * 3600 * 1000);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "Md"
+		});
+
+		// if the diff field doesn't exist in the 'format' option, the default diff field is used.
+		oDate = new Date(2017, 3, 11);
+		oDate1 = new Date(2018, 4, 11);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), 'Year', "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
+	});
+
+	QUnit.test("Greatest Diff Group: Time instance", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "Hms"
+		});
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(oDate.getTime() + 5400 * 1000);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Hour", "correct diff field group returned");
+
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		oDate = new Date(2017, 3, 11);
+		oDate1 = new Date(2017, 4, 11);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+
+		// if the diff field doesn't exist in the 'format' option, the default diff field is used.
+		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "yMd"
+		});
+		oDate = new Date(2017, 3, 11);
+		oDate1 = new Date(oDate.getTime() + 1800 * 1000);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Minute", "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "h"
+		});
+
+		oDate = new Date(2017, 3, 11, 11);
+		oDate1 = new Date(2017, 4, 11, 12);
+
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "a", "if the diff field is 'h' and the hour value from the two dates are in different time periods (am/pm), 'a' should be returned");
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "K"
+		});
+
+		oDate = new Date(2017, 3, 11, 11);
+		oDate1 = new Date(2017, 4, 11, 12);
+
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "a", "if the diff field is 'K' and the hour value from the two dates are in different time periods (am/pm), 'a' should be returned");
+	});
+
+	QUnit.test("Greatest Diff Group: DateTime instance", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+			interval: true,
+			format: "Hms"
+		});
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(oDate.getTime() + 5400 * 1000);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Hour", "correct diff field group returned");
+
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		oDate = new Date(2017, 3, 11);
+		oDate1 = new Date(oDate.getTime() + 999);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+
+		// if the diff field doesn't exist in the 'format' option, the default diff field is used.
+		oIntervalFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
+			interval: true,
+			format: "yMd"
+		});
+		oDate = new Date(2017, 3, 11);
+		oDate1 = new Date(oDate.getTime() + 1800 * 1000);
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Minute", "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
+	});
+
+	QUnit.test("Interval format with Date instance under locale DE", function(assert) {
+		var oLocale = new sap.ui.core.Locale("de-DE");
+
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yMMMd"
+		}, oLocale);
+
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+		assert.equal(oIntervalFormat.format([oDate, oDate1]), "11.–13. Apr. 2017");
+	});
+
+	QUnit.test("Interval format without 'format' option - fallback interval pattern is used", function(assert) {
+		var oLocale = new sap.ui.core.Locale("de-DE");
+
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			style: "short"
+		}, oLocale);
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+
+		assert.equal(oIntervalFormat.format([oDate, oDate1]), "11.04.17 – 13.04.17");
+
+		oLocale = new sap.ui.core.Locale("de-DE");
+		oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			pattern: "G y MM d"
+		}, oLocale);
+		assert.equal(oIntervalFormat.format([oDate, oDate1]), "n. Chr. 2017 04 11 – n. Chr. 2017 04 13");
+	});
+
+	QUnit.test("am/pm", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+
+		var oDate = new Date(2017, 3, 11, 9, 0, 0);
+		var oDate1 = new Date(2017, 3, 11, 13, 30, 0);
+
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "h"
+		}, oLocale);
+
+		assert.equal(oIntervalFormat.format([oDate, oDate1]), "9 AM – 1 PM");
+
+		oDate = new Date(2017, 3, 11, 11, 0, 0);
+		oDate1 = new Date(2017, 3, 11, 12, 0, 0);
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "K"
+		}, oLocale);
+
+		// optimised interval pattern only uses 'h'. 'K' is automatically converted
+		// to 'h'.
+		assert.equal(oIntervalFormat.format([oDate, oDate1]), "11 AM – 12 PM");
+
+		oDate = new Date(2017, 3, 11, 10, 0, 0);
+		oDate1 = new Date(2017, 3, 11, 11, 0, 0);
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			interval: true,
+			format: "h"
+		}, oLocale);
+
+		// optimised interval pattern only uses 'h'. 'K' is automatically converted
+		// to 'h'.
+		assert.equal(oIntervalFormat.format([oDate, oDate1]), "10 – 11 AM");
+	});
+
+	QUnit.test("Interval with two identical dates", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yMd"
+		});
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		oDate = new Date(2017, 3, 11);
+		assert.equal(oIntervalFormat.format([oDate, oDate]).toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+	});
+
+	QUnit.test("Interval with two identical dates without format property", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true
+		});
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		oDate = new Date(2017, 3, 11);
+		assert.equal(oIntervalFormat.format([oDate, oDate]).toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+	});
 </script>
 
 </head>

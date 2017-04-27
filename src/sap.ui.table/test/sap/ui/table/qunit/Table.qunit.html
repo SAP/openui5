@@ -774,17 +774,28 @@
 
 	QUnit.test("After initialization", function(assert) {
 		var done = assert.async();
-		var fnTest = function() {
-			oTable.attachEvent("_rowsUpdated", fnTest2);
-		};
 
-		var fnTest2 = function() {
-			assert.equal(oTable.getVisibleRowCount(), 22, "Expected visibleRowCount: 22, Is: " + oTable.getVisibleRowCount());
-			done();
-		};
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			if (oEvent.getParameter("reason") === sap.ui.table.TableUtils.RowsUpdateReason.Render) {
+				assert.strictEqual(oTable.getVisibleRowCount(), 28, "Expected visibleRowCount: 28, Is: " + oTable.getVisibleRowCount());
+				done();
+			}
+		});
+	});
 
-		oTable.attachEventOnce("_rowsUpdated", fnTest);
-		document.getElementById("qunit-fixture").style.height = "800px";
+	QUnit.test("Resize", function(assert) {
+		var done = assert.async();
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			if (oEvent.getParameter("reason") === sap.ui.table.TableUtils.RowsUpdateReason.Render) {
+				document.getElementById("qunit-fixture").style.height = "800px";
+			}
+
+			if (oEvent.getParameter("reason") === sap.ui.table.TableUtils.RowsUpdateReason.Resize) {
+				assert.strictEqual(oTable.getVisibleRowCount(), 22, "Expected visibleRowCount: 22, Is: " + oTable.getVisibleRowCount());
+				done();
+			}
+		});
 	});
 
 	QUnit.module("Fixed columns", {
@@ -1624,7 +1635,23 @@
 		beforeEach: function() {
 			createTable();
 		},
-		afterEach: destroyTable
+		afterEach: function() {
+			destroyTable();
+		},
+		checkRowsUpdated: function(aActualReasons, aExpectedReasons, iDelay) {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					assert.deepEqual(aActualReasons, aExpectedReasons,
+						"VisibleRowCountMode: " + oTable.getVisibleRowCountMode() + " - "
+						+ (aExpectedReasons.length > 0
+							? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
+							: "The event _rowsUpdated has not been fired")
+					);
+
+					resolve();
+				}, iDelay == null ? 100 : iDelay);
+			});
+		}
 	});
 
 	QUnit.test("RowSelectionChange", function(assert) {
@@ -1741,6 +1768,398 @@
 		oTable.$("selall").click();
 	});
 
+	QUnit.test("_fireRowsUpdated", function(assert) {
+		var done = assert.async();
+		var sTestReason = "test_reason";
+
+		oTable.attachEventOnce("_rowsUpdated", function(oEvent) {
+			assert.strictEqual(sTestReason, oEvent.getParameter("reason"), "The event has been fired with the correct reason");
+			done();
+		});
+
+		oTable._fireRowsUpdated(sTestReason);
+	});
+
+	QUnit.test("_rowsUpdated - Initial rendering", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		function _createTable(sVisibleRowCountMode) {
+			oTable = new sap.ui.table.Table({
+				rows: "{/modelData}",
+				visibleRowCountMode: sVisibleRowCountMode
+			});
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			oTable.addColumn(new sap.ui.table.Column({
+				label: new sap.m.Label({text: "Last Name"}),
+				template: new sap.m.Text({text: "{lastName}"})
+			}));
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({modelData: aData});
+			oTable.setModel(oModel);
+
+			oTable.placeAt("qunit-fixture");
+		}
+
+		destroyTable();
+		_createTable(sap.ui.table.VisibleRowCountMode.Fixed);
+		this.checkRowsUpdated(aFiredReasons, [
+			sap.ui.table.TableUtils.RowsUpdateReason.Change,
+			sap.ui.table.TableUtils.RowsUpdateReason.Render
+		]).then(function() {
+			destroyTable();
+			_createTable(sap.ui.table.VisibleRowCountMode.Interactive);
+			aFiredReasons = [];
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Change,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			destroyTable();
+			_createTable(sap.ui.table.VisibleRowCountMode.Auto);
+			aFiredReasons = [];
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Change,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			], 250);
+		}).then(function() {
+			done();
+		});
+	});
+
+	QUnit.test("_rowsUpdated - Re-render", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		function setVisibleRowCountMode(sNewVisibleRowCountMode) {
+			oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
+
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					aFiredReasons = [];
+					resolve();
+				}, 0);
+			});
+		}
+
+		setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed).then(function() {
+			oTable.invalidate();
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			return setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Interactive);
+		}).then(function() {
+			oTable.invalidate();
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			return setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+		}).then(function() {
+			oTable.invalidate();
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Render,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			done();
+		});
+	});
+
+	QUnit.test("_rowsUpdated - Refresh", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.getBinding("rows").refresh(true);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Change
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Sort", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.sort(oTable.getColumns()[0], "Ascending");
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Sort
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Filter", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.filter(oTable.getColumns()[0], "test");
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Filter
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Expand", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Unknown
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Collapse", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Unknown
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Unbind", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.unbindRows();
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Unbind
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Vertical scrolling", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 100;
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.VerticalScroll
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Change first visible row by API call (setFirstVisibleRow)", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.setFirstVisibleRow(1);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.FirstVisibleRowChange
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Resize", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+		var sOriginalTableParentHeight = oTable.getDomRef().parentElement.style.height;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.getDomRef().parentElement.style.height = "500px";
+			oTable._onTableResize();
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Resize
+			]).then(function() {
+				oTable.getDomRef().parentElement.style.height = sOriginalTableParentHeight;
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Personalization", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			jQuery.sap.require("sap.ui.table.TablePersoController");
+			var oPersoController = new sap.ui.table.TablePersoController({
+				persoService: {
+					getPersData: function() {
+						return {
+							done: function(callback) {
+								callback.call();
+
+								return {
+									fail: function() {}
+								}
+							}
+						};
+					},
+					setPersData: function() {
+						return null;
+					},
+					delPersData: function() {
+						return null;
+					}
+				},
+				table: oTable
+			});
+			oPersoController.refresh();
+			oTable.getBinding("rows").fireEvent("dataRequested");
+
+			that.checkRowsUpdated(aFiredReasons, []).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Animation", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		function fireTransitionEndEvent() {
+			var oEvent;
+
+			if (sap.ui.Device.browser.msie) {
+				oEvent = document.createEvent("CustomEvent");
+				oEvent.initCustomEvent("transitionend", true, true, true);
+			} else {
+				oEvent = new Event("transitionend");
+			}
+
+			document.body.dispatchEvent(oEvent);
+		}
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.setProperty("minAutoRowCount", 30, true);
+			fireTransitionEndEvent();
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Animation
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
 
 	QUnit.module("Legacy Modules", {});
 

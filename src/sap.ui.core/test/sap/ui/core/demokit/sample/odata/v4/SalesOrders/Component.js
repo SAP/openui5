@@ -187,8 +187,21 @@ sap.ui.define([
 					},
 					"SalesOrderList('0500000000')/SO_2_SOITEM(SalesOrderID='0500000000',ItemPosition='0000000020')/SOITEM_2_PRODUCT/PRODUCT_2_BP?custom-option=value&$select=CompanyName,LegalForm,PhoneNumber" : {
 						source : "BusinessPartner_SalesOrder_0_Item_1.json"
+					},
+					// Workaround for IE and Edge which deliver attributes of a DOM node in different order (in <Input enabled="{= %{LifecycleStatus} === 'N' }" value="{Note}"/>)
+					"BusinessPartnerList?custom-option=value&$select=BusinessPartnerID,CompanyName&$skip=0&$top=100" : {
+						source : "BusinessPartnerList.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,Note,LifecycleStatus,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=0&$top=5" : {
+						source : "SalesOrderList_skip0.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,Note,LifecycleStatus,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=4&$top=1" : {
+						source : "SalesOrderListReplacementForDelete.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(SalesOrderID%20ge%20'0500000000')%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,SalesOrderID,BuyerName,GrossAmount,CurrencyCode,Note,LifecycleStatus,LifecycleStatusDesc,ChangedAt&$expand=SO_2_BP($select=CompanyName)&$skip=5&$top=4" : {
+						source : "SalesOrderList_skip5_top4.json"
 					}
-}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
+				}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/");
 			}
 

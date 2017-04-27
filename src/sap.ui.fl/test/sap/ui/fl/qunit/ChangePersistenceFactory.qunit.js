@@ -1,4 +1,5 @@
-/*globals QUnit*/
+/*global QUnit,sinon*/
+
 jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
 jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
@@ -98,12 +99,10 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 			}
 		};
 
-		var oManifest = undefined;
-
 		var oChangePersistence = new ChangePersistence(oComponent);
 		var oChangePersistenceStub = sandbox.stub(oChangePersistence, "getChangesForComponent");
 
-		ChangePersistenceFactory._onLoadComponent(oConfig, oManifest);
+		ChangePersistenceFactory._onLoadComponent(oConfig, undefined);
 
 		assert.equal(oChangePersistenceStub.callCount, 0, "no change request was sent");
 	});

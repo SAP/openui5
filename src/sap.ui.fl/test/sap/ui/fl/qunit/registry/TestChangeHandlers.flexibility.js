@@ -5,20 +5,20 @@
 /*global sap */
 
 sap.ui.define([], function () {
-    "use strict";
+	"use strict";
 
-    return {
-        "doSomething": {
-            applyChange: function () {
-            },
-            completeChangeInfo: function () {
-            }
-        },
-        "doSomethingElse": {
-            applyChange: function () {
-            },
-            completeChangeInfo: function () {
-            }
-        }
-    };
+	return {
+		"doSomething": {
+			applyChange: function () {
+			},
+			completeChangeInfo: function () {
+			}
+		},
+		"doSomethingElse": {
+			applyChange: function () {
+			},
+			completeChangeInfo: function () {
+			}
+		}
+	};
 }, /* bExport= */true);

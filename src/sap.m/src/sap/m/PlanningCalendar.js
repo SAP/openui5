@@ -29,10 +29,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * move to the previous/next interval using arrows.
 	 *
 	 * <b>Note:</b> The <code>PlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
-	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>PlanningCalendar</code>
-	 * is loaded, it will be loaded after the <code>PlanningCalendar</code> is loaded.
-	 * This could lead to a waiting time before a <code>PlanningCalendar</code> is used for the first time.
-	 * To prevent this, applications using the <code>PlanningCalendar</code> should also load the
+	 * This library will be loaded after the <code>PlanningCalendar</code>, if it wasn't loaded first.
+	 * This could lead to a waiting time when a <code>PlanningCalendar</code> is used for the first time.
+	 * To prevent this, apps that use the <code>PlanningCalendar</code> should also load the
 	 * <code>sap.ui.unified</code> library.
 	 *
 	 * <h3>Usage</h3>
@@ -328,6 +327,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oClass: CalendarOneMonthInterval
 	};
 
+	//Defines the minimum screen width for the appointments column (it is a popin column)
+	var APP_COLUMN_MIN_SCREEN_WIDTH = sap.m.ScreenSize.Desktop;
+
 	var CalendarHeader = sap.ui.core.Control.extend("CalendarHeader", {
 
 		metadata : {
@@ -413,7 +415,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				new sap.m.Column({
 					width: "80%",
 					styleClass: "sapMPlanCalAppRow",
-					minScreenWidth: sap.m.ScreenSize.Desktop,
+					minScreenWidth: APP_COLUMN_MIN_SCREEN_WIDTH,
 					demandPopin: true
 				})
 			],
@@ -1017,6 +1019,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var oTable = this.getAggregation("table");
 		oTable.getColumns()[0].setVisible(bShowRowHeaders);
+		this._toggleAppointmentsColumnPopinState(bShowRowHeaders);
 
 		this.$().toggleClass("sapMPlanCalNoHead", !bShowRowHeaders);
 		_positionSelectAllCheckBox.call(this);
@@ -1847,6 +1850,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oRow = aRows[i];
 			oRow.getCalendarRow().setStartDate(oDateTime);
 		}
+	};
+
+
+	/**
+	 * Enables/disables the popin nature of a the appointments column.
+	 * @param {boolean} popinEnabled
+	 * @private
+	 */
+	PlanningCalendar.prototype._toggleAppointmentsColumnPopinState = function(popinEnabled) {
+		var oTable = this.getAggregation("table"),
+			oAppointmentsCol = oTable.getColumns()[1];
+
+		oAppointmentsCol.setDemandPopin(popinEnabled);
+		oAppointmentsCol.setMinScreenWidth(popinEnabled ? APP_COLUMN_MIN_SCREEN_WIDTH : "");
 	};
 
 	function _handleTableSelectionChange(oEvent) {

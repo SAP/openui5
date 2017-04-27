@@ -306,11 +306,20 @@
 		assert.equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y – y", "interval format \"y\", \"y\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("y", "Year"), "y – y", "interval format \"y\", \"y\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd/MM/y – dd/MM/y", "interval format \"yMd\", \"d\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "Day"), "dd/MM/y – dd/MM/y", "interval format \"yMd\", \"Day\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d – d MMM", "interval format \"MMMd\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd – dd MMM", "interval format \"MMMdd\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm – HH:mm", "interval format \"Hm\", \"H\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm – HH:mm", "interval format \"jm\", \"j\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "a"), "h:mm a – h:mm a", "interval format \"hm\", \"a\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "h"), "h:mm – h:mm a", "interval format \"hm\", \"h\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "H"), "h:mm a – h:mm a", "interval format \"hm\", \"h\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "j"), "h:mm a – h:mm a", "interval format \"hm\", \"j\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "Hour"), "h:mm – h:mm a", "interval format \"hm\", \"Hour\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "Year"), "h:mm a – h:mm a", "interval format \"hm\", \"Year\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "a"), "HH:mm – HH:mm", "interval format \"Hm\", \"a\"");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1

@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>RuntimeAuthoring Test Page With View</title>
+
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-resourceroots='{"sap.m.test.rta": "./"}'
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.dt, sap.ui.rta"
+			src="../../../resources/sap-ui-core.js">
+	</script>
+
+	<script type="text/javascript">
+		jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+
+		// Create the FakeLrep with localStorage
+		(function _createFakeLrep() {
+			sap.ui.require(["sap/ui/fl/FakeLrepConnector", "sap/ui/rta/util/FakeLrepConnectorLocalStorage"], function (FakeLrepConnector, FakeLrepConnectorLocalStorage) {
+				if (/[&?](sap-rta-clear-cache-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
+
+					jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
+					FakeLrepConnector.deleteChanges();
+				}
+
+				jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
+				FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
+			});
+		}());
+
+		sap.ui.controller("my.own.controller", {
+			onPress: function(oEvent) {
+				alert(oEvent.getSource());
+			},
+			onItemPress: function (oEvent) {
+				oEvent.getParameter("item").firePress();
+			}
+		});
+
+		sap.ui.jsview("my.own.view", {
+			// defines the UI of this View
+			getControllerName: function() {
+				return "my.own.controller";
+			},
+			createContent: function(oController) {
+				return [new sap.m.Toolbar({
+					id: "toolbar1",
+					content: [
+						new sap.m.MenuButton({
+							id: "mbtn",
+							text: "MenuButton_1",
+							menu: new sap.m.Menu({
+								itemSelected: oController.onItemPress,
+								items: [
+									new sap.m.MenuItem({id: "mitem1", icon:"sap-icon://accept", text: "Item1"}),
+									new sap.m.MenuItem({id: "mitem2", icon:"sap-icon://decline", text: "Item2", press: oController.onPress})
+								]
+							})
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Text({text: "Toolbar"}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.MenuButton({
+							id: "mbtn2",
+							text: "MenuButton_2",
+							menu: new sap.m.Menu({
+								items: [
+									new sap.m.MenuItem({id: "mitem21", icon:"sap-icon://cart-3", text: "Item1", press: oController.onPress}),
+									new sap.m.MenuItem({id: "mitem22", icon:"sap-icon://cart-4", text: "Item2"}),
+									new sap.m.MenuItem({id: "mitem23", icon:"sap-icon://cart-5", text: "Item3"})
+								]
+							})
+						})
+					]
+				}),
+					new sap.m.Bar({
+						id: "bar0",
+						contentLeft: [
+							new sap.m.Text({
+								text: "Bar"
+							})
+						],
+						contentMiddle: [
+							new sap.m.Button({
+								id: "btn1",
+								text: "Button 1",
+								icon: "sap-icon://cart-3",
+								press: oController.onPress
+							}),
+							new sap.m.Button({
+								id: "btn2",
+								text: "Button 2",
+								icon: "sap-icon://cart-4",
+								press: oController.onPress
+							}),
+							new sap.m.Button({
+								id: "btn3",
+								text: "Button 3",
+								icon:"sap-icon://cart-5",
+								press: oController.onPress
+							})
+						]
+					})]
+			}
+		});
+
+		var JSView = sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view"});
+
+
+		var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
+			createContent: function () {
+				return new sap.m.App("myApp", {
+					pages: [new sap.m.Page({
+						id: "idMain1",
+						content:JSView,
+						footer: new sap.m.Bar({
+							id: "bar1",
+							contentLeft: [
+								new sap.m.Button({
+									id: "adapt",
+									text: "Adapt UI",
+									press: function () {
+										var oRta = new sap.ui.rta.RuntimeAuthoring({
+											rootControl: sap.ui.getCore().byId("idMain1"),
+											flexSettings: {
+												layer: "VENDOR"
+											}
+										});
+										oRta.start();
+									}
+								})
+							]
+						})
+					})]
+				});
+			}
+		});
+
+		new sap.ui.core.ComponentContainer({
+			component: new MyComponent({id: "Comp1"})
+		}).placeAt("content");
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+
+</html>

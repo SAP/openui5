@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.Cache");
 jQuery.sap.require("sap.ui.fl.LrepConnector");
 jQuery.sap.require("sap.ui.fl.Utils");
@@ -89,7 +89,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 					changes: []
 				}
 			}
-		}
+		};
 		assert.deepEqual(Cache.getEntries(), {});
 		var oEntry = Cache.getEntry("test", "1.2.3");
 		assert.deepEqual(oEntry, oInitEntry);
