@@ -271,7 +271,7 @@ sap.ui.define([
 				// Only add up the size of controls that can be shown in the toolbar, hence this addition is here
 				this._iContentSize += iControlSize;
 
-				if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bCanMoveToOverflow) {
+				if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bCanMoveToOverflow && oControl.getVisible()) {
 					this._aMovableControls.push(oControl);
 				} else {
 					this._aToolbarOnlyControls.push(oControl);
