@@ -118,8 +118,8 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.suite'
 			},
 			{
-				name: 'sap.ui.documentation',
-				path: 'src/sap.ui.documentation'
+					name: 'sap.ui.documentation',
+					path: 'src/sap.ui.documentation'
 			},
 			{
 					name: 'sap.ui.dt',

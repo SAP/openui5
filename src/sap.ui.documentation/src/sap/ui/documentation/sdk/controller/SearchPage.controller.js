@@ -51,8 +51,11 @@ sap.ui.define([
 					jQuery.sap.log.error(e);
 				}
 
+				// Build the full query string, escape special characters
+				sQuery = "(category:topics OR category:apiref) AND (" + encodeURIComponent(sQuery) + ")";
+
 				jQuery.ajax({
-					url: "search?q=" + sQuery, // TODO escaping
+					url: "search?q=" + sQuery,
 					dataType : "json",
 					success : function(oData, sStatus, xhr) {
 						jQuery(function() {
