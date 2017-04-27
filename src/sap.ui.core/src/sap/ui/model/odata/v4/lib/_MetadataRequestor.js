@@ -15,7 +15,7 @@ sap.ui.define([
 		 * Creates a requestor for metadata documents.
 		 * @param {object} mHeaders
 		 *   A map of headers
-		 * @param {object} mQueryParams
+		 * @param {object} [mQueryParams={}]
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}
 		 * @returns {object}
 		 *   A new MetadataRequestor object
@@ -32,7 +32,10 @@ sap.ui.define([
 				 * @param {boolean} [bSkipQuery=false]
 				 *   Indicates whether to omit the query string
 				 * @returns {Promise}
-				 *   A promise fulfilled with the metadata as a JSON object
+				 *   A promise fulfilled with the metadata as a JSON object, enriched with a
+				 *   "$LastModified" property that contains the value of the response header
+				 *   "Last-Modified" (or, as a fallback, "Date"); the "$LastModified" property is
+				 *   missing if there is no such header
 				 */
 				read : function (sUrl, bSkipQuery) {
 					return new Promise(function (fnResolve, fnReject) {
@@ -40,13 +43,18 @@ sap.ui.define([
 							method : "GET",
 							headers : mHeaders
 						})
-						.then(function (oData /*, sTextStatus, jqXHR */) {
-							fnResolve(oData);
+						.then(function (oData, sTextStatus, jqXHR) {
+							var oJSON = _MetadataConverter.convertXMLMetadata(oData),
+								sLastModified = jqXHR.getResponseHeader("Last-Modified")
+									|| jqXHR.getResponseHeader("Date");
+
+							if (sLastModified) {
+								oJSON.$LastModified = sLastModified;
+							}
+							fnResolve(oJSON);
 						}, function (jqXHR, sTextStatus, sErrorMessage) {
 							fnReject(_Helper.createError(jqXHR));
 						});
-					}).then(function (oXMLMetadata) {
-						return _MetadataConverter.convertXMLMetadata(oXMLMetadata);
 					});
 				}
 			};

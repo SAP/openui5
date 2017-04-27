@@ -2724,6 +2724,54 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getLastModified", function (assert) {
+		var mEmptyScope = {
+				"$Version" : "4.0"
+			},
+			mNewScope = {
+				"$Version" : "4.0",
+				"$LastModified" : "Tue, 18 Apr 2017 14:40:29 GMT"
+			},
+			iNow = Date.now(),
+			mOldScope = {
+				"$Version" : "4.0",
+				"$LastModified" : "Fri, 07 Apr 2017 11:21:50 GMT"
+			},
+			mOldScopeClone = clone(mOldScope),
+			sUrl = "/~/$metadata";
+
+		// code under test (together with c'tor)
+		assert.strictEqual(this.oMetaModel.getLastModified().getTime(), 0, "initial value");
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.validate(sUrl, mOldScope), mOldScope);
+
+		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
+			"2017-04-07T11:21:50.000Z", "old $LastModified is used");
+		assert.notOk("$LastModified" in mOldScope);
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.validate(sUrl, mNewScope), mNewScope);
+
+		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
+			"2017-04-18T14:40:29.000Z", "new $LastModified is used");
+		assert.notOk("$LastModified" in mNewScope);
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.validate(sUrl, mOldScopeClone), mOldScopeClone);
+
+		assert.strictEqual(this.oMetaModel.getLastModified().toISOString(),
+			"2017-04-18T14:40:29.000Z", "new date wins, old $LastModified is ignored");
+		assert.notOk("$LastModified" in mOldScopeClone);
+
+		// code under test
+		assert.strictEqual(this.oMetaModel.validate(sUrl, mEmptyScope), mEmptyScope);
+
+		assert.ok(this.oMetaModel.getLastModified().getTime() >= iNow,
+			"missing $LastModified is like 'now': " + this.oMetaModel.getLastModified());
+	});
+
+	//*********************************************************************************************
 	[{
 		message : "Unsupported OData version: 4.01",
 		scope : {"$Version" : "4.01"}
@@ -3207,7 +3255,7 @@ sap.ui.require([
 	);
 
 	//*********************************************************************************************
-	QUnit.test("getOrCreateValueListModel", function(assert) {
+	QUnit.test("getOrCreateValueListModel", function (assert) {
 		var oModel = new ODataModel({
 				serviceUrl : "/Foo/DataService/",
 				synchronizationMode : "None"
@@ -3251,7 +3299,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrCreateValueListModel: relative data service URL", function(assert) {
+	QUnit.test("getOrCreateValueListModel: relative data service URL", function (assert) {
 		var sRelativePath = "../../../DataService/",
 			sAbsolutePath =
 				new URI(sRelativePath).absoluteTo(document.baseURL).pathname().toString(),
@@ -3452,7 +3500,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValueListMappings: value list model is data model", function(assert) {
+	QUnit.test("fetchValueListMappings: value list model is data model", function (assert) {
 		var oModel = new ODataModel({
 				serviceUrl : "/Foo/DataService/",
 				synchronizationMode : "None"
@@ -3627,7 +3675,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestValueListInfo: same model w/o reference", function(assert) {
+	QUnit.test("requestValueListInfo: same model w/o reference", function (assert) {
 		var oProperty = {
 				"$kind" : "Property"
 			},
@@ -3680,7 +3728,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDuplicate) {
-		QUnit.test("requestValueListInfo: fixed values: duplicate=" + bDuplicate, function(assert) {
+		var sTitle = "requestValueListInfo: fixed values: duplicate=" + bDuplicate;
+
+		QUnit.test(sTitle, function (assert) {
 			var oValueListMapping = {CollectionPath : "foo"},
 				oAnnotations = {
 					"@com.sap.vocabularies.Common.v1.ValueListWithFixedValues" : true,
@@ -3735,7 +3785,7 @@ sap.ui.require([
 	});
 
 	// *********************************************************************************************
-	QUnit.test("requestValueListInfo: same qualifier in reference and local", function(assert) {
+	QUnit.test("requestValueListInfo: same qualifier in reference and local", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
 			oProperty = {
 				"$kind" : "Property"
@@ -3790,7 +3840,7 @@ sap.ui.require([
 	});
 
 	// *********************************************************************************************
-	QUnit.test("fetchModule: synchronously", function(assert) {
+	QUnit.test("fetchModule: synchronously", function (assert) {
 		var vModule = {};
 
 		this.mock(sap.ui).expects("require")
@@ -3803,7 +3853,7 @@ sap.ui.require([
 	});
 
 	// *********************************************************************************************
-	QUnit.test("fetchModule, asynchronous", function(assert) {
+	QUnit.test("fetchModule, asynchronous", function (assert) {
 		var vModule = {},
 			sModuleName = "sap/ui/model/odata/type/Int64",
 			oSapUiMock = this.mock(sap.ui);

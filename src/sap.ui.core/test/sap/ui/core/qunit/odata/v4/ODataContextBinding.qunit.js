@@ -72,6 +72,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("sRefreshGroupId"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
 	});
 
@@ -246,9 +247,7 @@ sap.ui.require([
 			oModelMock = this.mock(this.oModel),
 			oSetContextSpy = this.spy(Binding.prototype, "setContext");
 
-		// one resolve in setContext, one in fetchQueryOptionsWithKeys
-		oModelMock.expects("resolve").twice()
-			.withExactArgs("relative", sinon.match.same(oContext))
+		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
 			.returns("/absolute1");
 		this.mock(oBinding).expects("_fireChange").twice()
 			.withExactArgs({reason : ChangeReason.Context});
@@ -317,8 +316,7 @@ sap.ui.require([
 				});
 			}
 			if (oTargetContext) {
-				// one resolve in setContext, another poss. resolve in fetchQueryOptionsWithKeys
-				oModelMock.expects("resolve").exactly(oFixture.sTarget === "v4" ? 2 : 1)
+				oModelMock.expects("resolve")
 					.withExactArgs("EMPLOYEE_2_TEAM", sinon.match.same(oTargetContext))
 					.returns("/EMPLOYEES(ID='2')/EMPLOYEE_2_TEAM");
 			}
@@ -1589,16 +1587,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("doFetchQueryOptions", function (assert) {
-		var oBinding = this.oModel.bindContext("bar"),
-			oContext = {},
-			oResult = {};
-
-		this.mock(oBinding).expects("fetchQueryOptionsWithKeys")
-			.withExactArgs(sinon.match.same(oContext))
-			.returns(oResult);
+		var oBinding = this.oModel.bindContext("foo");
 
 		// code under test
-		assert.strictEqual(oBinding.doFetchQueryOptions(oContext), oResult);
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {});
+
+		oBinding = this.oModel.bindContext("foo", undefined, {"$expand" : "bar"});
+
+		// code under test
+		assert.deepEqual(oBinding.doFetchQueryOptions().getResult(), {"$expand" : {"bar" : {}}});
 	});
 
 	//*********************************************************************************************

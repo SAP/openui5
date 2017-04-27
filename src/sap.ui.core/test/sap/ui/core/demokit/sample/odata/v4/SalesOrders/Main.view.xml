@@ -333,8 +333,9 @@
 										PRODUCT_2_BP : {
 											$expand :  {
 												BP_2_CONTACT : {
-													$select : ['DateOfBirth','EmailAddress',
-														'FirstName','LastName','PhoneNumber']
+													$select : ['ContactGUID','DateOfBirth',
+														'EmailAddress','FirstName','LastName',
+														'PhoneNumber']
 												}
 											},
 											$select : ['BusinessPartnerID','CompanyName',

@@ -388,6 +388,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("checkUpdate(true): no change event for virtual context", function (assert) {
+		var oVirtualContext = Context.create(this.oModel, {/*list binding*/}, "/...", -2),
+			oBinding = this.oModel.bindProperty("relative", oVirtualContext);
+
+		// Note: it is important that automatic type determination runs as soon as possible
+		this.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+			.withExactArgs("/.../relative")
+			.returns(Promise.resolve());
+		oBinding.attachChange(function () {
+			assert.ok(false, "no change event for virtual context");
+		});
+
+		// code under test
+		return oBinding.checkUpdate(true);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkUpdate(): unresolved path after setContext", function (assert) {
 		var done = assert.async(),
 			fnChangeHandler = function () {
