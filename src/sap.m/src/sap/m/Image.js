@@ -620,7 +620,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*
 	 * Image must not be stretched in Form because should have its original size.
 	 */
-	Image.prototype.getFormShouldNotAdjustWidth = function() {
+	Image.prototype.getFormDoNotAdjustWidth = function() {
 		return true;
 	};
 
