@@ -2488,10 +2488,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Enumeration for different action levels in SelectionDetails.
+	 * Enumeration for different action levels in sap.m.SelectionDetails control.
 	 *
 	 * @enum {string}
-	 * @private
+	 * @protected
 	 * @since 1.48
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
