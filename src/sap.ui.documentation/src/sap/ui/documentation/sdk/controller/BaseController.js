@@ -7,8 +7,9 @@ sap.ui.define([
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
 		"sap/ui/core/util/LibraryInfo",
-		"sap/ui/documentation/sdk/controller/util/ControlsInfo"
-	], function (Controller, History, LibraryInfo, ControlsInfo) {
+		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
+	], function (Controller, History, LibraryInfo, ControlsInfo, JSDocUtil) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
@@ -124,6 +125,44 @@ sap.ui.define([
 				var oLibComponentModel = ControlsInfo.data.libComponentInfos,
 					oLibInfo = new LibraryInfo();
 				return oLibInfo._getActualComponent(oLibComponentModel, sControlName);
+			},
+
+			/**
+			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
+			 * @param {string} sText
+			 * @returns {string}
+			 * @private
+			 */
+			_wrapInSpanTag: function (sText) {
+
+				var sFormattedTextBlock = JSDocUtil.formatTextBlock(sText, {
+					linkFormatter: function (target, text) {
+
+						var p;
+
+						// If the link has a protocol, do not modify, but open in a new window
+						if (target.match("://")) {
+							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
+						}
+
+						target = target.trim().replace(/\.prototype\./g, "#");
+						p = target.indexOf("#");
+						if ( p === 0 ) {
+							// a relative reference - we can't support that
+							return "<code>" + target.slice(1) + "</code>";
+						}
+
+						if ( p > 0 ) {
+							text = text || target; // keep the full target in the fallback text
+							target = target.slice(0, p);
+						}
+
+						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
+
+					}
+				});
+
+				return '<span class="sapUiDocumentationJsDoc">' + sFormattedTextBlock + '</span>';
 			}
 		});
 

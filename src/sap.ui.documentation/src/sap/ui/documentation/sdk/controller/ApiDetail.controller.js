@@ -8,11 +8,10 @@ sap.ui.define([
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ObjectSearch",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
-	], function (jQuery, Device, BaseController, JSONModel, JSDocUtil, ControlsInfo, ObjectSearch, ToggleFullScreenHandler) {
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ObjectSearch, ToggleFullScreenHandler) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -58,6 +57,9 @@ sap.ui.define([
 				this._objectPage = this.byId("apiDetailObjectPage");
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
 
+				// click handler for @link tags in JSdoc fragments
+				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
+
 				ControlsInfo.listeners.push(function(){
 					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
 				}.bind(this));
@@ -73,7 +75,21 @@ sap.ui.define([
 			},
 
 			onExit: function() {
+				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+			},
+
+			onJSDocLinkClick: function (oEvt) {
+				// get target
+				var sType = oEvt.target.getAttribute("data-sap-ui-target");
+				if ( sType && sType.indexOf('#') >= 0 ) {
+					sType = sType.slice(0, sType.indexOf('#'));
+				}
+
+				if ( sType ) {
+					this.getRouter().navTo("apiId", {id : sType}, false);
+					oEvt.preventDefault();
+				}
 			},
 
 			onSampleLinkPress: function (oEvent) {
@@ -583,36 +599,6 @@ sap.ui.define([
 				var type = e.getSource().getText();
 				type = type.replace('[]', ''); // remove array brackets before navigation
 				this.getRouter().navTo("apiId", {id: type}, true);
-			},
-
-			/**
-			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
-			 * @param {string} text
-			 * @returns {string}
-			 * @private
-			 */
-			_wrapInSpanTag: function (text) {
-				return '<span class="fs0875">' + JSDocUtil.formatTextBlock(text, {
-						linkFormatter: function (target, text) {
-
-							var p;
-
-							target = target.trim().replace(/\.prototype\./g, "#");
-							p = target.indexOf("#");
-							if (p === 0) {
-								// a relative reference - we can't support that
-								return "<code>" + target.slice(1) + "</code>";
-							}
-
-							if (p > 0) {
-								text = text || target; // keep the full target in the fallback text
-								target = target.slice(0, p);
-							}
-
-							return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
-
-						}
-					}) + '</span>';
 			},
 
 			backToSearch: function () {

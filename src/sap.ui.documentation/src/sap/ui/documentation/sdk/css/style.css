@@ -14,24 +14,24 @@
 	margin-left: -0.8125rem;
 }
 
-.fs0875 {
+.sapUiDocumentationJsDoc {
 	font-size: 0.875rem;
 }
 
-.fs0875 pre {
+.sapUiDocumentationJsDoc pre {
 	white-space: pre-wrap;
 }
 
-.fs0875 > p {
+.sapUiDocumentationJsDoc > p {
 	margin-top: 0.6em;
 	margin-bottom: 0.6em;
 }
 
-.fs0875 > p:first-child {
+.sapUiDocumentationJsDoc > p:first-child {
 	margin-top: 0.5rem;
 }
 
-.fs0875 > p:last-child {
+.sapUiDocumentationJsDoc > p:last-child {
 	margin-bottom: 0.5rem;
 }
 
@@ -467,10 +467,10 @@ code, kbd, pre, samp {
 	background: #8fb5ff;
 }
 
-/* Fix for sap.m.Tree not taking up 100% height (the containing page's background is modified instead) */
-.sapUiTheme-sap_belize .sapUiDocumentationTreePage {
+/* sap.m.List does not always take up 100% height (the containing page's background is modified instead) */
+.sapUiTheme-sap_belize .sapUiDocumentationMasterPage {
 	background: #3b4c5b;
 }
-.sapUiTheme-sap_belize_plus .sapUiDocumentationTreePage {
+.sapUiTheme-sap_belize_plus .sapUiDocumentationMasterPage {
 	background: #3b4c5b;
 }
