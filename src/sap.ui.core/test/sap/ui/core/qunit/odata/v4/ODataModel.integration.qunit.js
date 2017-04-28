@@ -1140,7 +1140,8 @@ sap.ui.require([
 	// The key point is that the parent of the list is a ContextBinding.
 	QUnit.test("ODLB: refresh via parent context binding, shared cache", function (assert) {
 		var sView = '\
-<FlexBox id="form" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
+<FlexBox id="form" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', \
+		parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<items>\
@@ -1450,8 +1451,8 @@ sap.ui.require([
 	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}" />\
 </FlexBox>';
 
-		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
-				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
+		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM($select=Team_Id,Name"
+				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_TEAM": {
