@@ -210,6 +210,18 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './APIInfo'],
 		var oPackageInfo = getPackageInfo(sEntityName);
 		var oEntityDoc;
 
+		if (!sLibraryName) {
+			var oClass = jQuery.sap.getObject(sEntityName);
+			if (oClass.getMetadata) {
+				var oMetadata = oClass.getMetadata();
+				if (oMetadata.getLibraryName) {
+					sLibraryName = oMetadata.getLibraryName();
+				}
+			} else {
+				sLibraryName = sEntityName.substr(0, sEntityName.lastIndexOf("."));
+			}
+		}
+
 		// api.json per library
 		if ( !oEntityDoc && !oPackageInfo.__noAPIJson ) {
 			var oEntityCollection = APIInfo.getLibraryElementsJSONSync(sLibraryName),

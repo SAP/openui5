@@ -11,7 +11,7 @@
 			showFooter="false"
 			navButtonPress="onNavBack"
 			showNavButton="false"
-			class="sapUiDocumentationTreePage">
+			class="sapUiDocumentationMasterPage">
 
 		<customHeader>
 			<Toolbar width="100%">

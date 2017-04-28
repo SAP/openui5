@@ -100,23 +100,23 @@ code {
 
 /* util */
 
-.fs0875 {
+.sapUiDocumentationJsDoc {
 	font-size: 0.875rem;
 }
 
-.fs0875 pre {
+.sapUiDocumentationJsDoc pre {
 	white-space: pre-wrap;
 }
 
-.fs0875 > p {
+.sapUiDocumentationJsDoc > p {
 	margin-top: 0.6em;
 	margin-bottom: 0.6em;
 }
 
-.fs0875 > p:first-child {
+.sapUiDocumentationJsDoc > p:first-child {
 	margin-top: 0.5rem;
 }
 
-.fs0875 > p:last-child {
+.sapUiDocumentationJsDoc > p:last-child {
 	margin-bottom: 0.5rem;
 }

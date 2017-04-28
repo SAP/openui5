@@ -9,12 +9,11 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/ui/documentation/sdk/util/ObjectSearch",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/Device"
 	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
-				 EntityInfo, JSDocUtil, ObjectSearch, ToggleFullScreenHandler, Device) {
+				 EntityInfo, ObjectSearch, ToggleFullScreenHandler, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -27,6 +26,9 @@ sap.ui.define([
 
 				this.router = this.getRouter();
 				this.router.getRoute("entity").attachPatternMatched(this.onRouteMatched, this);
+
+				// click handler for @link tags in JSdoc fragments
+				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
 				ControlsInfo.listeners.push(function () {
 					// We need to execute this after the library component info is loaded
@@ -55,13 +57,7 @@ sap.ui.define([
 			onTypeLinkPress: function (oEvt) {
 				// navigate to entity
 				var sType = oEvt.getSource().data("type");
-				this.router.navTo("entity", {
-					id: sType,
-					part: "samples"
-				}, false);
-
-				// notify master of selection change
-				this._component.getEventBus().publish("app", "selectEntity", {id: sType});
+				this.getRouter().navTo("entity", {id: sType}, false);
 			},
 
 			onAPIRefPress: function (oEvt) {
@@ -78,18 +74,9 @@ sap.ui.define([
 				}
 
 				if ( sType ) {
-
-					this.router.navTo("entity", {
-						id: sType,
-						part: "samples"
-					}, false);
-
-					// notify master of selection change
-					this._component.getEventBus().publish("app", "selectEntity", {id: sType});
-
+					this.getRouter().navTo("entity", {id : sType}, false);
 					oEvt.preventDefault();
 				}
-
 			},
 
 			onIntroLinkPress: function (oEvt) {
@@ -153,7 +140,7 @@ sap.ui.define([
 				if (this._sId !== sNewId) {
 
 					// retrieve entity docu from server
-					var oDoc = EntityInfo.getEntityDocu(sNewId, oEntity.namespace);
+					var oDoc = EntityInfo.getEntityDocu(sNewId, oEntity && oEntity.namespace);
 
 					// route to not found page IF there is NO index entry AND NO docu from server
 					if (!oEntity && !oDoc) {
@@ -282,36 +269,6 @@ sap.ui.define([
 				oData.show.values = oData.values.length > 0;
 
 				return oData;
-			},
-
-			/**
-			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
-			 * @param {string} sText
-			 * @returns {string}
-			 * @private
-			 */
-			_wrapInSpanTag: function (sText) {
-				return '<span class="fs0875">' + JSDocUtil.formatTextBlock(sText, {
-						linkFormatter: function (target, text) {
-
-							var p;
-
-							target = target.trim().replace(/\.prototype\./g, "#");
-							p = target.indexOf("#");
-							if ( p === 0 ) {
-								// a relative reference - we can't support that
-								return "<code>" + target.slice(1) + "</code>";
-							}
-
-							if ( p > 0 ) {
-								text = text || target; // keep the full target in the fallback text
-								target = target.slice(0, p);
-							}
-
-							return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
-
-						}
-					}) + '</span>';
 			},
 
 			/**
