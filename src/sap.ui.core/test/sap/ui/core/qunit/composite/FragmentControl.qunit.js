@@ -13,6 +13,8 @@ function setBlanketFilters(sFilters) {
 	}
 }
 
+sinon.config.useFakeTimers = true;
+
 sap.ui.require([
 	"jquery.sap.global"
 ], function(jQuery) {
@@ -30,6 +32,7 @@ sap.ui.require([
 	jQuery.sap.require("fragments.TextToggleButton");
 	jQuery.sap.require("fragments.TextToggleButtonNested");
 	jQuery.sap.require("fragments.TextToggleButtonForwarded");
+	jQuery.sap.require("fragments.LabelButtonTemplate");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.FragmentControl: Simple Text Fragment Control", {
@@ -405,16 +408,34 @@ sap.ui.require([
 		var done = assert.async();
 
 		oFragmentControl.attachTextChanged(function() {
+			// assert
 			assert.equal(oFragmentControl.getText(), "On");
 			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "On");
 			assert.equal(oFragmentControl.getAggregation("_content").getItems()[1].getPressed(), true);
 			done();
 		});
+		// act: Click on ToggleButton
 		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[1].getDomRef());
 		oFragmentControl.destroy();
 	});
 
-	QUnit.test("nested", function(assert) {
+	QUnit.test("nested - event from deep inner to outer", function(assert) {
+		var fnFireTextChangedSpy = sinon.spy(fragments.TextToggleButtonNested.prototype, "fireTextChanged");
+		var oFragmentControl = new fragments.TextToggleButtonNested();
+		oFragmentControl.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act: Click on ToggleButton
+		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
+
+		// assert
+		assert.ok(fnFireTextChangedSpy.calledOnce);
+
+		fnFireTextChangedSpy.restore();
+		oFragmentControl.destroy();
+	});
+
+	QUnit.test("nested - event from inner to outer", function(assert) {
 		var oFragmentControl = new fragments.TextToggleButtonNested();
 		oFragmentControl.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -425,7 +446,7 @@ sap.ui.require([
 		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of sap.m.Text");
 		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), false);
 
-		// Click on ToggleButton
+		// prepare: Set ToggleButton to 'pressed'
 		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getDomRef());
 
 		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "On", "property 'text' of fragment control");
@@ -433,19 +454,39 @@ sap.ui.require([
 		assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), true);
 
 		oFragmentControl.attachRefreshed(function() {
+			// assert: Initial state should be restored
 			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of fragment control");
 			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[0].getText(), "Default Text", "property 'text' of sap.m.Text");
 			assert.equal(oFragmentControl.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].getPressed(), false);
 			done();
 		});
 
-		// Click on 'Refresh' button
+		// act: Click on 'Refresh' button
 		sap.ui.test.qunit.triggerTouchEvent("tap", oFragmentControl.getAggregation("_content").getItems()[1].getDomRef());
 
 		oFragmentControl.destroy();
 	});
 
-	QUnit.test("forwarded", function(assert) {
+	QUnit.test("forwarded - event from deep inner to outer", function(assert) {
+		var oTextToggleButton = new fragments.TextToggleButton();
+		var fnFireTextChangedSpy = sinon.spy(fragments.TextToggleButtonForwarded.prototype, "fireTextChanged");
+		var oFragmentControl = new fragments.TextToggleButtonForwarded({
+			textToggleButton: oTextToggleButton
+		});
+		oFragmentControl.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act: Click on ToggleButton
+		sap.ui.test.qunit.triggerTouchEvent("tap", oTextToggleButton.getAggregation("_content").getItems()[1].getDomRef());
+
+		// assert
+		assert.ok(fnFireTextChangedSpy.calledOnce);
+
+		fnFireTextChangedSpy.restore();
+		oFragmentControl.destroy();
+	});
+
+	QUnit.test("forwarded - event from inner to outer", function(assert) {
 		var oFragmentControl = new fragments.TextToggleButtonForwarded({
 			textToggleButton: new fragments.TextToggleButton()
 		});
@@ -520,7 +561,95 @@ sap.ui.require([
 		oFragmentControl.destroy();
 	});
 
-	QUnit.test("clone", function(assert) {
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.FragmentControl: templating ", {
+		beforeEach: function() {
+		},
+		afterEach: function() {
+		}
+	});
+	//*********************************************************************************************
+	sap.ui.define([
+		"sap/ui/core/mvc/Controller"
+	], function(Controller) {
+		"use strict";
+		return Controller.extend("fragments.TestComponent", {});
+	});
+	sap.ui.define("my/fragment/Component", [
+		"sap/ui/core/UIComponent"
+	], function(UIComponent) {
+		return UIComponent.extend("my.fragment.Component", {
+			metadata: {
+				rootView: "fragments.TestComponent"
+			},
+			createContent: function() {
+				sap.ui.core.util.XMLPreprocessor.plugIn(function(oNode, oVisitor) {
+					sap.ui.core.FragmentControl.initialTemplating(oNode, oVisitor, "fragments.LabelButtonTemplate");
+				}, "fragments", "LabelButtonTemplate");
+
+				// For pre-templating we use here metadata model called "models.preprocessor". Via binding to
+				// the property 'labelFirst' we can control if-condition in templating.
+				return sap.ui.xmlview({
+					async: false,
+					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="fragments"> <m:VBox> <f:LabelButtonTemplate id="IDLabelButtonTemplate" label="{/label}" value="{/value}" labelFirst="{preprocessor>/labelFirst}"/></m:VBox></View>',
+					preprocessors: {
+						xml: {
+							models: {
+								preprocessor: new sap.ui.model.json.JSONModel({
+									labelFirst: false
+								})
+							}
+						}
+					}
+				});
+			}
+		});
+	});
+
+	QUnit.test("via component", function(assert) {
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: new my.fragment.Component()
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oView = oComponentContainer.getComponentInstance().getRootControl();
+
+		// Now we define another model in order to fill properties in the fragment control
+		oView.setModel(new sap.ui.model.json.JSONModel({
+			label: "Click",
+			value: "Me"
+		}));
+
+		// act: change the order to 'label' after 'button'
+		oView.byId("IDLabelButtonTemplate").setLabelFirst(false);
+		this.clock.tick(500);
+
+		assert.ok(oView);
+		assert.equal(oView.$().find("label")[0].textContent, "Click");
+		assert.equal(oView.$().find("button")[0].textContent, "Me");
+
+		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
+		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "BUTTON");
+		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL");
+
+		// act: change the order to 'label' before 'button'
+		oView.byId("IDLabelButtonTemplate").setLabelFirst(true);
+		this.clock.tick(500);
+
+		assert.ok(oView);
+		assert.equal(oView.$().find("label")[0].textContent, "Click");
+		assert.equal(oView.$().find("button")[0].textContent, "Me");
+
+		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
+		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL");
+		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
+
+		oComponentContainer.destroy();
+	});
+
+	QUnit.module("clone");
+
+	QUnit.test("simple", function(assert) {
 		var oFragmentControl = new fragments.TextToggleButton("Frag1");
 		var sId;
 		var iCount = 0;
@@ -550,12 +679,20 @@ sap.ui.require([
 		oClone.destroy();
 	});
 
-	QUnit.test("clone list", function(assert) {
+	QUnit.test("list", function(assert) {
 		var oFragmentControl = new fragments.TextList("Frag1", {
-			texts: [ new sap.ui.core.Item("I1", {key: "K1", text: "Text 1"}),
-			         new sap.ui.core.Item("I2", {key: "K2", text: "Text 2"}),
-			         new sap.ui.core.Item("I3", {key: "K3", text: "Text 3"})
-			        ]
+			texts: [
+				new sap.ui.core.Item("I1", {
+					key: "K1",
+					text: "Text 1"
+				}), new sap.ui.core.Item("I2", {
+					key: "K2",
+					text: "Text 2"
+				}), new sap.ui.core.Item("I3", {
+					key: "K3",
+					text: "Text 3"
+				})
+			]
 		});
 
 		var oClone = oFragmentControl.clone("MyClone");
@@ -571,4 +708,4 @@ sap.ui.require([
 		oClone.destroy();
 	});
 
-	});
+});

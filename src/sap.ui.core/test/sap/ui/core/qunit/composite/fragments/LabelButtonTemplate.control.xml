@@ -1,0 +1,15 @@
+<FragmentDefinition xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+                    xmlns:m="sap.m" xmlns="sap.ui.core">
+    <m:HBox class="IDLabelButtonTemplate">
+        <template:if test="{= ${this>labelFirst} === true}">
+            <template:then>
+                <m:Label text="{$this>label}" class="sapUiSmallMarginTop"/>
+                <m:Button text="{$this>value}"/>
+            </template:then>
+            <template:else>
+                <m:Button text="{$this>value}"/>
+                <m:Label text="{$this>label}" class="sapUiSmallMarginTop"/>
+            </template:else>
+        </template:if>
+    </m:HBox>
+</FragmentDefinition>

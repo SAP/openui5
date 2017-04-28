@@ -5,15 +5,19 @@ sap.ui.define([
 	var TextToggleButtonNested = FragmentControl.extend("fragments.TextToggleButtonNested", {
 		metadata: {
 			events: {
-				refreshed: {}
+				refreshed: {},
+				textChanged: {}
 			}
 		}
 	});
+	// Note: it is not perfect. It would be better to forward the event 'textChanged' from
+	// this fragment control to the nested fragment control.
+	TextToggleButtonNested.prototype.onTextChanged = function() {
+		this.fireTextChanged();
+	};
 	TextToggleButtonNested.prototype.onPressRefresh = function() {
-        var sDefault = this.getAggregation("_content").getItems()[0].getMetadata().getProperty("text").getDefaultValue();
-
-        this.getAggregation("_content").getItems()[0].setText(undefined);
-        this.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].setPressed(false);
+		this.getAggregation("_content").getItems()[0].resetProperty("text");
+		this.getAggregation("_content").getItems()[0].getAggregation("_content").getItems()[1].resetProperty("pressed");
 		this.fireRefreshed();
 	};
 	return TextToggleButtonNested;
