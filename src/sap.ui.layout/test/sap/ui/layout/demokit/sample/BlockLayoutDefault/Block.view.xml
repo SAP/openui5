@@ -17,7 +17,6 @@
 			<items>
 				<SegmentedButtonItem key="Default" text="Default" />
 				<SegmentedButtonItem key="Light" text="Light" />
-				<SegmentedButtonItem key="Mixed" text="Mixed" />
 				<SegmentedButtonItem key="Accent" text="Accent" />
 				<SegmentedButtonItem key="Dashboard" text="Dashboard" />
 			</items>

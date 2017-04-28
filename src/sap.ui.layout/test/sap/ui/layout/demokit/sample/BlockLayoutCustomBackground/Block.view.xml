@@ -1,0 +1,97 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.BlockLayoutCustomBackground.Block"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+	<l:VerticalLayout id="containerLayout" width="100%" >
+		<f:SimpleForm
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title="Coloring settings"
+			emptySpanXL="4"
+			emptySpanL="4"
+			emptySpanM="4"
+			emptySpanS="0"
+			columnsXL="1"
+			columnsL="1"
+			columnsM="1"
+			singleContainerFullSize="false">
+				<f:content>
+					<Label text="Objects count" />
+					<Input type="number" value="{/dataObjectsCount}" change="setBLCells" />
+					<Label text="Max cells per row" />
+					<Input type="number" value="{/maxCellsPerRow}" change="setBLCells" />
+					<Label text="Color set" />
+					<ComboBox
+						change="setBLCells"
+						value="{/colorSet}">
+						<core:Item key="1" text="1" />
+						<core:Item key="2" text="2" />
+						<core:Item key="3" text="3" />
+						<core:Item key="4" text="4" />
+						<core:Item key="5" text="5" />
+						<core:Item key="6" text="6" />
+						<core:Item key="7" text="7" />
+						<core:Item key="8" text="8" />
+						<core:Item key="9" text="9" />
+						<core:Item key="10" text="10" />
+					</ComboBox>
+				</f:content>
+		</f:SimpleForm>
+
+		<l:BlockLayout id="BlockLayoutTwo">
+		</l:BlockLayout>
+
+		<l:BlockLayout 
+			id="BlockLayout"
+			background="Default" >
+			<l:BlockLayoutRow accentCells="Accent1">
+				<l:BlockLayoutCell
+						id="Accent1"
+						width="2"
+						class="sapContrast"
+						title="Cell with sapContrast applied">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+					<RadioButtonGroup columns="2" selectedIndex="2" class="sapUiMediumMarginTop">
+						<buttons>
+							<RadioButton id="RB2-1" text="Option 1"/>
+							<RadioButton id="RB2-2" text="Option 2" editable="false"/>
+							<RadioButton id="RB2-3" text="Option 3"/>
+						</buttons>
+					</RadioButtonGroup>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						backgroundColorSet="1"
+						backgroundColorIndex="3"
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						backgroundColorSet="5"
+						backgroundColorIndex="1"
+						titleAlignment="End"
+						title="End aligned title">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="customCellImageBackground"
+						title="Custom background cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr. Is this text even readable ?"/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						class="sapContrast"
+						title="Another cell with sapContrast applied">
+					<FeedInput
+							showIcon="true" />
+					<FeedInput
+							showIcon="true" />
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</l:VerticalLayout>
+</mvc:View>

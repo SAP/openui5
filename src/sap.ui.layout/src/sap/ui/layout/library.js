@@ -266,6 +266,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		ColorSet4: "ColorSet4"
 	};
 
+
 	sap.ui.layout.form = sap.ui.layout.form || {};
 
 	/**
