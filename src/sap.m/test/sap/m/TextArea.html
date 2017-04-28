@@ -75,74 +75,114 @@
 					}),
 					content: [
 						ta00 = new sap.m.TextArea({
-				value : "%50 width TextArea:\n\n" + lorem + lorem,
-				width : "50%",
-				rows : 4
-			}),
-			ta0 = new sap.m.TextArea({
-				value : "Default textarea rows: 2, cols: 20",
-				valueState : "Warning"
-			}),
-			ta1 = new sap.m.TextArea({
-				value : "%90 width TextArea:\n\n" + lorem + lorem,
-				width : "90%",
-				rows : 4
-			}),
-			ta2 = new sap.m.TextArea({
-				value : "Disabled Textarea:\n\n" + lorem + lorem,
-				enabled : false,
-				editable : false,
-				width : "99%",
-				rows : 4
-			}),
-			ta3 = new sap.m.TextArea({
-				value : "ValueState : Warning \n\n" + lorem + lorem,
-				valueState : "Warning",
-				width : "100%",
-				rows : 3
-			}),
-			ta4 = new sap.m.TextArea({
-				value : "ValueState : Error \r\n\n" + lorem + lorem,
-				valueState : "Error",
-				width : "90%",
-				rows : 3
-			}),
-			ta5 = new sap.m.TextArea({
-				value : "Wrapping: Off Scroll horizontal --- " + lorem,
-				wrapping : "Off",
-				width : "90%",
-				rows : 3
-			}),
-			ta6 = new sap.m.TextArea({
-				value : "Not Editable: " + lorem,
-				editable : false,
-				width : "100%",
-				rows : 3
-			}),
-			ta7 = new sap.m.TextArea({
-				placeholder : "Max Length : 5",
-				maxLength : 5,
-				rows : 2
-			}),
-			ta8 = new sap.m.TextArea({
-				value: "Growing TextArea:\n\n" + lorem + lorem,
-				width: "100%",
-				growing: true,
-			}),
-			ta9 = new sap.m.TextArea({
-				value: new Array(1000).join("text "),
-				growing: true,
-				width: "100%"
-			}),
-			ta10 = new sap.m.TextArea({
-				growing: true,
-				width: "100%"
-			}),
-			ta11 = new sap.m.TextArea({
-				rows: 5,
-				growing: true,
-				width: "100%"
-			})
+							value : "%50 width TextArea:\n\n" + lorem + lorem,
+							width : "50%",
+							rows : 4
+						}),
+
+						ta001 = new sap.m.TextArea({
+							value: "This is text",
+							maxLength: 6,
+							showExceededText: true
+						}),
+						ta01 = new sap.m.TextArea({
+							placeholder: "{/placeholder}",
+							showExceededText: true,
+							value: lorem,
+							editable: true,
+							width: "100%",
+							growing: true,
+							maxLength: 40
+						}),
+						ta011 = new sap.m.TextArea({
+							placeholder: "{/placeholder}",
+							showExceededText: true,
+							editable: true,
+							width: "100%",
+							maxLength: 40
+						}),
+						ta0111 = new sap.m.TextArea({
+							placeholder: "{/placeholder}",
+							showExceededText: true,
+							value: "This is text",
+							editable: true,
+							width: "100%",
+							rows: 8,
+							maxLength: 40
+						}),
+						ta012 = new sap.m.TextArea({
+							placeholder: "{/placeholder}",
+							showExceededText: true,
+							value: "This is text",
+							editable: true,
+							width: "100%",
+							maxLength: 40,
+							height: "100px"
+						}),
+						ta0 = new sap.m.TextArea({
+							value : "Default textarea rows: 2, cols: 20",
+							valueState : "Warning"
+						}),
+						ta1 = new sap.m.TextArea({
+							value : "%90 width TextArea:\n\n" + lorem + lorem,
+							width : "90%",
+							rows : 4
+						}),
+						ta2 = new sap.m.TextArea({
+							value : "Disabled Textarea:\n\n" + lorem + lorem,
+							enabled : false,
+							editable : false,
+							width : "99%",
+							rows : 4
+						}),
+						ta3 = new sap.m.TextArea({
+							value : "ValueState : Warning \n\n" + lorem + lorem,
+							valueState : "Warning",
+							width : "100%",
+							rows : 3
+						}),
+						ta4 = new sap.m.TextArea({
+							value : "ValueState : Error \r\n\n" + lorem + lorem,
+							valueState : "Error",
+							width : "90%",
+							rows : 3
+						}),
+						ta5 = new sap.m.TextArea({
+							value : "Wrapping: Off Scroll horizontal --- " + lorem,
+							wrapping : "Off",
+							width : "90%",
+							rows : 3
+						}),
+						ta6 = new sap.m.TextArea({
+							value : "Not Editable: " + lorem,
+							editable : false,
+							width : "100%",
+							rows : 3
+						}),
+						ta7 = new sap.m.TextArea({
+							placeholder : "Max Length : 5",
+							maxLength : 5,
+							rows : 2
+						}),
+						ta8 = new sap.m.TextArea({
+							value: "Growing TextArea:\n\n" + lorem + lorem,
+							width: "100%",
+							growing: true,
+						}),
+						ta9 = new sap.m.TextArea({
+							value: new Array(1000).join("text "),
+							growing: true,
+							width: "100%"
+						}),
+						ta10 = new sap.m.TextArea({
+							growing: true,
+							width: "100%"
+						}),
+						ta11 = new sap.m.TextArea({
+							rows: 5,
+							growing: true,
+							width: "100%"
+						})
 					]
 				});
 
