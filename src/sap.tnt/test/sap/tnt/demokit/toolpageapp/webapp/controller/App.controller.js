@@ -27,15 +27,14 @@ sap.ui.define([
 			/**
 			 * Convenience method for accessing the router.
 			 * @public
-			 * @returns {sap.ui.core.routing.Router} the router for this component
+			 * @param {sap.ui.base.Event} oEvent The item select event
 			 */
 			onItemSelect: function(oEvent) {
 				var oItem = oEvent.getParameter('item');
 				var sKey = oItem.getKey();
-				if(sKey !== "home" && sKey !=="systemSettings" && sKey!== "statistics") {
+				if (sKey !== "home" && sKey !== "systemSettings" && sKey !== "statistics") {
 					MessageToast.show(sKey);
-				}
-				else {
+				} else {
 					this.getRouter().navTo(sKey);
 				}
 			},
@@ -59,7 +58,7 @@ sap.ui.define([
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress
 						}),
-						new Button ({
+						new Button({
 							text: "Online Guide",
 							type: sap.m.ButtonType.Transparent,
 							press: fnHandleUserMenuItemPress

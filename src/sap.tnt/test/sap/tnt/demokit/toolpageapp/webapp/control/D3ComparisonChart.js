@@ -1,7 +1,8 @@
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/demo/toolpageapp/control/D3Chart",
 	"sap/ui/thirdparty/d3"
-], function (D3Chart, d3) {
+], function ($, D3Chart, d3) {
 	"use strict";
 
 	return D3Chart.extend("sap.ui.demo.toolpageapp.control.D3ComparisonChart", {
@@ -16,8 +17,8 @@ sap.ui.define([
 				return oContext.getObject();
 			});
 
-			var iHighestValue = aData[Object.keys(aData).sort(function(a, b){return aData[a].v - aData[b].v}).pop()].v;
-			var iLowestValue = Math.abs(aData[Object.keys(aData).sort(function(a, b){return aData[b].v - aData[a].v}).pop()].v);
+			var iHighestValue = aData[Object.keys(aData).sort(function(a, b){return aData[a].v - aData[b].v;}).pop()].v;
+			var iLowestValue = Math.abs(aData[Object.keys(aData).sort(function(a, b){return aData[b].v - aData[a].v;}).pop()].v);
 
 			var iNumDataPoints = aData.length,
 				iNumSpaces = iNumDataPoints - 1,
@@ -46,7 +47,7 @@ sap.ui.define([
 					return Math.abs(d.v) * iWidth / (iLowestValue + iHighestValue);
 				})
 				.attr("y", function (d, i) {
-					return i * (iSpaceWidth + iBarWidth)
+					return i * (iSpaceWidth + iBarWidth);
 				})
 
 				.attr("x", function (d, i) {

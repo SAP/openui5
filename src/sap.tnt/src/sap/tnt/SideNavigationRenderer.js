@@ -18,7 +18,7 @@ sap.ui.define([],
          * @param {sap.ui.core.RenderManager}
          *          rm the RenderManager that can be used for writing to the render output buffer
          * @param {sap.ui.core.Control}
-         *          Control an object representation of the control that should be rendered
+         *          control an object representation of the control that should be rendered
          */
         SideNavigationRenderer.render = function (rm, control) {
             this.startSideNavigation(rm, control);

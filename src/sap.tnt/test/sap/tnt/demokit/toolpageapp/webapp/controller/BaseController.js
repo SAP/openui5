@@ -1,7 +1,7 @@
 sap.ui.define([
 		"sap/ui/core/mvc/Controller"
 	], function (Controller) {
-		"user strict";
+		"use strict";
 
 		return Controller.extend("sap.ui.demo.toolpageapp.controller.BaseController", {
 
