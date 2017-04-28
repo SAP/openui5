@@ -77,8 +77,10 @@ sap.ui.define([
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch; other values result in an error
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
-	 *   The default operation mode for sorting. Only
-	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported since 1.39.0.
+	 *   The operation mode for sorting and filtering with the model's operation mode as default.
+	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
+	 *   supported. All other operation modes including <code>undefined</code> lead to an error if
+	 *   'vFilters' or 'vSorters' are given or if {@link #filter} or {@link #sort} is called.
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
@@ -259,8 +261,8 @@ sap.ui.define([
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
 	 *   <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $orderby and $search
-	 *   inside resource paths that identify a collection. In our case here, this means you
+	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $levels, $orderby and
+	 *   $search inside resource paths that identify a collection. In our case here, this means you
 	 *   can only use them inside $expand.
 	 *   </ul>
 	 *   All other query options lead to an error.
@@ -559,6 +561,23 @@ sap.ui.define([
 					for (sExpandOptionName in mExpandOptions) {
 						parseAndValidateSystemQueryOption(mExpandOptions, sExpandOptionName,
 							aExpandQueryOptions);
+					}
+				}
+			} else if (sOptionName === "$count" ) {
+				if (typeof vValue  === "boolean") {
+					if (!vValue) {
+						delete mOptions.$count;
+					}
+				} else {
+					switch (typeof vValue === "string" && vValue.toLowerCase()) {
+						case "false":
+							delete mOptions.$count;
+							break;
+						case "true":
+							mOptions.$count = true;
+							break;
+						default:
+							throw new Error("Invalid value for $count: " + vValue);
 					}
 				}
 			}
