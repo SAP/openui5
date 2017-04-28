@@ -1936,7 +1936,7 @@ sap.ui.define([
 				return getQualifier(sTerm, sValueListMapping) !== undefined;
 			}).forEach(function (sTerm) {
 				addMapping(mAnnotationByTerm[sTerm], getQualifier(sTerm, sValueListMapping),
-					that.oModel.sServiceUrl + "$metadata", that.oModel);
+					that.sUrl, that.oModel);
 			});
 
 
