@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 1: one test per control)</title>
+
+
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true">
+		</script>
+
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.reorder = false;   // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
+			QUnit.config.autostart = false; // tests are added asynchronously, hence autostart is disabled and QUnit.start is called later (although it seems to work without this, but it's cleaner)
+
+			sap.ui.getCore().attachInit(function(){
+				'use strict';
+
+				sap.ui.require(["sap/ui/qunit/utils/ControlIterator"], function(ControlIterator) {
+
+					ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
+
+						QUnit.test("Testing control " + sControlName, function(assert) { // create one test per control
+							assert.ok(true, sControlName + " would be tested now");
+						});
+
+					},{
+						done: function(oResult) {
+							// do something when all control callbacks have been executed (tests have been created)
+
+							QUnit.start(); // tell QUnit that all tests have now been created (due to autostart=false)
+						}
+					});
+				});
+			});
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

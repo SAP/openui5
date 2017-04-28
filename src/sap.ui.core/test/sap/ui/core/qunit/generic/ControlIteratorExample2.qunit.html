@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit Page for sap.ui.qunit.utils.ControlIterator - most basic usage (example 2: all controls within one test)</title>
+
+
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true">
+		</script>
+
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.reorder = false; // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
+
+			sap.ui.getCore().attachInit(function(){
+				'use strict';
+
+				sap.ui.require(["sap/ui/qunit/utils/ControlIterator"], function(ControlIterator) {
+
+					QUnit.test("Testing all controls", function(assert) { // one single QUnit test for all controls
+						var testDone = assert.async();                    // this test is asynchronous, hence need to tell QUnit later when done
+
+						ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
+							assert.ok(true, sControlName + " would be tested now");        // do one or more asserts per control
+						},{
+							done: function(oResult) {
+								// do something when all control tests have been executed
+
+								testDone(); // tell QUnit that this test is done
+							}
+						});
+					});
+				});
+			});
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
