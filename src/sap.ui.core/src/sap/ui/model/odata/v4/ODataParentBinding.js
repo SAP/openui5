@@ -231,7 +231,7 @@ sap.ui.define([
 		for (i = 0; i < aMetaPathSegments.length; i += 1) {
 			sPropertyMetaPath = _Helper.buildPath(sPropertyMetaPath, aMetaPathSegments[i]);
 			sExpandSelectPath = _Helper.buildPath(sExpandSelectPath, aMetaPathSegments[i]);
-			oProperty = this.oModel.oMetaModel.getObject(sPropertyMetaPath);
+			oProperty = this.oModel.getMetaModel().getObject(sPropertyMetaPath);
 			if (oProperty.$kind === "NavigationProperty") {
 				mQueryOptionsForPathPrefix.$expand = {};
 				mQueryOptionsForPathPrefix = mQueryOptionsForPathPrefix.$expand[sExpandSelectPath]
@@ -331,7 +331,7 @@ sap.ui.define([
 		var sBaseMetaPath,
 			oCanUseCachePromise,
 			sChildMetaPath,
-			oMetaModel = this.oModel.oMetaModel,
+			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			that = this;
 
@@ -432,7 +432,7 @@ sap.ui.define([
 			mQueryOptions = this.mQueryOptions;
 			// getMetaPath needs an absolute path, a relative path starting with an index would not
 			// result in a correct meta path -> first add, then remove '/'
-			this.oModel.oMetaModel.getMetaPath("/" + sPath).slice(1)
+			this.oModel.getMetaModel().getMetaPath("/" + sPath).slice(1)
 				.split("/").some(function (sSegment) {
 					mQueryOptions = mQueryOptions.$expand && mQueryOptions.$expand[sSegment];
 					if (!mQueryOptions || mQueryOptions === true) {
@@ -582,7 +582,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
-		var oType = this.oModel.oMetaModel.getObject(sMetaPath + "/");
+		var oType = this.oModel.getMetaModel().getObject(sMetaPath + "/");
 
 		if (oType.$Key) {
 			this.addToSelect(mQueryOptions, oType.$Key);
