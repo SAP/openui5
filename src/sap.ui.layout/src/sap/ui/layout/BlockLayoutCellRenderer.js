@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library'],
-	function(jQuery, library) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, library, Parameters) {
 		"use strict";
 
 		var BlockLayoutCellRenderer = {};
@@ -23,9 +23,32 @@ sap.ui.define(['jquery.sap.global', './library'],
 			} else {
 				this.setWidth(rm, blockLayoutCell);
 			}
+
+			this.addColoringStyle(rm, blockLayoutCell);
 			rm.writeStyles();
 			rm.writeClasses();
 			rm.write(">");
+		};
+
+		BlockLayoutCellRenderer.addColoringStyle = function (rm, blockLayoutCell) {
+			var setIndex = blockLayoutCell.getBackgroundColorSet(),
+				colorIndex = blockLayoutCell.getBackgroundColorIndex(),
+				letters = ['', 'A', 'B', 'C', 'D'],
+				letterIndex = letters[colorIndex];
+
+			var param = Parameters.get("_sap_ui_layout_BlockLayout_BlockColorAccentType" + setIndex + letterIndex);
+
+			if (setIndex !== 0 && colorIndex !== 0) {
+				rm.addStyle("background-color", param);
+			}
+
+			if (colorIndex > 4) {
+				jQuery.sap.log.warning("You are using a color index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
+			}
+
+			if (setIndex > 10) {
+				jQuery.sap.log.warning("You are using a set index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
+			}
 		};
 
 		BlockLayoutCellRenderer.setDifferentSBreakpointSize = function (rm, widthToRowWidthRatio) {
