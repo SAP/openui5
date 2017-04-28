@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 		"sap/ui/demo/worklist/model/formatter"
 	], function (formatter) {

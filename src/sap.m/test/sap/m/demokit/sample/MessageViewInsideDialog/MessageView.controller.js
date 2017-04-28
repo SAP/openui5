@@ -10,7 +10,6 @@ sap.ui.define([
 
 		onInit: function () {
 
-			var that = this;
 			var	oLink = new sap.m.Link({
 				text: "Show more information",
 				href: "http://sap.com",

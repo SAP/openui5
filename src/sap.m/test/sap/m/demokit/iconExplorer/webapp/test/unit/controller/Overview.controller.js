@@ -1,11 +1,13 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
-		"sap/ui/demo/iconexplorer/controller/Overview.controller",
-		"sap/ui/demo/iconexplorer/controller/BaseController",
-		"sap/ui/base/ManagedObject",
-		"test/unit/helper/FakeI18nModel",
-		"sap/ui/thirdparty/sinon",
-		"sap/ui/thirdparty/sinon-qunit"
-	], function(OverviewController, BaseController ,ManagedObject, FakeI18n) {
+	"sap/ui/demo/iconexplorer/controller/Overview.controller",
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/base/ManagedObject",
+	"test/unit/helper/FakeI18nModel",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function(OverviewController, BaseController ,ManagedObject, FakeI18n) {
 	"use strict";
 
 	QUnit.module("Overview controller tests", {

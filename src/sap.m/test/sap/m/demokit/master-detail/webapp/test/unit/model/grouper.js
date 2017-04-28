@@ -1,8 +1,10 @@
+/*global QUnit*/
+
 sap.ui.define([
-		"sap/ui/demo/masterdetail/model/grouper",
-		"sap/ui/model/resource/ResourceModel",
-		"jquery.sap.global"
-	], function (Grouper, ResourceModel, $) {
+	"sap/ui/demo/masterdetail/model/grouper",
+	"sap/ui/model/resource/ResourceModel",
+	"jquery.sap.global"
+], function (Grouper, ResourceModel, $) {
 	"use strict";
 
 	function createResourceModel () {

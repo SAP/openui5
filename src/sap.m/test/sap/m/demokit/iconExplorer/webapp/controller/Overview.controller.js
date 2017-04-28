@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/MessageToast",
 	"sap/m/Label",
-	"sap/m/ToggleButton"
-], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton) {
+	"sap/m/ToggleButton",
+	"jquery.sap.global"
+], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, $) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -381,7 +382,7 @@ sap.ui.define([
 						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName, this);
 					this.byId("resultContainer").addContent(oResultsFragment);
 
-					var bCategoriesVisible = !(sap.ui.Device.system.phone || oQuery.tab == "favorites");
+					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
 					this.byId("categorySelection").setVisible(bCategoriesVisible);
 				}
 

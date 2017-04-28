@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/demo/cart/model/formatter",
 	"test/unit/helper/FakeI18nModel"
