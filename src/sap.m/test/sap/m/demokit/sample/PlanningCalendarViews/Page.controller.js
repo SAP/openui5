@@ -241,6 +241,14 @@ sap.ui.define([
 
 			},
 
+			handleGroupModeChange: function (oEvent) {
+				var selectedItem = oEvent.getParameter("selectedItem");
+				if (selectedItem) {
+					var oPC1 = this.getView().byId("PC1");
+					oPC1.setGroupAppointmentsMode(selectedItem.getKey());
+				}
+			},
+
 			handleAppointmentSelect: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment");
 				if (oAppointment) {
