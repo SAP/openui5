@@ -234,6 +234,70 @@
 
 			QUnit.module("Properties");
 
+			QUnit.test("Calendar Row", function(assert) {
+				//Assert default value
+				assert.equal(oRow1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Collapsed, "Calendar Row 1: group appointment mode is set");
+				//Act
+				oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+				//Assert
+				assert.equal(oRow1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Expanded, "Calendar Row 1: group appointment mode is set");
+				//Cleanup
+				oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Collapsed);
+			});
+
+			QUnit.test("Calendar Row appointments removed from groups when groupAppointmentsMode is Expanded", function(assert) {
+				//Prepare
+				var previousGroupAppointmentsMode = oRow1.getGroupAppointmentsMode();
+				var previousIntervalType = oRow1.getIntervalType();
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				sap.ui.getCore().applyChanges();
+
+				// Assert before act
+				var nbItems = oRow1.getAggregation("groupAppointments").length;
+				assert.ok(nbItems > 0, "CalendarRow 1: groupAppointments aggregation has " + nbItems + " items.");
+
+				//Act
+				oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+				sap.ui.getCore().applyChanges();
+				assert.ok(true, "Set the groupAppointmentsMode to Expanded");
+
+				//Assert
+				assert.deepEqual(oRow1.getAggregation("groupAppointments").length, 0, "CalendarRow 1: groupAppointments aggregation is empty");
+
+				//Cleanup
+				oRow1.setGroupAppointmentsMode(previousGroupAppointmentsMode);
+				oRow1.setIntervalType(previousIntervalType);
+				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.test("Calendar Row group appointments are not changed on the phone device when groupAppointmentsMode is Expanded", function(assert) {
+				//Prepare
+				var deviceStub = this.stub(sap.ui.Device.system, "phone", true);
+				var previousIntervalType = oRow1.getIntervalType();
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				sap.ui.getCore().applyChanges();
+				var previousGroupAppointmentsMode = oRow1.getGroupAppointmentsMode();
+
+				// Assert before act
+				var nbItemsBefore = oRow1.getAggregation("groupAppointments").length;
+				assert.ok(nbItemsBefore > 0, "CalendarRow 1: groupAppointments aggregation has " + nbItemsBefore + " items");
+
+				//Act
+				oRow1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+				sap.ui.getCore().applyChanges();
+				assert.ok(true, "Set the groupAppointmentsMode to Expanded");
+
+				//Assert
+				var nbItemsAfter = oRow1.getAggregation("groupAppointments").length;
+				assert.ok(nbItemsBefore === nbItemsAfter, "CalendarRow 1: groupAppointments aggregation is not changed");
+
+				//Cleanup
+				oRow1.setGroupAppointmentsMode(previousGroupAppointmentsMode);
+				oRow1.setIntervalType(previousIntervalType);
+				sap.ui.getCore().applyChanges();
+				deviceStub.restore();
+			});
+
 			QUnit.test("Appointment", function(assert) {
 				var oAppointment = sap.ui.getCore().byId("App0");
 				assert.equal(oAppointment.getKey(), "A0", "Appointment: key set");

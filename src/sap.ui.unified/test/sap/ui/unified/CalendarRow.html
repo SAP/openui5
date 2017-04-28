@@ -454,6 +454,18 @@
 					oRow1.setAppointmentsVisualization(sKey);
 				}
 			}).placeAt("event1");
+			new sap.ui.commons.DropdownBox("DB-GroupAppointment", {
+				selectedKey: sap.ui.unified.GroupAppointmentsMode.Collapsed,
+				tooltip: "Group appointment mode",
+				items: [
+					new sap.ui.core.ListItem("GAM-I-1",{text:"Collapsed", key: sap.ui.unified.GroupAppointmentsMode.Collapsed}),
+					new sap.ui.core.ListItem("GAM-I-2",{text:"Expanded", key: sap.ui.unified.GroupAppointmentsMode.Expanded})
+				],
+				change: function(oEvent){
+					var sKey = oEvent.getParameter("selectedItem").getKey();
+					oRow1.setGroupAppointmentsMode(sKey);
+				}
+			}).placeAt("event1");
 
 			// sample with fix start date and fixed sizes
 			var oRow2 = new sap.ui.unified.CalendarRow("Row2",  {

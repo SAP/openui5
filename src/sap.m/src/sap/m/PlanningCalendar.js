@@ -128,6 +128,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			noDataText : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
+			 * Defines the mode in which the overlapping appointments are displayed.
+			 *
+			 * <b>Note:</b> This property takes effect, only if the <code>intervalType</code> of the current calendar view
+			 * is set to <code>sap.ui.unified.CalendarIntervalType.Month</code>. On phone devices this property is ignored,
+			 * and the default value is applied.
+			 * @since 1.48.0
+			 */
+			groupAppointmentsMode : {type : "sap.ui.unified.GroupAppointmentsMode", group : "Appearance", defaultValue : sap.ui.unified.GroupAppointmentsMode.Collapsed},
+
+			/**
 			 * Determines whether the appointments that have only title without text are rendered with smaller height.
 			 *
 			 * <b>Note:</b> On phone devices this property is ignored, appointments are always rendered in full height
@@ -982,6 +992,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	PlanningCalendar.prototype.setGroupAppointmentsMode = function (bGroupAppointmentsMode) {
+
+		this.setProperty("groupAppointmentsMode", bGroupAppointmentsMode, true);
+
+		var aRows = this.getRows();
+		for (var i = 0; i < aRows.length; i++) {
+			var oRow = aRows[i];
+			oRow.getCalendarRow().setGroupAppointmentsMode(bGroupAppointmentsMode);
+		}
+
+		return this;
+	};
+
 	PlanningCalendar.prototype.setAppointmentsReducedHeight = function(bAppointmentsReducedHeight){
 
 		this.setProperty("appointmentsReducedHeight", bAppointmentsReducedHeight, true);
@@ -1042,6 +1065,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.setStartDate(this.getStartDate());
 		oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
+		oCalendarRow.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
 		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oCalendarRow.setLegend(this.getLegend());
 		oCalendarRow.setAppointmentsVisualization(this.getAppointmentsVisualization());
@@ -1081,6 +1105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oCalendarRow.setStartDate(this.getStartDate());
 		oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
 		oCalendarRow.setShowEmptyIntervalHeaders(this.getShowEmptyIntervalHeaders());
+		oCalendarRow.setGroupAppointmentsMode(this.getGroupAppointmentsMode());
 		oCalendarRow.setAppointmentsReducedHeight(this.getAppointmentsReducedHeight());
 		oCalendarRow.setLegend(this.getLegend());
 		oCalendarRow.setAppointmentsVisualization(this.getAppointmentsVisualization());
