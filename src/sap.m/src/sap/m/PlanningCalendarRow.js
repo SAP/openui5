@@ -3,8 +3,10 @@
  */
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library', 'sap/ui/unified/library'],
-		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer',
+		'sap/ui/core/Renderer', './library', 'sap/ui/unified/library', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarRow'],
+	function (jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
+			  CalendarRow) {
 	"use strict";
 
 	/**
@@ -98,10 +100,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			 *
 			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
-			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"}
+			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"},
+
+			_nonWorkingDates : {type : "sap.ui.unified.DateRange", multiple : true, visibility : "hidden"}
 
 		}
 	}});
+
+	/**
+	 * Used to link the items (DateRange) in aggregation _nonWorkingDates to any PlanningCalendar specialDates of type NonWorking
+	 * @private
+	 */
+	PlanningCalendarRow.PC_FOREIGN_KEY_NAME = "relatedToPCDateRange";
+
+	/**
+	 * Holds the name of the aggregation corresponding to non working dates
+	 * @private
+	 */
+	PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME = "_nonWorkingDates";
 
 	var CalenderRowHeader = StandardListItem.extend("CalenderRowHeader", {
 
@@ -149,7 +165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		var sId = this.getId();
 		var oCalendarRowHeader = new CalenderRowHeader(sId + "-Head", {parentRow: this});
-		var oCalendarRow = new sap.ui.unified.CalendarRow(sId + "-CalRow", {
+		var oCalendarRow = new CalendarRow(sId + "-CalRow", {
 			checkResize: false,
 			updateCurrentTime: false,
 			ariaLabelledBy: sId + "-Head"
@@ -178,13 +194,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		this._oColumnListItem = new sap.m.ColumnListItem(this.getId() + "-CLI", {
 			cells: [ oCalendarRowHeader,
-			         oCalendarRow]
+					 oCalendarRow]
 		});
 
 	};
 
 	PlanningCalendarRow.prototype.exit = function(){
 
+		if (this._oColumnListItem.getCells()[1]) {//destroy associated CalendarRow
+			this._oColumnListItem.getCells()[1].destroy();
+		}
 		this._oColumnListItem.destroy();
 		this._oColumnListItem = undefined;
 
@@ -338,7 +357,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	 * @private
 	 */
 	PlanningCalendarRow.prototype.getCalendarRow = function(){
-
+		if (!this._oColumnListItem) {
+			return null;
+		}
 		return this._oColumnListItem.getCells()[1];
 
 	};
@@ -350,6 +371,82 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		return this;
 
+	};
+
+
+	PlanningCalendarRow.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
+		if (CalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
+			// forward to CalendarRow
+			this.getCalendarRow().addAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, this._buildCalendarRowDateRange(oObject),
+				bSuppressInvalidate);
+		}
+		return Element.prototype.addAggregation.apply(this, arguments);
+	};
+
+	PlanningCalendarRow.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
+		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
+			// forward to CalendarRow
+			this.getCalendarRow().insertAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, this._buildCalendarRowDateRange(oObject),
+				iIndex, bSuppressInvalidate);
+		 }
+
+		return Element.prototype.insertAggregation.apply(this, arguments);
+	 };
+
+	PlanningCalendarRow.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
+		var aRemovableNonWorkingDate;
+
+		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName && this.getAggregation(PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME)) {
+			aRemovableNonWorkingDate = this.getCalendarRow().getAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME).filter(function(oNonWorkingDate) {
+				return oNonWorkingDate.data(CalendarRow.PCROW_FOREIGN_KEY_NAME) === oObject.getId();
+			});
+			if (aRemovableNonWorkingDate.length) {
+				jQuery.sap.assert(aRemovableNonWorkingDate.length == 1, "Inconsistency between PlanningCalendarRow " +
+					"_nonWorkingDate instance and CalendarRow _nonWorkingDates instance. For PCRow instance " +
+					"there are more than one(" + aRemovableNonWorkingDate.length + ") nonWorkingDates in CalendarRow ");
+				this.getCalendarRow().removeAggregation("_nonWorkingDates", aRemovableNonWorkingDate[0]);
+			}
+		}
+		return Element.prototype.removeAggregation.apply(this, arguments);
+	};
+
+	PlanningCalendarRow.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
+		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
+			// forward to CalendarRow
+			this.getCalendarRow().removeAllAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, bSuppressInvalidate);
+		}
+
+		return Element.prototype.removeAllAggregation.apply(this, arguments);
+	};
+
+	PlanningCalendarRow.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
+		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
+			// forward to CalendarRow
+			if (this.getCalendarRow()) {
+				this.getCalendarRow().destroyAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, bSuppressInvalidate);
+			}
+		}
+		return Element.prototype.destroyAggregation.apply(this, arguments);
+	};
+
+	/**
+	 * Clone from the passed DateRange and sets the foreign key to the source DateRange, that is used for cloning
+	 * @param {sap.ui.unified.DateRange} oSource
+	 * @returns {sap.ui.unified.DateRange}
+	 * @private
+	 */
+	PlanningCalendarRow.prototype._buildCalendarRowDateRange = function (oSource) {
+		var oRangeCopy = new DateRange();
+
+		if (oSource.getStartDate()) {
+			oRangeCopy.setStartDate(new Date(oSource.getStartDate().getTime()));
+		}
+		if (oSource.getEndDate()) {
+			oRangeCopy.setEndDate(new Date(oSource.getEndDate().getTime()));
+		}
+		oRangeCopy.data(CalendarRow.PCROW_FOREIGN_KEY_NAME, oSource.getId());
+
+		return oRangeCopy;
 	};
 
 	return PlanningCalendarRow;
