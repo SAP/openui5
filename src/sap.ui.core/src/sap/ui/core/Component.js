@@ -1914,13 +1914,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			});
 		}
 
-		function getControllerClass() {
+		function getControllerModuleName() {
+			return jQuery.sap.getResourceName(sName + ".Component", ""); // use empty suffix to suppress ".js"
+		}
+
+		function prepareControllerClass(oClass) {
 
 			var sController = sName + '.Component';
-
-			// require the component controller
-			jQuery.sap.require(sController);
-			var oClass = jQuery.sap.getObject(sController);
 
 			if (!oClass) {
 				var sMsg = "The specified component controller '" + sController + "' could not be found!";
@@ -2219,7 +2219,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					return v;
 				}
 			}).then(function() {
-				return mOptions.preloadOnly ? true : getControllerClass();
+				if ( mOptions.preloadOnly ) {
+					return true;
+				}
+
+				return new Promise(function(resolve, reject) {
+					// asynchronously require component controller class
+					sap.ui.require( [ getControllerModuleName() ], function(oClass) {
+						// prepare the loaded class and resolve with it
+						resolve( prepareControllerClass(oClass) );
+					});
+				});
+
 			}).then(function(oControllerClass) {
 				var waitFor = mOptions.waitFor;
 				if (waitFor) {
@@ -2256,7 +2267,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		}
 		preload(sName);
 
-		return getControllerClass();
+		// synchronously load the controller class, prepare and return it
+		return prepareControllerClass(
+			sap.ui.requireSync( getControllerModuleName() )
+		);
 	}
 
 	return Component;

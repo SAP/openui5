@@ -306,6 +306,15 @@
 					});
 				});
 
+				// intercept first call to setComponent to know when the async loading has finished
+				// TODO provide an API in ComponentContainer for that
+				var oWhenComponentCreated = jQuery.Deferred();
+				oComponentContainer.setComponent = function() {
+					var result = ComponentContainer.prototype.setComponent.apply(this, arguments);
+					oWhenComponentCreated.resolve();
+					return result;
+				};
+				
 				// simulate onBeforeRendering to force to create the component
 				oComponentContainer.onBeforeRendering();
 
@@ -320,27 +329,29 @@
 					};
 				})();
 
-				sap.ui.require([
-					"samples/components/button/Component"
-				], function(UsedComponent) {
+				oWhenComponentCreated.then(function() {
+					sap.ui.require([
+						"samples/components/button/Component"
+					], function(UsedComponent) {
 
-					var oComponentUsage = oComponentContainer.getComponentInstance();
+						var oComponentUsage = oComponentContainer.getComponentInstance();
 
-					var oNewComponent = sap.ui.component({
-						name: "samples.components.button"
+						var oNewComponent = sap.ui.component({
+							name: "samples.components.button"
+						});
+
+						assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "ComponentLifecycle is Legacy by default");
+						assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+						assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
+						assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+
+						// Overwrite nested component
+						oComponentContainer.setComponent(oNewComponent);
+						assert.ok(oComponentUsage.bIsDestroyed, "Old component should be destroyed");
+
+						done();
+
 					});
-
-					assert.equal(oComponentContainer.getLifecycle(), ComponentLifecycle.Legacy, "ComponentLifecycle is Legacy by default");
-					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
-					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
-					assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
-
-					// Overwrite nested component
-					oComponentContainer.setComponent(oNewComponent);
-					assert.ok(oComponentUsage.bIsDestroyed, "Old component should be destroyed");
-
-					done();
-
 				});
 
 			});

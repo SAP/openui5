@@ -44,6 +44,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 
 			/**
 			 * Flag whether the component should be created sync (default) or async.
+			 * This property can only be applied initially.
 			 */
 			async : {type : "boolean", defaultValue : false},
 
@@ -83,6 +84,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * the default behavior is <code>Container</code>. This means that
 			 * the Component is destroyed when the <code>ComponentContainer</code> is destroyed or a new
 			 * Component is associated.
+			 * This property must only be applied before a component instance is created.
 			 */
 			lifecycle : {type : "sap.ui.core.ComponentLifecycle", defaultValue : ComponentLifecycle.Legacy},
 
@@ -90,6 +92,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * Flag, whether to autoprefix the id of the nested Component or not. If
 			 * this property is set to true the ID of the Component will be prefixed
 			 * with the ID of the ComponentContainer followed by a single dash.
+			 * This property can only be applied initially.
 			 */
 			autoPrefixId : {type : "boolean", defaultValue: false},
 
@@ -97,6 +100,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * The component usage. If the ComponentContainer is used inside a
 			 * Component, this Component can define a usage which will be used for creating
 			 * the Component.
+			 * This property can only be applied initially.
 			 */
 			usage : {type : "string", defaultValue : null}
 
