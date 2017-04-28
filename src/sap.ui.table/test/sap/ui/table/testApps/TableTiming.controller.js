@@ -1,8 +1,11 @@
+/*eslint-disable no-console*/
+
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
 ], function (Controller, JSONModel) {
 	"use strict";
+
 	return Controller.extend("sap.ui.table.testApps.TableTiming", {
 
 		onInit: function() {
@@ -18,7 +21,7 @@ sap.ui.define([
 			if (oFormData) {
 				try {
 					oFormData = JSON.parse(oFormData);
-				} catch(e) {
+				} catch (e) {
 					oFormData = false;
 				}
 			}
@@ -54,8 +57,7 @@ sap.ui.define([
 				storage.setItem(x, x);
 				storage.removeItem(x);
 				return true;
-			}
-			catch(e) {
+			} catch (e) {
 				return false;
 			}
 		},

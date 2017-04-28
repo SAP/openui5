@@ -87,12 +87,12 @@ sap.ui.define([
 			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
 				dataType: "json",
 				success: function (oData) {
-					for (var i=0; i<oData.ProductCollection.length; i++) {
+					for (var i = 0; i < oData.ProductCollection.length; i++) {
 						var oProduct = oData.ProductCollection[i];
 						oProduct.Available = oProduct.Status == "Available" ? true : false;
 					}
 					oModel.setData(oData);
-				}.bind(this),
+				},
 				error: function () {
 					jQuery.sap.log.error("failed to load json");
 				}
