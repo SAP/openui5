@@ -100,6 +100,27 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		});
 	});
 
+	QUnit.test('clearEntries replaces the whole cache content and clearEntry replace a single cache entry', function(assert) {
+		var oEntry1 = {
+			mockChanges1: {}
+		};
+		var oEntry2 = {
+			mockChanges1: {}
+		}
+		Cache._entries = {
+			"testComponent1": {
+				"1.2.3": oEntry1
+			},
+			"testComponent2": {
+				"1.2.3": oEntry2
+			}
+		};
+		Cache.clearEntry("testComponent1", "1.2.3");
+		assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), {});
+		Cache.clearEntries({})
+		assert.deepEqual(Cache.getEntries(), {});
+	});
+
 	QUnit.test('if error occours, subsequent calls in their own execution path should get the chance to make a new request', function(assert) {
 		var that = this;
 		var oErrorFromFirstCall;
