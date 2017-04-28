@@ -5,8 +5,9 @@
 // Provides control sap.ui.unified.ColorPicker.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', "sap/ui/core/ResizeHandler",
 	"sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout",
-	"sap/ui/core/Icon", "sap/ui/core/theming/Parameters"],
-	function(jQuery, Library, Control, HTML, ResizeHandler, Grid, GridData, VLayout, HLayout, Icon, Parameters) {
+	"sap/ui/core/Icon", "sap/ui/core/theming/Parameters", "sap/ui/core/InvisibleText"],
+	function(jQuery, Library, Control, HTML, ResizeHandler, Grid, GridData, VLayout, HLayout, Icon, Parameters,
+		InvisibleText) {
 	"use strict";
 
 
@@ -65,7 +66,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @private
 			 * @since 1.48.0
 			 */
-			_grid: {type: "sap.ui.layout.Grid", group: "Appearance", multiple: false, visibility: "hidden"}
+			_grid: {type: "sap.ui.layout.Grid", group: "Appearance", multiple: false, visibility: "hidden"},
+
+			/**
+			 * Holds the control invisible texts.
+			 * @private
+			 * @since 1.48.0
+			 */
+			_invisibleTexts: {type: "sap.ui.core.InvisibleText", multiple: true, visibility: "hidden"}
 		},
 		events : {
 
@@ -632,7 +640,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// Label
 				oFactory.createLabel({
 					text: sLabelText,
-					tooltip: sTooltip
+					tooltip: sTooltip,
+					labelFor: oInput
 				}).addStyleClass(CONSTANTS.LabelClass),
 				// Input
 				oInput.setTooltip(sTooltip)
@@ -641,7 +650,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// Manage unit label
 		if (sUnit) {
-			oHL.addContent(oFactory.createLabel({text: sUnit})
+			oHL.addContent(oFactory.createLabel({text: sUnit, labelFor: oInput})
 				.addStyleClass(CONSTANTS.UnitLabelClass)
 				.addStyleClass(CONSTANTS.LabelClass)
 			);
@@ -736,7 +745,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	ColorPicker.prototype._createInteractionControls = function () {
-		var sId = this.getId();
+		var sId = this.getId(),
+			oHueInvisibleText,
+			oAlphaInvisibleText;
 
 		// Create the internal ColorPickerBox control
 		this.oCPBox = new ColorPickerBox(sId + "-cpBox", {
@@ -808,24 +819,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}).addStyleClass(CONSTANTS.OutputSelectorClass);
 
 		// Slider
+		oHueInvisibleText = new InvisibleText({text: oRb.getText("COLORPICKER_HUE_SLIDER")}).toStatic();
+		this.addAggregation("_invisibleTexts", oHueInvisibleText, true);
 		this.oSlider = oFactory.createSlider(sId + "-hSLD", {
 			max: 360,
 			step: 1,
 			tooltip: oRb.getText("COLORPICKER_HUE"),
 			value: parseInt(this.oHueField.getValue(), 10)
-		}).addStyleClass(CONSTANTS.SliderClass);
+		}).addStyleClass(CONSTANTS.SliderClass).addAriaLabelledBy(oHueInvisibleText);
 
 		// Attaching events with parameter passed so the handler will know in which mode to execute
 		this.oSlider.attachEvent("liveChange", "liveChange", this._handleSliderChange.bind(this));
 		this.oSlider.attachEvent("change", "change", this._handleSliderChange.bind(this));
 
 		// Alpha Slider
+		oAlphaInvisibleText = new InvisibleText({text: oRb.getText("COLORPICKER_ALPHA_SLIDER")}).toStatic();
+		this.addAggregation("_invisibleTexts", oAlphaInvisibleText, true);
 		this.oAlphaSlider = oFactory.createSlider(sId + "-aSLD", {
 			max: 1,
 			value: 1,
 			step: 0.01,
 			tooltip: oRb.getText("COLORPICKER_ALPHA")
-		}).addStyleClass(CONSTANTS.AlphaSliderClass);
+		}).addStyleClass(CONSTANTS.AlphaSliderClass).addAriaLabelledBy(oAlphaInvisibleText);
 
 		// Attaching events with parameter passed so the handler will know in which mode to execute
 		this.oAlphaSlider.attachEvent("liveChange", "liveChange", this._handleAlphaSliderChange.bind(this));
