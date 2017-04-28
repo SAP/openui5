@@ -266,6 +266,7 @@ sap.ui.require([
 		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", oContext, vSorters, vFilters,
 			mParameters);
 
+		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
@@ -3511,11 +3512,9 @@ sap.ui.require([
 		oBindingMock.expects("fetchFilter")
 			.withExactArgs(sinon.match.same(oContext), "staticFilter")
 			.returns(_SyncPromise.resolve("resolvedFilter"));
-		oBindingMock.expects("fetchQueryOptionsWithKeys")
-			.withExactArgs(sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve("queryOptionsWithKey"));
 		oBindingMock.expects("mergeQueryOptions")
-			.withExactArgs("queryOptionsWithKey", "resolvedOrderby", "resolvedFilter")
+			.withExactArgs(sinon.match.same(oBinding.mQueryOptions), "resolvedOrderby",
+				"resolvedFilter")
 			.returns(mQueryOptions);
 
 		// code under test

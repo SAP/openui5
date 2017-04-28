@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TextArea.
-sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/ResizeHandler"],
-	function(jQuery, InputBase, library, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/ResizeHandler", './library'],
+	function(jQuery, InputBase, Text, ResizeHandler, library) {
 	"use strict";
 
 
@@ -56,6 +56,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 
 			/**
+			 * Determines whether the characters, exceeding the maximum allowed character count, are visible in the input field.
+			 *
+			 * If set to <code>false</code> the user is not allowed to enter more characters than what is set in the <code>maxLength</code> property.
+			 * If set to <code>true</code> the characters exceeding the <code>maxLength</code> value are selected on paste and the counter below
+			 * the input field displays their number.
+			 *  @since 1.48
+			 */
+			showExceededText: {type: "boolean", group: "Behavior", defaultValue: false},
+
+			/**
 			 * Indicates how the control wraps the text, e.g. <code>Soft</code>, <code>Hard</code>, <code>Off</code>.
 			 */
 			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : sap.ui.core.Wrapping.None},
@@ -78,6 +88,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 			 * @since 1.38.0
 			 */
 			growingMaxLines : {type : "int", group : "Behavior", defaultValue : 0}
+
+		},
+		aggregations: {
+			// The hidden aggregation for internal usage
+			_counter: {type: "sap.m.Text", multiple: false, visibility: "hidden"}
 		},
 		events : {
 
@@ -96,9 +111,50 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 		}
 	}});
 
-	TextArea.prototype.init = function() {
+	/**
+	 * Initializes the control.
+	 */
+	TextArea.prototype.init = function(){
+		var oCounter;
 		InputBase.prototype.init.call(this);
 		this.sResizeListenerId = null;
+		this._bPasteIsTriggered = false;
+		oCounter = new Text(this.getId() + '-counter', {}).addStyleClass("sapMTextAreaCounter").setVisible(false);
+		this.setAggregation("_counter", oCounter);
+	};
+
+	TextArea.prototype.setMaxLength = function (iValue) {
+		this.setProperty("maxLength", iValue);
+		this._handleShowExceededText();
+		return this;
+	};
+
+	TextArea.prototype.setShowExceededText = function (bValue) {
+		var oCounter = this.getAggregation("_counter"),
+			sValue;
+
+		if (bValue) {
+
+			if (oCounter && this.getAriaLabelledBy().indexOf(oCounter.getId()) < 0) {
+				this.addAriaLabelledBy(oCounter.getId());
+			}
+		} else {
+			//remove the counter from AriaLabelledBy
+			oCounter = this.getAggregation("_counter");
+			oCounter && this.removeAllAriaLabelledBy(oCounter.getId());
+
+			// respect to max length
+			sValue = this.getValue();
+			if (this.getMaxLength()) {
+				sValue = sValue.substring(0, this.getMaxLength());
+				this.setValue(sValue);
+			}
+		}
+
+		oCounter.setVisible(bValue);
+		this.setProperty("showExceededText", bValue);
+		this._updateMaxLengthAttribute();
+		return this;
 	};
 
 	TextArea.prototype.exit = function() {
@@ -110,6 +166,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 	TextArea.prototype.onBeforeRendering = function() {
 		InputBase.prototype.onBeforeRendering.call(this);
 		this._detachResizeHandler();
+		//respect maxLength
+		if (this.getMaxLength()) {
+			this.setValue(this.getValue());
+		}
 	};
 
 	// Attach listeners on after rendering and find iscroll
@@ -138,6 +198,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 
 			this._adjustHeight();
 		}
+
+		this._updateMaxLengthAttribute();
 
 		if (!sap.ui.Device.support.touch) {
 			return;
@@ -210,18 +272,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 		});
 	};
 
-	/**
-	 * Getter for property <code>value</code>.
-	 * Defines the value of the control's input field.
-	 *
-	 * Default value is <code>undefined</code>
-	 *
-	 * @return {string} the value of property <code>value</code>
-	 * @public
-	 */
 	TextArea.prototype.getValue = function() {
 		var oTextArea = this.getFocusDomRef();
 		return oTextArea ? oTextArea.value : this.getProperty("value");
+	};
+
+	TextArea.prototype.setValue = function (sValue) {
+		InputBase.prototype.setValue.call(this, sValue);
+		this._handleShowExceededText();
+		return this;
 	};
 
 	// mark the event that it is handled by the textarea
@@ -236,6 +295,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 
 	TextArea.prototype.oninput = function(oEvent) {
 		InputBase.prototype.oninput.call(this, oEvent);
+
+		// Handles paste. This is before checking for "invalid" because in IE after paste the event is set as "invalid"
+		if (this._bPasteIsTriggered) {
+			this._bPasteIsTriggered = false;
+			this._selectExceededText();
+		}
+
 		if (oEvent.isMarked("invalid")) {
 			return;
 		}
@@ -244,10 +310,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 			sValue = oTextArea.value,
 			iMaxLength = this.getMaxLength();
 
-		// some browsers do not respect to maxlength property of textarea
-		if (iMaxLength > 0 && sValue.length > iMaxLength) {
-			sValue = sValue.substring(0, iMaxLength);
-			oTextArea.value = sValue;
+		if (this.getShowExceededText() === false && this._getInputValue().length < this.getMaxLength()) {
+			// some browsers do not respect to maxlength property of textarea
+			if (iMaxLength > 0 && sValue.length > iMaxLength) {
+				sValue = sValue.substring(0, iMaxLength);
+				oTextArea.value = sValue;
+			}
 		}
 
 		// update value property if needed
@@ -257,6 +325,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 			// get the value back maybe there is a formatter
 			sValue = this.getValue();
 		}
+
+		this._handleShowExceededText();
 
 		// handle growing
 		if (this.getGrowing()) {
@@ -269,6 +339,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 			// backwards compatibility
 			newValue: sValue
 		});
+	};
+
+	/**
+	 * Handles the onpaste event.
+	 *
+	 * The event is customized and the <code>textArea</code> value is calculated manually
+	 * because when the <code>showExceededText</code> is set to
+	 * <code>true</code> the exceeded text should be selected on paste.
+	 */
+	TextArea.prototype.onpaste = function (oEvent) {
+		if (this.getShowExceededText()) {
+			this._bPasteIsTriggered = true;
+		}
 	};
 
 	TextArea.prototype.setGrowing = function(bGrowing) {
@@ -298,8 +381,76 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library', "sap/ui/core/Res
 	};
 
 	TextArea.prototype._getInputValue = function(sValue) {
-		sValue = InputBase.prototype._getInputValue.call(this, sValue);
+		//not calling InputBase.prototype._getInputValue because it always respects maxValue
+		sValue = (sValue === undefined) ? this.$("inner").val() || "" : sValue.toString();
+
+		if (this.getMaxLength() > 0 && !this.getShowExceededText()) {
+			sValue = sValue.substring(0, this.getMaxLength());
+		}
+
 		return sValue.replace(/\r\n/g, "\n");
+	};
+
+	TextArea.prototype._selectExceededText = function () {
+		var iValueLength = this.getValue().length;
+
+		if (iValueLength > this.getMaxLength()) {
+			this.selectText(this.getMaxLength(), iValueLength);
+		}
+	};
+
+	TextArea.prototype._updateMaxLengthAttribute = function () {
+		var oTextArea = this.getFocusDomRef();
+		if (!oTextArea) {
+			return;
+		}
+
+		if (this.getShowExceededText()) {
+			oTextArea.removeAttribute("maxlength");
+			this._handleShowExceededText();
+		} else {
+			this.getMaxLength() && oTextArea.setAttribute("maxlength", this.getMaxLength());
+		}
+	};
+
+	/**
+	 * Updates counter value.
+	 * @param {string} sValue the value of the TextArea
+	 * @private
+	 */
+
+	TextArea.prototype._handleShowExceededText = function () {
+		var oCounter = this.getAggregation("_counter"),
+			iMaxLength = this.getMaxLength(),
+			sCounterText;
+
+		if (!this.getDomRef() || !this.getShowExceededText() || !iMaxLength) {
+			return;
+		}
+
+		sCounterText = this._getCounterValue();
+		oCounter.setText(sCounterText);
+	};
+
+	/**
+	 * Checks if the TextArea has exceeded the value for MaxLength
+	 * @return {boolean}
+	 * @private
+	 */
+	TextArea.prototype._maxLengthIsExceeded = function (bValue) {
+		var bResult = false;
+		if (this.getMaxLength() > 0 && this.getShowExceededText() && this.getValue().length > this.getMaxLength()) {
+			bResult = true;
+		}
+		return bResult;
+	};
+
+	TextArea.prototype._getCounterValue = function () {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			iCharactersExceeded = this.getMaxLength() - this.getValue().length,
+			bExceeded = (iCharactersExceeded < 0 ? true : false);
+
+		return Math.abs(iCharactersExceeded) + " " + oBundle.getText("TEXTAREA_CHARACTER" + ( Math.abs(iCharactersExceeded) === 1 ? "" : "S") + "_" + (bExceeded ? "EXCEEDED" : "LEFT"));
 	};
 
 	/**

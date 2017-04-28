@@ -56,6 +56,8 @@ sap.ui.define([
 
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+
+				this.getOwnerComponent().setModel(new JSONModel(), "treeData");
 			},
 
 			onRouteChange: function (oEvent) {

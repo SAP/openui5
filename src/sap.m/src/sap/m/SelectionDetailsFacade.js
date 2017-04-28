@@ -7,7 +7,6 @@
  * @class The public facade of the {@link sap.m.SelectionDetails} control
  * @extends sap.ui.base.Interface
  * @since 1.48.0
- * @experimental Since 1.48.0 The interface is currently under development. The API could be changed at any point in time. Please take this into account when using it.
  * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
  * @alias sap.m.SelectionDetailsFacade
  * @public
@@ -44,7 +43,6 @@
  * @class The public facade of the {@link SelectionDetailsItems} element
  * @extends sap.ui.base.Interface
  * @since 1.48.0
- * @experimental Since 1.48.0 The interface is currently under development. The API could be changed at any point in time. Please take this into account when using it.
  * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
  * @alias sap.m.SelectionDetailsItemFacade
  * @public

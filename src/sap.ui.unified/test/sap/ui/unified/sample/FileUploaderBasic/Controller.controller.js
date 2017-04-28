@@ -9,10 +9,10 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 				var sMsg = "";
 				var m = /^\[(\d\d\d)\]:(.*)$/.exec(sResponse);
 				if (m[1] == "200") {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2], "SUCCESS", "Upload Success";
+					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Success)";
 					oEvent.getSource().setValue("");
 				} else {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2], "ERROR", "Upload Error";
+					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Error)";
 				}
 
 				MessageToast.show(sMsg);

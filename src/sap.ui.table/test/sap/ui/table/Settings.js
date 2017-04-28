@@ -5,6 +5,7 @@
 	var TABLESETTINGS = window.TABLESETTINGS;
 
 	// Test data
+	var i, l;
 
 	window.TABLESETTINGS.listTestData = [
 		{lastName: "Dente", name: "Alfred", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "images/Person.png", gender: "male", rating: 4, money: 5.67, birthday: "1968-05-06", currency: "EUR", objStatusText: "Name OK Text", objStatusTitle: "Name OK Title", objStatusState: "Success", highlightState: "Success"},
@@ -30,11 +31,11 @@
 	];
 
 	var aOrgData = jQuery.extend(true, [], window.TABLESETTINGS.listTestData);
-	for (var i = 0; i < 9; i++) {
+	for (i = 0; i < 9; i++) {
 		window.TABLESETTINGS.listTestData = window.TABLESETTINGS.listTestData.concat(jQuery.extend(true, [], aOrgData));
 	}
 
-	for (var i = 0, l = window.TABLESETTINGS.listTestData.length; i < l; i++) {
+	for (i = 0, l = window.TABLESETTINGS.listTestData.length; i < l; i++) {
 		window.TABLESETTINGS.listTestData[i].lastName += " - " + (i + 1);
 		window.TABLESETTINGS.listTestData[i].birthdayDate = new Date(window.TABLESETTINGS.listTestData[i].birthday);
 	}
@@ -213,7 +214,7 @@
 		}
 	};
 
-	for (var i = 0; i < 20; i++) {
+	for (i = 0; i < 20; i++) {
 		window.TABLESETTINGS.treeTestData.root[4][i] = {
 			name: "subitem4-" + i,
 			description: "subitem4-" + i + " description",
@@ -1506,7 +1507,9 @@
 	function fnRowActionPress(oEvent) {
 		var oRow = oEvent.getParameter("row");
 		var oItem = oEvent.getParameter("item");
-		alert("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
+
+		jQuery.sap.require("sap.m.MessageToast");
+		sap.m.MessageToast("Item " + (oItem.getText() || oItem.getType()) + " in row " + oRow.getIndex() + " pressed.");
 	}
 
 	function switchRowActions(oTable, iCount, oTemplate) {

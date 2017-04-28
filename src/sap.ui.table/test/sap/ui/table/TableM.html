@@ -39,13 +39,13 @@ oTable.setToolbar(new sap.m.Toolbar({content: [
 	new sap.m.Button({
 		text: "First Toolbar Button",
 		press: function() {
-			alert("Pressed");
+			sap.m.MessageToast.show("Pressed");
 		}
 	}),
 	new sap.m.Button({
 		text: "Second Toolbar Button",
 		press: function() {
-			alert("Pressed");
+			sap.m.MessageToast.show("Pressed");
 		}
 	})
 ]}));

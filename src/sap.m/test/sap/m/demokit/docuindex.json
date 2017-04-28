@@ -829,6 +829,13 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.PDFViewer",
+		  "name": "PDF Viewer",
+		  "category": "Display",
+		  "since": "1.48",
+		  "samples": []
+		},
+		{
 		  "id": "sap.m.PlanningCalendar",
 		  "name": "Planning Calendar",
 		  "category": "User Input",
@@ -1093,6 +1100,7 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.TextArea",
+			 "sap.m.sample.TextAreaMaxLength",
 			"sap.m.sample.TextAreaValueUpdate",
 			"sap.m.sample.TextAreaGrowing"
 		  ]
@@ -2009,6 +2017,10 @@
 		  "name": "Text Area",
 		  "description": "The Text Area allows to enter multi-line text and automatically breaks to a new line for overflow text. If the text gets too big to be displayed at once the user can scroll up and down."
 		},
+	 	{
+		  "id": "sap.m.sample.TextAreaMaxLength",
+		  "name": "TextArea with MaxLength = true",
+		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"},
 		{
 		  "id": "sap.m.sample.TextAreaValueUpdate",
 		  "name": "TextArea - Value Update",

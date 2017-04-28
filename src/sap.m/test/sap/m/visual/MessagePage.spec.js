@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.MessagePage", function() {
+	"use strict";
 
 	it("Should test default MessagePage",function(){
 		expect(takeScreenshot()).toLookAs("initial");

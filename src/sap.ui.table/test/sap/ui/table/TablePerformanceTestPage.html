@@ -121,7 +121,7 @@
 	var oGetResults = new sap.m.Button({
 		text: "Download Test Results",
 		press: function () {
-			console.log("Test Results: ", oResults);
+			jQuery.sap.log.debug("Test Results: ", oResults);
 
 			var sCSV = "Key;Overall;Rendering;Before Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering\n";
 			jQuery.each(oResults, function (k, v) {

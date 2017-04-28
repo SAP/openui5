@@ -265,8 +265,6 @@ sap.ui.require([
 				case "sapUiSizeCozy":
 					switch (sControlName) {
 						case "sap.m.ProgressIndicator":
-							iPhantomJSRowHeight = 60;
-							break;
 						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
 						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
 							iPhantomJSRowHeight = 68;
@@ -279,12 +277,10 @@ sap.ui.require([
 						case "sap.m.ObjectStatus":
 							iPhantomJSRowHeight = 39;
 							break;
-						case "sap.m.ProgressIndicator":
-							iPhantomJSRowHeight = 46;
-							break;
 						case "sap.m.HBox[sap.m.Link,sap.m.Text]":
 							iPhantomJSRowHeight = 41;
 							break;
+						case "sap.m.ProgressIndicator":
 						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
 						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
 							iPhantomJSRowHeight = 52;
@@ -319,8 +315,6 @@ sap.ui.require([
 				case undefined:
 					switch (sControlName) {
 						case "sap.m.ProgressIndicator":
-							iPhantomJSRowHeight = 60;
-							break;
 						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
 						case "sap.m.HBox[sap.m.Input,sap.m.Input]":
 							iPhantomJSRowHeight = 68;

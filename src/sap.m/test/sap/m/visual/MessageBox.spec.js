@@ -1,4 +1,9 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect */
+/*eslint max-nested-callbacks: [2,4]*/
+
 describe("sap.m.MessageBox", function () {
+	"use strict";
+
 	var jsCode = "";
 
 	it("Should load test page", function () {

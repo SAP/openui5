@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.m.AppWithBackground", function () {
+	"use strict";
+
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.App';
 
 	var fnClickThenCompare = function (sId, sImageName, sTestMessage) {
@@ -6,7 +10,7 @@ describe("sap.m.AppWithBackground", function () {
 			element(by.id(sId)).click();
 			expect(takeScreenshot()).toLookAs(sImageName);
 		});
-	}
+	};
 
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("initial");

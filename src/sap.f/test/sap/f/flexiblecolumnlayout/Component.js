@@ -34,7 +34,8 @@ sap.ui.define([
 			var oFCL = this.getRootControl().byId("fcl"),
 				oSettings = {
 					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
-					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded
+					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded,
+					mode: "Normal"
 				};
 
 			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);

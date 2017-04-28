@@ -13,7 +13,8 @@
 		"controller/Statistics.controller.js",
 		"css/style.css",
 		"i18n/i18n.properties",
-		"images/homeImage.png",
+		"images/homeImage.jpg",
+		"images/homeImage_small.jpg",
 		"index.html",
 		"manifest.json",
 		"model/alerts.json",
@@ -34,6 +35,7 @@
 		"view/settings/MasterSettings.view.xml",
 		"view/Statistics.view.xml",
 		"view/StatisticsD3.view.xml",
-		"view/StatisticsMicro.view.xml"
+		"view/StatisticsMicro.view.xml",
+		"model/formatter.js"
 	]
 }

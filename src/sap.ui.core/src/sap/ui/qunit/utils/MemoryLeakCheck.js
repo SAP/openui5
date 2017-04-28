@@ -13,12 +13,13 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	jQuery.sap.require("sap.ui.qunit.qunit-junit");
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
+	QUnit.config.reorder = false;   // make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
+
 
 
 	/**
 	 * @namespace
 	 * <code>sap.ui.qunit.utils.MemoryLeakCheck</code> is a utility for finding controls that leak references to other controls. See the <code>checkControl</code> method for usage instructions.
-	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -55,7 +56,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			var oProperty = mProperties[sPropertyName];
 			try {
 				if (oControl[oProperty._sGetter]() === oProperty.getDefaultValue()) { // if no value has been set yet by the control factory  TODO: use "isPropertyInitial", once available
-					oControl[oProperty._sMutator]("test"); // just try a string for everything now, TODO: check type
+					oControl[oProperty._sMutator]("dummyValueForMemLeakTest"); // just try a string for everything now, TODO: check type
 				}
 			} catch (e) {
 				// type check error, ignore (we stupidly always try with a string, even if the property has a different type)
@@ -69,75 +70,79 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 
 	// Creates and renders two instances of the given control and asserts that the second instance does not leak any controls after destruction.
 	// Has some special logic to ignore or work around problems where certain controls do not work standalone.
-	var checkControl = function(fnControlFactory, assert, fnSomeAdditionalFunction, bControlCannotRender) {
+	var _checkControl = function(fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender) {
 		var oControl1 = fnControlFactory();
 
-		assert.ok(oControl1, "calling fnControlFactory() should return something (a control)");
-		assert.ok(oControl1 instanceof Control, "calling fnControlFactory() should return something that is really instanceof sap.ui.core.Control");
+		QUnit.test("Check control " + oControl1.getMetadata().getName() + " for memory leaks", function(assert) {
+			assert.ok(oControl1, "calling fnControlFactory() should return something (a control)");
+			assert.ok(oControl1 instanceof Control, "calling fnControlFactory() should return something that is really instanceof sap.ui.core.Control");
 
-		// check whether this control can be rendered
-		if (oControl1.placeAt && !bControlCannotRender) {
+			// check whether this control can be rendered
+			if (oControl1.placeAt && !bControlCannotRender) {
 
-			try {
-				oControl1.getMetadata().getRenderer();
-			} catch (e) {
-				// control didn't say it has problems with rendering!
-				assert.ok(false, "Error: control does not have a renderer. If this is known, please set the 'bControlCannotRender' flag when calling MemoryLeakCheck.checkControl");
+				try {
+					oControl1.getMetadata().getRenderer();
+				} catch (e) {
+					// control didn't say it has problems with rendering!
+					assert.ok(false, "Error: control does not have a renderer. If this is known, please set the 'bControlCannotRender' flag when calling MemoryLeakCheck.checkControl");
+				}
 			}
-		}
 
-		// Render Control Instance 1 - some control types statically create something for re-use across all instances
+			// Render Control Instance 1 - some control types statically create something for re-use across all instances
 
-		fillControlProperties(oControl1);
+			fillControlProperties(oControl1);
 
-		if (oControl1.placeAt && !bControlCannotRender) {
-			oControl1.placeAt("qunit-fixture");
+			if (oControl1.placeAt && !bControlCannotRender) {
+				try {
+					oControl1.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+				} catch (e) {
+					// control didn't say it has problems with rendering!
+					assert.ok(false, "Error: control has a renderer, but could not be rendered. If this is known, please set the 'bControlCannotRender' flag when calling MemoryLeakCheck.checkControl");
+					throw e;
+				}
+			}
+
+			if (fnSomeAdditionalFunction) {
+				fnSomeAdditionalFunction(oControl1);
+				sap.ui.getCore().applyChanges();
+			}
+
+			oControl1.destroy();
 			sap.ui.getCore().applyChanges();
 
-		} else {
-			// control didn't say it has problems with rendering!
-			assert.ok(false, "Error: control has a renderer, but could not be rendered. If this is known, please set the 'bControlCannotRender' flag when calling MemoryLeakCheck.checkControl");
 
-		}
+			// Render Control Instance 2 - any new controls leaked?
 
-		if (fnSomeAdditionalFunction) {
-			fnSomeAdditionalFunction(oControl1);
+			var mPreElements = getAllAliveControls(), oControl2 = fnControlFactory();
+
+			fillControlProperties(oControl2);
+
+			if (oControl2.placeAt && !bControlCannotRender) {
+				oControl2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oControl2.rerender(); // just re-render again - this finds problems
+				sap.ui.getCore().applyChanges();
+			}
+
+			if (fnSomeAdditionalFunction) {
+				fnSomeAdditionalFunction(oControl2);
+				sap.ui.getCore().applyChanges();
+			}
+
+			// check what's left after destruction
+
+			oControl2.destroy();
 			sap.ui.getCore().applyChanges();
-		}
+			var mPostElements = getAllAliveControls();
 
-		oControl1.destroy();
-		sap.ui.getCore().applyChanges();
+			// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR
+			detectEqualElementsInControlList(assert, mPostElements, mPreElements, "Memory leak check should not find any leftover controls after creating two instances and rendering twice" + (fnSomeAdditionalFunction ? "\n(and calling fnSomeAdditionalFunction)" : ""));
 
-
-		// Render Control Instance 2 - any new controls leaked?
-
-		var mPreElements = getAllAliveControls(), oControl2 = fnControlFactory();
-
-		fillControlProperties(oControl2);
-
-		if (oControl2.placeAt && !bControlCannotRender) {
-			oControl2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			oControl2.rerender(); // just re-render again - this finds problems
-			sap.ui.getCore().applyChanges();
-		}
-
-		if (fnSomeAdditionalFunction) {
-			fnSomeAdditionalFunction(oControl2);
-			sap.ui.getCore().applyChanges();
-		}
-
-		// check what's left after destruction
-
-		oControl2.destroy();
-		sap.ui.getCore().applyChanges();
-		var mPostElements = getAllAliveControls();
-
-		// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR
-		detectEqualElementsInControlList(assert, mPostElements, mPreElements, "Memory leak check should not find any leftover controls after creating two instances and rendering twice" + (fnSomeAdditionalFunction ? "\n(and calling fnSomeAdditionalFunction)" : ""));
-
-		// controls left over by first instance are either real leaks or one-time static leaks, which we accept
+			// controls left over by first instance are either real leaks or one-time static leaks, which we accept
+		});
 	};
 
 
@@ -158,7 +163,8 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			}
 		}
 
-		assert.ok(aUnexpectedElements.length === 0, aUnexpectedElements.join(", "), "", sMessage);
+		sMessage = sMessage + (aUnexpectedElements.length > 0 ? ". LEFTOVERS: " + aUnexpectedElements.join(", ") : "");
+		assert.equal(aUnexpectedElements.length, 0, sMessage);
 	};
 
 
@@ -213,9 +219,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			assert.ok(document.getElementById("qunit-fixture"), "the test page HTML should contain an element with ID 'qunit-fixture'");
 		});
 
-		QUnit.test("Check control for memory leaks", function(assert) {
-			checkControl(fnControlFactory, assert, fnSomeAdditionalFunction, bControlCannotRender);
-		});
+		_checkControl(fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender);
 	};
 
 	return MemoryLeakCheck;

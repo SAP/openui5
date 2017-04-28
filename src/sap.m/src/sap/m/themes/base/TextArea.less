@@ -12,7 +12,12 @@
 }
 
 .sapMTextArea .sapMInputDivWrapper {
-
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+	-webkit-align-items: flex-end;
+	align-items: flex-end;
 	-webkit-overflow-scrolling: touch;
 	height: 100%;
 	width: 100%;
@@ -24,10 +29,38 @@
 	height: 100%;
 	width: 100%;
 }
+
 .sapMTextAreaGrow {
 	/* should not grow more than screen size */
-	max-height: calc(~"100vh - 6rem");
 	overflow: hidden;
+}
+
+.sapMTextAreaWithCounter {
+	& .sapMTextAreaInner:not(.sapMTextAreaGrow) {
+		height: calc(100% - 1.5rem);
+	}
+
+	& .sapMTextAreaCounter {
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontSmallSize;
+		padding: 0.125rem 0.125rem 0.5rem;
+		height: 1.5rem;
+	}
+
+	.sapMTextAreaCounterShow{
+		display: block;
+	}
+
+	& .sapMInputDivWrapper:not(.sapMInputBaseReadonlyInner):not(.sapMInputBaseStateInner):not(.sapMInputBaseDisabledInner):hover {
+		background: transparent;
+		border-color: transparent;
+	}
+
+	&.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner):not(.sapMTextAreaGrow) {
+		&::before {
+			bottom: 1.7rem;
+		}
+	}
 }
 
 .sapMInputBase.sapMTextArea {
@@ -56,6 +89,18 @@
 		.sapMTextAreaInner {
 			padding: 0.1875rem 0.5rem;
 			height: auto;
+		}
+	}
+
+	.sapMTextAreaWithCounter {
+		& .sapMTextAreaInner:not(.sapMTextAreaGrow) {
+			height: 100%;
+		}
+
+		&.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner):not(.sapMTextAreaGrow) {
+			&::before {
+				bottom: 1.5rem;
+			}
 		}
 	}
 }

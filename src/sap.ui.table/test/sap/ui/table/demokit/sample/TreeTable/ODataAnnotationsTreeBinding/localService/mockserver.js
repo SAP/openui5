@@ -6,7 +6,7 @@ sap.ui.define([
 	return {
 
 		init: function (sODataServiceUrl) {
-			var oMockServer, sLocalServicePath, aRequests, oErrorResponse, fnResponse;
+			var oMockServer, sLocalServicePath;
 
 			// create
 			oMockServer = new MockServer({

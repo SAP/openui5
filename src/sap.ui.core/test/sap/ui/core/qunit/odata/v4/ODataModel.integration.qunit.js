@@ -72,7 +72,7 @@ sap.ui.require([
 	function prepareTestForCreateOnRelativeBinding(oTest, assert) {
 		var oModel = createTeaBusiModel({updateGroupId : "update"}),
 			sView = '\
-<VBox id="vbox" binding="{path : \'/TEAMS(42)\',\
+<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$select : \'ID,Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<items>\
@@ -84,9 +84,9 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</VBox>';
+</FlexBox>';
 
-		oTest.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+		oTest.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
 				"TEAM_2_EMPLOYEES" : [
 					{"ID" : "2", "Name" : "Frederic Fall"}
 				]
@@ -110,7 +110,7 @@ sap.ui.require([
 					: {source : "metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
-//			this.oLogMock.expects("warning").never();
+			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			// {map<string, string[]>}
@@ -169,9 +169,9 @@ sap.ui.require([
 		checkResetInvalidDataState : function (assert, fnGetResetable) {
 			var oModel = createTeaBusiModel({updateGroupId : "update"}),
 				sView = '\
-<form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
+<FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="age" text="{AGE}" />\
-</form:SimpleForm>',
+</FlexBox>',
 				that = this;
 
 			this.expectRequest("EMPLOYEES('2')", {"AGE" : 32})
@@ -262,8 +262,7 @@ sap.ui.require([
 			}
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.oView = sap.ui.xmlview({
-				viewContent : '<mvc:View xmlns="sap.m" xmlns:form="sap.ui.layout.form" '
-					+ 'xmlns:mvc="sap.ui.core.mvc">'
+				viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
 					+ sViewXML
 					+ '</mvc:View>'
 			});
@@ -447,9 +446,9 @@ sap.ui.require([
 	// Scenario: Minimal test for an absolute ODataContextBinding without own parameters containing
 	// a relative ODataPropertyBinding. The SalesOrders application does not have such a scenario.
 	testViewStart("Absolute ODCB w/o parameters with relative ODPB", '\
-<form:SimpleForm binding="{/EMPLOYEES(\'2\')}">\
+<FlexBox binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="text" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 		{"EMPLOYEES('2')" : {"Name" : "Frederic Fall"}},
 		{"text" : "Frederic Fall"}
 	);
@@ -458,9 +457,9 @@ sap.ui.require([
 	// Scenario: Minimal test for an absolute ODataContextBinding with own parameters containing
 	// a relative ODataPropertyBinding. The SalesOrders application does not have such a scenario.
 	testViewStart("Absolute ODCB with parameters and relative ODPB", '\
-<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="text" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 		{"EMPLOYEES('2')?$select=Name" : {"Name" : "Frederic Fall"}},
 		{"text" : "Frederic Fall"}
 	);
@@ -539,7 +538,7 @@ sap.ui.require([
 	// Scenario: Nested list binding with own parameters causes a second request.
 	// This scenario is similar to the "Sales Order Line Items" in the SalesOrders application.
 	testViewStart("Absolute ODCB with parameters and relative ODLB with parameters", '\
-<VBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'Name\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Table items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$select : \'Category\'}}">\
 		<items>\
@@ -550,7 +549,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</VBox>',
+</FlexBox>',
 		{
 			"EMPLOYEES('2')?$select=Name" : {"Name" : "Frederic Fall"},
 			"EMPLOYEES('2')/EMPLOYEE_2_EQUIPMENTS?$select=Category&$skip=0&$top=100" :
@@ -565,9 +564,9 @@ sap.ui.require([
 	// SalesOrders application the binding context is set programmatically. This example directly
 	// triggers the function import.
 	testViewStart("FunctionImport", '\
-<form:SimpleForm binding="{/GetEmployeeByID(EmployeeID=\'2\')}">\
+<FlexBox binding="{/GetEmployeeByID(EmployeeID=\'2\')}">\
 	<Text id="text" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 		{"GetEmployeeByID(EmployeeID='2')" : {"Name" : "Frederic Fall"}},
 		{"text" : "Frederic Fall"}
 	);
@@ -584,7 +583,7 @@ sap.ui.require([
 	// In this test dynamic filters are used instead of dynamic sorters
 	QUnit.test("Relative ODLB inherits parent OBCB's query options on filter", function (assert) {
 		var sView = '\
-<VBox binding="{path : \'/TEAMS(42)\',\
+<FlexBox binding="{path : \'/TEAMS(\\\'42\\\')\',\
 	parameters : {$expand : {TEAM_2_EMPLOYEES : {$orderby : \'AGE\', $select : \'Name\'}}}}">\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<items>\
@@ -595,10 +594,10 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS(42)?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
+		this.expectRequest("TEAMS('42')?$expand=TEAM_2_EMPLOYEES($orderby=AGE;$select=Name)", {
 				"TEAM_2_EMPLOYEES" : [
 					{"Name" : "Frederic Fall"},
 					{"Name" : "Jonathan Smith"},
@@ -608,7 +607,7 @@ sap.ui.require([
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest(
-					"TEAMS(42)/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042"
+					"TEAMS('42')/TEAM_2_EMPLOYEES?$orderby=AGE&$select=Name&$filter=AGE%20gt%2042"
 						+ "&$skip=0&$top=100",
 					{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
 				.expectChange("text", "Peter Burke", 1);
@@ -639,9 +638,9 @@ sap.ui.require([
 		</ColumnListItem>\
 	</items>\
 </Table>\
-<form:SimpleForm id="form" binding="{EMPLOYEE_2_MANAGER}">\
+<FlexBox id="form" binding="{EMPLOYEE_2_MANAGER}">\
 	<Text id="id" text="{ID}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER&$skip=0&$top=100", {
@@ -736,9 +735,9 @@ sap.ui.require([
 	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODCB refresh", function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
+<FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="text" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
@@ -787,9 +786,9 @@ sap.ui.require([
 	// * In the "Change Team Budget" dialog enter a "Budget" and press "Change" button
 	QUnit.test("ActionImport", function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{/ChangeTeamBudgetByID(...)}">\
+<FlexBox id="form" binding="{/ChangeTeamBudgetByID(...)}">\
 	<Text id="name" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			that = this;
 
 		//TODO Why is formatter called with null and not undefined?
@@ -857,9 +856,9 @@ sap.ui.require([
 	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Absolute ODCB changing parameters", function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{/EMPLOYEES(\'2\')}">\
+<FlexBox id="form" binding="{/EMPLOYEES(\'2\')}">\
 	<Text id="text" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			that = this;
 
 		that.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
@@ -1087,7 +1086,7 @@ sap.ui.require([
 	// The key point is that the parent of the list is a ContextBinding.
 	QUnit.test("ODLB: refresh via parent context binding, shared cache", function (assert) {
 		var sView = '\
-<VBox id="vbox" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
+<FlexBox id="form" binding="{path :\'/SalesOrderList(\\\'0500000001\\\')\', parameters : {$expand : {SO_2_SOITEM : {$select : \'ItemPosition\'}}}}">\
 	<Text id="count" text="{headerContext>$count}"/>\
 	<Table id="table" items="{SO_2_SOITEM}">\
 		<items>\
@@ -1098,7 +1097,7 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</VBox>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)",
@@ -1142,7 +1141,7 @@ sap.ui.require([
 				.expectChange("item", "0000000030", 1);
 
 			// code under test
-			that.oView.byId("vbox").getObjectBinding().refresh();
+			that.oView.byId("form").getObjectBinding().refresh();
 
 			return that.waitForChanges(assert);
 		});
@@ -1154,10 +1153,10 @@ sap.ui.require([
 	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB", function (assert) {
 		var sView = '\
-<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE,ROOM_ID\'}}">\
 	<Text id="name" text="{Name}" />\
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
-</form:SimpleForm>';
+</FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,ID,Name,LOCATION/City/CITYNAME", {
 				"Name" : "Frederic Fall",
@@ -1178,9 +1177,9 @@ sap.ui.require([
 	// The SalesOrders application does not have such a scenario.
 	QUnit.test("Auto-$expand/$select: Absolute ODCB, refresh", function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
+<FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\', parameters : {$select : \'AGE\'}}">\
 	<Text id="name" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
@@ -1319,9 +1318,9 @@ sap.ui.require([
 	// updated via a change event.
 	QUnit.test("Metadata: Product name via form", function (assert) {
 		var sView = '\
-<form:SimpleForm binding="{/Equipments/EQUIPMENT_2_PRODUCT/}">\
+<FlexBox binding="{/Equipments/EQUIPMENT_2_PRODUCT/}">\
 	<Text id="product" text="{@sapui.name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			oModel = createTeaBusiModel().getMetaModel(),
 			that = this;
 
@@ -1385,7 +1384,7 @@ sap.ui.require([
 	QUnit.test("Auto-$expand/$select: Absolute ODCB with relative ODPB, $expand required",
 			function (assert) {
 		var sView = '\
-<form:SimpleForm id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+<FlexBox id="form" binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
 			parameters : {\
 				$expand : {\
 					EMPLOYEE_2_TEAM : {$select : \'Team_Id\'}\
@@ -1395,10 +1394,10 @@ sap.ui.require([
 		}">\
 	<Text id="name" text="{EMPLOYEE_2_TEAM/Name}" />\
 	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}" />\
-</form:SimpleForm>';
+</FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
-				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=TEAM_ID))&$select=AGE,ID",
+				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_TEAM": {
@@ -1424,7 +1423,7 @@ sap.ui.require([
 	QUnit.test("Auto-$expand/$select: Nested ODCB",
 			function (assert) {
 		var sView = '\
-<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
 			parameters : {\
 				$expand : {\
 					EMPLOYEE_2_MANAGER : {$select : \'ID\'}\
@@ -1432,13 +1431,13 @@ sap.ui.require([
 				$select : \'AGE\'\
 			}\
 		}">\
-	<form:SimpleForm binding="{EMPLOYEE_2_TEAM}">\
+	<FlexBox binding="{EMPLOYEE_2_TEAM}">\
 		<Text id="name" text="{Name}" />\
-	</form:SimpleForm>\
-</form:SimpleForm>';
+	</FlexBox>\
+</FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
-					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name)&$select=AGE,ID",
+					+ "($select=ID),EMPLOYEE_2_TEAM($select=Team_Id,Name)&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1467,11 +1466,11 @@ sap.ui.require([
 
 		return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
-			oTeamBinding = that.oView.byId("vbox").getObjectBinding();
+			oTeamBinding = that.oView.byId("form").getObjectBinding();
 			that.expectRequest({
 					headers : null,
 					method : "POST",
-					url : "TEAMS(42)/TEAM_2_EMPLOYEES",
+					url : "TEAMS('42')/TEAM_2_EMPLOYEES",
 					payload : {
 						"@$ui5.transient": "update",
 						"ID" : null,
@@ -1501,10 +1500,10 @@ sap.ui.require([
 			assert.notOk(oTeam2EmployeesBinding.hasPendingChanges(), "no more pending changes");
 			assert.notOk(oTeamBinding.hasPendingChanges(), "no more pending changes");
 			assert.throws(function () {
-				that.oView.byId("vbox").bindElement("/TEAMS(43)",
+				that.oView.byId("form").bindElement("/TEAMS('43')",
 					{$expand : {TEAM_2_EMPLOYEES : {$select : 'ID,Name'}}});
 			}, new Error("setContext on relative binding is forbidden if created entity" +
-				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS(42)|TEAM_2_EMPLOYEES"));
+				" exists: sap.ui.model.odata.v4.ODataListBinding: /TEAMS('42')|TEAM_2_EMPLOYEES"));
 			return that.waitForChanges(assert);
 		});
 	});
@@ -1523,7 +1522,7 @@ sap.ui.require([
 
 			return prepareTestForCreateOnRelativeBinding(this, assert).then(function () {
 				oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
-				oTeamBinding = that.oView.byId("vbox").getObjectBinding();
+				oTeamBinding = that.oView.byId("form").getObjectBinding();
 
 				// restore requestor to test proper cancel handling without simulating the requestor
 				that.oModel.oRequestor.request.restore();
@@ -1569,20 +1568,20 @@ sap.ui.require([
 	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
-<form:SimpleForm id="function" binding="{/GetEmployeeByID(...)}">\
+<FlexBox id="function" binding="{/GetEmployeeByID(...)}">\
 	<Text id="name" text="{Name}" />\
-</form:SimpleForm>',
+</FlexBox>',
 			that = this;
 
 		this.expectChange("name");
 		return this.createView(assert, sView, oModel).then(function () {
 // TODO the query options for the function import are not enhanced
-//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
+//			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", "Jonathan Smith")
-				.expectChange("name", "Jonathan Smith"); // TODO unexpected 2nd change
+				.expectChange("name", null) // TODO unexpected change
+				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
 				.setParameter("EmployeeID", "1")
@@ -1598,7 +1597,7 @@ sap.ui.require([
 	QUnit.test("Auto-$expand/$select: Nested ODCB with own request",
 			function (assert) {
 		var sView = '\
-<form:SimpleForm binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
+<FlexBox binding="{path : \'/EMPLOYEES(\\\'2\\\')\',\
 			parameters : {\
 				$expand : {\
 					EMPLOYEE_2_MANAGER : {$select : \'ID\'},\
@@ -1612,7 +1611,7 @@ sap.ui.require([
 				}\
 			}\
 		}">\
-	<form:SimpleForm binding="{path : \'EMPLOYEE_2_TEAM\',\
+	<FlexBox binding="{path : \'EMPLOYEE_2_TEAM\',\
 		parameters : {\
 			$expand : {\
 				TEAM_2_EMPLOYEES : {\
@@ -1622,12 +1621,12 @@ sap.ui.require([
 		}\
 	}">\
 		<Text id="name" text="{Name}" />\
-	</form:SimpleForm>\
+	</FlexBox>\
 	<Text id="age" text="{AGE}" />\
-</form:SimpleForm>';
+</FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
-					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name",
+					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Team_Id,Name",
 				{
 					"Name": "SAP NetWeaver Gateway Content",
 					"TEAM_2_EMPLOYEES": [
@@ -1636,7 +1635,7 @@ sap.ui.require([
 					]
 				})
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
-					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE",
+					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=ID,AGE",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1657,7 +1656,267 @@ sap.ui.require([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
-	//TODO $batch?
-	//TODO test bound action
-	//TODO test delete
+
+	//*********************************************************************************************
+	// Scenario: Auto-$expand/$select: Absolute ODataListBinding considers $filter set via API,
+	// i.e. it changes the initially aggregated query options. Note: It is also possible to remove
+	// a filter which must lead to removal of the $filter option.
+	QUnit.test("Absolute ODLB with auto-$expand/$select: filter via API", function (assert) {
+		var sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			filters: {path: \'AGE\', operator: \'LT\', value1: \'77\'},\
+			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
+		}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$filter=AGE%20lt%2077"
+					+ "&$skip=0&$top=100",
+				{
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Jonathan Smith"},
+						{"Name" : "Peter Burke"}
+					]
+				}
+			)
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name"
+							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
+						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+					.expectChange("text", "Peter Burke", 1);
+
+				// code under test
+				that.oView.byId("table").getBinding("items")
+					.filter(new Filter("AGE", FilterOperator.GT, 42));
+				return that.waitForChanges(assert);
+			})
+			.then(function () {
+				that.expectRequest("EMPLOYEES?$orderby=Name&$select=AGE,ID,Name&$skip=0&$top=100", {
+						"value" : [
+							{"Name" : "Frederic Fall"},
+							{"Name" : "Jonathan Smith"},
+							{"Name" : "Peter Burke"}
+						]
+					})
+					.expectChange("text", "Jonathan Smith", 1)
+					.expectChange("text", "Peter Burke", 2);
+
+				// code under test
+				that.oView.byId("table").getBinding("items").filter(/*no filter*/);
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Auto-$expand/$select: Relative ODataListBinding considers $filter set via API, i.e.
+	// it changes the initially aggregated query options and creates a separate cache/request.
+	QUnit.test("ODLB with auto-$expand/$select below ODCB: filter via API", function (assert) {
+		var sView = '\
+<FlexBox binding="{/TEAMS(\'2\')}">\
+	<Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="text" text="{Name}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+	<Text id="name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('2')?$select=Team_Id,Name"
+					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
+					"Name" : "Team 2",
+					"Team_Id" : "2",
+					"TEAM_2_EMPLOYEES" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Jonathan Smith"},
+						{"Name" : "Peter Burke"}
+					]
+				}
+			)
+			.expectChange("name", "Team 2")
+			.expectChange("name", "Team 2") // TODO unexpected change
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				that.expectRequest("TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID,Name"
+							+ "&$filter=AGE%20gt%2042&$skip=0&$top=100",
+						{"value" : [{"Name" : "Frederic Fall"}, {"Name" : "Peter Burke"}]})
+					.expectChange("text", "Peter Burke", 1);
+
+				// code under test
+				that.oView.byId("table").getBinding("items")
+					.filter(new Filter("AGE", FilterOperator.GT, 42));
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
+	// Scenario: child binding has $apply and would need $expand therefore it cannot use its
+	// parent binding's cache
+	QUnit.test("Auto-$expand/$select: no $apply inside $expand", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}">\
+	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="text" text="{Name}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
+				+ "&$select=ID,Name&$skip=0&$top=100", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Peter Burke"}
+					]
+				})
+			.expectChange("text",  ["Frederic Fall", "Peter Burke"]);
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: child binding cannot use its parent list binding's cache (for whatever reason)
+	// but must not compute the canonical path for the virtual context
+	QUnit.test("Auto-$expand/$select: no canonical path for virtual context", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<List items="{path : \'TEAM_2_EMPLOYEES\',\
+					parameters : {$apply : \'filter(AGE lt 42)\'}, templateShareable : false}">\
+					<CustomListItem>\
+						<Text id="text" text="{Name}" />\
+					</CustomListItem>\
+				</List>\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>';
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+					"value" : [
+						{"Team_Id" : "TEAM_01"}
+					]
+				})
+			.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
+				+ "&$select=ID,Name&$skip=0&$top=100", {
+					"value" : [
+						{"Name" : "Frederic Fall"},
+						{"Name" : "Peter Burke"}
+					]
+				})
+			.expectChange("text", ["Frederic Fall", "Peter Burke"]);
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: master/detail where the detail does not need additional $expand/$select and thus
+	// should reuse its parent's cache
+	QUnit.test("Auto-$expand/$select: simple master/detail", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text0" text="{Team_Id}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="detail" binding="{}">\
+	<Text id="text1" text="{Team_Id}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+					"value" : [{
+						"Team_Id" : "TEAM_01"
+					}]
+				})
+			.expectChange("text0", ["TEAM_01"])
+			.expectChange("text1"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+
+			that.expectChange("text1", "TEAM_01");
+
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: master/detail where the detail needs additional $expand/$select and thus cannot
+	// reuse its parent's cache
+	QUnit.test("Auto-$expand/$select: master/detail with separate requests", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="master" items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text0" text="{Team_Id}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<FlexBox id="detail" binding="{}">\
+	<Text id="text1" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
+				"value" : [{
+					"Team_Id" : "TEAM_01"
+				}]
+			})
+			.expectChange("text0", ["TEAM_01"])
+			.expectChange("text1"); // expect a later change
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
+
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id,Name", {
+					"Team_Id" : "TEAM_01",
+					"Name" : "Team #1"
+				})
+				.expectChange("text1", "Team #1");
+
+			that.oView.byId("detail").setBindingContext(oContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
+//TODO $batch?
+//TODO test bound action
+//TODO test delete

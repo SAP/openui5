@@ -2258,7 +2258,9 @@
 	QUnit.test("test onBeforeRendering function with variableRowHeightEnabled=true", function(assert) {
 		var fnCalculateRowsToDisplay = sinon.spy(oTable, "_calculateRowsToDisplay");
 		oTable._bVariableRowHeightEnabled = true;
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event();
+		/*eslint-enable new-cap */
 		oTable.onBeforeRendering(oEvent);
 		assert.ok(fnCalculateRowsToDisplay.called, "_calcualteRowsToDisplay() called via onBeforeRendering()");
 		assert.ok(this.sinon.stub(sap.ui.table.TableUtils, "isVariableRowHeightEnabled").returns(true));
@@ -2272,7 +2274,9 @@
 
 	QUnit.test("test onAfterRendering function with variableRowHeightEnabled=true", function(assert) {
 		oTable._bVariableRowHeightEnabled = true;
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event();
+		/*eslint-enable new-cap */
 		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 		oTable.onAfterRendering(oEvent);
 		assert.equal(oVSb.scrollTop, 0, "scrollTop value is available");
@@ -2281,7 +2285,9 @@
 	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping function via onAfterRendering", function(assert) {
 		var fnCleanupTableRowForGrouping = sinon.spy(sap.ui.table.TableUtils.Grouping, "cleanupTableRowForGrouping");
 		var fnUpdateTableContent = sinon.spy(oTable, "_updateTableContent");
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event();
+		/*eslint-enable new-cap */
 		oTable._mode = "Group"; // return true for sap.ui.table.TableUtils.Grouping.isGroupMode(oTable)
 		oTable.setEnableGrouping(true); // for testing _updateTableContent()
 		oTable.setGroupBy(oTable.getColumns()[5]); // Enabling grouping on "gender" for enhancing row binding
