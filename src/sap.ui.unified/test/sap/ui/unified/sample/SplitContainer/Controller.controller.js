@@ -5,10 +5,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 	var ControllerController = Controller.extend("sap.ui.unified.sample.SplitContainer.Controller", {
 		handleSwitchOrientation: function(oEvent) {
 			var sOrientation = this.getView().byId("mySplitContainer").getOrientation();
-			if(sOrientation == "Vertical") {
+			if (sOrientation == "Vertical") {
 				sOrientation = "Horizontal";
-			}
-			else {
+			} else {
 				sOrientation = "Vertical";
 			}
 			this.getView().byId("mySplitContainer").setOrientation(sOrientation);
