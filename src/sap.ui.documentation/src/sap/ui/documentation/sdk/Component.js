@@ -24,9 +24,9 @@ sap.ui.define([
 					"css/welcome.css",
 					"css/landingPage.css",
 					"css/headers.css",
-					"controller/util/google-code-prettify/prettify.css",
-					"controller/util/google-code-prettify/prettify.js",
-					"controller/util/google-code-prettify/lang-css.js",
+					"thirdparty/google-code-prettify/prettify.css",
+					"thirdparty/google-code-prettify/prettify.js",
+					"thirdparty/google-code-prettify/lang-css.js",
 					"css/FeedbackRatingFaces.css"
 				]
 			},
