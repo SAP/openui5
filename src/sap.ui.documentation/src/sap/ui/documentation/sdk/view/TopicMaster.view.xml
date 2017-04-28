@@ -1,0 +1,44 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.TopicMaster"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		class="sapContrast sapContrastPlus">
+
+	<Page
+			id="page"
+			enableScrolling="true"
+			showFooter="false"
+			navButtonPress="onNavBack"
+			showNavButton="false"
+			class="sapUiDocumentationMasterPage">
+
+		<customHeader>
+			<Toolbar width="100%">
+				<SearchField placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"></SearchField>
+				<Button icon="sap-icon://expand-group" press="onTreeExpandAll"></Button>
+				<Button icon="sap-icon://collapse-group" press="onTreeCollapseAll"></Button>
+			</Toolbar>
+		</customHeader>
+
+		<content>
+
+			<Tree
+					id="tree"
+					mode="SingleSelectMaster"
+					selectionChange="onNodeSelect"
+					items="{ path: '/' }">
+				<StandardTreeItem
+						title="{text}"
+						selected="{isSelected}">
+					<customData>
+						<core:CustomData key="nodeId" value="{key}" />
+					</customData>
+				</StandardTreeItem>
+			</Tree>
+
+		</content>
+
+	</Page>
+
+</mvc:View>

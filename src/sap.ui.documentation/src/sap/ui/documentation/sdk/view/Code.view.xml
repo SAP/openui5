@@ -1,0 +1,55 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Code"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:l="sap.ui.layout"
+		xmlns="sap.m"
+		xmlns:ce="sap.ui.codeeditor" height="100%">
+	<Page
+			id="page"
+			showNavButton="true"
+			navButtonPress="onNavBack"
+			title="{/title}"
+			icon="img/144_iPad_Retina_Web_Clip.png"
+			enableScrolling="false">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
+		<headerContent>
+			<Button
+					class="sapUiHideOnPhone"
+					text="Download"
+					icon="sap-icon://download"
+					press="onDownload" />
+			<Button
+					class="sapUiVisibleOnlyOnPhone"
+					icon="sap-icon://download"
+					press="onDownload" />
+		</headerContent>
+		<content>
+			<l:FixFlex>
+				<l:fixContent>
+					<IconTabHeader
+							id="tabHeader"
+							showOverflowSelectList="true"
+							backgroundDesign="Transparent"
+							mode="Inline"
+							items="{/files}"
+							select="handleTabSelectEvent"
+							selectedKey="{/fileName}">
+						<items>
+							<IconTabFilter
+								key="{name}"
+								text="{name}"/>
+						</items>
+					</IconTabHeader>
+				</l:fixContent>
+				<l:flexContent>
+					<ce:CodeEditor
+						id="codeEditor"
+						editable="false"/>
+				</l:flexContent>
+			</l:FixFlex>
+		</content>
+	</Page>
+</mvc:View>

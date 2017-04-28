@@ -1,0 +1,329 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout">
+
+	<Page showHeader="false">
+
+		<content>
+			<l:BlockLayout
+					background="Light">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							class="sapUiNoContentPadding">
+						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
+								width="100%"
+								densityAware="false"
+								visible="{device>/system/phone}"/>
+						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_M_and_L_cropped.jpg"
+								width="100%"
+								visible="{=!${device>/system/phone}}"/>
+						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderTitleText" text="API Reference" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderSubText" text="Application programming interface references for the UI5 control libraries" width="100%" textAlign="Left"/>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							title="UI5 Library Namespaces">
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							width="2">
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="The SAPUI5 Core Runtime"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Contains the UI5 jQuery plugins (jQuery.sap.*), the Core and all it's components, base classes for Controls, Components and the Model View Controller classes."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.core namespace"
+									href="#/api/sap.ui.core"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.core.Control"
+									href="#/api/sap.ui.core.Control"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.core.Core"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="SAP Fiori Library"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="UI5 library with controls specialized for SAP Fiori apps."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.f namespace"
+									href="#/api/sap.f"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.f.DynamicPage"
+									href="#/api/sap.f.DynamicPage"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.f.FlexibleColumnLayout"
+									href="#/api/sap.f.FlexibleColumnLayout"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="SAP Fiori for Tools"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="UI5 library with controls specialized for administrative apps."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.tnt namespace"
+									href="#/api/sap.tnt"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.tnt.ToolPage"
+									href="#/api/sap.tnt.ToolPage"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.tnt.ToolHeader"
+									href="#/api/sap.tnt.ToolHeader"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Layout Controls"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="UI5 library specialized for layout controls"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.layout namespace"
+									href="#/api/sap.ui.layout"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.layout.form"
+									href="#/api/sap.ui.layout.form.Form"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.layout.BlockLayout"
+									href="#/api/sap.ui.layout.BlockLayout"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Object Pages"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="UI5 library with controls specialized for SAP Fiori apps."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.uxap namespace"
+									href="#/api/sap.uxap"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.uxap.ObjectPageLayout"
+									href="#/api/sap.uxap.ObjectPageLayout"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.uxap.ObjectPageHeaderContent"
+									href="#/api/sap.uxap.ObjectPageHeaderContent"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell
+							width="2">
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Main Controls"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="The main UI5 control library, with responsive controls that can be used in touch-enabled devices and desktop browsers."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.m namespace"
+									href="#/api/sap.m"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.m.Page"
+									href="#/api/sap.m.Page"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.m.NavContainer"
+									href="#/api/sap.m.NavContainer"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							width="2">
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Tables"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Table-like controls, supporting touch and non-touch desktop and tablet scenarios."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.table"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.m.Table"
+									href="#/api/sap.m.Table"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.table.AnalyticalTable"
+									href="#/api/sap.ui.table.AnalyticalTable"/>
+
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Models"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="The SAPUI5 Data Binding API"
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.model namespace"
+									href="#/api/sap.ui.model"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.model.Binding"
+									href="#/api/sap.ui.model.Binding"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.model.Model"
+									href="#/api/sap.ui.model.Model"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+
+					<l:BlockLayoutCell>
+						<l:VerticalLayout
+								width="100%">
+							<Title
+									text="Unified Controls"
+									titleStyle="H2"
+									class="sapUiSmallMarginBottom"/>
+							<Text
+									text="Unified controls intended from both, mobile and desktop scenarious."
+									class="sapUiSmallMarginBottom"/>
+							<Link
+									text="sap.ui.unified namespace"
+									href="#/api/sap.ui.unified"
+									class="sapUiMediumMarginBottom"/>
+							<Title
+									text="Further Links"
+									titleStyle="H5"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.unified.FileUploader"
+									href="#/api/sap.ui.unified.FileUploader"
+									class="sapUiTinyMarginBottom"/>
+							<Link
+									text="sap.ui.unified.ColorPicker"
+									href="#/api/sap.ui.unified.ColorPicker"/>
+						</l:VerticalLayout>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							class="demokitInitialPagesColorPatternFContrast">
+						<HBox
+								justifyContent="SpaceBetween"
+								alignItems="Center">
+							<Image
+									src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+									height="2.5rem">
+							</Image>
+							<HBox
+									width="100%"
+									justifyContent="End"
+									wrap="Wrap"
+									visible="{=!${appView>/isOpenUI5}}">
+								<Link
+										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+										text="Legal Disclosure"
+										href="https://www.sap.com/corporate/en/legal/impressum.html"
+										target="_blank"/>
+								<Link
+										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+										text="Privacy"
+										href="https://help.hana.ondemand.com/privacy.htm"
+										target="_blank"/>
+								<Link
+										class="demokitInitialPagesBrightLink"
+										text="Terms of use"
+										href="https://help.hana.ondemand.com/terms_of_use.html"
+										target="_blank"/>
+							</HBox>
+						</HBox>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+			</l:BlockLayout>
+		</content>
+	</Page>
+</mvc:View>
