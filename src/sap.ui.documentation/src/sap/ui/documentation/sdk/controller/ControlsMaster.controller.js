@@ -71,8 +71,11 @@ sap.ui.define([
 							entities : ControlsInfo.data.entities
 						});
 						this.getModel("filter").setData(ControlsInfo.data.filter);
-						this._updateListSelection();
+						this._toggleListItem(this._getItemToSelect(), true);
 					}.bind(this);
+
+				// Keep track if navigation happens via selecting items manually within the List
+				this._bNavToEntityViaList = false;
 
 				// Cache view reference
 				this._oView = this.getView();
@@ -207,6 +210,8 @@ sap.ui.define([
 				this._entityId = sEntityId;
 
 				oEntityModel.refresh();
+
+				this._updateListSelection();
 			},
 
 			_onControlsMasterMatched: function(event) {
@@ -216,8 +221,9 @@ sap.ui.define([
 				}
 			},
 
-			_onControlsMatched: function(event) {
+			_onControlsMatched: function() {
 				this.showMasterSide();
+				this._resetListSelection();
 			},
 
 			/* =========================================================== */
@@ -245,6 +251,7 @@ sap.ui.define([
 					oEntity = this.getView().getModel().getProperty(sPath),
 					bReplace = !Device.system.phone;
 
+				this._bNavToEntityViaList = true;
 				this.getRouter().navTo("entity", {id: oEntity.id, part: "samples"}, bReplace);
 			},
 
@@ -256,31 +263,75 @@ sap.ui.define([
 			},
 
 			/**
-			 * Updates the <code>List</code> selection, based on the loaded sample,
-			 * after the model is loaded and the data is available.
-			 * NOTE: The method is executed in <code>fnOnDataReady</code> callback.
-			 */
+			* Updates the <code>List</code> selection, based on the loaded sample,
+			* after the model is loaded.
+			* <code>Note</code>:
+			* The method scrolls the page to the given item,
+			* if the navigation happens not by selecting items from the <code>List</code>,
+			* but using links from other pages.
+			*/
 			_updateListSelection : function() {
 				var oItemToSelect = this._getItemToSelect();
 
-				if (oItemToSelect) {
-					this._getList().setSelectedItem(oItemToSelect, undefined, false);
+				if (!oItemToSelect) {
+					return;
+				}
+
+				this._toggleListItem(oItemToSelect, true);
+
+				if (!this._bNavToEntityViaList) {
+					jQuery.sap.delayedCall(0, this, this._scrollToListItem, [oItemToSelect]);
+				}
+				this._bNavToEntityViaList = false;
+			},
+
+			/**
+			* Resets the given <code>List</code> selection
+			* and scrolls to the top.
+			*/
+			_resetListSelection : function() {
+				var oSelectedItem = this._getList().getSelectedItem();
+
+				if (oSelectedItem) {
+					this._toggleListItem(oSelectedItem, false);
+					jQuery.sap.delayedCall(0, this, this._scrollPageTo, [0, 0]);
 				}
 			},
 
 			/**
-			 * Scrolls to the given <code>ListItemBase</code>.
-			 * @param {sap.m.ListItemBase} oItemToSelect
-			 */
-			_scrollToListItem : function(oItemToSelect) {
-				this._getPage().scrollToElement(oItemToSelect, this.LIST_SCROLL_DURATION);
+			* Selects or deselects the given <code>ListItemBase</code>.
+			*
+			* @param {sap.m.ListItemBase} oItemToSelect
+			* @param {boolean} bSelect Sets selected status of the list item.
+			*/
+			_toggleListItem : function(oItemToSelect, bSelect) {
+				this._getList().setSelectedItem(oItemToSelect, bSelect, false);
 			},
 
 			/**
-			 * Retrieves the <code>sap.m.ListItem</code>, that should be selected within the List,
-			 * based on the loaded sample or null, if it does not exist.
-			 * @returns {sap.m.ListItemBase | null}
-			 */
+			* Scrolls to the given <code>ListItemBase</code>.
+			*
+			* @param {sap.m.ListItemBase} oItemToScroll
+			*/
+			_scrollToListItem : function(oItemToScroll) {
+				this._getPage().scrollToElement(oItemToScroll, this.LIST_SCROLL_DURATION);
+			},
+
+			/**
+			* Scrolls the <code>sap.m.Page</code> to the given position.
+			*
+			* @param {int} iPos The vertical pixel position to scroll to.
+			* @param {int} iDuration The duration of animated scrolling.
+			*/
+			_scrollPageTo : function (iPos, iDuration) {
+				this._getPage().scrollTo(iPos, iDuration);
+			},
+
+			/**
+			* Retrieves the <code>sap.m.ListItem</code>, that should be selected within the List,
+			* based on the loaded sample or null, if it does not exist.
+			* @returns {sap.m.ListItemBase | null}
+			*/
 			_getItemToSelect : function () {
 				var oList = this._getList(),
 					oEntityModel = oList.getModel(),
