@@ -1884,19 +1884,21 @@ sap.ui.define([
 	 * @since 1.45.0
 	 */
 	ODataMetaModel.prototype.requestValueListInfo = function (sPropertyPath) {
-		var oContext = this.getMetaContext(sPropertyPath),
+		var sPropertyMetaPath = this.getMetaPath(sPropertyPath),
+			sTypeMetaPath = sPropertyMetaPath.slice(0, sPropertyMetaPath.lastIndexOf("/") + 1),
 			that = this;
 
 		return Promise.all([
-			this.requestObject("/$EntityContainer"), // the entity container's name
-			this.requestObject("", oContext),        // the property itself
-			this.requestObject("@", oContext),       // all annotations of the property
-			this.requestObject(sValueListWithFixedValues, oContext) // flag for "fixed values"
+			this.requestObject(sTypeMetaPath + "@sapui.name"),	// the name of the owning type
+			this.requestObject(sPropertyMetaPath),				// the property itself
+			this.requestObject(sPropertyMetaPath + "@"),		// all property annotations
+																// flag for "fixed values"
+			this.requestObject(sPropertyMetaPath + sValueListWithFixedValues)
 		]).then(function (aResults) {
 			var mAnnotationByTerm = aResults[2],
 				bFixedValues = aResults[3],
 				mMappingUrlByQualifier = {},
-				// the namespace of the container is the namespace of the service
+				// Only annotations in the type's namespace are relevant
 				sNamespace = _Helper.namespace(aResults[0]),
 				oProperty = aResults[1],
 				oValueListInfo = {};
