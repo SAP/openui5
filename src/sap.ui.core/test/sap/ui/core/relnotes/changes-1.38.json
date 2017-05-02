@@ -1957,5 +1957,40 @@
         "references": []
       }
     ]
+  },
+  "1.38.21": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "fc9c087d56c8ae5fefdd020702431396980a0607",
+        "type": "FIX",
+        "text": " Messaging: Validation messages not removed",
+        "references": []
+      },
+      {
+        "id": "32b7c2a656837ad110809b7ce63210a85c0341a3",
+        "type": "FIX",
+        "text": " core.BusyIndicator: should consider window scroll position in placement",
+        "references": []
+      },
+      {
+        "id": "97917d2d3a40885367774ab3694e0462e24ebc04",
+        "type": "FIX",
+        "text": " core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
+        "references": []
+      },
+      {
+        "id": "0dca667b73fdf6caac2b566fe8b16b7038fe07a4",
+        "type": "FIX",
+        "text": " core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
+        "references": []
+      },
+      {
+        "id": "88939577d5ff4d4748ca49eec35f610f70f59943",
+        "type": "FIX",
+        "text": " v2.ODataModel: Don\u0027t cache failed metadata object",
+        "references": []
+      }
+    ]
   }
 }

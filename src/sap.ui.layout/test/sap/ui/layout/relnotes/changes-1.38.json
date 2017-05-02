@@ -297,5 +297,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.21": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "a3d74e4631d420fbc1b528f925fa57d71886c441",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
+        "references": []
+      },
+      {
+        "id": "c44a37eb05e5c68f0dbf462d38cc47dbc341d94e",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn\u0027t have scrolling any more",
+        "references": []
+      }
+    ]
   }
 }
