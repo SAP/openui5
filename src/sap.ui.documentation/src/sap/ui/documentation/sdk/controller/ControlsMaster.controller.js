@@ -124,7 +124,7 @@ sap.ui.define([
 
 				// subscribe to app events
 				var oComponent = this.getOwnerComponent();
-				this._oRootView = oComponent.byId(oComponent.getManifestEntry("/sap.ui5/rootView").id);
+				this._oRootView = this.getRootView();
 
 				this._oViewSettings.compactOn = oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
 					this._oRootView.hasStyleClass("sapUiSizeCompact");
@@ -365,8 +365,10 @@ sap.ui.define([
 				this._oVSDialog.setSelectedGroupItem(this._oListSettings.groupProperty);
 				this._oVSDialog.setGroupDescending(this._oListSettings.groupDescending);
 
-				jQuery('body').toggleClass("sapUiSizeCompact", this._oListSettings.compactOn)
-					.toggleClass("sapUiSizeCozy", !this._oListSettings.compactOn);
+				// Apply cozy/compact mode to the dialog
+				this._oVSDialog
+					.toggleStyleClass("sapUiSizeCompact", this._oViewSettings.compactOn)
+					.toggleStyleClass("sapUiSizeCozy", !this._oViewSettings.compactOn);
 
 				// open
 				this._oVSDialog.open();
@@ -491,6 +493,9 @@ sap.ui.define([
 
 					// Compact mode select
 					this._oCore.byId("CompactModeSwitch").setState(bCompactMode);
+					this._oSettingsDialog
+						.toggleStyleClass("sapUiSizeCompact", bCompactMode)
+						.toggleStyleClass("sapUiSizeCozy", !bCompactMode);
 					this._oSettingsDialog.open();
 				});
 			},
