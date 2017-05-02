@@ -2132,6 +2132,12 @@
         "type": "FIX",
         "text": "sap.m.Wizard: jQuery handling of incorrectly escaped symbols fixed",
         "references": []
+      },
+      {
+        "id": "8e4cd2795e3e39e3f1b3891113e92c94cf88af78",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: removeMasterBtn has been fixed",
+        "references": []
       }
     ]
   }
