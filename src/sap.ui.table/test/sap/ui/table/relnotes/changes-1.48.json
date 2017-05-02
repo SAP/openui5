@@ -205,6 +205,12 @@
         "type": "FIX",
         "text": " sap.ui.table.Table: improper busy indicator \u0026 noData issue fixed",
         "references": []
+      },
+      {
+        "id": "04b073ac0b4b6dd113899c45a1d068c157aad0d0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
       }
     ]
   }

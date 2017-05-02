@@ -589,6 +589,12 @@
         "type": "FIX",
         "text": " v2.ODataModel: getBindingContext returns wrong Context",
         "references": []
+      },
+      {
+        "id": "962139a1752d7ac1239c08fbb7a704c0d5dfb938",
+        "type": "FEATURE",
+        "text": " sap.ui.support - OPA integration",
+        "references": []
       }
     ]
   }

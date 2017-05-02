@@ -259,6 +259,12 @@
         "type": "FIX",
         "text": " shared.less: missing font sizes for HC themes",
         "references": []
+      },
+      {
+        "id": "3bccdbfc799f4083cb57655c50769d97f697c0ee",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus corrected for IE",
+        "references": []
       }
     ]
   }

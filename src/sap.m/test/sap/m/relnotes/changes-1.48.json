@@ -1411,6 +1411,60 @@
         "type": "FIX",
         "text": "sap.m.Wizard: jQuery handling of incorrectly escaped symbols fixed",
         "references": []
+      },
+      {
+        "id": "8fca857648e0138b0cf1f1aed4757a7351a8ccd7",
+        "type": "FEATURE",
+        "text": " sap.m.MultiComboBox: Dropdown opening mechanism using keyboard improved",
+        "references": []
+      },
+      {
+        "id": "d28263e676731b2e3affb1b767663ab1bfdcb031",
+        "type": "FEATURE",
+        "text": " sap.m.PDFViewer: Add the initial version of the newly developed control.",
+        "references": []
+      },
+      {
+        "id": "247b392c9f6a2072710e93136c25047012c564b3",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar - non working dates added.",
+        "references": []
+      },
+      {
+        "id": "87c34a2b02206f91c9c761fe4b1824fa773882f2",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: The grouping of overlapping appointments can now be disabled.",
+        "references": []
+      },
+      {
+        "id": "6c1877a91d9182be629679fe676179b5f28a6d95",
+        "type": "FEATURE",
+        "text": " sap.m.TextArea: Counter is added",
+        "references": []
+      },
+      {
+        "id": "9ee0e4f91dde50865a4eb7850213aa88e6e651a0",
+        "type": "FIX",
+        "text": " sap.m.Button: Transparent type button has correct Icon color",
+        "references": []
+      },
+      {
+        "id": "5e4a399cce306d4b567048e9159ae25efdb3138d",
+        "type": "FIX",
+        "text": " sap.m.PDFViewer: Add explored samples.",
+        "references": []
+      },
+      {
+        "id": "0d9363b52ca7b2b7415c2e5d7122bb877eb89f46",
+        "type": "FIX",
+        "text": " sap.m.PDFViewer: Remove reference on tests in test suite.",
+        "references": []
+      },
+      {
+        "id": "3bccdbfc799f4083cb57655c50769d97f697c0ee",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus corrected for IE",
+        "references": []
       }
     ]
   }
