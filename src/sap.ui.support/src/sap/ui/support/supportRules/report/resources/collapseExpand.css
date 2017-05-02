@@ -1,0 +1,24 @@
+ /* Expand/Collapse functionality */
+.expanded {
+	padding-left: 30px;
+}
+.expanded > tr > td:first-child {
+	padding-left: 35px;
+}
+.collapsed {
+	display: none;
+}
+.expanded-content > .expandable-title::before {
+	font-family: "courier";
+	font-weight: bold;
+	content: "[-]";
+	bottom: 2px;
+	position: relative;
+}
+.collapsed-content > .expandable-title::before {
+	font-family: "courier";
+	font-weight: bold;
+	content: "[+]";
+	bottom: 2px;
+	position: relative;
+}
