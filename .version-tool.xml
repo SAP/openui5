@@ -8,6 +8,7 @@
           "src/sap.ui.ux3/pom.xml": "1",
           "src/sap.ui.core/pom.xml": "1",
           "src/sap.uxap/pom.xml": "1",
+          "src/sap.ui.documentation/pom.xml": "1",
           "src/sap.m/pom.xml": "1",
           "package.json": "1",
           "src/sap.ui.table/pom.xml": "1",
