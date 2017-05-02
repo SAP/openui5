@@ -9,39 +9,94 @@
 <base href="../../../../">
 
 <script id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.ui.codeeditor"
+	data-sap-ui-libs="sap.m, sap.ui.codeeditor"
 	data-sap-ui-theme="sap_bluecrystal"
 	src="resources/sap-ui-core.js">
 </script>
 
+<script id="code" type="text/plain" >
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Hello World App</title>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-preload="async">
+		<&sol;script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				// create a mobile app and display page1 initially
+				var app = new sap.m.App("myApp", {
+					initialPage: "page1"
+				});
+
+				// create the first page
+				var page1 = new sap.m.Page("page1", {
+					title: "Hello World",
+					showNavButton: false,
+					content: new sap.m.Button({
+						text: "Go to Page 2",
+						press: function () {
+							// navigate to page2
+							app.to("page2");
+						}
+					})
+				});
+
+				// create the second page with a back button
+				var page2 = new sap.m.Page("page2", {
+					title: "Hello Page 2",
+					showNavButton: true,
+					navButtonPress: function () {
+						// go back to the previous page
+						app.back();
+					}
+				});
+
+				// add both pages to the app
+				app.addPage(page1).addPage(page2);
+				// place the app into the HTML document
+				app.placeAt("content");
+			});
+		<&sol;script>
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
+</html>
+</script>
+
 <script>
+
 	sap.ui.getCore().attachInit(function() {
-		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({width:"400px"});
-		oCodeEditor.placeAt("content");
-		oCodeEditor.setValue("Test");
-		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({width:"400px", editable:false});
-		oCodeEditor.placeAt("content");
-		oCodeEditor.setValue("Test");
-		oCodeEditor.setColorTheme("hcb_bright");
-		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({});
-		oCodeEditor.placeAt("resizable");
-		oCodeEditor.setValue("Test");
-		oCodeEditor.setColorTheme("hcb_blue");
-		oCodeEditor.setSyntaxHints(false);
-		var oCodeEditor = new sap.ui.codeeditor.CodeEditor({});
-		oCodeEditor.placeAt("resizable");
-		oCodeEditor.setValue("Test");
-		oCodeEditor.setColorTheme("hcb_blue");
-		oCodeEditor.setSyntaxHints(true);
-		oCodeEditor.setLineNumbers(false);
+
+		new sap.m.App({
+			pages: [
+				new sap.m.Page({
+					title: "Code Editor",
+					content: [
+						new sap.m.Label({text: "Hello World App"}),
+						new sap.ui.codeeditor.CodeEditor({
+							type: "html",
+							value: jQuery("#code").html().trim().replace(/&sol;/g, "/"), // Handling escaped closing script tag sol
+							height: "auto",
+							maxLines: 70
+						}),
+						new sap.m.Button({text: "Save"})
+					]
+				})
+			]
+		}).placeAt("content");
+
 	});
-	
+
 </script>
 </head>
-<body id="body" class="sapUiBody" style="margin:0px; padding: 10px; box-sizing: border-box; height:100vh">
-	<h1 id="header">Test Page for <code>sap.ui.codeeditor.Example</code></h1>
+<body id="body" class="sapUiBody">
 	<div id="content"></div>
-	<div id="resizable" style="height:50%;width:50%" >
-	</div>
 </body>
 </html>
