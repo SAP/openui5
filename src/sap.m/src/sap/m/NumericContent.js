@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, Text, HTML, Icon) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/m/Image' ],
+	function(jQuery, library, Control, IconPool, Image) {
 	"use strict";
 
 	/**
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				/**
 				 * The indicator arrow that shows value deviation.
 				 */
-				"indicator" : {type : "sap.m.DeviationIndicator", group : "Misc", defaultValue : sap.m.DeviationIndicator.None},
+				"indicator" : {type : "sap.m.DeviationIndicator", group : "Misc", defaultValue : "None"},
 
 				/**
 				 * If set to true, the omitted value property is set to 0.
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				 * Updates the size of the control. If not set then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The NumericContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
+				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : "Auto"},
 
 				/**
 				 * The number of characters to display for the value property.
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				/**
 				 * The semantic color of the value.
 				 */
-				"valueColor" : {type : "sap.m.ValueColor", group : "Misc", defaultValue : sap.m.ValueColor.Neutral},
+				"valueColor" : {type : "sap.m.ValueColor", group : "Misc", defaultValue : "Neutral"},
 
 				/**
 				 * The width of the control. If it is not set, the size of the control is defined by the 'size' property.
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				/**
 				 * Indicates the load status.
 				 */
-				"state" : {type : "sap.m.LoadState", group : "Misc", defaultValue : sap.m.LoadState.Loaded}
+				"state" : {type : "sap.m.LoadState", group : "Misc", defaultValue : "Loaded"}
 			},
 			events : {
 				/**
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 		this.$().bind("mouseenter", this._addTooltip.bind(this));
 		this.$().bind("mouseleave", this._removeTooltip.bind(this));
 
-		if (sap.m.LoadState.Loaded == this.getState() || this.getAnimateTextChange()) {
+		if (library.LoadState.Loaded == this.getState() || this.getAnimateTextChange()) {
 			jQuery.sap.byId(this.getId()).animate({
 				opacity : "1"
 			}, 1000);
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 			sAltText = sAltText.concat(sEmptyValue);
 		}
 		sAltText = sAltText.concat("\n");
-		if (this.getIndicator() && this.getIndicator() != sap.m.DeviationIndicator.None) {
+		if (this.getIndicator() && this.getIndicator() !== library.DeviationIndicator.None) {
 			sAltText = sAltText.concat(this._rb.getText(("NUMERICCONTENT_DEVIATION_" + this.getIndicator()).toUpperCase()));
 			sAltText = sAltText.concat("\n");
 		}
@@ -213,10 +213,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 				this._oIcon = undefined;
 			}
 			if (uri) {
-				this._oIcon = sap.ui.core.IconPool.createControlByURI({
+				this._oIcon = IconPool.createControlByURI({
 					id : this.getId() + "-icon-image",
 					src : uri
-				}, sap.m.Image);
+				}, Image);
 			}
 		}
 		this._setPointerOnIcon();
@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	};
 
 	NumericContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
-		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
+		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
 			this._setPointerOnIcon();
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	};
 
 	NumericContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
-		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
+		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
 			this._setPointerOnIcon();
@@ -309,4 +309,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 	};
 
 	return NumericContent;
-}, /* bExport= */ true);
+});

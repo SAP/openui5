@@ -1,8 +1,8 @@
 /*!
 * ${copyright}
 */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/ListRenderer'],
-	function(jQuery, Renderer, ListRenderer) {
+sap.ui.define([ 'jquery.sap.global' ],
+	function(jQuery) {
 	"use strict";
 
 

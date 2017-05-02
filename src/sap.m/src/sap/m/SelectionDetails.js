@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides control sap.m.SelectionDetails.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', "sap/ui/Device"],
-	function(jQuery, library, Control, Button, Interface, Device) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', 'sap/ui/Device', 'sap/ui/core/library' ],
+	function(jQuery, library, Control, Button, Interface, Device, CoreLibrary) {
 	"use strict";
 
 	/**
@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		var oToolbarSpacer = new ToolbarSpacer();
 		var oTitle = new Title({
 			text: pageTitle,
-			titleStyle: sap.ui.core.TitleLevel.H5
+			titleStyle: CoreLibrary.TitleLevel.H5
 		});
 
 		oToolbar.addAggregation("content", oToolbarSpacer, true);
