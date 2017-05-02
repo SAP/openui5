@@ -217,7 +217,7 @@ sap.ui.require([
 		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1,234",
 			"before language change");
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
-		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1'234",
+		assert.strictEqual(oType.formatValue("1.234e3", "string"), "1’234",
 			"adjusted to changed language");
 	});
 

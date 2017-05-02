@@ -26,7 +26,7 @@
 		"ar": "arabski",
 		"ar_001": "współczesny arabski",
 		"arc": "aramejski",
-		"arn": "araukański",
+		"arn": "mapudungun",
 		"aro": "araona",
 		"arp": "arapaho",
 		"arq": "algierski arabski",
@@ -41,13 +41,13 @@
 		"avk": "kotava",
 		"awa": "awadhi",
 		"ay": "ajmara",
-		"az": "azerski",
+		"az": "azerbejdżański",
 		"az_alt-short": "azerski",
 		"ba": "baszkirski",
 		"bal": "beludżi",
 		"ban": "balijski",
 		"bar": "bawarski",
-		"bas": "basa",
+		"bas": "basaa",
 		"bax": "bamum",
 		"bbc": "batak toba",
 		"bbj": "ghomala",
@@ -77,39 +77,40 @@
 		"brh": "brahui",
 		"brx": "bodo",
 		"bs": "bośniacki",
-		"bss": "akose",
+		"bss": "akoose",
 		"bua": "buriacki",
-		"bug": "bugiński",
+		"bug": "bugijski",
 		"bum": "bulu",
 		"byn": "blin",
 		"byv": "medumba",
 		"ca": "kataloński",
 		"cad": "kaddo",
-		"car": "karibi",
+		"car": "karaibski",
 		"cay": "kajuga",
 		"cch": "atsam",
 		"ce": "czeczeński",
 		"ceb": "cebuano",
 		"cgg": "chiga",
-		"ch": "chamorro",
+		"ch": "czamorro",
 		"chb": "czibcza",
 		"chg": "czagatajski",
-		"chk": "truk",
+		"chk": "chuuk",
 		"chm": "maryjski",
-		"chn": "żargon Chinook",
-		"cho": "choctaw",
-		"chp": "chipewyan",
+		"chn": "żargon czinucki",
+		"cho": "czoktawski",
+		"chp": "czipewiański",
 		"chr": "czirokeski",
-		"chy": "język Czejenów",
+		"chy": "czejeński",
 		"ckb": "sorani",
 		"co": "korsykański",
 		"cop": "koptyjski",
 		"cps": "capiznon",
 		"cr": "kri",
-		"crh": "krymski turecki",
+		"crh": "krymskotatarski",
+		"crs": "kreolski seszelski",
 		"cs": "czeski",
 		"csb": "kaszubski",
-		"cu": "staro-cerkiewno-słowiański",
+		"cu": "cerkiewnosłowiański",
 		"cv": "czuwaski",
 		"cy": "walijski",
 		"da": "duński",
@@ -131,14 +132,14 @@
 		"dum": "średniowieczny niderlandzki",
 		"dv": "malediwski",
 		"dyo": "diola",
-		"dyu": "dyula",
+		"dyu": "diula",
 		"dz": "dzongkha",
 		"dzg": "dazaga",
 		"ebu": "embu",
 		"ee": "ewe",
 		"efi": "efik",
 		"egl": "emilijski",
-		"egy": "starożytny egipski",
+		"egy": "staroegipski",
 		"eka": "ekajuk",
 		"el": "grecki",
 		"elx": "elamicki",
@@ -146,7 +147,7 @@
 		"en_AU": "australijski angielski",
 		"en_CA": "kanadyjski angielski",
 		"en_GB": "brytyjski angielski",
-		"en_GB-alt-short": "angielski (GB)",
+		"en_GB-alt-short": "angielski (Wlk. Bryt.)",
 		"en_US": "amerykański angielski",
 		"en_US-alt-short": "angielski (USA)",
 		"enm": "średnioangielski",
@@ -173,13 +174,13 @@
 		"fr": "francuski",
 		"fr_CA": "kanadyjski francuski",
 		"fr_CH": "szwajcarski francuski",
-		"frc": "cajun",
+		"frc": "cajuński",
 		"frm": "średniofrancuski",
 		"fro": "starofrancuski",
 		"frp": "franko-prowansalski",
 		"frr": "północnofryzyjski",
-		"frs": "fryzyjski wschodni",
-		"fur": "friulijski",
+		"frs": "wschodniofryzyjski",
+		"fur": "friulski",
 		"fy": "zachodniofryzyjski",
 		"ga": "irlandzki",
 		"gaa": "ga",
@@ -203,7 +204,7 @@
 		"grb": "grebo",
 		"grc": "starogrecki",
 		"gsw": "szwajcarski niemiecki",
-		"gu": "gudźaracki",
+		"gu": "gudżarati",
 		"guc": "wayúu",
 		"gur": "frafra",
 		"guz": "gusii",
@@ -216,20 +217,20 @@
 		"he": "hebrajski",
 		"hi": "hindi",
 		"hif": "hindi fidżyjskie",
-		"hil": "hiligajnon",
+		"hil": "hiligaynon",
 		"hit": "hetycki",
-		"hmn": "hmongijski",
+		"hmn": "hmong",
 		"ho": "hiri motu",
 		"hr": "chorwacki",
 		"hsb": "górnołużycki",
 		"hsn": "xiang",
-		"ht": "haitański",
+		"ht": "kreolski haitański",
 		"hu": "węgierski",
 		"hup": "hupa",
 		"hy": "ormiański",
 		"hz": "herero",
 		"ia": "interlingua",
-		"iba": "ibanag",
+		"iba": "iban",
 		"ibb": "ibibio",
 		"id": "indonezyjski",
 		"ie": "interlingue",
@@ -248,7 +249,7 @@
 		"jbo": "lojban",
 		"jgo": "ngombe",
 		"jmc": "machame",
-		"jpr": "judeoperski",
+		"jpr": "judeo-perski",
 		"jrb": "judeoarabski",
 		"jut": "jutlandzki",
 		"jv": "jawajski",
@@ -270,7 +271,7 @@
 		"kgp": "kaingang",
 		"kha": "khasi",
 		"kho": "chotański",
-		"khq": "koyra chini",
+		"khq": "koyra chiini",
 		"khw": "khowar",
 		"ki": "kikuju",
 		"kiu": "kirmandżki",
@@ -312,7 +313,7 @@
 		"lez": "lezgijski",
 		"lfn": "Lingua Franca Nova",
 		"lg": "ganda",
-		"li": "limburgijski",
+		"li": "limburski",
 		"lij": "liguryjski",
 		"liv": "liwski",
 		"lkt": "lakota",
@@ -329,7 +330,7 @@
 		"lui": "luiseno",
 		"lun": "lunda",
 		"luo": "luo",
-		"lus": "lushai",
+		"lus": "mizo",
 		"luy": "luhya",
 		"lv": "łotewski",
 		"lzh": "chiński klasyczny",
@@ -342,8 +343,7 @@
 		"man": "mandingo",
 		"mas": "masajski",
 		"mde": "maba",
-		"mdf": "moksha",
-		"mdh": "mdh",
+		"mdf": "moksza",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -352,16 +352,15 @@
 		"mga": "średnioirlandzki",
 		"mgh": "makua",
 		"mgo": "meta",
-		"mh": "marshall",
+		"mh": "marszalski",
 		"mi": "maoryjski",
-		"mic": "micmac",
+		"mic": "mikmak",
 		"min": "minangkabu",
-		"mis": "mis",
 		"mk": "macedoński",
 		"ml": "malajalam",
 		"mn": "mongolski",
 		"mnc": "manchu",
-		"mni": "manipuryjski",
+		"mni": "manipuri",
 		"moh": "mohawk",
 		"mos": "mossi",
 		"mr": "marathi",
@@ -370,13 +369,13 @@
 		"mt": "maltański",
 		"mua": "mundang",
 		"mul": "wiele języków",
-		"mus": "creek",
-		"mwl": "mirandese",
+		"mus": "krik",
+		"mwl": "mirandyjski",
 		"mwr": "marwari",
 		"mwv": "mentawai",
 		"my": "birmański",
 		"mye": "myene",
-		"myv": "erzya",
+		"myv": "erzja",
 		"mzn": "mazanderański",
 		"na": "nauru",
 		"nan": "minnański",
@@ -385,7 +384,7 @@
 		"nb": "norweski (bokmål)",
 		"nd": "ndebele północny",
 		"nds": "dolnoniemiecki",
-		"nds_NL": "dolnoniemiecki (Holandia)",
+		"nds_NL": "dolnosaksoński",
 		"ne": "nepalski",
 		"new": "newarski",
 		"ng": "ndonga",
@@ -412,9 +411,9 @@
 		"nyn": "nyankole",
 		"nyo": "nyoro",
 		"nzi": "nzema",
-		"oc": "prowansalski",
+		"oc": "oksytański",
 		"oj": "odżibwa",
-		"om": "oromski",
+		"om": "oromo",
 		"or": "orija",
 		"os": "osetyjski",
 		"osa": "osage",
@@ -426,6 +425,7 @@
 		"pap": "papiamento",
 		"pau": "palau",
 		"pcd": "pikardyjski",
+		"pcm": "pidżyn nigeryjski",
 		"pdc": "pensylwański",
 		"pdt": "plautdietsch",
 		"peo": "staroperski",
@@ -445,7 +445,7 @@
 		"pt_PT": "europejski portugalski",
 		"qu": "keczua",
 		"quc": "kicze",
-		"qug": "chimborazo górski keczua",
+		"qug": "keczua górski (Chimborazo)",
 		"raj": "radźasthani",
 		"rap": "rapanui",
 		"rar": "rarotonga",
@@ -477,11 +477,11 @@
 		"sbp": "sangu",
 		"sc": "sardyński",
 		"scn": "sycylijski",
-		"sco": "szkocki",
+		"sco": "scots",
 		"sd": "sindhi",
 		"sdc": "sassarski",
 		"sdh": "południowokurdyjski",
-		"se": "lapoński północny",
+		"se": "północnolapoński",
 		"see": "seneka",
 		"seh": "sena",
 		"sei": "seri",
@@ -492,7 +492,7 @@
 		"sgs": "żmudzki",
 		"sh": "serbsko-chorwacki",
 		"shi": "tashelhiyt",
-		"shn": "shan",
+		"shn": "szan",
 		"shu": "arabski (Czad)",
 		"si": "syngaleski",
 		"sid": "sidamo",
@@ -501,11 +501,11 @@
 		"sli": "dolnośląski",
 		"sly": "selayar",
 		"sm": "samoański",
-		"sma": "lapoński południowy",
-		"smj": "lapoński Lule",
-		"smn": "lapoński Inari",
-		"sms": "lapoński Skolt",
-		"sn": "szona",
+		"sma": "południowolapoński",
+		"smj": "lule",
+		"smn": "inari",
+		"sms": "skolt",
+		"sn": "shona",
 		"snk": "soninke",
 		"so": "somalijski",
 		"sog": "sogdyjski",
@@ -513,7 +513,7 @@
 		"sr": "serbski",
 		"srn": "sranan tongo",
 		"srr": "serer",
-		"ss": "siswati",
+		"ss": "suazi",
 		"ssy": "saho",
 		"st": "sotho południowy",
 		"stq": "fryzyjski saterlandzki",
@@ -566,7 +566,7 @@
 		"twq": "tasawaq",
 		"ty": "tahitański",
 		"tyv": "tuwiński",
-		"tzm": "centralnomarokański tamazight",
+		"tzm": "tamazight (Atlas Środkowy)",
 		"udm": "udmurcki",
 		"ug": "ujgurski",
 		"uga": "ugarycki",
@@ -582,16 +582,16 @@
 		"vi": "wietnamski",
 		"vls": "zachodnioflamandzki",
 		"vmf": "meński frankoński",
-		"vo": "volapuk",
+		"vo": "wolapik",
 		"vot": "wotiacki",
 		"vro": "võro",
 		"vun": "vunjo",
 		"wa": "waloński",
 		"wae": "walser",
-		"wal": "walamo",
+		"wal": "wolayta",
 		"war": "waraj",
 		"was": "washo",
-		"wbp": "Warlpiri",
+		"wbp": "warlpiri",
 		"wo": "wolof",
 		"wuu": "wu",
 		"xal": "kałmucki",
@@ -604,7 +604,7 @@
 		"ybb": "yemba",
 		"yi": "jidysz",
 		"yo": "joruba",
-		"yrl": "nhengatu",
+		"yrl": "nheengatu",
 		"yue": "kantoński",
 		"za": "czuang",
 		"zap": "zapotecki",
@@ -613,8 +613,8 @@
 		"zen": "zenaga",
 		"zgh": "standardowy marokański tamazight",
 		"zh": "chiński",
-		"zh_Hans": "chiński (uproszczony)",
-		"zh_Hant": "chiński (tradycyjny)",
+		"zh_Hans": "chiński uproszczony",
+		"zh_Hant": "chiński tradycyjny",
 		"zu": "zulu",
 		"zun": "zuni",
 		"zxx": "brak treści o charakterze językowym",
@@ -651,7 +651,7 @@
 		"Cprt": "cypryjskie",
 		"Cyrl": "cyrylica",
 		"Cyrs": "cyrylica staro-cerkiewno-słowiańska",
-		"Deva": "devanagari",
+		"Deva": "dewanagari",
 		"Dsrt": "deseret",
 		"Dupl": "Dupl",
 		"Egyd": "egipskie demotyczne",
@@ -667,7 +667,7 @@
 		"Grek": "greckie",
 		"Gujr": "gudźarackie",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "hanb",
 		"Hang": "hangyl",
 		"Hani": "han",
 		"Hano": "hanunoo",
@@ -680,11 +680,11 @@
 		"Hira": "hiragana",
 		"Hluw": "Hluw",
 		"Hmng": "pahawh hmong",
-		"Hrkt": "katakana lub hiragana",
+		"Hrkt": "sylabariusze japońskie",
 		"Hung": "starowęgierskie",
 		"Inds": "indus",
 		"Ital": "starowłoskie",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "jawajskie",
 		"Jpan": "japońskie",
 		"Kali": "kayah li",
@@ -743,55 +743,6 @@
 		"Phnx": "fenicki",
 		"Plrd": "fonetyczny Pollard’a",
 		"Prti": "partyjski inskrypcyjny",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "rejang",
 		"Roro": "rongorongo",
 		"Runr": "runiczne",
@@ -836,11 +787,11 @@
 		"Yiii": "yi",
 		"Zinh": "dziedziczone",
 		"Zmth": "notacja matematyczna",
-		"Zsye": "Zsye",
+		"Zsye": "Emoji",
 		"Zsym": "symbole",
 		"Zxxx": "język bez systemu pisma",
 		"Zyyy": "wspólne",
-		"Zzzz": "nieznane lub niepoprawne"
+		"Zzzz": "nieznany skrypt"
 	},
 	"territories": {
 		"142": "Azja",
@@ -901,7 +852,7 @@
 		"BJ": "Benin",
 		"BL": "Saint-Barthélemy",
 		"BM": "Bermudy",
-		"BN": "Brunei Darussalam",
+		"BN": "Brunei",
 		"BO": "Boliwia",
 		"BQ": "Niderlandy Karaibskie",
 		"BR": "Brazylia",
@@ -934,6 +885,7 @@
 		"CX": "Wyspa Bożego Narodzenia",
 		"CY": "Cypr",
 		"CZ": "Czechy",
+		"CZ-alt-variant": "Republika Czeska",
 		"DE": "Niemcy",
 		"DG": "Diego Garcia",
 		"DJ": "Dżibuti",
@@ -950,6 +902,7 @@
 		"ES": "Hiszpania",
 		"ET": "Etiopia",
 		"EU": "Unia Europejska",
+		"EZ": "EZ",
 		"FI": "Finlandia",
 		"FJ": "Fidżi",
 		"FK": "Falklandy",
@@ -959,7 +912,7 @@
 		"FR": "Francja",
 		"GA": "Gabon",
 		"GB": "Wielka Brytania",
-		"GB-alt-short": "GB",
+		"GB-alt-short": "Wlk. Bryt.",
 		"GD": "Grenada",
 		"GE": "Gruzja",
 		"GF": "Gujana Francuska",
@@ -1029,7 +982,7 @@
 		"MG": "Madagaskar",
 		"MH": "Wyspy Marshalla",
 		"MK": "Macedonia",
-		"MK-alt-variant": "MK",
+		"MK-alt-variant": "Była Jugosłowiańska Republika Macedonii",
 		"ML": "Mali",
 		"MM": "Mjanma (Birma)",
 		"MN": "Mongolia",
@@ -1123,6 +1076,8 @@
 		"UA": "Ukraina",
 		"UG": "Uganda",
 		"UM": "Dalekie Wyspy Mniejsze Stanów Zjednoczonych",
+		"UN": "Organizacja Narodów Zjednoczonych",
+		"UN-alt-short": "ONZ",
 		"US": "Stany Zjednoczone",
 		"US-alt-short": "USA",
 		"UY": "Urugwaj",
@@ -1149,7 +1104,7 @@
 		"dateFormats": {
 			"full": "EEEE, d MMMM y",
 			"long": "d MMMM y",
-			"medium": "dd.MM.y",
+			"medium": "d MMM y",
 			"short": "dd.MM.y"
 		},
 		"timeFormats": {
@@ -1173,7 +1128,7 @@
 				"EHms": "E, HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
-				"GyMMMd": "d.MM.y G",
+				"GyMMMd": "d MMM y G",
 				"GyMMMEd": "E, d MMM y G",
 				"GyMMMM": "LLLL y G",
 				"GyMMMMd": "d MMMM y G",
@@ -1192,8 +1147,8 @@
 				"Md": "d.MM",
 				"MEd": "E, d.MM",
 				"MMM": "LLL",
-				"MMMd": "d.MM",
-				"MMMEd": "E, d.MM",
+				"MMMd": "d MMM",
+				"MMMEd": "E, d MMM",
 				"MMMMd": "d MMMM",
 				"MMMMEd": "E, d MMMM",
 				"ms": "mm:ss",
@@ -1201,14 +1156,16 @@
 				"yM": "MM.y",
 				"yMd": "d.MM.y",
 				"yMEd": "E, d.MM.y",
-				"yMMM": "MM.y",
-				"yMMMd": "d.MM.y",
-				"yMMMEd": "E, d.MM.y",
+				"yMMM": "LLL y",
+				"yMMMd": "d MMM y",
+				"yMMMEd": "E, d MMM y",
 				"yMMMM": "LLLL y",
 				"yMMMMd": "d MMMM y",
 				"yMMMMEd": "E, d MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "MMM, 'tydz'. W",
+				"yw": "y, 'tydz'. w"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1275,12 +1232,12 @@
 					"M": "LLL–LLL"
 				},
 				"MMMd": {
-					"d": "dd.MM–dd.MM",
-					"M": "dd.MM–dd.MM"
+					"d": "d–d MMM",
+					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E, dd.MM – E, dd.MM",
-					"M": "E, dd.MM – E, dd.MM"
+					"d": "E, d MMM – E, d MMM",
+					"M": "E, d MMM – E, d MMM"
 				},
 				"MMMMd": {
 					"d": "d–d MMMM",
@@ -1308,18 +1265,18 @@
 					"y": "E, dd.MM.y – E, dd.MM.y"
 				},
 				"yMMM": {
-					"M": "MM.y – MM.y",
-					"y": "MM.y – MM.y"
+					"M": "LLL–LLL y",
+					"y": "LLL y – LLL y"
 				},
 				"yMMMd": {
-					"d": "dd–dd.MM.y",
-					"M": "dd.MM–dd.MM.y",
-					"y": "dd.MM.y–dd.MM.y"
+					"d": "d–d MMM y",
+					"M": "d MMM – d MMM y",
+					"y": "d MMM y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E, dd.MM.y – E, dd.MM.y",
-					"M": "E, dd.MM.y – E, dd.MM.y",
-					"y": "E, dd.MM.y – E, dd.MM.y"
+					"d": "E, d – E, d MMM y",
+					"M": "E, d MMM – E, d MMM y",
+					"y": "E, d MMM y – E, d MMM y"
 				},
 				"yMMMM": {
 					"M": "LLLL–LLLL y",
@@ -1398,18 +1355,18 @@
 					"gru"
 				],
 				"narrow": [
-					"s",
-					"l",
-					"m",
-					"k",
-					"m",
-					"c",
-					"l",
-					"s",
-					"w",
-					"p",
-					"l",
-					"g"
+					"S",
+					"L",
+					"M",
+					"K",
+					"M",
+					"C",
+					"L",
+					"S",
+					"W",
+					"P",
+					"L",
+					"G"
 				],
 				"wide": [
 					"styczeń",
@@ -1439,13 +1396,13 @@
 					"sob."
 				],
 				"narrow": [
-					"N",
-					"P",
-					"W",
-					"Ś",
-					"C",
-					"P",
-					"S"
+					"n",
+					"p",
+					"w",
+					"ś",
+					"c",
+					"p",
+					"s"
 				],
 				"short": [
 					"nie",
@@ -1508,10 +1465,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -1528,10 +1485,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1 kw.",
-					"2 kw.",
-					"3 kw.",
-					"4 kw."
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -1578,8 +1535,8 @@
 			}
 		},
 		"era-wide": {
-			"0": "p.n.e.",
-			"1": "n.e."
+			"0": "przed naszą erą",
+			"1": "naszej ery"
 		},
 		"era-abbreviated": {
 			"0": "p.n.e.",
@@ -1859,13 +1816,13 @@
 					"sob."
 				],
 				"narrow": [
-					"N",
-					"P",
-					"W",
-					"Ś",
-					"C",
-					"P",
-					"S"
+					"n",
+					"p",
+					"w",
+					"ś",
+					"c",
+					"p",
+					"s"
 				],
 				"short": [
 					"nie",
@@ -1928,10 +1885,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -1948,10 +1905,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1 kw.",
-					"2 kw.",
-					"3 kw.",
-					"4 kw."
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -2235,18 +2192,18 @@
 					"gru"
 				],
 				"narrow": [
-					"s",
-					"l",
-					"m",
-					"k",
-					"m",
-					"c",
-					"l",
-					"s",
-					"w",
-					"p",
-					"l",
-					"g"
+					"S",
+					"L",
+					"M",
+					"K",
+					"M",
+					"C",
+					"L",
+					"S",
+					"W",
+					"P",
+					"L",
+					"G"
 				],
 				"wide": [
 					"styczeń",
@@ -2276,13 +2233,13 @@
 					"sob."
 				],
 				"narrow": [
-					"N",
-					"P",
-					"W",
-					"Ś",
-					"C",
-					"P",
-					"S"
+					"n",
+					"p",
+					"w",
+					"ś",
+					"c",
+					"p",
+					"s"
 				],
 				"short": [
 					"nie",
@@ -2345,10 +2302,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -2365,10 +2322,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1 kw.",
-					"2 kw.",
-					"3 kw.",
-					"4 kw."
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -2702,13 +2659,13 @@
 					"sob."
 				],
 				"narrow": [
-					"N",
-					"P",
-					"W",
-					"Ś",
-					"C",
-					"P",
-					"S"
+					"n",
+					"p",
+					"w",
+					"ś",
+					"c",
+					"p",
+					"s"
 				],
 				"short": [
 					"nie",
@@ -2771,10 +2728,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"K1",
-					"K2",
-					"K3",
-					"K4"
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -2791,10 +2748,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1 kw.",
-					"2 kw.",
-					"3 kw.",
-					"4 kw."
+					"I kw.",
+					"II kw.",
+					"III kw.",
+					"IV kw."
 				],
 				"narrow": [
 					"1",
@@ -3032,7 +2989,8 @@
 				"relativeTimePattern-count-few": "{0} tygodnie temu",
 				"relativeTimePattern-count-many": "{0} tygodni temu",
 				"relativeTimePattern-count-other": "{0} tygodnia temu"
-			}
+			},
+			"relativePeriod": "tydzień {0}"
 		},
 		"week-short": {
 			"displayName": "tydz.",
@@ -3050,7 +3008,8 @@
 				"relativeTimePattern-count-few": "{0} tyg. temu",
 				"relativeTimePattern-count-many": "{0} tyg. temu",
 				"relativeTimePattern-count-other": "{0} tyg. temu"
-			}
+			},
+			"relativePeriod": "tydzień {0}"
 		},
 		"week-narrow": {
 			"displayName": "tydz.",
@@ -3068,7 +3027,8 @@
 				"relativeTimePattern-count-few": "{0} tyg. temu",
 				"relativeTimePattern-count-many": "{0} tyg. temu",
 				"relativeTimePattern-count-other": "{0} tyg. temu"
-			}
+			},
+			"relativePeriod": "tydzień {0}"
 		},
 		"day-wide": {
 			"displayName": "dzień",
@@ -3135,6 +3095,7 @@
 		},
 		"hour-wide": {
 			"displayName": "godzina",
+			"relative-type-0": "ta godzina",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} godzinę",
 				"relativeTimePattern-count-few": "za {0} godziny",
@@ -3150,6 +3111,7 @@
 		},
 		"hour-short": {
 			"displayName": "godz.",
+			"relative-type-0": "ta godzina",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} godz.",
 				"relativeTimePattern-count-few": "za {0} godz.",
@@ -3165,6 +3127,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "g.",
+			"relative-type-0": "ta godzina",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} g.",
 				"relativeTimePattern-count-few": "za {0} g.",
@@ -3180,6 +3143,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minuta",
+			"relative-type-0": "ta minuta",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} minutę",
 				"relativeTimePattern-count-few": "za {0} minuty",
@@ -3195,6 +3159,7 @@
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "ta minuta",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} min",
 				"relativeTimePattern-count-few": "za {0} min",
@@ -3210,6 +3175,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "min",
+			"relative-type-0": "ta minuta",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} min",
 				"relativeTimePattern-count-few": "za {0} min",
@@ -3428,6 +3394,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

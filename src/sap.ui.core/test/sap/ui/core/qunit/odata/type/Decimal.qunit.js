@@ -334,7 +334,7 @@ sap.ui.require([
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
-		assert.strictEqual(oType.formatValue("1234", "string"), "1'234",
+		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});
 

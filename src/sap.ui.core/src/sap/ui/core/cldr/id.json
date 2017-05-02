@@ -17,7 +17,6 @@
 		"akk": "Akkadia",
 		"akz": "Alabama",
 		"ale": "Aleut",
-		"aln": "aln",
 		"alt": "Altai Selatan",
 		"am": "Amharik",
 		"an": "Aragon",
@@ -26,22 +25,20 @@
 		"ar": "Arab",
 		"ar_001": "Arab Standar Modern",
 		"arc": "Aram",
-		"arn": "Araukan",
-		"aro": "aro",
+		"arn": "Mapuche",
 		"arp": "Arapaho",
-		"arq": "Arab Algeria",
+		"arq": "Arab Aljazair",
 		"arw": "Arawak",
 		"ary": "Arab Maroko",
 		"arz": "Arab Mesir",
 		"as": "Assam",
 		"asa": "Asu",
 		"ase": "Bahasa Isyarat Amerika",
-		"ast": "Astur",
+		"ast": "Asturia",
 		"av": "Avar",
-		"avk": "avk",
 		"awa": "Awadhi",
 		"ay": "Aymara",
-		"az": "Azerbaijan",
+		"az": "Azerbaijani",
 		"az_alt-short": "Azeri",
 		"ba": "Bashkir",
 		"bal": "Baluchi",
@@ -57,7 +54,6 @@
 		"bew": "Betawi",
 		"bez": "Bena",
 		"bfd": "Bafut",
-		"bfq": "bfq",
 		"bg": "Bulgaria",
 		"bgn": "Balochi Barat",
 		"bho": "Bhojpuri",
@@ -70,11 +66,8 @@
 		"bm": "Bambara",
 		"bn": "Bengali",
 		"bo": "Tibet",
-		"bpy": "bpy",
-		"bqi": "bqi",
 		"br": "Breton",
 		"bra": "Braj",
-		"brh": "brh",
 		"brx": "Bodo",
 		"bs": "Bosnia",
 		"bss": "Akoose",
@@ -89,7 +82,7 @@
 		"cay": "Cayuga",
 		"cch": "Atsam",
 		"ce": "Chechen",
-		"ceb": "Sebuano",
+		"ceb": "Cebuano",
 		"cgg": "Kiga",
 		"ch": "Chamorro",
 		"chb": "Chibcha",
@@ -104,9 +97,9 @@
 		"ckb": "Kurdi Sorani",
 		"co": "Korsika",
 		"cop": "Koptik",
-		"cps": "cps",
 		"cr": "Kree",
 		"crh": "Tatar Krimea",
+		"crs": "Seselwa Kreol Prancis",
 		"cs": "Cheska",
 		"csb": "Kashubia",
 		"cu": "Bahasa Gereja Slavonia",
@@ -126,9 +119,8 @@
 		"dje": "Zarma",
 		"doi": "Dogri",
 		"dsb": "Sorbia Rendah",
-		"dtp": "dtp",
 		"dua": "Duala",
-		"dum": "Belanda Tengah",
+		"dum": "Belanda Abad Pertengahan",
 		"dv": "Divehi",
 		"dyo": "Jola-Fonyi",
 		"dyu": "Dyula",
@@ -137,7 +129,6 @@
 		"ebu": "Embu",
 		"ee": "Ewe",
 		"efi": "Efik",
-		"egl": "egl",
 		"egy": "Mesir Kuno",
 		"eka": "Ekajuk",
 		"el": "Yunani",
@@ -152,28 +143,24 @@
 		"enm": "Inggris Abad Pertengahan",
 		"eo": "Esperanto",
 		"es": "Spanyol",
-		"es_419": "Spanyol Amerika Latin",
+		"es_419": "Spanyol (Amerika Latin)",
 		"es_ES": "Spanyol (Eropa)",
-		"es_MX": "Spanyol Meksiko",
-		"esu": "esu",
+		"es_MX": "Spanyol (Meksiko)",
 		"et": "Esti",
-		"eu": "Bask",
+		"eu": "Basque",
 		"ewo": "Ewondo",
-		"ext": "ext",
 		"fa": "Persia",
 		"fan": "Fang",
 		"fat": "Fanti",
 		"ff": "Fula",
 		"fi": "Suomi",
 		"fil": "Filipino",
-		"fit": "fit",
 		"fj": "Fiji",
-		"fo": "Faro",
+		"fo": "Faroe",
 		"fon": "Fon",
 		"fr": "Prancis",
 		"fr_CA": "Prancis (Kanada)",
 		"fr_CH": "Prancis (Swiss)",
-		"frc": "frc",
 		"frm": "Prancis Abad Pertengahan",
 		"fro": "Prancis Kuno",
 		"frp": "Arpitan",
@@ -187,7 +174,6 @@
 		"gan": "gan",
 		"gay": "Gayo",
 		"gba": "Gbaya",
-		"gbz": "gbz",
 		"gd": "Gaelik Skotlandia",
 		"gez": "Geez",
 		"gil": "Gilbert",
@@ -196,16 +182,13 @@
 		"gmh": "Jerman Abad Pertengahan",
 		"gn": "Guarani",
 		"goh": "Jerman Kuno",
-		"gom": "gom",
 		"gon": "Gondi",
 		"gor": "Gorontalo",
-		"got": "Gothik",
+		"got": "Gotik",
 		"grb": "Grebo",
 		"grc": "Yunani Kuno",
 		"gsw": "Jerman (Swiss)",
-		"gu": "Gujarati",
-		"guc": "guc",
-		"gur": "gur",
+		"gu": "Gujarat",
 		"guz": "Gusii",
 		"gv": "Manx",
 		"gwi": "Gwich’in",
@@ -223,7 +206,7 @@
 		"hr": "Kroasia",
 		"hsb": "Sorbia Atas",
 		"hsn": "hsn",
-		"ht": "Haiti",
+		"ht": "Kreol Haiti",
 		"hu": "Hungaria",
 		"hup": "Hupa",
 		"hy": "Armenia",
@@ -242,15 +225,12 @@
 		"is": "Islandia",
 		"it": "Italia",
 		"iu": "Inuktitut",
-		"izh": "izh",
 		"ja": "Jepang",
-		"jam": "jam",
 		"jbo": "Lojban",
 		"jgo": "Ngomba",
 		"jmc": "Machame",
 		"jpr": "Ibrani-Persia",
 		"jrb": "Ibrani-Arab",
-		"jut": "jut",
 		"jv": "Jawa",
 		"ka": "Georgia",
 		"kaa": "Kara-Kalpak",
@@ -267,13 +247,10 @@
 		"ken": "Kenyang",
 		"kfo": "Koro",
 		"kg": "Kongo",
-		"kgp": "kgp",
 		"kha": "Khasi",
 		"kho": "Khotan",
 		"khq": "Koyra Chiini",
-		"khw": "khw",
 		"ki": "Kikuyu",
-		"kiu": "kiu",
 		"kj": "Kuanyama",
 		"kk": "Kazakh",
 		"kkj": "Kako",
@@ -290,7 +267,6 @@
 		"kr": "Kanuri",
 		"krc": "Karachai Balkar",
 		"kri": "Krio",
-		"krj": "krj",
 		"krl": "Karelia",
 		"kru": "Kuruk",
 		"ks": "Kashmir",
@@ -310,20 +286,16 @@
 		"lam": "Lamba",
 		"lb": "Luksemburg",
 		"lez": "Lezghia",
-		"lfn": "lfn",
 		"lg": "Ganda",
 		"li": "Limburgia",
 		"lij": "Liguria",
-		"liv": "liv",
 		"lkt": "Lakota",
-		"lmo": "lmo",
 		"ln": "Lingala",
 		"lo": "Lao",
 		"lol": "Mongo",
 		"loz": "Lozi",
 		"lrc": "Luri Utara",
 		"lt": "Lituavi",
-		"ltg": "ltg",
 		"lu": "Luba-Katanga",
 		"lua": "Luba-Lulua",
 		"lui": "Luiseno",
@@ -332,7 +304,6 @@
 		"lus": "Mizo",
 		"luy": "Luyia",
 		"lv": "Latvi",
-		"lzh": "lzh",
 		"lzz": "Laz",
 		"mad": "Madura",
 		"maf": "Mafa",
@@ -343,7 +314,6 @@
 		"mas": "Masai",
 		"mde": "Maba",
 		"mdf": "Moksha",
-		"mdh": "mdh",
 		"mdr": "Mandar",
 		"men": "Mende",
 		"mer": "Meru",
@@ -351,12 +321,11 @@
 		"mg": "Malagasi",
 		"mga": "Irlandia Abad Pertengahan",
 		"mgh": "Makhuwa-Meetto",
-		"mgo": "meta’",
+		"mgo": "Meta’",
 		"mh": "Marshall",
 		"mi": "Maori",
 		"mic": "Mikmak",
 		"min": "Minangkabau",
-		"mis": "mis",
 		"mk": "Makedonia",
 		"ml": "Malayalam",
 		"mn": "Mongolia",
@@ -365,7 +334,6 @@
 		"moh": "Mohawk",
 		"mos": "Mossi",
 		"mr": "Marathi",
-		"mrj": "mrj",
 		"ms": "Melayu",
 		"mt": "Malta",
 		"mua": "Mundang",
@@ -374,7 +342,7 @@
 		"mwl": "Miranda",
 		"mwr": "Marwari",
 		"mwv": "Mentawai",
-		"my": "Myanmar",
+		"my": "Burma",
 		"mye": "Myene",
 		"myv": "Eryza",
 		"mzn": "Mazanderani",
@@ -391,7 +359,6 @@
 		"ng": "Ndonga",
 		"nia": "Nias",
 		"niu": "Niuea",
-		"njo": "njo",
 		"nl": "Belanda",
 		"nl_BE": "Belanda (Belgia)",
 		"nmg": "Kwasio",
@@ -400,7 +367,6 @@
 		"no": "Norwegia",
 		"nog": "Nogai",
 		"non": "Norse Kuno",
-		"nov": "nov",
 		"nqo": "N’Ko",
 		"nr": "Ndebele Selatan",
 		"nso": "Sotho Utara",
@@ -425,18 +391,14 @@
 		"pam": "Pampanga",
 		"pap": "Papiamento",
 		"pau": "Palau",
-		"pcd": "pcd",
+		"pcm": "Pidgin Nigeria",
 		"pdc": "Jerman Pennsylvania",
-		"pdt": "pdt",
 		"peo": "Persia Kuno",
-		"pfl": "pfl",
 		"phn": "Funisia",
 		"pi": "Pali",
 		"pl": "Polski",
-		"pms": "pms",
-		"pnt": "pnt",
 		"pon": "Pohnpeia",
-		"prg": "prg",
+		"prg": "Prusia",
 		"pro": "Provencal Lama",
 		"ps": "Pashto",
 		"ps_alt-variant": "Pushto",
@@ -445,12 +407,9 @@
 		"pt_PT": "Portugis (Eropa)",
 		"qu": "Quechua",
 		"quc": "Kʼicheʼ",
-		"qug": "qug",
 		"raj": "Rajasthani",
 		"rap": "Rapanui",
 		"rar": "Rarotonga",
-		"rgn": "rgn",
-		"rif": "rif",
 		"rm": "Reto-Roman",
 		"rn": "Rundi",
 		"ro": "Rumania",
@@ -460,9 +419,7 @@
 		"root": "Root",
 		"rtm": "Rotuma",
 		"ru": "Rusia",
-		"rue": "rue",
-		"rug": "rug",
-		"rup": "Makedo-Rumania",
+		"rup": "Aromania",
 		"rw": "Kinyarwanda",
 		"rwk": "Rwa",
 		"sa": "Sanskerta",
@@ -472,14 +429,12 @@
 		"saq": "Samburu",
 		"sas": "Sasak",
 		"sat": "Santali",
-		"saz": "saz",
 		"sba": "Ngambai",
 		"sbp": "Sangu",
 		"sc": "Sardinia",
 		"scn": "Sisilia",
 		"sco": "Skotlandia",
 		"sd": "Sindhi",
-		"sdc": "sdc",
 		"sdh": "Kurdi Selatan",
 		"se": "Sami Utara",
 		"see": "Seneca",
@@ -489,7 +444,6 @@
 		"ses": "Koyraboro Senni",
 		"sg": "Sango",
 		"sga": "Irlandia Kuno",
-		"sgs": "sgs",
 		"sh": "Serbo-Kroasia",
 		"shi": "Tachelhit",
 		"shn": "Shan",
@@ -498,7 +452,7 @@
 		"sid": "Sidamo",
 		"sk": "Slovak",
 		"sl": "Sloven",
-		"sli": "Silesia Bawah",
+		"sli": "Silesia Rendah",
 		"sly": "Selayar",
 		"sm": "Samoa",
 		"sma": "Sami Selatan",
@@ -516,7 +470,6 @@
 		"ss": "Swati",
 		"ssy": "Saho",
 		"st": "Sotho Selatan",
-		"stq": "stq",
 		"su": "Sunda",
 		"suk": "Sukuma",
 		"sus": "Susu",
@@ -542,11 +495,9 @@
 		"tiv": "Tiv",
 		"tk": "Turkmen",
 		"tkl": "Tokelau",
-		"tkr": "tkr",
 		"tl": "Tagalog",
 		"tlh": "Klingon",
 		"tli": "Tlingit",
-		"tly": "tly",
 		"tmh": "Tamashek",
 		"tn": "Tswana",
 		"to": "Tonga",
@@ -556,7 +507,6 @@
 		"tru": "Turoyo",
 		"trv": "Taroko",
 		"ts": "Tsonga",
-		"tsd": "tsd",
 		"tsi": "Tsimshia",
 		"tt": "Tatar",
 		"ttt": "Tat Muslim",
@@ -579,13 +529,9 @@
 		"vai": "Vai",
 		"ve": "Venda",
 		"vec": "Venesia",
-		"vep": "vep",
 		"vi": "Vietnam",
-		"vls": "vls",
-		"vmf": "vmf",
 		"vo": "Volapuk",
 		"vot": "Votia",
-		"vro": "vro",
 		"vun": "Vunjo",
 		"wa": "Walloon",
 		"wae": "Walser",
@@ -597,7 +543,6 @@
 		"wuu": "wuu",
 		"xal": "Kalmuk",
 		"xh": "Xhosa",
-		"xmf": "xmf",
 		"xog": "Soga",
 		"yao": "Yao",
 		"yap": "Yapois",
@@ -605,12 +550,10 @@
 		"ybb": "Yemba",
 		"yi": "Yiddish",
 		"yo": "Yoruba",
-		"yrl": "yrl",
 		"yue": "Kanton",
 		"za": "Zhuang",
 		"zap": "Zapotek",
 		"zbl": "Blissymbol",
-		"zea": "zea",
 		"zen": "Zenaga",
 		"zgh": "Tamazight Maroko Standar",
 		"zh": "Tionghoa",
@@ -667,7 +610,7 @@
 		"Goth": "Gothic",
 		"Gran": "Grantha",
 		"Grek": "Yunani",
-		"Gujr": "Gujarati",
+		"Gujr": "Gujarat",
 		"Guru": "Gurmukhi",
 		"Hanb": "Hanb",
 		"Hang": "Hangul",
@@ -750,55 +693,6 @@
 		"Phnx": "Phoenix",
 		"Plrd": "Fonetik Pollard",
 		"Prti": "Prasasti Parthia",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Rejang",
 		"Roro": "Rongorongo",
 		"Runr": "Runik",
@@ -844,7 +738,7 @@
 		"Yiii": "Yi",
 		"Zinh": "Warisan",
 		"Zmth": "Notasi Matematika",
-		"Zsye": "Zsye",
+		"Zsye": "Emoji",
 		"Zsym": "Simbol",
 		"Zxxx": "Tidak Tertulis",
 		"Zyyy": "Umum",
@@ -890,7 +784,7 @@
 		"AL": "Albania",
 		"AM": "Armenia",
 		"AO": "Angola",
-		"AQ": "Antarktika",
+		"AQ": "Antartika",
 		"AR": "Argentina",
 		"AS": "Samoa Amerika",
 		"AT": "Austria",
@@ -907,7 +801,7 @@
 		"BH": "Bahrain",
 		"BI": "Burundi",
 		"BJ": "Benin",
-		"BL": "Saint Barthelemy",
+		"BL": "Saint Barthélemy",
 		"BM": "Bermuda",
 		"BN": "Brunei",
 		"BO": "Bolivia",
@@ -920,7 +814,7 @@
 		"BY": "Belarus",
 		"BZ": "Belize",
 		"CA": "Kanada",
-		"CC": "Kepulauan Cocos",
+		"CC": "Kepulauan Cocos (Keeling)",
 		"CD": "Kongo - Kinshasa",
 		"CD-alt-variant": "Kongo (RDK)",
 		"CF": "Republik Afrika Tengah",
@@ -941,7 +835,8 @@
 		"CW": "Curaçao",
 		"CX": "Pulau Christmas",
 		"CY": "Siprus",
-		"CZ": "Republik Cheska",
+		"CZ": "Cheska",
+		"CZ-alt-variant": "Republik Cheska",
 		"DE": "Jerman",
 		"DG": "Diego Garcia",
 		"DJ": "Jibuti",
@@ -958,6 +853,7 @@
 		"ES": "Spanyol",
 		"ET": "Etiopia",
 		"EU": "Uni Eropa",
+		"EZ": "EZ",
 		"FI": "Finlandia",
 		"FJ": "Fiji",
 		"FK": "Kepulauan Malvinas",
@@ -966,8 +862,8 @@
 		"FO": "Kepulauan Faroe",
 		"FR": "Prancis",
 		"GA": "Gabon",
-		"GB": "Inggris",
-		"GB-alt-short": "GB",
+		"GB": "Inggris Raya",
+		"GB-alt-short": "UK",
 		"GD": "Grenada",
 		"GE": "Georgia",
 		"GF": "Guyana Prancis",
@@ -1131,6 +1027,8 @@
 		"UA": "Ukraina",
 		"UG": "Uganda",
 		"UM": "Kepulauan Terluar A.S.",
+		"UN": "Perserikatan Bangsa-Bangsa",
+		"UN-alt-short": "PBB",
 		"US": "Amerika Serikat",
 		"US-alt-short": "A.S.",
 		"UY": "Uruguay",
@@ -1211,7 +1109,9 @@
 				"yMMMEd": "E, d MMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "'minggu' 'ke'-W MMM",
+				"yw": "'minggu' 'ke'-w y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1564,7 +1464,7 @@
 		},
 		"era-wide": {
 			"0": "Sebelum Masehi",
-			"1": "M"
+			"1": "Masehi"
 		},
 		"era-abbreviated": {
 			"0": "SM",
@@ -2854,10 +2754,10 @@
 			"relative-type-0": "tahun ini",
 			"relative-type-1": "tahun depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} tahun"
+				"relativeTimePattern-count-other": "dlm {0} thn"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} tahun yang lalu"
+				"relativeTimePattern-count-other": "{0} thn lalu"
 			}
 		},
 		"year-narrow": {
@@ -2866,46 +2766,46 @@
 			"relative-type-0": "tahun ini",
 			"relative-type-1": "tahun depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} tahun"
+				"relativeTimePattern-count-other": "+{0} thn"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} tahun yang lalu"
+				"relativeTimePattern-count-other": "-{0} thn"
 			}
 		},
 		"quarter-wide": {
-			"displayName": "Triwulan",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"displayName": "Kuartal",
+			"relative-type--1": "Kuartal lalu",
+			"relative-type-0": "Kuartal ini",
+			"relative-type-1": "Kuartal berikutnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dalam {0} triwulan"
+				"relativeTimePattern-count-other": "dalam {0} kuartal"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} triwulan yang lalu"
+				"relativeTimePattern-count-other": "{0} kuartal yang lalu"
 			}
 		},
 		"quarter-short": {
-			"displayName": "triwln.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"displayName": "krtl.",
+			"relative-type--1": "Kuartal lalu",
+			"relative-type-0": "Kuartal ini",
+			"relative-type-1": "Kuartal berikutnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dalam {0} triwulan"
+				"relativeTimePattern-count-other": "dlm {0} krtl."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} triwulan yang lalu"
+				"relativeTimePattern-count-other": "{0} krtl. lalu"
 			}
 		},
 		"quarter-narrow": {
-			"displayName": "triwln.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"displayName": "krtl.",
+			"relative-type--1": "Kuartal lalu",
+			"relative-type-0": "Kuartal ini",
+			"relative-type-1": "Kuartal berikutnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "+{0} triwln."
+				"relativeTimePattern-count-other": "+{0} krtl."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} triwln."
+				"relativeTimePattern-count-other": "-{0} krtl."
 			}
 		},
 		"month-wide": {
@@ -2926,10 +2826,10 @@
 			"relative-type-0": "bulan ini",
 			"relative-type-1": "Bulan berikutnya",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} bulan"
+				"relativeTimePattern-count-other": "dlm {0} bln"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} bulan yang lalu"
+				"relativeTimePattern-count-other": "{0} bln lalu"
 			}
 		},
 		"month-narrow": {
@@ -2954,7 +2854,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} minggu yang lalu"
-			}
+			},
+			"relativePeriod": "minggu ke-{0}"
 		},
 		"week-short": {
 			"displayName": "mgg.",
@@ -2962,11 +2863,12 @@
 			"relative-type-0": "minggu ini",
 			"relative-type-1": "minggu depan",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} minggu"
+				"relativeTimePattern-count-other": "dlm {0} mgg"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} minggu yang lalu"
-			}
+				"relativeTimePattern-count-other": "{0} mgg lalu"
+			},
+			"relativePeriod": "mgg ke-{0}"
 		},
 		"week-narrow": {
 			"displayName": "mgg.",
@@ -2978,11 +2880,12 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "-{0} mgg."
-			}
+			},
+			"relativePeriod": "mgg {0}"
 		},
 		"day-wide": {
 			"displayName": "Hari",
-			"relative-type--2": "kemarin lusa",
+			"relative-type--2": "kemarin dulu",
 			"relative-type--1": "kemarin",
 			"relative-type-0": "hari ini",
 			"relative-type-1": "besok",
@@ -2996,30 +2899,30 @@
 		},
 		"day-short": {
 			"displayName": "h",
-			"relative-type--2": "kemarin lusa",
+			"relative-type--2": "kemarin dulu",
 			"relative-type--1": "kemarin",
 			"relative-type-0": "hari ini",
 			"relative-type-1": "besok",
 			"relative-type-2": "lusa",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} hari"
+				"relativeTimePattern-count-other": "dalam {0} h"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} hari yang lalu"
+				"relativeTimePattern-count-other": "{0} h lalu"
 			}
 		},
 		"day-narrow": {
 			"displayName": "h",
-			"relative-type--2": "kemarin lusa",
+			"relative-type--2": "kemarin dulu",
 			"relative-type--1": "kemarin",
 			"relative-type-0": "hari ini",
 			"relative-type-1": "besok",
 			"relative-type-2": "lusa",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "Dalam {0} hari"
+				"relativeTimePattern-count-other": "+{0} h"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} hari yang lalu"
+				"relativeTimePattern-count-other": "-{0} h"
 			}
 		},
 		"weekday": {
@@ -3027,6 +2930,7 @@
 		},
 		"hour-wide": {
 			"displayName": "Jam",
+			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "Dalam {0} jam"
 			},
@@ -3036,15 +2940,17 @@
 		},
 		"hour-short": {
 			"displayName": "jam",
+			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "dlm {0} jam"
+				"relativeTimePattern-count-other": "Dalam {0} jam"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} jam yg lalu"
+				"relativeTimePattern-count-other": "{0} jam lalu"
 			}
 		},
 		"hour-narrow": {
 			"displayName": "j",
+			"relative-type-0": "jam ini",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "+{0} jam"
 			},
@@ -3054,6 +2960,7 @@
 		},
 		"minute-wide": {
 			"displayName": "Menit",
+			"relative-type-0": "menit ini",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "Dalam {0} menit"
 			},
@@ -3063,15 +2970,17 @@
 		},
 		"minute-short": {
 			"displayName": "mnt.",
+			"relative-type-0": "menit ini",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "dlm {0} mnt"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} mnt yg lalu"
+				"relativeTimePattern-count-other": "{0} mnt lalu"
 			}
 		},
 		"minute-narrow": {
 			"displayName": "m",
+			"relative-type-0": "menit ini",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "+{0} mnt"
 			},
@@ -3096,7 +3005,7 @@
 				"relativeTimePattern-count-other": "dlm {0} dtk"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} dtk yg lalu"
+				"relativeTimePattern-count-other": "{0} dtk lalu"
 			}
 		},
 		"second-narrow": {
@@ -3106,7 +3015,7 @@
 				"relativeTimePattern-count-other": "+{0} dtk"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "-{0} d yg lalu"
+				"relativeTimePattern-count-other": "-{0} dtk"
 			}
 		},
 		"zone": {
@@ -3131,7 +3040,7 @@
 		"100000000000000-other": "000 triliun"
 	},
 	"decimalFormat-short": {
-		"1000-other": "0",
+		"1000-other": "0 rb",
 		"10000-other": "00 rb",
 		"100000-other": "000 rb",
 		"1000000-other": "0 jt",
@@ -3209,6 +3118,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

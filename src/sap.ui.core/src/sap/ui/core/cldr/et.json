@@ -19,7 +19,7 @@
 		"ale": "aleuudi",
 		"aln": "geegi",
 		"alt": "altai",
-		"am": "amhari",
+		"am": "amhara",
 		"an": "aragoni",
 		"ang": "vanainglise",
 		"anp": "angika",
@@ -38,7 +38,6 @@
 		"ase": "Ameerika viipekeel",
 		"ast": "astuuria",
 		"av": "avaari",
-		"avk": "avk",
 		"awa": "avadhi",
 		"ay": "aimara",
 		"az": "aserbaidžaani",
@@ -107,6 +106,7 @@
 		"cps": "kapisnoni",
 		"cr": "krii",
 		"crh": "krimmitatari",
+		"crs": "seišelli",
 		"cs": "tšehhi",
 		"csb": "kašuubi",
 		"cu": "kirikuslaavi",
@@ -187,7 +187,6 @@
 		"gan": "kani",
 		"gay": "gajo",
 		"gba": "gbaja",
-		"gbz": "gbz",
 		"gd": "gaeli",
 		"gez": "etioopia",
 		"gil": "kiribati",
@@ -196,7 +195,6 @@
 		"gmh": "keskülemsaksa",
 		"gn": "guaranii",
 		"goh": "vanaülemsaksa",
-		"gom": "gom",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gooti",
@@ -211,7 +209,7 @@
 		"gwi": "gvitšini",
 		"ha": "hausa",
 		"hai": "haida",
-		"hak": "hak",
+		"hak": "hakka",
 		"haw": "havai",
 		"he": "heebrea",
 		"hi": "hindi",
@@ -264,7 +262,6 @@
 		"kcg": "tjapi",
 		"kde": "makonde",
 		"kea": "kabuverdianu",
-		"ken": "ken",
 		"kfo": "koro",
 		"kg": "kongo",
 		"kgp": "kaingangi",
@@ -310,7 +307,6 @@
 		"lam": "lamba",
 		"lb": "letseburgi",
 		"lez": "lesgi",
-		"lfn": "lfn",
 		"lg": "ganda",
 		"li": "limburgi",
 		"lij": "liguuri",
@@ -343,7 +339,6 @@
 		"mas": "masai",
 		"mde": "maba",
 		"mdf": "mokša",
-		"mdh": "mdh",
 		"mdr": "mandari",
 		"men": "mende",
 		"mer": "meru",
@@ -356,7 +351,6 @@
 		"mi": "maoori",
 		"mic": "mikmaki",
 		"min": "minangkabau",
-		"mis": "mis",
 		"mk": "makedoonia",
 		"ml": "malajalami",
 		"mn": "mongoli",
@@ -403,7 +397,7 @@
 		"nov": "noviaal",
 		"nqo": "nkoo",
 		"nr": "lõunandebele",
-		"nso": "pedi",
+		"nso": "põhjasotho",
 		"nus": "nueri",
 		"nv": "navaho",
 		"nwc": "vananevari",
@@ -412,7 +406,7 @@
 		"nyn": "nkole",
 		"nyo": "njoro",
 		"nzi": "nzima",
-		"oc": "provansi",
+		"oc": "oksitaani",
 		"oj": "odžibvei",
 		"om": "oromo",
 		"or": "oria",
@@ -426,6 +420,7 @@
 		"pap": "papiamento",
 		"pau": "belau",
 		"pcd": "pikardi",
+		"pcm": "Nigeeria pidžinkeel",
 		"pdc": "Pennsylvania saksa",
 		"pdt": "mennoniidisaksa",
 		"peo": "vanapärsia",
@@ -444,7 +439,6 @@
 		"pt_PT": "Euroopa portugali",
 		"qu": "ketšua",
 		"quc": "kitše",
-		"qug": "qug",
 		"raj": "radžastani",
 		"rap": "rapanui",
 		"rar": "rarotonga",
@@ -478,7 +472,6 @@
 		"scn": "sitsiilia",
 		"sco": "šoti",
 		"sd": "sindhi",
-		"sdc": "sdc",
 		"sdh": "lõunakurdi",
 		"se": "põhjasaami",
 		"see": "seneka",
@@ -667,13 +660,13 @@
 		"Grek": "kreeka",
 		"Gujr": "gudžarati",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "hanbi",
 		"Hang": "korea",
 		"Hani": "hani",
 		"Hano": "hanunoo",
-		"Hans": "hiina lihtsustatud",
+		"Hans": "lihtsustatud",
 		"Hans-alt-stand-alone": "lihtsustatud hani",
-		"Hant": "hiina traditsiooniline",
+		"Hant": "traditsiooniline",
 		"Hant-alt-stand-alone": "traditsiooniline hani",
 		"Hatr": "Hatra",
 		"Hebr": "heebrea",
@@ -684,7 +677,7 @@
 		"Hung": "vanaungari",
 		"Inds": "Induse",
 		"Ital": "vanaitali",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "jaava",
 		"Jpan": "jaapani",
 		"Jurc": "tšurtšeni",
@@ -748,55 +741,6 @@
 		"Phnx": "foiniikia",
 		"Plrd": "Pollardi miao",
 		"Prti": "partia raidkiri",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "redžangi",
 		"Roro": "rongorongo",
 		"Runr": "ruunikiri",
@@ -842,7 +786,7 @@
 		"Yiii": "jii",
 		"Zinh": "päritud",
 		"Zmth": "matemaatiline tähistus",
-		"Zsye": "Zsye",
+		"Zsye": "emoji",
 		"Zsym": "sümbolid",
 		"Zxxx": "kirjakeeleta",
 		"Zyyy": "üldine",
@@ -888,7 +832,7 @@
 		"AL": "Albaania",
 		"AM": "Armeenia",
 		"AO": "Angola",
-		"AQ": "Antarktis",
+		"AQ": "Antarktika",
 		"AR": "Argentina",
 		"AS": "Ameerika Samoa",
 		"AT": "Austria",
@@ -939,7 +883,8 @@
 		"CW": "Curaçao",
 		"CX": "Jõulusaar",
 		"CY": "Küpros",
-		"CZ": "Tšehhi",
+		"CZ": "Tšehhia",
+		"CZ-alt-variant": "Tšehhi",
 		"DE": "Saksamaa",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -956,6 +901,7 @@
 		"ES": "Hispaania",
 		"ET": "Etioopia",
 		"EU": "Euroopa Liit",
+		"EZ": "EZ",
 		"FI": "Soome",
 		"FJ": "Fidži",
 		"FK": "Falklandi saared",
@@ -1129,6 +1075,8 @@
 		"UA": "Ukraina",
 		"UG": "Uganda",
 		"UM": "Ühendriikide hajasaared",
+		"UN": "Ühendatud Rahvaste Organisatsioon",
+		"UN-alt-short": "ÜRO",
 		"US": "Ameerika Ühendriigid",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
@@ -1159,10 +1107,10 @@
 			"short": "dd.MM.yy"
 		},
 		"timeFormats": {
-			"full": "H:mm.ss zzzz",
-			"long": "H:mm.ss z",
-			"medium": "H:mm.ss",
-			"short": "H:mm"
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1175,8 +1123,8 @@
 				"Ed": "E, d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm.ss a",
-				"EHms": "E HH:mm.ss",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d. MMM y G",
@@ -1185,10 +1133,10 @@
 				"H": "HH",
 				"hm": "h:mm a",
 				"Hm": "HH:mm",
-				"hms": "h:mm.ss a",
-				"Hms": "H:mm.ss",
-				"hmsv": "h:mm.ss a v",
-				"Hmsv": "HH:mm.ss v",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
 				"hmv": "h:mm a v",
 				"Hmv": "HH:mm v",
 				"M": "M",
@@ -1199,8 +1147,8 @@
 				"MMMEd": "E, d. MMM",
 				"MMMMd": "d. MMMM",
 				"MMMMEd": "E, d. MMMM",
-				"mmss": "mm.ss",
-				"ms": "mm.ss",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
 				"y": "y",
 				"yM": "M.y",
 				"yMd": "d.M.y",
@@ -1210,7 +1158,9 @@
 				"yMMMEd": "E, d. MMMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "MMM (W. 'nädal')",
+				"yw": "y (w. 'nädal')"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1538,8 +1488,8 @@
 					"PM"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -1582,10 +1532,10 @@
 			"short": "dd.MM.y GGGGG"
 		},
 		"timeFormats": {
-			"full": "H:mm.ss zzzz",
-			"long": "H:mm.ss z",
-			"medium": "H:mm.ss",
-			"short": "H:mm"
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}, 'kell' {0}",
@@ -1958,8 +1908,8 @@
 					"PM"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -1999,10 +1949,10 @@
 			"short": "dd.MM.y GGGGG"
 		},
 		"timeFormats": {
-			"full": "H:mm.ss zzzz",
-			"long": "H:mm.ss z",
-			"medium": "H:mm.ss",
-			"short": "H:mm"
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}, 'kell' {0}",
@@ -2375,8 +2325,8 @@
 					"PM"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -2425,10 +2375,10 @@
 			"short": "dd.MM.y GGGGG"
 		},
 		"timeFormats": {
-			"full": "H:mm.ss zzzz",
-			"long": "H:mm.ss z",
-			"medium": "H:mm.ss",
-			"short": "H:mm"
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1}, 'kell' {0}",
@@ -2801,8 +2751,8 @@
 					"PM"
 				],
 				"narrow": [
-					"a",
-					"p"
+					"AM",
+					"PM"
 				],
 				"wide": [
 					"AM",
@@ -2858,12 +2808,12 @@
 			"relative-type-0": "käesolev aasta",
 			"relative-type-1": "järgmine aasta",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} aasta pärast",
-				"relativeTimePattern-count-other": "{0} aasta pärast"
+				"relativeTimePattern-count-one": "{0} a pärast",
+				"relativeTimePattern-count-other": "{0} a pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} aasta eest",
-				"relativeTimePattern-count-other": "{0} aasta eest"
+				"relativeTimePattern-count-one": "{0} a eest",
+				"relativeTimePattern-count-other": "{0} a eest"
 			}
 		},
 		"year-narrow": {
@@ -2872,8 +2822,8 @@
 			"relative-type-0": "käesolev aasta",
 			"relative-type-1": "järgmine aasta",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} aasta pärast",
-				"relativeTimePattern-count-other": "{0} aasta pärast"
+				"relativeTimePattern-count-one": "{0} a pärast",
+				"relativeTimePattern-count-other": "{0} a pärast"
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} aasta eest",
@@ -2956,12 +2906,12 @@
 			"relative-type-0": "käesolev kuu",
 			"relative-type-1": "järgmine kuu",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} kuu pärast",
-				"relativeTimePattern-count-other": "{0} kuu pärast"
+				"relativeTimePattern-count-one": "{0} k pärast",
+				"relativeTimePattern-count-other": "{0} k pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} kuu eest",
-				"relativeTimePattern-count-other": "{0} kuu eest"
+				"relativeTimePattern-count-one": "{0} k eest",
+				"relativeTimePattern-count-other": "{0} k eest"
 			}
 		},
 		"week-wide": {
@@ -2976,7 +2926,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} nädala eest",
 				"relativeTimePattern-count-other": "{0} nädala eest"
-			}
+			},
+			"relativePeriod": "{0} nädal"
 		},
 		"week-short": {
 			"displayName": "näd",
@@ -2984,13 +2935,14 @@
 			"relative-type-0": "käesolev nädal",
 			"relative-type-1": "järgmine nädal",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} nädala pärast",
-				"relativeTimePattern-count-other": "{0} nädala pärast"
+				"relativeTimePattern-count-one": "{0} näd pärast",
+				"relativeTimePattern-count-other": "{0} näd pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} nädala eest",
-				"relativeTimePattern-count-other": "{0} nädala eest"
-			}
+				"relativeTimePattern-count-one": "{0} näd eest",
+				"relativeTimePattern-count-other": "{0} näd eest"
+			},
+			"relativePeriod": "{0} näd"
 		},
 		"week-narrow": {
 			"displayName": "näd",
@@ -2998,13 +2950,14 @@
 			"relative-type-0": "käesolev nädal",
 			"relative-type-1": "järgmine nädal",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} nädala pärast",
-				"relativeTimePattern-count-other": "{0} nädala pärast"
+				"relativeTimePattern-count-one": "{0} näd pärast",
+				"relativeTimePattern-count-other": "{0} näd pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} nädala eest",
-				"relativeTimePattern-count-other": "{0} nädala eest"
-			}
+				"relativeTimePattern-count-one": "{0} näd eest",
+				"relativeTimePattern-count-other": "{0} näd eest"
+			},
+			"relativePeriod": "{0} nädal"
 		},
 		"day-wide": {
 			"displayName": "päev",
@@ -3034,8 +2987,8 @@
 				"relativeTimePattern-count-other": "{0} p pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} p tagasi",
-				"relativeTimePattern-count-other": "{0} p tagasi"
+				"relativeTimePattern-count-one": "{0} p eest",
+				"relativeTimePattern-count-other": "{0} p eest"
 			}
 		},
 		"day-narrow": {
@@ -3050,8 +3003,8 @@
 				"relativeTimePattern-count-other": "{0} p pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} p tagasi",
-				"relativeTimePattern-count-other": "{0} p tagasi"
+				"relativeTimePattern-count-one": "{0} p eest",
+				"relativeTimePattern-count-other": "{0} p eest"
 			}
 		},
 		"weekday": {
@@ -3059,6 +3012,7 @@
 		},
 		"hour-wide": {
 			"displayName": "tund",
+			"relative-type-0": "praegusel tunnil",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} tunni pärast",
 				"relativeTimePattern-count-other": "{0} tunni pärast"
@@ -3070,28 +3024,31 @@
 		},
 		"hour-short": {
 			"displayName": "t",
+			"relative-type-0": "praegusel tunnil",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} t pärast",
 				"relativeTimePattern-count-other": "{0} t pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} t tagasi",
-				"relativeTimePattern-count-other": "{0} t tagasi"
+				"relativeTimePattern-count-one": "{0} t eest",
+				"relativeTimePattern-count-other": "{0} t eest"
 			}
 		},
 		"hour-narrow": {
 			"displayName": "t",
+			"relative-type-0": "praegusel tunnil",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} t pärast",
 				"relativeTimePattern-count-other": "{0} t pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} t tagasi",
-				"relativeTimePattern-count-other": "{0} t tagasi"
+				"relativeTimePattern-count-one": "{0} t eest",
+				"relativeTimePattern-count-other": "{0} t eest"
 			}
 		},
 		"minute-wide": {
 			"displayName": "minut",
+			"relative-type-0": "praegusel minutil",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} minuti pärast",
 				"relativeTimePattern-count-other": "{0} minuti pärast"
@@ -3103,24 +3060,26 @@
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "praegusel minutil",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} min pärast",
 				"relativeTimePattern-count-other": "{0} min pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} min tagasi",
-				"relativeTimePattern-count-other": "{0} min tagasi"
+				"relativeTimePattern-count-one": "{0} min eest",
+				"relativeTimePattern-count-other": "{0} min eest"
 			}
 		},
 		"minute-narrow": {
 			"displayName": "min",
+			"relative-type-0": "praegusel minutil",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} min pärast",
 				"relativeTimePattern-count-other": "{0} min pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} min tagasi",
-				"relativeTimePattern-count-other": "{0} min tagasi"
+				"relativeTimePattern-count-one": "{0} min eest",
+				"relativeTimePattern-count-other": "{0} min eest"
 			}
 		},
 		"second-wide": {
@@ -3143,8 +3102,8 @@
 				"relativeTimePattern-count-other": "{0} sek pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} sek tagasi",
-				"relativeTimePattern-count-other": "{0} sek tagasi"
+				"relativeTimePattern-count-one": "{0} sek eest",
+				"relativeTimePattern-count-other": "{0} sek eest"
 			}
 		},
 		"second-narrow": {
@@ -3155,8 +3114,8 @@
 				"relativeTimePattern-count-other": "{0} s pärast"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} s tagasi",
-				"relativeTimePattern-count-other": "{0} s tagasi"
+				"relativeTimePattern-count-one": "{0} s eest",
+				"relativeTimePattern-count-other": "{0} s eest"
 			}
 		},
 		"zone": {
@@ -3283,6 +3242,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

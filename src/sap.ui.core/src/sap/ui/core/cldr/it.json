@@ -26,7 +26,7 @@
 		"ar": "arabo",
 		"ar_001": "arabo moderno standard",
 		"arc": "aramaico",
-		"arn": "araucano",
+		"arn": "mapuche",
 		"aro": "araona",
 		"arp": "arapaho",
 		"arq": "arabo algerino",
@@ -107,6 +107,7 @@
 		"cps": "capiznon",
 		"cr": "cree",
 		"crh": "turco crimeo",
+		"crs": "creolo delle Seychelles",
 		"cs": "ceco",
 		"csb": "kashubian",
 		"cu": "slavo della Chiesa",
@@ -200,12 +201,11 @@
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gotico",
-		"grb": "gerbo",
+		"grb": "grebo",
 		"grc": "greco antico",
 		"gsw": "tedesco svizzero",
 		"gu": "gujarati",
 		"guc": "wayuu",
-		"gur": "gur",
 		"guz": "gusii",
 		"gv": "mannese",
 		"gwi": "gwichʼin",
@@ -216,7 +216,7 @@
 		"he": "ebraico",
 		"hi": "hindi",
 		"hif": "hindi figiano",
-		"hil": "hiligayna",
+		"hil": "ilongo",
 		"hit": "hittite",
 		"hmn": "hmong",
 		"ho": "hiri motu",
@@ -259,12 +259,11 @@
 		"kaj": "kai",
 		"kam": "kamba",
 		"kaw": "kawi",
-		"kbd": "kabardia",
+		"kbd": "cabardino",
 		"kbl": "kanembu",
 		"kcg": "tyap",
 		"kde": "makonde",
 		"kea": "capoverdiano",
-		"ken": "ken",
 		"kfo": "koro",
 		"kg": "kongo",
 		"kgp": "kaingang",
@@ -289,8 +288,6 @@
 		"kpe": "kpelle",
 		"kr": "kanuri",
 		"krc": "karachay-Balkar",
-		"kri": "kri",
-		"krj": "krj",
 		"krl": "careliano",
 		"kru": "kurukh",
 		"ks": "kashmiri",
@@ -309,10 +306,10 @@
 		"lah": "lahnda",
 		"lam": "lamba",
 		"lb": "lussemburghese",
-		"lez": "lezghian",
+		"lez": "lesgo",
 		"lfn": "Lingua Franca Nova",
 		"lg": "ganda",
-		"li": "limburgese",
+		"li": "limburghese",
 		"lij": "ligure",
 		"liv": "livone",
 		"lkt": "lakota",
@@ -343,7 +340,6 @@
 		"mas": "masai",
 		"mde": "maba",
 		"mdf": "moksha",
-		"mdh": "mdh",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -356,7 +352,6 @@
 		"mi": "maori",
 		"mic": "micmac",
 		"min": "menangkabau",
-		"mis": "mis",
 		"mk": "macedone",
 		"ml": "malayalam",
 		"mn": "mongolo",
@@ -426,8 +421,8 @@
 		"pap": "papiamento",
 		"pau": "palau",
 		"pcd": "piccardo",
+		"pcm": "pidgin nigeriano",
 		"pdc": "tedesco della Pennsylvania",
-		"pdt": "pdt",
 		"peo": "persiano antico",
 		"pfl": "tedesco palatino",
 		"phn": "fenicio",
@@ -492,7 +487,7 @@
 		"sh": "serbo-croato",
 		"shi": "tashelhit",
 		"shn": "shan",
-		"shu": "chadian arabic",
+		"shu": "arabo ciadiano",
 		"si": "singalese",
 		"sid": "sidamo",
 		"sk": "slovacco",
@@ -522,7 +517,7 @@
 		"sux": "sumero",
 		"sv": "svedese",
 		"sw": "swahili",
-		"sw_CD": "congo swahili",
+		"sw_CD": "swahili del Congo",
 		"swb": "comoriano",
 		"syc": "siriaco classico",
 		"syr": "siriaco",
@@ -580,7 +575,6 @@
 		"vep": "vepso",
 		"vi": "vietnamita",
 		"vls": "fiammingo occidentale",
-		"vmf": "vmf",
 		"vo": "volapük",
 		"vot": "voto",
 		"vro": "võro",
@@ -667,7 +661,7 @@
 		"Grek": "greco",
 		"Gujr": "gujarati",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "hanb",
 		"Hang": "hangul",
 		"Hani": "han",
 		"Hano": "hanunoo",
@@ -684,7 +678,7 @@
 		"Hung": "antico ungherese",
 		"Inds": "indu",
 		"Ital": "italico antico",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "javanese",
 		"Jpan": "giapponese",
 		"Jurc": "jurchen",
@@ -748,55 +742,6 @@
 		"Phnx": "fenicio",
 		"Plrd": "fonetica di pollard",
 		"Prti": "partico delle iscrizioni",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "rejang",
 		"Roro": "rongorongo",
 		"Runr": "runico",
@@ -842,7 +787,7 @@
 		"Yiii": "yi",
 		"Zinh": "ereditato",
 		"Zmth": "notazione matematica",
-		"Zsye": "Zsye",
+		"Zsye": "emoji",
 		"Zsym": "simboli",
 		"Zxxx": "non scritto",
 		"Zyyy": "comune",
@@ -877,7 +822,7 @@
 		"039": "Europa meridionale",
 		"053": "Australasia",
 		"054": "Melanesia",
-		"057": "Regione Micronesiana",
+		"057": "Regione micronesiana",
 		"061": "Polinesia",
 		"AC": "Isola Ascensione",
 		"AD": "Andorra",
@@ -909,7 +854,7 @@
 		"BM": "Bermuda",
 		"BN": "Brunei",
 		"BO": "Bolivia",
-		"BQ": "Caraibi Olandesi",
+		"BQ": "Caraibi olandesi",
 		"BR": "Brasile",
 		"BS": "Bahamas",
 		"BT": "Bhutan",
@@ -926,7 +871,7 @@
 		"CG-alt-variant": "Congo (Repubblica)",
 		"CH": "Svizzera",
 		"CI": "Costa d’Avorio",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "Côte d’Ivoire",
 		"CK": "Isole Cook",
 		"CL": "Cile",
 		"CM": "Camerun",
@@ -939,7 +884,8 @@
 		"CW": "Curaçao",
 		"CX": "Isola Christmas",
 		"CY": "Cipro",
-		"CZ": "Repubblica Ceca",
+		"CZ": "Cèchia",
+		"CZ-alt-variant": "Repubblica Ceca",
 		"DE": "Germania",
 		"DG": "Diego Garcia",
 		"DJ": "Gibuti",
@@ -956,6 +902,7 @@
 		"ES": "Spagna",
 		"ET": "Etiopia",
 		"EU": "Unione Europea",
+		"EZ": "EZ",
 		"FI": "Finlandia",
 		"FJ": "Figi",
 		"FK": "Isole Falkland",
@@ -965,7 +912,7 @@
 		"FR": "Francia",
 		"GA": "Gabon",
 		"GB": "Regno Unito",
-		"GB-alt-short": "GB",
+		"GB-alt-short": "UK",
 		"GD": "Grenada",
 		"GE": "Georgia",
 		"GF": "Guyana francese",
@@ -978,7 +925,7 @@
 		"GP": "Guadalupa",
 		"GQ": "Guinea Equatoriale",
 		"GR": "Grecia",
-		"GS": "Georgia del Sud e isole Sandwich australi",
+		"GS": "Georgia del Sud e Sandwich australi",
 		"GT": "Guatemala",
 		"GU": "Guam",
 		"GW": "Guinea-Bissau",
@@ -1116,8 +1063,8 @@
 		"TH": "Thailandia",
 		"TJ": "Tagikistan",
 		"TK": "Tokelau",
-		"TL": "Timor Leste",
-		"TL-alt-variant": "Timor Est",
+		"TL": "Timor Est",
+		"TL-alt-variant": "Timor Leste",
 		"TM": "Turkmenistan",
 		"TN": "Tunisia",
 		"TO": "Tonga",
@@ -1129,6 +1076,8 @@
 		"UA": "Ucraina",
 		"UG": "Uganda",
 		"UM": "Altre isole americane del Pacifico",
+		"UN": "nazioni unite",
+		"UN-alt-short": "nazioni unite",
 		"US": "Stati Uniti",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
@@ -1208,7 +1157,9 @@
 				"yMMMEd": "E d MMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "'settimana' W 'di' MMM",
+				"yw": "'settimana' w 'del' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1394,18 +1345,18 @@
 					"D"
 				],
 				"wide": [
-					"Gennaio",
-					"Febbraio",
-					"Marzo",
-					"Aprile",
-					"Maggio",
-					"Giugno",
-					"Luglio",
-					"Agosto",
-					"Settembre",
-					"Ottobre",
-					"Novembre",
-					"Dicembre"
+					"gennaio",
+					"febbraio",
+					"marzo",
+					"aprile",
+					"maggio",
+					"giugno",
+					"luglio",
+					"agosto",
+					"settembre",
+					"ottobre",
+					"novembre",
+					"dicembre"
 				]
 			}
 		},
@@ -1477,13 +1428,13 @@
 					"sab"
 				],
 				"wide": [
-					"Domenica",
-					"Lunedì",
-					"Martedì",
-					"Mercoledì",
-					"Giovedì",
-					"Venerdì",
-					"Sabato"
+					"domenica",
+					"lunedì",
+					"martedì",
+					"mercoledì",
+					"giovedì",
+					"venerdì",
+					"sabato"
 				]
 			}
 		},
@@ -1560,8 +1511,8 @@
 			}
 		},
 		"era-wide": {
-			"0": "a.C.",
-			"1": "d.C."
+			"0": "avanti Cristo",
+			"1": "dopo Cristo"
 		},
 		"era-abbreviated": {
 			"0": "a.C.",
@@ -1895,13 +1846,13 @@
 					"sab"
 				],
 				"wide": [
-					"Domenica",
-					"Lunedì",
-					"Martedì",
-					"Mercoledì",
-					"Giovedì",
-					"Venerdì",
-					"Sabato"
+					"domenica",
+					"lunedì",
+					"martedì",
+					"mercoledì",
+					"giovedì",
+					"venerdì",
+					"sabato"
 				]
 			}
 		},
@@ -2227,18 +2178,18 @@
 					"D"
 				],
 				"wide": [
-					"Gennaio",
-					"Febbraio",
-					"Marzo",
-					"Aprile",
-					"Maggio",
-					"Giugno",
-					"Luglio",
-					"Agosto",
-					"Settembre",
-					"Ottobre",
-					"Novembre",
-					"Dicembre"
+					"gennaio",
+					"febbraio",
+					"marzo",
+					"aprile",
+					"maggio",
+					"giugno",
+					"luglio",
+					"agosto",
+					"settembre",
+					"ottobre",
+					"novembre",
+					"dicembre"
 				]
 			}
 		},
@@ -2310,13 +2261,13 @@
 					"sab"
 				],
 				"wide": [
-					"Domenica",
-					"Lunedì",
-					"Martedì",
-					"Mercoledì",
-					"Giovedì",
-					"Venerdì",
-					"Sabato"
+					"domenica",
+					"lunedì",
+					"martedì",
+					"mercoledì",
+					"giovedì",
+					"venerdì",
+					"sabato"
 				]
 			}
 		},
@@ -2734,13 +2685,13 @@
 					"sab"
 				],
 				"wide": [
-					"Domenica",
-					"Lunedì",
-					"Martedì",
-					"Mercoledì",
-					"Giovedì",
-					"Venerdì",
-					"Sabato"
+					"domenica",
+					"lunedì",
+					"martedì",
+					"mercoledì",
+					"giovedì",
+					"venerdì",
+					"sabato"
 				]
 			}
 		},
@@ -2874,9 +2825,9 @@
 		},
 		"quarter-wide": {
 			"displayName": "trimestre",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "trimestre scorso",
+			"relative-type-0": "questo trimestre",
+			"relative-type-1": "trimestre prossimo",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} trimestre",
 				"relativeTimePattern-count-other": "tra {0} trimestri"
@@ -2888,9 +2839,9 @@
 		},
 		"quarter-short": {
 			"displayName": "trim.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "trimestre scorso",
+			"relative-type-0": "questo trimestre",
+			"relative-type-1": "trimestre prossimo",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} trim.",
 				"relativeTimePattern-count-other": "tra {0} trim."
@@ -2902,9 +2853,9 @@
 		},
 		"quarter-narrow": {
 			"displayName": "trim.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "trimestre scorso",
+			"relative-type-0": "questo trimestre",
+			"relative-type-1": "trimestre prossimo",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} trim.",
 				"relativeTimePattern-count-other": "tra {0} trim."
@@ -2968,7 +2919,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} settimana fa",
 				"relativeTimePattern-count-other": "{0} settimane fa"
-			}
+			},
+			"relativePeriod": "la settimana del {0}"
 		},
 		"week-short": {
 			"displayName": "sett.",
@@ -2982,7 +2934,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} sett. fa",
 				"relativeTimePattern-count-other": "{0} sett. fa"
-			}
+			},
+			"relativePeriod": "la settimana del {0}"
 		},
 		"week-narrow": {
 			"displayName": "sett.",
@@ -2996,7 +2949,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} sett. fa",
 				"relativeTimePattern-count-other": "{0} sett. fa"
-			}
+			},
+			"relativePeriod": "la settimana del {0}"
 		},
 		"day-wide": {
 			"displayName": "giorno",
@@ -3051,6 +3005,7 @@
 		},
 		"hour-wide": {
 			"displayName": "ora",
+			"relative-type-0": "quest’ora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} ora",
 				"relativeTimePattern-count-other": "tra {0} ore"
@@ -3062,6 +3017,7 @@
 		},
 		"hour-short": {
 			"displayName": "h.",
+			"relative-type-0": "quest’ora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} h.",
 				"relativeTimePattern-count-other": "tra {0} h."
@@ -3073,6 +3029,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "h",
+			"relative-type-0": "quest’ora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} h",
 				"relativeTimePattern-count-other": "tra {0} h"
@@ -3084,6 +3041,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minuto",
+			"relative-type-0": "questo minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} minuto",
 				"relativeTimePattern-count-other": "tra {0} minuti"
@@ -3095,6 +3053,7 @@
 		},
 		"minute-short": {
 			"displayName": "min.",
+			"relative-type-0": "questo minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} min.",
 				"relativeTimePattern-count-other": "tra {0} min."
@@ -3106,6 +3065,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "m",
+			"relative-type-0": "questo minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} min",
 				"relativeTimePattern-count-other": "tra {0} min"
@@ -3116,7 +3076,7 @@
 			}
 		},
 		"second-wide": {
-			"displayName": "Secondo",
+			"displayName": "secondo",
 			"relative-type-0": "ora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "tra {0} secondo",
@@ -3268,6 +3228,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

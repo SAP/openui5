@@ -26,7 +26,7 @@
 		"ar": "arabiska",
 		"ar_001": "modern standardarabiska",
 		"arc": "arameiska",
-		"arn": "araukanska",
+		"arn": "mapudungun",
 		"aro": "araoniska",
 		"arp": "arapaho",
 		"arq": "algerisk arabiska",
@@ -107,6 +107,7 @@
 		"cps": "kapisnon",
 		"cr": "cree",
 		"crh": "krimtatariska",
+		"crs": "seychellisk kreol",
 		"cs": "tjeckiska",
 		"csb": "kasjubiska",
 		"cu": "kyrkslaviska",
@@ -132,7 +133,7 @@
 		"dv": "divehi",
 		"dyo": "jola-fonyi",
 		"dyu": "dyula",
-		"dz": "bhutanesiska",
+		"dz": "dzongkha",
 		"dzg": "dazaga",
 		"ebu": "embu",
 		"ee": "ewe",
@@ -343,7 +344,6 @@
 		"mas": "massajiska",
 		"mde": "maba",
 		"mdf": "moksja",
-		"mdh": "mdh",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -356,7 +356,6 @@
 		"mi": "maori",
 		"mic": "mi’kmaq",
 		"min": "minangkabau",
-		"mis": "mis",
 		"mk": "makedonska",
 		"ml": "malayalam",
 		"mn": "mongoliska",
@@ -382,7 +381,7 @@
 		"nan": "min nan",
 		"nap": "napolitanska",
 		"naq": "nama",
-		"nb": "norskt bokmål",
+		"nb": "bokmål",
 		"nd": "nordndebele",
 		"nds": "lågtyska",
 		"nds_NL": "lågsaxiska",
@@ -426,6 +425,7 @@
 		"pap": "papiamento",
 		"pau": "palau",
 		"pcd": "pikardiska",
+		"pcm": "Nigeria-pidgin",
 		"pdc": "Pennsylvaniatyska",
 		"pdt": "mennonitisk lågtyska",
 		"peo": "fornpersiska",
@@ -435,7 +435,7 @@
 		"pl": "polska",
 		"pms": "piemontesiska",
 		"pnt": "pontiska",
-		"pon": "ponape",
+		"pon": "pohnpeiska",
 		"prg": "fornpreussiska",
 		"pro": "fornprovensalska",
 		"ps": "afghanska",
@@ -475,7 +475,7 @@
 		"saz": "saurashtra",
 		"sba": "ngambay",
 		"sbp": "sangu",
-		"sc": "sardiska",
+		"sc": "sardinska",
 		"scn": "sicilianska",
 		"sco": "skotska",
 		"sd": "sindhi",
@@ -493,7 +493,7 @@
 		"sh": "serbokroatiska",
 		"shi": "tachelhit",
 		"shn": "shan",
-		"shu": "Chad-arabiska",
+		"shu": "Tchad-arabiska",
 		"si": "singalesiska",
 		"sid": "sidamo",
 		"sk": "slovakiska",
@@ -530,7 +530,7 @@
 		"szl": "silesiska",
 		"ta": "tamil",
 		"tcy": "tulu",
-		"te": "telugiska",
+		"te": "telugu",
 		"tem": "temne",
 		"teo": "teso",
 		"ter": "tereno",
@@ -635,7 +635,7 @@
 		"Bass": "bassaiska vah",
 		"Batk": "batak",
 		"Beng": "bengaliska",
-		"Bhks": "Bhks",
+		"Bhks": "bhaiksukiska",
 		"Blis": "blissymboler",
 		"Bopo": "bopomofo",
 		"Brah": "brami",
@@ -668,10 +668,10 @@
 		"Grek": "grekiska",
 		"Gujr": "gujarati",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "han med bopomofo",
 		"Hang": "hangul",
 		"Hani": "han",
-		"Hano": "hanunå",
+		"Hano": "hanunó’o",
 		"Hans": "förenklade",
 		"Hans-alt-stand-alone": "förenklade han-tecken",
 		"Hant": "traditionella",
@@ -685,7 +685,7 @@
 		"Hung": "fornungerska",
 		"Inds": "indus",
 		"Ital": "fornitaliska",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "javanska",
 		"Jpan": "japanska",
 		"Jurc": "jurchenska",
@@ -714,7 +714,7 @@
 		"Mahj": "mahajaniska",
 		"Mand": "mandaéiska",
 		"Mani": "manikeanska",
-		"Marc": "Marc",
+		"Marc": "marchenska",
 		"Maya": "mayahieroglyfer",
 		"Mend": "mende",
 		"Merc": "kursiv-meroitiska",
@@ -728,8 +728,8 @@
 		"Mult": "multaniska",
 		"Mymr": "burmesiska",
 		"Narb": "fornnordarabiska",
-		"Nbat": "nabatateiska",
-		"Newa": "Newa",
+		"Nbat": "nabateiska",
+		"Newa": "newariska",
 		"Nkgb": "naxi geba",
 		"Nkoo": "n-kå",
 		"Nshu": "nüshu",
@@ -746,58 +746,9 @@
 		"Phli": "tidig pahlavi",
 		"Phlp": "psaltaren-pahlavi",
 		"Phlv": "bokpahlavi",
-		"Phnx": "fenikiska",
+		"Phnx": "feniciska",
 		"Plrd": "pollardtecken",
 		"Prti": "tidig parthianska",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "rejang",
 		"Roro": "rongo-rongo",
 		"Runr": "runor",
@@ -839,11 +790,11 @@
 		"Wara": "varang kshiti",
 		"Wole": "woleai",
 		"Xpeo": "fornpersiska",
-		"Xsux": "sumeo-akkadisk kilskrift",
+		"Xsux": "sumero-akkadisk kilskrift",
 		"Yiii": "yi",
 		"Zinh": "ärvda",
 		"Zmth": "matematisk notation",
-		"Zsye": "Zsye",
+		"Zsye": "emoji",
 		"Zsym": "symboler",
 		"Zxxx": "oskrivet språk",
 		"Zyyy": "gemensamma",
@@ -941,6 +892,7 @@
 		"CX": "Julön",
 		"CY": "Cypern",
 		"CZ": "Tjeckien",
+		"CZ-alt-variant": "CZ",
 		"DE": "Tyskland",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -957,10 +909,11 @@
 		"ES": "Spanien",
 		"ET": "Etiopien",
 		"EU": "Europeiska unionen",
+		"EZ": "EZ",
 		"FI": "Finland",
 		"FJ": "Fiji",
 		"FK": "Falklandsöarna",
-		"FK-alt-variant": "Falklandsöarna (Malvinerna)",
+		"FK-alt-variant": "FK",
 		"FM": "Mikronesien",
 		"FO": "Färöarna",
 		"FR": "Frankrike",
@@ -1032,7 +985,7 @@
 		"MC": "Monaco",
 		"MD": "Moldavien",
 		"ME": "Montenegro",
-		"MF": "S:t Martin",
+		"MF": "Saint-Martin",
 		"MG": "Madagaskar",
 		"MH": "Marshallöarna",
 		"MK": "Makedonien",
@@ -1130,6 +1083,8 @@
 		"UA": "Ukraina",
 		"UG": "Uganda",
 		"UM": "USA:s yttre öar",
+		"UN": "Förenta Nationerna",
+		"UN-alt-short": "FN",
 		"US": "USA",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
@@ -1217,7 +1172,9 @@
 				"yMMMEd": "E d MMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "'vecka' W 'i' MMM",
+				"yw": "'vecka' w, y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2099,8 +2056,8 @@
 					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH:mm–HH:mm",
-					"m": "HH:mm–HH:mm"
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
 				},
 				"hmv": {
 					"a": "h:mm a – h:mm a v",
@@ -2108,8 +2065,8 @@
 					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH:mm–HH:mm v",
-					"m": "HH:mm–HH:mm v"
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -2976,7 +2933,7 @@
 			}
 		},
 		"month-narrow": {
-			"displayName": "m",
+			"displayName": "mån",
 			"relative-type--1": "förra mån.",
 			"relative-type-0": "denna mån.",
 			"relative-type-1": "nästa mån.",
@@ -3001,7 +2958,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "för {0} vecka sedan",
 				"relativeTimePattern-count-other": "för {0} veckor sedan"
-			}
+			},
+			"relativePeriod": "veckan för {0}"
 		},
 		"week-short": {
 			"displayName": "v",
@@ -3015,7 +2973,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "för {0} v. sedan",
 				"relativeTimePattern-count-other": "för {0} v. sedan"
-			}
+			},
+			"relativePeriod": "veckan för {0}"
 		},
 		"week-narrow": {
 			"displayName": "v",
@@ -3029,7 +2988,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "−{0} v",
 				"relativeTimePattern-count-other": "−{0} v"
-			}
+			},
+			"relativePeriod": "veckan för {0}"
 		},
 		"day-wide": {
 			"displayName": "dag",
@@ -3084,6 +3044,7 @@
 		},
 		"hour-wide": {
 			"displayName": "timme",
+			"relative-type-0": "denna timme",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} timme",
 				"relativeTimePattern-count-other": "om {0} timmar"
@@ -3095,6 +3056,7 @@
 		},
 		"hour-short": {
 			"displayName": "tim",
+			"relative-type-0": "denna timme",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} tim",
 				"relativeTimePattern-count-other": "om {0} tim"
@@ -3106,6 +3068,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "h",
+			"relative-type-0": "denna timme",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} h",
 				"relativeTimePattern-count-other": "+{0} h"
@@ -3117,6 +3080,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minut",
+			"relative-type-0": "denna minut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} minut",
 				"relativeTimePattern-count-other": "om {0} minuter"
@@ -3128,6 +3092,7 @@
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "denna minut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} min",
 				"relativeTimePattern-count-other": "om {0} min"
@@ -3139,6 +3104,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "m",
+			"relative-type-0": "denna minut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} min",
 				"relativeTimePattern-count-other": "+{0} min"
@@ -3290,6 +3256,7 @@
 		"EEK": "Ekr",
 		"EGP": "EG£",
 		"EUR": "€",
+		"IEP": "IE£",
 		"ILS": "₪",
 		"ISK": "Ikr",
 		"JMD": "JM$",
@@ -3309,6 +3276,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

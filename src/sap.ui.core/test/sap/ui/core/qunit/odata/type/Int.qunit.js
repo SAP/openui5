@@ -70,7 +70,7 @@ sap.ui.require([
 			assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
 			oType.formatValue(1234, "int");
 			assert.strictEqual(oType.oFormat, null, "no formatter for int");
-			assert.strictEqual(oType.formatValue(1234, "string"), "1'234",
+			assert.strictEqual(oType.formatValue(1234, "string"), "1’234",
 				"adjusted to changed language");
 			assert.ok(oType.oFormat, "Formatter has been created on demand");
 		});
