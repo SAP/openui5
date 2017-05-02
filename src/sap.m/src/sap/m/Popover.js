@@ -638,6 +638,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			// This is needed when a theme defines only a compact arrow for all modes.
 			bForceCompactArrowOffset = Parameters.get("_sap_m_Popover_ForceCompactArrowOffset") === "true";
 
+            // bug fix issue 1012: https://github.com/SAP/openui5/issues/1012
+            jQuery.sap.syncStyleClass('sapUiSizeCompact', oControl, this);
+
 			// Determines if the Popover will be rendered in a compact mode
 			this._bSizeCompact = sap.m._bSizeCompact || !!aCompactParents.length || this.hasStyleClass("sapUiSizeCompact");
 			this._bUseCompactArrow = this._bSizeCompact || bForceCompactArrowOffset;
