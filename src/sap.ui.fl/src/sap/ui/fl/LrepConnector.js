@@ -357,7 +357,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
 	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
 	 *
-	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle) and <code>componentClassName<code>
+	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName<code> and <code>etag<code> value
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
@@ -432,8 +432,8 @@ sap.ui.define([
 			.then(function(oResponse) {
 				return {
 					changes: oResponse.response,
-					messagebundle: oResponse.response.messagebundle,
-					componentClassName: sComponentClassName
+					componentClassName: sComponentClassName,
+					etag: oResponse.etag
 				};
 			}, function(oError) {
 				if (oError.code === 404 || oError.code === 405) {
