@@ -170,19 +170,22 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("read: failure", function (assert) {
 		var jqXHR = {},
-			oExpectedError = {},
-			oMetadataRequestor = _MetadataRequestor.create();
+			oExpectedError = new Error("404 Not Found"),
+			oMetadataRequestor = _MetadataRequestor.create(),
+			sUrl = "/foo/$metadata";
 
 		this.mock(jQuery).expects("ajax")
 			.returns(createMock(jqXHR, true)); // true  = fail
 		this.mock(_Helper).expects("createError")
 			.withExactArgs(sinon.match.same(jqXHR))
 			.returns(oExpectedError);
+		this.oLogMock.expects("error")
+			.withExactArgs("GET " + sUrl, oExpectedError.message,
+				"sap.ui.model.odata.v4.lib._MetadataRequestor");
 
-		return oMetadataRequestor.read("/").then(function (oResult) {
+		return oMetadataRequestor.read(sUrl).then(function (oResult) {
 			assert.ok(false);
-		})
-		.catch(function (oError) {
+		}, function (oError) {
 			assert.strictEqual(oError, oExpectedError);
 		});
 	});
