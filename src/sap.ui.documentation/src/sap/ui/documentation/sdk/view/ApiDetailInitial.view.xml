@@ -10,7 +10,7 @@
 					background="Light">
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							class="sapUiNoContentPadding">
+							class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
 								width="100%"
 								densityAware="false"

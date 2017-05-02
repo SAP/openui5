@@ -11,6 +11,12 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 
 /*gradient colors for all different browsers */
 html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .gradient {
+.sapUiDemoApps .namespaceLink {
+	vertical-align: baseline;
+}
+
+	/*gradient colors for all different browsers */
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .gradient {
 	background: #a9c4df; /* Old browsers */
 	background: -moz-linear-gradient(top,  #a9c4df 0%, #e7ecf0 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(top,  #a9c4df 0%,#e7ecf0 100%); /* Chrome10-25,Safari5.1-6 */

@@ -182,3 +182,47 @@
 .footer-class section {
 	flex-grow: 11;
 }
+
+
+/* ==========================================================================
+   Layout fixes
+  ========================================================================== */
+
+/* fix to remove the 5px space below title images */
+.sapUiDemokit .sapUiDemokitLandingImageCell {
+	line-height: 0;
+}
+
+/* removes unneccessary whitespace for the headlines */
+.sapUiDemokit .sapUiBlockLayoutSizeL .sapUiDemokitLandingBlockHeadline .sapUiBlockCellContent {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+.sapUiDemokit .sapUiBlockLayoutSizeXL .sapUiDemokitLandingBlockHeadline .sapUiBlockCellContent {
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
+}
+
+/* fixes an issue with the sap.m.Link control in a horizontal layout (BCP #1770222127)*/
+.sapUiDemokit .sapUiDemokitLayoutLink {
+	vertical-align: baseline;
+}
+
+/* there is no property yet to align the content for block layout cells */
+.sapUiDemokit .sapUiBlockCenteredCell .sapUiBlockCellContent {
+	text-align: center;
+}
+
+/* remove white shadow for API reference header bar */
+.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+	box-shadow: inherit;
+}
+
+/* control overflow for community links in horizontal layout */
+.sapUiDemokit .communityLinkCell .sapUiHLayout {
+	max-width: 100%;
+}
+
+.sapUiDemokit .communityLinkCell .sapUiHLayoutChildWrapper:nth-child(2) {
+	width: calc(100% - 3.0rem);
+}

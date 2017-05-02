@@ -11,7 +11,7 @@
 		<l:BlockLayout
 				background="Accent">
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="sapUiNoContentPadding">
+				<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 					<Image	src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped_274847.jpg"
 							width="100%"
 							densityAware="false"
