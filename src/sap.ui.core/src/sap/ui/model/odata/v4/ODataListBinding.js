@@ -681,7 +681,7 @@ sap.ui.define([
 		 *   with an error if the filter value uses an unknown operator
 		 */
 		function fetchGroupFilter(aGroupFilters) {
-			var oMetaModel = that.oModel.oMetaModel,
+			var oMetaModel = that.oModel.getMetaModel(),
 				oMetaContext = oMetaModel.getMetaContext(
 					that.oModel.resolve(that.sPath, oContext)),
 				oPropertyPromise = oMetaModel.fetchObject(aGroupFilters[0].sPath,

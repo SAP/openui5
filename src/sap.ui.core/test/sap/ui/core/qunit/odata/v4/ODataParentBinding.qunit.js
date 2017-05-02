@@ -644,7 +644,7 @@ sap.ui.require([
 					? []
 					: oFixture.childPath.split("/"),
 				oBinding = new ODataParentBinding({
-					oModel : {oMetaModel : oMetaModel}
+					oModel : {getMetaModel : function () {return oMetaModel;}}
 				}),
 				mWrappedQueryOptions,
 				oMetaModelMock = this.mock(oMetaModel);
@@ -692,7 +692,7 @@ sap.ui.require([
 			},
 			oMetaModelMock = this.mock(oMetaModel),
 			oBinding = new ODataParentBinding({
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			});
 
 		oMetaModelMock.expects("getObject")
@@ -718,7 +718,7 @@ sap.ui.require([
 				getObject : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			});
 
 		this.mock(oMetaModel).expects("getObject")
@@ -737,7 +737,7 @@ sap.ui.require([
 				getObject : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			}),
 			mChildLocalQueryOptions = {$apply : "filter(AGE gt 42)"};
 
@@ -1000,7 +1000,7 @@ sap.ui.require([
 						wrapChildQueryOptions : function () {},
 						doFetchQueryOptions : function () {},
 						aggregateQueryOptions : function () {},
-						oModel : {oMetaModel : oMetaModel}
+						oModel : {getMetaModel : function () {return oMetaModel;}}
 					}),
 					oBindingMock = this.mock(oBinding),
 					mChildLocalQueryOptions = {},
@@ -1074,7 +1074,7 @@ sap.ui.require([
 				wrapChildQueryOptions : function () {},
 				doFetchQueryOptions : function () {},
 				aggregateQueryOptions : function () {},
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildQueryOptions = {},
@@ -1131,7 +1131,7 @@ sap.ui.require([
 					doFetchQueryOptions : function () {
 						return _SyncPromise.resolve({});
 					},
-					oModel : {oMetaModel : oMetaModel},
+					oModel : {getMetaModel : function () {return oMetaModel;}},
 					aChildCanUseCachePromises : [],
 					bRelative : false
 				}),
@@ -1170,7 +1170,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: $count in child path", function (assert) {
-		var oBinding = new ODataParentBinding({oModel : {}});
+		var oBinding = new ODataParentBinding({
+			oModel : {getMetaModel : function () {return {};}}
+		});
 
 		// code under test
 		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
@@ -1180,7 +1182,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: operation binding", function (assert) {
-		var oBinding = new ODataParentBinding({oModel : {}, oOperation : {}});
+		var oBinding = new ODataParentBinding({
+			oModel : {getMetaModel : function () {return {};}},
+			oOperation : {}
+		});
 
 		// code under test
 		assert.strictEqual(
@@ -1678,18 +1683,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bKeys) {
 		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
-			var oBinding = new ODataParentBinding({
-					oModel : {
-						oMetaModel : {
-							getObject : function () {},
-						}
-					}
+			var oMetaModel = {
+					getObject : function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oModel : {getMetaModel : function () {return oMetaModel;}}
 				}),
 				sMetaPath = "~",
 				mQueryOptions = {},
 				oType = bKeys ? {$Key : []} : {};
 
-			this.mock(oBinding.oModel.oMetaModel).expects("getObject")
+			this.mock(oBinding.oModel.getMetaModel()).expects("getObject")
 				.withExactArgs(sMetaPath + "/").returns(oType);
 			this.mock(oBinding).expects("addToSelect").exactly(bKeys ? 1 : 0)
 				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oType.$Key));
