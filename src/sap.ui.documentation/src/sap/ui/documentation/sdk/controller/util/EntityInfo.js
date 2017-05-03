@@ -260,6 +260,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 			if ( !oEntityDoc) {
 				oEntityDoc = load(sEntityName, ".type", "xml", parseTypeMetamodel, sEntityName);
 			}
+			if ( !oEntityDoc ) {
+				oEntityDoc = load(sEntityName, ".js", "text", parseJavascript, sEntityName);
+			}
 			if ( oEntityDoc ) {
 				oPackageInfo.__noSource = true;
 			}
