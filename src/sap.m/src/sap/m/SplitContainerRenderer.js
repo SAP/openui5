@@ -73,7 +73,8 @@ sap.ui.define(['jquery.sap.global'],
 				oControl._oMasterNav.addStyleClass("sapMSplitContainerMasterVisible");
 				oControl._bMasterisOpen = true;
 			} else {
-				oControl._oMasterNav.addStyleClass("sapMSplitContainerMasterHidden");
+				// "sapMSplitContainerNoTransition" class is added to prevent initial flickering
+				oControl._oMasterNav.addStyleClass("sapMSplitContainerMasterHidden sapMSplitContainerNoTransition");
 			}
 
 			if (oControl.getMode() === "PopoverMode" && sap.ui.Device.orientation.portrait) {
