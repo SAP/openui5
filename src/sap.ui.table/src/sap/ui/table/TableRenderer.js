@@ -800,22 +800,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		var aColumns = oTable.getColumns();
 		var oColumn,
 			bInvisible = false,
-			nSpan = 0,
-			headerSpan;
+			nSpan = 0;
 
 		for (var iIndex = iStartColumn; iIndex < iEndColumn; iIndex++) {
 			oColumn = aColumns[iIndex];
 			if (oColumn && oColumn.shouldRender()) {
 				if (nSpan < 1) {
-					headerSpan = oColumn.getHeaderSpan();
-					if (jQuery.isArray(headerSpan)) {
-						nSpan = headerSpan[iRow];
-					} else if (headerSpan) {
-						nSpan = parseInt(headerSpan, 10);
-					}
-					if (isNaN(nSpan)) {
-						nSpan = 1;
-					}
+					nSpan = TableUtils.Column.getHeaderSpan(oColumn, iRow);
 					bInvisible = false;
 				} else {
 					//Render column header but this is invisible because of the span
