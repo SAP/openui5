@@ -41,7 +41,7 @@
 						</IconTabFilter>
 						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTab" text="Explored" key="controlsMaster">
+						<IconTabFilter id="controlsMasterTab" text="Explored" key="controls">
 						</IconTabFilter>
 						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
 						</IconTabFilter>
