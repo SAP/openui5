@@ -144,7 +144,7 @@
 
 	QUnit.test("Method isEnabled, aggregation 'items' contains items", function(assert) {
 		// Arrange
-		sinon.stub(this.oSelectionDetails, "getAggregation").returns([new sap.m.SelectionDetailsItem()]);
+		sinon.stub(this.oSelectionDetails, "getAggregation").returns([ new sap.m.SelectionDetailsItem() ]);
 
 		//Assert
 		assert.equal(this.oSelectionDetails.isEnabled(), true, "Method isEnabled returns true if the aggregation 'items' contains items");
@@ -160,8 +160,8 @@
 		var oReturnedSelectionDetails = this.oSelectionDetails.close();
 
 		//Assert
-		assert.ok(oSpy.called, "The 'close' method was called");
-		assert.ok(oReturnedSelectionDetails instanceof sap.m.SelectionDetails, "Returned value is SelectionDetails control");
+		assert.equal(oSpy.callCount, 1, "The 'close' method was called");
+		assert.equal(oReturnedSelectionDetails.getMetadata().getName(), "sap.m.SelectionDetails", "Returned value is SelectionDetails control");
 	});
 
 	QUnit.module("Internal control creation", {
@@ -256,6 +256,140 @@
 
 		//Assert
 		assert.equal(oAddAggregationSpy.callCount, 5, "The correct number of items has been added to the list.");
+	});
+
+	QUnit.module("Popover height handling", {
+		beforeEach: function() {
+			this.bOriginalPhone = sap.ui.Device.system.phone;
+			sap.ui.Device.system.phone = false;
+
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this._aGetPopoverArgs = [
+				sap.m.NavContainer, sap.m.ResponsivePopover, sap.m.Toolbar, sap.m.ToolbarSpacer, sap.m.Page,
+				sap.m.List, sap.ui.layout.FixFlex, sap.m.ScrollContainer, sap.m.Title
+			];
+		},
+		afterEach: function() {
+			sap.ui.Device.system.phone = this.bOriginalPhone;
+
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+			this._aGetPopoverArgs = null;
+		}
+	});
+
+	QUnit.test("_POPOVER_MAX_HEIGHT has the correct value", function(assert) {
+		assert.equal(sap.m.SelectionDetails._POPOVER_MAX_HEIGHT, 500, "The value is correct.");
+	});
+
+	QUnit.test("Method _getContentHeight calculates the correct height", function(assert) {
+		//Arrange
+		this.oSelectionDetails._oMainList = {
+			$: function() {
+				return {
+					outerHeight: function() { return 400; }
+				};
+			}
+		};
+		this.oSelectionDetails._oActionGroupList = {
+			$: function() {
+				return {
+					outerHeight: function() { return 50; }
+				};
+			}
+		};
+		this.oSelectionDetails._oInitialPage = {
+			getFooter: function() {
+				return {
+					$: function() {
+						return {
+							outerHeight: function() { return 50; }
+						};
+					}
+				}
+			}
+		};
+
+		//Act
+		var iContentHeight = this.oSelectionDetails._getInitialPageHeight();
+
+		//Assert
+		assert.equal(iContentHeight, 500, "The content height is calculated correctly.");
+	});
+
+	QUnit.test("Event delegate is added to the popover on non-phone devices", function(assert) {
+		//Arrange
+		var oAddEventDelegateSpy = sinon.spy(sap.m.ResponsivePopover.prototype, "addEventDelegate");
+
+		//Act
+		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
+
+		//Assert
+		assert.equal(oAddEventDelegateSpy.callCount, 1, "Method addEventDelegate has been called once on Popover.");
+
+		//Cleanup
+		oAddEventDelegateSpy.restore();
+	});
+
+	QUnit.test("Popover height is updated after rendering on non-phone devices", function(assert) {
+		//Arrange
+		var oUpdateContentHeightSpy = sinon.spy(this.oSelectionDetails, "_updatePopoverContentHeight");
+
+		//Act
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+
+		//Assert
+		assert.equal(oUpdateContentHeightSpy.callCount, 1, "Method _updatePopoverContentHeight has been called.");
+	});
+
+	QUnit.test("Popover height is capped at _POPOVER_MAX_HEIGHT", function(assert) {
+		//Arrange
+		sinon.stub(this.oSelectionDetails, "_getInitialPageHeight").returns(600);
+		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
+		var oSetPropertySpy = sinon.spy(this.oSelectionDetails._getPopover(), "setProperty");
+
+		//Act
+		this.oSelectionDetails._updatePopoverContentHeight();
+
+		//Assert
+		assert.equal(oSetPropertySpy.withArgs("contentHeight", sap.m.SelectionDetails._POPOVER_MAX_HEIGHT + "px").callCount, 1, "Property contentHeight has been updated.");
+	});
+
+	QUnit.test("Popover does not exceed viewport", function(assert) {
+		//Arrange
+		var iOriginalHeight = sap.ui.Device.resize.height;
+		sap.ui.Device.resize.height = 400;
+
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+		sap.ui.getCore().applyChanges();
+
+		var oPopover = this.oSelectionDetails._getPopover()._oControl;
+
+		//Act
+		var iMaxContentHeight = this.oSelectionDetails._getMaxPopoverHeight();
+
+		//Assert
+		assert.equal(oPopover._marginBottom, 10, "The internal marginBottom property exists.");
+		assert.equal(iMaxContentHeight, 390, "The calculated max height of the popover is correct.");
+
+		//Cleanup
+		sap.ui.Device.resize.height = iOriginalHeight;
+	});
+
+	QUnit.test("Popover height is set to content height", function(assert) {
+		//Arrange
+		sinon.stub(this.oSelectionDetails, "_getInitialPageHeight").returns(425);
+		this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
+		var oSetPropertySpy = sinon.spy(this.oSelectionDetails._getPopover(), "setProperty");
+
+		//Act
+		this.oSelectionDetails._updatePopoverContentHeight();
+
+		//Assert
+		assert.equal(oSetPropertySpy.withArgs("contentHeight", 425 + "px").callCount, 1, "Property contentHeight has been updated.");
 	});
 
 	QUnit.module("Navigation", {
@@ -403,6 +537,7 @@
 	QUnit.test("The 'back' method of navContainer is executed in the back button's press handler", function(assert) {
 		// Arrange
 		var oBackSpy = sinon.spy(this.oNavContainer, "back");
+		var oBackButtonPressSpy = sinon.spy(this.oSelectionDetails, "_onBackButtonPress");
 		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
 
 		// Act
@@ -410,9 +545,47 @@
 
 		// Assert
 		assert.equal(oBackSpy.callCount, 1, "Backward navigation occured.");
+		assert.equal(oBackButtonPressSpy.callCount, 1, "Backward navigation handler has been called.");
 	});
 
-	QUnit.test("Successive forward and backward navigation results in the first page opened", function(assert) {
+	QUnit.test("Backward navigation to the initial page triggers animation", function(assert) {
+		// Arrange
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
+		sinon.stub(this.oSelectionDetails, "_getInitialPageHeight").returns(500);
+		sinon.stub(this.oSelectionDetails._oNavContainer, "getCurrentPage").returns(this.oSelectionDetails._oInitialPage);
+		var oSetPopoverHeightSpy = sinon.spy(this.oSelectionDetails, "_setPopoverHeight");
+
+		// Act
+		this.oSelectionDetails._onBackButtonPress();
+
+		// Assert
+		assert.equal(oSetPopoverHeightSpy.callCount, 1, "Method _setPopoverHeight has been called.");
+	});
+
+	QUnit.test("Method _setPopoverHeight removes and reattaches the popover's resize handler", function(assert) {
+		// Arrange
+		var bOriginalPhone = sap.ui.Device.system.phone;
+		sap.ui.Device.system.phone = false;
+
+		this.oPopover.openBy(this.oSelectionDetails);
+		var oGetAnimationStub = sinon.stub(sap.ui.getCore().getConfiguration(), "getAnimation").returns(false);
+
+		var oRegisterSpy = sinon.spy(this.oPopover._oControl, "_registerContentResizeHandler");
+		var oDeregisterSpy = sinon.spy(this.oPopover._oControl, "_deregisterContentResizeHandler");
+
+		// Act
+		this.oSelectionDetails._setPopoverHeight(500);
+
+		// Assert
+		assert.equal(oDeregisterSpy.callCount, 1, "The popover's resize handler has been deregistered.");
+		assert.equal(oRegisterSpy.callCount, 1, "The popover's resize handler has been registered.");
+
+		//Cleanup
+		sap.ui.Device.system.phone = bOriginalPhone;
+		oGetAnimationStub.restore();
+	});
+
+	QUnit.test("Successive forward and backward navigation results in the first page being opened", function(assert) {
 		// Arrange
 		var oFirstPage = new sap.m.Page();
 		this.oNavContainer.addPage(oFirstPage);
@@ -422,7 +595,48 @@
 		this.oNavContainer.getPages()[1].getCustomHeader().getContent()[0].firePress();
 
 		// Assert
-		assert.deepEqual(this.oNavContainer.getCurrentPage(), oFirstPage, "Forward and backward navigation results in first page opened");
+		assert.deepEqual(this.oNavContainer.getCurrentPage(), oFirstPage, "Forward and backward navigation results in first page being opened");
+	});
+
+	QUnit.module("Main List Navigation", {
+		beforeEach : function() {
+			this.oSelectionDetails = new sap.m.SelectionDetails();
+			this.oSelectionDetails.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oSelectionDetails.destroy();
+			this.oSelectionDetails = null;
+		}
+	});
+
+	QUnit.test("'_navigate' Event of SelectionDetailsItem results in navigate event in SelectionDetails", function(assert) {
+		//Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+		var oFireNavigateSpy = sinon.spy(this.oSelectionDetails, "fireNavigate");
+
+		//Act
+		oSelectionDetailsItem.fireEvent("_navigate");
+
+		//Assert
+		assert.deepEqual(oFireNavigateSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
+	});
+
+	QUnit.test("'_onNavigate' event handler attached once per navigate button", function(assert) {
+		// Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		var oSpy = sinon.spy(this.oSelectionDetails, "_onNavigate");
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+
+		// Act
+		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
+		oSelectionDetailsItem.fireEvent("_navigate");
+
+		//Assert
+		assert.ok(oSpy.calledOnce, "Event handler called once");
 	});
 
 	QUnit.module("Popover interaction", {
@@ -644,46 +858,6 @@
 
 		//Cleanup
 		oSpy.restore();
-	});
-
-	QUnit.module("Navigation", {
-		beforeEach : function() {
-			this.oSelectionDetails = new sap.m.SelectionDetails();
-			this.oSelectionDetails.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-		},
-		afterEach : function() {
-			this.oSelectionDetails.destroy();
-			this.oSelectionDetails = null;
-		}
-	});
-
-	QUnit.test("'_navigate' Event for the selectionDetailsItem results in navigate event on SelectionDetails", function(assert) {
-		//Arrange
-		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
-		this.oSelectionDetails.addItem(oSelectionDetailsItem);
-		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oSpy = sinon.spy(this.oSelectionDetails, "fireNavigate");
-
-		//Act
-		oSelectionDetailsItem.fireEvent("_navigate");
-		//Assert
-		assert.deepEqual(oSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
-	});
-
-	QUnit.test("'_onNavigate' event handler attached once per navigate button", function(assert) {
-		// Arrange
-		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
-		this.oSelectionDetails.addItem(oSelectionDetailsItem);
-		var oSpy = sinon.spy(this.oSelectionDetails, "_onNavigate");
-		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-
-		// Act
-		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		oSelectionDetailsItem.fireEvent("_navigate");
-
-		//Assert
-		assert.ok(oSpy.calledOnce, "Event handler called once");
 	});
 
 	QUnit.module("Control Facade", {
@@ -1197,7 +1371,7 @@
 		//Assert
 		function onBeforeUpdate(oEvent) {
 			assert.deepEqual(oEvent.getParameter("items"), aOldItems, "Event includes old items as parameter");
-		};
+		}
 	});
 
 	QUnit.test("After factory is called event 'afterUpdate' is triggered", function(assert) {
@@ -1252,7 +1426,7 @@
 			assert.deepEqual(displayData, oEventParam.data[0].displayData, displayData, "'displayData' as parameter provided");
 			assert.deepEqual(data, oEventParam.data[0].data, data, "'data' as parameter provided");
 			assert.deepEqual(context, oEventParam.data[0].context, "'context' as parameter provided");
-		};
+		}
 	});
 
 	QUnit.test("Change handler is detached during destroy to prevent runtime error", function(assert) {
@@ -1263,7 +1437,6 @@
 		//Assert
 		assert.equal(oSpy.callCount, 1, "Selection change handle detached");
 	});
-
 </script>
 </head>
 <body class="sapUiBody">
