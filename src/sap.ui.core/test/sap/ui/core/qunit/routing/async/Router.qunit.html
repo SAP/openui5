@@ -2242,12 +2242,13 @@
 				// System under test
 				this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
 				var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+				var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
 
 
 				// Act
 				this.oRouter.parse(this.sPattern);
 
-				return oPlaceSpy.returnValues[0].then(function() {
+				return oRouteMatchedSpy.returnValues[0].then(function() {
 					// Assert
 					strictEqual(this.oRouter._oTargets._oViews, this.oRouter._oViews, "Targets are using the same view repository");
 					strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
@@ -2280,17 +2281,15 @@
 				this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
 				var oPlaceMyTargetSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
 				var oPlaceSecondTargetSpy = this.spy(this.oRouter.getTarget("secondTarget"), "_place");
+				var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
 
 				// Act
 				this.oRouter.parse(this.sPattern);
 
-				strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did place first target");
-				strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did place second target");
-
-				return Promise.all(oPlaceMyTargetSpy.returnValues.concat(oPlaceSecondTargetSpy.returnValues)).then(function() {
+				return oRouteMatchedSpy.returnValues[0].then(function() {
 					// Assert
-					strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did not call place again");
-					strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did not call place again");;
+					strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did place first target");
+					strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did place second target");
 
 					sinon.assert.calledOn(oPlaceMyTargetSpy, this.oRouter.getTarget("myTarget"));
 					sinon.assert.calledOn(oPlaceSecondTargetSpy, this.oRouter.getTarget("secondTarget"));
@@ -2319,24 +2318,33 @@
 
 				// System under test
 				this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+				// need to use sinon.spy instead of this.spy because this.spy is restored synchronously but this test
+				// has timeout in it.
 				var oPlaceSpy = this.spy(this.oRouter.getTarget("myChild"), "_place");
 				var oPlaceParentSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+				var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
 
 				// Act
 				this.oRouter.parse(this.sPattern);
-				strictEqual(oPlaceSpy.callCount, 1, "Did place myChild");
-				strictEqual(oPlaceParentSpy.callCount, 1, "Did place myTarget");
-				sinon.assert.calledOn(oPlaceParentSpy, this.oRouter.getTarget("myTarget"));
-				sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
 
-				Promise.race(oPlaceParentSpy.returnValues).then(function(oViewInfo) {
-					strictEqual(oViewInfo.name, "myTarget");
-				});
+				strictEqual(oRouteMatchedSpy.callCount, 1, "route is matched");
 
-				return Promise.all(oPlaceSpy.returnValues.concat(oPlaceParentSpy.returnValues)).then(function(aViewInfo) {
+				return oRouteMatchedSpy.returnValues[0].then(function() {
 					// Assert
-					strictEqual(aViewInfo[0].name, "myChild");
-					strictEqual(aViewInfo[1].name, "myTarget");
+					strictEqual(oPlaceSpy.callCount, 1, "Did place myChild");
+					strictEqual(oPlaceParentSpy.callCount, 1, "Did place myTarget");
+
+					oPlaceParentSpy.returnValues[0].then(function(oViewInfo) {
+						strictEqual(oViewInfo.name, "myTarget");
+					});
+
+					oPlaceSpy.returnValues[0].then(function(oViewInfo) {
+						strictEqual(oViewInfo.name, "myChild");
+					});
+
+					sinon.assert.calledOn(oPlaceParentSpy, this.oRouter.getTarget("myTarget"));
+					sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
+
 					strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 					strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
 				}.bind(this));

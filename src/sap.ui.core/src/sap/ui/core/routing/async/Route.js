@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'], function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function(jQuery, Device) {
 	"use strict";
 
 	/**
@@ -23,7 +23,9 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				oEventData,
 				oView = null,
 				oTargetControl = null,
-				bInitial;
+				bInitial,
+				oCurrentPromise,
+				that = this;
 
 			if (!oSequencePromise || oSequencePromise === true) {
 				bInitial = true;
@@ -61,11 +63,23 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 				// this is for sap.m.routing.Router to chain the promise to the navigation promise in TargetHandler
 				if (this._oRouter._oTargetHandler && this._oRouter._oTargetHandler._chainNavigation) {
-					var oCurrentPromise = oSequencePromise;
+					oCurrentPromise = oSequencePromise;
 					oSequencePromise = this._oRouter._oTargetHandler._chainNavigation(function() {
 						return oCurrentPromise;
 					});
 				}
+			} else /* let targets do the placement + the events */ if (Device.browser.msie || Device.browser.edge) {
+				oCurrentPromise = oSequencePromise;
+
+				// when Promise polyfill is used for IE or Edge, the synchronous DOM or CSS change, e.g. showing a busy indicator, doesn't get
+				// a slot for being executed. Therefore a explicit 0 timeout is added for allowing the DOM or CSS change to be executed before
+				// the view is loaded.
+				oSequencePromise = new Promise(function(resolve, reject) {
+					setTimeout(function() {
+						var oDisplayPromise = oRouter._oTargets._display(that._oConfig.target, oArguments, that._oConfig.titleTarget, oCurrentPromise);
+						oDisplayPromise.then(resolve, reject);
+					}, 0);
+				});
 			} else {
 				// let targets do the placement + the events
 				oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oArguments, this._oConfig.titleTarget, oSequencePromise);
