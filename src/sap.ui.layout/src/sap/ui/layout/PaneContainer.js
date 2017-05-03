@@ -81,6 +81,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 		return this._oSplitter.setLayoutData(oLayoutData);
 	};
 
+	/**
+	 * Pane insertion
+	 *
+	 * @public
+	 * @param oObject
+	 * @returns {sap.ui.base.ManagedObject}
+	 */
+	PaneContainer.prototype.insertPane = function (oObject) {
+		var vResult =  this.insertAggregation("panes", oObject),
+			oEventDelegate = {
+				onAfterRendering: function () {
+					this.triggerResize();
+					this.removeEventDelegate(oEventDelegate);
+				}
+			};
+
+		// When nesting Panes there should be resize event everytime a new pane is inserted.
+		// However for the newly inserted pane is too early and it has not been subscribed yet to the resize handler.
+		// Therefore the resize event should be triggered manually.
+		if (oObject instanceof PaneContainer && oObject._oSplitter) {
+			oObject._oSplitter.addEventDelegate(oEventDelegate, oObject._oSplitter);
+		}
+
+		return vResult;
+	};
+
 	return PaneContainer;
 
 }, /* bExport= */ true);
