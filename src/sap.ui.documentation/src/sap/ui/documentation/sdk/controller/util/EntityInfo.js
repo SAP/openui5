@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 		if (!sLibraryName) {
 			var oClass = jQuery.sap.getObject(sEntityName);
-			if (oClass.getMetadata) {
+			if (oClass && oClass.getMetadata) {
 				var oMetadata = oClass.getMetadata();
 				if (oMetadata.getLibraryName) {
 					sLibraryName = oMetadata.getLibraryName();
