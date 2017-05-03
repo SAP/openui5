@@ -1,21 +1,16 @@
 <!DOCTYPE HTML>
-
-<!--
-  Tested classes: sap.ui.core.Manifest
--->
-
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
-		<title>QUnit tests: Component Manifest</title>
+		<title>CustomizingConfiguration and Customizing in general - sap.ui.core</title>
 		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-resourceroots='{
 					"local": "./",
-					"sap.ui.test": "./testdata/"
+					"testdata": "./testdata/"
 				}'>
 		</script>
 		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
@@ -31,7 +26,7 @@
 		<script>
 			QUnit.config.autostart = false;
 			sap.ui.getCore().attachInit(function() {
-				sap.ui.require(["local/Manifest.qunit"], function() {
+				sap.ui.require(["local/Customizing_multi.qunit"], function() {
 					QUnit.start();
 				});
 			});
@@ -39,5 +34,7 @@
 	</head>
 	<body>
 		<div id="qunit"></div>
+		<div id="qunit-fixture">test markup, will be hidden</div>
+		<div id="content"></div>
 	</body>
 </html>

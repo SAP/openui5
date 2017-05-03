@@ -1,21 +1,22 @@
 <!DOCTYPE HTML>
 
 <!--
-  Tested classes: sap.ui.core.Manifest
+  Tested class: sap.ui.core.Component (asynchronous preloading)
 -->
 
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
-		<title>QUnit tests: Component Manifest</title>
+		<title>QUnit test: Component (async)</title>
+
 		<script src="../../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../../../../resources/sap-ui-core.js"
-				data-sap-ui-noConflict="true"
+				data-sap-ui-preload="sync"
+				data-sap-ui-language="en"
 				data-sap-ui-resourceroots='{
-					"local": "./",
-					"sap.ui.test": "./testdata/"
+					"local": "./"
 				}'>
 		</script>
 		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
@@ -31,7 +32,7 @@
 		<script>
 			QUnit.config.autostart = false;
 			sap.ui.getCore().attachInit(function() {
-				sap.ui.require(["local/Manifest.qunit"], function() {
+				sap.ui.require(["local/Preloading.qunit"], function() {
 					QUnit.start();
 				});
 			});
