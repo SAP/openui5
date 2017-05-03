@@ -161,6 +161,7 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	font-size: @sapMFontMediumSize;
 	font-family: @sapUiFontFamily;
 	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
+	padding-right: 0.125rem; /* prevents truncation of the last letter */
 }
 
 .sapMIBar-CTX.sapMTB-Info-CTX .sapMLabel {
