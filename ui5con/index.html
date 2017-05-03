@@ -13,10 +13,10 @@
             var oAgendaElement = document.getElementById(id);
             if(oAgendaElement.className.indexOf("collapsed") > 0) {
                 oAgendaElement.className = oAgendaElement.className.replace("collapsed", "expanded");
-                document.getElementById("moreButton").src = "/less1.png";
+                document.getElementById("moreButton").src = "less1.png";
              } else {
                 oAgendaElement.className = oAgendaElement.className.replace("expanded", "collapsed");
-                document.getElementById("moreButton").src = "/more1.png"
+                document.getElementById("moreButton").src = "more1.png"
              }
              return;
          }
@@ -398,7 +398,7 @@
                         </div>
                     </div>
                     <div id="hideElement" >
-                        <a href="javascript:open('lineupElement')"><img id="moreButton" src="/more1.png" alt="test" style="padding:1% 50% 0 50%"></a>
+                        <a href="javascript:open('lineupElement')"><img id="moreButton" src="more1.png" alt="test" style="padding:1% 50% 0 50%"></a>
                     </div>
                 </div>
             </div>
