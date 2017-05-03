@@ -89,7 +89,7 @@ sap.ui.define([
 					listItemType : (Device.system.phone) ? "Active" : "Inactive"
 				});
 				oDeviceModel.setDefaultBindingMode("OneWay");
-				this._oView.setModel(oDeviceModel, "device");
+				this._oView.setModel(oDeviceModel, "viewModel");
 
 				// Init Filter model
 				oFilterModel = new JSONModel();
