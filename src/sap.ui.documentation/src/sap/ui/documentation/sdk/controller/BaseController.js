@@ -76,12 +76,7 @@ sap.ui.define([
 			 * @returns {object} the configuration of the component
 			 */
 			getConfig : function () {
-				var oConfigModel = this.getOwnerComponent().getModel("config");
-				if (oConfigModel) {
-					return oConfigModel.getData();
-				} else {
-					return {};
-				}
+				return this.getOwnerComponent().getMetadata().getConfig();
 			},
 
 			/**
