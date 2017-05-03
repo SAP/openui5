@@ -64,8 +64,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		//Normalize the /n and /r to /r/n - Carriage Return and Line Feed
 		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 11) {
 			sValue = sValue.replace(/&#xd;&#xa;|&#xd;|&#xa;/g, "&#13;");
-		} else {
-			sValue = sValue.replace(/&#xd;&#xa;|&#xd;|&#xa;/g, "&#13;&#10;");
 		}
 		oRm.write(sValue);
 	};
