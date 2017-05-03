@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.Toolbar", function() {
+	"use strict";
 
 	it("Toolbar initial rendering",function() {
 		expect(takeScreenshot()).toLookAs("toolbar-initial");

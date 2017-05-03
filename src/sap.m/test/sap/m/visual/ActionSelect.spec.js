@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.ActionSelect", function() {
+	"use strict";
 
 	it("should load test page",function(){
 		expect(takeScreenshot()).toLookAs("initial");

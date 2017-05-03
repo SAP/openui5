@@ -62,7 +62,7 @@ sap.ui.define([
 						hierarchyParentNodeFor: "PARENT_NODE",
 						hierarchyNodeFor: "HIERARCHY_NODE",
 						hierarchyDrillStateFor: "DRILLDOWN_STATE"
-					},
+					}
 
 				}
 			});

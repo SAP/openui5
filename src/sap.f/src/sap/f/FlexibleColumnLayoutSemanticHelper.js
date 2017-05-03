@@ -50,6 +50,7 @@ sap.ui.define([
 	 * @param {object} oSettings Determines the rules that will be used by the helper
 	 * @param {sap.f.LayoutType} oSettings.defaultTwoColumnLayoutType Determines what two-column layout type will be suggested by default: <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> (default) or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>
 	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType Determines what three-column layout type will be suggested by default: <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>
+	 * @param {string} oSettings.mode Determines the suggested layout types: <code>Normal</code> (3-column layouts), <code>MasterDetail</code> (2-column layouts for the first two pages, all other pages will open in fullscreen), and <code>SingleColumn</code> (one page at a time only)
 	 * @public
 	 * @since 1.46.0
 	 * @alias sap.f.FlexibleColumnLayoutSemanticHelper
@@ -64,6 +65,8 @@ sap.ui.define([
 			oSettings.defaultTwoColumnLayoutType : LT.TwoColumnsBeginExpanded;
 		this._defaultThreeColumnLayoutType = [LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded].indexOf(oSettings.defaultThreeColumnLayoutType) !== -1 ?
 			oSettings.defaultThreeColumnLayoutType : LT.ThreeColumnsMidExpanded;
+		this._mode = ["Normal", "MasterDetail", "SingleColumn"].indexOf(oSettings.mode) !== -1 ?
+			oSettings.mode : "Normal";
 	};
 
 	/**
@@ -180,22 +183,29 @@ sap.ui.define([
 		// Level 1 - the second page
 		if (iNextLevel === 1) {
 
-			if ([LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(sCurrentLayout) !== -1) {
-				// From a 2-column layout - preserve
-				sNextLayout = sCurrentLayout;
-			} else if ([LT.MidColumnFullScreen, LT.EndColumnFullScreen].indexOf(sCurrentLayout) !== -1) {
-				// From any fullscreen layout - should go to mid fullscreen
+			if (this._mode === "SingleColumn") {
+
 				sNextLayout = LT.MidColumnFullScreen;
+
 			} else {
-				// From 1-column layout or any 3-column layout - default 2-column layout
-				sNextLayout = this._defaultTwoColumnLayoutType;
+
+				if ([LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(sCurrentLayout) !== -1) {
+					// From a 2-column layout - preserve
+					sNextLayout = sCurrentLayout;
+				} else if ([LT.MidColumnFullScreen, LT.EndColumnFullScreen].indexOf(sCurrentLayout) !== -1) {
+					// From any fullscreen layout - should go to mid fullscreen
+					sNextLayout = LT.MidColumnFullScreen;
+				} else {
+					// From 1-column layout or any 3-column layout - default 2-column layout
+					sNextLayout = this._defaultTwoColumnLayoutType;
+				}
 			}
 		}
 
 		// Level 2 - the third page
 		if (iNextLevel === 2) {
 
-			if (this._mode === "MasterDetail") {
+			if (this._mode === "SingleColumn" || this._mode === "MasterDetail") {
 
 				// Clicking the mid column when in 2-column layout should open the third column in fullscreen mode
 				sNextLayout = LT.EndColumnFullScreen;
@@ -293,6 +303,13 @@ sap.ui.define([
 			},
 			aEligibleLayouts,
 			sExitFullScreen;
+
+		if (this._mode === "SingleColumn") {
+			return {
+				midColumn: oMidColumn,
+				endColumn: oEndColumn
+			};
+		}
 
 		if (iMaxColumnsCount === 1) {
 

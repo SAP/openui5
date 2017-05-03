@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.IconTabBar", function() {
+	"use strict";
 
 	// initial loading
 	it("should load test page", function(){
@@ -118,8 +121,6 @@ describe("sap.m.IconTabBar", function() {
 	});
 
 	// backgroundDesign property tests
-	var itbBackgroundDesign = element(by.id("backgroundDesignIconTabBar"));
-
 	it("should change IconTabBar container background design to Transparent", function () {
 		element(by.id("backgroundDesignIconTabBar")).click(); // move the view in the window
 		element(by.id("RB1-Transparent")).click();

@@ -27,7 +27,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Element", 'sap/ui/base/Interfac
 	 * @constructor
 	 * @protected
 	 * @alias sap.m.SelectionDetailsItemLine
-	 * @experimental Since 1.48 This control is still under development and might change at any point in time.
 	 * @since 1.48.0
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

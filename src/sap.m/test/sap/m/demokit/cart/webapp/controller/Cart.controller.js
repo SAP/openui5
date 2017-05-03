@@ -7,7 +7,8 @@ sap.ui.define([
 	'sap/m/MessageToast',
 	'sap/m/Dialog',
 	'sap/m/Button',
-	'sap/ui/core/routing/History'
+	'sap/ui/core/routing/History',
+	'jquery.sap.global'
 ], function (
 	BaseController,
 	JSONModel,
@@ -17,7 +18,8 @@ sap.ui.define([
 	MessageToast,
 	Dialog,
 	Button,
-	History) {
+	History,
+	$) {
 	"use strict";
 
 	var sCartModelName = "cartProducts";
@@ -72,15 +74,16 @@ sap.ui.define([
 			var oData = oCfgModel.getData();
 			var oBundle = this.getResourceBundle();
 			var bDataNoSetYet = !oData.hasOwnProperty("inDelete");
-			var bInDelete = (bDataNoSetYet) ? true : oData.inDelete;
+			var bInDelete = (bDataNoSetYet ? true : oData.inDelete);
+			var sPhoneMode = (Device.system.phone ? "None" : "SingleSelectMaster");
+			var sPhoneType = (Device.system.phone ? "Active" : "Inactive");
 
-			var oBundle = this.getResourceBundle();
 			oCfgModel.setData({
 				inDelete: !bInDelete,
 				notInDelete: bInDelete,
-				listMode: bInDelete ? Device.system.phone ? "None" : "SingleSelectMaster" : "Delete",
-				listItemType: bInDelete ? Device.system.phone ? "Active" : "Inactive" : "Inactive",
-				pageTitle: (bInDelete) ? oBundle.getText("cartTitleDisplay") : oBundle.getText("cartTitleEdit")
+				listMode: (bInDelete ? sPhoneMode : "Delete"),
+				listItemType: (bInDelete ? sPhoneType : "Inactive"),
+				pageTitle: (bInDelete ? oBundle.getText("cartTitleDisplay") : oBundle.getText("cartTitleEdit"))
 			});
 		},
 
@@ -103,7 +106,6 @@ sap.ui.define([
 		 */
 		onSaveForLater: function (oEvent) {
 			var oBindingContext = oEvent.getSource().getBindingContext(sCartModelName);
-			var oModel = oBindingContext.getModel();
 			this._changeList(sSavedForLaterEntries, sCartEntries, oBindingContext);
 		},
 
@@ -180,7 +182,6 @@ sap.ui.define([
 		_deleteProduct: function (sCollection, oEvent) {
 			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName);
 			var sEntryId = oBindingContext.getObject().ProductId;
-			var oModel = oBindingContext.getModel();
 			var oBundle = this.getResourceBundle();
 
 			// show confirmation dialog

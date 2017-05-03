@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"myCompany/myApp/model/formatter"
 ], function(formatter) {

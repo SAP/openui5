@@ -1,0 +1,49 @@
+.demokitInitialPageColorPatternA {
+	background-color: #ffffff;
+}
+
+.demokitInitialPagesColorPatternB {
+	background-color: #eff4f9;
+}
+
+.demokitInitialPagesColorPatternBContrast {
+	background-color: #3F5161;
+}
+
+.demokitInitialPagesColorPatternC {
+	background-color: #d5e2ef;
+}
+
+.demokitInitialPagesColorPatternD {
+	background-color: #cadbeb;
+}
+
+.demokitInitialPagesColorPatternE {
+	background-color: #bbd0e6;
+}
+
+.sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
+	background-color: #2f3c48;
+}
+
+.demokitInitialPagesWhiteText {
+	color: #FFFFFF;
+	text-shadow: none;
+}
+
+.demokitInitialPagesBrightIcon {
+	color: #CAE4FB;
+}
+
+.demokitInitialPagesBrightLink.sapMLnk,
+.demokitInitialPagesBrightLink.sapMLnk:hover {
+	color: #7ed0ff;
+}
+
+.demokitInitialPagesBrightLinkSmallerText {
+	font-size: 0.8rem;
+}
+
+.demokitInitialPagesBigImageContainer .sapUiBlockCellContent{
+	padding: 2rem
+}

@@ -1,0 +1,208 @@
+/* ==========================================================================
+   Landing Page Header styles
+  ========================================================================== */
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderText {
+	position: absolute;
+	left: 0;
+	font-size: 3rem;
+	font-family: Arial;
+	color: #000000;
+	text-shadow: 0 0 0.125rem #ffffff;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderTitleText {
+	top: 2.5rem;
+	font-weight: bold;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderSubText {
+	top: 6.25rem;
+	font-weight: normal;
+}
+
+/*MEDIUM*/
+@media only screen and (max-width: 64rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderTitleText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderSubText {
+		top: 3.125rem;
+		font-size: 1.625rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media only screen and (min-width: 90rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderTitleText {
+		top: 2.5rem;
+		font-size: 4rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationWelcomeHeaderSubText {
+		top: 6.875rem;
+		font-size: 4rem;
+	}
+}
+
+/* ==========================================================================
+   Documentation Page Header styles
+  ========================================================================== */
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderText {
+	position: absolute;
+	padding-left: 2rem;
+	left: 0rem;
+	font-family: Arial;
+	color: #333333;
+	text-shadow: 0 0 0.125rem #ffffff;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+	top: 2.5rem;
+	font-size: 3rem;
+	font-weight: bold;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderSubText {
+	top: 6.25rem;
+	font-size: 1.25rem;
+	font-weight: normal;
+}
+
+/*SMALL*/
+@media only screen and (max-width: 64rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderSubText {
+		top: 3.125rem;
+		font-size: 0.875rem;
+		padding-left: 1rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media only screen and (min-width: 90rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
+		top: 2.5rem;
+		font-size: 4rem;
+		padding-left: 3rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderSubText {
+		top: 6.875rem;
+		font-size: 2rem;
+		padding-left: 3rem;
+	}
+}
+/* ==========================================================================
+   Explored Page Header styles
+  ========================================================================== */
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredHeaderText {
+	position: absolute;
+	padding-left: 2rem;
+	left: 0;
+	font-family: Arial;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredHeaderTitleText {
+	top: 2.5rem;
+	font-size: 3rem;
+	font-weight: bold;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredSubText {
+	top: 6.25rem;
+	font-size: 1.25rem;
+	font-weight: normal;
+}
+
+/*SMALL*/
+@media only screen and (max-width: 64rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredHeaderTitleText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredSubText {
+		top: 3.125rem;
+		font-size: 0.875rem;
+		padding-left: 1rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media only screen and (min-width: 90rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredHeaderTitleText {
+		top: 2.5rem;
+		font-size: 4rem;
+		padding-left: 3rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredSubText {
+		top: 6.875rem;
+		font-size: 2rem;
+		padding-left: 3rem;
+	}
+}
+
+/* ==========================================================================
+   API Page Header styles
+  ========================================================================== */
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderText {
+	position: absolute;
+	padding-left: 2rem;
+	left: 0;
+	font-family: Arial;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderTitleText {
+	top: 2.5rem;
+	font-size: 3rem;
+	font-weight: bold;
+}
+
+.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderSubText {
+	top: 6.25rem;
+	font-size: 1.25rem;
+	font-weight: normal;
+}
+
+/*SMALL*/
+@media only screen and (max-width: 64rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderTitleText {
+		top: 1.25rem;
+		font-size: 1.625rem;
+		padding-left: 1rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderSubText {
+		top: 3.125rem;
+		font-size: 0.875rem;
+		padding-left: 1rem;
+	}
+}
+
+/*XTRA LARGE*/
+@media only screen and (min-width: 90rem) {
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderTitleText {
+		top: 2.5rem;
+		font-size: 4rem;
+		padding-left: 3rem;
+	}
+
+	.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderSubText {
+		top: 6.875rem;
+		font-size: 2rem;
+		padding-left: 3rem;
+	}
+}

@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.TimePicker", function() {
+	"use strict";
+
 	it("correct margins", function () {
 		var oTPValueHelp = element(by.css('#__picker0 .sapMInputValHelpInner')),
 			oPicker,

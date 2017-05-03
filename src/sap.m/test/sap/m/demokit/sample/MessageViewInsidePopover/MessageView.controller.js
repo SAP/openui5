@@ -70,7 +70,7 @@ sap.ui.define([
 
 			this._oMessageView.setModel(oModel);
 
-			var oCloseButton =  new sap.m.Button ({
+			var oCloseButton =  new sap.m.Button({
 				text: "Close",
 				press: function () {
 					that._oPopover.close();

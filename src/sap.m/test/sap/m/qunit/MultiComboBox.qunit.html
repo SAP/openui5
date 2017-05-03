@@ -4728,6 +4728,84 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Focus should be set to the first item of the list if no item is selected", function(assert) {
+		// arrange
+		var oItem = new sap.ui.core.Item(),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [ oItem ]
+			}),
+			oFakeEvent = {
+				setMarked: function () {},
+				keyCode: 111 // dommy code
+			};
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oMultiComboBox.onsapshow(oFakeEvent);
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getList().getItemNavigation().iSelectedIndex, 0, "Initial index should be 0");
+
+		//delete
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Focus should be set to the first selected item if there are any selected", function(assert) {
+		// arrange
+		var oItem = new sap.ui.core.Item(),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [ new sap.ui.core.Item(), oItem ],
+				selectedItems: [ oItem ]
+			}),
+			oFakeEvent = {
+				setMarked: function () {},
+				keyCode: 111 // dommy code
+			};
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oMultiComboBox.onsapshow(oFakeEvent);
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getList().getItemNavigation().iSelectedIndex, 1, "Initial index should be 1");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Focus should be set to the item for which a token have been focused", function(assert) {
+		// arrange
+		var oItem1 = new sap.ui.core.Item( { text: "1" }),
+			oItem2 = new sap.ui.core.Item( { text: "2" }),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [ new sap.ui.core.Item({ text: "3" }), oItem1,  oItem2],
+				selectedItems: [ oItem1, oItem2 ]
+			}),
+			oFakeEvent = {
+				setMarked: function () {},
+				keyCode: 111 // dommy code
+			};
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox._oTokenizer.getTokens()[1].focus();
+		this.clock.tick(500);
+
+		// act
+		oMultiComboBox.onsapshow(oFakeEvent);
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(oMultiComboBox.getList().getItemNavigation().iSelectedIndex, 2, "Initial index should be 2");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {

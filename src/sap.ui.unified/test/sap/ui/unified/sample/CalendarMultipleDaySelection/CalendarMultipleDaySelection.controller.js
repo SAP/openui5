@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			var oDate;
 			var oData = {selectedDates:[]};
 			if (aSelectedDates.length > 0 ) {
-				for(var i=0; i<aSelectedDates.length; i++){
+				for (var i = 0; i < aSelectedDates.length; i++){
 					oDate = aSelectedDates[i].getStartDate();
 					oData.selectedDates.push({Date:this.oFormatYyyymmdd.format(oDate)});
 				}

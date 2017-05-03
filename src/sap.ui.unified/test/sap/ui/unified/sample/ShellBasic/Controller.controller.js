@@ -42,7 +42,7 @@ sap.ui.define([
 
 		handleSearchPressed: function(oEvent) {
 			var sQuery = oEvent.getParameter("query");
-			if(sQuery == "") {
+			if (sQuery == "") {
 				return;
 			}
 
@@ -57,7 +57,7 @@ sap.ui.define([
 
 			// mock data
 			var aResultData = [];
-			for(var i = 0; i < 10; i++) {
+			for (var i = 0; i < 10; i++) {
 				aResultData.push({
 									title:(i + 1) + ". " + sQuery,
 									text:"Lorem ipsum sit dolem"

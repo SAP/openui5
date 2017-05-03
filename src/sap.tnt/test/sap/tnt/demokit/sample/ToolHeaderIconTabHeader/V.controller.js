@@ -1,12 +1,10 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/Controller',
-		'sap/m/Popover',
-		'sap/m/Button'
-	], function(jQuery, Controller, Popover, Button) {
+	'jquery.sap.global',
+	'sap/ui/core/mvc/Controller'
+], function(jQuery, Controller) {
 	"use strict";
 
-	var Controller = Controller.extend("sap.tnt.sample.ToolHeaderIconTabHeader.V", {
+	return Controller.extend("sap.tnt.sample.ToolHeaderIconTabHeader.V", {
 
 		onInit: function () {
 
@@ -27,8 +25,5 @@ sap.ui.define([
 			label.setText(tab.getText());
 		}
 	});
-
-
-	return Controller;
 
 });

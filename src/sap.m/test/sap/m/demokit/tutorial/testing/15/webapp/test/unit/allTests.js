@@ -3,4 +3,6 @@ sap.ui.define([
 	"test/unit/model/formatter",
 	"test/unit/model/FlaggedType",
 	"test/unit/model/DateFormatter"
-], function() { "use strict"; });
+], function() {
+	"use strict";
+});

@@ -16,7 +16,7 @@ sap.ui.define([
 				oRm.addClass("sapThemeForegroundBorderColor-asBorderColor");
 				oRm.addClass("myColorPreviewBorder");
 				oRm.addStyle("background-color", oControl.getColor());
-			};
+			}
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");

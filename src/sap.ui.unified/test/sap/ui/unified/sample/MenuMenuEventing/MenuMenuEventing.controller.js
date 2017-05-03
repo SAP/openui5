@@ -30,15 +30,14 @@ sap.ui.define([
 		},
 
 		handleMenuItemPress: function(oEvent) {
-			if(oEvent.getParameter("item").getSubmenu()) {
+			if (oEvent.getParameter("item").getSubmenu()) {
 				return;
 			}
 
 			var msg = "";
-			if(oEvent.getParameter("item").getMetadata().getName() == "sap.ui.unified.MenuTextFieldItem") {
+			if (oEvent.getParameter("item").getMetadata().getName() == "sap.ui.unified.MenuTextFieldItem") {
 				msg = "'" + oEvent.getParameter("item").getValue() + "' entered";
-			}
-			else {
+			} else {
 				msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
 			}
 

@@ -829,6 +829,16 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.PDFViewer",
+		  "name": "PDF Viewer",
+		  "category": "Display",
+		  "since": "1.48",
+		  "samples": [
+			  "sap.m.sample.PDFViewerEmbedded",
+			  "sap.m.sample.PDFViewerPopup"
+		  ]
+		},
+		{
 		  "id": "sap.m.PlanningCalendar",
 		  "name": "Planning Calendar",
 		  "category": "User Input",
@@ -1093,6 +1103,7 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.TextArea",
+			 "sap.m.sample.TextAreaMaxLength",
 			"sap.m.sample.TextAreaValueUpdate",
 			"sap.m.sample.TextAreaGrowing"
 		  ]
@@ -1533,6 +1544,16 @@
 		  "id": "sap.m.sample.PanelExpanded",
 		  "name": "Panel - Expand / Collapse",
 		  "description": "Panels also have the possibility to expand/collapse their content (including the infoToolbar if available). [since rel. 1.22]"
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerEmbedded",
+		  "name": "PDF Viewer - Embedded",
+		  "description": "A PDF viewer embedded in another control."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerPopup",
+		  "name": "PDF Viewer - Popup",
+		  "description": "A PDF viewer opening as a popup dialog."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",
@@ -2009,6 +2030,10 @@
 		  "name": "Text Area",
 		  "description": "The Text Area allows to enter multi-line text and automatically breaks to a new line for overflow text. If the text gets too big to be displayed at once the user can scroll up and down."
 		},
+	 	{
+		  "id": "sap.m.sample.TextAreaMaxLength",
+		  "name": "TextArea with MaxLength = true",
+		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"},
 		{
 		  "id": "sap.m.sample.TextAreaValueUpdate",
 		  "name": "TextArea - Value Update",

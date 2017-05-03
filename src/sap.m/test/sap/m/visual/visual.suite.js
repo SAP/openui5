@@ -1,3 +1,5 @@
+/* global module */
+
 module.exports = [
 	"ActionSelect.spec.js",
 	"ActionSheet.spec.js",

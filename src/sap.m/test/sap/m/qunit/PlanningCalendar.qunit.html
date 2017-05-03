@@ -910,6 +910,28 @@
 			sap.ui.getCore().applyChanges();
 		});
 
+		QUnit.test("groupAppointmentsMode", function (assert) {
+			//Assert: default value
+			assert.equal(oPC1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Collapsed, "GroupAppointmentsMode is set to 'Collapsed' by default");
+			var aRows = oPC1.getRows();
+			for(var i = 0; i < aRows.length; i++) {
+				assert.ok(aRows[i].getCalendarRow().getGroupAppointmentsMode(), "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Collapsed'");
+			}
+
+			// Act
+			oPC1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Expanded);
+			sap.ui.getCore().applyChanges();
+			// Assert
+			assert.equal(oPC1.getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Expanded, "GroupAppointmentsMode is set to 'Expanded'");
+			for(var i = 0; i < aRows.length; i++) {
+				assert.equal(aRows[i].getCalendarRow().getGroupAppointmentsMode(), sap.ui.unified.GroupAppointmentsMode.Expanded, "CalendarRow " + i + ": GroupAppointmentsMode is set to 'Expanded'");
+			}
+
+			// Cleanup
+			oPC1.setGroupAppointmentsMode(sap.ui.unified.GroupAppointmentsMode.Collapsed);
+			sap.ui.getCore().applyChanges();
+		});
+
 		QUnit.test("appointmentsReducedHeight", function(assert) {
 			assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 			var aRows = oPC1.getRows();
@@ -1368,6 +1390,92 @@
 			assert.ok(!sap.ui.getCore().byId("PC1-R2H1"), "IntervalHeader destroyed");
 
 			oPC1 = initPlanningCalendar("PC1", "SF1", "B1");
+		});
+
+		QUnit.module("NonWorking Special Dates", {
+			beforeEach: function() {
+				this.oPC = createPlanningCalendar("PCNonWorking", new sap.m.SearchField(), new sap.m.Button()),
+						this.oSpecialDate = new sap.ui.unified.DateTypeRange({
+							startDate: new Date(2015, 0, 1, 15, 30),
+							type: sap.ui.unified.CalendarDayType.NonWorking
+						});
+				this.oSecondSpecialDate = new sap.ui.unified.DateTypeRange({
+					startDate: new Date(2015, 1, 2, 15, 30),
+					type: sap.ui.unified.CalendarDayType.NonWorking
+				});
+				this.oPC.placeAt("uiArea2");
+			},
+			afterEach: function() {
+				//Cleanup
+				this.oPC.destroy();
+			},
+
+			/* Checks that aggregation "_nonWorkingDates" is empty for both PlanningCalendarRows & its CalendarRows*/
+			_assertEmptyNonWorkingDates: function() {
+				this.oPC.getAggregation("rows").forEach(function (oRow) {
+					assert.ok(!oRow.getAggregation("_nonWorkingDates") ||
+							oRow.getAggregation("_nonWorkingDates").length === 0,
+							"PlanningCalendarRow should have no items in its aggregation nonWorkingDates");
+				});
+
+				this.oPC.getAggregation("rows").forEach(function (oPCRow) {
+					assert.ok(!oPCRow.getCalendarRow().getAggregation("_nonWorkingDates") ||
+							oPCRow.getCalendarRow().getAggregation("_nonWorkingDates").length === 0,
+							"CalendarRow should have no items in its aggregation nonWorkingDates");
+				});
+			},
+			_assertSingleNonWorkingDateIsAvailable: function(oDate, expectedLength, index) {
+				var oRowNoWork, oCRowNoWork;
+				this.oPC.getAggregation("rows").forEach(function(oPCRow) {
+					assert.equal(oPCRow.getAggregation("_nonWorkingDates").length, expectedLength, "PlanningCalendarRow should have 1 item in its aggregation nonWorkingDates");
+					oRowNoWork = oPCRow.getAggregation("_nonWorkingDates")[index];
+					assert.equal(oRowNoWork.getStartDate().toString(), oDate.getStartDate().toString(), "date ok");
+					assert.equal(oRowNoWork.getEndDate(), null, "PlanningCalendarRow should have no endDate");
+				});
+
+				this.oPC.getAggregation("rows").forEach(function(oPCRow) {
+					assert.equal(oPCRow.getCalendarRow().getAggregation("_nonWorkingDates").length, expectedLength, "CalendarRow should have 1 item in its aggregation nonWorkingDates");
+					oCRowNoWork = oPCRow.getCalendarRow().getAggregation("_nonWorkingDates")[index];
+					assert.equal(oCRowNoWork.getStartDate().toString(), oDate.getStartDate().toString(), "date ok");
+					assert.equal(oCRowNoWork.getEndDate(), null, "CalendarRow should have no endDate");
+				});
+			}
+		});
+		QUnit.test("Add non working special date", function(assert) {
+			//Act
+			this.oPC.addSpecialDate(this.oSpecialDate);
+			//Assert
+			this._assertSingleNonWorkingDateIsAvailable(this.oSpecialDate, 1, 0);
+		});
+
+		QUnit.test("Insert non working special date", function(assert) {
+			//Prepare
+			this.oPC.addSpecialDate(this.oSpecialDate);
+
+			//Act
+			this.oPC.insertSpecialDate(this.oSecondSpecialDate, 0);
+			//Assert
+			assert.equal(this.oPC.indexOfAggregation("specialDates", this.oSecondSpecialDate), 0, "Insert special dates at index 0 position it at the 0th index");
+			this._assertSingleNonWorkingDateIsAvailable(this.oSecondSpecialDate, 2, 0);
+
+		});
+
+		QUnit.test("Remove non working special date", function(assert) {
+			//Prepare
+			this.oPC.addSpecialDate(this.oSpecialDate);
+
+			//Act
+			this.oPC.removeSpecialDate(this.oSpecialDate);
+			//Assert
+			this._assertEmptyNonWorkingDates();
+		});
+
+		QUnit.test("Remove all non working special date", function(assert) {
+			this.oPC.addSpecialDate(this.oSpecialDate);
+			//Act
+			this.oPC.removeAllSpecialDates();
+			//Assert
+			this._assertEmptyNonWorkingDates();
 		});
 
 		QUnit.module("events");
@@ -1886,7 +1994,7 @@
 					oNextTarget = aDays[0],
 					oSelf = this,
 					fnDone = assert.async();
-            //Focus 29th of Aug (week 29 Aug - 4 Sep), 2016 and move left via keyboard 4 times, expect 22 -28 Aug 2016
+			//Focus 29th of Aug (week 29 Aug - 4 Sep), 2016 and move left via keyboard 4 times, expect 22 -28 Aug 2016
 			//act
 			aDays.eq(0).focus();
 			sap.ui.getCore().applyChanges();
@@ -1944,7 +2052,7 @@
 			setTimeout(function() {
 				oNextTarget = _navFocusPrev.call(oSelf, oNextTarget);
 				_assertFocus.call(oSelf, oNextTarget);
-				    _assertDatesAreVisible.call(oSelf, [
+					_assertDatesAreVisible.call(oSelf, [
 						new Date(2014, 9, 26),
 						new Date(2014, 9, 27),
 						new Date(2014, 9, 28),
@@ -2758,7 +2866,7 @@
 		QUnit.test('intervalSelect fires correctly', function(assert) {
 			var oRow = this._getFirstRow(this.oPC);
 			var eventParams = {};
-            bIntervalSelect = false;
+			bIntervalSelect = false;
 
 			oRow.attachIntervalSelect(function(oEvent) {
 				eventParams = oEvent.getParameters();

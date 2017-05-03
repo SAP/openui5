@@ -1,0 +1,348 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Controls"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+	<ScrollContainer
+			width="100%"
+			height="100%"
+			horizontal="false"
+			vertical="true">
+
+			<l:BlockLayout
+					background="Mixed">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell class="sapUiNoContentPadding">
+						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
+								width="100%"
+								densityAware="false"
+								visible="{device>/system/phone}"/>
+						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped.jpg"
+								width="100%"
+								densityAware="false"
+								visible="{=!${device>/system/phone}}"/>
+						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText" text="Explored" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText" text="Explore the samples, code snippets and download options" width="100%" textAlign="Left"/>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="Featured Control Groups">
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://edit"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Input Controls"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Simple yet powerful controls to enable users to enter and interact with data."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Input field"
+								href="#/entity/sap.m.Input"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Combobox"
+								href="#/entity/sap.m.ComboBox"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://list"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="List and Tree"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Lists make it possible to represent data in very flexible ways."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Standard List item"
+								href="#/entity/sap.m.StandardListItem"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Tree"
+								href="#/entity/sap.m.Tree"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://table-view"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Tables"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Tables can be simple or complex depending on your requirements."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Responsive Table"
+								href="#/entity/sap.m.Table"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Grid Table"
+								href="#/entity/sap.ui.table.Table"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://popup-window"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Popups"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Popups like dialogs and popovers."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Dialog"
+								href="#/entity/sap.m.Dialog"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Popover"
+								href="#/entity/sap.m.MessagePopover"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://grid"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Generic Tiles"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Some small descriptive text to explain the controls."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Generic Tile"
+								href="#/entity/sap.m.GenericTile"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Slide Tile"
+								href="#/entity/sap.m.SlideTile"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://message-popup"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Messaging"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Some small descriptive text to explain the controls."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Message Strip"
+								href="#/entity/sap.m.MessageStrip"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Message Dialog"
+								href="#/entity/sap.m.Dialog"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://header"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Bars"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Some small descriptive text to explain the controls."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Overflow Toolbar"
+								href="#/entity/sap.m.OverflowToolbar"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Bar"
+								href="#/entity/sap.m.Bar"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://action"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Actions"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Some small descriptive text to explain the controls."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Button"
+								href="#/entity/sap.m.Button"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Action Sheet"
+								href="#/entity/sap.m.ActionSheet"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="Layout &amp; Page Controls">
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://header"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Object Page"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Simple yet powerful controls to preview your information responsively."
+								class="sapUiSmallMarginBottom"/>
+						<Link
+								text="Object Page Layout"
+								href="#/entity/sap.uxap.ObjectPageLayout"
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Object Page blocks"
+								href="#/entity/sap.uxap.BlockBase"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://screen-split-three"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Flexible Column Layout"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Allows the viewing of multiple objects on one screen."
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Flexible Column Layout"
+								href="#/entity/sap.f.FlexibleColumnLayout"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://chart-table-view"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Dynamic Page"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="This dynamic layout comes complete with snapping headers."
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Dynamic Page"
+								href="#/entity/sap.f.DynamicPage"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://screen-split-one"
+								color="Default"
+								size="2rem"
+								class="sapUiSmallMarginBottom"/>
+						<Title
+								text="Split App"
+								titleStyle="H2"
+								class="sapUiSmallMarginBottom"/>
+						<Text
+								text="Sometimes the simple layout is the better layout."
+								class="sapUiTinyMarginBottom"/>
+						<Link
+								text="Split App"
+								href="#/entity/sap.m.SplitApp"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="demokitInitialPagesColorPatternFContrast">
+					<HBox
+							justifyContent="SpaceBetween"
+							alignItems="Center">
+						<Image
+								src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+								height="2.5rem">
+						</Image>
+						<HBox
+								width="100%"
+								justifyContent="End"
+								wrap="Wrap"
+								visible="{=!${appView>/isOpenUI5}}">
+							<Link
+									class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+									text="Legal Disclosure"
+									href="https://www.sap.com/corporate/en/legal/impressum.html"
+									target="_blank"/>
+							<Link
+									class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
+									text="Privacy"
+									href="https://help.hana.ondemand.com/privacy.htm"
+									target="_blank"/>
+							<Link
+									class="demokitInitialPagesBrightLink"
+									text="Terms of use"
+									href="https://help.hana.ondemand.com/terms_of_use.html"
+									target="_blank"/>
+						</HBox>
+					</HBox>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</ScrollContainer>
+</mvc:View>

@@ -1,4 +1,8 @@
-sap.ui.define([], function() {
+/*global QUnit*/
+
+sap.ui.define([
+	"sap/ui/test/opaQunit"
+], function (opaTest) {
 	"use strict";
 
 	QUnit.module("Object");

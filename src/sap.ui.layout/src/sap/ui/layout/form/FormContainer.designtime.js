@@ -15,9 +15,26 @@ sap.ui.define([],
 	}
 
 	return {
+		actions: {
+			remove: {
+				changeType: "hideControl"
+			},
+			reveal: {
+				changeType: "unhideControl"
+			},
+			rename: {
+				changeType: "renameGroup",
+				domRef: function (oFormContainer) {
+					return jQuery(oFormContainer.getRenderedDomRef()).find(".sapUiFormTitle")[0];
+				},
+				isEnabled : function (oFormContainer) {
+					return !(oFormContainer.getToolbar() || !oFormContainer.getTitle());
+				}
+			}
+		},
 		aggregations : {
 			formElements : {
-				domRef : function(oFormContainer) {
+				domRef: function (oFormContainer) {
 					var oDomRef = oFormContainer.getDomRef();
 					if (!oDomRef && oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) {
 						var oHeader = oFormContainer.getTitle() || oFormContainer.getToolbar();
@@ -27,8 +44,23 @@ sap.ui.define([],
 					} else {
 						return oDomRef;
 					}
+				},
+				actions: {
+					move: "moveControls"
+				}
+			},
+			toolbar : {
+				domRef: function (oFormContainer) {
+					var oToolbar = oFormContainer.getToolbar();
+					if (oToolbar) {
+						return oToolbar.getDomRef();
+					}
 				}
 			}
+		},
+		name: {
+			singular: "GROUP_CONTROL_NAME",
+			plural: "GROUP_CONTROL_NAME_PLURAL"
 		}
 	};
 

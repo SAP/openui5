@@ -40,6 +40,12 @@
             </modules>
         </component>
         <component>
+            <name>CA-UI5-BS-FCP</name>
+            <modules>
+                <module>sap/m/PDFViewer</module>
+            </modules>
+        </component>
+        <component>
             <name>CA-UI5-BS-FCW</name>
             <modules>
                 <module>sap/m/FeedInput</module>

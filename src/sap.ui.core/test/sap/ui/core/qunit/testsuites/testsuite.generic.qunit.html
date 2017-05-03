@@ -11,7 +11,11 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/ControlIterator.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/ControlIteratorExample.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/ControlIteratorExample2.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/ControlMemoryLeaks.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/ControlMemoryLeaksUsingIterator.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/DuplicateIdCheck.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/generic/SettersContextReturn.qunit.html");
 			return suite;

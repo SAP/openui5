@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.m.Text", function() {
+	"use strict";
 
 	// initial loading
 	// there is one invisible text with ID "text8". If it gets visible this will be seen in this screenshot

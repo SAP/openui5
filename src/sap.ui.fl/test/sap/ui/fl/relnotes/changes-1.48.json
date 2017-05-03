@@ -1,0 +1,19 @@
+{
+  "1.48.0": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "6571a0f605cb1d1c1e2c118d7879f543ff3db7a6",
+        "type": "FEATURE",
+        "text": " LRep CUSTOMER_BASE layer for flexibility",
+        "references": []
+      },
+      {
+        "id": "bfca68a0f0d4868bfd1064315e76d3e55f54737f",
+        "type": "FIX",
+        "text": " Variant loading fails if server sends correct content type",
+        "references": []
+      }
+    ]
+  }
+}

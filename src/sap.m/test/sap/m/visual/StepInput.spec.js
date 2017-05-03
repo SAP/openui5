@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe('sap.m.StepInput', function() {
+	"use strict";
+
 	it('value and buttons', function () {
 		var oStepInput = element(by.id('visual_test_step_input')),
 			oDecrementButton = element(by.id('visual_test_step_input-decrementButton'));

@@ -1,8 +1,11 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
 	"sap/ui/demo/iconexplorer/model/formatter",
+	'jquery.sap.global',
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (formatter) {
+], function (formatter, $) {
 	"use strict";
 
 	QUnit.module("Preview Panel Height");

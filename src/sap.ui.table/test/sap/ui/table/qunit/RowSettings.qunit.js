@@ -1,3 +1,5 @@
+/* global QUnit,oTable */
+
 sap.ui.require([
 	"sap/ui/table/RowSettings",
 	"sap/ui/table/TableUtils",
@@ -6,8 +8,11 @@ sap.ui.require([
 ], function(RowSettings, TableUtils, MessageType, ThemeParameters) {
 	"use strict";
 
-	/* global QUnit */
-	/* global oTable, createTables, destroyTables, fakeGroupRow, fakeSumRow */ // TableQUnitUtils
+	// mapping of global function calls
+	var createTables = window.createTables;
+	var destroyTables = window.destroyTables;
+	var fakeGroupRow = window.fakeGroupRow;
+	var fakeSumRow = window.fakeSumRow;
 
 	/**
 	 * Sets up the row settings template in the table.

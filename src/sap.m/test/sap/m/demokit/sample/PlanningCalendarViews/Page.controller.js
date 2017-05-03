@@ -109,7 +109,7 @@ sap.ui.define([
 								title: "Vacation",
 								type: "Type02",
 								tentative: false
-							},
+							}
 						],
 						headers: [
 							{
