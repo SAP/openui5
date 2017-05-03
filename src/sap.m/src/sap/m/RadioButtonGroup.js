@@ -441,22 +441,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @returns {Array} Array of removed buttons or null
 			 * @public
 			 */
-			RadioButtonGroup.prototype.removeAllButtons = function() {
-				var aButtons = this.removeAllAggregation("buttons");
-
+			RadioButtonGroup.prototype.removeAllButtons = function () {
 				if (!this._bUpdateButtons) {
 					this.setSelectedIndex(-1);
 				}
 
-				if (this.aRBs) {
-					while (this.aRBs.length > 0) {
-						this.aRBs[0].destroy();
-						this.aRBs.splice(0, 1);
-					}
-					return aButtons;
-				} else {
-					return null;
-				}
+				return this.removeAllAggregation("buttons");
 			};
 
 			/**
