@@ -1,12 +1,7 @@
-sap.ui.define(
-	['sap/ui/test/Opa5',
-	 'sap/ui/test/matchers/BindingPath',
-	 'sap/ui/test/matchers/Properties',
-	 'sap/ui/test/matchers/AggregationFilled',
-	 'sap/ui/test/actions/Press',
-	 'sap/ui/test/actions/EnterText',
-	 'sap/m/MessageBox'],
-	function (Opa5, BindingPath, Properties, AggregationFilled, Press, EnterText,MessageBox) {
+sap.ui.define([
+	'sap/ui/test/Opa5'
+], function (Opa5) {
+	"use strict";
 
 	Opa5.createPageObjects({
 		onOrderCompleted: {

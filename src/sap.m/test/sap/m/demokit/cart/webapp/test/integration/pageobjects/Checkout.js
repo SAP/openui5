@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/actions/EnterText'
 ], function (Opa5, BindingPath, Properties, AggregationFilled, I18NText, Press, EnterText) {
+	"use strict";
 
 	Opa5.createPageObjects({
 		onCheckout: {

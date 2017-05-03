@@ -71,7 +71,7 @@ sap.ui.define([
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
-			var sExpectedSource = "/response/200";
+			var sExpectedSource = "/test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
 			oModel.setData({
 				"source": sExpectedSource
 			});

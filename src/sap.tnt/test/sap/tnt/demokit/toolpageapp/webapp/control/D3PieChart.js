@@ -1,7 +1,8 @@
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/demo/toolpageapp/control/D3Chart",
 	"sap/ui/thirdparty/d3"
-], function (D3Chart, d3) {
+], function ($, D3Chart, d3) {
 	"use strict";
 
 	return D3Chart.extend("sap.ui.demo.toolpageapp.control.D3PieChart", {
@@ -50,7 +51,7 @@ sap.ui.define([
 			// draw arcs
 			g.append("path")
 				.attr("fill", function() {
-					return sap.ui.core.theming.Parameters.get("sapUiChart1")
+					return sap.ui.core.theming.Parameters.get("sapUiChart1");
 				})
 				.attr("d", arc);
 
@@ -62,10 +63,10 @@ sap.ui.define([
 				.append("text")
 				.text(function (d) { return d.v; })
 				.attr("font-size", "0.875rem")
-				.attr("fill", function() { return sap.ui.core.theming.Parameters.get("sapUiText") } )
+				.attr("fill", function() { return sap.ui.core.theming.Parameters.get("sapUiText"); } )
 				.attr("text-anchor", "middle")
 				.attr("y", function () {
-					return $(this).height() / 2 ;
+					return $(this).height() / 2;
 				});
 		},
 

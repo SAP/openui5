@@ -225,6 +225,15 @@
             assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
         });
 
+		QUnit.test("visible", function(assert) {
+			//Act
+			this.sut.getItems()[0].setVisible(false);
+			this.sut.openBy();
+			var oItemFridge = sap.ui.getCore().byId(this.sut.getItems()[0]._getVisualControl());
+
+			//Assert
+			assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
+		});
 
         QUnit.test('ARIA attributes', function (assert) {
             var fnSetBackButtonTooltipForPageWithParentSpy = sinon.spy(this.sut, "_setBackButtonTooltipForPageWithParent");

@@ -1,7 +1,3 @@
-/*!
- * ${copyright}
- */
-
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"jquery.sap.storage"

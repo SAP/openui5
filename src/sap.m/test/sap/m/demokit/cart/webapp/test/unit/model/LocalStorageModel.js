@@ -1,8 +1,10 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
 	"sap/ui/demo/cart/model/LocalStorageModel",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function (LocalStorageModel, sinon) {
+], function (LocalStorageModel) {
 	"use strict";
 
 	QUnit.module("LocalStorageModel - Defaults");
@@ -21,7 +23,7 @@ sap.ui.define([
 	QUnit.module("LocalStorageModel - Parameters", {
 		beforeEach: function() {
 			// stub the _loadData method called in the constructor
-			this.fnLoadData =  sinon.stub(LocalStorageModel.prototype, "_loadData");
+			this.fnLoadData = sinon.stub(LocalStorageModel.prototype, "_loadData");
 			// stub the storage api
 			this.fnPutStub = sinon.stub(jQuery.sap.storage, "put");
 			this.fnGetStub = sinon.stub(jQuery.sap.storage, "get");

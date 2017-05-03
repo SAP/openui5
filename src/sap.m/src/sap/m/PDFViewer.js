@@ -50,54 +50,64 @@ sap.ui.define([
 					library: "sap.m",
 					properties: {
 						/**
-						 * Defines height of the control
+						 * Defines the height of the PDF viewer control, respective to the height of
+						 * the parent container. Can be set to a percent, pixel, or em value.
 						 */
 						height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
 						/**
-						 * Defines width of the control
+						 * Defines the width of the PDF viewer control, respective to the width of the
+						 * parent container. Can be set to a percent, pixel, or em value.
 						 */
 						width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
 						/**
-						 * Specifies a URL which is use as source for the pdf file
+						 * Specifies the path to the PDF file to display. Can be set to a relative or
+						 * an absolute path.
 						 */
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
-						 * A custom error message showed when error during loading phase happened
+						 * A custom error message that is displayed when the PDF file cannot be loaded.
+						 * the PDF file.
 						 */
 						errorMessage: {type: "string", group: "Misc", defaultValue: null},
 						/**
-						 * A custom error text that is display instead of loaded iframe when error occurs
+						 * A custom text that is displayed instead of the loaded PDF frame when an error
+						 * occurs.
 						 */
 						errorPlaceholderMessage: {type: "string", group: "Misc", defaultValue: null},
 						/**
-						 * A title text of popup header
+						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
+						 * is set to open in a popup dialog.
 						 */
 						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null}
 					},
 					aggregations: {
 						/**
-						 * A custom control that is used instead of custom/default error placeholder text
+						 * A custom control that can be used instead of the error message specified by the
+						 * errorPlaceholderMessage property.
 						 */
 						errorPlaceholder: {type : "sap.ui.core.Control", multiple : false},
 						/**
 						 * A multiple aggregation for buttons that can be added to the footer of the popup
+						 * dialog. Works only if the PDF viewer is set to open in a popup dialog.
 						 */
 						popupButtons: {type: "sap.m.Button", multiple: true, singularName: "popupButton"}
 					},
 					events: {
 						/**
-						 * An event that is fired when pdf is loaded. If the pdf is loading by chunks, it will be fired as soon as
-						 * the browser's plugin decided. It can happened after a few chunks are received
+						 * This event is fired when a PDF file is loaded. If the PDF is loaded in smaller chunks,
+						 * this event is fired as often as defined by the browser's plugin. This may happen after
+						 * a couple chunks are processed.
 						 */
 						loaded: {},
 						/**
-						 * An event that is fired when an error during the loading process happened.
+						 * This event is fired when there is an error loading the PDF file.
 						 */
 						error: {},
 						/**
-						 * An event that is fired when the control cannot check the loaded content. For example the default firefox
-						 * contains a bug that disallow that. This can also happened when the source is from different domain/port
-						 * because of the cross domain policy
+						 * This event is fired when the PDF viewer control cannot check the loaded content. For
+						 * example, the default configuration of the Mozilla Firefox browser may not allow checking
+						 * the loaded content. This may also happen when the source PDF file is stored in a different
+						 * domain.
 						 */
 						sourceValidationFailed: {}
 					}
@@ -352,6 +362,14 @@ sap.ui.define([
 		PDFViewer.prototype._isSourceValidToDisplay = function () {
 			var sSource = this.getSource();
 			return sSource !== null && sSource !== "" && typeof sSource !== "undefined";
+		};
+
+		/**
+		 * @param oOrigin
+		 */
+		PDFViewer.prototype.invalidate = function (oOrigin) {
+			this._initControlState();
+			Control.prototype.invalidate.call(this, oOrigin);
 		};
 
 		/**

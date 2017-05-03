@@ -103,6 +103,18 @@
         "type": "FIX",
         "text": ": sap.ui.unified.calendar controls. - focused item is preserved after rerendering.",
         "references": []
+      },
+      {
+        "id": "247b392c9f6a2072710e93136c25047012c564b3",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar - non working dates added.",
+        "references": []
+      },
+      {
+        "id": "87c34a2b02206f91c9c761fe4b1824fa773882f2",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: The grouping of overlapping appointments can now be disabled.",
+        "references": []
       }
     ]
   }

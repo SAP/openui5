@@ -39,14 +39,15 @@ sap.ui.define([
 			var selectedKey = this.getModel().getProperty("/SelectedPayment");
 			var oElement = this.byId("paymentTypeStep");
 			switch (selectedKey) {
-				case "Credit Card" :
-					oElement.setNextStep(this.byId("creditCardStep"));
-					break;
-				case "Bank Transfer" :
+				case "Bank Transfer":
 					oElement.setNextStep(this.byId("bankAccountStep"));
 					break;
-				case "Cash on Delivery" :
+				case "Cash on Delivery":
 					oElement.setNextStep(this.byId("cashOnDeliveryStep"));
+					break;
+				case "Credit Card":
+				default:
+					oElement.setNextStep(this.byId("creditCardStep"));
 					break;
 			}
 		},
@@ -92,7 +93,7 @@ sap.ui.define([
 		 * shows warning message and cancels order if affirmed
 		 */
 		handleWizardCancel: function () {
-			var sText=this.getResourceBundle().getText("checkoutControllerAreyousurecancel");
+			var sText = this.getResourceBundle().getText("checkoutControllerAreyousurecancel");
 			this._handleSubmitOrCancel(sText, "warning", "home");
 		},
 
@@ -101,7 +102,7 @@ sap.ui.define([
 		 * shows warning message and submits order if affirmed
 		 */
 		handleWizardSubmit: function () {
-			var sText=this.getResourceBundle().getText("checkoutControllerAreyousuresubmit");
+			var sText = this.getResourceBundle().getText("checkoutControllerAreyousuresubmit");
 			this._handleSubmitOrCancel(sText, "confirm", "ordercompleted");
 		},
 
@@ -119,7 +120,7 @@ sap.ui.define([
 		 */
 		checkCreditCardStep: function () {
 			var sCardName = this.getModel().getProperty("/CreditCard/Name") || "";
-			var oElement=this.byId("creditCardStep")
+			var oElement = this.byId("creditCardStep");
 			var oWizard = this.byId("shoppingCartWizard");
 			if (sCardName.length < 2) {
 				oWizard.invalidateStep(oElement);
@@ -134,7 +135,7 @@ sap.ui.define([
 		 */
 		checkCashOnDeliveryStep: function () {
 			var sFirstName = this.getModel().getProperty("/CashOnDelivery/FirstName") || "";
-			var oElement=this.byId("cashOnDeliveryStep")
+			var oElement = this.byId("cashOnDeliveryStep");
 			var oWizard = this.byId("shoppingCartWizard");
 			if (sFirstName.length < 2) {
 				oWizard.invalidateStep(oElement);
@@ -152,7 +153,7 @@ sap.ui.define([
 			var sCity = this.getModel().getProperty("/BillingAddress/City") || "";
 			var sZipCode = this.getModel().getProperty("/BillingAddress/ZipCode") || "";
 			var sCountry = this.getModel().getProperty("/BillingAddress/Country") || "";
-			var oElement=this.byId("billingStep")
+			var oElement = this.byId("billingStep");
 			var oWizard = this.byId("shoppingCartWizard");
 
 			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
@@ -171,7 +172,7 @@ sap.ui.define([
 			var sCity = this.getModel().getProperty("/DeliveryAddress/City") || "";
 			var sZipCode = this.getModel().getProperty("/DeliveryAddress/ZipCode") || "";
 			var sCountry = this.getModel().getProperty("/DeliveryAddress/Country") || "";
-			var oElement=this.byId("deliveryAddressStep")
+			var oElement = this.byId("deliveryAddressStep");
 			var oWizard = this.byId("shoppingCartWizard");
 
 			if (sAddress.length < 2 || sCity.length < 2 || sZipCode.length < 2 || sCountry.length < 2) {
@@ -283,11 +284,11 @@ sap.ui.define([
 		 */
 		_navToWizardStep: function (oStep) {
 			var oNavContainer = this.byId("wizardNavContainer");
-			var _fnAfterNavigate=(function () {
+			var _fnAfterNavigate = function () {
 				this.byId("shoppingCartWizard").goToStep(oStep);
 				// detaches itself after navigaton
 				oNavContainer.detachAfterNavigate(_fnAfterNavigate);
-			}).bind(this);
+			}.bind(this);
 
 			oNavContainer.attachAfterNavigate(_fnAfterNavigate);
 			oNavContainer.to(this.byId("wizardContentPage"));

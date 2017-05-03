@@ -23,7 +23,7 @@ sap.ui.define([
 					], function () {
 						this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsMicro"}));
 					}.bind(this));
-				} catch(oException) {
+				} catch (oException) {
 					// no microcharts available: use d3 view
 					this.byId("statisticsContainer").addContent(sap.ui.xmlview({id: this.getView().createId("charts"), viewName : "sap.ui.demo.toolpageapp.view.StatisticsD3"}));
 				}

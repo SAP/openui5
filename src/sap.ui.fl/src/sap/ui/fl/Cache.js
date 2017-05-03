@@ -69,6 +69,16 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	};
 
 	/**
+	 * Clears whole entries stored in the cache.
+	 *
+	 * @protected
+	 * @sap-restricted sap.ui.fl
+	 */
+	Cache.clearEntries = function () {
+		Cache._entries = {};
+	};
+
+	/**
 	 * Returns the entry stored in the cache and creates an entry if needed.
 	 *
 	 * @param {string} sComponentName - Name of the application component
@@ -91,6 +101,20 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			};
 		}
 		return Cache._entries[sComponentName][sAppVersion];
+	};
+
+	/**
+	 * Clears a single entry stored in the cache for a specific application component and application version.
+	 *
+	 * @param {string} sComponentName - Name of the application component
+	 * @param {string} sAppVersion - Current running version of application
+	 *
+	 * @protected
+	 * @sap-restricted sap.ui.fl
+	 */
+	Cache.clearEntry = function (sComponentName, sAppVersion) {
+		Cache.getEntry(sComponentName, sAppVersion);
+		Cache._entries[sComponentName][sAppVersion] = {};
 	};
 
 	/**

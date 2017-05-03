@@ -833,7 +833,10 @@
 		  "name": "PDF Viewer",
 		  "category": "Display",
 		  "since": "1.48",
-		  "samples": []
+		  "samples": [
+			  "sap.m.sample.PDFViewerEmbedded",
+			  "sap.m.sample.PDFViewerPopup"
+		  ]
 		},
 		{
 		  "id": "sap.m.PlanningCalendar",
@@ -1541,6 +1544,16 @@
 		  "id": "sap.m.sample.PanelExpanded",
 		  "name": "Panel - Expand / Collapse",
 		  "description": "Panels also have the possibility to expand/collapse their content (including the infoToolbar if available). [since rel. 1.22]"
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerEmbedded",
+		  "name": "PDF Viewer - Embedded",
+		  "description": "A PDF viewer embedded in another control."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerPopup",
+		  "name": "PDF Viewer - Popup",
+		  "description": "A PDF viewer opening as a popup dialog."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",

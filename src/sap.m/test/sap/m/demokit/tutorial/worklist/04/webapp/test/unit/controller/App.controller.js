@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
 	"myCompany/myApp/controller/App.controller",
 	"sap/ui/core/Control",

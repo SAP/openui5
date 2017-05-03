@@ -8,6 +8,7 @@
           "src/sap.ui.ux3/pom.xml": "1",
           "src/sap.ui.core/pom.xml": "1",
           "src/sap.uxap/pom.xml": "1",
+          "src/sap.ui.documentation/pom.xml": "1",
           "src/sap.m/pom.xml": "1",
           "package.json": "1",
           "src/sap.ui.table/pom.xml": "1",
@@ -22,12 +23,12 @@
           "src/sap.ui.codeeditor/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/sap.ui.commons/pom.xml": "1",
           "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
-      "lastCommitId": "02fbe3375a5c6f8d1ef34f46b22bc0588e524384"
+      "lastCommitId": "c8fc4dd17792e6140f588a5257c9de58483b9927"
     }
   }
 }

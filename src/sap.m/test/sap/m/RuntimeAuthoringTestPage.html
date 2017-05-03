@@ -114,12 +114,25 @@
 											})
 										]
 									}),
-									new sap.ui.layout.form.SimpleForm({
-										id: "SimpleForm1",
-										content: [
-											new sap.m.Title({id: "simpleFormTitle1", text: "Form Title"}),
-											new sap.m.Label({id: "formLabel", text: "Label"}),
-											new sap.m.Text({id: "formText", text: "textToLabel1"})
+									new sap.ui.layout.form.Form("F1",{
+										title: new sap.ui.core.Title({text: "Form Title", tooltip: "Title tooltip"}),
+										tooltip: "Form tooltip",
+										editable: true,
+										layout: new sap.ui.layout.form.ResponsiveLayout(),
+										formContainers: [
+											new sap.ui.layout.form.FormContainer("C1", {
+												title: "contact data",
+												formElements: [
+													new sap.ui.layout.form.FormElement("F1C1E1", {
+														label: "Name",
+														fields: [new sap.m.Input({value: "Name", required: true})]
+													}),
+													new sap.ui.layout.form.FormElement({
+														label: "First name",
+														fields: [new sap.m.Input()]
+													})
+												]
+											})
 										]
 									}),
 									new sap.ui.layout.VerticalLayout({id: "justTest"}),

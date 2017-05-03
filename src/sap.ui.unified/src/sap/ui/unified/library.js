@@ -28,6 +28,7 @@ sap.ui.define(['jquery.sap.global',
 		dependencies : ["sap.ui.core"],
 		types: [
 			"sap.ui.unified.CalendarDayType",
+			"sap.ui.unified.GroupAppointmentsMode",
 			"sap.ui.unified.ContentSwitcherAnimation",
 			"sap.ui.unified.ColorPickerMode"
 		],
@@ -201,6 +202,30 @@ sap.ui.define(['jquery.sap.global',
 		 * @since 1.46
 		 */
 		OneMonth : "One Month"
+
+	};
+
+	/**
+	 * Types of display mode for overlapping appointments.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.48.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.unified.GroupAppointmentsMode = {
+
+		/**
+		 * Overlapping appointments are displayed as a collapsed group appointment.
+		 * @public
+		 */
+		Collapsed : "Collapsed",
+
+		/**
+		 * Overlapping appointments are displayed individually (expanded from a group).
+		 * @public
+		 */
+		Expanded : "Expanded"
 
 	};
 

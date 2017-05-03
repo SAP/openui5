@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache"
-], function(jQuery, uri, FlexUtils, LrepConnector, Cache) {
+	"jquery.sap.global", "sap/ui/thirdparty/URI", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/ChangePersistenceFactory"
+], function(jQuery, uri, FlexUtils, LrepConnector, Cache, ChangePersistenceFactory) {
 	"use strict";
-	var lrepConnector = Object.create(LrepConnector.prototype);
-	var instance;
+	var oLrepConnector = Object.create(LrepConnector.prototype);
+	FakeLrepConnector._oBackendInstances = {};
 
 	/**
 	 * Please use the @link {FakeLrepConnector#enableFakeConnector} function
@@ -26,8 +26,8 @@ sap.ui.define([
 		this.sInitialComponentJsonPath = sInitialComponentJsonPath;
 	}
 
-	for (var prop in lrepConnector){
-		if (typeof lrepConnector[prop] === 'function'){
+	for (var prop in oLrepConnector){
+		if (typeof oLrepConnector[prop] === 'function'){
 			/*eslint-disable noinspection, no-loop-func */
 			FakeLrepConnector.prototype[prop] = (function(prop){
 				return function() {
@@ -129,13 +129,32 @@ sap.ui.define([
 	}
 
 	/**
-	 * Hooks into the @link {sap.ui.fl.LrepConnector.createConnector} factory
-	 * function to enable the fake lrep connector.
+	 * Enables fake LRep connector.
 	 *
-	 * @param sInitialComponentJsonPath - the relative path to a test-component-changes.json file
+	 * If the <code>sAppComponentName<code> is provided, replaces the connector of corresponding @link {sap.ui.fl.ChangePersistence} by a fake one.
+	 * Otherwise, hooks into the @link {sap.ui.fl.LrepConnector.createConnector} factory function to enable the fake LRep connector. After enabling fake LRep connector,
+	 * the original connector can be restored by calling function @link {sap.ui.fl.FakeLrepConnector.disableFakeConnector}.
+	 *
+	 * @param {string} sInitialComponentJsonPath - Relative path to a test-component-changes.json file
+	 * @param {string} [sAppComponentName] - Name of application component to overwrite the existing LRep connector
+	 * @param {string} [sAppVersion] - Version of application to overwrite the existing LRep connector
 	 */
-	FakeLrepConnector.enableFakeConnector = function(sInitialComponentJsonPath){
-		Cache._entries = {};
+	FakeLrepConnector.enableFakeConnector = function(sInitialComponentJsonPath, sAppComponentName, sAppVersion){
+
+		if (sAppComponentName && sAppVersion) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
+			if (!(oChangePersistence._oConnector instanceof FakeLrepConnector)){
+				Cache.clearEntry(sAppComponentName, sAppVersion);
+				if (!FakeLrepConnector._oBackendInstances[sAppComponentName]){
+					FakeLrepConnector._oBackendInstances[sAppComponentName] = {};
+				}
+				FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion] = oChangePersistence._oConnector;
+				oChangePersistence._oConnector = new FakeLrepConnector(sInitialComponentJsonPath);
+			}
+			return;
+		}
+
+		Cache.clearEntries();
 
 		if (FakeLrepConnector.enableFakeConnector.original){
 			return;
@@ -144,21 +163,40 @@ sap.ui.define([
 		FakeLrepConnector.enableFakeConnector.original = LrepConnector.createConnector;
 
 		LrepConnector.createConnector = function(){
-			if (!instance) {
-				instance = new FakeLrepConnector(sInitialComponentJsonPath);
+			if (!FakeLrepConnector._oFakeInstance){
+				FakeLrepConnector._oFakeInstance = new FakeLrepConnector(sInitialComponentJsonPath);
 			}
-
-			return instance;
+			return FakeLrepConnector._oFakeInstance;
 		};
 	};
 
 	/**
-	 * Restore the original @link {sap.ui.fl.LrepConnector.createConnector} factory
-	 * function.
+	 * If the <code>sAppComponentName<code> is provided, restores the connector of corresponding @link {sap.ui.fl.ChangePersistence} by the original instance.
+	 * Otherwise, restores the original @link {sap.ui.fl.LrepConnector.createConnector} factory function.
+	 *
+	 * @param {string} [sAppComponentName] - Name of application component to restore the original LRep connector
+	 * @param {string} [sAppVersion] - Version of application to restore the original LRep connector
 	 */
-	FakeLrepConnector.disableFakeConnector = function(){
+	FakeLrepConnector.disableFakeConnector = function(sAppComponentName, sAppVersion){
+
+		if (sAppComponentName && sAppVersion) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
+			if (!(oChangePersistence._oConnector instanceof LrepConnector)) {
+				Cache.clearEntry(sAppComponentName, sAppVersion);
+				if (FakeLrepConnector._oBackendInstances[sAppComponentName] && FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion]) {
+					oChangePersistence._oConnector = FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion];
+					FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion] = undefined;
+				}
+			}
+			return;
+		}
+
+		Cache.clearEntries();
+
 		if (FakeLrepConnector.enableFakeConnector.original){
 			LrepConnector.createConnector = FakeLrepConnector.enableFakeConnector.original;
+			FakeLrepConnector.enableFakeConnector.original = undefined;
+			FakeLrepConnector._oFakeInstance = undefined;
 		}
 	};
 
