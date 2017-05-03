@@ -7,12 +7,12 @@
 .sapUiBlockLayoutBackgroundLight {
 	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1,
 	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3 {
-		.setCellsColorDoubles(@sapUiGroupContentBackground, @sapUiBaseColor);
+		.setCellsColorDoubles(darken(@sapUiBaseColor, 10), @sapUiBaseColor);
 	}
 
 	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet1Inverted,
 	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet3Inverted {
-		.setCellsColorDoubles(@sapUiBaseColor, @sapUiGroupContentBackground);
+		.setCellsColorDoubles(@sapUiBaseColor, darken(@sapUiBaseColor, 10));
 	}
 
 	.sapUiBlockLayoutRow.sapUiBlockLayoutBackgroundColorSet2,
