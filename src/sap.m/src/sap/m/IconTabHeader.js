@@ -800,6 +800,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oItem;
 	};
 
+	IconTabHeader.prototype.updateAggregation = function() {
+		this.oSelectedItem = null;
+
+		return Control.prototype.updateAggregation.apply(this, arguments);
+	};
+
 	IconTabHeader.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 
 		var aItems = this.getTabFilters();
