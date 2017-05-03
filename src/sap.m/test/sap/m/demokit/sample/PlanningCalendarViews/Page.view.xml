@@ -13,11 +13,13 @@
 			appointmentsVisualization="Filled"
 			appointmentSelect="handleAppointmentSelect"
 			intervalSelect="handleIntervalSelect"
-			showEmptyIntervalHeaders="false">
+			showEmptyIntervalHeaders="false"
+			viewChange = "handleViewChange">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
 				<ToolbarSpacer/>
-				<Select tooltip="Group appointments mode" change="handleGroupModeChange">
+				<Label id="label" text="Select a date from the interval to mark/unmark it as a non-working day."/>
+				<Select id="select" tooltip="Group appointments mode" change="handleGroupModeChange">
 					<items>
 						<core:Item key="Collapsed" text="Collapsed"/>
 						<core:Item key="Expanded" text="Expanded"/>
@@ -51,6 +53,14 @@
 					intervalsM="2"
 					intervalsL="3"
 					showSubIntervals="true">
+				</PlanningCalendarView>
+				<PlanningCalendarView
+					key="nonWorking"
+					intervalType="Day"
+					description="days with non-working dates"
+					intervalsS="1"
+					intervalsM="5"
+					intervalsL="9">
 				</PlanningCalendarView>
 			</views>
 			<rows>

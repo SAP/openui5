@@ -239,6 +239,7 @@ sap.ui.define([
 				});
 				this.getView().setModel(oModel);
 
+				this.determineControlsVisibility();
 			},
 
 			handleGroupModeChange: function (oEvent) {
@@ -254,40 +255,83 @@ sap.ui.define([
 				if (oAppointment) {
 					MessageBox.show("Appointment selected: " + oAppointment.getTitle());
 				} else {
-					var aAppointments = oEvent.getParameter("appointments");
-					var sValue = aAppointments.length + " Appointments selected";
+					var aAppointments = oEvent.getParameter("appointments"),
+						sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
 			},
 
 			handleIntervalSelect: function (oEvent) {
-				var oPC = oEvent.oSource;
-				var oStartDate = oEvent.getParameter("startDate");
-				var oEndDate = oEvent.getParameter("endDate");
-				var oRow = oEvent.getParameter("row");
-				var oModel = this.getView().getModel();
-				var oData = oModel.getData();
-				var iIndex = -1;
-				var oAppointment = {
-					start: oStartDate,
-					end: oEndDate,
-					title: "new appointment",
-					type: "Type09"
-				};
-
-				if (oRow) {
-					iIndex = oPC.indexOfRow(oRow);
-					oData.people[iIndex].appointments.push(oAppointment);
+				if (this.getView().byId("PC1").getViewKey() === "nonWorking"){
+					this.handleNonWorkingSpecialDates(oEvent);
 				} else {
-					var aSelectedRows = oPC.getSelectedRows();
-					for (var i = 0; i < aSelectedRows.length; i++) {
-						iIndex = oPC.indexOfRow(aSelectedRows[i]);
+					var oPC = oEvent.oSource,
+						oStartDate = oEvent.getParameter("startDate"),
+						oEndDate = oEvent.getParameter("endDate"),
+						oRow = oEvent.getParameter("row"),
+						oModel = this.getView().getModel(),
+						oData = oModel.getData(),
+						iIndex = -1,
+						oAppointment = {
+							start: oStartDate,
+							end: oEndDate,
+							title: "new appointment",
+							type: "Type09"
+						};
+
+					if (oRow) {
+						iIndex = oPC.indexOfRow(oRow);
 						oData.people[iIndex].appointments.push(oAppointment);
+					} else {
+						var aSelectedRows = oPC.getSelectedRows();
+						for (var i = 0; i < aSelectedRows.length; i++) {
+							iIndex = oPC.indexOfRow(aSelectedRows[i]);
+							oData.people[iIndex].appointments.push(oAppointment);
+						}
 					}
+
+					oModel.setData(oData);
 				}
+			},
 
-				oModel.setData(oData);
+			handleViewChange: function (oEvent) {
+				this.determineControlsVisibility();
+			},
 
+			/*
+			 For "days with non-working dates" view only.
+			 When handleIntervalSelect on a certain date header for a first time - it becomes a non-working day.
+			 When it's for a second time - it removes it.
+			 */
+			handleNonWorkingSpecialDates: function (oEvent){
+				var oPC1 = this.getView().byId("PC1"),
+					aSpecialDates = oPC1.getSpecialDates() || [],
+					oStartDate = oEvent.getParameter("startDate");
+
+				//determine add or remove
+				var oFound = aSpecialDates.find(function(oDateRange) {
+					return oDateRange.getStartDate().getTime() === oStartDate.getTime();
+				});
+
+				if (!oFound) {
+					oPC1.addSpecialDate(new sap.ui.unified.DateTypeRange({
+						startDate: new Date(oStartDate.getTime()),
+						type: sap.ui.unified.CalendarDayType.NonWorking
+					}));
+				} else {
+					oPC1.removeSpecialDate(oFound);
+				}
+			},
+
+			/*
+			sap.m.Label should be visible only for non-working days view.
+			sap.m.Select should be visible only for months view because only there is a grouping.
+			 */
+			determineControlsVisibility: function () {
+				var bLabelVisible = this.getView().byId("PC1").getViewKey() === "nonWorking",
+					bSelectVisible = this.getView().byId("PC1").getViewKey() === "M";
+				this.getView().byId("label").setVisible(bLabelVisible);
+				this.getView().byId("select").setVisible(bSelectVisible);
 			}
 
 		});
