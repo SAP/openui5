@@ -124,7 +124,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Component Lifecycle");
+	QUnit.module("Lifecycle");
 
 	QUnit.test("Legacy should destroy Component onExit but not when replaced", function (assert) {
 		var oComponentContainer = new ComponentContainer({
@@ -195,7 +195,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Component Usage");
+	QUnit.module("Usage");
 
 	sap.ui.define("my/usage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.usage.Component", {
@@ -378,6 +378,60 @@ sap.ui.define([
 			assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of samples.components.button.Component");
 			assert.equal(oOwnerComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
 			done();
+
+		});
+
+	});
+
+	QUnit.module("Callback");
+
+	QUnit.test("Synchronous componentCreated callback", function (assert) {
+
+		var done = assert.async();
+
+		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
+
+			var oComponentContainer = new ComponentContainer({
+				name: "samples.components.button",
+				componentCreated: function(oEvent) {
+					assert.ok(true, "ComponentContainer notified that the Component has been created");
+					assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
+					assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
+					done();
+				}
+			});
+
+			// simulate rendering
+			oComponentContainer.onBeforeRendering();
+
+		});
+
+	});
+
+	QUnit.test("Asynchronous componentCreated callback", function (assert) {
+
+		var done = assert.async();
+		var iTimeout = setTimeout(function() {
+			assert.ok(false, 'Test timed out');
+			done();
+		}, 2000);
+
+		sap.ui.require(["sap/ui/core/Component", "sap/ui/core/ComponentContainer"], function(Component, ComponentContainer) {
+
+			var oComponentContainer = new ComponentContainer({
+				name: "samples.components.button",
+				async: true,
+				componentCreated: function(oEvent) {
+					assert.ok(true, "ComponentContainer notified that the Component has been created");
+					assert.ok(oEvent.getParameter("component") instanceof Component, "Component instance has been passed as event parameter");
+					assert.strictEqual(oEvent.getParameter("component"), this.getComponentInstance(), "Component instance has been passed as event parameter");
+					clearTimeout(iTimeout);
+					done();
+				}
+			});
+
+			// simulate rendering
+			oComponentContainer.onBeforeRendering();
 
 		});
 
