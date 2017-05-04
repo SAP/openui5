@@ -1,42 +1,42 @@
-.demokitInitialPageColorPatternA {
+.sapUiTheme-sap_belize .demokitInitialPageColorPatternA {
 	background-color: #ffffff;
 }
 
-.demokitInitialPagesColorPatternB {
+.sapUiTheme-sap_belize .demokitInitialPagesColorPatternB {
 	background-color: #eff4f9;
 }
 
-.demokitInitialPagesColorPatternBContrast {
+.sapUiTheme-sap_belize .demokitInitialPagesColorPatternBContrast {
 	background-color: #3F5161;
 }
 
-.demokitInitialPagesColorPatternC {
+.sapUiTheme-sap_belize .demokitInitialPagesColorPatternC {
 	background-color: #d5e2ef;
 }
 
-.demokitInitialPagesColorPatternD {
+.sapUiTheme-sap_belize .demokitInitialPagesColorPatternD {
 	background-color: #cadbeb;
 }
 
-.demokitInitialPagesColorPatternE {
+.sapUiTheme-sap_belize .demokitInitialPagesColorPatternE {
 	background-color: #bbd0e6;
 }
 
-.sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
+.sapUiTheme-sap_belize .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
 	background-color: #2f3c48;
 }
 
-.demokitInitialPagesWhiteText {
+.sapUiTheme-sap_belize .demokitInitialPagesWhiteText {
 	color: #FFFFFF;
 	text-shadow: none;
 }
 
-.demokitInitialPagesBrightIcon {
+.sapUiTheme-sap_belize .demokitInitialPagesBrightIcon {
 	color: #CAE4FB;
 }
 
-.demokitInitialPagesBrightLink.sapMLnk,
-.demokitInitialPagesBrightLink.sapMLnk:hover {
+.sapUiTheme-sap_belize .demokitInitialPagesBrightLink.sapMLnk,
+.sapUiTheme-sap_belize .demokitInitialPagesBrightLink.sapMLnk:hover {
 	color: #7ed0ff;
 }
 
