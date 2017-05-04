@@ -536,6 +536,12 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		var that = this;
 
+		function reportError(oError) {
+			that.oModel.reportError("Failed to update path "
+				+ that.oModel.resolve(that.sPath, that.oContext),
+				sClassName, oError);
+		}
+
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
@@ -548,13 +554,10 @@ sap.ui.define([
 						that.oModel.resolve(that.sPath, that.oContext), sClassName);
 					// do not update that.vValue!
 				} else if (that.oContext) {
-					that.oContext.updateValue(sGroupId, that.sPath, vValue)
-					["catch"](function (oError) {
-						if (!oError.canceled) {
-							that.oModel.reportError("Failed to update path "
-								+ that.oModel.resolve(that.sPath, that.oContext),
-								sClassName, oError);
-						}
+					that.oContext.updateValue(sGroupId, that.sPath, vValue, reportError)
+					["catch"](function () {
+						// updateValue is only rejected when the PATCH was canceled
+						// Avoid "Uncaught (in promise)"
 					});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",

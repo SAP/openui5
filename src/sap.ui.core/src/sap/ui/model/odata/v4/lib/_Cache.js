@@ -582,6 +582,8 @@ sap.ui.define([
 	 *   Path of the property to update, relative to the entity
 	 * @param {any} vValue
 	 *   The new value
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a PATCH request fails
 	 * @param {string} sEditUrl
 	 *   The edit URL for the entity which is updated via PATCH
 	 * @param {string} [sEntityPath]
@@ -589,7 +591,8 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise for the PATCH request
 	 */
-	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, sEditUrl, sEntityPath) {
+	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
+			sEntityPath) {
 		var aPropertyPath = sPropertyPath.split("/"),
 			that = this;
 
@@ -610,6 +613,27 @@ sap.ui.define([
 				// write the previous value into the cache
 				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity,
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
+			}
+
+			function patch() {
+				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId,
+					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
+				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				return oPatchPromise.then(function (oPatchResult) {
+					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					// update the cache with the PATCH response
+					_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
+					return oPatchResult;
+				}, function (oError) {
+					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					if (!oError.canceled) {
+						fnErrorCallback(oError);
+						if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+							return patch();
+						}
+					}
+					throw oError;
+				});
 			}
 
 			if (!oEntity) {
@@ -647,18 +671,7 @@ sap.ui.define([
 			}
 			// send and register the PATCH request
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-			oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId,
-				{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
-			that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-			return oPatchPromise.then(function (oPatchResult) {
-				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-				// update the cache with the PATCH response
-				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
-				return oPatchResult;
-			}, function (oError) {
-				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-				throw oError;
-			});
+			return patch();
 		});
 	};
 

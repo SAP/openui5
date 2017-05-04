@@ -109,15 +109,19 @@ sap.ui.require([
 					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
 				}),
+				fnErrorCallback = function () {},
 				sPath = "SO_2_SOITEM/42",
+
 				oResult = {};
 
 			this.mock(oCache).expects("update")
-				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
+				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
+					sinon.match.same(fnErrorCallback), "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
 
 			// code under test
-			return oBinding.updateValue(sGroupId, "bar", Math.PI, "edit('URL')", sPath)
+			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback, "edit('URL')",
+					sPath)
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
@@ -151,18 +155,21 @@ sap.ui.require([
 				sPath : "PRODUCT_2_BP",
 				bRelative : true
 			}),
+			fnErrorCallback = function () {},
 			oResult = {};
 
 		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "BP_2_XYZ/42")
 			.returns("~BP_2_XYZ/42~");
 		this.mock(oBinding.oContext).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "~BP_2_XYZ/42~")
+			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback), "edit('URL')",
+				"~BP_2_XYZ/42~")
 			.returns(Promise.resolve(oResult));
 
 		this.mock(oBinding).expects("getUpdateGroupId").never();
 
 		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
+		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback, "edit('URL')",
+				"BP_2_XYZ/42")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
