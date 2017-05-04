@@ -1235,8 +1235,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * Checks if drag and drop is allowed.
-	 * @returns {boolean}
+	 * Checks if Drag and Drop is allowed.
+	 * @returns {boolean} True if Drag and Drop is supported based on the running use cases.
 	 * @private
 	 */
 	UploadCollection.prototype._isDragAndDropAllowed = function() {
@@ -2180,7 +2180,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sap.m.UploadCollection.prototype._handleOk(oEvent, this, this.editModeItem, false);
 			}
 		if (this.sErrorState !== "Error") {
-			for (i = 0; i < cItems ; i++) {
+			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i].getId() === sItemId) {
 					this.aItems[i]._status = "Edit";
 					break;
