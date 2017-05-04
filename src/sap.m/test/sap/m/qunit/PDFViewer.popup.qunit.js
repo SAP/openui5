@@ -46,7 +46,7 @@ sap.ui.define([
 		var oOptions = {
 			"source": "./pdfviewer/sample-file.pdf",
 			"loaded": function () {
-				assert.ok(true, "'Load' event should not be fired");
+				assert.ok(true, "'Load' event should be fired");
 				done();
 			},
 			"error": function () {
