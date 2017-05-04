@@ -165,6 +165,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	TextArea.prototype.onBeforeRendering = function() {
 		InputBase.prototype.onBeforeRendering.call(this);
+		var oCounter = this.getAggregation("_counter");
+		if ((this.getMaxLength() <= 0 || !this.getShowExceededText()) && oCounter.getVisible()) {
+			oCounter.setVisible(false);
+		}
 		this._detachResizeHandler();
 		//respect maxLength
 		if (this.getMaxLength()) {
