@@ -1130,6 +1130,7 @@
 
 			//arrange
 			tp.focus();
+			jQuery(tp.getFocusDomRef()).cursorPos(0);
 
 			//act
 			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
