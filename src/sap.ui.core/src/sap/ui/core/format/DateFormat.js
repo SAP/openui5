@@ -996,12 +996,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 				case "amPmMarker":
 					var sAM = this.aDayPeriods[0],
 						sPM = this.aDayPeriods[1];
-					if (oValue.indexOf(sAM, iIndex) == iIndex) {
+
+					// check whether the value is one of the ASCII variants for AM/PM
+					// for example: "am", "a.m.", "am." (and their case variants)
+					// if true, remove the '.' and compare with the defined am/pm case
+					// insensitive
+					var rAMPM = /[aApP](?:\.)?[mM](?:\.)?/;
+					var oSubValue = oValue.substring(iIndex);
+					var aMatch = oSubValue.match(rAMPM);
+					var bVariant = (aMatch && aMatch.index === 0);
+					if (bVariant) {
+						oSubValue = aMatch[0].replace(/\./g, "").toLowerCase() + oSubValue.substring(aMatch[0].length);
+						sAM = sAM.toLowerCase();
+						sPM = sPM.toLowerCase();
+					}
+
+					if (oSubValue.indexOf(sAM) == 0) {
 						bPM = false;
-						iIndex += sAM.length;
-					} else if (oValue.indexOf(sPM, iIndex) == iIndex) {
+						iIndex += (bVariant ? aMatch[0].length : sAM.length);
+					} else if (oSubValue.indexOf(sPM) == 0) {
 						bPM = true;
-						iIndex += sPM.length;
+						iIndex += (bVariant ? aMatch[0].length : sPM.length);
 					}
 					break;
 				case "timezoneGeneral": //e.g. GMT-02:00 or GMT+02:00
