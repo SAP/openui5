@@ -393,8 +393,7 @@
 
 				<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternC communityLinkCell">
-					<l:HorizontalLayout
-							width="100%">
+					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_stackoverflow.png"
 								width="2.5rem"
@@ -411,8 +410,7 @@
 
 				<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternD communityLinkCell">
-					<l:HorizontalLayout
-							width="100%">
+					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_youtube.png"
 								width="2.5rem"
@@ -429,8 +427,7 @@
 
 				<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternE communityLinkCell">
-					<l:HorizontalLayout
-							width="100%">
+					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_twitter.png"
 								width="2.5rem"

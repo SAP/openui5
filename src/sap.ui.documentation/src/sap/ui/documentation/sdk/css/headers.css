@@ -76,6 +76,7 @@
 		top: 1.25rem;
 		font-size: 1.625rem;
 		padding-left: 1rem;
+		margin-left: -0.0625rem;
 	}
 
 	.sapUiBlockCellContent > .sapMText.sapUiDocumentationDocumentationHeaderSubText {
@@ -129,6 +130,7 @@
 		top: 1.25rem;
 		font-size: 1.625rem;
 		padding-left: 1rem;
+		margin-left: -0.0625rem;
 	}
 
 	.sapUiBlockCellContent > .sapMText.sapUiDocumentationExploredSubText {
@@ -168,6 +170,7 @@
 .sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderTitleText {
 	top: 2.5rem;
 	font-size: 3rem;
+	margin-left: -0.2rem;
 }
 
 .sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderSubText {
@@ -182,6 +185,7 @@
 		top: 1.25rem;
 		font-size: 1.625rem;
 		padding-left: 1rem;
+		margin-left: -0.0625rem;
 	}
 
 	.sapUiBlockCellContent > .sapMText.sapUiDocumentationApiHeaderSubText {
