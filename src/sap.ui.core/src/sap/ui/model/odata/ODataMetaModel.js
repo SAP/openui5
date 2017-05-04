@@ -818,9 +818,9 @@ sap.ui.define([
 				sQualifiedTypeName,
 				mValueLists = Utils.getValueLists(oProperty);
 
-			if (jQuery.isEmptyObject(mValueLists) && oProperty["sap:value-list"]
+			if (!("" in mValueLists) && oProperty["sap:value-list"]
 				&& that.oODataModelInterface.addAnnotationUrl) {
-				// property with value list which is not yet loaded
+				// property with value list which is not yet (fully) loaded
 				bCachePromise = true;
 				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
 					+ "." + that.oModel.getObject(aMatches[1]).name;
