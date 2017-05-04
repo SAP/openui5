@@ -34,6 +34,8 @@ sap.ui.define([
 					// We need to execute this after the library component info is loaded
 					jQuery.sap.delayedCall(0, this, this._loadSample);
 				}.bind(this));
+
+				this.getView().setModel(new JSONModel());
 			},
 
 			onBeforeRendering: function() {
@@ -152,8 +154,7 @@ sap.ui.define([
 					oData = this._getViewData(sNewId, oDoc, oEntity);
 
 					// set view model
-					var oModel = new JSONModel(oData);
-					this.getView().setModel(oModel);
+					this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
 					// set also the binding context for entity data
 					// this.getView().bindElement("entity>" + sPath);
