@@ -237,7 +237,7 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
-					values: [], // for enums!
+					values: oDoc.values,
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
 						about: !!oDoc,
@@ -255,19 +255,8 @@ sap.ui.define([
 					return oData;
 				}
 
-				// fill data
-				for (var key in oDoc.values) {
-					if (oDoc.values.hasOwnProperty(key) && key.indexOf("_") !== 0) {
-						var oValue = oDoc.values[key];
-						oValue.name = key;
-						oValue.deprecatedDescription = this._formatDeprecatedDescription(oValue.deprecation);
-						oValue.deprecated = this._formatDeprecated(oValue.deprecation);
-						oData.values.push(oValue);
-					}
-				}
-
 				// determine if the parts shall be shown
-				oData.show.values = oData.values.length > 0;
+				oData.show.values = Array.isArray(oData.values) && oData.values.length > 0;
 
 				return oData;
 			},
