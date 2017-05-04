@@ -46,6 +46,9 @@ sap.ui.define([
 				// set the global tree data
 				this.setModel(new JSONModel(), "treeData");
 
+				// set the global libs data
+				this.setModel(new JSONModel(), "libsData");
+
 				// call the base component's init function and create the App view
 				UIComponent.prototype.init.apply(this, arguments);
 
