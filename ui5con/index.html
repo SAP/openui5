@@ -8,6 +8,19 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <script type="text/javascript">
+         function open(id) {
+            var oAgendaElement = document.getElementById(id);
+            if(oAgendaElement.className.indexOf("collapsed") > 0) {
+                oAgendaElement.className = oAgendaElement.className.replace("collapsed", "expanded");
+                document.getElementById("moreButton").src = "less1.png";
+             } else {
+                oAgendaElement.className = oAgendaElement.className.replace("expanded", "collapsed");
+                document.getElementById("moreButton").src = "more1.png"
+             }
+             return;
+         }
+    </script>
     <div class="b-page">
         <div class="b-header">
             <div class="b-bar"></div>
@@ -97,145 +110,295 @@
         <div class="b-section mod_agenda">
             <div class="b-section-h">
                 <div class="b-font size_36 color_white b-ui align_center margin_40">LINE UP</div>
-                <div class="b-list mod_agenda">
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Simplify UI5 Tool Setup</div>
-                            <div class="b-font size_13 color_gray">Maximilian Lenkeit</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                <div id="lineupElement" class="b-list mod_agenda collapsed">
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Building a companion conversational UI for a Fiori App
+                                </div>
+                                <div class="b-font size_13 color_gray">Gregor Brett</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">FLP meets SAPUI5 - extending the Fiori launchpad
+                                </div>
+                                <div class="b-font size_13 color_gray">Thilo Seidel</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Working with PDFs in a (mobile) UI5 App
+                                </div>
+                                <div class="b-font size_13 color_gray">Vincent Weiss</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">New Controls from Brno Suite Controls Team 
+                                </div>
+                                <div class="b-font size_13 color_gray">Ondrej Bohaciak, Vaclav Vopenka</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Developing Custom ESLint Rules
+                                </div>
+                                <div class="b-font size_13 color_gray">Alexander Flammer</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Keep an eye on SAPUI5 Flexibility
+                                </div>
+                                <div class="b-font size_13 color_gray">Alexander Rauh</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Adapting UI @ Runtime
+                                </div>
+                                <div class="b-font size_13 color_gray">Mikhail Benderskiy</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Get started with UI5 on Cloud Foundry
+                                </div>
+                                <div class="b-font size_13 color_gray">Frederic Berg</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Mixed Reality with OpenUI5
+                                </div>
+                                <div class="b-font size_13 color_gray">Dmitriy Buslov</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">New Demo Kit &mdash; Your way to UI5
+                                </div>
+                                <div class="b-font size_13 color_gray">Petya Begovska</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Controlling UI5 Apps and FLP via Speech 
+                                </div>
+                                <div class="b-font size_13 color_gray">Aparna Narayanaswamy</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Leveraging Service Workers
+                                </div>
+                                <div class="b-font size_13 color_gray">Benedikt Schölch, Tobias Sorn</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">IoT full stack scenario
+                                </div>
+                                <div class="b-font size_13 color_gray">Mateusz Skadorwa, Tomasz Wilk</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">CI: Build process &amp; automated testing of UI5 Apps
+                                </div>
+                                <div class="b-font size_13 color_gray">Matthias Oßwald, Merlin Beutlberger</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">News around UI5 that you absolutely have to know
+                                </div>
+                                <div class="b-font size_13 color_gray">Stefan Beck</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Collaborators Wanted &mdash; Custom UI5 Repo alias UI5Lab
+                                </div>
+                                <div class="b-font size_13 color_gray">Michael Graf</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Code-free Fiori Apps with SAP Web IDE RAD and Layout Editor 
+                                </div>
+                                <div class="b-font size_13 color_gray">Vered Constantin</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Metadata driven Controls with Rest Services</div>
+                                <div class="b-font size_13 color_gray">Martin Schaus</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Effortless OPA testing with Gherkin Reusable Specs</div>
+                                <div class="b-font size_13 color_gray">Savio Dimatteo</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Simplify UI5 Tool Setup &mdash; One Node.js Module to Serve Them All
+                                </div>
+                                <div class="b-font size_13 color_gray">Maximilian Lenkeit</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Open-sourcing Offline UI5 Apps</div>
+                                <div class="b-font size_13 color_gray">Tom Van Doorslaer</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Functional Programming for your UI5 Apps</div>
+                                <div class="b-font size_13 color_gray">DJ Adams</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Writing a real time geolocation map with OpenLayers 3
+                                </div>
+                                <div class="b-font size_13 color_gray">Manuel Blechschmidt</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Fiori 2.0 for your Application</div>
+                                <div class="b-font size_13 color_gray">Stanislava Baltova</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Apps beyond the Office</div>
+                                <div class="b-font size_13 color_gray">Denny Schreber</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">SEO for OpenUI5 Apps</div>
+                                <div class="b-font size_13 color_gray">Yavor Ivanov</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Supportability Reloaded</div>
+                                <div class="b-font size_13 color_gray">Gergana Kremenska</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">SAPUI5 on SAP HANA XSA &mdash; SAP Full-stack JavaScript Development</div>
+                                <div class="b-font size_13 color_gray">HP Seitz</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Real-time image processing &amp; Augmented Reality</div>
+                                <div class="b-font size_13 color_gray">Volker Buzek</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Create your own UI5 controls &mdash; what's coming up</div>
+                                <div class="b-font size_13 color_gray">Andreas Kunz</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Write reliable application tests for your SAP UI5 Apps</div>
+                                <div class="b-font size_13 color_gray">Maxim Naidenov</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Theming explained</div>
+                                <div class="b-font size_13 color_gray">Matthias Oßwald</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Components &mdash; more performance!</div>
+                                <div class="b-font size_13 color_gray">Peter Muessig</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">From native Android to UI5</div>
+                                <div class="b-font size_13 color_gray">Jan Zaruba, Tomas Krejci</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Upcoming &mdash; UI5 OData V4 Model</div>
+                                <div class="b-font size_13 color_gray">Patric Ksinsik, Thomas Chadzelek</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Plug in your Feature into SAP Web IDE</div>
+                                <div class="b-font size_13 color_gray">Wouter Lemaire, Vered Constantin</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">A Modern OpenUI5 app project boilerplate</div>
+                                <div class="b-font size_13 color_gray">Michael Dell, Jascha Quintern</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
+                        </div>
+                        <div class="b-list__item">
+                            <div class="b-topic">
+                                <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Evolution &mdash; performance, architecture, trends</div>
+                                <div class="b-font size_13 color_gray">Peter Muessig, Andreas Ecker</div>
+                                <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Open-sourcing Offline UI5 Apps</div>
-                            <div class="b-font size_13 color_gray">Tom Van Doorslaer</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Functional Programming for your UI5 Apps</div>
-                            <div class="b-font size_13 color_gray">DJ Adams</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Writing a real time geolocation map</div>
-                            <div class="b-font size_13 color_gray">Manuel Blechschmidt</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Fiori 2.0 for your App</div>
-                            <div class="b-font size_13 color_gray">Stanislava Baltova</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Apps beyond the Office</div>
-                            <div class="b-font size_13 color_gray">Denny Schreber</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">SEO for OpenUI5 Apps</div>
-                            <div class="b-font size_13 color_gray">Yavor Ivanov</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Supportability Reloaded</div>
-                            <div class="b-font size_13 color_gray">Gergana Kremenska</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">SAPUI5 on SAP HANA XSA</div>
-                            <div class="b-font size_13 color_gray">HP Seitz</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Augmented Reality experiments in UI5</div>
-                            <div class="b-font size_13 color_gray">Volker Buzek</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Create your own UI5 controls</div>
-                            <div class="b-font size_13 color_gray">Andreas Kunz</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Write reliable application tests for your SAP UI5 Apps</div>
-                            <div class="b-font size_13 color_gray">Maxim Naidenov</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Hands-On</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Theming explained</div>
-                            <div class="b-font size_13 color_gray">Matthias Oßwald</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Components &mdash; more performance!</div>
-                            <div class="b-font size_13 color_gray">Peter Muessig</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Demo Booth</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">From native Android to UI5</div>
-                            <div class="b-font size_13 color_gray">Jan Zaruba, Tomas Krejci</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Mini Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Upcoming &mdash; UI5 OData V4 Model</div>
-                            <div class="b-font size_13 color_gray">Patric Ksinsik, Thomas Chadzelek</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Your Feature in SAP Web IDE</div>
-                            <div class="b-font size_13 color_gray">Wouter Lemaire, Vered Constantin</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">Modern OpenUI5 app project boilerplate</div>
-                            <div class="b-font size_13 color_gray">Michael Dell, Jascha Quintern</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic">
-                            <div class="b-topic__title b-font size_15 color_white b-ui margin_20">UI5 Evolution &mdash; increase, fix, embrace</div>
-                            <div class="b-font size_13 color_gray">Peter Muessig, Andreas Ecker</div>
-                            <div class="b-topic__format b-font size_13 color_gray">Lecture</div>
-                        </div>
-                    </div>
-                    <div class="b-list__item">
-                        <div class="b-topic mod_more">
-                            <div class="b-font size_38">20+</div>
-                            <div class="b-font size_14">TO COME</div>
-                        </div>
+                    <div id="hideElement" >
+                        <a href="javascript:open('lineupElement')"><img id="moreButton" src="more1.png" alt="test" style="padding:1% 50% 0 50%"></a>
                     </div>
                 </div>
             </div>
