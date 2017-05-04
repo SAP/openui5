@@ -397,6 +397,9 @@
 						<Text text="Supplier"/>
 					</Column>
 					<Column hAlign="Right">
+						<Text text="Quantity"/>
+					</Column>
+					<Column hAlign="Right">
 						<Text text="Gross Amount"/>
 					</Column>
 					<Column>
@@ -428,6 +431,9 @@
 						</cells>
 						<cells>
 							<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
+						</cells>
+						<cells>
+							<Input value="{Quantity}"/>
 						</cells>
 						<cells>
 							<Text text="{GrossAmount}"/>
