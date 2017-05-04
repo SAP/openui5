@@ -48,12 +48,6 @@ sap.ui.define([
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
-
-				// get configuration
-				var oConfig = this.getMetadata().getConfig();
-				if (oConfig) {
-					this.setModel(new JSONModel(oConfig), "config");
-				}
 			},
 
 			/**
