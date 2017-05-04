@@ -423,7 +423,25 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
-		', mHeaders = {"Content-Type" : "application/xml"},
+		', sCustomerAnnotations = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="4.0"\
+	xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+	xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+<edmx:DataServices>\
+<Schema Namespace="name.space">\
+	<Annotations Target="FAR_CUSTOMER_LINE_ITEMS.Item/Customer" Qualifier="DEBID_addtl">\
+		<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">\
+			<Record>\
+				<PropertyValue Property="CollectionPath" String="VL_SH_DEBID"/>\
+			</Record>\
+		</Annotation>\
+	</Annotations>\
+</Schema>\
+</edmx:DataServices>\
+</edmx:Edmx>\
+		',
+		mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
 			"/fake/emptyDataServices/$metadata" :
 				{headers : mHeaders, message : sEmptyDataServices},
@@ -438,6 +456,8 @@ sap.ui.require([
 			"/fake/multipleValueLists" :
 				{headers : mHeaders, message : sMultipleValueListAnnotations},
 			"/fake/valueListMetadata/$metadata" : {headers : mHeaders, message : sValueListMetadata},
+			"/FAR_CUSTOMER_LINE_ITEMS/annotations" :
+				{headers : mHeaders, message : sCustomerAnnotations},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
@@ -2248,35 +2268,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: Metadata loaded w/o annot., separate value list load",
-		function (assert) {
-			return withGivenService(
-					assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+		// Note: "/FAR_CUSTOMER_LINE_ITEMS/annotations" contains
+		// @com.sap.vocabularies.Common.v1.ValueList#DEBID_addtl, but we expect a request as long as
+		// the annotation w/o qualifier is missing!
+		function (assert){
+			return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS",
+					"/FAR_CUSTOMER_LINE_ITEMS/annotations", function (oMetaModel) {
 				var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
-					oContextNoValueList = oMetaModel.getMetaContext("/Items('foo')/GeneratedID"),
-					oExpectedVL = { //value list with no qualifier
-						"CollectionPath" : {"String" : "VL_SH_DEBIA"},
-						"Parameters" : [{
-							"LocalDataProperty" : {"PropertyPath" : "Customer"},
-							"ValueListProperty" : {"String" : "KUNNR"},
-							"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
-						}]
-					},
-					oExpectedVL_DEBID = { //value list for qualifier DEBID
-						"CollectionPath" : {"String" : "VL_SH_DEBID"},
-						"Parameters" : [{
-							"LocalDataProperty" : {"PropertyPath" : "CompanyCode"},
-							"ValueListProperty" : {"String" : "BUKRS"},
-							"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
-						}]
-					},
-					oInterface = oMetaModel.oODataModelInterface,
-					oPromise;
-
-				oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+					oPromise,
+					fnSpy = oGlobalSandbox.spy(oMetaModel.oODataModelInterface, "addAnnotationUrl");
 
 				// no sap:value-list => no request
-				oMetaModel.getODataValueLists(oContextNoValueList);
-				assert.strictEqual(oInterface.addAnnotationUrl.callCount, 0);
+				oMetaModel.getODataValueLists(
+					oMetaModel.getMetaContext("/Items('foo')/GeneratedID"));
+				assert.strictEqual(fnSpy.callCount, 0);
 
 				// separate value list load
 				oPromise = oMetaModel.getODataValueLists(oContext);
@@ -2284,18 +2289,43 @@ sap.ui.require([
 					"promise cached");
 				return oPromise.then(function (mValueLists) {
 					assert.deepEqual(mValueLists, {
-						"" : oExpectedVL,
-						"DEBID" : oExpectedVL_DEBID
+						"" : { //value list with no qualifier
+							"CollectionPath" : {"String" : "VL_SH_DEBIA"},
+							"Parameters" : [{
+								"LocalDataProperty" : {"PropertyPath" : "Customer"},
+								"ValueListProperty" : {"String" : "KUNNR"},
+								"RecordType"
+									: "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+							}]
+						},
+						"DEBID" : { //value list for qualifier DEBID
+							"CollectionPath" : {"String" : "VL_SH_DEBID"},
+							"Parameters" : [{
+								"LocalDataProperty" : {"PropertyPath" : "CompanyCode"},
+								"ValueListProperty" : {"String" : "BUKRS"},
+								"RecordType"
+									: "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+							}]
+						},
+						"DEBID_addtl" : { // from "/FAR_CUSTOMER_LINE_ITEMS/annotations"
+							"CollectionPath" : {
+								"String" : "VL_SH_DEBID"
+							}
+						}
 					});
 
-					assert.strictEqual(oInterface.addAnnotationUrl.callCount, 1,
-						"addAnnotationUrl once");
-					assert.ok(oInterface.addAnnotationUrl.calledWithExactly(
+					assert.strictEqual(fnSpy.callCount, 1, "addAnnotationUrl once");
+					assert.ok(fnSpy.calledWithExactly(
 						"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer"),
 						"addAnnotationUrl arguments");
 
 					assert.notStrictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
 						"resolved promises deleted from cache");
+
+					return oMetaModel.getODataValueLists(oContext).then(function (mValueLists0) {
+						assert.deepEqual(mValueLists0, mValueLists, "same result");
+						assert.strictEqual(fnSpy.callCount, 1, "addAnnotationUrl not called again");
+					});
 				});
 			});
 		}
