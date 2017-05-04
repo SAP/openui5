@@ -646,6 +646,8 @@ sap.ui.define([
 
 			function assertException ($Messages, sCallbackName) {
 				var sOpaMessage = $Messages.eq(0).text();
+				var sFailureReason = ["success", "actions"].indexOf(sCallbackName) > -1 ? "success" : "check";
+				Opa5.assert.contains(sOpaMessage, "Failure in Opa " + sFailureReason + " function");
 				Opa5.assert.contains(sOpaMessage, "Exception thrown by the testcode:");
 				Opa5.assert.contains(sOpaMessage, "Doh! An exception in '" + sCallbackName + "'.");
 			}

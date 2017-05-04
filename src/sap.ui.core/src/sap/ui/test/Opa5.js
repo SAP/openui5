@@ -234,6 +234,7 @@ sap.ui.define([
 		 * after UIComponent is destroyed
 		 *
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -243,7 +244,6 @@ sap.ui.define([
 			oOptions.success = function () {
 				componentLauncher.teardown();
 			};
-			this.waitFor(oOptions);
 
 			// remove appParams from this frame URL as application under test is stopped
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
@@ -253,7 +253,8 @@ sap.ui.define([
 					uri.search(true),Opa.config.appParams));
 				window.history.replaceState({},"",uri.toString());
 			};
-			this.waitFor(oParamsWaitForOptions);
+
+			return $.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
 		};
 
 		/**
@@ -261,7 +262,8 @@ sap.ui.define([
 		 * @link{sap.ui.test.Opa5#iStartMyAppInAFrame} or @link{sap.ui.test.Opa5#iStartMyUIComponent}.
 		 * This function desinged for making your test's teardown independent of the startup.
 		 * If nothing has been started, this function will throw an error.
-		 * @returns {jQuery.promise|*|{result, arguments}}
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 */
 		Opa5.prototype.iTeardownMyApp = function () {
 			var that = this;
@@ -271,7 +273,6 @@ sap.ui.define([
 			oExtensionOptions.success = function () {
 				that._unloadExtensions(iFrameLauncher.getWindow() || window);
 			};
-			this.waitFor(oExtensionOptions);
 
 			var oOptions = createWaitForObjectWithoutDefaults();
 			oOptions.success = function () {
@@ -286,7 +287,7 @@ sap.ui.define([
 				}
 			}.bind(this);
 
-			return this.waitFor(oOptions);
+			return $.when(this.waitFor(oExtensionOptions), this.waitFor(oOptions));
 		};
 
 		/**
@@ -328,7 +329,8 @@ sap.ui.define([
 
 		/**
 		 * Removes the IFrame from the DOM and removes all the references to its objects
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -336,7 +338,8 @@ sap.ui.define([
 
 		/**
 		 * Removes the IFrame from the DOM and removes all the references to its objects
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -545,7 +548,8 @@ sap.ui.define([
 		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
 		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
 		 *
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (options) {

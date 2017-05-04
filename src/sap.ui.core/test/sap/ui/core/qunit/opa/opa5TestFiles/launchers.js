@@ -224,15 +224,39 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should complain if nothing is launched", function (assert) {
-		var oOpa5 = new Opa5();
+	var aTeardownOptions = [
+		{
+			name: "app",
+			func: "iTeardownMyApp",
+			error: "A teardown was called but there was nothing to tear down use iStartMyComponent or iStartMyAppInAFrame"
+		},
+		{
+			name: "component",
+			func: "iTeardownMyUIComponent",
+			error: "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start"
+		},
+		{
+			name: "iFrame",
+			func: "iTeardownMyAppFrame",
+			error: "sap.ui.test.launchers.iFrameLauncher: Teardown has been called but there was no start"
+		}
+	];
 
-		oOpa5.iTeardownMyApp();
+	aTeardownOptions.forEach(function (mTeardown) {
+		QUnit.test("Should complain if " + mTeardown.name + " is not launched", function (assert) {
+			var oOpa5 = new Opa5();
+			var fnSpy = this.spy();
 
-		Opa5.emptyQueue();
+			assert.expect(3);
 
-		assert.throws(function () {
+			oOpa5[mTeardown.func].apply(oOpa5).fail(function (oOptions) {
+				assert.ok(true, "Should execute teardown fail callback");
+				QUnit.assert.contains(oOptions.errorMessage, mTeardown.error, "Unexpected teardown error message");
+			});
+
+			oOpa5.emptyQueue().fail(fnSpy);
 			this.clock.tick(500);
-		}.bind(this), "A teardown was called but there was nothing to tear down");
+			assert.ok(fnSpy.calledOnce, "Teardown exception should also be handled by the queue's fail callback");
+		});
 	});
 });
