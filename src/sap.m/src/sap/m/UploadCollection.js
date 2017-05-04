@@ -1456,9 +1456,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		sFileNameLong = oItem.getFileName();
 
 		if (sStatus === UploadCollection._uploadingStatus) {
-			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
-				visible: true
-			}).addStyleClass("sapMUCloadingIcon");
+			oBusyIndicator = oItem._getControl("sap.m.BusyIndicator", {
+				id: sItemId + "-ia_indicator"
+			});
+			oBusyIndicator.addStyleClass("sapMUCloadingIcon");
 		} else {
 			oItemIcon = this._createIcon(oItem, sItemId, sFileNameLong, that);
 		}
