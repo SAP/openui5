@@ -43,6 +43,9 @@ sap.ui.define([
 				// set the device model
 				this.setModel(models.createDeviceModel(), "device");
 
+				// set the global tree data
+				this.setModel(new JSONModel(), "treeData");
+
 				// call the base component's init function and create the App view
 				UIComponent.prototype.init.apply(this, arguments);
 
