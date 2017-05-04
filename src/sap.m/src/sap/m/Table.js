@@ -367,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox({
 			id: this.getId("sa"),
 			activeHandling: false
-		}).setParent(this, null, true).attachSelect(function () {
+		}).addStyleClass('sapMLIBSelectM').setParent(this, null, true).attachSelect(function () {
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {
