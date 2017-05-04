@@ -11,7 +11,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	QUnit.test("process is skipped if no cache key could be determined", function (assert) {
 		var oView = {};
 		var sFlexReference = "someName";
-		var mPorpertyBag = {
+		var mProperties = {
 			sync: false
 		};
 		var oMockedComponent = {
@@ -27,8 +27,40 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
 
-		return XmlPreprocessorImpl.process(oView, mPorpertyBag).then(function () {
+		return XmlPreprocessorImpl.process(oView, mProperties).then(function () {
 			assert.equal(oFlexControllerCreationStub.callCount, 0, "no flex controller creation was created for processing");
+		});
+	});
+
+	QUnit.test("process xml view is called if cache key could be determined", function (assert) {
+		var oView = {};
+		var oMockedView = {
+			sId: "testView"
+		};
+		var sFlexReference = "someName";
+		var mProperties = {
+			sync: false
+		};
+		var oMockedComponent = {
+			getComponentClassName: function () {
+				return sFlexReference;
+			}
+		};
+
+		var oChangePersistence = new ChangePersistence({name: sFlexReference});
+		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create").returns({
+			processXmlView: function(oView, mProperties){
+				return oMockedView;
+			}
+		});
+		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve("abc123"));
+		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent");
+
+		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+
+		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller was created for processing");
+			assert.deepEqual(oProcessedView, oMockedView, "a processed view is returned");
 		});
 	});
 

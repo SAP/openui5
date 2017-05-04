@@ -350,8 +350,9 @@
 	QUnit.test("loadChanges", function(assert) {
 		var sComponentClassName;
 		this.server = sinon.fakeServer.create();
+		var sEtag = "abc123";
 		this.server.respondWith([200,
-			{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
+			{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", "etag": sEtag},
 			'{ "changes": [ ], "settings": { "isKeyUser": true, "isAtoAvailable": false, "isAtoEnabled": false, "isProductiveSystem": false }, "messagebundle": {"i_123": "translatedKey"} }'
 		]);
 		this.server.autoRespond = true;
@@ -362,7 +363,8 @@
 			assert.equal(oResult.changes.changes.length, 0);
 			assert.equal(oResult.changes.settings.isKeyUser, true);
 			assert.equal(oResult.changes.componentClassName, that.sComponentClassName);
-			assert.deepEqual(oResult.messagebundle, {"i_123": "translatedKey"}, "returns the responded messagebundle within the result");
+			assert.equal(oResult.etag, sEtag);
+			assert.deepEqual(oResult.changes.messagebundle, {"i_123": "translatedKey"}, "returns the responded messagebundle within the result");
 		});
 	});
 
