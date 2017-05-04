@@ -204,13 +204,13 @@ QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 	assert.equal(oModel.getProperty("/abc"), null, "Property does not exist");
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable");
 
-	//Access property of hidden aggregation
+	// Access property of hidden aggregation
 	assert.equal(oModel.setProperty("/_hiddenObjects/0/value", "hidden"), true, "Property of hidden element set");
 
-	//context not given
+	// context not given
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable without a context");
 
-	//context given
+	// context given
 	var oContext = oModel.getContext("/");
 	assert.equal(oModel.setProperty("value", "hello", oContext), true, "Property set, because context is resolvable");
 	assert.equal(oModel.getProperty("value", oContext), "hello", "Property has correct value, because context is resolvable");
@@ -221,33 +221,53 @@ QUnit.test("ManagedObject Model  - Property Binding - Registration and Housekeep
 	var fnPropertyChangeHandler = function() {
 		assert.equal(false, true, "Binding change fired unexpected");
 	};
-	//create a property binding with a relative path
-	oModel.getRootObject().bindProperty("value",{path:"stringValue"});
-	assert.equal(oModel._mPropertyObjects["myObject/@stringValue"], undefined , "No bindings are stored for 'myObject/@stringValue'");
-	oModel.getRootObject().setModel(oModel);
-	assert.equal(oModel._mPropertyObjects["myObject/@stringValue"], undefined , "No bindings are stored for 'myObject/@stringValue'");
-	oModel.getRootObject().setBindingContext(oModel.getContext("/"));
-	assert.equal(oModel._mPropertyObjects["myObject/@stringValue"].count, 1, "1 binding afte there context is set for 'myObject/@stringValue'");
+	// create a property binding with a relative path
+	var oRootObject = oModel.getRootObject();
 
-	//create a property binding with an absolute path
+	oRootObject.bindProperty("value",{path:"stringValue"});
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		properties: ["stringValue"]
+	}),false,"The 'stringValue' property is not observed");
+	oRootObject.setModel(oModel);
+	assert.equal(oModel._oObserver.isObserved(oRootObject, {
+		properties: ["stringValue"]
+	}),false,"The 'stringValue' property is not observed");
+	oRootObject.setBindingContext(oModel.getContext("/"));
+	assert.equal(oModel._oObserver.isObserved(oRootObject, {
+				properties: ["stringValue"]
+			}),true,"The 'stringValue' property is observed");
+	assert.equal(oModel._mObservedCount.properties["myObject/@stringValue"], 1, "1 binding after there context is set for 'myObject/@stringValue'");
+
+	// create a property binding with an absolute path
 	var oBinding1 = oModel.bindProperty("/value");
-	//as there is no change handler attached to the property binding, the handler is not yet registerd
-	assert.equal(oModel._mPropertyObjects["myObject/@value"], undefined , "No bindings are stored for 'myObject/@value'");
-	//adding a change handler causes the addBinding call on the model. This will add the change handler.
+	assert.equal(oModel._oObserver.isObserved(oRootObject, {
+		properties: ["value"]
+	}),false,"The 'value' property is not observed");
+	assert.equal(oModel._mObservedCount.properties["myObject/@value"], undefined, "No binding is stored for 'myObject/@value'");
+	// adding a change handler causes the addBinding call on the model. This will add the change handler.
 	oBinding1.attachChange(fnPropertyChangeHandler);
-	assert.equal(oModel._mPropertyObjects["myObject/@value"].count, 1, "1 binding is stored for 'myObject/@value'");
-	//create a second binding
+	assert.equal(oModel._oObserver.isObserved(oRootObject, {
+		properties: ["value"]
+	}),true,"The 'value' property is observed");
+	assert.equal(oModel._mObservedCount.properties["myObject/@value"], 1, "1 binding is stored for 'myObject/@value'");
+	// create a second binding
 	var oBinding2 = oModel.bindProperty("/value");
-	assert.equal(oModel._mPropertyObjects["myObject/@value"].count, 1, "Still only 1 binding binding is stored for 'myObject/@value'");
-	//adding a change handler causes the addBinding call on the model. This will add the change handler.
+	assert.equal(oModel._mObservedCount.properties["myObject/@value"], 1, "Still only 1 binding binding is stored for 'myObject/@value'");
+	// adding a change handler causes the addBinding call on the model. This will add the change handler.
 	oBinding2.attachChange(fnPropertyChangeHandler);
-	assert.equal(oModel._mPropertyObjects["myObject/@value"].count, 2, "2 binding binding is stored for 'myObject/@value'");
-	//detach the one change handler, now the model should still have any internal handlers to the _change
+	assert.equal(oModel._mObservedCount.properties["myObject/@value"], 2, "2 binding binding is stored for 'myObject/@value'");
+	// detach the one change handler, now the model should still have any internal handlers to the _change
 	oBinding2.detachChange(fnPropertyChangeHandler);
-	assert.equal(oModel._mPropertyObjects["myObject/@value"].count, 1, "1 binding is stored for 'myObject/@value'");
+	assert.equal(oModel._oObserver.isObserved(oRootObject, {
+		properties: ["value"]
+	}),true,"The 'value' property is still observed");
+	assert.equal(oModel._mObservedCount.properties["myObject/@value"], 1, "1 binding is stored for 'myObject/@value'");
 	//detach the last change handler, now the model should not have any internal handlers to the _change
 	oBinding1.detachChange(fnPropertyChangeHandler);
-	assert.equal(oModel._mPropertyObjects["myObject/@value"], undefined , "No bindings are stored for 'myObject/@value'");
+	assert.equal(oModel._oObserver.isObserved(oRootObject, {
+		properties: ["value"]
+	}),false,"The 'value' property is not observed");
+	assert.equal(oModel._mObservedCount.properties["myObject/@value"], undefined, "No binding is stored for 'myObject/@value'");
 });
 
 QUnit.test("ManagedObject Model  - Single Aggregation Binding - Registration and Housekeeping", function(assert) {
@@ -255,26 +275,37 @@ QUnit.test("ManagedObject Model  - Single Aggregation Binding - Registration and
 	var fnAggregationChangeHandler = function() {
 		assert.equal(true, false, "Binding change fired unexpected");
 	};
-	//create a aggregation binding
+	// create a aggregation binding
 	var oBinding1 = oModel.bindAggregation("/singleAggr");
-	//as there is no change handler attached to the property binding, the handler is not yet registerd
-	assert.equal(oModel._mAggregationObjects["myObject/@singleAggr"], undefined , "No bindings are stored for 'myObject/@singleAggr'");
-	//adding a change handler causes the addBinding call on the model. This will add the change handler.
-	oBinding1.attachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@singleAggr"].count, 1, "1 binding is stored for 'myObject/@singleAggr'");
-	//create a second binding
-	var oBinding2 = oModel.bindProperty("/singleAggr");
-	assert.equal(oModel._mAggregationObjects["myObject/@singleAggr"].count, 1, "Still only 1 binding binding is stored for 'myObject/@singleAggr'");
-	//adding a change handler causes the addBinding call on the model. This will add the change handler.
-	oBinding2.attachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@singleAggr"].count, 2, "2 binding binding is stored for 'myObject/@singleAggr'");
-	//detach the one change handler, now the model should still have any internal handlers to the _change
-	oBinding2.detachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@singleAggr"].count, 1, "1 binding is stored for 'myObject/@singleAggr'");
-	//detach the last change handler, now the model should not have any internal handlers to the _change
-	oBinding1.detachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@singleAggr"], undefined , "No bindings are stored for 'myObject/@singleAggr'");
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["singleAggr"]
+	}),false,"The 'singleAggr' aggregation is not observed");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined , "No bindings are stored for 'myObject/@singleAggr'");
 
+	// adding a change handler causes the addBinding call on the model. This will add the change handler.
+	oBinding1.attachChange(fnAggregationChangeHandler);
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["singleAggr"]
+	}),true,"The 'singleAggr' aggregation is observed");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], 1, "1 binding is stored for 'myObject/@singleAggr'");
+	// create a second binding
+	var oBinding2 = oModel.bindProperty("/singleAggr");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], 1, "Still only 1 binding binding is stored for 'myObject/@singleAggr'");
+	// adding a change handler causes the addBinding call on the model. This will add the change handler.
+	oBinding2.attachChange(fnAggregationChangeHandler);
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], 2, "2 binding binding is stored for 'myObject/@singleAggr'");
+	// detach the one change handler, now the model should still have any internal handlers to the _change
+	oBinding2.detachChange(fnAggregationChangeHandler);
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], 1, "1 binding is stored for 'myObject/@singleAggr'");
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["singleAggr"]
+	}),true,"The 'singleAggr' aggregation is still observed");
+	// detach the last change handler, now the model should not have any internal handlers to the _change
+	oBinding1.detachChange(fnAggregationChangeHandler);
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["singleAggr"]
+	}),false,"The 'singleAggr' aggregation is not observed");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@singleAggr"], undefined , "No bindings are stored for 'myObject/@singleAggr'");
 });
 
 QUnit.test("ManagedObject Model  - Multi Aggregation Binding - Registration and Housekeeping", function(assert) {
@@ -282,26 +313,37 @@ QUnit.test("ManagedObject Model  - Multi Aggregation Binding - Registration and 
 	var fnAggregationChangeHandler = function() {
 		assert.equal(true, false, "Binding change fired unexpected");
 	};
-	//create a aggregation binding
+	// create a aggregation binding
 	var oBinding1 = oModel.bindAggregation("/subObjects");
-	//as there is no change handler attached to the property binding, the handler is not yet registerd
-	assert.equal(oModel._mAggregationObjects["myObject/@subObjects"], undefined , "No bindings are stored for 'myObject/@subObjects'");
-	//adding a change handler causes the addBinding call on the model. This will add the change handler.
+	// as there is no change handler attached to the property binding, the handler is not yet registerd
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["subObjects"]
+	}),false,"The 'subObjects' aggregation is not observed");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined , "No bindings are stored for 'myObject/@subObjects'");
+	// adding a change handler causes the addBinding call on the model. This will add the change handler.
 	oBinding1.attachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@subObjects"].count, 1, "1 binding is stored for 'myObject/@subObjects'");
-	//create a second binding
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["subObjects"]
+	}),true,"The 'subObjects' aggregation is observed");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], 1, "1 binding is stored for 'myObject/@subObjects'");
+	// create a second binding
 	var oBinding2 = oModel.bindProperty("/subObjects");
-	assert.equal(oModel._mAggregationObjects["myObject/@subObjects"].count, 1, "Still only 1 binding binding is stored for 'myObject/@subObjects'");
-	//adding a change handler causes the addBinding call on the model. This will add the change handler.
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], 1, "Still only 1 binding binding is stored for 'myObject/@subObjects'");
+	// adding a change handler causes the addBinding call on the model. This will add the change handler.
 	oBinding2.attachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@subObjects"].count, 2, "2 binding binding is stored for 'myObject/@subObjects'");
-	//detach the one change handler, now the model should still have any internal handlers to the _change
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], 2, "2 binding binding is stored for 'myObject/@subObjects'");
+	// detach the one change handler, now the model should still have any internal handlers to the _change
 	oBinding2.detachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@subObjects"].count, 1, "1 binding is stored for 'myObject/@subObjects'");
-	//detach the last change handler, now the model should not have any internal handlers to the _change
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], 1, "1 binding is stored for 'myObject/@subObjects'");
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["subObjects"]
+	}),true,"The 'subObjects' aggregation is still observed");
+	// detach the last change handler, now the model should not have any internal handlers to the _change
 	oBinding1.detachChange(fnAggregationChangeHandler);
-	assert.equal(oModel._mAggregationObjects["myObject/@subObjects"], undefined , "No bindings are stored for 'myObject/@subObjects'");
-
+	assert.equal(oModel._oObserver.isObserved(oModel._oObject, {
+		aggregations: ["subObjects"]
+	}),false,"The 'subObjects' aggregation is not observed");
+	assert.equal(oModel._mObservedCount.aggregations["myObject/@subObjects"], undefined , "No bindings are stored for 'myObject/@subObjects'");
 });
 
 QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function(assert) {
@@ -319,7 +361,7 @@ QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function(as
 
 
 	assert.equal(oModel.setProperty("/value", "hello"), true, "Property set");
-	//TODO: Do this for all properties
+	// TODO: Do this for all properties
 	assert.equal(oModel.getProperty("/@className"), "sap.ui.test.TestElement", "Classname checked");
 	assert.equal(oModel.getProperty("/value/@bound"), false, "Value property is not bound");
 
@@ -333,7 +375,7 @@ QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function(as
 	assert.equal(oControl.getStringValue(), "value", "stringValue property is updated");
 
 	sExpectedValue = "fromStringValue";
-	oControl.setStringValue("fromStringValue"); //causes binding change
+	oControl.setStringValue("fromStringValue"); // causes binding change
 
 	var oBindingInfo = oModel.getProperty("/stringValue/@bindingInfo");
 
@@ -360,7 +402,7 @@ QUnit.test("ManagedObject Model  - Property Binding - Value Checks", function(as
 	assert.equal(oModel.getProperty("/@asdasdasd"), null, "Not existing special node checked");
 	assert.equal(oModel.getProperty("value"), null, "No context and relative path");
 
-	//bind to a property that does not exist
+	// bind to a property that does not exist
 	var oPropertyBinding = oModel.bindProperty("/notExist");
 	oPropertyBinding.attachChange(function() {
 		assert.equal(false, true, "Error: This should never be called for a property that does not exist");
@@ -401,10 +443,10 @@ QUnit.test("ManagedObject Model  - Aggregation Binding", function(assert) {
 	oBinding.attachChange(fHandler);
 	this.obj.setSingleAggr(this.subObj);
 
-	//check that no additional event is called
+	// check that no additional event is called
 	assert.equal(this.oManagedObjectModel.getProperty("/singleAggr"), this.subObj, "Aggregation can be accessed");
 
-	//bind to an aggregation that does not exist
+	// bind to an aggregation that does not exist
 	var oBinding = this.oManagedObjectModel.bindAggregation("/notExist");
 	assert.equal(oBinding.getPath(), "/notExist", "Binding path is correctly set for aggregation binding");
 });
@@ -456,7 +498,7 @@ QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj, true, "Binding change event fired for list aggregation");
 	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj2, true, "Binding change event fired for list aggregation");
 
-	//check that no additional event is called
+	// check that no additional event is called
 	assert.equal(this.oManagedObjectModel.setProperty("/value", "hello"), true, "Property set");
 	assert.equal(this.oManagedObjectModel.getProperty("/subObjects/0/@className"), "sap.ui.test.TestElement", "Classname checked");
 	assert.equal(this.oManagedObjectModel.getProperty("/subObjects/1/@className"), "sap.ui.test.TestElement", "Classname checked");
@@ -530,11 +572,11 @@ QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function(a
 	sap.ui.getCore().loadLibrary("sap.m");
 	assert.equal(true, true, "Not activted");
 	return;
-	//this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
-	//currently there are some controls and properties backlisted.
+	// this generic test loops over all controls in sap.m and checks whether a property binding in the model causes a change.
+	// currently there are some controls and properties backlisted.
 
-	//test values for types
-	//maybe we can cover more types
+	// test values for types
+	// maybe we can cover more types
 	var mTestProperties = {
 		"string" : ["", "\\", "{}","ÄÖÜß"],
 		"boolean" : [true, false],
@@ -620,12 +662,12 @@ QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function(a
 		"sap.m.Shell": {
 			"backgroundOpacity" : [0,0.5,0.9,1]
 		},
-		"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover" : true, //not processed at all
-		"sap.m.HeaderContainerItemContainer" : true, //not processed at all
-		"sap.m.TimePickerSliders" : true //not processed at all
+		"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover" : true, // not processed at all
+		"sap.m.HeaderContainerItemContainer" : true, // not processed at all
+		"sap.m.TimePickerSliders" : true // not processed at all
 	};
 
-	//get the controls from sap.m
+	// get the controls from sap.m
 	var oLib = sap.ui.getCore().getLoadedLibraries()["sap.m"],
 		aControls = oLib.controls;
 
@@ -663,7 +705,7 @@ QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function(a
 				for (var j = 0; j < aTestValues.length; j++) {
 					iCount = 0;
 					var iExpectedCount = 0;
-					if (aTestValues[j] !== oProperty.get(oControl)) { //ignore the default values. they will never cause a change event
+					if (aTestValues[j] !== oProperty.get(oControl)) { // ignore the default values. they will never cause a change event
 						iExpectedCount = 1;
 					}
 					oProperty.set(oControl, aTestValues[j]);

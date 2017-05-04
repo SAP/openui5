@@ -321,10 +321,29 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		this.obj.setProperty("value", 1);
 		this.checkExpected("Set 'value' to '1'. Observer called successfully");
 
+		oObserver.unobserve(this.obj, {
+			properties: ["value"]
+		});
+
+		this.obj.setProperty("value", 2);
+		this.checkExpected("Set 'value' to '2'. Observer not called, actual did not change");
+
+		//setting intValue
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"intValue",
+			old: 42,
+			current: -1
+		});
+
+		this.obj.setProperty("intValue", -1);
+		this.checkExpected("Set 'intValue' to '-1'. Observer called successfully");
+
 		oObserver.disconnect();
 	});
 
-	QUnit.test("ManagedObjectObserver listening to specific property changes", function(assert) {
+	QUnit.test("ManagedObjectObserver start and stop listening to specific property changes", function(assert) {
 
 		//listen to all changes
 		var oObserver = new ManagedObjectObserver(function(oChanges) {
@@ -335,7 +354,7 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 			properties: ["value"]
 		});
 
-		assert.ok(true, "Observation of specific members started");
+		assert.ok(true, "Observation of specific member 'value' started");
 
 		//setting the default value of a property
 		setExpected();
@@ -410,8 +429,63 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		this.obj.setProperty("stringValue","test");
 		this.checkExpected("Nothing changed with set of not registered property to default.");
 
+		oObserver.observe(this.obj, {
+			properties: ["intValue"]
+		});
+
+		assert.ok(true, "Additional observation of specific member 'intValue' started");
+
+		this.obj.setProperty("stringValue","Hugo");
+		this.checkExpected("Nothing changed with set of not registered property to default.");
+
+		//setting intValue
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"intValue",
+			old: 0,
+			current: 42
+		});
+
+		this.obj.setProperty("intValue", 42);
+		this.checkExpected("Set 'intValue' to '1'. Observer called successfully");
+
+		//setting intValue
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"value",
+			old: "1",
+			current: "42"
+		});
+
+		this.obj.setProperty("value", "42");
+		this.checkExpected("Set 'value' to '42'. Observer called successfully");
+
+		assert.ok(true, "Observation of specific members stopped");
+
+		oObserver.unobserve(this.obj, {
+			properties: ["value"]
+		});
+
+		this.obj.setProperty("value", 2);
+		this.checkExpected("Set 'value' to '2'. Observer not called, actual did not change");
+
+		//setting intValue
+		setExpected({
+			object: this.obj,
+			type:"property",
+			name:"intValue",
+			old: 42,
+			current: -1
+		});
+
+		this.obj.setProperty("intValue", -1);
+		this.checkExpected("Set 'intValue' to '-1'. Observer called successfully");
+
 		oObserver.disconnect();
 	});
+
 
 	// -------------------------------------------------------
 	// Aggregation handling
