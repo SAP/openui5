@@ -454,6 +454,20 @@ jQuery.sap.require("sap.m.Button");
 		spyLog.restore();
 	});
 
+	QUnit.test("log shall call jQuery.sap.log.debug once", function (assert) {
+		// PREPARE
+		var spyLog = sinon.spy(jQuery.sap.log, "debug");
+
+		// CUT
+		Utils.log.debug("");
+
+		// ASSERTIONS
+		assert.equal(spyLog.callCount, 1);
+
+		// RESTORE
+		spyLog.restore();
+	});
+
 	QUnit.test('getFirstAncestorOfControlWithControlType', function (assert) {
 		var button1 = new Button('button1');
 		var hLayout1 = new HorizontalLayout('hLayout1');
