@@ -64,6 +64,11 @@ sap.ui.define([
 					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
 				}.bind(this));
 				ControlsInfo.init();
+
+				this.setModel(new JSONModel(), "topics");
+				this.setModel(new JSONModel(), 'methods');
+				this.setModel(new JSONModel(), 'events');
+				this.setModel(new JSONModel(), "entity");
 			},
 
 			onBeforeRendering: function() {
@@ -159,7 +164,7 @@ sap.ui.define([
 
 				if (!this._oEntityModel) {
 					this._oEntityModel = new JSONModel();
-					this.setModel(this._oEntityModel, "entity");
+					this.getModel("entity").setData(this._oEntityModel, false /* no merge with previous data */);
 				}
 
 				this._oEntityModel.setData(oEntityModelData);
@@ -252,11 +257,10 @@ sap.ui.define([
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extends = oControlData.extends || this.NOT_AVAILABLE;
 				oControlData.since = oControlData.since || this.NOT_AVAILABLE;
-				oModel = new JSONModel(oControlData);
 
-				this.setModel(oModel, "topics");
-				this.setModel(new JSONModel(oMethodsModel), 'methods');
-				this.setModel(new JSONModel(oEventsModel), 'events');
+				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
+				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
+				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
