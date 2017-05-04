@@ -230,20 +230,6 @@ sap.ui.define([
 			/* Event handlers                                              */
 			/* =========================================================== */
 
-			/**
-			 * After list data is available, this handler method updates the
-			 * master list counter and hides the pull to refresh control, if
-			 * necessary.
-			 * @param {sap.ui.base.Event} oEvent the update finished event
-			 * @public
-			 */
-			onUpdateFinished : function (oEvent) {
-				// update the master list object counter after new data is loaded
-				// this._updateListItemCount(oEvent.getParameter("total"));
-				// hide pull to refresh if necessary
-				this.byId("pullToRefresh").hide();
-			},
-
 			onNavToEntity : function (oEvt) {
 				var oItemParam = oEvt.getParameter("listItem"),
 					oItem = (oItemParam) ? oItemParam : oEvt.getSource(),
@@ -527,7 +513,6 @@ sap.ui.define([
 					this._oView.addDependent(this._oSettingsDialog);
 				}
 
-				// var oCaller = oEvent.getSource();
 				jQuery.sap.delayedCall(0, this, function () {
 					var oAppSettings = this._oCore.getConfiguration(),
 						oThemeSelect = this._oCore.byId("ThemeSelect"),

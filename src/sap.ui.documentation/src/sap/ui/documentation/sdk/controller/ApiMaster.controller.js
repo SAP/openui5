@@ -236,7 +236,6 @@ sap.ui.define([
 			},
 
 			_moveNodePIntoNodeJ: function (p, j) {
-				//console.log("Move " + aTreeContent[p].text + " into " + aTreeContent[j].text);
 				var oTmpNode = aTreeContent.splice(p, 1);
 				if (!aTreeContent[j].nodes) {
 					aTreeContent[j].nodes = [];

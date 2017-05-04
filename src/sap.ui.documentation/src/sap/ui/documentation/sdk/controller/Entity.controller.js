@@ -156,8 +156,6 @@ sap.ui.define([
 					// set view model
 					this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
-					// set also the binding context for entity data
-					// this.getView().bindElement("entity>" + sPath);
 
 					// done, we can now switch the id
 					this._sId = sNewId;
