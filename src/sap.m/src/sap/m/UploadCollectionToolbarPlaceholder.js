@@ -2,7 +2,7 @@
  * ${copyright}
  */
 // Provides sap.m.UploadCollectionToolbarPlaceholder.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control' ],
 	function(jQuery, library, Control) {
 	"use strict";
 
@@ -34,4 +34,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	return UploadCollectionToolbarPlaceholder;
 
-}, /* bExport= */ true);
+});

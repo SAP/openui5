@@ -36,7 +36,7 @@
 						<core:Icon
 							src="sap-icon://role"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>administrationTitle}"
 							titleStyle="H2"
@@ -53,7 +53,7 @@
 						<core:Icon
 							src="sap-icon://add-product"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>productTitle}"
 							titleStyle="H2"
@@ -70,7 +70,7 @@
 						<core:Icon
 							src="sap-icon://customer-financial-fact-sheet"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>revenueTitle}"
 							titleStyle="H2"
@@ -87,7 +87,7 @@
 						<core:Icon
 							src="sap-icon://supplier"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>supplierTitle}"
 							titleStyle="H2"
@@ -107,7 +107,7 @@
 						<core:Icon
 							src="sap-icon://thumb-up"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>socialMediaTitle}"
 							titleStyle="H2"

@@ -58,10 +58,6 @@ tr.sapMListTblHeaderNone > th {
 	display: none;
 }
 
-.sapMListTblSelCol {
-	width: 3rem;
-}
-
 .sapMListTblNavCol {
 	width: 0;
 }
@@ -182,22 +178,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	display: block;
 }
 
-.sapMListTblSelCol {
-	width: 3rem;
-}
-
-.sapMListTblNavCol .sapMLIBIconDet {
-	margin-left: 0;
-}
-
 .sapMListModeSingleSelect .sapMListTblSelCol{
-	padding: 0;
-}
-
-.sapMListTblSelCol > .sapMLIBSelectSL,
-.sapMListTblSelCol > .sapMLIBSelectD,
-.sapMListTblSelCol > .sapMLIBSelectM{
-	margin: 0;
 	padding: 0;
 }
 
@@ -216,13 +197,8 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	font-weight: normal;
 }
 
-.sapMListTbl .sapUiIcon:not(.sapMLIBImgNav){
+.sapMListTbl .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
 	font-size: @sapUiListTableIconSize;
-}
-
-.sapMListTbl .sapMLIBSelectD > .sapUiIcon {
-	font-size: 1.375rem;
-	padding: .75rem 0;
 }
 
 .sapMListTblCell {
@@ -248,21 +224,18 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	padding-left: 1rem;
 }
 
-.sapMListTblSelCol + .sapMListTblCell {
-	padding-left: 0;
-}
-
 .sapMListTblCell.sapMListTblCellNoData,
-.sapMListTblRow > :nth-last-child(2) {
+.sapMLIBTypeActive > .sapMListTblCell:nth-last-child(2),
+.sapMLIBTypeInactive > .sapMListTblCell:nth-last-child(2) {
 	padding-right: 1rem;
 }
 
-.sapMListTblHasNav .sapMListTblRow > :nth-last-child(2),
-.sapMListModeSingleSelect.sapMListTblHasNav .sapMListTblRow > :nth-last-child(2) {
+.sapMListTblHasNav .sapMLIBTypeNavigation > .sapMListTblCell:nth-last-child(2) {
 	padding-right: 0;
 }
 
-.sapMListTblHasNav .sapMListTblNavCol{
+.sapMListTblSelCol,
+.sapMListTblHasNav .sapMListTblNavCol {
 	width: 3rem;
 }
 
@@ -330,54 +303,23 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* decrease the navigation icon size */
-.sapUiSizeCompact .sapMListTblNavCol > .sapMLIBImgNav{
+.sapUiSizeCompact .sapMListTblNavCol > .sapMLIBImgNav {
 	width : auto;
-	height: 2rem;
-	line-height: 2rem;
 }
 
-/* decrease the selection column width */
-.sapUiSizeCompact .sapMListTblSelCol {
+.sapUiSizeCompact .sapMListTblSelCol,
+.sapUiSizeCompact .sapMListTblHasNav .sapMListTblNavCol {
+	width: 2rem;
+}
+
+.sapUiSizeCompact .sapMListTblHasNav .sapMListTblNavCol:last-child,
+.sapUiSizeCompact .sapMListTblSelCol:last-child {
 	width: 2.5rem;
 }
 
-/* decrease the navigation column width */
-.sapUiSizeCompact .sapMListTblHasNav .sapMListTblNavCol{
-	width: 2rem;
-}
-
-/* let the checkbox have its own natural size for selection column */
-.sapUiSizeCompact .sapMListTblSelCol .sapMCb {
-	width : auto;
-}
-
-/* min height for the table cells */
-.sapUiSizeCompact .sapMListTblCell{
+	/* min height for the table cells */
+.sapUiSizeCompact .sapMListTblCell {
 	height: 2rem;
-}
-
-/* table delete icon */
-.sapUiSizeCompact .sapMListTbl .sapMLIBSelectD {
-	width: auto;
-}
-
-.sapUiSizeCompact .sapMListTbl .sapMLIBSelectD > .sapUiIcon {
-	font-size: 1rem;
-	padding: 0;
-}
-
-.sapUiSizeCompact .sapMListTblNavCol .sapMLIBIconDet {
-	margin-right: 0;
-	width: 2rem;
-	height: 2rem;
-	line-height: 2rem;
-}
-
-/* align relative float left checkbox in table cell */
-.sapUiSizeCompact .sapMListTblSelCol > .sapMLIBSelectS .sapMRbB,
-.sapUiSizeCompact .sapMListTblSelCol >.sapMLIBSelectSL .sapMRbB {
-	margin-left: 0.25rem;
-	padding: 0;
 }
 
 /* reset height of cells when no header is defined */

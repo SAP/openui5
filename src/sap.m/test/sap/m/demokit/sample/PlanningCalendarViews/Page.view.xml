@@ -2,6 +2,7 @@
 	controllerName="sap.m.sample.PlanningCalendarViews.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:unified="sap.ui.unified"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<VBox class="sapUiSmallMargin">
 		<PlanningCalendar
@@ -15,6 +16,13 @@
 			showEmptyIntervalHeaders="false">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
+				<ToolbarSpacer/>
+				<Select tooltip="Group appointments mode" change="handleGroupModeChange">
+					<items>
+						<core:Item key="Collapsed" text="Collapsed"/>
+						<core:Item key="Expanded" text="Expanded"/>
+					</items>
+				</Select>
 			</toolbarContent>
 			<views>
 				<PlanningCalendarView

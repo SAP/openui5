@@ -14,7 +14,7 @@ describe("sap.m.MessagePopover", function () {
 
 	["error", "warning", "success", "information", "all"].forEach(function (sMessageType) {
 		it("should open " + sMessageType + " messages.", function () {
-			element(by.id("mPopover-" + sMessageType)).click();
+			element(by.id("mPopover-messageView-" + sMessageType)).click();
 			expect(takeScreenshot(element(by.id("mPopover-messagePopover-popover")))).toLookAs("mpopover-" + sMessageType);
 		});
 	});
@@ -26,7 +26,7 @@ describe("sap.m.MessagePopover", function () {
 
 	["error", "warning", "success", "information", "all"].forEach(function (sMessageType) {
 		it("should open " + sMessageType + " messages in MessagePopover in compact mode.", function () {
-			element(by.id("mPopover-" + sMessageType)).click();
+			element(by.id("mPopover-messageView-" + sMessageType)).click();
 			expect(takeScreenshot(element(by.id("mPopover-messagePopover-popover")))).toLookAs("mpopover-compact-" + sMessageType);
 		});
 	});

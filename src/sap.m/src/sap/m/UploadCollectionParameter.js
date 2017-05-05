@@ -48,4 +48,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 	return UploadCollectionParameter;
 
-}, /* bExport= */ true);
+});

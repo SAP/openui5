@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollectionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus', 'sap/m/ObjectMarker', 'sap/ui/core/util/File'],
-	function(jQuery, library, Element, ObjectAttribute, ObjectStatus, ObjectMarker, FileUtil) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/ui/core/util/File' , 'sap/ui/Device' ],
+	function(jQuery, library, Element, ObjectAttribute, FileUtil, Device) {
 	"use strict";
 
 	/**
@@ -229,7 +229,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				 */
 				fileUploader : {
 					type : "sap.ui.unified.FileUploader",
-					group : "misc",
 					multiple : false
 				}
 			}
@@ -238,12 +237,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 
 	UploadCollectionItem.prototype.init = function() {
 		this._mDeprecatedProperties = {};
+		this._aManagedInstances = [];
+	};
+
+	UploadCollectionItem.prototype.exit = function() {
+		for (var i = 0; i < this._aManagedInstances.length; i++) {
+			this._aManagedInstances[i].destroy();
+		}
 	};
 
 	/**
-	 * @description Setter of the deprecated contributor property. The property is mapped to the aggregation attributes.
+	 * Setter of the deprecated contributor property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
 	 * @public
+	 * @param {string} sContributor New value for property contributor
+	 * @returns {sap.m.UploadCollectionItem} Returns <code>this</code> to allow method chaining
 	 */
 	UploadCollectionItem.prototype.setContributor = function(sContributor) {
 		this.setProperty("contributor", sContributor, false);
@@ -252,9 +260,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Setter of the deprecated uploadedDate property. The property is mapped to the aggregation attributes.
+	 * Setter of the deprecated uploadedDate property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
 	 * @public
+	 * @param {string} sUploadedDate New value for property uploadedDate
+	 * @returns {sap.m.UploadCollectionItem} Returns <code>this</code> to allow method chaining
 	 */
 	UploadCollectionItem.prototype.setUploadedDate = function(sUploadedDate) {
 		this.setProperty("uploadedDate", sUploadedDate, false);
@@ -263,9 +273,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Setter of the deprecated fileSize property. The property is mapped to the aggregation attributes.
+	 * Setter of the deprecated fileSize property. The property is mapped to the aggregation attributes.
 	 * @deprecated since version 1.30
 	 * @public
+	 * @param {string} sFileSize New value for property fileSize
+	 * @returns {sap.m.UploadCollectionItem} Returns <code>this</code> to allow method chaining
 	 */
 	UploadCollectionItem.prototype.setFileSize = function(sFileSize) {
 		this.setProperty("fileSize", sFileSize, false);
@@ -274,7 +286,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Setter of the selected property.
+	 * Setter of the selected property.
 	 * @param {boolean} selected value to set on Selected property
 	 * @since 1.34
 	 * @public
@@ -294,11 +306,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
 	 * @since 1.36.0
 	 * @public
+	 * @returns {boolean} <code>true</code> if download is possible, otherwise <code>false</code>
 	 */
 	UploadCollectionItem.prototype.download = function(askForLocation) {
 		// File.save doesn't work in Safari but URLHelper.redirect does work.
 		// So, this overwrites the value of askForLocation in order to make it work.
-		if (sap.ui.Device.browser.name === "sf") {
+		if (Device.browser.name === "sf") {
 			askForLocation = false;
 		}
 		// If there isn't URL, download is not possible
@@ -327,7 +340,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Split file name into name and extension.
+	 * Split file name into name and extension.
 	 * @param {string} fileName Full file name inclusive the extension
 	 * @param {boolean} withDot True if the extension should be returned starting with a dot (ie: '.jpg'). False for no dot. If not value is provided, the extension name is given without dot
 	 * @returns {object} oResult Filename and Extension
@@ -347,7 +360,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Update deprecated properties aggregation
+	 * Update deprecated properties aggregation
 	 * @private
 	 * @since 1.30.
 	 */
@@ -378,14 +391,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	};
 
 	/**
-	 * @description Return all attributes, the deprecated property attributes and the aggregated attributes in one array
+	 * Return all attributes, the deprecated property attributes and the aggregated attributes in one array
 	 * @private
 	 * @since 1.30.
+	 * @returns {sap.m.ObjectAttribute[]} Mapped properties
 	 */
 	UploadCollectionItem.prototype.getAllAttributes = function() {
 		return this.getAggregation("_propertyAttributes", []).concat(this.getAttributes());
 	};
 
-	return UploadCollectionItem;
+	/**
+	 * Creates an instance based on the given module name and settings. The instance is managed by the item lifecycle.
+	 * @param {string} name Module name to create an instance from
+	 * @param {object} settings Settings which are applied to the instance.
+	 * @param {string} getterName Name for generating a getter function.
+	 * @private
+	 * @returns {sap.ui.base.ManagedObject} Newly created instance
+	 */
+	UploadCollectionItem.prototype._getControl = function(name, settings, getterName) {
+		var fnConstructor = jQuery.sap.getObject(name),
+			oInstance = new fnConstructor(settings);
+		this._aManagedInstances.push(oInstance);
+		if (getterName) {
+			this["_get" + getterName] = jQuery.sap.getter(oInstance);
+		}
+		return oInstance;
+	};
 
-}, /* bExport= */true);
+	return UploadCollectionItem;
+});

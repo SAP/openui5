@@ -522,22 +522,21 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._getGroupHeaderMenu = function() {
-
 		var that = this;
+
 		function getGroupColumnInfo() {
 			var iIndex = that._iGroupedLevel - 1;
+
 			if (that._aGroupedColumns[iIndex]) {
 				var oGroupedColumn = that.getColumns().filter(function(oColumn){
-					if (that._aGroupedColumns[iIndex] == oColumn.getId()) {
-						return true;
-					}
+					return that._aGroupedColumns[iIndex] === oColumn.getId();
 				})[0];
 
 				return {
 					column: oGroupedColumn,
 					index: iIndex
 				};
-			}else {
+			} else {
 				return undefined;
 			}
 		}
@@ -562,53 +561,26 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this._oGroupHeaderMenu.addItem(new MenuItem({
 				text: this._oResBundle.getText("TBL_UNGROUP"),
 				select: function() {
-					var aColumns = that.getColumns(),
-						iFoundGroups = 0,
-						iLastGroupedIndex = -1,
-						iUngroudpedIndex = -1,
-						oColumn;
+					var oGroupColumnInfo = getGroupColumnInfo();
 
-					that.suspendUpdateAnalyticalInfo();
+					if (oGroupColumnInfo != null && oGroupColumnInfo.column != null) {
+						var oUngroupedColumn = oGroupColumnInfo.column;
 
-					for (var i = 0; i < aColumns.length; i++) {
-						oColumn = aColumns[i];
-						if (oColumn.getGrouped()) {
-							iFoundGroups++;
-							if (iFoundGroups == that._iGroupedLevel) {
-								// setGrouped(false) leads to an invalidation of the Column -> rerender
-								// and this will result in new requests from the AnalyticalBinding,
-								//because the initial grouping is lost (can not be restored!)
-								oColumn.setGrouped(false);
+						that.suspendUpdateAnalyticalInfo();
 
-								iUngroudpedIndex = i;
-								that.fireGroup({column: oColumn, groupedColumns: oColumn.getParent()._aGroupedColumns, type: GroupEventType.ungroup});
-							} else {
-								iLastGroupedIndex = i;
-							}
-						}
+						// Ungrouping a column invalidates the column which causes the table to re-render.
+						// When we later call _getRowContexts new requests from the AnalyticalBinding will be created in all cases, because the
+						// previous data can not be restored.
+						oUngroupedColumn.setGrouped(false);
+
+						that.fireGroup({column: oUngroupedColumn, groupedColumns: that._aGroupedColumns, type: GroupEventType.ungroup});
+
+						that.resumeUpdateAnalyticalInfo();
+
+						// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
+						// of the columns. We need to trigger a context update manually to also update the rows.
+						that._getRowContexts();
 					}
-
-					if (iLastGroupedIndex > -1 && iUngroudpedIndex > -1 && iUngroudpedIndex < iLastGroupedIndex) {
-						var oUngroupedColumn = aColumns[iUngroudpedIndex];
-						var iHeaderSpan = oUngroupedColumn.getHeaderSpan();
-						if (jQuery.isArray(iHeaderSpan)) {
-							iHeaderSpan = iHeaderSpan[0];
-						}
-						var aRemovedColumns = [];
-						for (var i = iUngroudpedIndex; i < iUngroudpedIndex + iHeaderSpan; i++) {
-							aRemovedColumns.push(aColumns[i]);
-						}
-						jQuery.each(aRemovedColumns, function(iIndex, oColumn) {
-							that.removeColumn(oColumn);
-							that.insertColumn(oColumn, iLastGroupedIndex);
-						});
-					}
-
-					that.resumeUpdateAnalyticalInfo();
-
-					// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
-					// of the columns. We need to trigger a context update manually to also update the rows.
-					that._getRowContexts();
 				}
 			}));
 			this._oGroupHeaderMenu.addItem(new MenuItem({
@@ -1268,7 +1240,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * <li><code>groupTotal</code> of type <code>boolean</code> Indicates whether the row is a totals row of a group</li>
 	 * <li><code>level</code> of type <code>integer</code> Level information (<code>-1</code> if no level information is available)</li>
 	 * <li><code>context</code> of type <code>sap.ui.model.Context</code> The binding context of the row</li>
-	 * <li><code>groupedColumns</code> of type <code>string[]</code> IDs of the grouped columns (only available for <code>group</code> and <code>groupTotal</code>)</li>
+	 * <li><code>groupedColumns</code> of type <code>string[]</code> IDs of the grouped columns (only available for <code>group</code> and
+	 * <code>groupTotal</code>)</li>
 	 * </ul>
 	 *
 	 * @param {sap.ui.table.Row} oRow The row for which the analytical information is returned
