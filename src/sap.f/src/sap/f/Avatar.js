@@ -97,7 +97,7 @@ sap.ui.define([
 			},
 			aggregations : {
 				/**
-				 * A <code>sap.m.LightBox</code> instance, that will be opened automatically when the user interacts with the <code>Avatar</code>.
+				 * A <code>sap.m.LightBox</code> instance, that will be opened automatically when the user interacts with the <code>Avatar</code> control.
 				 *
 				 * The <code>press</code> event will still be fired.
 				 * @since 1.48
@@ -146,20 +146,32 @@ sap.ui.define([
 
 	/**
 	 * Sets the <code>detailBox</code> aggregation.
-	 * @param {sap.m.LightBox|undefined} oLightBox - Instance of the LightBox control or undefined
+	 * @param {sap.m.LightBox|undefined} oLightBox - Instance of the <code>LightBox</code> control or undefined
 	 * @returns {object} <code>this</code> for chaining
 	 * @since 1.48
 	 * @override
 	 * @public
 	 */
 	Avatar.prototype.setDetailBox = function (oLightBox) {
+		var oCurrentDetailBox = this.getDetailBox();
+
 		if (oLightBox) {
+			// In case someone try's to set the same LightBox twice we don't do anything
+			if (oLightBox === oCurrentDetailBox) {
+				return this;
+			}
+
+			// If we already have a LightBox detach old one's event
+			if (oCurrentDetailBox) {
+				this.detachPress(this._fnLightBoxOpen, oCurrentDetailBox);
+			}
+
 			// Bind the LightBox open method to the press event of the Avatar
-			this._fnLightBoxOpen = oLightBox.open.bind(oLightBox);
-			this.attachPress(this._fnLightBoxOpen);
+			this._fnLightBoxOpen = oLightBox.open;
+			this.attachPress(this._fnLightBoxOpen, oLightBox);
 		} else if (this._fnLightBoxOpen) {
 			// If there was a LightBox - cleanup
-			Control.prototype.detachEvent.call(this, "press", this._fnLightBoxOpen);
+			this.detachPress(this._fnLightBoxOpen, oCurrentDetailBox);
 			this._fnLightBoxOpen = null;
 		}
 
@@ -184,11 +196,7 @@ sap.ui.define([
 
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex");
-			if (this.getDecorative()) {
-				this.$().attr("role", "presentation");
-			} else {
-				this.$().removeAttr("role");
-			}
+			this.$().removeAttr("role");
 		}
 
 		return this;
