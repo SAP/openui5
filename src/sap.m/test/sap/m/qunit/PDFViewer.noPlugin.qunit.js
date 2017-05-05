@@ -21,7 +21,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf'
+			source: "./pdfviewer/sample-file.pdf"
 		});
 
 		var oOptions = {
