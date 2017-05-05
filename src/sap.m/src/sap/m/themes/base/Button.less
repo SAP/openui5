@@ -450,7 +450,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 	border-color:     @sapUiButtonLiteBorderColor;
 }
 
-.sapMIBar-CTX .sapMBtnTransparent :not(.sapMBtnDisabled) {
+.sapMIBar-CTX .sapMBtnTransparent:not(.sapMBtnDisabled):not(.sapMToggleBtnPressed) {
 	color:            @sapUiButtonLiteTextColor;
 	text-shadow:      none;
 	border-color:     @sapUiButtonLiteBorderColor;
@@ -489,7 +489,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
-.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):hover {
+.sapMTB-Transparent-CTX :not(.sapMBtnDisabled) .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):hover {
 	background: @sapUiButtonLiteHoverBackground;
 }
 
