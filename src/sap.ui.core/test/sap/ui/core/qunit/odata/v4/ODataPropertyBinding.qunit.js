@@ -356,7 +356,7 @@ sap.ui.require([
 			}
 			if (oFixture.sInit === "v4") {
 				this.mock(oInitialContext).expects("deregisterChange")
-					.withExactArgs(oBinding.getPath(), oBinding);
+					.withExactArgs(oBinding.getPath(), sinon.match.same(oBinding));
 			}
 
 			//code under test
@@ -414,7 +414,7 @@ sap.ui.require([
 
 		this.createTextBinding(assert).then(function (oBinding) {
 			that.oSandbox.mock(oBinding.oContext).expects("deregisterChange")
-				.withExactArgs("property", oBinding);
+				.withExactArgs("property", sinon.match.same(oBinding));
 			assert.strictEqual(oBinding.getValue(), "value", "value before context reset");
 			oBinding.attachChange(fnChangeHandler);
 			oBinding.setContext(); // reset context triggers checkUpdate
@@ -874,15 +874,16 @@ sap.ui.require([
 			oPropertyBinding,
 			oReturn = {};
 
-		oMock.expects("attachEvent").withExactArgs("AggregatedDataStateChange", mParams)
+		oMock.expects("attachEvent")
+			.withExactArgs("AggregatedDataStateChange", sinon.match.same(mParams))
 			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("change", mParams)
+		oMock.expects("attachEvent").withExactArgs("change", sinon.match.same(mParams))
 			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("dataReceived", mParams)
+		oMock.expects("attachEvent").withExactArgs("dataReceived", sinon.match.same(mParams))
 			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("dataRequested", mParams)
+		oMock.expects("attachEvent").withExactArgs("dataRequested", sinon.match.same(mParams))
 			.returns(oReturn);
-		oMock.expects("attachEvent").withExactArgs("DataStateChange", mParams)
+		oMock.expects("attachEvent").withExactArgs("DataStateChange", sinon.match.same(mParams))
 			.returns(oReturn);
 
 		oPropertyBinding = this.oModel.bindProperty("Name");

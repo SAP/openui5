@@ -788,7 +788,7 @@ sap.ui.require([
 			.returns(_SyncPromise.resolve(mLocalQueryOptions));
 		this.mock(jQuery).expects("extend")
 			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
-				mLocalQueryOptions)
+				sinon.match.same(mLocalQueryOptions))
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
 			.withExactArgs("absolute", sinon.match.same(mResultingQueryOptions), undefined)
@@ -826,13 +826,14 @@ sap.ui.require([
 					? Promise.resolve(mLocalQueryOptions) : mLocalQueryOptions),
 				mResultingQueryOptions = {};
 
-			oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+			oBindingMock.expects("fetchQueryOptionsForOwnCache")
+				.withExactArgs(sinon.match.same(oContext))
 				.returns(oQueryOptionsPromise);
 			this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
 				.returns(oCanonicalPathPromise);
 			this.mock(jQuery).expects("extend")
 				.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
-					mLocalQueryOptions)
+					sinon.match.same(mLocalQueryOptions))
 				.returns(mResultingQueryOptions);
 			oBindingMock.expects("doCreateCache")
 				.withExactArgs("canonicalPath/relative", sinon.match.same(mResultingQueryOptions),
@@ -878,11 +879,12 @@ sap.ui.require([
 					oQueryOptionsPromise = _SyncPromise.resolve(mLocalQueryOptions),
 					mResultingQueryOptions = {};
 
-				oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+				oBindingMock.expects("fetchQueryOptionsForOwnCache")
+					.withExactArgs(sinon.match.same(oContext))
 					.returns(oQueryOptionsPromise);
 				this.mock(jQuery).expects("extend")
 					.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
-						mLocalQueryOptions)
+						sinon.match.same(mLocalQueryOptions))
 					.returns(mResultingQueryOptions);
 				oBindingMock.expects("doCreateCache")
 					.withExactArgs("canonicalPath/relative",
@@ -935,13 +937,14 @@ sap.ui.require([
 			mLocalQueryOptions = {},
 			mResultingQueryOptions = {};
 
-		oBindingMock.expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+		oBindingMock.expects("fetchQueryOptionsForOwnCache")
+			.withExactArgs(sinon.match.same(oContext))
 			.returns(_SyncPromise.resolve(mLocalQueryOptions));
 		this.mock(oContext).expects("getPath").withExactArgs()
 			.returns("/contextPath");
 		this.mock(jQuery).expects("extend")
 			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
-				mLocalQueryOptions)
+				sinon.match.same(mLocalQueryOptions))
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
 			.withExactArgs("contextPath/quasiAbsolute", sinon.match.same(mResultingQueryOptions),
@@ -965,7 +968,8 @@ sap.ui.require([
 				getIndex : function () {}
 			};
 
-		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache").withExactArgs(oContext)
+		this.mock(oBinding).expects("fetchQueryOptionsForOwnCache")
+			.withExactArgs(sinon.match.same(oContext))
 			.returns(_SyncPromise.resolve({}));
 		this.mock(oContext).expects("getIndex").withExactArgs()
 			.returns(-2);
@@ -1105,10 +1109,10 @@ sap.ui.require([
 			mResultingQueryOptions = {};
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(oContext0)
+			.withExactArgs(sinon.match.same(oContext0))
 			.returns(_SyncPromise.resolve({}));
 		oBindingMock.expects("fetchQueryOptionsForOwnCache")
-			.withExactArgs(oContext1)
+			.withExactArgs(sinon.match.same(oContext1))
 			.returns(_SyncPromise.resolve(mLocalQueryOptions));
 		this.mock(oContext0)
 			.expects("fetchCanonicalPath").withExactArgs()
@@ -1118,7 +1122,7 @@ sap.ui.require([
 			.returns(_SyncPromise.resolve(Promise.resolve("/canonicalPath1")));
 		this.mock(jQuery).expects("extend")
 			.withExactArgs(true, {}, sinon.match.same(oBinding.oModel.mUriParameters),
-				mLocalQueryOptions)
+				sinon.match.same(mLocalQueryOptions))
 			.returns(mResultingQueryOptions);
 		oBindingMock.expects("doCreateCache")
 			.withExactArgs("canonicalPath1", sinon.match.same(mResultingQueryOptions),

@@ -410,7 +410,7 @@ sap.ui.require([
 			oSyncPromise = _SyncPromise.resolve();
 
 		this.mock(oSyncPromise).expects("then")
-			.withExactArgs(undefined, fnOnRejected)
+			.withExactArgs(undefined, sinon.match.same(fnOnRejected))
 			.returns(oNewPromise);
 
 		assert.strictEqual(oSyncPromise.catch(fnOnRejected), oNewPromise);

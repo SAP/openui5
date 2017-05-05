@@ -77,7 +77,7 @@ sap.ui.require([
 			sResourcePath = "~",
 			oCache;
 
-		this.mock(_Cache).expects("buildQueryString").withExactArgs(mQueryOptions)
+		this.mock(_Cache).expects("buildQueryString").withExactArgs(sinon.match.same(mQueryOptions))
 			.returns("?foo=bar");
 
 		// code under test
@@ -389,9 +389,11 @@ sap.ui.require([
 			"foo/bar/baz" : [oBody4]
 		};
 
-		oCall1 = oRequestorMock.expects("removePost").withExactArgs("update", oBody2);
-		oCall2 = oRequestorMock.expects("removePost").withExactArgs("update2", oBody1);
-		oRequestorMock.expects("removePost").withExactArgs("update", oBody4);
+		oCall1 = oRequestorMock.expects("removePost")
+			.withExactArgs("update", sinon.match.same(oBody2));
+		oCall2 = oRequestorMock.expects("removePost")
+			.withExactArgs("update2", sinon.match.same(oBody1));
+		oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody4));
 
 		// code under test
 		oCache.resetChangesForPath("foo/bar");
@@ -402,8 +404,8 @@ sap.ui.require([
 			"foo/bars" : [oBody3]
 		});
 
-		oRequestorMock.expects("removePost").withExactArgs("update", oBody0);
-		oRequestorMock.expects("removePost").withExactArgs("update", oBody3);
+		oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody0));
+		oRequestorMock.expects("removePost").withExactArgs("update", sinon.match.same(oBody3));
 
 		// code under test
 		oCache.resetChangesForPath("");
@@ -1341,15 +1343,16 @@ sap.ui.require([
 			.returns(Promise.resolve(oPostResult));
 		// called from update
 		oHelperMock.expects("updateCache")
-			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
-				{bar : "baz"});
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "-1",
+				sinon.match(transientCacheData), {bar : "baz"});
 		// called from the POST's success handler
 		oHelperMock.expects("getSelectForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "")
 			.returns(aSelect);
 		oHelperMock.expects("updateCacheAfterPost")
-			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
-				sinon.match.same(oPostResult), sinon.match.same(aSelect));
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "-1",
+				sinon.match(transientCacheData), sinon.match.same(oPostResult),
+				sinon.match.same(aSelect));
 
 		// code under test
 		oPostPromise = oCache.create("updateGroup", "Employees", "", oEntityData);
@@ -2049,8 +2052,8 @@ sap.ui.require([
 		oCache = _Cache.createProperty(oRequestor, sResourcePath, mQueryParams);
 		oCacheMock = this.mock(oCache);
 
-		oCacheMock.expects("registerChange").withExactArgs("", oListener1);
-		oCacheMock.expects("registerChange").withExactArgs("", oListener2);
+		oCacheMock.expects("registerChange").withExactArgs("", sinon.match.same(oListener1));
+		oCacheMock.expects("registerChange").withExactArgs("", sinon.match.same(oListener2));
 		oCacheMock.expects("registerChange").withExactArgs("", undefined);
 
 		this.mock(oRequestor).expects("request")

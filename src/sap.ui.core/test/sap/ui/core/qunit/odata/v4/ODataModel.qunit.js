@@ -736,7 +736,8 @@ sap.ui.require([
 		oModelMock = this.mock(oModel),
 		oContext = new BaseContext(oModel, "/foo");
 
-		oModelMock.expects("resolve").withExactArgs("bar", oContext).returns("/foo/bar");
+		oModelMock.expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
 
 		// code under test
 		oBindingContext = oModel.createBindingContext("bar", oContext);

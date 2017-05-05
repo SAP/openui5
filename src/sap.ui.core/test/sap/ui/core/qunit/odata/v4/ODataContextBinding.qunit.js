@@ -113,7 +113,7 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(mParameters, true).returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -158,7 +158,7 @@ sap.ui.require([
 		};
 
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(mParameters, true).returns(mQueryOptions);
+			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns(mBindingParameters);
@@ -184,10 +184,10 @@ sap.ui.require([
 			};
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(mParameters, ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
 			.returns({});
 		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(mParameters, true)
+			.withExactArgs(sinon.match.same(mParameters), true)
 			.returns({$filter : "bar"});
 		this.stub(ODataContextBinding.prototype, "fetchCache", function (oContext0) {
 			assert.strictEqual(oContext0, oContext);
@@ -575,9 +575,11 @@ sap.ui.require([
 			oExpectedError = new Error("Expected read failure"),
 			oRejectedPromise = _SyncPromise.resolve(Promise.reject(oExpectedError));
 
-		oCacheMock.expects("fetchValue").withExactArgs("$direct", "foo", sinon.match.func, undefined)
+		oCacheMock.expects("fetchValue")
+			.withExactArgs("$direct", "foo", sinon.match.func, undefined)
 			.callsArg(2).returns(oRejectedPromise);
-		oCacheMock.expects("fetchValue").withExactArgs("$direct", "bar", sinon.match.func, undefined)
+		oCacheMock.expects("fetchValue")
+			.withExactArgs("$direct", "bar", sinon.match.func, undefined)
 			.returns(oRejectedPromise);
 		this.mock(oBinding).expects("fireDataReceived")
 			.withExactArgs({error : oExpectedError});
@@ -614,7 +616,7 @@ sap.ui.require([
 		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
 		oHelperMock.expects("buildPath").withExactArgs("navigation", "bar").returns("~bar~");
-		oContextMock.expects("fetchValue").withExactArgs("~bar~", oListener)
+		oContextMock.expects("fetchValue").withExactArgs("~bar~", sinon.match.same(oListener))
 			.returns(_SyncPromise.resolve(oResult));
 
 		assert.strictEqual(oNestedBinding.fetchValue("bar", oListener).getResult(), oResult);
