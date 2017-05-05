@@ -150,6 +150,26 @@
 				});
 			});
 
+ 			QUnit.module("Metadata Contexts");
+
+			QUnit.test("On regular controls with metadataContexts the XMLTemplateProcessor._preprocessMetadataContexts is called", function (assert) {
+				var nodeId = "";
+
+				XMLTemplateProcessor._preprocessMetadataContexts = function(sClassName, oNode, oContext) {
+					nodeId = oNode.getAttribute("id");
+				};
+
+				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				return sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				}).loaded().then(function (oView) {
+					var oButton = oView.byId("button");
+					assert.equal(nodeId,"button","XMLTemplateProcessor._preprocessMetadataContexts is called");
+					oView.destroy();
+					XMLTemplateProcessor._preprocessMetadataContexts = null;
+				});
+			});
 		});
 	</script>
 </head>
