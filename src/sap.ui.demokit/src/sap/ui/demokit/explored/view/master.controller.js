@@ -83,7 +83,7 @@ sap.ui.define([
 		onOpenAppSettings: function (oEvent) {
 
 			if (!this._oSettingsDialog) {
-				this._oSettingsDialog = new sap.ui.xmlfragment("sap.ui.demokit.explored.view.appSettingsDialog", this);
+				this._oSettingsDialog = sap.ui.xmlfragment("sap.ui.demokit.explored.view.appSettingsDialog", this);
 				this.getView().addDependent(this._oSettingsDialog);
 			}
 
