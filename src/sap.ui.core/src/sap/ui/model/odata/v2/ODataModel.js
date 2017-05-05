@@ -1545,6 +1545,7 @@ sap.ui.define([
 
 		function handleSuccess(oData) {
 			var sKey = oData ? that._getKey(oData) : null,
+				bLink = !(sPath === "" || sPath.indexOf("/") > 0),
 				oRef = null,
 				sContextPath, oEntity;
 
@@ -1554,7 +1555,9 @@ sap.ui.define([
 				oNewContext = that.getContext('/' + sKey);
 				oRef = {__ref: sKey};
 			}
-			if (oContext && bIsRelative) {
+			/* in case of sPath == "" or a deep path (entity(1)/entities) we
+			   should not link the Entity */
+			if (oContext && bIsRelative && bLink) {
 				sContextPath = oContext.getPath();
 				// remove starting slash
 				sContextPath = sContextPath.substr(1);
