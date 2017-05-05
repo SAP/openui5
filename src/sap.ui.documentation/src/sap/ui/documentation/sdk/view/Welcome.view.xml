@@ -38,7 +38,7 @@
 						<core:Icon
 								src="sap-icon://course-book"
 								size="2.5rem"
-								color="#346187"/>
+								color="Default"/>
 						<Title
 								text="Developer guidelines"
 								titleStyle="H2"
@@ -58,7 +58,7 @@
 						<core:Icon
 								src="sap-icon://explorer"
 								size="2.5rem"
-								color="#346187"/>
+								color="Default"/>
 						<Title
 								text="Explore the controls"
 								titleStyle="H2"
@@ -78,7 +78,7 @@
 						<core:Icon
 								src="sap-icon://developer-settings"
 								size="2.5rem"
-								color="#346187"/>
+								color="Default"/>
 						<Title
 								text="APIs for feature-rich UI controls"
 								titleStyle="H2"
@@ -98,7 +98,7 @@
 						<core:Icon
 								src="sap-icon://hello-world"
 								size="2.5rem"
-								color="#346187"/>
+								color="Default"/>
 						<Title
 								text="Demos and walkthroughs"
 								titleStyle="H2"
@@ -165,7 +165,7 @@
 							<core:Icon
 									src="sap-icon://video"
 									size="2.5rem"
-									color="#346187"/>
+									color="Default"/>
 							<Title
 									text="Join the community"
 									titleStyle="H2"
@@ -329,7 +329,7 @@
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
-									color="#346187"
+									color="Default"
 									class="sapUiTinyMarginBegin sapUiMediumMarginEnd"/>
 							<Text
 									text="A specific UI5 version to manage updates on your own"/>
@@ -339,7 +339,7 @@
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
-									color="#346187"
+									color="Default"
 									class="sapUiTinyMarginBegin sapUiMediumMarginEnd"/>
 							<Text
 									text="The latest stable version which is updated without prior notice."/>
@@ -376,7 +376,7 @@
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
-									color="#346187"
+									color="Default"
 									class="sapUiTinyMarginBegin sapUiMediumMarginEnd"/>
 							<Text
 									text="Found a bug? Report it!"/>
@@ -386,7 +386,7 @@
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
-									color="#346187"
+									color="Default"
 									class="sapUiTinyMarginBegin sapUiMediumMarginEnd"/>
 							<Text
 									text="Want to contribute a bug fix or some new features? Even better!"/>

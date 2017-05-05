@@ -12,7 +12,7 @@
 			<core:Icon
 				src="{icon}"
 				size="2rem"
-				color="#346187">
+				color="Default">
 			</core:Icon>
 			<Title
 				level="H1"
