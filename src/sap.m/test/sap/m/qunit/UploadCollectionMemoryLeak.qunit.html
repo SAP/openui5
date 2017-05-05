@@ -32,6 +32,7 @@
 				for (var i = 0; i < aInstances.length; i++) {
 					if (aInstances[i].getMetadata().getName() === "sap.ui.core.UIArea" ||
 						aInstances[i].getMetadata().getName() === "sap.ui.core.InvisibleText" ||
+						aInstances[i].getMetadata().getName() === "sap.ui.core.Popup" ||
 						isInMessageBox(aInstances[i])) {
 						continue;
 					}
