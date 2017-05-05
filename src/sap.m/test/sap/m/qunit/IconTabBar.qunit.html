@@ -1966,6 +1966,53 @@
 				oIconTabBar.destroy();
 			});
 
+			QUnit.module("tab selection");
+
+			QUnit.test("API Selection", function(assert) {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					expandable: true,
+					expanded: true,
+					items: [
+						new sap.m.IconTabFilter({
+							text: 'Tab 1',
+							key: "key1"
+						}),
+						new sap.m.IconTabFilter({
+							text: 'Tab 2',
+							key: "key2"
+						}),
+						new sap.m.IconTabFilter({
+							text: 'Tab 3',
+							key: "key3"
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// wait 500ms
+				this.clock.tick(500);
+
+				var $tab = oIconTabBar.getItems()[0].$();
+				assert.ok($tab.hasClass('sapMITBSelected'), "first tab is selected");
+
+				oIconTabBar.setSelectedKey(oIconTabBar.getItems()[0].getKey());
+				sap.ui.getCore().applyChanges();
+				assert.ok($tab.hasClass('sapMITBSelected'), "first tab is selected");
+
+				oIconTabBar.setSelectedKey(oIconTabBar.getItems()[1].getKey());
+				sap.ui.getCore().applyChanges();
+				$tab = oIconTabBar.getItems()[1].$();
+				assert.ok($tab.hasClass('sapMITBSelected'), "second tab is selected");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 			QUnit.module("updating data");
 
 			QUnit.test("keep the selected tab", function(assert) {
