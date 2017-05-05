@@ -1,8 +1,7 @@
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
-	"sap/m/PDFViewer",
-	"sap/ui/Device"
-], function (TestUtils, PDFViewer, Device) {
+	"sap/m/PDFViewer"
+], function (TestUtils, PDFViewer) {
 	var oPdfViewer = null;
 
 	QUnit.module('Static usage', {
@@ -21,7 +20,7 @@ sap.ui.define([
 		var loadDone = assert.async();
 
 		var oOptions = {
-			"source": '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf',
+			"source": "./pdfviewer/sample-file.pdf",
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired");
 				loadDone();
@@ -58,8 +57,8 @@ sap.ui.define([
 			loadAsyncAssert4();
 		};
 
-		var sourcePath1 = "/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf";
-		var sourcePath2 = "/test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
+		var sourcePath1 = "./pdfviewer/sample-file.pdf";
+		var sourcePath2 = "./pdfviewer/sample-file2.pdf";
 
 		var oOptions = {
 			"source": sourcePath1,
