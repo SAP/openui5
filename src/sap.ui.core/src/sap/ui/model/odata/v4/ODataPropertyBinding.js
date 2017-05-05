@@ -34,8 +34,7 @@ sap.ui.define([
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
 	 *   Note: Binding parameters may only be provided for absolute binding paths as only those
 	 *   lead to a data service request.
 	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
@@ -47,12 +46,6 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
-	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
-	 *   or the model's update group ID is used,
-	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   For valid values, see parameter "$$groupId".
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided
 	 *
@@ -78,9 +71,8 @@ sap.ui.define([
 					throw new Error("Invalid path: " + sPath);
 				}
 				oBindingParameters = _ODataHelper.buildBindingParameters(mParameters,
-					["$$groupId", "$$updateGroupId"]);
+					["$$groupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
-				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				this.mQueryOptions = _ODataHelper.buildQueryOptions(this.oModel.mUriParameters,
 					mParameters);
 				this.oContext = oContext;
@@ -315,8 +307,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.getUpdateGroupId = function () {
-		return this.sUpdateGroupId
-			|| (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
+		return (this.bRelative && this.oContext && this.oContext.getUpdateGroupId
 					&& this.oContext.getUpdateGroupId())
 			|| this.oModel.getUpdateGroupId();
 	};
