@@ -257,9 +257,9 @@ sap.ui.define([
 			},
 
 			_bindAllLibsModel : function (oAllLibsData) {
-				var oLibsModel = new JSONModel(oAllLibsData);
+				var oLibsModel = this.getOwnerComponent().getModel("libsData");
 				oLibsModel.setSizeLimit(iTreeModelLimit);
-				this.getOwnerComponent().setModel(oLibsModel, "libsData");
+				oLibsModel.setData(oAllLibsData, false /* mo merge with previous data */);
 			},
 
 			_bindTreeModel : function (oTree, aTreeContent) {
