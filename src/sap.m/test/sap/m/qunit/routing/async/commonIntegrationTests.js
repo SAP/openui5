@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 sap.ui.define(
 	[
 		"sap/m/NavContainer",
@@ -297,4 +299,5 @@ sap.ui.define(
 			}
 		};
 
-		});
+	}
+);

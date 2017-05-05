@@ -1,5 +1,8 @@
+/*global QUnit,sinon,qutils*/
+
 (function () {
 	"use strict";
+
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("HTML", {
@@ -135,8 +138,8 @@
 		assert.strictEqual(aRange[0], newRange[0], "The first value of the range should be set to " + newRange[0]);
 		assert.strictEqual(aRange[1], newRange[1], "The second value of the range should be set to " + newRange[1]);
 
-		assert.strictEqual(parseInt(this.rangeSlider.$("LeftTooltip").text()), newRange[0], "The tooltip1's value should be changed to the left handle's value of " + newRange[0]);
-		assert.strictEqual(parseInt(this.rangeSlider.$("RightTooltip").text()), newRange[1], "The tooltip2's value should be changed to the right handle's value of " + newRange[1])
+		assert.strictEqual(parseInt(this.rangeSlider.$("LeftTooltip").text(), 10), newRange[0], "The tooltip1's value should be changed to the left handle's value of " + newRange[0]);
+		assert.strictEqual(parseInt(this.rangeSlider.$("RightTooltip").text(), 10), newRange[1], "The tooltip2's value should be changed to the right handle's value of " + newRange[1]);
 	});
 
 	QUnit.test("set/getValue()", function (assert) {
@@ -232,8 +235,8 @@
 	});
 
 	QUnit.test("setValue()", function (assert) {
-		var that = this.rangeSlider.setValue();
-		assert.ok(that === this.rangeSlider, "The function should not do anything and return this for chaining");
+		var vResult = this.rangeSlider.setValue();
+		assert.ok(vResult === this.rangeSlider, "The function should not do anything and return this for chaining");
 	});
 
 	QUnit.test("_calculateHandlePosition()", function (assert) {
@@ -421,7 +424,7 @@
 			//Cleanup
 			oSlider.destroy();
 			oSlider = null;
-		}
+		};
 
 		check({value: 500, value2: 1000, min: 0, max: 2000});
 		check({value: 1000, value2: 500, min: 0, max: 2000});
@@ -443,7 +446,7 @@
 			//Cleanup
 			oSlider.destroy();
 			oSlider = null;
-		}
+		};
 
 		check({value: 100, max: 500, value2: 600, min: 200});
 		check({value: 100, min: 200, max: 2000,value2: 5000});
@@ -463,7 +466,7 @@
 			//Cleanup
 			oSlider.destroy();
 			oSlider = null;
-		}
+		};
 
 		check({range: [500, 1000], min: -100, max: 2000});
 		check({min: -100, max: 2000, range: [500, 1000]});
@@ -483,7 +486,7 @@
 			//Cleanup
 			oSlider.destroy();
 			oSlider = null;
-		}
+		};
 
 		check({range: [-200, 3000], min: -100, max: 2000});
 		check({min: -100, max: 2000, range: [-500, 3000]});

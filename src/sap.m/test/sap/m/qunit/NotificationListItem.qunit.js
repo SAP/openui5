@@ -1,3 +1,5 @@
+/* global QUnit, sinon */
+
 (function() {
 	'use strict';
 
@@ -331,7 +333,7 @@
 			new sap.m.Button({
 				text: 'Accept',
 				tap: function () {
-					new sap.m.MessageToast('Accept button pressed');
+					sap.m.MessageToast.show('Accept button pressed');
 				}
 			})
 		);
@@ -539,7 +541,7 @@
 		assert.strictEqual(this.NotificationListItem.getTruncate(), false, 'Notification shouldn\'t be truncated after pressing "Show More" button.');
 		assert.strictEqual(fnEventSpy.callCount, 1, 'Pressing the "Show More" button should call the _deregisterResize() method.');
 		assert.strictEqual(this.NotificationListItem.getDomRef('expandCollapseButton').textContent, collapseText,
-			'The "'+ expandText +'" button text should be changed to "' + collapseText + '".');
+			'The "' + expandText + '" button text should be changed to "' + collapseText + '".');
 	});
 
 	QUnit.test('When resizing _registerResize() should be called', function(assert) {
@@ -597,21 +599,18 @@
 		var fnEventSpy = sinon.spy(this.NotificationListItem, '_showHideTruncateButton');
 		this.NotificationListItem._deregisterResize();
 
-		// arrange		
+		// arrange
 		this.list.setWidth('50%');
 		sap.ui.getCore().applyChanges();
-
-		var buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 1, 'The _showHideTruncateButton() method should be called.');
 		assert.strictEqual(this.NotificationListItem.$('expandCollapseButton').hasClass('sapMNLI-CollapseButtonHide'), false, 'The hideShowMoreButton is not hidden');
 
-		// arrange		
+		// arrange
 		this.NotificationListItem.setHideShowMoreButton(true);
 
 		sap.ui.getCore().applyChanges();
-		buttonClassList = this.NotificationListItem.getDomRef('expandCollapseButton').classList;
 
 		// assert
 		assert.strictEqual(fnEventSpy.callCount, 2, 'The _showHideTruncateButton() method should be called again.');
@@ -812,7 +811,7 @@
 					model.setProperty(item.getBindingContext().getPath() + "/displayed", false);
 					sap.ui.getCore().byId("list").getBinding("items").filter([
 						new sap.ui.model.Filter("displayed", "EQ", true)
-					])
+					]);
 				}
 			});
 			model.setData([

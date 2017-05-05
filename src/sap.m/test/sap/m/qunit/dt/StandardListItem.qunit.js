@@ -13,11 +13,11 @@
 			create: function () {
 				return new StandardListItem({
 					title: "Title"
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});
