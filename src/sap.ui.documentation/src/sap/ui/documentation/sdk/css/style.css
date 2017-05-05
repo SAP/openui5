@@ -474,3 +474,19 @@ code, kbd, pre, samp {
 .sapUiTheme-sap_belize_plus .sapUiDocumentationMasterPage {
 	background: #3b4c5b;
 }
+
+/* Topics - dynamic page */
+.sapUiDocumentationTopicTitle {
+	font-size: 1.375rem !important;
+}
+
+html.sap-phone .sapUiDocumentationTopicTitle {
+	font-size: 1.25rem !important;
+}
+
+.sapUiDocumentationDynamicPageTitle .sapFDynamicPageTitleLeft {
+	width: 80% !important;
+}
+.sapUiDocumentationDynamicPageTitle .sapFDynamicPageTitleRight {
+	width: 20% !important;
+}
