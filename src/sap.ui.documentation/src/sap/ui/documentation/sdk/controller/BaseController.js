@@ -112,6 +112,15 @@ sap.ui.define([
 			},
 
 			/**
+			 * Getter for the application root view
+			 * @return {sap.ui.core.mvc.View} Application root view
+			 */
+			getRootView: function () {
+				var oComponent = this.getOwnerComponent();
+				return oComponent.byId(oComponent.getManifestEntry("/sap.ui5/rootView").id);
+			},
+
+			/**
 			 * Retrieves the actual component for the control.
 			 * @param {string} sControlName
 			 * @return {string} the actual component
