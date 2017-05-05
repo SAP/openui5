@@ -1644,14 +1644,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oFileNameEditBox = sap.ui.getCore().byId(sItemId + "-ta_editFileName");
 
 			if (!oFileNameEditBox) {
-				oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
-					type : sap.m.InputType.Text,
+				oFileNameEditBox = oItem._getControl("sap.m.Input", {
+					id: sItemId + "-ta_editFileName",
+					type: sap.m.InputType.Text,
 					fieldWidth: "75%",
-					valueState : sValueState,
-					valueStateText : sValueStateText,
+					valueState: sValueState,
+					valueStateText: sValueStateText,
 					showValueStateMessage: bShowValueStateMessage,
 					description: oFile.extension
-				}).addStyleClass("sapMUCEditBox");
+				});
+				oFileNameEditBox.addStyleClass("sapMUCEditBox");
 				oFileNameEditBox.setModel(oItem.getModel());
 				oFileNameEditBox.setValue(sFileName);
 			} else {
