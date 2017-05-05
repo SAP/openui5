@@ -564,7 +564,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.oSelectedItem &&
 			this.oSelectedItem.getVisible() &&
-			(bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
+			(!bAPIchange && bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
 			this.oSelectedItem.$()
 					.removeClass("sapMITBSelected")
 					.attr('aria-selected', false)
