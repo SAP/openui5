@@ -10,8 +10,7 @@
 	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-libs="sap.m">
 </script>
-<script
-	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../_includeQUnit.js"></script>
 <script>
 QUnit.config.autostart = false;
 sap.ui.getCore().attachInit(function () {
@@ -21,7 +20,6 @@ sap.ui.getCore().attachInit(function () {
 		"sap/ui/test/Opa",
 		"sap/ui/test/Opa5",
 		"sap/ui/thirdparty/sinon",
-		"sap/ui/qunit/qunit-css",
 		"sap/ui/qunit/qunit-junit",
 		"sap/ui/qunit/qunit-coverage",
 		"sap/ui/thirdparty/sinon-qunit"
@@ -48,10 +46,10 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			assertPageObjectIsReturned(oPages);
+			assertPageObjectIsReturned(assert, oPages);
 
-			assertStandardActionsRegisteredFor("onMyFirstPage");
-			assertStandardAssertionsRegisteredFor("onMyFirstPage");
+			assertStandardActionsRegisteredFor(assert, "onMyFirstPage");
+			assertStandardAssertionsRegisteredFor(assert, "onMyFirstPage");
 		});
 
 
@@ -74,8 +72,8 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			assertStandardActionsRegisteredFor("onMyFirstPage");
-			assertStandardAssertionsRegisteredFor("onMySecondPage");
+			assertStandardActionsRegisteredFor(assert, "onMyFirstPage");
+			assertStandardAssertionsRegisteredFor(assert, "onMySecondPage");
 		});
 
 		QUnit.test("Should be able to pass different namespaces and base classes to a page object", function(assert) {
@@ -99,11 +97,11 @@ sap.ui.getCore().attachInit(function () {
 				}
 			});
 
-			assertPageObjectBase(oPages,fnOtherBase);
-			assertPageObjectNamespaces(oPages);
+			assertPageObjectBase(assert, oPages,fnOtherBase);
+			assertPageObjectNamespaces(assert, oPages);
 		});
 
-		QUnit.test("Should prevent namespaces clashes by logging an error", function preventNamespaceClashTest () {
+		QUnit.test("Should prevent namespaces clashes by logging an error", function preventNamespaceClashTest (assert) {
 			this.stub(jQuery.sap.log,"error"); //prevent the error from appearing in the console log as it is wanted here
 
 			Opa5.createPageObjects({
@@ -114,7 +112,7 @@ sap.ui.getCore().attachInit(function () {
 					}
 				}
 			});
-			assertNamespaceClashErrorLogged(false);
+			assertNamespaceClashErrorLogged(assert, false);
 
 			Opa5.createPageObjects({
 				onMyFirstPage : {
@@ -124,7 +122,7 @@ sap.ui.getCore().attachInit(function () {
 					}
 				}
 			});
-			assertNamespaceClashErrorLogged(true);
+			assertNamespaceClashErrorLogged(assert, true);
 		});
 
 		QUnit.test("Should keep the page if you extend the Opa config", function (assert) {
@@ -233,13 +231,13 @@ sap.ui.getCore().attachInit(function () {
 			return oView;
 		}
 
-		function assertPageObjectIsReturned(oPages){
+		function assertPageObjectIsReturned(assert, oPages){
 			assert.ok(oPages,"Page Object is returned");
 			assert.ok(oPages.onMyFirstPage.actions.iCanDoMagic, "Page Object has access to the actions it describes");
 			assert.ok(oPages.onMyFirstPage.assertions.iCanSeeIt, "Page Object has access to the assertions it describes");
 		}
 
-		function assertStandardActionsRegisteredFor(sPageName){
+		function assertStandardActionsRegisteredFor(assert, sPageName){
 			assert.ok(Opa.config.actions[sPageName], "Page Object is added to the actions");
 			assert.ok(Opa.config.actions[sPageName].iCanDoMagic, "Page Object actions are added");
 			assert.ok(Opa.config.actions[sPageName].iCanDoOtherThings, "Page Object actions are added");
@@ -247,24 +245,25 @@ sap.ui.getCore().attachInit(function () {
 
 			assert.deepEqual(Opa.config.arrangements[sPageName], Opa.config.actions[sPageName], "Page Object actions can be uses as Opa arrangements and actions");
 		}
-		function assertStandardAssertionsRegisteredFor(sPageName){
+
+		function assertStandardAssertionsRegisteredFor(assert, sPageName){
 			assert.ok(Opa.config.assertions[sPageName], "Page Object is added to the assertions");
 			assert.ok(Opa.config.assertions[sPageName].iCanSeeIt, "Page Object assertions are added");
 			assert.ok(Opa.config.assertions[sPageName].iCanHearIt, "Page Object assertions are added");
 			assert.ok(!Opa.config.assertions[sPageName].iCanDoMagic, "Page Object actions are not added to the assertions");
 		}
 
-		function assertPageObjectBase(oPages,fnOtherBase){
+		function assertPageObjectBase(assert, oPages,fnOtherBase){
 			assert.ok(oPages.onMyFirstPage.actions instanceof fnOtherBase, "onMyFirstPage has other base class");
 			assert.ok(oPages.onMySecondPage.assertions instanceof Opa5, "onMySecondPage has default base class");
 		}
 
-		function assertPageObjectNamespaces(oPages){
+		function assertPageObjectNamespaces(assert, oPages){
 			assert.ok(oPages.onMyFirstPage.actions instanceof sap.ui.test.opa.pageObject.onMyFirstPage.actions, "onMyFirstPage has default namespace");
 			assert.ok(oPages.onMySecondPage.assertions instanceof  foo.bar.onMySecondPage.assertions, "onMySecondPage has given namespace");
 		}
 
-		function assertNamespaceClashErrorLogged(bIsCalled){
+		function assertNamespaceClashErrorLogged(assert, bIsCalled){
 			assert.equal(jQuery.sap.log.error.calledOnce,bIsCalled,"Error log is called");
 			if(bIsCalled){
 				assert.equal(jQuery.sap.log.error.args[0][0],"Opa5 Page Object namespace clash: You have loaded multiple page objects with the same name. To prevent overriding themself, specify the namespace parameter.","Should log namespace clash error message");

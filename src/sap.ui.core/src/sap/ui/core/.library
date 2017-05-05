@@ -81,6 +81,7 @@
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
         <raw-module name="sap/ui/thirdparty/punycode.js" />
+        <raw-module name="sap/ui/thirdparty/qunit-2.js" />
         <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-reporter-junit.js" depends="sap/ui/thirdparty/qunit.js" />
