@@ -257,4 +257,6 @@
 		sLogo = jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/sap_50x26.png";
 	}
 
+	window.sLogo = sLogo;
+
 })();
