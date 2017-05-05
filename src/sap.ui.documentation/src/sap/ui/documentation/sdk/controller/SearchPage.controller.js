@@ -19,13 +19,12 @@ sap.ui.define([
 			onInit: function () {
 				this.bindListResults();
 				this.getRouter().getRoute("search").attachPatternMatched(this._onTopicMatched, this);
+				this.setModel(new JSONModel());
 			},
 
 			bindListResults: function () {
 				this.dataObject = {data:[]};
-				this.oSearchModel = new JSONModel();
-				this.oSearchModel.setData(this.dataObject);
-				this.getView().setModel(this.oSearchModel);
+				this.getModel().setData(this.dataObject);
 			},
 
 			/* =========================================================== */
@@ -42,7 +41,7 @@ sap.ui.define([
 				var that = this,
 					sQuery = event.getParameter("arguments").searchParam;
 				this.dataObject.searchTerm = sQuery;
-				this.oSearchModel.refresh();
+				this.getModel().refresh();
 
 				try {
 					this.hideMasterSide();
@@ -138,7 +137,7 @@ sap.ui.define([
 				} else {
 					jQuery(".sapUiRrNoData").html("Search failed, please retry ...");
 				}
-				this.oSearchModel.refresh();
+				this.getModel().refresh();
 			},
 
 			getGroupHeader : function (oGroup) {
@@ -158,17 +157,17 @@ sap.ui.define([
 
 			onAllLoadMore : function (oEvent) {
 				this.dataObject.visibleAllLength = oEvent.getParameter("actual");
-				this.oSearchModel.refresh();
+				this.getModel().refresh();
 			},
 
 			onAPILoadMore : function (oEvent) {
 				this.dataObject.visibleAPILength = oEvent.getParameter("actual");
-				this.oSearchModel.refresh();
+				this.getModel().refresh();
 			},
 
 			onDocLoadMore : function (oEvent) {
 				this.dataObject.visibleDocLength = oEvent.getParameter("actual");
-				this.oSearchModel.refresh();
+				this.getModel().refresh();
 			},
 
 			openSearchResult : function (oControlEvent) {
