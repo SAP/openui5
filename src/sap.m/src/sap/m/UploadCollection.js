@@ -1763,7 +1763,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (!oOkButton) {
 				oOkButton = new sap.m.Button({
 					id : sItemId + "-okButton",
-					text : this._oRb.getText("UPLOADCOLLECTION_OKBUTTON_TEXT"),
+					text : this._oRb.getText("UPLOADCOLLECTION_RENAMEBUTTON_TEXT"),
 					type : sap.m.ButtonType.Transparent
 				}).addStyleClass("sapMUCOkBtn");
 			}
