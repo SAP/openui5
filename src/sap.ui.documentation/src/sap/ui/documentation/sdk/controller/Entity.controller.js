@@ -146,7 +146,7 @@ sap.ui.define([
 
 					// route to not found page IF there is NO index entry AND NO docu from server
 					if (!oEntity && !oDoc) {
-						this.router.myNavToWithoutHash("sap.ui.demokit.explored.view.notFound", "XML", false, {path: sNewId});
+						this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, {path: sNewId});
 						return;
 					}
 
