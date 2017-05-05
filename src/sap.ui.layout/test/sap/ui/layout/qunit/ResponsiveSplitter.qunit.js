@@ -397,4 +397,56 @@
 
 		assert.equal(oSplitterPaginatorItems.attr("aria-checked"), sChecked, "Single paginator is selected ");
 	});
+
+
+	QUnit.module("Integration tests");
+
+	QUnit.test("Inserting panel inside panel should trigger 'manual' resize.", function (assert) {
+		// Setup
+		var oPane = new sap.ui.layout.PaneContainer({
+			id: "leftPaneCont",
+			panes: [new sap.ui.layout.SplitPane({
+				id: "leftPane",
+				content: [new sap.m.Text({text: "This text should have automatic word wrap, as the size of the left area is resized via resize handler of the splitter. But when the text control is removed from the splitter aggregation and added again, then the previous width is remembered and compared with the new width. As the width did not change the left area is not resized correctly and the text is not wrapped anymore correctly."})]
+			})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "20%"
+			})
+		});
+
+		var oSplitter = new sap.ui.layout.ResponsiveSplitter({
+			rootPaneContainer: new sap.ui.layout.PaneContainer({
+				id: "rootPaneCont",
+				panes: [
+					new sap.ui.layout.PaneContainer({
+						id: "middlePaneCont",
+						panes: [new sap.ui.layout.SplitPane({
+							id: "middlePane",
+							content: [new sap.m.Text({text: "Middle"})]
+						})],
+						layoutData: new sap.ui.layout.SplitterLayoutData({
+							size: "80%"
+						})
+					})
+				]
+			})
+		});
+
+		var oResizeSpy = this.spy(oPane._oSplitter, "triggerResize");
+
+		oSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSplitter.getRootPaneContainer().insertPane(oPane);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been inserted");
+
+		//Cleanup
+		oPane = null;
+		oSplitter.destroy();
+		oSplitter = null;
+	});
 })();
