@@ -256,7 +256,6 @@ sap.ui.define([
 				// Get rid of function around code
 				code = code.replace(/^function.+{/, "");
 
-				//code = code.replace(/return \[[\s\S]*/, "");
 				code = code.replace(/}[!}]*$/, "");
 
 				// Get rid of unwanted code if CODESNIP tags are used
