@@ -371,7 +371,22 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 
 		if (vReturnMetadata){
-			jQuery.extend(true, oDesignTimeMetadata.getData(), vReturnMetadata);
+			var oData = oDesignTimeMetadata.getData();
+			if (vReturnMetadata.actions === null) {
+				var mAggregations = oElement.getMetadata().getAllAggregations();
+				var aAggregationNames = Object.keys(mAggregations);
+				aAggregationNames = aAggregationNames.concat(
+					Object.keys(oData.aggregations).filter(function (sAggregationName) {
+				    return aAggregationNames.indexOf(sAggregationName) < 0;
+				}));
+
+				aAggregationNames.forEach(function(sAggregationName) {
+					if (oData.aggregations[sAggregationName] && oData.aggregations[sAggregationName].actions) {
+						oData.aggregations[sAggregationName].actions = null;
+					}
+				});
+			}
+			jQuery.extend(true, oData, vReturnMetadata);
 		}
 
 		return true;
