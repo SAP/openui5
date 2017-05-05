@@ -152,23 +152,16 @@ sap.ui.define([
 						// key
 						"SalesOrderID" : "",
 						// properties
-						"BillingStatus" : "",
-						"BillingStatusDesc" : "",
 						"BuyerID" : "0100000000",
 						"BuyerName" : "",
 						"ChangedAt" : "1970-01-01T00:00:00Z",
 						"CreatedAt" : "1970-01-01T00:00:00Z",
 						"CurrencyCode" : "EUR",
-						"DeliveryStatus" : "",
-						"DeliveryStatusDesc" : "",
 						"GrossAmount" : "0.00",
 						"LifecycleStatus" : "N",
 						"LifecycleStatusDesc" : "New",
-						"NetAmount" : "0.00",
 						"Note" : null, // set to null to provoke server error if no note is entered
 						"NoteLanguage" : "E",
-						"TaxAmount" : "0.00",
-						"SOItemCount" : 0,
 						// navigation property
 						"SO_2_BP" : null
 					}),
@@ -211,16 +204,14 @@ sap.ui.define([
 				"CurrencyCode" : "EUR",
 				"DeliveryDate" : oDeliveryDate.toJSON(),
 				"GrossAmount" : "1137.64",
-				"NetAmount" : "956",
 				"Note" : "",
 				"NoteLanguage" : "E",
 				"Product" : {
 					"ProductID" : "HT-1000",
-					"ProductName" : "Notebook Basic 15"
+					"ProductName" : ""
 				},
 				"Quantity" : "1.000",
 				"QuantityUnit" : "EA",
-				"TaxAmount" : "181.64",
 				// navigation properties
 				"SOITEM_2_PRODUCT" : null
 			});
