@@ -688,15 +688,17 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
 		var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
-		var aAggregationNames = Object.keys(mAggregationsMetadata);
-		aAggregationNames.forEach(function (sAggregationName) {
-			if (mAggregationsWithOverlay[sAggregationName] === undefined) {
-				bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
-				if (!bIgnored) {
-					this._createAggregationOverlay(sAggregationName);
+		if (mAggregationsMetadata) {
+			var aAggregationNames = Object.keys(mAggregationsMetadata);
+			aAggregationNames.forEach(function (sAggregationName) {
+				if (mAggregationsWithOverlay[sAggregationName] === undefined) {
+					bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
+					if (!bIgnored) {
+						this._createAggregationOverlay(sAggregationName);
+					}
 				}
-			}
-		}, this);
+			}, this);
+		}
 
 		this.sync();
 	};

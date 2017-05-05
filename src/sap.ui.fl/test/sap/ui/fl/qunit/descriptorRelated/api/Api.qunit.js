@@ -610,6 +610,42 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_ui5_addLibraries", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorVariant;
+		var mParameter = {
+		    "libraries": {
+			    "descriptor.mocha133": {
+			        "minVersion": "1.44",
+			        "lazy": false
+				    }
+				}
+			};
+		return DescriptorInlineChangeFactory.create_ui5_addLibraries(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addLibraries");
+			return DescriptorVariantFactory.createNew({
+					"id" : "a.id",
+					"reference": "a.reference"
+			});
+		}).then(function(oDescriptorVariant){
+			_oDescriptorVariant = oDescriptorVariant;
+			return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
+		}).then(function(){
+			assert.ok(_oDescriptorVariant._content[0].content.libraries['descriptor.mocha133'], 'Library is added');
+			assert.deepEqual(_oDescriptorVariant._content[0].content, mParameter, 'Added library properties are equal to parameters set in factory method');
+		});
+	});
+
+	QUnit.test("create_ui5_addLibraries failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_addLibraries({
+				"libraries" : "a.id"
+			});
+		});
+	});
+
 	QUnit.test("create_app_setShortTitle", function(assert) {
 		var _oDescriptorInlineChange;
 		var _oDescriptorVariant;

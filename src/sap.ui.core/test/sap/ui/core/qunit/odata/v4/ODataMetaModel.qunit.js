@@ -3785,6 +3785,84 @@ sap.ui.require([
 	});
 
 	// *********************************************************************************************
+	QUnit.test("requestValueListInfo: property in cross-service reference", function (assert) {
+		var sMappingUrl = "../ValueListService/$metadata",
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			oProperty = {
+				"$kind" : "Property"
+			},
+			oMetadata = {
+				"$Version" : "4.0",
+				"$Reference" : {
+					"/Foo/EpmSample/$metadata" : {
+						"$Include" : ["zui5_epm_sample."]
+					}
+				},
+				"$EntityContainer" : "base.Container",
+				"base.Container" : {
+					"BusinessPartnerList" : {
+						"$kind" : "EntitySet",
+						"$Type" : "base.BusinessPartner"
+					}
+				},
+				"base.BusinessPartner" : {
+					"$kind" : "EntityType",
+					"BP_2_PRODUCT" : {
+						"$kind" : "NavigationProperty",
+						"$Type" : "zui5_epm_sample.Product"
+					}
+				}
+			},
+			oMetadataProduct = {
+				"$Version" : "4.0",
+				"zui5_epm_sample.Product" : {
+					"$kind" : "Entity",
+					"Category" : oProperty
+				},
+				"zui5_epm_sample." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"zui5_epm_sample.Product/Category" : {
+							"@com.sap.vocabularies.Common.v1.ValueListReferences" : [sMappingUrl]
+						}
+					}
+				}
+			},
+			sPropertyPath = "/BusinessPartnerList('0100000000')/BP_2_PRODUCT('HT-1000')/Category",
+			oRequestorMock = this.mock(oModel.oMetaModel.oRequestor),
+			oValueListMappings = {
+				"" : {CollectionPath : ""}
+			},
+			oValueListModel = {sServiceUrl : sMappingUrl};
+
+		oRequestorMock.expects("read").withExactArgs("/Foo/DataService/$metadata")
+			.returns(Promise.resolve(oMetadata));
+		oRequestorMock.expects("read").withExactArgs("/Foo/EpmSample/$metadata")
+			.returns(Promise.resolve(oMetadataProduct));
+		oMetaModelMock.expects("getOrCreateValueListModel")
+			.withExactArgs(sMappingUrl)
+			.returns(oValueListModel);
+		oMetaModelMock.expects("fetchValueListMappings")
+			.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample",
+				sinon.match.same(oProperty))
+			.returns(Promise.resolve(oValueListMappings));
+
+		// code under test
+		return oModel.getMetaModel().requestValueListInfo(sPropertyPath).then(function (oResult) {
+			assert.deepEqual(oResult, {
+				"" : {
+					$model : oValueListModel,
+					CollectionPath : ""
+				}
+			});
+		});
+	});
+
+	// *********************************************************************************************
 	QUnit.test("requestValueListInfo: same qualifier in reference and local", function (assert) {
 		var sMappingUrl = "../ValueListService/$metadata",
 			oProperty = {

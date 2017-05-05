@@ -1235,8 +1235,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * Checks if drag and drop is allowed.
-	 * @returns {boolean}
+	 * Checks if Drag and Drop is allowed.
+	 * @returns {boolean} True if Drag and Drop is supported based on the running use cases.
 	 * @private
 	 */
 	UploadCollection.prototype._isDragAndDropAllowed = function() {
@@ -1456,9 +1456,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		sFileNameLong = oItem.getFileName();
 
 		if (sStatus === UploadCollection._uploadingStatus) {
-			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
-				visible: true
-			}).addStyleClass("sapMUCloadingIcon");
+			oBusyIndicator = oItem._getControl("sap.m.BusyIndicator", {
+				id: sItemId + "-ia_indicator"
+			});
+			oBusyIndicator.addStyleClass("sapMUCloadingIcon");
 		} else {
 			oItemIcon = this._createIcon(oItem, sItemId, sFileNameLong, that);
 		}
@@ -1611,10 +1612,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (oFileName) {
 				oFileName.destroy();
 			}
-			oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
-				enabled : bEnabled,
-				press : [that, this._triggerLink, this]
-			}).addStyleClass("sapMUCFileName");
+
+			oFileName = oItem._getControl("sap.m.Link", {
+				id: sItemId + "-ta_filenameHL",
+				enabled: bEnabled,
+				press: [that, this._triggerLink, this]
+			});
+
+			oFileName.addStyleClass("sapMUCFileName");
 			oFileName.setModel(oItem.getModel());
 			oFileName.setText(sFileNameLong);
 			return oFileName;
@@ -1762,7 +1767,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (!oOkButton) {
 				oOkButton = new sap.m.Button({
 					id : sItemId + "-okButton",
-					text : this._oRb.getText("UPLOADCOLLECTION_OKBUTTON_TEXT"),
+					text : this._oRb.getText("UPLOADCOLLECTION_RENAMEBUTTON_TEXT"),
 					type : sap.m.ButtonType.Transparent
 				}).addStyleClass("sapMUCOkBtn");
 			}
@@ -2103,9 +2108,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Handling of termination of an uploading process
-	 * @param {object} oEvent Event of the upload termination
-	 * @param {object} oContext Context of the upload termination
+	 * Handling of termination of an uploading process
+	 * @param {sap.ui.base.Event} oEvent Event of the upload termination
+	 * @param {sap.m.UploadCollectionItem} oItem Context of the upload termination
 	 * @private
 	 */
 	UploadCollection.prototype._handleTerminate = function(oEvent, oItem) {
@@ -2180,7 +2185,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sap.m.UploadCollection.prototype._handleOk(oEvent, this, this.editModeItem, false);
 			}
 		if (this.sErrorState !== "Error") {
-			for (i = 0; i < cItems ; i++) {
+			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i].getId() === sItemId) {
 					this.aItems[i]._status = "Edit";
 					break;
@@ -3237,7 +3242,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Helper function for better Event API. This reference points to the oEvent comming from the FileUploader
-	 * @param {string} Header parameter name (optional)
+	 * @param {string} sHeaderParameterName Header parameter name (optional)
 	 * @returns {UploadCollectionParameter} || {UploadCollectionParameter[]}
 	 * @private
 	 */
@@ -3429,4 +3434,4 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	return UploadCollection;
 
-}, /* bExport= */ true);
+});

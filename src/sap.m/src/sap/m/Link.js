@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * Link must not be stretched in Form because this would stretch the size of the focus outline
 	 */
-	Link.prototype.getFormShouldNotAdjustWidth = function() {
+	Link.prototype.getFormDoNotAdjustWidth = function() {
 		return true;
 	};
 

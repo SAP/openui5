@@ -102,7 +102,9 @@ sap.ui.define([
 	 * @private
 	 */
 	TabHandling.prototype._onDomChanged = function() {
-		this._removeTabIndex();
+		if (this.getDesignTime().getEnabled()) {
+			this._removeTabIndex();
+		}
 	};
 
 	return TabHandling;

@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				 *
 				 * @since 1.25
 				 */
-				"frameType" : {type : "sap.m.FrameType", group : "Appearance", defaultValue : sap.m.FrameType.Auto}
+				"frameType" : {type : "sap.m.FrameType", group : "Appearance", defaultValue : "Auto"}
 			},
 			defaultAggregation : "content",
 			aggregations : {
@@ -204,4 +204,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	return TileContent;
-}, /* bExport= */true);
+});

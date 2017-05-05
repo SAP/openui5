@@ -47,6 +47,9 @@ sap.ui.define([
 			},
 			warning: function (sMessage, sDetails, sComponent) {
 				jQuery.sap.log.warning(sMessage, sDetails, sComponent);
+			},
+			debug: function (sMessage, sDetails, sComponent) {
+				jQuery.sap.log.debug(sMessage, sDetails, sComponent);
 			}
 		},
 

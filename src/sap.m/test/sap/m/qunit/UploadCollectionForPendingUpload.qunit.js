@@ -537,7 +537,7 @@ QUnit.test("uploadComplete", function(assert) {
 		responseRaw : '{ "propertyOne" : "ValueOne" }',
 		headers : {
 			"headerOne" : "headerValueOne",
-			"headerTwo" : "headerValueTwo",
+			"headerTwo" : "headerValueTwo"
 		}
 	};
 	function uploadComplete(oEvent) {

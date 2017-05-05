@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Parameters'],
+	function(Control, library, Parameters) {
 		"use strict";
 
 		/**
@@ -30,7 +30,6 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 
 			library : "sap.ui.layout",
 			properties : {
-
 				/**
 				 * Defines the title of the cell
 				 */
@@ -61,8 +60,17 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 				 * According to the visual guidelines, it is suggested that you only use 25%, 50%, 75% or 100% cells in
 				 * you applications. For example, 12,5% width is not desirable (1 cell with width 1, and another with width 7)
 				 */
-				width: { type: "int", group: "Appearance", defaultValue: 0 }
-
+				width: { type: "int", group: "Appearance", defaultValue: 0 },
+				/**
+				 * The Background color set from which the background color will be selected.
+				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer.
+				 */
+				backgroundColorSet: { type: "int", group: "Appearance", defaultValue: 0 },
+				/**
+				 * The index of the background color in the color set from which the color will be selected.
+				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer.
+				 */
+				backgroundColorIndex: { type: "int", group: "Appearance", defaultValue: 0 }
 			},
 			defaultAggregation : "content",
 			aggregations : {

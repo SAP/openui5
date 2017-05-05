@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/GenericTile'],
-	function(jQuery, library, Control, GenericTile) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/GenericTile', 'sap/ui/Device', 'sap/ui/core/Icon' ],
+	function(jQuery, library, Control, GenericTile, Device, Icon) {
 	"use strict";
 
 	/**
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			 * Changes the visualization in order to enable additional actions with the SlideTile control.
 			 * @since 1.46.0
 			 */
-			"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
+			"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: "Display" }
 		},
 		defaultAggregation : "tiles",
 		aggregations : {
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 */
 	SlideTile.prototype.init = function() {
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this.setAggregation("_pausePlayIcon", new sap.ui.core.Icon({
+		this.setAggregation("_pausePlayIcon", new Icon({
 			id: this.getId() + "-pause-play-icon",
 			src: "sap-icon://media-pause",
 			color: "#ffffff",
@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 			if (this.hasStyleClass("sapMSTIconPressed")) {
 				this._toggleAnimation();
 				this.removeStyleClass("sapMSTIconPressed");
-			} else if (sap.ui.Device.system.desktop) {
+			} else if (Device.system.desktop) {
 				oEvent.preventDefault();
 				this.getTiles()[this._iCurrentTile].firePress();
 			}
@@ -669,4 +669,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	SlideTile.prototype._getEventParams = GenericTile.prototype._getEventParams;
 
 	return SlideTile;
-}, /* bExport= */ true);
+});

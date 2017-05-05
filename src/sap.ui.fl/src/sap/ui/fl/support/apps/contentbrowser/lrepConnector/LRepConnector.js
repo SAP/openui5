@@ -239,6 +239,7 @@ sap.ui.define([
 		jQuery.ajax({
 			url: sUrl,
 			contentType: "text/plain",
+			dataType: "text",
 			data: oData,
 			beforeSend: function (oRequest) {
 				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);

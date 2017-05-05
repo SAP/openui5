@@ -1,0 +1,46 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Popover
+			id="Popover"
+			title="{i18n>TechInfo.SupportAssistantConfigPopup.Title}"
+			class="sapUiContentPadding"
+			contentMinWidth="400px"
+			placement="VerticalPreferredTop">
+		<content>
+			<VBox binding="{/ProductCollection}" >
+				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Locations}"></Label>
+				<RadioButton id="standard" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.StandardLocation}"/>
+				<Select
+					items="{path:'view>/SupportAssistantPopoverURLs'}"
+					id="standardBootstrapURL"
+					class="sapUiMediumMarginBegin"
+					width="85%"
+					selectedKey="{view>/StandardBootstrapURL}"
+					change="onChangeStandardBootstrapURL">
+					<core:Item key="{view>Value}" text="{view>DisplayName}"/>
+				</Select>
+				<RadioButton id="custom" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.CustomLocation}"/>
+				<Input
+					id="customBootstrapURL"
+					width="85%"
+					class="sapUiMediumMarginBegin"
+					value="{
+							path : 'view>/CustomBootstrapURL',
+							type : '.CustomTypeURL'
+						}"
+					change="onChangeCustomBootstrapURL"
+					valueStateText="{i18n>TechInfo.SupportAssistantConfigPopup.URLValidationMessage}"
+					enabled="false"
+					placeholder="http://&lt;custom&gt;/resources/sap/ui/support/"/>
+
+				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Options}" class="sapUiSmallMarginTop"></Label>
+				<CheckBox
+					id="openInNewWindow"
+					selected="{view>/OpenSupportAssistantInNewWindow}"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.OpenInNewWindow}"
+					select="onChangeOpenInNewWindow"/>
+			</VBox>
+		</content>
+	</Popover>
+</core:FragmentDefinition>

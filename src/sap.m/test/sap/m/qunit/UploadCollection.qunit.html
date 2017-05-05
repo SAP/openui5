@@ -1574,7 +1574,7 @@
 			responseRaw : '{ "propertyOne" : "ValueOne" }',
 			headers : {
 				"headerOne" : "headerValueOne",
-				"headerTwo" : "headerValueTwo",
+				"headerTwo" : "headerValueTwo"
 			}
 		};
 		function uploadComplete(oEvent) {
@@ -1616,7 +1616,7 @@
 		this.oUploadCollection._getFileUploader().fireUploadAborted({
 			fileName: sFileName,
 			requestHeaders: aRequestHeaders
-		})
+		});
 	});
 
 	QUnit.test("Event beforeUploadStarts", function(assert) {
