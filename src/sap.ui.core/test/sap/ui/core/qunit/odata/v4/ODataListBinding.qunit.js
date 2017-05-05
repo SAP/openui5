@@ -566,7 +566,7 @@ sap.ui.require([
 			.returns(mQueryOptions.$orderby);
 		this.mock(_Cache).expects("create").twice()
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				{"$orderby" : "bar", "sap-client" : "111"})
+				{"$orderby" : "bar", "sap-client" : "111"}, false)
 			.returns({});
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -3522,20 +3522,24 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doCreateCache - binding with parameters", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-				$$operationMode : OperationMode.Server}),
-			oCache = {},
-			mCacheQueryOptions = {};
+	[true, false].forEach(function (bAutoExpandSelect, i) {
+		QUnit.test("doCreateCache - binding with parameters, " + i, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
+					$$operationMode : OperationMode.Server}),
+				oCache = {},
+				mCacheQueryOptions = {};
 
-		this.mock(oBinding).expects("getQueryOptionsForPath").never();
-		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-				sinon.match.same(mCacheQueryOptions))
-			.returns(oCache);
+			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
-		// code under test
-		assert.strictEqual(oBinding.doCreateCache("EMPLOYEES", mCacheQueryOptions), oCache);
+			this.mock(oBinding).expects("getQueryOptionsForPath").never();
+			this.mock(_Cache).expects("create")
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
+					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect)
+				.returns(oCache);
+
+			// code under test
+			assert.strictEqual(oBinding.doCreateCache("EMPLOYEES", mCacheQueryOptions), oCache);
+		});
 	});
 
 	//*********************************************************************************************
@@ -3605,7 +3609,7 @@ sap.ui.require([
 				.returns(oFixture.mInheritedQueryOptions);
 			this.mock(_Cache).expects("create")
 				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"/TEAMS('4711')/TEAM_2_EMPLOYEES", oFixture.mExpectedQueryOptions)
+					"/TEAMS('4711')/TEAM_2_EMPLOYEES", oFixture.mExpectedQueryOptions, false)
 				.returns(oCache);
 
 			// code under test

@@ -510,7 +510,7 @@ sap.ui.require([
 			done();
 		});
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"})
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"}, false)
 			.returns({
 				fetchValue : function (sGroupId, sPath) {
 					assert.strictEqual(sPath, "property");
@@ -569,7 +569,7 @@ sap.ui.require([
 				// (don't) create parent cache, it won't be used
 				oCacheMock.expects("createSingle")
 					.withExactArgs(sinon.match.same(that.oModel.oRequestor), sContextPath.slice(1),
-						{"sap-client" : "111"});
+						{"sap-client" : "111"}, false);
 				oControl.bindObject(sContextPath);
 
 				oContextBindingMock = that.oSandbox.mock(oControl.getObjectBinding());
@@ -917,7 +917,7 @@ sap.ui.require([
 			});
 
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {})
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", {}, false)
 			.returns({
 				fetchValue : function (sGroupId, sPath) {
 					return oPromise;

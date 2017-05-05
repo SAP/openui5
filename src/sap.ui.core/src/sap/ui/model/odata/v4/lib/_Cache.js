@@ -33,8 +33,11 @@ sap.ui.define([
 	 *   The function to process the converted options getting the name and the value
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions) {
+	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions,
+			bSortExpandSelect) {
 		Object.keys(mQueryOptions).forEach(function (sKey) {
 			var vValue = mQueryOptions[sKey];
 
@@ -44,11 +47,11 @@ sap.ui.define([
 
 			switch (sKey) {
 				case "$expand":
-					vValue = Cache.convertExpand(vValue);
+					vValue = Cache.convertExpand(vValue, bSortExpandSelect);
 					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
-						vValue = vValue.join(",");
+						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
 					}
 					break;
 				default:
@@ -183,15 +186,19 @@ sap.ui.define([
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function Cache(oRequestor, sResourcePath, mQueryOptions) {
+	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
 		this.mChangeListeners = {};
 		this.mPatchRequests = {}; //map path to an array of (PATCH) promises
 		this.mPostRequests = {}; //map path to an array of entity data (POST bodies)
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
+		this.sResourcePath = sResourcePath
+			+ Cache.buildQueryString(mQueryOptions, false, bSortExpandSelect);
+		this.bSortExpandSelect = bSortExpandSelect;
 	}
 
 	/**
@@ -903,12 +910,14 @@ sap.ui.define([
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost) {
 		Cache.apply(this, arguments);
 
 		this.bPost = bPost;
@@ -1022,6 +1031,8 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {string}
 	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 	 * @example
@@ -1044,30 +1055,38 @@ sap.ui.define([
 	 *		"sap-client" : "003"
 	 *	}
 	 */
-	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions) {
+	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect) {
 		return _Helper.buildQuery(
-			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions));
+			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect));
 	};
 
 	/**
-	 *  Converts the value for a "$expand" in mQueryParams.
+	 * Converts the value for a "$expand" in mQueryParams.
 	 *
-	 *  @param {object} mExpandItems The expand items, a map from path to options
-	 *  @returns {string} The resulting value for the query string
-	 *  @throws {Error} If the expand items are not an object
+	 * @param {object} mExpandItems The expand items, a map from path to options
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @returns {string} The resulting value for the query string
+	 * @throws {Error} If the expand items are not an object
 	 */
-	Cache.convertExpand = function (mExpandItems) {
-		var aResult = [];
+	Cache.convertExpand = function (mExpandItems, bSortExpandSelect) {
+		var aKeys,
+			aResult = [];
 
 		if (!mExpandItems || typeof mExpandItems !== "object") {
 			throw new Error("$expand must be a valid object");
 		}
 
-		Object.keys(mExpandItems).forEach(function (sExpandPath) {
+		aKeys = Object.keys(mExpandItems);
+		if (bSortExpandSelect) {
+			aKeys = aKeys.sort();
+		}
+		aKeys.forEach(function (sExpandPath) {
 			var vExpandOptions = mExpandItems[sExpandPath];
 
 			if (vExpandOptions && typeof vExpandOptions === "object") {
-				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions));
+				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions,
+					bSortExpandSelect));
 			} else {
 				aResult.push(sExpandPath);
 			}
@@ -1082,15 +1101,17 @@ sap.ui.define([
 	 * @param {string} sExpandPath The expand path
 	 * @param {boolean|object} vExpandOptions
 	 *   The options; either a map or simply <code>true</code>
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {string} The resulting string for the OData query in the form "path" (if no
 	 *   options) or "path($option1=foo;$option2=bar)"
 	 */
-	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions) {
+	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions, bSortExpandSelect) {
 		var aExpandOptions = [];
 
 		convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
 			aExpandOptions.push(sOptionName + '=' + vOptionValue);
-		});
+		}, undefined, bSortExpandSelect);
 		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
 			: sExpandPath;
 	};
@@ -1103,9 +1124,12 @@ sap.ui.define([
 	 * @param {object} mQueryOptions The query options
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {object} The converted query options
 	 */
-	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions) {
+	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions,
+			bSortExpandSelect) {
 		var mConvertedQueryOptions = {};
 
 		if (!mQueryOptions) {
@@ -1113,7 +1137,7 @@ sap.ui.define([
 		}
 		convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
 			mConvertedQueryOptions[sKey] = vValue;
-		}, bDropSystemQueryOptions);
+		}, bDropSystemQueryOptions, bSortExpandSelect);
 		return mConvertedQueryOptions;
 	};
 
@@ -1133,11 +1157,13 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.create = function (oRequestor, sResourcePath, mQueryOptions) {
-		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
+	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
+		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 	};
 
 	/**
@@ -1177,6 +1203,8 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
@@ -1184,8 +1212,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bPost) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost);
+	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			bPost) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost);
 	};
 
 	/**

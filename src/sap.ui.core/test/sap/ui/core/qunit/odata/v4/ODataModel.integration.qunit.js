@@ -1158,7 +1158,7 @@ sap.ui.require([
 	<Text id="city" text="{LOCATION/City/CITYNAME}" />\
 </FlexBox>';
 
-		this.expectRequest("EMPLOYEES('2')?$select=AGE,ROOM_ID,ID,Name,LOCATION/City/CITYNAME", {
+		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,LOCATION/City/CITYNAME,Name,ROOM_ID", {
 				"Name" : "Frederic Fall",
 				"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
 			})
@@ -1396,8 +1396,8 @@ sap.ui.require([
 	<Text id="TEAM_ID" text="{EMPLOYEE_2_TEAM/TEAM_2_MANAGER/TEAM_ID}" />\
 </FlexBox>';
 
-		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM"
-				+ "($select=Team_Id,Name;$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
+		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id"
+				+ ";$expand=TEAM_2_MANAGER($select=ID,TEAM_ID))&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_TEAM": {
@@ -1437,7 +1437,7 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER"
-					+ "($select=ID),EMPLOYEE_2_TEAM($select=Team_Id,Name)&$select=AGE,ID",
+					+ "($select=ID),EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1626,7 +1626,7 @@ sap.ui.require([
 </FlexBox>';
 
 		this.expectRequest("EMPLOYEES('2')/EMPLOYEE_2_TEAM"
-					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Team_Id,Name",
+					+ "?$expand=TEAM_2_EMPLOYEES($orderby=AGE%20desc)&$select=Name,Team_Id",
 				{
 					"Name": "SAP NetWeaver Gateway Content",
 					"TEAM_2_EMPLOYEES": [
@@ -1635,7 +1635,7 @@ sap.ui.require([
 					]
 				})
 			.expectRequest("EMPLOYEES('2')?$expand=EMPLOYEE_2_MANAGER($select=ID),"
-					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=ID,AGE",
+					+ "EMPLOYEE_2_TEAM($expand=TEAM_2_EMPLOYEES($orderby=AGE))&$select=AGE,ID",
 				{
 					"AGE": 32,
 					"EMPLOYEE_2_MANAGER": {
@@ -1738,7 +1738,7 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS('2')?$select=Team_Id,Name"
+		this.expectRequest("TEAMS('2')?$select=Name,Team_Id"
 					+ "&$expand=TEAM_2_EMPLOYEES($orderby=Name;$select=ID,Name)", {
 					"Name" : "Team 2",
 					"Team_Id" : "2",
@@ -1905,7 +1905,7 @@ sap.ui.require([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContext = that.oView.byId("master").getItems()[0].getBindingContext();
 
-			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id,Name", {
+			that.expectRequest("TEAMS('TEAM_01')?$select=Name,Team_Id", {
 					"Team_Id" : "TEAM_01",
 					"Name" : "Team #1"
 				})
