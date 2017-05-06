@@ -1765,7 +1765,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (sStatus === "Edit") {
 			oOkButton = sap.ui.getCore().byId(sItemId + "-okButton");
 			if (!oOkButton) {
-				oOkButton = new sap.m.Button({
+				oOkButton = oItem._getControl("sap.m.Button", {
 					id : sItemId + "-okButton",
 					text : this._oRb.getText("UPLOADCOLLECTION_RENAMEBUTTON_TEXT"),
 					type : sap.m.ButtonType.Transparent
@@ -1773,7 +1773,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			oCancelButton = sap.ui.getCore().byId(sItemId + "-cancelButton");
 			if (!oCancelButton) {
-				oCancelButton = new sap.m.Button({
+				oCancelButton = oItem._getControl("sap.m.Button", {
 					id : sItemId + "-cancelButton",
 					text : this._oRb.getText("UPLOADCOLLECTION_CANCELBUTTON_TEXT"),
 					type : sap.m.ButtonType.Transparent
