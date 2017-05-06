@@ -21,9 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.FileUploadIntrospector
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FileUploadIntrospector = Control.extend("sap.ui.demokit.FileUploadIntrospector", /** @lends sap.ui.demokit.FileUploadIntrospector.prototype */ { metadata : {
 

@@ -28,9 +28,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/commons/Link'
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.UI5EntityCueCard
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var UI5EntityCueCard = Control.extend("sap.ui.demokit.UI5EntityCueCard", /** @lends sap.ui.demokit.UI5EntityCueCard.prototype */ { metadata : {
 

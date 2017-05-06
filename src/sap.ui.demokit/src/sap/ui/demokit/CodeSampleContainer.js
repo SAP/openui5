@@ -23,9 +23,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/commons/Link'
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.CodeSampleContainer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CodeSampleContainer = Control.extend("sap.ui.demokit.CodeSampleContainer", /** @lends sap.ui.demokit.CodeSampleContainer.prototype */ { metadata : {
 
