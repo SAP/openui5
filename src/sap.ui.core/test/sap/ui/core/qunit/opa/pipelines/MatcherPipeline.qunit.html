@@ -20,6 +20,8 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+		QUnit.config.autostart = false;
+
 		(function () {
 			var oLogger;
 
@@ -104,6 +106,9 @@
 					assert.strictEqual(oResult, undefined, "nothing was returned");
 					sinon.assert.calledWith(this.fnMatcher);
 				});
+
+				QUnit.start();
+
 			});
 		})();
 	</script>

@@ -20,6 +20,8 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+		QUnit.config.autostart = false;
+
 		sap.ui.require([
 			"jquery.sap.global",
 			"sap/ui/test/pipelines/ActionPipeline"
@@ -69,6 +71,9 @@
 				sinon.assert.calledWith(fnFirstAction, oControlStub);
 				sinon.assert.calledWith(fnSecondAction, oControlStub);
 			});
+
+			QUnit.start();
+
 		});
 	</script>
 </head>

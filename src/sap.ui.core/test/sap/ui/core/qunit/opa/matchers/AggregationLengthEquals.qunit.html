@@ -20,6 +20,8 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+			QUnit.config.autostart = false;
+
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationLengthEquals",
 				"sap/m/ComboBox",
@@ -88,6 +90,9 @@
 					assert.strictEqual(bResult, false, "Did not match");
 					sinon.assert.calledWith(oErrorSpy, "Control 'Element sap.m.ComboBox#myCB' does not have an aggregation called 'anAggregationThatWillNeverBeAddedToTheCombobox'");
 				});
+
+				QUnit.start();
+
 			});
 		</script>
 	</head>
