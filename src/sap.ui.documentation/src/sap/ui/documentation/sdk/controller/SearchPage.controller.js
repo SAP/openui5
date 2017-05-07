@@ -17,9 +17,9 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
+				this.setModel(new JSONModel());
 				this.bindListResults();
 				this.getRouter().getRoute("search").attachPatternMatched(this._onTopicMatched, this);
-				this.setModel(new JSONModel());
 			},
 
 			bindListResults: function () {
@@ -51,7 +51,7 @@ sap.ui.define([
 				}
 
 				// Build the full query string, escape special characters
-				sQuery = "(category:topics OR category:apiref) AND (" + encodeURIComponent(sQuery) + ")";
+				sQuery = "(category:topics OR category:apiref or category:entity) AND (" + encodeURIComponent(sQuery) + ")";
 
 				jQuery.ajax({
 					url: "search?q=" + sQuery,
@@ -73,9 +73,11 @@ sap.ui.define([
 				this.dataObject.data = [];
 				this.dataObject.dataAPI = [];
 				this.dataObject.dataDoc = [];
+				this.dataObject.dataExplored = [];
 				this.dataObject.AllLength = 0;
 				this.dataObject.APILength = 0;
 				this.dataObject.DocLength = 0;
+				this.dataObject.ExploredLength = 0;
 				if ( oData && oData[0] && oData[0].success ) {
 					if ( oData[0].totalHits == 0 ) {
 						jQuery(".sapUiRrNoData").html("No matches found.");
@@ -88,8 +90,8 @@ sap.ui.define([
 								sNavURL = oDoc.path,
 								bShouldAddToSearchResults = false,
 								sCategory;
-							if (sNavURL.indexOf("docs/guide/") === 0) {
-								sNavURL = sNavURL.substring("docs/guide/".length, sNavURL.lastIndexOf(".html"));
+							if (sNavURL.indexOf("topic/") === 0) {
+								sNavURL = sNavURL.substring("topic/".length, sNavURL.lastIndexOf(".html"));
 								sNavURL = "topicId/" + sNavURL;
 								bShouldAddToSearchResults = true;
 								sCategory = "Documentation";
@@ -103,6 +105,19 @@ sap.ui.define([
 									category: sCategory
 								});
 								this.dataObject.DocLength++;
+							} else if (sNavURL.indexOf("entity/") === 0 ) {
+								bShouldAddToSearchResults = true;
+								sCategory = "Explored";
+								this.dataObject.dataExplored.push({
+									index: this.dataObject.ExploredLength,
+									title: oDoc.title ? oDoc.title : "Untitled",
+									path: sNavURL,
+									summary: oDoc.summary ? (oDoc.summary + "...") : "",
+									score: oDoc.score,
+									modified: sModified,
+									category: sCategory
+								});
+								this.dataObject.ExploredLength++;
 							} else if (sNavURL.indexOf("docs/api/symbols/") === 0) {
 								sNavURL = sNavURL.substring("docs/api/symbols/".length, sNavURL.lastIndexOf(".html"));
 								sNavURL = "apiId/" + sNavURL;
@@ -155,6 +170,10 @@ sap.ui.define([
 				return sCategory === "Documentation";
 			},
 
+			categoryExploredFormatter : function (sCategory) {
+				return sCategory === "Explored";
+			},
+
 			onAllLoadMore : function (oEvent) {
 				this.dataObject.visibleAllLength = oEvent.getParameter("actual");
 				this.getModel().refresh();
@@ -167,6 +186,11 @@ sap.ui.define([
 
 			onDocLoadMore : function (oEvent) {
 				this.dataObject.visibleDocLength = oEvent.getParameter("actual");
+				this.getModel().refresh();
+			},
+
+			onExploredLoadMore : function (oEvent) {
+				this.dataObject.visibleExploredLength = oEvent.getParameter("actual");
 				this.getModel().refresh();
 			},
 
