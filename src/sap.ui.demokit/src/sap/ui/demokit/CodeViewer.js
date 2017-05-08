@@ -21,9 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.CodeViewer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CodeViewer = Control.extend("sap.ui.demokit.CodeViewer", /** @lends sap.ui.demokit.CodeViewer.prototype */ { metadata : {
 

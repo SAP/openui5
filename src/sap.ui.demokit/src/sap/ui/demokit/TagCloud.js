@@ -21,9 +21,9 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.TagCloud
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TagCloud = Control.extend("sap.ui.demokit.TagCloud", /** @lends sap.ui.demokit.TagCloud.prototype */ { metadata : {
 

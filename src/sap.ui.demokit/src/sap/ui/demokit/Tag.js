@@ -21,9 +21,9 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.Tag
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Tag = Element.extend("sap.ui.demokit.Tag", /** @lends sap.ui.demokit.Tag.prototype */ { metadata : {
 
