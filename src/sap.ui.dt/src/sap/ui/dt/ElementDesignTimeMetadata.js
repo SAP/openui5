@@ -198,9 +198,6 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 */
 	ElementDesignTimeMetadata.prototype.isAggregationIgnored = function(oElement, sAggregationName) {
 		var mAggregations = this.getAggregations();
-		if (!mAggregations) {
-			return true;
-		}
 		var oAggregationMetadata = mAggregations[sAggregationName];
 		var vIgnore = (oAggregationMetadata) ? oAggregationMetadata.ignore : false;
 		if (!vIgnore || (vIgnore && typeof vIgnore === "function" && !vIgnore(oElement))) {
