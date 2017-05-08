@@ -3220,6 +3220,190 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[FilterOperator.All, FilterOperator.Any].forEach(function (sFilterOperator) {
+		[{
+			description : "no nesting",
+			expectedResult : "p0/" + sFilterOperator.toLowerCase() + "(v0:v0/p1 eq 'value1')",
+			fetchObjects : {
+				"p0" : "Type0",
+				"p0/p1" : "Edm.String"
+			},
+			filter : new Filter({
+				condition : new Filter("v0/p1", FilterOperator.EQ, "value1"),
+				operator : sFilterOperator,
+				path : "p0",
+				variable : "v0"
+			})
+		}, {
+			description : "nested any/all filters",
+			expectedResult : "p0/" + sFilterOperator.toLowerCase() + "(v0:"
+				+ "v0/p1/" + sFilterOperator.toLowerCase() + "(v1:v1/p2 eq 'value2'))",
+			fetchObjects : {
+				"p0" : "Type0",
+				"p0/p1" : "Type1",
+				"p0/p1/p2" : "Edm.String"
+			},
+			filter : new Filter({
+				condition : new Filter({
+					condition : new Filter("v1/p2", FilterOperator.EQ, "value2"),
+					operator : sFilterOperator,
+					path : "v0/p1",
+					variable : "v1"
+				}),
+				operator : sFilterOperator,
+				path : "p0",
+				variable : "v0"
+			})
+		}, {
+			description : "nested multi-filter",
+			expectedResult : "p0/" + sFilterOperator.toLowerCase()
+				+ "(v0:v0/p1 eq 'value1' and v0/p2 eq 'value2')",
+			fetchObjects : {
+				"p0" : "Type0",
+				"p0/p1" : "Edm.String",
+				"p0/p2" : "Edm.String"
+			},
+			filter : new Filter({
+				condition : new Filter({
+					filters: [
+						new Filter("v0/p1", FilterOperator.EQ, "value1"),
+						new Filter("v0/p2", FilterOperator.EQ, "value2")
+					],
+					and: true
+				}),
+				operator : sFilterOperator,
+				path : "p0",
+				variable : "v0"
+			})
+		}, {
+			description : "nested multi-filter containing an 'any' filter",
+			expectedResult : "p0/" + sFilterOperator.toLowerCase()
+			+ "(v0:v0/p1/any(v1:v1/p2 lt 'value1') or v0/p3 eq 'value2')",
+			fetchObjects : {
+				"p0" : "Type0",
+				"p0/p1" : "Type1",
+				"p0/p1/p2" : "Edm.String",
+				"p0/p3" : "Edm.String"
+			},
+			filter : new Filter({
+				condition : new Filter({
+					filters: [
+						new Filter({
+							condition : new Filter("v1/p2", FilterOperator.LT, "value1"),
+							operator : FilterOperator.Any,
+							path : "v0/p1",
+							variable : "v1"
+						}),
+						new Filter("v0/p3", FilterOperator.EQ, "value2")
+					]
+				}),
+				operator : sFilterOperator,
+				path : "p0",
+				variable : "v0"
+			})
+		}, {
+			description : "multi filters using same lambda variable",
+			expectedResult : "p0/" + sFilterOperator.toLowerCase()
+				+ "(v0:v0/p1/any(v1:v1/p3 lt 'value1') or v0/p2/any(v1:v1/p4 gt \'value2\'))",
+			fetchObjects : {
+				"p0" : "Type0",
+				"p0/p1" : "Type1",
+				"p0/p1/p3" : "Edm.String",
+				"p0/p2" : "Type2",
+				"p0/p2/p4" : "Edm.String"
+			},
+			filter : new Filter({
+				condition : new Filter({
+					filters: [
+						new Filter({
+							condition : new Filter("v1/p3", FilterOperator.LT, "value1"),
+							operator : FilterOperator.Any,
+							path : "v0/p1",
+							variable : "v1"
+						}),
+						new Filter({
+							condition : new Filter("v1/p4", FilterOperator.GT, "value2"),
+							operator : FilterOperator.Any,
+							path : "v0/p2",
+							variable : "v1"
+						})
+					]
+				}),
+				operator : sFilterOperator,
+				path : "p0",
+				variable : "v0"
+			})
+		}, {
+			description : "nested filter overwrites outer lambda variable",
+			expectedResult : "p0/" + sFilterOperator.toLowerCase()
+				+ "(v0:v0/p1/" + sFilterOperator.toLowerCase() + "(v0:v0/p2 lt 'value1'))",
+			fetchObjects : {
+				"p0" : "Type0",
+				"p0/p1" : "Type1",
+				"p0/p1/p2" : "Edm.String"
+			},
+			filter : new Filter({
+				condition : new Filter({
+					condition : new Filter("v0/p2", FilterOperator.LT, "value1"),
+					operator : sFilterOperator,
+					path : "v0/p1",
+					variable : "v0"
+				}),
+				operator : sFilterOperator,
+				path : "p0",
+				variable : "v0"
+			})
+		}].forEach(function (oFixture) {
+			QUnit.test("fetchFilter: " + sFilterOperator + " - " + oFixture.description,
+					function (assert) {
+				var oBinding = this.oModel.bindList("/Set"),
+					aFetchObjectKeys = Object.keys(oFixture.fetchObjects),
+					oMetaModelMock = this.mock(oBinding.oModel.oMetaModel);
+
+				oBinding.aApplicationFilters = [oFixture.filter];
+				oMetaModelMock.expects("getMetaContext")
+					.exactly(aFetchObjectKeys.length)
+					.withExactArgs(oBinding.sPath)
+					.returns("~");
+
+				aFetchObjectKeys.forEach(function (sFetchObjectPath) {
+					oMetaModelMock.expects("fetchObject")
+						.withExactArgs(sFetchObjectPath, "~")
+						.returns(Promise.resolve({
+							$Type : oFixture.fetchObjects[sFetchObjectPath]
+						}));
+				});
+
+				// code under test
+				return oBinding.fetchFilter().then(function (sFilterValue) {
+					assert.strictEqual(sFilterValue, oFixture.expectedResult);
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchFilter: any - without predicate", function (assert) {
+		var oBinding = this.oModel.bindList("/Set"),
+			oFilter = new Filter({
+				operator : FilterOperator.Any,
+				path : "p0"
+			}),
+			oMetaModelMock = this.mock(oBinding.oModel.oMetaModel);
+
+		oBinding.aApplicationFilters = [oFilter];
+		oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
+		oMetaModelMock.expects("fetchObject").withExactArgs("p0", "~").returns(Promise.resolve({
+			$Type : "Type0"
+		}));
+
+		// code under test
+		return oBinding.fetchFilter().then(function (sFilterValue) {
+			assert.strictEqual(sFilterValue, "p0/any()");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchFilter: application and control filter", function (assert) {
 		var oBinding = this.oModel.bindList("/Set"),
 			oMetaModelMock = this.mock(oBinding.oModel.oMetaModel),
