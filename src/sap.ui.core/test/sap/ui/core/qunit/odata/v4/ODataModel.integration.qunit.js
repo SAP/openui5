@@ -18,6 +18,9 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
+	var bCheckLogin = TestUtils.isRealOData(),
+		sTeaBusi = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/";
+
 	/**
 	 * Creates a V4 OData model.
 	 *
@@ -47,8 +50,7 @@ sap.ui.require([
 	 * @returns {sap.ui.model.odata.v4.ODataModel} The model
 	 */
 	function createTeaBusiModel(mModelParameters) {
-		return createModel("/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-			mModelParameters);
+		return createModel(sTeaBusi, mModelParameters);
 	}
 
 	/**
@@ -127,6 +129,12 @@ sap.ui.require([
 			this.mListChanges = {};
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
+
+			if (bCheckLogin) {
+				bCheckLogin = false;
+				// The tests only wait for 1 second, so we log in to the server before running them.
+				return jQuery.ajax(TestUtils.proxy(sTeaBusi));
+			}
 		},
 
 		afterEach : function () {
