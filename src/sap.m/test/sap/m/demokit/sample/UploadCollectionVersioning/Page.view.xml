@@ -38,7 +38,7 @@
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
-				items="{path : '/items', templateShareable : 'true'}"
+				items="{path : '/items', templateShareable : false}"
 				mode="MultiSelect">
 				<toolbar>
 					<OverflowToolbar id="myId" >
@@ -60,8 +60,8 @@
 						enableDelete="false"
 						visibleDelete="false"
 						visibleEdit="false"
-						attributes="{path : 'attributes', templateShareable : 'true'}"
-						statuses="{path : 'statuses', templateShareable : 'true'}"
+						attributes="{path : 'attributes', templateShareable : false}"
+						statuses="{path : 'statuses', templateShareable : false}"
 						selected="{selected}">
 						<attributes>
 							<ObjectAttribute
