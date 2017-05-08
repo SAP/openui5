@@ -550,11 +550,17 @@ sap.ui.define([
 						that.oModel.resolve(that.sPath, that.oContext), sClassName);
 					// do not update that.vValue!
 				} else if (that.oContext) {
-					that.oContext.updateValue(sGroupId, that.sPath, vValue, reportError)
-					["catch"](function () {
-						// updateValue is only rejected when the PATCH was canceled
-						// Avoid "Uncaught (in promise)"
-					});
+					that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
+						.then(function (oResult) {
+							return that.oContext.getBinding().updateValue(sGroupId,
+								oResult.propertyPath, vValue, reportError, oResult.editUrl,
+								oResult.entityPath);
+						})
+						["catch"](function (oError) {
+							if (!oError.canceled) {
+								reportError(oError);
+							}
+						});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",
 						that.sPath, sClassName);
