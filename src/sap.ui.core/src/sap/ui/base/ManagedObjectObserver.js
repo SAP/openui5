@@ -371,6 +371,8 @@ sap.ui.define([
 			return;
 		}
 
+		aOrig = aOrig || [];
+
 		for (var i = 0; i < aAdditional.length; i++) {
 			var iIndex = aOrig.indexOf(aAdditional[i]);
 			if (iIndex > -1 && bRemove) {
