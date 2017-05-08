@@ -26,6 +26,7 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -336,7 +337,8 @@
 	QUnit.test("parse with strict check", function(assert){
 
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", strictParsing: true}),
-		    oDate;
+			oDate;
+
 		oDate = oFormat.parse("2014-02-28");
 		assert.ok((oDate.getFullYear() == 2014 && oDate.getMonth() == 1 && oDate.getDate() == 28), "2014-02-28 parsed fine");
 
@@ -361,6 +363,7 @@
 
 		oDate = oFormat.parse("10-11-62");
 		assert.ok(!oDate, "10-11-62 no date returned");
+
 
 	});
 
@@ -519,6 +522,30 @@
 		}, new sap.ui.core.Locale("de-DE"));
 
 		assert.equal(oFormat.parse("a.m."), null, "the variant can only be parsed in locale where it's supported");
+	});
+
+	QUnit.test("parse with tolerance for the number of spaces", function(assert) {
+		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "dd MMMM, yyyy"
+		});
+
+		var iDate = new Date(2017, 3, 17).getTime();
+
+		assert.equal(oFormat.parse("17April,2017").getTime(), iDate, "string without any space can also be parsed");
+		assert.equal(oFormat.parse(" 17   April,   2017   ").getTime(), iDate, "string with redundant space can also be parsed");
+		assert.equal(oFormat.parse(" 17April,   2017").getTime(), iDate, "string with arbitrary space can also be parsed");
+		assert.equal(oFormat.parse("17 April , 2017"), null, "string with non-defined space can't be parsed");
+
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yMMMd"
+		});
+
+		var aCompare = [new Date(2017, 3, 11), new Date(2017, 3, 17)];
+
+		// the correct pattern is MMM d – d, y
+		assert.deepEqual(oIntervalFormat.parse("Apr 11–17, 2017"), aCompare, "string with missing spaces can also be parsed");
+		assert.deepEqual(oIntervalFormat.parse("Apr11–17,  2017"), aCompare, "string with missing spaces and redundant spaces can also be parsed");
 	});
 
 	/** TODO: Move to sap.ui.core.date.Gregorian
@@ -1157,7 +1184,7 @@
 		assert.equal(this.oErrorSpy.getCall(0).args[0], "The given date instance isn't valid.");
 	});
 
-	QUnit.module("interval behavior");
+	QUnit.module("interval behavior - greatest Diff");
 
 	QUnit.test("Greatest Diff Group: Date instance", function(assert) {
 		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
@@ -1256,6 +1283,8 @@
 		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Minute", "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
 	});
 
+	QUnit.module("format & parse interval");
+
 	QUnit.test("Interval format with Date instance under locale DE", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 
@@ -1266,7 +1295,10 @@
 
 		var oDate = new Date(2017, 3, 11);
 		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
-		assert.equal(oIntervalFormat.format([oDate, oDate1]), "11.–13. Apr. 2017");
+		var sResult = oIntervalFormat.format([oDate, oDate1]);
+
+		assert.equal(sResult, "11.–13. Apr. 2017");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 	});
 
 	QUnit.test("Interval format without 'format' option - fallback interval pattern is used", function(assert) {
@@ -1279,31 +1311,39 @@
 		var oDate = new Date(2017, 3, 11);
 		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
 
-		assert.equal(oIntervalFormat.format([oDate, oDate1]), "11.04.17 – 13.04.17");
+		var sResult = oIntervalFormat.format([oDate, oDate1]);
+
+		assert.equal(sResult, "11.04.17 – 13.04.17");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
 		oLocale = new sap.ui.core.Locale("de-DE");
 		oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			interval: true,
 			pattern: "G y MM d"
 		}, oLocale);
-		assert.equal(oIntervalFormat.format([oDate, oDate1]), "n. Chr. 2017 04 11 – n. Chr. 2017 04 13");
+
+		sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "n. Chr. 2017 04 11 – n. Chr. 2017 04 13");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 	});
 
 	QUnit.test("am/pm", function(assert) {
 		var oLocale = new sap.ui.core.Locale("en");
 
-		var oDate = new Date(2017, 3, 11, 9, 0, 0);
-		var oDate1 = new Date(2017, 3, 11, 13, 30, 0);
+		var oDate = new Date(1970, 0, 1, 9, 0, 0);
+		var oDate1 = new Date(1970, 0, 1, 13, 0, 0);
 
 		var oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			interval: true,
 			format: "h"
 		}, oLocale);
 
-		assert.equal(oIntervalFormat.format([oDate, oDate1]), "9 AM – 1 PM");
+		var sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "9 AM – 1 PM");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
-		oDate = new Date(2017, 3, 11, 11, 0, 0);
-		oDate1 = new Date(2017, 3, 11, 12, 0, 0);
+		oDate = new Date(1970, 0, 1, 11, 0, 0);
+		oDate1 = new Date(1970, 0, 1, 12, 0, 0);
 
 		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			interval: true,
@@ -1312,10 +1352,12 @@
 
 		// optimised interval pattern only uses 'h'. 'K' is automatically converted
 		// to 'h'.
-		assert.equal(oIntervalFormat.format([oDate, oDate1]), "11 AM – 12 PM");
+		sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "11 AM – 12 PM");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 
-		oDate = new Date(2017, 3, 11, 10, 0, 0);
-		oDate1 = new Date(2017, 3, 11, 11, 0, 0);
+		oDate = new Date(1970, 0, 1, 10, 0, 0);
+		oDate1 = new Date(1970, 0, 1, 11, 0, 0);
 
 		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			interval: true,
@@ -1324,7 +1366,9 @@
 
 		// optimised interval pattern only uses 'h'. 'K' is automatically converted
 		// to 'h'.
+		sResult = oIntervalFormat.format([oDate, oDate1]);
 		assert.equal(oIntervalFormat.format([oDate, oDate1]), "10 – 11 AM");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
 	});
 
 	QUnit.test("Interval with two identical dates", function(assert) {
@@ -1334,8 +1378,11 @@
 		});
 
 		// if two dates are identical on the fields which we compare, no diff field will be returned
-		oDate = new Date(2017, 3, 11);
-		assert.equal(oIntervalFormat.format([oDate, oDate]).toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+		var oDate = new Date(2017, 3, 11);
+		var sResult = oIntervalFormat.format([oDate, oDate]);
+
+		assert.equal(sResult.toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
 	});
 
 	QUnit.test("Interval with two identical dates without format property", function(assert) {
@@ -1344,8 +1391,79 @@
 		});
 
 		// if two dates are identical on the fields which we compare, no diff field will be returned
-		oDate = new Date(2017, 3, 11);
-		assert.equal(oIntervalFormat.format([oDate, oDate]).toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+		var oDate = new Date(2017, 3, 11);
+		var sResult = oIntervalFormat.format([oDate, oDate]);
+
+		assert.equal(sResult.toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
+		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
+	});
+
+	QUnit.module("Interval parse in addition");
+
+	QUnit.test("Interval parse with invalid format string", function(assert) {
+		var oIntervalFormat1 = sap.ui.core.format.DateFormat.getDateInstance({
+			format: "yMMM",
+			interval: true
+		});
+
+		var oIntervalFormat2 = sap.ui.core.format.DateFormat.getDateInstance({
+			format: "yMMMd",
+			interval: true
+		});
+
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+
+		var sResult = oIntervalFormat1.format([oDate, oDate1]);
+		assert.deepEqual(oIntervalFormat2.parse(sResult), [null, null]);
+	});
+
+	QUnit.test("Interval parse with fallback pattern", function(assert){
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			format: "yMMMd",
+			interval: true
+		});
+
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(2017, 3, 13);
+		var aCompare = [oDate, oDate1];
+
+		assert.deepEqual(oIntervalFormat.parse("4/11/17 – 4/13/17"), aCompare, "Parse fallback short style");
+		assert.deepEqual(oIntervalFormat.parse("4/11/17 - 4/13/17"), aCompare, "Parse fallback short style with common connector");
+		assert.deepEqual(oIntervalFormat.parse("Apr 11, 2017 – Apr 13, 2017"), aCompare, "Parse fallback medium style");
+		assert.deepEqual(oIntervalFormat.parse("Apr 11, 2017 - Apr 13, 2017"), aCompare, "Parse fallback medium style with common connector");
+		assert.deepEqual(oIntervalFormat.parse("2017-04-11 – 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd'");
+		assert.deepEqual(oIntervalFormat.parse("2017-04-11 - 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd' and common connector");
+		assert.deepEqual(oIntervalFormat.parse("20170411 – 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd'");
+		assert.deepEqual(oIntervalFormat.parse("20170411 - 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd' and common connector");
+		assert.deepEqual(oIntervalFormat.parse("041117 – 041317"), aCompare, "Parse fallback with no delimiter");
+		assert.deepEqual(oIntervalFormat.parse("041117 - 041317"), aCompare, "Parse fallback with no delimiter and common connector");
+		assert.deepEqual(oIntervalFormat.parse("04112017 – 04132017"), aCompare, "Parse fallback with no delimiter");
+		assert.deepEqual(oIntervalFormat.parse("04112017 - 04132017"), aCompare, "Parse fallback with no delimiter and common connector");
+	});
+
+	QUnit.test("Interval parse with fallback locale de-DE", function(assert){
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			pattern: "'abc' dd.MM" // a non match pattern to test the fallbacks
+		}, new sap.ui.core.Locale("de_DE"));
+
+		var oDate = new Date(2017, 3, 11);
+		var oDate1 = new Date(2017, 3, 13);
+		var aCompare = [oDate, oDate1];
+
+		assert.deepEqual(oIntervalFormat.parse("11.04.17 – 13.04.17"), aCompare, "Parse fallback short style");
+		assert.deepEqual(oIntervalFormat.parse("11.04.17 - 13.04.17"), aCompare, "Parse fallback short style with common connector");
+		assert.deepEqual(oIntervalFormat.parse("11.04.2017 – 13.04.2017"), aCompare, "Parse fallback medium style");
+		assert.deepEqual(oIntervalFormat.parse("11.04.2017 - 13.04.2017"), aCompare, "Parse fallback medium style with common connector");
+		assert.deepEqual(oIntervalFormat.parse("2017-04-11 – 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd'");
+		assert.deepEqual(oIntervalFormat.parse("2017-04-11 - 2017-04-13"), aCompare, "Parse fallback with pattern 'yyyy-MM-dd' and common connector");
+		assert.deepEqual(oIntervalFormat.parse("20170411 – 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd'");
+		assert.deepEqual(oIntervalFormat.parse("20170411 - 20170413"), aCompare, "Parse fallback with pattern 'yyyyMMdd' and common connector");
+		assert.deepEqual(oIntervalFormat.parse("110417 – 130417"), aCompare, "Parse fallback with no delimiter");
+		assert.deepEqual(oIntervalFormat.parse("110417 - 130417"), aCompare, "Parse fallback with no delimiter and common connector");
+		assert.deepEqual(oIntervalFormat.parse("11042017 – 13042017"), aCompare, "Parse fallback with no delimiter");
+		assert.deepEqual(oIntervalFormat.parse("11042017 - 13042017"), aCompare, "Parse fallback with no delimiter and common connector");
 	});
 </script>
 

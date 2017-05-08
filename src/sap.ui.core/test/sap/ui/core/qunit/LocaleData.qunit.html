@@ -152,6 +152,7 @@
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("y", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"y\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "d", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
+			assert.ok(Array.isArray(oLocaleData.getCustomIntervalPattern("yMd", "", aCalendarTypes[i])), "getCustomIntervalPattern(\"yMd\", \"\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yw", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("Q", "Q", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
