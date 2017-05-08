@@ -16,22 +16,17 @@
 					background="Light">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
-							class="gradient sapUiContentPadding">
+							class="gradient">
 							<l:Grid
 								hSpacing="0"
 								defaultSpan="L6 M6 S12">
-								<l:VerticalLayout class="sapUiTinyMarginEnd">
-									<Title
-										level="H1"
-										titleStyle="H1"
+								<l:VerticalLayout width="100%" class="sapUiTinyMarginEnd">
+									<Text
 										text="{i18n>pageTitle}"
-										class="sapUiMediumMarginBottom"/>
+										class="headerText sapUiTinyMarginBottom"/>
 									<Text
 										text="{i18n>introText1}"
-										class="sapUiSmallMarginBottom"/>
-									<Text
-										text="{i18n>introText2}"
-										class="sapUiSmallMarginBottom"/>
+										class="headerSubText sapUiMediumMarginBottom"/>
 									<custom:ActionButton
 										id="download"
 										text="{i18n>downloadButtonText}"
