@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils"
-], function(jQuery, FlexController, Utils) {
+	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils", "sap/ui/fl/ChangePersistenceFactory"
+], function(jQuery, FlexController, Utils, ChangePersistenceFactory) {
 	"use strict";
 
 	/**
@@ -52,5 +52,23 @@ sap.ui.define([
 		return FlexControllerFactory.create(sComponentName);
 	};
 
+/**
+	 * Gets the changes and in case of existing changes, prepare the applyChanges function already with the changes.
+	 *
+	 * @param {object} oComponent Component instance that is currently loading
+	 * @param {object} vConfig configuration of loaded component
+	 * @public
+	 */
+	FlexControllerFactory.getChangesAndPropagate = function (oComponent, vConfig) {
+		var oManifest = oComponent.getManifestObject();
+		if (Utils.isApplication(oManifest)) {
+			var oFlexController = FlexControllerFactory.createForControl(oComponent);
+			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
+				.then(function (fnGetChangesMap) {
+						oComponent.addPropagationListener(oFlexController.applyChangesOnControl.bind(oFlexController, fnGetChangesMap, oComponent));
+					}
+				);
+		}
+	};
 	return FlexControllerFactory;
 }, true);
