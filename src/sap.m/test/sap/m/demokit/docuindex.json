@@ -103,7 +103,7 @@
 					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
 				},
-				"category": "Showcase",
+				"category": "Tool",
 				"teaser": "test-resources/sap/m/demokit/iconExplorer/demoappteaser",
 				"config": "test-resources/sap/m/demokit/iconExplorer/demoapp.json"
 			},
@@ -112,7 +112,7 @@
 				"text": "Theme Parameter Toolbox",
 				"desc": "Search, filter and preview semantic theme parameters",
 				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
-				"category": "Showcase",
+				"category": "Tool",
 				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
 			},
 			{
