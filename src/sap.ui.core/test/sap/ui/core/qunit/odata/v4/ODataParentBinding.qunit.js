@@ -99,33 +99,73 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {
-		QUnit.test("updateValue: absolute binding", function (assert) {
+		QUnit.test("updateValue: binding w/ cache", function (assert) {
 			var oCache = {
 					update : function () {}
 				},
 				oBinding = new ODataParentBinding({
 					oCachePromise : _SyncPromise.resolve(oCache),
-					sPath : "/absolute",
+					oContext : {},
+					oModel : {
+						resolve : function () {}
+					},
+					sPath : "binding/path",
 					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
 				}),
 				fnErrorCallback = function () {},
 				sPath = "SO_2_SOITEM/42",
-
+				sResolvedPath = "/resolved/binding/path",
 				oResult = {};
 
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				.returns(sResolvedPath);
 			this.mock(oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
 					sinon.match.same(fnErrorCallback), "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
 
 			// code under test
-			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback, "edit('URL')",
-					sPath)
+			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback,"edit('URL')",
+					sResolvedPath + "/" + sPath)
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("updateValue: absolute binding, patching root entity", function (assert) {
+		var oCache = {
+				update : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : _SyncPromise.resolve(oCache),
+				oModel : {
+					resolve : function () {}
+				},
+				sPath : "/absolute",
+				bRelative : false,
+				sUpdateGroupId : "myUpdateGroup"
+			}),
+			fnErrorCallback = function () {},
+			oResult = {};
+
+			this.mock(oBinding.oModel).expects("resolve")
+				.withExactArgs(oBinding.sPath, undefined)
+				.returns(oBinding.sPath);
+		this.mock(oCache).expects("update")
+			.withExactArgs("group", "bar", Math.PI, sinon.match.same(fnErrorCallback),
+				"edit('URL')", "")
+			.returns(Promise.resolve(oResult));
+
+		// code under test
+		return oBinding.updateValue("group", "bar", Math.PI, fnErrorCallback, "edit('URL')",
+				"/absolute")
+			.then(function (oResult0) {
+				assert.strictEqual(oResult0, oResult);
+			});
 	});
 
 	//*********************************************************************************************
@@ -146,30 +186,29 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateValue: relative binding", function (assert) {
-		var oBinding = new ODataParentBinding({
+	QUnit.test("updateValue: relative binding w/o cache", function (assert) {
+		var oParentBinding = new ODataParentBinding(),
+			oBinding = new ODataParentBinding({
 				oCachePromise : _SyncPromise.resolve(),
 				oContext : {
-					updateValue : function () {}
+					getBinding : function () { return oParentBinding; }
 				},
 				sPath : "PRODUCT_2_BP",
 				bRelative : true
 			}),
 			fnErrorCallback = function () {},
+			sPath = "/BusinessPartnerList/0/BP_2_XYZ/42",
 			oResult = {};
 
-		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "BP_2_XYZ/42")
-			.returns("~BP_2_XYZ/42~");
-		this.mock(oBinding.oContext).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback), "edit('URL')",
-				"~BP_2_XYZ/42~")
+		this.mock(oParentBinding).expects("updateValue")
+			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback),"edit('URL')",
+				sPath)
 			.returns(Promise.resolve(oResult));
 
 		this.mock(oBinding).expects("getUpdateGroupId").never();
 
 		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback, "edit('URL')",
-				"BP_2_XYZ/42")
+		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback,"edit('URL')", sPath)
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
