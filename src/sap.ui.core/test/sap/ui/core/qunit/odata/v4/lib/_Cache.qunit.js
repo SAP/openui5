@@ -1347,7 +1347,7 @@ sap.ui.require([
 		oHelperMock.expects("getSelectForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "")
 			.returns(aSelect);
-		oHelperMock.expects("updateAfterPost")
+		oHelperMock.expects("updateCacheAfterPost")
 			.withExactArgs(oCache.mChangeListeners, "-1", sinon.match(transientCacheData),
 				sinon.match.same(oPostResult), sinon.match.same(aSelect));
 
