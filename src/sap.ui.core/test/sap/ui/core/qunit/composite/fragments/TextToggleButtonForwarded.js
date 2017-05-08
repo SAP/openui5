@@ -12,14 +12,21 @@ sap.ui.define([
 			},
 			defaultAggregation: "textToggleButton",
 			events: {
-				refreshed: {}
+				refreshed: {},
+				textChanged: {}
 			}
 		}
 	});
+	TextToggleButtonForwarded.prototype.applySettings = function() {
+		FragmentControl.prototype.applySettings.apply(this, arguments);
+		this.getTextToggleButton().attachTextChanged(this.onTextChanged.bind(this));
+	};
+	TextToggleButtonForwarded.prototype.onTextChanged = function() {
+		this.fireTextChanged();
+	};
 	TextToggleButtonForwarded.prototype.onPressRefresh = function() {
-		var sDefault = this.getAggregation("_content").getItems()[0]._oContent.getMetadata().getProperty("text").getDefaultValue();
-		this.getAggregation("_content").getItems()[0]._oContent.setText(undefined);
-		this.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].setPressed(false);
+		this.getAggregation("_content").getItems()[0]._oContent.resetProperty("text");
+		this.getAggregation("_content").getItems()[0]._oContent.getAggregation("_content").getItems()[1].resetProperty("pressed");
 		this.fireRefreshed();
 	};
 	return TextToggleButtonForwarded;
