@@ -637,9 +637,10 @@ sap.ui.define([
 		 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
 		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
 		 *   'or' if not given
+		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @returns {SyncPromise} A promise which resolves with the $filter value
 		 */
-		function fetchArrayFilter(aFilters, bAnd) {
+		function fetchArrayFilter(aFilters, bAnd, mLambdaVariableToPath) {
 			var aFilterPromises = [],
 				mFiltersByPath = {};
 
@@ -651,8 +652,8 @@ sap.ui.define([
 				var aFiltersForPath;
 
 				if (oFilter.aFilters) { // array filter
-					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd)
-						.then(function (sArrayFilter) {
+					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd,
+						mLambdaVariableToPath).then(function (sArrayFilter) {
 							return "(" + sArrayFilter + ")";
 						})
 					);
@@ -664,7 +665,7 @@ sap.ui.define([
 					return;
 				}
 				delete mFiltersByPath[oFilter.sPath];
-				aFilterPromises.push(fetchGroupFilter(aFiltersForPath));
+				aFilterPromises.push(fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
 			});
 
 			return _SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
@@ -678,14 +679,16 @@ sap.ui.define([
 		 * the $filter values for the single filters in the group combined with a logical 'or'.
 		 *
 		 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
+		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @returns {SyncPromise} A promise which resolves with the $filter value or rejects
 		 *   with an error if the filter value uses an unknown operator
 		 */
-		function fetchGroupFilter(aGroupFilters) {
+		function fetchGroupFilter(aGroupFilters, mLambdaVariableToPath) {
 			var oMetaModel = that.oModel.getMetaModel(),
 				oMetaContext = oMetaModel.getMetaContext(
 					that.oModel.resolve(that.sPath, oContext)),
-				oPropertyPromise = oMetaModel.fetchObject(aGroupFilters[0].sPath,
+				oPropertyPromise = oMetaModel.fetchObject(
+					replaceLambdaVariables(aGroupFilters[0].sPath, mLambdaVariableToPath),
 					oMetaContext);
 
 			return oPropertyPromise.then(function (oPropertyMetadata) {
@@ -697,16 +700,60 @@ sap.ui.define([
 				}
 
 				aGroupFilterValues = aGroupFilters.map(function (oGroupFilter) {
-						return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
-					});
+					var oCondition,
+						sLambdaVariable,
+						sOperator = oGroupFilter.sOperator;
 
-				return combineFilterValues(aGroupFilterValues, " or ");
+					if (sOperator === FilterOperator.All || sOperator === FilterOperator.Any) {
+						oCondition = oGroupFilter.oCondition;
+						sLambdaVariable = oGroupFilter.sVariable;
+						if (sOperator === FilterOperator.Any && !oCondition) {
+							return oGroupFilter.sPath + "/any()";
+						}
+						// array filters are processed in parallel, so clone mLambdaVariableToPath
+						// to allow same lambda variables in different filters
+						mLambdaVariableToPath = jQuery.extend({}, mLambdaVariableToPath);
+						mLambdaVariableToPath[sLambdaVariable]
+							= replaceLambdaVariables(oGroupFilter.sPath, mLambdaVariableToPath);
+
+						return (oCondition.aFilters
+								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd,
+									mLambdaVariableToPath)
+								: fetchGroupFilter([oCondition], mLambdaVariableToPath)
+							).then(function (sFilterValue) {
+								return oGroupFilter.sPath + "/"
+									+ oGroupFilter.sOperator.toLowerCase()
+									+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
+							});
+					}
+					return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
+
+				});
+
+				return _SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
+					return combineFilterValues(aResolvedFilterValues, " or ");
+				});
 			});
 		}
 
+		/**
+		 * Replaces an optional lambda variable in the first segment of the given path by the
+		 * correct path.
+		 *
+		 * @param {string} sPath The path with an optional lambda variable at the beginning
+		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
+		 * @returns {string} The path with replaced lambda variable
+		 */
+		function replaceLambdaVariables(sPath, mLambdaVariableToPath) {
+			var aSegments = sPath.split("/");
+
+			aSegments[0] = mLambdaVariableToPath[aSegments[0]];
+			return aSegments[0] ? aSegments.join("/") : sPath;
+		}
+
 		return _SyncPromise.all([
-			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true),
-			fetchArrayFilter(this.aFilters, /*bAnd*/true)
+			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
+			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
 		]).then(function (aFilterValues) {
 			if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
 			if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }

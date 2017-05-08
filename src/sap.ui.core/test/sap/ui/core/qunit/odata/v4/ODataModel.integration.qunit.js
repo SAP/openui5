@@ -2196,6 +2196,109 @@ sap.ui.require([
 			});
 		});
 	});
+
+	// Scenario: Usage of Any/All filter values on the list binding
+	[{
+		filter : new Filter({
+			condition : new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+			operator : FilterOperator.Any,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000)"
+	}, {
+		filter : new Filter({
+			condition : new Filter({
+				and : true,
+				filters : [
+					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+					new Filter("soitem/NetAmount", FilterOperator.LE, "3000")
+				]
+			}),
+			operator : FilterOperator.Any,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 and"
+			+ " soitem/NetAmount le 3000)"
+	}, {
+		filter : new Filter({
+			condition : new Filter({
+				filters : [
+					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+					new Filter("soitem/SOITEM_2_SCHDL", FilterOperator.Any)
+				]
+			}),
+			operator : FilterOperator.Any,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 or"
+			+ " soitem/SOITEM_2_SCHDL/any())"
+	}, {
+		filter : new Filter({
+			condition : new Filter({
+				filters : [
+					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+					new Filter({
+						condition: new Filter({
+							and: true,
+							filters: [
+								new Filter("schedule/DeliveryDate", FilterOperator.LT,
+									"2017-01-01T05:50Z"),
+								new Filter("soitem/GrossAmount", FilterOperator.LT, "2000")
+							]
+						}),
+						operator: FilterOperator.All,
+						path: "soitem/SOITEM_2_SCHDL",
+						variable: "schedule"
+					})
+				]
+			}),
+			operator : FilterOperator.Any,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 or"
+			+ " soitem/SOITEM_2_SCHDL/all(schedule:schedule/DeliveryDate lt 2017-01-01T05:50Z"
+			+ " and soitem/GrossAmount lt 2000))"
+	}].forEach(function (oFixture) {
+		QUnit.test("filter all/any on list binding " + oFixture.request, function (assert) {
+			var sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+				that = this;
+
+			this.expectRequest("SalesOrderList?$skip=0&$top=100", {
+				"value": [
+					{"SalesOrderID": "0"},
+					{"SalesOrderID": "1"},
+					{"SalesOrderID": "2"}
+				]
+			}).expectChange("text", ["0", "1", "2"]);
+
+			return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+				that.expectRequest("SalesOrderList?$filter=" + oFixture.request.replace(/ /g, "%20")
+						+ "&$skip=0&$top=100", {
+					"value": [
+						{"SalesOrderID": "0"},
+						{"SalesOrderID": "2"}
+					]
+				}).expectChange("text", "2", 1);
+
+				// code under test
+				that.oView.byId("table").getBinding("items").filter(oFixture.filter);
+				return that.waitForChanges(assert);
+			});
+		});
+	});
 });
 //TODO test bound action
 //TODO test delete
