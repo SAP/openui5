@@ -21,6 +21,9 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
+
 			sap.ui.require([
 				"unitTests/utils/loggerInterceptor",
 				"sap/m/Button",
@@ -109,6 +112,9 @@
 
 					assert.ok(bPipleineResult, "Should match equal properties");
 				});
+
+				QUnit.start();
+
 			});
 		</script>
 	</head>

@@ -17,6 +17,8 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
+			QUnit.config.autostart = false;
+
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationEmpty",
 				"sap/m/ComboBox",
@@ -67,6 +69,9 @@
 					// Assert
 					assert.strictEqual(bResult, false, "Did not match");
 				});
+
+				QUnit.start();
+
 		});
 
 		</script>

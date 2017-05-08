@@ -18,6 +18,8 @@
         jQuery.sap.require("sap.ui.thirdparty.sinon");
         jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+        QUnit.config.autostart = false;
+
         sap.ui.require([
             "sap/ui/test/matchers/LabelFor",
             "sap/m/Input",
@@ -178,6 +180,9 @@
                 var bResult = oMatcher.isMatching(this.oButton);
                 assert.ok(bResult, "Match button");
             });
+
+            QUnit.start();
+
         });
 
     </script>

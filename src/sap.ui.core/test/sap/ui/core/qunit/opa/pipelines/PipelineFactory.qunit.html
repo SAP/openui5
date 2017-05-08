@@ -20,6 +20,8 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+		QUnit.config.autostart = false;
+
 		sap.ui.require([
 				"jquery.sap.global",
 				"sap/ui/test/pipelines/PipelineFactory"
@@ -90,6 +92,8 @@
 				assert.strictEqual(aResult[0].someName, fnAnonymousFunction , "The resulting object has the anonymous function on a functionName property");
 				assert.strictEqual(aResult[1], oObjectWithFunction , "The matcher was untouched since it was already implementing the contract");
 			});
+
+			QUnit.start();
 
 		});
 	</script>

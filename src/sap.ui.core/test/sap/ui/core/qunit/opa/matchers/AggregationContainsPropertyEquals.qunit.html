@@ -20,6 +20,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+			QUnit.config.autostart = false;
 
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationContainsPropertyEqual",
@@ -153,6 +154,9 @@
 					sinon.assert.calledWith(oErrorSpy, "Control 'Element sap.m.ComboBox#myCB' " +
 							"does not have an aggregation called 'anAggregationThatWillNeverBeAddedToTheCombobox'");
 				});
+
+				QUnit.start();
+
 			});
 		</script>
 	</head>
