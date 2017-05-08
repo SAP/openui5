@@ -651,7 +651,7 @@ sap.ui.require([
 		this.mock(oContext).expects("requestCanonicalPath")
 			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs("myGroup", "EMPLOYEES('1')", oContext)
+			.withExactArgs("myGroup", "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.resolve());
 
 		// code under test
@@ -672,7 +672,7 @@ sap.ui.require([
 				new Promise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs("myGroup", "n/a", oContext)
+			.withExactArgs("myGroup", "n/a", sinon.match.same(oContext))
 			.returns(Promise.resolve());
 
 		// code under test
@@ -695,7 +695,7 @@ sap.ui.require([
 		this.mock(oContext).expects("requestCanonicalPath")
 			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs(undefined, "EMPLOYEES('1')", oContext)
+			.withExactArgs(undefined, "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.reject(oError));
 
 		// code under test

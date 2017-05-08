@@ -891,9 +891,11 @@ sap.ui.require([
 			oUtilsMock = this.mock(Utils);
 
 		oUtilsMock.expects("handleCreatableNavigationProperty")
-			.withExactArgs(oEntitySet, oEntityType.navigationProperty[0]);
+			.withExactArgs(sinon.match.same(oEntitySet),
+				sinon.match.same(oEntityType.navigationProperty[0]));
 		oUtilsMock.expects("handleCreatableNavigationProperty")
-			.withExactArgs(oEntitySet, oEntityType.navigationProperty[1]);
+			.withExactArgs(sinon.match.same(oEntitySet),
+				sinon.match.same(oEntityType.navigationProperty[1]));
 
 		// code under test
 		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
