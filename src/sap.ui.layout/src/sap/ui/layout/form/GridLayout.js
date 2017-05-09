@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 
 		FormLayout.prototype.contentOnAfterRendering.apply(this, arguments);
 
-		if (!oControl.getFormShouldNotAdjustWidth || !oControl.getFormShouldNotAdjustWidth()) {
+		if (!oControl.getFormDoNotAdjustWidth || !oControl.getFormDoNotAdjustWidth()) {
 			oControl.$().css("width", "100%");
 		}
 
