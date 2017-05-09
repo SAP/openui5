@@ -169,7 +169,7 @@
 		this.oBox.setRenderType("Bare");
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oBox.getItems()[0].$().get(0).tagName, "IMG", "First item of Flex Box should now be rendered as IMG");
-		if(!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {
+		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.internet_explorer) {
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexGrow, "2", "Inline style for grow factor is set on second item");
 			assert.equal(this.oBox.getItems()[1].getDomRef().style.flexBasis, "58%", "Inline style for base size is set on second item");
 		}

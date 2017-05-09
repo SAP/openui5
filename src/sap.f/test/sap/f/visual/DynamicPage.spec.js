@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe("sap.f.DynamicPage", function() {
+	"use strict";
+
 	it("Initial state",function(){
 		expect(takeScreenshot()).toLookAs("initial");
 	});

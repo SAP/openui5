@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.tmpl.Template for all templates
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/BindingParser', 'sap/ui/core/Control', 'sap/ui/core/RenderManager'],
-	function(jQuery, ManagedObject, BindingParser, Control, RenderManager) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/BindingParser', 'sap/ui/core/Control', 'sap/ui/core/RenderManager', 'jquery.sap.sjax'],
+	function(jQuery, ManagedObject, BindingParser, Control, RenderManager /*, jQuerySap1 */) {
 	"use strict";
 
 

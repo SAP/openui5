@@ -31,7 +31,7 @@
 				uploadEnabled="false"
 				items="{
 					path : '/items',
-					templateShareable : 'true',
+					templateShareable : false,
 					sorter: {
 						path: 'version',
 						descending: false,
@@ -64,8 +64,8 @@
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"
-						attributes="{path : 'attributes', templateShareable : 'true'}"
-						statuses="{path : 'statuses', templateShareable : 'true'}"
+						attributes="{path : 'attributes', templateShareable : false}"
+						statuses="{path : 'statuses', templateShareable : false}"
 						selected="{selected}">
 						<attributes>
 							<ObjectAttribute

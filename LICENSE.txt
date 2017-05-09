@@ -212,7 +212,7 @@ This project may include APIs to SAP or third party products or services. The us
 OpenUI5 SUBCOMPONENTS:
 
 OpenUI5 includes the following subcomponents that are subject to separate license terms.
-Your use of these subcomponents is subject to the seperate license terms applicable to
+Your use of these subcomponents is subject to the separate license terms applicable to
 each subcomponent.
 
 Component: ace 1.2.6
@@ -439,6 +439,13 @@ Licensor: jQuery Foundation and other contributors
 Website: http://github.com/jquery/qunit/
 License: MIT License
 <year> = 2006, 2014
+<copyright holders> = jQuery Foundation and other contributors
+
+Component: qunit 2.3.2
+Licensor: jQuery Foundation and other contributors
+Website: http://github.com/jquery/qunit/
+License: MIT License
+<year> = 2017
 <copyright holders> = jQuery Foundation and other contributors
 
 Component: qunit composite 1.0.4

@@ -1,3 +1,5 @@
+/*global QUnit,sinon,qutils*/
+
 (function () {
 	'use strict';
 
@@ -864,9 +866,9 @@
 				]
 			}),
 			sContentSelector = ".sapMCrslInner > .sapMCrslItem > .sapMScrollCont > .sapMScrollContScroll",
-			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
+			sResponsiveLargeSize = (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px"),
+			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : sResponsiveLargeSize),
 			aResponsiveSize = sResponsiveSize.split(" "),
-			$container,
 			$containerContent;
 
 		// Act

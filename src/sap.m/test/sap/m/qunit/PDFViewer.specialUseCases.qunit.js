@@ -1,10 +1,9 @@
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/ui/Device",
-	"sap/m/PDFViewer",
-	"jquery.sap.global"
+	"sap/m/PDFViewer"
 	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, Device, PDFViewer, $) {
+], function (TestUtils, Device, PDFViewer) {
 	var oPDFViewer;
 	QUnit.module('Special use cases', {
 		afterEach: function (assert) {
@@ -24,7 +23,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "/test-resources/sap/m/qunit/pdfviewer/different-content.html",
+			"source": "./pdfviewer/different-content.html",
 			"loaded": function () {
 				assert.ok(false, "'Load' event should not be fired");
 
@@ -54,7 +53,7 @@ sap.ui.define([
 			var done = assert.async();
 
 			var oOptions = {
-				"source": '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf',
+				"source": "./pdfviewer/sample-file.pdf",
 				"loaded": function () {
 					assert.ok(true, "'Load' event fired");
 					done();
@@ -76,7 +75,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oOptions = {
-			"source": "/test-resources/sap/m/qunit/pdfviewer/not-existing",
+			"source": "./pdfviewer/not-existing",
 			"loaded": function () {
 				assert.ok(false, "'Load' event fired but should not.");
 			},
@@ -103,7 +102,7 @@ sap.ui.define([
 				assert.ok(true, "'Error' event fired");
 			},
 			oErrorOptions = {
-				"source": "/test-resources/sap/m/qunit/pdfviewer/not-existing",
+				"source": "./pdfviewer/not-existing",
 				"loaded": fnLoadedFailListener,
 				"error": fnErrorOkListener
 			},
@@ -124,8 +123,7 @@ sap.ui.define([
 				oPDFViewer.detachError(fnErrorOkListener);
 				oPDFViewer.attachLoaded(fnLoadedOkListener);
 				oPDFViewer.attachError(fnErrorFailListener);
-				debugger;
-				oPDFViewer.setSource("/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf");
+				oPDFViewer.setSource("./pdfviewer/sample-file.pdf");
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {
@@ -134,7 +132,7 @@ sap.ui.define([
 				oPDFViewer.detachError(fnErrorFailListener);
 				oPDFViewer.attachLoaded(fnLoadedFailListener);
 				oPDFViewer.attachError(fnErrorOkListener);
-				oPDFViewer.setSource("/test-resources/sap/m/qunit/pdfviewer/not-existing");
+				oPDFViewer.setSource("./pdfviewer/not-existing");
 			})
 			.then(TestUtils.wait(2000))
 			.then(function () {

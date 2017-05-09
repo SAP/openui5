@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 (function () {
 	"use strict";
 
@@ -512,17 +514,17 @@
 
 	QUnit.test("WizardProgressNavigator li element role attribute", function (assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
-		for(var i=0; i<$steps.length; i++){
-			assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i+1) + " should be set to 'listitem'");
+		for (var i = 0; i < $steps.length; i++){
+			assert.strictEqual($steps.eq(i).attr("role"), "listitem", "'role' attribute of the list item No" + (i + 1) + " should be set to 'listitem'");
 		}
 	});
 
 	QUnit.test("WizardProgressNavigator anchor element title attribute", function (assert) {
 		var $anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor"),
 			sStepText = this.oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE");
-		for(var i=0; i<$anchors.length; i++){
-			var sStepTitle = sStepText + " " + (i+1);
-			assert.strictEqual($anchors.eq(i).attr("title"), sStepTitle, "'title' attribute of the WizardProgressNavigator's list item No" + (i+1) + " should be set to '" + sStepTitle + "'");
+		for (var i = 0; i < $anchors.length; i++){
+			var sStepTitle = sStepText + " " + (i + 1);
+			assert.strictEqual($anchors.eq(i).attr("title"), sStepTitle, "'title' attribute of the WizardProgressNavigator's list item No" + (i + 1) + " should be set to '" + sStepTitle + "'");
 		}
 	});
 }());

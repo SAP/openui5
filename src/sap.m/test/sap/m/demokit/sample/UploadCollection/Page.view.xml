@@ -48,7 +48,7 @@
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
-				items="{path : '/items', templateShareable : 'true'}"
+				items="{path : '/items', templateShareable : false}"
 				numberOfAttachmentsText="Uploaded (8)"
 				mode="SingleSelectMaster">
 				<toolbar>
@@ -72,9 +72,9 @@
 						enableDelete="{enableDelete}"
 						visibleDelete="{visibleDelete}"
 						visibleEdit="{visibleEdit}"
-						attributes="{path : 'attributes', templateShareable : 'true'}"
-						statuses="{path : 'statuses', templateShareable : 'true'}"
-						markers="{path : 'markers', templateShareable : 'true'}"
+						attributes="{path : 'attributes', templateShareable : false}"
+						statuses="{path : 'statuses', templateShareable : false}"
+						markers="{path : 'markers', templateShareable : false}"
 						selected="{selected}">
 						<attributes>
 							<ObjectAttribute

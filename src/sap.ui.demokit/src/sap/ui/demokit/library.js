@@ -48,7 +48,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/core/Core', './js/h
 	 * @alias sap.ui.demokit
 	 * @author SAP SE
 	 * @version ${version}
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 */
 	var thisLibrary = sap.ui.demokit;
 	/* eslint-enable no-undef */
@@ -57,8 +58,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/core/Core', './js/h
 	 * Different styles for an entity cue card.
 	 *
 	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 * @private
+	 * @sap-restricted sdk
 	 */
 	thisLibrary.UI5EntityCueCardStyle = {
 

@@ -1644,14 +1644,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oFileNameEditBox = sap.ui.getCore().byId(sItemId + "-ta_editFileName");
 
 			if (!oFileNameEditBox) {
-				oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
-					type : sap.m.InputType.Text,
+				oFileNameEditBox = oItem._getControl("sap.m.Input", {
+					id: sItemId + "-ta_editFileName",
+					type: sap.m.InputType.Text,
 					fieldWidth: "75%",
-					valueState : sValueState,
-					valueStateText : sValueStateText,
+					valueState: sValueState,
+					valueStateText: sValueStateText,
 					showValueStateMessage: bShowValueStateMessage,
 					description: oFile.extension
-				}).addStyleClass("sapMUCEditBox");
+				});
+				oFileNameEditBox.addStyleClass("sapMUCEditBox");
 				oFileNameEditBox.setModel(oItem.getModel());
 				oFileNameEditBox.setValue(sFileName);
 			} else {
@@ -1765,18 +1767,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (sStatus === "Edit") {
 			oOkButton = sap.ui.getCore().byId(sItemId + "-okButton");
 			if (!oOkButton) {
-				oOkButton = new sap.m.Button({
+				oOkButton = oItem._getControl("sap.m.Button", {
 					id : sItemId + "-okButton",
 					text : this._oRb.getText("UPLOADCOLLECTION_RENAMEBUTTON_TEXT"),
-					type : sap.m.ButtonType.Transparent
+					type : Library.ButtonType.Transparent
 				}).addStyleClass("sapMUCOkBtn");
 			}
 			oCancelButton = sap.ui.getCore().byId(sItemId + "-cancelButton");
 			if (!oCancelButton) {
-				oCancelButton = new sap.m.Button({
+				oCancelButton = oItem._getControl("sap.m.Button", {
 					id : sItemId + "-cancelButton",
 					text : this._oRb.getText("UPLOADCOLLECTION_CANCELBUTTON_TEXT"),
-					type : sap.m.ButtonType.Transparent
+					type : Library.ButtonType.Transparent
 				}).addStyleClass("sapMUCCancelBtn");
 			}
 			aButtons.push(oOkButton);
@@ -1796,10 +1798,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			oEditButton = sap.ui.getCore().byId(sItemId + "-editButton");
 			if (!oEditButton) {
 				if (oItem.getVisibleEdit()) { // if the Edit button is invisible we do not need to render it
-					oEditButton = new sap.m.Button({
+					oEditButton = oItem._getControl("sap.m.Button", {
 						id : sItemId + "-editButton",
 						icon : "sap-icon://edit",
-						type : sap.m.ButtonType.Standard,
+						type : Library.ButtonType.Standard,
 						enabled : bEnabled,
 						visible : oItem.getVisibleEdit(),
 						tooltip : this._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"),
@@ -1855,10 +1857,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (oDeleteButton) {
 			oDeleteButton.destroy();
 		}
-		oDeleteButton = new sap.m.Button({
+		oDeleteButton = oItem._getControl("sap.m.Button", {
 			id : sItemId + "-" + sButton,
 			icon : "sap-icon://sys-cancel",
-			type : sap.m.ButtonType.Standard,
+			type : Library.ButtonType.Standard,
 			enabled : bEnabled,
 			tooltip : this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"),
 			visible : oItem.getVisibleDelete()

@@ -169,12 +169,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
 				this.fireSelected();
 
 				this._refreshNodeSelection(this.$());
+			} else if (bShouldExpand) {
+				this.expand();
 			} else {
-				if (bShouldExpand) {
-					this.expand();
-				} else {
-					this.collapse();
-				}
+				this.collapse();
 			}
 
 			oEvent.preventDefault();

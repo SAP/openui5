@@ -17,11 +17,11 @@
 					headerText: "Text",
 					headerToolbar: new Toolbar(),
 					infoToolbar: new Toolbar()
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});

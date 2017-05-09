@@ -924,10 +924,7 @@
 
 	QUnit.test("Terminate upload button is visible by default.", function(assert) {
 		//Arrange
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("visibleButtonTestId", "terminateButton", oItem, "", {});
@@ -939,10 +936,7 @@
 	QUnit.test("Terminate upload button is not visible when terminationEnabled is false.", function(assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
@@ -954,12 +948,7 @@
 	QUnit.test("Terminate upload button is not visible when button exists and terminationEnabled is false.", function(assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {
-				return true;
-			}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
@@ -973,12 +962,7 @@
 	QUnit.test("Terminate upload button is visible when button exists and terminationEnabled is true.", function(assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(true);
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {
-				return true;
-			}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});

@@ -1,4 +1,4 @@
-function ListItemBaseTest (listItem) {
+window.ListItemBaseTest = function (listItem) {
 	'use strict';
 
 	sap.ui.require(["sap/ui/rta/test/controlEnablingCheck"], function (rtaControlEnablingCheck) {
@@ -49,4 +49,4 @@ function ListItemBaseTest (listItem) {
 			afterRedo: fnConfirmListItemIsVisible
 		});
 	});
-}
+};

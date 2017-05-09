@@ -1,9 +1,11 @@
+/* global QUnit*/
+
 (function () {
 	"use strict";
 
 	var sControlId = "AvatarId",
 		sImagePath = "../images/Woman_avatar_01.png",
-		sIconPath ="sap-icon://lab",
+		sIconPath = "sap-icon://lab",
 		sPreAvatarSize = "Avatar's size is ",
 		sPreAvatarShape = "Avatar's shape is ",
 		sPreAvatarType = "Avatar's type is ",
@@ -15,7 +17,9 @@
 		var oAvatarProps = {};
 		sId = sId || sControlId;
 
-		oProps && jQuery.extend(oAvatarProps, oProps);
+		if (oProps) {
+			jQuery.extend(oAvatarProps, oProps);
+		}
 
 		return new sap.f.Avatar(sId, oAvatarProps);
 	}
@@ -242,6 +246,56 @@
 
 		// Act
 		this.oAvatar.firePress();
+
+		// Cleanup
+		oLightBox.destroy();
+	});
+
+	QUnit.test("detailBox lifecycle and events", function (oAssert) {
+		// Arrange
+		var oLightBoxA = new sap.m.LightBox(),
+			oLightBoxB = new sap.m.LightBox(),
+			oAttachPressSpy = sinon.spy(this.oAvatar, "attachPress"),
+			oDetachPressSpy = sinon.spy(this.oAvatar, "detachPress");
+
+		// Act - set LightBox
+		this.oAvatar.setDetailBox(oLightBoxA);
+
+		oAssert.strictEqual(this.oAvatar.mEventRegistry.press.length, 1, "There should be 1 press event attached");
+		oAssert.strictEqual(oAttachPressSpy.callCount, 1, "attachPress method should be called once");
+		oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
+
+		// Act - replace with new LightBox
+		oAttachPressSpy.reset();
+		this.oAvatar.setDetailBox(oLightBoxB);
+
+		// Assert
+		oAssert.strictEqual(this.oAvatar.mEventRegistry.press.length, 1, "There should be 1 press event attached");
+		oAssert.strictEqual(oAttachPressSpy.callCount, 1, "attachPress method should be called once");
+		oAssert.strictEqual(oDetachPressSpy.callCount, 1, "detachPress method should be called once");
+
+		// Act - replace with the same LightBox
+		oAttachPressSpy.reset();
+		oDetachPressSpy.reset();
+		this.oAvatar.setDetailBox(oLightBoxB);
+
+		// Assert
+		oAssert.strictEqual(this.oAvatar.mEventRegistry.press.length, 1, "There should be 1 press event attached");
+		oAssert.strictEqual(oAttachPressSpy.callCount, 0, "attachPress method should not be called");
+		oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
+
+		// Act - replace with the same LightBox
+		oDetachPressSpy.reset();
+		this.oAvatar.setDetailBox(undefined);
+
+		// Assert
+		oAssert.strictEqual(oDetachPressSpy.callCount, 1, "detachPress method should be called once");
+
+		// Cleanup
+		oLightBoxA.destroy();
+		oLightBoxB.destroy();
+		oAttachPressSpy.restore();
+		oDetachPressSpy.restore();
 	});
 
 })();

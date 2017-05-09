@@ -11,16 +11,17 @@
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ui.table">
 	</script>
+	<script src="../../_includeQUnit.js"></script>
 
 
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+
+		QUnit.config.autostart = false;
 
 		sap.ui.require([
 			"sap/ui/test/actions/Press",
@@ -47,6 +48,7 @@
 			"sap/m/semantic/DetailPage",
 			"sap/m/CheckBox",
 			"sap/m/ComboBox",
+			"sap/ui/test/Opa5",
 			"sap/ui/test/opaQunit",
 			"sap/ui/thirdparty/hasher",
 			"sap/ui/test/matchers/AggregationLengthEquals"
@@ -75,6 +77,7 @@
 				 DetailPage,
 				 CheckBox,
 				 ComboBox,
+				 Opa5,
 				 opaTest,
 				 hasher,
 				 AggregationLengthEquals){
@@ -300,7 +303,7 @@
 				oPressAction.executeOn(oSecondTab);
 			});
 
-			QUnit.test("Should be able to press a row in the sap.ui.table.Table", function(asssert) {
+			QUnit.test("Should be able to press a row in the sap.ui.table.Table", function(assert) {
 				// Arrange
 				var oTable = new Table({
 						selectionBehavior: "Row"
@@ -425,7 +428,7 @@
 					}
 				].forEach(function (oTest) {
 					opaTest(oTest.name, function(oOpa) {
-						var done = assert.async();
+						var done = Opa5.assert.async();
 
 						oTest.createModel();
 						oList.setModel(oModel);
@@ -440,7 +443,7 @@
 							id: oList.getId(),
 							matchers: new AggregationLengthEquals({name: "items", length: 2}),
 							success: function () {
-								assert.equal(oList.getItems().length, 2, "Triggered growing");
+								Opa5.assert.equal(oList.getItems().length, 2, "Triggered growing");
 								done();
 							},
 							errorMessage: "Growth not triggered"
@@ -552,6 +555,8 @@
 				assert.equal(jQuery(this.oComboBox.getPicker().getDomRef()).css("display"), "none", "Checking Popover's display css property");
 				assert.strictEqual(this.oComboBox.getValue(), "item 1", "Check selected item");
 			});
+
+			QUnit.start();
 
 		});
 	</script>

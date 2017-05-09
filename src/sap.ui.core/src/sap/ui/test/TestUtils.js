@@ -5,8 +5,10 @@
 sap.ui.define("sap/ui/test/TestUtils", [
 		"jquery.sap.global",
 		"sap/ui/core/Core",
-		"sap/ui/thirdparty/URI"
-], function(jQuery, Core, URI) {
+		"sap/ui/thirdparty/URI",
+		"jquery.sap.script",
+		"jquery.sap.sjax"
+], function(jQuery, Core, URI/*, jQuerySapScript, jQuerySapSjax */) {
 	"use strict";
 	/*global QUnit, sinon */
 	// Note: The dependency to Sinon.js has been omitted deliberately. Most test files load it via
@@ -87,9 +89,9 @@ sap.ui.define("sap/ui/test/TestUtils", [
 	function pushDeeplyContains(oActual, oExpected, sMessage, bExpectSuccess) {
 		try {
 			deeplyContains(oActual, oExpected, "/");
-			QUnit.push(bExpectSuccess, oActual, oExpected, sMessage);
+			QUnit.assert.push(bExpectSuccess, oActual, oExpected, sMessage);
 		} catch (ex) {
-			QUnit.push(!bExpectSuccess, oActual, oExpected,
+			QUnit.assert.push(!bExpectSuccess, oActual, oExpected,
 				(sMessage || "") + " failed because of " + ex.message);
 		}
 	}

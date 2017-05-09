@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/m/Text",
 	"codeUnterTest/model/formatter",

@@ -8,8 +8,8 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
-	function(jQuery, URI, Element) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jquery.sap.sjax'],
+	function(jQuery, URI, Element /*, jQuerySap1 */) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};

@@ -10,8 +10,9 @@ sap.ui.require([
   "sap/ui/test/gherkin/qUnitTestHarness",
   "sap/ui/test/gherkin/StepDefinitions",
   "sap/m/Label",
-  "sap/ui/test/gherkin/test/testHarnessTests"
-], function($, qUnitTestHarness, StepDefinitions, Label, testHarnessTests) {
+  "sap/ui/test/gherkin/test/testHarnessTests",
+  "jquery.sap.sjax"
+], function($, qUnitTestHarness, StepDefinitions, Label, testHarnessTests, sjax) {
   'use strict';
 
   QUnit.module("QUnit Test Harness Tests", {

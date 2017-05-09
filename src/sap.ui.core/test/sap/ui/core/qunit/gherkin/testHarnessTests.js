@@ -15,8 +15,9 @@ sap.ui.define([
   "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/opaQunit",
   "sap/ui/test/Opa5",
-  "sap/m/Label"
-], function($, qUnitTestHarness, opa5TestHarness, simpleGherkinParser, StepDefinitions, opaTest, Opa5, Label) {
+  "sap/m/Label",
+  "jquery.sap.sjax"
+], function($, qUnitTestHarness, opa5TestHarness, simpleGherkinParser, StepDefinitions, opaTest, Opa5, Label, sjax) {
   'use strict';
 
   var oOpa5 = opa5TestHarness._oOpa5;

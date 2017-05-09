@@ -501,6 +501,7 @@ sap.ui.define([
 
 		if (this._moveModelItems(this._getModelItemIndexByColumnKey(oModelItemFrom.columnKey), this._getModelItemIndexByColumnKey(oModelItemTo.columnKey))) {
 			this._switchMarkedTableItemTo(aVisibleTableItems[fcalculateIndexTo()]);
+            this.notifyChange();
 		}
 	};
 

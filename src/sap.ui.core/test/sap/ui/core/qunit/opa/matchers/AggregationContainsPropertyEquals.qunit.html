@@ -11,16 +11,16 @@
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m">
 		</script>
+		<script src="../../_includeQUnit.js"></script>
 
 
 		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+			QUnit.config.autostart = false;
 
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationContainsPropertyEqual",
@@ -154,6 +154,9 @@
 					sinon.assert.calledWith(oErrorSpy, "Control 'Element sap.m.ComboBox#myCB' " +
 							"does not have an aggregation called 'anAggregationThatWillNeverBeAddedToTheCombobox'");
 				});
+
+				QUnit.start();
+
 			});
 		</script>
 	</head>

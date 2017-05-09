@@ -19,12 +19,11 @@
 					headerToolbar: new Toolbar(),
 					swipeContent: new Button(),
 					infoToolbar: new Toolbar()
-
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});
@@ -72,7 +71,7 @@
 							publicAggregation: "items",
 							publicParent: oView.byId("list")
 						}
-					}
+					};
 				}
 			},
 			afterAction: fnConfirmListItem1IsOn3rdPosition,
