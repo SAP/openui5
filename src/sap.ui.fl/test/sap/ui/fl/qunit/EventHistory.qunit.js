@@ -45,13 +45,13 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		var oExpectedEvent1 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"mParameters": mParameters1
+			"parameters": mParameters1
 		};
 
 		var oExpectedEvent2 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"mParameters": mParameters2
+			"parameters": mParameters2
 		};
 
 		EventHistory.start();
@@ -81,13 +81,13 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		var oExpectedEvent1 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"mParameters": mParameters1
+			"parameters": mParameters1
 		};
 
 		var oExpectedEvent2 = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"mParameters": mParameters2
+			"parameters": mParameters2
 		};
 
 		EventHistory.start();
