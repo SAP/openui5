@@ -37,7 +37,7 @@
 		<!-- Navigation List -->
 		<content>
 			<List id="exploredMasterList"
-				  mode="{device>/listMode}"
+				  mode="{viewModel>/listMode}"
 				  selectionChange="onNavToEntity"
 				  items="{path: '/entities',
 				  groupHeaderFactory: '.getGroupHeader',
@@ -61,7 +61,7 @@
 					<StandardListItem
 							title="{name}"
 							counter="{sampleCount}"
-							type="{device>/listItemType}"
+							type="{viewModel>/listItemType}"
 							press="onNavToEntity" />
 				</items>
 			</List>

@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global',
 		});
 	};
 
-	thisLibrary._loadAllLibInfo = function(sAppRoot, sInfoType /*"_getDocuIndex", "_getThirdPartyInfo", "_getLibraryInfo", "_getReleaseNotes", "_getLibraryInfoAndReleaseNotes"*/, sReqVersion, fnCallback) {
+	thisLibrary._loadAllLibInfo = function(sAppRoot, sInfoType, sReqVersion, fnCallback) {
 
 		// parameter fallback for compatibility: if the version is a function
 		// then it is the old signature: (sAppRoot, sInfoType, fnCallback)

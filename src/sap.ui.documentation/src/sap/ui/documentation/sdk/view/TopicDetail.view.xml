@@ -8,9 +8,9 @@
 		xmlns:core="sap.ui.core">
 	<DynamicPage id="topicDetailPage" preserveHeaderStateOnScroll="true" fitContent="true">
 		<title>
-			<DynamicPageTitle>
+			<DynamicPageTitle class="sapUiDocumentationDynamicPageTitle">
 				<heading>
-					<m:Title text="{/topictitle1}"/>
+					<m:Text text="{/topictitle1}" class="sapUiDocumentationTopicTitle" wrapping="true"/>
 				</heading>
 				<actions>
 					<m:Button
