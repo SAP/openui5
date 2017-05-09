@@ -2025,6 +2025,66 @@
 				oIconTabBar.destroy();
 			});
 
+			QUnit.test("keep the last selected tab", function(assert) {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+				});
+
+				oIconTabBar.bindAggregation('items', {
+					path: '/datasets',
+					template: new sap.m.IconTabFilter({
+						key: "{firstName}",
+						text: "{lastName}"
+					})
+				});
+
+				var oData = {
+					"datasets": [
+						{firstName: "Peter", lastName: "Mueller"},
+						{firstName: "Petra", lastName: "Maier"},
+						{firstName: "Thomas", lastName: "Smith"},
+						{firstName: "John", lastName: "Williams"},
+						{firstName: "Maria", lastName: "Jones"}
+					]
+				};
+
+				var oJSONModel = new sap.ui.model.json.JSONModel();
+				oJSONModel.setData(oData);
+
+				sap.ui.getCore().setModel(oJSONModel);
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Select the last item
+				oIconTabBar.setSelectedItem(oIconTabBar.getItems()[4]);
+
+				// Update the data
+				oData = {
+					"datasets": [
+						{firstName: "Petra", lastName: "Maier"},
+						{firstName: "Thomas", lastName: "Smith"},
+						{firstName: "John", lastName: "Williams"},
+						{firstName: "Maria", lastName: "Jones"}
+					]
+				};
+
+				oJSONModel.setData(oData);
+
+				// wait 500ms
+				this.clock.tick(500);
+
+				var $selectedItem  = oIconTabBar.$().find('.sapMITBSelected');
+
+				// Assert
+				assert.ok($selectedItem.find('.sapMITBText').text() == 'Jones', "the last item is selected");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 			QUnit.test("keep the current content when change IconTabFilter count property", function(assert) {
 
 				// create
