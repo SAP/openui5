@@ -202,7 +202,7 @@
 			afterRedo: fnConfirmFormContainerRenamedWithNewValueWhenIsAString
 		});
 
-		// Remove and reveal actions
+		// Remove action
 		var fnConfirmFormContainerIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("formContainer").getVisible(), false, "then the FormContainer element is invisible");
 		};
@@ -238,35 +238,6 @@
 			afterAction: fnConfirmFormContainerIsInvisible,
 			afterUndo: fnConfirmFormContainerIsVisible,
 			afterRedo: fnConfirmFormContainerIsInvisible
-		});
-
-		rtaControlEnablingCheck("Checking the reveal action for a FormContainer", {
-			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
-				'<f:Form id="idForm">' +
-					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
-					'</f:layout>' +
-					'<f:formContainers>' +
-						'<f:FormContainer title="Option 1" id="formContainer" visible="false">' +
-							'<f:formElements>' +
-								'<f:FormElement label="labelForElement1">' +
-									'<f:fields>' +
-										'<m:Input/>' +
-									'</f:fields>' +
-								'</f:FormElement>' +
-							'</f:formElements>' +
-						'</f:FormContainer>' +
-					'</f:formContainers>' +
-				'</f:Form>' +
-			'</mvc:View>'
-			,
-			action: {
-				name: "reveal",
-				controlId: "formContainer"
-			},
-			afterAction: fnConfirmFormContainerIsVisible,
-			afterUndo: fnConfirmFormContainerIsInvisible,
-			afterRedo: fnConfirmFormContainerIsVisible
 		});
 	});
 })();
