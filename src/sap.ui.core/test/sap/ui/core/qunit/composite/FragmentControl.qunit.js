@@ -33,6 +33,7 @@ sap.ui.require([
 	jQuery.sap.require("fragments.TextToggleButtonNested");
 	jQuery.sap.require("fragments.TextToggleButtonForwarded");
 	jQuery.sap.require("fragments.LabelButtonTemplate");
+	jQuery.sap.require("fragments.LabelButtonsTemplate");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.FragmentControl: Simple Text Fragment Control", {
@@ -562,7 +563,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.module("sap.ui.core.FragmentControl: templating ", {
+	QUnit.module("sap.ui.core.FragmentControl: templating", {
 		beforeEach: function() {
 		},
 		afterEach: function() {
@@ -596,7 +597,8 @@ sap.ui.require([
 						xml: {
 							models: {
 								preprocessor: new sap.ui.model.json.JSONModel({
-									labelFirst: false
+									labelFirst: false,
+									value: "preprocessor"
 								})
 							}
 						}
@@ -606,13 +608,20 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("via component", function(assert) {
+	QUnit.test("property", function(assert) {
+		var fnInitialTemplatingSpy = sinon.spy(sap.ui.core.FragmentControl, "initialTemplating");
+
 		var oComponentContainer = new sap.ui.core.ComponentContainer({
 			component: new my.fragment.Component()
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
+        assert.ok(fnInitialTemplatingSpy.calledOnce);
+
 		var oView = oComponentContainer.getComponentInstance().getRootControl();
+		var oFragmentControl = oView.byId("IDLabelButtonTemplate");
+
+		var fnFragmentRetemplatingSpy = sinon.spy(oFragmentControl, "fragmentRetemplating");
 
 		// Now we define another model in order to fill properties in the fragment control
 		oView.setModel(new sap.ui.model.json.JSONModel({
@@ -620,9 +629,12 @@ sap.ui.require([
 			value: "Me"
 		}));
 
+		assert.equal(fnFragmentRetemplatingSpy.called, false);
 		// act: change the order to 'label' after 'button'
-		oView.byId("IDLabelButtonTemplate").setLabelFirst(false);
+		oFragmentControl.setLabelFirst(false);
 		this.clock.tick(500);
+
+		assert.ok(fnFragmentRetemplatingSpy.calledOnce);
 
 		assert.ok(oView);
 		assert.equal(oView.$().find("label")[0].textContent, "Click");
@@ -633,7 +645,7 @@ sap.ui.require([
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "LABEL");
 
 		// act: change the order to 'label' before 'button'
-		oView.byId("IDLabelButtonTemplate").setLabelFirst(true);
+		oFragmentControl.setLabelFirst(true);
 		this.clock.tick(500);
 
 		assert.ok(oView);
@@ -643,6 +655,78 @@ sap.ui.require([
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children().length, 2);
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[0].firstChild.nodeName, "LABEL");
 		assert.equal(oView.$().find(".IDLabelButtonTemplate").children()[1].firstChild.nodeName, "BUTTON");
+
+		oComponentContainer.destroy();
+	});
+
+	sap.ui.define([
+		"sap/ui/core/mvc/Controller"
+	], function(Controller) {
+		"use strict";
+		return Controller.extend("fragments.TestComponent2", {});
+	});
+	sap.ui.define("my/fragment2/Component", [
+		"sap/ui/core/UIComponent", 'fragments/Helper'
+	], function(UIComponent, Helper) {
+		return UIComponent.extend("my.fragment2.Component", {
+			Helper: Helper,
+			metadata: {
+				rootView: "fragments.TestComponent2"
+			},
+			createContent: function() {
+				sap.ui.core.util.XMLPreprocessor.plugIn(function(oNode, oVisitor) {
+					sap.ui.core.FragmentControl.initialTemplating(oNode, oVisitor, "fragments.LabelButtonsTemplate");
+				}, "fragments", "LabelButtonsTemplate");
+
+				return sap.ui.xmlview({
+					async: false,
+					viewContent: '<View height="100%" xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="fragments"><m:VBox><f:LabelButtonsTemplate id="IDLabelButtonsTemplate" items="{path:&quot;preprocessor>/items&quot;}"/></m:VBox></View>',
+					preprocessors: {
+						xml: {
+							models: {
+								preprocessor: new sap.ui.model.json.JSONModel({
+									items: [
+										{
+											text: "first"
+										}, {
+											text: 'second'
+										}
+									]
+								})
+							}
+						}
+					}
+				});
+			}
+		});
+	});
+	QUnit.test("aggregation with pretemplating model only", function(assert) {
+		var oComponentContainer = new sap.ui.core.ComponentContainer({
+			component: new my.fragment2.Component()
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		var oView = oComponentContainer.getComponentInstance().getRootControl();
+
+		assert.ok(oView);
+		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
+		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName, "LABEL");
+		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "BUTTON");
+		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName, "LABEL");
+		assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "BUTTON");
+
+		// ER: this 'act' should work in the future
+
+		// // act: change the order to 'label' after 'button'
+		// oView.byId("IDLabelButtonsTemplate").setLabelFirst(false);
+		// this.clock.tick(500);
+		//
+		// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
+		// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName, "BUTTON");
+		// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "LABEL");
+		// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName, "BUTTON");
+		// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "LABEL");
 
 		oComponentContainer.destroy();
 	});
@@ -707,5 +791,4 @@ sap.ui.require([
 		oFragmentControl.destroy();
 		oClone.destroy();
 	});
-
 });
