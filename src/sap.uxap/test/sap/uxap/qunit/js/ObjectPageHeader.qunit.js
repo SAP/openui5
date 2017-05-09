@@ -76,6 +76,26 @@
 		assert.ok(oHeaderView.$().find("sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
 	});
 
+	QUnit.test("Updates when header invisible", function (assert) {
+		var oPage = oHeaderView.byId("ObjectPageLayout"),
+			oHeader = core.byId("UxAP-ObjectPageHeader--header");
+
+		oPage.setVisible(false);
+		oPage.setShowTitleInHeaderContent(true);
+		core.applyChanges();
+
+		try {
+			oHeader.setObjectSubtitle("Updated");
+			ok(true, "no error upon update");
+		} catch (e) {
+			ok(false, "Expected to succeed");
+		}
+
+		//restore
+		oPage.setVisible(true);
+		oPage.setShowTitleInHeaderContent(false);
+	});
+
 	QUnit.module("Breadcrumb links API", {
 		setup: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
