@@ -38,17 +38,7 @@ sap.ui.define([
 				this.getView().setModel(new JSONModel());
 			},
 
-			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
 			onExit: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
