@@ -67,6 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.bInitial = true;
 			this.mRequestHandles = {};
 			this.oCountHandle = null;
+			this.bSkipDataEvents = false;
 
 			if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
@@ -600,7 +601,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				that.iLength = that.aKeys.length;
 				that.bLengthFinal = true;
 				that.bDataAvailable = true;
-
 			} else if (!bAborted) {
 				// reset data and trigger update
 				that.aKeys = [];
@@ -610,7 +610,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				that.bDataAvailable = true;
 				that._fireChange({reason: ChangeReason.Change});
 			}
-			that.fireDataReceived();
+
+			if (!that.bSkipDataEvents) {
+				that.fireDataReceived();
+			}
+
 		}
 
 		var sPath = this.sPath,
@@ -635,7 +639,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			} else {
 				// Execute the request and use the metadata if available
 				this.bPendingRequest = true;
-				this.fireDataRequested();
+				if (!this.bSkipDataEvents) {
+					this.fireDataRequested();
+				}
+				this.bSkipDataEvents = false;
 				//if load is triggered by a refresh we have to check the refreshGroup
 				sGroupId = this.sRefreshGroup ? this.sRefreshGroup : this.sGroupId;
 				this.mRequestHandles[sGuid] = this.oModel.read(sPath, {groupId: sGroupId, urlParameters: aParams, success: fnSuccess, error: fnError});
@@ -968,6 +975,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 */
 	ODataListBinding.prototype.abortPendingRequest = function(bAbortCountRequest) {
 		if (!jQuery.isEmptyObject(this.mRequestHandles)) {
+			this.bSkipDataEvents = true;
 			jQuery.each(this.mRequestHandles, function(sPath, oRequestHandle){
 				oRequestHandle.abort();
 			});
@@ -1058,7 +1066,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			} else {
 				// Only reset the keys, length usually doesn't change when sorting
 				this.aKeys = [];
-				this.abortPendingRequest();
+				this.abortPendingRequest(false);
 				this.sChangeReason = ChangeReason.Sort;
 				this._fireRefresh({reason : this.sChangeReason});
 			}
