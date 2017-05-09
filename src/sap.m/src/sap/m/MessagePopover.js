@@ -199,6 +199,11 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 		});
 
+
+		function capitalize(sName) {
+			return sName.charAt(0).toUpperCase() + sName.slice(1);
+		}
+
 		var CSS_CLASS = "sapMMsgPopover",
 			ICONS = {
 				back: IconPool.getIconURI("nav-back"),
@@ -291,7 +296,6 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				},
 				beforeOpen: function (oEvent) {
 					that.fireBeforeOpen({openBy: oEvent.getParameter("openBy")});
-					that._setInitialFocus();
 				},
 				beforeClose: function (oEvent) {
 					that.fireBeforeClose({openBy: oEvent.getParameter("openBy")});
@@ -304,7 +308,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			oPopupControl = this._oPopover.getAggregation("_popup");
 			oPopupControl.oPopup.setAutoClose(false);
 			oPopupControl.addEventDelegate({
-				onBeforeRendering: this.onBeforeRenderingPopover
+				onBeforeRendering: this.onBeforeRenderingPopover,
+				onAfterRendering: this.onAfterRenderingPopover
 			}, this);
 
 			if (sap.ui.Device.system.phone) {
@@ -317,11 +322,70 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			// Check for default async handlers and set them appropriately
 			ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
 				if (DEFAULT_ASYNC_HANDLERS.hasOwnProperty(sFuncName)) {
-					// MessagePopover is just a proxy to the MessageView
-					this.setProperty(sFuncName, DEFAULT_ASYNC_HANDLERS[sFuncName]);
-					this._oMessageView.setProperty(sFuncName, DEFAULT_ASYNC_HANDLERS[sFuncName]);
+					this['set' + capitalize(sFuncName)](DEFAULT_ASYNC_HANDLERS[sFuncName]);
 				}
 			}, this);
+		};
+
+		/**
+		 * Required adaptations before rendering MessagePopover
+		 *
+		 * @private
+		 */
+		MessagePopover.prototype.onBeforeRenderingPopover = function () {
+			// If there is no item's binding given - it should happen automatically in the MessageView
+			// However for backwards compatibility we need to have the same binding on the MessagePopover
+			// TODO: Decide what to do in this case
+			/*if (!this.getBinding("items") && this._oMessageView.getBinding("items")) {
+				this.bindAggregation("items", this._oMessageView.getBindingInfo("items"));
+			}*/
+
+			// Update MV only if 'items' aggregation is changed
+			if (this._bItemsChanged) {
+				var items = this.getItems();
+				var that = this;
+
+				this._oMessageView.removeAllItems();
+
+				items.forEach(function (item) {
+
+					// we need to know if the MessagePopover's item was changed so to
+					// update the MessageView's items as well
+					item._updateProperties(function () {
+						that._bItemsChanged = true;
+					});
+
+					this._oMessageView.addItem(new sap.m.MessageItem({
+						type: item.getType(),
+						title: item.getTitle(),
+						subtitle: item.getSubtitle(),
+						description: item.getDescription(),
+						markupDescription: item.getMarkupDescription(),
+						longtextUrl: item.getLongtextUrl(),
+						counter: item.getCounter()
+					}));
+				}, this);
+
+				this._bItemsChanged = false;
+			}
+
+			this._setInitialFocus();
+		};
+
+		/**
+		 * Required adaptations after rendering MessagePopover
+		 *
+		 * @private
+		 */
+		MessagePopover.prototype.onAfterRenderingPopover = function () {
+			// Because we remove the items from the MessageView and fill it in with new items
+			// every time something is changed - we need to update the id of the element which
+			// will receive the focus given by the Popover control.
+			// First we need to check if such id is stored in the MessagePopover -> ResponsivePopover -> Popover control
+			if (this._oPopover._oControl._sFocusControlId) {
+				// then we remove any stored item id because it no longer exists after the re-rendering.
+				this._oPopover._oControl._sFocusControlId = null;
+			}
 		};
 
 		/**
@@ -551,10 +615,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				// if the controls state is "InitiallyExpanded: true" and
 				// if current page is the list page - set initial focus to the list.
 				// otherwise use default functionality built-in the popover
-				var sMessageViewCurrentList = this._oMessageView._sCurrentList,
-					oMessageViewCurrentList = this._oMessageView._oLists[sMessageViewCurrentList];
-
-				this._oPopover.setInitialFocus(oMessageViewCurrentList);
+				this._oPopover.setInitialFocus(this._oMessageView._oLists[this._sCurrentList || 'all']);
 			}
 		};
 
@@ -606,6 +667,22 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			return this;
 		};
 
+		/*
+		 * =========================================
+		 * MessagePopover HeaderButton
+		 * proxy methods
+		 * =========================================
+		 */
+
+		MessagePopover.prototype.setHeaderButton = function (oBtn) {
+			this._oMessageView.setHeaderButton(oBtn);
+			return this;
+		};
+
+		MessagePopover.prototype.getHeaderButton = function () {
+			return this._oMessageView.getHeaderButton();
+		};
+
 		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
 			"setBusyIndicatorDelay", "getVisible", "setVisible", "getBusy", "setBusy"].forEach(function(sName){
 			MessagePopover.prototype[sName] = function() {
@@ -618,16 +695,37 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		});
 
 		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
-		["setModel", "getModel", "bindAggregation", "getAggregation", "setAggregation", "insertAggregation", "addAggregation",
-			"removeAggregation", "removeAllAggregation", "destroyAggregation",
-			"getBinding", "getBindingContext", "getBindingInfo", "getBindingPath",
-			"setBinding", "setBindingContext"].forEach(function (sFuncName) {
-			// Once they are called
-			MessagePopover.prototype[sFuncName] = function () {
-				// Proxying the above methods directly to the MessageView control
-				return this._oMessageView[sFuncName].apply(this._oMessageView, arguments);
-			};
-		}, this);
+		["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
+			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+				// First, they are saved for later reference
+				MessagePopover.prototype["_" + sFuncName + "Old"] = MessagePopover.prototype[sFuncName];
+
+				// Once they are called
+				MessagePopover.prototype[sFuncName] = function () {
+					// We immediately call the saved method first
+					var result = MessagePopover.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+
+					// Then there is additional logic
+
+					// Mark items aggregation as changed and invalidate popover to trigger rendering
+					// See 'MessagePopover.prototype.onBeforeRenderingPopover'
+					this._bItemsChanged = true;
+
+					// If Popover dependency has already been instantiated ...
+					if (this._oPopover) {
+						// ... invalidate it
+						this._oPopover.invalidate();
+					}
+
+					// If the called method is 'removeAggregation' or 'removeAllAggregation' ...
+					if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+						// ... return the result of the operation
+						return result;
+					}
+
+					return this;
+				};
+			});
 
 		return MessagePopover;
 
