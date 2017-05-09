@@ -228,10 +228,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.bindRows = function(oBindingInfo) {
-		// Sanitize the arguments for API Compatibility: sName, sPath, oTemplate, oSorter, aFilters
-		var oBindingInfoSanitized = this._sanitizeBindingInfo.apply(this, arguments);
+		// API Compatibility (sPath, oTemplate, oSorter, aFilters)
+		oBindingInfo = this._applyBindingInfoToModel.apply(this, arguments);
 
-		var vReturn = Table.prototype.bindRows.call(this, oBindingInfoSanitized);
+		var vReturn = Table.prototype.bindRows.call(this, oBindingInfo);
 
 		this._updateTotalRow(true);
 
@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * _bindAggregation is overwritten, and will be called by either ManagedObject.prototype.bindAggregation
 	 * or ManagedObject.prototype.setModel
 	 */
-	AnalyticalTable.prototype._bindAggregation = function(sName, sPath, oTemplate, oSorter, aFilters) {
+	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
 			// make sure to reset the first visible row (currently needed for the analytical binding)
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			// The current syntax for _bindAggregation is sPath can be an object wrapping the other parameters
 			// in this case we have to sanitize the parameters, so the ODataModelAdapter will instantiate the correct binding.
-			this._sanitizeBindingInfo.call(this, sPath, oTemplate, oSorter, aFilters);
+			this._applyBindingInfoToModel.call(this, Array.prototype.slice.call(arguments, 1));
 		}
 		return Table.prototype._bindAggregation.apply(this, arguments);
 	};
@@ -308,25 +308,20 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._sanitizeBindingInfo = function (oBindingInfo) {
-		var sPath,
-			oTemplate,
-			aSorters,
-			aFilters;
+	AnalyticalTable.prototype._applyBindingInfoToModel = function (oBindingInfo) {
+		// Old API compatibility (sPath, oTemplate|fFactory, oSorter, aFilters)
+		if (typeof oBindingInfo === "string") {
+			oBindingInfo = {
+				path: oBindingInfo,
+				sorter: arguments[2],
+				filters: arguments[3],
+				template: arguments[1]
+			};
 
-		// Old API compatibility
-		// previously the bind* functions were called in this pattern: sName, sPath, oTemplate, oSorter, aFilters
-		if (typeof oBindingInfo == "string") {
-			sPath = arguments[0];
-			oTemplate = arguments[1];
-			aSorters = arguments[2];
-			aFilters = arguments[3];
-			oBindingInfo = {path: sPath, sorter: aSorters, filters: aFilters};
-			// allow either to pass the template or the factory function as 3rd parameter
-			if (oTemplate instanceof ManagedObject) {
-				oBindingInfo.template = oTemplate;
-			} else if (typeof oTemplate === "function") {
-				oBindingInfo.factory = oTemplate;
+			// Allow to pass a factory function as the 2nd parameter.
+			if (typeof oBindingInfo.template === "function") {
+				oBindingInfo.factory = oBindingInfo.template;
+				delete oBindingInfo.template;
 			}
 		}
 
@@ -359,6 +354,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
 
+		// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
+		// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
+		oBindingInfo.events = {
+			selectionChanged: this._onSelectionChanged.bind(this)
+		};
+
 		// This may fail, in case the model is not yet set.
 		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)
 		var oModel = this.getModel(oBindingInfo.model);
@@ -367,18 +368,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 
 		return oBindingInfo;
-	};
-
-	AnalyticalTable.prototype._attachBindingListener = function() {
-		var oBinding = this.getBinding("rows");
-
-		// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
-		// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
-		if (oBinding && !oBinding.hasListeners("selectionChanged")){
-			oBinding.attachSelectionChanged(this._onSelectionChanged, this);
-		}
-
-		Table.prototype._attachDataRequestedListeners.apply(this);
 	};
 
 	AnalyticalTable.prototype._getColumnInformation = function() {
