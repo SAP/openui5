@@ -212,6 +212,11 @@
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
+			"control": "sap.m.MessageView",
+			"url": "../MessageView.html",
+			"appComponent": "CA-UI5-CTR-RIL"
+		},
+		{
 			"control": "sap.m.MultiInput",
 			"url": "../MultiInput.html",
 			"appComponent": "CA-UI5-CTR-ROD"
