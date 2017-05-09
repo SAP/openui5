@@ -11,11 +11,10 @@
 			"unitTests" : "./"
 		}'>
 </script>
+<script src="../_includeQUnit.js"></script>
 
 
 <script>
-jQuery.sap.require("sap.ui.qunit.qunit-css");
-jQuery.sap.require("sap.ui.thirdparty.qunit");
 jQuery.sap.require("sap.ui.qunit.qunit-junit");
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -286,9 +285,9 @@ sap.ui.require([
 
 	QUnit.test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
 
-		var sError = "OpaError",
+		var oError = new Error("OpaError"),
 			fnFaultyFunction = function() {
-				throw sError;
+				throw oError;
 			},
 			fnClockTick = function() {
 				this.clock.tick(100);
@@ -298,21 +297,21 @@ sap.ui.require([
 			fnSpy = this.spy();
 
 		oOpa.waitFor({check : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		assert.throws(fnClockTick, sError, "Exception thrown for check");
+		assert.throws(fnClockTick, oError, "Exception thrown for check");
 
 		this.clock.tick(100);
 
 		oOpa1.waitFor({success : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		assert.throws(fnClockTick, sError, "Exception thrown for success");
+		assert.throws(fnClockTick, oError, "Exception thrown for success");
 		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases")
 	});
 
 
 	QUnit.test("Should empty the queue if the promise is rejected", function(assert) {
 
-		var sError = "OpaError",
+		var oError = new Error("OpaError"),
 			fnFaultyFunction = function() {
-				throw sError;
+				throw oError;
 			},
 			fnClockTick = function() {
 				this.clock.tick(100);
@@ -332,7 +331,7 @@ sap.ui.require([
 
 		oOpa.emptyQueue();
 
-		assert.throws(fnClockTick, sError, "Exception thrown for check");
+		assert.throws(fnClockTick, oError, "Exception thrown for check");
 		oOpa.emptyQueue().done(fnSuccess);
 
 		this.clock.tick(100);

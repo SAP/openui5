@@ -82,6 +82,10 @@ sap.ui.define([
 			expected = null;
 		}
 
+		if ( QUnit.test.length === 2 && async === true ) {
+			throw new Error("Qunit >=2.0 is used, which no longer supports the 'async' parameter for tests.");
+		}
+
 		var testBody = function(assert) {
 			var fnStart = assert.async();
 			config.testName = testName;
@@ -89,6 +93,10 @@ sap.ui.define([
 			// provide current "assert" object to the tests
 			Opa.assert = assert;
 			Opa5.assert = assert;
+
+			if ( QUnit.test.length === 2 && expected !== null ) {
+				assert.expect(expected);
+			}
 
 			callback.call(this, config.arrangements, config.actions, config.assertions);
 
@@ -100,15 +108,23 @@ sap.ui.define([
 			});
 
 			promise.fail(function (oOptions) {
-				QUnit.ok(false, oOptions.errorMessage);
+				assert.ok(false, oOptions.errorMessage);
 				Opa.assert = undefined;
 				Opa5.assert = undefined;
 				// let OPA finish before QUnit starts executing the next test
-				setTimeout(fnStart, 0);
+				// call fnStart only when QUnit did not timeout.
+				if ( oOptions.stoppedManually !== false ) {
+					setTimeout(fnStart, 0);
+				}
 			});
 		};
 
-		return QUnit.test(testName, expected, testBody, async);
+		if ( QUnit.test.length === 2 ) {
+			return QUnit.test(testName, testBody);
+		} else {
+			return QUnit.test(testName, expected, testBody, async);
+		}
+
 	};
 	// Export to global namespace to be backwards compatible
 	window.opaTest = opaTest;
