@@ -362,7 +362,17 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._onLoadIEListener = function (oEvent) {
-			var sCurrentContentType = oEvent.currentTarget.contentWindow.document.mimeType;
+			try {
+				// because of asynchronity of events, IE sometimes fires load event even after it unloads the content.
+				// The contentWindow does not exists in these moments. On the other hand, the error state is already handled
+				// by onBeforeUnloadListener, so we only need catch for catching the error and then return.
+				// The problem is not with null reference. The access of the contentWindow sometimes fires 'access denied' error
+				// which is not detectable otherwise.
+				var sCurrentContentType = oEvent.currentTarget.contentWindow.document.mimeType;
+			} catch (err) {
+				return;
+			}
+
 			if (!isSupportedMimeType(sCurrentContentType)) {
 				this._fireErrorEvent();
 			}
