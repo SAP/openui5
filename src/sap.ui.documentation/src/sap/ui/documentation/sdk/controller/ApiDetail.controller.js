@@ -70,6 +70,10 @@ sap.ui.define([
 				this.setModel(new JSONModel(), 'methods');
 				this.setModel(new JSONModel(), 'events');
 				this.setModel(new JSONModel(), "entity");
+
+				this._fnOrientationChange({
+					landscape: Device.orientation.landscape
+				});
 			},
 
 			onBeforeRendering: function() {
@@ -354,10 +358,14 @@ sap.ui.define([
 				};
 			},
 
-			_fnOrientationChange: function(e) {
+			_fnOrientationChange: function(oEvent) {
 				var page = this.getView().byId("apiDetailPage");
 
-				if (e.landscape) {
+				if (Device.system.phone) {
+					this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
+				}
+
+				if (oEvent.landscape) {
 					page.setShowHeader(false);
 				} else {
 					page.setShowHeader(true);

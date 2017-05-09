@@ -5,8 +5,9 @@
 /*global history */
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/m/library"
-	], function (BaseController, mobileLibrary) {
+		"sap/m/library",
+		"sap/ui/Device"
+	], function (BaseController, mobileLibrary, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {
@@ -17,6 +18,28 @@ sap.ui.define([
 			 */
 			onInit: function () {
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
+
+					this._fnOrientationChange({
+					landscape: Device.orientation.landscape
+				});
+			},
+
+			onBeforeRendering: function() {
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+			},
+
+			onAfterRendering: function() {
+				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+			},
+
+			onExit: function() {
+				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+			},
+
+			_fnOrientationChange: function(oEvent) {
+				if (Device.system.phone) {
+					this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
+				}
 			},
 
 			/**

@@ -14,7 +14,9 @@
 					background="Mixed">
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
-						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
+						<Image
+								id="phoneImage"
+								src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
 								width="100%"
 								densityAware="false"
 								visible="{device>/system/phone}"/>
