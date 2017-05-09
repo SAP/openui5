@@ -13,7 +13,7 @@
 			<l:BlockLayout
 					background="Mixed">
 				<l:BlockLayoutRow>
-					<l:BlockLayoutCell class="sapUiNoContentPadding">
+					<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
 								width="100%"
 								densityAware="false"
