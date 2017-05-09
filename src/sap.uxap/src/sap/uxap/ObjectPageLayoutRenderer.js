@@ -206,9 +206,14 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
 		ObjectPageLayoutRenderer._rerenderHeaderContentArea = function (oRm, oControl) {
-			var sId = oControl.getId();
+			var sId = oControl.getId(),
+			$headerContent;
+
 			this.renderHeaderContent(oRm, oControl);
-			oRm.flush(jQuery.sap.byId(sId + "-headerContent")[0]);
+			$headerContent = jQuery.sap.byId(sId + "-headerContent")[0];
+			if ($headerContent) {
+				oRm.flush($headerContent);
+			}
 		};
 
 
