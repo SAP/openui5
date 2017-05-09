@@ -11,16 +11,11 @@ sap.ui.define(['jquery.sap.global'],
 	var ToggleFullScreenHandler = {
 
 		updateMode : function(oEvt, oView, oController) {
-			if (!this._oShell) {
-				this._oShell = sap.ui.getCore().byId('Shell');
-			}
 			var bSwitchToFullScreen = (this._getSplitApp(oController).getMode() === "ShowHideMode");
 			if (bSwitchToFullScreen) {
 				this._getSplitApp(oController).setMode('HideMode');
-				this._oShell.setAppWidthLimited(false);
 			} else {
 				this._getSplitApp(oController).setMode('ShowHideMode');
-				this._oShell.setAppWidthLimited(true);
 			}
 			this.updateControl(oEvt.getSource(), oView, bSwitchToFullScreen, oController);
 		},
@@ -49,7 +44,6 @@ sap.ui.define(['jquery.sap.global'],
 
 		cleanUp : function() {
 			this._oSplitApp = null;
-			this._oShell = null;
 		}
 	};
 

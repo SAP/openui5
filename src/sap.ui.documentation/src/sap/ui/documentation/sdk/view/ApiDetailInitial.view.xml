@@ -1,7 +1,8 @@
 <mvc:View
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:l="sap.ui.layout">
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
 
 	<Page showHeader="false">
 
@@ -10,7 +11,7 @@
 					background="Light">
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
-							class="sapUiNoContentPadding">
+							class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
 								width="100%"
 								densityAware="false"
@@ -290,39 +291,9 @@
 				</l:BlockLayoutRow>
 
 				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="demokitInitialPagesColorPatternFContrast">
-						<HBox
-								justifyContent="SpaceBetween"
-								alignItems="Center">
-							<Image
-									src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
-									height="2.5rem">
-							</Image>
-							<HBox
-									width="100%"
-									justifyContent="End"
-									wrap="Wrap"
-									visible="{=!${appView>/isOpenUI5}}">
-								<Link
-										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-										text="Legal Disclosure"
-										href="https://www.sap.com/corporate/en/legal/impressum.html"
-										target="_blank"/>
-								<Link
-										class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
-										text="Privacy"
-										href="https://help.hana.ondemand.com/privacy.htm"
-										target="_blank"/>
-								<Link
-										class="demokitInitialPagesBrightLink"
-										text="Terms of use"
-										href="https://help.hana.ondemand.com/terms_of_use.html"
-										target="_blank"/>
-							</HBox>
-						</HBox>
-					</l:BlockLayoutCell>
+					<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 				</l:BlockLayoutRow>
+
 			</l:BlockLayout>
 		</content>
 	</Page>

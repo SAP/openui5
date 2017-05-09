@@ -19,18 +19,6 @@ sap.ui.define([
 				this.getRouter().getRoute("group").attachPatternMatched(this._onGroupMatched, this);
 			},
 
-			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			onExit: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
 			/* =========================================================== */
 			/* begin: internal methods									 */
 			/* =========================================================== */

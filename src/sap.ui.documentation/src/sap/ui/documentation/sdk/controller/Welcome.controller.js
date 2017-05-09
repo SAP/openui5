@@ -4,8 +4,9 @@
 
 /*global history */
 sap.ui.define([
-		"sap/ui/documentation/sdk/controller/BaseController"
-	], function (BaseController) {
+		"sap/ui/documentation/sdk/controller/BaseController",
+		"sap/m/library"
+	], function (BaseController, mobileLibrary) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {
@@ -32,6 +33,13 @@ sap.ui.define([
 
 				event.preventDefault();
 				this.getRouter().navTo(page, {id: parameter}, true);
+			},
+
+			/**
+			 * Navigates to the tutorial overview
+			 */
+			onGetStarted: function () {
+				mobileLibrary.URLHelper.redirect("#/topic/8b49fc198bf04b2d9800fc37fecbb218");
 			},
 
 			/**
