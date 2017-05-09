@@ -89,3 +89,16 @@ html.sapUiMedia-Std-Phone .sapUiSizeCompact .sapMDateTimePopupCont.sapMTimePicke
 html.sap-phone .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
 	height: ~'calc(100% - 3.5rem)';
 }
+
+html.sap-phone .sapMDateTimePopupCont {
+  	background-color: @sapUiListBackground;
+	.sapUiCalContent {
+		& > .sapUiCalMonthPicker,
+		& > .sapUiCalYearPicker {
+			width: 100%;
+			box-sizing: border-box;
+			left: 0;
+			margin: 0;
+		}
+	}
+}
