@@ -109,7 +109,7 @@ sap.ui.define([
 					return this.waitFor({
 						searchOpenDialogs : true,
 						controlType : "sap.m.Button",
-						matchers : new Opa5.matchers.PropertyStrictEquals({name : "icon", value : "sap-icon://refresh"}),
+						matchers : new Opa5.matchers.PropertyStrictEquals({name : "icon", value : "sap-icon://clear-filter"}),
 						actions : new Press(),
 						errorMessage : "Did not find the ViewSettingDialog's 'Reset' button."
 					});
