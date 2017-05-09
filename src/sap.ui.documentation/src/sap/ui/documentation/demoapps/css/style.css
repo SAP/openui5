@@ -5,8 +5,8 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 
 /* override default padding for headline cells */
 .sapUiDemoApps .headlineCell .sapUiBlockCellContent {
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
 }
 
 /* fix to align link and label in horizontal layout*/

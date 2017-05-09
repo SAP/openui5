@@ -4,15 +4,10 @@
 	xmlns:l="sap.ui.layout">
 	<l:BlockLayoutCell
 		class="headlineCell"
+		title="{
+			path: 'categoryId',
+			formatter: '.formatter.categoryName'
+		}"
 		width="2">
-		<l:content>
-			<Title
-				level="H3"
-				titleStyle="H3"
-				text="{
-					path: 'categoryId',
-					formatter: '.formatter.categoryName'
-				}"/>
-		</l:content>
 	</l:BlockLayoutCell>
 </core:FragmentDefinition>

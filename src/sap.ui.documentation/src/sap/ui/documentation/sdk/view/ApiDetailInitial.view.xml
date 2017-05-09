@@ -22,7 +22,7 @@
 								width="100%"
 								visible="{=!${device>/system/phone}}"/>
 						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderTitleText" text="API Reference" width="100%" textAlign="Left"/>
-						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderSubText" text="Application programming interface references for the UI5 control libraries" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderSubText" text="Look up properties and interfaces" width="100%" textAlign="Left"/>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
