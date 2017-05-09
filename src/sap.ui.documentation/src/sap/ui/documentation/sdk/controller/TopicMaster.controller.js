@@ -56,10 +56,39 @@ sap.ui.define([
 				}
 
 				var oData = oResponse.data.links;
-				// Remove all top-level entries with an empty text property
-				return oData.filter(function (oEntry) {
-					return oEntry.text !== "";
+				return this._preProcessDocuIndex(oData);
+			},
+
+			_preProcessDocuIndex: function (oData) {
+				var sMainSectionId = "95d113be50ae40d5b0b562b84d715227",
+					sTestPagesSectionId = "1b4124400a764ec0a8623d0d5c585321",
+					oProcessedData,
+					iTestPagesSectionIndex,
+					oTestPagesSection,
+					oMainSection;
+
+				// Remove dummy top-level elements (either empty text, or key=index)
+				oProcessedData = oData.filter(function (oEntry) {
+					return oEntry.text !== "" && oEntry.key !== "index";
 				});
+
+				// Search for the sections that we're interested in (main and test pages)
+				for (var i = 0; i < oProcessedData.length; i++) {
+					if (oProcessedData[i].key === sMainSectionId) {
+						oMainSection = oProcessedData[i];
+					} else if (oProcessedData[i].key === sTestPagesSectionId) {
+						oTestPagesSection = oProcessedData[i];
+						iTestPagesSectionIndex = i;
+					}
+				}
+
+				// If there is a "Test Pages" section, move it as the last element of the main section
+				if (oMainSection && oTestPagesSection) {
+					oProcessedData.splice(iTestPagesSectionIndex, 1);
+					oMainSection.links.push(oTestPagesSection);
+				}
+
+				return oProcessedData;
 			},
 
 			onNodeSelect : function (oEvent) {
