@@ -76,6 +76,5 @@ sap.ui.define([
 			oRm.write("</div>");
 		};
 
-
 		return PDFViewerRenderer;
 	}, /* bExport= */ true);

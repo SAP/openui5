@@ -1,9 +1,12 @@
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/ui/Device",
-	"sap/m/PDFViewer"
+	"sap/m/PDFViewer",
+	"jquery.sap.global",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
 	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, Device, PDFViewer) {
+], function (TestUtils, Device, PDFViewer, $, sinon) {
 	var oPDFViewer;
 	QUnit.module('Special use cases', {
 		afterEach: function (assert) {
@@ -137,6 +140,58 @@ sap.ui.define([
 			.then(TestUtils.wait(2000))
 			.then(function () {
 				assert.ok(oPDFViewer.$().find('.sapMPDFViewerError').length === 1, 'The error content is missing');
+				done();
+			});
+	});
+
+	QUnit.test("Changes of height & width propagates directly to DOM", function (assert) {
+		assert.expect(4);
+		var done = assert.async(),
+			fnInvalidate,
+			sExpectedHeight = "666px",
+			sExpectedWidth = "999px",
+			fnLoadedListener = function () {
+				assert.ok(true, "'Load' event should be fired");
+			},
+			fnSpyPdfViewer = function () {
+				fnInvalidate = sinon.spy(oPDFViewer, "invalidate");
+			},
+			fnErrorListener = function () {
+				assert.ok(false, "'Error' event fired");
+			},
+			oErrorOptions = {
+				"source": "./pdfviewer/sample-file.pdf",
+				"loaded": fnLoadedListener,
+				"error": fnErrorListener
+			},
+			fnChangeHeightHandler = function () {
+				oPDFViewer.setHeight(sExpectedHeight);
+			},
+			fnChangeWidthHandler = function () {
+				oPDFViewer.setWidth(sExpectedWidth);
+			},
+			fnCheckHeight = function () {
+				var sCurrentHeight = oPDFViewer.$().css('height');
+				assert.ok(sCurrentHeight === sExpectedHeight, "Height differs. Expects: " +
+					sExpectedHeight + ", but " + sCurrentHeight + " found.");
+			},
+			fnCheckWidth = function () {
+				var sCurrentWidth = oPDFViewer.$().css('width');
+				assert.ok(sCurrentWidth === sExpectedWidth, "Width differs. Expects: " +
+					sExpectedWidth + ", but " + sCurrentWidth + " found.");
+			};
+
+		oPDFViewer = TestUtils.createPdfViewer(oErrorOptions);
+		TestUtils.renderPdfViewer(oPDFViewer);
+
+		TestUtils.wait(2000)()
+			.then(fnSpyPdfViewer)
+			.then(fnChangeHeightHandler)
+			.then(fnCheckHeight)
+			.then(fnChangeWidthHandler)
+			.then(fnCheckWidth)
+			.then(function () {
+				sinon.assert.callCount(fnInvalidate, 0);
 				done();
 			});
 	});
