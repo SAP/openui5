@@ -53,7 +53,7 @@
 
 				<ToolbarSpacer visible="{=!${appView>/bPhoneSize}}">
 					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px" />
+						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
 					</layoutData>
 				</ToolbarSpacer>
 
