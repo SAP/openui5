@@ -48,7 +48,7 @@ sap.ui.define(function () {
 		var oEvent = {
 			"channelId": sChannelId,
 			"eventId": sEventId,
-			"mParameters": mParameters
+			"parameters": mParameters
 		};
 
 		if (EventHistory._oHistory[sEventId]) {
