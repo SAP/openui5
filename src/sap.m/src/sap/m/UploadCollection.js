@@ -1519,7 +1519,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		oRm.renderControl(this._getFileNameControl(oItem, that));
 		// if status is uploading only the progress label is displayed under the Filename
 		if (sStatus === UploadCollection._uploadingStatus && !(Device.browser.msie && Device.browser.version <= 9)) {
-			oRm.renderControl(this._createProgressLabel(sItemId, sPercentUploaded));
+			oRm.renderControl(this._createProgressLabel(oItem, sPercentUploaded));
 		} else {
 			if (iMarkersCounter > 0) {
 				oRm.write('<div class="sapMUCObjectMarkerContainer">');// begin of markers container
@@ -1679,13 +1679,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @return {sap.m.Label} oProgressLabel
 	 * @private
 	 */
-	UploadCollection.prototype._createProgressLabel = function(sItemId, sPercentUploaded) {
-		var oProgressLabel;
+	UploadCollection.prototype._createProgressLabel = function(oItem, sPercentUploaded) {
+		var oProgressLabel,
+			sItemId = oItem.getId();
 
 		oProgressLabel = sap.ui.getCore().byId(sItemId + "-ta_progress");
 		if (!oProgressLabel) {
-			oProgressLabel = new sap.m.Label(sItemId + "-ta_progress", {
-				text : this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded])
+			oProgressLabel = oItem._getControl("sap.m.Label", {
+				id: sItemId + "-ta_progress",
+				text: this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded])
 			}).addStyleClass("sapMUCProgress");
 		} else {
 			oProgressLabel.setText(this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded]));
