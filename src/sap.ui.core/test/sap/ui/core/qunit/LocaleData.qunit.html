@@ -322,6 +322,9 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "Hour"), "h:mm – h:mm a", "interval format \"hm\", \"Hour\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "Year"), "h:mm a – h:mm a", "interval format \"hm\", \"Year\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "a"), "HH:mm – HH:mm", "interval format \"Hm\", \"a\"");
+		// if the diff field is smaller than the fields in skeleton format, create custom format for a single date
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMMM", "d"), "MMM y", "interval format \"yMMM\", \"d\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "s"), "dd/MM/y, HH:mm", "interval format \"yMdjm\", \"s\"");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
