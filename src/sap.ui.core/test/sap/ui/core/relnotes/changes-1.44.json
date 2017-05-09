@@ -879,5 +879,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "58f0226ae05e15c572dc00ce99c8b80964563678",
+        "type": "FIX",
+        "text": " core.Icon: avoid the same aria label read twice",
+        "references": []
+      },
+      {
+        "id": "a7f53414c07df938a775614281c9085ad9e469af",
+        "type": "FIX",
+        "text": " core.IconPool: add local font path for SAP-icons Icon Font",
+        "references": []
+      },
+      {
+        "id": "34fa83060c0153f2c9fb0228beeeef0ffeb6bd84",
+        "type": "FIX",
+        "text": " core.routing: execute view processing within 0 timeout for IE/Edge",
+        "references": []
+      },
+      {
+        "id": "500f12a494115d91192d0dbe7da78affa58e896e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context: fix sap.m.Input change event value",
+        "references": []
+      }
+    ]
   }
 }

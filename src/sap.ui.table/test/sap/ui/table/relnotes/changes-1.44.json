@@ -606,5 +606,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "59e937866a82ac65752cbb128c664c7325ebd957",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
+      },
+      {
+        "id": "83fbaaecd24160f846e7b1a948186c457483f247",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - column header spans in XML view",
+        "references": []
+      }
+    ]
   }
 }

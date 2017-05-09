@@ -184,5 +184,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "adf858bd1d04a27889a7431d1ceb964cea4091ca",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: PaneContainer\u0027s content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
   }
 }

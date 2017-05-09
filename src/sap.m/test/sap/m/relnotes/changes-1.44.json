@@ -2073,5 +2073,52 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "5b1ae0bd7248b00a2128015b3ad9220802d1f7c2",
+        "type": "FIX",
+        "text": " sap.m.Label: Last letter is no longer cut in the InfoToolbar",
+        "references": []
+      },
+      {
+        "id": "0ae89d5ccc0f36fa584662e5432bbf9d0bf29d06",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: removed usage of deprecated property numberUnit of sap.m.ObjectNumber",
+        "references": []
+      },
+      {
+        "id": "719645060e5f3f5a285cc2b4c374b937e0b23087",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in Edge when animated",
+        "references": []
+      },
+      {
+        "id": "2b391b279926089b6253a52e86e5fea9764b9fb7",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments are correctly positioned when property showRowHeader is set to false",
+        "references": []
+      },
+      {
+        "id": "d199fc91cd0d546ea8147830ae77ab4040a50243",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Change \u0026 LiveChange events are now fired properly on click.",
+        "references": []
+      },
+      {
+        "id": "4726e283008d697cef6d975525b2730b03f885e3",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Initial flickering when mode\u003d\"HideMode\" is now removed",
+        "references": []
+      },
+      {
+        "id": "a328a0f59ae748f8e0b8a595cc1623dd4179c80a",
+        "type": "FIX",
+        "text": " sap.m.TextArea: IE11 new line is doubled.",
+        "references": []
+      }
+    ]
   }
 }

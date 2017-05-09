@@ -482,5 +482,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "d06f118d1bac4ef8ecd36ffdafca368cd7f71d70",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: correct hover style when \"Accept\"/\"Reject\" type",
+        "references": []
+      }
+    ]
   }
 }
