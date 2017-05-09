@@ -9,11 +9,9 @@
 
 	<m:Page
 			id="apiDetailPage"
-			navButtonPress="onNavBack"
-			showHeader="{device>/orientation/portrait}"
+			showHeader="false"
 			showSubHeader="false"
 			showFooter="false"
-			showNavButton="{device>/system/phone}"
 			busy="true"
 			busyIndicatorDelay="0">
 
