@@ -1,4 +1,4 @@
-/* filter only sap.uxap results */
+// filter only sap.uxap results
 if (window.blanket) {
-	blanket.options("sap-ui-cover-only", "sap/uxap/");
+	window.blanket.options("sap-ui-cover-only", "sap/uxap/");
 }

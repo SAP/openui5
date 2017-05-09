@@ -1,4 +1,8 @@
+/*global QUnit,sinon*/
+
 (function (QUnit, sinon, core, controller, xmlview) {
+	"use strict";
+
 	sap.ui.require(["jquery.sap.global",
 		"sap/ui/core/StashedControlSupport",
 		"sap/uxap/ObjectPageLazyLoader"

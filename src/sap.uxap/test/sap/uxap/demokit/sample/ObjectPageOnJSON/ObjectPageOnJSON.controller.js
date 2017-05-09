@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/Controller"
 ], function (SplitContainer, Device, MessageToast, JSONModel, Controller) {
 	"use strict";
 	return Controller.extend("sap.uxap.sample.ObjectPageOnJSON.ObjectPageOnJSON", {
