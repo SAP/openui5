@@ -12,8 +12,6 @@
 	</script>
 
 	<script>
-		jQuery.sap.require("sap.m.StepInput");
-
 		var app = new sap.m.App("myApp", {initialPage: "page1"});
 		var oLabel9 = new sap.m.Label({
 			text: "value = 1.32567, displayValuePrecision = 3, input will show 1.326"
@@ -28,7 +26,7 @@
 			text: "Step = 1 (default behavior); value = 6, min = 5, max = 15"
 		});
 		var oLabelVal5Min6 = new sap.m.Label({
-			text: "value = 5, min = 6, it sets the min because the value is lower"
+			text: "value = 5, min = 6, it sets 6 because the value is below the min"
 		});
 		var oLabelStep5 = new sap.m.Label({
 			text: "Step = 5 (customized scenario), no value, min and max limitations"
