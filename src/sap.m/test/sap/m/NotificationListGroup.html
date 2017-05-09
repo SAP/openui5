@@ -103,8 +103,9 @@
 				listItem2,
 				listItem3
 			],
-			onCollapse: function (evt) {
-				sap.m.MessageToast.show('Collapse event fired');
+			onCollapse: function (event) {
+				var collapseExpandText = (event.oSource.getCollapsed() ? 'Collapse' : 'Expand') + ' event fired';
+				sap.m.MessageToast.show(collapseExpandText);
 			}
 		});
 
