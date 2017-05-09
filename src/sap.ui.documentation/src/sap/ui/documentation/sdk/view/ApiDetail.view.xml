@@ -20,6 +20,8 @@
 		<m:content>
 			<ObjectPageLayout id="apiDetailObjectPage"
 							  enableLazyLoading="false"
+							  showAnchorBarPopover="true"
+							  upperCaseAnchorBar="false"
 							  visible="false">
 				<headerTitle>
 					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
@@ -125,24 +127,28 @@
 					</ObjectPageSection>
 
 					<ObjectPageSection id="properties"
-									   title="Properties"
+									   title="Fields"
 									   visible="{topics>/hasProperties}">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
 									<m:Table items="{ path : 'topics>/properties'}"
 											 showSeparators="Inner"
-											 fixedLayout="false">
+											 fixedLayout="true">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+
+													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
+														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</layout:VerticalLayout>
+
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																			{path: 'topics>deprecated/text'},
 																			{path: 'topics>deprecated/since'}],
@@ -183,19 +189,21 @@
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/properties'}"
 											 showSeparators="Inner"
-											 fixedLayout="false">
+											 fixedLayout="true">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Default Value"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
+
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
 												<m:cells>
-													<m:Text text="{topics>name}" wrapping="false"/>
+
+													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																		  formatter: '.formatLinkEnabled'}"
@@ -203,6 +211,11 @@
 													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
+
+													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
+														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</layout:VerticalLayout>
+
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																					 {path: 'topics>deprecated/text'},
 																					 {path: 'topics>deprecated/since'}],
@@ -218,43 +231,46 @@
 
 					<ObjectPageSection id="events"
 									   title="Events"
-									   visible="{topics>/hasEvents}">
+									   visible="{topics>/hasEvents}"
+									   subSections="{ path : 'events>/events'}" >
 						<subSections>
-							<ObjectPageSubSection>
+							<ObjectPageSubSection title="{ parts: [{path: 'events>'}],
+																	formatter: '.formatEventsName'}">
 								<blocks>
-									<m:Table items="{ path : 'events>/events'}"
-											 showSeparators="Inner"
-											 fixedLayout="false">
-										<m:columns>
-											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem>
-												<m:cells>
-													<m:Text text="{ parts: [{path: 'events>'}],
-																	formatter: '.formatEventsName'}"
-															wrapping="false"/>
-													<m:Text text="{ parts: [{path: 'events>'}],
-																	formatter: '.formatEventsParam'}"
-															wrapping="false"/>
-													<m:Link text="{ parts: [{path: 'events>'}],
-																	formatter: '.formatEventsType'}"
-															enabled="{parts: [{path: 'events>'}],
-																	  formatter: '.formatEventLinkEnabled'}"
-															press="onTypeLinkPress"/>
-													<core:HTML content="{parts: [{path: 'events>description'},
-																			{path: 'events>deprecated/text'},
-																			{path: 'events>deprecated/since'}],
-																		 formatter: '.formatDescription'}"/>
-												</m:cells>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
+									<layout:VerticalLayout>
+
+										<core:HTML content="{parts: [{path: 'events>description'},
+																				{path: 'events>deprecated/text'},
+																				{path: 'events>deprecated/since'}],
+																			 formatter: '.formatDescription'}"/>
+
+										<m:Table items="{ path : 'events>parameters'}"
+												 showSeparators="Inner"
+												 fixedLayout="true">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+														<m:Text class="docuParamBold" text="{events>name}"
+																wrapping="false"/>
+														<m:Link text="{events>type}"
+																enabled="{parts: [{path: 'events>'}],
+																		  formatter: '.formatEventLinkEnabled'}"
+																press="onTypeLinkPress"/>
+														<core:HTML content="{parts: [{path: 'events>description'},
+																					 {path: 'events>deprecated/text'},
+																					 {path: 'events>deprecated/since'}],
+																			 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+
+									</layout:VerticalLayout>
 								</blocks>
 							</ObjectPageSubSection>
 						</subSections>
@@ -262,51 +278,89 @@
 
 					<ObjectPageSection id="methods"
 									   title="Methods"
-									   visible="{topics>/hasMethods}">
+									   visible="{topics>/hasMethods}"
+									   subSections="{ path : 'methods>/methods'}" >
 						<subSections>
-							<ObjectPageSubSection>
+
+							<ObjectPageSubSection title="{parts: [{path: 'methods>'}],
+																   formatter: '.formatMethodsName'}">
 								<blocks>
-									<m:Table items="{ path : 'methods>/methods'}"
-											 showSeparators="Inner"
-											 fixedLayout="false">
-										<m:columns>
-											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
-										</m:columns>
-										<m:items>
-											<m:ColumnListItem>
-												<m:cells>
-													<m:Text text="{parts: [{path: 'methods>'}],
-																   formatter: '.formatMethodsName'}"
-															wrapping="false"/>
-													<m:Text text="{parts: [{path: 'methods>'}],
-																   formatter: '.formatMethodsParam'}"
-															wrapping="false"/>
 
-													<layout:VerticalLayout content="{methods>returnType/type}">
-														<m:HBox>
-															<m:items>
-																<m:Link text="{methods>value}"
-																		enabled="{parts: [{path: 'methods>value'}],
+									<layout:VerticalLayout>
+
+										<core:HTML content="{parts: [{path: 'methods>description'},
+																	{path: 'methods>deprecated/text'},
+																	{path: 'methods>deprecated/since'}],
+																			 formatter: '.formatDescription'}"/>
+
+										<m:Table items="{ path : 'methods>parameters'}"
+												 showSeparators="Inner"
+												 fixedLayout="true">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+
+														<m:Text class="docuParamBold" text="{methods>name}" wrapping="false"/>
+
+
+														<layout:VerticalLayout content="{methods>types}">
+															<m:HBox>
+																<m:items>
+																	<m:Link text="{methods>value}"
+																			enabled="{parts: [{path: 'methods>value'}],
 																				  formatter: '.formatLinkEnabled'}"
-																		press="onTypeLinkPress"/>
-																<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
-															</m:items>
-														</m:HBox>
-													</layout:VerticalLayout>
+																			press="onTypeLinkPress"/>
+																	<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+																</m:items>
+															</m:HBox>
+														</layout:VerticalLayout>
 
-													<core:HTML content="{parts: [{path: 'methods>description'},
-																				 {path: 'methods>deprecated/text'},
-																		   		 {path: 'methods>deprecated/since'}],
-																	  	 formatter: '.formatDescription'}"/>
-												</m:cells>
-											</m:ColumnListItem>
-										</m:items>
-									</m:Table>
+														<core:HTML content="{parts: [{path: 'methods>description'},
+																					 {path: 'methods>deprecated/text'},
+																					 {path: 'methods>deprecated/since'}],
+																			 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+
+										<m:Table showSeparators="Inner"
+												 class="sapUiDocumentationReturnsTable"
+												 fixedLayout="true">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Returns"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+
+														<layout:VerticalLayout content="{methods>returnValue/types}">
+															<m:HBox>
+																<m:items>
+																	<m:Link text="{methods>value}"
+																			enabled="{parts: [{path: 'methods>value'}],
+																				  formatter: '.formatLinkEnabled'}"
+																			press="onTypeLinkPress"/>
+																	<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+																</m:items>
+															</m:HBox>
+														</layout:VerticalLayout>
+
+														<core:HTML content="{parts: [{path: 'methods>returnValue/description'}],
+																			 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
+
+									</layout:VerticalLayout>
+
 								</blocks>
 							</ObjectPageSubSection>
 						</subSections>
@@ -320,24 +374,28 @@
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/aggregations'}"
 											 showSeparators="Inner"
-											 fixedLayout="false">
+											 fixedLayout="true">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Cardinality"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column  minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																      formatter: '.formatLinkEnabled'}"
 															press="onTypeLinkPress"/>
+
+													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
+														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</layout:VerticalLayout>
+
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																				 {path: 'topics>deprecated/text'},
 																				 {path: 'topics>deprecated/since'}],
@@ -359,24 +417,28 @@
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/associations'}"
 											 showSeparators="Inner"
-											 fixedLayout="false">
+											 fixedLayout="true">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Cardinality"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem visible="{topics>visibility === 'public'}">
 												<m:cells>
-													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																	  formatter: '.formatLinkEnabled'}"
 															press="onTypeLinkPress"/>
+
+													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
+														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</layout:VerticalLayout>
+
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																				 {path: 'topics>deprecated/text'},
 																				 {path: 'topics>deprecated/since'}],
@@ -398,18 +460,16 @@
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/specialSettings'}"
 											 showSeparators="Inner"
-											 fixedLayout="false">
+											 fixedLayout="true">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
-											<m:Column vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
-												<m:Label text="Description"/>
-											</m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
 												<m:cells>
-													<m:Text text="{topics>name}" wrapping="false"/>
+													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																		  formatter: '.formatLinkEnabled'}"

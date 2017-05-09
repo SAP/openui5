@@ -10,8 +10,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ObjectSearch",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
-	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ObjectSearch, ToggleFullScreenHandler) {
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+		"sap/uxap/ObjectPageSubSection"
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ObjectSearch, ToggleFullScreenHandler, ObjectPageSubSection) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -120,6 +121,8 @@ sap.ui.define([
 			_onTopicMatched: function (oEvent) {
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._bindData(this._sTopicid);
+				this._createMethodsSummary();
+				this._createEventsSummary();
 				this._bindEntityData();
 
 				this._scrollContentToTop();
@@ -127,6 +130,56 @@ sap.ui.define([
 
 				if (this.extHookonTopicMatched) {
 					this.extHookonTopicMatched(this._sTopicid);
+				}
+			},
+
+			_createMethodsSummary: function () {
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-methodsSummary", "sap.ui.documentation.sdk.view.ApiDetailMethodsSummary", this);
+				var oSection = this.getView().byId("methods");
+				if (oSection.getSubSections().length > 0) {
+					return;
+				}
+				oSection.insertSubSection(new ObjectPageSubSection({
+					title: "Summary",
+					blocks: [
+						oSummaryTable
+					]
+				}), 0);
+			},
+
+			_createEventsSummary: function () {
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-eventsSummary", "sap.ui.documentation.sdk.view.ApiDetailEventsSummary", this);
+				var oSection = this.getView().byId("events");
+				if (oSection.getSubSections().length > 0) {
+					return;
+				}
+				oSection.insertSubSection(new ObjectPageSubSection({
+					title: "Summary",
+					blocks: [
+						oSummaryTable
+					]
+				}), 0);
+			},
+
+			scrollToMethod: function (oEvent) {
+				var oLink = oEvent.getSource();
+				this._scrollToEntity("methods", oLink.getText());
+			},
+
+			scrollToEvent: function (oEvent) {
+				var oLink = oEvent.getSource();
+				this._scrollToEntity("events", oLink.getText());
+			},
+
+			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
+
+				var aSubSections = this.getView().byId(sSectionId).getSubSections();
+				var aFilteredSubSections = aSubSections.filter(function (oSubSection) {
+					return oSubSection.getTitle() === sSubSectionTitle;
+				});
+
+				if (aFilteredSubSections.length) {
+					this.getView().byId("apiDetailObjectPage").scrollToSection(aFilteredSubSections[0].getId(), 250);
 				}
 			},
 
@@ -218,7 +271,7 @@ sap.ui.define([
 					oControlData.hasControlProperties = false;
 				}
 
-				if (oUi5Metadata && oUi5Metadata.events) {
+				if (oControlData && oControlData.events) {
 					oControlData.hasEvents = true;
 				} else {
 					oControlData.hasEvents = false;
@@ -250,7 +303,7 @@ sap.ui.define([
 				}
 
 				if (oControlData.hasEvents) {
-					oEventsModel.events = this.buildEventsModel(oUi5Metadata.events);
+					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
 
 				oControlData.isClass = oControlData.kind === "class";
@@ -260,7 +313,9 @@ sap.ui.define([
 
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
+				this.getModel('methods').setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
+				this.getModel('events').setDefaultBindingMode("OneWay");
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
@@ -308,88 +363,54 @@ sap.ui.define([
 					page.setShowHeader(true);
 				}
 			},
-
 			/**
 			 * Adjusts methods info so that it can be easily displayed in a table
 			 * @param methods - the methods array initially coming from the server
 			 * @returns {Array} - the adjusted array
 			 */
 			buildMethodsModel: function (methods) {
-				var result = [],
-					record, i, j, k,
-					types,
-					params,
-					parameter,
-					method,
-					description;
 
-				for (i = 0; i < methods.length; i++) {
-					method = methods[i];
-					params = method.parameters;
-					if (method.visibility !== "public") {
-						continue;
-					}
+				// No methods, do nothing
+				if (!methods.length) {
+					return methods;
+				}
 
-					types = [];
+				var result = methods.filter(function (method) {
+					return true; //method.visibility === "public";
+				}).map(function (method) {
+					method.parameters = method.parameters || [];
 
-					if (method.returnValue) {
-						if (method.returnValue.type) {
-							types = method.returnValue.type.split('|');
-						}
-						description = method.returnValue.description;
-					} else {
-						description = "";
-					}
-
-					record = {
-						name: method.name,
-						type: this.METHOD,
-						returnType: {
-							description: description,
-							type: []
-						},
-						description: method.description,
-						since: method.since,
-						deprecated: method.deprecated
-					};
-
-					for (k = 0; k < types.length; k++) {
-						record.returnType.type.push({
-							value: types[k],
-							isLast: k == types.length - 1
-						});
-					}
-
-					result.push(record);
-
-					if (!params || params.length == 0) {
-						continue;
-					}
-
-					for (j = 0; j < params.length; j++) {
-						parameter = params[j];
-						types = parameter.type.split('|');
-						record = {
-							description: parameter.description,
-							name: parameter.name,
-							optional: parameter.optional,
-							type: this.PARAM,
-							returnType: {
-								type: []
-							},
-							since: parameter.since
-						};
-
-						for (k = 0; k < types.length; k++) {
-							record.returnType.type.push({
-								value: types[k],
-								isLast: k == types.length - 1
+					// Handle multiple values
+					method.parameters = method.parameters.map(function (param) {
+						var types = (param.type || "").split("|");
+						param.types = [];
+						for (var i = 0; i < types.length; i++) {
+							param.types.push({
+								value: types[i],
+								isLast: i === types.length - 1
 							});
 						}
+						return param;
+					});
 
-						result.push(record);
+					// Format return value
+					if (method.returnValue) {
+						var types = (method.returnValue.type || "").split("|");
+						method.returnValue.types = [];
+						for (var i = 0; i < types.length; i++) {
+							method.returnValue.types.push({
+								value: types[i],
+								isLast: i === types.length - 1
+							});
+						}
 					}
-				}
+
+					return method;
+
+				});
+
+				// Prepend an empty item so that it is replaced by the summary subsection
+				result.unshift({});
 
 				return result;
 			},
@@ -400,38 +421,28 @@ sap.ui.define([
 			 * @returns {Array} - the adjusted array
 			 */
 			buildEventsModel: function (events) {
-				var result = [],
-					event,
-					params;
 
-				for (var i = 0; i < events.length; i++) {
-					event = {
-						name: events[i].name,
-						type: this.EVENT,
-						description: events[i].description,
-						since: events[i].since,
-						deprecated: events[i].deprecated
-					};
-
-					result.push(event);
-
-					params = events[i].parameters;
-					if (!params) {
-						continue;
-					}
-
-					for (var param in params) {
-						event = {
-							name: params[param].name,
-							type: this.PARAM,
-							description: params[param].description,
-							paramType: params[param].type
-
-						};
-
-						result.push(event);
-					}
+				// No events, do nothing
+				if (events.length === 0) {
+					return events;
 				}
+
+				// Transform the key-value pairs of event parameters into an array
+				var result = events.map(function (event) {
+					if (event.parameters) {
+						var aParameters = [];
+						for (var i in event.parameters) {
+							if (event.parameters.hasOwnProperty(i)) {
+								aParameters.push(event.parameters[i]);
+							}
+						}
+						event.parameters = aParameters;
+					}
+					return event;
+				});
+
+				// Prepend an empty item so that it is replaced by the summary subsection
+				result.unshift({});
 
 				return result;
 			},
@@ -546,16 +557,22 @@ sap.ui.define([
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
 				var result = description;
 
-				if (deprecatedSince) {
-					result += '\nDeprecated since version ' + deprecatedSince + '.';
-				}
+				if (deprecatedSince || deprecatedText) {
+					result += "<span class=\"sapUiDocumentationDeprecated\">";
 
-				if (deprecatedText) {
 					if (deprecatedSince) {
-						result += ' ' + deprecatedText;
-					} else {
-						result += '\n' + deprecatedText;
+						result += '<br/>Deprecated since version ' + deprecatedSince + '.';
 					}
+
+					if (deprecatedText) {
+						if (deprecatedSince) {
+							result += ' ' + deprecatedText;
+						} else {
+							result += '<br/>' + deprecatedText;
+						}
+					}
+
+					result += "</span>";
 				}
 
 				result = this._wrapInSpanTag(result);
@@ -583,11 +600,9 @@ sap.ui.define([
 			 * @returns {string} - the name of the event or if eventInfo is a event param - empty string
 			 */
 			formatEventsName: function (eventInfo) {
-				if (eventInfo && eventInfo.type == this.EVENT) {
-					return eventInfo.name;
-				} else {
-					return "";
-				}
+
+				return eventInfo ? eventInfo.name : "";
+
 			},
 
 			/**
@@ -622,11 +637,8 @@ sap.ui.define([
 			 * @returns {string} - the name of the method or empty string
 			 */
 			formatMethodsName: function (methodInfo) {
-				if (methodInfo && methodInfo.type == this.METHOD) {
-					return methodInfo.name;
-				} else {
-					return "";
-				}
+
+					return methodInfo ? methodInfo.name : "";
 
 
 

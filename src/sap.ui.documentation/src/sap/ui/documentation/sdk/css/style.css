@@ -554,3 +554,7 @@ html.sap-phone .sapUiDocumentationTopicTitle {
 .sapUiDocumentationDynamicPageTitle .sapFDynamicPageTitleRight {
 	width: 20% !important;
 }
+
+.sapUiDocumentationReturnsTable {
+	margin-top: 20px;
+}
