@@ -183,6 +183,16 @@
 		iconActive : true,
 		iconPress : oh4PressHandler
 	});
+	var oh4WithResponsiveness = new sap.m.VBox({
+		items: [oh4, new sap.m.HBox({
+			alignItems: sap.m.FlexAlignContent.Center,
+			items: [new sap.m.Label({text: "Responsive:"}), new sap.m.Switch({
+				change: function (oEvent) {
+					oh4.setResponsive(oEvent.getParameter("state"));
+				}
+			})]
+		})]
+	});
 
 	var oh5 = new sap.m.ObjectHeader(
 			"oh5",
@@ -635,7 +645,7 @@
 				number : "500230.09",
 				numberUnit : "USD",
 				numberState : sap.ui.core.ValueState.Success,
-				additionalNumbers : [ 
+				additionalNumbers : [
 					new sap.m.ObjectNumber({
 						number : "1.10234",
 						unit : "Conversion Rate"
@@ -689,7 +699,7 @@
 	addToPage(oh3);
 	addToPage(oh3_1);
 	addToPage(oh3_2);
-	addToPage(oh4);
+	addToPage(oh4WithResponsiveness);
 	addToPage(oh5);
 	addToPage(oh6);
 	addToPage(oh7);
