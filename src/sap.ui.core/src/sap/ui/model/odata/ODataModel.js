@@ -1965,7 +1965,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			oChangeHeader["Content-Type"] = "application/json";
 		}
 
-		if (sMethod == "MERGE" && !this.bUseBatch) {
+		if (sMethod == "MERGE" && this.bUseBatch) {
 			oChangeHeader["x-http-method"] = "MERGE";
 			sMethod = "POST";
 		}

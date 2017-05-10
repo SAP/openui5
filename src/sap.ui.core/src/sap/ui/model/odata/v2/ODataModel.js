@@ -3695,7 +3695,7 @@ sap.ui.define([
 		}
 
 		// format handling
-		if (sMethod === "MERGE" && !this.bUseBatch) {
+		if (sMethod === "MERGE" && this.bUseBatch) {
 			mHeaders["x-http-method"] = "MERGE";
 			sMethod = "POST";
 		}
