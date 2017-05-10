@@ -802,7 +802,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					domRef : jQuery.sap.domById(sSourceId)
 				});
 			}
-		} else if (this.getIconActive() && jQuery(oEvent.target).hasClass('sapMOHIcon')){
+		} else if (this.getIconActive() && jQuery(oEvent.target).is('.sapMOHIcon,.sapMOHRIcon')){
 			if (oEvent.type === "sapspace") {
 				oEvent.preventDefault();
 			}
