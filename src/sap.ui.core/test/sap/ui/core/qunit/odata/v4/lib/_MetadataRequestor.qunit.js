@@ -51,7 +51,7 @@ sap.ui.require([
 						case "Last-Modified":
 							return sLastModified || null;
 						default:
-							assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
+							QUnit.assert.ok(false, "unexpected getResponseHeader(" + sName + ")");
 						}
 					}
 				});

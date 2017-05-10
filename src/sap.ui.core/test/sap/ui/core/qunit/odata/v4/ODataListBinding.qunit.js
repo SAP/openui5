@@ -1250,7 +1250,7 @@ sap.ui.require([
 				oContext = Context.create(this.oModel, {}, "/EMPLOYEES(1)"),
 				oContextMock,
 				oError = new Error("Intentionally failed"),
-				oPromise = _SyncPromise.resolve(Promise.reject(oError)),
+				oPromise = _SyncPromise.resolve(Promise.reject(oError)), // async!
 				sResolvedPath = bRelative
 					? "/service/EMPLOYEES(1)/TEAM_2_EMPLOYEES"
 					: "/service/EMPLOYEES";
@@ -1601,7 +1601,7 @@ sap.ui.require([
 				+ bCanceled, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				oError = new Error("Expected Error"),
-				oReadPromise = _SyncPromise.resolve(Promise.reject(oError));
+				oReadPromise = _SyncPromise.reject(oError);
 
 			if (bCanceled) {
 				oError.canceled = true;
@@ -1628,7 +1628,7 @@ sap.ui.require([
 			iDataReceivedEvents = 0,
 			oError = new Error(),
 			oModelMock = this.mock(this.oModel),
-			oReadResult = _SyncPromise.resolve(Promise.reject(oError));
+			oReadResult = _SyncPromise.reject(oError);
 
 		return new Promise(function (resolve) {
 			oModelMock.expects("reportError").twice()
