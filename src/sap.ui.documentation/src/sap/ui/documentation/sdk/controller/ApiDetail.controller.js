@@ -215,12 +215,7 @@ sap.ui.define([
 					entities : ControlsInfo.data.entities
 				}, oEntityModelData = this._getEntityData(oLibData);
 
-				if (!this._oEntityModel) {
-					this._oEntityModel = new JSONModel();
-					this.getModel("entity").setData(this._oEntityModel, false /* no merge with previous data */);
-				}
-
-				this._oEntityModel.setData(oEntityModelData);
+				this.getModel("entity").setData(oEntityModelData);
 			},
 
 			_bindData : function (sTopicId) {
