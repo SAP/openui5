@@ -393,9 +393,9 @@ sap.ui.require([
 			oBinding = this.oModel.bindProperty("relative", oVirtualContext);
 
 		// Note: it is important that automatic type determination runs as soon as possible
-		this.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 			.withExactArgs("/.../relative")
-			.returns(Promise.resolve());
+			.returns(_SyncPromise.resolve());
 		oBinding.attachChange(function () {
 			assert.ok(false, "no change event for virtual context");
 		});
@@ -586,9 +586,9 @@ sap.ui.require([
 						.withExactArgs(sPath, sinon.match.object, /*iIndex*/undefined)
 						.returns(Promise.resolve(oValue));
 				}
-				that.oSandbox.mock(that.oModel.getMetaModel()).expects("requestUI5Type")
+				that.oSandbox.mock(that.oModel.getMetaModel()).expects("fetchUI5Type")
 					.withExactArgs(sResolvedPath)
-					.returns(Promise.resolve(oType));
+					.returns(_SyncPromise.resolve(oType));
 				that.oSandbox.mock(oType).expects("formatValue").withExactArgs(oValue, "string");
 
 				//code under test
@@ -650,9 +650,9 @@ sap.ui.require([
 				oTypeError = new Error("Unsupported EDM type...");
 
 			oCacheMock.expects("createProperty").returns(oCache);
-			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+			this.oSandbox.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.withExactArgs(sPath)
-				.returns(Promise.reject(oTypeError));
+				.returns(_SyncPromise.reject(oTypeError));
 			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath, sClassName);
 			this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
 				sClassName);
@@ -749,7 +749,7 @@ sap.ui.require([
 		this.getPropertyCacheMock().expects("fetchValue")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("foo"));
-		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
 
 		//code under test
 		oControl.bindProperty("text", {
@@ -772,7 +772,7 @@ sap.ui.require([
 		this.getPropertyCacheMock().expects("fetchValue")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("foo"));
-		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type").never();
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").never();
 
 		//code under test
 		oControl.bindProperty("text", {
@@ -797,9 +797,9 @@ sap.ui.require([
 		this.getPropertyCacheMock().expects("fetchValue")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 			.returns(_SyncPromise.resolve("foo"));
-		this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+		this.oSandbox.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 			.withExactArgs(sPath)
-			.returns(Promise.resolve(oType));
+			.returns(_SyncPromise.resolve(oType));
 		this.oSandbox.mock(oType).expects("formatValue")
 			.withExactArgs("foo", "string")
 			.returns("*foo*");
@@ -835,9 +835,9 @@ sap.ui.require([
 				oCacheMock.expects("fetchValue")
 					.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 					.returns(_SyncPromise.resolve("update")); // 2nd read gets an update
-				this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+				this.oSandbox.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 					.withExactArgs(sPath) // always requested only once
-					.returns(Promise.reject(oError)); // UI5 type not found
+					.returns(_SyncPromise.reject(oError)); // UI5 type not found
 				this.oLogMock.expects("warning")
 					.withExactArgs("failed type", sPath, sClassName);
 
@@ -973,9 +973,9 @@ sap.ui.require([
 		QUnit.test("getGroupId, binding group ID " + sGroupId , function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
 				oReadPromise = _SyncPromise.resolve(),
-				oTypePromise = Promise.resolve(new TypeString());
+				oTypePromise = _SyncPromise.resolve(new TypeString());
 
-			this.oSandbox.mock(this.oModel.getMetaModel()).expects("requestUI5Type")
+			this.oSandbox.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.returns(oTypePromise);
 			this.oSandbox.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 				.withExactArgs(sGroupId || "$auto", undefined, sinon.match.func, sinon.match.object)

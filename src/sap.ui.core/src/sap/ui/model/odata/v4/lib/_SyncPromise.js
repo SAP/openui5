@@ -27,10 +27,12 @@ sap.ui.define([
 	 * @param {any[]} [aValues]
 	 *   The values to be combined via the static method <code>SyncPromise.all</code>; assumes that
 	 *   <code>oPromise</code> and <code>fnCallback</code> are both omitted (<code>null</code>)
+	 * @param {boolean} [bReject=false]
+	 *   Whether to reject the new promise with the reason <code>oPromise</code>
 	 * @returns {SyncPromise}
 	 *   The SyncPromise created
 	 */
-	function SyncPromise(oPromise, fnCallback, aValues) {
+	function SyncPromise(oPromise, fnCallback, aValues, bReject) {
 		var bFulfilled = false,
 			iPending,
 			bRejected = false,
@@ -45,7 +47,10 @@ sap.ui.define([
 			}
 		}
 
-		if (aValues) {
+		if (bReject) {
+			vResult = oPromise;
+			bRejected = true;
+		} else if (aValues) {
 			iPending = aValues.length; // number of pending promises
 			checkFulfilled();
 			aValues.forEach(function (oValue, i) {
@@ -223,7 +228,17 @@ sap.ui.define([
 			};
 		},
 
-		// reject not implemented as there is no use case so far
+		/**
+		 * Returns a SyncPromise that is rejected with the given reason.
+		 *
+		 * @param {any} [vReason]
+		 *   The reason for rejection
+		 * @returns {SyncPromise}
+		 *   The SyncPromise
+		 */
+		reject : function (vReason) {
+			return new SyncPromise(vReason, null, null, true);
+		},
 
 		/**
 		 * Returns a SyncPromise wrapping the given promise <code>oPromise</code> or

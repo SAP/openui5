@@ -228,7 +228,7 @@ sap.ui.require([
 
 			if (!aExpectedValues || !aExpectedValues.length) {
 				assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
-			} else  {
+			} else {
 				assert.strictEqual(sValue, aExpectedValues.shift(),
 					sVisibleId + ": " + JSON.stringify(sValue));
 			}
@@ -1855,7 +1855,7 @@ sap.ui.require([
 						{"Name" : "Peter Burke"}
 					]
 				})
-			.expectChange("text",  ["Frederic Fall", "Peter Burke"]);
+			.expectChange("text", ["Frederic Fall", "Peter Burke"]);
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.waitForChanges(assert);
 		});
@@ -2025,6 +2025,42 @@ sap.ui.require([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}),
 			oController);
+	});
+
+	//*********************************************************************************************
+	// Scenario: trying to call submitBatch() synchronously after delete(), but there is no way...
+	QUnit.test("submitBatch() after delete()", function (assert) {
+		var sView = '\
+<FlexBox binding="{/TEAMS(\'42\')}" id="form">\
+	<Text id="text" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('42')", {
+			"Team_Id" : "TEAM_01",
+			"Name" : "Team #1"
+		}).expectChange("text", "Team #1");
+
+		return this.createView(assert, sView).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			that.expectRequest({
+				headers : {
+					"If-Match": undefined
+				},
+				method : "DELETE",
+				url : "TEAMS('42')"
+			}).expectChange("text", null);
+
+			// Note: "the resulting group ID must be '$auto' or '$direct'"
+			// --> no way to call submitBatch()!
+			oContext.delete(/*sGroupId*/);
+			assert.throws(function () {
+				oContext.getModel().submitBatch("$direct");
+			});
+
+			return that.waitForChanges(assert);
+		});
 	});
 });
 //TODO $batch?
