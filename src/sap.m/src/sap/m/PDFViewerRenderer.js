@@ -32,6 +32,7 @@ sap.ui.define([
 			oRm.addStyle("height", oControl._getRenderHeight());
 			oRm.writeStyles();
 			oRm.writeClasses();
+			this._writeAccessibilityTags(oRm, oControl);
 			oRm.write(">");
 
 			if (oControl._isSourceValidToDisplay() && oControl._isEmbeddedModeAllowed() && PDFViewer._isPdfPluginEnabled()) {
@@ -50,6 +51,11 @@ sap.ui.define([
 			}
 
 			oRm.write("</div>");
+		};
+
+		PDFViewerRenderer._writeAccessibilityTags = function (oRm, oControl) {
+			oRm.writeAttribute("role", "document");
+			oRm.writeAttribute("aria-label", oControl._getLibraryResourceBundle().getText("PDF_VIEWER_ACCESSIBILITY_LABEL"));
 		};
 
 		PDFViewerRenderer.renderPdfContent = function (oRm, oControl) {
