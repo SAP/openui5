@@ -46,7 +46,7 @@
 							<m:ObjectAttribute
 									visible="{=${topics>/isClass}}"
 									title="Inherited from"
-									text="{topics>/extends}"
+									text="{topics>/extendsText}"
 									active="{topics>/isDerived}"
 									press="onTypeLinkPress"
 									class="sapUiTinyMarginBottom">
@@ -62,7 +62,7 @@
 
 							<m:ObjectAttribute
 									title="Available since"
-									text="{topics>/since}" />
+									text="{topics>/sinceText}" />
 						</layout:VerticalLayout>
 
 						<layout:VerticalLayout width="100%">

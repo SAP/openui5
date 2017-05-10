@@ -559,3 +559,7 @@ html.sap-phone .sapUiDocumentationTopicTitle {
 .sapUiDocumentationReturnsTable {
 	margin-top: 20px;
 }
+
+.sapUiDocumentationBorrowedTitle {
+	font-size: 1.25rem !important;
+}
