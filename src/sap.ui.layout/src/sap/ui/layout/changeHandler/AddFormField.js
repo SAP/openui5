@@ -68,23 +68,25 @@ sap.ui.define([
 			if (fnCheckChangeDefinition(oChangeDefinition)) {
 				var oChangeContent = oChangeDefinition.content;
 
-				var sFieldSelector = oChangeContent.newFieldSelector;
+				var mFieldSelector = oChangeContent.newFieldSelector;
+				var mSmartFieldSelector = jQuery.extend({}, oChangeContent.newFieldSelector);
+				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
 				var sBindingPath = oChangeContent.bindingPath;
 
 				var mCreateProperties = {
 					"appComponent" : mPropertyBag.appComponent,
 					"view" : mPropertyBag.view,
-					"fieldSelector" : sFieldSelector,
+					"fieldSelector" : mSmartFieldSelector,
 					"bindingPath" : sBindingPath
 				};
 
 				var oCreatedControls = fnChangeHandlerCreateFunction(oModifier, mCreateProperties),
-				    oCreatedFormElement = oModifier.createControl("sap.ui.layout.form.FormElement", mPropertyBag.appComponent, oView);
+				    oCreatedFormElement = oModifier.createControl("sap.ui.layout.form.FormElement", mPropertyBag.appComponent, oView, mFieldSelector);
 
-				oModifier.insertAggregation(oCreatedFormElement, "label", oCreatedControls.label, 0);
-				oModifier.insertAggregation(oCreatedFormElement, "fields", oCreatedControls.control, 0);
+				oModifier.insertAggregation(oCreatedFormElement, "label", oCreatedControls.label, 0, oView);
+				oModifier.insertAggregation(oCreatedFormElement, "fields", oCreatedControls.control, 0, oView);
 
-				oModifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex);
+				oModifier.insertAggregation(oParentFormContainer, "formElements", oCreatedFormElement, iIndex, oView);
 
 				return true;
 			} else {

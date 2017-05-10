@@ -62,7 +62,7 @@ function(
 
 	QUnit.test('applyChange on a xml tree', function(assert) {
 		var oDOMParser = new DOMParser();
-		var oXmlDocument = oDOMParser.parseFromString("<Button text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
+		var oXmlDocument = oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
 		this.oXmlButton = oXmlDocument.childNodes[0];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier}));

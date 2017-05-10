@@ -67,9 +67,9 @@ sap.ui.require([
 					'</sections>' +
 				'</uxap:ObjectPageLayout></mvc:View>';
 			var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-			this.oXmlView = oXmlDocument;
+			this.oXmlView = oXmlDocument.documentElement;
 
-			this.oXmlLayout = oXmlDocument.childNodes[0].childNodes[0];
+			this.oXmlLayout = this.oXmlView.childNodes[0];
 			this.oXmlObjectPageSection1 = this.oXmlLayout.childNodes[0].childNodes[0];
 			this.oXmlObjectPageSection2 = this.oXmlLayout.childNodes[0].childNodes[1];
 			this.oXmlObjectPageSection3 = this.oXmlLayout.childNodes[0].childNodes[2];
