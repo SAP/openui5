@@ -123,12 +123,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 		this.setAggregation("_counter", oCounter);
 	};
 
-	TextArea.prototype.setMaxLength = function (iValue) {
-		this.setProperty("maxLength", iValue);
-		this._handleShowExceededText();
-		return this;
-	};
-
 	TextArea.prototype.setShowExceededText = function (bValue) {
 		var oCounter = this.getAggregation("_counter"),
 			sValue;
