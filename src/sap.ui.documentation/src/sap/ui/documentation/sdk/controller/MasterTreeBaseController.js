@@ -55,7 +55,7 @@ sap.ui.define([
 
 					// Only scroll after the dom is ready
 					jQuery.sap.delayedCall(0, this, function () {
-						if (!isInViewport(oLastItem.getDomRef())) {
+						if (oLastItem.getDomRef() && !isInViewport(oLastItem.getDomRef())) {
 							this._scrollTreeItemIntoView(oLastItem);
 						}
 					});

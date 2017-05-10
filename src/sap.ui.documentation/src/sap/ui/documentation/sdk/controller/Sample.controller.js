@@ -44,18 +44,6 @@ sap.ui.define([
 				});
 			},
 
-			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			onExit: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
 			/* =========================================================== */
 			/* begin: internal methods									 */
 			/* =========================================================== */
@@ -170,17 +158,37 @@ sap.ui.define([
 					return;
 				}
 
-				var oHtmlControl = new HTML({
-					content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
-				}).addEventDelegate({
+				if (!this._oHtmlControl) {
+					this._oHtmlControl = new HTML({
+						id : "sampleFrame",
+						content : '<iframe src="' + this.sIFrameUrl + '" id="sampleFrame" frameBorder="0"></iframe>'
+					}).addEventDelegate({
 						onAfterRendering : function () {
-							oHtmlControl.$().on("load", function () {
-								oIframeContent.placeAt("body");
-							});
-						}
-					});
 
-				return oHtmlControl;
+							// Do not attach on "load" event on every onAfterRendering of the HTML control
+							if (!this._oHtmlControl._jQueryHTMLControlLoadEventAttached) {
+								this._oHtmlControl.$().on("load", function () {
+									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow;
+
+									// Apply theme settings to iframe sample
+									oSampleFrame.sap.ui.getCore().attachInit(function () {
+										var bCompact = this.getRootView().hasStyleClass("sapUiSizeCompact");
+
+										oSampleFrame.sap.ui.getCore().applyTheme(this._oCore.getConfiguration().getTheme());
+										oSampleFrame.jQuery('body')
+											.toggleClass("sapUiSizeCompact", bCompact)
+											.toggleClass("sapUiSizeCozy", bCompact);
+									}.bind(this));
+								}.bind(this));
+
+								this._oHtmlControl._jQueryHTMLControlLoadEventAttached = true;
+							}
+
+						}.bind(this)
+					});
+				}
+
+				return this._oHtmlControl;
 
 			},
 

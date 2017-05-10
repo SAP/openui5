@@ -60,7 +60,7 @@ sap.ui.define([
 				// retrieve sample object
 				var oSample = ControlsInfo.data.samples[this._sId];
 				if (!oSample) {
-					this.router.myNavToWithoutHash("sap.ui.demokit.explored.view.notFound", "XML", false, { path: this._sId });
+					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, { path: this._sId });
 					return;
 				}
 
@@ -256,7 +256,6 @@ sap.ui.define([
 				// Get rid of function around code
 				code = code.replace(/^function.+{/, "");
 
-				//code = code.replace(/return \[[\s\S]*/, "");
 				code = code.replace(/}[!}]*$/, "");
 
 				// Get rid of unwanted code if CODESNIP tags are used
