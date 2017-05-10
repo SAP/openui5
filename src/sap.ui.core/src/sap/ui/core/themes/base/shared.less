@@ -289,3 +289,22 @@ link[id^="sap-ui-theme-"]::after,
 	position: absolute !important;
 	clip: rect(1px, 1px, 1px, 1px);
 }
+
+/* CSS classes for bridging two buttons in the technical info dialog */
+.sapMBtn.sapUiDebugTechnicalInfoAssistantButton {
+	margin-right: 0 !important;
+}
+
+.sapMBtn.sapUiDebugTechnicalInfoAssistantButton>.sapMBtnInner {
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
+
+.sapMBtn.sapUiDebugTechnicalInfoAssistantSettingsButton {
+	margin-left: 0 !important;
+}
+
+.sapMBtn.sapUiDebugTechnicalInfoAssistantSettingsButton>.sapMBtnInner  {
+	border-top-left-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;
+}
