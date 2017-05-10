@@ -553,8 +553,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 		_updateTriggerDelayed: function(bLoading) {
 			if (this._oControl.getGrowingScrollToLoad()) {
-				this._iTriggerTimer && jQuery.sap.clearDelayedCall(this._iTriggerTimer);
-				this._iTriggerTimer = jQuery.sap.delayedCall(0, this, "_updateTrigger", [bLoading]);
+				this._iTriggerTimer && window.cancelAnimationFrame(this._iTriggerTimer);
+				this._iTriggerTimer = window.requestAnimationFrame(this._updateTrigger.bind(this, bLoading));
 			} else {
 				this._updateTrigger(bLoading);
 			}
