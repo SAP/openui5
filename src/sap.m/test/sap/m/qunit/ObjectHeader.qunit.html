@@ -808,6 +808,33 @@
 		domRef = null;
 	});
 
+	QUnit.test("TestIcon pressing Space when responsive=true", function() {
+		//Prepare
+		var ohResponsiveIcon = new sap.m.ObjectHeader("ohResponsiveIcon", {
+			title: "Some Title",
+			icon : sap.ui.core.IconPool.getIconURI("attachment"),
+			iconActive: true,
+			responsive: true,
+			iconPress: eventHandler
+		});
+		ohResponsiveIcon.placeAt('objectHeaders');
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		var oImg = jQuery("#" + ohResponsiveIcon.getId() + "-titleIcon");
+		oImg.focus();
+		sap.ui.test.qunit.triggerKeydown(oImg, jQuery.sap.KeyCodes.SPACE);
+
+		//Assert
+		assert.ok(domRef, "Icon should fire 'iconPress' event when object header is responsive");
+		if (domRef) {
+			assert.equal(domRef.id, ohResponsiveIcon.getId() + "-img", "Icon should fire 'iconPress' event when object header is responsive and the event's source is the image");
+		}
+		//CleanUp
+		domRef = null;
+		ohResponsiveIcon.destroy();
+	});
+
 	test("TestTitleSelectorTap", function() {
 
 		qutils.triggerEvent("tap", ohBasicId + "-titleArrow");
@@ -920,7 +947,7 @@
 		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
 		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 	});
-	
+
 	test("Title has level H1", function(){
 		// Arrange
 		var oObjectHeader = new sap.m.ObjectHeader({
