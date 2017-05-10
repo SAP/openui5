@@ -2622,6 +2622,30 @@
 			//clean
 			oVSD1.destroy();
 		});
+
+		QUnit.test("Item selection does not trigger re-rendering", function (assert) {
+			//arrange
+			var oSetPropertySpy = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty"),
+				oItem = new sap.m.ViewSettingsItem({
+					key: "test",
+					text: "2",
+					selected: false
+				});
+
+			oSetPropertySpy.reset();
+
+			//act
+			oItem.setSelected(true);
+
+			//assert
+			assert.ok(oSetPropertySpy.calledOnce, "called once");
+			assert.strictEqual(oSetPropertySpy.thisValues[0], oItem, "called on the right item");
+			assert.strictEqual(oSetPropertySpy.args[0][0], "selected", "called with the right property name");
+			assert.strictEqual(oSetPropertySpy.args[0][2], true, "called with suppressinvalidate");
+
+			//clean
+			oItem.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
