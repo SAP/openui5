@@ -192,6 +192,7 @@
 		};
 
 		rtaControlEnablingCheck("Checking the combine action for sap.m.Button in sap.m.Page headerContent", {
+			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 			'<Page id="page" >' +
@@ -235,6 +236,7 @@
 		};
 
 		rtaControlEnablingCheck("Checking the split action for sap.m.MenuButton in sap.m.Page headerContent", {
+			jsOnly : true,
 			xmlView :
 			'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 				'<Page id="page" >' +

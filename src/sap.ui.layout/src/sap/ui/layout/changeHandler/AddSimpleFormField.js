@@ -129,7 +129,7 @@ sap.ui.define([
 
 			oModifier.removeAllAggregation(oSimpleForm, "content");
 			for (var i = 0; i < aContentClone.length; ++i) {
-				oModifier.insertAggregation(oSimpleForm, "content", aContentClone[i], i);
+				oModifier.insertAggregation(oSimpleForm, "content", aContentClone[i], i, mPropertyBag.view);
 			}
 
 			return true;

@@ -337,17 +337,17 @@ function (
 		var sSmartFieldId = "SmartField";
 		var sSmartFieldLabelId = "SmartFieldLabel";
 		var oXmlString =
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:layout='sap.ui.layout' xmlns:core='sap.ui.core'>" +
-				"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-					"<layout:content>" +
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+					"<form:content>" +
 						'<core:Title id="' + sTitleId + '"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
 						'<smartfield:SmartField id="' + sSmartFieldId + '" value="' + sValue  + '"/>' +
-					"</layout:content>" +
-				"</layout:SimpleForm>" +
+					"</form:content>" +
+				"</form:SimpleForm>" +
 			"</mvc:View>";
-		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-		this.oXmlSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
+		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
+		this.oXmlSimpleForm = oXmlDocument.childNodes[0];
 
 		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oXmlSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
@@ -390,17 +390,17 @@ function (
 		var sSmartFieldId = "SmartField";
 		var sSmartFieldLabelId = "SmartFieldLabel";
 		var oXmlString =
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:layout='sap.ui.layout' xmlns:core='sap.ui.core'>" +
-				"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-					"<layout:content>" +
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+					"<form:content>" +
 						'<core:Title id="' + sTitleId + '"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
 						'<smartfield:SmartField id="' + sSmartFieldId + '" value="' + sValue  + '"/>' +
-					"</layout:content>" +
-				"</layout:SimpleForm>" +
+					"</form:content>" +
+				"</form:SimpleForm>" +
 			"</mvc:View>";
-		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-		this.oSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
+		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
+		this.oSimpleForm = oXmlDocument.childNodes[0];
 
 		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
@@ -445,19 +445,19 @@ function (
 		var sSmartFieldId2 = "SmartField2";
 		var sSmartFieldLabelId2 = "SmartFieldLabel2";
 		var oXmlString =
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:layout='sap.ui.layout' xmlns:core='sap.ui.core'>" +
-				"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-					"<layout:content>" +
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+					"<form:content>" +
 						'<core:Title id="' + sTitleId + '"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
 						'<smartfield:SmartField id="' + sSmartFieldId + '" value="{dummy}"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId2 + '" labelFor="' + sSmartFieldId2  + '"/>' +
 						'<smartfield:SmartField id="' + sSmartFieldId2 + '" value="{dummy2}"/>' +
-					"</layout:content>" +
-				"</layout:SimpleForm>" +
+					"</form:content>" +
+				"</form:SimpleForm>" +
 			"</mvc:View>";
-		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-		this.oSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
+		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
+		this.oSimpleForm = oXmlDocument.childNodes[0];
 
 		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
@@ -499,18 +499,18 @@ function (
 		var sSmartFieldId2 = "SmartField2";
 		var sSmartFieldLabelId2 = "SmartFieldLabel2";
 		var oXmlString =
-			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:layout='sap.ui.layout' xmlns:core='sap.ui.core'>" +
-				"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-					"<layout:content>" +
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:smartfield='sap.ui.comp.smartfield' xmlns:form='sap.ui.layout.form' xmlns:core='sap.ui.core'>" +
+				"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+					"<form:content>" +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId + '" labelFor="' + sSmartFieldId  + '"/>' +
 						'<smartfield:SmartField id="' + sSmartFieldId + '" value="{dummy}"/>' +
 						'<smartfield:SmartLabel id="' + sSmartFieldLabelId2 + '" labelFor="' + sSmartFieldId2  + '"/>' +
 						'<smartfield:SmartField id="' + sSmartFieldId2 + '" value="{dummy2}"/>' +
-					"</layout:content>" +
-				"</layout:SimpleForm>" +
+					"</form:content>" +
+				"</form:SimpleForm>" +
 			"</mvc:View>";
-		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
-		this.oSimpleForm = oXmlDocument.childNodes[0].childNodes[0];
+		var oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
+		this.oSimpleForm = oXmlDocument.childNodes[0];
 
 		assert.ok(AddFieldChangeHandler.applyChange(oChangeXml, this.oSimpleForm,
 			{modifier: XmlTreeModifier, view: oXmlDocument, appComponent: this.oMockedAppComponent}),
