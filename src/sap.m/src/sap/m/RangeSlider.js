@@ -35,7 +35,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
                      * If the value is lower/higher than the allowed minimum/maximum,
                      * a warning message will be output to the console.
                      */
-                    range: {type: "any", group: "Data", defaultValue: []}, //Default value of [0, 100] would be set onInit
+                    range: {type: "float[]", group: "Data", defaultValue: [0,100]}, //Default value of [0, 100] would be set onInit
 
                     /**
                      * Indicates whether an Input fields should be used as tooltips for the handles.
@@ -456,10 +456,15 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
 
         RangeSlider.prototype.setRange = function (aRange) {
             var fMax = this.getMax(),
-                fMin = this.getMin();
+                fMin = this.getMin(),
+                aRange = this.validateProperty("range", aRange),
+                bRangeValidityCheck = aRange.every(function (value) {
+                    return !isNaN(value);
+                });
 
-
-            if (!Array.isArray(aRange)) {
+            // validateProperty can return array with NaN values in it
+            // so a check is needed
+            if (!bRangeValidityCheck) {
                 jQuery.sap.log.error("Error: " + "Cannot set property range: " + aRange + " not an array in the range: ["
                     + fMin + "," + fMax + "]", this);
                 return this;
@@ -467,7 +472,7 @@ sap.ui.define(["./Slider", "./Input", 'sap/ui/core/InvisibleText'],
 
             aRange = aRange.map(this._adjustRangeValue, this);
 
-            this.setProperty("range", Array.prototype.slice.call(aRange), true);
+            this.setProperty("range", aRange, true);
 
             if (this.getDomRef()) {
                 var fPercentValStart = this._getPercentOfValue(aRange[0]),
