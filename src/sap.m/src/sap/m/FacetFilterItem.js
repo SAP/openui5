@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Represents a value for the {@link sap.m.FacetfilterList} control.
+	 * Represents a value for the {@link sap.m.FacetFilterList} control.
 	 * @extends sap.m.ListItemBase
 	 * @version ${version}
 	 *

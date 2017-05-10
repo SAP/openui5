@@ -843,7 +843,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Returns the bigger value precision by comparing
 		 * the precision of the value and the precision of the step.
 		 *
-		 * @returns {integer} number of digits after the dot
+		 * @returns {int} number of digits after the dot
 		 */
 		StepInput.prototype._getRealValuePrecision = function () {
 			var sDigitsValue = this.getValue().toString().split("."),

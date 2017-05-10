@@ -202,7 +202,7 @@ function(jQuery, ManagedObject, ElementUtil, DOMUtil) {
 
 	/**
 	 * Returns all available triggers from designtime metadata
-	 * @return {array.<Object>} array of available triggers
+	 * @return {Array.<Object>} array of available triggers
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getTriggers = function() {
