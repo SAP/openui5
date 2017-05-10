@@ -209,6 +209,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (sap.ui.Device.system.phone) {
 				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
 			}
+			this.addDependent(this._oPopover);
 		}
 
 		var oSelectList = this._getSelectList();
