@@ -1,10 +1,10 @@
 /*!
- * ${copyright}
- */
+* ${copyright}
+*/
 
 // Provides control sap.m.TextArea.
 sap.ui.define(['jquery.sap.global', './InputBase', './library'],
-	function(jQuery, InputBase, library) {
+function(jQuery, InputBase, library) {
 	"use strict";
 
 
@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 			if (this.getGrowingMaxLines() > 0) {
 				oStyle = window.getComputedStyle(oTextArea);
 				fMaxHeight = parseFloat(oStyle.lineHeight) * this.getGrowingMaxLines() +
-						parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
+					parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
 
 				// bottom padding is out of scrolling content in firefox
 				if (sap.ui.Device.browser.firefox) {
@@ -252,9 +252,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	};
 
 	TextArea.prototype._updateOverflow = function() {
-		var oTextArea = this.getFocusDomRef();
-		var fMaxHeight = parseFloat(window.getComputedStyle(oTextArea)["max-height"]);
-		oTextArea.style.overflowY = (oTextArea.scrollHeight > fMaxHeight) ? "auto" : "";
+		var oTextAreaRef = this.getFocusDomRef(),
+			fMaxHeight;
+
+		if (oTextAreaRef) {
+			fMaxHeight = parseFloat(window.getComputedStyle(oTextAreaRef)["max-height"]);
+			oTextAreaRef.style.overflowY = (oTextAreaRef.scrollHeight > fMaxHeight) ? "auto" : "";
+		}
 	};
 
 	TextArea.prototype._getInputValue = function(sValue) {

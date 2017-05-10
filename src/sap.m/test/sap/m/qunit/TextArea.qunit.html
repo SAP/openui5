@@ -416,6 +416,29 @@
 		oTA.destroy();
 	});
 
+	test("height is adjust on resize event", function(assert) {
+		var fnOnResizeSpy,
+			sLongText = new Array(1000).join("text "),
+			oTA = new sap.m.TextArea({
+				value: sLongText,
+				growing: true
+			}).placeAt("content");
+
+		oTA._updateOverflow();
+		assert.ok(true,  "_updateOverflow is pass successfully when the control is not rendered");
+
+		sap.ui.getCore().applyChanges();
+
+		fnOnResizeSpy = this.spy(oTA, "_resizeHandler");
+
+		oTA.setWidth("500px");
+		this.clock.tick(200);
+
+		assert.ok(oTA._sResizeListenerId, "TextArea has resize handler");
+		assert.strictEqual(fnOnResizeSpy.callCount, 1, "The resize handler was called once");
+		oTA.destroy();
+	});
+
 	module("Input and Live change events in IE10+ when textarea html element is used");
 	test("iE10+ Input event should not be fired on focus for textarea html element with a native placeholder", function() {
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", false);
