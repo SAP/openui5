@@ -1,9 +1,10 @@
 /*!
  * ${copyright}
  */
-// Provides a popup with technical information
+
 sap.ui.define([
 	"sap/ui/base/Object",
+	"sap/ui/core/support/techinfo/moduleTreeHelper",
 	"sap/ui/Device",
 	"sap/ui/Global",
 	"sap/ui/core/format/DateFormat",
@@ -18,14 +19,17 @@ sap.ui.define([
 	'sap/m/library',
 	"jquery.sap.global",
 	"jquery.sap.storage"
-], function (UI5Object, Device, Global, DateFormat, ResourceModel, JSONModel, URI, MessageBox, MessageToast, Support, SimpleType, ValidateException, mobileLibrary, jQuery) {
+], function (UI5Object, moduleTreeHelper, Device, Global, DateFormat, ResourceModel, JSONModel, URI, MessageBox, MessageToast, Support, SimpleType, ValidateException, mobileLibrary, jQuery) {
 	"use strict";
 
 	return {
 
 		_MIN_UI5VERSION_SUPPORT_ASSISTANT: "1.47",
+		_MIN_EXPAND_LEVEL_DEBUG_MODULES: 3,
 
 		_storage : jQuery.sap.storage(jQuery.sap.storage.Type.local),
+
+		_treeHelper: moduleTreeHelper,
 
 		/* =========================================================== */
 		/* lifecycle methods                                           */
@@ -33,12 +37,16 @@ sap.ui.define([
 
 		/**
 		 * Opens the technical information dialog
+		 * @param{function} fnCallback Callback that can be executed to fetch library and module information
 		 */
-		open: function () {
+		open: function (fnCallback) {
 			// early out if already open
 			if (this._oDialog && this._oDialog.isOpen()) {
 				return;
 			}
+
+			// set module info passed in from jquery.sap.global
+			this._oModuleSystemInfo = fnCallback() || {};
 
 			// create dialog lazily
 			if (!this._oDialog) {
@@ -77,10 +85,29 @@ sap.ui.define([
 
 		/**
 		 * Copies the technical information shown in the dialog to the clipboard
+		 * @param {string} sString The string to be copied
+		 * @param {string} sConfirmTextPrefix The prefix for the i18n texts to be displayed on success/error
+		 * @private
 		 */
-		onCopyToClipboard: function () {
+		_CopyToClipboard: function (sString, sConfirmTextPrefix) {
+			var $temp = jQuery("<textarea>");
+
+			try {
+				jQuery("body").append($temp);
+				$temp.val(sString).select();
+				document.execCommand("copy");
+				$temp.remove();
+				MessageToast.show(this._getText(sConfirmTextPrefix + ".Success"));
+			} catch (oException) {
+				MessageToast.show(this._getText(sConfirmTextPrefix + ".Error"));
+			}
+		},
+
+		/**
+		 * Copies the technical information shown in the dialog to the clipboard
+		 */
+		onCopyTechnicalInfoToClipboard: function () {
 			var oModel = this._oDialog.getModel("view"),
-				$temp = jQuery("<textarea>"),
 				sVersionString = oModel.getProperty("/ProductName") + ": " +
 					oModel.getProperty("/ProductVersion") + " " +
 					sap.ui.getCore().byId("technicalInfoDialog--versionBuiltAt").getText(),
@@ -92,27 +119,156 @@ sap.ui.define([
 					this._getText("TechInfo.UserAgent.Label") + ": " + oModel.getProperty("/UserAgent") + "\r\n" +
 					this._getText("TechInfo.AppUrl.Label") + ": " + oModel.getProperty("/ApplicationURL") + "\r\n";
 
-			try {
-				jQuery("body").append($temp);
-				$temp.val(sString).select();
-				document.execCommand("copy");
-				$temp.remove();
-
-				MessageToast.show(this._getText("TechInfo.CopyToClipboard.Success"));
-			} catch (oException) {
-				MessageToast.show(this._getText("TechInfo.CopyToClipboard.Error"));
-			}
+			this._CopyToClipboard(sString, "TechInfo.CopyToClipboard");
 		},
 
 		/**
-		 * Enables debug sources
-		 * @param {sap.ui.base.event} oEvent the checkbox select event
+		 * Copies the custom sap-ui-debug value to the clipboard
+		 */
+		onConfigureDebugModulesCopyToClipboard: function () {
+			var oModel = this._oDialog.getModel("view"),
+				oTree = oModel.getProperty("/DebugModules")[0],
+				sString = "sap-ui-debug=" + this._treeHelper.toDebugInfo(oTree);
+
+			this._CopyToClipboard(sString, "TechInfo.DebugModulesCopyToClipboard");
+		},
+
+		/**
+		 * Enables/Disables debug mode globally with a confirmation dialog
+		 * @param {sap.ui.base.event} oEvent The checkbox select event
 		 */
 		onDebugSources: function (oEvent) {
 			var bSelected = oEvent.getParameter("selected");
 			this._confirmReload(function () {
 				this._reloadWithParameter("sap-ui-debug", bSelected);
+			}.bind(this), function () {
+				var oModel = this._oDialog.getModel("view");
+				oModel.setProperty("/DebugMode", !oModel.getProperty("/DebugMode"));
 			}.bind(this));
+		},
+
+		/**
+		 * Opens a dialog with debug package selection options
+		 */
+		onConfigureDebugModules: function () {
+			var oModel = this._oDialog.getModel("view"),
+				oTreeResults;
+
+			// early out if already open
+			if (this._oDebugPopover && this._oDebugPopover.isOpen()) {
+				return;
+			}
+
+			// fill and bind the tree structure from the currently loaded modules
+			oTreeResults = this._treeHelper.toTreeModel(this._oModuleSystemInfo);
+			oModel.setProperty("/DebugModules", [oTreeResults.tree]);
+			this._updateTreeInfos();
+
+			// create dialog lazily
+			if (!this._oDebugPopover) {
+				this._oDebugPopover = sap.ui.xmlfragment("TechnicalInfoDialogDebugModules", "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
+				this._oDialog.addDependent(this._oDebugPopover);
+				jQuery.sap.syncStyleClass(this._getContentDensityClass(), this._oDialog, this._oDebugPopover);
+
+				// register message validation and trigger it once to validate the value coming from local storage
+				var oCustomDebugValue = sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--customDebugValue");
+				sap.ui.getCore().getMessageManager().registerObject(oCustomDebugValue, true);
+				var oBinding = oCustomDebugValue.getBinding("value");
+				try {
+					oBinding.getType().validateValue(oCustomDebugValue.getValue());
+				} catch (oException) {
+					oCustomDebugValue.setValueState("Error");
+				}
+			}
+
+			// adopt tree depth to the deepest currently selected module
+			sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--tree").expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
+
+			// open dialog
+			this._oDebugPopover.open();
+		},
+
+		/**
+		 * Shows a confirmation dialog and triggers the custom debug parameter by reloading
+		 */
+		onConfigureDebugModulesConfirm: function () {
+			this._confirmReload(function () {
+				var oModel = this._oDialog.getModel("view");
+
+				this._reloadWithParameter("sap-ui-debug", oModel.getProperty("/CustomDebugMode"));
+			}.bind(this));
+		},
+
+		/**
+		 * Closes the configure debug modules dialog without applying the changes
+		 */
+		onConfigureDebugModulesClose: function () {
+			this.onConfigureDebugModulesReset();
+			this._oDebugPopover.close();
+		},
+
+		/**
+		 * Updates the debug mode input field and the number of selected debug modules
+		 * @private
+		 */
+		_updateTreeInfos: function () {
+			var oModel = this._oDialog.getModel("view"),
+				oTreeData = oModel.getProperty("/DebugModules")[0];
+
+			oModel.setProperty("/CustomDebugMode", this._treeHelper.toDebugInfo(oTreeData));
+			oModel.setProperty("/DebugModuleSelectionCount", this._treeHelper.getSelectionCount(oTreeData));
+		},
+
+		/**
+		 * Selects/Deselects a node including its tree branch
+		 * @param {sap.ui.base.Event} oEvent The tree select event
+		 */
+		onConfigureDebugModuleSelect: function (oEvent) {
+			var oModel = this._oDialog.getModel("view"),
+				oListItem = oEvent.getParameter("listItem"),
+				oContext = oListItem.getItemNodeContext(),
+				oNodePath = oContext.context.getPath(),
+				oSubTreeData = oModel.getProperty(oNodePath);
+
+			this._treeHelper.recursiveSelect(oSubTreeData, oListItem.getSelected());
+			this._updateTreeInfos();
+		},
+
+		/**
+		 * Sets the validated value from the input field and re-evaluates the module tree according to the input
+		 */
+		onChangeCustomDebugMode: function () {
+			var oModel = this._oDialog.getModel("view"),
+				oTreeResults;
+
+			// convert boolean string to boolean value
+			if (oModel.getProperty("/CustomDebugMode") === "true") {
+				oModel.setProperty("/CustomDebugMode", true);
+			}
+			if (oModel.getProperty("/CustomDebugMode") === "false") {
+				oModel.setProperty("/CustomDebugMode", false);
+			}
+
+			// set validated value and update tree accordingly
+			window["sap-ui-debug"] = oModel.getProperty("/CustomDebugMode");
+			oTreeResults = this._treeHelper.toTreeModel(this._oModuleSystemInfo);
+			oModel.setProperty("/DebugModules", [oTreeResults.tree]);
+
+			// adopt tree depth to the deepest currently selected module
+			sap.ui.getCore().byId("TechnicalInfoDialogDebugModules--tree").expandToLevel(Math.max(this._MIN_EXPAND_LEVEL_DEBUG_MODULES, oTreeResults.depth));
+
+			this._updateTreeInfos();
+		},
+
+		/**
+		 * Resets the debug module tree
+		 */
+		onConfigureDebugModulesReset: function () {
+			var oModel = this._oDialog.getModel("view"),
+				oTreeData = oModel.getProperty("/DebugModules")[0];
+
+			this._treeHelper.recursiveSelect(oTreeData, false);
+			this._updateTreeInfos();
 		},
 
 		/**
@@ -157,7 +313,7 @@ sap.ui.define([
 
 		/**
 		 * Event handler for the two radio buttons in the configuration popover
-		 * @param {sap.ui.base.Event} oEvent the button press event
+		 * @param {sap.ui.base.Event} oEvent The button press event
 		 */
 		onSelectBootstrapOption: function (oEvent) {
 			var sKey = oEvent.getSource().getId().split("--").pop();
@@ -166,7 +322,7 @@ sap.ui.define([
 
 		/**
 		 * Writes the custom bootstrap URL to local storage
-		 * @param {sap.ui.base.Event} oEvent the select change event
+		 * @param {sap.ui.base.Event} oEvent The select change event
 		 */
 		onChangeStandardBootstrapURL: function (oEvent) {
 			var sValue = oEvent.getParameter("selectedItem").getKey();
@@ -175,7 +331,7 @@ sap.ui.define([
 
 		/**
 		 * Writes the custom bootstrap URL to local storage
-		 * @param {sap.ui.base.Event} oEvent the input change event
+		 * @param {sap.ui.base.Event} oEvent The input change event
 		 */
 		onChangeCustomBootstrapURL: function (oEvent) {
 			var sValue = oEvent.getParameter("value");
@@ -184,7 +340,7 @@ sap.ui.define([
 
 		/**
 		 * Writes the option for opening in new window to local storage
-		 * @param {sap.ui.base.event} oEvent the checkbox select event
+		 * @param {sap.ui.base.event} oEvent The checkbox select event
 		 */
 		onChangeOpenInNewWindow: function (oEvent) {
 			var bSelected = oEvent.getParameter("selected");
@@ -193,7 +349,7 @@ sap.ui.define([
 
 		/**
 		 * Opens a popover with extended configuration options
-		 * @param {sap.ui.base.Event} oEvent the button press event
+		 * @param {sap.ui.base.Event} oEvent The button press event
 		 */
 		onConfigureAssistantBootstrap: function (oEvent) {
 			// early out if already open
@@ -261,6 +417,29 @@ sap.ui.define([
 			}
 		}),
 
+		/**
+		 * This is a custom model type for validating a sap-ui-debug string.
+		 * the sap-ui-debug value can be a
+		 *  - boolean (x,X is also interpreted as true)
+		 *  - list of modules separated with commas
+		 * Each module can contain wildcards with * or ** and regular expression characters
+		 */
+		CustomTypeMode : SimpleType.extend("URL", {
+			formatValue: function (oValue) {
+				return oValue;
+			},
+			parseValue: function (oValue) {
+				return oValue;
+			},
+			validateValue: function (oValue) {
+				var oRegexpMode = /^(true|false|x|X)$|^(([a-zA-Z*[\]{}()+?.\\^$|]+\/?)+(,([a-zA-Z*[\]{}()+?.\\^$|]+\/?)+)*)$/;
+				if (oValue && !oValue.match(oRegexpMode)) {
+					throw new ValidateException("'" + oValue + "' is not a valid sap-ui-debug value");
+				}
+				return true;
+			}
+		}),
+
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
@@ -269,9 +448,9 @@ sap.ui.define([
 		 * Returns the locale-dependent text for the given key. Fetches the resource bundle
 		 * and stores it in the type if necessary.
 		 *
-		 * @param {string} sKey the key
-		 * @param {any[]} aParameters the parameters
-		 * @returns {string} the locale-dependent text for the key
+		 * @param {string} sKey Property key
+		 * @param {any[]} aParameters Parameters to replace placeholders in the text
+		 * @returns {string} Locale-dependent text for the key
 		 */
 		_getText: function (sKey, aParameters) {
 			return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParameters);
@@ -281,7 +460,7 @@ sap.ui.define([
 		 * Converts the build date retrieved by the gloabl version info to a date object
 		 * @param {string} sDate the date in a proprietary format "yyyyMMdd-HHmmss" (the dash is optional)
 		 * @private
-		 * @return {Date} a date object with the build timestamp
+		 * @return {Date} Date object with the build timestamp
 		 */
 		_convertBuildDate: function (sDate) {
 			var oData = DateFormat.getInstance({
@@ -368,7 +547,7 @@ sap.ui.define([
 		/**
 		 * Initalizes the view model with the current runtime information
 		 * @private
-		 * @return {JSONModel} a model with filled data.
+		 * @return {JSONModel} Model with filled data.
 		 */
 		_createViewModel: function () {
 			var sDefaultBootstrapURL = new URI(jQuery.sap.getResourcePath(""), window.location.href ) + "/sap/ui/support/",
@@ -387,7 +566,8 @@ sap.ui.define([
 				"OpenSupportAssistantInNewWindow": this._storage.get("sap-ui-open-sa-in-new-window"),
 				"SelectedLocation": this._storage.get("sap-ui-selected-location"),
 				"OpenUI5ProductVersion": null,
-				"OpenUI5ProductTimestamp": null
+				"OpenUI5ProductTimestamp": null,
+				"DebugModuleSelectionCount": 0
 			});
 
 			// load version info into view model
@@ -426,42 +606,34 @@ sap.ui.define([
 			}
 
 			var aSupportedUrls = [
-					{
-						"DisplayName": sAppVersion,
-						"Value": sDefaultBootstrapURL
-					},
-					{
-						"DisplayName": "OpenUI5 CDN",
-						"Value": "https://openui5.hana.ondemand.com/resources/sap/ui/support/"
-					},
-					{
-						"DisplayName": "OpenUI5 (Nightly)",
-						"Value": "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/"
-					},
-					{
-						"DisplayName": "OpenUI5 (Beta)",
-						"Value": "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/"
-					},
-					{
-						"DisplayName": "SAPUI5 CDN",
-						"Value": "https://sapui5.hana.ondemand.com/resources/sap/ui/support/"
-					}
-				];
+				{
+					"DisplayName": sAppVersion,
+					"Value": sDefaultBootstrapURL
+				},
+				{
+					"DisplayName": "OpenUI5 CDN",
+					"Value": "https://openui5.hana.ondemand.com/resources/sap/ui/support/"
+				},
+				{
+					"DisplayName": "OpenUI5 (Nightly)",
+					"Value": "https://openui5nightly.hana.ondemand.com/resources/sap/ui/support/"
+				},
+				{
+					"DisplayName": "OpenUI5 (Beta)",
+					"Value": "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/"
+				},
+				{
+					"DisplayName": "SAPUI5 CDN",
+					"Value": "https://sapui5.hana.ondemand.com/resources/sap/ui/support/"
+				}
+			];
 
 			oViewModel.setProperty("/SupportAssistantPopoverURLs", aSupportedUrls);
 			oViewModel.setProperty("/ApplicationURL", document.location.href);
 			oViewModel.setProperty("/UserAgent", navigator.userAgent);
-			oViewModel.setProperty("/DebugMode", sap.ui.getCore().getConfiguration().getDebug() || !!window["sap-ui-debug"]);
-
+			oViewModel.setProperty("/DebugMode", sap.ui.getCore().getConfiguration().getDebug());
 			return oViewModel;
 		},
-
-		/**
-		 * Called after OK action is triggered
-		 * @name okActionCallback
-		 * @function
-		 * @private
-		 */
 
 		/**
 		 * Checks if variable is set in local storage. If the variable is empty
@@ -508,17 +680,34 @@ sap.ui.define([
 		},
 
 		/**
-		 * Displays a confirmation message to reload the current page
-		 * @param {okActionCallback} fnAction a callback function to be executed after the "ok" action is triggered
+		 * Called after OK action is triggered
+		 * @name confirmActionCallback
+		 * @function
 		 * @private
 		 */
-		_confirmReload: function (fnAction) {
+
+		/**
+		 * Called after CANCEL action is triggered
+		 * @name cancelActionCallback
+		 * @function
+		 * @private
+		 */
+
+		/**
+		 * Displays a confirmation message to reload the current page
+		 * @param {confirmActionCallback} fnConfirm Callback function to be executed after the "ok" action is triggered
+		 * @param {cancelActionCallback} [fnCancel] Callback function to be executed after the "cancel" action is triggered
+		 * @private
+		 */
+		_confirmReload: function (fnConfirm, fnCancel) {
 			MessageBox.confirm(
 				this._getText("TechInfo.DebugSources.ConfirmMessage"), {
 					title: this._getText("TechInfo.DebugSources.ConfirmTitle"),
 					onClose: function (oAction) {
 						if (oAction === MessageBox.Action.OK) {
-							fnAction();
+							fnConfirm();
+						} else if (fnCancel) {
+							fnCancel();
 						}
 					}
 				}
@@ -527,8 +716,8 @@ sap.ui.define([
 
 		/**
 		 * Replaces the URL parameter and triggers a reload of the current page
-		 * @param {string} sParameter the parameter name
-		 * @param {any} vValue the parameter value
+		 * @param {string} sParameter Parameter name
+		 * @param {any} vValue Parameter value
 		 * @private
 		 */
 		_reloadWithParameter: function(sParameter, vValue) {
