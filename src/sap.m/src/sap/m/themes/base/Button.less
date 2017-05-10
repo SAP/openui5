@@ -399,15 +399,18 @@ span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
 /* (add separators, remove top/bottom border)       */
 /* ------------------------------------------------ */
 
-.sapMIBar-CTX .sapMBtnInner {
+.sapMIBar-CTX .sapMBtnInner,
+.sapMBar .sapMBtnInner,
+.sapMHeader-CTX .sapMBtnInner,
+.sapMFooter-CTX .sapMBtnInner {
+	background: @sapUiButtonLiteBackground;
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
-.sapMBar .sapMBtnInner,
-.sapMHeader-CTX .sapMBtnInner,
-.sapMFooter-CTX .sapMBtnInner,
+// in subHeader the default buttons have border
 .sapMSubHeader-CTX .sapMBtnInner {
 	background: @sapUiButtonLiteBackground;
+	border-color: @sapUiButtonBorderColor;
 }
 
 .sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
