@@ -116,6 +116,16 @@
 		}
 	});
 
+	QUnit.test("Method 'setPopoverModal' calls inner popover method", function(assert) {
+		//Arrange
+		var oSpy = sinon.spy(this.oResponsivePopover, "setModal");
+		//Act
+		this.oSelectionDetails.setPopoverModal(true);
+		//Assert
+		assert.equal(oSpy.callCount, 1, "Method delegation executed");
+		assert.equal(this.oResponsivePopover.getModal(), true, "Method delegation correctly updated the property value");
+	});
+
 	QUnit.test("Method 'isOpen' returns false as default", function(assert) {
 		//Assert
 		assert.equal(this.oSelectionDetails.isOpen(), false, "Method 'isOpen' returns false");
@@ -205,6 +215,23 @@
 		assert.equal(sap.m.List.callCount, 2, "Constructor for List has been called twice.");
 		assert.equal(sap.ui.layout.FixFlex.callCount, 1, "Constructor for FixFlex has been called only once.");
 		assert.equal(sap.m.NavContainer.callCount, 1, "Constructor for NavContainer has been called only once.");
+		assert.equal(oPopover.setProperty, this.oSelectionDetails._setPopoverProperty, "Method 'setProperty' overridden");
+	});
+
+	QUnit.test("Function _setPopoverProperty", function(assert) {
+		//Arrange
+		var oPopover = this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
+		var oInnerControlSpy = sinon.spy(oPopover._oControl, "setProperty");
+		var oModalSpy = sinon.spy(oPopover._oControl, "setModal");
+		var oManagedObjectSpy = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
+		//Act
+		var oReturn = this.oSelectionDetails._setPopoverProperty.call(oPopover, "visible", true);
+		this.oSelectionDetails._setPopoverProperty.call(oPopover, "modal", true);
+		//Assert
+		assert.equal(oInnerControlSpy.callCount, 2, "Method 'setProperty' of inner control called twice");
+		assert.equal(oModalSpy.callCount, 1, "Method 'setModal' of inner control called twice, in case of property 'modal'");
+		assert.equal(oManagedObjectSpy.callCount, 2, "Method 'setProperty' of MangedObject called twice");
+		assert.equal(oReturn, oPopover, "Popover instance returned");
 	});
 
 	QUnit.test("Initial page has header with close button on phones", function(assert) {
@@ -963,7 +990,7 @@
 
 	QUnit.test("Factory Function - only function provided", function(assert) {
 		//Arrange
-		fnFunction = function(){};
+		var fnFunction = function(){};
 		this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
 
 		//Assert
@@ -973,8 +1000,8 @@
 
 	QUnit.test("Register Factory Function - data and function provided", function(assert) {
 		//Arrange
-		fnFunction = function(){};
-		oData = [1, 2];
+		var fnFunction = function(){};
+		var oData = [1, 2];
 		this.oSelectionDetails.registerSelectionDetailsItemFactory(oData, fnFunction);
 
 		//Assert
@@ -984,7 +1011,7 @@
 
 	QUnit.test("Factory Function - invalid data provided", function(assert) {
 		//Arrange
-		fnFunction = "Invalid data";
+		var fnFunction = "Invalid data";
 		var oResult = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
 
 		//Assert
@@ -1329,13 +1356,13 @@
 				return oEventParam.data;
 			}
 		});
-		oSpy = sinon.spy(this.oSelectionDetails, "destroyAggregation");
+		var oDestroyAggregationSpy = sinon.spy(this.oSelectionDetails, "destroyAggregation");
 
 		//Act
 		this.oSelectionDetails._callFactory();
 
 		//Assert
-		assert.ok(oSpy.withArgs(["items", true]), "Correct aggregation destroyed");
+		assert.ok(oDestroyAggregationSpy.withArgs(["items", true]), "Correct aggregation destroyed");
 		assert.equal(this.oSelectionDetails.getItems().length, 2, "Items are added");
 	});
 
