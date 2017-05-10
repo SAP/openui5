@@ -138,6 +138,23 @@
 														class="sapUiTinyMarginBegin"/>
 												</l:fixContent>
 											</l:FixFlex>
+											<l:FixFlex fixFirst="false" vertical="false">
+												<l:flexContent>
+													<Input
+														id="previewCopyUnicode"
+														editable="false"
+														value="{i18n>previewInfoUnicode}:{path: 'name', formatter: '.getUnicodeByName'}"
+														class="sapUiCopyCode"/>
+												</l:flexContent>
+												<l:fixContent>
+													<Button
+														icon="sap-icon://copy"
+														type="Emphasized"
+														tooltip="{i18n>previewCopyToClipboard}"
+														press="onCopyUnicodeToClipboard"
+														class="sapUiTinyMarginBegin"/>
+												</l:fixContent>
+											</l:FixFlex>
 										</Panel>
 										<Panel headerText="{i18n>previewIconTitle}" backgroundDesign="Solid" class="sapUiContentPadding">
 											<l:BlockLayout
