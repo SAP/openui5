@@ -904,6 +904,43 @@
 		oSegmentedButton.destroy();
 	});
 
+	//1780019055
+	QUnit.test("Select event in overflowed mode", function(assert) {
+		//arrange
+		var fnCallback = sinon.spy(),
+			oBtn1 = new sap.m.SegmentedButtonItem({
+				width: "300px",
+				text: "button 1"
+			}),
+			oBtn2 = new sap.m.SegmentedButtonItem({
+				width: "300px",
+				text: "button 2"
+			}),
+			oSegmentedButton = new sap.m.SegmentedButton({
+				items : [oBtn1,oBtn2],
+				select: fnCallback
+			}),
+			oToolbar = new sap.m.OverflowToolbar({
+				width: "200px",
+				content : [oSegmentedButton]
+			}),
+			oInnerSelect;
+
+		oToolbar.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+
+		oInnerSelect = oSegmentedButton.getAggregation("_select");
+
+		//act
+		oInnerSelect.fireChange({ selectedItem: oInnerSelect.getItems()[1] });
+
+		//assert
+		assert.strictEqual(fnCallback.callCount, 1, "select event callback should be called once");
+
+		//clean
+		oToolbar.destroy();
+	});
+
 	//BCP: 1770067241
 	QUnit.test("SegmentedItem press", function() {
 		//arrange
