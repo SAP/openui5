@@ -2,12 +2,6 @@
    Landing Page Header styles
   ========================================================================== */
 
-/* shrink image to 200px height on landscape phone mode */
-.phoneHeaderImageLandscape {
-	max-height: 200px;
-	object-fit: cover;
-}
-
 /* basic setup of the welcome page landing image, center vertically and horizontally above image */
 .sapUiDemokit .sapMText.welcomeImageTextHeadline {
 	font-size: 3rem;

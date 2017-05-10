@@ -5,6 +5,7 @@
 /*global Promise*/
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"jquery.sap.global",
 	"sap/ui/documentation/demoapps/model/sourceFileDownloader",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/library"
-], function (Controller, JSONModel, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
+], function (Controller, Device, JSONModel, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("sap.ui.documentation.demoapps.controller.App", {
@@ -32,6 +33,40 @@ sap.ui.define([
 				});
 
 			this.getView().setModel(oViewModel, "appView");
+
+			this._fnOrientationChange({
+				landscape: Device.orientation.landscape
+			});
+			this._fnResolutionChange({
+				name: (Device.resize.width <= 600 ? "Phone" : "NoPhone")
+			});
+		},
+
+		onBeforeRendering: function() {
+			Device.orientation.detachHandler(this._fnOrientationChange.bind(this));
+			Device.media.detachHandler(this._fnResolutionChange.bind(this));
+		},
+
+		onAfterRendering: function() {
+			Device.orientation.attachHandler(this._fnOrientationChange.bind(this));
+			Device.media.attachHandler(this._fnResolutionChange.bind(this));
+		},
+
+		onExit: function() {
+			Device.orientation.detachHandler(this._fnOrientationChange.bind(this));
+			Device.media.detachHandler(this._fnResolutionChange.bind(this));
+		},
+
+		_fnOrientationChange: function(oEvent) {
+			if (Device.system.phone) {
+				this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
+			}
+		},
+
+		_fnResolutionChange: function(oEvent) {
+			this.byId("phoneImage").setVisible(oEvent.name === "Phone");
+			this.byId("phoneImage").toggleStyleClass("phoneHeaderImageDesktop", oEvent.name === "Phone");
+			this.byId("desktopImage").setVisible(oEvent.name !== "Phone");
 		},
 
 		/**

@@ -19,7 +19,7 @@ sap.ui.define([
 			onInit: function () {
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
 
-					this._fnOrientationChange({
+				this._fnOrientationChange({
 					landscape: Device.orientation.landscape
 				});
 			},

@@ -14,34 +14,64 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 	vertical-align: baseline;
 }
 
-/*gradient colors for all different browsers */
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .gradient {
-	background: #a9c4df; /* Old browsers */
-	background: -moz-linear-gradient(top,  #a9c4df 0%, #e7ecf0 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(top,  #a9c4df 0%,#e7ecf0 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom,  #a9c4df 0%,#e7ecf0 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a9c4df', endColorstr='#e7ecf0',GradientType=0 ); /* IE6-9 */
+/* fix to remove the 5px space below title images */
+.sapUiDemokit .sapUiDemokitLandingImageCell {
+	line-height: 0;
 }
 
+.headerGrid {
+	position: absolute;
+	top: 2rem;
+	padding-left: 2rem;
+}
+
+.headerButton {
+	margin-top: 1.5rem;
+}
+
+/* shrink image to 200px height on landscape phone mode */
+.phoneHeaderImageLandscape {
+	max-height: 12.5rem;
+	object-fit: cover;
+}
+
+.phoneHeaderImageDesktop {
+	max-height: 21.875rem;
+	object-fit: cover;
+}
+
+.desktopImage {
+	min-height: 9.375rem;
+	object-fit: cover;
+}
 
 .headerText {
 	width: 100%;
 	padding-top: 0.5rem;
-	text-shadow: 0 0 0.125rem #fff;
 	font-size: 3rem;
 	margin-left: -0.2rem;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
 }
 
 .headerSubText {
 	width: 100%;
 	font-size: 1.25rem;
 	font-weight: normal;
-	text-shadow: 0 0 0.125rem #fff;
+	color: #ffffff;
+	text-shadow: 0 0 0.125rem #000000;
 }
 
 /*SMALL*/
 
 @media only screen and (max-width: 1024px) {
+	.headerButton {
+		margin-top: 1rem;
+	}
+	.headerGrid {
+		top: 1.25rem;
+		padding-left: 1rem;
+	}
 	.headerText {
 		font-size: 1.25rem;
 		margin-left: -0.0625rem;
@@ -55,10 +85,16 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .gradient {
 /*XTRA LARGE*/
 
 @media only screen and (min-width: 1440px) {
+	.headerGrid {
+		padding-left: 3rem;
+	}
 	.headerText {
 		font-size: 4rem;
 	}
 	.headerSubText {
 		font-size: 2rem;
+	}
+	.headerButton {
+		margin-top: 2rem;
 	}
 }

@@ -16,29 +16,37 @@
 					background="Light">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
-							class="gradient">
+								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+							<Image
+									id="phoneImage"
+									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_S_cropped.jpg"
+									width="100%"
+									densityAware="false"/>
+							<Image
+									id="desktopImage"
+									class="desktopImage"
+									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_M_and_L_cropped.jpg"
+									width="100%"/>
 							<l:Grid
-								hSpacing="0"
-								defaultSpan="L6 M6 S12">
+									class="headerGrid"
+									hSpacing="0"
+									defaultSpan="L6 M6 S12">
 								<l:VerticalLayout width="100%" class="sapUiTinyMarginEnd">
-									<Text
-										text="{i18n>pageTitle}"
-										class="headerText sapUiTinyMarginBottom"/>
-									<Text
-										text="{i18n>introText1}"
-										class="headerSubText sapUiMediumMarginBottom"/>
+									<Text class="headerText" text="{i18n>pageTitle}" width="100%" textAlign="Left"/>
+									<Text class="headerSubText" text="{i18n>introText1}" width="100%" textAlign="Left"/>
 									<custom:ActionButton
-										id="download"
-										text="{i18n>downloadButtonText}"
-										type="Emphasized"
-										press="onDownloadButtonPress"
-										icon="sap-icon://download">
+											class="headerButton"
+											id="download"
+											text="{i18n>downloadButtonText}"
+											type="Emphasized"
+											press="onDownloadButtonPress"
+											icon="sap-icon://download">
 									</custom:ActionButton>
 								</l:VerticalLayout>
 								<Image
-									src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"
-									densityAware="false"
-									width="100%"/>
+										src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"
+										densityAware="false"
+										width="100%"/>
 							</l:Grid>
 						</l:BlockLayoutCell>
 					</l:BlockLayoutRow>

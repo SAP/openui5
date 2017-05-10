@@ -13,7 +13,7 @@
 					<l:BlockLayoutCell
 							class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 						<Image
-								class="phoneImage"
+								id="phoneImage"
 								src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
 								width="100%"
 								densityAware="false"
