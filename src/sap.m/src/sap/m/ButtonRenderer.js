@@ -33,7 +33,8 @@ sap.ui.define(['jquery.sap.global'],
 		var sText = oButton._getText();
 		var sTextDir = oButton.getTextDirection();
 		var bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge;
-		var bRenderBDI = sTextDir === sap.ui.core.TextDirection.Inherit;
+		// render bdi tag only if the browser is different from IE and Edge since it is not supported there
+		var bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge;
 
 		// get icon from icon pool
 		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
@@ -199,6 +200,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oButton.getId() + "-content");
 			oRm.write(">");
+
 			if (bRenderBDI) {
 				oRm.write("<bdi>");
 			}
