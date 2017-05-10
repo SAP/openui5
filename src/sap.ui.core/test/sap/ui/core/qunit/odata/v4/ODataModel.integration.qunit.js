@@ -1903,9 +1903,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: child binding has $apply and would need $expand therefore it cannot use its
 	// parent binding's cache
-	QUnit.test("Auto-$expand/$select: no $apply inside $expand", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
-			sView = '\
+	testViewStart("Auto-$expand/$select: no $apply inside $expand", '\
 <FlexBox binding="{/TEAMS(\'42\')}">\
 	<Table items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$apply : \'filter(AGE lt 42)\'}}">\
 		<items>\
@@ -1916,21 +1914,14 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</FlexBox>',
-			that = this;
-
-		this.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)"
-				+ "&$select=ID,Name&$skip=0&$top=100", {
-					"value" : [
-						{"Name" : "Frederic Fall"},
-						{"Name" : "Peter Burke"}
-					]
-				})
-			.expectChange("text", ["Frederic Fall", "Peter Burke"]);
-		return this.createView(assert, sView, oModel).then(function () {
-			return that.waitForChanges(assert);
-		});
-	});
+</FlexBox>', {
+		"TEAMS('42')/TEAM_2_EMPLOYEES?$apply=filter(AGE%20lt%2042)&$select=ID,Name&$skip=0&$top=100" : {
+			"value" : [
+				{"Name" : "Frederic Fall"},
+				{"Name" : "Peter Burke"}
+			]
+		}
+	}, {"text" :  ["Frederic Fall", "Peter Burke"]}, createTeaBusiModel({autoExpandSelect : true}));
 
 	//*********************************************************************************************
 	// Scenario: child binding cannot use its parent list binding's cache (for whatever reason)
