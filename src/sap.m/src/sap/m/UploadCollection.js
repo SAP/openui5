@@ -1033,7 +1033,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype.exit = function() {
-		var i, iPendingUploadsNumber;
+		var i, iPendingUploadsNumber, oItemToDestroy;
 		/* _unbindDragEnterLeave has to be called before setting $RootNode to null, because if $RootNode is null, the
 			unbind will only partially be performed as it depends on $RootNode */
 		this._unbindDragEnterLeave();
@@ -1062,6 +1062,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				this._aFileUploadersForPendingUpload[i] = null;
 			}
 			this._aFileUploadersForPendingUpload = null;
+		}
+		// destroy items with status "uploading" because they are not destroyed with "items" aggregation
+		for (i = 0; i < this.aItems.length; i++) {
+			if (this.aItems[i]._status === UploadCollection._uploadingStatus) {
+				oItemToDestroy = this.aItems.splice(i, 1)[0];
+				if (oItemToDestroy.destroy) {
+					oItemToDestroy.destroy();
+				}
+			}
 		}
 		this._deregisterSizeHandler();
 	};
@@ -1519,7 +1528,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		oRm.renderControl(this._getFileNameControl(oItem, that));
 		// if status is uploading only the progress label is displayed under the Filename
 		if (sStatus === UploadCollection._uploadingStatus && !(Device.browser.msie && Device.browser.version <= 9)) {
-			oRm.renderControl(this._createProgressLabel(sItemId, sPercentUploaded));
+			oRm.renderControl(this._createProgressLabel(oItem, sPercentUploaded));
 		} else {
 			if (iMarkersCounter > 0) {
 				oRm.write('<div class="sapMUCObjectMarkerContainer">');// begin of markers container
@@ -1679,13 +1688,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @return {sap.m.Label} oProgressLabel
 	 * @private
 	 */
-	UploadCollection.prototype._createProgressLabel = function(sItemId, sPercentUploaded) {
-		var oProgressLabel;
+	UploadCollection.prototype._createProgressLabel = function(oItem, sPercentUploaded) {
+		var oProgressLabel,
+			sItemId = oItem.getId();
 
 		oProgressLabel = sap.ui.getCore().byId(sItemId + "-ta_progress");
 		if (!oProgressLabel) {
-			oProgressLabel = new sap.m.Label(sItemId + "-ta_progress", {
-				text : this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded])
+			oProgressLabel = oItem._getControl("sap.m.Label", {
+				id: sItemId + "-ta_progress",
+				text: this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded])
 			}).addStyleClass("sapMUCProgress");
 		} else {
 			oProgressLabel.setText(this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded]));
@@ -2650,7 +2661,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._onUploadComplete = function(oEvent) {
 		if (oEvent) {
-			var i, sRequestId, sUploadedFile, cItems, bUploadSuccessful = checkRequestStatus();
+			var i, sRequestId, sUploadedFile, cItems, oItemToDestroy, aInProgressStates,
+			bUploadSuccessful = checkRequestStatus();
 			sRequestId = this._getRequestId(oEvent);
 			sUploadedFile = oEvent.getParameter("fileName");
 
@@ -2660,35 +2672,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sUploadedFile = aUploadedFile[0];
 			}
 			cItems = this.aItems.length;
+			aInProgressStates = [UploadCollection._uploadingStatus, UploadCollection._pendingUploadStatus];
 			for (i = 0; i < cItems; i++) {
 				// sRequestId should be null only in case of IE9 because FileUploader does not support header parameters for it
-				if (!sRequestId) {
-					if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-							this.aItems[i]._status === UploadCollection._uploadingStatus &&
-							bUploadSuccessful) {
+				if ((!sRequestId || this.aItems[i]._requestIdName === sRequestId) &&
+					this.aItems[i].getProperty("fileName") === sUploadedFile &&
+					(aInProgressStates.indexOf(this.aItems[i]._status) >= 0)) {
+					if (bUploadSuccessful && this.aItems[i]._status !== UploadCollection._pendingUploadStatus) {
 						this.aItems[i]._percentUploaded = 100;
 						this.aItems[i]._status = UploadCollection._displayStatus;
-						this._oItemToUpdate = null;
-						break;
-					} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-										 this.aItems[i]._status === UploadCollection._uploadingStatus) {
-						this.aItems.splice(i, 1);
-						this._oItemToUpdate = null;
-						break;
 					}
-				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-									 this.aItems[i]._requestIdName === sRequestId &&
-									 this.aItems[i]._status === UploadCollection._uploadingStatus &&
-									 bUploadSuccessful) {
-					this.aItems[i]._percentUploaded = 100;
-					this.aItems[i]._status = UploadCollection._displayStatus;
-					this._oItemToUpdate = null;
-					break;
-				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-									 this.aItems[i]._requestIdName === sRequestId &&
-									 this.aItems[i]._status === UploadCollection._uploadingStatus ||
-									 this.aItems[i]._status === UploadCollection._pendingUploadStatus) {
-					this.aItems.splice(i, 1);
+					oItemToDestroy = this.aItems.splice(i, 1)[0];
+					if (oItemToDestroy.destroy) {
+						oItemToDestroy.destroy();
+					}
 					this._oItemToUpdate = null;
 					break;
 				}

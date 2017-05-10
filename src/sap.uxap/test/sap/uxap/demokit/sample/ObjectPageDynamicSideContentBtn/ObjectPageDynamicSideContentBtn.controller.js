@@ -2,7 +2,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 	"use strict";
 	var sCurrentBreakpoint, oDynamicSideView, oOPSideContentBtn;
 	var DynamicSideContentBtn = Controller.extend("sap.uxap.sample.ObjectPageDynamicSideContentBtn.ObjectPageDynamicSideContentBtn", {
-		
+
 		onInit: function () {
 			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageDynamicSideContentBtn/employee.json");
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
@@ -10,7 +10,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 			oOPSideContentBtn = this.getView().byId("headerForTest").getSideContentButton();
 		},
 		onAfterRendering: function() {
-			sCurrentBreakpoint=oDynamicSideView.getCurrentBreakpoint();
+			sCurrentBreakpoint = oDynamicSideView.getCurrentBreakpoint();
 		},
 		handleSideContentHide: function () {
 			if (sCurrentBreakpoint === "S") {
@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 			} else {
 				oOPSideContentBtn.setVisible(false);
 			}
-		},
+		}
 	});
 
 	return DynamicSideContentBtn;

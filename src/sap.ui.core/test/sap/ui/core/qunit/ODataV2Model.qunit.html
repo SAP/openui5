@@ -1253,6 +1253,26 @@
 			done();
 		});
 	});
+	
+	QUnit.test("test bindElement: relative with path '' ", function(assert){
+		assert.expect(1);
+		var done = assert.async();
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oPanel.addContent(oLabel);
+		oPanel.bindElement("/Products(3)");
+		oLabel.bindElement({path:"", parameters: {expand:"Category"}});
+		var fnHandler = function() {
+			ok(!oModel.oData["Products(3)"][''], "no empty property created");
+			oLabel.getElementBinding().detachDataReceived(fnHandler);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			oPanel.unbindElement();
+			done();
+		}
+		oLabel.getElementBinding().attachDataReceived(fnHandler);
+	});
+
 
 	QUnit.test("test bindElement", function(assert){
 		assert.expect(2);

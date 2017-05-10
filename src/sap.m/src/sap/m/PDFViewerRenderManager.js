@@ -53,6 +53,7 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 
 				this._objectsRegister[sPopupFactoryFunctionName] = function () {
 					var oPopup = new Dialog(sPopupId, oOptions);
+					oPopup.addStyleClass("sapUiPopupWithPadding");
 
 					that._objectsRegister[sPopupFactoryFunctionName] = function () {
 						return oPopup;

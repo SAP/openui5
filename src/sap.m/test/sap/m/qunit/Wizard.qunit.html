@@ -57,6 +57,7 @@
 					steps: [
 						new sap.m.WizardStep({
 							title: "Step 1",
+							validated: false,
 							activate: this.oSpies.firstStep.onActivate,
 							complete: this.oSpies.firstStep.onComplete
 						}),
@@ -102,6 +103,29 @@
 			var text = this.oWizard._getNextButton().getText();
 			var sText = this.oResourceBundle.getText("WIZARD_FINISH");
 			assert.strictEqual(text, sText, "Default text of finish button should be equal to '" + sText + "'");
+		});
+
+		QUnit.test("Wizard setCurrentStep", function (assert) {
+			this.oWizard.setCurrentStep(this.oWizard.getSteps()[1]);
+			assert.ok(this.oSpies.firstStep.onComplete.calledOnce, " should call the complete event of step 1.");
+			assert.ok(this.oSpies.secondStep.onActivate.calledOnce, " should call the activate event of step 2.");
+		});
+
+		QUnit.test("Wizard nextStep()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			assert.equal(this.oWizard.getCurrentStep(), this.oWizard.getSteps()[2].getId(), " should change the current step.");
+		});
+
+		QUnit.test("Wizard discardProgress()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
+			assert.equal(this.oWizard.getCurrentStep(), this.oWizard.getSteps()[0].getId(), " should change the current step");
+		});
+
+		QUnit.test("Wizard setCurrentStep()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.setCurrentStep(this.oWizard.getSteps()[0]);
+			assert.equal(this.oWizard.getSteps()[0].getValidated(), false, " should reset the validated state");
 		});
 
 		QUnit.test("Scroll handler", function (assert) {
@@ -277,6 +301,12 @@
 			oButton.firePress();
 			this.oWizard.discardProgress(this.oWizardSecondStep);
 			assert.strictEqual(this.oWizard.getProgress(), 2, "Progress should be 1");
+		});
+
+		QUnit.test("DiscardProgress() ", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
+			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), false, "should reset the initial validated state");
 		});
 
 		QUnit.test("DiscardProgress() should hide the steps after the step", function (assert) {

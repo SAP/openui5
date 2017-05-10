@@ -60,6 +60,13 @@
 			var oLabel = new sap.m.Label({text:'Most common use cases:'}).addStyleClass("TestPageHeaderLabel");
 			oRatingPage.addContent(oLabel);
 
+			var oLabel01 = new sap.m.Label({text:'No icon size'});
+			var oRating01 = new sap.m.RatingIndicator("noIconSize", {
+				enabled: false,
+				value: 2.5,
+				tooltip: "This is a tooltip"
+			});
+
 			var oLabel0 = new sap.m.Label({text:'Small inactive rating'});
 			var oRating0 = new sap.m.RatingIndicator("smallInactiveRI", {
 				iconSize: "1rem",
@@ -78,11 +85,13 @@
 			var oLabel2 = new sap.m.Label({text:'Medium inactive rating'});
 			var oRating2 = new sap.m.RatingIndicator("mediumInactiveRI", {
 				enabled: false,
+				iconSize: "1.375rem",
 				value: 2.5
 			});
 
 			var oLabel3 = new sap.m.Label({text:'Medium active rating'});
 			var oRating3 = new sap.m.RatingIndicator("mediumActiveRI", {
+				iconSize: "1.375rem",
 				value: 2.5
 			});
 
@@ -106,6 +115,8 @@
 
 			var oVBox = new sap.m.VBox({
 				items: [
+					oLabel01,
+					oRating01,
 					oLabel0,
 					oRating0,
 					oLabel1,

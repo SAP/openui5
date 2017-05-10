@@ -420,58 +420,58 @@
 
 		this.oTable = new sap.ui.table.AnalyticalTable();
 		var oBindingInfo = {};
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Default");
 
 		oBindingInfo = {parameters: {autoExpandMode: "Sequential"}};
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Sequential, "Property AutoExpandMode - From BindingInfo");
 
 		oBindingInfo = {};
 		this.oTable.setAutoExpandMode(oExpandMode.Sequential);
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Sequential, "Property AutoExpandMode - Sequential");
 
 		oBindingInfo = {};
 		this.oTable.setAutoExpandMode(oExpandMode.Bundled);
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Bundled");
 
 		oBindingInfo = {};
 		this.oTable.setAutoExpandMode("DOES_NOT_EXIST");
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.autoExpandMode, oExpandMode.Bundled, "Property AutoExpandMode - Wrong");
 	});
 
 	QUnit.test("SumOnTop", function (assert) {
 		this.oTable = new sap.ui.table.AnalyticalTable();
 		var oBindingInfo = {};
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.sumOnTop, false, "Property SumOnTop - Default");
 
 		oBindingInfo = {parameters: {sumOnTop: true}};
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - From BindingInfo");
 
 		oBindingInfo = {};
 		this.oTable.setSumOnTop(true);
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.sumOnTop, true, "Property SumOnTop - Custom");
 	});
 
 	QUnit.test("NumberOfExpandedLevels", function (assert) {
 		this.oTable = new sap.ui.table.AnalyticalTable();
 		var oBindingInfo = {};
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
 
 		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 5, "Property NumberOfExpandedLevels - From BindingInfo");
 
 		oBindingInfo = {};
 		this.oTable.setNumberOfExpandedLevels(4);
-		this.oTable._sanitizeBindingInfo(oBindingInfo);
+		this.oTable._applyBindingInfoToModel(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property SumOnTop - Custom");
 	});
 

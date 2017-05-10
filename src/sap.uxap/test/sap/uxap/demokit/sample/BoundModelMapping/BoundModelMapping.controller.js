@@ -1,9 +1,9 @@
-sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], function (JSON, Controller) {
+sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], function (JSONModel, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.uxap.sample.BoundModelMapping.BoundModelMapping", {
 		onInit: function () {
-			var oModel = new JSON({
+			var oModel = new JSONModel({
 				externalPath: "/Employee",
 				Employee: {
 					firstName: "John",

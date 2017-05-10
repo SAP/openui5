@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, testData) {
 	"use strict";
 
@@ -203,7 +205,7 @@
 					})
 				]
 			}),
-			oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0]
+			oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
 
 
 		oObjectPageLayout.placeAt('qunit-fixture');
@@ -233,7 +235,7 @@
 						})
 					]
 				}),
-				oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0]
+				oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
 
 
 		oObjectPageLayout.placeAt('qunit-fixture');
@@ -245,4 +247,4 @@
 		oObjectPageLayout.destroy();
 	});
 
-}(jQuery, QUnit, sinon, testData));
+}(jQuery, QUnit, sinon, window.testData));
