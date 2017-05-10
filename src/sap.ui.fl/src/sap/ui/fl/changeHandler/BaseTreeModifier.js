@@ -15,8 +15,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		* @param {boolean} oSelector.isLocalId - true if the id within the selector is a local id or a global id
 		* @param {sap.ui.core.UIComponent} oAppComponent
 		* @param {object} mAdditionalSelectorInformation additional mapped data which is added to the selector
-		* @param {Node} oView - only for xml processing: the xml node of the view
-		* @returns {sap.ui.core.Control} - control targeted within the selector
+		* @param {Element} oView - For XML processing only: XML node of the view
+		* @returns {sap.ui.core.Control|Element} - Control targeted within the selector
 		* @throws {Exception} oException - in case no control could be determined an error is thrown
 		* @public
 		*/

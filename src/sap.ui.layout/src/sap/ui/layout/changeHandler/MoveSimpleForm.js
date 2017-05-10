@@ -30,7 +30,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				for (var i = 0; i < aContent.length; i++) {
 					var sType = oModifier.getControlType(aContent[i]);
 					if (aStopToken.indexOf(sType) === -1) {
-						if (aContent[i].getVisible()) {
+						if (oModifier.getVisible(aContent[i])) {
 							return true;
 						}
 					} else {
@@ -50,7 +50,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 					oModifier.insertAggregation(oSimpleForm, "content", oTitle, 0, oView);
 				}
 
-				return oSimpleForm.getContent();
+				return oModifier.getAggregation(oSimpleForm, "content");
 			};
 
 			/**
@@ -115,7 +115,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 					if (iSourceFieldIndex != iTargetFieldIndex) {
 						oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 						for (var i = 0; i < aContentClone.length; ++i) {
-							oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i);
+							oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i, oView);
 						}
 					}
 
@@ -156,7 +156,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 
 					oModifier.removeAllAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION);
 					for (var i = 0; i < aContentClone.length; ++i) {
-						oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i);
+						oModifier.insertAggregation(oSimpleForm, MoveSimpleForm.CONTENT_AGGREGATION, aContentClone[i], i, oView);
 					}
 
 				} else {

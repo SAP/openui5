@@ -107,7 +107,8 @@ function (
 		var oNewFieldInstance = new sap.m.Input(oView.createId("myGroupField"));
 		oForm.addContent(oNewFieldInstance);
 
-		// final check
+		// final check if the reapplication of the change is done
+        // oForm.addContent > core.ManagedObject.setParent > core.ManagedObject.propagateProperties > FlexController.applyChangesOnControl
 		assert.deepEqual(oNewFieldInstance.getVisible(), false, "the label is still hidden");
 	});
 

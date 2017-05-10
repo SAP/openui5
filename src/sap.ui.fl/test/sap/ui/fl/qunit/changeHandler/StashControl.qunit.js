@@ -42,7 +42,7 @@ sap.ui.require([
 
 	QUnit.test('applyChange on a xml tree', function(assert) {
 		var oDOMParser = new DOMParser();
-		var oXmlDocument = oDOMParser.parseFromString("<ObjectPageSection id='ObjectPageSection' title='ObjectPage Section 1' stashed='false' />", "application/xml");
+		var oXmlDocument = oDOMParser.parseFromString("<ObjectPageSection xmlns='sap.uxap' id='ObjectPageSection' title='ObjectPage Section 1' stashed='false' />", "application/xml");
 		this.oXmlObjectPage = oXmlDocument.childNodes[0];
 
 		this.oChangeHandler.applyChange(this.oChange, this.oXmlObjectPage, {modifier: XmlTreeModifier});

@@ -36,7 +36,7 @@
 				'<Input id="testComponent---myView--myGroupElement" />' +
 				'</form:SimpleForm>' +
 				'</mvc:View>';
-			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
+			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			return this.oXmlView;
 		},
 

@@ -15,7 +15,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			this.stubs = [];
 			this.oChangeHandler = HideControlChangeHandler;
 			var oDOMParser = new DOMParser();
-			this.oXmlDocument = oDOMParser.parseFromString("<Button text='" + this.OLD_VALUE + "' enabled='true' id='buttonId' />", "application/xml");
+			this.oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" >' +
+			'<Button text="foo" enabled="true" id="buttonId" />' +
+			'</mvc:View>';
+			this.oXmlDocument = oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
 			var oChangeJson = {
 				"selector": {
 					"id": "key"

@@ -164,7 +164,7 @@ sap.ui.define([
 				}
 
 				oModifier.removeAggregation(oSourceParent, sSourceAggregation, oMovedElement, oView);
-				oModifier.insertAggregation(oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex);
+				oModifier.insertAggregation(oTargetParent, sTargetAggregation, oMovedElement, mMovedElement.targetIndex, oView);
 			}, this);
 
 			return true;

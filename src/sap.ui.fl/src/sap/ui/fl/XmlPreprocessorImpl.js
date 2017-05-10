@@ -41,7 +41,7 @@ sap.ui.define([
 	XmlPreprocessorImpl.process = function(oView, mProperties){
 		try {
 			if (!mProperties || mProperties.sync) {
-				Utils.log.warning("Flexibility feature for applying changes on an XML view is only available for " +
+				jQuery.sap.log.warning("Flexibility feature for applying changes on an XML view is only available for " +
 					"asynchronous views; merge is be done later on the JS controls.");
 				return (oView);
 			}
