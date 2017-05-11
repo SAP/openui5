@@ -407,7 +407,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		var bResolves = !!this.oModel.resolve(this.sPath, this.oContext),
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
 
-		if (!bResolves || oRef === undefined) {
+		if (!bResolves || oRef === undefined ||
+		    (this.sOperationMode === OperationMode.Server && (this.aApplicationFilters.length > 0 || this.aFilters.length > 0 || this.aSorters.length > 0))) {
 			this.bUseExpandedList = false;
 			this.aExpandRefs = undefined;
 			return false;
@@ -465,7 +466,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype.useClientMode = function() {
 		return (this.sOperationMode === OperationMode.Client ||
 			this.sOperationMode === OperationMode.Auto && !this.bThresholdRejected ||
-			this.bUseExpandedList);
+			this.sOperationMode !== OperationMode.Server && this.bUseExpandedList);
 	};
 
 	/**

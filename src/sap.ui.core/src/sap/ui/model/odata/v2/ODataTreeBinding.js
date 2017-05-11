@@ -159,6 +159,9 @@ sap.ui.define(['jquery.sap.global',
 
 			// external operation mode
 			this.sOperationMode = (mParameters && mParameters.operationMode) || this.oModel.sDefaultOperationMode;
+			if (this.sOperationMode === OperationMode.Default) {
+				this.sOperationMode = OperationMode.Server;
+			}
 
 			// internal operation mode switch, default is the same as "OperationMode.Server"
 			this.bClientOperation = false;
