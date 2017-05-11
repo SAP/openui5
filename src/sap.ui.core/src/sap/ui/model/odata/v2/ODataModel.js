@@ -2552,7 +2552,7 @@ sap.ui.define([
 			function successWrapper(oData, oResponse) {
 				for (var i = 0; i < oRequest.parts.length; i++) {
 					if (oRequest.parts[i].request._aborted){
-						that._processAborted(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+						that._processAborted(oRequest.parts[i].request, oResponse);
 					} else if (oRequest.parts[i].fnSuccess) {
 						oRequest.parts[i].fnSuccess(oData, oResponse);
 					}
@@ -2572,7 +2572,7 @@ sap.ui.define([
 		function handleError(oError) {
 			if (oError.message == "Request aborted") {
 				for (var i = 0; i < oRequest.parts.length; i++){
-					that._processAborted(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
+					that._processAborted(oRequest.parts[i].request, oError);
 				}
 			} else {
 				for (var i = 0; i < oRequest.parts.length; i++) {
@@ -2611,7 +2611,7 @@ sap.ui.define([
 		function processResponse(oRequest, oResponse, bAborted) {
 			for (var i = 0; i < oRequest.parts.length; i++) {
 				if (bAborted || oRequest.parts[i].request._aborted) {
-					that._processAborted(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+					that._processAborted(oRequest.parts[i].request, oResponse);
 				} else if (oResponse.message) {
 					that._processError(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
 				} else {
@@ -2686,7 +2686,7 @@ sap.ui.define([
 			that._processAfterUpdate();
 
 			if (bAborted) {
-				that._processAborted(oBatchRequest, oError, fnError, true);
+				that._processAborted(oBatchRequest, oError, true);
 			} else {
 				that._processError(oBatchRequest, oError, fnError, true, aRequests);
 			}
@@ -2696,7 +2696,32 @@ sap.ui.define([
 				requests: aRequests,
 				batch: true
 		};
-		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
+		var oBatchRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
+
+		function callAbortHandler(oRequest) {
+			var fnError;
+			for (var i = 0; i < oRequest.parts.length; i++) {
+				fnError = oRequest.parts[i].fnError;
+				if (!oRequest.parts[i].request._aborted && fnError) {
+					fnError(oAbortedError);
+				}
+			}
+		}
+
+		var oRequestHandle = {
+			abort: function() {
+				jQuery.each(aRequests, function(i, oRequest) {
+					if (Array.isArray(oRequest)) {
+						oRequest.forEach(function(oRequest) {
+							callAbortHandler(oRequest);
+						});
+					} else {
+						callAbortHandler(oRequest);
+					}
+				});
+				oBatchRequestHandle.abort();
+			}
+		};
 
 		return oRequestHandle;
 	};
@@ -2901,7 +2926,7 @@ sap.ui.define([
 			for (var i = 0; i < oRequest.parts.length; i++) {
 				var oPart = oRequest.parts[i];
 				if (oPart.request._aborted) {
-					that._processAborted(oRequest.request, null, oPart.fnError);
+					that._processAborted(oRequest.request, null);
 					oRequest.parts.splice(i,1);
 					i--;
 				} else if (oWrappedBatchRequestHandle){
@@ -3205,6 +3230,14 @@ sap.ui.define([
 
 	};
 
+	var oAbortedError = {
+		message: "Request aborted",
+		statusCode: 0,
+		statusText: "abort",
+		headers: {},
+		responseText: ""
+	};
+
 	/**
 	 * Process request response for aborted requests.
 	 *
@@ -3214,27 +3247,17 @@ sap.ui.define([
 	 * @param {boolean} bBatch Process success for single/batch request
 	 * @private
 	 */
-	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError, bBatch) {
+	ODataModel.prototype._processAborted = function(oRequest, oResponse, bBatch) {
 		var sPath;
-		var oError = {
-			message: "Request aborted",
-			statusCode: 0,
-			statusText: "abort",
-			headers: {},
-			responseText: ""
-		};
 		if (!bBatch) {
 			// decrease laundering
 			sPath = '/' + this.getKey(oRequest.data);
 			this.decreaseLaundering(sPath, oRequest.data);
 		}
-		if (fnError) {
-			fnError(oError);
-		}
 
 		// If no response is contained, request was never sent and completes event can be omitted
 		if (oResponse) {
-			var oEventInfo = this._createEventInfo(oRequest, oError);
+			var oEventInfo = this._createEventInfo(oRequest, oAbortedError);
 			oEventInfo.success = false;
 			if (bBatch) {
 				this.fireBatchRequestCompleted(oEventInfo);
@@ -3605,20 +3628,24 @@ sap.ui.define([
 	 * @param {function} [fnProcessRequest] Function to prepare the request and add it to the request queue
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 */
-	ODataModel.prototype._processRequest = function(fnProcessRequest) {
+	ODataModel.prototype._processRequest = function(fnProcessRequest, fnError) {
 		var oRequestHandle, oRequest,
 			bAborted = false,
 			that = this;
 
 		oRequestHandle = {
 				abort: function() {
-					bAborted = true;
+					// Call error handler synchronously
+					if (!bAborted && fnError) {
+						fnError(oAbortedError);
+					}
 					if (oRequest) {
 						oRequest._aborted = true;
 						if (oRequest._handle) {
 							oRequest._handle.abort();
 						}
 					}
+					bAborted = true;
 				}
 		};
 
@@ -3702,7 +3729,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
 
 			return oRequest;
-		});
+		}, fnError);
 
 	};
 
@@ -3772,7 +3799,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle);
 
 			return oRequest;
-		});
+		}, fnError);
 	};
 
 	/**
@@ -3845,7 +3872,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError, requestHandle);
 
 			return oRequest;
-		});
+		}, fnError);
 	};
 
 	/**
@@ -3982,7 +4009,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError);
 
 			return oRequest;
-		});
+		}, fnError);
 
 		oRequestHandle.contextCreated = function() {
 				return pContextCreated;
@@ -4117,7 +4144,7 @@ sap.ui.define([
 			oRequest = createReadRequest(oRequestHandle);
 			return oRequestHandle;
 		} else {
-			return this._processRequest(createReadRequest);
+			return this._processRequest(createReadRequest, fnError);
 		}
 	};
 
@@ -4366,6 +4393,9 @@ sap.ui.define([
 						vRequestHandleInternal.abort();
 					}
 				} else {
+					if (!bAborted && fnError) {
+						fnError(oAbortedError);
+					}
 					bAborted = true;
 				}
 			}
