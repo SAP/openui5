@@ -626,6 +626,12 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 		};
 
 	function fnAppendBusyIndicator() {
+
+		// Only append if busy state is still set
+		if (!this.getBusy()) {
+			return;
+		}
+
 		var $this = this.$(this._sBusySection);
 
 		//If there is a pending delayed call to append the busy indicator, we can clear it now
