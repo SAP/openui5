@@ -1,0 +1,19 @@
+ /* Filters functionality */
+.filters {
+	margin: 10px;
+	font-size: 1em;
+}
+.filter {
+	padding: 5px;
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 5px;
+}
+.filter-active {
+	background-color: #ddd;
+	box-shadow: 1px 1px 5px #888888;
+}
+.filtered {
+	display: none;
+}
+

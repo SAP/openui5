@@ -1,0 +1,84 @@
+<mvc:View
+		height="100%"
+		controllerName="sap.ui.support.supportRules.ui.controllers.Main"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout"
+		xmlns:c= "sap.ui.core">
+	<Page showHeader="false">
+		<l:FixFlex>
+			<l:fixContent>
+
+				<Bar class="sapContrast" design="SubHeader" id="sapSTShowButtonBar">
+					<contentMiddle>
+						<Text text="{/constants/SUPPORT_ASSISTANT_NAME}" class="STCustomHeaderInfo" />
+						<c:Icon src="sap-icon://full-screen" press="toggleHide" class="STCustomHeaderInfo" />
+					</contentMiddle>
+				</Bar>
+
+				<Bar class="sapContrast" design="SubHeader">
+					<contentLeft>
+						<!--<c:Icon src="sap-icon://sap-ui5" />-->
+						<Image src="../ui/images/icon_white_19x15_blue.png"></Image>
+						<Text text="{/constants/SUPPORT_ASSISTANT_NAME}" class="STCustomHeaderInfo" />
+					</contentLeft>
+
+					<contentMiddle>
+						<FlexBox
+								height="100%"
+								width="500px"
+								alignItems="Center"
+								justifyContent="Center">
+							<ProgressIndicator
+									id="progressIndicator"
+									percentValue="{/progress}"
+									displayValue="None"
+									showValue="true"
+									state="Success"
+									visible="{/showProgressIndicator}">
+								<layoutData>
+									<FlexItemData growFactor="1" />
+								</layoutData>
+							</ProgressIndicator>
+							<Text	id="coreStateLabel"
+									visible="{= ${/analyzePressed} === true &amp;&amp; ${/coreStateChanged} === true &amp;&amp; ${/showProgressIndicator} === false }"
+									text='Application state has changed and issues view is not in sync. Analyze again. '>
+							</Text>
+							<Text	id="elapsedTimeLabel"
+									visible="{= ${/analyzePressed} === true &amp;&amp; ${/coreStateChanged} === false &amp;&amp; ${/showProgressIndicator} === false }"
+									text='{/analysisDurationTitle}: {/lastAnalysisElapsedTime}'>
+							</Text>
+							<Text
+									 visible="{= ${/persistingSettings} === true &amp;&amp;  ${/analyzePressed} === false &amp;&amp; ${/showProgressIndicator} === false }"
+									 text='There are settings persisted from your previous session'>
+							</Text>
+						</FlexBox>
+					</contentMiddle>
+
+					<contentRight>
+						<Button text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis"/>
+						<Button text="{= 'Issues (' + ${/issues}.length + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
+
+						<c:Icon src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon"/>
+
+						<c:Icon src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon" tooltip="Open Documentation" />
+
+						<c:Icon src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo" visible="{/hasNoOpener}"/>
+
+						<Button icon="sap-icon://down" press="resizeDown"  visible="{/hasNoOpener}"/>
+						<Button icon="sap-icon://up" press="resizeUp"  visible="{/hasNoOpener}"/>
+					</contentRight>
+				</Bar>
+			</l:fixContent>
+
+			<l:flexContent>
+				<NavContainer
+					id="navCon"
+					afterNavigate="onNavConAfterNavigate">
+					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis"></mvc:XMLView>
+					<mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues"></mvc:XMLView>
+				</NavContainer>
+			</l:flexContent>
+		</l:FixFlex>
+	</Page>
+</mvc:View>
