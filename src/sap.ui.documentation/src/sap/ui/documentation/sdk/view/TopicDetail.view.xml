@@ -32,7 +32,10 @@
 		</header>
 
 		<content>
-			<core:HTML id="testHTML" preferDOM="false" content='&lt;iframe style="width:100%;height:100%;" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;'></core:HTML>
+			<core:HTML id="testHTML"
+					   preferDOM="false"
+					   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe style="width:100%;height:99%;" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
+			</core:HTML>
 		</content>
 	</DynamicPage>
 </mvc:View>
