@@ -1080,9 +1080,15 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.submitBatch = function (sGroupId) {
+		var that = this;
+
 		this.checkGroupId(sGroupId, true);
 
-		return this._submitBatch(sGroupId);
+		return new Promise(function (resolve) {
+			sap.ui.getCore().addPrerenderingTask(function () {
+				resolve(that._submitBatch(sGroupId));
+			});
+		});
 	};
 
 	/**

@@ -119,6 +119,9 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
+			// {map<string, object[]>}
+			// this.mBatchQueue["sGroupId"] is a list of queued requests for the group "sGroupId"
+			this.mBatchQueue = {};
 			// {map<string, string[]>}
 			// this.mChanges["id"] is a list of expected changes for the property "text" of the
 			// control with ID "id"
@@ -145,11 +148,15 @@ sap.ui.require([
 		},
 
 		/**
-		 * Finishes the test if no pending changes are left.
+		 * Finishes the test if no pending changes are left and all expected requests have been
+		 * received.
 		 */
 		checkFinish : function () {
 			var sControlId, i;
 
+			if (this.aRequests.length) {
+				return;
+			}
 			for (sControlId in this.mChanges) {
 				if (this.mChanges[sControlId].length) {
 					return;
@@ -204,9 +211,10 @@ sap.ui.require([
 				that.expectChange("age", "32");
 
 				// code under test
+				// Note: $direct would be an "Invalid group ID" here
 				fnGetResetable(that.oView).resetChanges();
 
-				return that.waitForChanges();
+				return that.waitForChanges(assert);
 			});
 		},
 
@@ -251,20 +259,46 @@ sap.ui.require([
 		 *   values for controls have been set
 		 */
 		createView : function (assert, sViewXML, oModel, oController) {
-			var that = this;
+			var sName,
+				mRequestorStubs = {
+					cancelChangeRequests : cancelChangeRequests,
+					hasPendingChanges : function () {
+						assert.ok(false, "hasPendingChanges");
+					},
+					relocate : function () {
+						assert.ok(false, "relocate");
+					},
+					request : checkRequest,
+					submitBatch : submitBatch
+				},
+				that = this;
 
 			/*
-			 * Stub function for _Requestor.request. Checks that the expected request arrived and
+			 * Stub function for _Requestor#cancelChangeRequests. Can only handle the case that
+			 * there is no candidate request to potentially cancel at all.
+			 */
+			function cancelChangeRequests(fnFilter, sGroupId) {
+				if (sGroupId) {
+					assert.notOk(sGroupId in that.mBatchQueue);
+				} else {
+					assert.strictEqual(Object.keys(that.mBatchQueue).length, 0);
+				}
+			}
+
+			/*
+			 * Stub function for _Requestor#request. Checks that the expected request arrived and
 			 * returns a promise for its response.
 			 */
 			function checkRequest(sMethod, sUrl, sGroupId, mHeaders, oPayload) {
 				var oActualRequest = {
+						groupId : sGroupId,
 						method : sMethod,
 						url : sUrl,
 						headers : mHeaders,
 						payload : oPayload
 					},
 					oExpectedRequest = that.aRequests.shift(),
+					aRequests,
 					oResponse;
 
 				if (!oExpectedRequest) {
@@ -275,18 +309,56 @@ sap.ui.require([
 					delete oExpectedRequest.response;
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				}
+
+				if (sGroupId !== "$direct") { // "$batch" support
+					aRequests = that.mBatchQueue[sGroupId];
+					if (!aRequests) {
+						aRequests = that.mBatchQueue[sGroupId] = [];
+					}
+					aRequests.push(oActualRequest);
+					return new Promise(function (resolve) {
+						oActualRequest.$resolve = resolve.bind(null, oResponse);
+					});
+				}
 				return Promise.resolve(oResponse);
 			}
 
-			this.oModel = oModel || createTeaBusiModel();
-			if (this.oModel.oRequestor.request) {
-				this.stub(this.oModel.oRequestor, "request", checkRequest);
+			/*
+			 * Stub function for _Requestor#submitBatch. Makes each request return its response.
+			 */
+			function submitBatch(sGroupId) {
+				var aRequests = that.mBatchQueue[sGroupId];
+
+				if (aRequests) {
+					delete that.mBatchQueue[sGroupId];
+					aRequests.forEach(function (oRequest) {
+						oRequest.$resolve();
+					});
+				} else {
+					assert.ok(false, "Nothing to submit for group ID: " + sGroupId);
+				}
+
+				return Promise.resolve(); // needed for .catch() in ODataModel
 			}
+
+			this.oModel = oModel || createTeaBusiModel();
+			if (this.oModel.submitBatch) {
+				//TODO basically, we should rather stub the requestor's jQuery.ajax() call only
+				for (sName in mRequestorStubs) {
+					this.stub(this.oModel.oRequestor, sName, mRequestorStubs[sName]);
+				}
+				this.oModel.oRequestor.restore = function () {
+					for (sName in mRequestorStubs) {
+						this[sName].restore();
+					}
+					delete this.restore;
+				}.bind(this.oModel.oRequestor);
+			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.oView = sap.ui.xmlview({
 				controller : oController
 					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
-					viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
+				viewContent : '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">'
 					+ sViewXML
 					+ '</mvc:View>'
 			});
@@ -388,6 +460,7 @@ sap.ui.require([
 				};
 			}
 			// ensure that these properties are defined (required for deepEqual)
+			vRequest.groupId = vRequest.groupId || "$direct";
 			if (!("headers" in vRequest)) { // to allow null for vRequest.headers
 				vRequest.headers = undefined;
 			}
@@ -1522,8 +1595,7 @@ sap.ui.require([
 	// hasPendingChanges is working
 	// None of our applications has such a scenario.
 	QUnit.test("Create on a relative binding; check hasPendingChanges()", function (assert) {
-		var fnResolve,
-			oTeam2EmployeesBinding,
+		var oTeam2EmployeesBinding,
 			oTeamBinding,
 			that = this;
 
@@ -1531,6 +1603,7 @@ sap.ui.require([
 			oTeam2EmployeesBinding = that.oView.byId("table").getBinding("items");
 			oTeamBinding = that.oView.byId("form").getObjectBinding();
 			that.expectRequest({
+					groupId : "update",
 					headers : null,
 					method : "POST",
 					url : "TEAMS('42')/TEAM_2_EMPLOYEES",
@@ -1539,9 +1612,7 @@ sap.ui.require([
 						"ID" : null,
 						"Name" : "John Doe"
 					}
-				}, new Promise(function (resolve, reject) {
-					fnResolve = resolve;
-				}))
+				}, {"ID" : "7", "Name" : "John Doe"})
 				// insert new employee at first row
 				.expectChange("id", "", 0)
 				.expectChange("text", "John Doe", 0)
@@ -1556,7 +1627,7 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("id", "7", 0);
-			fnResolve({"ID" : "7", "Name" : "John Doe"});
+			that.oModel.submitBatch("update");
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// code under test
@@ -1588,7 +1659,7 @@ sap.ui.require([
 				oTeamBinding = that.oView.byId("form").getObjectBinding();
 
 				// restore requestor to test proper cancel handling without simulating the requestor
-				that.oModel.oRequestor.request.restore();
+				that.oModel.oRequestor.restore();
 				that.expectChange("id", "", 0)
 					.expectChange("text", "John Doe", 0)
 					.expectChange("id", "2", 1)
@@ -2062,7 +2133,69 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: call submitBatch() synchronously after changeParameters (BCP 1770236987)
+	[false, true].forEach(function (bAutoExpandSelect) {
+		var sTitle = "submitBatch after changeParameters, autoExpandSelect = " + bAutoExpandSelect;
+
+		QUnit.test(sTitle, function (assert) {
+			var mFrederic = {
+					"ID" : "2",
+					"Name" : "Frederic Fall"
+				},
+				mJonathan = {
+					"ID" : "3",
+					"Name" : "Jonathan Smith"
+				},
+				oModel = createTeaBusiModel({autoExpandSelect : bAutoExpandSelect}),
+				sUrlPrefix = bAutoExpandSelect
+					? "EMPLOYEES?$select=ID,Name&"
+					: "EMPLOYEES?",
+				sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+				that = this;
+
+			this.expectRequest({
+					groupId : "group",
+					method : "GET",
+					url : sUrlPrefix + "$skip=0&$top=100"
+				}, {"value" : [mFrederic, mJonathan]})
+			.expectChange("text", false);
+
+			return this.createView(assert, sView, oModel).then(function () {
+				that.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+
+				oModel.submitBatch("group");
+
+				return that.waitForChanges(assert).then(function () {
+					var oListBinding = that.oView.byId("table").getBinding("items");
+
+					that.expectRequest({
+							groupId : "group",
+							method : "GET",
+							url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
+						}, {"value" : [mJonathan, mFrederic]})
+					.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
+
+					oListBinding.changeParameters({
+						"$orderby" : "Name desc"
+					});
+					oModel.submitBatch("group");
+
+					return that.waitForChanges(assert);
+				});
+			});
+		});
+	});
 });
-//TODO $batch?
 //TODO test bound action
 //TODO test delete
