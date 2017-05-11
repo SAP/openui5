@@ -262,7 +262,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 * @private
 	 */
 	NotificationListGroup.prototype._getVisibleItemsCount = function () {
-		/** @type [sap.m.NotificationListItem] */
+		/** @type {sap.m.NotificationListItem[]} */
 		var items = this.getItems();
 		var result = 0;
 

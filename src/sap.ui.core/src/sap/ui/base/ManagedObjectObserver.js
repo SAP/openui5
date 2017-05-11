@@ -12,53 +12,63 @@ sap.ui.define([
 	 * Constructor for a new ManagedObjectObserver.
 	 *
 	 * @classdesc
-	 * Use the ManagedObjectObserver to get notified if properties, aggregations, associations on a
-	 * ManagedObject instance change.
+	 * Use the ManagedObjectObserver to get notified when properties, aggregations or associations of a
+	 * ManagedObject instance have changed.
 	 *
-	 * Use the observe method to add instances of ManagedObject that should be observed.
-	 * Use the disconnect method to disconnect this Observer.
-	 * With the constructor a fnCallback function is passed that is called for any change.
-	 * Depending on the change type different change object are passed:
-	 * <b>Property Change</b>
-	 * {string}
-	 *      change.name the name of the property that changed
-	 * {string}
-	 *      change.type 'property'
-	 * {object}
-	 *      change.object the managed object instance on which the change occurred
-	 * {any}
-	 *      change.old the old value
-	 * {any}
-	 *      change.current the new value
+	 * Use the {@link #observe} method to add instances of ManagedObject that should be observed or to enhance
+	 * the set of observed properties, aggregations etc. for an already observed instance.
 	 *
-	 * <b>Aggregation Change</b>
+	 * Use the {@link #unobserve} method to stop observing an instance of ManagedObject or to reduce the set of
+	 * observed properties, aggregations etc. for an observed instance.
+	 *
+	 * Use the {@link #disconnect} method to completely stop observing all instances of ManagedObject hat previously
+	 * had been added to this observer.
+	 *
+	 * The only parameter to the constructor is a function <code>fnCallback</code> which will be called for every
+	 * observed change. Depending on the type of the change, different change objects are passed to the callback:
+	 *
+	 * <h4>Property Change</h4>
 	 * {string}
-	 *      change.name the name of the aggregation that changed
+	 *      change.name the name of the property that changed<br>
 	 * {string}
-	 *      change.type 'aggregation'
+	 *      change.type 'property'<br>
 	 * {object}
-	 *      change.object the managed object instance on which the change occurred
+	 *      change.object the managed object instance on which the change occurred<br>
 	 * {any}
-	 *      change.mutation 'remove' or 'insert'
+	 *      change.old the old value<br>
+	 * {any}
+	 *      change.current the new value<br>
+	 *
+	 * <h4>Aggregation Change</h4>
+	 * {string}
+	 *      change.name the name of the aggregation that changed<br>
+	 * {string}
+	 *      change.type 'aggregation'<br>
+	 * {object}
+	 *      change.object the managed object instance on which the change occurred<br>
+	 * {any}
+	 *      change.mutation 'remove' or 'insert'<br>
 	 * {sap.ui.base.ManagedObject}
-	 *      change.child the child managed object instance
+	 *      change.child the child managed object instance<br>
 	 *
-	 * <b>Association Change</b>
+	 * <h4>Association Change</h4>
 	 * {string}
-	 *      change.name the name of the association that changed
+	 *      change.name the name of the association that changed<br>
 	 * {string}
-	 *      change.type 'association'
+	 *      change.type 'association'<br>
 	 * {object}
-	 *      change.object the managed object instance on which the change occurred
+	 *      change.object the managed object instance on which the change occurred<br>
 	 * {any}
-	 *      change.mutation 'remove' or 'insert'
+	 *      change.mutation 'remove' or 'insert'<br>
 	 * {string|string[]}
-	 *      change.ids the ids that changed
+	 *      change.ids the ids that changed<br>
 	 *
-	 * @param {function} fnCallback the callback function for the observer, if a change happens
+	 * @param {function} fnCallback Callback function for this observer, to be called whenever a change happens
 	 *
 	 * @private
 	 * @sap-restricted sap.ui.model.base
+	 * @constructor
+	 * @alias sap.ui.base.ManagedObjectObserver
 	 */
 	var ManagedObjectObserver = BaseObject.extend("sap.ui.base.ManagedObjectObserver", {
 		constructor: function(fnCallback) {

@@ -229,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 	/**
 	 *Collect components from .library file
 	 *@param {object} oData xml formatted object of .library file
-	 *@return {array.<Object>} library component info or empty string
+	 *@return {Array.<Object>} library component info or empty string
 	 */
 
 	LibraryInfo.prototype._getLibraryComponentInfo = function(oData) {
@@ -276,7 +276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 	/**
 	 * Return the control's component for Ownership app (TeamApp) & Explored app (Demokit)
 	 *
-	 * @param {array.<Object>} oComponentInfos object for each library with the default component and special cases
+	 * @param {Array.<Object>} oComponentInfos object for each library with the default component and special cases
 	 * @param {string} sModuleName control name, e.g. sap.m.Button
 	 * @return {string} component
 	 * @private
@@ -335,7 +335,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 
 	/**
 	 * Return the default library's component for Version Info (Demokit)
-	 * @param {array.<Object>} oLibraryInfo array with all library information, e.g componentInfo, releasenotes and etc
+	 * @param {Array.<Object>} oLibraryInfo array with all library information, e.g componentInfo, releasenotes and etc
 	 * @return {string} component
 	 */
 	LibraryInfo.prototype._getDefaultComponent = function(oLibraryInfo) {

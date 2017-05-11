@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * @param {string} sColumnId ID of the column for which the Span-parent shall be found
 			 * @param {int} [iLevel] level where the parent is looked up
 			 *
-			 * @returns {{column: sap.ui.table.Column, level: int}[]|undefined} Array of column information
+			 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information
 			 * @private
 			 */
 			getParentSpannedColumns : function(oTable, sColumnId, iLevel) {
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * @param {string} sColumnId ID of the column for which the Span-parent shall be found
 			 * @param {int} [iLevel] level where the parent is looked up
 			 *
-			 * @returns {{column: sap.ui.table.Column, level: int}[]|undefined} Array of column information
+			 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information
 			 * @private
 			 */
 			getChildrenSpannedColumns : function(oTable, sColumnId, iLevel) {
@@ -515,7 +515,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			/**
 			 * Returns the minimal possible column width in pixels.
 			 *
-			 * @returns {integer} The minimal possible column width in pixels
+			 * @returns {int} The minimal possible column width in pixels
 			 * @private
 			 */
 			getMinColumnWidth: function() {
