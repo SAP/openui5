@@ -8,6 +8,21 @@ sap.ui.define([
 	"use strict";
 	/*global sinon, QUnit*/
 
+	function Deferred() {
+		this.promise = new Promise(function(resolve, reject) {
+			this.resolve = resolve;
+			this.reject = reject;
+		}.bind(this));
+	}
+
+	// used to get access to the non-public core parts
+	var oRealCore;
+	var TestCorePlugin = function() {};
+	TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
+		oRealCore = oCore;
+	};
+	sap.ui.getCore().registerPlugin(new TestCorePlugin());
+
 	function unloadResources() {
 		// unload libs and components (not an API)
 		jQuery.sap.unloadResources('sap.test.lib2.library-preload', true, true, true);
@@ -35,6 +50,8 @@ sap.ui.define([
 		// remove script tags for Component-preload.js modules (not an API)
 		jQuery("SCRIPT[data-sap-ui-module^='sap/test/']").remove();
 	}
+
+
 
 	QUnit.module("Async (Pre-)Loading", {
 		afterEach: function() {
@@ -290,6 +307,132 @@ sap.ui.define([
 			assert.ok(oComponent instanceof Component, "Component has been created.");
 		});
 	});
+
+
+	QUnit.module("Synchronization of Preloads", {
+		beforeEach: function(assert) {
+			this.oldCfgPreload = oRealCore.oConfiguration.preload;
+			this.loadScript = sinon.stub(jQuery.sap, "_loadJSResourceAsync");
+			this.requireSpy = sinon.stub(sap.ui, "require").callsArgWith(1);
+		},
+		afterEach: function(assert) {
+			oRealCore.oConfiguration.preload = this.oldCfgPreload;
+			this.requireSpy.restore();
+			this.loadScript.restore();
+		}
+	});
+
+	QUnit.test("preload only", function(assert) {
+
+		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+
+		function contains(dep) {
+			return sinon.match(function(value) {
+				return Array.isArray(value) && value.indexOf(dep) >= 0;
+			});
+		}
+
+		this.loadScript.withArgs("scenario1/comp/Component-preload.js").returns( Promise.resolve(true) );
+		this.loadScript.withArgs("scenario1/lib1/library-preload.js").returns( Promise.resolve(true) );
+		this.loadScript.withArgs("scenario1/lib2/library-preload.js").returns( Promise.resolve(true) );
+
+		// first load with preloadOnly: true and check that none of the relvant modules have been required
+		return sap.ui.component.load({
+			name: "scenario1.comp",
+			async: true,
+			asyncHints: {
+				libs: [ "scenario1.lib1", "scenario1.lib2" ],
+				preloadOnly: true
+			}
+		}).then(function(ComponentClass) {
+			assert.ok( this.loadScript.calledThrice, "_loadJSResourceAsync has been called 3 times");
+			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/lib1/library') ), "lib1 never has been required");
+			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/lib2/library') ), "lib2 never has been required");
+			assert.ok( this.requireSpy.neverCalledWith( contains('scenario1/comp/Component') ), "component never has been required");
+
+			// then load again and check that modules now are required
+			return sap.ui.component.load({
+				name: "scenario1.comp",
+				async: true,
+				asyncHints: {
+					libs: [ "scenario1.lib1", "scenario1.lib2" ]
+				}
+			}).then(function() {
+				assert.ok( this.requireSpy.calledWith( contains('scenario1/lib1/library') ), "lib1 has been required");
+				assert.ok( this.requireSpy.calledWith( contains('scenario1/lib2/library') ), "lib2 has been required");
+				assert.ok( this.requireSpy.calledWith( contains('scenario1/comp/Component') ), "component has been required");
+			}.bind(this));
+
+		}.bind(this));
+
+	});
+
+	QUnit.test("preload bundles and libs", function(assert) {
+
+		oRealCore.oConfiguration.preload = 'async'; // sync or async both activate the preload
+
+		function contains(dep) {
+			return sinon.match(function(value) {
+				return Array.isArray(value) && value.indexOf(dep) >= 0;
+			});
+		}
+
+		var taskChecksDone = assert.async();
+		var deferredBundle = new Deferred();
+		var deferredLib1 = new Deferred();
+		var deferredLib2 = new Deferred();
+		this.loadScript.withArgs("scenario2/bundle.js").returns(deferredBundle.promise);
+		this.loadScript.withArgs("scenario2/lib1/library-preload.js").returns(deferredLib1.promise);
+		this.loadScript.withArgs("scenario2/lib2/library-preload.js").returns(deferredLib2.promise);
+		this.loadScript.withArgs("scenario2/comp/Component-preload.js").returns(Promise.resolve(true));
+		this.requireSpy.withArgs( ["scenario2/comp/Component"] ).callsArgWith(1, Component);
+
+		var promise = sap.ui.component({
+			name: "scenario2.comp",
+			async: true,
+			asyncHints: {
+				preloadBundles: [
+					"scenario2/bundle.js"
+				],
+				libs: [ "scenario2.lib1", "scenario2.lib2" ]
+			}
+		});
+
+		setTimeout(function() {
+			// check after execution of micro tasks that libs have not been required
+			assert.ok( this.requireSpy.neverCalledWith( contains('scenario2/lib1/library') ), "lib1 never has been required");
+			assert.ok( this.requireSpy.neverCalledWith( contains('scenario2/lib2/library') ), "lib2 never has been required");
+			assert.ok( this.requireSpy.neverCalledWith( contains('scenario2/comp/Component') ), "component never has been required");
+
+			deferredLib1.resolve(true);
+			deferredLib2.resolve(true);
+
+			setTimeout(function() {
+				// check after next execution of micro tasks that libs have not been required
+				assert.ok( this.requireSpy.neverCalledWith( contains('scenario2/lib1/library') ), "lib1 has not been required as long as loading the bundle did not resolve");
+				assert.ok( this.requireSpy.neverCalledWith( contains('scenario2/lib2/library') ), "lib2 has not been required as long as loading the bundle did not resolve");
+				assert.ok( this.requireSpy.neverCalledWith( contains('scenario2/comp/Component') ), "component never has been required");
+
+				deferredBundle.resolve();
+
+				setTimeout(function() {
+					// check after next execution of micro tasks that libs have been required
+					assert.ok( this.requireSpy.calledWith( contains('scenario2/lib1/library') ), "lib1 has been required");
+					assert.ok( this.requireSpy.calledWith( contains('scenario2/lib2/library') ), "lib2 has been required");
+					assert.ok( this.requireSpy.calledWith( contains('scenario2/comp/Component') ), "component has been required");
+
+					taskChecksDone();
+
+				}.bind(this), 10);
+
+			}.bind(this), 10);
+
+		}.bind(this), 10);
+
+		return promise;
+
+	});
+
 
 	QUnit.module("Async (Pre-)Loading (Manifest First)", {
 		beforeEach: function() {
