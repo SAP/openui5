@@ -26,6 +26,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 
 		constructor : function(oModel, sPath, oContext, aSorters, aFilters, mParameters){
 			ListBinding.apply(this, arguments);
+
+			this.oModel.checkFilterOperation(this.aApplicationFilters);
+
 			this.bIgnoreSuspend = false;
 			this.update();
 		},
@@ -175,6 +178,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	 * @public
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
+		this.oModel.checkFilterOperation(aFilters);
+
 		if (this.bSuspended) {
 			this.checkUpdate(true);
 		}
