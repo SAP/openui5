@@ -546,7 +546,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * @param {function} [oEnvironment.beforeEach]
 	 *   teardown
 	 */
-	function initModule(sTitle, oEnvironment) {
+	function module(sTitle, oEnvironment) {
 		var fnAfterEach, fnBeforeEach;
 
 		oEnvironment = oEnvironment || {};
@@ -741,7 +741,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	}
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.format");
+	module("sap.ui.model.odata.AnnotationHelper.format");
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWithRawValue) {
@@ -1424,7 +1424,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.simplePath");
+	module("sap.ui.model.odata.AnnotationHelper.simplePath");
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWithRawValue) {
@@ -1489,7 +1489,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.followPath");
+	module("sap.ui.model.odata.AnnotationHelper.followPath");
 
 	//*********************************************************************************************
 	[{
@@ -1788,7 +1788,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	// property which is most probably "String", "Path" or "Value"
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
+	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
 
 	//*********************************************************************************************
 	QUnit.test("gotoEntityType called directly on the entity type's qualified name",
@@ -1825,7 +1825,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
+	module("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
 
 	//*********************************************************************************************
 	QUnit.test("gotoEntitySet called directly on the entity set's name", function (assert) {
@@ -1859,7 +1859,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.gotoFunctionImport");
+	module("sap.ui.model.odata.AnnotationHelper.gotoFunctionImport");
 
 	//*********************************************************************************************
 	QUnit.test("gotoFunctionImport", function (assert) {
@@ -1891,7 +1891,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.AnnotationHelper.createPropertySetting", {
+	module("sap.ui.model.odata.AnnotationHelper.createPropertySetting", {
 		afterEach : function afterEach() {
 			delete window.foo;
 		},
