@@ -24,9 +24,9 @@ sap.ui.define([
 					"css/welcome.css",
 					"css/landingPage.css",
 					"css/headers.css",
-					"controller/util/google-code-prettify/prettify.css",
-					"controller/util/google-code-prettify/prettify.js",
-					"controller/util/google-code-prettify/lang-css.js",
+					"thirdparty/google-code-prettify/prettify.css",
+					"thirdparty/google-code-prettify/prettify.js",
+					"thirdparty/google-code-prettify/lang-css.js",
 					"css/FeedbackRatingFaces.css"
 				]
 			},
@@ -43,17 +43,17 @@ sap.ui.define([
 				// set the device model
 				this.setModel(models.createDeviceModel(), "device");
 
+				// set the global tree data
+				this.setModel(new JSONModel(), "treeData");
+
+				// set the global libs data
+				this.setModel(new JSONModel(), "libsData");
+
 				// call the base component's init function and create the App view
 				UIComponent.prototype.init.apply(this, arguments);
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
-
-				// get configuration
-				var oConfig = this.getMetadata().getConfig();
-				if (oConfig) {
-					this.setModel(new JSONModel(oConfig), "config");
-				}
 			},
 
 			/**

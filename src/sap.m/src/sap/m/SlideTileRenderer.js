@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/GenericTileScope"], function(GenericTileScope) {
+sap.ui.define([ 'jquery.sap.global', 'sap/m/GenericTileScope'],
+	function(jQuery, GenericTileScope) {
 	"use strict";
 
 	/**

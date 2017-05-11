@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define(['sap/ui/test/opaQunit'], function (opaTest) {
 	"use strict";
 

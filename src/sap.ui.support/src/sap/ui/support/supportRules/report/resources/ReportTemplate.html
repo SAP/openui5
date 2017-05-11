@@ -1,0 +1,56 @@
+<style type="text/css">
+	body {
+		font-family: "72-Web", Arial, Helvetica, sans-serif;
+	}
+	main > header > h1 {
+		font-size: 1.8em;
+	}
+	section h1 {
+		font-size: 1.2em;
+	}
+	table {
+		font-size: 0.9em;
+	}
+	.checked {
+		color: green;
+	}
+</style>
+
+{{getStyles metadata.styles}}
+
+<main>
+	<header>
+		<h1>{{metadata.title}}</h1>
+		<div>Generated on (<time>{{metadata.timestamp}}</time>)</div>
+		<div class="bottom-margin-small">{{metadata.analysisDurationTitle}}: <time>{{metadata.analysisDuration}}</time></div>
+		<div>{{getScope metadata.scope}}</div>
+	</header>
+	<div>
+		<section id="section_selected-rules">
+			<div class="expandable-control collapsed-content" data-expandableElement="selectedRulesContent"><h1 class="expandable-title">{{{metadata.title_SelectedRules}}}</h1></div>
+			<div id="selectedRulesContent">{{getRules rules}}</div>
+		</section>
+		<section id="section_technical-details">
+			<div class="expandable-control collapsed-content" data-expandableElement="technicalInfoContent"><h1 class="expandable-title">{{metadata.title_TechnicalInfo}}</h1></div>
+			<div id="technicalInfoContent">{{getTechnicalInformation technicalInfo}}</div>
+		</section>
+		<section id="section_app-info">
+			<div class="expandable-control collapsed-content" data-expandableElement="appInfoContent"><h1 class="expandable-title">{{metadata.title_AppInfo}}</h1></div>
+			<div id="appInfoContent">{{getAppInfo appInfo}}</div>
+		</section>
+		<section id="section_issues">
+			<div class="expandable-control collapsed-content" data-expandableElement="issuesContent"><h1 class="expandable-title">{{metadata.title_Issues}}</h1></div>
+			<div id="issuesContent">{{getIssues issues}}</div>
+		</section>
+	</div>
+	<footer>
+	</footer>
+</main>
+
+{{getScripts metadata.scripts}}
+
+<script>
+	window.sapUiSupportReport.collapseExpand.init();
+	window.sapUiSupportReport.filter.init();
+</script>
+

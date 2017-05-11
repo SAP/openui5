@@ -11,4 +11,4 @@ sap.ui.define([	'jquery.sap.global',
 			this.getView().bindElement("/SupplierCollection/0");
 		}
 	});
-}, true)
+}, true);

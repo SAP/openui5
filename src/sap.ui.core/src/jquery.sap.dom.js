@@ -547,7 +547,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
 
 		if (oDomRef) {
-			if (Device.browser.msie) {
+			if (Device.browser.msie || Device.browser.edge) {
 				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
 
 			} else if (Device.browser.webkit) {

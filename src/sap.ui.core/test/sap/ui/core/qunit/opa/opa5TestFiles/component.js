@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/test/Opa5', 'sap/ui/core/routing/Has
 	function componentHashTestCase (oOptions){
 		// System under Test
 		var oOpa5 = new Opa5();
-		var done = assert.async();
+		var done = oOptions.assert.async();
 		var oHashChanger = HashChanger.getInstance();
 
 		oHashChanger.setHash("#foo");

@@ -11,14 +11,14 @@
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  *
- *     * Redistributions of source code must retain the above copyright notice,
- *       this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright notice,
- *       this list of conditions and the following disclaimer in the documentation
- *       and/or other materials provided with the distribution.
- *     * Neither the name of Christian Johansen nor the names of his contributors
- *       may be used to endorse or promote products derived from this software
- *       without specific prior written permission.
+ *	 * Redistributions of source code must retain the above copyright notice,
+ *	   this list of conditions and the following disclaimer.
+ *	 * Redistributions in binary form must reproduce the above copyright notice,
+ *	   this list of conditions and the following disclaimer in the documentation
+ *	   and/or other materials provided with the distribution.
+ *	 * Neither the name of Christian Johansen nor the names of his contributors
+ *	   may be used to endorse or promote products derived from this software
+ *	   without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -33,30 +33,48 @@
  */
 /*global sinon, QUnit, test*/
 sinon.expectation.fail = sinon.assert.fail = function (msg) {
-    QUnit.ok(false, msg);
+	// ##### BEGIN: MODIFIED BY SAP
+	// use QUnit.assert.ok instead of QUnit.ok
+	// see https://github.com/cjohansen/sinon-qunit/pull/17
+	QUnit.assert.ok(false, msg);
+	// ##### END: MODIFIED BY SAP
 };
 
 sinon.assert.pass = function (assertion) {
-    QUnit.ok(true, assertion);
+	// ##### BEGIN: MODIFIED BY SAP
+	// use QUnit.assert.ok instead of QUnit.ok
+	QUnit.assert.ok(true, assertion);
+	// ##### END: MODIFIED BY SAP
 };
 
 sinon.config = {
-    injectIntoThis: true,
-    injectInto: null,
-    properties: ["spy", "stub", "mock", "clock", "sandbox"],
-    useFakeTimers: false,
-    useFakeServer: false
+	injectIntoThis: true,
+	injectInto: null,
+	properties: ["spy", "stub", "mock", "clock", "sandbox"],
+	useFakeTimers: false,
+	useFakeServer: false
 };
 
 (function (global) {
-    var qTest = QUnit.test;
+	var qTest = QUnit.test;
 
-    QUnit.test = global.test = function (testName, expected, callback, async) {
-        if (arguments.length === 2) {
-            callback = expected;
-            expected = null;
-        }
+	// ##### BEGIN: MODIFIED BY SAP
+	// QUnit 2.x only supports only signature QUnit.test(message, callback); there are no more 'expected' and 'async' parameters
+	if ( qTest.length === 2 ) {
+		QUnit.test = function(testName, callback) {
+			return qTest(testName, sinon.test(callback));
+		};
+	} else {
+	// ##### END: MODIFIED BY SAP
+		QUnit.test = global.test = function (testName, expected, callback, async) {
+			if (arguments.length === 2) {
+				callback = expected;
+				expected = null;
+			}
 
-        return qTest(testName, expected, sinon.test(callback), async);
-    };
+			return qTest(testName, expected, sinon.test(callback), async);
+		};
+	// ##### BEGIN: MODIFIED BY SAP
+	}
+	// ##### END: MODIFIED BY SAP
 }(this));

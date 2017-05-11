@@ -1,6 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon) {
 	"use strict";
-
 
 	sinon.config.useFakeTimers = true;
 	var core = sap.ui.getCore(),
@@ -101,11 +102,11 @@
 			"the link is correctly removed from the control");
 
 		assert.throws(function () {
-			oStandardBreadCrumbsControl.addLink(new oFactory.getText());
+			oStandardBreadCrumbsControl.addLink(oFactory.getText());
 		}, "an exception is thrown when trying to add an incorrect type to the links aggregation");
 
 		assert.throws(function () {
-			oStandardBreadCrumbsControl.setCurrentLocation(new oFactory.getLink());
+			oStandardBreadCrumbsControl.setCurrentLocation(oFactory.getLink());
 		}, "an exception is thrown when trying to set an incorrect type to currentLocation");
 	});
 

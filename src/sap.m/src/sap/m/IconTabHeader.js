@@ -181,8 +181,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			});
 
-			this.addDependent(this._oSelectList);
-
 			this._oSelectList._iconTabHeader = this;
 		}
 
@@ -225,6 +223,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (sap.ui.Device.system.phone) {
 				this._oPopover._oControl.addButton(this._createPopoverCloseButton());
 			}
+			this.addDependent(this._oPopover);
 		}
 
 		var oSelectList = this._getSelectList();
@@ -564,7 +563,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.oSelectedItem &&
 			this.oSelectedItem.getVisible() &&
-			(bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
+			(!bAPIchange && bIsParentIconTabBar && oParent.getExpandable() || this.oSelectedItem !== oItem)) {
 			this.oSelectedItem.$()
 					.removeClass("sapMITBSelected")
 					.attr('aria-selected', false)
@@ -798,6 +797,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// Return the original value from removeAggregation
 		return oItem;
+	};
+
+	IconTabHeader.prototype.updateAggregation = function() {
+		this.oSelectedItem = null;
+
+		return Control.prototype.updateAggregation.apply(this, arguments);
 	};
 
 	IconTabHeader.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {

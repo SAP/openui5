@@ -190,7 +190,7 @@
 			var step6 = new sap.m.WizardStep({
 				title : "Finishing touches",
 				icon: "sap-icon://detail-view",
-				validated : false,
+				validated : true,
 				content : [
 					new sap.m.Text({
 						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
@@ -506,6 +506,44 @@
 			});
 		})();
 
+		(function () {
+			var step1 = new sap.m.WizardStep({
+				validated : true,
+				icon: "sap-icon://permission",
+				complete : function() {
+					alert("Complete 1");
+				}
+			});
+			var step2 = new sap.m.WizardStep({
+				validated : true,
+				icon: "sap-icon://person-placeholder",
+				complete : function() {
+					alert("Complete 2");
+				}
+			});
+			var step3 = new sap.m.WizardStep({
+				validated: true,
+				icon: "sap-icon://simple-payment",
+				complete : function() {
+					alert("Complete 3");
+				}
+			});
+			var step4 = new sap.m.WizardStep({
+				validated: true,
+				icon: "sap-icon://simple-payment",
+				complete : function() {
+					alert("Complete 4");
+				}
+			});
+
+			currentStepTest = new sap.m.Wizard({
+				width:"100%",
+				showNextButton: true,
+				currentStep: step4,
+				steps: [step1, step2, step3, step4]
+			});
+		})();
+
 		var masterPage = new sap.m.Page({
 			title: "Navigation",
 			content: [
@@ -537,6 +575,13 @@
 							type: "Active",
 							press : function () {
 								app.toDetail("iconOnly-wiz-page");
+							}
+						}),
+						new sap.m.StandardListItem('currentStep-wiz-sel',{
+							title: "CurrentStep test",
+							type: "Active",
+							press : function () {
+								app.toDetail("currentStep-wiz-page");
 							}
 						})
 					]
@@ -580,6 +625,15 @@
 				app.backDetail();
 			},
 			content: [iconOnlyWizard]
+		}));
+
+		app.addDetailPage(new sap.m.Page("currentStep-wiz-page", {
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [currentStepTest]
 		}));
 
 		app.placeAt("content");

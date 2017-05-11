@@ -80,9 +80,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
 				rm.write("<th class='" + clsPrefix + "SelCol'>");
-				rm.write("<div class='sapMLIBSelectM'>");
 				rm.renderControl(oTable._getSelectAllCheckbox());
-				rm.write("</div></th>");
+				rm.write("</th>");
 				index++;
 			} else {
 				createBlankCell("SelCol");

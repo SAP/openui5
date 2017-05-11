@@ -16,12 +16,56 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The IconTabBar control represents a collection of tabs with associated content.
+	 * The IconTabBar represents a collection of tabs with associated content.
+	 * <h3>Overview</h3>
+	 * The IconTabBar can be used for navigation within an object, or as a filter. Different types of IconTabBar are used based on the contents.
+	 * <ul>
+	 * <li>Filter – There is only one main content for all tabs. The main content can be filtered, based on the selected tab.</li>
+	 * <li>Normal tab bar - The contents of each tab are independent from each other.</li>
+	 * <li>Combination of the above - There can be both filtered and independent contents.</li>
+	 * </ul>
+	 * <h3>Structure</h3>
+	 * The IconTabBar can hold two types of entities {@link sap.m.IconTabFilter sap.m.IconTabFilter} and {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 	 *
-	 * IconTabBar covers the following use cases:
-	 * - Filter – There is only one main content for all tabs. The main content can be filtered, based on the selected tab.
-	 * - Normal tab bar - The contents of each tab are independent from each other.
-	 * - Combination of the above - There can be both filtered and independent contents.
+	 * The IconTabBarFilter holds all information on an item - text, icon and count.
+	 *
+	 * The IconTabBarSeparator holds an icon that can be used to show a process that runs from item to item.
+	 *<h3>Usage</h3>
+	 *<h4>Text only</h4>
+	 *Uses text labels as tabs with optional counter
+	 *<ul>
+	 *<li>Used when there are no suitable icons for all items.</li>
+	 *<li>Used when longer labels are needed.</li>
+	 *<li>If <code>headerMode</code> property is set to <code>Inline</code> the text and the count are displayed in one line.</li>
+	 *<li><code>UpperCase</code> is disabled.</li>
+	 *<li>Use title case.</li>
+	 *</ul>
+	 *<h4>Icon Tabs</h4>
+	 *Round tabs with optional counter and label
+	 *<ul>
+	 *<li>Used when there are unique icons for all items.</li>
+	 *<li>Only shorter labels are possible.</li>
+	 *<li>Provide labels for all icons or for none. Do not mix these.</li>
+	 *</ul>
+	 *<h4>Tabs as filters</h4>
+	 *Tabs with filtered content from the same set of items
+	 *<ul>
+	 *<li>Provide an <i>"All"</i> tab to show all items without filtering.</li>
+	 *<li>Use counters to show the number of items in each filter.</li>
+	 *</ul>
+	 *<h4>Tabs as process steps</h4>
+	 *Tabs show a single step in a process
+	 *<ul>
+	 *<li>Use an arrow (e.g. triple-chevron) as a separator to connect the steps.</li>
+	 *<li>Use counters to show the number of items in each filter.</li>
+	 *</ul>
+	 *<h3>Responsive Behavior</h3>
+	 *<ul>
+	 *<li>Text-only tabs are never truncated.</li>
+	 *<li>Use the <code>expandable</code> property to specify whether users can collapse the tab container (default = true).</li>
+	 *<li>On desktop, tabs can be dragged and dropped (property <code>enableTabReordering</code>).</li>
+	 *<li>If you have a large number of tabs, you can scroll through them with the arrows. Additionally all tabs are available in an overflow button (property <code>showOverflowSelectList</code>).</li>
+	 *</ul>
 	 * @extends sap.ui.core.Control
 	 * @implements sap.m.ObjectHeaderContainer
 	 *

@@ -23,12 +23,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @since 1.17.0
 	 * @experimental Since version 1.17.0.
 	 * API is not yet finished and might change completely
 	 * @alias sap.ui.demokit.IndexLayout
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var IndexLayout = Control.extend("sap.ui.demokit.IndexLayout", /** @lends sap.ui.demokit.IndexLayout.prototype */ { metadata : {
 

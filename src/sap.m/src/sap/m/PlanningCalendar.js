@@ -1420,16 +1420,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		this._bDateRangeChanged = true;
 		// forward to PlanningCalendarRow
 		if (oSpecialDate && oSpecialDate.getType() === sap.ui.unified.CalendarDayType.NonWorking) {
-			this.getAggregation("rows").forEach(function (оPCRow){
-				if (оPCRow.getAggregation("_nonWorkingDates")) {
-					aRemovableNonWorkingDate = оPCRow.getAggregation("_nonWorkingDates").filter(function(oNonWorkingDate) {
+			this.getAggregation("rows").forEach(function (oPCRow){
+				if (oPCRow.getAggregation("_nonWorkingDates")) {
+					aRemovableNonWorkingDate = oPCRow.getAggregation("_nonWorkingDates").filter(function(oNonWorkingDate) {
 						return oNonWorkingDate.data(PlanningCalendarRow.PC_FOREIGN_KEY_NAME) === oSpecialDate.getId();
 					});
 					if (aRemovableNonWorkingDate.length) {
 						jQuery.sap.assert(aRemovableNonWorkingDate.length == 1, "Inconsistency between PlanningCalendar " +
 							"special date instance and PlanningCalendar nonWorkingDates instance. For PC instance " +
 							"there are more than one(" + aRemovableNonWorkingDate.length + ") nonWorkingDates in PlanningCalendarRow ");
-						оPCRow.removeAggregation("_nonWorkingDates", aRemovableNonWorkingDate[0]);
+						oPCRow.removeAggregation("_nonWorkingDates", aRemovableNonWorkingDate[0]);
 					}
 				}
 			});

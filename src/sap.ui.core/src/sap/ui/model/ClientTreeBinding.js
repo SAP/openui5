@@ -35,6 +35,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			this.filterInfo.oParentContext = {};
 
 			if (aApplicationFilters) {
+				this.oModel.checkFilterOperation(aApplicationFilters);
+
 				if (this.oModel._getObject(this.sPath, this.oContext)) {
 					this.filter(aApplicationFilters, FilterType.Application);
 				}
@@ -241,6 +243,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 		if (aFilters && !Array.isArray(aFilters)) {
 			aFilters = [aFilters];
 		}
+
+		// check filter integrity
+		this.oModel.checkFilterOperation(aFilters);
 
 		if (sFilterType == FilterType.Application) {
 			this.aApplicationFilters = aFilters || [];

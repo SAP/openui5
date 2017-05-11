@@ -30,6 +30,7 @@ sap.ui.define(['jquery.sap.global', './ClientContextBinding', './ClientListBindi
 
 			this.bCache = true;
 			this.aPendingRequestHandles = [];
+			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
 
 			if (typeof oData == "string") {
 				this.loadData(oData);

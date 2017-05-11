@@ -24,3 +24,9 @@
 .sapMLIBActive.sapMLIBFocusable:focus {
 	outline-color: @sapUiContentContrastFocusColor;
 }
+
+/* Fix for IE/Edge visual appearance of buttons */
+.sapMLIB .sapMBtn:hover .sapMBtnHoverable.sapMBtnTransparent {
+	background-clip: border-box;
+	border-color: transparent;
+}

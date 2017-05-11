@@ -5,8 +5,8 @@
 /* global QUnit */
 
 sap.ui.require([
-  "sap/ui/test/gherkin/simpleGherkinParser",
-], function(simpleGherkinParser) {
+  "sap/ui/test/gherkin/simpleGherkinParser", "jquery.sap.sjax"
+], function(simpleGherkinParser, sjax) {
   "use strict";
 
   QUnit.module("Simple Gherkin Parser Tests", {

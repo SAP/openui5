@@ -1,3 +1,5 @@
+/* global QUnit,sinon*/
+
 (function ($, QUnit, sinon, DynamicPage, DynamicPageTitle, DynamicPageHeader) {
 	"use strict";
 
@@ -107,13 +109,13 @@
 							type: "Reject"
 						})
 					]
-				})
+				});
 			},
 			getContent: function (iNumber) {
 				return new sap.ui.layout.Grid({
 					defaultSpan: "XL2 L3 M4 S6",
 					content: this.getMessageStrips(iNumber)
-				})
+				});
 			},
 			getMessageStrip: function (iNumber) {
 				return new sap.m.MessageStrip({
@@ -151,7 +153,7 @@
 				}
 
 				return Array.prototype.slice.call(arguments).every(function (oObject) {
-					return exists(oObject);
+					return this.exists(oObject);
 				});
 			},
 			toMobileMode: function () {
@@ -245,7 +247,7 @@
 		core.applyChanges();
 		iActualSnappedContentNumber = this.oDynamicPageTitle.getSnappedContent().length;
 
-		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "Snapped Content removed successfully")
+		assert.equal(iActualSnappedContentNumber, iExpectedSnappedContentNumber, "Snapped Content removed successfully");
 	});
 
 	QUnit.test("Add/Remove dynamically Expanded content", function (assert) {
@@ -268,7 +270,7 @@
 		this.oDynamicPageTitle.removeExpandedContent(oLabel);
 		iActualExpandedContentNumber = this.oDynamicPageTitle.getExpandedContent().length;
 
-		assert.equal(iActualExpandedContentNumber, iExpectedExpandedContentNumber, "Expanded Content removed successfully")
+		assert.equal(iActualExpandedContentNumber, iExpectedExpandedContentNumber, "Expanded Content removed successfully");
 	});
 
 	QUnit.test("Add/Remove dynamically Actions", function (assert) {
@@ -319,7 +321,7 @@
 		this.oDynamicPageTitle.removeAllActions();
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
-		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action removed successfully")
+		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action removed successfully");
 	});
 
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
@@ -777,7 +779,6 @@
 
 	QUnit.test("DynamicPage _moveHeaderToContentArea() should move the Header from title are to content area", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			oTitle = oDynamicPage.getTitle(),
 			oHeader = oDynamicPage.getHeader(),
 			$header = oHeader.$(),
 			$wrapper = oDynamicPage.$wrapper;
@@ -866,7 +867,6 @@
 
 	QUnit.test("DynamicPage _moveHeaderToTitleArea(true) should preserve the top scroll position of the content", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			oHeader = oDynamicPage.getHeader(),
 			$wrapper = oDynamicPage.$wrapper,
 			iScrollPositionBefore = 0,
 			iExpectedScrollPositionAfter = 0; // should remain 0 as the header is still expanded
@@ -1195,9 +1195,7 @@
 
 	QUnit.test("{headerExpanded: false; preserveHeaderStateOnScroll: true}", function (assert) {
 		var sSnappedClass = "sapFDynamicPageTitleSnapped",
-			oHeader = this.oDynamicPage.getHeader(),
-			$header = oHeader.$(),
-			$titleWrapper = this.oDynamicPage.$("header");
+			oHeader = this.oDynamicPage.getHeader();
 
 		//arrange
 		this.oDynamicPage.setHeaderExpanded(false);
@@ -1218,8 +1216,9 @@
 			oHeader = oDynamicPage.getHeader(),
 			$header = oHeader.$(),
 			$wrapper = oDynamicPage.$wrapper,
-			$titleWrapper = oDynamicPage.$("header"),
-			iExpectedScrollPosition = iExpectedScrollPosition || 0;
+			$titleWrapper = oDynamicPage.$("header");
+
+		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
 		assert.strictEqual(oDynamicPage.getHeaderExpanded(), false, "The DynamicPage getHeaderExpanded is false");
 		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass), "title has snapped css-class");
@@ -1235,8 +1234,9 @@
 			oHeader = oDynamicPage.getHeader(),
 			$header = oHeader.$(),
 			$wrapper = oDynamicPage.$wrapper,
-			$titleWrapper = oDynamicPage.$("header"),
-			iExpectedScrollPosition = iExpectedScrollPosition || 0;
+			$titleWrapper = oDynamicPage.$("header");
+
+		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
 		assert.strictEqual(oDynamicPage.getHeaderExpanded(), true, "The DynamicPage getHeaderExpanded is true");
 		assert.strictEqual(oDynamicPage.$titleArea.hasClass(sSnappedClass), false, "title does not have snapped css-class");

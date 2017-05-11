@@ -414,7 +414,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
 							}
 						} else if (sName === 'metadataContexts') {
-							var oMetaContextsInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+							var oMetaContextsInfo;
+
+							if (XMLTemplateProcessor._preprocessMetadataContexts) {
+								oMetaContextsInfo =  XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(),node,oView._oContainingView.oController);
+							}
 
 							if (oMetaContextsInfo) {
 								mSettings.metadataContexts = mSettings.metadataContexts || {};
@@ -648,6 +652,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 			}
 
 		};
+
+		/**
+		 * Preprocessor for special setting metadataContexts.
+		 * Needs to be re-implemented.
+		 *
+		 * @param {string} sClassName - The class of the control to be created
+		 * @param {object} oNode - The XML node
+		 * @param {object} oContext - The current context of the control
+		 * @private
+		 */
+		XMLTemplateProcessor._preprocessMetadataContexts = null;
 
 	return XMLTemplateProcessor;
 

@@ -37,7 +37,7 @@
 					<RowSettings highlight="{Status}"/>
 				</rowSettingsTemplate>
 				<columns>
-					<Column>
+					<Column sortProperty="Status" filterProperty="Status">
 						<m:Label text="Status"/>
 						<template>
 							<m:Text text="{Status}" wrapping="false"/>

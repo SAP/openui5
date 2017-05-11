@@ -490,9 +490,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', './ASTU
 
 		/**
 		 * Get the documentation information needed for a given parameter
-		 * @param {string} sParamName
-		 * @param {array} aDocTags with documentation tags
-		 * @return {Object} with parameter information
+		 * @param {string} sParamName Name of the parameter to be fetched
+		 * @param {array} aDocTags With documentation tags
+		 * @return {Object} Parameter information
 		 */
 		function getParamInfo(sParamName, aDocTags) {
 

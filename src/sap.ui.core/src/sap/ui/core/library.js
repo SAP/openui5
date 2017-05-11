@@ -1473,10 +1473,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
-	 * Marker interface for controls that can be used as content of an <code>sap.ui.layout.form.Form</code>
+	 * Marker interface for controls that can be used as content of <code>sap.ui.layout.form.Form</code>
 	 * or <code>sap.ui.layout.form.SimpleForm</code>.
 	 *
-	 * If the control's width should not be adjusted by the <code>Form</code> to meet the cell's width, the
+	 * If the control's width must not be adjusted by the <code>Form</code> control to meet the cell's width, the
 	 * control must implement the <code>getFormDoNotAdjustWidth</code> function and return <code>true</code>.
 	 *
 	 * @since 1.48.0
@@ -1487,15 +1487,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
-	 * In the <code>Form</code> all content controls are positioned on a grid cell base. By default
-	 * the controls should use the full width of the used grid cell. But for some controls (like image controls) this
-	 * is not the wanted behaviour. In this case the control should keep its original width.
+	 * In the <code>Form</code> control all content controls are positioned on a grid cell base. By default
+	 * the controls use the full width of the used grid cell. But for some controls (like image controls),
+	 * this is not the desired behavior. In this case the control must keep its original width.
 	 *
-	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cells width
+	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cell's width
 	 * @since 1.48.0
 	 * @public
 	 * @function
-	 * @name sap.ui.core.IFormContent.getFormShouldNotAdjustWidth
+	 * @name sap.ui.core.IFormContent.getFormDoNotAdjustWidth
 	 */
 
 	/**

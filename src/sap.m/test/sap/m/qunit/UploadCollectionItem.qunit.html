@@ -26,7 +26,7 @@
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
-	QUnit.module("I. Initial Test deprecated properties", {
+	QUnit.module("Initial Test deprecated properties", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				contributor : "Susan Baker",
@@ -80,18 +80,15 @@
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' updated");
 	});
 
-	QUnit.module("II. Test deprecated properties with setter", {
+	QUnit.module("Deprecated properties with setter", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
-//				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
 				enableDelete : true,
 				fileName : "Screenshot.ico",
-//				fileSize : 20,
 				mimeType : "image/jpg",
 				thumbnailUrl : "",
-//				uploadedDate : "2014-07-30",
 				url : ""
 			});
 			sap.ui.getCore().applyChanges();
@@ -121,7 +118,7 @@
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
-	QUnit.module("III. Test deprecated properties with prefilled aggregation", {
+	QUnit.module("Deprecated properties with pre-filled aggregation", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
@@ -204,7 +201,7 @@
 		assert.equal(aAggregation.length, 3, "3 deprecated attributes still available");
 	});
 
-	QUnit.module("IV. Test getter for all attributes", {
+	QUnit.module("Test getter for all attributes", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
@@ -264,7 +261,7 @@
 		//Assert
 		assert.ok(eventSpy.called, "Function 'fireEvent' was called");
 		assert.ok(eventSpy.calledOnce, "Function 'fireEvent' was called once");
-		assert.ok(eventSpy.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'")
+		assert.ok(eventSpy.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'");
 		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
 	});
 
@@ -297,7 +294,7 @@
 		assert.ok(aMarkers[0].getVisibility(), sap.m.ObjectMarkerVisibility.IconOnly);
 	});
 
-	QUnit.module("V. Test XMLHttpRequest", {
+	QUnit.module("Download method - XMLHttpRequest", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				contributor : "Susan Baker",
@@ -360,8 +357,8 @@
 		//Assert
 		assert.ok(stub.calledWith(undefined, sFileName, sFileExtension, "image/jpg", 'utf-8'), "sap.ui.core.util.File.save was called with the right arguments");
 	});
-	
-	// REMARK: phantom.js reacts like Safari 
+
+	// REMARK: phantom.js reacts like Safari
 	QUnit.test("Check if in case of safari sap.m.URLHelper is called", function(assert) {
 		if (sap.ui.Device.browser.name !== "sf" || sap.ui.Device.browser.phantomJS) {
 			assert.expect(0);
@@ -379,7 +376,7 @@
 		assert.ok(stub.calledWith(this.oUploadCollectionItem.getUrl(), true), "Redirect was called with the right arguments");
 	});
 
-	QUnit.module("VI. Test download Methods", {
+	QUnit.module("Download Methods", {
 		beforeEach : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				contributor : "Susan Baker",
@@ -423,6 +420,57 @@
 
 		//Assert
 		assert.equal(bDownloadResult, false, "Item was downloaded successfully.");
+	});
+
+	QUnit.module("Items related control instance management", {
+		beforeEach : function() {
+			this.oItem = new sap.m.UploadCollectionItem();
+		},
+		afterEach : function() {
+			if (this.oItem) {
+				this.oItem.destroy();
+				this.oItem = null;
+			}
+		}
+	});
+
+	QUnit.test("Instance created and returned", function(assert) {
+		//Act
+		var oResult = this.oItem._getControl("sap.m.Button");
+		//Assert
+		assert.equal(oResult.getMetadata().getName(), "sap.m.Button", "Correct instance created and returned");
+	});
+
+	QUnit.test("Instance created and settings applied", function(assert) {
+		//Act
+		var oResult = this.oItem._getControl("sap.m.Button", {
+			text: "myText"
+		});
+		//Assert
+		assert.equal(oResult.getText(), "myText", "Settings applied");
+	});
+
+	QUnit.test("Instance created and internally stored", function(assert) {
+		//Act
+		var oResult = this.oItem._getControl("sap.m.Button");
+		//Assert
+		assert.equal(this.oItem._aManagedInstances.length, 1, "Created instance internally stored");
+	});
+
+	QUnit.test("Internal instances destroyed if item is destroyed", function(assert) {
+		//Arrange
+		var oResult = this.oItem._getControl("sap.m.Button");
+		//Act
+		this.oItem.destroy();
+		//Assert
+		assert.equal(oResult._bIsBeingDestroyed, true, "Created instance marked as destroyed");
+	});
+
+	QUnit.test("Instance getter created if name provided", function(assert) {
+		//Act
+		var oResult = this.oItem._getControl("sap.m.Button", null, "Otto");
+		//Assert
+		assert.equal(this.oItem._getOtto(), oResult, "Generated getter returns sames object");
 	});
 
 </script>

@@ -1,4 +1,6 @@
-var SemanticUtil = (function (
+/* eslint-disable no-undef */
+SemanticUtil = (function (
+/* eslint-enable no-undef */
 	SemanticPage,
 	DynamicPageTitle,
 	OverflowToolbar,
@@ -153,7 +155,9 @@ var SemanticUtil = (function (
 				oClass = oSemanticActionMetadata.constructor;
 
 			oFactory["get" + sClassName] = function() {
+				/*eslint-disable new-cap*/
 				return new oClass();
+				/*eslint-enable new-cap*/
 			};
 		});
 
@@ -166,5 +170,5 @@ var SemanticUtil = (function (
 					return oObject;
 				}
 			}
-		}
+		};
 })(sap.f.semantic.SemanticPage, sap.f.DynamicPageTitle, sap.m.OverflowToolbar, sap.m.ActionSheet, sap.m.MessageStrip, sap.m.Button, sap.m.Title);

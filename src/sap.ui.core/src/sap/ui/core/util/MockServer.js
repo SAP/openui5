@@ -5,8 +5,8 @@
 // Provides class sap.ui.core.util.MockServer for mocking a server
 sap.ui
 	.define(
-		['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon'],
-		function(jQuery, Device, ManagedObject, sinon) {
+		['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon', 'jquery.sap.sjax'],
+		function(jQuery, Device, ManagedObject, sinon /* jQuerySapSjax*/) {
 			"use strict";
 
 			if (Device.browser.msie) {

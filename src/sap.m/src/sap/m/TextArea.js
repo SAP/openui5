@@ -123,25 +123,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 		this.setAggregation("_counter", oCounter);
 	};
 
-	TextArea.prototype.setMaxLength = function (iValue) {
-		this.setProperty("maxLength", iValue);
-		this._handleShowExceededText();
-		return this;
-	};
-
 	TextArea.prototype.setShowExceededText = function (bValue) {
 		var oCounter = this.getAggregation("_counter"),
 			sValue;
 
 		if (bValue) {
 
-			if (oCounter && this.getAriaLabelledBy().indexOf(oCounter.getId()) < 0) {
+			if (this.getAriaLabelledBy().indexOf(oCounter.getId()) < 0) {
 				this.addAriaLabelledBy(oCounter.getId());
 			}
 		} else {
 			//remove the counter from AriaLabelledBy
 			oCounter = this.getAggregation("_counter");
-			oCounter && this.removeAllAriaLabelledBy(oCounter.getId());
+			oCounter && this.removeAriaLabelledBy(oCounter.getId());
 
 			// respect to max length
 			sValue = this.getValue();
@@ -165,11 +159,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	TextArea.prototype.onBeforeRendering = function() {
 		InputBase.prototype.onBeforeRendering.call(this);
-		this._detachResizeHandler();
-		//respect maxLength
-		if (this.getMaxLength()) {
-			this.setValue(this.getValue());
+		var oCounter = this.getAggregation("_counter");
+		if ((this.getMaxLength() <= 0 || !this.getShowExceededText()) && oCounter.getVisible()) {
+			oCounter.setVisible(false);
 		}
+		this._detachResizeHandler();
 	};
 
 	// Attach listeners on after rendering and find iscroll
@@ -447,10 +441,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	TextArea.prototype._getCounterValue = function () {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-			iCharactersExceeded = this.getMaxLength() - this.getValue().length,
-			bExceeded = (iCharactersExceeded < 0 ? true : false);
+				iCharactersExceeded = this.getMaxLength() - this.getValue().length,
+				bExceeded = (iCharactersExceeded < 0 ? true : false),
+				sMessageBundleKey = "TEXTAREA_CHARACTER" + ( Math.abs(iCharactersExceeded) === 1 ? "" : "S") + "_" + (bExceeded ? "EXCEEDED" : "LEFT");
 
-		return Math.abs(iCharactersExceeded) + " " + oBundle.getText("TEXTAREA_CHARACTER" + ( Math.abs(iCharactersExceeded) === 1 ? "" : "S") + "_" + (bExceeded ? "EXCEEDED" : "LEFT"));
+		return oBundle.getText(sMessageBundleKey, [Math.abs(iCharactersExceeded)]);
 	};
 
 	/**

@@ -1,4 +1,7 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon) {
+	"use strict";
 
 	var core = sap.ui.getCore(),
 		sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton",
@@ -8,7 +11,7 @@
 
 	sap.ui.controller("viewController", {});
 
-	var viewController = new sap.ui.controller("viewController");
+	var viewController = sap.ui.controller("viewController");
 
 	var anchorBarView = sap.ui.xmlview("UxAP-70_KeyboardHandling", {
 		viewName: "view.UxAP-70_KeyboardHandling",
@@ -48,7 +51,7 @@
 
 			this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
 				assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
-			}
+			};
 		},
 		afterEach: function() {
 			// trigger 'escape' keypress event to potentially close the popover
@@ -320,7 +323,7 @@
 
 			this.assertCorrectTabIndex = function ($elment, sMessage, assert) {
 				assert.strictEqual($elment.attr(sTabIndex), sFocusable, sMessage);
-			}
+			};
 		}
 	});
 

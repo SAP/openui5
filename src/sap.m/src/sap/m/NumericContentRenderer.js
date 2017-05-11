@@ -2,8 +2,8 @@
  * @copyright@
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define([ './library' ],
+	function(library) {
 	"use strict";
 
 	/**
@@ -23,7 +23,7 @@ sap.ui.define([],
 		var sIndicator = oControl.getIndicator();
 		var sScale = oControl.getScale();
 		var sState = oControl.getState();
-		var bIndicator = sap.m.DeviationIndicator.None !== sIndicator && sValue !== "";
+		var bIndicator = library.DeviationIndicator.None !== sIndicator && sValue !== "";
 		var bWithMargin = oControl.getWithMargin();
 		var sWithoutMargin;
 		if (bWithMargin) {
@@ -47,7 +47,7 @@ sap.ui.define([],
 		oRm.writeAttributeEscaped("aria-label", sTooltip);
 		oRm.writeAttribute("role", "img");
 
-		if (sState == sap.m.LoadState.Failed || sState == sap.m.LoadState.Loading) {
+		if (sState == library.LoadState.Failed || sState == library.LoadState.Loading) {
 			oRm.writeAttribute("aria-disabled", "true");
 		}
 		if (oControl.getAnimateTextChange()) {
@@ -95,7 +95,7 @@ sap.ui.define([],
 	NumericContentRenderer._prepareAndRenderIcon = function(oRm, oControl, oIcon) {
 		if (oIcon) {
 			var sState,
-			oLoadState = sap.m.LoadState,
+			oLoadState = library.LoadState,
 			sCurrentState = oControl.getState();
 
 			//remove state classes from icon and only add the current state's class

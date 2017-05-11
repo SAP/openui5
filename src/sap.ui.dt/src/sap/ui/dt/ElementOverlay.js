@@ -371,7 +371,22 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		}
 
 		if (vReturnMetadata){
-			jQuery.extend(true, oDesignTimeMetadata.getData(), vReturnMetadata);
+			var oData = oDesignTimeMetadata.getData();
+			if (vReturnMetadata.actions === null) {
+				var mAggregations = oElement.getMetadata().getAllAggregations();
+				var aAggregationNames = Object.keys(mAggregations);
+				aAggregationNames = aAggregationNames.concat(
+					Object.keys(oData.aggregations).filter(function (sAggregationName) {
+				    return aAggregationNames.indexOf(sAggregationName) < 0;
+				}));
+
+				aAggregationNames.forEach(function(sAggregationName) {
+					if (oData.aggregations[sAggregationName] && oData.aggregations[sAggregationName].actions) {
+						oData.aggregations[sAggregationName].actions = null;
+					}
+				});
+			}
+			jQuery.extend(true, oData, vReturnMetadata);
 		}
 
 		return true;
@@ -688,15 +703,17 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 		// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
 		var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
-		var aAggregationNames = Object.keys(mAggregationsMetadata);
-		aAggregationNames.forEach(function (sAggregationName) {
-			if (mAggregationsWithOverlay[sAggregationName] === undefined) {
-				bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
-				if (!bIgnored) {
-					this._createAggregationOverlay(sAggregationName);
+		if (mAggregationsMetadata) {
+			var aAggregationNames = Object.keys(mAggregationsMetadata);
+			aAggregationNames.forEach(function (sAggregationName) {
+				if (mAggregationsWithOverlay[sAggregationName] === undefined) {
+					bIgnored = oDesignTimeMetadata.isAggregationIgnored(oElement, sAggregationName);
+					if (!bIgnored) {
+						this._createAggregationOverlay(sAggregationName);
+					}
 				}
-			}
-		}, this);
+			}, this);
+		}
 
 		this.sync();
 	};

@@ -232,7 +232,7 @@ sap.ui.define([
 
 				/**
 				 * The event is fired when the selected section is changed using the navigation.
-				 * @since 1.38.1
+				 * @since 1.40
 				 */
 				navigate: {
 					parameters: {
@@ -452,6 +452,8 @@ sap.ui.define([
 		this._restoreScrollPosition();
 
 		sap.ui.getCore().getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
+
+		this.fireEvent("onAfterRenderingDOMReady");
 	};
 
 	/**

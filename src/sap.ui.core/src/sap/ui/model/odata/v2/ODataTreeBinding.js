@@ -135,6 +135,9 @@ sap.ui.define(['jquery.sap.global',
 			}
 			this.aApplicationFilters = aApplicationFilters;
 
+			// check filter integrity
+			this.oModel.checkFilterOperation(this.aApplicationFilters);
+
 			// a queue containing all parallel running requests
 			// a request is identified by (node id, startindex, length)
 			this.mRequestHandles = {};
@@ -1293,6 +1296,9 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype.filter = function (aFilters, sFilterType, bReturnSuccess) {
 		var bSuccess = false;
 		sFilterType = sFilterType || FilterType.Control;
+
+		// check filter integrity
+		this.oModel.checkFilterOperation(aFilters);
 
 		// check if filtering is supported for the current binding configuration
 		if (sFilterType == FilterType.Control && (!this.bClientOperation || this.sOperationMode == OperationMode.Server)) {

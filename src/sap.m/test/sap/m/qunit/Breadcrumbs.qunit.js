@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Breadcrumbs) {
 	"use strict";
 	var core, oFactory, helpers;

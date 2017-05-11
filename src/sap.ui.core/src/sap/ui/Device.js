@@ -1663,14 +1663,14 @@ if (typeof window.sap.ui !== "object") {
 	 * The current height of the document's window in pixels.
 	 *
 	 * @name sap.ui.Device.resize.height
-	 * @type integer
+	 * @type int
 	 * @public
 	 */
 	/**
 	 * The current width of the document's window in pixels.
 	 *
 	 * @name sap.ui.Device.resize.width
-	 * @type integer
+	 * @type int
 	 * @public
 	 */
 

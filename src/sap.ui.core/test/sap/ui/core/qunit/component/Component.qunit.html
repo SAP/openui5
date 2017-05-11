@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested class: sap.ui.core.Component, sap.ui.core.UIComponent
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit test: Component</title>
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-language="en"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{
+					"local": "./",
+					"samples.components": "../../samples/components/"
+				}'>
+		</script>
+		<link  href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" >
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE]>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+			sinon.config.useFakeTimers = false;
+			QUnit.config.autostart = false;
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require(["local/Component.qunit"], function() {
+					QUnit.start();
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<br>
+		<div id="comparea1"></div>
+		<div id="comparea2"></div>
+	</body>
+</html>

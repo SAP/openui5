@@ -138,4 +138,78 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "details"}});
 	});
 
+	QUnit.test("Handler for the 'Copy unicode' button correctly recognized unicode and calls the _copyStringToClipboard function with correct parameter", function (assert) {
+		// Arrange
+		var sUnicode = "xe034",
+			oResourceBundleStub = sinon.stub(this.oOverviewController, "getResourceBundle").returns({
+				getText: function() {
+					return "Unicode";
+				}
+			}),
+			sTestString = this.oOverviewController.getResourceBundle().getText() + ":" + sUnicode,
+			sInputId = "previewCopyUnicode",
+			oInput = new sap.m.Input(sInputId, {
+				value: sTestString
+			}),
+			oInputStub = sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput),
+			oCopyStub = sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+
+		// Act
+		this.oOverviewController.onCopyUnicodeToClipboard();
+
+		// Assert
+		assert.strictEqual(oCopyStub.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(oCopyStub.getCalls()[0].args[0], sUnicode, "Correct string copied to clipboard");
+
+		// Clean up
+		this.oOverviewController.byId.restore();
+		this.oOverviewController.getResourceBundle.restore();
+		this.oOverviewController._copyStringToClipboard.restore();
+		oInput.destroy();
+	});
+
+	QUnit.test("Handler for the 'Copy code' button calls the _copyStringToClipboard function with correct parameter", function (assert) {
+		// Arrange
+		var sTestString = "sap-icon://excel-attachment",
+			sInputId = "previewCopyCode",
+			oInput = new sap.m.Input(sInputId, {
+				value: sTestString
+			}),
+			oInputStub = sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput),
+			oCopyStub = sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+
+		// Act
+		this.oOverviewController.onCopyCodeToClipboard();
+
+		// Assert
+		assert.strictEqual(oCopyStub.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(oCopyStub.getCalls()[0].args[0], sTestString, "Correct string copied to clipboard");
+
+		// Clean up
+		this.oOverviewController.byId.restore();
+		this.oOverviewController._copyStringToClipboard.restore();
+		oInput.destroy();
+	});
+
+	QUnit.test("The formatter for the unicode copy field cuts off the unnessesary characters", function (assert) {
+		// Arrange
+		var sRawUnicodeString = "&#xe000;",
+			sCleanUnicodeString = "xe000",
+			sResult,
+			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicodeHTML: function() {
+					return sRawUnicodeString;
+				}
+			});
+
+		// Act
+		sResult = this.oOverviewController.getUnicodeByName("iconName");
+
+		// Assert
+		assert.strictEqual(sResult, sCleanUnicodeString, "Raw unicode haas been transformed correctly");
+
+		// Clean up
+		this.oOverviewController.getModel.restore();
+	});
+
 });

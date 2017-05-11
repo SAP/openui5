@@ -18,7 +18,8 @@ sap.ui.define([
 				{ label: "Disabled, value = 12.3, displayValuePrecision = 1, width = 120px", value: 12.3, enabled:false, width:"120px", displayValuePrecision: 1},
 				{ label: "Read only, value = 123, default width of 100%", editable:false, value:123},
 				{ label: "Step = 0.05; value = 1.32, displayValuePrecision = 3, min = -5, max = 15", value: 1.32, step: 0.05, min:-5, max:15, displayValuePrecision: 3},
-				{ label: "Step = 1.05; value = 1.5675, displayValuePrecision = 2, no Min and Max", value: 1.5675, step: 1.05, displayValuePrecision: 2}
+				{ label: "Step = 1.05; value = 1.5675, displayValuePrecision = 2, no Min and Max", value: 1.5675, step: 1.05, displayValuePrecision: 2},
+				{ label: "Step = -1 (which becomes 1), value = 20, width = 120px", value: 20, step: -1, width:"120px"}
 			];
 
 			oModel = new JSONModel({

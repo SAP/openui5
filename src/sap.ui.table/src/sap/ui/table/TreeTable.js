@@ -112,29 +112,32 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		TableUtils.Grouping.setTreeMode(this);
 	};
 
-	TreeTable.prototype.bindRows = function(oBindingInfo, vTemplate, aSorters, aFilters) {
-		var sPath,
-			oTemplate,
-			aSorters,
-			aFilters;
-
-		// Old API compatibility (sName, sPath, oTemplate, oSorter, aFilters)
-		if (typeof oBindingInfo == "string") {
-			sPath = arguments[0];
-			oTemplate = arguments[1];
-			aSorters = arguments[2];
-			aFilters = arguments[3];
-			oBindingInfo = {path: sPath, sorter: aSorters, filters: aFilters, template: oTemplate};
+	TreeTable.prototype.bindRows = function(oBindingInfo) {
+		// Old API compatibility (sPath, oTemplate, oSorter, aFilters)
+		if (typeof oBindingInfo === "string") {
+			oBindingInfo = {
+				path: oBindingInfo,
+				sorter: arguments[2],
+				filters: arguments[3],
+				template: arguments[1]
+			};
 		}
 
-		if (typeof oBindingInfo === "object") {
-			oBindingInfo.parameters = oBindingInfo.parameters || {};
+		if (oBindingInfo != null) {
+			if (oBindingInfo.parameters == null) {
+				oBindingInfo.parameters = {};
+			}
+
 			oBindingInfo.parameters.rootLevel = this.getRootLevel();
 			oBindingInfo.parameters.collapseRecursive = this.getCollapseRecursive();
-			// number of expanded levels is taken from the binding parameters first,
-			// if not found, we check if they are set on the table
+
+			// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
+			// to determine the value.
 			oBindingInfo.parameters.numberOfExpandedLevels = oBindingInfo.parameters.numberOfExpandedLevels || (this.getExpandFirstLevel() ? 1 : 0);
-			oBindingInfo.parameters.rootNodeID = oBindingInfo.parameters.rootNodeID;
+
+			oBindingInfo.events = {
+				selectionChanged: this._onSelectionChanged.bind(this)
+			};
 		}
 
 		return Table.prototype.bindRows.call(this, oBindingInfo);
@@ -158,18 +161,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			Table.prototype.setSelectionMode.call(this, sSelectionMode);
 		}
 		return this;
-	};
-
-	/**
-	 * refresh rows
-	 * @private
-	 */
-	TreeTable.prototype.refreshRows = function(sReason) {
-		Table.prototype.refreshRows.apply(this, arguments);
-		var oBinding = this.getBinding("rows");
-		if (oBinding && this.isTreeBinding("rows") && !oBinding.hasListeners("selectionChanged")) {
-			oBinding.attachSelectionChanged(this._onSelectionChanged, this);
-		}
 	};
 
 	/**
