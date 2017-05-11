@@ -469,17 +469,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
 		var oModel = createModel("", {updateGroupId : "updateGroupId"}),
-			oAgeBinding = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
-			oNameBinding = oModel.bindProperty("/EMPLOYEES('1')/Name"),
-			oEntryDateBinding = oModel.bindProperty("/EMPLOYEES('1')/ENTRYDATE", undefined, {
+			oBinding1 = oModel.bindList("/EMPLOYEES"),
+			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oBinding3 = oModel.bindContext("/EMPLOYEES('1')", undefined, {
 				$$updateGroupId : "anotherGroup"
 			});
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
-		this.mock(oAgeBinding).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oNameBinding).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oEntryDateBinding).expects("resetInvalidDataState").never();
+		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding3).expects("resetInvalidDataState").never();
 
 		// code under test
 		oModel.resetChanges();

@@ -68,10 +68,8 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-					["$$groupId", "$$updateGroupId"]);
+				oBindingParameters = this.oModel.buildBindingParameters(mParameters, ["$$groupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
-				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				// Note: no system query options supported at property binding
 				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
 					/*bSystemQueryOptionsAllowed*/false);
