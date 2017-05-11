@@ -214,7 +214,7 @@ sap.ui.define([
 		}
 		if (!this.bRequestTypeFailed && !this.oType && this.sInternalType !== "any") {
 			// request type only once
-			aPromises.push(this.oModel.getMetaModel().requestUI5Type(sResolvedPath)
+			aPromises.push(this.oModel.getMetaModel().fetchUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
 				})["catch"](function (oError) {

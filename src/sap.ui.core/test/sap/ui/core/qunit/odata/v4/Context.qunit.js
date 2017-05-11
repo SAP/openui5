@@ -449,10 +449,7 @@ sap.ui.require([
 			var oBinding = {
 					updateValue : function () {}
 				},
-				oModel = {
-					requestCanonicalPath : function () {}
-				},
-				oContext = Context.create(oModel, oBinding, "/foo", 42),
+				oContext = Context.create(null, oBinding, "/foo", 42),
 				oResult = {},
 				sPropertyName = "bar",
 				vValue = Math.PI;
@@ -502,15 +499,12 @@ sap.ui.require([
 		var oBinding = {
 				updateValue : function () {}
 			},
-			oModel = {
-				requestCanonicalPath : function () {}
-			},
-			oContext = Context.create(oModel, oBinding, "/foo", 0),
+			oContext = Context.create(null, oBinding, "/foo", 0),
 			oError = new Error();
 
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs()
-			.returns(_SyncPromise.resolve(Promise.reject(oError))); // rejected!
+			.returns(_SyncPromise.reject(oError)); // rejected!
 		this.mock(oBinding).expects("updateValue").never();
 
 		return oContext.updateValue("up", "bar", Math.PI).then(function (oResult0) {
@@ -648,8 +642,8 @@ sap.ui.require([
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("requestCanonicalPath")
-			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
+		this.mock(oContext).expects("fetchCanonicalPath")
+			.withExactArgs().returns(_SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs("myGroup", "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.resolve());
@@ -692,8 +686,8 @@ sap.ui.require([
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("requestCanonicalPath")
-			.withExactArgs().returns(Promise.resolve("/EMPLOYEES('1')"));
+		this.mock(oContext).expects("fetchCanonicalPath")
+			.withExactArgs().returns(_SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(undefined, "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.reject(oError));
@@ -711,12 +705,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: failure in requestCanonicalPath", function (assert) {
+	QUnit.test("delete: failure in fetchCanonicalPath", function (assert) {
 		var oError = new Error(),
 			oContext = Context.create(null, null, "/EMPLOYEES/42", 42);
 
-		this.mock(oContext).expects("requestCanonicalPath")
-			.withExactArgs().returns(Promise.reject(oError));
+		this.mock(oContext).expects("fetchCanonicalPath")
+			.withExactArgs().returns(_SyncPromise.reject(oError));
 
 		// code under test
 		return oContext.delete().then(function () {
