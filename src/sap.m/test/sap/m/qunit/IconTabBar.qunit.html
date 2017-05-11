@@ -2310,6 +2310,38 @@
 				oIconTabBar.destroy();
 			});
 
+			QUnit.test("IconTabHeader propagates properties to its child items", function(assert) {
+
+				// Arrange
+				var oIconTabHeader = new sap.m.IconTabHeader({
+						showOverflowSelectList: true,
+						items: [
+							new sap.m.IconTabFilter({
+								icon: "sap-icon://manager",
+								visible: "{/tabVisible}"
+							})
+						]
+					}),
+					bTabVisible = false;
+
+				oIconTabHeader.setModel(new sap.ui.model.json.JSONModel({tabVisible: bTabVisible}));
+
+				// act
+				oIconTabHeader._overflowButtonPress();
+
+				// Assert
+				assert.strictEqual(oIconTabHeader._getSelectList().getItems()[0].getVisible(), bTabVisible, "property has propagated");
+
+				// act (reopen)
+				oIconTabHeader._overflowButtonPress();
+
+				// Assert
+				assert.strictEqual(oIconTabHeader._getSelectList().getItems()[0].getVisible(), bTabVisible, "property has propagated");
+
+				// Clean up
+				oIconTabHeader.destroy();
+			});
+
 			QUnit.module("tabs");
 
 			QUnit.test("remove selected tab", function(assert) {
