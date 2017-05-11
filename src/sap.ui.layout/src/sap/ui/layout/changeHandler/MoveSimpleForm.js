@@ -26,6 +26,33 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			MoveSimpleForm.sTypeSmartLabel = "sap.ui.comp.smartfield.SmartLabel";
 			MoveSimpleForm.CONTENT_AGGREGATION = "content";
 
+			var fnFirstGroupWithoutTitle = function(oModifier, aStopToken, aContent) {
+				for (var i = 0; i < aContent.length; i++) {
+					var sType = oModifier.getControlType(aContent[i]);
+					if (aStopToken.indexOf(sType) === -1) {
+						if (aContent[i].getVisible()) {
+							return true;
+						}
+					} else {
+						return false;
+					}
+				}
+			};
+
+			var fnAddTitleToFirstGroupIfNeeded = function(oModifier, aContent, oSimpleForm, mPropertyBag, aStopToken) {
+				if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
+					var oView = mPropertyBag.view;
+					var oAppComponent = mPropertyBag.appComponent;
+					var sGroupId = oAppComponent.createId(jQuery.sap.uid());
+
+					var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);
+					oModifier.setProperty(oTitle, "text", "");
+					oModifier.insertAggregation(oSimpleForm, "content", oTitle, 0, oView);
+				}
+
+				return oSimpleForm.getContent();
+			};
+
 			/**
 			 * Moves an element from one aggregation to another.
 			 *
@@ -100,7 +127,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 											MoveSimpleForm.sTypeOverflowToolBar];
 					// !important : element was used in 1.40, do not remove for compatibility!
 					var oMovedGroup = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
-					var iMovedGroupIndex = aContent.indexOf(oMovedGroup);
+
+					// If needed, insert a Title for the first group.
+					if (mMovedElement.target.groupIndex === 0 || !oMovedGroup) {
+						aContent = fnAddTitleToFirstGroupIfNeeded(oModifier, aContent, oSimpleForm, mPropertyBag, aStopGroupToken, oContent.newControlId);
+					}
+
+					var iMovedGroupIndex = oMovedGroup ? aContent.indexOf(oMovedGroup) : 0;
 
 					var iTargetIndex = fnMapGroupIndexToContentAggregationIndex(oModifier, aStopGroupToken, aContent,
 							mMovedElement.target.groupIndex);
@@ -181,6 +214,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			var fnMapGroupIndexToContentAggregationIndex = function(oModifier, aStopToken, aContent, iGroupIndex) {
 				var oResult;
 				var iCurrentGroupIndex = -1;
+
+				if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
+					iCurrentGroupIndex++;
+				}
+
 				for (var i = 0; i < aContent.length; i++) {
 					var sType = oModifier.getControlType(aContent[i]);
 					if (aStopToken.indexOf(sType) > -1) {
