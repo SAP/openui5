@@ -232,7 +232,7 @@ sap.ui.define([
 
 				/**
 				 * The event is fired when the selected section is changed using the navigation.
-				 * @since 1.38.1
+				 * @since 1.40
 				 */
 				navigate: {
 					parameters: {
