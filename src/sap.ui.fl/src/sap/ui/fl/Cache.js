@@ -95,7 +95,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			Cache._entries[sComponentName][sAppVersion] = {
 				file: {
 					changes: {
-						changes: []
+						changes: [],
+						contexts: []
 					}
 				}
 			};
@@ -115,6 +116,24 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	Cache.clearEntry = function (sComponentName, sAppVersion) {
 		Cache.getEntry(sComponentName, sAppVersion);
 		Cache._entries[sComponentName][sAppVersion] = {};
+	};
+
+	/**
+	 * Deletes a single entry stored in the cache for a specific application component and application version.
+	 *
+	 * @param {string} sComponentName - Name of the application component
+	 * @param {string} sAppVersion - Current running version of application
+	 *
+	 * @private
+	 * @sap-restricted sap.ui.fl
+	 */
+	Cache._deleteEntry = function (sComponentName, sAppVersion) {
+		if (Cache._entries[sComponentName] && Cache._entries[sComponentName][sAppVersion]) {
+			delete Cache._entries[sComponentName][sAppVersion];
+		}
+		if (jQuery.isEmptyObject(Cache._entries[sComponentName])) {
+			delete Cache._entries[sComponentName];
+		}
 	};
 
 	/**
@@ -164,9 +183,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 		}
 
 		var currentLoadChanges = oLrepConnector.loadChanges(oComponent, mPropertyBag).then(function (mChanges) {
-			if (oCacheEntry.file) {
-				Utils.log.error('sap.ui.fl.Cache: Cached changes for component ' + sComponentName + ' overwritten.');
-			}
 			if (mChanges && mChanges.changes && mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
 				mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
 				Cache._switches[sValue] = true;
@@ -175,7 +191,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;
 		}, function (err) {
-			delete oCacheEntry.promise;
+			Cache._deleteEntry(sComponentName, sAppVersion);
 			throw err;
 		});
 
