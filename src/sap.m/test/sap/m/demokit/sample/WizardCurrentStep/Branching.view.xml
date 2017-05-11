@@ -1,0 +1,33 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.WizardCurrentStep.Branching"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Wizard
+		id="BranchingWizard"
+		enableBranching="true">
+		<WizardStep validated="false" id="A" title="A" subsequentSteps="B1, B2">
+
+			<RadioButtonGroup id="PathSelection" select="discardAndApplyPath">
+				<buttons>
+					<RadioButton text="A->B1->C->D->E->F1->F2->G"/>
+					<RadioButton text="A->B2->C->D->E->F1->G" />
+					<RadioButton text="A->B1->B2->C->D->E" />
+				</buttons>
+			</RadioButtonGroup>
+
+		</WizardStep>
+		<WizardStep validated="false" id="B1" title="B1" nextStep="C"></WizardStep>
+		<WizardStep validated="false" id="B2" title="B2" nextStep="C"></WizardStep>
+		<WizardStep validated="false" id="C" title="C" nextStep="D"></WizardStep>
+		<WizardStep validated="false" id="D" title="D" nextStep="E"></WizardStep>
+		<WizardStep validated="false" id="E" title="E" subsequentSteps="F1, F2"></WizardStep>
+		<WizardStep validated="false" id="F1" title="F1" nextStep="G"></WizardStep>
+		<WizardStep validated="false" id="F2" title="F2" nextStep="G"></WizardStep>
+		<WizardStep validated="false" id="G" title="G"></WizardStep>
+	</Wizard>
+</mvc:View>

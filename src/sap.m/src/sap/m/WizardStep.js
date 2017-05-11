@@ -110,6 +110,19 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 		return this;
 	};
 
+	WizardStep.prototype.setNextStep = function (value) {
+		this.setAssociation("nextStep", value, true);
+
+		var parent = this._getWizardParent();
+
+		if (parent !== null) {
+			parent._checkCircularReference(this._getNextStepReference());
+			parent._updateProgressNavigator();
+		}
+
+		return this;
+	};
+
 	/**
 	 * setVisible shouldn't be used on wizard steps.
 	 * If you need to show/hide steps based on some condition - use the branching property instead
