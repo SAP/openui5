@@ -100,7 +100,7 @@ window.initMap = function () {
         maxZoom: 16,
         zoom: 16,
         streetViewControl: false,
-        mapTypeControl: false,
+        mapTypeControl: true,
         scrollwheel: false,
         zoomControl: true
     });
