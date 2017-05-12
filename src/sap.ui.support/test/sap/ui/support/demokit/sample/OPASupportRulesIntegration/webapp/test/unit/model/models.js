@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.require(
 	[
 		"jquery.sap.global",

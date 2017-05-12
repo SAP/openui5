@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	"use strict";
 
@@ -16,7 +18,9 @@
 				a: 1,
 				b: "str",
 				c: false,
-				d: function () {"use strict"; tempFunc();},
+				/* eslint-disable strict, no-undef*/
+				d: function () { "use strict"; tempFunc(); },
+				/* eslint-enable strict, no-undef*/
 				e: [1, 2, "str"]
 			},
 			serializedString = this.rs.serialize(serializedObject);

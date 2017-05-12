@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	"use strict";
 
@@ -11,13 +13,13 @@
 			context: {
 				id: "testId"
 			}
-		}
+		};
 	};
 
 	QUnit.module("IssueManager API test", {
 		setup: function () {
 			this.im = sap.ui.support.supportRules.IssueManager;
-			this.rs = new sap.ui.support.supportRules.RuleSet({name: "testRuleSet"})
+			this.rs = new sap.ui.support.supportRules.RuleSet({name: "testRuleSet"});
 			this.rs.addRule(window.saptest.createValidRule("id1"));
 			this.imFacade = this.im.createIssueManagerFacade(this.rs.getRules().id1);
 		},
@@ -29,8 +31,8 @@
 	});
 
 	QUnit.test("IssueManagerFacade addIssue ", function (assert) {
-		assert.ok(this.imFacade.addIssue != undefined 
-				&& typeof this.imFacade.addIssue == "function", 
+		assert.ok(this.imFacade.addIssue != undefined
+				&& typeof this.imFacade.addIssue == "function",
 				"public API should not change");
 	});
 
@@ -146,7 +148,7 @@
 		}
 
 		var secondHistoryLength = this.im.getHistory()[1].issues.length;
-		
+
 		assert.equal(firstHistoryLength, issueCount, "Should have the same amount of elements as added with addIssue()");
 		assert.equal(secondHistoryLength, issueCountSecond, "Should have the same amount of elements as added with addIssue()");
 		assert.equal(firstHistoryLength + secondHistoryLength, issueCount + issueCountSecond, "sum of 2 history gets should be equal to total added issues");
