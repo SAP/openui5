@@ -5,6 +5,7 @@
 
 @_sap_m_Shell_AppWidthLimit: 1280px;
 @_sap_m_Shell_AppWidthLimitBy2: @_sap_m_Shell_AppWidthLimit / 2;
+@_sap_m_Shell_AppWidthLimitPlusPadding: @_sap_m_Shell_AppWidthLimit + 16px;
 
 @_sap_m_Shell_AppHeight: 3333px; // Ux decision: never show the header, so make this value large enough even for zoom-out cases
 @_sap_m_Shell_HeaderHeight: 68px; // should be 4.25rem
@@ -201,7 +202,6 @@
 	}
 }
 
-@sapMShellAppWidthLimitPlusPadding: @_sap_m_Shell_AppWidthLimit + 16px;
 @media (min-width: @_sap_m_Shell_AppWidthLimit) {
 	html.sap-desktop .sapMShellAppWidthLimited .sapMShellHeader {
 		padding: 0;
