@@ -1,20 +1,25 @@
+/*global QUnit,sinon*/
+
 sap.ui.require([
 	"sap/ui/support/supportRules/Main",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels"],
 	function (Main, CommunicationBus, channelNames) {
+		"use strict";
 
+		/*eslint-disable no-unused-vars*/
 		var core;
+		/*eslint-enable no-unused-vars*/
 
 		var spyChannel = function (channelName) {
 			sinon.spy(CommunicationBus, "publish");
 
 			return {
-				assertCalled: function () {
+				assertCalled: function (assert) {
 					assert.ok(CommunicationBus.publish.calledWith(channelName), "channel name: " + channelName + " should be called");
 					CommunicationBus.publish.restore();
 				}
-			}
+			};
 		};
 
 		Main.startPlugin();
@@ -50,37 +55,37 @@ sap.ui.require([
 		// 	Main._fetchSupportRuleSets.restore();
 		// });
 
-		QUnit.test("When a new control is created", function () {
+		QUnit.test("When a new control is created", function (assert) {
 			var spyCoreStateChanged = spyChannel(channelNames.ON_CORE_STATE_CHANGE);
 
 			var icon = new sap.ui.core.Icon();
 			this.clock.tick(600);
 
-			spyCoreStateChanged.assertCalled();
+			spyCoreStateChanged.assertCalled(assert);
 			icon.destroy();
 		});
 
-		QUnit.test("When a control is deleted", function () {
+		QUnit.test("When a control is deleted", function (assert) {
 			var icon = new sap.ui.core.Icon();
 			var spyCoreStateChanged = spyChannel(channelNames.ON_CORE_STATE_CHANGE);
 
 			icon.destroy();
 			this.clock.tick(600);
 
-			spyCoreStateChanged.assertCalled();
+			spyCoreStateChanged.assertCalled(assert);
 		});
 
-		QUnit.test("Analyze support rule", function () {
+		QUnit.test("Analyze support rule", function (assert) {
 			var spyProgressUpdate = spyChannel(channelNames.ON_PROGRESS_UPDATE);
 
 			Main._analyzeSupportRule({
 				check: function () {}
 			});
 
-			spyProgressUpdate.assertCalled();
+			spyProgressUpdate.assertCalled(assert);
 		});
 
-		QUnit.test("Element tree", function () {
+		QUnit.test("Element tree", function (assert) {
 			var assertIsDirectChild = function (id1, id2, et) {
 				var root = et.constructor === Array ? et[0] : et;
 
@@ -100,7 +105,7 @@ sap.ui.require([
 				}
 			};
 
-			var panel = new sap.m.Panel({
+			var oPanel = new sap.m.Panel({
 				id: "rootPanel",
 				content: [
 					new sap.m.Panel({
@@ -139,5 +144,7 @@ sap.ui.require([
 			assertIsDirectChild("innerButton", "innerPanel1", et);
 			assertIsDirectChild("innerText", "innerPanel1", et);
 			assertIsDirectChild("innerButton2", "innerPanel2",et);
+
+			oPanel.destroy();
 		});
 });
