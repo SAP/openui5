@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 *  Holds a reference to a JavaScript Date Object. The <code>value</code> (string)
 					 * property will be set according to it. Alternatively, if the <code>value</code>
 					 * and <code>valueFormat</code> pair properties are supplied instead,
-					 * the <code>dateValue</code> will be instantiated аccording to the parsed
+					 * the <code>dateValue</code> will be instantiated according to the parsed
 					 * <code>value</code>.
 					 */
 					dateValue : {type : "object", group : "Data", defaultValue : null},
