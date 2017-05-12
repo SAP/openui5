@@ -1,9 +1,13 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
 	'jquery.sap.global'
 	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
 ], function (TestUtils, PDFViewer, $) {
+	"use strict";
+
 	var oPdfViewer;
 	QUnit.module('Popup mode', {
 		afterEach: function (assert) {

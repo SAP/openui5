@@ -24,7 +24,7 @@ sap.ui.define([
 				this.branchingWizard.setCurrentStep(this.getView().byId("wizardViewBranching").byId(event.getParameter("selectedItem").getKey()));
 			} catch (ex) {
 				MessageToast.show(ex);
-				console.error(ex);
+				jQuery.sap.log.error(ex);
 				this.getView().byId("selectBranchingCurrentStep").setSelectedKey(this.branchingWizard.getCurrentStep());
 				this.getView().byId("wizardViewBranching").byId("BranchingWizard").getSteps()[0].$().firstFocusableDomRef().focus();
 				this.getView().byId("wizardViewBranching").getController().reapplyLastPath();

@@ -107,7 +107,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		var oEntry2 = {
 			mockChanges1: {}
-		}
+		};
 		Cache._entries = {
 			"testComponent1": {
 				"1.2.3": oEntry1
@@ -118,7 +118,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		Cache.clearEntry("testComponent1", "1.2.3");
 		assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), {});
-		Cache.clearEntries({})
+		Cache.clearEntries({});
 		assert.deepEqual(Cache.getEntries(), {});
 	});
 

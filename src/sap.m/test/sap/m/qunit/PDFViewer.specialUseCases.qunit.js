@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/ui/Device",
@@ -7,6 +9,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-qunit"
 	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
 ], function (TestUtils, Device, PDFViewer, $, sinon) {
+	"use strict";
+
 	var oPDFViewer;
 	QUnit.module('Special use cases', {
 		afterEach: function (assert) {

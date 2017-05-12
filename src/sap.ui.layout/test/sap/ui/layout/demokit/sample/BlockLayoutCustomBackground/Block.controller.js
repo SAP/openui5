@@ -28,11 +28,11 @@ sap.ui.define([
 		setBLCells: function (event) {
 			var bl2 = this.getView().byId("BlockLayoutTwo"),
 				row = null,
-				colorSet = parseInt(this.oModel.getProperty("/colorSet")),
+				colorSet = parseInt(this.oModel.getProperty("/colorSet"), 10),
 				colorIndex = 0,
 				createRow = true,
-				dataObjCount = parseInt(this.oModel.getProperty("/dataObjectsCount")),
-				maxCellsPerRow = parseInt(this.oModel.getProperty("/maxCellsPerRow"));
+				dataObjCount = parseInt(this.oModel.getProperty("/dataObjectsCount"), 10),
+				maxCellsPerRow = parseInt(this.oModel.getProperty("/maxCellsPerRow"), 10);
 
 			bl2.removeAllContent();
 
