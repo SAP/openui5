@@ -1160,14 +1160,16 @@ sap.ui.require([
 			text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
 		});
 		oModelMock.expects("checkGroupId").withExactArgs(undefined);
-		oContextMock.expects("updateValue").withExactArgs(undefined, "Note", "foo")
+		oContextMock.expects("updateValue")
+			.withExactArgs(undefined, "Note", "foo", sinon.match.func)
 			.returns(Promise.resolve());
 
 		// code under test
 		oControl.setText("foo");
 
 		oModelMock.expects("checkGroupId").withExactArgs("up");
-		oContextMock.expects("updateValue").withExactArgs("up", "Note", "bar")
+		oContextMock.expects("updateValue")
+			.withExactArgs("up", "Note", "bar", sinon.match.func)
 			.returns(Promise.resolve());
 
 		// code under test
@@ -1180,10 +1182,12 @@ sap.ui.require([
 		var oContext = Context.create(this.oModel, null, "/ProductList('HT-1000')"),
 			sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
-			oPromise = Promise.reject(oError),
+			oPromise = Promise.resolve(),
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
-		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
+		this.oSandbox.mock(oContext).expects("updateValue")
+			.withExactArgs(undefined, "Name", "foo", sinon.match.func)
+			.callsArgWith(3, oError)
 			.returns(oPromise);
 		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
@@ -1192,7 +1196,7 @@ sap.ui.require([
 		// code under test
 		oPropertyBinding.setValue("foo");
 
-		return oPromise.catch(function () {}); // wait, but do not fail
+		return oPromise;
 	});
 
 	//*********************************************************************************************
@@ -1204,7 +1208,8 @@ sap.ui.require([
 
 		oError.canceled = true;
 
-		this.oSandbox.mock(oContext).expects("updateValue").withExactArgs(undefined, "Name", "foo")
+		this.oSandbox.mock(oContext).expects("updateValue")
+			.withExactArgs(undefined, "Name", "foo", sinon.match.func)
 			.returns(oPromise);
 		this.oSandbox.mock(this.oModel).expects("reportError").never();
 
