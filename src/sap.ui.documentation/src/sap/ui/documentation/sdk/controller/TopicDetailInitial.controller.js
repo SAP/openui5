@@ -2,14 +2,14 @@
  * ${copyright}
  */
 
-/*global history */
+/*global location */
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/Device"
 	], function (BaseController, Device) {
 		"use strict";
 
-		return BaseController.extend("sap.ui.documentation.sdk.controller.Controls", {
+		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetailInitial", {
 
 			onInit: function () {
 				this._fnOrientationChange({
@@ -36,5 +36,6 @@ sap.ui.define([
 			}
 
 		});
+
 	}
 );

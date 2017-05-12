@@ -5,21 +5,60 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 
 /* override default padding for headline cells */
 .sapUiDemoApps .headlineCell .sapUiBlockCellContent {
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+	padding-top: 1.25rem;
+	padding-bottom: 1.25rem;
 }
 
-/*gradient colors for all different browsers */
-html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .gradient {
+/* fix to align link and label in horizontal layout*/
 .sapUiDemoApps .namespaceLink {
 	vertical-align: baseline;
 }
 
-	/*gradient colors for all different browsers */
+/*gradient colors for all different browsers */
 html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .gradient {
 	background: #a9c4df; /* Old browsers */
 	background: -moz-linear-gradient(top,  #a9c4df 0%, #e7ecf0 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(top,  #a9c4df 0%,#e7ecf0 100%); /* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to bottom,  #a9c4df 0%,#e7ecf0 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a9c4df', endColorstr='#e7ecf0',GradientType=0 ); /* IE6-9 */
+}
+
+
+.headerText {
+	width: 100%;
+	padding-top: 0.5rem;
+	text-shadow: 0 0 0.125rem #fff;
+	font-size: 3rem;
+	margin-left: -0.2rem;
+}
+
+.headerSubText {
+	width: 100%;
+	font-size: 1.25rem;
+	font-weight: normal;
+	text-shadow: 0 0 0.125rem #fff;
+}
+
+/*SMALL*/
+
+@media only screen and (max-width: 1024px) {
+	.headerText {
+		font-size: 1.25rem;
+		margin-left: -0.0625rem;
+	}
+	.headerSubText {
+		font-size: 0.875rem;
+	}
+}
+
+
+/*XTRA LARGE*/
+
+@media only screen and (min-width: 1440px) {
+	.headerText {
+		font-size: 4rem;
+	}
+	.headerSubText {
+		font-size: 2rem;
+	}
 }

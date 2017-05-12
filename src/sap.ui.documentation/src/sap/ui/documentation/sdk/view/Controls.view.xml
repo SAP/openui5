@@ -14,7 +14,9 @@
 					background="Mixed">
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
-						<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
+						<Image
+								id="phoneImage"
+								src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped_274847.jpg"
 								width="100%"
 								densityAware="false"
 								visible="{device>/system/phone}"/>
@@ -22,8 +24,8 @@
 								width="100%"
 								densityAware="false"
 								visible="{=!${device>/system/phone}}"/>
-						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText" text="Explored" width="100%" textAlign="Left"/>
-						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText" text="Explore the samples, code snippets and download options" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText" text="Samples" width="100%" textAlign="Left"/>
+						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText" text="Explore and download code snippets" width="100%" textAlign="Left"/>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 
