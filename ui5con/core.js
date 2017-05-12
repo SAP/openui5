@@ -95,14 +95,14 @@ a.parentNode.insertBefore(s, a);
 
 window.initMap = function () {
     var map = new google.maps.Map(document.getElementsByClassName('b-direction__map')[0], {
-        center: { lat: 49.241545, lng: 8.6333657 },
-        minZoom: 16,
+        center: { lat: 49.240150, lng: 8.639048 },
+        minZoom: 1,
         maxZoom: 16,
         zoom: 16,
         streetViewControl: false,
         mapTypeControl: false,
         scrollwheel: false,
-        zoomControl: false
+        zoomControl: true
     });
 
     new google.maps.Marker({
@@ -110,7 +110,7 @@ window.initMap = function () {
             lat: 49.240150, // original center - 49.240850
             lng: 8.639048,
         },
-        map,
+        map:map,
         clickable: false,
         icon: markerImg
     });
