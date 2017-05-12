@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * <h3>Overview</h3>
 	 * The IconTabBar can be used for navigation within an object, or as a filter. Different types of IconTabBar are used based on the contents.
 	 * <ul>
-	 * <li>Filter – There is only one main content for all tabs. The main content can be filtered, based on the selected tab.</li>
+	 * <li>Filter - There is only one main content for all tabs. The main content can be filtered, based on the selected tab.</li>
 	 * <li>Normal tab bar - The contents of each tab are independent from each other.</li>
 	 * <li>Combination of the above - There can be both filtered and independent contents.</li>
 	 * </ul>
