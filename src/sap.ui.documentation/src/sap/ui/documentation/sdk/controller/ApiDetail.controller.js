@@ -9,10 +9,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/documentation/sdk/util/ObjectSearch",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection"
-	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ObjectSearch, ToggleFullScreenHandler, ObjectPageSubSection) {
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -81,6 +80,8 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
+				this._createMethodsSummary();
+				this._createEventsSummary();
 				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
@@ -124,25 +125,30 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (oEvent) {
 				this._sTopicid = oEvent.getParameter("arguments").id;
-				this._bindData(this._sTopicid);
-				this._createMethodsSummary();
-				this._createEventsSummary();
-				this._bindEntityData();
 
-				this._scrollContentToTop();
-				this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
 
-				if (this.extHookonTopicMatched) {
-					this.extHookonTopicMatched(this._sTopicid);
-				}
+					this._bindData(this._sTopicid);
+					this._bindEntityData(this._sTopicid);
+					this._createMethodsSummary();
+					this._createEventsSummary();
+
+					this._scrollContentToTop();
+					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+
+				}.bind(this));
+
 			},
 
 			_createMethodsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-methodsSummary", "sap.ui.documentation.sdk.view.ApiDetailMethodsSummary", this);
 				var oSection = this.getView().byId("methods");
-				if (oSection.getSubSections().length > 0) {
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
 					return;
 				}
+
 				oSection.insertSubSection(new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
@@ -154,9 +160,12 @@ sap.ui.define([
 			_createEventsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-eventsSummary", "sap.ui.documentation.sdk.view.ApiDetailEventsSummary", this);
 				var oSection = this.getView().byId("events");
-				if (oSection.getSubSections().length > 0) {
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
 					return;
 				}
+
 				oSection.insertSubSection(new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
@@ -197,7 +206,7 @@ sap.ui.define([
 			 * Callback function, executed once the <code>ControlsInfo</code> is loaded.
 			 */
 			_onControlsInfoLoaded : function () {
-				this._bindEntityData();
+				this._bindEntityData(this._sTopicid);
 			},
 
 			/**
@@ -209,17 +218,14 @@ sap.ui.define([
 			 * After that, the method is called in <code>_onTopicMatched</code>,
 			 * whenever a different topic has been selected.
 			 */
-			_bindEntityData : function () {
+			_bindEntityData : function (sTopicId) {
 				if (!ControlsInfo || !ControlsInfo.data) {
 					return;
 				}
 
-				var oLibData = {
-					entityCount : ControlsInfo.data.entityCount,
-					entities : ControlsInfo.data.entities
-				}, oEntityModelData = this._getEntityData(oLibData);
+				var oEntityData = this._getEntityData(sTopicId);
 
-				this.getModel("entity").setData(oEntityModelData);
+				this.getModel("entity").setData(oEntityData, false);
 			},
 
 			_bindData : function (sTopicId) {
@@ -232,10 +238,6 @@ sap.ui.define([
 					oEventsModel = {events: []},
 					oUi5Metadata;
 
-				if (!oControlData && !aControlChildren) {
-					jQuery.sap.delayedCall(250, this, this._bindData, [sTopicId]);
-					return;
-				}
 
 				if (aControlChildren) {
 					if (!oControlData) {
@@ -341,10 +343,13 @@ sap.ui.define([
 			 * @param {Object} oLibData
 			 * @return {Object}
 			 */
-			_getEntityData: function (oLibData) {
-				var sEntityName = this._sTopicid,
-					oEntity = ObjectSearch.getEntityById(oLibData, sEntityName),
-					sAppComponent = this._getControlComponent(sEntityName);
+			_getEntityData: function (sEntityName) {
+				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+					return entity.id === sEntityName;
+				});
+				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
+
+				var sAppComponent = this._getControlComponent(sEntityName);
 
 				return {
 					appComponent: sAppComponent || this.NOT_AVAILABLE,
