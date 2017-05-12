@@ -212,4 +212,42 @@ sap.ui.define([
 		this.oOverviewController.getModel.restore();
 	});
 
+	QUnit.module("Overview controller: searching by unicode filter factory tests", {
+		beforeEach: function () {
+			this.oOverviewController = new OverviewController();
+			this.oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicodeHTML: function() {
+					return "&#xe000;";
+				}
+			});
+		},
+
+		afterEach: function () {
+			this.oOverviewController.destroy();
+		}
+	});
+
+	QUnit.test("The filter produced by the factory function returns true if the model returns unicode string that cotnains query string", function (assert) {
+		// Arrange
+		var fnFilter = this.oOverviewController._unicodeFilterFactory("xe000"),
+			sResult;
+
+		// Act
+		sResult = fnFilter("iconName");
+
+		// Assert
+		assert.ok(sResult, "The unicode of the icon satisfies the query");
+	});
+
+	QUnit.test("The filter produced by the factory function returns false if the model returns unicode string that does not contain query string", function (assert) {
+		// Arrange
+		var fnFilter = this.oOverviewController._unicodeFilterFactory("xe021"),
+			sResult;
+
+		// Act
+		sResult = fnFilter("iconName");
+
+		// Assert
+		assert.notOk(sResult, "The unicode of the icon does not satisfy the query");
+	});
 });

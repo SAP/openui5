@@ -45,6 +45,17 @@ sap.ui.define([
 		}).length;
 	}
 
+	function onlyOneItemInTheListContainTheSearchTerm (sName, oResults) {
+		var aItems = oResults.getItems();
+
+		// only one item is present in the result table
+		if (aItems.length !== 1) {
+			return false;
+		}
+
+		return aItems[0].getCells()[1].getText().indexOf(sName) !== -1;
+	}
+
 	function allItemsInTheListContainTheTag (sTag, sModel, oResults) {
 		var aItems = oResults.getItems();
 
@@ -366,6 +377,20 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The item is in the result set");
 						},
 						errorMessage: "The table did not have items"
+					});
+				},
+
+				theTableContainsOnlyTheIcon: function (sName) {
+					return this.waitFor({
+						id: sResultsId,
+						viewName: sViewName,
+						check:  function () {
+							return onlyOneItemInTheListContainTheSearchTerm.apply(this, [sName].concat(Array.prototype.slice.apply(arguments)));
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Only one single item with the substring '" + sName + "' in the title is in the result set");
+						},
+						errorMessage: "The table does not contain a single item with the substring '"  + sName + "' in its title "
 					});
 				},
 
