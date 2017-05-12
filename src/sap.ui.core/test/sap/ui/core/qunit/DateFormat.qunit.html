@@ -501,6 +501,25 @@
 		assert.notEqual(oTimeStart.parse("PM12:22:52").getTime(), oTimeStart.parse("AM12:22:52").getTime(), "PM/AM info should be correctly considered");
 	});
 
+	QUnit.test("parse time format with variants of am/pm", function(assert) {
+		var aVariants = ["am", "pm", "AM", "PM", "a.m.", "am.", "p.m.", "pm.", "A.M.", "AM.", "P.M.", "PM."];
+		var oFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			pattern: "a"
+		});
+
+		aVariants.forEach(function(sDate) {
+			var oDate = oFormat.parse(sDate);
+			assert.ok(oDate instanceof Date, sDate + " correctly parsed");
+		});
+
+		assert.equal(oFormat.parse("a..m"), null, "Invalid variant can't be parsed");
+
+		oFormat = sap.ui.core.format.DateFormat.getTimeInstance({
+			pattern: "a"
+		}, new sap.ui.core.Locale("de-DE"));
+
+		assert.equal(oFormat.parse("a.m."), null, "the variant can only be parsed in locale where it's supported");
+	});
 
 	/** TODO: Move to sap.ui.core.date.Gregorian
 	QUnit.test("DateFormat.calculateWeekNumber", function(assert) {
