@@ -688,7 +688,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		};
 
 		/**
-		 * Handles the Еsc key and reverts the value in the input field to the previous one.
+		 * Handles the Esc key and reverts the value in the input field to the previous one.
 		 *
 		 * @param {jQuery.Event} oEvent Event object
 		 */
