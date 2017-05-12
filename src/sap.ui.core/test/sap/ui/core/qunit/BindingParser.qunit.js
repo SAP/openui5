@@ -221,6 +221,58 @@ sap.ui.require([
 		assert.strictEqual(o.filters[1].oValue2, "someOtherCompareValue", "compare value should be as defined");
 	});
 
+	QUnit.test("Filter Operator 'Any' with a valid nested filter (value2)", function (assert) {
+		var o = parse("{path:'something', filters: { path: 'someField', operator: 'Any', variable: 'd', condition: { " +
+				"and: true, filters: [" +
+					"{path:'d/someFilterPath', operator:'EQ', value1:'someCompareValue'}," +
+					"{path:'s/someFilterPath2', operator:'BT', value1: 'someCompareValue', value2: 'someOtherCompareValue'}]}}}");
+		assert.strictEqual(typeof o, "object", "parse should return a binding info object");
+		assert.ok(o.filters instanceof Filter, "binding info should contain a single filter");
+		assert.strictEqual(o.filters.sOperator, "Any", "filter should have the expected operator");
+		assert.strictEqual(o.filters.sVariable, "d", "identifier (value1) should remain the same string");
+		assert.ok(o.filters.oCondition instanceof Filter, "nested filter (value2) should be resolved to a Filter object");
+		// some further assertions to check that the nested filter has been resolved properly
+		assert.strictEqual(o.filters.oCondition.bAnd, true, "nested filter should have the 'and' flag set");
+		assert.strictEqual(Array.isArray(o.filters.oCondition.aFilters) ? o.filters.oCondition.aFilters.length : -1, 2, "nested filter should have a filters array of length 2");
+		assert.ok(o.filters.oCondition.aFilters[0] instanceof Filter, "items in filters array also should have been resolved");
+	});
+
+	QUnit.test("Filter Operator 'All' with a valid nested filter (value2)", function (assert) {
+		var o = parse("{path:'something', filters: { path: 'someField', operator: 'All', variable: 'd', condition: { " +
+				"and: true, filters: [" +
+					"{path:'d/someFilterPath', operator:'EQ', value1:'someCompareValue'}," +
+					"{path:'s/someFilterPath2', operator:'BT', value1: 'someCompareValue', value2: 'someOtherCompareValue'}]}}}");
+		assert.strictEqual(typeof o, "object", "parse should return a binding info object");
+		assert.ok(o.filters instanceof Filter, "binding info should contain a single filter");
+		assert.strictEqual(o.filters.sOperator, "All", "filter should have the expected operator");
+		assert.strictEqual(o.filters.sVariable, "d", "identifier (variable) should remain the same string");
+		assert.ok(o.filters.oCondition instanceof Filter, "boolean expression (condition) should be resolved to a Filter object");
+		// some further assertions to check that the nested filter has been resolved properly (not complete)
+		assert.strictEqual(o.filters.oCondition.bAnd, true, "nested filter should have the 'and' flag set");
+		assert.strictEqual(Array.isArray(o.filters.oCondition.aFilters) ? o.filters.oCondition.aFilters.length : -1, 2, "nested filter should have a filters array of length 2");
+		assert.ok(o.filters.oCondition.aFilters[0] instanceof Filter, "items in filters array also should have been resolved");
+	});
+
+	QUnit.test("Filter Operator other than 'Any'/'All' with a nested filter (negative test)", function (assert) {
+		// nested filter should not be resolved for operators other than Any / All
+		var o = parse("{path:'something', filters: { path: 'someField', operator: 'BT', value1: 'd', value2: {path:'d/someFilterPath', operator:'EQ', value1:'someCompareValue'}}}");
+		assert.strictEqual(typeof o, "object", "parse should return an object");
+		assert.ok(o.filters instanceof Filter, "binding info should contain a single filter");
+		assert.strictEqual(o.filters.sOperator, "BT", "filter should have the expected operator");
+		assert.strictEqual(o.filters.oValue1, "d", "value1 should remain the same");
+		assert.strictEqual(typeof o.filters.oValue2, "object", "value2 should be an object...");
+		assert.notOk(o.filters.oValue2 instanceof Filter, "...but not a Filter");
+	});
+
+	QUnit.test("Filter Operator 'Any' with multiple nested filters (negative test)", function (assert) {
+		// A filter with operator 'Any' must not accept multiple (an array of) filters in 'value2'
+		assert.throws(function() {
+			parse("{path:'something', filters: { path: 'someField', operator: 'Any', variable: 'd', condition: [" +
+						"{path:'d/someFilterPath', operator:'EQ', value1:'someCompareValue'}," +
+						"{path:'s/someFilterPath2', operator:'BT', value1: 'someCompareValue', value2: 'someOtherCompareValue'}]}}");
+		}, /operator.*any.*instance.*filter/i, "operator 'Any' shouldn't accept array of conditions");
+	});
+
 	QUnit.test("Single Binding with deeply nested filters", function (assert) {
 		var o = parse("{path:'something', filters: { and:false, filters: [" +
 							"{path:'someFilterPath1', operator:'EQ', value1:'someCompareValue1'}," +
