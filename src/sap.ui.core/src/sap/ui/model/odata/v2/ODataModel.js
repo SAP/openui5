@@ -1488,6 +1488,8 @@ sap.ui.define([
 	 * entity needs to be fetched from the server asynchronously. In case no callback function
 	 * is provided, the request will not be triggered.
 	 *
+	 * If a callback function is given, the created binding context for a fetched entity is passed as argument to the given callback function.
+	 *
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath Binding path
 	 * @param {object} [oContext] Binding context
@@ -1495,9 +1497,9 @@ sap.ui.define([
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
 	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
-	 * @param {function} [fnCallBack] Function to be called when context has been created
+	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
-	 * @return {sap.ui.model.Context} The created binding context
+	 * @return {sap.ui.model.Context} The created binding context, only if the data is already available and the binding context could be created synchronously
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
