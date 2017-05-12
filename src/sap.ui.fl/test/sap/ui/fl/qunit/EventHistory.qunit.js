@@ -5,7 +5,7 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 	"use strict";
 	//sinon.config.useFakeTimers = false;
 	var oSubscribeStub;
-	var oUnsubscribeStub
+	var oUnsubscribeStub;
 
 	QUnit.module("sap.ui.fl.EventHistory", {
 		beforeEach: function() {

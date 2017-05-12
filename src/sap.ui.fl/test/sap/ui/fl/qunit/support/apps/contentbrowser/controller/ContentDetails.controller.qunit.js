@@ -92,7 +92,7 @@ sap.ui.define([
 							fileName : "fileName",
 							fileType : "fileType",
 							namespace : "namespace"
-						}
+						};
 					}
 				};
 			}
@@ -125,7 +125,7 @@ sap.ui.define([
 								name : "layer",
 								value : "VENDOR"
 							}]
-						}
+						};
 					}
 				};
 			}

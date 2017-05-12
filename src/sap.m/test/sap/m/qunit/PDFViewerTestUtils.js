@@ -1,9 +1,13 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
 ], function ($, PDFViewer, JSONModel, Device) {
+	"use strict";
+
 	var testUtils = {};
 
 	testUtils.generateTestSuite = function (name, httpCode, success, expectedOptions) {

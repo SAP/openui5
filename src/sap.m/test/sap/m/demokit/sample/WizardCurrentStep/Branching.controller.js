@@ -31,7 +31,7 @@ sap.ui.define([
 			var pathIds = this.radioBtnGroup.getButtons()[index].getText().split("->");
 			for (var i = 0; i < pathIds.length - 1; i++) {
 				var step = this.getView().byId(pathIds[i]);
-				var nextStep = this.getView().byId(pathIds[i+ 1]);
+				var nextStep = this.getView().byId(pathIds[i + 1]);
 				step.setNextStep(nextStep);
 			}
 
