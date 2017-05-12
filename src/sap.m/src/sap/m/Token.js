@@ -275,6 +275,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * @private
 	 */
 	Token.prototype.ontap = function(oEvent) {
+		if (oEvent.target.id == this._deleteIcon.getId()){
+			return;
+		}
 		this._onTokenPress(oEvent);
 	};
 
