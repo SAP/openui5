@@ -72,27 +72,34 @@ sap.ui.define([
 			oOptions.addContent(new TextView({ text : "Resizable: "}));
 			oOptions.addContent(new CheckBox({
 				checked : oLD.getResizable(),
-				change  : (function(oLayoutData) { return function(oEvent) {
-					oLayoutData.setResizable(oEvent.getParameter("checked"));
-				};})(oLD)
+				change : (function(oLayoutData) {
+					return function(oEvent) {
+						oLayoutData.setResizable(oEvent.getParameter("checked"));
+					};
+				})(oLD)
 			}));
 
 			oOptions.addContent(new TextView({ text : "Size (CSS): " }));
 			oOptions.addContent(new TextField({
 				value : oLD.getSize(),
-				change  : (function(oLayoutData) { return function(oEvent) {
-					oLayoutData.setSize(oEvent.getParameter("newValue"));
-				};})(oLD)
+				change : (function(oLayoutData) {
+					return function(oEvent) {
+						oLayoutData.setSize(oEvent.getParameter("newValue"));
+					};
+				})(oLD)
 			}));
 
+			/*eslint-disable no-loop-func */
 			oOptions.addContent(new TextView({ text : "Min-Size: (in px)" }));
 			oOptions.addContent(new TextField({
 				value : oLD.getMinSize(),
-				change  : (function(oLayoutData) { return function(oEvent) {
-					oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue"), 10));
-				};})(oLD)
+				change : (function(oLayoutData) {
+					return function(oEvent) {
+						oLayoutData.setMinSize(parseInt(oEvent.getParameter("newValue"), 10));
+					};
+				})(oLD)
 			}));
-
+			/*eslint-enable no-loop-func */
 			oOptionsLayout.addContent(oOptions);
 		}
 	},

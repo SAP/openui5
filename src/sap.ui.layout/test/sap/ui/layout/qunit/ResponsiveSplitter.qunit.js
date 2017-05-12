@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 (function () {
 	"use strict";
 
@@ -266,8 +268,8 @@
 	});
 
 	QUnit.test("End", function (assert) {
-		var $SecondPane = jQuery(this.$ResponsiveSplitter.find(".sapUiLoSplitterContent")[1]),
-			iSecondtPaneInitialWidth = $SecondPane.width();
+		var $SecondPane = jQuery(this.$ResponsiveSplitter.find(".sapUiLoSplitterContent")[1]);
+
 		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.END);
 		this.clock.tick(1);
 		assert.strictEqual($SecondPane.width(), 0, "Second Pane should have 0px width");
@@ -313,7 +315,7 @@
 		assert.strictEqual(typeof iRequiredParentWidth, "number", "The default value of the " +
 			"requiredParentWidth property must be of type number");
 		assert.strictEqual(iRequiredParentWidth, 800, "The default value of the requiredParentWidth " +
-			"property should be equal to 800")
+			"property should be equal to 800");
 	});
 
 	QUnit.module("Aria support", {
