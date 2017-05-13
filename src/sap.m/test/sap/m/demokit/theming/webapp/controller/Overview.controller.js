@@ -29,7 +29,6 @@ sap.ui.define([
 
 			this._oPreviousQueryContext = {};
 			this._oCurrentQueryContext = null;
-
 			//Chooses the right fragment depending on the device which is used
 			var sFragment;
 			if (sap.ui.Device.system.desktop){
@@ -2135,23 +2134,23 @@ sap.ui.define([
 			case "Belize":
 			default:
 				sap.ui.getCore().applyTheme("sap_belize");
-				sap.ui.getCore().byId("title").setText("Details for ''Belize''");
+				this.byId("title").setText("Details for ''Belize''");
 				break;
 			case "Blue Crystal":
 				sap.ui.getCore().applyTheme("sap_bluecrystal");
-				sap.ui.getCore().byId("title").setText("Details for ''Blue Crystal''");
+				this.byId("title").setText("Details for ''Blue Crystal''");
 				break;
 			case "High Contrast White":
 				sap.ui.getCore().applyTheme("sap_belize_hcw");
-				sap.ui.getCore().byId("title").setText("Details for ''High Contrast White''");
+				this.byId("title").setText("Details for ''High Contrast White''");
 				break;
 			case "Belize Plus":
 				sap.ui.getCore().applyTheme("sap_belize_plus");
-				sap.ui.getCore().byId("title").setText("Details for ''Belize Plus''");
+				this.byId("title").setText("Details for ''Belize Plus''");
 				break;
 			case "High Contrast Black":
 				sap.ui.getCore().applyTheme("sap_belize_hcb");
-				sap.ui.getCore().byId("title").setText("Details for ''High Contrast Black''");
+				this.byId("title").setText("Details for ''High Contrast Black''");
 				break;
 			}
 		},

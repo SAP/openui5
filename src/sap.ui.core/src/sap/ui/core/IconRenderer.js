@@ -28,11 +28,10 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 			sColor = oControl.getColor(),
 			sBackgroundColor = oControl.getBackgroundColor(),
 			sSize = oControl.getSize(),
-			sTooltip = oControl.getTooltip_AsString(),
-			bUseIconTooltip = oControl.getUseIconTooltip(),
 			bNoTabStop = oControl.getNoTabStop(),
 			aLabelledBy = oControl.getAriaLabelledBy(),
 			oAccAttributes = oControl._getAccessibilityAttributes(),
+			sTitle = oControl._getOutputTitle(),
 			// oInvisibleText must be retrieved after calling _getAccessibilityAttributes
 			// because it may be created within the function
 			oInvisibleText = oControl.getAggregation("_invisibleText");
@@ -41,8 +40,8 @@ sap.ui.define(['jquery.sap.global', './IconPool', './library'], function(jQuery,
 		oRm.writeControlData(oControl);
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
 
-		if (sTooltip || (bUseIconTooltip && oIconInfo && oIconInfo.text)) {
-			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
+		if (sTitle) {
+			oRm.writeAttributeEscaped("title", sTitle);
 		}
 
 		if (oControl.hasListeners("press") && !bNoTabStop) {

@@ -1,0 +1,63 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:commons="sap.ui.commons"
+	xmlns:core="sap.ui.core">
+	<Popover
+		title="{/executionScopeTitle}"
+		contentMinWidth="250px"
+		class="sapUiContentPadding"
+		beforeOpen="onBeforePopoverOpen"
+		placement="Bottom">
+		<content>
+			<VBox>
+				<RadioButton groupName="analyzeContext" text="{/executionScopes/global/displayName}" select="onContextSelect"
+							 selected="{= ${/analyzeContext/key} === 'global'}">
+					<customData>
+						<core:CustomData key="analyzeContext" value="global" />
+					</customData>
+					<tooltip>
+						<commons:RichTooltip text="{/executionScopes/global/description}" atPosition="right top" />
+					</tooltip>
+				</RadioButton>
+				<RadioButton groupName="analyzeContext" text="{/executionScopes/subtree/displayName}" select="onContextSelect"
+							 selected="{= ${/analyzeContext/key} === 'subtree'}">
+					<customData>
+						<core:CustomData key="analyzeContext" value="subtree" />
+					</customData>
+					<tooltip>
+						<commons:RichTooltip text="{/executionScopes/subtree/description}" atPosition="right top" />
+					</tooltip>
+				</RadioButton>
+				<l:VerticalLayout
+					class="sapUiSupportToolSettingsPopoverPadding">
+					<Input
+						placeholder="Input sub-root ID"
+						enabled="{= ${/analyzeContext/key} === 'subtree'}"
+						value="{/subtreeExecutionContextId}"
+						width="300px"
+						liveChange="onExecutionContextChange"/>
+				</l:VerticalLayout>
+				<RadioButton groupName="analyzeContext" text="{/executionScopes/components/displayName}" select="onContextSelect"
+							 selected="{= ${/analyzeContext/key} === 'components'}">
+					<customData>
+						<core:CustomData key="analyzeContext" value="components" />
+					</customData>
+					<tooltip>
+						<commons:RichTooltip text="{/executionScopes/components/description}" atPosition="right top" />
+					</tooltip>
+				</RadioButton>
+				<l:VerticalLayout
+					id="componentsSelectionContainer"
+					content="{/executionScopeComponents}"
+					class="sapUiSupportToolSettingsPopoverPadding">
+					<CheckBox text="{text}"
+							  enabled="{= ${/analyzeContext/key} === 'components'}"
+							  select="onScopeComponentSelect"
+							  selected="{selected}"
+					/>
+				</l:VerticalLayout>
+			</VBox>
+		</content>
+	</Popover>
+</core:FragmentDefinition>

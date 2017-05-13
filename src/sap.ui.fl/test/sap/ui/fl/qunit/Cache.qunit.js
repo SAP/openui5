@@ -86,7 +86,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oInitEntry = {
 			file: {
 				changes: {
-					changes: []
+					changes: [],
+					contexts: []
 				}
 			}
 		};
@@ -106,7 +107,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		var oEntry2 = {
 			mockChanges1: {}
-		}
+		};
 		Cache._entries = {
 			"testComponent1": {
 				"1.2.3": oEntry1
@@ -117,8 +118,23 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		};
 		Cache.clearEntry("testComponent1", "1.2.3");
 		assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), {});
-		Cache.clearEntries({})
+		Cache.clearEntries({});
 		assert.deepEqual(Cache.getEntries(), {});
+	});
+
+	QUnit.test('deleteEntry deletes a single cache entry', function(assert) {
+		var oEntry1 = {
+			mockChanges1: {}
+		};
+		Cache._entries = {
+			"testComponent1": {
+				"1.2.3": oEntry1
+			}
+		};
+		Cache._deleteEntry("testComponent1", "4.5.6");
+		assert.deepEqual(Cache.getEntry("testComponent1", "1.2.3"), oEntry1);
+		Cache._deleteEntry("testComponent1", "1.2.3");
+		assert.equal(Cache._entries["testComponent1"], undefined);
 	});
 
 	QUnit.test('if error occours, subsequent calls in their own execution path should get the chance to make a new request', function(assert) {

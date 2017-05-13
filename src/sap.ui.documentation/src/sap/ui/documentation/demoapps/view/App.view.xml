@@ -4,6 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
+	xmlns:custom="sap.ui.documentation.sdk.controls"
 	displayBlock="true">
 	<App
 		id="app"
@@ -30,14 +31,14 @@
 										class="sapUiSmallMarginBottom"/>
 									<Text
 										text="{i18n>introText2}"
-										class="sapUiMediumMarginBottom"/>
-									<Button
+										class="sapUiSmallMarginBottom"/>
+									<custom:ActionButton
 										id="download"
 										text="{i18n>downloadButtonText}"
 										type="Emphasized"
 										press="onDownloadButtonPress"
 										icon="sap-icon://download">
-									</Button>
+									</custom:ActionButton>
 								</l:VerticalLayout>
 								<Image
 									src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"

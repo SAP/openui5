@@ -16,11 +16,11 @@
 					content: [
 						new Text({text: "Text"})
 					]
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});

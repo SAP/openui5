@@ -32,6 +32,7 @@
 				for (var i = 0; i < aInstances.length; i++) {
 					if (aInstances[i].getMetadata().getName() === "sap.ui.core.UIArea" ||
 						aInstances[i].getMetadata().getName() === "sap.ui.core.InvisibleText" ||
+						aInstances[i].getMetadata().getName() === "sap.ui.core.Popup" ||
 						isInMessageBox(aInstances[i])) {
 						continue;
 					}
@@ -283,12 +284,14 @@
 					items: [ this.oItem ]
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
+				var oStubShow = sinon.stub(sap.m.MessageBox, "show");
 				sap.ui.getCore().byId(this.oItem.getId() + "-deleteButton").firePress();
 				sap.ui.getCore().applyChanges();
 				oCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
 				sap.ui.getCore().applyChanges();
 				oCollection.destroy();
 				checkDestroy(this, assert);
+				oStubShow.restore();
 			});
 
 			QUnit.module("Uploading", {
@@ -389,6 +392,7 @@
 				var oDialog = sap.ui.getCore().byId(oCollection.getId() + "deleteDialog");
 				oDialog.getButtons()[1].firePress();
 				sap.ui.getCore().applyChanges();
+				oDialog.fireEvent("afterClose");
 				oCollection.destroy();
 				checkDestroy(this, assert);
 			});

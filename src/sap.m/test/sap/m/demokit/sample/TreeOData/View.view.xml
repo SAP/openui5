@@ -1,0 +1,19 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+		<MessageStrip
+			text="Currently only a limited amount of data is supported for sap.m.Tree. Please consider to consume the same amount of data as in List based controls, or use sap.ui.table.TreeTable to display large amount of data."
+			showIcon="true"
+			showCloseButton="true"
+			class="sapUiMediumMarginBottom">
+		</MessageStrip>
+	 	<Tree
+		    id="Tree"
+		    items="{path: '/Nodes',
+				    parameters : {
+		                countMode: 'Inline'
+		            }
+            }">
+			<StandardTreeItem title="{Description}"/>
+		</Tree>
+</mvc:View>

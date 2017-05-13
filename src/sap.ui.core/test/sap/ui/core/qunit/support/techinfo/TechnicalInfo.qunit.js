@@ -18,7 +18,7 @@ sap.ui.require([
 		var sBuildDateMinutes = "201704131523";
 		var sBuildDateDash = "20170413-1523";
 
-		// TODO clarify whether timestamps should be parsed in UTC to prevent timezone conversion
+		// TODO: clarify whether timestamps should be parsed in UTC to prevent timezone conversion
 		function equalDate(oDate, iYear, iMonth, iDayInMonth, iHour, iMinutes, iSeconds, sMessage) {
 			assert.equal(oDate.getFullYear(), iYear, sMessage + ", year should be " + iYear);
 			assert.equal(oDate.getMonth(), iMonth - 1, sMessage + ", month should be " + (iMonth - 1));
@@ -49,57 +49,90 @@ sap.ui.require([
 
 	QUnit.module("CustomURLType", {
 		beforeEach: function() {
-			this.oCustomTypeURL =  new TechnicalInfo.CustomTypeURL();
+			this.oCustomTypeURL = new TechnicalInfo.CustomTypeURL();
+			this.oCustomTypeMode = new TechnicalInfo.CustomTypeMode();
 		},
 		afterEach: function() {
 			this.oCustomTypeURL.destroy();
+			this.oCustomTypeMode.destroy();
 		}
 	});
 
-	QUnit.test("Parsing", function(assert) {
+	QUnit.test("URL Parsing", function(assert) {
 		assert.strictEqual(this.oCustomTypeURL.parseValue("something"), "something", "The value remains unchanged during parsing");
 	});
 
-	QUnit.test("Formatting", function(assert) {
+	QUnit.test("URL Formatting", function(assert) {
 		assert.strictEqual(this.oCustomTypeURL.formatValue("something"), "something", "The value remains unchanged during formatting");
 	});
 
-	QUnit.test("Validation", function(assert) {
-		var sHTTPSCDN = "https://sapui5.hana.ondemand.com/resources/sap/ui/support/",
-			sHTTPCustom = "http://my.server:12345/some/deep/path/sap/ui/support/",
-			sFaultyURL1 = "ohSnapThisWontWork/sap/ui/support/",
-			sFaultyURL2 = "http://ohSnapThisWontWork",
-			sFaultyURL3 = "http:///ohSn@pThisWontWork/ !/§&/($ __/sap/ui/support/",
-			sFaultyURL4 = "/sap/ui/support/",
-			sFaultyURL5 = "john:doe@ftp://sap/ui/support/";
+	QUnit.test("URL Validation", function(assert) {
+		var aValidValues = [
+				"https://sapui5.hana.ondemand.com/resources/sap/ui/support/",
+				"http://my.server:12345/some/deep/path/sap/ui/support/"
+			],
+			aInvalidValues = [
+				"ohSnapThisWontWork/sap/ui/support/",
+				"http://ohSnapThisWontWork",
+				"http:///ohSn@pThisWontWork/ !/§&/($ __/sap/ui/support/",
+				"/sap/ui/support/",
+				"john:doe@ftp://sap/ui/support/"
+			];
 
-		assert.ok(this.oCustomTypeURL.validateValue(sHTTPSCDN), "URL '" + sHTTPSCDN + "' is a valid custom bootstrap URL");
-		assert.ok(this.oCustomTypeURL.validateValue(sHTTPCustom), "URL '" + sHTTPCustom + "' is a valid custom bootstrap URL");
-		assert.throws(function() {
-				this.oCustomTypeURL.validateValue(sFaultyURL1);
-			},
+		aValidValues.forEach(function (sValue) {
+			assert.ok(this.oCustomTypeURL.validateValue(sValue), "URL '" + sValue + "' is a valid custom bootstrap URL");
+		}.bind(this));
+		aInvalidValues.forEach(function (sValue) {
+			assert.throws(function () {
+					this.oCustomTypeURL.validateValue(sValue);
+				}.bind(this),
+				ValidateException,
+				"URL '" + sValue + "' is not a valid custom bootstrap URL");
+		}.bind(this));
+	});
+
+	QUnit.test("Mode Parsing", function(assert) {
+		assert.strictEqual(this.oCustomTypeMode.parseValue("something"), "something", "The value remains unchanged during parsing");
+	});
+
+	QUnit.test("Mode Formatting", function(assert) {
+		assert.strictEqual(this.oCustomTypeMode.formatValue("something"), "something", "The value remains unchanged during formatting");
+	});
+
+	QUnit.test("Mode Validation", function(assert) {
+		var aValidValues = [
+				"x",
+				"X",
+				"true",
+				"false",
+				"sap",
+				"sap/ui/",
+				"sap/ui/Device.js",
+				"sap/ui/Device.js,sap/m",
+				"sap/ui/Device.js,sap/m/Button.js",
+				"sap/u*"
+			],
+			aInvalidValues = [
+				"111",
+				"sap is awesome!",
+				"http://www.sapui5.hana.ondemand.com",
+				"\"hello\"",
+				"sap_ui",
+				"\\//\\",
+				"l33th4xx0r",
+				"alert('here');"
+			];
+
+		aValidValues.forEach(function (sValue) {
+			assert.ok(this.oCustomTypeMode.validateValue(sValue), "mode '" + sValue + "' is a valid custom debug mode");
+		}.bind(this));
+		aInvalidValues.forEach(function (sValue) {
+			assert.throws(function () {
+				this.oCustomTypeMode.validateValue(sValue);
+			}.bind(this),
 			ValidateException,
-			"URL '" + sFaultyURL1 + "' is not a valid custom bootstrap URL");
-		assert.throws(function() {
-				this.oCustomTypeURL.validateValue(sFaultyURL2);
-			},
-			ValidateException,
-			"URL '" + sFaultyURL2 + "' is not a valid custom bootstrap URL");
-		assert.throws(function() {
-				this.oCustomTypeURL.validateValue(sFaultyURL3);
-			},
-			ValidateException,
-			"URL '" + sFaultyURL3 + "' is not a valid custom bootstrap URL");
-		assert.throws(function() {
-				this.oCustomTypeURL.validateValue(sFaultyURL4);
-			},
-			ValidateException,
-			"URL '" + sFaultyURL4 + "' is not a valid custom bootstrap URL");
-		assert.throws(function() {
-				this.oCustomTypeURL.validateValue(sFaultyURL5);
-			},
-			ValidateException,
-			"URL '" + sFaultyURL5 + "' is not a valid custom bootstrap URL");
+			"Mode '" + sValue + "' is not a valid custom debug mode");
+		}.bind(this));
 	});
 
 	QUnit.module("SaveLocalStorageDefault");
@@ -181,6 +214,7 @@ sap.ui.require([
 				"SelectedLocation",
 				"OpenUI5ProductVersion",
 				"OpenUI5ProductTimestamp",
+				"DebugModuleSelectionCount",
 				"ProductVersion",
 				"ProductTimestamp",
 				"SupportAssistantPopoverURLs",

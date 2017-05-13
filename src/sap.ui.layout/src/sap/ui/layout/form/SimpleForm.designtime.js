@@ -250,6 +250,17 @@ sap.ui.define([], function() {
 			content : {
 				ignore : true
 			},
+			title : {
+				ignore : true
+			},
+			toolbar : {
+				ignore : function(oSimpleForm){
+					return !oSimpleForm.getToolbar();
+				},
+				domRef : function(oSimpleForm){
+					return oSimpleForm.getToolbar().getDomRef();
+				}
+			},
 			form : {
 				ignore : false,
 				propagateMetadata : function(oElement){

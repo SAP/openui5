@@ -1,4 +1,8 @@
+/*global QUnit,sinon*/
+
 (function (QUnit, sinon, core, controller, xmlview) {
+	"use strict";
+
 	sap.ui.require(["jquery.sap.global"], function (jQuery) {
 
 		jQuery.sap.registerModulePath("view", "./view");
@@ -13,7 +17,7 @@
 				sinon.config.useFakeTimers = true;
 				this.objectPageSampleView.placeAt("qunit-fixture");
 				core.applyChanges();
-				this.oObjectPage = this.objectPageSampleView.byId("objectPage162")
+				this.oObjectPage = this.objectPageSampleView.byId("objectPage162");
 			},
 			afterEach: function () {
 				this.objectPageSampleView.destroy();

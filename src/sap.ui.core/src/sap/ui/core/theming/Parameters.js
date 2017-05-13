@@ -8,8 +8,8 @@
  * @public
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
-	function(jQuery, URI, Element) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jquery.sap.sjax'],
+	function(jQuery, URI, Element /*, jQuerySap1 */) {
 	"use strict";
 
 	var oCfgData = window["sap-ui-config"] || {};
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element'],
 		 * @private
 		 * @sap-restricted sap.viz
 		 * @param {object} oElement element/control instance
-		 * @return {array<array<string>>} Two dimensional array with scopes in bottom up order
+		 * @return {Array.<Array.<string>>} Two dimensional array with scopes in bottom up order
 		 */
 		Parameters.getActiveScopesFor = function(oElement) {
 			var aScopeChain = [];

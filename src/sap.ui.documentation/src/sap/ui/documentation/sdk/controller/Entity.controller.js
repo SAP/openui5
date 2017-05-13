@@ -34,19 +34,11 @@ sap.ui.define([
 					// We need to execute this after the library component info is loaded
 					jQuery.sap.delayedCall(0, this, this._loadSample);
 				}.bind(this));
-			},
 
-			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				this.getView().setModel(new JSONModel());
 			},
 
 			onExit: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
@@ -144,7 +136,7 @@ sap.ui.define([
 
 					// route to not found page IF there is NO index entry AND NO docu from server
 					if (!oEntity && !oDoc) {
-						this.router.myNavToWithoutHash("sap.ui.demokit.explored.view.notFound", "XML", false, {path: sNewId});
+						this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, {path: sNewId});
 						return;
 					}
 
@@ -152,11 +144,8 @@ sap.ui.define([
 					oData = this._getViewData(sNewId, oDoc, oEntity);
 
 					// set view model
-					var oModel = new JSONModel(oData);
-					this.getView().setModel(oModel);
+					this.getView().getModel().setData(oData, false /* no merge with previous data */);
 
-					// set also the binding context for entity data
-					// this.getView().bindElement("entity>" + sPath);
 
 					// done, we can now switch the id
 					this._sId = sNewId;
@@ -236,7 +225,7 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
-					values: [], // for enums!
+					values: oDoc.values,
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
 						about: !!oDoc,
@@ -254,19 +243,8 @@ sap.ui.define([
 					return oData;
 				}
 
-				// fill data
-				for (var key in oDoc.values) {
-					if (oDoc.values.hasOwnProperty(key) && key.indexOf("_") !== 0) {
-						var oValue = oDoc.values[key];
-						oValue.name = key;
-						oValue.deprecatedDescription = this._formatDeprecatedDescription(oValue.deprecation);
-						oValue.deprecated = this._formatDeprecated(oValue.deprecation);
-						oData.values.push(oValue);
-					}
-				}
-
 				// determine if the parts shall be shown
-				oData.show.values = oData.values.length > 0;
+				oData.show.values = Array.isArray(oData.values) && oData.values.length > 0;
 
 				return oData;
 			},

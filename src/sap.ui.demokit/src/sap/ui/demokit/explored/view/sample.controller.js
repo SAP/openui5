@@ -71,8 +71,9 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			// set page title
 			oPage.setTitle("Sample: " + oSample.name);
 
+			var oContent;
 			try {
-				var oContent = this._createComponent();
+				oContent = this._createComponent();
 			} catch (ex) {
 				oPage.removeAllContent();
 				oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
@@ -131,7 +132,7 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 				this.sIFrameUrl = SampleController._createIFrameURL(vIframe, sSampleId);
 			} else {
 				jQuery.sap.log.error("no iframe source was provided");
-				return;
+				return null;
 			}
 
 			// destroy previous sample iframe
@@ -158,7 +159,6 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			});
 
 			return oHtmlControl;
-
 		},
 
 		_createComponent : function () {

@@ -27,6 +27,8 @@
 				<l:BlockLayoutCell
 					class="sapUiResponsiveContentPadding sapUiSmallMarginBegin"
 					title="{i18n>shopAdminTitle}"
+					backgroundColorSet="9"
+					backgroundColorIndex="2"
 					titleAlignment="Left"/>
 			</l:BlockLayoutRow>
 
@@ -36,7 +38,7 @@
 						<core:Icon
 							src="sap-icon://role"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>administrationTitle}"
 							titleStyle="H2"
@@ -53,7 +55,7 @@
 						<core:Icon
 							src="sap-icon://add-product"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>productTitle}"
 							titleStyle="H2"
@@ -70,7 +72,7 @@
 						<core:Icon
 							src="sap-icon://customer-financial-fact-sheet"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>revenueTitle}"
 							titleStyle="H2"
@@ -87,7 +89,7 @@
 						<core:Icon
 							src="sap-icon://supplier"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>supplierTitle}"
 							titleStyle="H2"
@@ -107,7 +109,7 @@
 						<core:Icon
 							src="sap-icon://thumb-up"
 							size="2.5rem"
-							color="#346187"/>
+							color="Default"/>
 						<Title
 							text="{i18n>socialMediaTitle}"
 							titleStyle="H2"
@@ -121,10 +123,12 @@
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 					class="sapUiNoContentPadding"
+					backgroundColorSet="9"
+					backgroundColorIndex="2"
 					width="3">
 					<Table
 						items="{path:'customer>/customers', templateShareable: false}"
-						class="customerTable sapUiContentPadding">
+						class="sapUiContentPadding">
 						<headerToolbar>
 							<Toolbar design="Transparent">
 								<Title text="{i18n>customerOverviewTitle}"/>

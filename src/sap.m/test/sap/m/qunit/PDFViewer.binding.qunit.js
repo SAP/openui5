@@ -1,8 +1,12 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel"
 ], function (TestUtils, PDFViewer, JSONModel) {
+	"use strict";
+
 	var oPdfViewer = null;
 
 	QUnit.module('Bindings usage', {
@@ -21,7 +25,7 @@ sap.ui.define([
 		var loadDone = assert.async();
 
 		var oModel = new JSONModel({
-			source: '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf'
+			source: "./pdfviewer/sample-file.pdf"
 		});
 
 		var oOptions = {
@@ -46,7 +50,7 @@ sap.ui.define([
 		var loadDone2 = assert.async();
 
 		var oModel = new JSONModel({
-			source: '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf'
+			source: "./pdfviewer/sample-file.pdf"
 		});
 
 		var fnLoadHandler1 = function () {
@@ -71,7 +75,7 @@ sap.ui.define([
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
-			var sExpectedSource = "/test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf";
+			var sExpectedSource = "./pdfviewer/sample-file2.pdf";
 			oModel.setData({
 				"source": sExpectedSource
 			});
@@ -95,7 +99,7 @@ sap.ui.define([
 		var loadDone2 = assert.async();
 
 		var oModel = new JSONModel({
-			source: '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf'
+			source: "./pdfviewer/sample-file.pdf"
 		});
 
 		var fnLoadHandler1 = function () {
@@ -121,7 +125,7 @@ sap.ui.define([
 			oPdfViewer.detachLoaded(fnLoadHandler1);
 			oPdfViewer.attachLoaded(fnLoadHandler2);
 
-			var sExpectedSource = '/test-resources/sap/m/qunit/pdfviewer/sample-file2.pdf';
+			var sExpectedSource = "./pdfviewer/sample-file2.pdf";
 			oPdfViewer.setSource(sExpectedSource);
 			assert.equal(oModel.getProperty('/source'), sExpectedSource);
 

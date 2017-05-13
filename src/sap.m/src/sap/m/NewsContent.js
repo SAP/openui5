@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text'],
-	function(jQuery, library, Control, Text) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/Device' ],
+	function(jQuery, library, Control, Text, Device) {
 	"use strict";
 
 	/**
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 * Updates the size of the chart. If not set then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The NewsContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
+				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : "Auto"},
 				/**
 				 * The content text.
 				 */
@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	NewsContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			this.$().focus();
 		}
 		this.firePress();
@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	NewsContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
-		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
+		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
 			this._setPointerOnContentText();
@@ -203,7 +203,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	NewsContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
-		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
+		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
 			this._setPointerOnContentText();
@@ -212,4 +212,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	return NewsContent;
-}, /* bExport= */ true);
+});

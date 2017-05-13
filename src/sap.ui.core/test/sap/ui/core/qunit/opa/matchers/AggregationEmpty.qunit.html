@@ -10,13 +10,14 @@
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m">
 		</script>
+		<script src="../../_includeQUnit.js"></script>
 
 
 		<script>
-			jQuery.sap.require("sap.ui.qunit.qunit-css");
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
 
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationEmpty",
@@ -68,6 +69,9 @@
 					// Assert
 					assert.strictEqual(bResult, false, "Did not match");
 				});
+
+				QUnit.start();
+
 		});
 
 		</script>

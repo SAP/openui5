@@ -54,7 +54,7 @@
 					aFilters.push(new sap.ui.model.Filter("lname", sap.ui.model.FilterOperator.Contains , sSearchValue));
 					aFilters.push(new sap.ui.model.Filter("ean13", sap.ui.model.FilterOperator.Contains , sSearchValue));
 					aFilters.push(new sap.ui.model.Filter("ean8", sap.ui.model.FilterOperator.Contains , sSearchValue));
-					aFilters.push(new sap.ui.model.Filter("qty", sap.ui.model.FilterOperator.Contains , sSearchValue));
+					aFilters.push(new sap.ui.model.Filter("quantity", sap.ui.model.FilterOperator.Contains , sSearchValue));
 					aFilters.push(new sap.ui.model.Filter("limit", sap.ui.model.FilterOperator.Contains , sSearchValue));
 					aFilters.push(new sap.ui.model.Filter("backorder", sap.ui.model.FilterOperator.Contains , sSearchValue));
 					aFilters.push(new sap.ui.model.Filter("price", sap.ui.model.FilterOperator.Contains , sSearchValue));
@@ -104,27 +104,27 @@
 		var oProductData1 = {
 		items : [{
 				name : "Headphone",
-				qty : "10 EA",
+				quantity : "10 EA",
 				limit : "15.00 Eur",
 				price : "12.00 EUR"
 			}, {
 				name : "Mouse Pad",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "5.00 Eur",
 				price : "3.00 EUR"
 			}, {
 				name : "Monitor",
-				qty : "8 EA",
+				quantity : "8 EA",
 				limit : "60.00 Eur",
 				price : "45.00 EUR"
 			}, {
 				name : "Optic Mouse",
-				qty : "2 EA",
+				quantity : "2 EA",
 				limit : "40.00 Eur",
 				price : "15.00 EUR"
 			}, {
 				name : "Dock Station",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "90.00 Eur",
 				price : "55.00 EUR"
 			}]
@@ -139,27 +139,27 @@
 		var oProductData2 = {
 			items : [{
 				name : "Tablet",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "150.00 Eur",
 				price : "120.00 EUR"
 			}, {
 				name : "Docking Station",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "15.00 Eur",
 				price : "13.00 EUR"
 			}, {
 				name : "DVD-R",
-				qty : "10 EA",
+				quantity : "10 EA",
 				limit : "6.00 Eur",
 				price : "4.00 EUR"
 			}, {
 				name : "Headset",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "20.00 Eur",
 				price : "15.00 EUR"
 			}, {
 				name : "Power Supply",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "32.00 Eur",
 				price : "20.00 EUR"
 			}]
@@ -177,7 +177,7 @@
 				lname : "Headphone 1234567890120 12345678",
 				ean13 : "1234567890120",
 				ean8 : "12345678",
-				qty : "10 EA",
+				quantity : "10 EA",
 				limit : "15.00 Eur",
 				backorder : "10,000",
 				price : "12.00 EUR"
@@ -186,7 +186,7 @@
 				lname : "Mouse Pad 1234565544123 1234565544123",
 				ean13 : "1234565544123",
 				ean8 : "1234565544123",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "5.00 Eur",
 				backorder : "25,000",
 				price : "3.00 EUR"
@@ -195,7 +195,7 @@
 				lname : "Monitor 1234565544133 15675678",
 				ean13 : "1234565544133",
 				ean8 : "15675678",
-				qty : "8 EA",
+				quantity : "8 EA",
 				limit : "60.00 Eur",
 				backorder : "125,000",
 				price : "45.00 EUR"
@@ -204,7 +204,7 @@
 				lname : "Optic Mouse 2222365544133 15232678",
 				ean13 : "2222365544133",
 				ean8 : "15232678",
-				qty : "2 EA",
+				quantity : "2 EA",
 				limit : "40.00 Eur",
 				backorder : "125,500",
 				price : "15.00 EUR"
@@ -213,7 +213,7 @@
 				lname : "Dock Station 2221121244133 15675222",
 				ean13 : "2221121244133",
 				ean8 : "15675222",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "90.00 Eur",
 				backorder : "25,000",
 				price : "55.00 EUR"
@@ -222,7 +222,7 @@
 				lname : "Dock Station 2221121244133 15675222",
 				ean13 : "2221121244133",
 				ean8 : "15675222",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "90.00 Eur",
 				backorder : "25,000",
 				price : "55.00 EUR"
@@ -231,7 +231,7 @@
 				lname : "Dock Station 2221121244133 15675222",
 				ean13 : "2221121244133",
 				ean8 : "15675222",
-				qty : "1 EA",
+				quantity : "1 EA",
 				limit : "90.00 Eur",
 				backorder : "25,000",
 				price : "55.00 EUR"
@@ -243,6 +243,44 @@
 		oModel3.setDefaultBindingMode("OneWay");
 		oModel3.setData(oProductData3);
 
+		var fnCreateSimpleDialogColumns = function () {
+			return [
+				new sap.m.Column({
+					hAlign: "Begin",
+					header: new sap.m.Label({
+						text: "Name"
+					})
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "Quantity"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					width: "30%",
+					header: new sap.m.Label({
+						text: "Value"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					width: "30%",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "Price"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				})];
+		};
+
 		// create our new Table Select Dialog
 		var oTableSelectDialog1 = new sap.m.TableSelectDialog("TableSelectDialog1", {
 			title: "Choose a piece of tech",
@@ -250,44 +288,7 @@
 			search : fnDoSearch,
 			liveChange: fnDoSearch,
 			columns : [
-				new sap.m.Column({
-					styleClass : "name",
-					hAlign : "Begin",
-					header : new sap.m.Label({
-						text : "Name"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					styleClass : "qty",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Qty"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					styleClass : "limit",
-					width : "30%",
-					header : new sap.m.Label({
-						text : "Value"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					styleClass : "price",
-					width : "30%",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
+				fnCreateSimpleDialogColumns()
 			]
 		});
 
@@ -300,7 +301,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}"
+					text: "{quantity}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -318,7 +319,7 @@
 					text : "{name}"
 				}),
 				new sap.m.Label({
-					text: "{qty}"
+					text: "{quantity}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -343,7 +344,7 @@
 				}),  new sap.m.Label({
 					text : "{ean8}"
 				}),  new sap.m.Label({
-					text: "{qty}"
+					text: "{quantity}"
 				}), new sap.m.Label({
 					text: "{limit}"
 				}), new sap.m.Label({
@@ -408,44 +409,7 @@
 			search : fnDoSearch,
 			liveChange: fnDoSearch,
 			columns : [
-				new sap.m.Column({
-					styleClass : "name",
-					hAlign : "Begin",
-					header : new sap.m.Label({
-						text : "Name"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					styleClass : "qty",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Qty"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					styleClass : "limit",
-					width : "30%",
-					header : new sap.m.Label({
-						text : "Value"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					styleClass : "price",
-					width : "30%",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
+				fnCreateSimpleDialogColumns()
 			]
 		});
 
@@ -482,40 +446,7 @@
 			search : fnDoSearch,
 			liveChange: fnDoSearch,
 			columns : [
-				new sap.m.Column({
-					hAlign : "Begin",
-					header : new sap.m.Label({
-						text : "Name"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Qty"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					width : "30%",
-					header : new sap.m.Label({
-						text : "Value"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					width : "30%",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
+				fnCreateSimpleDialogColumns()
 			]
 		});
 
@@ -553,38 +484,7 @@
 			search : fnDoSearch,
 			liveChange: fnDoSearch,
 			columns : [
-				new sap.m.Column({
-					hAlign : "Begin",
-					header : new sap.m.Label({
-						text : "Name"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Qty"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					header : new sap.m.Label({
-						text : "Value"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
+				fnCreateSimpleDialogColumns()
 			]
 		});
 
@@ -620,6 +520,23 @@
 			}
 		});
 
+		var fnCreateColumsForDialog5 = function () {
+			var aColumns = fnCreateSimpleDialogColumns();
+			var oColumn = new sap.m.Column({
+				hAlign: "Center",
+				width: "150px",
+				popinDisplay: "Inline",
+				header: new sap.m.Label({
+					text: "Back Order"
+				}),
+				minScreenWidth: "Tablet",
+				demandPopin: true
+			});
+
+			aColumns.splice(3, 0, oColumn);
+			return aColumns;
+		};
+
 		/* 5) multi select table dialog with large binding */
 		var oTableSelectDialog5 = new sap.m.TableSelectDialog("TableSelectDialog5", {
 			title: "Choose several extended tech products",
@@ -628,52 +545,7 @@
 			search : fnDoSearch,
 			liveChange: fnDoSearch,
 			columns : [
-				new sap.m.Column({
-					width : "150px",
-					hAlign : "Begin",
-					header : new sap.m.Label({
-						text : "Name"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					width : "90px",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Qty"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					width : "100px",
-					header : new sap.m.Label({
-						text : "Value"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					width : "150px",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Back Order"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					width : "150px",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
+				fnCreateColumsForDialog5()
 			]
 		});
 
@@ -759,7 +631,7 @@
 					width : "190px",
 					popinDisplay : "Inline",
 					header : new sap.m.Label({
-						text : "Qty"
+						text : "Quantity"
 					}),
 					minScreenWidth : "Tablet",
 					demandPopin : true
@@ -849,6 +721,46 @@
 			}
 		});
 
+		var fnCreateDialogColumns = function (aColumnsNames) {
+			return [
+				new sap.m.Column({
+					hAlign: "Begin",
+					header: new sap.m.Label({
+						text: aColumnsNames[0]
+					})
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "Quantity",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: aColumnsNames[1]
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					width: "30%",
+					header: new sap.m.Label({
+						text: aColumnsNames[2]
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					width: "30%",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: aColumnsNames[3]
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				})
+			];
+		};
+
 		/* 8) table select dialog with web service binding, prefiltered by "id_1" */
 		var oTableSelectDialog8 = new sap.m.TableSelectDialog("TableSelectDialog8", {
 			title: "Choose an extended tech products",
@@ -856,46 +768,9 @@
 			multiSelect: true,
 			search : fnDoProductSearch,
 			liveChange: fnDoProductSearch,
-			columns : [
-					new sap.m.Column({
-						styleClass : "name",
-						hAlign : "Begin",
-						header : new sap.m.Label({
-							text : "ID"
-						})
-					}),
-					new sap.m.Column({
-						hAlign : "Center",
-						styleClass : "qty",
-						popinDisplay : "Inline",
-						header : new sap.m.Label({
-							text : "Name"
-						}),
-						minScreenWidth : "Tablet",
-						demandPopin : true
-					}),
-					new sap.m.Column({
-						hAlign : "End",
-						styleClass : "limit",
-						width : "30%",
-						header : new sap.m.Label({
-							text : "Price"
-						}),
-						minScreenWidth : "Tablet",
-						demandPopin : true
-					}),
-					new sap.m.Column({
-						hAlign : "End",
-						styleClass : "price",
-						width : "30%",
-						popinDisplay : "Inline",
-						header : new sap.m.Label({
-							text : "Weight"
-						}),
-						minScreenWidth : "Tablet",
-						demandPopin : true
-					})
-				]
+			columns: [
+				fnCreateDialogColumns(["ID", "Name", "Price", "Weight"])
+			]
 		});
 
 		// attach confirm listener
@@ -958,45 +833,8 @@
 			multiSelect: true,
 			search : fnDoProductSearch,
 			liveChange: fnDoProductSearch,
-			columns : [
-				new sap.m.Column({
-					styleClass : "name",
-					hAlign : "Begin",
-					header : new sap.m.Label({
-						text : "ID"
-					})
-				}),
-				new sap.m.Column({
-					hAlign : "Center",
-					styleClass : "qty",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Name"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					styleClass : "limit",
-					width : "30%",
-					header : new sap.m.Label({
-						text : "Currency"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				}),
-				new sap.m.Column({
-					hAlign : "End",
-					styleClass : "price",
-					width : "30%",
-					popinDisplay : "Inline",
-					header : new sap.m.Label({
-						text : "Price"
-					}),
-					minScreenWidth : "Tablet",
-					demandPopin : true
-				})
+			columns: [
+				fnCreateDialogColumns(["ID", "Name", "Currency", "Price"])
 			]
 		});
 

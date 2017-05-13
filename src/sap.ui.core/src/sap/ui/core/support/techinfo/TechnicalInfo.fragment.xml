@@ -18,7 +18,7 @@
 					class="sapUiTinyMarginBegin"
 					icon="sap-icon://copy"
 					tooltip="{i18n>TechInfo.CopyButton.Tooltip}"
-					press="onCopyToClipboard"/>
+					press="onCopyTechnicalInfoToClipboard"/>
 				<Button
 					icon="sap-icon://sys-help"
 					tooltip="{i18n>TechInfo.HelpButton.Tooltip}"
@@ -108,6 +108,9 @@
 						id="debugMode"
 						selected="{view>/DebugMode}"
 						select="onDebugSources"/>
+					<Link
+						text="{i18n>TechInfo.DebugSourcesModules.Link}"
+						press="onConfigureDebugModules"/>
 				</HBox>
 			</f:content>
 		</f:SimpleForm>

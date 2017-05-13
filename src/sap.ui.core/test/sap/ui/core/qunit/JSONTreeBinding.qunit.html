@@ -795,6 +795,152 @@
 		assert.equal(oBinding.getChildCount(oContext), 0, "getChildCount(oContext) returns the correct number of child nodes (0)");
 	});
 
+	QUnit.module("Unsupported Filters", {
+		beforeEach: function () {
+			setup();
+		},
+
+		getErrorWithMessage: function(sFilter) {
+			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
+		}
+	});
+
+	QUnit.test("constructor - Any/All are rejected", function (assert) {
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
+				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+
+				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+
+				oModel.bindTree("/teamMembers", undefined, [oMultiFilter]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+	});
+
+	QUnit.test("filter() - Any/All are rejected", function(assert) {
+		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
+
+		// "Any" at last position fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
+				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				oTreeBinding.filter([oFilter, oFilter2]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+
+		// "All" at first position fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
+				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				oTreeBinding.filter([oFilter, oFilter2]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+
+		// Multifilter containing "All" or "Any" fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition: new sap.ui.model.Filter()});
+				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+
+				var oMultiFilter = new sap.ui.model.Filter({
+					filters: [oFilter, oFilter2],
+					and: false
+				});
+
+				oTreeBinding.filter([oMultiFilter]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+
+		// Multifilter containing "All" or "Any" fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
+				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id4", condition: new sap.ui.model.Filter()});
+
+				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+
+				oTreeBinding.filter([oMultiFilter]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+	});
+
+	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
+		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
+
+		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
+		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
+		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
+		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new sap.ui.model.Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new sap.ui.model.Filter({
+			filters: [oMultiFilter2, oFilter4],
+			and: true
+		});
+
+		assert.throws(
+			function() {
+				oTreeBinding.filter([oMultiFilter3]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
+		);
+	});
+
+	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
+		var oTreeBinding = oModel.bindTree("/teamMembers", undefined, []);
+
+		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
+		var oFilter2 = new sap.ui.model.Filter({
+			path: "y",
+			operator: sap.ui.model.FilterOperator.All,
+			variable: "id1",
+			condition: new sap.ui.model.Filter([
+				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
+				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			], true)
+		});
+		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
+		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new sap.ui.model.Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new sap.ui.model.Filter({
+			filters: [oMultiFilter2, oFilter4],
+			and: true
+		});
+
+		assert.throws(
+			function() {
+				oTreeBinding.filter([oMultiFilter3]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
+		);
+	});
+
 	</script>
 
 </head>

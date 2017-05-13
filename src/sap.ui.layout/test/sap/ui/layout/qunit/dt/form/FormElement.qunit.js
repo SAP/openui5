@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	"use strict";
 
@@ -47,11 +49,11 @@
 					fields: [
 						new Input()
 					]
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function(oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});
@@ -73,7 +75,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
+						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
 						'<f:FormContainer>' +
@@ -117,7 +119,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
+						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
 						'<f:FormContainer>' +
@@ -146,7 +148,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
+						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
 						'<f:FormContainer>' +

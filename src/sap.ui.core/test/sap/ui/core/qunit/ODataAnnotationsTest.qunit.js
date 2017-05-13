@@ -61,6 +61,7 @@ function fnCreateModel(iModelVersion, sServiceUrl, aAnnotationUrls, mMetadataUrl
 
 
 jQuery.sap.require("sap.ui.model.odata.ODataModel");
+jQuery.sap.require("jquery.sap.sjax");
 function cleanOdataCache() {
 	sap.ui.model.odata.ODataModel.mServiceData = {};
 	sap.ui.model.odata.v2.ODataModel.mServiceData = {};

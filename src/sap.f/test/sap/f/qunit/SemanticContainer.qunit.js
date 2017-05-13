@@ -1,3 +1,5 @@
+/* global QUnit,sinon,SemanticUtil*/
+
 (function ($, QUnit, sinon) {
 	"use strict";
 
@@ -242,7 +244,7 @@
 			"The second action is inserted as first at index: " + iContentIdx);
 
 		// Act
-		iContentCount --;
+		iContentCount--;
 		this.oSemanticTitle.removeCustomTextAction(oButton2);
 		assert.equal(this.oSemanticTitle.indexOfCustomTextAction(oButton2), -1,
 			"The second action has been removed");
@@ -298,7 +300,7 @@
 			"The second action is inserted as first at index: " + iContentIdx);
 
 		// Act
-		iContentCount --;
+		iContentCount--;
 		this.oSemanticTitle.removeCustomIconAction(oButton2);
 		assert.equal(this.oSemanticTitle.indexOfCustomIconAction(oButton2), -1,
 			"The second action has been removed");
@@ -439,7 +441,7 @@
 			"The second action is inserted as first at index: " + iContentIdx);
 
 		// Act
-		iContentCount --;
+		iContentCount--;
 		this.oSemanticFooter.removeCustomAction(oButton2);
 		assert.equal(this.oSemanticFooter.indexOfCustomAction(oButton2), -1,
 			"The second action has been removed");
@@ -702,7 +704,7 @@
 			"The second action is inserted as first at index: " + iContentIdx);
 
 		// Act
-		iContentCount --;
+		iContentCount--;
 		this.oSemanticShareMenu.removeCustomAction(oButton2);
 		assert.equal(this.oSemanticShareMenu.indexOfCustomAction(oButton2), -1,
 			"The second action has been removed");

@@ -3,7 +3,7 @@
  */
 
 // Provides reuse functionality for reading documentation from metamodel entities
-sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './APIInfo'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanalyzer/ModuleAnalyzer', './APIInfo'],
 	function(jQuery, analyzer, APIInfo) {
 	"use strict";
 
@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './APIInfo'],
 
 		if (!sLibraryName) {
 			var oClass = jQuery.sap.getObject(sEntityName);
-			if (oClass.getMetadata) {
+			if (oClass && oClass.getMetadata) {
 				var oMetadata = oClass.getMetadata();
 				if (oMetadata.getLibraryName) {
 					sLibraryName = oMetadata.getLibraryName();
@@ -243,7 +243,8 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './APIInfo'],
 					doc: oEntity.description,
 					module: oEntity.module,
 					name: oEntity.name,
-					since: oEntity.since
+					since: oEntity.since,
+					values: oEntity.properties
 				};
 
 				oPackageInfo.__noSource = true;
@@ -259,6 +260,9 @@ sap.ui.define(['jquery.sap.global', './jsanalyzer/ModuleAnalyzer', './APIInfo'],
 			// If not a control try to load type
 			if ( !oEntityDoc) {
 				oEntityDoc = load(sEntityName, ".type", "xml", parseTypeMetamodel, sEntityName);
+			}
+			if ( !oEntityDoc ) {
+				oEntityDoc = load(sEntityName, ".js", "text", parseJavascript, sEntityName);
 			}
 			if ( oEntityDoc ) {
 				oPackageInfo.__noSource = true;

@@ -1,8 +1,12 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
 	"sap/ui/model/json/JSONModel"
 ], function (TestUtils, PDFViewer, JSONModel) {
+	"use strict";
+
 	var oPdfViewer = null;
 
 	QUnit.module('No plugin use cases', {
@@ -21,7 +25,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oModel = new JSONModel({
-			source: '/test-resources/sap/m/qunit/pdfviewer/sample-file.pdf'
+			source: "./pdfviewer/sample-file.pdf"
 		});
 
 		var oOptions = {

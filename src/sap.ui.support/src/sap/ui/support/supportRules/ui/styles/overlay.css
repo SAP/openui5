@@ -1,0 +1,119 @@
+body {
+	background: #fff;
+	content: "SupportTools loading...";
+}
+
+.sapUiSupportToolSettingsPopoverPadding {
+    padding-left: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.supportAnalyzeButton>span {
+	border-radius: 4px 0px 0px 4px;
+}
+
+.supportSettingsButton {
+	margin-left: 0 !important;
+}
+
+.supportSettingsButton>span {
+	border-radius: 0px 4px 4px 0px;
+}
+
+.sapMITBContent {
+	height: 400px;
+}
+
+.topLabel {
+	position: absolute;
+	top: 8px;
+	font-style: monospace;
+	font-size: 0.75rem;
+	cursor: pointer;
+	color: #fff;
+}
+
+.STHelpIcon {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+
+.issueReason {
+	font-weight: bolder !important;
+}
+
+.sapMPanelWrappingDiv>h1, .sapUiFormTitle {
+	height: 2rem !important;
+	line-height: 2rem !important;
+}
+
+.sapMPanelContent {
+	padding: 0rem 0.1rem 0.1rem 0rem !important;
+}
+
+.sapMLIB {
+	height: auto !important;
+}
+
+.sapMSLIImgIcon {
+	font-size: 1rem !important;
+}
+
+.sapMSLITitle {
+	font-size: 0.875rem !important;
+	padding-bottom: 0.125rem;
+}
+
+.customIconTabHeader {
+	display: inline-block;
+	height: 1.96rem;
+}
+
+.customIconTabHeader .sapMITBHead {
+	height: 1.95rem;
+	margin: 0;
+}
+
+.customIconTabHeader .sapMITBText {
+	margin: 0 !important;
+	margin-top: 6px !important;
+}
+
+.customIconTabHeader .sapMITBContentArrow {
+	height: 0.55rem !important;
+}
+
+.customIconTabHeader {
+	border-bottom: none !important;
+	box-shadow: none !important;
+}
+
+.customIconTabHeader .sapMITBScrollContainer, .sapMITBHead {
+	padding: 0 !important;
+	padding-left: 1px !important;
+}
+
+.customMargin {
+	margin-left: 0.25rem !important;
+	margin-right: 0.25rem !important;
+}
+
+.sapUiSupportToolIssuesPage > section {
+	top: 6rem !important;
+}
+
+.supportUrlUpload {
+	margin: 2px;
+}
+
+.sapMLIBContent .sapMILILabel {
+	max-width: 20rem;
+}
+
+.sapUiSizeCompact .sapMPageHeader.sapMIBar .sapMBarLeft, .sapUiSizeCompact .sapMPageFooter.sapMIBar .sapMBarLeft, .sapUiSizeCompact .sapMPageHeader.sapMIBar .sapMBarRight, .sapUiSizeCompact .sapMPageFooter.sapMIBar .sapMBarRight, .sapUiSizeCompact .sapMPageHeader.sapMIBar .sapMBarPH, .sapUiSizeCompact .sapMPageFooter.sapMIBar .sapMBarPH {
+	padding-top: 0rem !important;
+}
+
+.customSettingsPadding{
+	padding-left: 0.375rem;
+}

@@ -59,7 +59,7 @@ sap.ui.define([
 	* Returns the configuration of the semantic type.
 	*
 	* @param {String} sType
-	* @returns {Object || null}
+	* @returns {Object | null}
 	*/
 	SemanticConfiguration.getConfiguration = function (sType) {
 		return SemanticConfiguration._oTypeConfigs[sType] || null;
@@ -70,7 +70,7 @@ sap.ui.define([
 	* defined in the configuration, that will be applied.
 	*
 	* @param {String} sType
-	* @returns {Object || null}
+	* @returns {Object | null}
 	*/
 	SemanticConfiguration.getSettings = function (sType) {
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {
@@ -85,7 +85,7 @@ sap.ui.define([
 	* defined in the configuration.
 	*
 	* @param {String} sType
-	* @returns {String || null}
+	* @returns {String | null}
 	*/
 	SemanticConfiguration.getConstraints = function (sType) {
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {
@@ -114,7 +114,7 @@ sap.ui.define([
 	* defined in the configuration.
 	*
 	* @param {String} sType
-	* @returns {Number || null}
+	* @returns {Number | null}
 	*/
 	SemanticConfiguration.getOrder = function (sType) {
 		if (SemanticConfiguration.isKnownSemanticType(sType)) {
@@ -153,7 +153,7 @@ sap.ui.define([
 
 
 	/**
-	* <code>SemanticControl> configuration object.
+	* <code>SemanticControl</code> configuration object.
 	*/
 	SemanticConfiguration._oTypeConfigs = (function () {
 		var oTypeConfigs = {},

@@ -103,7 +103,7 @@
 					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
 				},
-				"category": "Showcase",
+				"category": "Tool",
 				"teaser": "test-resources/sap/m/demokit/iconExplorer/demoappteaser",
 				"config": "test-resources/sap/m/demokit/iconExplorer/demoapp.json"
 			},
@@ -112,7 +112,7 @@
 				"text": "Theme Parameter Toolbox",
 				"desc": "Search, filter and preview semantic theme parameters",
 				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
-				"category": "Showcase",
+				"category": "Tool",
 				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
 			},
 			{
@@ -1180,7 +1180,8 @@
 			"sap.m.sample.TreeIcon",
 			"sap.m.sample.TreeSelection",
 			"sap.m.sample.TreeInitialExpandState",
-			"sap.m.sample.TreeCollapseAll"
+			"sap.m.sample.TreeCollapseAll",
+			"sap.m.sample.TreeOData"
 		  ]
 		},
 		{
@@ -1249,7 +1250,8 @@
 		  "since" : "1.30",
 		  "samples" : [
 			"sap.m.sample.Wizard",
-			"sap.m.sample.WizardBranching"
+			"sap.m.sample.WizardBranching",
+			"sap.m.sample.WizardCurrentStep"
 		  ]
 		},
 		{
@@ -2016,6 +2018,11 @@
 		  "description": "Collapse all nodes."
 		},
 		{
+		  "id": "sap.m.sample.TreeOData",
+		  "name": "Tree - OData",
+		  "description": "This example shows tree with odata service."
+		},
+		{
 			"id": "sap.m.sample.RangeSlider",
 			"name": "RangeSlider",
 			"description": "With the RangeSlider a user can specify range from a numerical interval."
@@ -2613,6 +2620,11 @@
 		  "id": "sap.m.sample.WizardBranching",
 		  "name": "Wizard branching use case",
 		  "description": "The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one."
+		},
+		{
+		  "id": "sap.m.sample.WizardCurrentStep",
+		  "name": "Wizard edit mode",
+		  "description": "Demonstrates the usage of the setCurrentStep association, which controlls the current step of the wizard. This association could be used to simulate 'edit mode' for the wizard by showing all steps in the wizard, without need from the user click next button on each of them."
 		},
 		{
 		  "id": "sap.m.sample.SplitApp",

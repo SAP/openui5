@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.UploadCollectionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/m/ObjectStatus', 'sap/m/ObjectMarker', 'sap/ui/core/util/File'],
-	function(jQuery, library, Element, ObjectAttribute, ObjectStatus, ObjectMarker, FileUtil) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/ObjectAttribute', 'sap/ui/core/util/File' , 'sap/ui/Device' ],
+	function(jQuery, library, Element, ObjectAttribute, FileUtil, Device) {
 	"use strict";
 
 	/**
@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 	UploadCollectionItem.prototype.download = function(askForLocation) {
 		// File.save doesn't work in Safari but URLHelper.redirect does work.
 		// So, this overwrites the value of askForLocation in order to make it work.
-		if (sap.ui.Device.browser.name === "sf") {
+		if (Device.browser.name === "sf") {
 			askForLocation = false;
 		}
 		// If there isn't URL, download is not possible

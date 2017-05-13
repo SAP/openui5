@@ -2,8 +2,8 @@
  * ${copyright}
  */
 // Provides control sap.m.SelectionDetails.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', "sap/ui/Device"],
-	function(jQuery, library, Control, Button, Interface, Device) {
+sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Button', 'sap/ui/base/Interface', 'sap/ui/Device', 'sap/ui/core/library' ],
+	function(jQuery, library, Control, Button, Interface, Device, CoreLibrary) {
 	"use strict";
 
 	/**
@@ -199,6 +199,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		return this;
 	};
 
+	/* =========================================================== */
+	/* Protected API methods                                       */
+	/* =========================================================== */
+	/**
+	 * Sets the popover to modal or non-modal based on the given parameter. This only takes effect on desktop or tablet.
+	 * Please see the documentation {@link sap.m.ResponsivePopover#modal}.
+	 * @param {boolean} modal New value for property modal of the internally used popover.
+	 * @returns {sap.m.SelectionDetails} To ensure method chaining, return the SelectionDetails.
+	 * @protected
+	 */
+	SelectionDetails.prototype.setPopoverModal = function(modal) {
+		this._getPopover().setModal(modal);
+		return this;
+	};
+
 	/**
 	 * Handles the wrapping of the content and the toolbar creation for the new page.
 	 *
@@ -263,7 +278,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 		var oToolbarSpacer = new ToolbarSpacer();
 		var oTitle = new Title({
 			text: pageTitle,
-			titleStyle: sap.ui.core.TitleLevel.H5
+			titleStyle: CoreLibrary.TitleLevel.H5
 		});
 
 		oToolbar.addAggregation("content", oToolbarSpacer, true);
@@ -599,9 +614,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/B
 	 * @returns {sap.m.ResponsivePopover} this to allow method chaining
 	 * @private
 	 */
-	SelectionDetails.prototype._setPopoverProperty = function(propertyName){
+	SelectionDetails.prototype._setPopoverProperty = function(propertyName, value){
 		var oProperty = this._oControl.getMetadata().getProperty(propertyName);
-		if (oProperty) {
+		if (oProperty && propertyName === "modal" && this._oControl.setModal) {
+			this._oControl.setModal(value);
+		} else {
 			this._oControl.setProperty.apply(this._oControl, arguments);
 		}
 		return Control.prototype.setProperty.apply(this, arguments);

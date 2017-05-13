@@ -1470,7 +1470,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		if (this._resetButton === undefined) {
 			this._resetButton = new sap.m.Button(this.getId() + "-resetbutton", {
-				icon : IconPool.getIconURI("refresh"),
+				icon : IconPool.getIconURI("clear-filter"),
 				press : function() {
 					that._onClearFilters();
 				},
@@ -1635,7 +1635,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			});
 			oDetailResetButton = new sap.m.Button(this.getId()
 			+ "-detailresetbutton", {
-				icon : IconPool.getIconURI("refresh"),
+				icon : IconPool.getIconURI("clear-filter"),
 				press : function() {
 					that._onClearFilters();
 				},

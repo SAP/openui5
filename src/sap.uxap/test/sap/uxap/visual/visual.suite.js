@@ -1,3 +1,4 @@
+/*global module*/
 module.exports = [
 	"ObjectPageAnchorBar.spec.js",
 	"ObjectPageIconTabBar.spec.js",

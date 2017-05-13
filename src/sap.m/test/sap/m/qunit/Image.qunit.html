@@ -281,6 +281,98 @@
 
 		});
 
+		QUnit.module("Aggregations", {
+			beforeEach: function () {
+				this.oImage = new sap.m.Image();
+			},
+			afterEach: function () {
+				this.oImage.destroy();
+			}
+		});
+
+		QUnit.test("detailBox", 7, function (oAssert) {
+			// Arrange
+			var oLightBox = new sap.m.LightBox(),
+				fnDone = oAssert.async();
+
+			// Act
+			this.oImage.setDetailBox(oLightBox);
+
+			// Assert
+			oAssert.strictEqual(this.oImage.getDetailBox(), oLightBox, "Returned aggregation should be the same object");
+			oAssert.ok(this.oImage._fnLightBoxOpen, "Internal method for opening the LightBox should be available");
+			oAssert.ok(this.oImage.hasListeners("press"), "There should be a press event attached to the control");
+
+			// Arrange
+			this.oImage.setDetailBox(undefined);
+
+			// Assert
+			oAssert.notOk(this.oImage.getDetailBox(), "No LightBox is returned");
+			oAssert.notOk(this.oImage._fnLightBoxOpen, "No internal method for opening the LightBox should be assigned");
+			oAssert.notOk(this.oImage.hasListeners("press"), "There should no press listeners");
+
+			// Arrange
+			this.oImage.attachPress(function () {
+				// Assert
+				oAssert.ok(true, "Press event also fired");
+				fnDone();
+			});
+			this.oImage.setDetailBox(oLightBox);
+
+			// Act
+			this.oImage.firePress();
+
+			// Cleanup
+			oLightBox.destroy();
+		});
+
+		QUnit.test("detailBox lifecycle and events", function (oAssert) {
+			// Arrange
+			var oLightBoxA = new sap.m.LightBox(),
+				oLightBoxB = new sap.m.LightBox(),
+				oAttachPressSpy = sinon.spy(this.oImage, "attachPress"),
+				oDetachPressSpy = sinon.spy(this.oImage, "detachPress");
+
+			// Act - set LightBox
+			this.oImage.setDetailBox(oLightBoxA);
+
+			oAssert.strictEqual(this.oImage.mEventRegistry.press.length, 1, "There should be 1 press event attached");
+			oAssert.strictEqual(oAttachPressSpy.callCount, 1, "attachPress method should be called once");
+			oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
+
+			// Act - replace with new LightBox
+			oAttachPressSpy.reset();
+			this.oImage.setDetailBox(oLightBoxB);
+
+			// Assert
+			oAssert.strictEqual(this.oImage.mEventRegistry.press.length, 1, "There should be 1 press event attached");
+			oAssert.strictEqual(oAttachPressSpy.callCount, 1, "attachPress method should be called once");
+			oAssert.strictEqual(oDetachPressSpy.callCount, 1, "detachPress method should be called once");
+
+			// Act - replace with the same LightBox
+			oAttachPressSpy.reset();
+			oDetachPressSpy.reset();
+			this.oImage.setDetailBox(oLightBoxB);
+
+			// Assert
+			oAssert.strictEqual(this.oImage.mEventRegistry.press.length, 1, "There should be 1 press event attached");
+			oAssert.strictEqual(oAttachPressSpy.callCount, 0, "attachPress method should not be called");
+			oAssert.strictEqual(oDetachPressSpy.callCount, 0, "detachPress method should not be called");
+
+			// Act - replace with the same LightBox
+			oDetachPressSpy.reset();
+			this.oImage.setDetailBox(undefined);
+
+			// Assert
+			oAssert.strictEqual(oDetachPressSpy.callCount, 1, "detachPress method should be called once");
+
+			// Cleanup
+			oLightBoxA.destroy();
+			oLightBoxB.destroy();
+			oAttachPressSpy.restore();
+			oDetachPressSpy.restore();
+		});
+
 
 	QUnit.module("Dimensions");
 

@@ -23,7 +23,7 @@ sap.ui.define([
 				this.oPage.addStyleClass('docuPage');
 
 				if ( !window.prettyPrint ) {
-					jQuery.sap.require("sap.ui.documentation.sdk.controller.util.google-code-prettify.prettify");
+					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
 				}
 
 				this.getRouter().getRoute("topicId").attachPatternMatched(this._onTopicMatched, this);

@@ -18,7 +18,18 @@ sap.ui.define([],
 		},
 		aggregations : {
 			sections : {
-				domRef : ":sap-domref > .sapUxAPObjectPageWrapper",
+				domRef : function(oElement) {
+					var aSections = oElement.getSections();
+					var bSectionsVisible = aSections.some(function(oSection) {
+						return oSection.getVisible();
+					});
+
+					if (bSectionsVisible) {
+						return oElement.$("opwrapper").get(0);
+					} else {
+						return oElement.$("sectionsContainer").get(0);
+					}
+				},
 				childNames : {
 					singular : function(){
 						return sap.uxap.i18nModel.getResourceBundle().getText("SECTION_CONTROL_NAME");

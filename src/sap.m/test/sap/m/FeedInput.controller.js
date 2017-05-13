@@ -1,10 +1,15 @@
-sap.ui.controller("sap.m.test.FeedInput", {
+(function () {
+	"use strict";
 
-	onInit: function () {
-	},
+	sap.ui.controller("sap.m.test.FeedInput", {
 
-	onPostFeedItem: function (oEvent) {
-		var sValue = oEvent.getParameter("value");
-		sap.m.MessageToast.show("posted new entry: " + sValue);
-	}
-});
+		onInit: function () {
+		},
+
+		onPostFeedItem: function (oEvent) {
+			var sValue = oEvent.getParameter("value");
+			sap.m.MessageToast.show("posted new entry: " + sValue);
+		}
+	});
+
+}());

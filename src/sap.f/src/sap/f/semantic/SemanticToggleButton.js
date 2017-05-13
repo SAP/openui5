@@ -18,7 +18,7 @@ sap.ui.define([
 	* @class
 	* A base class for the {@link sap.f.semantic.FavoriteAction} and {@link sap.f.semantic.FlagAction}.
 	*
-	* @extends <code>sap.f.semantic.SemanticButton</code>
+	* @extends sap.f.semantic.SemanticButton
 	* @abstract
 	*
 	* @author SAP SE

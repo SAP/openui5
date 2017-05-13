@@ -3,8 +3,8 @@
  */
 
 // Provides access to Java-like properties files
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.sjax'],
-	function(jQuery, Device/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
+	function(jQuery, Device) {
 	"use strict";
 
 	// Javadoc for private inner class "Properties" - this list of comments is intentional!

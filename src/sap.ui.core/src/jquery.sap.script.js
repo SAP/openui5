@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Some private variable used for creation of (pseudo-)unique ids.
-	 * @type integer
+	 * @type int
 	 * @private
 	 */
 	var iIdCounter = 0;

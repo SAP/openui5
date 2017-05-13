@@ -2,6 +2,7 @@ sap.ui.define([
 		"sap/ui/test/Opa5",
 		"sap/ui/test/opaQunit"
 	], function (Opa5, opaTest) {
+
 		QUnit.module("IFrame getters");
 
 		QUnit.test("Should get the QUnit utils in an IFrame", function(assert) {
@@ -142,6 +143,7 @@ sap.ui.define([
 
 		QUnit.test("Should throw error if the IFrame throws an error", function (assert) {
 			var done = assert.async();
+
 			// Arrange
 			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
 			var $Frame = jQuery("#OpaFrame").on("load", function () {
@@ -534,7 +536,7 @@ sap.ui.define([
 					bIncreased = true;
 				}
 				var $Test = Opa5.getJQuery()("#qunit-tests").children(":nth-child(" + iTestIndex + ")");
-				return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find(".test-message");
+				return $Test.hasClass(oOptions.passed ? "pass" : "fail") && $Test.find("li>.test-message");
 			}
 		}
 
@@ -544,7 +546,8 @@ sap.ui.define([
 
 
 		opaTest("Should empty the queue if QUnit times out", function (oOpa) {
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=Timeouts");
+			var qunitversion = parseInt(QUnit.version, 10) || 1;
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=4000&module=Timeouts");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({
@@ -638,7 +641,8 @@ sap.ui.define([
 
 		opaTest("Should log exceptions in callbacks currectly", function (oOpa) {
 
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=Exceptions");
+			var qunitversion = parseInt(QUnit.version, 10) || 1;
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=4000&module=Exceptions");
 
 			function assertException ($Messages, sCallbackName) {
 				var sOpaMessage = $Messages.eq(0).text();
@@ -695,7 +699,8 @@ sap.ui.define([
 		});
 
 		opaTest("Should write log messages from an iFrame startup", function (oOpa) {
-			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunittimeout=4000&module=IFrame");
+			var qunitversion = parseInt(QUnit.version, 10) || 1;
+			startApp(oOpa, "../testdata/failingOpaTest.html?sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=8000&module=IFrame");
 
 			oOpa.waitFor({
 				matchers: createMatcherForTestMessage({

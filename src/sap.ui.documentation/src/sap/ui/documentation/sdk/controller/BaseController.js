@@ -76,12 +76,7 @@ sap.ui.define([
 			 * @returns {object} the configuration of the component
 			 */
 			getConfig : function () {
-				var oConfigModel = this.getOwnerComponent().getModel("config");
-				if (oConfigModel) {
-					return oConfigModel.getData();
-				} else {
-					return {};
-				}
+				return this.getOwnerComponent().getMetadata().getConfig();
 			},
 
 			/**
@@ -114,6 +109,15 @@ sap.ui.define([
 				} else {
 					oButton.setVisible(false);
 				}
+			},
+
+			/**
+			 * Getter for the application root view
+			 * @return {sap.ui.core.mvc.View} Application root view
+			 */
+			getRootView: function () {
+				var oComponent = this.getOwnerComponent();
+				return oComponent.byId(oComponent.getManifestEntry("/sap.ui5/rootView").id);
 			},
 
 			/**

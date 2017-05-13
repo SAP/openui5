@@ -231,22 +231,22 @@ sap.ui.define([
 
 		/**
 		 * Copies the value of the code input field to the clipboard and display a message
+		 * @public
 		 */
 		onCopyCodeToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue(),
-				$temp = $("<input>"),
+			var sString = this.byId("previewCopyCode").getValue();
+			this._copyStringToClipboard(sString);
+		},
+
+		/**
+		 * Copies the value of the unicode input field to the clipboard and display a message
+		 * @public
+		 */
+		onCopyUnicodeToClipboard: function () {
+			var sString = this.byId("previewCopyUnicode").getValue(),
 				oResourceBundle = this.getResourceBundle();
-
-			try {
-				$("body").append($temp);
-				$temp.val(sString).select();
-				document.execCommand("copy");
-				$temp.remove();
-
-				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]));
-			} catch (oException) {
-				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardFail", [sString]));
-			}
+			sString = sString.substring(oResourceBundle.getText("previewInfoUnicode").length + 1);
+			this._copyStringToClipboard(sString);
 		},
 
 		/**
@@ -288,9 +288,42 @@ sap.ui.define([
 			this._updateHash("icon");
 		},
 
+		/**
+		 * Retrieves the unicode of the icon by the icon's name. Used as a formatter in the view.
+		 * @param {string} name the icon's name
+		 * @return {strng} the unicode of the queried icon
+		 * @public
+		 */
+		getUnicodeByName: function (name) {
+			name = name || "";
+			var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase());
+			sUnicode = sUnicode.substring(2, sUnicode.length - 1);
+			return sUnicode;
+		},
+
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
+
+		/**
+		 * Copies the string to the clipboard and display a message
+		 * @param {string} copyText the text string that has to be copied to the clipboard
+		 */
+		_copyStringToClipboard: function (copyText) {
+			var $temp = $("<input>"),
+				oResourceBundle = this.getResourceBundle();
+
+			try {
+				$("body").append($temp);
+				$temp.val(copyText).select();
+				document.execCommand("copy");
+				$temp.remove();
+
+				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardSuccess", [copyText]));
+			} catch (oException) {
+				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardFail", [copyText]));
+			}
+		},
 
 		/**
 		 * Shows the selected item on the object page
@@ -532,9 +565,11 @@ sap.ui.define([
 				var aFilters = [],
 					oFilterTags = (sTagValue ? new Filter("tagString", FilterOperator.Contains, sTagValue) : undefined),
 					oFilterSearchName = (sSearchValue ? new Filter("name", FilterOperator.Contains, sSearchValue) : undefined),
+					fnUmicodeCustomFilter = (sSearchValue ? this._unicodeFilterFactory(sSearchValue) : undefined),
+					oFilterSearchUnicode = (sSearchValue ? new Filter("name", fnUmicodeCustomFilter) : undefined),
 					oFilterSearchTags = (sSearchValue ? new Filter("tagString", FilterOperator.Contains, sSearchValue) : undefined),
 					oFilterSearchNameTags = (sSearchValue ? new Filter({
-						filters: [oFilterSearchTags, oFilterSearchName],
+						filters: [oFilterSearchTags, oFilterSearchName, oFilterSearchUnicode],
 						and: false
 					}) : undefined);
 
@@ -567,6 +602,19 @@ sap.ui.define([
 				oResultBinding.filter(this._vFilterSearch);
 				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"));
 			}
+		},
+
+		/**
+		 * Factory that produces the custom filter for the given unicode query
+		 * @param {string} query the query text that has been entered in the search field and contains the unicode character
+		 * @return {function} the custom filter function that takes the name of the icon and returns true if the icon's unicode contains the query string
+		 * @private
+		 */
+		_unicodeFilterFactory: function(query) {
+			return function (name) {
+				var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase());
+				return sUnicode.indexOf(query) !== -1;
+			}.bind(this);
 		},
 
 		/**

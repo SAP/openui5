@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global"], function ($) {
+sap.ui.define(["jquery.sap.global", "jquery.sap.sjax"], function ($, sjax) {
   "use strict";
 
   /**

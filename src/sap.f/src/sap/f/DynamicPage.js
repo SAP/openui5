@@ -765,11 +765,17 @@ sap.ui.define([
 
 	/**
 	 * Determines if the control would need a <code>ScrollBar</code>.
+	 * <code>Note:</code>
+	 * For IE and Edge we use 1px threshhold,
+	 * because the clientHeight returns results in 1px difference compared to the scrollHeight,
+	 * the reason is not defined.
+	 *
 	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		var iThreshold = Device.browser.internet_explorer ? 1 : 0;  // Sometimes in IE clientHeight return results with 1px difference than scrollHeight. The reason is not defined.
+		var bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false,
+			iThreshold = bMSBrowser ? 1 : 0;
 
 		return this._getMaxScrollPosition() > iThreshold;
 	};

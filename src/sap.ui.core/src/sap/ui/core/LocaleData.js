@@ -361,6 +361,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
 			var bSymbolFound;
 
+			var sDiffGroup = sIntervalDiff;
+			var oGroup;
+			if (sDiffGroup) {
+				if (sDiffGroup === "a") {
+					sDiffGroup = "Hour";
+				}
+
+				if (sDiffGroup.length === 1) {
+					sDiffGroup = mCLDRSymbols[sDiffGroup] ? mCLDRSymbols[sDiffGroup].group : "";
+				}
+
+				if (sDiffGroup) {
+					oGroup = mCLDRSymbolGroups[sDiffGroup];
+					if (oGroup.index > aTokens[aTokens.length - 1].index) {
+						// if the index of interval diff is greater than the index of the last field
+						// in the sSkeleton, which means the diff unit is smaller than all units in
+						// the skeleton, return a single date pattern which is generated using the
+						// given skeleton
+						return this.getCustomDateTimePattern(sSkeleton, sCalendarType);
+					}
+				}
+			}
+
 			if (sIntervalDiff) {
 				// FieldGroup
 				if (sIntervalDiff.length > 1) {

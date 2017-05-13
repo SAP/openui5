@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 jQuery.sap.require("sap.m.FormattedTextAnchorGenerator");
 (function (QUnit, AnchorGenerator) {
 	"use strict";

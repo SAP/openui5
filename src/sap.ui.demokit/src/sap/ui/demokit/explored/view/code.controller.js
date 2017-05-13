@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				// (via the 'Orcish maneuver': Use XHR to retrieve and cache code)
 				if (oConfig && oConfig.sample && oConfig.sample.files) {
 					var sRef = jQuery.sap.getModulePath(oSample.id);
-					for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
+					for (var i = 0; i < oConfig.sample.files.length; i++) {
 						var sFile = oConfig.sample.files[i];
 						var sContent = this.fetchSourceFile(sRef, sFile);
 
@@ -127,7 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// zip files
 			var oData = this.getView().getModel().getData(),
 				iRequiredParentLevels = 0;
-			for (var i = 0 ; i < oData.files.length ; i++) {
+			for (var i = 0; i < oData.files.length; i++) {
 				var oFile = oData.files[i],
 					sRawFileContent = oFile.raw,
 					iFileNestedLevel = oFile.name.split("../").length - 1,

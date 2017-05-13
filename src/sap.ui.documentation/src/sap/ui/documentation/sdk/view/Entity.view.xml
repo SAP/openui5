@@ -77,12 +77,36 @@
 			<ObjectPageSection id="about" title="About">
 				<subSections>
 					<ObjectPageSubSection>
-						<core:HTML content="{/description}" />
+
+						<l:VerticalLayout>
+							<core:HTML content="{/description}" />
+
+							<m:Table
+									class="myTable"
+									visible="{/show/values}"
+									showSeparators="Inner"
+									fixedLayout="false"
+									items="{/values}" >
+								<m:columns>
+									<m:Column><m:Label text="Name" /></m:Column>
+									<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description" /></m:Column>
+								</m:columns>
+								<m:items>
+									<m:ColumnListItem>
+										<m:cells>
+											<m:Text text="{name}" class="docuKey" wrapping="false" />
+											<m:Text text="{description}" />
+										</m:cells>
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</l:VerticalLayout>
+
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection id="samples" title="Samples ({/count/samples})">
+			<ObjectPageSection id="samples" title="Samples ({/count/samples})" visible="{= ${/count/samples} > 0 }">
 				<subSections>
 					<ObjectPageSubSection>
 						<m:Table

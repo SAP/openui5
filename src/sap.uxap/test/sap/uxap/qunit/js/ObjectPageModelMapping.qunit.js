@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Importance) {
 	"use strict";
 
@@ -17,8 +19,6 @@
 			this.oView.destroy();
 		}
 	});
-
-	var iRenderingDelay = 1000;
 
 	QUnit.test("initial model mapping is applied", function (assert) {
 
@@ -70,7 +70,7 @@
 
 		//act
 		oBlock.getMappings()[0].setExternalPath("/newEmployee"); // update external path
-        sap.ui.getCore().applyChanges(); // allow model info to propagare
+		sap.ui.getCore().applyChanges(); // allow model info to propagare
 
 		// check
 		var oActualFirstName = oSelectedView.byId("txtFirstName").getText(),

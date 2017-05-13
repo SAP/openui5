@@ -47,7 +47,7 @@ sap.ui.define(function() {
 		};
 
 		// render each tag.
-		for (var i = 0;i < tags.length;i++) {
+		for (var i = 0; i < tags.length; i++) {
 			var tag = tags[i];
 			rm.write("<span");
 			rm.writeElementData(tag);

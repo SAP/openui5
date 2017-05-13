@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.getView().setModel(oMediaModel, "media");
 
 			// set mock feed model
-			var sPath = jQuery.sap.getModulePath("sap.ui.layout.sample.DynamicSideContentProduct", "/feed.json")
+			var sPath = jQuery.sap.getModulePath("sap.ui.layout.sample.DynamicSideContentProduct", "/feed.json");
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

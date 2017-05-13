@@ -10,7 +10,9 @@ sap.ui.core.UIComponent.extend("sap.ui.codeeditor.sample.CodeEditor.Component", 
 		config: {
 			sample: {
 				stretch: true,
-				files: [ "CodeEditor.view.xml", "CodeEditor.controller.js"]
+				files: [
+					"CodeEditor.view.xml"
+				]
 			}
 		}
 	}

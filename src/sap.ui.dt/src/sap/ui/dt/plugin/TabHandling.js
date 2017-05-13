@@ -38,7 +38,7 @@ sap.ui.define([
 
 	TabHandling.prototype.registerElementOverlay = function(oOverlay) {
 		if (oOverlay.isRoot()) {
-			this._removeTabIndex();
+			this.removeTabIndex();
 		}
 	};
 
@@ -50,7 +50,7 @@ sap.ui.define([
 	 */
 	TabHandling.prototype.deregisterElementOverlay = function(oOverlay) {
 		if (oOverlay.isRoot()) {
-			this._restoreTabIndex();
+			this.restoreTabIndex();
 		}
 	};
 
@@ -64,17 +64,14 @@ sap.ui.define([
 		} else {
 			this._oMutationObserver.detachDomChanged(this._onDomChanged, this);
 			delete this._oMutationObserver;
-			this._restoreTabIndex();
+			this.restoreTabIndex();
 		}
 	};
 
 	/**
 	 * Traverse the whole DOM tree and set tab indices to -1 for all elements
-	 *
-	 * @param {sap.ui.core.Element} oRootDom object of the root DOM element
-	 * @private
 	 */
-	TabHandling.prototype._removeTabIndex = function() {
+	TabHandling.prototype.removeTabIndex = function() {
 		var oDesignTime = this.getDesignTime();
 		var aRootElements = oDesignTime.getRootElements();
 		aRootElements.forEach(function(sRootElement) {
@@ -88,10 +85,8 @@ sap.ui.define([
 
 	/**
 	 * Restore the tab indices of all elements of the DOM tree
-	 *
-	 * @private
 	 */
-	TabHandling.prototype._restoreTabIndex = function() {
+	TabHandling.prototype.restoreTabIndex = function() {
 		jQuery("[data-sap-ui-dt-tabindex]").each(function(iIndex, oNode) {
 			oNode.setAttribute("tabIndex", oNode.getAttribute("data-sap-ui-dt-tabindex"));
 			oNode.removeAttribute("data-sap-ui-dt-tabindex");
@@ -103,7 +98,7 @@ sap.ui.define([
 	 */
 	TabHandling.prototype._onDomChanged = function() {
 		if (this.getDesignTime().getEnabled()) {
-			this._removeTabIndex();
+			this.removeTabIndex();
 		}
 	};
 

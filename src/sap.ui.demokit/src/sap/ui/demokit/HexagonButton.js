@@ -20,9 +20,9 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.HexagonButton
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var HexagonButton = Control.extend("sap.ui.demokit.HexagonButton", /** @lends sap.ui.demokit.HexagonButton.prototype */ { metadata : {
 
