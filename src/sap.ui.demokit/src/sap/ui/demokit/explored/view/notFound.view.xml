@@ -5,12 +5,12 @@
 	xmlns:h="http://www.w3.org/1999/xhtml"
 	xmlns="sap.m">
 	<Page
-		title="Not Found"
+		title="{i18n>entityNotFoundTitle}"
 		showNavButton="{device>/isPhone}"
 		navButtonPress="onNavBack"
 		enableScrolling="false" >
 		<content>
-			<Text text="The requested entity '{/entityName}' is unknown to the explored app." textAlign="Center" width="100%"></Text>
+			<Text text="{parts:['i18n>entityNotFound','/entityName'],formatter:'jQuery.sap.formatMessage'}" textAlign="Center" width="100%"></Text>
 		</content>
 	</Page>
 </mvc:View>

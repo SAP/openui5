@@ -11,7 +11,7 @@
 			<Toolbar>
 					<Button icon="sap-icon://drop-down-list" id="viewSettingsButton" press="onOpenViewSettings" />
 					<ToolbarSpacer/>
-					<Title text="Entities ({entity>/entityCount})" />
+					<Title text="{i18n>entities} ({entity>/entityCount})" />
 					<ToolbarSpacer/>
 					<Button icon="sap-icon://action-settings" tooltip="{i18n>settings}" press="onOpenAppSettings" />
 
@@ -23,7 +23,7 @@
 				<contentMiddle>
 					<SearchField
 						id="searchField"
-						placeholder="Search"
+						placeholder="{i18n>searchPlaceholder}"
 						liveChange="onSearch"
 						width="100%" >
 					</SearchField>

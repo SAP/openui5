@@ -17,7 +17,7 @@
 		<headerContent>
 			<Button
 				class="sapUiHideOnPhone"
-				text="Download"
+				text="{i18n>download}"
 				icon="sap-icon://download"
 				press="onDownload" />
 			<Button
