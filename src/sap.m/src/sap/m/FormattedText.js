@@ -210,16 +210,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 			return attribs;
 		}
 
-		/**
-		 * Sanitizes HTML tags and attributes according to a given policy.
-		 *
-		 * @param {string} inputHtml The HTML to sanitize
-		 * @param {function(string,string[])} tagPolicy Determines which
-		 *            tags to accept and sanitizes their attributes (see
-		 *            makeHtmlSanitizer above for details)
-		 * @return {string} The sanitized HTML
-		 * @private
-		 */
 		function fnPolicy (tagName, attribs) {
 			if (_renderingRules.ELEMENTS[tagName]) {
 				return fnSanitizeAttribs(tagName, attribs);
@@ -229,6 +219,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 			}
 		}
 
+		/**
+		 * Sanitizes HTML tags and attributes according to a given policy.
+		 *
+		 * @param {string} sText The HTML to sanitize
+		 * @return {string} The sanitized HTML
+		 * @private
+		 */
 		function sanitizeHTML(sText) {
 			return jQuery.sap._sanitizeHTML(sText, {
 				tagPolicy: fnPolicy,

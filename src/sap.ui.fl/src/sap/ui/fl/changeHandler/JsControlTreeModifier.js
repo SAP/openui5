@@ -180,7 +180,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			 * Removes the object from the aggregation of the given control
 			 *
 			 * @param {sap.ui.core.Control}
-			 *          oParent - the control for which the changes should be fetched
+			 *          oControl - the parent control for which the changes should be fetched
 			 * @param {string}
 			 *          sName - aggregation name
 			 * @param {object}

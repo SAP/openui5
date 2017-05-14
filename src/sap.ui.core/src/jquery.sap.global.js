@@ -1720,8 +1720,8 @@
 		 * Activates or deactivates the performance measure functionality
 		 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
 		 * like "javascript", "require", "xmlhttprequest", "render"
-		 * @param {boolean} bOn state of the perfomance measurement functionality to set
-		 * @param {string | string[]}  An optional list of categories that should be measured
+		 * @param {boolean} bOn - state of the perfomance measurement functionality to set
+		 * @param {string | string[]} aCategories - An optional list of categories that should be measured
 		 *
 		 * @return {boolean} current state of the perfomance measurement functionality
 		 * @name jQuery.sap.measure#setActive

@@ -163,7 +163,7 @@ sap.ui.define([
 	 *
 	 * About the format of return value, see: {@link sap.f.FlexibleColumnLayoutSemanticHelper#getCurrentUIState}
 	 *
-	 * @param iLevel - the view level that should be represented. 0 means initial (master only), 1 - master-detail,
+	 * @param {int} iNextLevel - the view level that should be represented. 0 means initial (master only), 1 - master-detail,
 	 * 2 - master-detail-detail, 3 and above - subsequent views
 	 *
 	 * @public

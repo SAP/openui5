@@ -509,6 +509,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Calculates and sets the Image size in the Light box.
+		 * @param {sap.m.Image} image The image instance.
 		 * @param {number} imageWidth The width of the internal image.
 		 * @param {number} imageHeight The height of the internal image.
 		 * @private
