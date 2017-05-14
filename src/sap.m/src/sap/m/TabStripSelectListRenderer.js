@@ -15,10 +15,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectListRen
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}
 		 *
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oList {sap.ui.core.Control} An object representation of the control that should be rendered
-		 * @param oItem {sap.ui.core.Element} An object representation of the element that should be rendered
-		 * @param mStates {object}
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered
+		 * @param {sap.ui.core.Element} oItem An object representation of the element that should be rendered
+		 * @param {object} mStates
 		 */
 		TabStripSelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
 			if (!(oItem instanceof sap.ui.core.Element)) {

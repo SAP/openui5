@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		/**
 		 * Sets the time format.
 		 *
-		 * @param sFormat {string} New display format
+		 * @param {string} sFormat New display format
 		 * @returns {sap.m.TimePickerSliders} this instance, used for chaining
 		 * @public
 		 */
@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		/**
 		 * Sets the values of the slider controls, given a JavaScript date object.
 		 *
-		 * @param oDate {Object} The date to use as a setting, if not provided the current date will be used
+		 * @param {Object} oDate The date to use as a setting, if not provided the current date will be used
 		 * @public
 		 */
 		TimePickerSliders.prototype.setTimeValues = function (oDate) {

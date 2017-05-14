@@ -16,8 +16,8 @@ sap.ui.define(['jquery.sap.global'],
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oControl {sap.ui.core.Control} An object representation of the control that should be rendered
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		TabContainerRenderer.render = function(oRm, oControl) {
 			var oTabStrip = oControl._getTabStrip(),
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global'],
 		/**
 		 * Generates the accessibility attributes relevant for the content of the <code>TabStripContainer</code>.
 		 *
-		 * @param oControl {sap.m.TabContainer} The <code>TabStripContainer</code> for which accessibility properties to be generated
+		 * @param {sap.m.TabContainer} oControl The <code>TabStripContainer</code> for which accessibility properties to be generated
 		 * @returns {Object} Accessibility attributes for the tab content
 		 */
 		TabContainerRenderer.getTabContentAccAttributes = function (oControl) {
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global'],
 		/**
 		 * Returns the DOM ID of the content element.
 		 *
-		 * @param oControl {sap.ui.core.Control} The <code>TabContainer</code> for which the DOM ID is looking for
+		 * @param {sap.ui.core.Control} oControl The <code>TabContainer</code> for which the DOM ID is looking for
 		 * @returns {string} The ID of the DOM element, corresponding to the tab content
 		 */
 		TabContainerRenderer.getContentDomId = function(oControl) {

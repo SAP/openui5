@@ -376,7 +376,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Sets a new tooltip for this object.
 		 * @link sap.ui.core.Element#setTooltip
-		 * @param sTooltip {string|sap.ui.core.TooltipBase}
+		 * @param {string|sap.ui.core.TooltipBase} sTooltip
 		 */
 		StepInput.prototype.setTooltip = function (sTooltip) {
 			//We need to call the special logic implemented in InputBase.prototype.setTooltip

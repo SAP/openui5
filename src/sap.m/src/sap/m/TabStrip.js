@@ -491,8 +491,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Performs horizontal scroll.
 		 *
-		 * @param iDelta {int} The target scrollLeft value
-		 * @param iDuration {int} Scroll animation duration
+		 * @param {int} iDelta The target scrollLeft value
+		 * @param {int} iDuration Scroll animation duration
 		 * @private
 		 */
 		TabStrip.prototype._scroll = function(iDelta, iDuration) {
@@ -530,8 +530,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Scrolls to a particular item.
 		 *
-		 * @param oItem {sap.m.TabStripItem} The item to be scrolled to
-		 * @param iDuration {int} Duration of the scrolling animation
+		 * @param {sap.m.TabStripItem} oItem The item to be scrolled to
+		 * @param {int} iDuration Duration of the scrolling animation
 		 * @private
 		 */
 		TabStrip.prototype._scrollIntoView = function (oItem, iDuration) {
@@ -573,7 +573,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Create the instance of the <code>TabStripSelect</code>.
 		 *
-		 * @param aTabStripItems { array<sap.m.TabStripItem> } Array with the <code>TabStripItems</code>
+		 * @param { array<sap.m.TabStripItem> } aTabStripItems Array with the <code>TabStripItems</code>
 		 * @returns {sap.m.TabStripSelect} The created <code>TabStripSelect</code>
 		 * @private
 		 */
@@ -630,7 +630,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Calculates the next item to be focused and selected and applies the focus and selection when an item is removed.
 		 *
-		 * @param bSetAsSelected {boolean} Whether the next item to be selected
+		 * @param {boolean} bSetAsSelected Whether the next item to be selected
 		 * @private
 		 */
 		TabStrip.prototype._moveToNextItem = function (bSetAsSelected) {
@@ -663,7 +663,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Activates an item on the <code>TabStrip</code>.
 		 *
-		 * @param oItem {sap.m.TabStripItem} The item to be activated
+		 * @param {sap.m.TabStripItem} oItem The item to be activated
 		 * @param {jQuery.Event} oEvent  Event object that probably will be present as the item activation is bubbling
 		 * @private
 		 */
@@ -687,9 +687,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Adds an entity <code>oObject</code> to the aggregation identified by <code>sAggregationName</code>.
 		 *
-		 * @param sAggregationName {string} The name of the aggregation where the new entity is to be added
-		 * @param oObject {any} The value of the aggregation to be added
-		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @param {string} sAggregationName The name of the aggregation where the new entity is to be added
+		 * @param {any} oObject The value of the aggregation to be added
+		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
 		 */
@@ -703,9 +703,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Inserts an entity to the aggregation named <code>sAggregationName</code> at position <code>iIndex</code>.
 		 *
-		 * @param sAggregationName {string} The name of the aggregation
-		 * @param oObject {any} The value of the aggregation to be inserted
-		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @param {string} sAggregationName The name of the aggregation
+		 * @param {any} oObject The value of the aggregation to be inserted
+		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
 		 */
@@ -719,9 +719,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Removes an entity from the aggregation named <code>sAggregationName</code>.
 		 *
-		 * @param sAggregationName {string} The name of the aggregation
-		 * @param oObject {any} The value of aggregation to be removed
-		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @param {string} sAggregationName The name of the aggregation
+		 * @param {any} oObject The value of aggregation to be removed
+		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
 		 */
@@ -735,8 +735,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Removes all objects from the aggregation named <code>sAggregationName</code>.
 		 *
-		 * @param sAggregationName {string} The name of aggregation
-		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @param {string} sAggregationName The name of aggregation
+		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
 		 */
@@ -750,8 +750,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Destroys all the entities in the aggregation named <code>sAggregationName</code>.
 		 *
-		 * @param sAggregationName {string} The name of aggregation
-		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @param {string} sAggregationName The name of aggregation
+		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
 		 */
@@ -793,9 +793,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Overrides the default method to make sure a <code>TabStripSelect</code> instance is created when needed.
 		 *
-		 * @param sPropertyName {string} The property name to be set
-		 * @param vValue {any} The property value to be set
-		 * @param bSuppressInvalidate {boolean} Whether to suppress invalidation
+		 * @param {string} sPropertyName The property name to be set
+		 * @param {any} vValue The property value to be set
+		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
 		 */
@@ -820,7 +820,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Attaches any previously added event handlers.
 		 *
-		 * @param oObject {object} The <code>TabStripItem</code> instance on which events will be detached/attached
+		 * @param {object} oObject The <code>TabStripItem</code> instance on which events will be detached/attached
 		 * @private
 		 */
 		TabStrip.prototype._attachItemEventListeners = function (oObject) {
@@ -845,7 +845,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Detaches any previously added event handlers.
 		 *
-		 * @param oObject {object} The <code>TabStripItem</code> instance on which events will be detached/attached.
+		 * @param {object} oObject The <code>TabStripItem</code> instance on which events will be detached/attached.
 		 * @private
 		 */
 		TabStrip.prototype._detachItemEventListeners = function (oObject) {
@@ -888,8 +888,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Request the given item to be closed and removes it from the <code>items</code> aggregation if permitted.
 		 *
-		 * @param oItem {sap.m.TabStripItem} The item which will disappear
-		 * @param fnCallback {function} A callback function to be called after the item is removed
+		 * @param {sap.m.TabStripItem} oItem The item which will disappear
+		 * @param {function} fnCallback A callback function to be called after the item is removed
 		 * @private
 		 */
 		TabStrip.prototype._removeItem = function(oItem, fnCallback) {
@@ -919,8 +919,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Ensures proper handling of <code>TabStrip</code> <code>items</code> aggregation> and proxies to the <code>TabStripSelect</code> <code>items</code> aggregation.
 		 *
-		 * @param aArgs {array}
-		 * @param bIsAdding {boolean}
+		 * @param {array} aArgs
+		 * @param {boolean} bIsAdding
 		 * @returns {sap.m.TabStrip} <code>this</code> instance for chaining
 		 */
 		TabStrip.prototype._handleItemsAggregation = function (aArgs, bIsAdding) {
@@ -957,10 +957,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Ensures proper handling of <code>TabStrip</code> <code>items</code> aggregation and proxies to the <code>TabStripSelect</code> <code>items</code> aggregation.
 		 *
-		 * @param aArgs {array}
-		 * @param bIsAdding {boolean}
-		 * @param sFunctionName {string}
-		 * @param oObject {object}
+		 * @param {array} aArgs
+		 * @param {boolean} bIsAdding
+		 * @param {string} sFunctionName
+		 * @param {object} oObject
 		 * @returns {*}
 		 */
 		TabStrip.prototype._handleSelectItemsAggregation = function (aArgs, bIsAdding, sFunctionName, oObject) {
@@ -1015,7 +1015,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Ensures proper <code>TabStripItem</code> inheritance in context of <code>TabStripSelect</code>.
 		 *
-		 * @param oTabStripItem {sap.m.TabStripItem}
+		 * @param {sap.m.TabStripItem} oTabStripItem
 		 * @returns {sap.ui.core.Element}
 		 */
 		TabStrip.prototype._createSelectItemFromTabStripItem = function (oTabStripItem) {
@@ -1050,7 +1050,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Finds the correct <code>TabStripItem</code> in context of <code>TabStrip</code> by a given <code>TabStripItem</code> instance.
 		 *
-		 * @param oTabStripSelectItem {sap.m.TabStripItem} The <code>TabStripItem</code> instance which analogue is to be found
+		 * @param {sap.m.TabStripItem} oTabStripSelectItem The <code>TabStripItem</code> instance which analogue is to be found
 		 * @returns {sap.m.TabStripItem} The <code>TabStripItem</code> in context of <code>TabStripSelect</code> found (if any)
 		 */
 		TabStrip.prototype._findTabStripItemFromSelectItem = function (oTabStripSelectItem) {
@@ -1068,7 +1068,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Finds the correct <code>TabStripItem</code> in context of <code>TabStripSelect</code> by a given <code>TabStripItem</code> instance.
 		 *
-		 * @param oTabStripItem {sap.m.TabStripItem} The <code>TabStripItem</code> instance which analogue is to be found
+		 * @param {sap.m.TabStripItem} oTabStripItem The <code>TabStripItem</code> instance which analogue is to be found
 		 * @returns {sap.m.TabStripItem} The <code>TabStripItem</code> in context of <code>TabStripSelect</code> found (if any)
 		 */
 		TabStrip.prototype._findSelectItemFromTabStripItem = function (oTabStripItem) {
@@ -1090,8 +1090,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Handles ARIA-selected attributes depending on the currently selected item.
 		 *
-		 * @param aItems {Array.<sap.m.TabStripItem>} The whole set of items
-		 * @param oSelectedItem {sap.m.TabStripItem} Currently selected item
+		 * @param {Array.<sap.m.TabStripItem>} aItems The whole set of items
+		 * @param {sap.m.TabStripItem} oSelectedItem Currently selected item
 		 * @private
 		 */
 		TabStrip.prototype._updateAriaSelectedAttributes = function(aItems, oSelectedItem) {

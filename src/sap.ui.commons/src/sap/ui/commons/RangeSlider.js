@@ -331,7 +331,8 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param fValue @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @param fValue
+	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RangeSlider.prototype.setValue2 = function(fValue) {

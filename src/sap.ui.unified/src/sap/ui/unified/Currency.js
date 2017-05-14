@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		/**
 		 * Currency property setter
-		 * @param sValue {String} The ISO 4217 currency code
+		 * @param {String} sValue The ISO 4217 currency code
 		 * @return {object} this to enable chaining
 		 */
 		Currency.prototype.setCurrency = function (sValue) {
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		/**
 		 * UseSymbol property setter
-		 * @param bValue {boolean}
+		 * @param {boolean} bValue
 		 * @return {object} this to enable chaining
 		 */
 		Currency.prototype.setUseSymbol = function (bValue) {
@@ -183,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		/**
 		 * MaxPrecision property setter
-		 * @param iValue {int}
+		 * @param {int} iValue
 		 * @return {object} this to enable chaining
 		 */
 		Currency.prototype.setMaxPrecision = function (iValue) {

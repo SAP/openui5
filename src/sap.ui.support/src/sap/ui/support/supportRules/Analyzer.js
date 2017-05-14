@@ -102,8 +102,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Internal method to start the next run on the next object.
-		 * @param bContinue {boolean} true if called via timer
-		 * @param fnResolve {function} resolve function
+		 * @param {boolean} bContinue true if called via timer
+		 * @param {function} fnResolve resolve function
 		 *
 		 * @private
 		 * @experimental
@@ -140,7 +140,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Processes the next object in the current task
 		 *
-		 * @param fnResolve {function} resolves promise to notify of finished state
+		 * @param {function} fnResolve resolves promise to notify of finished state
 		 */
 		Analyzer.prototype._next = function (fnResolve) {
 			if (!this._bRunning) {

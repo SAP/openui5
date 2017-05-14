@@ -2119,8 +2119,8 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * @function
 	 * @name sap.ui.model.odata.v2.ODataTreeBinding.prototype.addContexts
-	 * @param oParentContext {sap.ui.model.Context} the parent context under which the new contexts will be inserted
-	 * @param vContextHandle {sap.ui.model.Context|sap.ui.model.Context[]} an array of contexts or a single context, which will be added to the tree.
+	 * @param {sap.ui.model.Context} oParentContext the parent context under which the new contexts will be inserted
+	 * @param {sap.ui.model.Context|sap.ui.model.Context[]} vContextHandle an array of contexts or a single context, which will be added to the tree.
 	 * @private
 	 */
 
