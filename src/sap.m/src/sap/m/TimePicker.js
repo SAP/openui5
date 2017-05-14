@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 		/**
 		 * Handler for oninput event
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		TimePicker.prototype.oninput = function (oEvent) {
 			MaskInput.prototype.oninput.apply(this, arguments);
@@ -971,7 +971,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		/**
 		 * Handles the press event of the OK button.
 		 *
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 * @private
 		 */
 		TimePicker.prototype._handleOkPress = function(oEvent) {

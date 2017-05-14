@@ -1685,7 +1685,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>press</code> event of the <code>PlanningCalendar</code>'s today button
-	 * @param oEvent {jQuery.Event}
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleTodayPress = function (oEvent) {
@@ -1717,7 +1717,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>startDateChange</code> event of the <code>PlanningCalendar</code>
-	 * @param oEvent {jQuery.Event}
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleStartDateChange = function(oEvent){

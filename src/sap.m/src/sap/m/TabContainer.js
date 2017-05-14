@@ -469,7 +469,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Override <code>selectedItem</code> property setter.
 		 *
 		 * @param oSelectedItem {sap.m.TabContainerItem} The new <code>TabContainerItem</code> to be selected
-		 * @param oEvent {object} Event object that may be present when the selection change is bubbling
+		 * @param {jQuery.Event} oEvent  Event object that may be present when the selection change is bubbling
 		 * @returns {sap.m.TabContainer} <code>this</code> pointer for chaining
 		 * @override
 		 */

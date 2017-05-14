@@ -567,7 +567,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 
 			/**
 			 * Default expanded handler
-			 * @param oEvent {jQuery.Event} Event object
+			 * @param {jQuery.Event} oEvent  Event object
 			 */
 			function onSliderExpanded(oEvent) {
 				var aSliders = this.getAggregation("_columns");

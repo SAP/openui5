@@ -917,7 +917,7 @@ sap.ui.define([
 	/**
 	 * Handler for F6 and Shift + F6 group navigation
 	 *
-	 * @param oEvent {jQuery.EventObject}
+	 * @param {jQuery.Event} oEvent
 	 * @param bShiftKey serving as a reference if shift is used
 	 * @private
 	 */

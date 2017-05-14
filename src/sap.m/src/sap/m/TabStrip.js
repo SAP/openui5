@@ -664,7 +664,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Activates an item on the <code>TabStrip</code>.
 		 *
 		 * @param oItem {sap.m.TabStripItem} The item to be activated
-		 * @param oEvent {object} Event object that probably will be present as the item activation is bubbling
+		 * @param {jQuery.Event} oEvent  Event object that probably will be present as the item activation is bubbling
 		 * @private
 		 */
 		TabStrip.prototype._activateItem = function(oItem, oEvent) {
@@ -867,7 +867,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Propagates the property change from a <code>TabStrip</code> item instance to the <code>TabStrip</code> select item copy instance.
 		 *
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 * @private
 		 */
 		TabStrip.prototype._handleItemPropertyChanged = function (oEvent) {
@@ -878,7 +878,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Fires an item close request event based on an item close button press.
 		 *
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 * @private
 		 */
 		TabStrip.prototype._handleItemClosePressed = function (oEvent) {
@@ -1147,7 +1147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/**
 		 * Handles the <code>onTouchStart</code> event.
-		 * @param oEvent {jQuery.event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 * @returns {boolean}
 		 */
 		TabStrip.prototype.ontouchstart = function (oEvent) {
@@ -1164,7 +1164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/**
 		 * Handles the <code>onTouchEnd</code> event.
-		 * @param oEvent {jQuery.event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 * @returns {boolean}
 		 */
 		TabStrip.prototype.ontouchend = function (oEvent) {
