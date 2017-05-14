@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
 	 * @param {string} [oData.bundleName] the UI5 module name of the .properties file; this name will be resolved to a path like the paths of normal UI5 modules and ".properties" will then be appended (e.g. a name like "myBundle" can be given)
 	 * @param {string} [oData.bundleLocale] an optional locale; when not given, the default is the active locale from the UI5 configuration
-	 * @returns {Promise} Promise in async case (async ResourceModel) which is resolved when the the enhancement is finished
+	 * @returns {Promise} Promise in async case (async ResourceModel) which is resolved when the enhancement is finished
 	 * @since 1.16.1
 	 * @public
 	 */

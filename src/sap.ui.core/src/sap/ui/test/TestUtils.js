@@ -443,7 +443,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 
 		/**
 		 * @returns {boolean}
-		 *   <code>true</code> if the the real OData service is used.
+		 *   <code>true</code> if the real OData service is used.
 		 */
 		isRealOData : function () {
 			return bRealOData;

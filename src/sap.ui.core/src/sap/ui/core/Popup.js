@@ -867,7 +867,7 @@ sap.ui.define([
 
 	/**
 	 * Checks whether the given DOM object is contained in the current popup or
-	 * one of the the children popups
+	 * one of the children popups
 	 *
 	 * @param {DOMRef} the DOM object which will be checked against
 	 * @return {boolean} whether the given DOM object is contained

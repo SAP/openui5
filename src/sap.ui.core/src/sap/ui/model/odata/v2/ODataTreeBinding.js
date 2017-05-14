@@ -1278,7 +1278,7 @@ sap.ui.define(['jquery.sap.global',
 
 	/**
 	 * Applies the given filters to the ODataTreeBinding.
-	 * Please note that "Control" filters are not suported for OperationMode.Server, here only "Application" filters are allowed.
+	 * Please note that "Control" filters are not supported for OperationMode.Server, here only "Application" filters are allowed.
 	 * Filters given via the constructor are always Application filters and will be send with every backend-request.
 	 * Please see the constructor documentation for more information.
 	 *

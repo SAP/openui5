@@ -1183,7 +1183,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 *
 	 * Explanation of the SelectAll function and what to expect from its behavior:
 	 * All rows/nodes stored locally on the client are selected.
-	 * In addition all subsequent rows/tree nodes, which will be paged into view are also immediatly selected.
+	 * In addition all subsequent rows/tree nodes, which will be paged into view are also immediately selected.
 	 * However, due to obvious performance/network traffic reasons, the SelectAll function will NOT retrieve any data from the backend.
 	 *
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining

@@ -2042,7 +2042,7 @@
 			oModel.setProperty("/Suppliers(0)/Name", "blabla");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
 			oModel.setProperty("/Suppliers(0)/temp", "temp");
-			assert.equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
+			assert.equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create nonexistent property");
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
 			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");

@@ -167,7 +167,7 @@ sap.ui.getCore().attachInitEvent(function () {
 
 	function onNavigate(event){
 		jQuery.sap.log.debug("Navigate event with the reference to: " + event.getParameter("href"));
-		// Supress link navigation from a QuickView
+		// suppress link navigation from a QuickView
 		event.preventDefault();
 		// Close the QuickView after a click on a link
 		event.getSource().close();

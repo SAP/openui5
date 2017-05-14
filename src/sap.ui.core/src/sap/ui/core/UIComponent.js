@@ -548,7 +548,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	};
 
 	/**
-	 * Renders the the root control of the UIComponent.
+	 * Renders the root control of the UIComponent.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager a RenderManager instance
 	 * @public

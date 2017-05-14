@@ -10,7 +10,7 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	 * Provides and update the status data of a binding.
 	 * Depending on the models state and controls state changes, the data state is used to propagated changes to a control.
 	 * The control can react on these changes by implementing the <code>refreshDataState</code> method for the control.
-	 * Here the the data state object is passed as a parameter.
+	 * Here the data state object is passed as a parameter.
 	 *
 	 * Using the {@link #getChanges getChanges} method the control can determine the changed properties and their old and new value.
 	 * <pre>

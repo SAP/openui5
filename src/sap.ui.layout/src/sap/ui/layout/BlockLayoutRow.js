@@ -240,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 					sCalculatedStyleClass = "sapUiBlockLayoutBackgroundColorSetGray" + ((iInvertCellColorsModulo % 2) + 1);
 
-					// If the the cell already has the expected class, shouldn't loop further as everything below is already adjusted
+					// If the cell already has the expected class, shouldn't loop further as everything below is already adjusted
 					if (oCell.hasStyleClass(sCalculatedStyleClass)) {
 						continue;
 					}

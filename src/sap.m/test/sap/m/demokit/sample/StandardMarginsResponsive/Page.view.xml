@@ -10,7 +10,7 @@
 	</Panel>
 	<Panel width="auto" class="sapUiResponsiveMargin">
 		<content>
-				<Text text="Please resize the the browser window and/or use the 'Full Screen' button to see how the margins change." />
+				<Text text="Please resize the browser window and/or use the 'Full Screen' button to see how the margins change." />
 		</content>
 	</Panel>
 	<Panel width="auto" class="sapUiResponsiveMargin">

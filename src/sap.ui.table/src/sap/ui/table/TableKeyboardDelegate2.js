@@ -1985,7 +1985,7 @@ sap.ui.define([
 
 					} else if (iColSpan > iPageSize) {
 						// If the focused cell is a column span bigger than a page size,
-						// then set the focus the the next column in the row.
+						// then set the focus the next column in the row.
 						TableUtils.focusItem(this, iFocusedIndex + iColSpan, null);
 
 					} else if (iFocusedCellInRow + iColSpan - iRowHeaderOffset + iPageSize > iVisibleColumnCount) {

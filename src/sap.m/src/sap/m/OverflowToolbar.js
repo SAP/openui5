@@ -35,7 +35,7 @@ sap.ui.define([
 	 * <h3>Overview</h3>
 	 *
 	 * The content of the <code>OverflowToolbar</code> moves into the overflow area from
-	 * right to left when the the available space is not enough in the visible area of
+	 * right to left when the available space is not enough in the visible area of
 	 * the container. It can be accessed by the user through the overflow button that
 	 * opens it in a popover.
 	 *

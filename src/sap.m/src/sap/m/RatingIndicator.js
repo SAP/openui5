@@ -555,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				fStep = 1;
 				break;
 			case sap.m.RatingIndicatorVisualMode.Half:
-				// If the the value is half, we return 0.5 in order to allow/force only full value selection via keyboard.
+				// If the value is half, we return 0.5 in order to allow/force only full value selection via keyboard.
 				if (this.getValue() % 1 === 0.5) {
 					fStep = 0.5;
 				} else {

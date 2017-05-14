@@ -317,7 +317,7 @@
 			{
 				"id": "df95fded7d758ef7c5eb24e2d9936a9c06fc49ae",
 				"type": "FIX",
-				"text": "BusyIndicator: Supress 'touchmove' on Control Level",
+				"text": "BusyIndicator: suppress 'touchmove' on Control Level",
 				"references": []
 			},
 			{

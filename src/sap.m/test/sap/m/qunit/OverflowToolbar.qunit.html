@@ -1560,7 +1560,7 @@
 			var spyInvalidate = this.spy(sap.m.OverflowToolbar.prototype, "invalidate");
 			var spyFlexbox = this.spy(sap.m.OverflowToolbar.prototype, "_checkContents");
 
-			// Decrease the size so that some buttons have to move the the popover
+			// Decrease the size so that some buttons have to move the popover
 			oOverflowTB.setWidth("200px");
 			assert.strictEqual(spyInvalidate.callCount, 1, "invalidate was called by the framework after the resize");
 			this.clock.tick(1000);

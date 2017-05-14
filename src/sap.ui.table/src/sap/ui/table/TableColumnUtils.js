@@ -542,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * and execution of the default action is prevented in the event handler.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
-			 * @param {int} iColumnIndex The index of a column. Must the the index of a visible column.
+			 * @param {int} iColumnIndex The index of a column. Must the index of a visible column.
 			 * @param {int} iWidth The width in pixel to set the column or column span to. Must be greater than 0.
 			 * @param {boolean} [bFireEvent=true] Whether the ColumnResize event should be fired. The event will be fired for every resized column.
 			 * @param {int} [iColumnSpan=1] The span of columns to resize beginning from <code>iColumnIndex</code>.

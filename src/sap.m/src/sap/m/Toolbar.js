@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 			/**
 			 * Defines the width of the control.
-			 * By default, Toolbar is a block element. If the the width is not explicitly set, the control will assume its natural size.
+			 * By default, Toolbar is a block element. If the width is not explicitly set, the control will assume its natural size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 

@@ -362,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Paginator.prototype._handleSelect = function(oEvent) {
 		if (oEvent && oEvent.target) {
 
-			// Supress triggering beforeunload in IE
+			// suppress triggering beforeunload in IE
 			oEvent.preventDefault();
 
 			// go up one node if unnamed element is the source
