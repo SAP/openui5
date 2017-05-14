@@ -494,7 +494,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	/**
 	 * Function is called when Slider is moved
 	 *
-	 * @param {DOM.Event} event Event object
+	 * @param {jQuery.Event} event Event object
 	 * @private
 	 */
 	RangeSlider.prototype.handleMove = function(event) {

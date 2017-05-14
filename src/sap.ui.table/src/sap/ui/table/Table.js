@@ -2813,7 +2813,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * notifies the listener which control has been clicked or the contextmenu
 	 * should be openend.
 	 * @param {function} fnFire function to fire the event
-	 * @param {DOMEvent} oEvent event object
+	 * @param {jQuery.Event} oEvent event object
 	 * @return {boolean} cancelled or not
 	 * @private
 	 */
@@ -3449,7 +3449,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Checks whether the event is a touch event.
 	 *
-	 * @param {UIEvent} oEvent The event to check
+	 * @param {jQuery.Event} oEvent The event to check
 	 * @return {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
 	 * @private
 	 */

@@ -511,7 +511,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Sets the focus to the item with the given index.
 	 *
 	 * @param {int} iIndex Index of the item to focus
-	 * @param {jQuery.event} oEvent Event that leads to focus change
+	 * @param {jQuery.Event} oEvent Event that leads to focus change
 	 * @private
 	 */
 	ItemNavigation.prototype.focusItem = function(iIndex, oEvent) {

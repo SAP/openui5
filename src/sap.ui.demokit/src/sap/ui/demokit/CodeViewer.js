@@ -112,10 +112,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 
 	/**
 	 * Handles the sapescape event... triggers return to non-editable mode (revert)
-	 * @param {sap.ui.core.BroserEvent} oBrowserEvent the forwarded browser event
 	 * @private
 	 */
-	CodeViewer.prototype.onsapescape = function(oBrowserEvent) {
+	CodeViewer.prototype.onsapescape = function() {
 		if ( this.getEditable() ) {
 			// we do not update the source from the PRE tag, so this acts as a 'revert'
 			this.setEditable(false);

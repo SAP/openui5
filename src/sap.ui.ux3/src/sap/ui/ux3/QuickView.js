@@ -221,7 +221,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBase', 'sap/ui/core/d
 
 	/**
 	* Handle the mouseover event
-	* @param {jQuery.EventObject} oEvent The event that occurred on the QuickView link
+	* @param {jQuery.Event} oEvent The event that occurred on the QuickView link
 	* @private
 	 */
 	QuickView.prototype.onmouseover = function(oEvent) {

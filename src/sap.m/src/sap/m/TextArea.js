@@ -468,7 +468,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	 * On touch start get iscroll and save starting point
 	 *
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	TextArea.prototype._onTouchStart = function(oEvent) {
 		var oTouchEvent = oEvent.touches[0];
@@ -486,7 +486,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	 * Touch move listener doing native scroll workaround
 	 *
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	TextArea.prototype._onTouchMove = function(oEvent) {
 

@@ -932,7 +932,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 		/**
 		 * <code>liveChange</code> handler.
-		 * @param {oEvent} oEvent Event object
+		 * @param {sap.ui.base.Event} oEvent Event object
 		 * @private
 		 */
 		StepInput.prototype._inputLiveChangeHandler = function (oEvent) {

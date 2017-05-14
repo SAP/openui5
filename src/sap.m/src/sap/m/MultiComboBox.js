@@ -471,7 +471,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * Function is called on key down keyboard input
 	 *
 	 * @private
-	 * @param {jQuery.event} oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
 		ComboBoxBase.prototype.onkeydown.apply(this, arguments);
@@ -554,7 +554,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * Function is called on key up keyboard input
 	 *
 	 * @private
-	 * @param {jQuery.event} oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	MultiComboBox.prototype.onkeyup = function(oEvent) {
 		if (!this.getEnabled() || !this.getEditable()) {
@@ -1605,7 +1605,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
-	 * @param {jQuery.event} oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	MultiComboBox.prototype.onsapbackspace = function(oEvent) {
 
@@ -1631,7 +1631,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * Function is called on delete keyboard input, deletes selected tokens
 	 *
 	 * @private
-	 * @param {jQuery.event} oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	MultiComboBox.prototype.onsapdelete = function(oEvent) {
 
@@ -1649,7 +1649,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 	/**
 	 * @private
-	 * @param {jQuery.event} oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	MultiComboBox.prototype.onsapnext = function(oEvent) {
 
@@ -1678,7 +1678,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 
 	/**
 	 * @private
-	 * @param {jQuery.event} oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	MultiComboBox.prototype.onsapprevious = function(oEvent) {
 

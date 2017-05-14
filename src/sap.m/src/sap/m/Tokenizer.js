@@ -460,8 +460,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handles the copy event
 	 *
-	 * @param {ClipboardEvent}
-	 *            oEvent - the occuring event
 	 * @private
 	 */
 	Tokenizer.prototype._copy = function() {
@@ -499,8 +497,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handles the cut event
 	 *
-	 * @param {ClipboardEvent}
-	 *            oEvent - the occuring event
 	 * @private
 	 */
 	Tokenizer.prototype._cut = function() {
@@ -551,7 +547,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function is called on keyboard backspace, deletes selected tokens
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 
@@ -570,7 +566,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function is called on keyboard delete, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 

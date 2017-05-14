@@ -606,7 +606,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		/**
 		 * Event handler for the focusin event.
 		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onfocusin = function (oEvent) {
@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * Event handler for the escape key pressed event.
 		 * If it occurs and the developer hasn't defined the escapeHandler property, the Dialog is immediately closed.
 		 * Else the escapeHandler is executed and the developer may prevent the closing of the Dialog.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onsapescape = function(oEvent) {

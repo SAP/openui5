@@ -229,7 +229,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 	 * they are given before an eventual <code>originalEvent</code> property in <code>oParams</code>.
 	 *
 	 * @param {string} sEventName mandatory name (type) of the newly created event
-	 * @param {EventTarget} [oTarget] optional target of the event
+	 * @param {DOMElement} [oTarget] optional target of the event
 	 * @param {object} [oParams] optional map of properties to be added to the event
 	 */
 	function fakeEvent(sEventName, oTarget, oParams) {
