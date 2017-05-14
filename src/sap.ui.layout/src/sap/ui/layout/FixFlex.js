@@ -71,7 +71,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 					fixContentSize: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto"},
 
 					/**
-					 * Enables scrolling inside the flexible part. The given size is calculated in "px". If the child control in the flexible part is larger then the available flexible size on the screen and if the available size for the flexible part is smaller or equal to the minFlexSize value, the scroll will be for the entire FixFlex control.
+					 * Enables scrolling inside the flexible part. The given size is calculated in "px". If the child control in the flexible part is larger than the available flexible size on the screen and if the available size for the flexible part is smaller or equal to the minFlexSize value, the scroll will be for the entire FixFlex control.
 					 *
 					 * @since 1.29
 					 */
@@ -229,7 +229,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/EnabledP
 				if (this.$("FlexibleContainer").children().height() > nMinFlexSize) {
 					this.$("Flexible").attr("style", "min-" + sDirection + ":" + nMinFlexSize + "px");
 				} else {
-					// If the child control is smaller then the content,
+					// If the child control is smaller than the content,
 					// the flexible part need to have set height/width, else the child control can"t resize to max
 					this.$("Flexible").attr("style", sDirection + ":" + nMinFlexSize + "px");
 				}

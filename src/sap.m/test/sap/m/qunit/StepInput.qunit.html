@@ -408,7 +408,7 @@
 			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
-		QUnit.test("displayValuePrecision formating when digits after the dot are more then the value precision", function (assert) {
+		QUnit.test("displayValuePrecision formating when digits after the dot are more than the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -417,7 +417,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
 		});
 
-		QUnit.test("displayValuePrecision formating when digits after the dot are less then the value precision", function (assert) {
+		QUnit.test("displayValuePrecision formating when digits after the dot are less than the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(5);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -942,7 +942,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
 		});
 
-		QUnit.test("less then Min value set via binding", function (assert) {
+		QUnit.test("less than Min value set via binding", function (assert) {
 			this.oModel.setData({
 				vValue: 4,
 				vMin: 5
