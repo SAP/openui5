@@ -9,7 +9,7 @@ sap.ui.define(
 			 * @public
 			 */
 			init : function () {
-				// create a sinon.js fake server that responds automatically after 1s
+				// create a Sinon.JS fake server that responds automatically after 1s
 				this.oServer = sinon.fakeServer.create();
 				this.oServer.autoRespond = true;
 				this.oServer.autoRespondAfter = 1000;

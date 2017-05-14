@@ -432,8 +432,8 @@ sap.ui.define([
 	}
 
 	var ExtensionDelegate = {
-		_ontouchstart: onTouchStart, // qUnit helper
-		_ontouchmove: onTouchMove,   // qUnit helper
+		_ontouchstart: onTouchStart, // QUnit helper
+		_ontouchmove: onTouchMove,   // QUnit helper
 		onAfterRendering: function(oEvent) {
 			VerticalScrollingHelper.restoreScrollPosition(this);
 			HorizontalScrollingHelper.restoreScrollPosition(this);

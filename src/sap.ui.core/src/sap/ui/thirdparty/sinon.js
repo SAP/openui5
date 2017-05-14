@@ -4564,7 +4564,7 @@ if (typeof sinon == "undefined") {
     };
     // ##### BEGIN OF MODIFICATION BY SAP
     //var IE6Re = /MSIE 6/;
-    // Fix in SAP internally used sinon.js version:
+    // Fix in SAP internally used Sinon.JS version:
     // In the newest Sinon, errors are only suppressed for user agents matching /MSIE 6/,
     // so IE7-IE9 throw an exception: a broader RegExp needs to be used for IE7-IE9
     var IE6to9Re = /MSIE [6-9]/;

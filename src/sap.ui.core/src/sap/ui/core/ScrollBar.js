@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	 */
 	ScrollBar.prototype.init = function(){
 
-		// JQuery Object - Dom reference of the scroll bar
+		// jQuery Object - Dom reference of the scroll bar
 		this._$ScrollDomRef = null;
 
 		// In pixels - exact position
