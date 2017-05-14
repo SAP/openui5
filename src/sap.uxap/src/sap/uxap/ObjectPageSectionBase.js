@@ -316,7 +316,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * Called to set the visibility of the section / subsection
-	 * @params oSection, sCurrentLowestImportanceLevelToShow
+	 * @param {string} sCurrentLowestImportanceLevelToShow
 	 *
 	 * @private
 	 */

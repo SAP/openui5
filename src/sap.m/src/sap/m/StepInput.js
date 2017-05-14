@@ -459,7 +459,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Handles the button press.
 		 *
-		 * @params {boolean} isPlusButton Indicates the pressed button either the increment or decrement one
+		 * @param {boolean} isPlusButton Indicates the pressed button either the increment or decrement one
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 * @private
 		 */
@@ -488,9 +488,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Handles whether the increment and decrement buttons should be enabled/disabled based on different situations.
 		 *
-		 * @params {number} value Indicates the value in the input
-		 * @params {number} max Indicates the max
-		 * @params {number} min Indicates the min
+		 * @param {number} value Indicates the value in the input
+		 * @param {number} max Indicates the max
+		 * @param {number} min Indicates the min
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype._disableButtons = function (value, max, min) {
@@ -892,7 +892,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Sets the editable property.
 		 *
-		 * @params {boolean} editable - Indicates if the value is editable
+		 * @param {boolean} editable - Indicates if the value is editable
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setEditable = function (editable) {
@@ -942,9 +942,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Returns a default value depending of the given value, min and max properties.
 		 *
-		 * @params {number} value Indicates the value
-		 * @params {number} max Indicates the max
-		 * @params {number} min Indicates the min
+		 * @param {number} value Indicates the value
+		 * @param {number} max Indicates the max
+		 * @param {number} min Indicates the min
 		 * @returns {number} The default value
 		 * @private
 		 */
@@ -966,7 +966,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Checks whether the value is a number like (coercion may take place).
 		 *
-		 * @params {variant} val - Holds the value
+		 * @param {variant} val - Holds the value
 		 * @returns {boolean}
 		 * @private
 		 */
