@@ -46,7 +46,8 @@ sap.ui.define([
 				"int",
 				"boolean",
 				"string",
-				"string[]"
+				"string[]",
+				"number"
 			],
 
 			/* =========================================================== */
@@ -386,10 +387,12 @@ sap.ui.define([
 				var result = methods.filter(function (method) {
 					return true; //method.visibility === "public";
 				}).map(function (method) {
+					var subParameters = [];
 					method.parameters = method.parameters || [];
 
 					// Handle multiple values
 					method.parameters = method.parameters.map(function (param) {
+						var paramProperties, paramTypes;
 						var types = (param.type || "").split("|");
 						param.types = [];
 						for (var i = 0; i < types.length; i++) {
@@ -398,6 +401,24 @@ sap.ui.define([
 								isLast: i === types.length - 1
 							});
 						}
+
+						if (param.parameterProperties) {
+							paramProperties = param.parameterProperties;
+							for (var prop in paramProperties) {
+								paramTypes = (paramProperties[prop].type || "").split("|");
+								paramProperties[prop].types = [];
+								paramProperties[prop].types = paramTypes.map(function (currentType, idx, array) {
+									return {
+										value: currentType,
+										isLast: idx === array.length - 1
+									};
+								});
+								paramProperties[prop].isSubProperty = true;
+								paramProperties[prop].phoneName = param.name + '.' + paramProperties[prop].name;
+								subParameters.push(paramProperties[prop]);
+							}
+						}
+
 						return param;
 					});
 
@@ -412,6 +433,8 @@ sap.ui.define([
 							});
 						}
 					}
+
+					method.parameters = method.parameters.concat(subParameters);
 
 					return method;
 
@@ -438,14 +461,32 @@ sap.ui.define([
 				// Transform the key-value pairs of event parameters into an array
 				var result = events.map(function (event) {
 					if (event.parameters) {
-						var aParameters = [];
+						var aParameters = [], currentParam, subParam, subSubParam;
 						for (var i in event.parameters) {
 							if (event.parameters.hasOwnProperty(i)) {
-								aParameters.push(event.parameters[i]);
+								currentParam = event.parameters[i];
+								aParameters.push(currentParam);
+								if (currentParam.parameterProperties) {
+									for (var j in currentParam.parameterProperties) {
+										subParam = currentParam.parameterProperties[j];
+										subParam.isSubProperty = true;
+										subParam.phoneName = currentParam.name + '.' + subParam.name;
+										aParameters.push(subParam);
+										if (subParam.parameterProperties) {
+											for (var k in subParam.parameterProperties) {
+												subSubParam = subParam.parameterProperties[k];
+												subSubParam.isSubSubProperty = true;
+												subSubParam.phoneName = currentParam.name + '.' + subParam.name + '.' + subSubParam.name;
+												aParameters.push(subSubParam);
+											}
+										}
+									}
+								}
 							}
 						}
 						event.parameters = aParameters;
 					}
+
 					return event;
 				});
 
@@ -684,6 +725,28 @@ sap.ui.define([
 				var sEventText = this.formatEventsType(eventInfo);
 
 				return this._baseTypes.indexOf(sEventText) === -1;
+			},
+
+			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
+				if (bPhoneSize && (isSubProperty || isSubSubProperty)) {
+					return "sapUiDocumentationParamPhone";
+				} else if (isSubSubProperty) {
+					return "sapUiDocumentationParamSubSub";
+				} else if (isSubProperty) {
+					return "sapUiDocumentationParamSub";
+				} else {
+					return "sapUiDocumentationParamBold";
+				}
+			},
+
+			formatMethodClassName: function (isSubProperty, bPhoneSize) {
+				if (bPhoneSize && isSubProperty) {
+					return "sapUiDocumentationParamPhone";
+				} else if (isSubProperty) {
+					return "sapUiDocumentationParamSub";
+				} else {
+					return "sapUiDocumentationParamBold";
+				}
 			},
 
 			/**

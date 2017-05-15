@@ -79,8 +79,22 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 	font-style: italic;
 }
 
-.sapMListTbl .docuParamBold.sapMText {
+.sapMListTbl .sapUiDocumentationParamBold.sapMText {
 	font-weight: bold;
+}
+
+.sapMListTbl .sapUiDocumentationParamPhone.sapMText {
+	font-weight: normal;
+}
+
+.sapMListTbl .sapUiDocumentationParamSub.sapMText {
+	font-weight: normal;
+	padding-left: 2rem;
+}
+
+.sapMListTbl .sapUiDocumentationParamSubSub.sapMText {
+	font-weight: normal;
+	padding-left: 4rem;
 }
 
 /* explored code view */

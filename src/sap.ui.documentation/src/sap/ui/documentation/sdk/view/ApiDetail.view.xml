@@ -5,7 +5,8 @@
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:ce="sap.ui.codeeditor"
-		xmlns:layout="sap.ui.layout">
+		xmlns:layout="sap.ui.layout"
+		xmlns:custom="sap.ui.documentation.sdk.controls">
 
 	<m:Page
 			id="apiDetailPage"
@@ -141,7 +142,7 @@
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 
 													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
 														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
@@ -200,7 +201,7 @@
 											<m:ColumnListItem>
 												<m:cells>
 
-													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
@@ -253,7 +254,11 @@
 											<m:items>
 												<m:ColumnListItem>
 													<m:cells>
-														<m:Text class="docuParamBold" text="{events>name}"
+														<custom:ParamText customClass="{parts: [{path: 'events>isSubProperty'},
+																								{path: 'events>isSubSubProperty'},
+																								{path: 'appView>/bPhoneSize'}],
+																						formatter: '.formatEventClassName'}" 
+																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${events>phoneName} ? ${events>phoneName} : ${events>name} }"
 																wrapping="false"/>
 														<m:Link text="{events>type}"
 																enabled="{parts: [{path: 'events>'}],
@@ -303,7 +308,11 @@
 												<m:ColumnListItem>
 													<m:cells>
 
-														<m:Text class="docuParamBold" text="{methods>name}" wrapping="false"/>
+														<custom:ParamText customClass="{parts: [{path: 'methods>isSubProperty'},
+																								{path: 'appView>/bPhoneSize'}],
+																						formatter: '.formatMethodClassName'}"
+																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${methods>phoneName} ? ${methods>phoneName} : ${methods>name} }"
+																		  wrapping="false"/>
 
 
 														<layout:VerticalLayout content="{methods>types}">
@@ -383,7 +392,7 @@
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
@@ -426,7 +435,7 @@
 										<m:items>
 											<m:ColumnListItem visible="{topics>visibility === 'public'}">
 												<m:cells>
-													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
@@ -467,7 +476,7 @@
 										<m:items>
 											<m:ColumnListItem>
 												<m:cells>
-													<m:Text class="docuParamBold" text="{topics>name}" wrapping="false"/>
+													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																		  formatter: '.formatLinkEnabled'}"
