@@ -377,6 +377,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 <edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">\
 	<edmx:DataServices m:DataServiceVersion="2.0">\
 		<Schema Namespace="GWSAMPLE_BASIC" xml:lang="en" sap:schema-version="0000" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<ComplexType Name="Foo">\
+				<Property Name="bar" Type="GWSAMPLE_BASIC.Bar"/>\
+			</ComplexType>\
+			<ComplexType Name="Bar">\
+				<Property Name="baz" Type="Edm.String"/>\
+			</ComplexType>\
 			<EntityType Name="BusinessPartner" sap:content-version="1"/>\
 			<EntityType Name="Product" sap:content-version="1">\
 				<Property Name="_Boolean" Type="Edm.Boolean" Nullable="false"/>\
@@ -1773,6 +1779,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				assert.strictEqual(AnnotationHelper.resolvePath(oContext), undefined,
 					"resolvePath");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("followPath starting at complex type", function (assert) {
+		return withTestModel(assert, function (oMetaModel) {
+			var oContext = oMetaModel.createBindingContext("/dataServices/schema/0/complexType/0/"),
+				oResult;
+
+			// code under test
+			oResult = Basics.followPath(oContext, {Path : "bar/baz"});
+
+			assert.strictEqual(oResult.resolvedPath,
+				"/dataServices/schema/0/complexType/1/property/0");
 		});
 	});
 
