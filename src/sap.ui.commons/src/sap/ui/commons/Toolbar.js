@@ -900,7 +900,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles the right side resize event.
 		 *
-		 * @param {jQuery.Event}  oEvent Event object
 		 * @private
 		 */
 		Toolbar.prototype.onrightsideresize = function () {

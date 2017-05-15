@@ -390,7 +390,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Sets the visibility of the paginator buttons
-	 * @param width
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._setPaginatorVisibility = function () {

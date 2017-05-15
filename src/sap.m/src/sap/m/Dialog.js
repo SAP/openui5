@@ -1246,7 +1246,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		/**
 		 *
-		 * @param oScrollDomRef
 		 * @private
 		 */
 		Dialog.prototype._registerContentResizeHandler = function() {

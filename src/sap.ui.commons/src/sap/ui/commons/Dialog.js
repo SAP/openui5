@@ -644,7 +644,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Restores the focus to the dialog after it has been moved or resized.
 		 *
-		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.restoreFocus = function () {

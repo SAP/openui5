@@ -418,7 +418,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	/**
 	 * Function is called when window is resized
 	 *
-	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	DataSetSimpleView.prototype.onresize = function() {

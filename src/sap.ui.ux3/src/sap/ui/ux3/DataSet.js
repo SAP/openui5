@@ -333,7 +333,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * Prepare rendering: Calls init end exit hooks on the selected view instance. Necessary to keep the view
 	 * consistent to the DataSet state.
 	 *
-	 * @param {string} sItemId Id of the selected DataSetItem
 	 * @private
 	*/
 	DataSet.prototype.prepareRendering = function() {
@@ -359,7 +358,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	/**
 	 * Returns the LeadSelection index
 	 *
-	 * @param {string} sItemId Id of the selected DataSetItem
 	 * @return {int} selected index
 	 * @protected
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

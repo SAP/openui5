@@ -409,7 +409,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 	/**
 	 * Updates counter value.
-	 * @param {string} sValue the value of the TextArea
 	 * @private
 	 */
 

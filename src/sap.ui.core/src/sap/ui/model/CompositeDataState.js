@@ -149,7 +149,6 @@ sap.ui.define([ 'jquery.sap.global', './DataState' ], function(jQuery, DataState
 	/**
 	 * Sets an array of control state messages.
 	 *
-	 * @param {sap.ui.core.Message[]} the control messages
 	 * @return {sap.ui.model.DataState} <code>this</code> to allow method chaining
 	 * @protected
 	 */

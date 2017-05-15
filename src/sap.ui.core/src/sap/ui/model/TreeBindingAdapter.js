@@ -1618,7 +1618,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Gets the collapsing behavior when parent nodes are collapsed.
-		 * @param {boolean} bCollapseRecursive
 		 */
 		TreeBindingAdapter.prototype.getCollapseRecursive = function () {
 			return this.bCollapseRecursive;

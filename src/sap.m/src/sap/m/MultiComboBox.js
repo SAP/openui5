@@ -1474,10 +1474,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	};
 
 	/**
-	 * @param {sap.ui.base.Event} oEvent
 	 * @private
 	 */
-
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
 		this._oTokenizer.scrollToEnd();
 	};

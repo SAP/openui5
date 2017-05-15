@@ -183,7 +183,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 	/**
 	 * Returns all plugins for the application window
-	 * @param bTool
 	 * @returns {sap.ui.core.support.Plugin[]}
 	 * @private
 	 * @sap-restricted

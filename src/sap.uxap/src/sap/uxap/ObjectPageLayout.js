@@ -1212,7 +1212,6 @@ sap.ui.define([
 	 * Get the destination section of the ongoing scroll
 	 * When this one is non-null, then the page will skip intermediate sections [during the scroll from the current to the destination section]
 	 * and will scroll directly to the given section
-	 * @param sDirectSectionId - the section to be scrolled directly to
 	 */
 	ObjectPageLayout.prototype.getDirectScrollingToSection = function () {
 		return this.sDirectSectionId;

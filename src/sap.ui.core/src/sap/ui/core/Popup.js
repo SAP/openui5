@@ -2341,8 +2341,6 @@ sap.ui.define([
 	};
 
 	/**
-	 *
-	 * @param iZIndex
 	 * @private
 	 */
 	Popup.prototype._showBlockLayer = function() {
