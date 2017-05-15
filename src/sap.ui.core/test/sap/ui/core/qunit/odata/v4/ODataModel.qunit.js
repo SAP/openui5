@@ -427,17 +427,25 @@ sap.ui.require([
 	QUnit.test("submitBatch", function (assert) {
 		var oModel = createModel(),
 			oModelMock = this.mock(oModel),
-			oReturn,
 			oSubmitPromise = {};
 
 		oModelMock.expects("checkGroupId").withExactArgs("groupId", true);
-		oModelMock.expects("_submitBatch").withExactArgs("groupId")
-			.returns(oSubmitPromise);
+		oModelMock.expects("_submitBatch").never(); // not yet
+		this.stub(sap.ui.getCore(), "addPrerenderingTask", function (fnCallback) {
+			setTimeout(function () {
+				// make sure that _submitBatch is called within fnCallback
+				oModelMock.expects("_submitBatch").withExactArgs("groupId")
+					.returns(oSubmitPromise);
+				fnCallback();
+			}, 0);
+		});
 
 		// code under test
-		oReturn = oModel.submitBatch("groupId");
-
-		assert.strictEqual(oReturn, oSubmitPromise);
+		return oModel.submitBatch("groupId").then(function (oResult) {
+			// this proves that submitBatch() returns a promise which is resolved with the result
+			// of _submitBatch(), which in reality is of course a promise itself
+			assert.strictEqual(oResult, oSubmitPromise);
+		});
 	});
 
 	//*********************************************************************************************
