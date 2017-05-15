@@ -1165,7 +1165,7 @@ sap.ui.require([
 
 		oBindingMock.expects("fetchQueryOptionsForOwnCache").returns(_SyncPromise.resolve({}));
 		this.mock(oContext).expects("fetchCanonicalPath").withExactArgs()
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+			.returns(_SyncPromise.reject(oError));
 		this.mock(oBinding.oModel).expects("reportError")
 			.withExactArgs("Failed to create cache for binding MyBinding",
 				"sap.ui.model.odata.v4.ODataBinding", sinon.match.same(oError));

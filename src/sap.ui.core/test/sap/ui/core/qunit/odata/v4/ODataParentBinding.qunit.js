@@ -1688,7 +1688,7 @@ sap.ui.require([
 			var oBinding = new ODataParentBinding({
 					oModel : {
 						oMetaModel : {
-							getObject : function () {},
+							getObject : function () {}
 						}
 					}
 				}),

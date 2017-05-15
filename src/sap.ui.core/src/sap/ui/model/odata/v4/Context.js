@@ -161,7 +161,7 @@ sap.ui.define([
 		if (this.isTransient()) {
 			return that.oBinding._delete(sGroupId, "n/a", that);
 		}
-		return this.requestCanonicalPath().then(function (sCanonicalPath) {
+		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
 		});
 	};

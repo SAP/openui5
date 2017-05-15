@@ -573,7 +573,7 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oCacheMock = this.mock(oBinding.oCachePromise.getResult()),
 			oExpectedError = new Error("Expected read failure"),
-			oRejectedPromise = _SyncPromise.resolve(Promise.reject(oExpectedError));
+			oRejectedPromise = _SyncPromise.reject(oExpectedError);
 
 		oCacheMock.expects("fetchValue").withExactArgs("$direct", "foo", sinon.match.func, undefined)
 			.callsArg(2).returns(oRejectedPromise);
