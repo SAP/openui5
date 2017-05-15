@@ -23,7 +23,7 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$groupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 		sServiceUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataPropertyBinding", {
@@ -1001,7 +1001,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	["/absolute", "relative"].forEach(function (sPath) {
-		QUnit.test("$$groupId, $$updateGroupId - sPath: " + sPath, function (assert) {
+		QUnit.test("$$groupId - sPath: " + sPath, function (assert) {
 			var oBinding,
 				oContext = this.oModel.createBindingContext("/absolute"),
 				oHelperMock = this.oSandbox.mock(_ODataHelper),
@@ -1010,14 +1010,6 @@ sap.ui.require([
 
 			oModelMock.expects("getGroupId").withExactArgs().returns("baz");
 			oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
-
-			oHelperMock.expects("buildBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-				.returns({$$groupId : "foo", $$updateGroupId : "bar"});
-			// code under test
-			oBinding = this.oModel.bindProperty(sPath, oContext, mParameters);
-			assert.strictEqual(oBinding.getGroupId(), "foo");
-			assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
 			oHelperMock.expects("buildBindingParameters")
 				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
