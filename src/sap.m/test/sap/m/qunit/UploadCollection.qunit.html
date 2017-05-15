@@ -478,11 +478,11 @@
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
-		var oSpyDestroy = sinon.spy(oFileName, "destroy");
+		var oSpyGetter = sinon.spy(oItem, "_getFileNameLink");
 		//Act
 		oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
 		//Assert
-		assert.ok(oSpyDestroy.calledOnce, "Destroy on oFileName object was called once");
+		assert.equal(oSpyGetter.callCount, 1, "_getFileNameLink on oItem object was called once");
 		assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
 	});
 
@@ -496,11 +496,11 @@
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
-		var oSpyDestroy = sinon.spy(oDeleteButton, "destroy");
+		var oSpyGetter = sinon.spy(oItem, "_getDeleteButton");
 		//Act
 		oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
 		//Assert
-		assert.ok(oSpyDestroy.calledOnce, "Destroy on oDeleteButton object was called once");
+		assert.equal(oSpyGetter.callCount, 1, "_getDeleteButton on oItem object was called once");
 		assert.equal(oDeleteButton.mEventRegistry.press.length, 1, "One press handler attached in case the function is called several times");
 	});
 
@@ -630,7 +630,6 @@
 			done();
 		});
 		oDialog.getButtons()[0].firePress();
-		this.oUploadCollection.removeItem(oItem);
 		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
 	});
 
