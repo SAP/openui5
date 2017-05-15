@@ -575,11 +575,41 @@
 		assert.equal(oBackButtonPressSpy.callCount, 1, "Backward navigation handler has been called.");
 	});
 
+	QUnit.test("If 'back' navigation happens, event 'navigate' is triggered", function(assert) {
+		// Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		//var oContent = this.aHandleNavLazyArgs[1];
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		this.oSelectionDetails._onNavigate({
+			getSource: function () {
+				return oSelectionDetailsItem;
+			}
+		});
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
+		this.oSelectionDetails.attachNavigate(onNavigate, this);
+
+		// Act
+		this.oNavContainer.getPages()[0].getCustomHeader().getContent()[0].firePress();
+
+		// Assert
+		function onNavigate(oEvent) {
+			assert.equal(oEvent.getParameter("direction"), "back", "Event property 'direction' is 'back'");
+			assert.equal(oEvent.getParameter("item"), oSelectionDetailsItem, "Event property 'item' is provided");
+			assert.equal(oEvent.getParameter("content"), this.oContent, "Event property 'content' is the content of page which is navigated from");
+		}
+	});
+
 	QUnit.test("Backward navigation to the initial page triggers animation", function(assert) {
 		// Arrange
+		var oInitialPageMock = {
+			getContent: function () {
+				return [ "" ];
+			}
+		};
 		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
+		this.oSelectionDetails._oInitialPage = oInitialPageMock;
 		sinon.stub(this.oSelectionDetails, "_getInitialPageHeight").returns(500);
-		sinon.stub(this.oSelectionDetails._oNavContainer, "getCurrentPage").returns(this.oSelectionDetails._oInitialPage);
+		sinon.stub(this.oSelectionDetails._oNavContainer, "getCurrentPage").returns(oInitialPageMock);
 		var oSetPopoverHeightSpy = sinon.spy(this.oSelectionDetails, "_setPopoverHeight");
 
 		// Act
@@ -649,6 +679,8 @@
 
 		//Assert
 		assert.deepEqual(oFireNavigateSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
+		assert.deepEqual(oFireNavigateSpy.getCall(0).args[0].direction, "to", "'navigate' event of SelectionDetails was called with correct 'direction' parameter");
+		assert.deepEqual(this.oSelectionDetails._oItemForNavigation, oSelectionDetailsItem, "Item for navigation saved");
 	});
 
 	QUnit.test("'_onNavigate' event handler attached once per navigate button", function(assert) {
