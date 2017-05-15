@@ -371,11 +371,11 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
 						if (!this._oDummyScrollContainer) {
 							this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
-							if (iScrollHeight > mSize.height && oOverlayParent.$) {
+							if (iScrollHeight > mSize.height && oOverlayParent.$ && oOverflows.overflowY && (oOverflows.overflowY == "auto" || oOverflows.overflowY == "scroll")) {
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarVertical");
 							}
-							if (iScrollWidth > mSize.width && oOverlayParent.$) {
+							if (iScrollWidth > mSize.width && oOverlayParent.$ && oOverflows.overflowX && (oOverflows.overflowX == "auto" || oOverflows.overflowX == "scroll")) {
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarHorizontal");
 							}
