@@ -588,8 +588,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Scrolls the items if possible, using an animation.
 	 *
-	 * @param iDelta how far to scroll
-	 * @param iDuration how long to scroll (ms)
+	 * @param {int} iDelta how far to scroll
+	 * @param {int} iDuration how long to scroll (ms)
 	 * @private
 	 */
 	NavigationBar.prototype._scroll = function(iDelta, iDuration) {

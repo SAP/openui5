@@ -1181,8 +1181,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * Scrolls the items if possible, using an animation.
 	 *
-	 * @param iDelta How far to scroll
-	 * @param iDuration How long to scroll (ms)
+	 * @param {int} iDelta How far to scroll
+	 * @param {int} iDuration How long to scroll (ms)
 	 * @private
 	 */
 	IconTabHeader.prototype._scroll = function(iDelta, iDuration) {

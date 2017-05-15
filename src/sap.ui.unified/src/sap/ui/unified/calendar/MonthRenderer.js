@@ -299,13 +299,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	/**
 	 *
-	 * @param oRm
+	 * @param {sap.ui.core.RenderManager} oRm
 	 * @param {sap.ui.unified.calendar.Month} oMonth
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDay
-	 * @param oHelper
+	 * @param {object} oHelper
 	 * @param {boolean} bOtherMonth
 	 * @param {boolean} bWeekNum
-	 * @param iNumber
+	 * @param {int} iNumber
 	 * @param {string} sWidth
 	 * @param {boolean} bDayName
 	 */

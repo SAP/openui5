@@ -827,8 +827,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * For IE selecting text by #setSelectedRange method (this is what function _doSelect does)
 	 * provokes focus, so this function makes sure we were not called because of "_doSelect" more than once.
 	 * Edge does not have such behavior.
-	 * @param iStart the 0-based start position for the selection
-	 * @param iEnd the 0-based end position for the selection
+	 * @param {int} iStart the 0-based start position for the selection
+	 * @param {int} iEnd the 0-based end position for the selection
 	 * @private
 	 */
 	DropdownBox.prototype._callDoSelectAfterFocusIn = function(iStart, iEnd) {

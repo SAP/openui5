@@ -6257,8 +6257,8 @@
 	/**
 	 * Navigates through the whole table with up and down keys, from the first to the last row in the specified column including scrolling.
 	 *
-	 * @param assert
-	 * @param iCol Column number. Set -1 for the row headers and -2 for the row actions column
+	 * @param {QUnit.assert} assert
+	 * @param {int} iCol Column number. Set -1 for the row headers and -2 for the row actions column
 	 * @param {boolean} bCtrlKey Set true if the Ctrl key should be used by navigation
 	 * @private
 	 */

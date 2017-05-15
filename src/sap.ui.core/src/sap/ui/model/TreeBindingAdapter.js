@@ -466,9 +466,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Retrieves the requested part from the tree and returns node objects.
-		 * @param iStartIndex
-		 * @param iLength
-		 * @param iThreshold
+		 * @param {int} iStartIndex
+		 * @param {int} iLength
+		 * @param {int} iThreshold
 		 * @return {Object} Tree Node
 		 * @protected
 		 */

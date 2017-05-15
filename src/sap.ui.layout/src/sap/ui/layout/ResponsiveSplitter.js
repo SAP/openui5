@@ -446,7 +446,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Sets the indexed page to visible and changes the selected button in the paginator
-	 * @param iPageIndex
+	 * @param {int} iPageIndex
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._activatePage = function (iPageIndex) {
