@@ -592,6 +592,32 @@
 		assert.equal(sFileNameRequestIdValue, this.encodeToAscii(sFileName) + sRequestId, "Unique key for a File is set correctly into requestHeaders");
 	});
 
+	QUnit.test("handleTerminate - Function _handleTerminate called on terminate button press", function(assert) {
+		var oDialogOpenStub = sinon.stub(sap.m.Dialog.prototype, "open");
+		var oHandleTerminateSpy = sinon.spy(this.oUploadCollection, "_handleTerminate");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		oFileUploader._aXhr = [];
+		var oFile2 = {
+			name: "Document.txt"
+		};
+		oFileUploader.fireChange({
+			files: [oFile2]
+		});
+
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		var oTerminateButton =  this.oUploadCollection.aItems[0]._getTerminateButton()
+		oTerminateButton.firePress();
+
+		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
+
+		// Clean up
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.destroy();
+		oDialogOpenStub.restore();
+	});
+
 	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function(assert) {
 		var done = assert.async();
 		var oItem = new sap.m.UploadCollectionItem({
