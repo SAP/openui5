@@ -102,7 +102,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		/**
 		 * Determines the pin/unpin toggle button state.
-		 * @param bValue
+		 * @param {boolean} bValue
 		 * @private
 		 */
 		DynamicPageHeader.prototype._togglePinButton = function (bValue) {

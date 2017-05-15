@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * in order to re-initialize item navigation
 		 * with the currently visible items. Update the visibility of the overflow button.
 		 *
-		 * @param bClearTabStops Whether the tab indices of all toolbar items should be set to -1
+		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */
 		Toolbar.prototype.updateAfterResize = function (bClearTabStops) {
@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * visible one.
 		 *
 		 * @param iAllItemsBeforeBreak The number of currently visible toolbar items
-		 * @param bClearTabStops Whether the tab indices of all toolbar items should be set to -1
+		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */
 		Toolbar.prototype.updateItemNavigation = function (iAllItemsBeforeBreak, bClearTabStops) {
@@ -342,7 +342,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Returns the number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism).
 		 * If the toolbar has not been rendered yet, value "0" is returned.
 		 * Requirement here is that every control has exactly one root HTML element.
-		 * @param bIncludeItemsWithAPIPropertyVisibleFalse if true the items with property "visible"=false will be also
+		 * @param {boolean} bIncludeItemsWithAPIPropertyVisibleFalse if true the items with property "visible"=false will be also
 		 * included, although they may not be hidden due to the overflow mechanism.
 		 * @return The number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism).
 		 * @private
@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Modifies the visibility of the overflow button
 		 *
-		 * @param bOverflow whether the overflow button should be displayed
+		 * @param {boolean} bOverflow whether the overflow button should be displayed
 		 * @private
 		 */
 		Toolbar.prototype.updateOverflowIcon = function (bOverflow) {

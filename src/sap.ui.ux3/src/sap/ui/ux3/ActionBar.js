@@ -269,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Load language dependent text for given resource bundle key and optional
 	 * arguments, if the resource contains dynamic content
 	 *
-	 * @param sKey resource bundle key
+	 * @param {string} sKey resource bundle key
 	 * @param aArgs used to fill dynamic resource content
 	 * @return the resource if it was found in the bundle or 'sKey' if no matching
 	 *		 resource was available.
@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * that 'sActionId' taken from 'this.mActionKeys', otherwise
 	 * a warning will be logged and 'undefined is returned'
 	 *
-	 * @param sActionId
+	 * @param {string} sActionId
 	 * @return new or pooled instance of the specified action or 'undefined'
 	 */
 	ActionBar.prototype._getSocialAction = function (sActionId) {
@@ -663,7 +663,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/*
 	 * Shows or hides standard button 'Update' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowUpdate = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Update), bFlag);
@@ -675,7 +675,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/*
 	 * Shows or hides standard button 'Follow' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowFollow = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Follow), bFlag);
@@ -687,7 +687,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/*
 	 * Shows or hides standard button 'Flag' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowFlag = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Flag), bFlag);
@@ -986,7 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Calls '_addSocialAction' or '_removeSocialAction' depending on 'bFlag'.
 	 *
 	 * @param oSocialAction social action to deal with.
-	 * @param bFlag show the action or not.
+	 * @param {boolean} bFlag show the action or not.
 	 * @return the sap.ui.ux3.ActionBar instance
 	 * @see sap.ui.ux3.ActionBar._addSocialAction
 	 * @see sap.ui.ux3.ActionBar._removeSocialAction
@@ -1041,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * and buttons. Calls rerenderBusinessActions if param 'bRerender' is true
 	 *
 	 * @param oBusinessAction business action to be removed
-	 * @param bRerender if this flag is set, business actions are re-rendered.
+	 * @param {boolean} bRerender if this flag is set, business actions are re-rendered.
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */

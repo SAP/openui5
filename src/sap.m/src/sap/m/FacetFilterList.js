@@ -608,8 +608,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	/**
 	 * Adds a key to the selected keys cache.
 	 *
-	 * @param sKey
-	 * @param sText
+	 * @param {string} sKey
+	 * @param {string} sText
 	 */
 	FacetFilterList.prototype._addSelectedKey = function(sKey, sText){
 		if (!sKey && !sText) {
@@ -629,8 +629,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * Removes the given key from the selected keys cache.
 	 * This does not deselect the associated item and therefore does not cause onItemSelectedChange to be called.
 	 *
-	 * @param sKey The key to remove. If <code>null</code>, then the value of sText will be used as the key
-	 * @param sText If key is <code>null</code> then this parameter will be used as the key
+	 * @param {string} sKey The key to remove. If <code>null</code>, then the value of sText will be used as the key
+	 * @param {string} sText If key is <code>null</code> then this parameter will be used as the key
 	 * @returns {Boolean} <code>true</code> if the key was removed
 	 */
 	FacetFilterList.prototype._removeSelectedKey = function(sKey, sText) {

@@ -118,8 +118,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * set the internal visibility of the sectionBase. This is set by the ux rules (for example don't display a section that has no subSections)
-	 * @param bValue
-	 * @param bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
+	 * @param {boolean} bValue
+	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._setInternalVisible = function (bValue, bInvalidate) {
@@ -137,8 +137,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * set the internal visibility of the sectionBase title. This is set by the ux rules (for example don't display a subSection title if there are only 1 in the section)
-	 * @param bValue
-	 * @param bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
+	 * @param {boolean} bValue
+	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
@@ -156,8 +156,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * set the internal title of the sectionBase. This is set by the ux rules (for example the subSection title becomes the section title if there are only 1 subSection in the section)
-	 * @param sValue
-	 * @param bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
+	 * @param {string} sValue
+	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
 	 * @private
 	 */
 
@@ -495,7 +495,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * Tells the ObjectPageLayout instance to scroll itself to a given section (by Id)
-	 * @param sId
+	 * @param {string} sId
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._scrollParent = function (sId) {

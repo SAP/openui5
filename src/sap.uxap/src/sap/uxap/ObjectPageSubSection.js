@@ -757,7 +757,7 @@ sap.ui.define([
 
 	/**
 	 * switch the state for the subsection
-	 * @param sSwitchToMode
+	 * @param {sap.uxap.ObjectPageSubSectionMode} sSwitchToMode
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._switchSubSectionMode = function (sSwitchToMode) {
@@ -775,7 +775,7 @@ sap.ui.define([
 	/**
 	 * set the mode on a control if there is such mode property
 	 * @param oBlock
-	 * @param sMode
+	 * @param {string} sMode
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._setBlockMode = function (oBlock, sMode) {

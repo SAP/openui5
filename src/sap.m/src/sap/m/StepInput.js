@@ -779,7 +779,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Applies change on the visible value but doesn't force the other checks that come with <code>this.setValue</code>.
 		 * Usable for Keyboard Handling when resetting initial value with ESC key.
 		 *
-		 * @param fNewValue
+		 * @param {float} fNewValue
 		 * @private
 		 */
 		StepInput.prototype._applyValue = function (fNewValue) {

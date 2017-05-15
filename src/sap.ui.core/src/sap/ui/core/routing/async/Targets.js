@@ -57,8 +57,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 		/**
 		 *
-		 * @param sName name of the single target
-		 * @param vData event data
+		 * @param {string} sName name of the single target
+		 * @param {object} vData event data
 		 * @private
 		 */
 		_displaySingleTarget : function (sName, vData, oSequencePromise) {

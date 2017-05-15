@@ -2660,8 +2660,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Calculates the pixel value from a given CSS size and returns it with or without unit.
-	 * @param sCSSSize
-	 * @param bReturnWithUnit
+	 * @param {string} sCSSSize
+	 * @param {boolean} bReturnWithUnit
 	 * @returns {string|number} Converted CSS value in pixel
 	 * @private
 	 */

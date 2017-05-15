@@ -455,7 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Visually adapts the NavigationBar to the new selection, using animations instead of re-rendering.
 	 *
-	 * @param sItemId may be null, which means all selection is removed
+	 * @param {string} sItemId may be null, which means all selection is removed
 	 * @private
 	 */
 	NavigationBar.prototype._updateSelection = function(sItemId) {

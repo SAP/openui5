@@ -3100,8 +3100,9 @@ sap.ui.define([
 	/**
 	 * Update the property in the model if two way data binding mode is enabled
 	 *
-	 * @param sName the name of the property to update
-	 * @param oValue the new value to set for the property in the model
+	 * @param {string} sName the name of the property to update
+	 * @param {any} oValue the new value to set for the property in the model
+	 * @param {any} oOldValue the old value of the property in the model
 	 * @private
 	 */
 	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){

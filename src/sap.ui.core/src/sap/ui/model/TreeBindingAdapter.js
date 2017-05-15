@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Sets the AutoExpand Mode for this Adapter. Default is "Bundled".
-		 * @param sAutoExpandMode
+		 * @param {sap.ui.model.TreeAutoExpandMode} sAutoExpandMode
 		 */
 		TreeBindingAdapter.prototype.setAutoExpandMode = function (sAutoExpandMode) {
 			this._autoExpandMode = sAutoExpandMode;

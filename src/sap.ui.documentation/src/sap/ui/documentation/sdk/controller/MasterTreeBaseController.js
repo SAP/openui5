@@ -65,7 +65,7 @@ sap.ui.define([
 			/**
 			 * Scans the items aggregation of a sap.m.Tree for an item that has custom data with key="topicId" and value=sId
 			 * Note: It's important to always fetch the items before searching as they change dynamically when nodes expand/collapse
-			 * @param sId
+			 * @param {string} sId
 			 * @returns {null}
 			 * @private
 			 */

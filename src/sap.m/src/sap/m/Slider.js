@@ -311,7 +311,7 @@ sap.ui.define([
 		/**
 		 * Get the value on certain position
 		 *
-		 * @param fPercent
+		 * @param {float} fPercent
 		 * @returns {number}
 		 * @private
 		 */

@@ -32,8 +32,8 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 	/**
 	 * Creates (if not already created) and returns an invisible text element for screan reader support
-	 * @param sType - the type of the control we want to get a label for
-	 * @param sText - the text to be used
+	 * @param {string} sType - the type of the control we want to get a label for
+	 * @param {string} sText - the text to be used
 	 * @private
 	 */
 	var _ensureInvisibleText = function(sType, sText) {

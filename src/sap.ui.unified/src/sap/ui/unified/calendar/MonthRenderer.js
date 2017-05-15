@@ -303,11 +303,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	 * @param {sap.ui.unified.calendar.Month} oMonth
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDay
 	 * @param oHelper
-	 * @param bOtherMonth
-	 * @param bWeekNum
+	 * @param {boolean} bOtherMonth
+	 * @param {boolean} bWeekNum
 	 * @param iNumber
-	 * @param sWidth
-	 * @param bDayName
+	 * @param {string} sWidth
+	 * @param {boolean} bDayName
 	 */
 	MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWeekNum, iNumber, sWidth, bDayName){
 		CalendarUtils._checkCalendarDate(oDay);

@@ -1109,7 +1109,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Handles the proper update of the <code>TabStripItem</code> selection class.
 		 *
-		 * @param sSelectedItemId
+		 * @param {string} sSelectedItemId
 		 */
 		TabStrip.prototype._updateSelectedItemClasses = function(sSelectedItemId) {
 			if (this.$("tabs")) {

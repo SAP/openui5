@@ -53,7 +53,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 
 			/** SUBSTITUTION UNTIL SmartForm has adopted to the bySelector
 			 *
-			 * @param sId
+			 * @param {string} sId
 			 * @param oView
 			 * @returns {*|Node}
 			 */

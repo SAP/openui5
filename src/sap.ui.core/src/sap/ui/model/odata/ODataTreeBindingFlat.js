@@ -868,7 +868,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Expands a node or index.
 	 * @param vRowIndex either an index or a node instance
-	 * @param bSuppressChange if set to true, no change event will be fired
+	 * @param {boolean} bSuppressChange if set to true, no change event will be fired
 	 */
 	ODataTreeBindingFlat.prototype.expand = function (vRowIndex, bSuppressChange) {
 		var oToggledNode = vRowIndex;
@@ -937,7 +937,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Collapses the given node or index.
 	 * @param vRowIndex either an index or a node instance
-	 * @param bSuppressChange if set to true, there will be no change event fired
+	 * @param {boolean} bSuppressChange if set to true, there will be no change event fired
 	 */
 	ODataTreeBindingFlat.prototype.collapse = function (vRowIndex, bSuppressChange) {
 		var oToggledNode = vRowIndex;
@@ -1085,8 +1085,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * Backtracking up the tree hierarchy.
 	 * fnUp is called for all nodes.
 	 * @param oNode the start node of the upwards traversal
-	 * @param fnUp callback for the backtracking
-	 * @param bOldParent a flag to specify if the new or old/original parent should be used for traversal
+	 * @param {function} fnUp callback for the backtracking
+	 * @param {boolean} bOldParent a flag to specify if the new or old/original parent should be used for traversal
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._up = function(oNode, fnUp, bOldParent) {
@@ -1104,9 +1104,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Backtrack in a deep part of the tree.
 	 * @param oNode
-	 * @param fnUp
+	 * @param {function} fnUp
 	 * @param oBreaker
-	 * @param bOldParent
+	 * @param {boolean} bOldParent
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._structuralUp = function(oNode, fnUp, oBreaker, bOldParent) {
@@ -1127,9 +1127,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Backtrack in a flat part of the tree
 	 * @param oNode
-	 * @param fnUp
+	 * @param {function} fnUp
 	 * @param oBreaker
-	 * @param bInitial
+	 * @param {boolean} bInitial
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._flatUp = function(oNode, fnUp, oBreaker, bInitial) {

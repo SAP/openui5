@@ -918,7 +918,7 @@ sap.ui.define([
 	 * Handler for F6 and Shift + F6 group navigation
 	 *
 	 * @param {jQuery.Event} oEvent
-	 * @param bShiftKey serving as a reference if shift is used
+	 * @param {boolean} bShiftKey serving as a reference if shift is used
 	 * @private
 	 */
 	AnchorBar.prototype._handleGroupNavigation = function (oEvent, bShiftKey) {
