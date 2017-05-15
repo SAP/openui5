@@ -1992,5 +1992,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.22": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "d79e4698a2fa25c3977a44ff9f9c35db36b53e05",
+        "type": "FIX",
+        "text": " core.IconPool: add local font path for SAP-icons Icon Font",
+        "references": []
+      }
+    ]
   }
 }
