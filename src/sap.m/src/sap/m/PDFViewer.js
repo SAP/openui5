@@ -179,6 +179,38 @@ sap.ui.define([
 		};
 
 		/**
+		 * @param sWidth
+		 *
+		 * @public
+		 */
+		PDFViewer.prototype.setWidth = function (sWidth) {
+			this.setProperty("width", sWidth, true);
+			var oDomRef = this.$();
+			if (oDomRef === null) {
+				return this;
+			}
+
+			oDomRef.css("width", this._getRenderWidth());
+			return this;
+		};
+
+		/**
+		 * @param sHeight
+		 *
+		 * @public
+		 */
+		PDFViewer.prototype.setHeight = function (sHeight) {
+			this.setProperty("height", sHeight, true);
+			var oDomRef = this.$();
+			if (oDomRef === null) {
+				return this;
+			}
+
+			oDomRef.css("height", this._getRenderHeight());
+			return this;
+		};
+
+		/**
 		 * Lifecycle method
 		 *
 		 * @private
