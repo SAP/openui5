@@ -449,10 +449,8 @@ sap.ui.require([
 			var oBinding = {
 					updateValue : function () {}
 				},
-				oModel = {
-					requestCanonicalPath : function () {}
-				},
-				oContext = Context.create(oModel, oBinding, "/foo", 42),
+				fnErrorCallback = function () {},
+				oContext = Context.create(null, oBinding, "/foo", 42),
 				oResult = {},
 				sPropertyName = "bar",
 				vValue = Math.PI;
@@ -464,10 +462,12 @@ sap.ui.require([
 				.withExactArgs()
 				.returns(_SyncPromise.resolve("/edit('URL')"));
 			this.mock(oBinding).expects("updateValue")
-				.withExactArgs("up", sPropertyName, vValue, "edit('URL')", "~")
+				.withExactArgs("up", sPropertyName, vValue, sinon.match.same(fnErrorCallback),
+					"edit('URL')", "~")
 				.returns(Promise.resolve(oResult));
 
-			return oContext.updateValue("up", sPropertyName, vValue, sEditUrl, "SO_2_SOITEM/42")
+			return oContext.updateValue("up", sPropertyName, vValue, fnErrorCallback, sEditUrl,
+					"SO_2_SOITEM/42")
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
@@ -479,6 +479,7 @@ sap.ui.require([
 		var oBinding = {
 				updateValue : function () {}
 			},
+			fnErrorCallback = function () {},
 			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/-1", -1,
 				new Promise(function () {})),
 			sPropertyName = "bar",
@@ -488,10 +489,12 @@ sap.ui.require([
 		assert.ok(oContext.isTransient());
 
 		this.mock(oBinding).expects("updateValue")
-			.withExactArgs("up", sPropertyName, vValue, "n/a", "-1/SO_2_SOITEM/42")
+			.withExactArgs("up", sPropertyName, vValue, sinon.match.same(fnErrorCallback), "n/a",
+				"-1/SO_2_SOITEM/42")
 			.returns(Promise.resolve(oResult));
 
-		return oContext.updateValue("up", sPropertyName, vValue, undefined, "SO_2_SOITEM/42")
+		return oContext.updateValue("up", sPropertyName, vValue, fnErrorCallback, undefined,
+				"SO_2_SOITEM/42")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});

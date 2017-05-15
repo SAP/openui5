@@ -629,6 +629,8 @@ sap.ui.define([
 	 *   Name of property to update
 	 * @param {any} vValue
 	 *   The new value
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a PATCH request fails
 	 * @param {string} sEditUrl
 	 *   The edit URL for the entity which is updated
 	 * @param {string} [sPath]
@@ -640,8 +642,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl,
-			sPath) {
+	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue,
+			fnErrorCallback, sEditUrl, sPath) {
 		var oCache;
 
 		if (!this.oCachePromise.isFulfilled()) {
@@ -651,10 +653,10 @@ sap.ui.define([
 		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			return oCache.update(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
+			return oCache.update(sGroupId, sPropertyName, vValue, fnErrorCallback, sEditUrl, sPath);
 		}
 
-		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, sEditUrl,
+		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback, sEditUrl,
 			_Helper.buildPath(this.sPath, sPath));
 	};
 
