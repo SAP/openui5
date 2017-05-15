@@ -77,7 +77,7 @@ module.exports = __webpack_require__.p + "index.html";
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAF4AAABeCAMAAACdDFNcAAAAS1BMVEX/V0MAAAD/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0P/V0OKm0d4AAAAGXRSTlMxABpajBQvCQQpIRAcPU0kh4BwXFNHYDdGxSQqCQAAAq5JREFUaN7Nmtma4iAQhdGkWEJEYidtv/+Tjs6IIcsBlK5vPNf6p3IotqqIQ5G0spboeBcRWav0oUgFeGXpuCOyqhqv1Q2NRUpX4LU9ZmX1m/hN4PAVMngMr3oAxmsARyL9Cl6t/953Z2OkuEtKY85dv/6FAvh86N0NvJE0HXiBDF6t2AJq9QRVgl8k41mKpOR5kaR5PMVwUaD4AbTBY9s7KYokOzwAAtF7I4plesQXgN6Jl9QBvtinG/GiTMQH+Ce9l+Jlyf7J38fbGrqQM9/u4dWSXhO/2uJ1TK/l6w2eIno1n2b8yhpAL/R/tmeB1yAj385PvcBbPJvem182xqtgvKhWsF9FeCqw5jS5sblpdNOpwB6a8Sprzck1C7lT1h71xFMma05js9GIHiBD+AGv07vH1TW7ctf0/qIf+JA2IPQGCrxASJ4HPhn8T5PQTzL8f3iVcn5qkppS7qu/eAJpg+h5fvccXPH0xqR9x/7j3L/jFR7Ya1OgKx5cdcNb7I0rwTvsjj2IYL3JWvN1GXzb+uHytbEHuEM3PM6bcQn37UN++YAR585B6HitxMF/D22k4RuHH6+bWihovYvpvl3Ix3wHzVfCwikbOzO0Kw2xP3Di2oA3SW8u7UaXpDsm4Anhpyh4v8X7KPwJ4SngJbJ+Dh6H71DqUJhgybQc9vBDKjUDFuObWX4P75tZdfh2V7+G93V4fnMkz9AyJybztGJeFJiXNOYFmXk74d0Mmbdy5oMI8zGK9xDIfIRlPoDzXh807+WH+erGfPHkvzbzX/r5SxYH+u2CCzGXixiKXWIudvGW6rgLjfxlUlzkraNb3hI1c4Gdtz3A29zgbc2wNpZ422L/v6nH2pLMN1QFaKh+Tjv45Wb2p7Xiyz8k+NTPIBg+4kBvYYnowSUq/gTlD9DwQC9C8lfEAAAAAElFTkSuQmCC"
-
+//module.exports = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'
 /***/ }),
 /* 2 */,
 /* 3 */

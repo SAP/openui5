@@ -11,12 +11,13 @@
     <script type="text/javascript">
          function open(id) {
             var oAgendaElement = document.getElementById(id);
+            var oButton = document.getElementById("hideButton");
             if(oAgendaElement.className.indexOf("collapsed") > 0) {
                 oAgendaElement.className = oAgendaElement.className.replace("collapsed", "expanded");
-                document.getElementById("moreButton").src = "less1.png";
+                oButton.className = oButton.className.replace("more", "less");
              } else {
                 oAgendaElement.className = oAgendaElement.className.replace("expanded", "collapsed");
-                document.getElementById("moreButton").src = "more1.png"
+                oButton.className = oButton.className.replace("less", "more");
              }
              return;
          }
@@ -437,7 +438,12 @@
                         </div>
                     </div>
                     <div id="hideElement" >
-                        <a href="javascript:open('lineupElement')"><img id="moreButton" src="more1.png" alt="test" style="padding:1% 50% 0 50%"></a>
+                        <a href="javascript:open('lineupElement')">
+                            <div id="hideButton" class="more"> 
+                                <svg id="moreButton" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><style>.cls-1,.cls-2{fill:#ff5743;}.cls-2{font-size:20px;font-family:BentonSans-Medium, BentonSans;}</style></defs><title>More_Button</title><path class="cls-1" d="M40,3A37,37,0,1,1,3,40,37,37,0,0,1,40,3m0-3A40,40,0,1,0,80,40,40,40,0,0,0,40,0Z"/><text class="cls-2" transform="translate(9.5 46.8)">MORE</text></svg>
+                                <svg id="lessButton" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><style>.cls-1,.cls-2{fill:#ff5743;}.cls-2{font-size:20px;font-family:BentonSans-Medium, BentonSans;}.cls-3{letter-spacing:-0.01em;}.cls-4{letter-spacing:-0.01em;}</style></defs><title>Less_Button</title><path class="cls-1" d="M40,3A37,37,0,1,1,3,40,37,37,0,0,1,40,3m0-3A40,40,0,1,0,80,40,40,40,0,0,0,40,0Z"/><text class="cls-2" transform="translate(13.5 46.8)">L<tspan class="cls-3" x="11.56" y="0">E</tspan><tspan class="cls-4" x="23.69" y="0">S</tspan><tspan x="36.97" y="0">S</tspan></text></svg>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
