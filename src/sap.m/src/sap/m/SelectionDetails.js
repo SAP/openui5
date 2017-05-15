@@ -239,19 +239,9 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * @private
 	 */
 	SelectionDetails.prototype._handleNavLazy = function(pageTitle, content, Page, Toolbar, ToolbarSpacer, Title, Button) {
-		var sPageId = this.getId() + "-page-for-" + content.getId();
+		var sPageId = this.getId() + "-page-for-" + content.getId() + "-uid-" + jQuery.sap.uid();
 
 		this._setPopoverHeight(SelectionDetails._POPOVER_MAX_HEIGHT);
-
-		// Navigate to the page directly when the page already exists in the NavContainer
-		var aPages = this._oNavContainer.getPages();
-		for (var i = 0; i < aPages.length; i++) {
-			if (sPageId === aPages[i].getId()) {
-				this._oNavContainer.to(sPageId);
-				return;
-			}
-		}
-
 		var oPage = new Page(sPageId, {
 			customHeader: this._getPageToolbar(Toolbar, ToolbarSpacer, Title, true, pageTitle),
 			content: [ content ]
@@ -358,12 +348,14 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 */
 	SelectionDetails.prototype._onBackButtonPress = function() {
 		var oContent = this._oNavContainer.getCurrentPage().getContent()[0];
+		this._oNavContainer.attachEventOnce("afterNavigate", function () {
+			this.fireNavigate({
+				item: this._oItemForNavigation,
+				direction: "back",
+				content: oContent
+			});
+		}, this);
 		this._oNavContainer.back();
-		this.fireNavigate({
-			item: this._oItemForNavigation,
-			direction: "back",
-			content: oContent
-		});
 
 		// Once NavContainer's history returned to the initial page, the popover's size has to be reset
 		if (this._oNavContainer.getCurrentPage() === this._oInitialPage) {
