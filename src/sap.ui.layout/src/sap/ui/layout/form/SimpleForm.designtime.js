@@ -36,6 +36,9 @@ sap.ui.define([], function() {
 			content : {
 				ignore : true
 			},
+			title : {
+				ignore : true
+			},
 			form : {
 				inHiddenTree : true,
 				getIndex : function(oSimpleForm, oFormContainer) {
