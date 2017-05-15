@@ -471,10 +471,8 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
-		var oCache = this.oCachePromise.getResult();
-
 		if (this.oContext !== oContext) {
-			if (!oCache && this.oContext) {
+			if (this.bRelative && this.oContext && this.oContext.deregisterChange) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}
 			this.oContext = oContext;
