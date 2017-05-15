@@ -32,7 +32,7 @@ sap.ui.define([
 				iShouldSeeTheRememberedObject: function() {
 					return this.waitFor({
 						success: function() {
-							var sBindingPath = this.getContext().currentItem.getBindingContext().getPath();
+							var sBindingPath = this.getContext().currentItemBindingPath;
 							return this.waitFor({
 								id: "page",
 								viewName: sViewName,
@@ -107,7 +107,7 @@ sap.ui.define([
 						id: "shareTile",
 						viewName: sViewName,
 						matchers: function(oButton) {
-							var sObjectName = this.getContext().currentItem.getBindingContext().getProperty("ProductName");
+							var sObjectName = this.getContext().currentItemName;
 							var sTitle = oButton.getTitle();
 							return sTitle && sTitle.indexOf(sObjectName) > -1;
 						}.bind(this),
