@@ -2,7 +2,7 @@
 	controllerName="sap.ui.demo.cart.controller.OrderCompleted"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Page title="{i18n>ordercompletedTitle}">
+	<Page title="{i18n>ordercompletedTitle}" class="sapUiContentPadding">
 		<content>
 			<FormattedText htmlText="{i18n>ordercompletedText}" />
 		</content>
