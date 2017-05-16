@@ -45,29 +45,6 @@
 						<layout:VerticalLayout width="100%">
 							<m:ObjectAttribute
 									visible="{=${topics>/isClass}}"
-									title="Inherited from"
-									text="{topics>/extendsText}"
-									active="{topics>/isDerived}"
-									press="onTypeLinkPress"
-									class="sapUiTinyMarginBottom">
-								<m:customData>
-									<core:CustomData key="type" value="{topics>/extends}" />
-								</m:customData>
-							</m:ObjectAttribute>
-
-							<m:ObjectAttribute
-									title="Module"
-									text="{topics>/module}"
-									class="sapUiTinyMarginBottom"/>
-
-							<m:ObjectAttribute
-									title="Available since"
-									text="{topics>/sinceText}" />
-						</layout:VerticalLayout>
-
-						<layout:VerticalLayout width="100%">
-							<m:ObjectAttribute
-									visible="{=${topics>/isClass}}"
 									title="Control Sample"
 									text="{entity>/sample}"
 									active="{entity>/hasSample}"
@@ -79,6 +56,62 @@
 							</m:ObjectAttribute>
 
 							<m:ObjectAttribute
+									visible="{=${topics>/isClass}}"
+									title="Inherited from"
+									text="{topics>/extendsText}"
+									active="{topics>/isDerived}"
+									press="onTypeLinkPress"
+									class="sapUiTinyMarginBottom">
+								<m:customData>
+									<core:CustomData key="type" value="{topics>/extends}" />
+								</m:customData>
+							</m:ObjectAttribute>
+
+							<m:HBox class="sapUiDocumentationImplementsDiv sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
+								<m:Text text="Implements:"/>
+								<m:HBox items="{path: 'topics>/implementsParsed'}">
+										<m:HBox>
+											<m:Link text="{topics>name}" href="#/api/{topics>href}"/>
+											<m:Text text="," visible="{= !${topics>isLast}}"/>
+										</m:HBox>
+								</m:HBox>
+							</m:HBox>
+
+							<m:ObjectAttribute
+									visible="{=!${topics>/isClass}}"
+									title="Module"
+									text="{topics>/module}"
+									class="sapUiTinyMarginBottom"/>
+
+							<m:ObjectAttribute
+									visible="{=!${topics>/isClass}}"
+									title="Available since"
+									text="{topics>/sinceText}"
+									class="sapUiTinyMarginBottom"/>
+
+							<m:ObjectAttribute
+									visible="{=!${topics>/isClass}}"
+									title="Application Component"
+									text="{entity>/appComponent}"
+									class="sapUiTinyMarginBottom"/>
+
+						</layout:VerticalLayout>
+
+						<layout:VerticalLayout width="100%">
+							<m:ObjectAttribute
+									visible="{=${topics>/isClass}}"
+									title="Module"
+									text="{topics>/module}"
+									class="sapUiTinyMarginBottom"/>
+
+							<m:ObjectAttribute
+									visible="{=${topics>/isClass}}"
+									title="Available since"
+									text="{topics>/sinceText}"
+									class="sapUiTinyMarginBottom"/>
+
+							<m:ObjectAttribute
+									visible="{=${topics>/isClass}}"
 									title="Application Component"
 									text="{entity>/appComponent}"
 									class="sapUiTinyMarginBottom"/>
