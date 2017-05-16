@@ -35,7 +35,7 @@ sap.ui.define([
 			var oResult;
 			var iCurrentGroupIndex = -1;
 
-			// Empty simpleform case, when the title is null
+			// Empty simpleform case, when there are no elements inside the single formContainer
 			if (iGroupIndex === 0) {
 				return iGroupIndex;
 			}
