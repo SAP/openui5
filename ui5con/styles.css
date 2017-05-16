@@ -270,7 +270,7 @@ a:hover {
     padding: 70px 0
 }
 .b-section.mod_agenda {
-    margin-top: 45px;
+    margin-top: 90px;
     padding: 70px 0;
     background-color: #19181e
 }
@@ -692,7 +692,9 @@ a:hover {
 .b-list.mod_info.eveningSection .b-list__item.description .b-font.size_18.margin{
     margin-bottom: 10px;
 }
-
+.eveningSectionTitle {
+    margin-top: 30px;
+}
 #hideButton {
 	margin: 20px auto 0 auto;
 	width:50px;
