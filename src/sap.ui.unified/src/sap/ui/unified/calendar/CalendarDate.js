@@ -7,6 +7,10 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 	function (BaseObject, UniversalDate) {
 		"use strict";
 
+		/*
+		 * All calculations in this class are done by representing the date(year, month, date) as UTC values for an
+		 * internal JavaScript Date object.
+		 */
 
 		/**
 		 * Constructor for CalendarDate
@@ -160,7 +164,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		 * @returns {int} the number (0-6) representing the day of week.
 		 */
 		CalendarDate.prototype.getDay = function() {
-			return this._oUDate.getDay();
+			return this._oUDate.getUTCDay();
 		};
 
 		/**
@@ -332,5 +336,5 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 
 		return CalendarDate;
 
-}, /* bExport= */ true);
+	}, /* bExport= */ true);
 
