@@ -19,27 +19,34 @@ sap.ui.define([
 			onInit: function () {
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
 
-				this._fnOrientationChange({
+				// manually call the handler once at startup as device API won't do this for us
+				this._onOrientationChange({
 					landscape: Device.orientation.landscape
 				});
 			},
 
+			/**
+			 * Called before the view is rendered.
+			 * @public
+			 */
 			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				this._deregisterOrientationChange();
 			},
 
+			/**
+			 * Called after the view is rendered.
+			 * @public
+			 */
 			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				this._registerOrientationChange();
 			},
 
+			/**
+			 * Called when the controller is destroyed.
+			 * @public
+			 */
 			onExit: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
-			},
-
-			_fnOrientationChange: function(oEvent) {
-				if (Device.system.phone) {
-					this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
-				}
+				this._deregisterOrientationChange();
 			},
 
 			/**

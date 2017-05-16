@@ -52,6 +52,13 @@
 	}
 
 	.sap-phone .sapUiDemokit .welcomeImageTextLayout {
+		margin-top: -4.5rem;
+	}
+}
+
+/*SMALL PHONE */
+@media only screen and (max-width: 32rem) {
+	.sap-phone .sapUiDemokit .welcomeImageTextLayout {
 		margin-top: -6rem;
 	}
 }
@@ -76,8 +83,8 @@
 	padding-left: 2rem;
 	left: 0rem;
 	font-family: Arial;
-	color: #333333;
-	text-shadow: 0 0 0.125rem #ffffff;
+	color: #fff;
+	text-shadow: 0 0 0.125rem #000;
 }
 
 .sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {

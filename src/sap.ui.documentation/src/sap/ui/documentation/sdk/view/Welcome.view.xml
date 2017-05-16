@@ -28,14 +28,14 @@
 							width="100%"
 							class="welcomeImageTextLayout">
 						<Text class="welcomeImageTextHeadline"
-							  text="Build Enterprise Ready Web Apps"
+							  text="Discover New Enterprise-Grade Horizons"
 							  width="100%"
 							  textAlign="Center"/>
-						<custom:ActionButton
+						<Button
 								text="Get Started with UI5"
 								type="Emphasized"
 								press="onGetStarted"
-								class="sapUiDocumentationWelcomeHeaderButton"/>
+								class="actionButton"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -175,7 +175,7 @@
 								width="100%">
 							<custom:TitleLink
 									href="https://experience.sap.com/fiori-design/"
-									text="Award-Winning SAP Fiori Design"
+									text="Award-Winning SAP Fiori Design in Action"
 									class="sapUiSmallMarginBottom"
 									titleStyle="H2"/>
 							<Text
