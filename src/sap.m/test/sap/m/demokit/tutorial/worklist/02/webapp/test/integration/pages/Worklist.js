@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"myCompany/myApp/test/integration/pages/Common",
-	"myCompany/myApp/test/integration/pages/shareOptions"
+	"mycompany/myapp/test/integration/pages/Common",
+	"mycompany/myapp/test/integration/pages/shareOptions"
 ], function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 	"use strict";
 

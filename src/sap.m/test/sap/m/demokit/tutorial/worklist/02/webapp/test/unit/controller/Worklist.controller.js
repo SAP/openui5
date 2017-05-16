@@ -1,8 +1,8 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"myCompany/myApp/controller/Worklist.controller",
-	"myCompany/myApp/controller/BaseController",
+	"mycompany/myapp/controller/Worklist.controller",
+	"mycompany/myapp/controller/BaseController",
 	"sap/ui/base/ManagedObject",
 	"test/unit/helper/FakeI18nModel",
 	"sap/ui/thirdparty/sinon",

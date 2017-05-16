@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="myCompany.myApp.controller.NotFound"
+	controllerName="mycompany.myapp.controller.NotFound"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<MessagePage
