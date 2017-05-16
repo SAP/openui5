@@ -166,6 +166,12 @@ sap.ui.define([
 		this._oEditor.getSession().setMode("ace/mode/javascript");
 		this._oEditor.setTheme("ace/theme/tomorrow");
 		this._oEditor.renderer.setShowGutter(true);
+
+		// Do not scroll to end of input when setting value
+		// it has been reported as annoying to end users
+		// when they have to scroll to the beginning of content
+		this._oEditor.$blockScrolling = Infinity;
+
 		var that = this;
 
 		this._oEditor.addEventListener("change", function(oEvent) {
