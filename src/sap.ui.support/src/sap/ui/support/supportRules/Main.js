@@ -656,13 +656,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @return {object} contains all the information required to create a report.
 	 */
 	Main.prototype._getReportData = function (reportConstants) {
-		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel());
-
+		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel()),
+			rules = this._mRuleSets,
+			selectedRules = this._oSelectedRulesIds;
 		return {
 			issues: issues,
 			technical: this._oDataCollector.getTechInfoJSON(),
 			application: this._oDataCollector.getAppInfo(),
-			rules: IssueManager.getRulesViewModel(this._mRulesets, this._oSelectedRulesIds, issues),
+			rules: IssueManager.getRulesViewModel(rules, selectedRules, issues),
 			scope: {
 				executionScope: this._oExecutionScope,
 				scopeDisplaySettings: {
