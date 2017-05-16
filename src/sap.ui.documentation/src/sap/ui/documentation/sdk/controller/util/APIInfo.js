@@ -46,17 +46,16 @@ sap.ui.define(['jquery.sap.global'],
 
 		function getLibraryElementsJSONPromise(sLibraryName) {
 
+			// If no library name given, resolve immediately with empty array
+			if ( !sLibraryName ) {
+				return Promise.resolve([]);
+			}
+
+			if (oLibraryDataCache[sLibraryName]) {
+				return Promise.resolve(oLibraryDataCache[sLibraryName]);
+			}
+
 			return new Promise(function (resolve) {
-				// If no library name given, resolve immediately with empty array
-				if ( !sLibraryName ) {
-					resolve([]);
-					return;
-				}
-
-				if (oLibraryDataCache[sLibraryName]) {
-					resolve(oLibraryDataCache[sLibraryName]);
-				}
-
 				// Fetch library data, then cache it no matter the result
 				jQuery.ajax({
 					async: true,
@@ -81,19 +80,14 @@ sap.ui.define(['jquery.sap.global'],
 				return oAllLibrariesPromise;
 			}
 
-			oAllLibrariesPromise = new Promise(function (resolve) {
-				var aLibraries = sap.ui.getVersionInfo().libraries;
+			var aLibraries = sap.ui.getVersionInfo().libraries;
 
-				// Get a list of promises for each library (these never reject, but can resolve with an empty array)
-				var aPromises = aLibraries.map(function (oLibrary) {
-					return getLibraryElementsJSONPromise(oLibrary.name);
-				});
-
-				// Load all libraries asynchronously and return when ready
-				Promise.all(aPromises).then(function (aLibsData) {
-					resolve(aLibsData);
-				});
+			// Get a list of promises for each library (these never reject, but can resolve with an empty array)
+			var aPromises = aLibraries.map(function (oLibrary) {
+				return getLibraryElementsJSONPromise(oLibrary.name);
 			});
+
+			oAllLibrariesPromise = Promise.all(aPromises);
 
 			return oAllLibrariesPromise;
 		}
