@@ -322,6 +322,8 @@ sap.ui.define([
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
 		this._oABHelper = new ABHelper(this);
+
+		this._bSuppressLayoutCalculations = false;	// used to temporarily suppress layout/ux rules functionality for bulk updates
 	};
 
 	/**
@@ -931,6 +933,12 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
+
+		// Skip all calculations (somebody called _suppressLayoutCalculations and will call _resumeLayoutCalculations once all updates are done)
+		if (this._bSuppressLayoutCalculations) {
+			return;
+		}
+
 		//in case we have added a section or subSection which change the ux rules
 		jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "refreshing ux rules");
 
@@ -962,6 +970,25 @@ sap.ui.define([
 					}
 				}.bind(this));
 		}
+	};
+
+	/**
+	 * Stop layout calculations temporarily (f.e. to do bulk updates on the object page)
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._suppressLayoutCalculations = function () {
+		this._bSuppressLayoutCalculations = true;
+	};
+
+	/**
+	 * Resume layout calculations and call _adjustLayoutAndUxRules (f.e. once buld updates are over)
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._resumeLayoutCalculations = function () {
+		this._bSuppressLayoutCalculations = false;
+		this._adjustLayoutAndUxRules();
 	};
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
