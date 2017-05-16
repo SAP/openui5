@@ -671,7 +671,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				}
 			},
 			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
-			analysisDurationTitle: reportConstants.analysisDurationTitle
+			analysisDurationTitle: reportConstants.analysisDurationTitle,
+			name: constants.SUPPORT_ASSISTANT_NAME
 		};
 	};
 
