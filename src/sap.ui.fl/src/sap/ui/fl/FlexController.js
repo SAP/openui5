@@ -182,14 +182,13 @@ sap.ui.define([
 	 * Will be saved with #saveAll.
 	 *
 	 * @param {object} oChange property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
-	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created.
-	 * @param {sap.ui.core.Control} oControl control for which the change will be added
+	 *        oPropertyBag). The property "packageName" is set to $TMP and internally since flex changes are always local when they are created
+	 * @param {object} oAppComponent component object
 	 * @returns {sap.ui.fl.Change} the created change
 	 * @public
 	 */
-	FlexController.prototype.addPreparedChange = function (oChange, oControl) {
-		var oComponent = Utils.getAppComponentForControl(oControl);
-		this._oChangePersistence.addChange(oChange, oComponent);
+	FlexController.prototype.addPreparedChange = function (oChange, oAppComponent) {
+		this._oChangePersistence.addChange(oChange, oAppComponent);
 		return oChange;
 	};
 
