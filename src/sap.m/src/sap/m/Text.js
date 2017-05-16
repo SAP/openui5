@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.cacheLineHeight = true;
 
 	/**
-	 * Ellipsis(…) text to indicate more text when clampText function is used.
+	 * Ellipsis(...) text to indicate more text when clampText function is used.
 	 *
 	 * Can be overwritten with 3dots(...) if fonts do not support this UTF-8 character.
 	 *
@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @protected
 	 * @type {string}
 	 */
-	Text.prototype.ellipsis = '…';
+	Text.prototype.ellipsis = '...';
 
 	/**
 	 * To prevent from the layout thrashing of the textContent call, this method

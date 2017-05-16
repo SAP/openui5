@@ -38,9 +38,9 @@
  * @borrows sap.m.SelectionDetails#removeAllActionGroups as removeAllActionGroups
  */
 /**
- * Describes the public facade of the {@link SelectionDetailsItems} element.
+ * Describes the public facade of the {@link sap.m.SelectionDetailsItem} element.
  * @name sap.m.SelectionDetailsItemFacade
- * @class The public facade of the {@link SelectionDetailsItems} element
+ * @class The public facade of the {@link sap.m.SelectionDetailsItem} element
  * @extends sap.ui.base.Interface
  * @since 1.48.0
  * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

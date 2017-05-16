@@ -4432,6 +4432,48 @@ QUnit.test("test ODataModel update", function(assert) {
 		oBinding.getContexts();
 	});
 
+	QUnit.test("test stable Ids in GenerateMissingMockData", function(assert) {
+		var sMetadataUrl = "testdata/northwind/metadata.xml";
+		var sMockdataBaseUrl = "testdata/northwind/";
+
+		oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		oMockServer.simulate(sMetadataUrl, {
+			'sMockdataBaseUrl' : sMockdataBaseUrl,
+			'bGenerateMissingMockData' : true,
+			'aEntitySetsNames': ["Orders"]
+		});
+		oMockServer.start();
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/Orders",
+			dataType : "json"
+		});
+		assert.ok(oResponse.success, "Mock server responded");
+		assert.equal(oResponse.data.d.results.length, 100, "generated 100 Orders");
+		assert.equal(oResponse.data.d.results[1].OrderID, 2613, "Check Int: OrderID [1] fixed to 2613");
+		assert.equal(oResponse.data.d.results[2].OrderID, 5101, "Check Int: OrderID [2] fixed to 5101");
+		assert.equal(oResponse.data.d.results[3].OrderID, 8688, "Check Int: OrderID [3] fixed to 8688");
+		assert.equal(oResponse.data.d.results[1].Freight, 416.31, "Check Double: Freight [1] fixed to 416.31");
+		assert.equal(oResponse.data.d.results[2].Freight, 6671.92, "Check Double: Freight [1] fixed to 6671.92");
+		assert.equal(oResponse.data.d.results[3].Freight, 2613.6, "Check Double: Freight [1] fixed to 2613.6");
+		assert.equal(oMockServer._getPseudoRandomNumber("String"), 0.000985394674611232 , "next 'String' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("DateTime"), 0.19947249775302894 , "next 'DateTime' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Int"), 0.20229533793968885 , "next 'Int' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Decimal"), 0.6043817862499473 , "next 'Decimal' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Boolean"), 0.000985394674611232 , "next 'Boolean' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Byte"), 0.000985394674611232 , "next 'Byte' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Double"), 0.000985394674611232 , "next 'Double' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Single"), 0.000985394674611232 , "next 'Single' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("SByte"), 0.000985394674611232 , "next 'SByte' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Time"), 0.000985394674611232 , "next 'Time' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Guid"), 0.000985394674611232 , "next 'Guid' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("Binary"), 0.000985394674611232 , "next 'Binary' pseudo random number stable as expected");
+		assert.equal(oMockServer._getPseudoRandomNumber("DateTimeOffset"), 0.000985394674611232 , "next 'DateTimeOffset' pseudo random number stable as expected");
+
+		oMockServer.destroy();
+	});
 
 
 	function countProperties(obj) {

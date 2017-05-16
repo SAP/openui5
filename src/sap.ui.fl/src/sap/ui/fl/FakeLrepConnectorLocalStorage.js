@@ -122,6 +122,7 @@ sap.ui.define([
 			var result = {
 				changes: {
 					changes : aChanges,
+					contexts : [],
 					settings : this.mSettings
 				},
 				componentClassName: sComponentClassName

@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/ContentDetailsEdit.controller",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
@@ -99,7 +101,7 @@ sap.ui.define([
 								name : "layer",
 								value : "VENDOR"
 							}]
-						}
+						};
 					}
 				};
 			}
@@ -136,8 +138,8 @@ sap.ui.define([
 							layer : "VENDOR",
 							fileName : "fileName",
 							fileType : "fileType",
-							namespace : "namespace",
-						}
+							namespace : "namespace"
+						};
 					}
 				};
 			}

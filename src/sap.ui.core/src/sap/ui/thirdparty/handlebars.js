@@ -1199,7 +1199,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
 	    var currentDepths = depths;
-	    if (depths && context !== depths[0]) {
+	    // ##### BEGIN MODIFIED BY SAP
+	    // Disabled context stacking optimization which will be responsible for
+	    // the regression when using a relative context access. The compat mode
+	    // will allow relative parent context access (../). This mode should also
+	    // ensure a proper context stacking to not break the hierarchy!
+	    if (depths /* && context !== depths[0] */) {
+	    // ##### END MODIFIED BY SAP
 	      currentDepths = [context].concat(depths);
 	    }
 

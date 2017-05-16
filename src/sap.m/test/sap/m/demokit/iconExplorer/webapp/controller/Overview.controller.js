@@ -565,9 +565,11 @@ sap.ui.define([
 				var aFilters = [],
 					oFilterTags = (sTagValue ? new Filter("tagString", FilterOperator.Contains, sTagValue) : undefined),
 					oFilterSearchName = (sSearchValue ? new Filter("name", FilterOperator.Contains, sSearchValue) : undefined),
+					fnUmicodeCustomFilter = (sSearchValue ? this._unicodeFilterFactory(sSearchValue) : undefined),
+					oFilterSearchUnicode = (sSearchValue ? new Filter("name", fnUmicodeCustomFilter) : undefined),
 					oFilterSearchTags = (sSearchValue ? new Filter("tagString", FilterOperator.Contains, sSearchValue) : undefined),
 					oFilterSearchNameTags = (sSearchValue ? new Filter({
-						filters: [oFilterSearchTags, oFilterSearchName],
+						filters: [oFilterSearchTags, oFilterSearchName, oFilterSearchUnicode],
 						and: false
 					}) : undefined);
 
@@ -600,6 +602,19 @@ sap.ui.define([
 				oResultBinding.filter(this._vFilterSearch);
 				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"));
 			}
+		},
+
+		/**
+		 * Factory that produces the custom filter for the given unicode query
+		 * @param {string} query the query text that has been entered in the search field and contains the unicode character
+		 * @return {function} the custom filter function that takes the name of the icon and returns true if the icon's unicode contains the query string
+		 * @private
+		 */
+		_unicodeFilterFactory: function(query) {
+			return function (name) {
+				var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase());
+				return sUnicode.indexOf(query) !== -1;
+			}.bind(this);
 		},
 
 		/**

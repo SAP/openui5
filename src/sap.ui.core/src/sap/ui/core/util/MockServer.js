@@ -149,6 +149,28 @@ sap.ui
 
 			});
 
+
+			/**
+			 * generates a floating-point, pseudo-random number in the range [0, 1[
+			 * using a linear congruential generator with drand48 parameters
+			 * the seed is fixed, so the generated random sequence is always the same
+			 * each property type has a own seed. Valid types are:
+			 * String, DateTime, Int, Decimal, Boolean, Byte, Double, Single, SByte, Time, Guid, Binary, DateTimeOffset
+			 * @public
+			 * @param {string} specific property type of random mock value to be generated
+			 * @return (number) pseudo-random number
+			 */
+			MockServer.prototype._getPseudoRandomNumber = function (sType) {
+				if (!this._iRandomSeed) {
+					this._iRandomSeed = {};
+				}
+				if (!this._iRandomSeed.hasOwnProperty(sType)) {
+					this._iRandomSeed[sType] = 0;
+				}
+				this._iRandomSeed[sType] = (this._iRandomSeed[sType] + 11 ) * 25214903917 % 281474976710655;
+				return this._iRandomSeed[sType] / 281474976710655;
+			};
+
 			/**
 			 * Starts the server.
 			 * @public
@@ -1528,45 +1550,45 @@ sap.ui
 			MockServer.prototype._generatePropertyValue = function(sKey, sType, mComplexTypes, iIndexParameter) {
 				var iIndex = iIndexParameter;
 				if (!iIndex) {
-					iIndex = Math.floor(Math.random() * 10000) + 101;
+					iIndex = Math.floor(this._getPseudoRandomNumber("String") * 10000) + 101;
 				}
 				switch (sType) {
 					case "String":
 						return sKey + " " + iIndex;
 					case "DateTime":
 						var date = new Date();
-						date.setFullYear(2000 + Math.floor(Math.random() * 20));
-						date.setDate(Math.floor(Math.random() * 30));
-						date.setMonth(Math.floor(Math.random() * 12));
+						date.setFullYear(2000 + Math.floor(this._getPseudoRandomNumber("DateTime") * 20));
+						date.setDate(Math.floor(this._getPseudoRandomNumber("DateTime") * 30));
+						date.setMonth(Math.floor(this._getPseudoRandomNumber("DateTime") * 12));
 						date.setMilliseconds(0);
 						return "/Date(" + date.getTime() + ")/";
 					case "Int16":
 					case "Int32":
 					case "Int64":
-						return Math.floor(Math.random() * 10000);
+						return Math.floor(this._getPseudoRandomNumber("Int") * 10000);
 					case "Decimal":
-						return Math.floor(Math.random() * 1000000) / 100;
+						return Math.floor(this._getPseudoRandomNumber("Decimal") * 1000000) / 100;
 					case "Boolean":
-						return Math.random() < 0.5;
+						return this._getPseudoRandomNumber("Boolean") < 0.5;
 					case "Byte":
-						return Math.floor(Math.random() * 10);
+						return Math.floor(this._getPseudoRandomNumber("Byte") * 10);
 					case "Double":
-						return Math.random() * 10;
+						return this._getPseudoRandomNumber("Double") * 10;
 					case "Single":
-						return Math.random() * 1000000000;
+						return this._getPseudoRandomNumber("Single") * 1000000000;
 					case "SByte":
-						return Math.floor(Math.random() * 10);
+						return Math.floor(this._getPseudoRandomNumber("SByte") * 10);
 					case "Time":
 						// ODataModel expects ISO8601 duration format
-						return "PT" + Math.floor(Math.random() * 23) + "H" + Math.floor(Math.random() * 59) + "M" + Math.floor(Math.random() * 59) + "S";
+						return "PT" + Math.floor(this._getPseudoRandomNumber("Time") * 23) + "H" + Math.floor(this._getPseudoRandomNumber("Time") * 59) + "M" + Math.floor(this._getPseudoRandomNumber("Time") * 59) + "S";
 					case "Guid":
 						return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-							var r = Math.random() * 16 | 0,
+							var r = this._getPseudoRandomNumber("Guid") * 16 | 0,
 								v = c === 'x' ? r : (r & 0x3 | 0x8);
 							return v.toString(16);
-						});
+						}.bind(this));
 					case "Binary":
-						var nMask = Math.floor(-2147483648 + Math.random() * 4294967295),
+						var nMask = Math.floor(-2147483648 + this._getPseudoRandomNumber("Binary") * 4294967295),
 							sMask = "";
 						/*eslint-disable */
 						for (var nFlag = 0, nShifted = nMask; nFlag < 32; nFlag++, sMask += String(nShifted >>> 31), nShifted <<= 1)
@@ -1575,9 +1597,9 @@ sap.ui
 						return sMask;
 					case "DateTimeOffset":
 						var date = new Date();
-						date.setFullYear(2000 + Math.floor(Math.random() * 20));
-						date.setDate(Math.floor(Math.random() * 30));
-						date.setMonth(Math.floor(Math.random() * 12));
+						date.setFullYear(2000 + Math.floor(this._getPseudoRandomNumber("DateTimeOffset") * 20));
+						date.setDate(Math.floor(this._getPseudoRandomNumber("DateTimeOffset") * 30));
+						date.setMonth(Math.floor(this._getPseudoRandomNumber("DateTimeOffset") * 12));
 						date.setMilliseconds(0);
 						return "/Date(" + date.getTime() + "+0000)/";
 					default:

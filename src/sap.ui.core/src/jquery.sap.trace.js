@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 			function createFESRopt(oInteraction) {
 				return [
 					format(oInteraction.component, 20, true), // application_name, trimmed from left
-					format(oInteraction.trigger + "_" + oPendingInteraction.event, 20, true), // step_name
+					format(oInteraction.trigger + "_" + oInteraction.event, 20, true), // step_name
 					"", // 1 empty field
 					format(CLIENT_MODEL, 20), // client_model
 					format(oInteraction.bytesSent, 16), // client_data_sent
@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
 					"", "", "", "", // 4 empty fields
 					format(oInteraction.busyDuration, 16), // busy duration
-					"", "", "", // 3 empty fields
+					"", "", "", "", // 4 empty fields
 					format(oInteraction.component, 70, true) // application_name with 70 characters, trimmed from left
 				].join(",");
 			}

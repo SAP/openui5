@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 		 * @private
 		 * @sap-restricted sap.viz
 		 * @param {object} oElement element/control instance
-		 * @return {array<array<string>>} Two dimensional array with scopes in bottom up order
+		 * @return {Array.<Array.<string>>} Two dimensional array with scopes in bottom up order
 		 */
 		Parameters.getActiveScopesFor = function(oElement) {
 			var aScopeChain = [];

@@ -5,14 +5,14 @@
 			"sap/ui/rta/test/controlEnablingCheck",
 			'sap/ui/dt/test/report/QUnit',
 			'sap/ui/dt/test/ElementEnablementTest'],
-		function (rtaControlEnablingCheck, QUnit, ElementEnablementTest) {
+		function (rtaControlEnablingCheck, QUnitReport, ElementEnablementTest) {
 
 			var oElementEnablementTest = new ElementEnablementTest({
 				type: "sap.m.Button"
 			});
 
 			oElementEnablementTest.run().then(function(oData) {
-				var oReport = new QUnit({
+				new QUnitReport({
 					data: oData
 				});
 			});

@@ -1,7 +1,11 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer"
 ], function (TestUtils, PDFViewer) {
+	"use strict";
+
 	var oPdfViewer = null;
 
 	QUnit.module('Static usage', {

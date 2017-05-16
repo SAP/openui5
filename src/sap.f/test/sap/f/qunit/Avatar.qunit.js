@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit,sinon*/
 
 (function () {
 	"use strict";

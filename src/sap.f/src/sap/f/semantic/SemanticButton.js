@@ -20,7 +20,7 @@ sap.ui.define([
 	* A base class for the available semantic actions, such as {@link sap.f.semantic.AddAction AddAction},
 	* {@link sap.f.semantic.CloseAction CloseAction}, etc.
 	*
-	* @extends <code>sap.f.semantic.SemanticControl</code>
+	* @extends sap.f.semantic.SemanticControl
 	* @abstract
 	*
 	* @author SAP SE

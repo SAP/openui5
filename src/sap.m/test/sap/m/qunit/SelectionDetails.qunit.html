@@ -116,6 +116,16 @@
 		}
 	});
 
+	QUnit.test("Method 'setPopoverModal' calls inner popover method", function(assert) {
+		//Arrange
+		var oSpy = sinon.spy(this.oResponsivePopover, "setModal");
+		//Act
+		this.oSelectionDetails.setPopoverModal(true);
+		//Assert
+		assert.equal(oSpy.callCount, 1, "Method delegation executed");
+		assert.equal(this.oResponsivePopover.getModal(), true, "Method delegation correctly updated the property value");
+	});
+
 	QUnit.test("Method 'isOpen' returns false as default", function(assert) {
 		//Assert
 		assert.equal(this.oSelectionDetails.isOpen(), false, "Method 'isOpen' returns false");
@@ -205,6 +215,23 @@
 		assert.equal(sap.m.List.callCount, 2, "Constructor for List has been called twice.");
 		assert.equal(sap.ui.layout.FixFlex.callCount, 1, "Constructor for FixFlex has been called only once.");
 		assert.equal(sap.m.NavContainer.callCount, 1, "Constructor for NavContainer has been called only once.");
+		assert.equal(oPopover.setProperty, this.oSelectionDetails._setPopoverProperty, "Method 'setProperty' overridden");
+	});
+
+	QUnit.test("Function _setPopoverProperty", function(assert) {
+		//Arrange
+		var oPopover = this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
+		var oInnerControlSpy = sinon.spy(oPopover._oControl, "setProperty");
+		var oModalSpy = sinon.spy(oPopover._oControl, "setModal");
+		var oManagedObjectSpy = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
+		//Act
+		var oReturn = this.oSelectionDetails._setPopoverProperty.call(oPopover, "visible", true);
+		this.oSelectionDetails._setPopoverProperty.call(oPopover, "modal", true);
+		//Assert
+		assert.equal(oInnerControlSpy.callCount, 2, "Method 'setProperty' of inner control called twice");
+		assert.equal(oModalSpy.callCount, 1, "Method 'setModal' of inner control called twice, in case of property 'modal'");
+		assert.equal(oManagedObjectSpy.callCount, 2, "Method 'setProperty' of MangedObject called twice");
+		assert.equal(oReturn, oPopover, "Popover instance returned");
 	});
 
 	QUnit.test("Initial page has header with close button on phones", function(assert) {
@@ -445,17 +472,6 @@
 		assert.equal(this.oNavContainer.getPages()[0].getCustomHeader().getContent()[2].getText(), this.sTitle, "Page has the correct title.");
 	});
 
-	QUnit.test("Method 'navTo' does not create new page if the page of given content exists in NavContainer", function(assert) {
-		// Arrange
-		var oPage = new sap.m.Page(this.oSelectionDetails.getId() + "-page-for-" + this.oContent.getId());
-		this.oNavContainer.addPage(oPage);
-		var oAddPageSpy = sinon.spy(this.oNavContainer, "addPage");
-		// Act
-		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
-		// Assert
-		assert.ok(oAddPageSpy.notCalled, "The method addPage has not been called if the page already exists in NavContainer");
-	});
-
 	QUnit.test("Method 'navTo' results in navigation to the page with correct ID if Popover is open", function(assert) {
 		// Arrange
 		var oToSpy = sinon.spy(this.oNavContainer, "to"),
@@ -467,7 +483,7 @@
 
 		// Assert
 		assert.equal(oAddPageSpy.callCount, 1, "called the method addPage that has been overwritten in NavContainer");
-		assert.equal(oToSpy.args[0], sPageId, "Navigation occurs with correct page ID");
+		assert.equal(oToSpy.args[0][0].indexOf(sPageId), 0, "Navigation occurs with correct page ID");
 	});
 
 	QUnit.test("Method 'navTo' loads dependencies", function(assert) {
@@ -548,11 +564,42 @@
 		assert.equal(oBackButtonPressSpy.callCount, 1, "Backward navigation handler has been called.");
 	});
 
+	QUnit.test("If 'back' navigation happens, event 'navigate' is triggered", function(assert) {
+		// Arrange
+		var oSelectionDetailsItem = new sap.m.SelectionDetailsItem();
+		//var oContent = this.aHandleNavLazyArgs[1];
+		this.oSelectionDetails.addItem(oSelectionDetailsItem);
+		this.oSelectionDetails._onNavigate({
+			getSource: function () {
+				return oSelectionDetailsItem;
+			}
+		});
+		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
+		this.oSelectionDetails.attachNavigate(onNavigate, this);
+
+		// Act
+		this.oNavContainer.getPages()[0].getCustomHeader().getContent()[0].firePress();
+		this.oSelectionDetails._oNavContainer.fireEvent("afterNavigate");
+
+		// Assert
+		function onNavigate(oEvent) {
+			assert.equal(oEvent.getParameter("direction"), "back", "Event property 'direction' is 'back'");
+			assert.equal(oEvent.getParameter("item"), oSelectionDetailsItem, "Event property 'item' is provided");
+			assert.equal(oEvent.getParameter("content"), this.oContent, "Event property 'content' is the content of page which is navigated from");
+		}
+	});
+
 	QUnit.test("Backward navigation to the initial page triggers animation", function(assert) {
 		// Arrange
+		var oInitialPageMock = {
+			getContent: function () {
+				return [ "" ];
+			}
+		};
 		this.oSelectionDetails._handleNavLazy.apply(this.oSelectionDetails, this.aHandleNavLazyArgs);
+		this.oSelectionDetails._oInitialPage = oInitialPageMock;
 		sinon.stub(this.oSelectionDetails, "_getInitialPageHeight").returns(500);
-		sinon.stub(this.oSelectionDetails._oNavContainer, "getCurrentPage").returns(this.oSelectionDetails._oInitialPage);
+		sinon.stub(this.oSelectionDetails._oNavContainer, "getCurrentPage").returns(oInitialPageMock);
 		var oSetPopoverHeightSpy = sinon.spy(this.oSelectionDetails, "_setPopoverHeight");
 
 		// Act
@@ -622,6 +669,8 @@
 
 		//Assert
 		assert.deepEqual(oFireNavigateSpy.getCall(0).args[0].item, oSelectionDetailsItem, "'navigate' event of SelectionDetails was called with correct 'item' parameter");
+		assert.deepEqual(oFireNavigateSpy.getCall(0).args[0].direction, "to", "'navigate' event of SelectionDetails was called with correct 'direction' parameter");
+		assert.deepEqual(this.oSelectionDetails._oItemForNavigation, oSelectionDetailsItem, "Item for navigation saved");
 	});
 
 	QUnit.test("'_onNavigate' event handler attached once per navigate button", function(assert) {
@@ -963,7 +1012,7 @@
 
 	QUnit.test("Factory Function - only function provided", function(assert) {
 		//Arrange
-		fnFunction = function(){};
+		var fnFunction = function(){};
 		this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
 
 		//Assert
@@ -973,8 +1022,8 @@
 
 	QUnit.test("Register Factory Function - data and function provided", function(assert) {
 		//Arrange
-		fnFunction = function(){};
-		oData = [1, 2];
+		var fnFunction = function(){};
+		var oData = [1, 2];
 		this.oSelectionDetails.registerSelectionDetailsItemFactory(oData, fnFunction);
 
 		//Assert
@@ -984,7 +1033,7 @@
 
 	QUnit.test("Factory Function - invalid data provided", function(assert) {
 		//Arrange
-		fnFunction = "Invalid data";
+		var fnFunction = "Invalid data";
 		var oResult = this.oSelectionDetails.registerSelectionDetailsItemFactory(fnFunction);
 
 		//Assert
@@ -1329,13 +1378,13 @@
 				return oEventParam.data;
 			}
 		});
-		oSpy = sinon.spy(this.oSelectionDetails, "destroyAggregation");
+		var oDestroyAggregationSpy = sinon.spy(this.oSelectionDetails, "destroyAggregation");
 
 		//Act
 		this.oSelectionDetails._callFactory();
 
 		//Assert
-		assert.ok(oSpy.withArgs(["items", true]), "Correct aggregation destroyed");
+		assert.ok(oDestroyAggregationSpy.withArgs(["items", true]), "Correct aggregation destroyed");
 		assert.equal(this.oSelectionDetails.getItems().length, 2, "Items are added");
 	});
 

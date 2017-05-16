@@ -50,6 +50,7 @@
 		<module>src/sap.uxap</module>
 		<module>src/sap.ui.fl</module>
 		<module>src/sap.ui.codeeditor</module>
+		<module>src/sap.ui.support</module>
 
 		<!-- theme libraries -->
 		<!-- TODO <module>src/themelib_sap_hcb</module> -->

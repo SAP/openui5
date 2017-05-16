@@ -27,11 +27,11 @@
 							]
 						})
 					]
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function(oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});
@@ -52,7 +52,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 			'<f:Form id="idForm">' +
 				'<f:layout>' +
-					'<f:ResponsiveGridLayout/>'+
+					'<f:ResponsiveGridLayout/>' +
 				'</f:layout>' +
 				'<f:formContainers>' +
 					'<f:FormContainer id="formContainer">' +
@@ -65,7 +65,7 @@
 							'<f:FormElement id="element2" label="labelForElement2">' +
 								'<f:fields>' +
 								'<m:Input/>' +
-								'</f:fields>'+
+								'</f:fields>' +
 							'</f:FormElement>' +
 						'</f:formElements>' +
 					'</f:FormContainer>' +
@@ -120,7 +120,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
+						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
 						'<f:FormContainer id="formContainer">' +
@@ -171,7 +171,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
+						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
 						'<f:FormContainer id="formContainer" title="Option 1">' +
@@ -202,7 +202,7 @@
 			afterRedo: fnConfirmFormContainerRenamedWithNewValueWhenIsAString
 		});
 
-		// Remove and reveal actions
+		// Remove action
 		var fnConfirmFormContainerIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual(oViewAfterAction.byId("formContainer").getVisible(), false, "then the FormContainer element is invisible");
 		};
@@ -215,7 +215,7 @@
 			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
 				'<f:Form id="idForm">' +
 					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
+						'<f:ResponsiveGridLayout/>' +
 					'</f:layout>' +
 					'<f:formContainers>' +
 						'<f:FormContainer title="Option 1" id="formContainer">' +
@@ -238,35 +238,6 @@
 			afterAction: fnConfirmFormContainerIsInvisible,
 			afterUndo: fnConfirmFormContainerIsVisible,
 			afterRedo: fnConfirmFormContainerIsInvisible
-		});
-
-		rtaControlEnablingCheck("Checking the reveal action for a FormContainer", {
-			xmlView: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:f="sap.ui.layout.form" xmlns:m="sap.m">' +
-				'<f:Form id="idForm">' +
-					'<f:layout>' +
-						'<f:ResponsiveGridLayout/>'+
-					'</f:layout>' +
-					'<f:formContainers>' +
-						'<f:FormContainer title="Option 1" id="formContainer" visible="false">' +
-							'<f:formElements>' +
-								'<f:FormElement label="labelForElement1">' +
-									'<f:fields>' +
-										'<m:Input/>' +
-									'</f:fields>' +
-								'</f:FormElement>' +
-							'</f:formElements>' +
-						'</f:FormContainer>' +
-					'</f:formContainers>' +
-				'</f:Form>' +
-			'</mvc:View>'
-			,
-			action: {
-				name: "reveal",
-				controlId: "formContainer"
-			},
-			afterAction: fnConfirmFormContainerIsVisible,
-			afterUndo: fnConfirmFormContainerIsInvisible,
-			afterRedo: fnConfirmFormContainerIsVisible
 		});
 	});
 })();

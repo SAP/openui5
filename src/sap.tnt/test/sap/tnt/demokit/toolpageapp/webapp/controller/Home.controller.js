@@ -10,7 +10,7 @@ sap.ui.define([
 
 			onInit: function () {
 				var oViewModel = new JSONModel({
-					isPhone : Device.system.phone,
+					isPhone : Device.system.phone
 				});
 				this.setModel(oViewModel, "view");
 				Device.media.attachHandler(function (oDevice) {

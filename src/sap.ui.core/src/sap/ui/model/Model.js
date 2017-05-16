@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context'],
-	function(jQuery, MessageProcessor, BindingMode, Context) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './BindingMode', './Context', './Filter', './FilterOperator'],
+	function(jQuery, MessageProcessor, BindingMode, Context, Filter, FilterOperator) {
 	"use strict";
 
 
@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 			this.iSizeLimit = 100;
 			this.sDefaultBindingMode = BindingMode.TwoWay;
 			this.mSupportedBindingModes = {"OneWay": true, "TwoWay": true, "OneTime": true};
+			this.mUnsupportedFilterOperators = {};
 			this.bLegacySyntax = false;
 			this.sUpdateTimer = null;
 		},
@@ -947,6 +948,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	Model.prototype.isLaundering = function(sPath, oContext) {
 		return false;
 	};
+
+	/**
+	 * Checks whether the given filters contain an unsupported operator.
+	 *
+	 * OData v1, v2 and Client Bindings cannot be filtered with <code>sap.ui.model.FilterOperator</code> <code>"Any"</code> and <code>"All"</code>.
+	 * The model property <code>mUnsupportedFilterOperators</code> can be configured in each model subclass
+	 * to describe the unsupported operators.
+	 *
+	 * If any of the given filters contains nested filters, those are checked recursively.
+	 *
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} vFilters Single filter or an array of filter instances
+	 * @throws {Error} if at least one filter uses an <code>sap.ui.model.FilterOperator</code>
+	 *               that is not supported by the related model instance
+	 * @sap-restricted sap.ui.model
+	 * @protected
+	 */
+	Model.prototype.checkFilterOperation = function(vFilters) {
+		_traverseFilter(vFilters, function (oFilter) {
+			if (this.mUnsupportedFilterOperators[oFilter.sOperator]) {
+				throw new Error("Filter instances contain an unsupported FilterOperator: " + oFilter.sOperator);
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Traverses the given filter tree.
+	 *
+	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} vFilters Array of filters or a single filter instance, which will be checked for unsupported filter operators
+	 * @param {function} fnCheck Check function which is called for each filter instance in the tree
+	 * @private
+	 */
+	function _traverseFilter (vFilters, fnCheck) {
+		vFilters = vFilters || [];
+
+		if (vFilters instanceof Filter) {
+			vFilters = [vFilters];
+		}
+
+		// filter has more sub-filter instances (we ignore the subfilters below the any/all operators)
+		for (var i = 0; i < vFilters.length; i++) {
+			// check single Filter
+			var oFilter = vFilters[i];
+			fnCheck(oFilter);
+
+			// check subfilter for lambda expressions (e.g. Any, All, ...)
+			_traverseFilter(oFilter.oCondition, fnCheck);
+
+			// check multi filter if necessary
+			_traverseFilter(oFilter.aFilters, fnCheck);
+		}
+	}
+
 	return Model;
 
 });

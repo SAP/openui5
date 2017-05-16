@@ -1,3 +1,5 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe('sap.ui.layout.BlockLayout', function () {
 	"use strict";
 

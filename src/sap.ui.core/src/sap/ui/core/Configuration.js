@@ -550,7 +550,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *                                    represented as en-US with a private extension
 		 * </pre>
 		 *
-		 * For a normalized BCP47 tag, call {@link #getLanguageTag} or call {@link getLocale} to get a
+		 * For a normalized BCP47 tag, call {@link #getLanguageTag} or call {@link #getLocale} to get a
 		 * {@link sap.ui.core.Locale Locale} object matching the language.
 		 *
 		 * @return {string} Language string as configured

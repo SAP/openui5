@@ -58,10 +58,10 @@ sap.ui.define([], function() {
 					if (oFormContainer) {
 						iIndex = aFormContainers.indexOf(oFormContainer) + 1;
 					} else {
-						var oTitle = aFormContainers[aFormContainers.length - 1].getTitle();
-						// if there is no Title in the FormContainer, the SimpleForm is empty and
+						var aFormElements = aFormContainers[aFormContainers.length - 1].getFormElements();
+						// if there is no Elements in the FormContainer, the SimpleForm is empty and
 						// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
-						if (oTitle !== null ) {
+						if (aFormElements.length > 0) {
 							iIndex = aFormContainers.length;
 						}
 					}
@@ -249,6 +249,17 @@ sap.ui.define([], function() {
 		aggregations : {
 			content : {
 				ignore : true
+			},
+			title : {
+				ignore : true
+			},
+			toolbar : {
+				ignore : function(oSimpleForm){
+					return !oSimpleForm.getToolbar();
+				},
+				domRef : function(oSimpleForm){
+					return oSimpleForm.getToolbar().getDomRef();
+				}
 			},
 			form : {
 				ignore : false,

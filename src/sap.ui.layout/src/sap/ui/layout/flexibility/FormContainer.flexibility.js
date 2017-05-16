@@ -11,7 +11,6 @@ sap.ui.define([
 
 	return {
 		"hideControl": "default",
-		"unhideControl": "default",
 		"renameGroup": RenameFormContainer,
 		"moveControls": "default"
 

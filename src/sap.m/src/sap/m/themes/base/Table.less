@@ -171,15 +171,12 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 .sapMListTblNavCol,
 .sapMListTblSelCol {
 	vertical-align: top;
+	line-height: 3rem;
 	padding: 0;
 }
 
 .sapMListTblNavCol > .sapMLIBImgNav{
 	display: block;
-}
-
-.sapMListModeSingleSelect .sapMListTblSelCol{
-	padding: 0;
 }
 
 .sapMListTblUnreadCol{
@@ -230,7 +227,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	padding-right: 1rem;
 }
 
-.sapMListTblHasNav .sapMLIBTypeNavigation > .sapMListTblCell:nth-last-child(2) {
+.sapMListTblHasNav .sapMListTblCell:nth-last-child(2) {
 	padding-right: 0;
 }
 
@@ -255,6 +252,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 /* table column header */
 .sapMListTbl th {
 	background: @sapUiListHeaderBackground;
+	border-bottom: 1px solid @sapUiListBorderColor;
 }
 
 /* table footer */
@@ -299,6 +297,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 .sapUiSizeCompact .sapMListTblNavCol,
 .sapUiSizeCompact .sapMListTblSelCol {
 	vertical-align: middle;
+	line-height: 2rem;
 	text-align: center;
 }
 
@@ -317,8 +316,8 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	width: 2.5rem;
 }
 
-	/* min height for the table cells */
-.sapUiSizeCompact .sapMListTblCell {
+/* min height for the table rows */
+.sapUiSizeCompact .sapMListTblRow {	
 	height: 2rem;
 }
 

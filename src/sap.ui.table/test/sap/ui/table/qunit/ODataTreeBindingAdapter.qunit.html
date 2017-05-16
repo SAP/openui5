@@ -1562,6 +1562,74 @@
 		});
 	});
 
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("selectionChanged event with selectAll", 3, function(assert){
+		var done = assert.async();
+		prebuildTree(function () {
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, 55, "Event: leadIndex should be515");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 56, "Event: length of changedIndices should be 56");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.selectAll();
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("selectionChanged event with collapse", 4, function(assert){
+		var done = assert.async();
+		prebuildTree(function () {
+			oBinding.selectAll();
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, 55, "Event: leadIndex should still be 55");
+				assert.equal(oEvent.mParameters.oldIndex, 55, "Event: oldIndex should still be 55");
+				assert.equal(oEvent.mParameters.rowIndices.length, 7, "Event: length of changedIndices should be 7");
+
+				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 5, 6, 7, 8, 9], "Changed indices after collapse is correct");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.collapse(1);
+		});
+	});
+
+	/**
+	 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+	 * Data should already be present, since prebuildTree already requested a big set
+	 */
+	QUnit.test("selectionChanged event with collapse: deselect of lead selection", 4, function(assert){
+		var done = assert.async();
+		prebuildTree(function () {
+			oBinding.setSelectedIndex(2);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachChange(fnSelectionChangeHandler1);
+				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
+				assert.equal(oEvent.mParameters.oldIndex, 3, "Event: oldIndex should be 3");
+				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
+
+				assert.deepEqual(oEvent.mParameters.rowIndices, [3], "Changed indices after collapse is correct");
+				done();
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.collapse(1);
+		});
+	});
+
 	QUnit.test("SelectAll with Paging and Expand", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
@@ -1610,7 +1678,6 @@
 			oBinding.getContexts(0, 2);
 		});
 	});
-
 
 	QUnit.test("Sorting with stable expand states", function(assert){
 		var done = assert.async();

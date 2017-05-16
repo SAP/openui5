@@ -239,8 +239,9 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	/**
-	 * _bindAggregation is overwritten, and will be called by either ManagedObject.prototype.bindAggregation
-	 * or ManagedObject.prototype.setModel
+	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
+	 *
+	 * @override {@link sap.ui.table.Table#_bindAggregation}
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
@@ -252,7 +253,20 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// in this case we have to sanitize the parameters, so the ODataModelAdapter will instantiate the correct binding.
 			this._applyBindingInfoToModel.call(this, Array.prototype.slice.call(arguments, 1));
 		}
-		return Table.prototype._bindAggregation.apply(this, arguments);
+
+		// Create the binding.
+		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
+
+		var oBinding = this.getBinding("rows");
+
+		if (sName === "rows" && oBinding != null) {
+			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
+			oBinding.attachEvents({
+				// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
+				// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
+				selectionChanged: this._onSelectionChanged.bind(this)
+			});
+		}
 	};
 
 	/**
@@ -353,12 +367,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
-
-		// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
-		// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
-		oBindingInfo.events = {
-			selectionChanged: this._onSelectionChanged.bind(this)
-		};
 
 		// This may fail, in case the model is not yet set.
 		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)

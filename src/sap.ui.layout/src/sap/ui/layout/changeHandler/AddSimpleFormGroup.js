@@ -18,13 +18,30 @@ sap.ui.define([
 
 		AddSimpleFormGroup.CONTENT_AGGREGATION = "content";
 
+		var fnFirstGroupWithoutTitle = function(oModifier, aStopToken, aContent) {
+			for (var i = 0; i < aContent.length; i++) {
+				var sType = oModifier.getControlType(aContent[i]);
+				if (aStopToken.indexOf(sType) === -1) {
+					if (aContent[i].getVisible()) {
+						return true;
+					}
+				} else {
+					return false;
+				}
+			}
+		};
+
 		var fnMapGroupIndexToContentAggregationIndex = function(oModifier, aStopToken, aContent, iGroupIndex) {
 			var oResult;
 			var iCurrentGroupIndex = -1;
 
-			// Empty simpleform case, when the title is null
+			// Empty simpleform case, when there are no elements inside the single formContainer
 			if (iGroupIndex === 0) {
 				return iGroupIndex;
+			}
+
+			if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
+				iCurrentGroupIndex++;
 			}
 
 			for (var i = 0; i < aContent.length; i++) {
