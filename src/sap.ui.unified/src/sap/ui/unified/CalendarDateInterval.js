@@ -110,17 +110,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 		}
 
-		if (oStartDate.getTime() < this._oMinDate.getTime() || oStartDate.getTime() > this._oMaxDate.getTime()) {
+		var oMinDate = this.getMinDate();
+		var oMaxDate = this.getMaxDate();
+
+		if ((oMinDate && oStartDate.getTime() < oMinDate.getTime()) ||
+			(oMaxDate && oStartDate.getTime() > oMaxDate.getTime())) {
 			throw new Error("Date must not be in valid range (minDate and maxDate); " + this);
 		}
 
-		var oMinDate = this.getMinDate();
 		if (oMinDate && oStartDate.getTime() < oMinDate.getTime()) {
 			jQuery.sap.log.warning("startDate < minDate -> minDate as startDate set", this);
 			oStartDate = new Date(oMinDate);
 		}
 
-		var oMaxDate = this.getMaxDate();
+
 		if (oMaxDate && oStartDate.getTime() > oMaxDate.getTime()) {
 			jQuery.sap.log.warning("startDate > maxDate -> maxDate as startDate set", this);
 			oStartDate = new Date(oMaxDate);

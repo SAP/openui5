@@ -141,6 +141,47 @@
 				equal(iStartDateChanged, 0, "no startDateChangeEvent fired by API change");
 			});
 
+			test("setStartDate with equal to the min date", function() {
+				//Prepare
+				var oCal = new sap.ui.unified.CalendarDateInterval({
+					startDate: new Date(2016, 2, 23, 8, 0, 0),
+					minDate: new Date(2000, 0, 1, 0, 0, 0),
+					maxDate: new Date(2050, 11, 31, 0, 0)
+				});
+
+				try {
+					//Act
+					oCal.setStartDate(oCal.getMinDate());
+					//Assert
+					assert.equal(oCal.getStartDate(), oCal.getMinDate(), "Start Date must be equal to mindate");
+				} catch (e) {
+					assert.ok(false, "CalendarDateInterval.setStartDate threw an unexpected exception:\t" + e + "\nStacktrace:\n" + e.stack)
+				}
+				//Cleanup
+				oCal.destroy();
+			});
+
+			test("setStartDate with equal to the max date", function() {
+				//Prepare
+				var oCal = new sap.ui.unified.CalendarDateInterval({
+					startDate: new Date(2016, 2, 23, 8, 0, 0),
+					minDate: new Date(2000, 0, 1, 0, 0, 0),
+					maxDate: new Date(2050, 11, 30, 23, 0, 0)
+				});
+
+				try {
+					//Act
+					oCal.setStartDate(oCal.getMaxDate());
+					//Assert
+					assert.equal(oCal.getStartDate(), oCal.getMaxDate(), "Start Date must be equal to maxdate");
+				} catch (e) {
+					assert.ok(false, "CalendarDateInterval.setStartDate threw an unexpected exception:\t" + e + "\nStacktrace:\n" + e.stack)
+				}
+
+				//Cleanup
+				oCal.destroy();
+			});
+
 			test("focusDate", function() {
 				iStartDateChanged = 0;
 				oCal1.focusDate(new Date("2015", "2", "11"));
