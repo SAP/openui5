@@ -1,7 +1,8 @@
 sap.ui.require([
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
 	"mycompany/myapp/test/integration/pages/Common"
-], function(Opa5, Common) {
+], function(Opa5, Press, Common) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -40,9 +41,7 @@ sap.ui.require([
 					return this.waitFor({
 						id: "link",
 						viewName: "ObjectNotFound",
-						success: function(oLink) {
-							oLink.$().trigger("click");
-						},
+						actions: new Press(),
 						errorMessage: "Did not find the link on the not found page"
 					});
 				},
@@ -51,9 +50,7 @@ sap.ui.require([
 					return this.waitFor({
 						id: "link",
 						viewName: "NotFound",
-						success: function(oLink) {
-							oLink.$().trigger("click");
-						},
+						actions: new Press(),
 						errorMessage: "Did not find the link on the not found page"
 					});
 				}
