@@ -671,9 +671,6 @@ a:hover {
 .b-list.mod_info.eveningSection .b-list__item.icon {
     margin-bottom: 0px;
 }
-.b-list.mod_info.eveningSection {
-    background-color: gainsboro;
-}
 
 @media (min-width: 700px) {
 	.b-list.mod_info.eveningSection {
