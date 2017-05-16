@@ -25,7 +25,6 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 */
 	var NewsContent = Control.extend("sap.m.NewsContent", /** @lends sap.m.NewsContent.prototype */ {
 		metadata : {
-
 			library : "sap.m",
 			properties : {
 				/**
@@ -136,16 +135,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 		return sAltText;
 	};
 
-	/**
-	 * Returns the Tooltip as String
-	 *
-	 * @returns {sap.ui.core.TooltipBase} The Tooltip object
-	 */
 	NewsContent.prototype.getTooltip_AsString = function() {
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
 		if (typeof oTooltip === "string" || oTooltip instanceof String) {
-			// TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
 			sTooltip = oTooltip.split("{AltText}").join(sTooltip).split("((AltText))").join(sTooltip);
 			return sTooltip;
 		}
@@ -156,15 +149,9 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 		}
 	};
 
-	/**
-	 * Sets the ContentText
-	 *
-	 * @param {String} text The ContentType text
-	 * @returns {sap.m.NewsContent} Reference to this in order to allow method chaining
-	 */
 	NewsContent.prototype.setContentText = function(text) {
 		this._oContentText.setText(text);
-		return this;
+		return this.setProperty("contentText", text, true);
 	};
 
 	/* --- Event Handling --- */
