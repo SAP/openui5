@@ -104,6 +104,10 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	}
 
 	function getSeverityFilter(severity, count, isActive) {
+		if (!count) {
+			return '';
+		}
+
 		var activeClass = isActive ? 'filter-active' : '';
 		return '<div data-severity="' + severity + '" class="filter ' + activeClass + ' ' + severity + '">' + severity + '(' + count + ')</div>' + ' | ';
 	}
@@ -112,7 +116,6 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		var content = '',
 			severities = {},
 			severityProperty,
-			severity,
 			i,
 			total = 0,
 			issues = [],
@@ -141,10 +144,9 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 				}
 			}
 			content += getSeverityFilter('Total', total, true);
-
-			for (severity in severities) {
-				content += getSeverityFilter(severity, severities[severity], false);
-			}
+			content += getSeverityFilter('High', severities['High'], false);
+			content += getSeverityFilter('Medium', severities['Medium'], false);
+			content += getSeverityFilter('Low', severities['Low'], false);
 		} catch (ex) {
 			jQuery.sap.log.warning('There was a problem creating severity filters.');
 			content = '';
