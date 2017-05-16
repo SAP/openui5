@@ -689,6 +689,9 @@ a:hover {
 	    margin-bottom: 0px;
 	}
 }
+.b-list.mod_info.eveningSection .b-list__item.description .b-font.size_18.margin{
+    margin-bottom: 10px;
+}
 
 #hideButton {
 	margin: 20px auto 0 auto;
