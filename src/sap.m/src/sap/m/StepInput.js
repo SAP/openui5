@@ -58,23 +58,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					value: {type: "float", group: "Data", defaultValue: 0},
 					/**
 					 * Defines the name of the control for the purposes of form submission.
+					 * @since 1.44.15
 					 */
 					name: { type: "string", group: "Misc", defaultValue: null },
 					/**
 					 * Defines a short hint intended to aid the user with data entry when the control has no value.
-					 * @since 1.50
+					 * @since 1.44.15
 					 */
 					placeholder: { type: "string", group: "Misc", defaultValue: null },
 					/**
 					 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
 					 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
 					 * (e.g. one label should label multiple fields).
-					 * @since 1.50
+					 * @since 1.44.15
 					 */
 					required : {type : "boolean", group : "Misc", defaultValue : false},
 					/**
 					 * Defines the width of the control.
-					 * @since 1.50
 					 */
 					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
 					/**
