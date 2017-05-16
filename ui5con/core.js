@@ -104,11 +104,11 @@ window.initMap = function () {
         scrollwheel: false,
         zoomControl: true
     });
-
+   
     new google.maps.Marker({
         position: {
-            lat: 49.240150, 
-            lng: 8.639048,
+            lat: 49.241254, 
+            lng: 8.639473,
         },
         map:map,
         clickable: false,
