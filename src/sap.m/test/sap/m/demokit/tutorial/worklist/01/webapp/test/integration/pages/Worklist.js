@@ -85,7 +85,10 @@ sap.ui.define([
 					return this.waitFor(createWaitForItemAtPosition({
 						position: iPosition,
 						success: function(oTableItem) {
-							this.getContext().currentItem = oTableItem;
+							// IE will not allow accessing objects of destroyed frames. Reference the strings directly so they can be used after the iFrame is restarted.
+							this.getContext().currentItemBindingPath = oTableItem.getBindingContext().getPath();
+							this.getContext().currentItemId = oTableItem.getBindingContext().getProperty("ProductID");
+							this.getContext().currentItemName = oTableItem.getBindingContext().getProperty("ProductName");
 						}
 					}));
 				},
