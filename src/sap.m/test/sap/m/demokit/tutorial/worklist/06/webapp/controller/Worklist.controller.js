@@ -1,7 +1,7 @@
 sap.ui.define([
-	"myCompany/myApp/controller/BaseController",
+	"mycompany/myapp/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"myCompany/myApp/model/formatter",
+	"mycompany/myapp/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/MessageToast",
@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast, MessageBox) {
 	"use strict";
 
-	return BaseController.extend("myCompany.myApp.controller.Worklist", {
+	return BaseController.extend("mycompany.myapp.controller.Worklist", {
 
 		formatter: formatter,
 
