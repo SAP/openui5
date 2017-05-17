@@ -320,6 +320,21 @@ sap.ui.define([
 
 				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData);
 
+				if (oControlData.implements && oControlData.implements.length) {
+					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
+						var aDisplayNameArr = item.split("."),
+							sDisplayName = aDisplayNameArr[aDisplayNameArr.length - 1];
+						return {
+							href: item,
+							name: sDisplayName,
+							isLast: idx === array.length - 1
+						};
+					});
+					oControlData.hasImplementsData = true;
+				} else {
+					oControlData.hasImplementsData = false;
+				}
+
 				oControlData.isClass = oControlData.kind === "class";
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;

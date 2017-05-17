@@ -138,3 +138,8 @@ code {
 .sapUiDocumentationJsDoc > p:last-child {
 	margin-bottom: 0.5rem;
 }
+
+.sapUiDocumentationImplementsDiv .sapMLnk {
+	line-height: 1.5rem;
+	margin-left: 0.25rem;
+}
