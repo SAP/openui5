@@ -70,25 +70,23 @@ sap.ui.define([
 				this.setModel(new JSONModel(), 'methods');
 				this.setModel(new JSONModel(), 'events');
 				this.setModel(new JSONModel(), "entity");
+				this.setModel(new JSONModel(), "borrowedMethods");
+				this.setModel(new JSONModel(), "borrowedEvents");
 
-				this._fnOrientationChange({
-					landscape: Device.orientation.landscape
-				});
-			},
-
-			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				this.getView().byId("apiDetailObjectPage").attachEvent("onAfterRenderingDOMReady", function () {
+					jQuery.sap.delayedCall(250, this, function () {
+						this._scrollToEntity(this._sEntityType, this._sEntityId);
+					});
+				}, this);
 			},
 
 			onAfterRendering: function() {
 				this._createMethodsSummary();
 				this._createEventsSummary();
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onExit: function() {
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onJSDocLinkClick: function (oEvt) {
@@ -126,6 +124,8 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (oEvent) {
 				this._sTopicid = oEvent.getParameter("arguments").id;
+				this._sEntityType = oEvent.getParameter("arguments").entityType;
+				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
 				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
 
@@ -134,7 +134,12 @@ sap.ui.define([
 					this._createMethodsSummary();
 					this._createEventsSummary();
 
-					this._scrollContentToTop();
+					if (this._sEntityType) {
+						this._scrollToEntity(this._sEntityType, this._sEntityId);
+					} else {
+						this._scrollContentToTop();
+					}
+
 					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
 
 				}.bind(this));
@@ -187,7 +192,12 @@ sap.ui.define([
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
 
-				var aSubSections = this.getView().byId(sSectionId).getSubSections();
+				var oSection = this.getView().byId(sSectionId);
+				if (!oSection) {
+					return;
+				}
+
+				var aSubSections = oSection.getSubSections();
 				var aFilteredSubSections = aSubSections.filter(function (oSubSection) {
 					return oSubSection.getTitle() === sSubSectionTitle;
 				});
@@ -308,16 +318,20 @@ sap.ui.define([
 					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
 
+				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData);
+
 				oControlData.isClass = oControlData.kind === "class";
 				oControlData.isDerived = !!oControlData.extends;
-				oControlData.extends = oControlData.extends || this.NOT_AVAILABLE;
-				oControlData.since = oControlData.since || this.NOT_AVAILABLE;
+				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
+				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
 
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
 				this.getModel('methods').setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
 				this.getModel('events').setDefaultBindingMode("OneWay");
+				this.getModel('borrowedMethods').setData(oControlData.borrowed.methods, false);
+				this.getModel('borrowedEvents').setData(oControlData.borrowed.events, false);
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
@@ -359,19 +373,6 @@ sap.ui.define([
 				};
 			},
 
-			_fnOrientationChange: function(oEvent) {
-				var page = this.getView().byId("apiDetailPage");
-
-				if (Device.system.phone) {
-					this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
-				}
-
-				if (oEvent.landscape) {
-					page.setShowHeader(false);
-				} else {
-					page.setShowHeader(true);
-				}
-			},
 			/**
 			 * Adjusts methods info so that it can be easily displayed in a table
 			 * @param methods - the methods array initially coming from the server
@@ -444,6 +445,65 @@ sap.ui.define([
 				result.unshift({});
 
 				return result;
+			},
+
+			buildBorrowedModel: function(sTopicId, aLibsData) {
+				var aBaseClassMethods,
+					aBaseClassEvents,
+					sBaseClass,
+					aBorrowChain,
+					oBaseClass;
+
+				aBorrowChain = {
+					methods: [],
+					events: []
+				};
+				sBaseClass = aLibsData[sTopicId].extends;
+
+				var fnVisibilityFilter = function (item) {
+					return item.visibility === "public";
+				};
+
+				var fnMethodsMapper = function (item) {
+					return {
+						name: item.name,
+						link: "#/api/" + sBaseClass + "/methods/" + item.name
+					};
+				};
+
+				var fnEventsMapper = function (item) {
+					return {
+						name: item.name,
+						link: "#/api/" + sBaseClass + "/events/" + item.name
+					};
+				};
+
+				while (sBaseClass) {
+					oBaseClass = aLibsData[sBaseClass];
+					if (!oBaseClass) {
+						break;
+					}
+
+					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter).map(fnMethodsMapper);
+					if (aBaseClassMethods.length) {
+						aBorrowChain.methods.push({
+							name: sBaseClass,
+							methods: aBaseClassMethods
+						});
+					}
+
+					aBaseClassEvents = (oBaseClass.events || []).filter(fnVisibilityFilter).map(fnEventsMapper);
+					if (aBaseClassEvents.length) {
+						aBorrowChain.events.push({
+							name: sBaseClass,
+							events: aBaseClassEvents
+						});
+					}
+
+					sBaseClass = oBaseClass.extends;
+				}
+
+				return aBorrowChain;
 			},
 
 			/**
