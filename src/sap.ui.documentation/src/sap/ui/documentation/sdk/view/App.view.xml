@@ -57,7 +57,7 @@
 					</layoutData>
 				</ToolbarSpacer>
 
-				<ObjectStatus text="Beta version - still under construction!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
+				<ObjectStatus text="Version {appView>/version} - development in progress!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
@@ -75,7 +75,7 @@
 					<menu>
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
-								<MenuItem text="Version {appView>/version}" />
+								<MenuItem text="Version {appView>/version}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
 								<MenuItem text="Legal" visible="{=!${appView>/isOpenUI5}}"/>
