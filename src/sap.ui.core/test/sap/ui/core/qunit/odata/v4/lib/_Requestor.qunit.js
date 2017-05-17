@@ -98,7 +98,7 @@ sap.ui.require([
 			fnSubmit = sinon.spy();
 
 		this.mock(_Requestor).expects("cleanPayload")
-			.withExactArgs(oPayload).returns(oChangedPayload);
+			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
 				data : JSON.stringify(oChangedPayload),

@@ -1,8 +1,8 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.types.Types"
 	xmlns="sap.m"
+	xmlns:ce="sap.ui.codeeditor"
 	xmlns:core="sap.ui.core"
-	xmlns:demokit="sap.ui.demokit"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
@@ -19,8 +19,7 @@
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="auto" class="sapUiResponsiveMargin">
 			<content>
-				<demokit:CodeViewer class="sapUiExploredCodeViewer" source="{ui>/code}"
-					lineNumbering="true"/>
+				<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
 			</content>
 		</Panel>
 		<form:SimpleForm id="simpleForm" layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
