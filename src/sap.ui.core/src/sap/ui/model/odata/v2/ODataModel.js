@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @param {map} [mParameters.metadataUrlParams] Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
 	 * @param {string} [mParameters.defaultBindingMode=OneWay] Sets the default binding mode for the model
 	 * @param {string} [mParameters.defaultCountMode=sap.ui.model.odata.CountMode.Request] Sets the default count mode for the model
-	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Server] Sets the default operation mode for the model
+	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Default] Sets the default operation mode for the model
 	 * @param {string} [mParameters.defaultUpdateMethod=sap.ui.model.odata.UpdateMethod.Merge] Default update method which is used for all update requests
 	 * @param {map} [mParameters.metadataNamespaces] Map of namespaces (name => URI) used for parsing the service metadata
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
@@ -138,7 +138,7 @@ sap.ui.define([
 			this.bLoadAnnotationsJoined = bLoadAnnotationsJoined !== false;
 			this.sAnnotationURI = sAnnotationURI;
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
-			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Server;
+			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Default;
 			this.sMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshGroupId = undefined;
