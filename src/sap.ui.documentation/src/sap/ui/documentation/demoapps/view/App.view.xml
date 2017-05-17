@@ -28,20 +28,20 @@
 									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_M_and_L_cropped.jpg"
 									width="100%"/>
 							<l:Grid
+									width="100%"
 									class="headerGrid"
 									hSpacing="0"
 									defaultSpan="L6 M6 S12">
 								<l:VerticalLayout width="100%" class="sapUiTinyMarginEnd">
 									<Text class="headerText" text="{i18n>pageTitle}" width="100%" textAlign="Left"/>
-									<Text class="headerSubText" text="{i18n>introText1}" width="100%" textAlign="Left"/>
-									<custom:ActionButton
-											class="headerButton"
+									<Button
+											class="actionButton headerButton"
 											id="download"
 											text="{i18n>downloadButtonText}"
 											type="Emphasized"
 											press="onDownloadButtonPress"
 											icon="sap-icon://download">
-									</custom:ActionButton>
+									</Button>
 								</l:VerticalLayout>
 								<Image
 										src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"
@@ -71,7 +71,7 @@
 									justifyContent="SpaceBetween"
 									alignItems="Center">
 								<Image
-										src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+										src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 										height="2.5rem">
 								</Image>
 								<HBox
@@ -109,8 +109,7 @@
 					<InputListItem
 						visible="{= !!${config} }"
 						label="{name}"
-						type="Active"
-						icon="sap-icon://{icon}">
+						type="Active">
 						<customData>
 							<core:CustomData key="config" value="{config}"/>
 						</customData>

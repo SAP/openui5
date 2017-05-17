@@ -1,4 +1,5 @@
 <mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.ApiDetailInitial"
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:l="sap.ui.layout"
@@ -22,8 +23,13 @@
 								width="100%"
 								visible="{=!${device>/system/phone}}"/>
 						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderTitleText" text="API Reference" width="100%" textAlign="Left"/>
-						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderSubText" text="Compendium of UI5 libraries" width="100%" textAlign="Left"/>
 					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							title="Featured Namespaces"
+							class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"/>
 				</l:BlockLayoutRow>
 
 				<l:BlockLayoutRow>
@@ -39,7 +45,7 @@
 									href="#/api/sap.m"
 									target="_blank"/>
 							<Text
-									text="Responsive controls usable for touch-enabled devices and desktop browsers"
+									text="Responsive controls for touch-enabled devices and desktop browsers"
 									class="sapUiSmallMarginBottom"/>
 							<Label
 									text="Namespace: sap.m"/>
@@ -71,6 +77,9 @@
 									text="Tables"
 									href="#/api/sap.ui.table"
 									target="_blank"/>
+							<Text
+									text="Tables for desktop-type scenarios"
+									class="sapUiSmallMarginBottom"/>
 							<Label
 									text="Namespace: sap.ui.table"/>
 						</l:VerticalLayout>

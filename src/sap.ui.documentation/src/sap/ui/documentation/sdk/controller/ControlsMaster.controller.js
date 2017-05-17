@@ -122,7 +122,7 @@ sap.ui.define([
 
 				// Subscribe to view event to apply to it the current configuration
 				this._oView.addEventDelegate({
-					onBeforeFirstShow: jQuery.proxy(this.onBeforeFirstShow, this)
+					onBeforeFirstShow: this.onBeforeFirstShow.bind(this)
 				});
 
 				// subscribe to app events

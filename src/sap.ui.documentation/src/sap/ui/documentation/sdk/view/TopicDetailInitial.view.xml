@@ -15,7 +15,7 @@
 				<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 					<Image
 							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped_274847.jpg"
+							src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped.jpg"
 							width="100%"
 							densityAware="false"
 							visible="{device>/system/phone}"/>
@@ -63,10 +63,13 @@
 						backgroundColorIndex="2">
 					<custom:TitleLink
 							width="100%"
-							text="Tutorials"
+							text="Get Started"
 							href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
 							class="demokitInitialPagesWhiteText"
 							titleStyle="H1"/>
+					<Text
+							text="Set Up and Tutorials"
+							class="demokitInitialPagesWhiteText"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 

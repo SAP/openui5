@@ -18,7 +18,7 @@
 				id="aboutMaster"
 				title="About">
 				<l:VerticalLayout class="sapUiSmallMargin">
-					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/logo-SAPUI5-blue-446x140.png" width="100%" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
+					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/logo_sapui5.png" width="100%" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
 					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/sap_logo.png" width="100%" class="sapUiSmallMarginBottom" visible="{appView>/isOpenUI5}"/>
 					<Text text="UI5 Demo Kit - UI Development Toolkit for HTML5" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
 					<Text text="© Copyright 2009-2017 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
