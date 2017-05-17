@@ -167,6 +167,70 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
+			<l:BlockLayoutRow visible="{= !${appView>/isOpenUI5}}">
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://lightbulb"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Smart"
+								text="Smart Controls"
+								titleStyle="H2"/>
+						<Text text="Metadata-driven controls"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://map-2"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Map"
+								text="Maps"
+								titleStyle="H2"/>
+						<Text
+								text="Location visualization"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://filter-analytics"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Chart"
+								text="Charts"
+								titleStyle="H2"/>
+						<Text
+								text="Data visualization"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://process"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Process"
+								text="Processes"
+								titleStyle="H2"/>
+						<Text text="Step-based Interactions"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
