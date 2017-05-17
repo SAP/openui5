@@ -9,102 +9,33 @@
 	<Page showHeader="false">
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="sapUiNoContentPadding sapUiDemokitLandingImageCell">
+				<l:BlockLayoutCell class="sapUiNoContentPadding sapUiDemokitLandingImageCell welcomeImageCell">
 					<Image
-							src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped_280279.jpg"
+							id="phoneImage"
+							src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped.jpg"
 							width="100%"
+							class="welcomeImage"
 							densityAware="false"
 							visible="{device>/system/phone}"/>
 					<Image
 							src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
 							width="100%"
 							densityAware="false"
+							class="welcomeImage"
 							visible="{=!${device>/system/phone}}"/>
-					<Text class="sapUiDocumentationWelcomeHeaderText sapUiDocumentationWelcomeHeaderTitleText"
-						  text="You have arrived!" width="100%" textAlign="Center"/>
-					<Text class="sapUiDocumentationWelcomeHeaderText sapUiDocumentationWelcomeHeaderSubText"
-						  text="Welcome to the new Demo Kit" width="100%" textAlign="Center"/>
-				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
 
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternA sapUiBlockCenteredCell sapUiDemokitLandingBlockHeadline">
-					<custom:ActionButton
-							text="Get Started with UI5"
-							type="Emphasized"
-							press="onGetStarted"
-							class="sapUiDocumentationWelcomeHeaderButton"/>
-				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
-
-			<l:BlockLayoutRow>
-				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternE">
 					<l:VerticalLayout
-							width="100%">
-						<core:Icon
-								src="sap-icon://course-book"
-								size="2.5rem"
-								color="Default"/>
-						<custom:TitleLink
-								href="#/topic"
-								text="Documentation"
-								titleStyle="H2"
-								class="sapUiTinyMarginTopBottom"/>
-						<Text
-								text="UI5 offers a solid foundation for building enterprise-ready apps. Read more about its powerful development paradigms."/>
-					</l:VerticalLayout>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternD">
-					<l:VerticalLayout
-							width="100%">
-						<core:Icon
-								src="sap-icon://explorer"
-								size="2.5rem"
-								color="Default"/>
-						<custom:TitleLink
-								href="#/controls"
-								text="Samples"
-								titleStyle="H2"
-								class="sapUiTinyMarginTopBottom"/>
-						<Text
-								text="More than 400 UI controls are waiting to be discovered. Use them out of the box, or extend and tweak them to meet your requirements."/>
-					</l:VerticalLayout>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternC">
-					<l:VerticalLayout
-							width="100%">
-						<core:Icon
-								src="sap-icon://developer-settings"
-								size="2.5rem"
-								color="Default"/>
-						<custom:TitleLink
-								href="#/api"
-								text="API Reference"
-								titleStyle="H2"
-								class="sapUiTinyMarginTopBottom"/>
-						<Text
-								text="Curious about our UI controls? Take a look at the technical details to see how flexible the controls are."/>
-					</l:VerticalLayout>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternB">
-					<l:VerticalLayout
-							width="100%">
-						<core:Icon
-								src="sap-icon://hello-world"
-								size="2.5rem"
-								color="Default"/>
-						<custom:TitleLink
-								href="#/demoapps"
-								text="Demos Apps"
-								titleStyle="H2"
-								class="sapUiTinyMarginTopBottom"/>
-						<Text
-								text="Use real-life demos or app templates as a starting point for your developments, or learn with our tutorials."/>
+							width="100%"
+							class="welcomeImageTextLayout">
+						<Text class="welcomeImageTextHeadline"
+							  text="Discover New Enterprise-Grade Horizons"
+							  width="100%"
+							  textAlign="Center"/>
+						<Button
+								text="Get Started with UI5"
+								type="Emphasized"
+								press="onGetStarted"
+								class="actionButton"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -129,13 +60,13 @@
 									href="#/topic/50eadaac8d2e49ee8996dc2b560cb76b"
 									text="Responsive Across Browsers and Devices"
 									titleStyle="H2"
-									class="demokitInitialPagesWhiteText sapUiTinyMarginTopBottom"/>
+									class="demokitInitialPagesWhiteText sapUiSmallMarginBottom "/>
 							<Text
 									text="No need to worry about device specifics! UI5 apps run on smartphones, tablets, and desktops. The UI controls automatically adapt themselves to each device's capabilities and make the most of the available real estate."
 									class="demokitInitialPagesWhiteText"/>
 						</l:VerticalLayout>
 						<Image
-								src="./resources/sap/ui/documentation/sdk/images/demoAppsTeaser.png"
+								src="./resources/sap/ui/documentation/sdk/images/Fiori_guidelines_image.png"
 								width="100%">
 							<layoutData>
 								<l:GridData span="L6 M12 S12"/>
@@ -151,6 +82,7 @@
 						<custom:TitleLink
 								text="Powerful Development Concepts"
 								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
+								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
 						<Text
 								text="The UI5 core offers a solid foundation that simplifies your work by managing many aspects of modern development behind the scenes. It comes with built-in support for architectural concepts like MVC, two-way data binding, and routing."
@@ -200,25 +132,66 @@
 						<custom:TitleLink
 								href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
 								text="Enterprise-Ready Web Toolkit"
+								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
 						<Text
-								text="Created by professionals, for modern developers building state of the art web applications. It comes with all features needed to cover most current application requirements, with standards high enough to be delivered in standard SAP solutions."/>
+								text="Created by professionals, for modern developers building state of the art web applications. It comes with all features needed to cover most current application requirements, with standards high enough to be delivered in standard SAP solutions."
+								class="sapUiSmallMarginBottom"/>
+							<l:HorizontalLayout>
+								<core:Icon
+										src="sap-icon://accept"
+										size="0.875rem"
+										color="Default"
+										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+								<Text text="Translation and internationalization support"/>
+							</l:HorizontalLayout>
+							<l:HorizontalLayout>
+								<core:Icon
+										src="sap-icon://accept"
+										size="0.875rem"
+										color="Default"
+										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+								<Text text="Extensibility concepts at code and application level"/>
+							</l:HorizontalLayout>
+							<l:HorizontalLayout>
+								<core:Icon
+										src="sap-icon://accept"
+										size="0.875rem"
+										color="Default"
+										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
+								<Text text="High Contrast theme to aid visually impaired users"/>
+							</l:HorizontalLayout>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 
 				<l:BlockLayoutCell
 						class="demokitInitialPagesColorPatternB">
-					<l:VerticalLayout
-							width="100%">
-						<custom:TitleLink
-								href="https://experience.sap.com/fiori-design/"
-								text="Award-Winning SAP Fiori Design"
-								titleStyle="H2"/>
-						<Text
-								text="UI5 applications benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or try our online theming tool to create a custom theme."
-								class="sapUiSmallMarginBottom"/>
-					</l:VerticalLayout>
+					<l:Grid
+							defaultSpan="L6 M12 S12"
+							hSpacing="0"
+							vSpacing="0">
+						<l:VerticalLayout
+								width="100%">
+							<custom:TitleLink
+									href="https://experience.sap.com/fiori-design/"
+									text="Award-Winning SAP Fiori Design in Action"
+									class="sapUiSmallMarginBottom"
+									titleStyle="H2"/>
+							<Text
+									text="UI5 applications benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or try our online theming tool to create a custom theme."
+									class="sapUiSmallMarginBottom"/>
+						</l:VerticalLayout>
+						<Image
+								src="./resources/sap/ui/documentation/sdk/images/Fiori_design_examples.png"
+								class="sapUiSmallmarginBeginEnd"
+								width="100%">
+							<layoutData>
+								<l:GridData span="L6 M12 S12"/>
+							</layoutData>
+						</Image>
+					</l:Grid>
+
 				</l:BlockLayoutCell>
 
 			</l:BlockLayoutRow>
@@ -274,7 +247,7 @@
 								titleStyle="H2"
 								class="sapUiSmallMarginBottom"/>
 						<Text
-								text="SAPUI5 is part of the user interface technologies in SAP NetWeaver ABAP or Java systems."
+								text="SAPUI5 is part of the user interface technologies in SAP HANA, NetWeaver ABAP or Java systems."
 								class="sapUiSmallMarginBottom"/>
 
 						<l:HorizontalLayout>
@@ -393,8 +366,7 @@
 
 				<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternC communityLinkCell">
-					<l:HorizontalLayout
-							width="100%">
+					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_stackoverflow.png"
 								width="2.5rem"
@@ -411,8 +383,7 @@
 
 				<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternD communityLinkCell">
-					<l:HorizontalLayout
-							width="100%">
+					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_youtube.png"
 								width="2.5rem"
@@ -429,8 +400,7 @@
 
 				<l:BlockLayoutCell
 						class="sapUiBlockCenteredCell demokitInitialPagesColorPatternE communityLinkCell">
-					<l:HorizontalLayout
-							width="100%">
+					<l:HorizontalLayout>
 						<Image
 								src="./resources/sap/ui/documentation/sdk/images/logo_twitter.png"
 								width="2.5rem"
@@ -444,6 +414,7 @@
 								class="sapUiSmallMargin sapUiNoMarginBottom"/>
 					</l:HorizontalLayout>
 				</l:BlockLayoutCell>
+
 			</l:BlockLayoutRow>
 
 

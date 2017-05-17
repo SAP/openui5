@@ -34,15 +34,15 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
 			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
 			onExit: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
 			/* =========================================================== */
@@ -92,7 +92,7 @@ sap.ui.define([
 				return '<div>' + html + '</div>';
 			},
 
-			_fnOrientationChange: function(e) {
+			_onOrientationChange: function(e) {
 				var page = this.getView().byId("topicDetailPage");
 
 				if (e.landscape) {
