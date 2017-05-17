@@ -12,10 +12,18 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		var sTestResourcesRoot;
 
+		var oLibraryDataCache = {};
+		var oAllLibrariesPromise = null;
+
 		function getLibraryElementsJSONSync(sLibraryName) {
-			var oResponse = {};
+			var oResponse = [];
+
 			if ( !sLibraryName ) {
-				return undefined;
+				return oResponse;
+			}
+
+			if (oLibraryDataCache[sLibraryName]) {
+				return oLibraryDataCache[sLibraryName];
 			}
 
 			jQuery.ajax({
@@ -25,31 +33,63 @@ sap.ui.define(['jquery.sap.global'],
 				success : function(vResponse) {
 					oResponse = vResponse.symbols;
 				},
-				error : function (err) {
+				error : function () {
 					oResponse = [];
 					jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
 				}
 			});
+
+			oLibraryDataCache[sLibraryName] = oResponse;
+
 			return oResponse;
 		}
 
-		function getLibraryElementsJSONAsync(that, sLibraryName, _parseLibraryElements) {
+		function getLibraryElementsJSONPromise(sLibraryName) {
+
+			// If no library name given, resolve immediately with empty array
 			if ( !sLibraryName ) {
-				return undefined;
+				return Promise.resolve([]);
 			}
 
-			jQuery.ajax({
-				async: true,
-				url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/api.json',
-				dataType : 'json',
-				success : function(vResponse) {
-					_parseLibraryElements.call(that, vResponse.symbols);
+			if (oLibraryDataCache[sLibraryName]) {
+				return Promise.resolve(oLibraryDataCache[sLibraryName]);
+			}
 
-				},
-				error : function (err) {
-					jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
-				}
+			return new Promise(function (resolve) {
+				// Fetch library data, then cache it no matter the result
+				jQuery.ajax({
+					async: true,
+					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/api.json',
+					dataType : 'json',
+					success : function(vResponse) {
+						oLibraryDataCache[sLibraryName] = vResponse.symbols;
+						resolve(vResponse.symbols);
+					},
+					error : function (err) {
+						jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
+						oLibraryDataCache[sLibraryName] = [];
+						resolve([]);
+					}
+				});
 			});
+
+		}
+
+		function getAllLibrariesElementsJSONPromise() {
+			if (oAllLibrariesPromise) {
+				return oAllLibrariesPromise;
+			}
+
+			var aLibraries = sap.ui.getVersionInfo().libraries;
+
+			// Get a list of promises for each library (these never reject, but can resolve with an empty array)
+			var aPromises = aLibraries.map(function (oLibrary) {
+				return getLibraryElementsJSONPromise(oLibrary.name);
+			});
+
+			oAllLibrariesPromise = Promise.all(aPromises);
+
+			return oAllLibrariesPromise;
 		}
 
 		function setRoot(sRoot) {
@@ -65,7 +105,8 @@ sap.ui.define(['jquery.sap.global'],
 		return {
 			_setRoot : setRoot,
 			getLibraryElementsJSONSync : getLibraryElementsJSONSync,
-			getLibraryElementsJSONAsync: getLibraryElementsJSONAsync
+			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise,
+			getAllLibrariesElementsJSONPromise: getAllLibrariesElementsJSONPromise
 		};
 
 	});
