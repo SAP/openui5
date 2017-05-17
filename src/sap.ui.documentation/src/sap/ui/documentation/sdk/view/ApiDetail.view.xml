@@ -68,7 +68,7 @@
 							</m:ObjectAttribute>
 
 							<m:HBox class="sapUiDocumentationImplementsDiv sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
-								<m:Text text="Implements:"/>
+								<m:Label text="Implements:"/>
 								<m:HBox items="{path: 'topics>/implementsParsed'}">
 										<m:HBox>
 											<m:Link text="{topics>name}" href="#/api/{topics>href}"/>
