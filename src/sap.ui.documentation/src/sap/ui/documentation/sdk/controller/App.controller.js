@@ -60,15 +60,15 @@ sap.ui.define([
 			},
 
 			onBeforeRendering: function() {
-				Device.orientation.detachHandler(this._fnOrientationChange, this);
+				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
 			onAfterRendering: function() {
-				Device.orientation.attachHandler(this._fnOrientationChange, this);
+				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
 			onExit: function() {
-				Device.orientation.detachHandler(this._fnOrientationChange, this);
+				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
 			onRouteChange: function (oEvent) {
@@ -453,7 +453,7 @@ sap.ui.define([
 				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
 			},
 
-			_fnOrientationChange: function() {
+			_onOrientationChange: function() {
 				this.getModel("appView").setProperty("/bLandscape", Device.orientation.landscape);
 			},
 

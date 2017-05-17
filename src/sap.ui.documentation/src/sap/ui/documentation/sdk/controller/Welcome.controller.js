@@ -5,8 +5,9 @@
 /*global history */
 sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/m/library"
-	], function (BaseController, mobileLibrary) {
+		"sap/m/library",
+		"sap/ui/Device"
+	], function (BaseController, mobileLibrary, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Welcome", {
@@ -17,6 +18,35 @@ sap.ui.define([
 			 */
 			onInit: function () {
 				this.getRouter().getRoute("welcome").attachPatternMatched(this._onMatched, this);
+
+				// manually call the handler once at startup as device API won't do this for us
+				this._onOrientationChange({
+					landscape: Device.orientation.landscape
+				});
+			},
+
+			/**
+			 * Called before the view is rendered.
+			 * @public
+			 */
+			onBeforeRendering: function() {
+				this._deregisterOrientationChange();
+			},
+
+			/**
+			 * Called after the view is rendered.
+			 * @public
+			 */
+			onAfterRendering: function() {
+				this._registerOrientationChange();
+			},
+
+			/**
+			 * Called when the controller is destroyed.
+			 * @public
+			 */
+			onExit: function() {
+				this._deregisterOrientationChange();
 			},
 
 			/**

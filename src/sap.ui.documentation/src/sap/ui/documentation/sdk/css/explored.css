@@ -79,8 +79,22 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 	font-style: italic;
 }
 
-.sapMListTbl .docuParamBold.sapMText {
+.sapMListTbl .sapUiDocumentationParamBold.sapMText {
 	font-weight: bold;
+}
+
+.sapMListTbl .sapUiDocumentationParamPhone.sapMText {
+	font-weight: normal;
+}
+
+.sapMListTbl .sapUiDocumentationParamSub.sapMText {
+	font-weight: normal;
+	padding-left: 2rem;
+}
+
+.sapMListTbl .sapUiDocumentationParamSubSub.sapMText {
+	font-weight: normal;
+	padding-left: 4rem;
 }
 
 /* explored code view */
@@ -90,7 +104,7 @@ pre {
 }
 code {
 	font-family: Consolas, Courier, monospace;
-	font-size: 0.85em;
+	font-size: 0.875rem;
 }
 
 .nameTitle {
@@ -123,4 +137,9 @@ code {
 
 .sapUiDocumentationJsDoc > p:last-child {
 	margin-bottom: 0.5rem;
+}
+
+.sapUiDocumentationImplementsDiv .sapMLnk {
+	line-height: 1.5rem;
+	margin-left: 0.25rem;
 }

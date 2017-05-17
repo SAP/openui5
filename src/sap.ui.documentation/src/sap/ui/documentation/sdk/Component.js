@@ -9,9 +9,14 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/ErrorHandler",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/util/DocumentationRouter",
-		"sap/ui/documentation/sdk/controller/util/ConfigUtil"
-	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil) {
+		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
+		"sap/ui/documentation/sdk/controller/util/APIInfo"
+	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo) {
 		"use strict";
+
+		var aTreeContent = [],
+			oLibsData = {},
+			iTreeModelLimit = 1000000;
 
 		return UIComponent.extend("sap.ui.documentation.sdk.Component", {
 
@@ -38,6 +43,10 @@ sap.ui.define([
 			 * @override
 			 */
 			init : function () {
+
+				// This promise will be resolved when the api-based models (libsData, treeData) have been loaded
+				this._modelsPromise = null;
+
 				this._oErrorHandler = new ErrorHandler(this);
 
 				// set the device model
@@ -54,6 +63,11 @@ sap.ui.define([
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
+
+				// Preload API Info on desktop for faster startup
+				if (Device.system.desktop) {
+					this.fetchAPIInfoAndBindModels();
+				}
 			},
 
 			/**
@@ -95,6 +109,125 @@ sap.ui.define([
 					this._oConfigUtil = new ConfigUtil(this);
 				}
 				return this._oConfigUtil;
+			},
+
+
+			// MODELS
+
+			fetchAPIInfoAndBindModels: function () {
+
+				if (this._modelsPromise) {
+					return this._modelsPromise;
+				}
+
+				this._modelsPromise = new Promise(function (resolve) {
+					APIInfo.getAllLibrariesElementsJSONPromise().then(function(aLibsData) {
+						aLibsData.forEach(this._parseLibraryElements, this);
+						this._bindAllLibsModel(oLibsData);
+						this._bindTreeModel(aTreeContent);
+						resolve();
+					}.bind(this));
+				}.bind(this));
+
+				return this._modelsPromise;
+			},
+
+
+			_parseLibraryElements : function (aLibraryElementsJSON) {
+
+				for (var i = 0; i < aLibraryElementsJSON.length; i++) {
+					if (!aLibraryElementsJSON[i].children) {
+						oLibsData[aLibraryElementsJSON[i].name] = aLibraryElementsJSON[i];
+					}
+
+					this._addElementToTreeData(aLibraryElementsJSON[i]);
+
+					if (aLibraryElementsJSON[i].children) {
+						this._parseLibraryElements(aLibraryElementsJSON[i].children, true);
+					}
+				}
+			},
+
+			_addElementToTreeData : function (oJSONElement) {
+				if (oJSONElement.visibility === "public") {
+					if (oJSONElement.kind !== "namespace") {
+						var oTreeNode = this._createTreeNode(oJSONElement.basename, oJSONElement.name, oJSONElement.name === this._topicId);
+						var sNodeNamespace = oJSONElement.name.substring(0, (oJSONElement.name.indexOf(oJSONElement.basename) - 1));
+						var oExistingNodeNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
+						if (oExistingNodeNamespace) {
+							if (!oExistingNodeNamespace.nodes) {
+								oExistingNodeNamespace.nodes = [];
+							}
+							oExistingNodeNamespace.nodes.push(oTreeNode);
+						} else {
+							var oNewNodeNamespace = this._createTreeNode(sNodeNamespace, sNodeNamespace, sNodeNamespace === this._topicId);
+							oNewNodeNamespace.nodes = [];
+							oNewNodeNamespace.nodes.push(oTreeNode);
+							aTreeContent.push(oNewNodeNamespace);
+
+							this._removeDuplicatedNodeFromTree(sNodeNamespace);
+						}
+					} else {
+						var oNewNodeNamespace = this._createTreeNode(oJSONElement.name, oJSONElement.name, oJSONElement.name === this._topicId );
+						aTreeContent.push(oNewNodeNamespace);
+					}
+				}
+			},
+
+			_createTreeNode : function (text, name, isSelected) {
+				var oTreeNode = {};
+				oTreeNode.text = text;
+				oTreeNode.name = name;
+				oTreeNode.ref = "#/api/" + name;
+				oTreeNode.isSelected = isSelected;
+				return oTreeNode;
+			},
+
+			_findNodeNamespaceInTreeStructure : function (sNodeNamespace, aTreeStructure) {
+				aTreeStructure = aTreeStructure || aTreeContent;
+				for (var i = 0; i < aTreeStructure.length; i++) {
+					var oTreeNode = aTreeStructure[i];
+					if (oTreeNode.name === sNodeNamespace) {
+						return oTreeNode;
+					}
+					if (oTreeNode.nodes) {
+						var oChildNode = this._findNodeNamespaceInTreeStructure(sNodeNamespace, oTreeNode.nodes);
+						if (oChildNode) {
+							return oChildNode;
+						}
+					}
+				}
+			},
+
+			_removeNodeFromNamespace : function (sNode, oNamespace) {
+				for (var i = 0; i < oNamespace.nodes.length; i++) {
+					if (oNamespace.nodes[i].text === sNode) {
+						oNamespace.nodes.splice(i, 1);
+						return;
+					}
+				}
+			},
+
+			_removeDuplicatedNodeFromTree : function (sNodeFullName) {
+				if (oLibsData[sNodeFullName]) {
+					var sNodeNamespace = sNodeFullName.substring(0, sNodeFullName.lastIndexOf("."));
+					var oNamespace = this._findNodeNamespaceInTreeStructure(sNodeNamespace);
+					var sNode = sNodeFullName.substring(sNodeFullName.lastIndexOf(".") + 1, sNodeFullName.lenght);
+					this._removeNodeFromNamespace(sNode, oNamespace);
+				}
+			},
+
+
+			_bindAllLibsModel : function (oAllLibsData) {
+				var oLibsModel = this.getModel("libsData");
+				oLibsModel.setSizeLimit(iTreeModelLimit);
+				oLibsModel.setData(oAllLibsData, false /* mo merge with previous data */);
+			},
+
+			_bindTreeModel : function (aTreeContent) {
+				var treeModel = this.getModel("treeData");
+				treeModel.setSizeLimit(iTreeModelLimit);
+				treeModel.setData(aTreeContent, false);
 			}
 		});
 

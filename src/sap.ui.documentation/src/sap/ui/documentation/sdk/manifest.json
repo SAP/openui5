@@ -159,7 +159,7 @@
 			"target": ["apiMaster", "apiDetailInitial"]
 		  },
 		  {
-			"pattern": "api/{id}",
+		    "pattern": "api/{id}/:entityType:/:entityId:",
 			"name": "apiId",
 			"target": ["apiMaster", "apiDetail"]
 		  },

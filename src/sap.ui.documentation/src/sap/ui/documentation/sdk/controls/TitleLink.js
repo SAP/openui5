@@ -28,6 +28,11 @@ sap.ui.define([
 				href : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 				/**
+				 * Stores a text that can be different to the text property for filtering purposes
+				 */
+				filter : {type : "string", group : "Data", defaultValue : ""},
+
+				/**
 				 * If set to true, the text will wrap to multiple lines, if not it will truncate on a single line
 				 */
 				wrap : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -117,7 +122,7 @@ sap.ui.define([
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 * @param {sap.ui.core.Control} oTitle an object representation of the control that should be rendered
 		 */
 		renderer: function (oRm, oTitle) {
 			var oAssoTitle = oTitle._getTitle(),
@@ -171,21 +176,19 @@ sap.ui.define([
 			oRm.write(">");
 
 			// adding link functionality begin
-			if (oTitle.getHref()) {
-				oRm.write("<a");
-				oRm.addClass("sapMLnk");
-				if (oTitle.getText()) {
-					oRm.writeAttribute("tabIndex", "0");
-				} else {
-					oRm.writeAttribute("tabIndex", "-1");
-				}
-				oRm.writeAttributeEscaped("href", oTitle.getHref());
-				if (oTitle.getTarget()) {
-					oRm.writeAttributeEscaped("target", oTitle.getTarget());
-				}
-				oRm.writeClasses();
-				oRm.write(">");
+			oRm.write("<a");
+			oRm.addClass("sapMLnk");
+			if (oTitle.getText()) {
+				oRm.writeAttribute("tabIndex", "0");
+			} else {
+				oRm.writeAttribute("tabIndex", "-1");
 			}
+			oRm.writeAttributeEscaped("href", oTitle.getHref());
+			if (oTitle.getTarget()) {
+				oRm.writeAttributeEscaped("target", oTitle.getTarget());
+			}
+			oRm.writeClasses();
+			oRm.write(">");
 			// adding link functionality end
 
 			oRm.write("<span");
@@ -194,9 +197,7 @@ sap.ui.define([
 			oRm.writeEscaped(oAssoTitle ? oAssoTitle.getText() : oTitle.getText());
 			oRm.write("</span></", sTag, ">");
 
-			if (oTitle.getHref()) {
-				oRm.write("</a>");
-			}
+			oRm.write("</a>");
 		}
 	});
 
