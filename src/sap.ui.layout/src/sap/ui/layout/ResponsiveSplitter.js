@@ -497,14 +497,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 			iHiddenPanesCount = aHiddenPanes.length;
 			iMaxPageCount = this._getMaxPageCount();
 
+			var i;
 			if (oSplitterElement._isInInterval(this._currentInterval.iFrom)) {
 				oSplitterElementParent._oSplitter.addAssociatedContentArea(oSplitterElement.getContent());
 			} else if (bDemandPane && (iHiddenPanesCount < iMaxPageCount)) {
-				for (var i = 0; i < iHiddenPanesCount; i++) {
+				for (i = 0; i < iHiddenPanesCount; i++) {
 					aPages[i + 1].setContent(aHiddenPanes[i].getContent());
 				}
 			} else if (bDemandPane && iHiddenPanesCount === iMaxPageCount) {
-				for (var i = 0; i < iHiddenPanesCount; i++) {
+				for (i = 0; i < iHiddenPanesCount; i++) {
 					aPages[i].setContent(aHiddenPanes[i].getContent());
 				}
 			} else if (this._isDefault(oSplitterElement)) {
@@ -524,7 +525,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Returns an array of all nested panes which are suitable for the current interval
-	 * @returns {array}
+	 * @returns {array} An array of all nested panes
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._getAllPanesInInterval = function (oPaneContainer, iFrom) {
@@ -545,7 +546,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Returns an array of all hidden panes which are with demand set to true
-	 * @returns {array}
+	 * @returns {array} An array of all hidden panes
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._getHiddenPanes = function () {
@@ -569,7 +570,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Returns an array of all visible buttons from the Paginator
-	 * @returns {object}
+	 * @returns {object} An array of all visible buttons
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._getVisibleButtons = function () {

@@ -107,15 +107,23 @@ sap.ui.require([
 		var sAppVersion = "1.2.3";
 		//enable
 		FakeLrepConnector.enableFakeConnector("dummy path", sAppComponentName, sAppVersion);
+		var oConnector = LrepConnector.createConnector();
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sAppComponentName, sAppVersion);
 		assert.deepEqual(Cache.getEntry(sAppComponentName, sAppVersion), {} , "when enable fake connector, the flex cache entry is empty");
-		assert.ok(FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion] instanceof LrepConnector , "then real connector instance is stored");
-		assert.ok(oChangePersistence._oConnector instanceof FakeLrepConnector , "then the fake connector instance is used");
+		assert.ok(FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion] instanceof LrepConnector , "then real connector instance of correspond change persistence is stored");
+		assert.ok(oChangePersistence._oConnector instanceof FakeLrepConnector , "then the fake connector instance is used for correspond change persistence ");
+		assert.notEqual(FakeLrepConnector.enableFakeConnector.original, undefined , "then original connector is stored");
+		assert.ok(FakeLrepConnector._oFakeInstance instanceof  FakeLrepConnector, "then a fake instance is stored");
+		assert.ok(oConnector instanceof FakeLrepConnector , "new connector will be created with a fake instance");
 
 		//then disable
 		FakeLrepConnector.disableFakeConnector(sAppComponentName, sAppVersion);
+		oConnector = LrepConnector.createConnector();
 		assert.deepEqual(Cache.getEntry(sAppComponentName, sAppVersion), {} , "when disable fake connector, the flex cache is empty");
-		assert.ok(oChangePersistence._oConnector instanceof LrepConnector , "then the real connector instance is restored");
-		assert.equal(FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion], undefined , "and the original stored instance is erased");
+		assert.ok(oChangePersistence._oConnector instanceof LrepConnector , "then the real connector instance of correspond change persistence is restored");
+		assert.equal(FakeLrepConnector._oBackendInstances[sAppComponentName][sAppVersion], undefined , "and the original stored instance of correspond change persistence is erased");
+		assert.equal(FakeLrepConnector.enableFakeConnector.original, undefined, "then original connector is erased");
+		assert.ok(oConnector instanceof LrepConnector , "new connector will be created with real instance");
+		assert.equal(FakeLrepConnector._oFakeInstance, undefined, "and a stored fake instance is erased");
 	});
 });

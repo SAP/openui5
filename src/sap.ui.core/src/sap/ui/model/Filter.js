@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 	 *
 	 * @example <caption>Legacy signature: Same as above, but using individual constructor arguments. Not supported for filter operators <code>Any</code> and <code>All</code>.</caption>
 	 *
-	 *     new sap.ui.model.Filter(sPath, sOperator, vArg1, vArg2);
+	 *     new sap.ui.model.Filter(sPath, sOperator, vValue1, vValue2);
 	 *   OR
 	 *     new sap.ui.model.Filter(sPath, fnTest);
 	 *   OR
@@ -106,8 +106,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 	 * @param {sap.ui.model.FilterOperator} vFilterInfo.operator Operator used for the filter
 	 * @param {object} vFilterInfo.value1 First value to use with the given filter operator
 	 * @param {object} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
-	 * @param {string} [vFilterInfo.variable] the variable used in lambda operators (e.g. <code>Any</code> and <code>All</code>)
-	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] a <code>Filter</code> instance which will be used as the condition for the lambda expression
+	 * @param {string} [vFilterInfo.variable] The variable used in lambda operators (<code>Any</code> and <code>All</code>)
+	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] A <code>Filter</code> instance which will be used as the condition for the lambda operator
 	 * @param {sap.ui.model.Filter[]} vFilterInfo.filters Array of filters on which logical conjunction is applied
 	 * @param {boolean} vFilterInfo.and Indicates whether an "AND" logical conjunction is applied on the filters. If it's set to <code>false</code>, an "OR" conjunction is applied
 	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator] Either a filter operator or a custom filter function or a Boolean flag that defines how to combine multiple filters
@@ -147,6 +147,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 				}
 				this.oValue1 = vValue1;
 				this.oValue2 = vValue2;
+
+				if (this.sOperator === FilterOperator.Any || this.sOperator === FilterOperator.All) {
+					throw new Error("The filter operators 'Any' and 'All' are only supported with the parameter object notation.");
+				}
 			}
 
 			if (this.sOperator === FilterOperator.Any) {

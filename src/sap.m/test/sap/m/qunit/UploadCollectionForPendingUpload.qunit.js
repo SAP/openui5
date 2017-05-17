@@ -674,6 +674,7 @@ QUnit.test("Dropping more than one file is not allowed when multiple is false", 
 
 	QUnit.test("Check file list", function (assert) {
 		assert.expect(4);
+		var oHandleDeleteStub = sinon.stub(this.oUploadCollection, "_handleDelete");
 		var oFile0 = {
 			name: "Screenshot.ico"
 		};
@@ -712,17 +713,12 @@ QUnit.test("Dropping more than one file is not allowed when multiple is false", 
 		});
 		sap.ui.getCore().applyChanges();
 
-		var fnTestHandleDelete = function (oEvent, oContext) {
-			assert.ok(true, "Function '_handleDelete' was called");
-		};
 		//check the call of _handleDelete
-		var fnBaseHandleDelete = this.oUploadCollection._handleDelete;
-		sap.m.UploadCollection.prototype._handleDelete = fnTestHandleDelete;
 		var sDeleteButtonId = this.oUploadCollection.aItems[0].getId() + "-deleteButton";
 		var oDeleteButton = sap.ui.getCore().byId(sDeleteButtonId);
 		oDeleteButton.firePress();
 		sap.ui.getCore().applyChanges();
-		sap.m.UploadCollection.prototype._handleDelete = fnBaseHandleDelete;
+		assert.ok(oHandleDeleteStub.called,  "Function '_handleDelete' was called");
 
 		//check the number of list items
 		var iLengthBeforeDeletion = this.oUploadCollection.getItems().length;
@@ -743,6 +739,7 @@ QUnit.test("Dropping more than one file is not allowed when multiple is false", 
 		//check the deleted item by comparison of the number of list items before and after the deletion
 		var iLengthAfterDeletion = this.oUploadCollection.getItems().length;
 		assert.notEqual(iLengthBeforeDeletion, iLengthAfterDeletion, "Item was deleted, checked by different number of items!");
+		oHandleDeleteStub.restore();
 	});
 
 QUnit.test("Delete PendingUpload item which comes from drag and drop", function(assert) {

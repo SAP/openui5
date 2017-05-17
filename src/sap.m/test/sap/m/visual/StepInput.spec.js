@@ -5,7 +5,7 @@ describe('sap.m.StepInput', function() {
 
 	it('value and buttons', function () {
 		var oStepInput = element(by.id('visual_test_step_input')),
-			oDecrementButton = element(by.id('visual_test_step_input-decrementButton'));
+			oDecrementButton = element(by.id('visual_test_step_input-decrementBtn'));
 
 		//Assert
 		expect(takeScreenshot(oStepInput)).toLookAs("step_input_v2min0step3");

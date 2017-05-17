@@ -112,7 +112,7 @@ sap.ui.define([
 						id: "shareTile",
 						viewName: sViewName,
 						matchers: function(oButton) {
-							var sObjectName = this.getContext().currentItem.getBindingContext().getProperty("ProductName");
+							var sObjectName = this.getContext().currentItemName;
 							var sTitle = oButton.getTitle();
 							return sTitle && sTitle.indexOf(sObjectName) > -1;
 						}.bind(this),

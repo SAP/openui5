@@ -9,11 +9,11 @@ sap.ui.define([
 			 * @returns {string} path to image
 			 */
 			srcImageValue : function (bIsPhone) {
-				var sImageSrc= "";
+				var sImageSrc = "";
 				if (bIsPhone === false) {
 					sImageSrc = "./images/homeImage.jpg";
 				} else {
-					sImageSrc = "./images/homeImage_small.jpg"
+					sImageSrc = "./images/homeImage_small.jpg";
 				}
 				return sImageSrc;
 			}

@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	"use strict";
 
@@ -21,7 +23,7 @@
 							new sap.m.Panel({
 								content: [
 									new sap.m.Input(),
-									new sap.m.Input(),
+									new sap.m.Input()
 								]
 							}),
 							new sap.m.Button()
@@ -29,7 +31,7 @@
 					}),
 					new sap.m.MaskInput(),
 					new sap.m.ComboBox(),
-					new sap.m.Button(),
+					new sap.m.Button()
 				]
 			});
 			this.page.placeAt("qunit-fixture");
@@ -44,7 +46,7 @@
 		}
 	});
 
-	QUnit.test("Fixed public methods", function () {
+	QUnit.test("Fixed public methods", function (assert) {
 		var getElementsIsAMethod = this.es.getElements && typeof this.es.getElements == "function",
 			getLoggedObjectsIsAMethod = this.es.getLoggedObjects && typeof this.es.getLoggedObjects == "function",
 			getElementsByClassName = this.es.getElementsByClassName && typeof this.es.getElementsByClassName == "function";
@@ -54,7 +56,7 @@
 		assert.ok(getElementsByClassName, " should not be changed");
 	});
 
-	QUnit.test("getElementsByClassName", function () {
+	QUnit.test("getElementsByClassName", function (assert) {
 		var pageElements = this.es.getElementsByClassName("sap.m.Page"),
 			buttonElements = this.es.getElementsByClassName(sap.m.Button),
 			inputBaseElements = this.es.getElementsByClassName(sap.m.InputBase);
@@ -64,19 +66,19 @@
 		assert.equal(inputBaseElements.length, 4, "should select 4 inherited elements");
 	});
 
-	QUnit.test("Return type of get functions", function () {
+	QUnit.test("Return type of get functions", function (assert) {
 		var elements = this.es.getElements(),
 			elementsById = this.es.getElementsByClassName("sap.m.Page");
 		assert.equal(elements.constructor, Array, "type should be array");
-		assert.equal(elementsById.constructor, Array, "type should be array")
+		assert.equal(elementsById.constructor, Array, "type should be array");
 	});
 
-	QUnit.test("getElements with global context", function () {
+	QUnit.test("getElements with global context", function (assert) {
 		var elements = this.es.getElements();
-		assert.equal(elements.length, Object.keys(core.mElements).length, " should be equal to core mElements")
+		assert.equal(elements.length, Object.keys(core.mElements).length, " should be equal to core mElements");
 	});
 
-	QUnit.test("getElements with subtree context", function () {
+	QUnit.test("getElements with subtree context", function (assert) {
 		var elementsInCore = this.es.getElements();
 		var esNew = sap.ui.support.supportRules.ExecutionScope(core, {
 			type: "subtree",

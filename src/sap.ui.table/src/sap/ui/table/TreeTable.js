@@ -134,13 +134,28 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
 			// to determine the value.
 			oBindingInfo.parameters.numberOfExpandedLevels = oBindingInfo.parameters.numberOfExpandedLevels || (this.getExpandFirstLevel() ? 1 : 0);
-
-			oBindingInfo.events = {
-				selectionChanged: this._onSelectionChanged.bind(this)
-			};
 		}
 
 		return Table.prototype.bindRows.call(this, oBindingInfo);
+	};
+
+	/**
+	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
+	 *
+	 * @override {@link sap.ui.table.Table#_bindAggregation}
+	 */
+	TreeTable.prototype._bindAggregation = function(sName, oBindingInfo) {
+		// Create the binding.
+		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
+
+		var oBinding = this.getBinding("rows");
+
+		if (sName === "rows" && oBinding != null) {
+			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
+			oBinding.attachEvents({
+				selectionChanged: this._onSelectionChanged.bind(this)
+			});
+		}
 	};
 
 	/**

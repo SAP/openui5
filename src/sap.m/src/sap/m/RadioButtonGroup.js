@@ -67,10 +67,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 					/**
-					 * Тhe value state to be displayed for the radio button. Possible values are: sap.ui.core.ValueState.Error,
+					 * The value state to be displayed for the radio button. Possible values are: sap.ui.core.ValueState.Error,
 					 * sap.ui.core.ValueState.Warning, sap.ui.core.ValueState.Success and sap.ui.core.ValueState.None.
 					 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
-					 * sets the value of the invalid propery for the whole RadioButtonGroup to “true”.
+					 * sets the value of the invalid propery for the whole RadioButtonGroup to "true".
 					 */
 					valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					selectedIndex : {type : "int", group : "Data", defaultValue : 0},
 
 					/**
-					 * Switches the enabled state of the control. All Radio Buttons inside a disabled group are disabled. Default value is “true”.
+					 * Switches the enabled state of the control. All Radio Buttons inside a disabled group are disabled. Default value is "true".
 					 */
 					enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -441,22 +441,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @returns {Array} Array of removed buttons or null
 			 * @public
 			 */
-			RadioButtonGroup.prototype.removeAllButtons = function() {
-				var aButtons = this.removeAllAggregation("buttons");
-
+			RadioButtonGroup.prototype.removeAllButtons = function () {
 				if (!this._bUpdateButtons) {
 					this.setSelectedIndex(-1);
 				}
 
-				if (this.aRBs) {
-					while (this.aRBs.length > 0) {
-						this.aRBs[0].destroy();
-						this.aRBs.splice(0, 1);
-					}
-					return aButtons;
-				} else {
-					return null;
-				}
+				return this.removeAllAggregation("buttons");
 			};
 
 			/**

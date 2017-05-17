@@ -1,4 +1,8 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.ui.layout.ResponsiveLayoutVisual", function() {
+	"use strict";
+
 	browser.testrunner.currentSuite.meta.controlName = 'sap.ui.layout.form.ResponsiveLayout';
 	var sFormId = "SF1";
 	var oForm = element(by.id(sFormId));

@@ -478,11 +478,11 @@
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
-		var oSpyDestroy = sinon.spy(oFileName, "destroy");
+		var oSpyGetter = sinon.spy(oItem, "_getFileNameLink");
 		//Act
 		oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
 		//Assert
-		assert.ok(oSpyDestroy.calledOnce, "Destroy on oFileName object was called once");
+		assert.equal(oSpyGetter.callCount, 1, "_getFileNameLink on oItem object was called once");
 		assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
 	});
 
@@ -496,11 +496,11 @@
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
-		var oSpyDestroy = sinon.spy(oDeleteButton, "destroy");
+		var oSpyGetter = sinon.spy(oItem, "_getDeleteButton");
 		//Act
 		oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
 		//Assert
-		assert.ok(oSpyDestroy.calledOnce, "Destroy on oDeleteButton object was called once");
+		assert.equal(oSpyGetter.callCount, 1, "_getDeleteButton on oItem object was called once");
 		assert.equal(oDeleteButton.mEventRegistry.press.length, 1, "One press handler attached in case the function is called several times");
 	});
 
@@ -592,6 +592,32 @@
 		assert.equal(sFileNameRequestIdValue, this.encodeToAscii(sFileName) + sRequestId, "Unique key for a File is set correctly into requestHeaders");
 	});
 
+	QUnit.test("handleTerminate - Function _handleTerminate called on terminate button press", function(assert) {
+		var oDialogOpenStub = sinon.stub(sap.m.Dialog.prototype, "open");
+		var oHandleTerminateSpy = sinon.spy(this.oUploadCollection, "_handleTerminate");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		oFileUploader._aXhr = [];
+		var oFile2 = {
+			name: "Document.txt"
+		};
+		oFileUploader.fireChange({
+			files: [oFile2]
+		});
+
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		var oTerminateButton =  this.oUploadCollection.aItems[0]._getTerminateButton()
+		oTerminateButton.firePress();
+
+		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
+
+		// Clean up
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.destroy();
+		oDialogOpenStub.restore();
+	});
+
 	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function(assert) {
 		var done = assert.async();
 		var oItem = new sap.m.UploadCollectionItem({
@@ -630,7 +656,6 @@
 			done();
 		});
 		oDialog.getButtons()[0].firePress();
-		this.oUploadCollection.removeItem(oItem);
 		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
 	});
 

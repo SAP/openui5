@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 QUnit.config.autostart = false;
 sap.ui.test.qunit.delayTestStart();
 

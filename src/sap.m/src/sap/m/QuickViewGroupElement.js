@@ -72,7 +72,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * Specifies the target of the link – it works like the target property of the HTML <a> tag. Works only with QuickViewGroupElement of type link.
+						 * Specifies the target of the link - it works like the target property of the HTML <a> tag. Works only with QuickViewGroupElement of type link.
 						 */
 						target: {
 							type: "string",
@@ -81,7 +81,7 @@ sap.ui.define([
 						},
 
 						/**
-						 * Specifies the type of the displayed information – phone number, mobile number, e-mail, link, text or a link to another QuickViewPage. Default value is ‘text’.
+						 * Specifies the type of the displayed information - phone number, mobile number, e-mail, link, text or a link to another QuickViewPage. Default value is 'text'.
 						 */
 						type: {
 							type: "sap.m.QuickViewGroupElementType",

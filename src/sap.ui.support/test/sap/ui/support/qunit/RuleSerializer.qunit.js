@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function () {
 	"use strict";
 
@@ -11,12 +13,14 @@
 
 	QUnit.test("Serialize plain object test", function (assert) {
 		//The \\n here is because FireFoxESR adds the "use strict" with 2 new lines
-		var expectedString = '{\"a\":1,\"b\":\"str\",\"c\":false,\"d\":\"function () {\\"use strict\\"; tempFunc();}\",\"e\":[1,2,\"str\"]}',
+		var expectedString = '{\"a\":1,\"b\":\"str\",\"c\":false,\"d\":\"function () { \\"use strict\\"; tempFunc(); }\",\"e\":[1,2,\"str\"]}',
 			serializedObject = {
 				a: 1,
 				b: "str",
 				c: false,
-				d: function () {"use strict"; tempFunc();},
+				/* eslint-disable strict, no-undef*/
+				d: function () { "use strict"; tempFunc(); },
+				/* eslint-enable strict, no-undef*/
 				e: [1, 2, "str"]
 			},
 			serializedString = this.rs.serialize(serializedObject);

@@ -40,9 +40,9 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 				buttonToggleShowExceededTextPress: function (){
 					//var oTA = this.getView().byId("textAreaWithBinding")
 					//oTA.setShowExceededText(!oTA.getShowExceededText());
-					var oTA = this.getView().byId("textAreaWithBinding2")
+					var oTA = this.getView().byId("textAreaWithBinding2");
 					oTA.setShowExceededText(!oTA.getShowExceededText());
-					var oTA = this.getView().byId("textAreaWithoutBinding")
+					var oTA = this.getView().byId("textAreaWithoutBinding");
 					oTA.setShowExceededText(!oTA.getShowExceededText());
 				}
 			});

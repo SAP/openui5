@@ -6,6 +6,7 @@ sap.ui.define(['sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
 	var sVariableError = "When using the filter operators 'Any' or 'All', a string has to be given as argument 'variable'.";
 	var sConditionError = "When using the filter operator 'Any' or 'All', a valid instance of sap.ui.model.Filter has to be given as argument 'condition'.";
 	var sOneMissing = "When using the filter operator 'Any', a lambda variable and a condition have to be given or neither.";
+	var sLegacyAnyAll = "The filter operators 'Any' and 'All' are only supported with the parameter object notation.";
 
 	QUnit.module("Unsupported Filter Operators");
 
@@ -28,6 +29,29 @@ sap.ui.define(['sap/ui/model/Filter', 'sap/ui/model/FilterOperator'],
 	});
 
 	QUnit.test("constructor - wrong args", function (assert) {
+		//"Any" and "All" with legacy syntax
+		assert.throws(
+			function() {
+				new sap.ui.model.Filter("test", FilterOperator.Any, "notSupported", new sap.ui.model.Filter());
+			},
+			new Error(sLegacyAnyAll),
+			"'Any' is not accepted with legacy syntax"
+		);
+		assert.throws(
+			function() {
+				new sap.ui.model.Filter("test", FilterOperator.All, "notSupported", new sap.ui.model.Filter());
+			},
+			new Error(sLegacyAnyAll),
+			"'All' is not accepted with legacy syntax"
+		);
+		assert.throws(
+			function() {
+				new sap.ui.model.Filter("test", FilterOperator.Any);
+			},
+			new Error(sLegacyAnyAll),
+			"'Any' is not accepted with legacy syntax and missing 3rd and 4th argument"
+		);
+
 		// "Any" with missing args, object syntax
 		assert.throws(
 			function() {
