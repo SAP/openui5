@@ -44,8 +44,27 @@ sap.ui.define([
 			 */
 			onExit: function() {
 				this._deregisterOrientationChange();
-			}
+			},
 
+			/**
+			 * Filter for controls in the master search field when the title of a control section was pressed
+ 			 */
+			onPress: function(oEvent) {
+				var sFilter = oEvent.oSource.getFilter();
+				var oSearchField = this.getSplitApp().getMasterPages()[0].byId("searchField");
+				oSearchField.setValue(sFilter);
+				oSearchField.fireLiveChange({
+					newValue: sFilter
+				});
+				// tablet or small screen devices: show master page
+				setTimeout(function () {
+					this.getSplitApp().showMaster();
+				}.bind(this), 0);
+				// phone: navigate to master list
+				if (Device.system.phone) {
+					this.getRouter().navTo("controlsMaster", {});
+				}
+			}
 		});
 	}
 );
