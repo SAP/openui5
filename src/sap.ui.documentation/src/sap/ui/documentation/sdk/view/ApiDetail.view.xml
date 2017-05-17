@@ -95,7 +95,6 @@
 									<layout:VerticalLayout>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
-										<m:Text text="Since: {topics>/since}" visible="{= ${topics>/since} !== undefined}"/>
 
 										<m:Table visible="{topics>/hasChildren}"
 												 items="{ path : 'topics>/controlChildren'}"
