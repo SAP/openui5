@@ -179,7 +179,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * the <code>minDate</code> is set to the first date of the month in which the <code>maxDate</code> belongs.
 			 * @since 1.38.0
 			 */
-			maxDate : {type : "object", group : "Misc", defaultValue : null}
+			maxDate : {type : "object", group : "Misc", defaultValue : null},
+
+			/**
+			 * If set the day names are shown in a separate line.
+			 * If not set the day names are shown inside the single days.
+			 * @since 1.50
+			 */
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -880,7 +887,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oInterval = new oIntervalMetadata.oClass(this.getId() + oIntervalMetadata.sIdSuffix, {
 						startDate: new Date(oStartDate.getTime()), // use new date object
 						days: iIntervals,
-						showDayNamesLine: false,
+						showDayNamesLine: this.getShowDayNamesLine(),
 						pickerPopup: true
 					});
 
@@ -1058,6 +1065,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		_setSelectionMode.call(this);
 
 		return this;
+
+	};
+
+
+	PlanningCalendar.prototype.setShowDayNamesLine = function(bShowDayNamesLine){
+
+		var intervalMetadata,
+			sInstanceName,
+			oCalDateInterval;
+
+		for (intervalMetadata in  INTERVAL_METADATA) {
+			sInstanceName = INTERVAL_METADATA[intervalMetadata].sInstanceName;
+			if (this[sInstanceName]) {
+				oCalDateInterval = this[sInstanceName];
+				oCalDateInterval.setShowDayNamesLine(bShowDayNamesLine);
+			}
+		}
+
+		return this.setProperty("showDayNamesLine", bShowDayNamesLine, false);
 
 	};
 
