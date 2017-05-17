@@ -109,15 +109,19 @@ sap.ui.require([
 					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
 				}),
+				fnErrorCallback = function () {},
 				sPath = "SO_2_SOITEM/42",
+
 				oResult = {};
 
 			this.mock(oCache).expects("update")
-				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI, "edit('URL')", sPath)
+				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
+					sinon.match.same(fnErrorCallback), "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
 
 			// code under test
-			return oBinding.updateValue(sGroupId, "bar", Math.PI, "edit('URL')", sPath)
+			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback, "edit('URL')",
+					sPath)
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
@@ -151,18 +155,21 @@ sap.ui.require([
 				sPath : "PRODUCT_2_BP",
 				bRelative : true
 			}),
+			fnErrorCallback = function () {},
 			oResult = {};
 
 		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "BP_2_XYZ/42")
 			.returns("~BP_2_XYZ/42~");
 		this.mock(oBinding.oContext).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, "edit('URL')", "~BP_2_XYZ/42~")
+			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback), "edit('URL')",
+				"~BP_2_XYZ/42~")
 			.returns(Promise.resolve(oResult));
 
 		this.mock(oBinding).expects("getUpdateGroupId").never();
 
 		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, "edit('URL')", "BP_2_XYZ/42")
+		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback, "edit('URL')",
+				"BP_2_XYZ/42")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
@@ -644,7 +651,7 @@ sap.ui.require([
 					? []
 					: oFixture.childPath.split("/"),
 				oBinding = new ODataParentBinding({
-					oModel : {oMetaModel : oMetaModel}
+					oModel : {getMetaModel : function () {return oMetaModel;}}
 				}),
 				mWrappedQueryOptions,
 				oMetaModelMock = this.mock(oMetaModel);
@@ -692,7 +699,7 @@ sap.ui.require([
 			},
 			oMetaModelMock = this.mock(oMetaModel),
 			oBinding = new ODataParentBinding({
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			});
 
 		oMetaModelMock.expects("getObject")
@@ -718,7 +725,7 @@ sap.ui.require([
 				getObject : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			});
 
 		this.mock(oMetaModel).expects("getObject")
@@ -737,7 +744,7 @@ sap.ui.require([
 				getObject : function () {}
 			},
 			oBinding = new ODataParentBinding({
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			}),
 			mChildLocalQueryOptions = {$apply : "filter(AGE gt 42)"};
 
@@ -1000,7 +1007,7 @@ sap.ui.require([
 						wrapChildQueryOptions : function () {},
 						doFetchQueryOptions : function () {},
 						aggregateQueryOptions : function () {},
-						oModel : {oMetaModel : oMetaModel}
+						oModel : {getMetaModel : function () {return oMetaModel;}}
 					}),
 					oBindingMock = this.mock(oBinding),
 					mChildLocalQueryOptions = {},
@@ -1074,7 +1081,7 @@ sap.ui.require([
 				wrapChildQueryOptions : function () {},
 				doFetchQueryOptions : function () {},
 				aggregateQueryOptions : function () {},
-				oModel : {oMetaModel : oMetaModel}
+				oModel : {getMetaModel : function () {return oMetaModel;}}
 			}),
 			oBindingMock = this.mock(oBinding),
 			mChildQueryOptions = {},
@@ -1131,7 +1138,7 @@ sap.ui.require([
 					doFetchQueryOptions : function () {
 						return _SyncPromise.resolve({});
 					},
-					oModel : {oMetaModel : oMetaModel},
+					oModel : {getMetaModel : function () {return oMetaModel;}},
 					aChildCanUseCachePromises : [],
 					bRelative : false
 				}),
@@ -1170,7 +1177,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: $count in child path", function (assert) {
-		var oBinding = new ODataParentBinding({oModel : {}});
+		var oBinding = new ODataParentBinding({
+			oModel : {getMetaModel : function () {return {};}}
+		});
 
 		// code under test
 		assert.strictEqual(oBinding.fetchIfChildCanUseCache(null, "$count").getResult(), true);
@@ -1180,7 +1189,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchIfChildCanUseCache: operation binding", function (assert) {
-		var oBinding = new ODataParentBinding({oModel : {}, oOperation : {}});
+		var oBinding = new ODataParentBinding({
+			oModel : {getMetaModel : function () {return {};}},
+			oOperation : {}
+		});
 
 		// code under test
 		assert.strictEqual(
@@ -1678,18 +1690,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bKeys) {
 		QUnit.test("selectKeyProperties: " + (bKeys ? "w/" : "w/o") + " keys", function (assert) {
-			var oBinding = new ODataParentBinding({
-					oModel : {
-						oMetaModel : {
-							getObject : function () {},
-						}
-					}
+			var oMetaModel = {
+					getObject : function () {}
+				},
+				oBinding = new ODataParentBinding({
+					oModel : {getMetaModel : function () {return oMetaModel;}}
 				}),
 				sMetaPath = "~",
 				mQueryOptions = {},
 				oType = bKeys ? {$Key : []} : {};
 
-			this.mock(oBinding.oModel.oMetaModel).expects("getObject")
+			this.mock(oBinding.oModel.getMetaModel()).expects("getObject")
 				.withExactArgs(sMetaPath + "/").returns(oType);
 			this.mock(oBinding).expects("addToSelect").exactly(bKeys ? 1 : 0)
 				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oType.$Key));
