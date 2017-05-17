@@ -384,13 +384,13 @@ sap.ui.define([
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
-						check:  function () {
-							return onlyOneItemInTheListContainTheSearchTerm.apply(this, [sName].concat(Array.prototype.slice.apply(arguments)));
+						check:  function (oTable) {
+							return onlyOneItemInTheListContainTheSearchTerm(sName, oTable);
 						},
 						success: function () {
 							Opa5.assert.ok(true, "Only one single item with the substring '" + sName + "' in the title is in the result set");
 						},
-						errorMessage: "The table does not contain a single item with the substring '"  + sName + "' in its title "
+						errorMessage: "The table does not show only one single item with the substring '"  + sName + "' in its title "
 					});
 				},
 
