@@ -377,10 +377,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
-				"sap.m.OverflowToolbar": {
-					"moveControls": "default"
-				},
 				"sap.m.MenuButton": "sap/m/flexibility/MenuButton",
+				"sap.m.OverflowToolbar":"sap/m/flexibility/OverflowToolbar",
 				"sap.m.Page": "sap/m/flexibility/Page",
 				"sap.m.Panel": "sap/m/flexibility/Panel",
 				"sap.m.RadioButton": "sap/m/flexibility/RadioButton",
