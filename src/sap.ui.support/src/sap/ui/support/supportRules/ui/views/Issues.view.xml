@@ -1,0 +1,129 @@
+<mvc:View
+		xmlns="sap.m"
+		controllerName="sap.ui.support.supportRules.ui.controllers.Issues"
+		height="100%"
+		xmlns:l="sap.ui.layout"
+		xmlns:c="sap.ui.core"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:tnt="sap.tnt">
+			<l:Splitter>
+				<l:contentAreas>
+					<Page class="sapUiSupportToolIssuesPage">
+						<customHeader>
+							<Toolbar id="filtersBar" height="{/filterBarHeight}">
+								<FlexBox alignContent="Center"
+										direction="Column"
+										justifyContent="Center">
+									<items>
+										<HBox alignItems="Center"
+											  justifyContent="Center"
+											  height="100%">
+											<l:VerticalLayout>
+												<Label text="Severity:" class="customMargin" />
+												<Select id='severityFilter'
+														change="updateIssuesVisibility"
+														selectedKey="{/severityFilter}"
+														items="{/severitiesFilter}"
+														class="customMargin" >
+												<c:ListItem key="{}" text="{}" />
+												</Select>
+											</l:VerticalLayout>
+											<ToolbarSpacer></ToolbarSpacer>
+											<l:VerticalLayout>
+												<Label text="Category:" class="customMargin" />
+											<Select id='categoryFilter'
+													change="updateIssuesVisibility"
+													selectedKey="{/categoryFilter}"
+													items="{/categoriesFilter}"
+													class="customMargin">
+												<c:ListItem key="{}" text="{}" />
+												</Select>
+											</l:VerticalLayout>
+											<ToolbarSpacer></ToolbarSpacer>
+											<l:VerticalLayout>
+												<Label text="Audiences:" class="customMargin" />
+												<Select id='audiencesFilter'
+												change="updateIssuesVisibility"
+												selectedKey="{/audienceFilter}"
+												items="{/audiencesFilter}"
+												class="customMargin" >
+													<c:ListItem key="{}" text="{}" />
+												</Select>
+											</l:VerticalLayout>
+											<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection" class="customRightClass"></Button>
+											<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed} &amp;&amp; ${/issues}.length > 0}">
+												<menu>
+													<Menu itemSelected="onReportPress">
+														<items>
+															<MenuItem text="View" press="onViewReport"/>
+															<MenuItem text="Download" press="onDownloadReport"/>
+														</items>
+													</Menu>
+												</menu>
+											</MenuButton>
+
+											</HBox>
+										</items>
+								</FlexBox>
+							</Toolbar>
+						</customHeader>
+						<subHeader>
+							<Toolbar id="messegeStrip" height="{/messegeStripHeight}">
+								<FlexBox alignItems="Center"
+										justifyContent="Start">
+									<items>
+										<l:VerticalLayout>
+											<Text text="Note: The issues list is cut down to the first 1000 issues, matching the filter criteria."
+													  visible="{= ${/issues}.length > 1000}"/>
+											<Text  text="{= 'Displaying: ' + ${/visibleIssuesCount} + ' out of ' + ${/maxIssuesDisplayedNumber} + ' (scope: ' + ${/analyzeContext/displayName} + ')' }"/>
+										</l:VerticalLayout>
+									</items>
+								</FlexBox>
+							</Toolbar>
+						</subHeader>
+						<List
+								id="issuesList"
+								mode="SingleSelectMaster"
+								itemPress="onIssuePressed"
+								items="{path: '/issues'}">
+							<StandardListItem
+									type="Active"
+									icon="{path:'severity', formatter:'.filterSevirityIcon'}"
+									info="{path:'severity', formatter:'.filterSevirityText'}"
+									infoState="{path:'severity', formatter:'.filterSevirityState'}"
+									description="{description}"
+									press="onIssuePressed"
+									visible="{path:'', formatter:'.filterIssueListItems'}"
+									title="{name}"/>
+						</List>
+					</Page>
+					<Page showHeader="false">
+						<f:SimpleForm editable="true"
+									  visible="{= ${/selectedIssue} !== null}"
+									  layout="ResponsiveGridLayout"
+									  title="{/selectedIssue/name}">
+							<f:content>
+								<Label text="Description" />
+								<Text text="{/selectedIssue/description}" />
+								<Label text="Resolution" />
+								<Text text="{/selectedIssue/resolution}" />
+								<Label text="Details" />
+								<Text text="{/selectedIssue/details}" />
+								<Label text="URLs" />
+								<l:VerticalLayout
+									content="{/selectedIssue/resolutionUrls}">
+									<Link text="{text}" press="openDocumentation" />
+								</l:VerticalLayout>
+								<Label text="Element ClassName" />
+								<Text text="{/selectedIssue/context/className}" />
+								<Label text="Element id" />
+								<Text text="{/selectedIssue/context/id}" />
+							</f:content>
+						</f:SimpleForm>
+					</Page>
+					<c:HTML id="elementTreeContainer" content='&lt;control-tree&gt;  &lt;/control-tree&gt;'>
+					</c:HTML>
+				</l:contentAreas>
+			</l:Splitter>
+</mvc:View>
