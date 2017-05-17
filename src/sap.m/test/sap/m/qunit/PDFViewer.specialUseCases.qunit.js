@@ -19,55 +19,36 @@ sap.ui.define([
 		return;
 	}
 
-	// does not make as much sense cause firefox does not allow check it if the content is pdf
-	// and also it is not possible to access contentType of document due to cross domain browser policy
-	QUnit.test("Different resource's mimeType passed in", function (assert) {
-		assert.expect(1);
-		var done = assert.async();
-
-		var oOptions = {
-			"source": "./pdfviewer/different-content.html",
-			"loaded": function () {
-				assert.ok(false, "'Load' event should not be fired");
-
-			},
-			"error": function (oEvent) {
-				oEvent.preventDefault();
-				assert.ok(true, "'Error' event fired");
-				done();
-			},
-			"sourceValidationFailed": function (oEvent) {
-				if (Device.browser.firefox) {
-					assert.ok(true, "'sourceValidationFailed' event fired");
-					oEvent.preventDefault();
-				} else {
-					assert.ok(false, "'sourceValidationFailed' event should not be fired");
-				}
-			}
-		};
-
-		oPDFViewer = TestUtils.createPdfViewer(oOptions);
-		TestUtils.renderPdfViewer(oPDFViewer);
-	});
-
-	if (!TestUtils.isSourceValidationSupported()) {
-		QUnit.test('No prevent default in sourceValidation', function (assert) {
-			assert.expect(2);
+	if (TestUtils.isSourceValidationSupported()) {
+		// does not make as much sense cause firefox does not allow check it if the content is pdf
+		// and also it is not possible to access contentType of document due to cross domain browser policy
+		QUnit.test("Different resource's mimeType passed in", function (assert) {
+			assert.expect(1);
 			var done = assert.async();
 
 			var oOptions = {
-				"source": "./pdfviewer/sample-file.pdf",
+				"source": "./pdfviewer/different-content.html",
 				"loaded": function () {
-					assert.ok(true, "'Load' event fired");
+					if (!Device.browser.firefox) {
+						assert.ok(false, "'Load' event should not be fired");
+					}
+
+				},
+				"error": function (oEvent) {
+					oEvent.preventDefault();
+					assert.ok(true, "'Error' event fired");
 					done();
 				},
-				"error": function () {
-					assert.ok(false, "'Error' event should not be fired");
-				},
 				"sourceValidationFailed": function (oEvent) {
-					assert.ok(true, "'sourceValidationFailed' event fired");
+					if (Device.browser.firefox) {
+						assert.ok(true, "'sourceValidationFailed' event fired");
+						oEvent.preventDefault();
+					} else {
+						assert.ok(false, "'sourceValidationFailed' event should not be fired");
+					}
 				}
 			};
+
 			oPDFViewer = TestUtils.createPdfViewer(oOptions);
 			TestUtils.renderPdfViewer(oPDFViewer);
 		});

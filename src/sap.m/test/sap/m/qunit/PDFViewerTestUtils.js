@@ -24,7 +24,9 @@ sap.ui.define([
 			},
 			expected: {
 				load: success,
-				error: !success
+				error: !success,
+				sourceValidationFailedPreventDefault: (expectedOptions.sourceValidationFailedPreventDefault ?
+					expectedOptions.sourceValidationFailedPreventDefault : true)
 			}
 		};
 
@@ -46,6 +48,7 @@ sap.ui.define([
 			var sResponseHttpCode = oOptions.setup.httpCode;
 			var bExpectLoad = oOptions.expected.load;
 			var bExpectError = oOptions.expected.error;
+			var bSourceValidationFailedPreventDefault = oOptions.expected.sourceValidationFailedPreventDefault;
 			var bExpectSourceValidationError = oOptions.expected.sourceValidationFired;
 			var iExpectedAssertCalls = oOptions.expected.assertCalls;
 
@@ -92,7 +95,7 @@ sap.ui.define([
 						assert.ok(false, "'sourceValidationFailed' event fired but should not");
 					}
 
-					if (bExpectError) {
+					if (bSourceValidationFailedPreventDefault) {
 						oEvent.preventDefault();
 					}
 				}
