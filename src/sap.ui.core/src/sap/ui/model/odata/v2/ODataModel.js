@@ -1930,7 +1930,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._removeEntity = function(sKey) {
-		sKey = sKey && this._normalizeKey(sKey);
+		sKey = sKey && ODataUtils._normalizeKey(sKey);
 		delete this.oData[sKey];
 		delete this.mChangedEntities[sKey];
 		delete this.mContexts["/" + sKey];
@@ -1944,7 +1944,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getEntity = function(sKey) {
-		sKey = sKey && this._normalizeKey(sKey);
+		sKey = sKey && ODataUtils._normalizeKey(sKey);
 		return this.oData[sKey];
 	};
 
@@ -1966,7 +1966,7 @@ sap.ui.define([
 		} else if (typeof vValue === 'string') {
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey && this._normalizeKey(sKey);
+		return sKey && ODataUtils._normalizeKey(sKey);
 	};
 
 	/**
@@ -2020,34 +2020,6 @@ sap.ui.define([
 		}
 		sKey += ")";
 		return sKey;
-	};
-
-	/**
-	 * Normalizes the given canonical key.
-	 *
-	 * Although keys contained in OData response must be canonical, there are
-	 * minor differences (like capitalization of suffixes for Decimal, Double,
-	 * Float) which can differ and cause equality checks to fail.
-	 *
-	 * @param {string} sKey The canonical key of an entity
-	 * @returns {string} Normalized key of the entry
-	 * @private
-	 */
-	// Define regular expression and function outside function to avoid instatiation on every call
-	var rNormalizeString = /([(=,])('.*?')([,)])/g,
-		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
-		rNormalizeBinary = /([(=,])(X')/g,
-		fnNormalizeString = function(value, p1, p2, p3) {
-			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
-		},
-		fnNormalizeCase = function(value) {
-			return value.toLowerCase();
-		},
-		fnNormalizeBinary = function(value, p1) {
-			return p1 + "binary'";
-		};
-	ODataModel.prototype._normalizeKey = function(sKey) {
-		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
 	};
 
 	/**

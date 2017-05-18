@@ -571,7 +571,7 @@ var mPredefinedServiceResponses = {
 			sParams = "";
 		}
 
-		aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(0-9)]*)\/{0,1}(.*)$/);
+		aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(A-Za-z0-9=_%'\-)]*)\/{0,1}(.*)$/);
 		if (aMatches && aMatches.length === 3) {
 			sCollection = aMatches[1];
 			sPostfix = aMatches[2];
