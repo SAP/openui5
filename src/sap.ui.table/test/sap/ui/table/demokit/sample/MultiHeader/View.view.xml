@@ -15,7 +15,7 @@
 		<Table id="table1" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
 
 			<columns>
-				<Column width="11rem">
+				<Column width="11rem" sortProperty="supplier" filterProperty="supplier">
 					<multiLabels>
 						<m:Label text="Supplier" textAlign="Center" width="100%"/>
 					</multiLabels>
@@ -25,7 +25,7 @@
 					</template>
 				</Column>
 
-				<Column width="11rem" id="multiheader">
+				<Column width="11rem" id="multiheader" sortProperty="street" filterProperty="street">
 						<multiLabels>
 							<m:Label text="Contact" textAlign="Center" width="100%"/>
 							<m:Label text="Address" textAlign="Center" width="100%"/>
@@ -37,7 +37,7 @@
 						</template>
 					</Column>
 
-				<Column width="11rem">
+				<Column width="11rem" sortProperty="city">
 					<multiLabels>
 						<m:Label text="Contact" />
 						<m:Label text="Address" />
@@ -48,7 +48,7 @@
 					</template>
 				</Column>
 
-				<Column width="11rem">
+				<Column width="11rem"  sortProperty="phone">
 					<multiLabels>
 						<m:Label text="Contact" />
 						<m:Label text="Phone" textAlign="Center" width="100%"/>
