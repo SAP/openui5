@@ -113,15 +113,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo) {
-		// Old API compatibility (sPath, oTemplate, oSorter, aFilters)
-		if (typeof oBindingInfo === "string") {
-			oBindingInfo = {
-				path: oBindingInfo,
-				sorter: arguments[2],
-				filters: arguments[3],
-				template: arguments[1]
-			};
-		}
+		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
 
 		if (oBindingInfo != null) {
 			if (oBindingInfo.parameters == null) {
