@@ -465,13 +465,13 @@
 
 		var oColumn = oTable._getVisibleColumns()[iCol];
 
-		aLabels.push(oColumn.getId());
+		aLabels.push(oColumn.getId() + "-inner");
 
 		if (iCol == 0) {
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
 		}
 
-		if (iCol == 1) {
+		if (bFocus && iCol == 1) {
 			aLabels.push(oTable.getId() + "-ariacolsortedasc");
 			aLabels.push(oTable.getId() + "-ariacolfiltered");
 		}
@@ -480,7 +480,7 @@
 			aLabels.push(oTable.getId() + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
 		}
 
-		if (iCol == 1) {
+		if (bFocus && iCol == 1) {
 			aLabels.push(oTable.getId() + "-ariacolmenu");
 		}
 
