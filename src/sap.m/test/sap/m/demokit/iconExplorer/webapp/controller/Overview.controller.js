@@ -230,43 +230,47 @@ sap.ui.define([
 		},
 
 		/**
-		 * Copies the value of the code input field to the clipboard and display a message
+		 * Copies the value of the code input field to the clipboard and displays a message
 		 * @public
 		 */
 		onCopyCodeToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue();
-			this._copyStringToClipboard(sString);
+			var sString = this.byId("previewCopyCode").getValue(),
+				oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText;
+
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
+			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
 		},
 
 		/**
-		 * Copies the value of the unicode input field to the clipboard and display a message
+		 * Copies the unicode part from the input field to the clipboard and displays a message
 		 * @public
 		 */
 		onCopyUnicodeToClipboard: function () {
-			var sString = this.byId("previewCopyUnicode").getValue(),
-				oResourceBundle = this.getResourceBundle();
-			sString = sString.substring(oResourceBundle.getText("previewInfoUnicode").length + 1);
-			this._copyStringToClipboard(sString);
+			var oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIconName = this.byId("preview").getBindingContext().getObject().name,
+				sString = this.getModel().getUnicodeHTML(sIconName);
+			sString = sString.substring(2, sString.length - 1);
+			sSuccessText = oResourceBundle.getText("previewCopyUnicodeToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyUnicodeToClipboardFail", [sString]);
+			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
 		},
 
 		/**
-		 * Copies the value of the code input field to the clipboard and display a message
+		 * Copies the icon to the clipboard and displays a message
+		 * @public
 		 */
 		onCopyIconToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue();
-			var sIcon = this.getModel().getUnicode(sString);
-			var $temp = $("<input>");
+			var sString = this.byId("previewCopyCode").getValue(),
+				oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIcon = this.getModel().getUnicode(sString);
 
-			try {
-				$("body").append($temp);
-				$temp.val(sIcon).select();
-				document.execCommand("copy");
-				$temp.remove();
-
-				MessageToast.show("Icon \"" + sString + "\" has been copied to clipboard");
-			} catch (oException) {
-				MessageToast.show("Icon \"" + sString + "\" could not be copied to clipboard");
-			}
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
+			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
 		},
 
 		/**
@@ -288,28 +292,15 @@ sap.ui.define([
 			this._updateHash("icon");
 		},
 
-		/**
-		 * Retrieves the unicode of the icon by the icon's name. Used as a formatter in the view.
-		 * @param {string} name the icon's name
-		 * @return {strng} the unicode of the queried icon
-		 * @public
-		 */
-		getUnicodeByName: function (name) {
-			name = name || "";
-			var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase());
-			sUnicode = sUnicode.substring(2, sUnicode.length - 1);
-			return sUnicode;
-		},
-
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
 
 		/**
-		 * Copies the string to the clipboard and display a message
+		 * Copies the string to the clipboard and displays a message
 		 * @param {string} copyText the text string that has to be copied to the clipboard
 		 */
-		_copyStringToClipboard: function (copyText) {
+		_copyStringToClipboard: function (copyText, successText, exceptionText) {
 			var $temp = $("<input>"),
 				oResourceBundle = this.getResourceBundle();
 
@@ -319,9 +310,9 @@ sap.ui.define([
 				document.execCommand("copy");
 				$temp.remove();
 
-				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardSuccess", [copyText]));
+				MessageToast.show(successText);
 			} catch (oException) {
-				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardFail", [copyText]));
+				MessageToast.show(exceptionText);
 			}
 		},
 

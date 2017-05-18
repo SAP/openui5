@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/base/ManagedObject",
 	"test/unit/helper/FakeI18nModel",
+	"sap/ui/demo/iconexplorer/model/formatter",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
-], function(OverviewController, BaseController ,ManagedObject, FakeI18n) {
+], function(OverviewController, BaseController, ManagedObject, FakeI18n, formatter) {
 	"use strict";
 
 	QUnit.module("Overview controller tests", {
@@ -140,36 +141,30 @@ sap.ui.define([
 
 	QUnit.test("Handler for the 'Copy unicode' button correctly recognized unicode and calls the _copyStringToClipboard function with correct parameter", function (assert) {
 		// Arrange
-		var sUnicode = "xe034",
-			sTestString,
-			oInput,
-			sInputId = "previewCopyUnicode",
-			oCopyStub = sinon.stub(this.oOverviewController, "_copyStringToClipboard");
-
-		sinon.stub(this.oOverviewController, "getResourceBundle").returns({
-			getText: function() {
-				return "Unicode";
+		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+		sinon.stub(this.oOverviewController, "byId").withArgs("preview").returns({
+			getBindingContext: function() {
+				return {
+					getObject: function() {
+						return {
+							name: "iconName"
+						}
+					}
+				};
 			}
 		});
-		sTestString = this.oOverviewController.getResourceBundle().getText() + ":" + sUnicode;
-
-		oInput = new sap.m.Input(sInputId, {
-			value: sTestString
+		sinon.stub(this.oOverviewController, "getModel").returns({
+			getUnicodeHTML: function() {
+				return "&#xe034;";
+			}
 		});
-		sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput);
 
 		// Act
 		this.oOverviewController.onCopyUnicodeToClipboard();
 
 		// Assert
-		assert.strictEqual(oCopyStub.callCount, 1, "String copied to clipbiard exaclty once");
-		assert.strictEqual(oCopyStub.getCalls()[0].args[0], sUnicode, "Correct string copied to clipboard");
-
-		// Clean up
-		this.oOverviewController.byId.restore();
-		this.oOverviewController.getResourceBundle.restore();
-		this.oOverviewController._copyStringToClipboard.restore();
-		oInput.destroy();
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], "xe034", "Correct string copied to clipboard");
 	});
 
 	QUnit.test("Handler for the 'Copy code' button calls the _copyStringToClipboard function with correct parameter", function (assert) {
@@ -178,9 +173,8 @@ sap.ui.define([
 			sInputId = "previewCopyCode",
 			oInput = new sap.m.Input(sInputId, {
 				value: sTestString
-			}),
-			oCopyStub = sinon.stub(this.oOverviewController, "_copyStringToClipboard");
-
+			});
+		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
 		sinon.stub(this.oOverviewController, "getResourceBundle").returns({
 			getText: function() {
 				return "Unicode";
@@ -192,12 +186,37 @@ sap.ui.define([
 		this.oOverviewController.onCopyCodeToClipboard();
 
 		// Assert
-		assert.strictEqual(oCopyStub.callCount, 1, "String copied to clipbiard exaclty once");
-		assert.strictEqual(oCopyStub.getCalls()[0].args[0], sTestString, "Correct string copied to clipboard");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], sTestString, "Correct string copied to clipboard");
 
 		// Clean up
-		this.oOverviewController.byId.restore();
-		this.oOverviewController._copyStringToClipboard.restore();
+		oInput.destroy();
+	});
+
+	QUnit.test("Handler for the 'Copy icon' button calls the _copyStringToClipboard function with correct parameter", function (assert) {
+		// Arrange
+		var sTestString = "sap-icon://excel-attachment",
+			sInputId = "previewCopyCode",
+			sIcon = "icon",
+			oInput = new sap.m.Input(sInputId, {
+				value: sTestString
+			}),
+			oInputStub = sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput),
+			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicode: function() {
+					return sIcon;
+				}
+			});
+		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+
+		// Act
+		this.oOverviewController.onCopyIconToClipboard();
+
+		// Assert
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], sIcon, "Correct string copied to clipboard");
+
+		// Clean up
 		oInput.destroy();
 	});
 
@@ -205,22 +224,26 @@ sap.ui.define([
 		// Arrange
 		var sRawUnicodeString = "&#xe000;",
 			sCleanUnicodeString = "xe000",
-			sResult;
-
-		sinon.stub(this.oOverviewController, "getModel").returns({
-			getUnicodeHTML: function() {
-				return sRawUnicodeString;
-			}
-		});
+			sResult,
+			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicodeHTML: function() {
+					return sRawUnicodeString;
+				}
+			}),
+			oResourceBundlelStub = sinon.stub(this.oOverviewController, "getResourceBundle").returns({
+				getText: function(bundleName, bundleParameters) {
+					// Assert
+					assert.strictEqual(bundleName, "previewInfoUnicodeWithParams", "Resource bundle called with correct i18n key");
+					assert.strictEqual(bundleParameters[0], sCleanUnicodeString, "Raw unicode haas been transformed correctly");
+				}
+			});
 
 		// Act
-		sResult = this.oOverviewController.getUnicodeByName("iconName");
-
-		// Assert
-		assert.strictEqual(sResult, sCleanUnicodeString, "Raw unicode haas been transformed correctly");
+		formatter.getUnicodeTextByName.bind(this.oOverviewController)("iconName");
 
 		// Clean up
 		this.oOverviewController.getModel.restore();
+		this.oOverviewController.getResourceBundle.restore();
 	});
 
 	QUnit.module("Overview controller: searching by unicode filter factory tests", {
