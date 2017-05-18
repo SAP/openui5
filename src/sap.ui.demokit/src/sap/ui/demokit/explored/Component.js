@@ -24,7 +24,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					viewType : "XML",
 					viewPath : "sap.ui.demokit.explored.view",
 					targetControl : "splitApp",
-					clearTarget : false
+					clearTarget : false,
+					async: true
 				},
 				routes : [
 					{
