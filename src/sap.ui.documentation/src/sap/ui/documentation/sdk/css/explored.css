@@ -143,3 +143,7 @@ code {
 	line-height: 1.5rem;
 	margin-left: 0.25rem;
 }
+
+.sapUiDocumentationImplementsDiv .sapMLabel {
+	line-height: 1.5rem;
+}
