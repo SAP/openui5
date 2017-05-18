@@ -236,7 +236,6 @@ sap.ui.define([
 			},
 
 			_moveNodePIntoNodeJ: function (p, j) {
-				//console.log("Move " + aTreeContent[p].text + " into " + aTreeContent[j].text);
 				var oTmpNode = aTreeContent.splice(p, 1);
 				if (!aTreeContent[j].nodes) {
 					aTreeContent[j].nodes = [];
@@ -257,9 +256,9 @@ sap.ui.define([
 			},
 
 			_bindAllLibsModel : function (oAllLibsData) {
-				var oLibsModel = new JSONModel(oAllLibsData);
+				var oLibsModel = this.getOwnerComponent().getModel("libsData");
 				oLibsModel.setSizeLimit(iTreeModelLimit);
-				this.getOwnerComponent().setModel(oLibsModel, "libsData");
+				oLibsModel.setData(oAllLibsData, false /* mo merge with previous data */);
 			},
 
 			_bindTreeModel : function (oTree, aTreeContent) {

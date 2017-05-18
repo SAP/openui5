@@ -1,42 +1,50 @@
-.demokitInitialPageColorPatternA {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPageColorPatternA {
 	background-color: #ffffff;
 }
 
-.demokitInitialPagesColorPatternB {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternB {
 	background-color: #eff4f9;
 }
 
-.demokitInitialPagesColorPatternBContrast {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternBContrast {
 	background-color: #3F5161;
 }
 
-.demokitInitialPagesColorPatternC {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternC {
 	background-color: #d5e2ef;
 }
 
-.demokitInitialPagesColorPatternD {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternD {
 	background-color: #cadbeb;
 }
 
-.demokitInitialPagesColorPatternE {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternE {
 	background-color: #bbd0e6;
 }
 
-.sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
 	background-color: #2f3c48;
 }
 
-.demokitInitialPagesWhiteText {
-	color: #FFFFFF;
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesWhiteText {
+	color: #fff;
 	text-shadow: none;
 }
 
-.demokitInitialPagesBrightIcon {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesWhiteText .sapMLnk {
+	color: #fff;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
+	color: #7ed0ff;
+}
+
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesBrightIcon {
 	color: #CAE4FB;
 }
 
-.demokitInitialPagesBrightLink.sapMLnk,
-.demokitInitialPagesBrightLink.sapMLnk:hover {
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesBrightLink.sapMLnk,
+html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
 	color: #7ed0ff;
 }
 

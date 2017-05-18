@@ -11,8 +11,9 @@ sap.ui.define([
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
 		"sap/ui/core/util/LibraryInfo",
-		"sap/ui/core/IconPool"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool) {
+		"sap/ui/core/IconPool",
+		"sap/m/SplitAppMode"
+	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool, SplitAppMode) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
@@ -56,8 +57,18 @@ sap.ui.define([
 
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+			},
 
-				this.getOwnerComponent().setModel(new JSONModel(), "treeData");
+			onBeforeRendering: function() {
+				Device.orientation.detachHandler(this._fnOrientationChange, this);
+			},
+
+			onAfterRendering: function() {
+				Device.orientation.attachHandler(this._fnOrientationChange, this);
+			},
+
+			onExit: function() {
+				Device.orientation.detachHandler(this._fnOrientationChange, this);
 			},
 
 			onRouteChange: function (oEvent) {
@@ -90,11 +101,12 @@ sap.ui.define([
 				var bPressed = oEvent.getParameter("pressed"),
 					bPhone = Device.system.phone,
 					oSplitApp = this.getView().byId("splitApp"),
-					sSplitMode = oSplitApp.getMode(),
+					isShowHideMode = oSplitApp.getMode() === SplitAppMode.ShowHideMode,
+					isHideMode = oSplitApp.getMode() === SplitAppMode.HideMode,
 					sMasterViewId = this.getModel("appView").getProperty("/sMasterViewId"),
 					fnToggle;
 
-				if (!bPhone && sSplitMode === sap.m.SplitAppMode.ShowHideMode) {
+				if (!bPhone && (isShowHideMode || isHideMode)) {
 					fnToggle = (bPressed) ? oSplitApp.showMaster : oSplitApp.hideMaster;
 					fnToggle.call(oSplitApp);
 					return;
@@ -436,10 +448,13 @@ sap.ui.define([
 
 			onHeaderResize: function (oEvent) {
 				var iWidth = oEvent.size.width,
-					oViewModel = this.getModel("appView"),
 					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
-				oViewModel.setProperty("/bPhoneSize", bPhoneSize);
-				oViewModel.setProperty("/bLandscape", Device.orientation.landscape);
+
+				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
+			},
+
+			_fnOrientationChange: function() {
+				this.getModel("appView").setProperty("/bLandscape", Device.orientation.landscape);
 			},
 
 			onToggleSearchMode : function(oEvent) {
