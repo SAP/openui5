@@ -4,7 +4,6 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:custom="sap.ui.documentation.sdk.controls">
 	<l:BlockLayoutCell
-		class="sapUiContentPadding"
 		width="2">
 		<l:VerticalLayout width="100%">
 			<core:Icon
