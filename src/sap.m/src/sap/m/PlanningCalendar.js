@@ -50,12 +50,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * {@link sap.m.PlanningCalendarRow PlanningCalendarRow}.</li>
 	 * </ul>
 	 *
-	 * The empty space in the cell that is below an appointment can be removed by adding
+	 * Since 1.48 the empty space in the cell that is below an appointment can be removed by adding
 	 * the <code>sapUiCalendarAppFitVertically</code> CSS class to the <code>PlanningCalendar</code>.
 	 * Please note that it should be used only for a <code>PlanningCalendar</code> with one appointment per day
 	 * for a row that doesn't have interval headers set.
 	 *
-	 * Alternating row colors can be suppressed by adding the <code>sapMPlanCalSuppressAlternatingRowColors</code>
+	 * Since 1.44 alternating row colors can be suppressed by adding the <code>sapMPlanCalSuppressAlternatingRowColors</code>
 	 * CSS class to the <code>PlanningCalendar</code>.
 	 *
 	 * <h3>Responsive behavior</h3>
