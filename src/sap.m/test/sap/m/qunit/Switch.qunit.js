@@ -388,7 +388,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
+		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
 		assert.strictEqual(getComputedStyle(oSwitch.getDomRef("invisible")).getPropertyValue("display"), "none");
 		assert.strictEqual(oSwitch.getDomRef("invisible").getAttribute("aria-hidden"), "true");
 
@@ -939,5 +939,30 @@
 
 		// cleanup
 		oCustomSwitch.destroy();
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach : function() {
+			this.switch = new sap.m.Switch();
+			this.switch.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.switch.destroy();
+		}
+	});
+
+	QUnit.test("_setDomState", function(assert) {
+		// arrange
+		var invisibleElementSpy = this.spy(this.switch, "getInvisibleElementText"),
+			switchDomRef = this.switch.getDomRef(),
+			domRefSpy = this.spy(switchDomRef, "setAttribute");
+
+		// act
+		this.switch._setDomState(true);
+
+		// assert
+		assert.ok(invisibleElementSpy.calledBefore(domRefSpy), "InvisibleElement text was set before updating the dom reference attribute.");
 	});
 }());

@@ -150,6 +150,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			oHandleDomRef.setAttribute("data-sap-ui-swt", sState);
 
+			this._getInvisibleElement().text(this.getInvisibleElementText(bState));
+
 			if (bState) {
 				$Switch.removeClass(CSS_CLASS + "Off").addClass(CSS_CLASS + "On");
 				oDomRef.setAttribute("aria-checked", "true");
@@ -157,8 +159,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				$Switch.removeClass(CSS_CLASS + "On").addClass(CSS_CLASS + "Off");
 				oDomRef.setAttribute("aria-checked", "false");
 			}
-
-			this._getInvisibleElement().text(this.getInvisibleElementText(bState));
 
 			if (sap.ui.getCore().getConfiguration().getAnimation()) {
 				$Switch.addClass(CSS_CLASS + "Trans");
@@ -182,11 +182,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			switch (this.getType()) {
 				case sap.m.SwitchType.Default:
-					sText = this.getCustomTextOn() || (bState ? oBundle.getText("SWITCH_ON") : oBundle.getText("SWITCH_OFF"));
+					if (bState) {
+						sText = this.getCustomTextOn().trim() || oBundle.getText("SWITCH_ON");
+					} else {
+						sText = this.getCustomTextOff().trim() || oBundle.getText("SWITCH_OFF");
+					}
 					break;
 
 				case sap.m.SwitchType.AcceptReject:
-					sText = oBundle.getText("SWITCH_ARIA_ACCEPT");
+					if (bState) {
+						sText = oBundle.getText("SWITCH_ARIA_ACCEPT");
+					} else {
+						sText = oBundle.getText("SWITCH_ARIA_REJECT");
+					}
+
 					break;
 
 				// no default
