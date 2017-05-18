@@ -226,7 +226,6 @@
 
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
 											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
@@ -243,14 +242,20 @@
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
 
-													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
-														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</layout:VerticalLayout>
+													<m:VBox>
+														<core:HTML content="{parts: [{path: 'topics>description'}],
+																				 	  formatter: '.formatDescription'}"/>
 
-													<core:HTML content="{parts: [{path: 'topics>description'},
-																					 {path: 'topics>deprecated/text'},
-																					 {path: 'topics>deprecated/since'}],
-																			 	  formatter: '.formatDescription'}"/>
+														<m:MessageStrip  width="100%"
+															visible="{=${topics>deprecated} !== undefined}"
+															text="Deprecated since version {topics>deprecated/since}. {topics>deprecated/text}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															class="sapUiMediumMarginBottom">
+														</m:MessageStrip>
+													</m:VBox>
+
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
@@ -270,10 +275,17 @@
 								<blocks>
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'events>description'},
-																				{path: 'events>deprecated/text'},
-																				{path: 'events>deprecated/since'}],
+										<core:HTML content="{parts: [{path: 'events>description'}],
 																			 formatter: '.formatDescription'}"/>
+
+										<m:MessageStrip
+											visible="{=${events>deprecated} !== undefined}"
+											text="Deprecated since version {events>deprecated/since}. {events>deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 
 										<m:Table items="{ path : 'events>parameters'}"
 												 showSeparators="Inner"
@@ -323,10 +335,17 @@
 
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'methods>description'},
-																	{path: 'methods>deprecated/text'},
-																	{path: 'methods>deprecated/since'}],
+										<core:HTML content="{parts: [{path: 'methods>description'}],
 																			 formatter: '.formatDescription'}"/>
+
+										<m:MessageStrip
+											visible="{=${methods>deprecated} !== undefined}"
+											text="Deprecated since version {methods>deprecated/since}. {methods>deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 
 										<m:Table items="{ path : 'methods>parameters'}"
 												 showSeparators="Inner"
