@@ -535,49 +535,6 @@ sap.ui.define([
 		return this.sPath + sIndex;
 	};
 
-	/**
-	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
-	 * value for the given path, relative to this context, as maintained by that binding.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyName
-	 *   Name of property to update
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a PATCH request fails
-	 * @param {string} [sEditUrl]
-	 *   The edit URL corresponding to the entity to be updated
-	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @returns {Promise}
-	 *   A promise on the outcome of the binding's <code>updateValue</code> call
-	 *
-	 * @private
-	 */
-	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, fnErrorCallback,
-			sEditUrl, sPath) {
-		var that = this;
-
-		// Note: iIndex === -2 will fail with "No instance to calculate key predicate" below
-		sPath = _Helper.buildPath(this.iIndex, sPath);
-
-		if (this.isTransient()) {
-			// Note: must not be falsy, otherwise a parent context would insert its own edit URL
-			sEditUrl = "n/a";
-		}
-		if (sEditUrl) {
-			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback,
-				sEditUrl, sPath);
-		}
-
-		return this.fetchCanonicalPath().then(function (sEditUrl) {
-			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback,
-				sEditUrl.slice(1), sPath);
-		});
-	};
-
 	return {
 		/**
 		 * Creates a context for an OData V4 model.

@@ -1284,6 +1284,108 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Modify a property which does not belong to the parent binding's entity
+	QUnit.test("Modify a foreign property", function (assert) {
+		var sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="item" text="{SO_2_BP/CompanyName}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=SalesOrderID" +
+			"&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=100", {
+				"value" : [{
+					"SalesOrderID" : "0500000002",
+					"SO_2_BP" : {
+						"@odata.etag" : "etag",
+						"BusinessPartnerID" : "42",
+						"CompanyName" : "Foo"
+					}
+				}]
+			})
+			.expectChange("item", ["Foo"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "BusinessPartnerList('42')",
+					headers : {
+						"If-Match" : "etag"
+					},
+					payload : {
+						"CompanyName" : "Bar"
+					}
+				}, {
+					"CompanyName" : "Bar"
+				})
+				.expectChange("item", "Bar", 0);
+
+			that.oView.byId("table").getItems()[0].getCells()[0].getBinding("text")
+				.setValue("Bar");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
+	QUnit.test("Create with user input", function (assert) {
+		var sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="note" text="{Note}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createSalesOrdersModel({
+				autoExpandSelect : true,
+				updateGroupId : "update"
+			}),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				"value" : [{
+					"Note" : "foo",
+					"SalesOrderID" : 42
+				}]
+			})
+			.expectChange("note", ["foo"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			that.expectRequest({
+					groupId : "update",
+					headers : null,
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {
+						"@$ui5.transient" : "update",
+						"Note" : "bar"
+					}
+				}, {
+					"CompanyName" : "Bar"
+				})
+				.expectChange("note", "foo", 1)
+				.expectChange("note", "baz", 0) // TODO unexpected change
+				.expectChange("note", "baz", 0);
+
+			oTable.getBinding("items").create({Note : "bar"});
+			oTable.getItems()[0].getCells()[0].getBinding("text").setValue("baz");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect mode for an ODataContextBinding with relative
 	// ODataPropertyBindings
 	// The SalesOrders application does not have such a scenario.
