@@ -6,9 +6,17 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 	"jquery.sap.global",
 	"sap/m/Dialog",
 	"sap/m/Button",
+	"sap/m/ButtonType",
 	"sap/m/Link",
-	"sap/m/MessagePage"
-], function ($, Dialog, Button, Link, MessagePage) {
+	"sap/m/MessagePage",
+	"sap/m/OverflowToolbar",
+	"sap/m/OverflowToolbarButton",
+	"sap/m/Title",
+	"sap/m/ToolbarSpacer",
+	"sap/m/OverflowToolbarLayoutData",
+	"sap/m/OverflowToolbarPriority"
+], function ($, Dialog, Button, ButtonType, Link, MessagePage, OverflowToolbar, OverflowToolbarButton, Title,
+             ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarPriority) {
 	"use strict";
 
 	var oPDFViewerRenderManager = {
@@ -51,7 +59,13 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 					return oCloseButton;
 				};
 
-				this._objectsRegister[sPopupFactoryFunctionName] = function () {
+				this._objectsRegister[sPopupFactoryFunctionName] = function (bIsDestroying) {
+					// if the constructor getter is called during the destroying, it is not neccessary to create
+					// the control and then immediately destroy it
+					if (bIsDestroying === true) {
+						return null;
+					}
+
 					var oPopup = new Dialog(sPopupId, oOptions);
 					oPopup.addStyleClass("sapUiPopupWithPadding");
 
@@ -70,21 +84,23 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 			 */
 			PDFViewer.prototype._preparePopup = function (oPopup) {
 				var aButtons = $.merge([], this.getPopupButtons()),
-					oCloseButton = this._objectsRegister.getPopupCloseButton();
+					oCloseButton = this._objectsRegister.getPopupCloseButton(),
+					oDownloadButton = this._objectsRegister.getPopupDownloadButtonControl();
 				oCloseButton.setText(this._getLibraryResourceBundle().getText("PDF_VIEWER_POPUP_CLOSE_BUTTON"));
 
+				aButtons.push(oDownloadButton);
 				aButtons.push(oCloseButton);
 				oPopup.removeAllButtons();
 				aButtons.forEach(function (oButton) {
 					oPopup.addButton(oButton);
 				});
 
-				if (this.getPopupHeaderTitle()) {
-					// show header only when header title is set
-					oPopup.setShowHeader(true);
+				oPopup.setShowHeader(true);
+				if (!!this.getPopupHeaderTitle()) {
 					oPopup.setTitle(this.getPopupHeaderTitle());
-				} else {
-					oPopup.setShowHeader(false);
+				}
+				if (!!this.getTitle()) {
+					oPopup.setTitle(this.getTitle());
 				}
 			};
 
@@ -128,9 +144,90 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 					return oMessagePage;
 				};
 			};
+
+			PDFViewer.prototype._initOverflowToolbarControl = function () {
+				var that = this,
+					sOverflowId = this.getId() + "-overflowToolbar",
+					sTitleId = sOverflowId + "-title",
+					sOverflowToolbarFactoryFunctionName = "getOverflowToolbarControl";
+
+				this._objectsRegister[sOverflowToolbarFactoryFunctionName] = function (bIsDestroying) {
+					// if the constructor getter is called during the destroying, it is not neccessary to create
+					// the control and then immediately destroy it
+					if (bIsDestroying === true) {
+						return null;
+					}
+
+					var oOverflowToolbar = new OverflowToolbar(sOverflowId, {}),
+						oTitle = new Title(sTitleId, {
+						text: that.getTitle()
+					}),
+						oButton = that._objectsRegister.getToolbarDownloadButtonControl();
+					oOverflowToolbar.addStyleClass("sapUiTinyMarginBottom");
+
+					oOverflowToolbar.addContent(oTitle);
+					oOverflowToolbar.addContent(new ToolbarSpacer());
+					oOverflowToolbar.addContent(oButton);
+					oButton.setLayoutData(new OverflowToolbarLayoutData({
+							priority: OverflowToolbarPriority.NeverOverflow
+						})
+					);
+
+					that._objectsRegister[sOverflowToolbarFactoryFunctionName] = function () {
+						oButton.setEnabled(that._bRenderPdfContent);
+						oTitle.setText(that.getTitle());
+						return oOverflowToolbar;
+					};
+
+					return oOverflowToolbar;
+				};
+			};
+
+			PDFViewer.prototype._initToolbarDownloadButtonControl = function () {
+				var that = this,
+					sButtonId = this.getId() + "-toolbarDownloadButton",
+					sDownloadButtonFactoryFunctionName = "getToolbarDownloadButtonControl";
+
+				this._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
+					var oButton = new OverflowToolbarButton(sButtonId, {
+						type: ButtonType.Transparent,
+						icon: "sap-icon://download"
+					});
+					oButton.attachPress(that._onDownloadButtonClickListener.bind(that));
+					oButton.setEnabled(that._bRenderPdfContent);
+
+					that._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
+						oButton.setEnabled(that._bRenderPdfContent);
+						return oButton;
+					};
+
+					return oButton;
+				};
+			};
+
+			PDFViewer.prototype._initPopupDownloadButtonControl = function () {
+				var that = this,
+					sButtonId = this.getId() + "-popupDownloadButton",
+					sDownloadButtonFactoryFunctionName = "getPopupDownloadButtonControl";
+
+				this._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
+					var oButton = new Button(sButtonId, {
+						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT")
+					});
+					oButton.attachPress(that._onDownloadButtonClickListener.bind(that));
+					oButton.setEnabled(that._bRenderPdfContent);
+
+					that._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
+						oButton.setEnabled(that._bRenderPdfContent);
+						return oButton;
+					};
+
+					return oButton;
+				};
+
+			};
 		}
 	};
-
 
 	return oPDFViewerRenderManager;
 }, true);
