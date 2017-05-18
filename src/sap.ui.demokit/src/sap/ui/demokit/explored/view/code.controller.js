@@ -4,11 +4,12 @@
 
 /*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+	'sap/ui/core/routing/History',
 	'sap/ui/core/Component', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/MessageToast',
 	'../data'],
-	function (jQuery, Device, Component, UIComponent, Controller, JSONModel, MessageToast, data) {
+	function (jQuery, Device, History, Component, UIComponent, Controller, JSONModel, MessageToast, data) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {
@@ -228,7 +229,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		},
 
 		onNavBack : function () {
-			this.router.navTo("sample", { id : this._sId }, true);
+			var oHistory, sPreviousHash;
+			oHistory = History.getInstance();
+			sPreviousHash = oHistory.getPreviousHash();
+			if (sPreviousHash !== undefined) {
+				window.history.go(-1);
+			} else {
+				this.router.navTo("home", {}, true /*no history*/);
+			}
 		},
 
 		/**
@@ -271,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this.router.navTo("code_file", {
 				id : this._sId,
 				fileName: encodeURIComponent(sFileName)
-			}, false);
+			}, true);
 		}
 
 
