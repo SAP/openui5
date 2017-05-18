@@ -257,16 +257,25 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.hasPendingChangesInDependents = function () {
 		return this.oModel.getDependentBindings(this).some(function (oDependent) {
-			var oCache;
+			var oCache, bHasPendingChanges;
 
-			if (!oDependent.oCachePromise.isFulfilled()) {
-				// No pending changes because create and update are not allowed
-				return false;
+			if (oDependent.oCachePromise.isFulfilled()) {
+				// Pending changes for this cache are only possible when there is a cache already
+				oCache = oDependent.oCachePromise.getResult();
+				if (oCache && oCache.hasPendingChangesForPath("")) {
+					return true;
+				}
 			}
-
-			oCache = oDependent.oCachePromise.getResult();
-			return oCache && oCache.hasPendingChangesForPath("")
-				|| oDependent.hasPendingChangesInDependents();
+			if (oDependent.mCacheByContext) {
+				bHasPendingChanges = Object.keys(oDependent.mCacheByContext).some(function (sPath) {
+					return oDependent.mCacheByContext[sPath].hasPendingChangesForPath("");
+				});
+				if (bHasPendingChanges) {
+					return true;
+				}
+			}
+			// Ask dependents, they might have no cache, but pending changes in mCacheByContext
+			return oDependent.hasPendingChangesInDependents();
 		});
 	};
 
@@ -417,17 +426,22 @@ sap.ui.define([
 		this.oModel.getDependentBindings(this).forEach(function (oDependent) {
 			var oCache;
 
-			if (!oDependent.oCachePromise.isFulfilled()) {
-				// No pending changes because create and update are not allowed
-				return;
+			if (oDependent.oCachePromise.isFulfilled()) {
+				// Pending changes for this cache are only possible when there is a cache already
+				oCache = oDependent.oCachePromise.getResult();
+				if (oCache) {
+					oCache.resetChangesForPath("");
+				}
+				oDependent.resetInvalidDataState();
 			}
-
-			oCache = oDependent.oCachePromise.getResult();
-			if (oCache) {
-				oCache.resetChangesForPath("");
+			// mCacheByContext may have changes nevertheless
+			if (oDependent.mCacheByContext) {
+				Object.keys(oDependent.mCacheByContext).forEach(function (sPath) {
+					oDependent.mCacheByContext[sPath].resetChangesForPath("");
+				});
 			}
+			// Reset dependents, they might have no cache, but pending changes in mCacheByContext
 			oDependent.resetChangesInDependents();
-			oDependent.resetInvalidDataState();
 		});
 	};
 

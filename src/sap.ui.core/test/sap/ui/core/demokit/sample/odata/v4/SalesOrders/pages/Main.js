@@ -458,6 +458,17 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						}
 					});
 				},
+				resetSalesOrderListChanges : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							oTable.getBinding("items").resetChanges();
+							Opa5.assert.ok(true, "SalesOrders reset by API");
+						},
+						viewName : sViewName
+					});
+				},
 				selectFirstSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -465,6 +476,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (aControls) {
 							aControls[0].$().tap();
+							Opa5.assert.ok(true, "First Sales Order selected: " +
+								aControls[0].getText());
 						},
 						viewName : sViewName
 					});
