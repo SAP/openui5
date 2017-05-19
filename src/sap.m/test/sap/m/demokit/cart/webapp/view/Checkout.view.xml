@@ -1,4 +1,5 @@
 <mvc:View
+	id="checkoutView"
 	height="100%"
 	controllerName="sap.ui.demo.cart.controller.Checkout"
 	xmlns:layout="sap.ui.layout"
@@ -9,37 +10,35 @@
 	<NavContainer id="wizardNavContainer">
 		<pages>
 			<Page
-					id="wizardContentPage"
-					title="{i18n>checkoutTitle}">
+				id="wizardContentPage"
+				title="{i18n>checkoutTitle}">
 				<headerContent>
 					<Button
-							id="returnToShopButton"
-							type="Emphasized"
-							text="{i18n>returntoshopButtonText}"
-							press="onReturnToShopButtonPress" />
+						id="returnToShopButton"
+						type="Emphasized"
+						text="{i18n>returntoshopButtonText}"
+						press="onReturnToShopButtonPress" />
 				</headerContent>
 				<content>
 					<Wizard
-							id="shoppingCartWizard"
-							complete="completedHandler"
-							enableBranching="true"
-							finishButtonText="{i18n>checkoutWizardReviewbtn}">
+						id="shoppingCartWizard"
+						complete="completedHandler"
+						enableBranching="true"
+						finishButtonText="{i18n>checkoutWizardReviewbtn}">
 						<WizardStep
-								id="contentsStep"
-								nextStep="paymentTypeStep"
-								title="{i18n>checkoutContentsTitle}"
-								icon="sap-icon://cart">
+							id="contentsStep"
+							nextStep="paymentTypeStep"
+							title="{i18n>checkoutContentsTitle}"
+							icon="sap-icon://cart">
 							<List
-									id="entryList"
-									delete="onCartEntriesDelete"
-									select="onEntryListSelect"
-									noDataText="{i18n>cartNoData}"
-									items="{
-										path : 'cartProducts>/cartEntries',
-										sorter : {
-											path : 'Name',
-											descending : false
-										}
+								id="entryList"
+								noDataText="{i18n>cartNoData}"
+								items="{
+									path : 'cartProducts>/cartEntries',
+									sorter : {
+										path : 'Name',
+										descending : false
+									}
 							}">
 								<items>
 									<ObjectListItem
