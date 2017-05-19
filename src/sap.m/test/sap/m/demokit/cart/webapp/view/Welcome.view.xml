@@ -1,9 +1,11 @@
 <mvc:View
+	id="welcomeView"
 	controllerName="sap.ui.demo.cart.controller.Welcome"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
+		id="page"
 		showHeader="{device>/isPhone}"
 		class="customBackground">
 		<customHeader>
