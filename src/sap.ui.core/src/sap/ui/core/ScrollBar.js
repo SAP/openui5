@@ -117,7 +117,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 		// RTL mode
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
-		// Supress scroll event
+		// suppress scroll event
 		this._bSuppressScroll = false;
 
 		this._iMaxContentDivSize = 1000000;  // small value that all browsers still can render without any problems
@@ -377,7 +377,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	* @private
 	*/
 	ScrollBar.prototype.onscroll = function(oEvent) {
-		//jQuery.sap.log.debug("*****************************onScroll************************ SUPRESS SCROLL:  " + this._bSuppressScroll );
+		//jQuery.sap.log.debug("*****************************onScroll************************ suppress SCROLL:  " + this._bSuppressScroll );
 		if (this._bSuppressScroll) {
 			this._bSuppressScroll = false;
 			oEvent.preventDefault();

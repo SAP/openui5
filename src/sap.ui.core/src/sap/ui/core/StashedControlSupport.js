@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 *
 		 * @name sap.ui.core.StashedControlSupport.getStashedControlIds
 		 * @param {string} [sParentId] if set only StashedControls for a specific parent are returned
-		 * @return {Control[]} array with the the StashedControls
+		 * @return {Control[]} array with the StashedControls
 		 *
 		 * @private
 		 */

@@ -527,7 +527,7 @@
 			{
 				"id": "f84948f9ffd5e1c0531b007bcd063c0ba58ee9ac",
 				"type": "FIX",
-				"text": "sap.ui.core.routing.HashChanger: Initialized flag marked before firing the the hashchange event",
+				"text": "sap.ui.core.routing.HashChanger: Initialized flag marked before firing the hashchange event",
 				"references": []
 			},
 			{

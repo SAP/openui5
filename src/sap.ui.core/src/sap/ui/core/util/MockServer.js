@@ -3507,7 +3507,7 @@ sap.ui
 			 * @param {object} mConfig the configuration object.
 			 * @param {boolean} [mConfig.autoRespond=true] If set true, all mock servers will respond automatically. If set false you have to call {@link sap.ui.core.util.MockServer#respond} method for response.
 			 * @param {int} [mConfig.autoRespondAfter=0] the time in ms after all mock servers should send their response.
-			 * @param {boolean} [mConfig.fakeHTTPMethods=false] If set to true, all mock server will find <code>_method</code> parameter in the POST body and use this to override the the actual method.
+			 * @param {boolean} [mConfig.fakeHTTPMethods=false] If set to true, all mock server will find <code>_method</code> parameter in the POST body and use this to override the actual method.
 			 * @public
 			 */
 			MockServer.config = function(mConfig) {

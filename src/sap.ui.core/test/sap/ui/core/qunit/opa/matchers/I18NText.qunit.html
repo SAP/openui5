@@ -90,7 +90,7 @@
 					sinon.assert.calledWith(this.oDebugSpy, sinon.match(/No value for the key 'aKeyThatDoesExist' in the model 'i18n' of 'Element sap.m.Button#button'/));
 				});
 
-				QUnit.test("Shall not match and log debug for non existent property", function (assert) {
+				QUnit.test("Shall not match and log debug for nonexistent property", function (assert) {
 					// Arrange
 					this.oMatcher.setPropertyName("aPropertyThatWillNeverEverExistOnTheButton");
 					this.oMatcher.setKey("buttonText");

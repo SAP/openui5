@@ -607,7 +607,7 @@ function runODataMessagesTests() {
 
 			oParser.setHeaderField("none");
 			oParser.parse(oResponse, oRequest);
-			assert.equal(iCounter, 5, "No message from non-existant 'none' header was added")
+			assert.equal(iCounter, 5, "No message from non-existent 'none' header was added")
 
 
 			// Clean up

@@ -89,7 +89,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the the original language in ISO 639-1 format
+	 * Returns the original language in ISO 639-1 format
 	 *
 	 * @returns {String} Original language
 	 *
@@ -103,7 +103,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the the context in which the change should be applied
+	 * Returns the context in which the change should be applied
 	 *
 	 * @returns {Object[]} context - List of objects determine the context
 	 * @returns {string} selector  - names the key of the context

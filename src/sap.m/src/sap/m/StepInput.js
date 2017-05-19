@@ -44,7 +44,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					max: {type: "float", group: "Data"},
 					/**
 					 * Increases/decreases the value of the input.
-					 * <ul><b>Note:</b> <li>The value of the <code>step</code> property should not contain more digits after the decimal point than what is set to the <code>displayValuePrecision</code> property, as it may lead to an increase/decrease that is not visible for the user. For example, if the <code>value</code> is set to 1.22 and the <code>displayValuePrecision</code> is set to one digit after the decimal, the user will see 1.2. In this case, if the the <code>value</code> of the <code>step</code> property is set to 1.005 and the user selects <code>increase</code>, the resulting value will increase to 1.2261 but the displayed value will remain as 1.2 as it will be rounded to the first digit after the decimal point.</li> <li>Depending on what is set for the <code>value</code> and the <code>displayValuePrecision</code> properties, it is possible the displayed value to be rounded to a higher number, for example to 3.0 when the actual value is 2.99.</li></ul>
+					 * <ul><b>Note:</b> <li>The value of the <code>step</code> property should not contain more digits after the decimal point than what is set to the <code>displayValuePrecision</code> property, as it may lead to an increase/decrease that is not visible for the user. For example, if the <code>value</code> is set to 1.22 and the <code>displayValuePrecision</code> is set to one digit after the decimal, the user will see 1.2. In this case, if the <code>value</code> of the <code>step</code> property is set to 1.005 and the user selects <code>increase</code>, the resulting value will increase to 1.2261 but the displayed value will remain as 1.2 as it will be rounded to the first digit after the decimal point.</li> <li>Depending on what is set for the <code>value</code> and the <code>displayValuePrecision</code> properties, it is possible the displayed value to be rounded to a higher number, for example to 3.0 when the actual value is 2.99.</li></ul>
 					 */
 					step: {type: "float", group: "Data", defaultValue: 1},
 					/**
@@ -376,7 +376,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Sets a new tooltip for this object.
 		 * @link sap.ui.core.Element#setTooltip
-		 * @param sTooltip {string|sap.ui.core.TooltipBase}
+		 * @param {string|sap.ui.core.TooltipBase} sTooltip
 		 */
 		StepInput.prototype.setTooltip = function (sTooltip) {
 			//We need to call the special logic implemented in InputBase.prototype.setTooltip
@@ -932,7 +932,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 		/**
 		 * <code>liveChange</code> handler.
-		 * @param {oEvent} oEvent Event object
+		 * @param {sap.ui.base.Event} oEvent Event object
 		 * @private
 		 */
 		StepInput.prototype._inputLiveChangeHandler = function (oEvent) {

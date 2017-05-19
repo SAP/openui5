@@ -895,7 +895,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			aParsed = oRegExp.exec(sValue);
 			// checks whether the currency code (symbol) is at the beginnig or end of the string
 			if (aParsed[2]) {
-				// currency code is at the begining
+				// currency code is at the beginning
 				sValue = aParsed[2];
 				sCurrencyMeasure = aParsed[1] || undefined;
 			} else {

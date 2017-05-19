@@ -3346,7 +3346,6 @@ sap.ui.define([
 	 *
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
-	 * @param {function} fnError The error callback function
 	 * @param {boolean} bBatch Process success for single/batch request
 	 * @private
 	 */

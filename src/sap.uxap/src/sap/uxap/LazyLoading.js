@@ -37,8 +37,8 @@ sap.ui.define(["jquery.sap.global",	"sap/ui/Device", "sap/ui/base/Metadata", "./
 			this.LAZY_LOADING_DELAY = 200;  //ms.
 
 			//lazy loading fine tuning
-			//An extra non visible subsection will be loaded if the the top of this subsection is at
-			//no more than LAZY_LOADING_EXTRA_PAGE_SIZE * page height from the the bottom of the page.
+			//An extra non visible subsection will be loaded if the top of this subsection is at
+			//no more than LAZY_LOADING_EXTRA_PAGE_SIZE * page height from the bottom of the page.
 			this.LAZY_LOADING_EXTRA_PAGE_SIZE = 0.5;
 
 			//number of subsections which should be preloaded :

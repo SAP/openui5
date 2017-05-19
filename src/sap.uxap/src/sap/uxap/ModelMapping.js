@@ -33,17 +33,17 @@ sap.ui.define(["sap/ui/core/Element", "./library"],
 			properties: {
 
 				/**
-				 * Determines the the external model name.
+				 * Determines the external model name.
 				 */
 				externalModelName: {type: "string", group: "Misc", defaultValue: null},
 
 				/**
-				 * Determines the the internal model name.
+				 * Determines the internal model name.
 				 */
 				internalModelName: {type: "string", group: "Misc", defaultValue: "Model"},
 
 				/**
-				 * Determines the the external path.
+				 * Determines the external path.
 				 */
 				externalPath: {type: "string", group: "Misc", defaultValue: null}
 			}

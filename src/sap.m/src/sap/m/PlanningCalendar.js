@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * and navigation for moving through the intervals using arrows or selecting a specific interval with a picker.
 	 * Custom views can be configured using the <code>views</code> aggregation. If not configured, the following set of default
 	 * built-in views is available - Hours, Days, 1 Week, 1 Month, and Months. Setting a custom view(s) replaces the built-in ones.</li>
-	 * <li>The rows of the <code>PlanningCalendar</code> that contain the the assigned appointments.
+	 * <li>The rows of the <code>PlanningCalendar</code> that contain the assigned appointments.
 	 * They can be configured with the <code>rows</code> aggregation, which is of type
 	 * {@link sap.m.PlanningCalendarRow PlanningCalendarRow}.</li>
 	 * </ul>
@@ -1693,7 +1693,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>press</code> event of the <code>PlanningCalendar</code>'s today button
-	 * @param oEvent {jQuery.Event}
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleTodayPress = function (oEvent) {
@@ -1725,7 +1725,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>startDateChange</code> event of the <code>PlanningCalendar</code>
-	 * @param oEvent {jQuery.Event}
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleStartDateChange = function(oEvent){

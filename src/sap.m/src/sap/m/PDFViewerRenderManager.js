@@ -25,8 +25,6 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 			/**
 			 * Creates factory method that lazily creates dialog and holds the reference on it.
 			 *
-			 * @param oOptions
-			 *
 			 * @private
 			 */
 			PDFViewer.prototype._initPopupControl = function () {

@@ -1036,7 +1036,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	}
 
 	/**
-	 * Adds the given ID reference to the the aria-labelledby attribute.
+	 * Adds the given ID reference to the aria-labelledby attribute.
 	 *
 	 * @param {string} sID The ID reference of an element
 	 * @param {boolean} [bPrepend=false] whether prepend or not

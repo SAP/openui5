@@ -774,7 +774,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 
-	//Refreshs teh delimiters according to the current scroll state
+	//Refreshs the delimiters according to the current scroll state
 	var updateDelimiters = function(oRoadMap){
 		var iRTLFactor = getRTLFactor();
 

@@ -1840,7 +1840,7 @@ if (typeof window.sap.ui !== "object") {
 
 	function handleMobileOrientationResizeChange(evt) {
 		if (evt.type == "resize") {
-			// supress the first invalid resize event fired before orientationchange event while keyboard is open on iPhone 7.0.x
+			// suppress the first invalid resize event fired before orientationchange event while keyboard is open on iPhone 7.0.x
 			// because this event has wrong size infos
 			if (bSkipFirstResize && rInputTagRegex.test(document.activeElement.tagName) && !bOrientationchange) {
 				return;

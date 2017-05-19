@@ -397,7 +397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 				iRequestedLength = Math.min(oCurrentSection.length, iMaxGroupSize - oCurrentSection.startIndex);
 			}
 
-			//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
+			//if we are in the autoexpand mode "bundled", suppress additional requests during the tree traversal
 			//paging is handled differently
 			var bSupressRequest = false;
 			if (oNode.autoExpand >= 0 && this._isRunningInAutoExpand(TreeAutoExpandMode.Bundled)) {
@@ -489,7 +489,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 				if ((oChildNode.autoExpand >= 0 || oChildNode.nodeState.expanded) && this.isGrouped()) {
 					if (!this._mTreeState.collapsed[oChildNode.groupID]) {
 
-						// propagate teh selectAllMode to the childNode, but only if the parent node is flagged and we are still autoexpanding
+						// propagate the selectAllMode to the childNode, but only if the parent node is flagged and we are still autoexpanding
 						if (oChildNode.autoExpand >= 0 && oChildNode.parent.nodeState.selectAllMode && !this._mTreeState.deselected[oChildNode.groupID]) {
 							if (oChildNode.nodeState.selectAllMode === undefined) {
 								oChildNode.nodeState.selectAllMode = true;

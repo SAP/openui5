@@ -755,7 +755,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		// Attach 'itemPropertyChanged' handler, that will re-initiate (specific) dialog content
 		oObject.attachEvent('itemPropertyChanged', function (sAggregationName, oEvent) {
-			/* If the the changed item was a 'sap.m.ViewSettingsItem'
+			/* If the changed item was a 'sap.m.ViewSettingsItem'
 			 * then threat it differently as filter detail item.
 			 * */
 			if (sAggregationName === 'filterItems' &&
@@ -1299,7 +1299,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 					continue;
 				}
 
-				// set the the selected state on the item
+				// set the selected state on the item
 				oFilterItem.setProperty('selected', oSelectedFilterKeys[sKey], true);
 			}
 		}

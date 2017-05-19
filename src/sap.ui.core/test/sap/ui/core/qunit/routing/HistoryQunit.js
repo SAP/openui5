@@ -266,7 +266,7 @@
 		//now we have a history that looks like this : foo - bar(current position) - foo
 		sut._hashChange("bar");
 
-		//now we navigate to fee and we don't know wich direction we took...
+		//now we navigate to fee and we don't know which direction we took...
 		sut._hashChange("foo");
 
 		//Assert

@@ -383,8 +383,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
-	 *        sSearchText="".
 	 * @private
 	 */
 	P13nChartSelectionPanel.prototype._filterModelItemsBySearchText = function() {

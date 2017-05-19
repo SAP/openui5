@@ -1851,7 +1851,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var iMergeOffsetBottomRow = iLength;
 
 		// if the threshold is not explicitly disabled by setting it to 0,
-		// the default threshold should be at the the visibleRowCount.
+		// the default threshold should be at the visibleRowCount.
 		var iThreshold = this.getThreshold();
 		iThreshold = iThreshold ? Math.max(iVisibleRowCount, iThreshold) : 0;
 
@@ -2790,7 +2790,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * notifies the listener which control has been clicked or the contextmenu
 	 * should be openend.
 	 * @param {function} fnFire function to fire the event
-	 * @param {DOMEvent} oEvent event object
+	 * @param {jQuery.Event} oEvent event object
 	 * @return {boolean} cancelled or not
 	 * @private
 	 */
@@ -3426,7 +3426,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Checks whether the event is a touch event.
 	 *
-	 * @param {UIEvent} oEvent The event to check
+	 * @param {jQuery.Event} oEvent The event to check
 	 * @return {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
 	 * @private
 	 */
@@ -3477,7 +3477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Updates the rows aggregation and renders the rows.
-	 * As specified by <code>bUpdateUI</code>, also the the row binding contexts and the table cells are updated.
+	 * As specified by <code>bUpdateUI</code>, also the row binding contexts and the table cells are updated.
 	 *
 	 * @param {int} iNumberOfRows The number of rows to be updated.
 	 * @param {sap.ui.table.TableUtils.RowsUpdateReason|undefined} [sReason=undefined] The reason for updating the rows.
