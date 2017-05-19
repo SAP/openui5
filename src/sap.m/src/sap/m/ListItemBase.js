@@ -194,6 +194,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype.DeleteIconURI = IconPool.getIconURI("sys-cancel");
 	ListItemBase.prototype.NavigationIconURI = IconPool.getIconURI("slim-arrow-right");
 
+	// defines the root tag name for rendering purposes
+	ListItemBase.prototype.TagName = "li";
+
 	// internal active state of the listitem
 	ListItemBase.prototype.init = function() {
 		this._active = false;
