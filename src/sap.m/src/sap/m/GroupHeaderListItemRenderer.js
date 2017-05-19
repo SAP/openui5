@@ -13,14 +13,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 */
 	var GroupHeaderListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 
-	GroupHeaderListItemRenderer.openItemTag = function(rm, oLI) {
-		rm.write(oLI.getTable() ? "<tr" : "<li");
-	};
-
-	GroupHeaderListItemRenderer.closeItemTag = function(rm, oLI) {
-		rm.write(oLI.getTable() ? "</tr>" : "</li>");
-	};
-
 	GroupHeaderListItemRenderer.renderType = function(rm, oLI) {
 		var oTable = oLI.getTable();
 

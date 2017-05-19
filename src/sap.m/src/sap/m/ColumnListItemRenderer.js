@@ -12,15 +12,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	 */
 	var ColumnListItemRenderer = Renderer.extend(ListItemBaseRenderer);
 
-	// determines whether given control is a textual control or not
-	// TODO: Change with a better way (e.g. Text Marker Interface)
-	ColumnListItemRenderer.isTextualControl = function(oControl) {
-		var mConstructors = [sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Title];
-		return mConstructors.some(function(fnConstructor) {
-			return fnConstructor && oControl instanceof fnConstructor;
-		});
-	};
-
 	ColumnListItemRenderer.render = function(rm, oLI) {
 		var oTable = oLI.getTable();
 		if (!oTable) {
@@ -32,14 +23,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		if (oLI.getVisible() && oTable.hasPopin()) {
 			this.renderPopin(rm, oLI, oTable);
 		}
-	};
-
-	ColumnListItemRenderer.openItemTag = function(rm, oLI) {
-		rm.write("<tr");
-	};
-
-	ColumnListItemRenderer.closeItemTag = function(rm, oLI) {
-		rm.write("</tr>");
 	};
 
 	// render type highlight always within a cell
@@ -200,9 +183,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		}
 
 		/* add the header as an aria-labelled by association for the cells */
+		/* only set the header text to the aria-labelled association if the header is a textual control and is visible */
 		if (oHeader &&
+			oHeader.getText &&
 			oCell.getAriaLabelledBy &&
-			this.isTextualControl(oHeader)) {
+			oHeader.getVisible()) {
 
 			// suppress the invalidation during the rendering
 			oCell.addAssociation("ariaLabelledBy", oHeader, true);

@@ -66,6 +66,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 		}
 	});
 
+	// defines tag name
+	ColumnListItem.prototype.TagName = "tr";
+
 	ColumnListItem.prototype.init = function() {
 		ListItemBase.prototype.init.call(this);
 		this._bNeedsTypeColumn = false;
