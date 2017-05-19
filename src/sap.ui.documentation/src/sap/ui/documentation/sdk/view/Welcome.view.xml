@@ -49,7 +49,8 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternBContrast">
+						backgroundColorSet="5"
+						backgroundColorIndex="4">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
@@ -76,7 +77,7 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternE">
+						class="demokitInitialPagesColorPatternC">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -126,11 +127,11 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternC">
+						class="demokitInitialPagesColorPatternB">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
-								href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
+								href="#/topic/23cfd955f58142389fa7c9097e11559c"
 								text="Enterprise-Ready Web Toolkit"
 								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
@@ -166,7 +167,7 @@
 
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternB">
+						class="demokitInitialPagesColorPatternE">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
@@ -241,9 +242,8 @@
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
-								href="http://TODO"
+								href="#/topic/91f346786f4d1014b6dd926db0e91070"
 								text="SAPUI5 On-Premise"
-								target="_blank"
 								titleStyle="H2"
 								class="sapUiSmallMarginBottom"/>
 						<Text
