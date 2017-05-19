@@ -646,6 +646,35 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		}
 	};
 
+	/**
+	 * Normalizes the given canonical key.
+	 *
+	 * Although keys contained in OData response must be canonical, there are
+	 * minor differences (like capitalization of suffixes for Decimal, Double,
+	 * Float) which can differ and cause equality checks to fail.
+	 *
+	 * @param {string} sKey The canonical key of an entity
+	 * @returns {string} Normalized key of the entry
+	 * @protected
+	 */
+	// Define regular expression and function outside function to avoid instatiation on every call
+	var rNormalizeString = /([(=,])('.*?')([,)])/g,
+		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
+		rNormalizeBinary = /([(=,])(X')/g,
+		fnNormalizeString = function(value, p1, p2, p3) {
+			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
+		},
+		fnNormalizeCase = function(value) {
+			return value.toLowerCase();
+		},
+		fnNormalizeBinary = function(value, p1) {
+			return p1 + "binary'";
+		};
+
+	ODataUtils._normalizeKey = function(sKey) {
+		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
+	};
+
 	return ODataUtils;
 
 }, /* bExport= */ true);
