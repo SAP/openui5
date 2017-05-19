@@ -67,6 +67,7 @@ sap.ui.define([
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
 						 * A custom error message that is displayed when the PDF file cannot be loaded.
+						 * @deprecated since version 1.50.0
 						 */
 						errorMessage: {type: "string", group: "Misc", defaultValue: null},
 						/**
@@ -77,6 +78,7 @@ sap.ui.define([
 						/**
 						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
 						 * is set to open in a popup dialog.
+						 * @deprecated since version 1.50.0
 						 */
 						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null},
 
@@ -190,8 +192,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param sWidth
-		 *
+		 * Sets the width of the PDFViewer.
+		 * @param {sap.ui.core.CSSSize} sWidth The width of the PDFViewer as CSS size.
+		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
 		 * @public
 		 */
 		PDFViewer.prototype.setWidth = function (sWidth) {
@@ -206,8 +209,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param sHeight
-		 *
+		 * Sets the height of the PDFViewer.
+		 * @param {sap.ui.core.CSSSize} sHeight The height of the PDFViewer as CSS size.
+		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
 		 * @public
 		 */
 		PDFViewer.prototype.setHeight = function (sHeight) {
