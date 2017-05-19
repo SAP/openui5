@@ -153,7 +153,7 @@
 			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
 		}
 
-		aLabels.push(oColumn.getId());
+		aLabels.push(oColumn.getId() + "-inner");
 
 		if (iIndex == 0) {
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
@@ -201,7 +201,7 @@
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = oCell.getIndex();
 
-		aLabels.push(oColumn.getId());
+		aLabels.push(oColumn.getId() + "-inner");
 		if (iIndex == 0) {
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
 		}

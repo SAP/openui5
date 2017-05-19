@@ -699,7 +699,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			return;
 		}
 
-		var $cell = this.$()
+		this.$()
 			.parents(".sapUiTableCHT")
 			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]') // all td cells in this column header
 			.filter(":not([colspan]):visible") // only visible without a colspan
@@ -709,7 +709,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)
 			.toggleClass("sapUiTableColSortedD", bSorted && this.getSortOrder() === SortOrder.Descending);
-		oTable._getAccExtension().updateAriaStateOfColumn(this, $cell);
+		oTable._getAccExtension().updateAriaStateOfColumn(this);
 	};
 
 	Column.prototype._renderSortIcon = function() {
