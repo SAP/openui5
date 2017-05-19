@@ -275,7 +275,7 @@
 			{
 				"id": "26e0a240073f8f570609b4ff641ffd04a42d3b1d",
 				"type": "FEATURE",
-				"text": "openui5.m.Support: qUnit implementation",
+				"text": "openui5.m.Support: QUnit implementation",
 				"references": []
 			},
 			{
@@ -1349,7 +1349,7 @@
 			{
 				"id": "56483dc1e809f04b6630a19043693e1caaf3110f",
 				"type": "FIX",
-				"text": "sap.m.ListBase: qUnit for focus retain after.",
+				"text": "sap.m.ListBase: QUnit for focus retain after.",
 				"references": []
 			},
 			{

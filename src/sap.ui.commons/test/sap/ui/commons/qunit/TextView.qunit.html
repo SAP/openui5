@@ -24,12 +24,12 @@
 	<script>
 
 		var oTV1 = new sap.ui.commons.TextView("TV1");
-		oTV1.setText("This is a simple Text for the qUnit Test.");
+		oTV1.setText("This is a simple Text for the QUnit Test.");
 
 		sap.ui.setRoot("uiArea1", oTV1);
 
 		var oTV2 = new sap.ui.commons.TextView("TV2");
-		oTV2.setText("This is a multiline long Text to test wrapping in the qUnit test.\n This is the second line. \n This is the third line.");
+		oTV2.setText("This is a multiline Text to test wrapping in the QUnit test.\n This is the second line. \n This is the third line.");
 		oTV2.setWidth("165px");
 
 		sap.ui.setRoot("uiArea2", oTV2);
@@ -64,7 +64,7 @@
 		QUnit.test("Text Output", function(assert) {
 			// check if result is in HTML
 			var oTVDom = jQuery.sap.domById('TV1');
-			assert.equal(oTVDom.innerHTML,"This is a simple Text for the qUnit Test.", "Displayed Text");
+			assert.equal(oTVDom.innerHTML,"This is a simple Text for the QUnit Test.", "Displayed Text");
 
 			// is text escaped
 			oTV1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");

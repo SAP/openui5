@@ -1224,7 +1224,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._registerResizeHandler = function () {
 			var _$srollSontent = this.$("scroll");
 
-			//The content have to have explicit size so the scroll will work when the user's content is larger then the available space.
+			//The content have to have explicit size so the scroll will work when the user's content is larger than the available space.
 			//This can be removed and the layout change to flex when the support for IE9 is dropped
 			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
 			Device.resize.attachHandler(this._onResize, this);

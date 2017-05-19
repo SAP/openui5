@@ -221,7 +221,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handler for theme changing
 	 *
-	 * @param {jQuery.Event} oEvent  oEvent The event object passed to the event handler.
+	 * @param {jQuery.Event} oEvent The event object passed to the event handler.
 	 */
 	RatingIndicator.prototype.onThemeChanged = function (oEvent) {
 		this.invalidate(); // triggers a re-rendering

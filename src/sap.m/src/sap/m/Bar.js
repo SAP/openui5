@@ -351,7 +351,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './library', 'sap/ui/c
 
 		} else {
 
-			// IE has a rounding issue with JQuery.outerWidth
+			// IE has a rounding issue with jQuery.outerWidth
 			var oContainerChildrenStyle;
 
 			for (i = 0; i < aContainerChildren.length; i++) {

@@ -688,7 +688,7 @@
 			{
 				"id": "1f46a9722ac357c31638eab836c4437cd7811ba2",
 				"type": "FIX",
-				"text": "m.Page: Start in qUnit Async-Test Moved",
+				"text": "m.Page: Start in QUnit Async-Test Moved",
 				"references": []
 			},
 			{
@@ -1123,7 +1123,7 @@
 			{
 				"id": "64348792bece6a10a32ba4119ac9bc9de36380de",
 				"type": "FIX",
-				"text": "openUI5 templates app - nav back fixes",
+				"text": "OpenUI5 templates app - nav back fixes",
 				"references": []
 			},
 			{

@@ -227,7 +227,7 @@
 			{
 				"id": "23be6d6248779b79b514c775f816afb3777010bc",
 				"type": "FIX",
-				"text": "Enabled sap-ui-core-nojQuery.js to work with JQueryFilter",
+				"text": "Enabled sap-ui-core-nojQuery.js to work with jQueryFilter",
 				"references": []
 			},
 			{

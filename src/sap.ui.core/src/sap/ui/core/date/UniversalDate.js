@@ -236,7 +236,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 			oFirstDay.setUTCDate(oFirstDay.getUTCDate() - 1);
 			iDayCount--;
 		}
-		// If less then min days are left, first week is one week later
+		// If less than min days are left, first week is one week later
 		if (iDayCount < iMinDays) {
 			oFirstDay.setUTCDate(oFirstDay.getUTCDate() + 7);
 		}
