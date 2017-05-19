@@ -3956,6 +3956,10 @@ sap.ui.define([
 	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
 	 * refers to the default model.
 	 *
+	 * A value of<code>null</code> for <code>oContext</code> hides the parent context. The parent context will
+	 * no longer be propagated to aggregated child controls. A value of <code>undefined</code> removes a currently
+	 * active context or a <code>null</code> context and the parent context gets visible and propagated again.
+	 *
 	 * <b>Note:</b> A ManagedObject inherits binding contexts from the Core only when it is a descendant of a UIArea.
 	 *
 	 * @param {sap.ui.model.Context} oContext the new binding context for this object
@@ -3968,7 +3972,11 @@ sap.ui.define([
 		jQuery.sap.assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 		var oOldContext = this.oBindingContexts[sModelName];
 		if (Context.hasChanged(oOldContext, oContext)) {
-			this.oBindingContexts[sModelName] = oContext;
+			if (oContext === undefined) {
+				delete this.oBindingContexts[sModelName];
+			} else {
+				this.oBindingContexts[sModelName] = oContext;
+			}
 			this.updateBindingContext(false, sModelName);
 			this.propagateProperties(sModelName);
 			this.fireModelContextChange();
@@ -3977,6 +3985,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Set the ObjectBinding context for this ManagedObject for the model with the given name. Only set internally
+	 * from a ContextBinding.
+	 *
+	 * A value of<code>null</code> for <code>oContext</code> hides the parent context. The parent context will
+	 * no longer be propagated to aggregated child controls. A value of <code>undefined</code> removes a currently
+	 * active context or a <code>null</code> context and the parent context gets visible and propagated again.
+	 *
+	 * @param {sap.ui.model.Context} oContext the new ObjectBinding context for this object
+	 * @param {string} [sModelName] the name of the model to set the context for or <code>undefined</code>
 	 * @private
 	 */
 	ManagedObject.prototype.setElementBindingContext = function(oContext, sModelName){
@@ -3984,7 +4001,11 @@ sap.ui.define([
 		var oOldContext = this.mElementBindingContexts[sModelName];
 
 		if (Context.hasChanged(oOldContext, oContext)) {
-			this.mElementBindingContexts[sModelName] = oContext;
+			if (oContext === undefined) {
+				delete this.mElementBindingContexts[sModelName];
+			} else {
+				this.mElementBindingContexts[sModelName] = oContext;
+			}
 			this.updateBindingContext(true, sModelName);
 			this.propagateProperties(sModelName);
 			this.fireModelContextChange();
@@ -4106,6 +4127,8 @@ sap.ui.define([
 			return oElementBindingContext;
 		} else if (oElementBindingContext && oModel && oElementBindingContext.getModel() === oModel) {
 			return oElementBindingContext;
+		} else if (oElementBindingContext === null) {
+			return oElementBindingContext;
 		} else {
 			return this._getBindingContext(sModelName);
 		}
@@ -4124,6 +4147,8 @@ sap.ui.define([
 			return this.oBindingContexts[sModelName];
 		} else if (oContext && oModel && oContext.getModel() === oModel) {
 			return this.oBindingContexts[sModelName];
+		} else if (oContext === null) {
+			return oContext;
 		} else if (oPropagatedContext && oModel && oPropagatedContext.getModel() !== oModel) {
 			return undefined;
 		} else {
@@ -4325,6 +4350,9 @@ sap.ui.define([
 			bNoOwnElementContexts = jQuery.isEmptyObject(this.mElementBindingContexts);
 
 		function merge(empty,o1,o2,o3) {
+			// jQuery.extend ignores 'undefined' values but not 'null' values.
+			// So 'null' values get propagated and block a parent propagation.
+			// 'undefined' values are ignored and therefore not propagated.
 			return empty ? o1 : jQuery.extend({}, o1, o2, o3);
 		}
 

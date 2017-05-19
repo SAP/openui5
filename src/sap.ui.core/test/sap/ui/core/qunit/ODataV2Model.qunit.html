@@ -1487,7 +1487,7 @@
 			ok(!oModel.oData["Products(3)"][''], "no empty property created");
 			oLabel.getElementBinding().detachDataReceived(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			oPanel.unbindElement();
 			done();
 		}
@@ -1508,7 +1508,7 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -1527,7 +1527,7 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -1546,14 +1546,14 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 		}
 		var fnHandler2 = function() {
 			assert.ok(!oLabel.getBindingContext(), "no bindingContext");
 			assert.ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
 			assert.ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
 			oLabel.getElementBinding().detachChange(fnHandler2);
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			oLabel.unbindElement();
 			done();
 		}
@@ -1568,11 +1568,11 @@
 		oLabel.bindElement("Category");
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
-		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == null, "Context should be null until the data from bindElement is loaded");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			oLabel.unbindElement();
 			done();
 		}
@@ -1590,7 +1590,7 @@
 		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			done();
@@ -1620,7 +1620,7 @@
 			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -1649,7 +1649,7 @@
 			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -1681,7 +1681,7 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(7)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 	});
@@ -1836,7 +1836,7 @@
 		oLabel.bindElement("/Categories(2)", {batchGroupId:"test"});
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
 			done();
