@@ -844,19 +844,65 @@
 	});
 
 	QUnit.test("No fixed column used, when table is too small.", function(assert) {
+		var done = assert.async();
+		var fResolve;
+		var iActualRenderCount = 0;
+		var iExpectedRenderCount;
+		var iAfterRenderingTimeoutId = null;
+		var bFixedColumnsIgnored;
+
 		oTable.setFixedColumnCount(3);
-		oTable.setWidth("400px");
 
-		sap.ui.getCore().applyChanges();
+		oTable.addEventDelegate({
+			onAfterRendering: assertFixedColumns
+		});
 
-		assert.equal(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
-		assert.equal(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
+		function _test(iWidth, _iExpectedRenderCount, bExpectedFixedColumnsIgnored) {
+			return new Promise(function(resolve) {
+				iActualRenderCount = 0;
+				iExpectedRenderCount = _iExpectedRenderCount;
+				iAfterRenderingTimeoutId = null;
+				bFixedColumnsIgnored = bExpectedFixedColumnsIgnored;
+				oTable.setWidth(iWidth + "px");
+				sap.ui.getCore().applyChanges();
+				fResolve = resolve;
+			});
+		}
 
-		oTable.setWidth("500px");
+		function assertFixedColumns() {
+			iActualRenderCount++;
 
-		sap.ui.getCore().applyChanges();
+			if (iAfterRenderingTimeoutId === null) {
+				iAfterRenderingTimeoutId = window.setTimeout(function() {
+					assert.strictEqual(iActualRenderCount, iExpectedRenderCount, "Number of renderings should be: " + iExpectedRenderCount);
 
-		assert.equal(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
+					if (bFixedColumnsIgnored) {
+						assert.ok(oTable._bIgnoreFixedColumnCount, "Fixed columns are ignored");
+						assert.strictEqual(oTable.getFixedColumnCount(), 0, "getFixedColumnCount returns 0");
+						assert.strictEqual(oTable.getProperty("fixedColumnCount"), 3, "The value of the fixedColumnCount property is 3");
+					} else {
+						assert.ok(!oTable._bIgnoreFixedColumnCount, "Fixed columns are not ignored");
+						assert.strictEqual(oTable.getFixedColumnCount(), 3, "getFixedColumnCount returns 3");
+					}
+
+					fResolve();
+				}, 100)
+			}
+		}
+
+		assert.expect(18);
+
+		_test(475, 1, false).then(function() {
+			return _test(474, 2, true);
+		}).then(function() {
+			return _test(450, 1, true);
+		}).then(function() {
+			return _test(400, 1, true);
+		}).then(function() {
+			return _test(475, 2, false);
+		}).then(function() {
+			done();
+		});
 	});
 
 	QUnit.module("API assertions", {
