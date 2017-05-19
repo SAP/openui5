@@ -2418,7 +2418,7 @@ sap.ui.require([
 			condition : new Filter({
 				filters : [
 					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
-					new Filter("soitem/SOITEM_2_SCHDL", FilterOperator.Any)
+					new Filter({operator : FilterOperator.Any, path : "soitem/SOITEM_2_SCHDL"})
 				]
 			}),
 			operator : FilterOperator.Any,
