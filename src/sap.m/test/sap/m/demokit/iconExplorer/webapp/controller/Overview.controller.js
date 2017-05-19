@@ -301,8 +301,7 @@ sap.ui.define([
 		 * @param {string} copyText the text string that has to be copied to the clipboard
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
-			var $temp = $("<input>"),
-				oResourceBundle = this.getResourceBundle();
+			var $temp = $("<input>");
 
 			try {
 				$("body").append($temp);

@@ -148,7 +148,7 @@ sap.ui.define([
 					getObject: function() {
 						return {
 							name: "iconName"
-						}
+						};
 					}
 				};
 			}
@@ -200,13 +200,14 @@ sap.ui.define([
 			sIcon = "icon",
 			oInput = new sap.m.Input(sInputId, {
 				value: sTestString
-			}),
-			oInputStub = sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput),
-			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
-				getUnicode: function() {
-					return sIcon;
-				}
 			});
+
+		sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput);
+		sinon.stub(this.oOverviewController, "getModel").returns({
+			getUnicode: function() {
+				return sIcon;
+			}
+		});
 		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
 
 		// Act
@@ -218,13 +219,15 @@ sap.ui.define([
 
 		// Clean up
 		oInput.destroy();
+		this.oOverviewController.byId.restore();
+		this.oOverviewController.getModel.restore();
+		this.oOverviewController._copyStringToClipboard.restore();
 	});
 
 	QUnit.test("The formatter for the unicode copy field cuts off the unnessesary characters", function (assert) {
 		// Arrange
 		var sRawUnicodeString = "&#xe000;",
 			sCleanUnicodeString = "xe000",
-			sResult,
 			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
 				getUnicodeHTML: function() {
 					return sRawUnicodeString;
@@ -242,8 +245,8 @@ sap.ui.define([
 		formatter.getUnicodeTextByName.bind(this.oOverviewController)("iconName");
 
 		// Clean up
-		this.oOverviewController.getModel.restore();
-		this.oOverviewController.getResourceBundle.restore();
+		oGetModelStub.restore();
+		oResourceBundlelStub.restore();
 	});
 
 	QUnit.module("Overview controller: searching by unicode filter factory tests", {

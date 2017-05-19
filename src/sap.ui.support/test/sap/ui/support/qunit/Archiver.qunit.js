@@ -1,3 +1,5 @@
+/*global QUnit,sinon*/
+
 sap.ui.require([
 	'sap/ui/support/supportRules/report/Archiver'],
 	function(Archiver) {

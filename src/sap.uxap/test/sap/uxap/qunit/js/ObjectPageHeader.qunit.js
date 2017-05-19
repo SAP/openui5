@@ -84,9 +84,9 @@
 
 		try {
 			oHeader.setObjectSubtitle("Updated");
-			ok(true, "no error upon update");
+			assert.ok(true, "no error upon update");
 		} catch (e) {
-			ok(false, "Expected to succeed");
+			assert.ok(false, "Expected to succeed");
 		}
 
 		//restore

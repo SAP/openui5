@@ -39,7 +39,7 @@ sap.ui.define([
 			var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase()),
 				sFormattedText;
 			sUnicode = sUnicode.substring(2, sUnicode.length - 1);
-			sFormattedText = this.getResourceBundle().getText("previewInfoUnicodeWithParams", [sUnicode])
+			sFormattedText = this.getResourceBundle().getText("previewInfoUnicodeWithParams", [sUnicode]);
 			return sFormattedText;
 		},
 
