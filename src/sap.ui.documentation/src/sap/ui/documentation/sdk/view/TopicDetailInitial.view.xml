@@ -29,11 +29,6 @@
 							text="Documentation"
 							width="100%"
 							textAlign="Left"/>
-					<Text
-							class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderSubText"
-							text="Extend your knowledge base"
-							width="100%"
-							textAlign="Left"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
@@ -68,7 +63,7 @@
 							class="demokitInitialPagesWhiteText"
 							titleStyle="H1"/>
 					<Text
-							text="Set Up and Tutorials"
+							text="Set up and tutorials"
 							class="demokitInitialPagesWhiteText"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
