@@ -444,6 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		}
 		rm.write("><div");
 		rm.addClass("sapUiTableColCell");
+		rm.writeAttribute("id", sHeaderId + "-inner");
 		rm.writeClasses();
 		var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
 		if (sHAlign) {

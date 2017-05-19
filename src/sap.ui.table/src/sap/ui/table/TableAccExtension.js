@@ -456,7 +456,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				sText = ExtensionHelper.getColumnTooltip(oColumn),
 				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]),
 				oHeaderInfo = TableUtils.getColumnHeaderCellInfo($Cell),
-				iSpan = oHeaderInfo ? oHeaderInfo.span : 1;
+				iSpan = oHeaderInfo ? oHeaderInfo.span : 1,
+				bIsMainHeader = oColumn && oColumn.getId() === $Cell.attr("id");
 
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
@@ -466,6 +467,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 			if (sText) {
 				aLabels.push(oTable.getId() + "-cellacc");
+			}
+
+			if (bIsMainHeader && oColumn && oColumn.getSorted()) {
+				aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+			}
+			if (bIsMainHeader && oColumn && oColumn.getFiltered()) {
+				aLabels.push(oTable.getId() + "-ariacolfiltered");
+			}
+
+			if ($Cell.attr("aria-haspopup") === "true") {
+				aLabels.push(oTable.getId() + "-ariacolmenu");
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -624,21 +636,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 						var iIdx = jQuery.inArray(mParams.headerId, aHeaders);
 						aLabels = iIdx > 0 ? aHeaders.slice(0, iIdx + 1) : [mParams.headerId];
 					}
+					for (var i = 0; i < aLabels.length; i++) {
+						aLabels[i] = aLabels[i] + "-inner";
+					}
 					mAttributes["aria-labelledby"] = aLabels;
 
 					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
-					if (bIsMainHeader && oColumn.getSorted()) {
+
+					if (bIsMainHeader && oColumn && oColumn.getSorted()) {
 						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
-						mAttributes["aria-labelledby"].push(sTableId + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
 					}
-					if (bIsMainHeader && oColumn.getFiltered()) {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
-					}
+
 					if (oColumn && oColumn._menuHasItems()) {
 						mAttributes["aria-haspopup"] = "true";
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolmenu");
 					}
 					break;
 
