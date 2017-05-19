@@ -649,20 +649,44 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
 	 * @public
-	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
+	 * @name sap.ui.table.TreeTable#getEnableGrouping
 	 * @function
 	 */
 
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
+	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
+	 * @see {@link sap.ui.table.TreeTable#setUseGroupMode}
+	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
 	 * @public
 	 */
-	TreeTable.prototype.setEnableGrouping = function(bEnableGrouping) {
-		jQuery.sap.log.warning("The property enableGrouping is not supported by control sap.ui.table.TreeTable");
+	TreeTable.prototype.setEnableGrouping = function() {
+		jQuery.sap.log.warning("The property enableGrouping is not supported by the sap.ui.table.TreeTable control");
+		return this;
+	};
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @public
+	 * @name sap.ui.table.TreeTable#getGroupBy
+	 * @function
+	 */
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @public
+	 */
+	TreeTable.prototype.setGroupBy = function() {
+		jQuery.sap.log.warning("The groupBy association is not supported by the sap.ui.table.TreeTable control");
 		return this;
 	};
 
