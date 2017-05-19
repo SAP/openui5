@@ -584,22 +584,12 @@
 		TableUtils.Menu.applyColumnHeaderCellMenu(oTable, 0);
 		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
 
-		// Invalid parameters: The cell menu will not be removed.
-		TableUtils.Menu.removeColumnHeaderCellMenu();
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable, -1);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable, iNumberOfCols);
-		this.assertColumnHeaderCellMenuExists(assert, $Column, true);
-
 		// Remove the cell menu.
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable, 0);
+		TableUtils.Menu.removeColumnHeaderCellMenu(oTable);
 		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
 
 		// When a column header cell has no cell menu, removing the cell menu has no effect.
-		TableUtils.Menu.removeColumnHeaderCellMenu(oTable, 0);
+		TableUtils.Menu.removeColumnHeaderCellMenu(oTable);
 		this.assertColumnHeaderCellMenuExists(assert, $Column, false);
 	});
 
