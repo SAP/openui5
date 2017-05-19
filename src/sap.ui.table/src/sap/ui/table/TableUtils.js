@@ -3,13 +3,23 @@
  */
 
 // Provides helper sap.ui.table.TableUtils.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './TableGrouping', './TableColumnUtils', './TableMenuUtils', 'sap/ui/Device', './library'],
-	function(jQuery, Control, ResizeHandler, TableGrouping, TableColumnUtils, TableMenuUtils, Device, library) {
+sap.ui.define([
+	"jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/MessageType", "sap/ui/Device", "sap/ui/model/ChangeReason",
+	"./TableGrouping", "./TableColumnUtils", "./TableMenuUtils", "./library"
+], function(jQuery, Control, ResizeHandler, MessageType, Device, ChangeReason, TableGrouping, TableColumnUtils, TableMenuUtils, library) {
 	"use strict";
 
-	// shortcuts
-	var SelectionBehavior = library.SelectionBehavior,
-		SelectionMode = library.SelectionMode;
+	// Shortcuts
+	var SelectionBehavior = library.SelectionBehavior;
+	var SelectionMode = library.SelectionMode;
+
+	/**
+	 * The border width of a row in pixels.
+	 *
+	 * @type {int}
+	 * @constant
+	 */
+	var ROW_BORDER_WIDTH = 1;
 
 	/*
 	 * @see TableUtils#getParentRowActionCell
@@ -56,12 +66,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
 		},
 
-		CONTENT_DENSITY_ROW_HEIGHTS : {
-			sapUiSizeCondensed : 24,
-			sapUiSizeCompact : 32,
-			sapUiSizeCozy : 48,
-			undefined : 32
+		/**
+		 * The default row heights in pixels for the different content densities.
+		 *
+		 * @type {DefaultRowHeight}
+		 * @static
+		 * @constant
+		 * @typedef {Object} DefaultRowHeight
+		 * @property {int} sapUiSizeCondensed - The default height of a row in pixels in condensed content density.
+		 * @property {int} sapUiSizeCompact - The default height of a row in pixels in compact content density.
+		 * @property {int} sapUiSizeCozy - The default height of a row in pixels in cozy content density.
+		 * @property {int} undefined - The default height of a row in pixels in case no content density information is available.
+		 */
+		DEFAULT_ROW_HEIGHT: {
+			sapUiSizeCondensed : 24 + ROW_BORDER_WIDTH,
+			sapUiSizeCompact : 32 + ROW_BORDER_WIDTH,
+			sapUiSizeCozy : 48 + ROW_BORDER_WIDTH,
+			undefined : 32 + ROW_BORDER_WIDTH
 		},
+
+		/**
+		 * Reason for updates of the rows. Inherits from {@link sap.ui.model.ChangeReason}.
+		 *
+		 * @type {RowsUpdateReason}
+		 * @static
+		 * @constant
+		 * @typedef {Object} RowsUpdateReason
+		 * @property {string} Sort - {@link sap.ui.model.ChangeReason.Sort}
+		 * @property {string} Filter - {@link sap.ui.model.ChangeReason.Filter}
+		 * @property {string} Change - {@link sap.ui.model.ChangeReason.Change}
+		 * @property {string} Context - {@link sap.ui.model.ChangeReason.Context}
+		 * @property {string} Refresh - {@link sap.ui.model.ChangeReason.Refresh}
+		 * @property {string} Expand - {@link sap.ui.model.ChangeReason.Expand}
+		 * @property {string} Collapse - {@link sap.ui.model.ChangeReason.Collapse}
+		 * @property {string} Remove - {@link sap.ui.model.ChangeReason.Remove}
+		 * @property {string} Add - {@link sap.ui.model.ChangeReason.Add}
+		 * @property {string} Binding - {@link sap.ui.model.ChangeReason.Binding}
+		 * @property {string} Render - The table has been rendered.
+		 * @property {string} VerticalScroll - The table has been scrolled vertically.
+		 * @property {string} FirstVisibleRowChange - The first visible row has been changed by API call.
+		 * @property {string} Unbind - The row binding has been removed.
+		 * @property {string} Animation - An animation has been performed.
+		 * @property {string} Resize - The table has been resized.
+		 * @property {string} Unknown - The reason for the update is unknown.
+		 */
+		RowsUpdateReason: (function() {
+			var mUpdateRowsReason = {};
+
+			for (var sProperty in ChangeReason) {
+				mUpdateRowsReason[sProperty] = ChangeReason[sProperty];
+			}
+
+			mUpdateRowsReason.Render = "Render";
+			mUpdateRowsReason.VerticalScroll = "VerticalScroll";
+			mUpdateRowsReason.FirstVisibleRowChange = "FirstVisibleRowChange";
+			mUpdateRowsReason.Unbind = "Unbind";
+			mUpdateRowsReason.Animation = "Animation";
+			mUpdateRowsReason.Resize = "Resize";
+			mUpdateRowsReason.Unknown = "Unknown";
+
+			return mUpdateRowsReason;
+		})(),
 
 		/**
 		 * Returns whether the table has a row header or not
@@ -73,6 +138,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			return (oTable.getSelectionMode() !== SelectionMode.None
 					&& oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly)
 					|| TableGrouping.isGroupMode(oTable);
+		},
+
+		/**
+		 * Returns whether the table has row highlights.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {boolean} Returns <code>true</code>, if the table has row highlights
+		 * @private
+		 */
+		hasRowHighlights: function(oTable) {
+			if (oTable == null) {
+				return false;
+			}
+
+			var oRowSettingsTemplate = oTable.getRowSettingsTemplate();
+
+			if (oRowSettingsTemplate == null) {
+				return false;
+			}
+
+			var sHighlight = oRowSettingsTemplate.getHighlight();
+
+			return oRowSettingsTemplate.isBound("highlight")
+				   || (sHighlight != null && sHighlight !== MessageType.None);
 		},
 
 		/**
@@ -93,7 +182,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		hasRowActions : function(oTable) {
-			return !!oTable.getRowActionTemplate() && TableUtils.getRowActionCount(oTable) > 0;
+			var oRowActionTemplate = oTable.getRowActionTemplate();
+
+			return oRowActionTemplate != null
+				   && (oRowActionTemplate.isBound("visible") || oRowActionTemplate.getVisible())
+				   && TableUtils.getRowActionCount(oTable) > 0;
 		},
 
 		/**
@@ -145,16 +238,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				return false;
 			}
 
+			return !TableUtils.hasData(oTable);
+		},
+
+		/**
+		 * Returns whether the table currently has data.
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @return {boolean}
+		 * @private
+		 */
+		hasData : function(oTable) {
 			var oBinding = oTable.getBinding("rows"),
-				iBindingLength = oTable._getRowCount(),
-				bHasData = oBinding ? !!iBindingLength : false;
+			iBindingLength = oTable._getRowCount(),
+			bHasData = oBinding ? !!iBindingLength : false;
 
 			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
 				var bHasTotal = oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 				bHasData = (bHasTotal && iBindingLength < 2) || (!bHasTotal && iBindingLength === 0) ? false : true;
 			}
 
-			return !bHasData;
+			return bHasData;
+		},
+
+		/**
+		 * Returns whether the busy indicator is visible. It is considered as visible when the busy indicator element exists in the DOM as
+		 * a child of the table element. It is not checked whether the indicator is actually visible on the screen.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table
+		 * @returns {boolean} Returns <code>true</code>, if the busy indicator is visible.
+		 * @private
+		 */
+		isBusyIndicatorVisible: function(oTable) {
+			if (oTable == null || oTable.getDomRef() == null) {
+				return false;
+			}
+
+			return oTable.getDomRef().querySelector(".sapUiLocalBusyIndicator") != null;
 		},
 
 		/**

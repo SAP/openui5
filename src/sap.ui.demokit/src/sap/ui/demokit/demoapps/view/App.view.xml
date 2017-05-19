@@ -15,7 +15,7 @@
 					background="Light">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
-							class="sapUiContentPadding">
+							class="gradient sapUiContentPadding">
 							<l:Grid
 								hSpacing="0"
 								defaultSpan="L6 M6 S12">

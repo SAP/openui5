@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Encode the string for inclusion into an URL parameter
+	 * Encode the string for inclusion into a URL parameter
 	 *
 	 * @param {string} sString The string to be escaped
 	 * @return The escaped string
@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/**
-	 * Validates an URL. Check if it's not a script or other security issue.
+	 * Validates a URL. Check if it's not a script or other security issue.
 	 *
 	 * Split URL into components and check for allowed characters according to RFC 3986:
 	 *

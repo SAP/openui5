@@ -253,8 +253,8 @@
 				assert.equal(oColorPicker.oGreenField.getValue(), "255" , "GREEN not changed (default value): 255");
 				assert.equal(oColorPicker.oBlueField.getValue(), "255" , "BLUE not changed (default value): 255");
 				assert.equal(oColorPicker.oHueField.getValue(), "180" , "HUE changed from 0 -> 180: ");
-				assert.equal(oColorPicker.oSatField.getValue(), "52" , "SATURATION changed from 0 -> 52: ");
-				assert.equal(oColorPicker.oLitField.getValue(), "100" , "LIGHTNESS not changed (default value): 100");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION changed from 0 -> 100: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "74" , "LIGHTNESS changed from 0 -> 74");
 				assert.equal(oColorPicker.oHexField.getValue(), "7bffff" , "HEX changed from ffffff -> 7bffff: ");
 
 				oColorPicker.destroy();
@@ -317,8 +317,8 @@
 				assert.equal(oColorPicker.oGreenField.getValue(), "177" , "GREEN changed from 255 -> 177: ");
 				assert.equal(oColorPicker.oBlueField.getValue(), "255" , "BLUE manually changed to 260 => set to 255: ");
 				assert.equal(oColorPicker.oHueField.getValue(), "215" , "HUE changed from 180 -> 215: ");
-				assert.equal(oColorPicker.oSatField.getValue(), "53" , "SATURATION changed from 52 -> 53: ");
-				assert.equal(oColorPicker.oLitField.getValue(), "46" , "LIGHTNESS not changed (46): ");
+				assert.equal(oColorPicker.oSatField.getValue(), "100" , "SATURATION changed from 52 -> 100: ");
+				assert.equal(oColorPicker.oLitField.getValue(), "74" , "LIGHTNESS changed from 46 -> 74: ");
 				assert.equal(oColorPicker.oHexField.getValue(), "78b1ff" , "HEX changed from 78b13c -> 78b1ff: ");
 
 				oColorPicker.destroy();
@@ -462,7 +462,7 @@
 				oColorPicker.oHueField.setValue(370);
 				oColorPicker.oHueField.fireChange({newValue:oColorPicker.oHueField.getValue()});
 
-				assert.equal(oColorPicker.oHueField.getValue(), "359" , "SATURATION manually changed to 370 => set to 359: ");
+				assert.equal(oColorPicker.oHueField.getValue(), "360" , "SATURATION manually changed to 370 => set to 360: ");
 
 				oColorPicker.destroy();
 			});

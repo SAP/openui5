@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/fl/support/apps/contentbrowser/controller/Layers.controller",
 	"sap/ui/core/routing/Router",
@@ -34,9 +36,9 @@ sap.ui.define([
 					getData: function () {
 						return {
 							layer : {
-								name : "VENDOR",
+								name : "VENDOR"
 							}
-						}
+						};
 					}
 				};
 			}

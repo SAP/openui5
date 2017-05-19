@@ -119,7 +119,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './FlexItemData', 
 			 * Flex items within the flexible box layout
 			 */
 			items : {type : "sap.ui.core.Control", multiple : true, singularName : "item"}
-		}
+		},
+		designTime : true
 	}});
 
 

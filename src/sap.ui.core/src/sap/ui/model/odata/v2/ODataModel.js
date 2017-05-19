@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @param {map} [mParameters.metadataUrlParams] Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
 	 * @param {string} [mParameters.defaultBindingMode=OneWay] Sets the default binding mode for the model
 	 * @param {string} [mParameters.defaultCountMode=sap.ui.model.odata.CountMode.Request] Sets the default count mode for the model
-	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Server] Sets the default operation mode for the model
+	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Default] Sets the default operation mode for the model
 	 * @param {string} [mParameters.defaultUpdateMethod=sap.ui.model.odata.UpdateMethod.Merge] Default update method which is used for all update requests
 	 * @param {map} [mParameters.metadataNamespaces] Map of namespaces (name => URI) used for parsing the service metadata
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
@@ -116,6 +116,7 @@ sap.ui.define([
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
+			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
 
 			this.bJSON = bJSON !== false;
@@ -137,7 +138,7 @@ sap.ui.define([
 			this.bLoadAnnotationsJoined = bLoadAnnotationsJoined !== false;
 			this.sAnnotationURI = sAnnotationURI;
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
-			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Server;
+			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Default;
 			this.sMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshGroupId = undefined;
@@ -206,7 +207,7 @@ sap.ui.define([
 				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			}
 
-			if (!this.oServiceData.oMetadata) {
+			if (!this.oServiceData.oMetadata || this.oServiceData.oMetadata.bFailed) {
 				//create Metadata object
 				this.oMetadata = new ODataMetadata(sMetadataUrl,{
 					async: true,
@@ -247,8 +248,6 @@ sap.ui.define([
 			this.oMetadata.loaded().then(this._initializeMetadata.bind(this));
 			if (!this.oMetadata.isLoaded()) {
 				this.oMetadata.attachFailed(this.onMetadataFailed);
-			} else if (this.oMetadata.isFailed()){
-				this.refreshMetadata();
 			}
 
 
@@ -370,7 +369,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Fired, when the annotations document was successfully loaded.
+	 * Fired, when the annotations document was successfully loaded. If there are more than one annotation documents loaded then this
+	 * event is fired if at least one document was successfully loaded. Event is fired only once for all annotation documents.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
@@ -379,12 +379,12 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.odata.v2.ODataAnnotations~Source[]} oEvent.getParameters.result One or several annotation source(s)
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} oEvent.getParameters.result An array consisting of one or several annotation sources and/or errors containing a source property and error details.
 	 * @public
 	 */
 
 	/**
-	 * Fired, when the annotations document failed to loaded.
+	 * Fired, when the annotations document failed to loaded. Event is fired only once for all annotation documents.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
@@ -1489,6 +1489,8 @@ sap.ui.define([
 	 * entity needs to be fetched from the server asynchronously. In case no callback function
 	 * is provided, the request will not be triggered.
 	 *
+	 * If a callback function is given, the created binding context for a fetched entity is passed as argument to the given callback function.
+	 *
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath Binding path
 	 * @param {object} [oContext] Binding context
@@ -1496,9 +1498,9 @@ sap.ui.define([
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
 	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
-	 * @param {function} [fnCallBack] Function to be called when context has been created
+	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
-	 * @return {sap.ui.model.Context} The created binding context
+	 * @return {sap.ui.model.Context} The created binding context, only if the data is already available and the binding context could be created synchronously
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
@@ -1547,6 +1549,7 @@ sap.ui.define([
 
 		function handleSuccess(oData) {
 			var sKey = oData ? that._getKey(oData) : null,
+				bLink = !(sPath === "" || sPath.indexOf("/") > 0),
 				oRef = null,
 				sContextPath, oEntity;
 
@@ -1556,7 +1559,9 @@ sap.ui.define([
 				oNewContext = that.getContext('/' + sKey);
 				oRef = {__ref: sKey};
 			}
-			if (oContext && bIsRelative) {
+			/* in case of sPath == "" or a deep path (entity(1)/entities) we
+			   should not link the Entity */
+			if (oContext && bIsRelative && bLink) {
 				sContextPath = oContext.getPath();
 				// remove starting slash
 				sContextPath = sContextPath.substr(1);
@@ -2034,14 +2039,18 @@ sap.ui.define([
 	// Define regular expression and function outside function to avoid instatiation on every call
 	var rNormalizeString = /([(=,])('.*?')([,)])/g,
 		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
+		rNormalizeBinary = /([(=,])(X')/g,
 		fnNormalizeString = function(value, p1, p2, p3) {
 			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
 		},
 		fnNormalizeCase = function(value) {
 			return value.toLowerCase();
+		},
+		fnNormalizeBinary = function(value, p1) {
+			return p1 + "binary'";
 		};
 	ODataModel.prototype._normalizeKey = function(sKey) {
-		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase);
+		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
 	};
 
 	/**
@@ -2625,7 +2634,7 @@ sap.ui.define([
 			function successWrapper(oData, oResponse) {
 				for (var i = 0; i < oRequest.parts.length; i++) {
 					if (oRequest.parts[i].request._aborted){
-						that._processAborted(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+						that._processAborted(oRequest.parts[i].request, oResponse);
 					} else if (oRequest.parts[i].fnSuccess) {
 						oRequest.parts[i].fnSuccess(oData, oResponse);
 					}
@@ -2645,7 +2654,7 @@ sap.ui.define([
 		function handleError(oError) {
 			if (oError.message == "Request aborted") {
 				for (var i = 0; i < oRequest.parts.length; i++){
-					that._processAborted(oRequest.parts[i].request, oError, oRequest.parts[i].fnError);
+					that._processAborted(oRequest.parts[i].request, oError);
 				}
 			} else {
 				for (var i = 0; i < oRequest.parts.length; i++) {
@@ -2684,7 +2693,7 @@ sap.ui.define([
 		function processResponse(oRequest, oResponse, bAborted) {
 			for (var i = 0; i < oRequest.parts.length; i++) {
 				if (bAborted || oRequest.parts[i].request._aborted) {
-					that._processAborted(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
+					that._processAborted(oRequest.parts[i].request, oResponse);
 				} else if (oResponse.message) {
 					that._processError(oRequest.parts[i].request, oResponse, oRequest.parts[i].fnError);
 				} else {
@@ -2759,7 +2768,7 @@ sap.ui.define([
 			that._processAfterUpdate();
 
 			if (bAborted) {
-				that._processAborted(oBatchRequest, oError, fnError, true);
+				that._processAborted(oBatchRequest, oError, true);
 			} else {
 				that._processError(oBatchRequest, oError, fnError, true, aRequests);
 			}
@@ -2769,7 +2778,32 @@ sap.ui.define([
 				requests: aRequests,
 				batch: true
 		};
-		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
+		var oBatchRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
+
+		function callAbortHandler(oRequest) {
+			var fnError;
+			for (var i = 0; i < oRequest.parts.length; i++) {
+				fnError = oRequest.parts[i].fnError;
+				if (!oRequest.parts[i].request._aborted && fnError) {
+					fnError(oAbortedError);
+				}
+			}
+		}
+
+		var oRequestHandle = {
+			abort: function() {
+				jQuery.each(aRequests, function(i, oRequest) {
+					if (Array.isArray(oRequest)) {
+						oRequest.forEach(function(oRequest) {
+							callAbortHandler(oRequest);
+						});
+					} else {
+						callAbortHandler(oRequest);
+					}
+				});
+				oBatchRequestHandle.abort();
+			}
+		};
 
 		return oRequestHandle;
 	};
@@ -2991,7 +3025,7 @@ sap.ui.define([
 			for (var i = 0; i < oRequest.parts.length; i++) {
 				var oPart = oRequest.parts[i];
 				if (oPart.request._aborted) {
-					that._processAborted(oRequest.request, null, oPart.fnError);
+					that._processAborted(oRequest.request, null);
 					oRequest.parts.splice(i,1);
 					i--;
 				} else if (oWrappedBatchRequestHandle){
@@ -3299,36 +3333,33 @@ sap.ui.define([
 
 	};
 
+	var oAbortedError = {
+		message: "Request aborted",
+		statusCode: 0,
+		statusText: "abort",
+		headers: {},
+		responseText: ""
+	};
+
 	/**
 	 * Process request response for aborted requests.
 	 *
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
-	 * @param {function} fnError The error callback function
 	 * @param {boolean} bBatch Process success for single/batch request
 	 * @private
 	 */
-	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError, bBatch) {
+	ODataModel.prototype._processAborted = function(oRequest, oResponse, bBatch) {
 		var sPath;
-		var oError = {
-			message: "Request aborted",
-			statusCode: 0,
-			statusText: "abort",
-			headers: {},
-			responseText: ""
-		};
 		if (!bBatch) {
 			// decrease laundering
 			sPath = '/' + this.getKey(oRequest.data);
 			this.decreaseLaundering(sPath, oRequest.data);
 		}
-		if (fnError) {
-			fnError(oError);
-		}
 
 		// If no response is contained, request was never sent and completes event can be omitted
 		if (oResponse) {
-			var oEventInfo = this._createEventInfo(oRequest, oError);
+			var oEventInfo = this._createEventInfo(oRequest, oAbortedError);
 			oEventInfo.success = false;
 			if (bBatch) {
 				this.fireBatchRequestCompleted(oEventInfo);
@@ -3701,20 +3732,24 @@ sap.ui.define([
 	 * @param {function} [fnProcessRequest] Function to prepare the request and add it to the request queue
 	 * @return {object} An object which has an <code>abort</code> function to abort the current request.
 	 */
-	ODataModel.prototype._processRequest = function(fnProcessRequest) {
+	ODataModel.prototype._processRequest = function(fnProcessRequest, fnError) {
 		var oRequestHandle, oRequest,
 			bAborted = false,
 			that = this;
 
 		oRequestHandle = {
 				abort: function() {
-					bAborted = true;
+					// Call error handler synchronously
+					if (!bAborted && fnError) {
+						fnError(oAbortedError);
+					}
 					if (oRequest) {
 						oRequest._aborted = true;
 						if (oRequest._handle) {
 							oRequest._handle.abort();
 						}
 					}
+					bAborted = true;
 				}
 		};
 
@@ -3803,7 +3838,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
-		});
+		}, fnError);
 
 	};
 
@@ -3877,7 +3912,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
-		});
+		}, fnError);
 	};
 
 	/**
@@ -3953,7 +3988,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, handleSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
-		});
+		}, fnError);
 	};
 
 	/**
@@ -4095,7 +4130,7 @@ sap.ui.define([
 			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, requestHandle, bRefreshAfterChange);
 
 			return oRequest;
-		});
+		}, fnError);
 
 		oRequestHandle.contextCreated = function() {
 				return pContextCreated;
@@ -4230,7 +4265,7 @@ sap.ui.define([
 			oRequest = createReadRequest(oRequestHandle);
 			return oRequestHandle;
 		} else {
-			return this._processRequest(createReadRequest);
+			return this._processRequest(createReadRequest, fnError);
 		}
 	};
 
@@ -4497,6 +4532,9 @@ sap.ui.define([
 						vRequestHandleInternal.abort();
 					}
 				} else {
+					if (!bAborted && fnError) {
+						fnError(oAbortedError);
+					}
 					bAborted = true;
 				}
 			}
@@ -4601,7 +4639,7 @@ sap.ui.define([
 				delete that.mChangedEntities[sKey];
 			});
 		}
-		this.checkUpdate();
+		this.checkUpdate(true);
 	};
 
 	/**

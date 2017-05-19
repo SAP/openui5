@@ -121,7 +121,7 @@
 	var oGetResults = new sap.m.Button({
 		text: "Download Test Results",
 		press: function () {
-			console.log("Test Results: ", oResults);
+			jQuery.sap.log.debug("Test Results: ", oResults);
 
 			var sCSV = "Key;Overall;Rendering;Before Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering\n";
 			jQuery.each(oResults, function (k, v) {
@@ -339,7 +339,7 @@
 					if (i === iColumns - 1) {
 						iColumnWidth = undefined;
 					}
-					oControl = new sap.m.Text({text: "{c" + i + "}"});
+					oControl = new sap.m.Text({text: "{c" + i + "}", wrapping: false});
 					oColumn = new sap.ui.table.Column({
 						label: new sap.m.Label({text: "m.Text"}),
 						template: oControl,

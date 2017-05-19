@@ -18,7 +18,9 @@ sap.ui.define([
 		'./pipelines/MatcherPipeline',
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator',
-		'./_LogCollector'
+		'./_LogCollector',
+		'sap/ui/thirdparty/URI',
+		'sap/ui/base/EventProvider'
 	],
 	function($,
 			 Opa,
@@ -35,7 +37,9 @@ sap.ui.define([
 			 MatcherPipeline,
 			 ActionPipeline,
 			 _ParameterValidator,
-			 _LogCollector) {
+			 _LogCollector,
+			 URI,
+			 EventProvider) {
 		"use strict";
 
 		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
@@ -53,7 +57,55 @@ sap.ui.define([
 			].concat(Opa._aConfigValuesForWaitFor),
 			aPropertiesThatShouldBePassedToOpaWaitFor = [
 				"check", "error", "success"
-			].concat(Opa._aConfigValuesForWaitFor);
+			].concat(Opa._aConfigValuesForWaitFor),
+			aExtensions = [],
+			aEventProvider = new EventProvider();
+
+		Opa._extractAppParams = function() {
+			// extract all uri parameters except opa* and qunit parameters
+			var aBlacklistPatterns = [
+				/opa.*/,
+				/hidepassed/,
+				/noglobals/,
+				/notrycatch/,
+				/coverage/,
+				/module/,
+				/filter/
+			];
+			var oParams = {};
+			var oUriParams = new URI().search(true);
+			for (var sUriParamName in oUriParams) {
+				var bBlacklistedPattern = false;
+				for (var iPatternIndex = 0; iPatternIndex < aBlacklistPatterns.length; iPatternIndex++) {
+					if (sUriParamName.match(aBlacklistPatterns[iPatternIndex])) {
+						oLogger.debug("Skipping uri parameter: " + sUriParamName +
+							" as blacklisted with pattern: " + aBlacklistPatterns[iPatternIndex]);
+						bBlacklistedPattern = true;
+						break;
+					}
+				}
+				if (!bBlacklistedPattern) {
+					oParams[sUriParamName] = Opa._parseParam(oUriParams[sUriParamName]);
+				}
+			}
+			return oParams;
+		};
+
+		var reduce = function(oTarget, oExcesive) {
+			for (var sKey in oExcesive) {
+				if (oTarget.hasOwnProperty(sKey) && oExcesive.hasOwnProperty(sKey)) {
+					if (typeof oTarget[sKey] == "object" && typeof oExcesive[sKey] == "object") {
+						reduce(oTarget[sKey], oExcesive[sKey]);
+					} else {
+						delete oTarget[sKey];
+					}
+				}
+			}
+			return oTarget;
+		};
+
+		// parse app params from uri
+		var appParams = Opa._extractAppParams();
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -79,24 +131,35 @@ sap.ui.define([
 		);
 
 		function iStartMyAppInAFrame (sSource, iTimeout) {
-			this.waitFor({
-				// make sure no controls are searched by the defaults
-				viewName: null,
-				controlType: null,
-				id: null,
-				searchOpenDialogs: false,
-				success : function () {
-					addFrame(sSource);
-				}
-			});
+			var that = this;
+			// merge appParams over sSource search params
+			if (sSource && typeof sSource !== "string") {
+				sSource = sSource.toString();
+			}
+			var uri = new URI(sSource);
+			uri.search($.extend(
+				uri.search(true),Opa.config.appParams));
 
-			var oOptions = createWaitForObjectWithoutDefaults();
+			// kick starting the frame
+			var oCreateFrameOptions = createWaitForObjectWithoutDefaults();
+			oCreateFrameOptions.success = function() {
+				addFrame(uri.toString());
+			};
+			this.waitFor(oCreateFrameOptions);
 
-			oOptions.check = iFrameLauncher.hasLaunched;
-			oOptions.timeout = iTimeout || 80;
-			oOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
+			// wait till the frame is started
+			var oFrameCreatedOptions = createWaitForObjectWithoutDefaults();
+			oFrameCreatedOptions.check = iFrameLauncher.hasLaunched;
+			oFrameCreatedOptions.timeout = iTimeout || 80;
+			oFrameCreatedOptions.errorMessage = "unable to load the IFrame with the url: " + sSource;
+			that.waitFor(oFrameCreatedOptions);
 
-			return this.waitFor(oOptions);
+			// load extensions
+			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
+			oLoadExtensionOptions.success = function() {
+				that._loadExtensions(iFrameLauncher.getWindow());
+			};
+			return this.waitFor(oLoadExtensionOptions);
 		}
 
 		/**
@@ -107,15 +170,31 @@ sap.ui.define([
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - "".
 		 * @param {number} [oOptions.timeout=15] The timeout for loading the UIComponent in seconds - {@link sap.ui.test.Opa5#waitFor}.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 *
+		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
+		 * applied to the current URL.
+		 *
 		 * @public
 		 * @function
 		 */
 		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (oOptions){
+			var that = this;
 			var bComponentLoaded = false;
 			oOptions = oOptions || {};
 
-			var oFirstWaitForOptions = createWaitForObjectWithoutDefaults();
-			oFirstWaitForOptions.success = function () {
+			// apply the appParams to this frame URL so the application under test uses appParams
+			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
+			oParamsWaitForOptions.success = function() {
+				var uri = new URI();
+				uri.search($.extend(
+					uri.search(true),Opa.config.appParams));
+				window.history.replaceState({},"",uri.toString());
+			};
+			this.waitFor(oParamsWaitForOptions);
+
+			// kick starting the component
+			var oStartComponentOptions = createWaitForObjectWithoutDefaults();
+			oStartComponentOptions.success = function () {
 				// include stylesheet
 				var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
 				$.sap.includeStyleSheet(sComponentStyleLocation);
@@ -126,26 +205,34 @@ sap.ui.define([
 					bComponentLoaded = true;
 				});
 			};
-			// wait for starting of component launcher
-			this.waitFor(oFirstWaitForOptions);
+			this.waitFor(oStartComponentOptions);
 
-			var oPropertiesForWaitFor = createWaitForObjectWithoutDefaults();
-			oPropertiesForWaitFor.errorMessage = "Unable to load the component with the name: " + oOptions.name;
-			oPropertiesForWaitFor.check = function () {
+			// wait till component is started
+			var oComponentStartedOptions = createWaitForObjectWithoutDefaults();
+			oComponentStartedOptions.errorMessage = "Unable to load the component with the name: " + oOptions.name;
+			oComponentStartedOptions.check = function () {
 				return bComponentLoaded;
 			};
-
-			// add timeout to object for waitFor when timeout is specified
 			if (oOptions.timeout) {
-				oPropertiesForWaitFor.timeout = oOptions.timeout;
+				oComponentStartedOptions.timeout = oOptions.timeout;
 			}
+			that.waitFor(oComponentStartedOptions);
 
-			return this.waitFor(oPropertiesForWaitFor);
+			// load extensions
+			var oLoadExtensionOptions = createWaitForObjectWithoutDefaults();
+			oLoadExtensionOptions.success = function() {
+				that._loadExtensions(window);
+			};
+			return this.waitFor(oLoadExtensionOptions);
 		};
 
 
 		/**
 		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects
+		 *
+		 * @since 1.48 If appParams were applied to the current URL, they will be removed
+		 * after UIComponent is destroyed
+		 *
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -156,8 +243,17 @@ sap.ui.define([
 			oOptions.success = function () {
 				componentLauncher.teardown();
 			};
-			return this.waitFor(oOptions);
+			this.waitFor(oOptions);
 
+			// remove appParams from this frame URL as application under test is stopped
+			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
+			oParamsWaitForOptions.success = function() {
+				var uri = new URI();
+				uri.search(reduce(
+					uri.search(true),Opa.config.appParams));
+				window.history.replaceState({},"",uri.toString());
+			};
+			this.waitFor(oParamsWaitForOptions);
 		};
 
 		/**
@@ -168,6 +264,15 @@ sap.ui.define([
 		 * @returns {jQuery.promise|*|{result, arguments}}
 		 */
 		Opa5.prototype.iTeardownMyApp = function () {
+			var that = this;
+
+			// unload all extensions, schedule unload on flow so to be synchronized with waitFor's
+			var oExtensionOptions = createWaitForObjectWithoutDefaults();
+			oExtensionOptions.success = function () {
+				that._unloadExtensions(iFrameLauncher.getWindow() || window);
+			};
+			this.waitFor(oExtensionOptions);
+
 			var oOptions = createWaitForObjectWithoutDefaults();
 			oOptions.success = function () {
 				if (iFrameLauncher.hasLaunched()) {
@@ -181,12 +286,15 @@ sap.ui.define([
 				}
 			}.bind(this);
 
-
 			return this.waitFor(oOptions);
 		};
 
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 *
+		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
+		 * merged in the query params of app URL
+		 *
 		 * @param {string} sSource The source of the IFrame
 		 * @param {number} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -197,6 +305,10 @@ sap.ui.define([
 
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 *
+		 * @since 1.48 If appParams are provided in {@link sap.ui.test.Opa.config}, they are
+		 * merged in the query params of app URL
+		 *
 		 * @param {string} sSource The source of the IFrame
 		 * @param {int} [iTimeout=80] The timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -429,6 +541,10 @@ sap.ui.define([
 		 * </code>
 		 * This is also the easiest way of migrating existing tests. First extend the config, then see which waitFors
 		 * will time out and finally disable autoWait in these Tests.
+		 *
+		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
+		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
+		 *
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
@@ -659,11 +775,20 @@ sap.ui.define([
 		 *     </code>
 		 * </pre>
 		 *
+		 * @since 1.48 Application config parameters could be overwritten from URL.
+		 * Every parameter that is not prefixed with 'opa' and is not blacklisted as QUnit
+		 * parameter is parsed and overwrites respective 'appParams' value.
+		 *
 		 * @param {object} options The values to be added to the existing config
 		 * @public
 		 * @function
 		 */
-		Opa5.extendConfig = Opa.extendConfig;
+		Opa5.extendConfig = function(options) {
+			Opa.extendConfig(options);
+			Opa.extendConfig({
+				appParams: appParams
+			});
+		};
 
 		/**
 		 * Resets Opa.config to its default values.
@@ -679,6 +804,7 @@ sap.ui.define([
 		 * 	<li>pollingInterval: 400 milliseconds</li>
 		 * 	<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
 		 * 	<li>autoWait: false - since 1.42</li>
+		 * 	<li>appParams: object with URI parameters for the tested app - since 1.48</li>
 		 * </ul>
 		 * @public
 		 * @since 1.25
@@ -693,6 +819,9 @@ sap.ui.define([
 				visible : true,
 				autoWait : false,
 				_stackDropCount : 1
+			});
+			Opa.extendConfig({
+				appParams: appParams
 			});
 		};
 
@@ -866,6 +995,130 @@ sap.ui.define([
 			searchOpenDialogs: "bool",
 			autoWait: "bool"
 		}, Opa._validationInfo);
+
+		Opa5._getEventProvider = function() {
+			return aEventProvider;
+		};
+
+		//// Extensions
+		Opa5.prototype._loadExtensions = function(oAppWindow) {
+			var that = this;
+
+			// get extension names from config
+			var aExtensionNames =
+				Opa.config.extensions ? Opa.config.extensions : [];
+
+			// load all required extensions in the app frame
+			var oExtensionsPromise = $.when($.map(aExtensionNames,function(sExtensionName) {
+				var oExtension;
+				var oExtensionDeferred = $.Deferred();
+
+				oAppWindow.sap.ui.require([
+					sExtensionName
+				], function (oOpaExtension) {
+					oExtension = new oOpaExtension();
+					oExtension.name = sExtensionName;
+
+					// execute the onAfterInit hook
+					that._executeExtensionOnAfterInit(oExtension,oAppWindow)
+						.done(function(){
+							// notify test framework adapters so it could hook custom assertions
+							Opa5._getEventProvider().fireEvent('onExtensionAfterInit',{
+								extension: oExtension,
+								appWindow: oAppWindow
+							});
+							that._addExtension(oExtension);
+							oExtensionDeferred.resolve();
+						}).fail(function(error) {
+							// log the error and continue with other extensions
+							oLogger.error(new Error("Error during extension init: " +
+								error), "Opa");
+							oExtensionDeferred.resolve();
+						});
+
+				});
+
+				return oExtensionDeferred.promise();
+			}));
+
+			// schedule the extension loading promise on flow so waitFor's are synchronized
+			// return waitFor-like promise to comply with the caller return
+			return this._schedulePromiseOnFlow(oExtensionsPromise);
+		};
+
+		Opa5.prototype._unloadExtensions = function(oAppWindow) {
+			var that = this;
+
+			var oExtensionsPromise = $.when($.map(this._getExtensions(),function(oExtension) {
+				var oExtensionDeferred = $.Deferred();
+
+				Opa5._getEventProvider().fireEvent('onExtensionBeforeExit',{
+					extension: oExtension
+				});
+				that._executeExtensionOnBeforeExit(oExtension,oAppWindow)
+					.done(function() {
+						oExtensionDeferred.resolve();
+					})
+					.fail(function(error) {
+						// log the error and continue with other extensions
+						oLogger.error(new Error("Error during extension init: " +
+							error), "Opa");
+						oExtensionDeferred.resolve();
+					});
+				return oExtensionDeferred.promise();
+			}));
+
+			// schedule the extension uploading promise on flow so waitFor's are synchronized
+			this._schedulePromiseOnFlow(oExtensionsPromise);
+		};
+
+		Opa5.prototype._addExtension = function(oExtension) {
+			aExtensions.push(oExtension);
+		};
+
+		Opa5.prototype._getExtensions = function() {
+			return aExtensions;
+		};
+
+		Opa5.prototype._executeExtensionOnAfterInit = function(oExtension,oAppWindow) {
+			var oDeferred = $.Deferred();
+
+			var fnOnAfterInit = oExtension.onAfterInit;
+			if (fnOnAfterInit) {
+				// onAfterInit will return app-frame promise, need to convert it to test-frame promise
+				fnOnAfterInit.bind(oAppWindow)().done(function() {
+					oDeferred.resolve();
+				}).fail(function(error) {
+					oDeferred.reject(
+						new Error("Error while waiting for extension: " + oExtension.name +
+							" to init, details: " + error));
+				});
+			} else {
+				oDeferred.resolve();
+			}
+			return oDeferred.promise();
+		};
+
+		Opa5.prototype._executeExtensionOnBeforeExit = function(oExtension,oAppWindow) {
+			var oDeferred = $.Deferred();
+
+			var fnOnBeforeExit = oExtension.onBeforeExit;
+			if (fnOnBeforeExit) {
+				// onBeforeExit will return app-frame promise, need to convert it to test-frame promise
+				fnOnBeforeExit.bind(oAppWindow)().done(function() {
+					oDeferred.resolve();
+				}).fail(function(error) {
+					oDeferred.reject(
+						new Error("Error while waiting for extension: " + oExtension.name +
+							" to exit, details: " + error));
+				});
+			} else {
+				oDeferred.resolve();
+			}
+
+			return oDeferred.promise();
+		};
+
 
 		return Opa5;
 }, /* export= */ true);

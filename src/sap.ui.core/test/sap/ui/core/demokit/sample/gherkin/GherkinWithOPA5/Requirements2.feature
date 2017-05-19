@@ -31,7 +31,17 @@ Feature: Lemmings Have Names Now
     Then I see <NAME> at the end of the list of named lemmings
 
     Examples:
-        | NUM_CLICKS | NAME    |
-        |  1         | Alice   |
-        |  2         | Bob     |
-        |  3         | Charlie |
+      | NUM_CLICKS | NAME    |
+      |  1         | Alice   |
+      |  2         | Bob     |
+
+    Examples: second set
+      | NUM_CLICKS | NAME    |
+      |  3         | Charlie |
+
+    @wip
+    Examples: third set (are the names even correct?)
+      | NUM_CLICKS | NAME    |
+      |  4         | Delta   |
+      |  5         | Echo    |
+      |  6         | Foxtrot |

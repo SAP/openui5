@@ -44,19 +44,13 @@ sap.ui.define([
 			var oElement = oElementOverlay.getElementInstance();
 			var iIndex = aChildren.indexOf(oElement);
 
-			var oPublicParentOverlay = oElementOverlay.getPublicParentElementOverlay();
-
 			return {
-				publicParent : oPublicParentOverlay.getElementInstance(),
-				publicAggregation: oElementOverlay.getPublicParentAggregationOverlay().getAggregationName(),
 				parent: oParent,
 				aggregation : sParentAggregationName,
 				index: iIndex
 			};
 		} else {
 			return {
-				publicParent : null,
-				publicAggregation : "",
 				parent: null,
 				aggregation: "",
 				index: -1

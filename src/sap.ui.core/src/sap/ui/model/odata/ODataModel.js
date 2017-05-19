@@ -99,6 +99,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			this.oServiceData = {};
 			this.sDefaultBindingMode = BindingMode.OneWay;
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
+			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
 			this.bCountSupported = true;
 			this.bJSON = bJSON;
 			this.bCache = true;
@@ -118,7 +119,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 			this.oMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.bSkipMetadataAnnotationParsing = bSkipMetadataAnnotationParsing;
-
 
 			// prepare variables for request headers, data and metadata
 			this.oHeaders = {};
@@ -1992,7 +1992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Checks if a model refresh is needed, either because the the data provided by the sPath and oContext is stored
+	 * Checks if a model refresh is needed, either because the data provided by the sPath and oContext is stored
 	 * in the model or new data is added (POST). For batch requests all embedded requests are checked separately.
 	 *
 	 * @return {boolean}

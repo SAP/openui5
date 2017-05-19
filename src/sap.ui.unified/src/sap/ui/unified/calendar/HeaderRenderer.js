@@ -21,10 +21,12 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.unified.calendar.Header} oHead an object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function(oRm, oHead){
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage();
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
 		var mAccProps = {};
+		var sLabelNext = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_BTN_NEXT");
+		var sLabelPrev = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_BTN_PREV");
 
 		oRm.write("<div");
 		oRm.writeControlData(oHead);
@@ -41,6 +43,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.write("<button");
 		oRm.writeAttributeEscaped('id', sId + '-prev');
+		oRm.writeAttributeEscaped("title", sLabelPrev);
+		oRm.writeAccessibilityState(null, { label: sLabelPrev});
+
 		oRm.addClass("sapUiCalHeadPrev");
 		if (!oHead.getEnabledPrevious()) {
 			oRm.addClass("sapUiCalDsbl");
@@ -67,7 +72,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		for (i = 0; i < 3; i++) {
 			// for Chinese and Japanese the date should be displayed in year, month, day order
-			if (sLanguage === "ja" || sLanguage === "zh") {
+			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
 				iBtn = 2 - i;
 			} else {
 				iBtn = i;
@@ -77,6 +82,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.write("<button");
 		oRm.writeAttributeEscaped('id', sId + '-next');
+		oRm.writeAttributeEscaped("title", sLabelNext);
+		oRm.writeAccessibilityState(null, { label: sLabelNext});
+
 		oRm.addClass("sapUiCalHeadNext");
 		if (!oHead.getEnabledNext()) {
 			oRm.addClass("sapUiCalDsbl");

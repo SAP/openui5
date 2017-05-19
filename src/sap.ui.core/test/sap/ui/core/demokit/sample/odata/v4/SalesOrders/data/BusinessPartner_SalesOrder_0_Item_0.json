@@ -1,0 +1,23 @@
+{
+	"@odata.context" : "../$metadata#FOO0",
+	"@odata.etag" : "W/\"20160613143341.1548870\"",
+	"BusinessPartnerID" : "0100000000",
+	"CompanyName" : "SAP",
+	"LegalForm" : "SE",
+	"PhoneNumber" : "0622734567",
+	"BP_2_CONTACT" : [{
+		"DateOfBirth" : null,
+		"EmailAddress" : "do.not.reply@sap.com",
+		"FirstName" : "Karl",
+		"LastName" : "Müller",
+		"PhoneNumber" : "0622734567",
+		"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab92db14"
+	}, {
+		"DateOfBirth" : null,
+		"EmailAddress" : "hjg@sap.com",
+		"FirstName" : "Harald",
+		"LastName" : "Gahn",
+		"PhoneNumber" : "0622746358",
+		"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab92fb14"
+	}]
+}

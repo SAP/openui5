@@ -81,7 +81,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					return;
 				}
 
-				ACCInfoHelper._flatten(oChild.getAccessibilityInfo(), oTargetInfo, oBundle, iLevel + 1);
+				var oChildInfo = oChild.getAccessibilityInfo();
+				if (oChildInfo) {
+					ACCInfoHelper._flatten(oChildInfo, oTargetInfo, oBundle, iLevel + 1);
+				}
 			});
 
 			if (iLevel == 0) {
@@ -294,7 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			var oCountChangeInfo = ExtensionHelper.updateRowColCount(oExtension);
 			oExtension.getTable().$("cellacc").text(sText || " "); //set the custom text to the prepared hidden element
 
-			if (fAdapt) { //Allow to adapt the labels / descriptions based on the changed row / coulmn count
+			if (fAdapt) { //Allow to adapt the labels / descriptions based on the changed row / column count
 				fAdapt(aLabels, aDescriptions, oCountChangeInfo.rowChange, oCountChangeInfo.colChange, oCountChangeInfo.initial);
 			}
 
@@ -333,6 +336,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				oInfo = null,
 				bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell),
 				bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell),
+				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
+				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.DATACELL, {
 					index: iCol,
 					column: oTableInstances.column,
@@ -341,12 +346,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				aDescriptions = [],
 				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"];
 
-			if (TableUtils.Grouping.isInGroupingRow($Cell)) {
+			if (bIsInGroupingRow) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
 				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
 			}
 
-			if (TableUtils.Grouping.isInSumRow($Cell)) {
+			if (bIsInSumRow) {
 				var iLevel = $Cell.parent().data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
@@ -354,6 +359,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					aLabels.push(sTableId + "-ariagrouptotallabel");
 					aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
 				}
+			}
+
+			if (TableUtils.hasRowHighlights(oTable) && !bIsInGroupingRow && !bIsInSumRow) {
+				aLabels.push(oTableInstances.row.getId() + "-highlighttext");
 			}
 
 			aLabels = aLabels.concat(aDefaultLabels);
@@ -395,27 +404,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		modifyAccOfROWHEADER : function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
-				bGroupHeader = TableUtils.Grouping.isInGroupingRow($Cell),
-				bSum = TableUtils.Grouping.isInSumRow($Cell),
+				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
+				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
 				oRow = oTable.getRows()[$Cell.attr("data-sap-ui-rowindex")],
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [],
 				aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
 
-			if (!bSum && !bGroupHeader) {
+			if (!bIsInSumRow && !bIsInGroupingRow) {
 				if ($Cell.attr("aria-selected") == "true") {
 					aLabels.push(sTableId + "-ariarowselected");
 				}
 				if (!$Cell.hasClass("sapUiTableRowHidden")) {
 					aLabels.push(oRow.getId() + "-rowselecttext");
+
+					if (TableUtils.hasRowHighlights(oTable)) {
+						aLabels.push(oRow.getId() + "-highlighttext");
+					}
 				}
 			}
 
-			if (bGroupHeader) {
+			if (bIsInGroupingRow) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
 				//aLabels.push(oRow.getId() + "-groupHeader"); //Not needed: Screenreader seems to announce this automatically
 			}
 
-			if (bSum) {
+			if (bIsInSumRow) {
 				var iLevel = $Cell.data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
@@ -443,7 +456,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				sText = ExtensionHelper.getColumnTooltip(oColumn),
 				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]),
 				oHeaderInfo = TableUtils.getColumnHeaderCellInfo($Cell),
-				iSpan = oHeaderInfo ? oHeaderInfo.span : 1;
+				iSpan = oHeaderInfo ? oHeaderInfo.span : 1,
+				bIsMainHeader = oColumn && oColumn.getId() === $Cell.attr("id");
 
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
@@ -453,6 +467,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 			if (sText) {
 				aLabels.push(oTable.getId() + "-cellacc");
+			}
+
+			if (bIsMainHeader && oColumn && oColumn.getSorted()) {
+				aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+			}
+			if (bIsMainHeader && oColumn && oColumn.getFiltered()) {
+				aLabels.push(oTable.getId() + "-ariacolfiltered");
+			}
+
+			if ($Cell.attr("aria-haspopup") === "true") {
+				aLabels.push(oTable.getId() + "-ariacolmenu");
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -478,8 +503,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		modifyAccOfROWACTION : function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
-				bGroupHeader = TableUtils.Grouping.isInGroupingRow($Cell),
-				bSum = TableUtils.Grouping.isInSumRow($Cell),
+				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
+				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
 				iRow = $Cell.attr("data-sap-ui-rowindex"),
 				oRow = oTable.getRows()[iRow],
 				bHidden = ExtensionHelper.isHiddenCell($Cell),
@@ -487,12 +512,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels),
 				aDescriptions = [];
 
-			if (bGroupHeader) {
+			if (bIsInGroupingRow) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
 				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
 			}
 
-			if (bSum) {
+			if (bIsInSumRow) {
 				var iLevel = $Cell.data("sap-ui-level");
 				if (iLevel == 0) {
 					aLabels.push(sTableId + "-ariagrandtotallabel");
@@ -502,8 +527,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				}
 			}
 
-			if (!bSum && !bGroupHeader && $Cell.attr("aria-selected") == "true") {
+			if (!bIsInSumRow && !bIsInGroupingRow && $Cell.attr("aria-selected") == "true") {
 				aLabels.push(sTableId + "-ariarowselected");
+			}
+
+			if (TableUtils.hasRowHighlights(oTable) && !bIsInGroupingRow && !bIsInSumRow) {
+				aLabels.push(oRow.getId() + "-highlighttext");
 			}
 
 			var sText = "";
@@ -576,7 +605,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.ROWHEADER:
 					mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
-					if (!TableUtils.Grouping.isTreeMode(oTable)) { // Otherwise there are strange announcements of the whole content in AnlyticalTable
+					if (!TableUtils.Grouping.isTreeMode(oTable)) { // Otherwise there are strange announcements of the whole content in AnalyticalTable
 						mAttributes["role"] = ["rowheader"];
 					}
 					if (oTable.getSelectionMode() !== SelectionMode.None && (!mParams || !mParams.rowHidden)) {
@@ -607,21 +636,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 						var iIdx = jQuery.inArray(mParams.headerId, aHeaders);
 						aLabels = iIdx > 0 ? aHeaders.slice(0, iIdx + 1) : [mParams.headerId];
 					}
+					for (var i = 0; i < aLabels.length; i++) {
+						aLabels[i] = aLabels[i] + "-inner";
+					}
 					mAttributes["aria-labelledby"] = aLabels;
 
 					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
-					if (bIsMainHeader && oColumn.getSorted()) {
+
+					if (bIsMainHeader && oColumn && oColumn.getSorted()) {
 						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
-						mAttributes["aria-labelledby"].push(sTableId + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
 					}
-					if (bIsMainHeader && oColumn.getFiltered()) {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
-					}
+
 					if (oColumn && oColumn._menuHasItems()) {
 						mAttributes["aria-haspopup"] = "true";
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolmenu");
 					}
 					break;
 
@@ -1064,6 +1093,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		if (bTreeMode) {
 			$TreeIcon.attr(ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.TREEICON, {row: oRow}));
+		}
+	};
+
+	/*
+	 * Updates the row highlight state.
+	 * @public (Part of the API for Table control only!)
+	 */
+	TableAccExtension.prototype.updateAriaStateOfRowHighlight = function(oRowSettings) {
+		if (!this._accMode || oRowSettings == null) {
+			return;
+		}
+
+		var oRow = oRowSettings._getRow();
+		if (oRow != null) {
+			var oHighlightTextElement = oRow.getDomRef("highlighttext");
+			oHighlightTextElement.innerText = oRowSettings._getHighlightText();
 		}
 	};
 

@@ -102,7 +102,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * Starts observing the target object. Override this method in classes which extend ManagedObjectObserver.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
 	 * @protected
@@ -110,6 +110,7 @@ sap.ui.define([
 	ManagedObjectObserver.prototype.observe = function(oTarget) {
 		var that = this;  // eslint-disable-line consistent-this
 
+		// _change event is triggered on property change of UI5 managed object
 		oTarget.attachEvent("_change", this._fnFireModified, this);
 
 		// Wrapper for the destroy method to recognize changes
@@ -172,7 +173,8 @@ sap.ui.define([
 			var vOriginalReturn = that._fnOriginalSetParent.apply(this, arguments);
 			if (bFireModified && !this.__bSapUiDtSupressParentChangeEvent) {
 				this._bInSetParent = false;
-				if (oCurrentParent !== oParent) {
+				// "dependents" is used to store some removed elements (e.g. from Combine)
+				if (oCurrentParent !== oParent || sAggregationName === "dependents") {
 					that.fireModified({
 						type: "setParent",
 						value: oParent,
@@ -377,9 +379,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * Stops observing the target object. Override this method in classes which extend ManagedObjectObserver.
 	 *
-	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.unobserve = function() {

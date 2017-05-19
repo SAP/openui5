@@ -118,6 +118,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.suite'
 			},
 			{
+					name: 'sap.ui.documentation',
+					path: 'src/sap.ui.documentation'
+			},
+			{
 					name: 'sap.ui.dt',
 					path: 'src/sap.ui.dt'
 			},
@@ -132,6 +136,10 @@ module.exports = function(grunt) {
 			{
 					name: 'sap.ui.codeeditor',
 					path: 'src/sap.ui.codeeditor'
+			},
+			{
+					name: 'sap.ui.support',
+					path: 'src/sap.ui.support'
 			},
 			{
 					name: 'themelib_sap_bluecrystal',

@@ -21,9 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.CodeViewer
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CodeViewer = Control.extend("sap.ui.demokit.CodeViewer", /** @lends sap.ui.demokit.CodeViewer.prototype */ { metadata : {
 
@@ -102,20 +102,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Dia
 	 * @param oBrowserEvent the forwarded sap.ui.core.BrowserEvent
 	 * @private
 	 */
-	CodeViewer.prototype.onclick = function(e) {
+	CodeViewer.prototype.onclick = function(oBrowserEvent) {
 		if (!this.getEditable()) {
 			this.firePress({id:this.getId()});
-			e.preventDefault();
-			e.stopPropagation();
+			oBrowserEvent.preventDefault();
+			oBrowserEvent.stopPropagation();
 		}
 	};
 
 	/**
 	 * Handles the sapescape event... triggers return to non-editable mode (revert)
-	 * @param {sap.ui.core.BroserEvent} oBrowserEvent the forwarded browser event
 	 * @private
 	 */
-	CodeViewer.prototype.onsapescape = function(oBrowserEvent) {
+	CodeViewer.prototype.onsapescape = function() {
 		if ( this.getEditable() ) {
 			// we do not update the source from the PRE tag, so this acts as a 'revert'
 			this.setEditable(false);

@@ -347,6 +347,8 @@ sap.ui.define([
 	 *   again
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
+	 * @throws {Error}
+	 *   If group ID is '$cached'
 	 *
 	 * @private
 	 */
@@ -358,6 +360,10 @@ sap.ui.define([
 			sPayload,
 			oPromise,
 			oRequest;
+
+		if (sGroupId === "$cached") {
+			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
+		}
 
 		sGroupId = sGroupId || "$direct";
 		if (bIsBatch) {

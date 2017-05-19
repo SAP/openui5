@@ -19,7 +19,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 		 * <ul>
 		 * <li> Type, title, subtitle and description </li>
 		 * <li> If the description contains markup, the <code>markupDescription</code> needs to be set to true, to ensure it is interpreted correctly. </li>
-		 * <li> If the long text description can be specified by an URL by setting, the <code>longtextUrl</code> property. </li>
+		 * <li> If the long text description can be specified by a URL by setting, the <code>longtextUrl</code> property. </li>
 		 * <li> The message item can have a single {@link sap.m.Link} after the description. It is stored in the <code>link</code> aggregation. </li>
 		 * <h3>Usage</h3>
 		 * <b>Note:</b> The MessageItem control replaces {@link sap.m.MessagePopoverItem} as a more generic wrapper for messages.
@@ -82,9 +82,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 				},
 				defaultAggregation: "link",
 				aggregations: {
-
 					/**
-					 * Adds a sap.m.Link control which will be displayed at the end of the description of a message.
+					 * Adds an sap.m.Link control which will be displayed at the end of the description of a message.
 					 */
 					link: { type: "sap.m.Link", multiple: false, singularName: "link" }
 				}
@@ -113,7 +112,21 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 				oParent._oLists && oParent._oLists[sType] && oParent._oLists[sType].getItems && oParent._oLists[sType].getItems().forEach(fnUpdateProperty.bind(this, sPropertyName));
 			}
 
+			if (typeof this._updatePropertiesFn === "function") {
+				this._updatePropertiesFn();
+			}
+
 			return Item.prototype.setProperty.apply(this, arguments);
+		};
+
+		/**
+		 * Custom function which will be fired upon updating any property in the MessageItem
+		 *
+		 * @param {function} customFn The custom function to be executed
+		 * @private
+		 */
+		MessageItem.prototype._updateProperties = function (customFn) {
+			this._updatePropertiesFn = customFn;
 		};
 
 		MessageItem.prototype.setDescription = function(sDescription) {

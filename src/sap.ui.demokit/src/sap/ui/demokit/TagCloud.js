@@ -21,9 +21,9 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @public
+	 * @private
+	 * @sap-restricted sdk
 	 * @alias sap.ui.demokit.TagCloud
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var TagCloud = Control.extend("sap.ui.demokit.TagCloud", /** @lends sap.ui.demokit.TagCloud.prototype */ { metadata : {
 
@@ -65,7 +65,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		}
 	}});
 
-	//Called by a tag when a onclick event is triggered there.
+	//Called by a tag when an onclick event is triggered there.
 	//The event is forwarded to the application coding.
 	TagCloud.prototype.firePressEvent = function(tag){
 	  this.firePress({tagId:tag.getId()});

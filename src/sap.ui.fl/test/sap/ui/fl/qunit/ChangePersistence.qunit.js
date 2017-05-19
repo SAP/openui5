@@ -1,4 +1,4 @@
-/*globals sinon, QUnit*/
+/*global sinon, QUnit*/
 jQuery.sap.require("sap.ui.fl.ChangePersistence");
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require("sap.ui.fl.Change");
@@ -16,8 +16,11 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	QUnit.module("sap.ui.fl.ChangePersistence", {
 		beforeEach: function () {
-			this.sComponentName = "MyComponent";
-			this.oChangePersistence = new ChangePersistence(this.sComponentName);
+			this._oComponent = {
+				name: "MyComponent",
+				appVersion: "1.2.3"
+			};
+			this.oChangePersistence = new ChangePersistence(this._oComponent);
 			Utils.setMaxLayerParameter("USER");
 		},
 		afterEach: function () {
@@ -360,21 +363,26 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
-	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings", function(assert) {
-		var oFileContent = {};
+	QUnit.test("getChangesForComponent shall also pass the settings data to the fl.Settings", function(assert) {
+		var oFileContent = {
+			changes: {
+				settings: {
+					isKeyUser: true
+				}
+			}
+		};
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
 		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
 
 		return this.oChangePersistence.getChangesForComponent().then(function() {
 			assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
 			var aPassedArguments = oSettingsStoreInstanceStub.getCall(0).args;
-			assert.equal(aPassedArguments[0], oFileContent, "the file content was passed to the function");
+			assert.deepEqual(aPassedArguments[0], oFileContent.changes.settings, "the settings content was passed to the function");
 		});
 	});
 
 	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
-		var sComponentName = this.sComponentName;
-		var oFileContent = {dummy:true};
+		var oFileContent = {};
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
 		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
 
@@ -477,7 +485,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test1", function(assert) {
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getSelector: function () {
 				return { id: "field3-2" };
@@ -515,12 +523,18 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group1": [oChange3]
 			},
 			mDependencies: {
-				"fileNameChange2USERnamespace": [oChange1],
-				"fileNameChange3USERnamespace": [oChange2]
+				"fileNameChange2USERnamespace": {
+					"changeObject": oChange2,
+					"dependencies": ["fileNameChange1USERnamespace"]
+				},
+				"fileNameChange3USERnamespace": {
+					"changeObject": oChange3,
+					"dependencies": ["fileNameChange2USERnamespace"]
+				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": [oChange2],
-				"fileNameChange2USERnamespace": [oChange3]
+				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"],
+				"fileNameChange2USERnamespace": ["fileNameChange3USERnamespace"]
 			}
 		};
 
@@ -553,7 +567,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		};
 		var oChange1 = {
 			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
+				return "fileNameChange1" + "USER" + "namespace";
 			},
 			getSelector: function () {
 				return { id: "field3-2" };
@@ -580,11 +594,14 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group1": [oChange0]
 			},
 			mDependencies: {
-				"fileNameChange2USERnamespace": [oChange1, oChange0],
+				"fileNameChange2USERnamespace": {
+					"changeObject": oChange2,
+					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"]
+				}
 			},
 			mDependentChangesOnMe: {
-				"fileNameChange0USERnamespace": [oChange2],
-				"fileNameChange1USERnamespace": [oChange2]
+				"fileNameChange0USERnamespace": ["fileNameChange2USERnamespace"],
+				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
 			}
 		};
 
@@ -682,8 +699,11 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach: function () {
-			this.sComponentName = "MyComponent";
-			this.oChangePersistence = new ChangePersistence(this.sComponentName, this.lrepConnectorMock);
+			this._oComponent = {
+				name: "MyComponent",
+				appVersion: "1.2.3"
+			};
+			this.oChangePersistence = new ChangePersistence(this._oComponent);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -715,12 +735,17 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
 		beforeEach: function () {
+			this._oComponent = {
+				name : "saveChangeScenario",
+				appVersion : "1.2.3"
+			};
 			this.lrepConnectorMock = {
 				create: sinon.stub().returns(Promise.resolve()),
 				deleteChange: sinon.stub().returns(Promise.resolve()),
 				loadChanges: sinon.stub().returns(Promise.resolve({changes: {changes: []}}))
 			};
-			this.oChangePersistence = new ChangePersistence("saveChangeScenario", this.lrepConnectorMock);
+			this.oChangePersistence = new ChangePersistence(this._oComponent);
+			this.oChangePersistence._oConnector = this.lrepConnectorMock;
 		},
 		afterEach: function () {
 			sandbox.restore();

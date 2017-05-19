@@ -3,12 +3,12 @@
 /* Base theme                      */
 /* =============================== */
 
-@lightBoxMinHeight: 18rem;
-@footerOneLineHeightDesktop: 2.5rem;
-@footerTwoLinesHeightDesktop: 4rem;
-@footerOneLineHeightMobile: 3rem;
-@footerTwoLinesHeightMobile: 4.5rem;
-@busyIndicatorHeight: 1rem;
+@_sap_m_LightBox_MinHeight: 18rem;
+@_sap_m_LightBox_FooterOneLineHeightDesktop: 2.5rem;
+@_sap_m_LightBox_FooterTwoLinesHeightDesktop: 4rem;
+@_sap_m_LightBox_FooterOneLineHeightMobile: 3rem;
+@_sap_m_LightBox_FooterTwoLinesHeightMobile: 4.5rem;
+@_sap_m_LightBox_BusyIndicatorHeight: 1rem;
 
 /* ==========================================================================
    Container
@@ -19,8 +19,7 @@
 	max-width: 100%;
 	min-height: 18rem;
 	max-height: 100%;
-	border-radius: 0.3125rem;
-	overflow: hidden;
+	border-radius: 0.25rem 0.25rem 0.375rem 0.375rem;
 	background-color: @sapUiGlobalBackgroundColor;
 	box-shadow: @sapUiShadowLevel3;
 }
@@ -37,7 +36,7 @@
 
 .sapMLightBoxFooter {
   background-color: @sapUiPageFooterBackground;
-  border-top: 1px solid @sapUiPageFooterBorderColor; 
+  border-top: 1px solid @sapUiPageFooterBorderColor;
 }
 
 /* ==========================================================================
@@ -117,7 +116,7 @@
   ========================================================================== */
 
 .sapMLightBoxImageContainer {
-	min-height: (@lightBoxMinHeight - 4rem); //TODO: ma trqq go calnem
+	min-height: (@_sap_m_LightBox_MinHeight - 4rem); //TODO: ma trqq go calnem
 	position: absolute;
 	top: 0;
 	bottom: 2.5rem;
@@ -128,7 +127,7 @@
 	position: absolute;
 	top: 0;
 	width: 100%;
-	height: calc(~"100% - " @footerTwoLinesHeightMobile);
+	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightMobile);
 }
 
 /* ==========================================================================
@@ -138,13 +137,13 @@
 	.sapUiSizeCompact {
 		.sapMBusyIndicator {
 			display: block;
-			margin-top: (@lightBoxMinHeight - @busyIndicatorHeight - @footerOneLineHeightDesktop) / 2;
+			margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterOneLineHeightDesktop) / 2;
 		}
 
 		.sapMLightBoxTwoLines {
 			.sapMBusyIndicator {
 				height: 14rem;
-				margin-top: (@lightBoxMinHeight - @busyIndicatorHeight - @footerTwoLinesHeightDesktop) / 2;
+				margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterTwoLinesHeightDesktop) / 2;
 			}
 		}
 	}
@@ -153,13 +152,13 @@
 .sapMLightBox {
 	.sapMBusyIndicator {
 		display: block;
-		margin-top: (@lightBoxMinHeight - @busyIndicatorHeight - @footerOneLineHeightMobile) / 2;
+		margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterOneLineHeightMobile) / 2;
 	}
 
 	.sapMLightBoxTwoLines {
 		.sapMBusyIndicator {
 			height: 14rem;
-			margin-top: (@lightBoxMinHeight - @busyIndicatorHeight - @footerTwoLinesHeightMobile) / 2;
+			margin-top: (@_sap_m_LightBox_MinHeight - @_sap_m_LightBox_BusyIndicatorHeight - @_sap_m_LightBox_FooterTwoLinesHeightMobile) / 2;
 		}
 	}
 }
@@ -174,11 +173,12 @@
 
 .sapMLightBox .sapMLightBoxErrorContainerTwoHeaders {
 	padding: 2rem;
-	height: calc(~"100% - " @footerTwoLinesHeightMobile);
+	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightMobile);
 }
 
 .sapMLightBox .sapMLightBoxVerticalLayout {
 	text-align: center;
+	max-width: 30rem;
 }
 
 .sapMLightBox .sapMLightBoxIconErrorContainer {
@@ -224,7 +224,7 @@
   ========================================================================== */
 
 .sapUiSizeCompact .sapMLightBoxImageContainerTwoHeaders {
-	height: calc(~"100% - " @footerTwoLinesHeightDesktop);
+	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightDesktop);
 }
 
 .sapUiSizeCompact .sapMLightBoxFooter {
@@ -244,5 +244,5 @@
 }
 
 .sapUiSizeCompact .sapMLightBox .sapMLightBoxErrorContainerTwoHeaders {
-	height: calc(~"100% - " @footerTwoLinesHeightDesktop);
+	height: calc(~"100% - " @_sap_m_LightBox_FooterTwoLinesHeightDesktop);
 }

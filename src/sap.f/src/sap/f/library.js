@@ -125,7 +125,7 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 25/50/25 Begin, Mid (expanded) and End columns are displayed
-		 * Tablet:  0/67/33  Mid (expanded) and End columns are displayed, Begin is accessible by a navigation arrow
+		 * Tablet:  0/67/33  Mid (expanded) and End columns are displayed, Begin is accessible by a layout arrow
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail.
@@ -136,7 +136,7 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 25/25/50 Begin, Mid and End (expanded) columns are displayed
-		 * Tablet:  0/33/67  Mid and End (expanded) columns are displayed, Begin is accessible by navigation arrows
+		 * Tablet:  0/33/67  Mid and End (expanded) columns are displayed, Begin is accessible by layout arrows
 		 * Phone:   -/-/100  (only the End column is displayed)
 		 *
 		 * Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail-detail.
@@ -146,24 +146,24 @@ sap.ui.define(["jquery.sap.global",
 		ThreeColumnsEndExpanded: "ThreeColumnsEndExpanded",
 
 		/**
-		 * Desktop: 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a navigation arrow
-		 * Tablet:  33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a navigation arrow
+		 * Desktop: 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 * Tablet:  33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the detail.
-		 * The detail-detail is still loaded and easily accessible with a navigation arrow.
+		 * The detail-detail is still loaded and easily accessible with a layout arrow.
 		 *
 		 * @public
 		 */
 		ThreeColumnsMidExpandedEndHidden: "ThreeColumnsMidExpandedEndHidden",
 
 		/**
-		 * Desktop: 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by navigation arrows
-		 * Tablet:  67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by navigation arrows
+		 * Desktop: 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 * Tablet:  67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the master.
-		 * The detail-detail is still loaded and easily accessible with navigation arrows.
+		 * The detail-detail is still loaded and easily accessible with layout arrows.
 		 *
 		 * @public
 		 */

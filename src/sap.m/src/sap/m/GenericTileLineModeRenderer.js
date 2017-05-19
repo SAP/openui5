@@ -20,7 +20,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 	 */
 	GenericTileLineModeRenderer.render = function(oRm, oControl) {
 		var sTooltipText = oControl._getTooltipText(),
-			bIsCompact = oControl._isCompact(),
+			bIsScreenLarge = oControl._isScreenLarge(),
 			sAriaText = oControl._getAriaText(),
 			sScopeClass = jQuery.sap.encodeCSS("sapMGTScope" + oControl.getScope()),
 			bHasPress = oControl.hasListeners("press");
@@ -55,8 +55,8 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 		oRm.writeClasses();
 		oRm.write(">");
 
-		if (bIsCompact) {
-			//compact
+		if (bIsScreenLarge) {
+			//large
 			oRm.write("<div");
 			oRm.writeAttribute("id", oControl.getId() + "-startMarker");
 			oRm.addClass("sapMGTStartMarker");
@@ -89,7 +89,7 @@ sap.ui.define([ "sap/m/GenericTileRenderer", "sap/m/LoadState", "sap/m/GenericTi
 			oRm.write("/>");
 
 		} else {
-			// cozy
+			// small
 			if (oControl.getState() !== LoadState.Disabled) {
 				this._renderFocusDiv(oRm, oControl);
 			}

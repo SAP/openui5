@@ -1,0 +1,27 @@
+/* ==================================== */
+/* CSS for control sap.m/MessageView */
+/* Belize High Contrast White theme     */
+/* ==================================== */
+
+// style links in the description as Link control
+.sapMMsgViewDescriptionText a {
+	text-decoration: underline;
+	&:hover {
+		text-decoration: none;
+	}
+	&:focus {
+		outline: 0.125rem dotted @sapUiContentFocusColor;
+		text-decoration: none;
+	}
+}
+
+.sapMMsgViewItem:hover .sapMSLIImgIcon {
+	color: @sapUiContentIconColor;
+}
+
+.sapMMsgViewBtnError.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon,
+.sapMMsgViewBtnInformation.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon,
+.sapMMsgViewBtnWarning.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon,
+.sapMMsgViewBtnSuccess.sapMSegBBtnFocusable.sapMSegBBtn:hover .sapUiIcon  {
+	color: @sapUiSegmentedButtonIconColor;
+}

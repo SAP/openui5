@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
@@ -11,17 +12,36 @@ sap.ui.require([
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/TestUtils"
+	"sap/ui/test/matchers/Properties"
 ],
-function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press, BindingPath,
-		Interactable, Properties, TestUtils) {
+function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press,
+	BindingPath, Interactable, Properties) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
+		SOITEM_NOTE_COLUMN_INDEX = 10,
+		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		ITEM_COLUMN_INDEX = 1,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+
+	/*
+	 * Search for the control with the given ID, extract the number and compare with the expected
+	 * count.
+	 */
+	function checkCount(oOpa, iExpectedCount, sTitleId) {
+		return oOpa.waitFor({
+			id : sTitleId,
+			success : function (oTitle) {
+				Opa5.assert.strictEqual(
+					// extract number from title
+					Number(oTitle.getText().split(" ")[0]),
+					iExpectedCount,
+					"Expected count for " + sTitleId + ": " + iExpectedCount);
+			},
+			viewName : sViewName
+		});
+	}
 
 	function handleMessageBox(oOpa, sTitle, bConfirm, sLog) {
 		return oOpa.waitFor({
@@ -66,11 +86,10 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				},
 				pressValueHelpOnCurrencyCode : function () {
 					return this.waitFor({
-						actions : new Press(),
 						controlType : "sap.ui.core.sample.common.ValueHelp",
-						matchers : new Interactable(),
 						id : "NewCurrencyCode",
 						success : function (oValueHelp) {
+							oValueHelp.onValueHelp();
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 						},
 						viewName : sViewName
@@ -127,7 +146,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 		onTheErrorInfo : {
 			actions : {
 				confirm : function () {
-					return handleMessageBox(this, "Error", true, "Confirm 'Error'");
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({icon : "sap-icon://message-error"}),
+						success : function (aControls) {
+							aControls[0].getButtons()[0].$().tap();
+							Opa5.assert.ok(true, "Confirm 'Error'");
+						}
+					});
 				}
 			},
 			assertions : {}
@@ -151,11 +177,47 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				changeSalesOrderLineItemNote : function (iRow, sNewNoteValue) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+
+							oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].setValue(sNewNoteValue);
+							Opa5.assert.ok(true,
+								"SO Item Note of row " + iRow + " set to " + sNewNoteValue);
+						},
+						viewName : sViewName
+					});
+				},
+				changeSalesOrderLineItemQuantity : function (iRow, sNewQuantity) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+
+							oRow.getCells()[SOITEM_QUANTITY_COLUMN_INDEX].setValue(sNewQuantity);
+							Opa5.assert.ok(true,
+								"SO Item Note of row " + iRow + " set to " + sNewQuantity);
+						},
+						viewName : sViewName
+					});
+				},
 				deleteSelectedSalesOrder : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "deleteSalesOrder",
+						viewName : sViewName
+					});
+				},
+				deleteSelectedSalesOrderLineItem : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "deleteSalesOrderLineItem",
 						viewName : sViewName
 					});
 				},
@@ -223,7 +285,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						controlType : "sap.m.Text",
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (oControl) {
-							var oCore = Opa5.getWindow().sap.ui.getCore(),
+							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
 							sap.ui.test.Opa.getContext().firstSalesOrderId = sSalesOrderId;
@@ -247,13 +309,24 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
-				pressCancelSalesOrdersChangesButton : function () {
+				pressCancelSalesOrderChangesButton : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
-						id : "cancelSalesOrdersChanges",
-						success : function (oCreateSalesOrderButton) {
-							Opa5.assert.ok(true, "Cancel Sales Orders Changes button pressed");
+						id : "cancelSalesOrderChanges",
+						success : function (oCancelSalesOrderChangesButton) {
+							Opa5.assert.ok(true, "Cancel Sales Order Changes button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressCancelSalesOrderListChangesButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "cancelSalesOrderListChanges",
+						success : function (oCancelSalesOrderListChangesButton) {
+							Opa5.assert.ok(true, "Cancel Sales Order List Changes button pressed");
 						},
 						viewName : sViewName
 					});
@@ -265,6 +338,17 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						id : "confirmSalesOrder",
 						success : function (oCreateSalesOrderButton) {
 							Opa5.assert.ok(true, "Confirm Sales Order button pressed");
+						},
+						viewName : sViewName
+					});
+				},
+				pressCreateSalesOrderItemButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "createSalesOrderLineItem",
+						success : function (oCreateSalesOrderLineItemButton) {
+							Opa5.assert.ok(true, "Create Sales Order Line Item button pressed");
 						},
 						viewName : sViewName
 					});
@@ -302,6 +386,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				pressSaveSalesOrderButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "saveSalesOrder",
+						viewName : sViewName
+					});
+				},
 				pressSaveSalesOrdersButton : function () {
 					return this.waitFor({
 						actions : new Press(),
@@ -318,12 +410,43 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				pressValueHelpOnProductCategory : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Input",
+						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
+						id : /-field/,
+						success : function (oValueHelp) {
+							Opa5.assert.ok(true, "ValueHelp on Product.Category pressed");
+							return this.waitFor({
+								controlType : "sap.m.Popover",
+								success : function (aControls) {
+									aControls[0].close();
+									Opa5.assert.ok(true, "ValueHelp Popover closed");
+								}
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				pressValueHelpOnProductTypeCode : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.ComboBox",
+						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
+						id : /-field/,
+						success : function (oValueHelp) {
+							Opa5.assert.ok(true, "ValueHelp on Product.TypeCode pressed");
+						},
+						viewName : sViewName
+					});
+				},
 				rememberCreatedSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (oControl) {
-							var oCore = Opa5.getWindow().sap.ui.getCore(),
+							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
 							if (!sap.ui.test.Opa.getContext().aOrderIds) {
@@ -375,6 +498,14 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "sortByGrossAmount",
+						viewName : sViewName
+					});
+				},
+				sortBySalesOrderID  : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "sortBySalesOrderID",
 						viewName : sViewName
 					});
 				},
@@ -506,6 +637,9 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 				checkLog : function (aExpected) {
 					return this.waitFor({
 						success : function (oControl) {
+							var aLogEntries = jQuery.sap.log.getLogEntries(),
+								iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex || 0;
+
 							function isExpected(oLog) {
 								if (!aExpected) {
 									return false;
@@ -513,43 +647,59 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 								return aExpected.some(function (oExpected, i) {
 									if (oLog.component === oExpected.component &&
 											oLog.level === oExpected.level &&
-											oLog.message.indexOf(oExpected.message) >= 0) {
+											oLog.message.indexOf(oExpected.message) >= 0 &&
+											(!oExpected.details ||
+												oLog.details.indexOf(oExpected.details) >= 0 )) {
 										aExpected.splice(i, 1);
 										return true;
 									}
 								});
 							}
 
-							Opa5.getWindow().jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
+							sap.ui.test.Opa.getContext().iNextLogIndex = aLogEntries.length;
+							aLogEntries.splice(iStartIndex).forEach(function (oLog) {
+								var sComponent = oLog.component || "";
 
-									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-										if (isExpected(oLog)) {
-											Opa5.assert.ok(true,
-												"Expected Warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										} else {
-											Opa5.assert.ok(false,
-												"Unexpected warning or error found: " + sComponent
-												+ " Level: " + oLog.level
-												+ " Message: " + oLog.message );
-										}
+								if (Helper.isRelevantLog(oLog)) {
+									if (isExpected(oLog)) {
+										Opa5.assert.ok(true,
+											"Expected Warning or error found: " + sComponent
+											+ " Level: " + oLog.level
+											+ " Message: " + oLog.message
+											+ (oLog.details ? " Details: " + oLog.details : ""));
+									} else {
+										Opa5.assert.ok(false,
+											"Unexpected warning or error found: " + sComponent
+											+ " Level: " + oLog.level
+											+ " Message: " + oLog.message
+											+ (oLog.details ? " Details: " + oLog.details : ""));
 									}
-								});
+								}
+							});
 							if (aExpected) {
 								aExpected.forEach(function (oExpected) {
 								Opa5.assert.ok(false,
 									"Expected warning or error not logged: " + oExpected.component
 									+ " Level: " + oExpected.level
-									+ " Message: " + oExpected.message );
+									+ " Message: " + oExpected.message
+									+ (oExpected.details ? " Details: " + oExpected.details : ""));
 								});
 							}
 							Opa5.assert.ok(true, "Log checked");
 						}
+					});
+				},
+				checkNewSalesOrderItemProductName : function (sExpectProductName) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderItemsTable) {
+							var oRow = oSalesOrderItemsTable.getItems()[0];
+
+							Opa5.assert.strictEqual(oRow.getCells()[3].getText(),
+								sExpectProductName, "Product name of new created SOItem");
+						},
+						viewName : sViewName
 					});
 				},
 				checkNote : function (iRow, sExpectedNote) {
@@ -564,6 +714,16 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 							Opa5.assert.strictEqual(oRow.getCells()[NOTE_COLUMN_INDEX].getValue(),
 								sExpectedNote,
 								"Note of row " + iRow + " as expected " + sExpectedNote);
+						},
+						viewName : sViewName
+					});
+				},
+				checkSalesOrderDetailsNote: function () {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : "Note",
+						success : function (oSONote) {
+							Opa5.assert.strictEqual(oSONote.getValue(), "");
 						},
 						viewName : sViewName
 					});
@@ -605,26 +765,25 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
-				checkSalesOrderDetailsNote: function () {
+				checkSalesOrderItemsCount : function (iExpectedCount) {
+					return checkCount(this, iExpectedCount, "SalesOrderLineItemsTitle");
+				},
+				checkSalesOrderLineItemNote : function (iRow, sNoteValue) {
 					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : "Note",
-						success : function (oSONote) {
-							Opa5.assert.strictEqual(oSONote.getValue(), "");
+						controlType : "sap.m.Table",
+						id : "SalesOrderLineItems",
+						success : function (oSalesOrderTable) {
+							var oRow = oSalesOrderTable.getItems()[iRow];
+
+							Opa5.assert.strictEqual(
+								oRow.getCells()[SOITEM_NOTE_COLUMN_INDEX].getValue(), sNoteValue,
+								"SO Item Note of row " + iRow + " is " + sNoteValue);
 						},
 						viewName : sViewName
 					});
 				},
 				checkSalesOrdersCount : function (iExpectedCount) {
-					return this.waitFor({
-						controlType : "sap.m.Text",
-						id : "SalesOrdersTitle",
-						success : function (oText) {
-							Opa5.assert.strictEqual(oText.getText(),
-								iExpectedCount + " Sales Orders", iExpectedCount + " Sales Orders");
-						},
-						viewName : sViewName
-					});
+					return checkCount(this, iExpectedCount, "SalesOrdersTitle");
 				},
 				checkSalesOrderSelected : function (iRow) {
 					return this.waitFor({
@@ -650,6 +809,19 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				checkTableLength : function (iExpectedLength, sTableId) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : sTableId,
+						success : function (oTable) {
+							Opa5.assert.strictEqual(oTable.getBinding("items").getLength(),
+								iExpectedLength,
+								"Expected length for table with ID " + sTableId + ": "
+									+ iExpectedLength);
+						},
+						viewName : sViewName
+					});
+				},
 				cleanUp : function() {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -667,6 +839,7 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 									{"If-Match" : "*"}));
 								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
 							});
+							sap.ui.test.Opa.getContext().aOrderIds = [];
 							oRequestor.submitBatch("Cleanup").then(function () {
 								Opa5.assert.ok(true, "Cleanup finished");
 								bCleanUpFinished = true;
@@ -700,6 +873,23 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 			assertions : {}
 		},
 		/*
+		 * Actions and assertions for the "ValueHelp" Popover
+		 */
+		onTheValueHelpPopover : {
+			actions : {
+				close : function () {
+					return this.waitFor({
+						controlType : "sap.m.Popover",
+						success : function (aControls) {
+							aControls[0].close();
+							Opa5.assert.ok(true, "ValueHelp Popover closed");
+						}
+					});
+				}
+			},
+			assertions : {}
+		},
+		/*
 		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
 		 */
 		onTheSalesOrderDeletionConfirmation : {
@@ -721,12 +911,40 @@ function (Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press
 			assertions : {}
 		},
 		/*
+		 * Actions and assertions for the "Sales Order Deletion" confirmation dialog
+		 */
+		onTheSalesOrderLineItemDeletionConfirmation : {
+			actions : {
+				cancel : function () {
+					return handleMessageBox(this, "Sales Order Line Item Deletion", false);
+				},
+				confirm : function () {
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({title : "Sales Order Line Item Deletion"}),
+						success : function (aControls) {
+							aControls[0].getButtons()[0].$().tap(); // confirm deletion
+							Opa5.assert.ok(true, "Confirm Delete Sales Line Item Order");
+						}
+					});
+				}
+			},
+			assertions : {}
+		},
+		/*
 		 * Actions and assertions for the "Success" information dialog
 		 */
 		onTheSuccessInfo : {
 			actions : {
 				confirm : function () {
-					return handleMessageBox(this, "Success", true, "Confirm 'Success'");
+					return this.waitFor({
+						controlType : "sap.m.Dialog",
+						matchers : new Properties({icon : "sap-icon://message-success"}),
+						success : function (aControls) {
+							aControls[0].getButtons()[0].$().tap();
+							Opa5.assert.ok(true, "Confirm 'Success'");
+						}
+					});
 				}
 			},
 			assertions : {}

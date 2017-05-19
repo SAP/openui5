@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/routing/H
 	var RouteMatchedHandler = BaseObject.extend("sap.m.routing.RouteMatchedHandler", {
 		constructor : function (oRouter, bCloseDialogs) {
 			if (oRouter instanceof MobileRouter) {
-				jQuery.sap.log.warning("A sap.m.routing.Router is used together with a sap.m.routing.RouteMatchedHandler (deprecated)." +
+				jQuery.sap.log.warning("A sap.m.routing.Router is used together with an sap.m.routing.RouteMatchedHandler (deprecated)." +
 					"The RoutematchedHandler is not taking over triggering the navigations, the Router will do it.", this);
 				return;
 			}

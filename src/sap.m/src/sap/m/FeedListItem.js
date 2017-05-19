@@ -65,12 +65,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', './FormattedT
 			timestamp : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * If true, sender string is an link, which will fire 'senderPress' events. If false, sender is normal text.
+			 * If true, sender string is a link, which will fire 'senderPress' events. If false, sender is normal text.
 			 */
 			senderActive : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * If true, icon is an link, which will fire 'iconPress' events. If false, icon is normal image
+			 * If true, icon is a link, which will fire 'iconPress' events. If false, icon is normal image
 			 */
 			iconActive : {type : "boolean", group : "Behavior", defaultValue : true},
 

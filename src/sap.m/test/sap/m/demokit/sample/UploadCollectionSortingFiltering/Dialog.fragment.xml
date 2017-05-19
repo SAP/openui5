@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<ViewSettingsDialog
-		title="Sorting and Filtering of Items"
+		title="Grouping, Sorting and Filtering of Items"
 		confirm="onViewSettingsConfirm">
 		<sortItems>
 			<ViewSettingsItem text="File Name" key="fileName" />
@@ -10,6 +10,11 @@
 			<ViewSettingsItem text="File Size" key="fileSize" />
 			<ViewSettingsItem text="Status" key="status" />
 		</sortItems>
+		<groupItems>
+			<ViewSettingsItem text="Uploaded By" key="uploadedBy" />
+			<ViewSettingsItem text="Mime Type" key="mimeType" />
+			<ViewSettingsItem text="Version" key="version" selected="true" />
+		</groupItems>
 		<filterItems>
 			<ViewSettingsFilterItem
 				text="File Size"

@@ -1,4 +1,6 @@
-sap.ui.require([], function () {
+/*global QUnit*/
+
+sap.ui.define(['sap/ui/test/opaQunit'], function (opaTest) {
 	"use strict";
 
 	QUnit.module("Download");

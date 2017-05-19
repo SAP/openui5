@@ -125,7 +125,7 @@ sap.ui.define(['./ComponentMetadata', './library'],
 		}
 
 		// if the root view is a string we convert it into a view
-		// configuration object and assume that it is a XML view
+		// configuration object and assume that it is an XML view
 		// !This should be kept in sync with the UIComponent#createContent functionality!
 		if (oUI5Manifest["rootView"] && typeof oUI5Manifest["rootView"] === "string") {
 			oUI5Manifest["rootView"] = {

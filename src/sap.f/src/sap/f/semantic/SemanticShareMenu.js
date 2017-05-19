@@ -160,14 +160,15 @@ sap.ui.define([
 	};
 
 	/*
-	* Cleans the references to all objects in use.
-	*
-	* @returns {sap.f.semantic.SemanticShareMenu}
-	*/
+	 * Destroys all the actions - custom and semantic
+	 * and cleans all the references in use.
+	 *
+	 * @returns {sap.f.semantic.SemanticShareMenu}
+	 */
 	SemanticShareMenu.prototype.destroy = function() {
+		this._oShareMenuBtn = null;
 		this._aShareMenuActions = null;
 		this._aCustomShareActions = null;
-		this._oShareMenuBtn = null;
 
 		return SemanticContainer.prototype.destroy.call(this);
 	};
@@ -308,8 +309,6 @@ sap.ui.define([
 	 * The method is called after a control has been removed
 	 * in order to update the <code>ShareMenu</code> mode.
 	 *
-	 *
-	 * @param {sap.f.semantic.SemanticControl} oControl
 	 * @returns {Boolean}
 	 */
 	SemanticShareMenu.prototype._onControlRemoved = function() {

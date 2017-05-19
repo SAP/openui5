@@ -82,7 +82,7 @@
 			"visibleDelete" : true,
 			"fileName" : "Document.txt",
 			"fileSize" : 15000,
-			"uploadedBy" : "J Edgar Hoover",
+			"uploadedBy" : "John Smith",
 			"version" : "1",
 			"status" : "Success",
 			"mimeType" : "text/plain",
@@ -90,7 +90,7 @@
 			"attributes":[
 				{
 					"title":"Uploaded By",
-					"text":"J Edgar Hoover"
+					"text":"John Smith"
 				},
 				{
 					"title":"Uploaded On",
@@ -119,7 +119,7 @@
 			"visibleDelete" : true,
 			"fileName" : "Third Quarter Results.ppt",
 			"fileSize" : 2000,
-			"uploadedBy" : "Sean O'Connel",
+			"uploadedBy" : "John Smith",
 			"version" : "2",
 			"status" : "Warning",
 			"mimeType" : "application/vnd.ms-powerpoint",
@@ -128,7 +128,7 @@
 			"attributes":[
 				{
 					"title":"Uploaded By",
-					"text":"Sean O'Connel"
+					"text":"John Smith"
 				},
 				{
 					"title":"Uploaded On",

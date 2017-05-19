@@ -1,4 +1,4 @@
-/*globals QUnit*/
+/*global QUnit,sinon*/
 
 
 (function(QUnit) {

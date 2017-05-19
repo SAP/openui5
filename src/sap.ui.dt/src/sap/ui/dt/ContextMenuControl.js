@@ -108,54 +108,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method for calculating the x, y-offset for opening the context menu at the current mouse position
-	 *
-	 * @param {number} iPageX mouse x position
-	 * @param {number} iPageY mouse y position
-	 */
-	ContextMenuControl.prototype._open = function(iPageX, iPageY) {
-
-		// first check if there are some context menu entries
-		if (this.getItems().length === 0) {
-			return;
-		}
-
-		// calculate the offset (depending on context-menu size)
-		var mouseX = iPageX;
-		var mouseY = iPageY;
-		var X = mouseX;
-		var Y = mouseY;
-		var bodyX = jQuery('body').width();
-		var bodyY = jQuery('body').height();
-
-		if (!this.getDomRef()) {
-			this.open(false, undefined, undefined, undefined, undefined, -2000 + " " + -2000, "none");
-		}
-
-		var ContextMenuControlWidth = this.$().context.clientWidth;
-		var ContextMenuControlHeight = this.$().context.clientHeight;
-		var xFlipOffset = (bodyX - mouseX < ContextMenuControlWidth) ? ContextMenuControlWidth : 0;
-		var yFlipOffset = (bodyY - mouseY < ContextMenuControlHeight) ? ContextMenuControlHeight : 0;
-
-		X = ((bodyX / 2 - mouseX) * -1) + ContextMenuControlWidth / 2 + 2 - xFlipOffset;
-		Y = ((bodyY / 2 - mouseY) * -1) + ContextMenuControlHeight / 2 + 2 - yFlipOffset;
-
-		var yOffset = mouseY - ContextMenuControlHeight;
-		if (yOffset < 0 && yFlipOffset !== 0) {
-			Y = Y - yOffset;
-		}
-
-		this.close();
-		this.open(true, this._oOverlayDomRef, undefined, undefined, document.body, X + " " + Y, "flip");
-	};
-
-	/**
 	 * Handler Method for event open menu
 	 *
-	 * @param {object} oContextInfo Information on the context
+	 * @param {object} oOriginalEvent Original Event invoking Context menu
+	 * @param {object} oTargetOverlay Overlay invoking the context menu
 	 */
-	ContextMenuControl.prototype.openMenu = function(oContextInfo) {
-		this._open(oContextInfo.pageX, oContextInfo.pageY);
+	ContextMenuControl.prototype.openMenu = function(oOriginalEvent, oTargetOverlay) {
+		// first check if there are some context menu entries
+		if (this.getItems().length === 0 || !oTargetOverlay.getDomRef()) {
+			return;
+		}
+		this.openAsContextMenu(oOriginalEvent, oTargetOverlay);
 	};
 
 	/**

@@ -48,6 +48,9 @@ sap.ui.define([
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
 
+			// check filter integrity
+			this.oModel.checkFilterOperation(this.aApplicationFilters);
+
 			// load the entity type for the collection only once and not e.g. every time when filtering
 			if (!this.oModel.getServiceMetadata()) {
 				var that = this,
@@ -79,7 +82,7 @@ sap.ui.define([
 				this.bDataAvailable = true;
 			}	else {
 				// call getLength when metadata is already loaded or don't do anything
-				// if the the metadata gets loaded it will call a refresh on all bindings
+				// if the metadata gets loaded it will call a refresh on all bindings
 				if (this.oModel.getServiceMetadata()) {
 					this.resetData();
 				}
@@ -815,6 +818,9 @@ sap.ui.define([
 		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
 		}
+
+		// check filter integrity
+		this.oModel.checkFilterOperation(aFilters);
 
 		if (sFilterType == FilterType.Application) {
 			this.aApplicationFilters = aFilters;

@@ -2,10 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Opa5, Properties) {
+function (Helper, Opa5, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.ListBinding.Main";
 
@@ -61,13 +62,11 @@ function (Opa5, Properties) {
 				checkLog : function () {
 					return this.waitFor({
 						success : function (oControl) {
-							Opa5.getWindow().jQuery.sap.log.getLogEntries()
+							jQuery.sap.log.getLogEntries()
 								.forEach(function (oLog) {
 									var sComponent = oLog.component || "";
 
-									if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-											|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-											&& oLog.level <= jQuery.sap.log.Level.WARNING) {
+									if (Helper.isRelevantLog(oLog)) {
 										Opa5.assert.ok(false,
 											"Unexpected warning or error found: " + sComponent
 											+ " Level: " + oLog.level

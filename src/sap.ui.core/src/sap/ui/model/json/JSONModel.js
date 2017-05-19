@@ -359,6 +359,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 		return Array.isArray(this._getObject(sAbsolutePath));
 	};
 
+	/**
+	 * Sets the meta model associated with this model
+	 *
+	 * @private
+	 * @param {sap.ui.model.MetaModel} oMetaModel the meta model associated with this model
+	 */
+	JSONModel.prototype._setMetaModel = function(oMetaModel) {
+		this._oMetaModel = oMetaModel;
+	};
+
+	JSONModel.prototype.getMetaModel = function() {
+		return this._oMetaModel;
+	};
 
 	return JSONModel;
 

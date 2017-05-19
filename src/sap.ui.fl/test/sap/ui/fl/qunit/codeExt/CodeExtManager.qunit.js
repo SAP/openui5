@@ -1,7 +1,9 @@
-/* globals QUnit, sinon */
+/*global QUnit */
+
 sap.ui.require([
 	"sap/ui/fl/codeExt/CodeExtManager", "sap/ui/fl/Change", "sap/ui/fl/Utils"
 ], function(CodeExtManager, Change, Utils) {
+	"use strict";
 
 	QUnit.test("createOrUpdateCodeExtChange throws an error if no codeRef is provided", function(assert) {
 
@@ -192,62 +194,63 @@ sap.ui.require([
 			};
 
 		var aExpectedPayload = [
-		    			{
-		    				fileName: sGeneratedId,
-		    				fileType: "change",
-		    				changeType: "codeExt",
-		    				reference: sReference,
-		    				packageName: "myPackageName",
-		    				content: {
-								codeRef: sCodeRef
-		    				},
-		    				selector: {
-		    					id : sControllerName1
-		    				},
-		    				layer: sLayer,
-		    				texts: {},
-		    				namespace: sNamespace,
-		    				creation: "",
-		    				originalLanguage: sLanguage,
-		    				conditions: {},
-		    				context: "context",
-		    				support: {
-		    					generator: "Change.createInitialFileContent",
-		    					service: "",
-		    					user: "",
-		    					sapui5Version: sap.ui.version
-		    				},
-		    				dependentSelector: {},
-		    				validAppVersions: {}
-		    			},
-		    			{
-		    				fileName: sGeneratedId,
-		    				fileType: "change",
-		    				changeType: "codeExt",
-		    				reference: sReference,
-		    				packageName: "myPackageName",
-		    				content: {
-								codeRef: sCodeRef
-		    				},
-		    				selector: {
-		    					id : sControllerName2
-		    				},
-		    				layer: sLayer,
-		    				texts: {},
-		    				namespace: sNamespace,
-		    				creation: "",
-		    				originalLanguage: sLanguage,
-		    				conditions: {},
-		    				context: "context",
-		    				support: {
-		    					generator: "Change.createInitialFileContent",
-		    					service: "",
-		    					user: "",
-		    					sapui5Version: sap.ui.version
-		    				},
-		    				dependentSelector: {},
-		    				validAppVersions: {}
-		    			}];
+			{
+				fileName: sGeneratedId,
+				fileType: "change",
+				changeType: "codeExt",
+				reference: sReference,
+				packageName: "myPackageName",
+				content: {
+					codeRef: sCodeRef
+				},
+				selector: {
+					id : sControllerName1
+				},
+				layer: sLayer,
+				texts: {},
+				namespace: sNamespace,
+				creation: "",
+				originalLanguage: sLanguage,
+				conditions: {},
+				context: "context",
+				support: {
+					generator: "Change.createInitialFileContent",
+					service: "",
+					user: "",
+					sapui5Version: sap.ui.version
+				},
+				dependentSelector: {},
+				validAppVersions: {}
+			},
+			{
+				fileName: sGeneratedId,
+				fileType: "change",
+				changeType: "codeExt",
+				reference: sReference,
+				packageName: "myPackageName",
+				content: {
+					codeRef: sCodeRef
+				},
+				selector: {
+					id : sControllerName2
+				},
+				layer: sLayer,
+				texts: {},
+				namespace: sNamespace,
+				creation: "",
+				originalLanguage: sLanguage,
+				conditions: {},
+				context: "context",
+				support: {
+					generator: "Change.createInitialFileContent",
+					service: "",
+					user: "",
+					sapui5Version: sap.ui.version
+				},
+				dependentSelector: {},
+				validAppVersions: {}
+			}
+		];
 
 		var oLrepConnectorCreateStub = this.stub(CodeExtManager._oLrepConnector, "create");
 

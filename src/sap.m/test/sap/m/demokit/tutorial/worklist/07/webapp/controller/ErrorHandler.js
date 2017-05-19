@@ -4,14 +4,14 @@ sap.ui.define([
 ], function(Object, MessageBox) {
 	"use strict";
 
-	return Object.extend("myCompany.myApp.controller.ErrorHandler", {
+	return Object.extend("mycompany.myapp.controller.ErrorHandler", {
 
 		/**
 		 * Handles application errors by automatically attaching to the model events and displaying errors when needed.
 		 * @class
 		 * @param {sap.ui.core.UIComponent} oComponent reference to the app's component
 		 * @public
-		 * @alias myCompany.myApp.controller.ErrorHandler
+		 * @alias mycompany.myapp.controller.ErrorHandler
 		 */
 		constructor: function(oComponent) {
 			this._oResourceBundle = oComponent.getModel("i18n").getResourceBundle();

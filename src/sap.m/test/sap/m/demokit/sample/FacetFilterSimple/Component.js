@@ -19,7 +19,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				sample : {
 					files : [
 						"FacetFilter.view.xml",
-						"FacetFilter.controller.js"
+						"FacetFilter.controller.js",
+						"../Table/Component.js",
+						"../Table/Formatter.js",
+						"../Table/Table.controller.js",
+						"../Table/Table.view.xml"
 					]
 				}
 			}

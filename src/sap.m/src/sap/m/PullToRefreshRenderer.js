@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		var bShowIcon = oControl.getShowIcon();
 		var sCustomIcon = oControl.getCustomIcon();
 		var sTooltip = oControl.getTooltip_AsString();
+		var oResourceBundle = oControl._getRB();
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -66,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		// Text - Pull down to refresh
 		oRm.write("<span id=" + oControl.getId() + "-T class=\"sapMPullDownText\">");
-		oRm.writeEscaped(oControl.oRb.getText(oControl._bTouchMode ? "PULL2REFRESH_PULLDOWN" : "PULL2REFRESH_REFRESH"));
+		oRm.writeEscaped(oResourceBundle.getText(oControl._bTouchMode ? "PULL2REFRESH_PULLDOWN" : "PULL2REFRESH_REFRESH"));
 		oRm.write("</span>");
 
 		// Info - last updated at xx:xx:xx

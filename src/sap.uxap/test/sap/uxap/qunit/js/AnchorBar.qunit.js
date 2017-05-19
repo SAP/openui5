@@ -1,21 +1,24 @@
+/*global QUnit,sinon*/
+
 (function ($, QUnit, sinon, Importance) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("view", "view");
 
-    sinon.config.useFakeTimers = true;
+	sinon.config.useFakeTimers = true;
 
 	var iRenderingDelay = 1000;
 	var ANCHORBAR_CLASS_SELECTOR = ".sapUxAPAnchorBar";
 	var HIERARCHICAL_CLASS_SELECTOR = ".sapUxAPHierarchicalSelect";
 
-    QUnit.module("properties", {
-    	beforeEach: function () {
-    		this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBar", {
-                viewName: "view.UxAP-69_AnchorBar"
-            });
-            this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
-            this.anchorBarView.placeAt('qunit-fixture');
-		    sap.ui.getCore().applyChanges();
+	QUnit.module("properties", {
+		beforeEach: function () {
+			this.anchorBarView = sap.ui.xmlview("UxAP-69_anchorBar", {
+				viewName: "view.UxAP-69_AnchorBar"
+			});
+			this.oObjectPage = this.anchorBarView.byId("ObjectPageLayout");
+			this.anchorBarView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.anchorBarView.destroy();
@@ -23,29 +26,29 @@
 		}
 	});
 
-    QUnit.test("Show/Hide Bar", function (assert) {
-        assert.expect(3); //number of assertions
+	QUnit.test("Show/Hide Bar", function (assert) {
+		assert.expect(3); //number of assertions
 
-        // test whether it is visible by default
-        assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0, true, "anchorBar visible by default");
+		// test whether it is visible by default
+		assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0, true, "anchorBar visible by default");
 
-        // hide the anchor bar
-        this.oObjectPage.setShowAnchorBar(false);
+		// hide the anchor bar
+		this.oObjectPage.setShowAnchorBar(false);
 
-        // allow for re-render
-        sap.ui.getCore().applyChanges();
+		// allow for re-render
+		sap.ui.getCore().applyChanges();
 
-        // test whether it is hidden
+		// test whether it is hidden
 		assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length, 0, "anchorBar hidden");
 
-        // show the anchor bar back
+		// show the anchor bar back
 		this.oObjectPage.setShowAnchorBar(true);
 
-        // allow for re-render
+		// allow for re-render
 		sap.ui.getCore().applyChanges();
-        assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0, true, "anchorBar displayed");
+		assert.strictEqual(jQuery(ANCHORBAR_CLASS_SELECTOR).length > 0, true, "anchorBar displayed");
 
-    });
+	});
 
 	QUnit.test("Show/Hide popover", function (assert) {
 		//no longer show the popover

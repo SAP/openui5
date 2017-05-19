@@ -172,6 +172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	//================================================================================
 
 	NotificationListItem.prototype.onBeforeRendering = function () {
+		this._updateAriaAdditionalInfo();
 		this._deregisterResize();
 	};
 

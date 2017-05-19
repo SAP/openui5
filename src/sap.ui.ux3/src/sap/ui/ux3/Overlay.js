@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/**
 	 * Handle the click event happening on the Overlay.
 	 *
-	 * @param {jQuery.EventObject} oEvent
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Overlay.prototype.onclick = function(oEvent) {
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/**
 	 * Handle the sapselect pseudo event happening on the Overlay.
 	 *
-	 * @param {jQuery.EventObject} oEvent
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Overlay.prototype.onsapselect = function(oEvent) {
@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/**
 	 * Event handling for Overlay Buttons.
 	 *
-	 * @param {jQuery.EventObject} oEvent
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Overlay.prototype._handleButtonEvent = function(oEvent) {

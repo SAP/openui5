@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/test/opaQunit"
 ], function (opaTest) {
@@ -81,6 +83,15 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheOverviewPage.theTableShowsOnlyObjectsWithTheSearchStringInTheirTitle();
+	});
+
+	opaTest("Search for the 'copy' icon by its unicode should result in the 'copy' icon being displayed in the table", function (Given, When, Then) {
+		//Actions
+		When.onTheOverviewPage.iClearTheSearch().
+			and.iSearchForValueWithEnter("xe245");
+
+		// Assertions
+		Then.onTheOverviewPage.theTableContainsOnlyTheIcon("copy");
 	});
 
 	opaTest("Entering something that cannot be found into search field and pressing search field's refresh should leave the list as it was", function (Given, When, Then) {

@@ -211,7 +211,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding', 'sap/ui/model
 
 			// Create new binding context and fire change
 			oData = this.oModel._getObject(this.sPath, this.oContext);
-			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, oData, this.mParameters);
+			bReloadNeeded = this.oModel._isReloadNeeded(sResolvedPath, this.mParameters);
 
 			if (bReloadNeeded) {
 				this.fireDataRequested();

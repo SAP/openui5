@@ -153,7 +153,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
 		this._propagateMessages(aMessages, mRequestInfo, mGetEntities, mChangeEntities);
 	} else {
 		// In case no message processor is attached, at least log to console.
-		// TODO: Maybe we should just output an error an do nothing, since this is not how messages are meant to be used like?
+		// TODO: Maybe we should just output an error and do nothing, since this is not how messages are meant to be used like?
 		this._outputMesages(aMessages);
 	}
 };
@@ -170,7 +170,7 @@ ODataMessageParser.prototype.parse = function(oResponse, oRequest, mGetEntities,
  *
  * @param {string} sParentEntity - The path of the parent entity in which to search for the NavigationProperty
  * @param {string} sPropertyName - The name of the property which should be checked whether it is a NavigationProperty
- * @returns {boolean} Returns true if the given property is an NavigationProperty
+ * @returns {boolean} Returns true if the given property is a NavigationProperty
  * @private
  */
 ODataMessageParser.prototype._isNavigationProperty = function(sParentEntity, sPropertyName) {
@@ -295,7 +295,7 @@ ODataMessageParser.prototype._propagateMessages = function(aMessages, mRequestIn
 };
 
 /**
- * Creates a sap.ui.core.message.Message from the given JavaScript object
+ * Creates an sap.ui.core.message.Message from the given JavaScript object
  *
  * @param {ODataMessageParser~ServerError} oMessageObject - The object containing the message data
  * @param {ODataMessageParser~RequestInfo} mRequestInfo - Info object about the request URL
@@ -318,9 +318,10 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 	var sDescriptionUrl = oMessageObject.longtext_url ? oMessageObject.longtext_url : "";
 
 	var bPersistent = false;
-	if (oMessageObject.propertyref) {
+	if (!oMessageObject.target && oMessageObject.propertyref) {
 		oMessageObject.target = oMessageObject.propertyref;
 	}
+	// propertyRef is deprecated and should not be used if a target is specified
 	if (typeof oMessageObject.target === "undefined") {
 		oMessageObject.target = "";
 	}

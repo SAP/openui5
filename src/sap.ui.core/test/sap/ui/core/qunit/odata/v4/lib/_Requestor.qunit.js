@@ -14,7 +14,7 @@ sap.ui.require([
 
 	var sServiceUrl = "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 		sSampleServiceUrl
-			= "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/";
+			= "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/";
 
 	/**
 	 * Creates a mock for jQuery's XHR wrapper.
@@ -57,17 +57,18 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Requestor", {
 		beforeEach : function () {
-			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
-			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
-			sap.ui.getVersionInfo({failOnError : false});
-
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oSandbox = sinon.sandbox.create();
+			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
+
+			// workaround: Chrome extension "UI5 Inspector" calls this method which loads the
+			// resource "sap-ui-version.json" and thus interferes with mocks for jQuery.ajax
+			this.oSandbox.stub(sap.ui, "getVersionInfo");
 		},
 
 		afterEach : function () {
-			this.oLogMock.verify();
+			this.oSandbox.verifyAndRestore();
 		}
 	});
 
@@ -97,7 +98,7 @@ sap.ui.require([
 			fnSubmit = sinon.spy();
 
 		this.mock(_Requestor).expects("cleanPayload")
-			.withExactArgs(oPayload).returns(oChangedPayload);
+			.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
 		this.mock(jQuery).expects("ajax")
 			.withExactArgs(sServiceUrl + "Employees?foo=bar", {
 				data : JSON.stringify(oChangedPayload),
@@ -1423,6 +1424,16 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(_Requestor.cleanBatch(aRequests), aRequests);
 		assert.deepEqual(aRequests, aResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: $cached as groupId", function (assert) {
+		var oRequestor = _Requestor.create("/");
+
+		assert.throws(function(){
+			//code under test
+			oRequestor.request("GET", "/FOO", "$cached");
+		},  new Error("Unexpected request: GET /FOO"));
 	});
 
 	//*********************************************************************************************

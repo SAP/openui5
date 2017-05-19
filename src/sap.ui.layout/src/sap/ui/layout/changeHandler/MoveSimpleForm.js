@@ -7,7 +7,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			"use strict";
 
 			/**
-			 * Change handler for moving of a elements.
+			 * Change handler for moving elements.
 			 *
 			 * @alias sap.ui.fl.changeHandler.MoveElements
 			 * @author SAP SE
@@ -19,9 +19,39 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD = "moveSimpleFormField";
 			MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP = "moveSimpleFormGroup";
 			MoveSimpleForm.sTypeTitle = "sap.ui.core.Title";
+			MoveSimpleForm.sTypeMTitle = "sap.m.Title";
 			MoveSimpleForm.sTypeToolBar = "sap.m.Toolbar";
+			MoveSimpleForm.sTypeOverflowToolBar = "sap.m.OverflowToolbar";
 			MoveSimpleForm.sTypeLabel = "sap.m.Label";
+			MoveSimpleForm.sTypeSmartLabel = "sap.ui.comp.smartfield.SmartLabel";
 			MoveSimpleForm.CONTENT_AGGREGATION = "content";
+
+			var fnFirstGroupWithoutTitle = function(oModifier, aStopToken, aContent) {
+				for (var i = 0; i < aContent.length; i++) {
+					var sType = oModifier.getControlType(aContent[i]);
+					if (aStopToken.indexOf(sType) === -1) {
+						if (aContent[i].getVisible()) {
+							return true;
+						}
+					} else {
+						return false;
+					}
+				}
+			};
+
+			var fnAddTitleToFirstGroupIfNeeded = function(oModifier, aContent, oSimpleForm, mPropertyBag, aStopToken) {
+				if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
+					var oView = mPropertyBag.view;
+					var oAppComponent = mPropertyBag.appComponent;
+					var sGroupId = oAppComponent.createId(jQuery.sap.uid());
+
+					var oTitle = oModifier.createControl("sap.ui.core.Title", oAppComponent, oView, sGroupId);
+					oModifier.setProperty(oTitle, "text", "");
+					oModifier.insertAggregation(oSimpleForm, "content", oTitle, 0, oView);
+				}
+
+				return oSimpleForm.getContent();
+			};
 
 			/**
 			 * Moves an element from one aggregation to another.
@@ -91,10 +121,19 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 
 				} else if (oChangeWrapper.getChangeType() === MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP) {
 
-					var aStopGroupToken = [MoveSimpleForm.sTypeTitle, MoveSimpleForm.sTypeToolBar];
+					var aStopGroupToken = [MoveSimpleForm.sTypeTitle,
+											MoveSimpleForm.sTypeToolBar,
+											MoveSimpleForm.sTypeMTitle,
+											MoveSimpleForm.sTypeOverflowToolBar];
 					// !important : element was used in 1.40, do not remove for compatibility!
 					var oMovedGroup = oModifier.bySelector(mMovedElement.elementSelector || mMovedElement.element, oAppComponent, oView);
-					var iMovedGroupIndex = aContent.indexOf(oMovedGroup);
+
+					// If needed, insert a Title for the first group.
+					if (mMovedElement.target.groupIndex === 0 || !oMovedGroup) {
+						aContent = fnAddTitleToFirstGroupIfNeeded(oModifier, aContent, oSimpleForm, mPropertyBag, aStopGroupToken, oContent.newControlId);
+					}
+
+					var iMovedGroupIndex = oMovedGroup ? aContent.indexOf(oMovedGroup) : 0;
 
 					var iTargetIndex = fnMapGroupIndexToContentAggregationIndex(oModifier, aStopGroupToken, aContent,
 							mMovedElement.target.groupIndex);
@@ -142,7 +181,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			MoveSimpleForm.completeChangeContent = function(oChangeWrapper, mSpecificChangeInfo, mPropertyBag) {
 				var mStableChangeInfo;
 
-				var oSimpleForm = mSpecificChangeInfo.source.publicParent;
+				var oModifier = mPropertyBag.modifier;
+				var oView = mPropertyBag.view;
+				var oAppComponent = mPropertyBag.appComponent;
+
+				var oSimpleForm = oModifier.bySelector(mSpecificChangeInfo.selector, oAppComponent, oView);
 				var aMovedElements = mSpecificChangeInfo.movedElements;
 				if (aMovedElements.length > 1) {
 					jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
@@ -175,6 +218,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			var fnMapGroupIndexToContentAggregationIndex = function(oModifier, aStopToken, aContent, iGroupIndex) {
 				var oResult;
 				var iCurrentGroupIndex = -1;
+
+				if (fnFirstGroupWithoutTitle(oModifier, aStopToken, aContent)) {
+					iCurrentGroupIndex++;
+				}
+
 				for (var i = 0; i < aContent.length; i++) {
 					var sType = oModifier.getControlType(aContent[i]);
 					if (aStopToken.indexOf(sType) > -1) {
@@ -193,7 +241,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 					return true;
 				}
 				var sType = aElements[iIndex].getMetadata().getName();
-				return (MoveSimpleForm.sTypeTitle === sType || MoveSimpleForm.sTypeToolBar === sType);
+				return (MoveSimpleForm.sTypeTitle === sType
+						|| MoveSimpleForm.sTypeToolBar === sType
+						|| MoveSimpleForm.sTypeMTitle === sType
+						|| MoveSimpleForm.sTypeOverflowToolBar === sType);
 			};
 
 			var fnMeasureLengthOfSequenceUntilStopToken = function(oModifier, iMovedElementIndex, aContent, aStopToken) {
@@ -208,8 +259,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			};
 
 			var fnGetFieldLength = function(oModifier, aElements, iIndex) {
-				return fnMeasureLengthOfSequenceUntilStopToken(oModifier, iIndex, aElements, [MoveSimpleForm.sTypeTitle,
-						MoveSimpleForm.sTypeToolBar, MoveSimpleForm.sTypeLabel]);
+				return fnMeasureLengthOfSequenceUntilStopToken(oModifier, iIndex, aElements,
+					[MoveSimpleForm.sTypeTitle,
+					MoveSimpleForm.sTypeMTitle,
+					MoveSimpleForm.sTypeToolBar,
+					MoveSimpleForm.sTypeOverflowToolBar,
+					MoveSimpleForm.sTypeLabel,
+					MoveSimpleForm.sTypeSmartLabel
+					]);
 			};
 
 			var fnMapFieldIndexToContentAggregationIndex = function(oModifier, aContent, iGroupStart, iFieldIndex, bUp) {

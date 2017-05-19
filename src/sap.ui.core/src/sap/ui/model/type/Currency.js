@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	/**
 	 * Format the given array containing amount and currency code to an output value of type string.
 	 * Other internal types than 'string' are not supported by the Currency type.
-	 * If an source format is has been defined for this type, the formatValue does also accept
+	 * If a source format has been defined for this type, the formatValue does also accept
 	 * a string value as input, which will be parsed into an array using the source format.
 	 * If aValues is not defined or null, null will be returned.
 	 *

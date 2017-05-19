@@ -17,11 +17,11 @@ sap.ui.define([
 
 		onMasterPressed: function (oEvent) {
 			var oContext = oEvent.getParameter("listItem").getBindingContext("side");
-			var sPath= oContext.getPath() + "/selected";
+			var sPath = oContext.getPath() + "/selected";
 			oContext.getModel().setProperty(sPath, true);
 			var sSelectedMasterElement = oContext.getProperty("title");
 			var sKey = oContext.getProperty("key");
-			switch(sSelectedMasterElement) {
+			switch (sSelectedMasterElement) {
 				case "System Settings": {
 					this.getRouter().navTo(sKey);
 					break;

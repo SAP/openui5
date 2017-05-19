@@ -74,7 +74,7 @@ sap.ui.define([
 		 * @private
 		 */
 		this._setFocusHandler = function(oNewFocusHandler) {
-			jQuery.sap.assert(oNewFocusHandler && lazyInstanceof(oNewFocusHandler, 'sap/ui/core/FocusHandler'), "oFocusHandler must be a sap.ui.core.FocusHandler");
+			jQuery.sap.assert(oNewFocusHandler && lazyInstanceof(oNewFocusHandler, 'sap/ui/core/FocusHandler'), "oFocusHandler must be an sap.ui.core.FocusHandler");
 			oFocusHandler = oNewFocusHandler;
 		};
 
@@ -231,7 +231,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.writeClasses = function(oElement) {
-			jQuery.sap.assert(!oElement || typeof oElement === "boolean" || lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be empty, a boolean, or a sap.ui.core.Element");
+			jQuery.sap.assert(!oElement || typeof oElement === "boolean" || lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
 			var oStyle = aStyleStack[aStyleStack.length - 1];
 
 			// Custom classes are added by default from the currently rendered control. If an oElement is given, this Element's custom style
@@ -335,7 +335,7 @@ sap.ui.define([
 		 * @since 1.22.9
 		 */
 		this.cleanupControlWithoutRendering = function(oControl) {
-			jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
+			jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be an sap.ui.core.Control or empty");
 			if (!oControl || !oControl.getDomRef()) {
 				return;
 			}
@@ -357,7 +357,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.renderControl = function(oControl) {
-			jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control or empty");
+			jQuery.sap.assert(!oControl || lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be an sap.ui.core.Control or empty");
 			// don't render a NOTHING
 			if (!oControl) {
 				return this;
@@ -483,7 +483,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.getHTML = function(oControl) {
-			jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+			jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be an sap.ui.core.Control");
 
 			var tmp = aBuffer;
 			var aResult = aBuffer = this.aBuffer = [];
@@ -826,7 +826,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
-		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be an sap.ui.core.Control");
 		this.writeElementData(oControl);
 		return this;
 	};
@@ -871,13 +871,13 @@ sap.ui.define([
 
 	/**
 	 * Writes the elements data into the HTML.
-	 * Element Data consists at least of the id of a element
+	 * Element Data consists at least of the id of an element
 	 * @param {sap.ui.core.Element} oElement the element whose identifying information should be written to the buffer
 	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
-		jQuery.sap.assert(oElement && lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be a sap.ui.core.Element");
+		jQuery.sap.assert(oElement && lazyInstanceof(oElement, 'sap/ui/core/Element'), "oElement must be an sap.ui.core.Element");
 		var sId = oElement.getId();
 		if (sId) {
 			this.writeAttribute("id", sId).writeAttribute("data-sap-ui", sId);
@@ -1165,7 +1165,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be an sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
 	};
 
@@ -1211,7 +1211,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.getRenderer = function(oControl) {
-		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be a sap.ui.core.Control");
+		jQuery.sap.assert(oControl && lazyInstanceof(oControl, 'sap/ui/core/Control'), "oControl must be an sap.ui.core.Control");
 
 		return oControl.getMetadata().getRenderer();
 	};

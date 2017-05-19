@@ -28,13 +28,14 @@ sap.ui.define([
 
 		/**
 		 * Returns an instance of the semantic helper
-		 * @returns {*}
+		 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper} An instance of the semantic helper
 		 */
 		getHelper: function () {
 			var oFCL = this.getRootControl().byId("fcl"),
 				oSettings = {
 					defaultTwoColumnLayoutType: sap.f.LayoutType.TwoColumnsMidExpanded,
-					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded
+					defaultThreeColumnLayoutType: sap.f.LayoutType.ThreeColumnsMidExpanded,
+					mode: "Normal"
 				};
 
 			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);

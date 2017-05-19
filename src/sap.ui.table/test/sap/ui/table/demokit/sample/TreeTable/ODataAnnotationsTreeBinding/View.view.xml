@@ -19,25 +19,25 @@
 
             <Column label="Description">
                 <template>
-                    <m:Text text="{Description}"/>
+                    <m:Text text="{Description}" wrapping="false" />
                 </template>
             </Column>
 
             <Column label="HierarchyLevel">
                 <template>
-                    <m:Text text="{HierarchyLevel}"/>
+                    <m:Text text="{HierarchyLevel}" wrapping="false" />
                 </template>
             </Column>
 
             <Column label="NodeID">
                 <template>
-                    <m:Text text="{NodeID}"/>
+                    <m:Text text="{NodeID}" wrapping="false" />
                 </template>
             </Column>
 
             <Column label="ParentNodeID">
                 <template>
-                    <m:Text text="{ParentNodeID}"/>
+                    <m:Text text="{ParentNodeID}" wrapping="false" />
                 </template>
             </Column>
 

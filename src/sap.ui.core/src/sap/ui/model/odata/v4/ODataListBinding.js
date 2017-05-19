@@ -40,47 +40,11 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The parent context which is required as base for a relative path
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
-	 *   The dynamic sorters to be used initially. Call {@link #sort} to replace them. Static
-	 *   sorters, as defined in the '$orderby' binding parameter, are always executed after the
-	 *   dynamic sorters.
-	 *   Supported since 1.39.0.
+	 *   The dynamic sorters to be used initially; supported since 1.39.0
 	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
-	 *   The dynamic application filters to be used initially. Call {@link #filter} to replace them.
-	 *   Static filters, as defined in the '$filter' binding parameter, are always combined with the
-	 *   dynamic filters using a logical <code>AND</code>.
-	 *   Supported since 1.39.0.
+	 *   The dynamic application filters to be used initially; supported since 1.39.0
 	 * @param {object} [mParameters]
-	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
-	 *   Note: The binding creates its own data service request if it is absolute or if it has any
-	 *   parameters or if it is relative and has a context created via
-	 *   {@link ODataModel#createBindingContext} or if it has sorters or filters.
-	 *   The following OData query options are allowed:
-	 *   <ul>
-	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search and $select "5.1 System Query
-	 *     Options"
-	 *   </ul>
-	 *   All other query options lead to an error.
-	 *   Query options specified for the binding overwrite model query options.
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.$$operationMode]
-	 *   The operation mode for sorting with the model's operation mode as default. Since 1.39.0,
-	 *   the operation mode {@link sap.ui.model.odata.OperationMode.Server} is supported. All other
-	 *   operation modes including <code>undefined</code> lead to an error if 'vFilters' or
-	 *   'vSorters' are given or if {@link #filter} or {@link #sort} is called.
-	 * @param {string} [mParameters.$$groupId]
-	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, either the parent binding's group ID (if the binding is relative) or the
-	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
-	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
-	 *   or the model's update group ID is used,
-	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   For valid values, see parameter "$$groupId".
+	 *   Map of binding parameters
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
 	 *
@@ -111,10 +75,13 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-
+				this.mAggregatedQueryOptions = {};
 				this.aApplicationFilters = _Helper.toArray(vFilters);
 				this.oCachePromise = _SyncPromise.resolve();
-				this.sChangeReason = undefined;
+				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
+				// auto-$expand/$select: promises to wait until child bindings have provided
+				// their path and query options
+				this.aChildCanUseCachePromises = [];
 				this.oDiff = undefined;
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
@@ -220,7 +187,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Applies the the given map of parameters to this binding's parameters and triggers the
+	 * Applies the given map of parameters to this binding's parameters and triggers the
 	 * creation of a new cache if called with a change reason.
 	 *
 	 * @param {object} [mParameters]
@@ -293,51 +260,12 @@ sap.ui.define([
 		return ListBinding.prototype.attachEvent.apply(this, arguments);
 	};
 
-	/*
-	 * Checks dependent bindings for updates or refreshes the binding if the canonical path of its
-	 * parent context changed.
-	 *
-	 * @throws {Error} If called with parameters
-	 */
-	// @override
-	ODataListBinding.prototype.checkUpdate = function () {
-		var that = this;
-
-		function updateDependents() {
-			// Do not fire a change event, there is no change in the list of contexts
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				oDependentBinding.checkUpdate();
-			});
-		}
-
-		if (arguments.length > 0) {
-			throw new Error("Unsupported operation: v4.ODataListBinding#checkUpdate "
-				+ "must not be called with parameters");
-		}
-
-		this.oCachePromise.then(function (oCache) {
-			if (oCache && that.bRelative && that.oContext.fetchCanonicalPath) {
-				that.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
-					// entity of context changed
-					if (oCache.$canonicalPath !== sCanonicalPath) {
-						that.refreshInternal();
-					} else {
-						updateDependents();
-					}
-				})["catch"](function (oError) {
-					that.oModel.reportError("Failed to update " + that, sClassName, oError);
-				});
-			} else {
-				updateDependents();
-			}
-		});
-	};
-
 	/**
 	 * Creates a new entity and inserts it at the beginning of the list. As long as the binding
 	 * contains an entity created via this function, you cannot create another entity. This is only
 	 * possible after the creation of the entity has been successfully sent to the server and you
-	 * have called {@link #refresh} at the binding or the new entity is deleted in between.
+	 * have called {@link #refresh} at the (parent) binding, which is absolute or not relative to a
+	 * {@link sap.ui.model.odata.v4.Context}, or the new entity is deleted in between.
 	 *
 	 * For creating the new entity, the binding's update group ID is used, see binding parameter
 	 * $$updateGroupId of {@link sap.ui.model.odata.v4.ODataModel#bindList}.
@@ -358,40 +286,44 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.Context}
 	 *   The context object for the created entity
 	 * @throws {Error}
-	 *   If the binding already contains an entity created via this function, or {@link #create} on
-	 *   this binding is not supported.
+	 *   If a relative binding is not yet resolved or if the binding already contains an entity
+	 *   created via this function
 	 *
 	 * @public
 	 * @since 1.43.0
 	 */
 	ODataListBinding.prototype.create = function (oInitialData) {
-		var oCache = this.oCachePromise.getResult(),
-			oContext,
-			sCreatePath,
-			sResolvedPath,
+		var oContext,
+			vCreatePath, // {string|SyncPromise}
+			oCreatePromise,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
+
+		if (!sResolvedPath) {
+			throw new Error("Binding is not yet resolved: " + this);
+		}
 
 		if (this.aContexts[-1]) {
 			throw new Error("Must not create twice");
 		}
-		if (!oCache || !this.oCachePromise.isFulfilled()) {
-			throw new Error("Create on this binding is not supported");
+
+		vCreatePath = sResolvedPath.slice(1);
+		if (this.bRelative && this.oContext.fetchCanonicalPath) {
+			vCreatePath = this.oContext.fetchCanonicalPath().then(function (sCanonicalPath) {
+				return _Helper.buildPath(sCanonicalPath, that.sPath).slice(1);
+			});
 		}
-		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-		sCreatePath = sResolvedPath.slice(1);
-		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1,
-			oCache.create(this.getUpdateGroupId(), sCreatePath, "", oInitialData, function () {
+
+		oCreatePromise = this.createInCache(this.getUpdateGroupId(), vCreatePath, "", oInitialData,
+			function () {
 				// cancel callback
 				oContext.destroy();
 				delete that.aContexts[-1];
 				that._fireChange({reason : ChangeReason.Remove});
-			}, function (oError) {
-				// error callback
-				that.oModel.reportError("POST on '" + sCreatePath
-					+ "' failed; will be repeated automatically", sClassName, oError);
 			}).then(function () {
 				that.iMaxLength += 1;
-			}));
+			});
+		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
 
 		this.aContexts[-1] = oContext;
 		this._fireChange({reason : ChangeReason.Add});
@@ -552,15 +484,16 @@ sap.ui.define([
 			}
 			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
 		}
-		return _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions);
+		return _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
+			this.oModel.bAutoExpandSelect);
 	};
 
 	/**
 	 * Hook method for {@link ODataBinding#fetchUseOwnCache} to determine the query options for
 	 * this binding.
 	 *
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, must be undefined for absolute bindings
+	 * @param {sap.ui.model.Context} oContext
+	 *   The context instance to be used
 	 * @returns {SyncPromise}
 	 *   A promise resolving with the binding's query options
 	 *
@@ -704,9 +637,10 @@ sap.ui.define([
 		 * @param {sap.ui.model.Filter[]} aFilters The non-empty array of filters
 		 * @param {boolean} [bAnd] Whether the filters are combined with 'and'; combined with
 		 *   'or' if not given
+		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @returns {SyncPromise} A promise which resolves with the $filter value
 		 */
-		function fetchArrayFilter(aFilters, bAnd) {
+		function fetchArrayFilter(aFilters, bAnd, mLambdaVariableToPath) {
 			var aFilterPromises = [],
 				mFiltersByPath = {};
 
@@ -718,8 +652,8 @@ sap.ui.define([
 				var aFiltersForPath;
 
 				if (oFilter.aFilters) { // array filter
-					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd)
-						.then(function (sArrayFilter) {
+					aFilterPromises.push(fetchArrayFilter(oFilter.aFilters, oFilter.bAnd,
+						mLambdaVariableToPath).then(function (sArrayFilter) {
 							return "(" + sArrayFilter + ")";
 						})
 					);
@@ -731,7 +665,7 @@ sap.ui.define([
 					return;
 				}
 				delete mFiltersByPath[oFilter.sPath];
-				aFilterPromises.push(fetchGroupFilter(aFiltersForPath));
+				aFilterPromises.push(fetchGroupFilter(aFiltersForPath, mLambdaVariableToPath));
 			});
 
 			return _SyncPromise.all(aFilterPromises).then(function (aFilterValues) {
@@ -745,14 +679,16 @@ sap.ui.define([
 		 * the $filter values for the single filters in the group combined with a logical 'or'.
 		 *
 		 * @param {sap.ui.model.Filter[]} aGroupFilters The non-empty array of filters
+		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
 		 * @returns {SyncPromise} A promise which resolves with the $filter value or rejects
 		 *   with an error if the filter value uses an unknown operator
 		 */
-		function fetchGroupFilter(aGroupFilters) {
-			var oMetaModel = that.oModel.oMetaModel,
+		function fetchGroupFilter(aGroupFilters, mLambdaVariableToPath) {
+			var oMetaModel = that.oModel.getMetaModel(),
 				oMetaContext = oMetaModel.getMetaContext(
 					that.oModel.resolve(that.sPath, oContext)),
-				oPropertyPromise = oMetaModel.fetchObject(aGroupFilters[0].sPath,
+				oPropertyPromise = oMetaModel.fetchObject(
+					replaceLambdaVariables(aGroupFilters[0].sPath, mLambdaVariableToPath),
 					oMetaContext);
 
 			return oPropertyPromise.then(function (oPropertyMetadata) {
@@ -764,16 +700,60 @@ sap.ui.define([
 				}
 
 				aGroupFilterValues = aGroupFilters.map(function (oGroupFilter) {
-						return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
-					});
+					var oCondition,
+						sLambdaVariable,
+						sOperator = oGroupFilter.sOperator;
 
-				return combineFilterValues(aGroupFilterValues, " or ");
+					if (sOperator === FilterOperator.All || sOperator === FilterOperator.Any) {
+						oCondition = oGroupFilter.oCondition;
+						sLambdaVariable = oGroupFilter.sVariable;
+						if (sOperator === FilterOperator.Any && !oCondition) {
+							return oGroupFilter.sPath + "/any()";
+						}
+						// array filters are processed in parallel, so clone mLambdaVariableToPath
+						// to allow same lambda variables in different filters
+						mLambdaVariableToPath = jQuery.extend({}, mLambdaVariableToPath);
+						mLambdaVariableToPath[sLambdaVariable]
+							= replaceLambdaVariables(oGroupFilter.sPath, mLambdaVariableToPath);
+
+						return (oCondition.aFilters
+								? fetchArrayFilter(oCondition.aFilters, oCondition.bAnd,
+									mLambdaVariableToPath)
+								: fetchGroupFilter([oCondition], mLambdaVariableToPath)
+							).then(function (sFilterValue) {
+								return oGroupFilter.sPath + "/"
+									+ oGroupFilter.sOperator.toLowerCase()
+									+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
+							});
+					}
+					return getSingleFilterValue(oGroupFilter, oPropertyMetadata.$Type);
+
+				});
+
+				return _SyncPromise.all(aGroupFilterValues).then(function (aResolvedFilterValues) {
+					return combineFilterValues(aResolvedFilterValues, " or ");
+				});
 			});
 		}
 
+		/**
+		 * Replaces an optional lambda variable in the first segment of the given path by the
+		 * correct path.
+		 *
+		 * @param {string} sPath The path with an optional lambda variable at the beginning
+		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
+		 * @returns {string} The path with replaced lambda variable
+		 */
+		function replaceLambdaVariables(sPath, mLambdaVariableToPath) {
+			var aSegments = sPath.split("/");
+
+			aSegments[0] = mLambdaVariableToPath[aSegments[0]];
+			return aSegments[0] ? aSegments.join("/") : sPath;
+		}
+
 		return _SyncPromise.all([
-			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true),
-			fetchArrayFilter(this.aFilters, /*bAnd*/true)
+			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
+			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
 		]).then(function (aFilterValues) {
 			if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
 			if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
@@ -906,6 +886,7 @@ sap.ui.define([
 			oRange,
 			bRefreshEvent = !!this.sChangeReason,
 			iStartInModel, // in model coordinates
+			oVirtualContext,
 			that = this;
 
 		jQuery.sap.log.debug(this + "#getContexts(" + iStart + ", " + iLength + ", "
@@ -929,6 +910,23 @@ sap.ui.define([
 
 		sChangeReason = this.sChangeReason || ChangeReason.Change;
 		this.sChangeReason = undefined;
+
+		if (sChangeReason === "AddVirtualContext") {
+			// Note: this task is queued _before_ any $auto submit task!
+			sap.ui.getCore().addPrerenderingTask(function () {
+				// Note: first result of getContexts after refresh is ignored
+				that.sChangeReason = "RemoveVirtualContext";
+				that._fireChange({reason : ChangeReason.Change});
+				that.reset(ChangeReason.Refresh);
+			}, true);
+			oVirtualContext = Context.create(this.oModel, this,
+				this.oModel.resolve(this.sPath, this.oContext) + "/-2", -2);
+			return [oVirtualContext];
+		}
+
+		if (sChangeReason === "RemoveVirtualContext") {
+			return [];
+		}
 
 		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
@@ -1291,14 +1289,14 @@ sap.ui.define([
 				that.fetchCache(that.oContext);
 			}
 			that.reset(ChangeReason.Refresh);
-			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-				if (!oDependentBinding.getContext().created()) {
-					// Property bindings should not check for updates yet, otherwise they will cause
-					// a "Failed to drill down..." when the row is no longer part of the collection.
-					// They get another update request in createContexts, when the context for the
-					// row is reused.
-					oDependentBinding.refreshInternal(sGroupId, false);
-				}
+			// Skip bindings that have been created via ODataListBinding#create because after
+			// refresh the newly created context is gone. Avoid "Failed to drill down..." errors.
+			that.oModel.getDependentBindings(that, true).forEach(function (oDependentBinding) {
+				// Call refreshInternal with bCheckUpdate = false because property bindings should
+				// not check for updates yet, otherwise they will cause a "Failed to drill down..."
+				// when the row is no longer part of the collection. They get another update request
+				// in createContexts, when the context for the row is reused.
+				oDependentBinding.refreshInternal(sGroupId, false);
 			});
 		});
 	};
@@ -1348,6 +1346,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   The context object
+	 * @throws {Error}
+	 *   For relative bindings containing created entities
 	 *
 	 * @private
 	 * @see sap.ui.model.Binding#setContext
@@ -1361,6 +1361,12 @@ sap.ui.define([
 				// Keep the header context even if we lose the parent context, so that the header
 				// context remains unchanged if the parent context is temporarily dropped during a
 				// refresh.
+				if (this.aContexts && this.aContexts[-1]) {
+					// to allow switching the context for new created entities (transient or not)
+					// we first have to implement a store/restore mechanism for the -1 entry
+					throw new Error("setContext on relative binding is forbidden if created " +
+						"entity exists: " + this);
+				}
 				this.reset();
 				this.fetchCache(oContext);
 				if (oContext) {

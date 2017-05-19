@@ -40,6 +40,27 @@
 			<code>sap.ui.model.odata.type.Decimal (minimum: 100 (exclusive), maximum: 1000)</code>
 			field.</li>
 			<li><b>Check</b>: You get a validation error.</li>
+			<li>Press <code>Reset Model</code></li>
+			<li><b>Check</b>: The validation error is gone and the old value is displayed</li>
+		</ol>
+		<h3>OData V4 Model tests</h3>
+		<ol>
+			<li>Press <code>V4</code> Button.</li>
+			<li>Enter an invalid value in one or more of the data fields</li>
+			<li><b>Check</b>: You get validation errors with an appropriate error messages.</li>
+			<li>Press <code>Reset Model</code> or <code>Reset ContextBinding</code></li>
+			<li><b>Check</b>: The validation errors are gone and the old values are displayed</li>
+		</ol>
+		<h3>Real OData tests</h3>
+		<ol>
+			<li>Start the app with URL parameter "realOData=true"</li>
+			<li>Enter valid values in the input fields</li>
+			<li>Press <code>Save</code></li>
+			<li>Reload the application and <b>Check</b> whether the before saved values appear</li>
+			<li>Press <code>Reset</code></li>
+			<li><b>Check</b> whether the default values provided by the service appear</li>
+			<li>Reload the application and <b>Check</b> whether the default values still appear</li>
+			<li>Press <code>V4</code> button and test the same within for OData v4 model</li>
 		</ol>
 	</body>
 </html>

@@ -14,7 +14,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 * @param {object} [mSettings] Initial settings for the new control.
 		 *
 		 * @class
-		 * BusyDialog is used to indicate that the system is busy and the user has to wait.
+		 * BusyDialog is used to indicate that the system is busy.
+		 * <h3>Overview</h3>
+		 * When the busy dialog is displayed, the whole application is blocked.
+		 * <h3>Structure</h3>
+		 * The busy dialog can hold several elements, most of which are optional.
+		 * <ul>
+		 * <li><code>title</code> - A title for the dialog. By default, there is no title.</li>
+		 * <li><code>text</code> - A text displayed above the busy animation.</li>
+		 * <li><code>showCancelButton</code> - An optional Cancel button to stop the execution.</li>
+		 * <li><code>customIcon</code> - An optional alternative icon to use as a busy animation.</li>
+		 * </ul>
+		 * <h3>Usage</h3>
+		 * <h4>When to use</h4>
+		 * <ul>
+		 * <li>The operation lasts more than one second.</li>
+		 * <li>You want to indicate loading in a page-to-page navigation (lightweight version).</li>
+		 * <li>Offer a Cancel button if you expect the process to run more than 10 seconds.</li>
+		 * <li> If you do not show a title or text, use the {@link sap.ui.core.InvisibleText invisible text} control to provide the reason for users with assertive technologies.</li>
+		 * </ul>
+		 * <h4>When not to use</h4>
+		 * <ul>
+		 * <li>The screen is not supposed to be blocked. Use a {@link sap.m.BusyIndicator} for the specific application part.</li>
+		 * <li>Do not use the title of the busy dialog. Provide a precise text describing the operation in <code>text</code>.</li>
+		 * </ul>
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -170,8 +193,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				this._oLabel = null;
 			}
 
-			this._oDialog.destroy();
-			this._oDialog = null;
+			if (this._oDialog) {
+				this._oDialog.destroy();
+				this._oDialog = null;
+			}
 		};
 
 		/**

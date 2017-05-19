@@ -11,17 +11,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 *
 			 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 			 * @param {object} [mSettings] Initial settings for the new control
-			 *
+			 * A wrapper control for a group of radio buttons.
 			 * @class
-			 * This control is used as a wrapper for a group of sap.m.RadioButton controls, which then can be used as a single UI element.
+			 * This control is used as a wrapper for a group of {@link sap.m.RadioButton} controls, which can be used as a single UI element.
 			 * You can select only one of the grouped radio buttons at a time.
-			 * The RadioButtonGroup lets you do things like attach a single event handler on a group of buttons, rather than on each individual button.
-			 * The grouped radio buttons can be arranged within different number of columns.
-			 * Based on the number of specified columns and the number of radio buttons used, different layout types can be achieved - as a 'matrix',
-			 * horizontally or vertically aligned radio buttons.<br/>
-			 * <b>Note:</b> Design guidelines recommend application developers create radio button groups with only one row or only one column.
-
+			 * <h3>Structure</h3>
+			 * <ul>
+			 * <li>The radio buttons are stored in the <code>buttons</code> aggregation.</li>
+			 * <li>By setting the <code>columns</code> property, you can create layouts like a 'matrix', 'vertical' or 'horizontal'.</li>
+			 * <li><b>Note:</b>For proper display on all devices, we recommend creating radio button groups with only one row or only one column.</li>
+			 * </ul>
+			 * <h3>Usage</h3>
+			 * <h4>When to use:</h4>
+			 * <ul>
+			 * <li>You want to attach a single event handler on a group of buttons, rather than on each individual button.</li>
+			 * </ul>
+			 * <h4>When not to use:</h4>
+			 * <ul>
+			 * <li>Do not put two radio button groups right next to each other as it is difficult to determine which buttons belong to which group.</li>
+			 * </ul>
 			 * @extends sap.ui.core.Control
+			 * @implements sap.ui.core.IFormContent
 			 *
 			 * @author SAP SE
 			 * @version ${version}
@@ -34,6 +44,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 */
 			var RadioButtonGroup = Control.extend("sap.m.RadioButtonGroup", /** @lends sap.m.RadioButtonGroup.prototype */ { metadata : {
 
+				interfaces : ["sap.ui.core.IFormContent"],
 				library : "sap.m",
 				properties : {
 
@@ -56,10 +67,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 					/**
-					 * Тhe value state to be displayed for the radio button. Possible values are: sap.ui.core.ValueState.Error,
+					 * The value state to be displayed for the radio button. Possible values are: sap.ui.core.ValueState.Error,
 					 * sap.ui.core.ValueState.Warning, sap.ui.core.ValueState.Success and sap.ui.core.ValueState.None.
 					 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
-					 * sets the value of the invalid propery for the whole RadioButtonGroup to “true”.
+					 * sets the value of the invalid propery for the whole RadioButtonGroup to "true".
 					 */
 					valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 
@@ -70,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					selectedIndex : {type : "int", group : "Data", defaultValue : 0},
 
 					/**
-					 * Switches the enabled state of the control. All Radio Buttons inside a disabled group are disabled. Default value is “true”.
+					 * Switches the enabled state of the control. All Radio Buttons inside a disabled group are disabled. Default value is "true".
 					 */
 					enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -199,6 +210,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this._oItemNavigation.setColumns(this.getColumns());
 				this._oItemNavigation.setSelectedIndex(this.getSelectedIndex());
 				this._oItemNavigation.setFocusedIndex(this.getSelectedIndex());
+				this._oItemNavigation.setDisabledModifiers({
+					sapnext : ["alt", "meta"],
+					sapprevious : ["alt", "meta"]
+				});
 			};
 
 			/**
@@ -402,7 +417,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					return null;
 				}
 
-				this.aRBs[iIndex].destroy();
 				this.aRBs.splice(iIndex, 1);
 
 				if (!this._bUpdateButtons) {
@@ -427,22 +441,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * @returns {Array} Array of removed buttons or null
 			 * @public
 			 */
-			RadioButtonGroup.prototype.removeAllButtons = function() {
-				var aButtons = this.removeAllAggregation("buttons");
-
+			RadioButtonGroup.prototype.removeAllButtons = function () {
 				if (!this._bUpdateButtons) {
 					this.setSelectedIndex(-1);
 				}
 
-				if (this.aRBs) {
-					while (this.aRBs.length > 0) {
-						this.aRBs[0].destroy();
-						this.aRBs.splice(0, 1);
-					}
-					return aButtons;
-				} else {
-					return null;
-				}
+				return this.removeAllAggregation("buttons");
 			};
 
 			/**

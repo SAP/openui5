@@ -69,13 +69,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aggregations : {
 				/**
 				 * The (optional) custom Text control of this page.
-				 * Use this aggregation when the "text" (sap.m.Text) control needs to be replaced with a sap.m.Link control.
+				 * Use this aggregation when the "text" (sap.m.Text) control needs to be replaced with an sap.m.Link control.
 				 * "text" and "textDirection" setters can be used for this aggregation.
 				 */
 				customText : {type : "sap.m.Link", multiple : false},
 				/**
 				 * The (optional) custom description control of this page.
-				 * Use this aggregation when the "description" (sap.m.Text) control needs to be replaced with a sap.m.Link control.
+				 * Use this aggregation when the "description" (sap.m.Text) control needs to be replaced with an sap.m.Link control.
 				 * "description" and "textDirection" setters can be used for this aggregation.
 				 */
 				customDescription : {type : "sap.m.Link", multiple : false},

@@ -71,7 +71,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Smoke test 'generate' method");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
 
@@ -173,8 +173,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
-      "Scenario Outline should generate the scenario with concrete values");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
 
@@ -260,7 +259,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Background gets run before every scenario in the feature");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
 
@@ -1057,8 +1056,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
-      "Scenario Outline should generate the scenario with single-column concrete values");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1161,8 +1159,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
-      "Background should run before each execution of the Scenario Outline");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
 
@@ -1279,8 +1276,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
-      "Given missing Background definition + Scenario Outline then all tests skipped");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1332,8 +1328,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
-      "Given nested variables, Scenario Outline should re-write multiple times");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1365,9 +1360,7 @@ sap.ui.require([
       testGenerator.generate();
     }, function(error) {
       return error.message === "Ambiguous step definition error: 3 step definitions '/^I should be served a coffee$/i', '/^I should.*/i' and '/^.*/i' match the feature file step 'I should be served a coffee'";
-    },
-      "ambiguous step definition error"
-    );
+    });
 
   });
 
@@ -1483,8 +1476,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest,
-      "Scenario Outline with no Examples will be skipped (regardless of if step definitions are found)");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1553,7 +1545,7 @@ sap.ui.require([
       }]
     };
 
-    deepEqual(actualFeatureTest, expectedFeatureTest, "Scenario Outline with one @wip Example will be skipped");
+    deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1595,7 +1587,7 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Feature whose steps are all not found will not be skipped");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
   // //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1637,7 +1629,129 @@ sap.ui.require([
       }]
     };
 
-    assert.deepEqual(actualFeatureTest, expectedFeatureTest, "Feature whose steps are all @wip will be skipped");
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
+  });
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Scenario Outline with two Examples, one of which is @wip, will execute only the other one", function(assert) {
+    var text = [
+      "Feature: Musicians sure write a lot of music",
+      "",
+      "  Scenario Outline: Musicians and their music",
+      "    Given the musician '<MUSICIAN>' recorded approximately <NUMBER> songs",
+      "",
+      "    @wip",
+      "    Examples: Elvis",
+      "      | MUSICIAN | NUMBER |",
+      "      |  Elvis   |  711   |",
+      "",
+      "    Examples: Vangelis",
+      "      | MUSICIAN  | NUMBER |",
+      "      |  Vangelis |  420   |",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the musician '(.*?)' recorded approximately (.*?) songs$/i;
+    var function1 = function(musician, number) {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Musicians sure write a lot of music",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Musicians and their music: Vangelis #1",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the musician 'Vangelis' recorded approximately 420 songs",
+          regex: regex1,
+          parameters: ["Vangelis", "420"],
+          func: function1
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
+  });
+
+
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // TEST /////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////
+  QUnit.test("Scenario Outline with two Examples will execute BOTH of them", function(assert) {
+    var text = [
+      "Feature: Musicians sure write a lot of music",
+      "",
+      "  Scenario Outline: Musicians and their music",
+      "    Given the musician '<MUSICIAN>' recorded approximately <NUMBER> songs",
+      "",
+      "    Examples: Elvis",
+      "      | MUSICIAN | NUMBER |",
+      "      |  Elvis   |  711   |",
+      "",
+      "    Examples: Vangelis",
+      "      | MUSICIAN  | NUMBER |",
+      "      |  Vangelis |  420   |",
+      ""
+    ].join("\n");
+
+    var feature = this.parser.parse(text);
+
+    var regex1 = /^the musician '(.*?)' recorded approximately (.*?) songs$/i;
+    var function1 = function(musician, number) {};
+    var steps = StepDefinitions.extend("sap.ui.test.gherkin.StepDefinitionsTest", {
+      init: function() {
+        this.register(regex1, function1);
+      }
+    });
+
+    var testGenerator = new GherkinTestGenerator(feature, steps);
+    var actualFeatureTest = testGenerator.generate();
+    var expectedFeatureTest = {
+      name: "Feature: Musicians sure write a lot of music",
+      skip: false,
+      wip: false,
+      testScenarios: [{
+        name: "Scenario Outline: Musicians and their music: Elvis #1",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the musician 'Elvis' recorded approximately 711 songs",
+          regex: regex1,
+          parameters: ["Elvis", "711"],
+          func: function1
+        }]
+      },{
+        name: "Scenario Outline: Musicians and their music: Vangelis #1",
+        skip: false,
+        wip: false,
+        testSteps: [{
+          isMatch: true,
+          skip: false,
+          text: "the musician 'Vangelis' recorded approximately 420 songs",
+          regex: regex1,
+          parameters: ["Vangelis", "420"],
+          func: function1
+        }]
+      }]
+    };
+
+    assert.deepEqual(actualFeatureTest, expectedFeatureTest);
   });
 
 });

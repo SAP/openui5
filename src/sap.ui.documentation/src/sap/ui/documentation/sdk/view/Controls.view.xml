@@ -1,0 +1,316 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Controls"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns:custom="sap.ui.documentation.sdk.controls">
+	<ScrollContainer
+			width="100%"
+			height="100%"
+			horizontal="false"
+			vertical="true">
+
+		<l:BlockLayout>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+					<Image
+							id="phoneImage"
+							src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped.jpg"
+							width="100%"
+							densityAware="false"
+							visible="{device>/system/phone}"/>
+					<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped.jpg"
+							width="100%"
+							densityAware="false"
+							visible="{=!${device>/system/phone}}"/>
+					<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText"
+							text="Samples"
+							width="100%"
+							textAlign="Left"/>
+					<Text
+							class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText"
+							text="Explore and download code samples"
+							width="100%"
+							textAlign="Left"/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="Featured Controls"
+						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"/>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://edit"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Input"
+								text="Input"
+								titleStyle="H2"/>
+						<Text text="User interaction"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://list"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="List"
+								text="Lists"
+								titleStyle="H2"/>
+						<Text text="Various list structures"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://table-view"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Table"
+								text="Tables"
+								titleStyle="H2"/>
+						<Text text="Simple or more powerful tables"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://popup-window"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Popup"
+								text="Pop-Ups"
+								titleStyle="H2"/>
+						<Text text="Dialogs and popovers"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://grid"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Tile"
+								text="Tiles"
+								titleStyle="H2"/>
+						<Text
+								text="Tiles for e.g. texts, images or charts"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://message-popup"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Message"
+								text="Messages"
+								titleStyle="H2"/>
+						<Text text="User notification"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://header"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Bar"
+								text="Bars"
+								titleStyle="H2"/>
+						<Text text="Toolbars and headers"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://tree"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Tree"
+								text="Trees"
+								titleStyle="H2"/>
+						<Text text="Hierarchical data representation"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow visible="{= !${appView>/isOpenUI5}}">
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://lightbulb"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Smart"
+								text="Smart Controls"
+								titleStyle="H2"/>
+						<Text text="Metadata-driven controls"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://map-2"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Map"
+								text="Maps"
+								titleStyle="H2"/>
+						<Text
+								text="Location visualization"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://filter-analytics"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Chart"
+								text="Charts"
+								titleStyle="H2"/>
+						<Text
+								text="Data visualization"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://process"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Process"
+								text="Processes"
+								titleStyle="H2"/>
+						<Text text="Step-based Interactions"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="Layout &amp; Pages"
+						class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"/>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternB">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://write-new"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Object Page"
+								text="Object Page"
+								titleStyle="H2"/>
+						<Text
+								text="Displaying, creating, or editing objects"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternC">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://chart-table-view"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Dynamic Page"
+								text="Dynamic Page"
+								titleStyle="H2"/>
+						<Text
+								text="Page with title, header, and content area"
+								class="sapUiTinyMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternD">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://screen-split-three"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Flexible Column Layout"
+								text="Flexible Column Layout"
+								titleStyle="H2"/>
+						<Text
+								text="Page with up to 3 columns"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
+					<l:VerticalLayout>
+						<core:Icon
+								src="sap-icon://screen-split-one"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								press="onPress"
+								filter="Split App"
+								text="Split App"
+								titleStyle="H2"/>
+						<Text
+								text="Two-column layout"
+								class="sapUiTinyMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+			</l:BlockLayoutRow>
+
+		</l:BlockLayout>
+	</ScrollContainer>
+</mvc:View>

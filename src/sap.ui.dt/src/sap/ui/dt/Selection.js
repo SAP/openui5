@@ -93,7 +93,7 @@ function(ManagedObject) {
 	Selection.prototype.add = function(oOverlay) {
 		this._syncSelectionWithMode();
 
-		this._aSelection.push(oOverlay);
+		this._aSelection = this._aSelection.concat(oOverlay);
 		this.fireChange({
 			selection : this.getSelection()
 		});
@@ -105,9 +105,10 @@ function(ManagedObject) {
 	Selection.prototype.remove = function(oOverlay) {
 		this._syncSelectionWithMode();
 
-		var iIndex = this._aSelection.indexOf(oOverlay);
-		if (iIndex !== -1) {
-			this._aSelection.splice(iIndex, 1);
+		if (this._aSelection.indexOf(oOverlay) !== -1) {
+			this._aSelection = this._aSelection.filter(function (oItem) {
+				return oOverlay !== oItem;
+			});
 		}
 		this.fireChange({
 			selection : this.getSelection()

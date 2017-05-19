@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @class
 	 * <h3>Overview</h3>
 	 * A SelectDialog is a dialog containing a list, search functionality to filter it and a confirmation/cancel button.
-	 * The list used in the dialog is a growing list and can be filled with a any kind of list item.
+	 * The list used in the dialog is a growing list and can be filled with any kind of list item.
 	 * <h3>Structure</h3>
 	 * <h4>Dialog structure</h4>
 	 * The select dialog has the following components:
@@ -875,7 +875,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Event function that is called when the model sent a request to update the data.
 	 * It shows a busy indicator and hides searchField and list in the dialog.
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateStarted = function (oEvent) {
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
@@ -892,7 +892,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Event function that is called when the model request is finished.
 	 * It hides the busy indicator and shows searchField and list in the dialog.
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
 	// only reset busy mode when we have an oData model

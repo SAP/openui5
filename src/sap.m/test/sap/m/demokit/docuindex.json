@@ -103,9 +103,17 @@
 					"Run Integration Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html",
 					"Run Unit Tests": "test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
 				},
-				"category": "Showcase",
+				"category": "Tool",
 				"teaser": "test-resources/sap/m/demokit/iconExplorer/demoappteaser",
 				"config": "test-resources/sap/m/demokit/iconExplorer/demoapp.json"
+			},
+			{
+				"icon": "palette",
+				"text": "Theme Parameter Toolbox",
+				"desc": "Search, filter and preview semantic theme parameters",
+				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
+				"category": "Tool",
+				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
 			},
 			{
 				"icon": "retail-store-manager",
@@ -230,11 +238,11 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "samples": [
-		  	"sap.m.sample.ComboBox",
+			"sap.m.sample.ComboBox",
 			"sap.m.sample.ComboBox2Columns",
-            "sap.m.sample.ComboBoxLazyLoading",
+			"sap.m.sample.ComboBoxLazyLoading",
 			"sap.m.sample.ComboBoxSearchBoth"
-          ]
+		  ]
 		},
 		{
 		  "id": "sap.m.ColumnListItem",
@@ -265,7 +273,7 @@
 		  "category": "User Input",
 		  "since": "1.22",
 		  "formFactors": "L",
-		  "samples": ["sap.m.sample.DatePicker"]
+		  "samples": ["sap.m.sample.DatePicker", "sap.m.sample.DatePickerMassEdit"]
 		},
 		{
 		  "id": "sap.m.DateRangeSelection",
@@ -326,10 +334,10 @@
 		  "category": "List",
 		  "since": "1.34",
 		  "samples": [
-		  	"sap.m.sample.NotificationListGroup",
-		  	"sap.m.sample.NotificationListGroupBindings",
-		  	"sap.m.sample.NotificationListGroupLazyLoading",
-		  	"sap.m.sample.MaxNumberOfNotificationsReached"
+			"sap.m.sample.NotificationListGroup",
+			"sap.m.sample.NotificationListGroupBindings",
+			"sap.m.sample.NotificationListGroupLazyLoading",
+			"sap.m.sample.MaxNumberOfNotificationsReached"
 		  ]
 		},
 		{
@@ -733,15 +741,15 @@
 			"sap.m.sample.Table"
 		  ]
 		},
-        {
-          "id": "sap.m.ObjectMarker",
-          "name": "Object Marker",
-          "category": "Display",
-          "since": "1.38",
-          "samples": [
-            "sap.m.sample.ObjectMarker"
-          ]
-        },
+		{
+		  "id": "sap.m.ObjectMarker",
+		  "name": "Object Marker",
+		  "category": "Display",
+		  "since": "1.38",
+		  "samples": [
+			"sap.m.sample.ObjectMarker"
+		  ]
+		},
 		{
 		  "id": "sap.m.ObjectNumber",
 		  "name": "Object Number",
@@ -821,17 +829,28 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.PDFViewer",
+		  "name": "PDF Viewer",
+		  "category": "Display",
+		  "since": "1.48",
+		  "samples": [
+			  "sap.m.sample.PDFViewerEmbedded",
+			  "sap.m.sample.PDFViewerPopup"
+		  ]
+		},
+		{
 		  "id": "sap.m.PlanningCalendar",
 		  "name": "Planning Calendar",
 		  "category": "User Input",
 		  "since": "1.34",
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.PlanningCalendar",
-		  	"sap.m.sample.PlanningCalendarMulti",
-		  	"sap.m.sample.PlanningCalendarSingle",
-		  	"sap.m.sample.PlanningCalendarViews",
-		  	"sap.m.sample.PlanningCalendarOneLine",
-		  	"sap.m.sample.PlanningCalendarMinMax"]
+			"sap.m.sample.PlanningCalendarMulti",
+			"sap.m.sample.PlanningCalendarSingle",
+			"sap.m.sample.PlanningCalendarViews",
+			"sap.m.sample.PlanningCalendarOneLine",
+			"sap.m.sample.PlanningCalendarMinMax",
+			"sap.m.sample.PlanningCalendarModifyAppointments"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -927,9 +946,9 @@
 		  "category": "User Input",
 		  "since": "1.10",
 		  "samples": [
-            "sap.m.sample.Select",
-            "sap.m.sample.Select2Columns"
-          ]
+			"sap.m.sample.Select",
+			"sap.m.sample.Select2Columns"
+		  ]
 		},
 		{
 		  "id": "sap.m.SelectList",
@@ -947,7 +966,7 @@
 			"sap.m.sample.SemanticPage",
 			"sap.m.sample.SemanticPageFullScreen",
 			"sap.m.sample.SemanticPageDraftIndicator",
-		  	"sap.m.sample.SemanticPageFloatingFooter"
+			"sap.m.sample.SemanticPageFloatingFooter"
 		  ]
 		},
 		{
@@ -1027,13 +1046,13 @@
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
-        {
-          "id": "sap.m.StepInput",
-          "name": "Step Input",
-          "category": "User Input",
-          "since": "1.40",
-          "samples": ["sap.m.sample.StepInput"]
-        },
+		{
+		  "id": "sap.m.StepInput",
+		  "name": "Step Input",
+		  "category": "User Input",
+		  "since": "1.40",
+		  "samples": ["sap.m.sample.StepInput"]
+		},
 		{
 		  "id": "sap.m.Switch",
 		  "name": "Switch",
@@ -1084,6 +1103,7 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.TextArea",
+			 "sap.m.sample.TextAreaMaxLength",
 			"sap.m.sample.TextAreaValueUpdate",
 			"sap.m.sample.TextAreaGrowing"
 		  ]
@@ -1102,7 +1122,7 @@
 		  "category" : "Tile",
 		  "since" : "1.34",
 		  "samples" : [
-		  	"sap.m.sample.TileContent"
+			"sap.m.sample.TileContent"
 		  ]
 		},
 		{
@@ -1160,7 +1180,8 @@
 			"sap.m.sample.TreeIcon",
 			"sap.m.sample.TreeSelection",
 			"sap.m.sample.TreeInitialExpandState",
-			"sap.m.sample.TreeCollapseAll"
+			"sap.m.sample.TreeCollapseAll",
+			"sap.m.sample.TreeOData"
 		  ]
 		},
 		{
@@ -1229,7 +1250,8 @@
 		  "since" : "1.30",
 		  "samples" : [
 			"sap.m.sample.Wizard",
-			"sap.m.sample.WizardBranching"
+			"sap.m.sample.WizardBranching",
+			"sap.m.sample.WizardCurrentStep"
 		  ]
 		},
 		{
@@ -1365,11 +1387,11 @@
 		  "name": "Combo box - Two columns layout",
 		  "description": "Use the combo box dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
 		},
-        {
-          "id": "sap.m.sample.ComboBoxLazyLoading",
-          "name": "Combo box - Lazy loading",
-          "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
-        },
+		{
+		  "id": "sap.m.sample.ComboBoxLazyLoading",
+		  "name": "Combo box - Lazy loading",
+		  "description": "Use this feature to defer initialization of items until the point at which the items are needed. It can improve performance, reduce memory usage and unnecessary client/server round-trips."
+		},
 		{
 		  "id": "sap.m.sample.ComboBoxSearchBoth",
 		  "name": "Combo box - Search in both columns",
@@ -1526,6 +1548,16 @@
 		  "description": "Panels also have the possibility to expand/collapse their content (including the infoToolbar if available). [since rel. 1.22]"
 		},
 		{
+		  "id": "sap.m.sample.PDFViewerEmbedded",
+		  "name": "PDF Viewer - Embedded",
+		  "description": "A PDF viewer embedded in another control."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerPopup",
+		  "name": "PDF Viewer - Popup",
+		  "description": "A PDF viewer opening as a popup dialog."
+		},
+		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",
 		  "name": "Flex Box - Opposing Alignment",
 		  "description": "In this Flex Box the items are aligned at opposing ends of the container with justifyContent set to 'SpaceBetween'."
@@ -1640,11 +1672,11 @@
 		  "name": "Icon Tab - Separator",
 		  "description": "This is an example how to use separators in the Icon Tab Bar. You can choose an icon as a separator or use the default vertical line."
 		},
-	 	{
+		{
 		  "id": "sap.m.sample.IconTabBarOverflowSelectList",
 		  "name": "Icon Tab Bar - Overflow Select List",
 		  "description": "In this example when some of the tab items are not visible, they are displayed in an overflow select list for easier selection."
-	    },
+		},
 		{
 		  "id": "sap.m.sample.IconTabBarBackgroundDesign",
 		  "name": "Icon Tab Bar - Background Design",
@@ -1796,6 +1828,11 @@
 		  "description": "The Date Picker is an extension of the Input control and is dedicated to Date."
 		},
 		{
+		  "id": "sap.m.sample.DatePickerMassEdit",
+		  "name": "Date Picker Mass Editing Scenario",
+		  "description": "Using calendar in a dialog for changing dates in mass editing scenario."
+		},
+		{
 		  "id": "sap.m.sample.DateTimeInput",
 		  "name": "Date Time Input",
 		  "description": "The Date & Time Input control allows input of dates and times using date and time pickers. [Deprecated since 1.32.8]"
@@ -1845,11 +1882,11 @@
 		  "name": "Select",
 		  "description": "Illustrates the usage of a Select in header, footer and content of a page. Note the different display options."
 		},
-        {
-          "id": "sap.m.sample.Select2Columns",
-          "name": "Select - Two columns layout",
-          "description": "Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
-        },
+		{
+		  "id": "sap.m.sample.Select2Columns",
+		  "name": "Select - Two columns layout",
+		  "description": "Use the select dropdown list with two columns layout if you need to display additional information to your options, like e.g. currencies to countries or abbreviations to systems."
+		},
 		{
 		  "id": "sap.m.sample.SelectList",
 		  "name": "SelectList",
@@ -1870,11 +1907,11 @@
 		  "name": "Semantic Page using Draft Indicator",
 		  "description": "Integration of Draft Indicator inside Semantic Page"
 		},
-	  	{
+		{
 		  "id": "sap.m.sample.SemanticPageFloatingFooter",
 		  "name": "Semantic Page using Floating Footer",
 		  "description": "Integration of Floating Footer inside Semantic Page"
-	  	},
+		},
 		{
 		  "id": "sap.m.sample.ActionSelect",
 		  "name": "Action Select",
@@ -1981,10 +2018,15 @@
 		  "description": "Collapse all nodes."
 		},
 		{
+		  "id": "sap.m.sample.TreeOData",
+		  "name": "Tree - OData",
+		  "description": "This example shows tree with odata service."
+		},
+		{
 			"id": "sap.m.sample.RangeSlider",
 			"name": "RangeSlider",
 			"description": "With the RangeSlider a user can specify range from a numerical interval."
-	  	},
+		},
 		{
 		  "id": "sap.m.sample.Slider",
 		  "name": "Slider",
@@ -1995,6 +2037,10 @@
 		  "name": "Text Area",
 		  "description": "The Text Area allows to enter multi-line text and automatically breaks to a new line for overflow text. If the text gets too big to be displayed at once the user can scroll up and down."
 		},
+	 	{
+		  "id": "sap.m.sample.TextAreaMaxLength",
+		  "name": "TextArea with MaxLength = true",
+		  "description": "Shows the behavior of the control with the new showExceededText property (since 1.48) and maxLength = true"},
 		{
 		  "id": "sap.m.sample.TextAreaValueUpdate",
 		  "name": "TextArea - Value Update",
@@ -2405,21 +2451,21 @@
 		  "name": "Notification List Group",
 		  "description": "A control suitable for grouping notifications."
 		},
-	    {
+		{
 		  "id": "sap.m.sample.NotificationListGroupBindings",
 		  "name": "Notification List Group with data bindings",
 		  "description": "A control suitable for grouping notifications. The sample uses JSON data bindings."
-	    },
-	    {
+		},
+		{
 		  "id": "sap.m.sample.NotificationListGroupLazyLoading",
 		  "name": "Notification List Group with lazy loading of the notifications",
 		  "description": "Notification List Group with lazy loading of the notifications."
-	    },
-	    {
+		},
+		{
 		  "id": "sap.m.sample.MaxNumberOfNotificationsReached",
 		  "name": "Notification List Group with max number of notifications reached",
 		  "description": "Notification List Group with max number of notifications reached. The group will render the max amount of notificatons, depending on device type allowed and then show a warning messge."
-	    },
+		},
 		{
 		  "id": "sap.m.sample.Dialog",
 		  "name": "Dialog",
@@ -2487,8 +2533,8 @@
 		},
 		{
 		  "id": "sap.m.sample.UploadCollectionSortingFiltering",
-		  "name": "With Sorting and Filtering Feature",
-		  "description": "Shows the UploadCollection with sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
+		  "name": "With Grouping, Sorting and Filtering Feature",
+		  "description": "Shows the UploadCollection with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
@@ -2525,11 +2571,11 @@
 		  "name": "Remove Margins",
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
 		},
-        {
-          "id": "sap.m.sample.StepInput",
-          "name": "StepInput",
-          "description": "The StepInput allows the user to change stepwise a value by a predefined step."
-        },
+		{
+		  "id": "sap.m.sample.StepInput",
+		  "name": "StepInput",
+		  "description": "The StepInput allows the user to change stepwise a value by a predefined step."
+		},
 		{
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
@@ -2574,6 +2620,11 @@
 		  "id": "sap.m.sample.WizardBranching",
 		  "name": "Wizard branching use case",
 		  "description": "The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one."
+		},
+		{
+		  "id": "sap.m.sample.WizardCurrentStep",
+		  "name": "Wizard edit mode",
+		  "description": "Demonstrates the usage of the setCurrentStep association, which controlls the current step of the wizard. This association could be used to simulate 'edit mode' for the wizard by showing all steps in the wizard, without need from the user click next button on each of them."
 		},
 		{
 		  "id": "sap.m.sample.SplitApp",
@@ -2677,13 +2728,13 @@
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarSingle",
-		  "name": "Planning Calendar - for one person",
+		  "name": "Planning Calendar - without row header",
 		  "description": "PlanningCalendar with only one row without row header.  On click on an interval a new appointment is created."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarViews",
 		  "name": "Planning Calendar - with custom views",
-		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set."
+		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarOneLine",
@@ -2694,6 +2745,11 @@
 		  "id": "sap.m.sample.PlanningCalendarMinMax",
 		  "name": "Planning Calendar - with min. and max. date",
 		  "description": "PlanningCalendar with min. date 2000-01-01 and max. date 2050-12-31"
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarModifyAppointments",
+		  "name": "Planning Calendar - with appointments modification",
+		  "description": "PlanningCalendar containing sap.m.Popover with information for the appointments and sap.m.Dialog for creating a new appointment. Note: Illustrates how the PlanningCalendar can be used in combination with the sap.m.Popover and sap.m.Dialog controls for details/create. These features are NOT part of the control."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

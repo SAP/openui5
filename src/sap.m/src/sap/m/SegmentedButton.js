@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * SegmentedButton is a horizontal control made of multiple buttons, which can display a title or an image. It automatically resizes the buttons to fit proportionally within the control. When no width is set, the control uses the available width.
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,6 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	var SegmentedButton = Control.extend("sap.m.SegmentedButton", /** @lends sap.m.SegmentedButton.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		publicMethods : ["createButton"],
 		properties : {
@@ -127,6 +129,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
 		this._oItemNavigation = new ItemNavigation();
 		this._oItemNavigation.setCycling(false);
+		//this way we do not hijack the browser back/forward navigation
+		this._oItemNavigation.setDisabledModifiers({
+			sapnext: ["alt"],
+			sapprevious: ["alt"]
+		});
 		this.addDelegate(this._oItemNavigation);
 
 		//Make sure when a button gets removed to reset the selected button
@@ -361,7 +368,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adds a Button with a text as title, an URI for an icon, enabled and textDirection.
+	 * Adds a Button with a text as title, a URI for an icon, enabled and textDirection.
 	 * Only one is allowed.
 	 *
 	 * @param {string} sText
@@ -626,8 +633,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Setter for association <code>selectedButton</code>.
 	 *
 	 * @param {string | sap.m.Button | null | undefined} vButton New value for association <code>setSelectedButton</code>
-	 *    A sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
-	 *    Alternatively, the ID of a sap.m.Button instance may be given as a string.
+	 *    An sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
+	 *    Alternatively, the ID of an sap.m.Button instance may be given as a string.
 	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
 	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
 	 * @public
@@ -719,11 +726,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		oButton.firePress();
 		this.setSelectedButton(sButtonId);
-		this.fireSelect({
-			button: oButton,
-			id: sButtonId,
-			key: sNewKey
-		});
 	};
 
 	SegmentedButton.prototype._forwardChangeEvent = function () {
@@ -828,6 +830,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getButtons().filter(function(oButton) {
 			return oButton.getVisible();
 		});
+	};
+
+	SegmentedButton.prototype.clone = function () {
+		var sSelectedButtonId = this.getSelectedButton(),
+			aButtons = this.removeAllAggregation("buttons"),
+			oClone = Control.prototype.clone.apply(this, arguments),
+			iSelectedButtonIndex = aButtons.map(function(b) {
+				return b.getId();
+			}).indexOf(sSelectedButtonId),
+			i;
+
+		if (iSelectedButtonIndex > -1) {
+			oClone.setSelectedButton(oClone.getButtons()[iSelectedButtonIndex]);
+		}
+
+		for (i = 0; i < aButtons.length; i++) {
+			this.addAggregation("buttons", aButtons[i]);
+		}
+
+		return oClone;
 	};
 
 	return SegmentedButton;

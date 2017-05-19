@@ -11,29 +11,6 @@
 	-webkit-text-fill-color: @sapUiContentDisabledTextColor;
 }
 
-.sapMFocus > .sapMSFF {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -3px;
-}
-
-/* fix for IE focus outline */
-html[data-sap-ui-browser^="ie"] .sapMFocus > .sapMSFF {
-	outline: none;
-
-	&::after {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		display: block;
-		width: 100%;
-		height: 100%;
-		border: 0.125rem dotted @sapUiContentFocusColor;
-		box-sizing: border-box;
-		pointer-events: none;
-	}
-}
-
 .sapMHeader-CTX .sapMBarChild > .sapMSFF {
 	border-color: @sapUiFieldBorderColor;
 }

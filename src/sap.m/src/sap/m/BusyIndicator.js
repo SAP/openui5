@@ -12,11 +12,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new BusyIndicator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Control to indicate that the system is busy with some task and the user has to wait.
+	 * Informs the user about an ongoing operation.
+	 * <h3>Overview</h3>
+	 * The busy indicator implies that an action is taking place within a single control.
+	 * You can set the size of the icon, the text, but also define a custom icon to be used instead.
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>The user needs to be able to cancel the operation.</li>
+	 * <li>Only part of the application or a particular control is affected.</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>The operation takes less than one second.</li>
+	 * <li>You need to block the screen and prevent the user from starting another activity. In this case, use the {@link sap.m.BusyDialog busy dialog}.
+	 * <li>Do not change the mouse cursor to indicate the ongoing operation.</li>
+	 * <li>Do not show multiple busy indicators at once</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

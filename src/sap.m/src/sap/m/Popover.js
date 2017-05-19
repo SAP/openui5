@@ -636,7 +636,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			// A theme can force the usage of compact arrow offset in all content density modes, by setting sapMPopoverForceCompactArrowOffset variable.
 			// This is needed when a theme defines only a compact arrow for all modes.
-			bForceCompactArrowOffset = Parameters.get("sapMPopoverForceCompactArrowOffset") === "true";
+			bForceCompactArrowOffset = Parameters.get("_sap_m_Popover_ForceCompactArrowOffset") === "true";
 
 			// Determines if the Popover will be rendered in a compact mode
 			this._bSizeCompact = sap.m._bSizeCompact || !!aCompactParents.length || this.hasStyleClass("sapUiSizeCompact");
@@ -917,7 +917,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 * Event handler for the focusin event.
 		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Popover.prototype.onfocusin = function (oEvent) {
@@ -939,7 +939,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/**
 		 * Event handler for the keydown event.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Popover.prototype.onkeydown = function (oEvent) {
@@ -1022,7 +1022,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		/*                      begin: internal methods                  */
 		/* =========================================================== */
 		/**
-		 * This method detects if there's a sap.m.NavContainer instance added as a single child into Popover's content aggregation or through one or more sap.ui.mvc.View controls.
+		 * This method detects if there's an sap.m.NavContainer instance added as a single child into Popover's content aggregation or through one or more sap.ui.mvc.View controls.
 		 * If there is, sapMPopoverNav style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
 		 * @returns {boolean}
 		 */
@@ -1059,7 +1059,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		/**
-		 * This method detects if there's a sap.m.Page instance added as a single child into popover's content aggregation or through one or more sap.ui.mvc.View controls.
+		 * This method detects if there's an sap.m.Page instance added as a single child into popover's content aggregation or through one or more sap.ui.mvc.View controls.
 		 * If there is, sapMPopoverPage style class will be added to the root node of the control in order to apply some special css styles to the inner dom nodes.
 		 *
 		 * @returns {boolean}

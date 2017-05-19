@@ -1509,7 +1509,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// calculate the center and middle position of the dragged tile
 		if (!this._oTouchSession) {
 
-			// if onDrag is fired after an scroll interval but the drag session was already ended.
+			// if onDrag is fired after a scroll interval but the drag session was already ended.
 			clearTimeout(this.iScrollTimer);
 			this._oDragSession = null;
 			this.iScrollTimer = null;

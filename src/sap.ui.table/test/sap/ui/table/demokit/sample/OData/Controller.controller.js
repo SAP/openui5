@@ -53,7 +53,7 @@ sap.ui.define([
 
 		formatDimensions : function(sWidth, sHeight, sDepth, sUnit) {
 			if (sWidth && sHeight && sDepth && sUnit) {
-				return sWidth+"x"+sHeight+"x"+sDepth+" "+(sUnit.toLowerCase());
+				return sWidth + "x" + sHeight + "x" + sDepth + " " + (sUnit.toLowerCase());
 			}
 			return null;
 		},
@@ -92,7 +92,9 @@ sap.ui.define([
 			try {
 				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
 				sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.OData", "/info.json"), oEvent.getSource());
-			} catch(e) {}
+			} catch (e) {
+				// nothing
+			}
 		}
 
 	});

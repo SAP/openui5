@@ -97,6 +97,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		this._fnActionSubstituteParentFunction = function () {
 			return this;
 		}.bind(this);
+
+		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.f");
 	};
 
 	DynamicPageTitle.prototype.onBeforeRendering = function () {
@@ -120,6 +122,24 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	};
 
 	/**
+	 * Fires the <code>DynamicPageTitle</code> press event.
+	 * @param {jQuery.Event} oEvent
+	 */
+	DynamicPageTitle.prototype.onsapspace = function (oEvent) {
+		this.onsapenter(oEvent);
+	};
+
+	/**
+	 * Fires the <code>DynamicPageTitle</code> press event.
+	 * @param {jQuery.Event} oEvent
+	 */
+	DynamicPageTitle.prototype.onsapenter = function (oEvent) {
+		if (oEvent.srcControl === this) {
+			this.fireEvent("_titlePress");
+		}
+	};
+
+	/**
 	 * Caches the DOM elements in a jQuery wrapper for later reuse.
 	 * @private
 	 */
@@ -137,7 +157,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		if (!this.getAggregation("_overflowToolbar")) {
 			this.setAggregation("_overflowToolbar", new OverflowToolbar({
 				id: this.getId() + "-overflowToolbar"
-			}).addStyleClass("sapFDynamicPageTitleOverflowToolbar"));
+			}).addStyleClass("sapFDynamicPageTitleOverflowToolbar"), true); // suppress invalidate, as this is always called onBeforeRendering
 		}
 
 		return this.getAggregation("_overflowToolbar");

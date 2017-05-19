@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 			showMarker : {type : "boolean", group : "Appearance", defaultValue : false, deprecated: true},
 
 			/**
-			 * The icon of the item, either defined in the sap.ui.core.IconPool or an URI to a custom image. An icon must be set.
+			 * The icon of the item, either defined in the sap.ui.core.IconPool or a URI to a custom image. An icon must be set.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 

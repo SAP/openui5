@@ -130,7 +130,7 @@ sap.ui.define([
 				preserveHeaderStateOnScroll: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
-				* Determines whether the the user can switch between the expanded/collapsed states of the
+				* Determines whether the user can switch between the expanded/collapsed states of the
 				* header by clicking on the title.
 				*
 				* If set to <code>false</code>, the title is not clickable and the application
@@ -305,7 +305,7 @@ sap.ui.define([
 
 				/**
 				* The <code>customShareActions</code> are placed in the <code>ShareMenu</code> area of the
-				* <code>SemanticPage</code> title, right after the the semantic actions.
+				* <code>SemanticPage</code> title, right after the semantic actions.
 				*/
 				customShareActions: {type: "sap.m.Button", multiple: true},
 
@@ -330,6 +330,7 @@ sap.ui.define([
 	* LIFECYCLE METHODS
 	*/
 	SemanticPage.prototype.init = function () {
+		this._bSPBeingDestroyed = false;
 		this._initDynamicPage();
 		this._attachShareMenuButtonChange();
 		this._fnActionSubstituteParentFunction = function () {
@@ -338,6 +339,7 @@ sap.ui.define([
 	};
 
 	SemanticPage.prototype.exit = function () {
+		this._bSPBeingDestroyed = true;
 		this._cleanMemory();
 	};
 
@@ -444,7 +446,7 @@ sap.ui.define([
 			if (oObject) {
 				sPlacement = SemanticConfiguration.getPlacement(sType);
 				this._onRemoveAggregation(oObject, sType);
-				this._getSemanticContainer(sPlacement).removeContent(oObject, sPlacement);
+				!this._bSPBeingDestroyed && this._getSemanticContainer(sPlacement).removeContent(oObject, sPlacement);
 			}
 		}
 
@@ -910,6 +912,21 @@ sap.ui.define([
 	* @private
 	*/
 	SemanticPage.prototype._cleanMemory = function() {
+		if (this._oShareMenu) {
+			this._oShareMenu.destroy();
+			this._oShareMenu = null;
+		}
+
+		if (this._oActionSheet) {
+			this._oActionSheet.destroy();
+			this._oActionSheet = null;
+		}
+
+		if (this._oSemanticTitle) {
+			this._oSemanticTitle.destroy();
+			this._oSemanticTitle = null;
+		}
+
 		if (this._oDynamicPageTitle) {
 			this._oDynamicPageTitle.destroy();
 			this._oDynamicPageTitle = null;
@@ -920,6 +937,11 @@ sap.ui.define([
 			this._oDynamicPageHeader = null;
 		}
 
+		if (this._oSemanticFooter) {
+			this._oSemanticFooter.destroy();
+			this._oSemanticFooter = null;
+		}
+
 		if (this._oDynamicPageFooter) {
 			this._oDynamicPageFooter.destroy();
 			this._oDynamicPageFooter = null;
@@ -928,26 +950,6 @@ sap.ui.define([
 		if (this._oOverflowToolbar) {
 			this._oOverflowToolbar.destroy();
 			this._oOverflowToolbar = null;
-		}
-
-		if (this._oActionSheet) {
-			this._oActionSheet.destroy();
-			this._oActionSheet = null;
-		}
-
-		if (this._oShareMenu) {
-			this._oShareMenu.destroy();
-			this._oShareMenu = null;
-		}
-
-		if (this._oSemanticTitle) {
-			this._oSemanticTitle.destroy();
-			this._oSemanticTitle = null;
-		}
-
-		if (this._oSemanticFooter) {
-			this._oSemanticFooter.destroy();
-			this._oSemanticFooter = null;
 		}
 	};
 

@@ -23,7 +23,7 @@ sap.ui.define([
 		 * Will be called when scrolled horizontally. Because the table does not render/update the data of all columns (only the visible ones),
 		 * we need to update the content of the columns which became visible.
 		 *
-		 * @param {UIEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		onScroll: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -155,7 +155,7 @@ sap.ui.define([
 		/**
 		 * Will be called when scrolled vertically. Updates the visualized data by applying the first visible row from the vertical scrollbar.
 		 *
-		 * @param {UIEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		onScroll: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -220,7 +220,7 @@ sap.ui.define([
 		 * Will be called when the vertical scrollbar is clicked.
 		 * Resets the vertical scroll flags.
 		 *
-		 * @param {MouseEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The mouse event object.
 		 */
 		onScrollbarMouseDown: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -321,7 +321,7 @@ sap.ui.define([
 	var ExtensionHelper = {
 		/**
 		 * Will be called when scrolled with the mouse wheel.
-		 * @param {WheelEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The wheel event object.
 		 */
 		onMouseWheelScrolling: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -390,67 +390,70 @@ sap.ui.define([
 	 * Event handling for scrolling.
 	 * "this" in the function context is the table instance.
 	 */
+	function onTouchStart(oEvent) {
+		if (oEvent.type === "touchstart" || oEvent.pointerType === "touch") {
+			this._bIsScrollVertical = null;
+			var oTouch = oEvent.touches ? oEvent.touches[0] : oEvent;
+			this._aTouchStartPosition = [oTouch.pageX, oTouch.pageY];
+			if (this._oVSb) {
+				this._iTouchScrollTop = this._oVSb.scrollTop;
+			}
+			if (this._oHSb) {
+				this._iTouchScrollLeft = this._oHSb.scrollLeft;
+			}
+		}
+	}
+
+	function onTouchMove(oEvent) {
+		if ((oEvent.type === "touchmove" || oEvent.pointerType === "touch") && this._aTouchStartPosition) {
+			var oTouch = oEvent.touches ? oEvent.touches[0] : oEvent;
+			var iDeltaX = (oTouch.pageX - this._aTouchStartPosition[0]);
+			var iDeltaY = (oTouch.pageY - this._aTouchStartPosition[1]);
+
+			if (this._bIsScrollVertical === null) {
+				if (iDeltaX === 0 && iDeltaY === 0) {
+					return;
+				}
+				this._bIsScrollVertical = Math.abs(iDeltaY) >= Math.abs(iDeltaX);
+			}
+
+			if (this._bIsScrollVertical && this._oVSb) {
+				this._oVSb.scrollTop = this._iTouchScrollTop - iDeltaY;
+				if (Device.browser.safari) { // Safari does not support touch-action:none and touch-action:pan-x/y
+					oEvent.preventDefault();
+				}
+			} else if (!this._bIsScrollVertical && this._oHSb) {
+				this._oHSb.scrollLeft = this._iTouchScrollLeft - iDeltaX;
+				if (Device.browser.safari) { // Safari does not support touch-action:none and touch-action:pan-x/y
+					oEvent.preventDefault();
+				}
+			}
+		}
+	}
+
 	var ExtensionDelegate = {
-		ontouchstart: function(oEvent) {
-			if (this._isTouchMode(oEvent)) {
-				this._aTouchStartPosition = null;
-				this._bIsScrollVertical = null;
-				var $scrollTargets = this._getScrollTargets();
-				var bDoScroll = jQuery(oEvent.target).closest($scrollTargets).length > 0;
-				if (bDoScroll) {
-					var oTouch = oEvent.targetTouches[0];
-					this._aTouchStartPosition = [oTouch.pageX, oTouch.pageY];
-					var oVsb = this._getScrollExtension().getVerticalScrollbar();
-					if (oVsb) {
-						this._iTouchScrollTop = oVsb.scrollTop;
-					}
-
-					var oHsb = this._getScrollExtension().getHorizontalScrollbar();
-					if (oHsb) {
-						this._iTouchScrollLeft = oHsb.scrollLeft;
-					}
-				}
-			}
-		},
-
-		ontouchmove: function(oEvent) {
-			if (this._isTouchMode(oEvent) && this._aTouchStartPosition) {
-				var oTouch = oEvent.targetTouches[0];
-				var iDeltaX = (oTouch.pageX - this._aTouchStartPosition[0]);
-				var iDeltaY = (oTouch.pageY - this._aTouchStartPosition[1]);
-				if (this._bIsScrollVertical == null) {
-					this._bIsScrollVertical = Math.abs(iDeltaY) > Math.abs(iDeltaX);
-				}
-
-				if (this._bIsScrollVertical) {
-					var oVSb = this._getScrollExtension().getVerticalScrollbar();
-					if (oVSb) {
-						var iScrollTop = this._iTouchScrollTop - iDeltaY;
-
-						if (iScrollTop > 0 && iScrollTop < (this.getDomRef("vsb-content").clientHeight - oVSb.clientHeight) - 1) {
-							oEvent.preventDefault();
-							oEvent.stopPropagation();
-						}
-						oVSb.scrollTop = iScrollTop;
-					}
-				} else {
-					var oHSb = this._getScrollExtension().getHorizontalScrollbar();
-					if (oHSb) {
-						var iScrollLeft = this._iTouchScrollLeft - iDeltaX;
-
-						if (iScrollLeft > 0 && iScrollLeft < (this.getDomRef("hsb-content").clientWidth - oHSb.clientWidth) - 1) {
-							oEvent.preventDefault();
-							oEvent.stopPropagation();
-						}
-						oHSb.scrollLeft = iScrollLeft;
-					}
-				}
-			}
-		},
-
+		_ontouchstart: onTouchStart, // QUnit helper
+		_ontouchmove: onTouchMove,   // QUnit helper
 		onAfterRendering: function(oEvent) {
 			VerticalScrollingHelper.restoreScrollPosition(this);
 			HorizontalScrollingHelper.restoreScrollPosition(this);
+
+			this._oVSb = this._getScrollExtension().getVerticalScrollbar();
+			this._oHSb = this._getScrollExtension().getHorizontalScrollbar();
+
+			// touch target - tableCCnt contains all scrollable regions
+			var oDomRef = this.getDomRef("tableCCnt");
+
+			// Process touch actions:
+			// IE/Edge and Chrome on desktops and windows tablets - pointer events;
+			// other browsers and tablets - touch events.
+			if (Device.support.pointer && Device.system.desktop) {
+				oDomRef.addEventListener("pointerdown", onTouchStart.bind(this));
+				oDomRef.addEventListener("pointermove", onTouchMove.bind(this), Device.browser.chrome ? {passive: true} : false);
+			} else if (Device.support.touch) {
+				oDomRef.addEventListener("touchstart", onTouchStart.bind(this));
+				oDomRef.addEventListener("touchmove", onTouchMove.bind(this));
+			}
 		},
 
 		onfocusin: function(oEvent) {

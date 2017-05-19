@@ -28,7 +28,7 @@
                     <Column width="13rem">
                         <m:Label text="Categories"/>
                         <template>
-                            <m:Text text="{name}"/>
+                            <m:Text text="{name}" wrapping="false" />
                         </template>
                     </Column>
                     <Column width="9rem">

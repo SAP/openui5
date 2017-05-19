@@ -66,7 +66,9 @@ sap.ui.define([
 		},
 		getFilterCriteria: function (aCurrentFilterValues) {
 			return this.aKeys.filter(function (el, i) {
-				if (aCurrentFilterValues[i] !== "") return el;
+				if (aCurrentFilterValues[i] !== "") {
+					return el;
+				}
 			});
 		},
 		getFormattedSummaryText: function (aFilterCriterias) {
@@ -111,7 +113,7 @@ sap.ui.define([
 				type: sap.ui.core.MessageType.Warning,
 				processor: this._oMessageProcessor
 			}];
-			return messageOptions[Math.floor(Math.random() * 4)]
+			return messageOptions[Math.floor(Math.random() * 4)];
 		},
 		initializePopover: function (oControl) {
 			this._messagePopover = new MessagePopover({

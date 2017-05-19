@@ -1,4 +1,5 @@
-/*globals QUnit*/
+/*global QUnit,sinon*/
+/*eslint max-nested-callbacks:[1,4], no-warning-comments: 0 */
 jQuery.sap.require("sap.ui.fl.descriptorRelated.api.DescriptorInlineChangeFactory");
 jQuery.sap.require("sap.ui.fl.descriptorRelated.api.DescriptorVariantFactory");
 jQuery.sap.require("sap.ui.fl.descriptorRelated.api.DescriptorChangeFactory");
@@ -26,7 +27,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			delete this._oSandbox;
 		}
 	});
-	
+
 	QUnit.test("createForExistingVariant", function(assert) {
 		var oServer = this._oSandbox.useFakeServer();
 		oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.string",
@@ -36,7 +37,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 							[200, { "Content-Type": "application/json" },
 							'{ "id": "id.json", "content": [] }']);
 		oServer.autoRespond = true;
-		
+
 		return DescriptorVariantFactory.createForExisting("id.string").then(function(oVariant){
 			assert.equal(oVariant._getMap().id, "id.string");
 			return DescriptorVariantFactory.createForExisting("id.json");
@@ -44,7 +45,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.equal(oVariant._getMap().id, "id.json");
 		});
 	});
-	
+
 	QUnit.test("createDescriptorInlineChange", function(assert) {
 		return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
 			"card" : {
@@ -144,13 +145,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ovp_addNewCard({
 				"cardId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ovp_addNewCard({
 				"card" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_ovp_removeCard", function(assert) {
@@ -166,13 +167,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ovp_removeCard({
 				"cards" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ovp_removeCard({
 				"cardId" : {}
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_addNewInbound", function(assert) {
@@ -220,13 +221,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addNewInbound({
 				"inboundId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addNewInbound({
 				"inbound" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_removeInbound", function(assert) {
@@ -242,13 +243,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeInbound({
 				"inbounds" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeInbound({
 				"inboundId" : {}
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_changeInbound", function(assert) {
@@ -296,18 +297,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeInbound({
 				"inbounds" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeInbound({
 				"inboundId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeInbound({
 				"inboundId" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_addNewOutbound", function(assert) {
@@ -331,13 +332,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addNewOutbound({
 				"outboundId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addNewOutbound({
 				"outbound" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_removeOutbound", function(assert) {
@@ -353,13 +354,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeOutbound({
 				"outbounds" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeOutbound({
 				"outboundId" : {}
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_changeOutbound", function(assert) {
@@ -380,18 +381,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeOutbound({
 				"outbounds" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeOutbound({
 				"outboundId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeOutbound({
 				"outboundId" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_addNewDataSource", function(assert) {
@@ -407,13 +408,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addNewDataSource({
 				"dataSourceId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addNewDataSource({
 				"dataSource" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_removeDataSource", function(assert) {
@@ -429,13 +430,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeDataSource({
 				"dataSources" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeDataSource({
 				"dataSourceId" : {}
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_changeDataSource", function(assert) {
@@ -456,22 +457,22 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeDataSource({
 				"dataSources" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeDataSource({
 				"dataSourceId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_changeDataSource({
 				"dataSourceId" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
-	
-	
+
+
 	QUnit.test("create_appdescr_app_addAnnotationsToOData", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 			"dataSourceId": "customer.existingDataSource",
@@ -487,38 +488,38 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 				"dataSourceId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 				"dataSourceId" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 				"dataSourceId": "customer.existingDataSource",
 				"dataSource" : { }
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 				"dataSourceId": "customer.existingDataSource",
 				"annotations" : { },
 				"dataSource" : { }
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 				"dataSourceId": "customer.existingDataSource",
 				"annotations" : [ "customer.anno1"],
 				"dataSource" : ""
-			})
-		}.bind(this));
+			});
+		});
 	});
-	
-	
-	
-	
+
+
+
+
 	QUnit.test("create_app_setTitle", function(assert) {
 		var _oDescriptorInlineChange;
 		var _oDescriptorVariant;
@@ -550,10 +551,9 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.title'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 		});
 	});
-	
+
 	QUnit.test("create_app_setTitle descriptor change", function(assert) {
 		var _oDescriptorInlineChange;
-		var _oDescriptorChange;
 		var mParameter = {
 				"type" : "XTIT",
 				"maxLength" : 20,
@@ -569,7 +569,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
 			_oDescriptorInlineChange = oDescriptorInlineChange;
 			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setTitle");
-			return new DescriptorChangeFactory().createNew("a.reference", _oDescriptorInlineChange);		
+			return new DescriptorChangeFactory().createNew("a.reference", _oDescriptorInlineChange);
 		}).then(function(_oDescriptorChange){
 			_oDescriptorChange._getChangeToSubmit();
 			assert.ok(_oDescriptorChange._mChangeFile.texts['a.reference_sap.app.title'], 'Initial empty text key replaced');
@@ -607,6 +607,74 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.ok(_oDescriptorVariant._content[0].texts['a.id_sap.app.subTitle'], 'Initial empty text key replaced');
 			assert.ok(!_oDescriptorVariant._content[0].texts[''], 'Initial empty text key removed ');
 			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.subTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
+		});
+	});
+
+	QUnit.test("create_ui5_addLibraries", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorVariant;
+		var mParameter = {
+		    "libraries": {
+			    "descriptor.mocha133": {
+			        "minVersion": "1.44",
+			        "lazy": false
+				    }
+				}
+			};
+		return DescriptorInlineChangeFactory.create_ui5_addLibraries(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addLibraries");
+			return DescriptorVariantFactory.createNew({
+					"id" : "a.id",
+					"reference": "a.reference"
+			});
+		}).then(function(oDescriptorVariant){
+			_oDescriptorVariant = oDescriptorVariant;
+			return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
+		}).then(function(){
+			assert.ok(_oDescriptorVariant._content[0].content.libraries['descriptor.mocha133'], 'Library is added');
+			assert.deepEqual(_oDescriptorVariant._content[0].content, mParameter, 'Added library properties are equal to parameters set in factory method');
+		});
+	});
+
+	QUnit.test("create_ui5_addLibraries failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_addLibraries({
+				"libraries" : "a.id"
+			});
+		});
+	});
+
+	QUnit.test("create_app_setShortTitle", function(assert) {
+		var _oDescriptorInlineChange;
+		var _oDescriptorVariant;
+		var mParameter = {
+				"type" : "XTIT",
+				"maxLength" : 30,
+				"comment" : "comment on shorttitle",
+				"value" : {
+					"" : "Default Shorttitle",
+					"en":"English Shorttitle",
+					"de":"Deutscher Kurztitel",
+					"en_US":"English Shorttitle in en_US"
+				}
+			};
+		return DescriptorInlineChangeFactory.create_app_setShortTitle(mParameter).then(function(oDescriptorInlineChange) {
+			assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+			_oDescriptorInlineChange = oDescriptorInlineChange;
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setShortTitle");
+			return DescriptorVariantFactory.createNew({
+					"id" : "a.id",
+					"reference": "a.reference"
+			});
+		}).then(function(oDescriptorVariant){
+			_oDescriptorVariant = oDescriptorVariant;
+			return oDescriptorVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
+		}).then(function(){
+			assert.ok(_oDescriptorVariant._content[0].texts['a.id_sap.app.shortTitle'], 'Initial empty text key replaced');
+			assert.ok(!_oDescriptorVariant._content[0].texts[''], 'Initial empty text key removed ');
+			assert.deepEqual(_oDescriptorVariant._content[0].texts['a.id_sap.app.shortTitle'], mParameter, 'Text in "texts"-node equals parameters set in factory method');
 		});
 	});
 
@@ -681,13 +749,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_setKeywords({
 				"keywords" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_setKeywords({
 				"keywords" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_setDestination", function(assert) {
@@ -705,13 +773,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_setDestination({
 				"destinations" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_setDestination({
 				"destination" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_addTechnicalAttributes", function(assert) {
@@ -727,13 +795,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
 				"technicalAttributes" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
 				"technicalAttributes" : "TAG1"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_app_removeTechnicalAttributes", function(assert) {
@@ -749,13 +817,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
 				"technicalAttributes" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
 				"technicalAttributes" : "TAG1"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("appdescr_ui5_addNewModel", function(assert) {
@@ -776,15 +844,15 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui5_addNewModel({
 				"modelId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui5_addNewModel({
 				"model" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
-	
+
 	QUnit.test("appdescr_ui5_replaceComponentUsage", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
 			"componentUsageId": "usageAttachment",
@@ -798,18 +866,18 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_replaceComponentUsage");
 		});
 	});
-	
+
 	QUnit.test("appdescr_ui5_replaceComponentUsage failure", function (assert) {
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
 				"componentUsageId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
 				"componentUsage" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("appdescr_smb_addNamespace", function(assert) {
@@ -842,21 +910,21 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_smb_addNamespace({
 				"smartBusinessAppId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_smb_addNamespace({
 				"smartBusinessApp" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
-	
+
 	QUnit.test("appdescr_smb_changeNamespace", function(assert) {
 		return DescriptorInlineChangeFactory.create_smb_changeNamespace({
 			"smartBusinessApp": {
 				"tile": {
-	        "tileConfiguration": "{\"TILE_PROPERTIES\":\" {\\\"id\\\":\\\"\\\",\\\"instanceId\\\":\\\"\\\",\\\"evaluationId\\\":\\\"\\\"," +
-	        		"\\\"navType\\\":\\\"0\\\",\\\"cacheMaxAge\\\":1,\\\"cacheMaxAgeUnit\\\":\\\"MIN\\\",\\\"tileSpecific\\\":{}}\"}"
+					"tileConfiguration": "{\"TILE_PROPERTIES\":\" {\\\"id\\\":\\\"\\\",\\\"instanceId\\\":\\\"\\\",\\\"evaluationId\\\":\\\"\\\"," +
+					"\\\"navType\\\":\\\"0\\\",\\\"cacheMaxAge\\\":1,\\\"cacheMaxAgeUnit\\\":\\\"MIN\\\",\\\"tileSpecific\\\":{}}\"}"
 				},
 				"annotationFragments" : {
 					"selectionVariant" : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionVariant#<qualifier>",
@@ -874,13 +942,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_smb_changeNamespace({
 				"smartBusinessAppId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_smb_changeNamespace({
 				"smartBusinessApp" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("appdescr_ui_generic_app_setMainPage", function(assert) {
@@ -904,13 +972,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
 				"pageId" : {}
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
 				"page" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("create_ui_setIcon", function(assert) {
@@ -925,13 +993,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui_setIcon({
 				"iconId" : "a.string"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui_setIcon({
 				"icon" : { }
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.module("DescriptorVariant", {
@@ -943,6 +1011,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						"reference": "a.reference"
 					})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -981,19 +1057,19 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	});
 
 	QUnit.test("setTransportRequest - wrong format - error expected", function(assert) {
-		var oDescriptorVariant_;
 		return DescriptorVariantFactory.createNew({
 			"id" : "a.id",
 			"reference": "a.reference"
 		}).then(function(oDescriptorVariant) {
-			oDescriptorVariant_ = oDescriptorVariant;
 			return oDescriptorVariant.setTransportRequest( "Wrong Format" );
-		}).then(function(){
-			assert.ok(false,"success function not supposed to be called");
+		}).then(
+			function(){
+				assert.ok(false,"success function not supposed to be called");
 			},
-		   function(oError) {
-			assert.notEqual( oError, null );
-		});
+			function(oError) {
+				assert.notEqual( oError, null );
+			}
+		);
 	});
 
 	QUnit.test("setPackage", function(assert) {
@@ -1011,20 +1087,20 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	});
 
 	QUnit.test("setPackage - wrong format - error expected", function(assert) {
-		var oDescriptorVariant_;
 		return DescriptorVariantFactory.createNew({
 			"id" : "a.id",
 			"reference": "a.reference"
 		}).then(function(oDescriptorVariant) {
 			assert.equal( oDescriptorVariant._getMap().packageName, "$TMP" );//check the default
-			oDescriptorVariant_ = oDescriptorVariant;
 			return oDescriptorVariant.setPackage( "SomePackage_WrongFormat" );
-		}).then(function(){
+		}).then(
+			function(){
 				assert.ok(false,"success function not supposed to be called");
 			},
 			function(oError) {
 				assert.notEqual( oError, null );
-		});
+			}
+		);
 	});
 
 	QUnit.test("submit", function(assert) {
@@ -1034,6 +1110,54 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		}).then(function(oDescriptorVariant) {
 			return oDescriptorVariant.submit().then(function(oResponse){
 				assert.notEqual(oResponse, null);
+			});
+		});
+	});
+
+	QUnit.test("getJson", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"isAppVariantRoot":	false
+		}).then(function(oDescriptorVariant) {
+			var mExpectedJson = {
+					"id" : "a.id",
+					"reference": "a.reference",
+					"fileName":	"manifest",
+					"fileType":	"appdescr_variant",
+					"isAppVariantRoot":	false,
+					"layer": "CUSTOMER",
+					"namespace": "apps/a.reference/changes/a.id/",
+					"packageName": "$TMP",
+					"content": []
+			};
+			var mJsonResult = oDescriptorVariant.getJson();
+			assert.ok(mJsonResult);
+			assert.deepEqual(mJsonResult, mExpectedJson);
+			//with an inline change
+			return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+				return oDescriptorVariant.addDescriptorInlineChange(oDescriptorInlineChange).then(function() {
+					var mExpectedJsonWithContent = {
+							"id" : "a.id",
+							"reference": "a.reference",
+							"fileName":	"manifest",
+							"fileType":	"appdescr_variant",
+							"isAppVariantRoot":	false,
+							"layer": "CUSTOMER",
+							"namespace": "apps/a.reference/changes/a.id/",
+							"packageName": "$TMP",
+							"content": [{
+								"changeType": "changeType",
+								"content": {
+									"param":"value"
+								},
+								"texts": {"a": "b"}
+							}]
+					};
+					var mJsonResultWithContent = oDescriptorVariant.getJson();
+					assert.ok(mJsonResultWithContent);
+					assert.deepEqual(mJsonResultWithContent, mExpectedJsonWithContent);
+				});
 			});
 		});
 	});
@@ -1048,6 +1172,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"reference": "a.reference"
 				})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1067,50 +1199,50 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					assert.equal(oDescriptorVariant._reference, "a.reference");
 					assert.equal(oDescriptorVariant._mode, "NEW");
 					assert.equal(oDescriptorVariant._layer, "CUSTOMER");
-				})
+				});
 	});
 
 	QUnit.test("createNew failure", function(assert) {
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
 				"id" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
 				"reference": "a.reference"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
 				"id" : 1,
 				"reference": "a.reference"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
 				"id" : "a.id",
 				"reference": 1
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
 				"id" : "a.id",
 				"reference" : "a.reference",
 				"layer" : true //wrong type, string expected
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createNew({
 				"id" : "a.id",
 				"reference" : "a.reference",
-				"layer" : "PARTNER"	//"VENDOR" or "PARTNER" expected
-			})
-		}.bind(this));
+				"layer" : "USER"	//"USER" not supported
+			});
+		});
 
 	});
 
@@ -1121,6 +1253,26 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			"layer": "CUSTOMER"
 		}).then(function(oDescriptorVariant) {
 			assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER');
+		});
+	});
+
+	QUnit.test("createNew - layer - set to CUSTOMER_BASE", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"layer": "CUSTOMER_BASE"
+		}).then(function(oDescriptorVariant) {
+			assert.equal(oDescriptorVariant._getMap().layer, 'CUSTOMER_BASE');
+		});
+	});
+
+	QUnit.test("createNew - layer - set to PARTNER", function(assert) {
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"layer": "PARTNER"
+		}).then(function(oDescriptorVariant) {
+			assert.equal(oDescriptorVariant._getMap().layer, 'PARTNER');
 		});
 	});
 
@@ -1175,17 +1327,17 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					assert.equal(oDescriptorVariant._mMap.id, "a.id");
 					assert.equal(oDescriptorVariant._mMap.reference, "a.reference");
 					assert.equal(oDescriptorVariant._mode, "FROM_EXISTING");
-				})
+				});
 	});
 
 	QUnit.test("createForExisting failure", function(assert) {
 		assert.throws(function(){
-			DescriptorVariantFactory.createForExisting()
-		}.bind(this));
+			DescriptorVariantFactory.createForExisting();
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createForExisting({
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 	QUnit.test("createDeletion", function(assert) {
@@ -1195,24 +1347,24 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					assert.notEqual(oDescriptorVariant, null);
 					assert.equal(oDescriptorVariant._id, "a.id");
 					assert.equal(oDescriptorVariant._mode, "DELETION");
-				})
+				});
 	});
 
 	QUnit.test("createDeletion failure", function(assert) {
 		assert.throws(function(){
 			DescriptorVariantFactory.createDeletion({
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createDeletion({
 				"reference" : "a.id"
-			})
-		}.bind(this));
+			});
+		});
 		assert.throws(function(){
 			DescriptorVariantFactory.createDeletion({
 				"id" : 1
-			})
-		}.bind(this));
+			});
+		});
 	});
 
 
@@ -1224,6 +1376,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						"reference": "a.reference"
 					})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1233,7 +1393,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 
 	QUnit.test("setPackage - default", function(assert) {
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			assert.equal(oDescriptorChange._getChangeToSubmit( ).getPackage(),"$TMP");
 		});
@@ -1242,7 +1402,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	QUnit.test("setPackage", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
 			return oDescriptorChange.setPackage('/ABC/DEF_GHIJ_123445');
@@ -1254,7 +1414,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	QUnit.test("setPackage", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
 			return oDescriptorChange.setPackage('/ABC/DEF_GHIJ_123445');
@@ -1264,25 +1424,25 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	});
 
 	QUnit.test("setPackage - wrong format - error expected", function(assert) {
-		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
-			_oDescriptorChange = oDescriptorChange;
 			return oDescriptorChange.setPackage('Wrong Format');
-		}).then(function(){
-			assert.ok(false,"error expected, success function not supposed to be called");
-		},
-		function(oError) {
-			assert.notEqual( oError, null );
-	});
+		}).then(
+			function(){
+				assert.ok(false,"error expected, success function not supposed to be called");
+			},
+			function(oError) {
+				assert.notEqual( oError, null );
+			}
+		);
 	});
 
 
 	QUnit.test("setTransportRequest", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
 			return oDescriptorChange.setTransportRequest( "XYZ12345" );
@@ -1294,7 +1454,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 
 	QUnit.test("setTransportRequest - wrong format - error expected", function(assert) {
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			return oDescriptorChange.setTransportRequest( "Wrong Format" );
 		}).then(function(){
@@ -1352,22 +1512,79 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
-	QUnit.test("createNew - with layer CUSTOMER", function(assert) {
+	QUnit.test("createNew - with layer CUSTOMER_BASE", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			new DescriptorChangeFactory().createNew(
+					"a.reference",
+					oDescriptorInlineChange,
+					'CUSTOMER_BASE'
+					).then(function(oDescriptorChange) {
+						assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER_BASE' );
+					});
+		});
+	});
+
+	QUnit.test("createNew - with layer PARTNER", function(assert) {
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			new DescriptorChangeFactory().createNew(
+					"a.reference",
+					oDescriptorInlineChange,
+					'PARTNER'
+					).then(function(oDescriptorChange) {
+						assert.equal(oDescriptorChange._mChangeFile.layer, 'PARTNER' );
+					});
+		});
+	});
+
+	QUnit.test("getJson", function(assert) {
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
 			new DescriptorChangeFactory().createNew(
 					"a.reference",
 					oDescriptorInlineChange,
 					'CUSTOMER'
 					).then(function(oDescriptorChange) {
-						assert.equal(oDescriptorChange._mChangeFile.layer, 'CUSTOMER' );
+						var mExpectedPartJson = {
+								"reference": "a.reference",
+								"fileType":	"change",
+								"layer": "CUSTOMER",
+								"namespace": "apps/a.reference/changes/",
+								"packageName": "$TMP",
+								"changeType": "changeType",
+								"content": {
+									"param":"value"
+								},
+								"texts": {"a": "b"}
+						};
+						var mJsonResult = oDescriptorChange.getJson();
+						assert.ok(mJsonResult);
+						assert.equal(mJsonResult.reference, mExpectedPartJson.reference);
+						assert.equal(mJsonResult.fileType, mExpectedPartJson.fileType);
+						assert.equal(mJsonResult.layer, mExpectedPartJson.layer);
+						assert.equal(mJsonResult.namespace, mExpectedPartJson.namespace);
+						assert.equal(mJsonResult.packageName, mExpectedPartJson.packageName);
+						assert.equal(mJsonResult.changeType, mExpectedPartJson.changeType);
+						assert.deepEqual(mJsonResult.content, mExpectedPartJson.content);
+						assert.deepEqual(mJsonResult.texts, mExpectedPartJson.texts);
 					});
 		});
 	});
 
+
 	QUnit.module("DescriptorChangeFactory", {
 		beforeEach: function(assert) {
+			this._oSandbox = sinon.sandbox.create();
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
+			this._oSandbox.restore();
+			delete this._oSandbox;
 		}
 	});
 
@@ -1393,7 +1610,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"layer": "CUSTOMER"
 				})
 			}));
-
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1422,7 +1646,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						assert.notEqual(oResponse, null);
 						assert.equal(that._fStubSend.getCall(0).args[0],"/sap/bc/lrep/appdescr_variants/a.id");
 					});
-				})
+				});
 	});
 
 	QUnit.test("delete - submit", function(assert) {
@@ -1434,7 +1658,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						assert.notEqual(oResponse, null);
 						assert.equal(that._fStubSend.getCall(0).args[0],'/sap/bc/lrep/appdescr_variants/a.id');
 					});
-				})
+				});
 	});
 
 	QUnit.module("DescriptorVariantFactory - ATO true", {
@@ -1449,12 +1673,12 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 				})
 			}));
 			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
-					new Settings({
-							"isKeyUser":false,
-							"isAtoAvailable":false,
-							"isAtoEnabled":true,
-							"isProductiveSystem":false
-					})
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":true,
+					"isProductiveSystem":false
+				})
 			));
 
 		},
@@ -1486,7 +1710,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						assert.notEqual(oResponse, null);
 						assert.equal(that._fStubSend.getCall(1).args[0],'/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
 					});
-				})
+				});
 	});
 
 	QUnit.test("delete - submit", function(assert) {
@@ -1498,7 +1722,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 						assert.notEqual(oResponse, null);
 						assert.equal(that._fStubSend.getCall(1).args[0],'/sap/bc/lrep/appdescr_variants/a.id?changelist=ATO_NOTIFICATION');
 					});
-				})
+				});
 	});
 
 	QUnit.module("DescriptorChangeFactory - ATO false", {
@@ -1510,6 +1734,14 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 					"reference": "a.reference"
 				})
 			}));
+			this._oSandbox.stub(Settings, "getInstance").returns(Promise.resolve(
+				new Settings({
+					"isKeyUser":false,
+					"isAtoAvailable":false,
+					"isAtoEnabled":false,
+					"isProductiveSystem":false
+				})
+			));
 		},
 		afterEach: function() {
 			this._oSandbox.restore();
@@ -1520,7 +1752,7 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	QUnit.test("create new", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
 			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'');
@@ -1554,7 +1786,17 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	QUnit.test("create new - CUSTOMER layer", function(assert) {
 		var _oDescriptorChange;
 		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange)
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
+		}).then(function(oDescriptorChange) {
+			_oDescriptorChange = oDescriptorChange;
+			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');
+		});
+	});
+
+	QUnit.test("create new - CUSTOMER_BASE layer", function(assert) {
+		var _oDescriptorChange;
+		return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
+			return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 		}).then(function(oDescriptorChange) {
 			_oDescriptorChange = oDescriptorChange;
 			assert.equal(_oDescriptorChange._getChangeToSubmit( ).getRequest(),'ATO_NOTIFICATION');

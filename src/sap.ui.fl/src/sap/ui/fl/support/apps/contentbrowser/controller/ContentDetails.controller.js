@@ -112,7 +112,7 @@ sap.ui.define([
 		 * Sets the received data to the current content model, updates the icon tab bar, and releases the busy mode of the current page.
 		 * @param {Object} oModelData - model data of current page
 		 * @param {Object} oPage - current page used to set display busy mode on/off
-		 * @param {Object} oData - metadata which is received from <code>LRepConnector<code> "getContent" promise
+		 * @param {Object} oMetadata - metadata which is received from <code>LRepConnector<code> "getContent" promise
 		 * @private
 		 */
 		_onContentMetadataReceived: function (oModelData, oPage, oMetadata) {
@@ -128,6 +128,89 @@ sap.ui.define([
 				}
 			}
 			oPage.setBusy(false);
+		},
+
+		/**
+		 * Navigates to Edit mode of content.
+		 * @public
+		 */
+		onEditClicked: function () {
+			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var oContentData = oSelectedContentModel.getData();
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+			oRouter.navTo("ContentDetailsEdit", {
+				"layer": oContentData.layer,
+				"namespace": HtmlEscapeUtils.escapeSlashes(oContentData.namespace),
+				"fileName": oContentData.fileName,
+				"fileType": oContentData.fileType
+			});
+		},
+
+		/**
+		 * Handles the deletion button;
+		 * The function displays a confirmation dialog. On confirmation, the deletion of the displayed content is triggered.
+		 * @public
+		 */
+		onDeleteClicked: function () {
+			var that = this;
+
+			var oDialog = new Dialog({
+				title: "{i18n>confirmDeletionTitle}",
+				type: "Message",
+				content: new Text({text: "{i18n>questionFileDeletion}"}),
+				beginButton: new Button({
+					text: "{i18n>confirm}",
+					type: sap.m.ButtonType.Reject,
+					press: function () {
+						that._deleteFile();
+						oDialog.close();
+					}
+				}),
+				endButton: new Button({
+					text: "{i18n>cancel}",
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				afterClose: function () {
+					oDialog.destroy();
+				}
+			});
+
+			this.getView().addDependent(oDialog);
+
+			oDialog.open();
+		},
+
+		/**
+		 * Handler if a deletion was confirmed.
+		 * @returns {Promise} - <code>LRepConnector<code> "deleteFile" promise
+		 * @private
+		 */
+		_deleteFile: function () {
+			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var oContentData = oSelectedContentModel.getData();
+			var sLayer = "";
+
+			oContentData.metadata.forEach(function (mMetadata) {
+				if (mMetadata.name === "layer") {
+					sLayer = mMetadata.value;
+				}
+			});
+
+			var sNamespace = oContentData.namespace;
+			var sFileName = oContentData.fileName;
+			var sFileType = oContentData.fileType;
+
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType).then(function () {
+				oRouter.navTo("LayerContentMaster", {
+					"layer": sLayer,
+					"namespace": HtmlEscapeUtils.escapeSlashes(sNamespace)
+				});
+			});
 		}
 	});
 });

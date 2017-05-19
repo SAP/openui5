@@ -1,3 +1,5 @@
+/* global module */
+
 module.exports = [
 	"ActionSelect.spec.js",
 	"ActionSheet.spec.js",
@@ -18,7 +20,7 @@ module.exports = [
 	"MessagePopover.spec.js",
 	"MessageStrip.spec.js",
 	"MessageToast.spec.js",
-	//"MessageView.spec.js",
+	"MessageView.spec.js",
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
 	"NotificationListItem.spec.js",
@@ -27,6 +29,7 @@ module.exports = [
 	"OverflowToolbar.spec.js",
 	"Page.spec.js",
 	"Panel.spec.js",
+	"PlanningCalendar.spec.js",
 	"Popover.spec.js",
 	"ProgressIndicator.spec.js",
 	"QuickView.spec.js",

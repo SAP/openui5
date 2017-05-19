@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * @param {string} sColumnId ID of the column for which the Span-parent shall be found
 			 * @param {int} [iLevel] level where the parent is looked up
 			 *
-			 * @returns {{column: sap.ui.table.Column, level: int}[]|undefined} Array of column information
+			 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information
 			 * @private
 			 */
 			getParentSpannedColumns : function(oTable, sColumnId, iLevel) {
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * @param {string} sColumnId ID of the column for which the Span-parent shall be found
 			 * @param {int} [iLevel] level where the parent is looked up
 			 *
-			 * @returns {{column: sap.ui.table.Column, level: int}[]|undefined} Array of column information
+			 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information
 			 * @private
 			 */
 			getChildrenSpannedColumns : function(oTable, sColumnId, iLevel) {
@@ -240,19 +240,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 				var vHeaderSpans = oColumn.getHeaderSpan();
 				var iHeaderSpan;
 
+				if (!vHeaderSpans) {
+					return 1;
+				}
+
+				if (!Array.isArray(vHeaderSpans)) {
+					vHeaderSpans = (vHeaderSpans + "").split(",");
+				}
+
 				function getSpan(sSpan) {
 					var result = parseInt(sSpan, 10);
 					return isNaN(result) ? 1 : result;
 				}
 
-				if (jQuery.isArray(vHeaderSpans)) {
-					if (isNaN(iLevel)) { // find max value of all spans in the header
-						iHeaderSpan = Math.max.apply(null, vHeaderSpans.map(getSpan));
-					} else {
-						iHeaderSpan = getSpan(vHeaderSpans[iLevel]);
-					}
+				if (isNaN(iLevel)) { // find max value of all spans in the header
+					iHeaderSpan = Math.max.apply(null, vHeaderSpans.map(getSpan));
 				} else {
-					iHeaderSpan = getSpan(vHeaderSpans);
+					iHeaderSpan = getSpan(vHeaderSpans[iLevel]);
 				}
 
 				return Math.max(iHeaderSpan, 1);
@@ -308,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 					// get the direct relations for all collected columns
 					// columns have a logical relation with each other, if they are spanned by other column headers or
 					// of they by itself are spanning other columns. Since those columns are logically tightly coupled,
-					// they can be seen as a immutable block of columns.
+					// they can be seen as an immutable block of columns.
 					for (i = 0; i < aNewRelations.length; i++) {
 						oColumn = mColumns[aNewRelations[i]];
 						aDirectRelations = aDirectRelations.concat(TableColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()));
@@ -511,7 +515,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			/**
 			 * Returns the minimal possible column width in pixels.
 			 *
-			 * @returns {integer} The minimal possible column width in pixels
+			 * @returns {int} The minimal possible column width in pixels
 			 * @private
 			 */
 			getMinColumnWidth: function() {
@@ -538,7 +542,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/Device', './l
 			 * and execution of the default action is prevented in the event handler.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
-			 * @param {int} iColumnIndex The index of a column. Must the the index of a visible column.
+			 * @param {int} iColumnIndex The index of a column. Must the index of a visible column.
 			 * @param {int} iWidth The width in pixel to set the column or column span to. Must be greater than 0.
 			 * @param {boolean} [bFireEvent=true] Whether the ColumnResize event should be fired. The event will be fired for every resized column.
 			 * @param {int} [iColumnSpan=1] The span of columns to resize beginning from <code>iColumnIndex</code>.

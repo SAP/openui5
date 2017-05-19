@@ -1,14 +1,17 @@
 <mvc:View
+	id="notFoundView"
 	controllerName="sap.ui.demo.cart.controller.NotFound"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-	<Page title="{i18n>CATEGORY_NO_DATA}">
+	<Page
+		id="page"
+		title="{i18n>categoryNoData}">
 		<content>
 			<MessagePage
-					showHeader="false"
-					text="{i18n>CATEGORY_NO_DATA}"
-					description=""/>
+				showHeader="false"
+				text="{i18n>categoryNoData}"
+				description=""/>
 		</content>
 	</Page>
 </mvc:View>

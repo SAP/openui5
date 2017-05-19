@@ -2,10 +2,11 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/matchers/Properties"
-], function (Opa5, opaTest, Properties) {
+	"sap/ui/test/TestUtils"
+], function (Properties, Opa5, opaTest, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -27,7 +28,7 @@ sap.ui.require([
 			[
 				{controlType : "sap.ui.core.Title", text : "HeaderInfo"},
 				{controlType : "sap.m.Text", text : "[Type Name] Business Partner"},
-				{controlType : "sap.m.Text", text : "[Name] SAPAG"},
+				{controlType : "sap.m.Text", text : "[Name] SAPSE"},
 				{controlType : "sap.ui.core.Title", text : "Identification"},
 				{controlType : "sap.m.Label", text : "ID"},
 				{controlType : "sap.m.Text", text : "0100000000"},
@@ -57,8 +58,6 @@ sap.ui.require([
 			Then.waitFor({
 				id : /selectInstance/,
 				success : function () {
-					var jQuery = Opa5.getWindow().jQuery;
-
 					// check no warnings and errors
 					jQuery.sap.log.getLogEntries().forEach(function (oLog) {
 						var sComponent = oLog.component || "";
@@ -76,10 +75,14 @@ sap.ui.require([
 				errorMessage : "Instance selector not found"
 			});
 
-			Then.iTeardownMyAppFrame();
+			Then.iTeardownMyUIComponent();
 		}
 
-		Given.iStartMyAppInAFrame("../../common/index.html?component=ViewTemplate.scenario");
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.sample.ViewTemplate.scenario"
+			}
+		});
 
 		// wait for application to load before any interaction
 		Then.waitFor({

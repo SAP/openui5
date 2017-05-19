@@ -478,11 +478,11 @@
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
-		var oSpyDestroy = sinon.spy(oFileName, "destroy");
+		var oSpyGetter = sinon.spy(oItem, "_getFileNameLink");
 		//Act
 		oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
 		//Assert
-		assert.ok(oSpyDestroy.calledOnce, "Destroy on oFileName object was called once");
+		assert.equal(oSpyGetter.callCount, 1, "_getFileNameLink on oItem object was called once");
 		assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
 	});
 
@@ -496,11 +496,11 @@
 		this.oUploadCollection.insertItem(oItem);
 		sap.ui.getCore().applyChanges();
 		var oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
-		var oSpyDestroy = sinon.spy(oDeleteButton, "destroy");
+		var oSpyGetter = sinon.spy(oItem, "_getDeleteButton");
 		//Act
 		oDeleteButton = this.oUploadCollection._createDeleteButton(oItem.getId(), "deleteButton", oItem, this);
 		//Assert
-		assert.ok(oSpyDestroy.calledOnce, "Destroy on oDeleteButton object was called once");
+		assert.equal(oSpyGetter.callCount, 1, "_getDeleteButton on oItem object was called once");
 		assert.equal(oDeleteButton.mEventRegistry.press.length, 1, "One press handler attached in case the function is called several times");
 	});
 
@@ -592,6 +592,32 @@
 		assert.equal(sFileNameRequestIdValue, this.encodeToAscii(sFileName) + sRequestId, "Unique key for a File is set correctly into requestHeaders");
 	});
 
+	QUnit.test("handleTerminate - Function _handleTerminate called on terminate button press", function(assert) {
+		var oDialogOpenStub = sinon.stub(sap.m.Dialog.prototype, "open");
+		var oHandleTerminateSpy = sinon.spy(this.oUploadCollection, "_handleTerminate");
+		var oFileUploader = this.oUploadCollection._getFileUploader();
+		oFileUploader._aXhr = [];
+		var oFile2 = {
+			name: "Document.txt"
+		};
+		oFileUploader.fireChange({
+			files: [oFile2]
+		});
+
+		this.oUploadCollection.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		var oTerminateButton =  this.oUploadCollection.aItems[0]._getTerminateButton()
+		oTerminateButton.firePress();
+
+		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
+
+		// Clean up
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.destroy();
+		oDialogOpenStub.restore();
+	});
+
 	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function(assert) {
 		var done = assert.async();
 		var oItem = new sap.m.UploadCollectionItem({
@@ -630,7 +656,6 @@
 			done();
 		});
 		oDialog.getButtons()[0].firePress();
-		this.oUploadCollection.removeItem(oItem);
 		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
 	});
 
@@ -679,7 +704,7 @@
 
 	QUnit.test("Event 'selectionChange' is attached once", function(assert) {
 		//Arrange
-		nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
+		var nListeners = this.oUploadCollection._oList.mEventRegistry.selectionChange.length;
 		//Act
 		this.oUploadCollection.invalidate();
 		sap.ui.getCore().applyChanges();
@@ -924,10 +949,7 @@
 
 	QUnit.test("Terminate upload button is visible by default.", function(assert) {
 		//Arrange
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("visibleButtonTestId", "terminateButton", oItem, "", {});
@@ -939,10 +961,7 @@
 	QUnit.test("Terminate upload button is not visible when terminationEnabled is false.", function(assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
@@ -954,12 +973,7 @@
 	QUnit.test("Terminate upload button is not visible when button exists and terminationEnabled is false.", function(assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(false);
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {
-				return true;
-			}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
@@ -973,12 +987,7 @@
 	QUnit.test("Terminate upload button is visible when button exists and terminationEnabled is true.", function(assert) {
 		//Arrange
 		this.oUploadCollection.setTerminationEnabled(true);
-		var oItem = {
-			getEnableDelete: function() {},
-			getVisibleDelete: function() {
-				return true;
-			}
-		};
+		var oItem = this.oUploadCollection.getItems()[0];
 		var spyGetTerminationEnabled = sinon.spy(this.oUploadCollection, "getTerminationEnabled");
 		//Act
 		var oDeleteButton = this.oUploadCollection._createDeleteButton("invisibleButtonTestId", "terminateButton", oItem, null, {});
@@ -1258,6 +1267,51 @@
 		assert.ok(this.oUploadCollection.getAggregation("_dragDropIcon").$().is(':hidden'), "The drag and drop icon is hidden");
 	});
 
+	QUnit.test("Private function _isDragAndDropAllowed: success case", function(assert) {
+		var bDragAndDropAllowed;
+		//Arrange
+		//Act
+		bDragAndDropAllowed = this.oUploadCollection._isDragAndDropAllowed();
+		//Assert
+		assert.ok(bDragAndDropAllowed, "Function returns true when both uploadEnabled is set to true and uploadButtonInvisible is set to false");
+	});
+
+	QUnit.test("Private function _isDragAndDropAllowed: failure case", function(assert) {
+		var bDragAndDropAllowed;
+		//Arrange
+		this.oUploadCollection.setUploadEnabled(false);
+		//Act
+		bDragAndDropAllowed = this.oUploadCollection._isDragAndDropAllowed();
+		//Assert
+		assert.notOk(bDragAndDropAllowed, "Function returns false when uploadEnabled is set to false");
+	});
+
+	QUnit.test("Drag and drop is not allowed", function(assert) {
+		var $DragDropArea;
+		//Arrange
+		this.oUploadCollection.setUploadButtonInvisible(true);
+		this.oUploadCollection.rerender();
+		$DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		//Act
+		$DragDropArea.trigger("dragenter");
+		//Assert
+		assert.ok(this.oUploadCollection.$("drag-drop-area").hasClass("sapMUCDragDropOverlayHide"), "Drag and drop is not possible when either upload is disabled or the upload button is invisible");
+	});
+
+	QUnit.test("Change of uploadButtonInvisible property", function(assert) {
+		var oBindSpy,
+			oUnBindSpy;
+		//Arrange
+		oBindSpy = sinon.spy(this.oUploadCollection, "_bindDragEnterLeave");
+		oUnBindSpy = sinon.spy(this.oUploadCollection, "_unbindDragEnterLeave");
+		//Act
+		this.oUploadCollection.setUploadButtonInvisible(true);
+		this.oUploadCollection.setUploadButtonInvisible(false);
+		//Assert
+		assert.ok(oUnBindSpy.calledOnce, "The change of uploadButtonInvisible to true leads to an unbind of the dragEnterLeave event");
+		assert.ok(oBindSpy.calledOnce, "The change of uploadButtonInvisible to false leads to a bind of the dragEnterLeave event");
+	});
+
 	QUnit.test("Check for files with files", function(assert) {
 		var bActual,
 			oEvent;
@@ -1523,24 +1577,25 @@
 	QUnit.test("uploadComplete", function(assert) {
 		var oFileUploaderEventMock = {
 			fileName : "file1",
-			reponse : { "propertyOne" : "ValueOne" },
+			response : { "propertyOne" : "ValueOne" },
 			readyStateXHR : 4,
 			status : 200,
 			responseRaw : '{ "propertyOne" : "ValueOne" }',
 			headers : {
 				"headerOne" : "headerValueOne",
-				"headerTwo" : "headerValueTwo",
+				"headerTwo" : "headerValueTwo"
 			}
 		};
 		function uploadComplete(oEvent) {
 			// Deprecated
 			assert.equal(oEvent.getParameters().getParameter("fileName"), "file1", "Correct file1 name in complete event");
-			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "Correct reponse in complete event");
+			assert.equal(oEvent.getParameters().getParameter("response"), oFileUploaderEventMock.response, "Correct response in complete event");
 			assert.equal(oEvent.getParameters().getParameter("readyStateXHR"), oFileUploaderEventMock.readyStateXHR, "Correct readyStateXHR in complete event");
 			assert.equal(oEvent.getParameters().getParameter("status"), oFileUploaderEventMock.status, "Correct status in complete event");
 			// check for properly provided parameters
 			assert.equal(oEvent.getParameter("files")[0].fileName, "file1", "Correct file1 name in complete event");
 			assert.equal(oEvent.getParameter("files")[0].response, oFileUploaderEventMock.response, "Correct response in complete event");
+			assert.equal(oEvent.getParameter("files")[0].reponse, oFileUploaderEventMock.response, "Correct reponse in complete event - deprecated event property");
 			assert.equal(oEvent.getParameter("files")[0].status, oFileUploaderEventMock.status, "Correct status in complete event");
 			assert.equal(oEvent.getParameter("files")[0].responseRaw, oFileUploaderEventMock.responseRaw, "Correct raw response in complete event");
 			assert.equal(oEvent.getParameter("files")[0].headers, oFileUploaderEventMock.headers, "Correct headers in complete event");
@@ -1570,7 +1625,7 @@
 		this.oUploadCollection._getFileUploader().fireUploadAborted({
 			fileName: sFileName,
 			requestHeaders: aRequestHeaders
-		})
+		});
 	});
 
 	QUnit.test("Event beforeUploadStarts", function(assert) {
@@ -1873,6 +1928,49 @@
 		oStub.restore();
 	});
 
+	QUnit.module("Grouping tests", {
+		beforeEach : function() {
+			this.oUploadCollection = new sap.m.UploadCollection({
+				items : {
+					path : "/items",
+					template : createItemTemplate(),
+					templateShareable : false,
+					sorter : new sap.ui.model.Sorter("contributor", false, function(oContext) {
+						return {
+							key: oContext.getProperty("contributor"),
+							upperCase: false
+						};
+					})
+				}
+			}).setModel(new sap.ui.model.json.JSONModel(oData));
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Rendering", function(assert) {
+		//Arrange
+		sinon.spy(this.oUploadCollection._oList, "addItemGroup");
+		var aList = this.oUploadCollection._oList,
+			aItems = aList.getItems();
+
+		//Act
+		this.oUploadCollection.rerender();
+
+		//Assert
+		assert.equal(this.oUploadCollection._oList.addItemGroup.callCount, 4, "Four groups were added");
+		assert.equal(aItems.length, 8, "Each item is part of a separate group (we have inside 4 group items, each with 1 collection item)");
+		jQuery.each(aItems, function(iIndex, oItem) {
+			if (oItem._bGroupHeader) {
+				assert.ok(oItem.getTitle().length > 0, "The group item has title property");
+			}
+		});
+	});
+
 	QUnit.module("Properties", {
 		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection();
@@ -1915,7 +2013,7 @@
 					assert.deepEqual(oUploadCollection._oFileUploader[sGetterMethodFileUploader](), oPropertyValue, "Propagation to FileUploader");
 			}
 		}
-	}
+	};
 
 	QUnit.test("Default values", function(assert) {
 		var sFileType,

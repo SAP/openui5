@@ -1,0 +1,151 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<Dialog
+		id="Dialog"
+		class="sapUiNoContentPadding"
+		contentWidth="40%"
+		draggable="true">
+		<customHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Title text="{i18n>TechInfo.DialogTitle}"/>
+				<ToolbarSpacer/>
+				<Button
+					class="sapUiTinyMarginBegin"
+					icon="sap-icon://copy"
+					tooltip="{i18n>TechInfo.CopyButton.Tooltip}"
+					press="onCopyTechnicalInfoToClipboard"/>
+				<Button
+					icon="sap-icon://sys-help"
+					tooltip="{i18n>TechInfo.HelpButton.Tooltip}"
+					press="onShowHelp"/>
+			</Toolbar>
+		</customHeader>
+		<f:SimpleForm
+			id="Form"
+			adjustLabelSpan="false"
+			editable="true">
+			<f:content>
+				<!-- Product Version info -->
+				<Label text="{view>/ProductName}" />
+				<l:VerticalLayout>
+					<l:HorizontalLayout>
+						<Link
+							text="{view>/ProductVersion}"
+							press="onShowVersion"
+							tooltip="{i18n>TechInfo.VersionLink.Tooltip}"/>
+						<Text
+							id="versionBuiltAt"
+							text="{
+								parts: [
+									'i18n>TechInfo.VersionBuildTime.Text',
+									{
+										path:'view>/ProductTimestamp',
+										type:'sap.ui.model.type.DateTime',
+										formatOptions: {
+											style: 'medium'
+										}
+									}
+								],
+								formatter: 'jQuery.sap.formatMessage'
+							}"
+							class="sapUiTinyMarginBegin"
+							/>
+					</l:HorizontalLayout>
+				</l:VerticalLayout>
+
+				<!-- OpenUI5 Version info (optional) -->
+				<Label
+					text="OpenUI5 Version"
+					visible="{= ${view>/OpenUI5ProductVersion} !== null ? true : false }"/>
+				<l:VerticalLayout
+					visible="{= ${view>/OpenUI5ProductVersion} !== null ? true : false }">
+					<l:HorizontalLayout>
+						<Text text="{view>/OpenUI5ProductVersion}"/>
+						<Text
+							id="versionOpenUI5BuiltAt"
+							text="{
+								parts: [
+									'i18n>TechInfo.VersionBuildTime.Text',
+									{
+										path:'view>/OpenUI5ProductTimestamp',
+										type:'sap.ui.model.type.DateTime',
+										formatOptions: {
+											style: 'medium'
+										}
+									}
+								],
+								formatter: 'jQuery.sap.formatMessage'
+							}"
+							class="sapUiTinyMarginBegin"/>
+					</l:HorizontalLayout>
+				</l:VerticalLayout>
+
+				<!-- User agent -->
+				<Label text="{i18n>TechInfo.UserAgent.Label}"/>
+				<Text text="{view>/UserAgent}"
+					wrapping="false"
+					tooltip="{view>/UserAgent}"/>
+
+				<!-- App URL -->
+				<Label text="{i18n>TechInfo.AppUrl.Label}"/>
+				<Text
+					text="{view>/ApplicationURL}"
+					wrapping="false"
+					tooltip="{view>/ApplicationURL}"/>
+
+				<!-- Debug sources -->
+				<Label
+					text="{i18n>TechInfo.DebugSources.Label}"
+					tooltip="{i18n>TechInfo.DebugSources.Tooltip}"
+					labelFor="debugMode"/>
+				<HBox>
+					<CheckBox
+						id="debugMode"
+						selected="{view>/DebugMode}"
+						select="onDebugSources"/>
+					<Link
+						text="{i18n>TechInfo.DebugSourcesModules.Link}"
+						press="onConfigureDebugModules"/>
+				</HBox>
+			</f:content>
+		</f:SimpleForm>
+		<buttons>
+			<Button
+				text="{i18n>TechnInfo.DiagnosticsButton.Text}"
+				press="onOpenDiagnostics"
+				type="Emphasized"/>
+			<Button
+				text="{i18n>TechnInfo.AssistantButton.Text}"
+				press="onOpenAssistant"
+				class="sapUiDebugTechnicalInfoAssistantButton"
+				type="Emphasized">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<Button
+				icon="sap-icon://settings"
+				press="onConfigureAssistantBootstrap"
+				class="sapUiDebugTechnicalInfoAssistantSettingsButton"
+				type="Emphasized">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+			<Button
+				text="{i18n>CLOSE}"
+				press="close"
+				type="Emphasized">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+				</layoutData>
+			</Button>
+		</buttons>
+	</Dialog>
+
+</core:FragmentDefinition>

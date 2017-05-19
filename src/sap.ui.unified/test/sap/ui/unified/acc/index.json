@@ -27,6 +27,11 @@
 			"appComponent" : "CA-UI5-CTR-BAL"
 		},
 		{
+			"control" : "sap.ui.unified.ColorPicker",
+			"url" : "../ColorPicker.html",
+			"appComponent" : "CA-UI5-CTR-BAL"
+		},
+		{
 			"control" : "sap.ui.unified.Currency",
 			"url" : "../Currency.html",
 			"appComponent" : "CA-UI5-CTR-BAL"

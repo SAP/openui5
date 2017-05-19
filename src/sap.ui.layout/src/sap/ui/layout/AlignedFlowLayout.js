@@ -13,13 +13,11 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The <code>AlignedFlowLayout</code> arranges its child controls evenly across the available horizontal space,
-		 * each item gets the same width and grows and shrinks in response to the layout width.
-		 * Items not fitting into a row when considering the configured <code>minItemWidth</code> property, wrap into
-		 * the next row (like in a regular flow layout). However, those wrapped items have the same flexible widths as
+		 * The <code>AlignedFlowLayout</code> control arranges its child controls evenly across the horizontal space available.
+		 * Each item takes up the same width and grows and shrinks in response to the layout width.
+		 * Items not fitting into a row with the configured <code>minItemWidth</code> property wrap into
+		 * the next row (like in a regular flow layout). However, those wrapped items have the same flexible width as
 		 * the items in the rows above, so they are aligned.
-		 * In addition, there is a special <code>endContent</code> area which is positioned at the bottom right of the
-		 * entire layout control.
 		 *
 		 * @extends sap.ui.core.Control
 		 *
@@ -40,11 +38,23 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 				properties: {
 
 					/**
-					 * TODO.
+					 * Sets the minimum width of items.
+					 * It prevents items from becoming smaller than the value specified.
+					 * <b>Note:</b> If <code>minItemWidth</code> is greater than <code>maxItemWidth</code>,
+					 * <code>maxItemWidth</code> wins.
 					 */
 					minItemWidth: {
-						type: "sap.ui.core.CSSSize",
-						defaultValue: "240px" // =15rem, but easier to get pixel size TODO: verify  TODO: percentages do not make sense!  TODO: Reasonable default?
+						type: "sap.ui.core.AbsoluteCSSSize",
+						defaultValue: "12rem"
+					},
+
+					/**
+					 * Sets the maximum width of items.
+					 * It prevents items from becoming larger than the value specified.
+					 */
+					maxItemWidth: {
+						type: "sap.ui.core.AbsoluteCSSSize",
+						defaultValue: "24rem"
 					}
 				},
 				defaultAggregation: "content",
@@ -52,7 +62,8 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 					/**
 					 * Defines the content contained within this control.
-					 * TODO: mention constraints, e.g. size/complexity of items, and whether content can be added that tries to adapt to the parent height.
+					 * Flow layouts are typically used to arrange input controls, such as text input fields, but also
+					 * buttons, images, etc.
 					 */
 					content: {
 						type: "sap.ui.core.Control",
@@ -60,7 +71,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					},
 
 					/**
-					 * Defines the end content contained within this control.
+					 * Defines the area which is positioned at the bottom on the right of the entire layout control.
 					 */
 					endContent: {
 						type: "sap.ui.core.Control",
@@ -85,27 +96,53 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		};
 
 		AlignedFlowLayout.prototype._onRenderingOrThemeChanged = function() {
-			this._onResize();
-			this._updateLastSpacerWidth();
+			var oDomRef = this.getDomRef(),
+				oEndItemDomRef = this.getDomRef("endItem"),
+				bEndItemAndContent = this.getContent().length && oDomRef && oEndItemDomRef;
+
+			if (bEndItemAndContent) {
+				var oLayoutComputedStyle = window.getComputedStyle(oDomRef, null),
+					iLayoutPaddingTop = oLayoutComputedStyle.getPropertyValue("padding-top"),
+					mEndItemStyle = oEndItemDomRef.style;
+
+				// adapt the position of the absolute-positioned end item in case a standard CSS class is added
+				if (sap.ui.getCore().getConfiguration().getRTL()) {
+					mEndItemStyle.left = oLayoutComputedStyle.getPropertyValue("padding-left");
+				} else {
+					mEndItemStyle.right = oLayoutComputedStyle.getPropertyValue("padding-right");
+				}
+
+				mEndItemStyle.bottom = iLayoutPaddingTop;
+			}
+
+			this._onResize(null, oDomRef, oEndItemDomRef);
+
+			// update last spacer width
+			if (bEndItemAndContent) {
+				oDomRef.lastElementChild.style.width = this._iEndItemWidth + "px";
+			}
 		};
 
 		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 
-		AlignedFlowLayout.prototype._updateLastSpacerWidth = function() {
-			if (this.getContent().length) {
-				var oDomRef = this.getDomRef(),
-					oEndItemDomRef = this.getDomRef("endItem");
+		function getRootFontSize() {
+			var oRootDomRef = document.documentElement;
 
-				if (oDomRef && oEndItemDomRef) {
-					oDomRef.lastElementChild.style.width = this._iEndItemWidth + "px";
-				}
+			if (!oRootDomRef) {
+				return 16; // browser default font size
 			}
-		};
+
+			return parseFloat(window.getComputedStyle(oRootDomRef).getPropertyValue("font-size"));
+		}
+
+		function remToPx(vRem) {
+			return parseFloat(vRem) * getRootFontSize();
+		}
 
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
-		AlignedFlowLayout.prototype._onResize = function(oEvent) {
+		AlignedFlowLayout.prototype._onResize = function(oEvent, oDomRef, oEndItemDomRef) {
 
 			// called by resize handler, but only the height changed, so there is nothing to do;
 			// this is required to avoid a resizing loop
@@ -113,15 +150,16 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 				return;
 			}
 
-			var oDomRef = this.getDomRef();
+			oDomRef = oDomRef || this.getDomRef();
 
 			if (!oDomRef) {
 				return;
 			}
 
 			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
-				oEndItemDomRef = this.getDomRef("endItem"),
 				bEnoughSpaceForEndItem = true;
+
+			oEndItemDomRef = oEndItemDomRef || this.getDomRef("endItem");
 
 			if (oEndItemDomRef) {
 				var mLastSpacerStyle = oDomRef.lastElementChild.style;
@@ -179,7 +217,11 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 			}
 
 			// if the items fits into a single line, sets a CSS class to turns off the display of the spacer elements
-			oDomRef.classList.toggle(CSS_CLASS_ONE_LINE, (!this.checkItemsWrapping(oDomRef) && bEnoughSpaceForEndItem));
+			if (!this.checkItemsWrapping(oDomRef) && bEnoughSpaceForEndItem) {
+				oDomRef.classList.add(CSS_CLASS_ONE_LINE);
+			} else {
+				oDomRef.classList.remove(CSS_CLASS_ONE_LINE);
+			}
 		};
 
 		/*
@@ -236,6 +278,43 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 		AlignedFlowLayout.prototype.getLastVisibleDomRef = function() {
 			return this.getDomRef("endItem") || this.getLastItemDomRef();
+		};
+
+		AlignedFlowLayout.prototype.getNumberOfSpacers = function() {
+			var iContentLength = this.getContent().length;
+
+			// spacers are only needed when some content is rendered
+			if (iContentLength === 0) {
+				return 0;
+			}
+
+			var iSpacers = iContentLength,
+				sMinItemWidth = this.getMinItemWidth(),
+				fMinItemWidth;
+
+			// the CSS unit of the minItemWidth control property is in rem
+			if (sMinItemWidth.lastIndexOf("rem") !== -1) {
+				fMinItemWidth = remToPx(sMinItemWidth);
+
+				// the CSS unit of the minItemWidth control property is in px
+			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
+				fMinItemWidth = parseFloat(sMinItemWidth);
+			}
+			// else, the CSS unit is not in rem or px, in this case a conversion to px is not made and
+			// more spacers are rendered (worst case, but unusual in UI5)
+
+			if (fMinItemWidth) {
+
+				// we do not need more spacers than (documentElement.clientWidth / minItemWidth)
+				iSpacers = Math.abs(document.documentElement.clientWidth / fMinItemWidth);
+			}
+
+			// we do not need more spacers than items
+			iSpacers = Math.min(iSpacers, iContentLength - 2);
+
+			// we need at least 1 spacer, to prevent collision of the content with the endContent aggregation
+			iSpacers = Math.max(1, iSpacers);
+			return Math.floor(iSpacers);
 		};
 
 		return AlignedFlowLayout;

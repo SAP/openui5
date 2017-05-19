@@ -19,9 +19,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseR
 	SelectionDetailsListItemRenderer.renderLIContent = function(oRm, oControl) {
 		var aLines = oControl._getParentElement().getLines();
 
+		oRm.write("<div");
+		oRm.addClass("sapMSDItemLines");
+		oRm.writeClasses();
+		oRm.write(">");
+
 		for (var i = 0; i < aLines.length; i++) {
 			this.renderLine(oRm, oControl, aLines[i]);
 		}
+
+		oRm.write("</div>");
+
+		ListItemBaseRenderer.renderType(oRm, oControl);
 	};
 
 	SelectionDetailsListItemRenderer.renderLine = function(oRm, oControl, line) {
@@ -81,8 +90,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseR
 	};
 
 	SelectionDetailsListItemRenderer.renderType = function(oRm, oControl) {
-		ListItemBaseRenderer.renderType(oRm, oControl);
-
 		var oToolbar = oControl._getParentElement().getAggregation("_overflowToolbar");
 		if (oToolbar) {
 			oRm.write("<div");

@@ -9,7 +9,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
 
-	<title>qUnit Page for sap.ui.table.Table</title>
+	<title>QUnit Page for sap.ui.table.Table</title>
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
@@ -460,6 +460,53 @@
 		assert.ok(oTable.$("sapUiTableRowActionScr").length, "Action Area available");
 	});
 
+	QUnit.test("Row Settings Template", function(assert) {
+		var oOnAfterRenderingEventListener = this.spy();
+		var oRowSettings;
+
+		oTable.addEventDelegate({onAfterRendering: oOnAfterRenderingEventListener});
+
+		assert.ok(oTable.getRowSettingsTemplate() == null, "Initially the table has no row settings template");
+		assert.ok(oTable.getRows()[0].getAggregation("_settings") == null, "Initially the rows have no settings");
+
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings());
+		sap.ui.getCore().applyChanges();
+		assert.ok(oTable.getRowSettingsTemplate() != null, "The table has a row settings template");
+		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Setting the row settings template caused the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.ok(oRowSettings != null, "The rows have a settings template clone");
+
+		oOnAfterRenderingEventListener.reset();
+		oTable.getRowSettingsTemplate().setHighlight(sap.ui.core.MessageType.Success);
+		sap.ui.getCore().applyChanges();
+		assert.ok(oOnAfterRenderingEventListener.notCalled, "Changing the highlight property of the template did not cause the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.None,
+			"Changing the highlight property of the template did not change the highlight property of the template clones in the rows");
+
+		oOnAfterRenderingEventListener.reset();
+		oTable.getRowSettingsTemplate().invalidate();
+		sap.ui.getCore().applyChanges();
+		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Invalidating the template caused the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.None,
+			"Invalidating the template did not change the highlight property of the template clones in the rows");
+
+		oOnAfterRenderingEventListener.reset();
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			highlight: sap.ui.core.MessageType.Warning
+		}));
+		sap.ui.getCore().applyChanges();
+		assert.ok(oOnAfterRenderingEventListener.calledOnce, "Changing the template caused the table to re-render");
+
+		oRowSettings = oTable.getRows()[0].getAggregation("_settings");
+		assert.strictEqual(oRowSettings.getHighlight(), sap.ui.core.MessageType.Warning,
+			"Changing the template changed the highlight property of the template clones in the rows");
+	});
+
 	QUnit.test("Localization Change", function(assert) {
 		var bInvalidated = false;
 		var sChange = "";
@@ -479,45 +526,105 @@
 			return sap.ui.table.Table.prototype.invalidate.apply(this, arguments);
 		};
 
+		function initObjectsUnderTest() {
+			oTable._bRtlMode = null;
+			oTable._oCellContextMenu = new sap.ui.core.Control();
+			oTable.getRows().forEach(function(oRow) {
+				oRow.getAggregation("_rowAction")._oResBundle = null;
+				oRow.getAggregation("_settings")._oResBundle = null;
+			});
+			oTable.getColumns().forEach(function(oColumn) {
+				oColumn.getMenu()._oResBundle = null;
+			});
+
+			bInvalidated = false;
+			sChange = "";
+		}
+
+		function assertLocalizationUpdates(bRTLChanged, bLanguageChanged) {
+			var sChangesTestMessage;
+			var sExpectedChanges;
+			var bTableInvalidated = bRTLChanged || bLanguageChanged;
+
+			if (bRTLChanged && bLanguageChanged) {
+				sChangesTestMessage = "Direction and language changes have been processed";
+				sExpectedChanges = "RTLLANG";
+			} else if (bRTLChanged) {
+				sChangesTestMessage = "Direction change has been processed";
+				sExpectedChanges = "RTL";
+			} else if (bLanguageChanged) {
+				sChangesTestMessage = "Language change has been processed";
+				sExpectedChanges = "LANG";
+			} else {
+				sChangesTestMessage = "Other localization changes have been processed";
+				sExpectedChanges = "";
+			}
+
+			assert.strictEqual(bInvalidated, bTableInvalidated, sChangesTestMessage
+																+ ": The table was " + (bTableInvalidated ? "" : " not") + " invalidated");
+
+			assert.strictEqual(sChange, sExpectedChanges, sChangesTestMessage);
+
+			assert.strictEqual(oTable._bRtlMode !== null, bRTLChanged,
+				"The flag _bRtlMode of the table"
+				+ " has" + (bRTLChanged ? "" : " not") + " been updated");
+
+			assert.strictEqual(oTable._oCellContextMenu === null, bLanguageChanged,
+				"The cell context menu has"
+				+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+
+			oTable.getRows().forEach(function(oRow, iIndex) {
+				assert.strictEqual(oRow.getAggregation("_rowAction")._oResBundle !== null, bLanguageChanged,
+					"The resource bundle of the actions template clone of row " + iIndex
+					+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+			});
+
+			oTable.getRows().forEach(function(oRow, iIndex) {
+				assert.strictEqual(oRow.getAggregation("_settings")._oResBundle !== null, bLanguageChanged,
+					"The resource bundle of the settings template clone of row " + iIndex
+					+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+			});
+
+			oTable.getColumns().forEach(function(oColumn, iIndex) {
+				assert.strictEqual(oColumn.getMenu()._oResBundle !== null, bLanguageChanged,
+					"The resource bundle of the menu of column " + iIndex
+					+ " has" + (bLanguageChanged ? "" : " not") + " been updated");
+			});
+		}
+
 		var oRowAction = new sap.ui.table.RowAction();
 		oRowAction.addItem(new sap.ui.table.RowActionItem({type: "Navigation"}));
 		oTable.setRowActionTemplate(oRowAction);
+		oTable.setRowActionCount(1);
+		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings());
+		oTable.setVisibleRowCount(2);
+		oTable.getColumns().forEach(function(oColumn, iIndex) {
+			if (iIndex > 1) {
+				oTable.removeColumn(oColumn);
+			}
+		});
 		sap.ui.getCore().applyChanges();
 
-		//RTL + Language
+		// RTL + Language
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {rtl: "", language: ""}});
-		assert.ok(bInvalidated, "Table was invalidated on RTL and Language change");
-		assert.equal(sChange, "RTLLANG", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(true, true);
 
-		//RTL
+		// RTL
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {rtl: ""}});
-		assert.ok(bInvalidated, "Table was invalidated on RTL change");
-		assert.equal(sChange, "RTL", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(true, false);
 
-		//Language
+		// Language
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {language: ""}});
-		assert.ok(bInvalidated, "Table was invalidated on Language change");
-		assert.equal(sChange, "LANG", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(false, true);
 
-		//Other localization event
+		// Other localization event
+		initObjectsUnderTest();
 		oTable.onlocalizationChanged({changes : {}});
-		assert.ok(!bInvalidated, "Table was not invalidated on other localization event");
-		assert.equal(sChange, "", "Change type");
-		sap.ui.getCore().applyChanges();
-		bInvalidated = false;
-		sChange = "";
+		assertLocalizationUpdates(false, false);
 	});
-
-
 
 	QUnit.module("Column operations", {
 		beforeEach: function() {
@@ -653,7 +760,7 @@
 		assert.equal(oTable.getNavigationMode(), sap.ui.table.NavigationMode.Scrollbar , "NavigationMode defaulted to Scrollbar after explicitly setting it to Paginator");
 	});
 
-	QUnit.module("VisibleRowcountMode Auto", {
+	QUnit.module("VisibleRowCountMode Auto", {
 		beforeEach: function() {
 			createTable({
 				visibleRowCountMode: sap.ui.table.VisibleRowCountMode.Auto
@@ -667,17 +774,28 @@
 
 	QUnit.test("After initialization", function(assert) {
 		var done = assert.async();
-		var fnTest = function() {
-			oTable.attachEvent("_rowsUpdated", fnTest2);
-		};
 
-		var fnTest2 = function() {
-			assert.equal(oTable.getVisibleRowCount(), 22, "Expected visibleRowCount: 22, Is: " + oTable.getVisibleRowCount());
-			done();
-		};
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			if (oEvent.getParameter("reason") === sap.ui.table.TableUtils.RowsUpdateReason.Render) {
+				assert.strictEqual(oTable.getVisibleRowCount(), 28, "Expected visibleRowCount: 28, Is: " + oTable.getVisibleRowCount());
+				done();
+			}
+		});
+	});
 
-		oTable.attachEventOnce("_rowsUpdated", fnTest);
-		document.getElementById("qunit-fixture").style.height = "800px";
+	QUnit.test("Resize", function(assert) {
+		var done = assert.async();
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			if (oEvent.getParameter("reason") === sap.ui.table.TableUtils.RowsUpdateReason.Render) {
+				document.getElementById("qunit-fixture").style.height = "800px";
+			}
+
+			if (oEvent.getParameter("reason") === sap.ui.table.TableUtils.RowsUpdateReason.Resize) {
+				assert.strictEqual(oTable.getVisibleRowCount(), 22, "Expected visibleRowCount: 22, Is: " + oTable.getVisibleRowCount());
+				done();
+			}
+		});
 	});
 
 	QUnit.module("Fixed columns", {
@@ -726,19 +844,65 @@
 	});
 
 	QUnit.test("No fixed column used, when table is too small.", function(assert) {
+		var done = assert.async();
+		var fResolve;
+		var iActualRenderCount = 0;
+		var iExpectedRenderCount;
+		var iAfterRenderingTimeoutId = null;
+		var bFixedColumnsIgnored;
+
 		oTable.setFixedColumnCount(3);
-		oTable.setWidth("400px");
 
-		sap.ui.getCore().applyChanges();
+		oTable.addEventDelegate({
+			onAfterRendering: assertFixedColumns
+		});
 
-		assert.equal(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
-		assert.equal(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
+		function _test(iWidth, _iExpectedRenderCount, bExpectedFixedColumnsIgnored) {
+			return new Promise(function(resolve) {
+				iActualRenderCount = 0;
+				iExpectedRenderCount = _iExpectedRenderCount;
+				iAfterRenderingTimeoutId = null;
+				bFixedColumnsIgnored = bExpectedFixedColumnsIgnored;
+				oTable.setWidth(iWidth + "px");
+				sap.ui.getCore().applyChanges();
+				fResolve = resolve;
+			});
+		}
 
-		oTable.setWidth("500px");
+		function assertFixedColumns() {
+			iActualRenderCount++;
 
-		sap.ui.getCore().applyChanges();
+			if (iAfterRenderingTimeoutId === null) {
+				iAfterRenderingTimeoutId = window.setTimeout(function() {
+					assert.strictEqual(iActualRenderCount, iExpectedRenderCount, "Number of renderings should be: " + iExpectedRenderCount);
 
-		assert.equal(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
+					if (bFixedColumnsIgnored) {
+						assert.ok(oTable._bIgnoreFixedColumnCount, "Fixed columns are ignored");
+						assert.strictEqual(oTable.getFixedColumnCount(), 0, "getFixedColumnCount returns 0");
+						assert.strictEqual(oTable.getProperty("fixedColumnCount"), 3, "The value of the fixedColumnCount property is 3");
+					} else {
+						assert.ok(!oTable._bIgnoreFixedColumnCount, "Fixed columns are not ignored");
+						assert.strictEqual(oTable.getFixedColumnCount(), 3, "getFixedColumnCount returns 3");
+					}
+
+					fResolve();
+				}, 100)
+			}
+		}
+
+		assert.expect(18);
+
+		_test(475, 1, false).then(function() {
+			return _test(474, 2, true);
+		}).then(function() {
+			return _test(450, 1, true);
+		}).then(function() {
+			return _test(400, 1, true);
+		}).then(function() {
+			return _test(475, 2, false);
+		}).then(function() {
+			done();
+		});
 	});
 
 	QUnit.module("API assertions", {
@@ -1517,7 +1681,23 @@
 		beforeEach: function() {
 			createTable();
 		},
-		afterEach: destroyTable
+		afterEach: function() {
+			destroyTable();
+		},
+		checkRowsUpdated: function(aActualReasons, aExpectedReasons, iDelay) {
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					assert.deepEqual(aActualReasons, aExpectedReasons,
+						"VisibleRowCountMode: " + oTable.getVisibleRowCountMode() + " - "
+						+ (aExpectedReasons.length > 0
+							? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
+							: "The event _rowsUpdated has not been fired")
+					);
+
+					resolve();
+				}, iDelay == null ? 100 : iDelay);
+			});
+		}
 	});
 
 	QUnit.test("RowSelectionChange", function(assert) {
@@ -1634,6 +1814,398 @@
 		oTable.$("selall").click();
 	});
 
+	QUnit.test("_fireRowsUpdated", function(assert) {
+		var done = assert.async();
+		var sTestReason = "test_reason";
+
+		oTable.attachEventOnce("_rowsUpdated", function(oEvent) {
+			assert.strictEqual(sTestReason, oEvent.getParameter("reason"), "The event has been fired with the correct reason");
+			done();
+		});
+
+		oTable._fireRowsUpdated(sTestReason);
+	});
+
+	QUnit.test("_rowsUpdated - Initial rendering", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		function _createTable(sVisibleRowCountMode) {
+			oTable = new sap.ui.table.Table({
+				rows: "{/modelData}",
+				visibleRowCountMode: sVisibleRowCountMode
+			});
+
+			oTable.attachEvent("_rowsUpdated", function(oEvent) {
+				aFiredReasons.push(oEvent.getParameter("reason"));
+			});
+
+			oTable.addColumn(new sap.ui.table.Column({
+				label: new sap.m.Label({text: "Last Name"}),
+				template: new sap.m.Text({text: "{lastName}"})
+			}));
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({modelData: aData});
+			oTable.setModel(oModel);
+
+			oTable.placeAt("qunit-fixture");
+		}
+
+		destroyTable();
+		_createTable(sap.ui.table.VisibleRowCountMode.Fixed);
+		this.checkRowsUpdated(aFiredReasons, [
+			sap.ui.table.TableUtils.RowsUpdateReason.Change,
+			sap.ui.table.TableUtils.RowsUpdateReason.Render
+		]).then(function() {
+			destroyTable();
+			_createTable(sap.ui.table.VisibleRowCountMode.Interactive);
+			aFiredReasons = [];
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Change,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			destroyTable();
+			_createTable(sap.ui.table.VisibleRowCountMode.Auto);
+			aFiredReasons = [];
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Change,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			], 250);
+		}).then(function() {
+			done();
+		});
+	});
+
+	QUnit.test("_rowsUpdated - Re-render", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		function setVisibleRowCountMode(sNewVisibleRowCountMode) {
+			oTable.setVisibleRowCountMode(sNewVisibleRowCountMode);
+
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					aFiredReasons = [];
+					resolve();
+				}, 0);
+			});
+		}
+
+		setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Fixed).then(function() {
+			oTable.invalidate();
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			return setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Interactive);
+		}).then(function() {
+			oTable.invalidate();
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			return setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+		}).then(function() {
+			oTable.invalidate();
+			return that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Render,
+				sap.ui.table.TableUtils.RowsUpdateReason.Render
+			]);
+		}).then(function() {
+			done();
+		});
+	});
+
+	QUnit.test("_rowsUpdated - Refresh", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.getBinding("rows").refresh(true);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Change
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Sort", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.sort(oTable.getColumns()[0], "Ascending");
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Sort
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Filter", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.filter(oTable.getColumns()[0], "test");
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Filter
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Expand", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Unknown
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Collapse", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[0]);
+		sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Unknown
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Unbind", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.unbindRows();
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Unbind
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Vertical scrolling", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 100;
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.VerticalScroll
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Change first visible row by API call (setFirstVisibleRow)", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.setFirstVisibleRow(1);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.FirstVisibleRowChange
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Resize", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+		var sOriginalTableParentHeight = oTable.getDomRef().parentElement.style.height;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.getDomRef().parentElement.style.height = "500px";
+			oTable._onTableResize();
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Resize
+			]).then(function() {
+				oTable.getDomRef().parentElement.style.height = sOriginalTableParentHeight;
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Personalization", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			jQuery.sap.require("sap.ui.table.TablePersoController");
+			var oPersoController = new sap.ui.table.TablePersoController({
+				persoService: {
+					getPersData: function() {
+						return {
+							done: function(callback) {
+								callback.call();
+
+								return {
+									fail: function() {}
+								}
+							}
+						};
+					},
+					setPersData: function() {
+						return null;
+					},
+					delPersData: function() {
+						return null;
+					}
+				},
+				table: oTable
+			});
+			oPersoController.refresh();
+			oTable.getBinding("rows").fireEvent("dataRequested");
+
+			that.checkRowsUpdated(aFiredReasons, []).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Animation", function(assert) {
+		var done = assert.async();
+		var aFiredReasons = [];
+		var that = this;
+
+		function fireTransitionEndEvent() {
+			var oEvent;
+
+			if (sap.ui.Device.browser.msie) {
+				oEvent = document.createEvent("CustomEvent");
+				oEvent.initCustomEvent("transitionend", true, true, true);
+			} else {
+				oEvent = new Event("transitionend");
+			}
+
+			document.body.dispatchEvent(oEvent);
+		}
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			oTable.setProperty("minAutoRowCount", 30, true);
+			fireTransitionEndEvent();
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Animation
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
 
 	QUnit.module("Legacy Modules", {});
 
@@ -1682,7 +2254,7 @@
 		});
 	});
 
-	QUnit.module("Function(public/private), mouse/touch event & property tests", {
+	QUnit.module("Functions (public/private), mouse/touch events, properties", {
 		beforeEach: function() {
 			createTable();
 			this.sinon = sinon.sandbox.create();
@@ -1732,7 +2304,9 @@
 	QUnit.test("test onBeforeRendering function with variableRowHeightEnabled=true", function(assert) {
 		var fnCalculateRowsToDisplay = sinon.spy(oTable, "_calculateRowsToDisplay");
 		oTable._bVariableRowHeightEnabled = true;
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event();
+		/*eslint-enable new-cap */
 		oTable.onBeforeRendering(oEvent);
 		assert.ok(fnCalculateRowsToDisplay.called, "_calcualteRowsToDisplay() called via onBeforeRendering()");
 		assert.ok(this.sinon.stub(sap.ui.table.TableUtils, "isVariableRowHeightEnabled").returns(true));
@@ -1746,7 +2320,9 @@
 
 	QUnit.test("test onAfterRendering function with variableRowHeightEnabled=true", function(assert) {
 		oTable._bVariableRowHeightEnabled = true;
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event();
+		/*eslint-enable new-cap */
 		var oVSb = oTable._getScrollExtension().getVerticalScrollbar();
 		oTable.onAfterRendering(oEvent);
 		assert.equal(oVSb.scrollTop, 0, "scrollTop value is available");
@@ -1755,7 +2331,9 @@
 	QUnit.test("test _updateTableContent and cleanupTableRowForGrouping function via onAfterRendering", function(assert) {
 		var fnCleanupTableRowForGrouping = sinon.spy(sap.ui.table.TableUtils.Grouping, "cleanupTableRowForGrouping");
 		var fnUpdateTableContent = sinon.spy(oTable, "_updateTableContent");
+		/*eslint-disable new-cap */
 		var oEvent = jQuery.Event();
+		/*eslint-enable new-cap */
 		oTable._mode = "Group"; // return true for sap.ui.table.TableUtils.Grouping.isGroupMode(oTable)
 		oTable.setEnableGrouping(true); // for testing _updateTableContent()
 		oTable.setGroupBy(oTable.getColumns()[5]); // Enabling grouping on "gender" for enhancing row binding
@@ -2043,17 +2621,21 @@
 		var sNoDataClassOfTable = "sapUiTableEmpty";
 		var oEvent = {};
 		var oBinding = oTable.getBinding("rows");
+		var oGetBindingLength = this.stub(oBinding, "getLength");
+		var oIsInstanceOf = this.stub(sap.ui.table.TableUtils, "isInstanceOf");
+		var oClock = sinon.useFakeTimers();
+
 		oEvent.getSource = function() {
 			return oBinding;
 		};
+
 		oEvent.getParameter = function() {
 			return false;
 		};
-		var clock = sinon.useFakeTimers();
 
 		function testDataReceivedListener(bNoDataVisible) {
 			oTable._onBindingDataReceivedListener.call(oTable, oEvent);
-			clock.tick(1);
+			oClock.tick(1);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
@@ -2062,8 +2644,8 @@
 			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible, "Test: NoData is visible: " + bNoDataVisible);
 		}
 
-		function testBindingLengthChanged(bNoDataVisible) {
-			oTable._onBindingLengthChange.call(oTable);
+		function testUpdateBindingLength(bNoDataVisible) {
+			oTable._updateBindingLength.call(oTable);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
@@ -2081,31 +2663,33 @@
 		assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), false, "Test: NoData is visible: false");
 
 		// No data received: NoData area becomes visible.
-		oTable._iBindingLength = 0;
+		oGetBindingLength.returns(0);
 		testDataReceivedListener(true);
 
 		// Data received: NoData area will be hidden.
-		oTable._iBindingLength = 1;
+		oGetBindingLength.returns(1);
 		testDataReceivedListener(false);
 
 		// Client Binding without data: NoData area becomes visible.
-		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
-		oTable._iBindingLength = 0;
-		testBindingLengthChanged(true);
+		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
+		oGetBindingLength.returns(0);
+		testUpdateBindingLength(true);
 
 		// Client Binding with data: NoData area will be hidden.
 		sap.ui.table.TableUtils.isInstanceOf.restore();
-		this.stub(sap.ui.table.TableUtils, "isInstanceOf").withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
-		oTable._iBindingLength = 1;
-		testBindingLengthChanged(false);
+		oIsInstanceOf.restore();
+		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
+		oGetBindingLength.returns(1);
+		testUpdateBindingLength(false);
 
 		// Binding removed: NoData area becomes visible.
-		sap.ui.table.TableUtils.isInstanceOf.restore();
+		oIsInstanceOf.restore();
 		oTable.unbindRows();
-		testBindingLengthChanged(true);
+		testUpdateBindingLength(true);
 
 		// Cleanup
-		clock.restore();
+		oClock.restore();
+		oGetBindingLength.restore();
 	});
 
 	QUnit.test("test setGroupBy function", function(assert) {
@@ -2225,6 +2809,26 @@
 		assert.ok(oTable._getColumnsWidth() > 600 && oTable._getColumnsWidth() < 900, "Columns width returned");
 	});
 
+	QUnit.test("_getDefaultRowHeight", function(assert) {
+		oTable.setRowHeight(99);
+		assert.strictEqual(oTable._getDefaultRowHeight(), 99, "The default row height is the value of the rowHeight property (99)");
+
+		oTable.setRowHeight(0);
+		oTable.getDomRef().classList.add("sapUiSizeCozy");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 49, "The default row height is correct in cozy size (49)");
+
+		oTable.getDomRef().classList.remove("sapUiSizeCozy");
+		oTable.getDomRef().classList.add("sapUiSizeCompact");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 33, "The default row height is correct in compact size (33)");
+
+		oTable.getDomRef().classList.remove("sapUiSizeCompact");
+		oTable.getDomRef().classList.add("sapUiSizeCondensed");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 25, "The default row height is correct in condensed size (25)");
+
+		oTable.getDomRef().classList.remove("sapUiSizeCondensed");
+		assert.strictEqual(oTable._getDefaultRowHeight(), 33, "The default row height is correct in default size (33)");
+	});
+
 	QUnit.module("Performance", {
 		beforeEach: function() {
 			createTable();
@@ -2282,7 +2886,7 @@
 	</script>
 </head>
 <body class="sapUiBody">
-	<h1 id="qunit-header">qUnit Page for sap.ui.table.Table</h1>
+	<h1 id="qunit-header">QUnit Page for sap.ui.table.Table</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>

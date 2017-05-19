@@ -1,0 +1,40 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+	<l:BlockLayoutCell	class="demokitInitialPagesColorPatternFContrast">
+		<FlexBox
+				alignItems="{= ${device>/system/phone} ? 'Start' : 'Center' }"
+				justifyContent="SpaceBetween"
+				direction ="{= ${device>/system/phone} ? 'Column' : 'Row' }"
+				width="100%">
+			<items>
+				<Image
+						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
+						height="2.5rem">
+				</Image>
+				<FlexBox
+						direction ="{= ${device>/system/phone} ? 'Column' : 'Row' }"
+						class="sapUiTinyMarginTop">
+					<items>
+						<Link
+								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
+								text="Legal Disclosure"
+								href="https://www.sap.com/corporate/en/legal/impressum.html"
+								target="_blank"/>
+						<Link
+								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
+								text="Privacy"
+								href="https://help.hana.ondemand.com/privacy.htm"
+								target="_blank"/>
+						<Link
+								class="demokitInitialPagesBrightLink"
+								text="Terms of use"
+								href="https://help.hana.ondemand.com/terms_of_use.html"
+								target="_blank"/>
+					</items>
+				</FlexBox>
+			</items>
+		</FlexBox>
+	</l:BlockLayoutCell>
+</core:FragmentDefinition>

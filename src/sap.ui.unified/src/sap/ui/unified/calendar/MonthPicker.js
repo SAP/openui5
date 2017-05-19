@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * sets a minimum an maximum month
+	 * sets a minimum and maximum month
 	 *
 	 * @param {int} [iMin] minimum month as integer (starting with 0)
 	 * @param {int} [iMax] maximum month as integer (starting with 0)

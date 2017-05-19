@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 
 	/**
-	 * Parses a given DOM ref and converts it into a HTMLControl.
+	 * Parses a given DOM ref and converts it into an HTMLControl.
 	 * @param {Element} oElement reference to a DOM element
 	 * @param {sap.ui.core.mvc.HTMLView} [oView] The view instance to use.
 	 * @return {sap.ui.core.HTML} reference to a Control

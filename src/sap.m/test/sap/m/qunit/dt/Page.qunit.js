@@ -14,7 +14,7 @@
 			create: Page.create
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});

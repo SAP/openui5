@@ -21,33 +21,36 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("Create, modify and delete", function (Given, When, Then) {
 		var oExpectedLog = {
-				component : "sap.ui.model.odata.v4.ODataListBinding",
+				component : "sap.ui.model.odata.v4.ODataParentBinding",
 				level : jQuery.sap.log.Level.ERROR,
 				message : "POST on 'SalesOrderList' failed; will be repeated automatically"
-			},
-			oExpectedLogChangeParameters = {
-				component : "sap.ui.model.odata.v4.lib._Cache",
-				level : jQuery.sap.log.Level.ERROR,
-				message : "Failed to drill-down into Note, invalid segment: Note"
 			},
 			sModifiedNote = "Modified by OPA",
 			bRealOData = TestUtils.isRealOData();
 
-		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
-				+ "&sap-language=en"
-				+ (bRealOData ? "&sap-server=test" : "")
-				+ TestUtils.getRealOData());
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.sample.odata.v4.SalesOrders"
+			}
+		});
 
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
 		if (!bRealOData) {
 			Then.onTheMainPage.checkSalesOrdersCount(10);
 		}
+
+		// check value helps within sales order line items
+		When.onTheMainPage.selectFirstSalesOrder();
+		When.onTheMainPage.pressValueHelpOnProductCategory();
+		When.onTheMainPage.pressValueHelpOnProductTypeCode();
+
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		Then.onTheCreateNewSalesOrderDialog.checkNewBuyerId("0100000000");
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote();
 		Then.onTheCreateNewSalesOrderDialog.checkCurrencyCodeIsValueHelp();
 		When.onTheCreateNewSalesOrderDialog.pressValueHelpOnCurrencyCode();
+		When.onTheValueHelpPopover.close();
 		Then.onTheMainPage.checkNote(0);
 		When.onTheCreateNewSalesOrderDialog.changeNote(sModifiedNote);
 		Then.onTheCreateNewSalesOrderDialog.checkNewNote(sModifiedNote);
@@ -133,7 +136,7 @@ sap.ui.require([
 		// Create a sales order, press "cancel sales order changes" w/o saving
 		When.onTheMainPage.pressCreateSalesOrdersButton();
 		When.onTheCreateNewSalesOrderDialog.confirmDialog();
-		When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+		When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 		When.onTheMainPage.firstSalesOrderIsAtPos0();
 		if (!bRealOData) {
 			Then.onTheMainPage.checkSalesOrdersCount(10);
@@ -150,7 +153,7 @@ sap.ui.require([
 			When.onTheMainPage.pressRefreshSalesOrdersButton();
 			When.onTheRefreshConfirmation.cancel();
 			Then.onTheMainPage.checkID(0, "");
-			When.onTheMainPage.pressCancelSalesOrdersChangesButton();
+			When.onTheMainPage.pressCancelSalesOrderListChangesButton();
 			When.onTheMainPage.firstSalesOrderIsAtPos0();
 			// Create a sales order with invalid note, save, update note, save -> success
 			When.onTheMainPage.pressCreateSalesOrdersButton();
@@ -190,9 +193,11 @@ sap.ui.require([
 			When.onTheMainPage.sortByGrossAmount();
 			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
 			Then.onTheMainPage.checkSalesOrderItemInRow(0);
-			// Change SalesOrderDetails $select via API
-			When.onTheMainPage.unselectSODetailsNoteWithChangeParameters();
-			Then.onTheMainPage.checkSalesOrderDetailsNote();
+			// Sort via changeParameters
+			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID ascending
+			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
+			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID descending
+			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
 		}
 
 		if (!bRealOData) {
@@ -223,8 +228,8 @@ sap.ui.require([
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
 		Then.onTheMainPage.checkLog(bRealOData
-				? [oExpectedLog, oExpectedLog, oExpectedLog, oExpectedLogChangeParameters]
-				: undefined);
-		Then.iTeardownMyAppFrame();
+			? [oExpectedLog, oExpectedLog, oExpectedLog]
+			: undefined);
+		Then.iTeardownMyUIComponent();
 	});
 });

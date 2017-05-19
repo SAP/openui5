@@ -147,8 +147,9 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._importMessage = function(oMessage) {
-		var sMessageKey = oMessage.getTarget();
-		var sProcessorId = oMessage.getMessageProcessor().getId();
+		var sMessageKey = oMessage.getTarget(),
+				oProcessor = oMessage.getMessageProcessor(),
+				sProcessorId = oProcessor && oProcessor.getId();
 
 		if (!this.mMessages[sProcessorId]) {
 			this.mMessages[sProcessorId] = {};
@@ -273,8 +274,10 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageManager.prototype._removeMessage = function(oMessage) {
+		var oProcessor = oMessage.getMessageProcessor(),
+				sProcessorId = oProcessor && oProcessor.getId(),
+				mMessages = this.mMessages[sProcessorId];
 
-		var mMessages = this.mMessages[oMessage.getMessageProcessor().getId()];
 		if (!mMessages) {
 			return;
 		}

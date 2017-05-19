@@ -1,0 +1,6 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
+    <m:VBox>
+        <m:Text text="{$this>text}"/>
+        <m:Button text="Press Me" press="onPress"/>
+    </m:VBox>
+</FragmentDefinition>

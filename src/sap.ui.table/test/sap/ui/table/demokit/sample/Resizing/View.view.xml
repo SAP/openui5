@@ -32,7 +32,7 @@
 						autoResizable="true">
 						<m:Label text="Product Name" />
 						<template>
-							<m:Text text="{Name}"/>
+							<m:Text text="{Name}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -41,7 +41,7 @@
 						filterProperty="Category">
 						<m:Label text="Category" />
 						<template>
-							<m:Text text="{Category}"/>
+							<m:Text text="{Category}" wrapping="false" />
 						</template>
 					</Column>
 					<Column
@@ -74,7 +74,7 @@
 								path: 'DeliveryDate',
 								type: 'sap.ui.model.type.Date',
 								formatOptions: {source: {pattern: 'timestamp'}}
-							}"/>
+							}" wrapping="false" />
 						</template>
 					</Column>
 				</columns>

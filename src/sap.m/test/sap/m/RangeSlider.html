@@ -37,7 +37,7 @@
             }).placeAt("content1");
 
             new sap.m.RangeSlider("RangeSlider1", {
-                width: "500px",
+                width: "50%",
                 min: 100,
                 max: 399,
                 range: [100, 200],
@@ -45,7 +45,7 @@
             }).placeAt("content1");
 
             new sap.m.RangeSlider("RangeSlider2", {
-                width: "800px",
+                width: "80%",
                 min: -100,
                 max: 200,
                 range: [-50, 100],
@@ -59,13 +59,13 @@
             }).placeAt("content1");
 
             var oRangeSlider3 = new sap.m.RangeSlider("RangeSlider3", {
-                width: "800px"
+                width: "80%"
             });
             oRangeSlider3.setRange([20, 80]);
             oRangeSlider3.placeAt("content1");
 
             new sap.m.RangeSlider("RangeSlider4", {
-                width: "700px",
+                width: "70%",
                 enabled: false,
                 liveChange: function(oControlEvent) {
                     jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
@@ -77,7 +77,7 @@
             }).placeAt("content1");
 
             new sap.m.RangeSlider("RangeSlider5", {
-                width: "1000px",
+                width: "100%",
                 step: 5,
                 min: -50,
                 max: 50,
@@ -92,7 +92,7 @@
             }).placeAt("content2");
 
             new sap.m.RangeSlider("RangeSlider6", {
-                width: "1000px",
+                width: "100%",
                 step: 5,
                 min: 4,
                 max: 27,
@@ -107,7 +107,7 @@
             }).placeAt("content2");
 
             new sap.m.RangeSlider("RangeSlider7", {
-                width: "500px",
+                width: "50%",
                 step: 2,
                 min: 1,
                 max: 17,
@@ -122,7 +122,7 @@
             }).placeAt("content2");
 
             var oRangeSlider8 = new sap.m.RangeSlider("RangeSlider8", {
-                width: "1100px",
+                width: "100%",
                 step: 20,
                 min: -200000,
                 max: 200000,

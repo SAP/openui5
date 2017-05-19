@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			 * @public
 			 * @since 1.17.0
 			 * @deprecated As of 1.44, use {@link sap.ui.core.Configuration#getSAPLogonLanguage} instead
-			 *   as that class allows to configure a SAP Logon language.
+			 *   as that class allows to configure an SAP Logon language.
 			 */
 			getSAPLogonLanguage : function() {
 

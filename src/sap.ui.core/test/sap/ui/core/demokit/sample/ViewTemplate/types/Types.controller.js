@@ -78,6 +78,15 @@ sap.ui.define([
 			}
 		},
 
+		onResetContextBinding: function (oEvent) {
+			this.getView().getElementBinding().resetChanges();
+			this.getView().getElementBinding("v4").resetChanges();
+		},
+
+		onResetModel: function (oEvent) {
+			this.getView().getModel().resetChanges();
+		},
+
 		onSave : function () {
 			var that = this,
 				oView = this.getView(),
@@ -104,7 +113,7 @@ sap.ui.define([
 
 		onSourceCode : function (oEvent) {
 			var oView = this.getView(),
-				bVisible = oView.byId("toggleSourceCode").getPressed(),
+				bVisible = oView.byId("toggleSourceCodeButton").getPressed(),
 				sSource;
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);

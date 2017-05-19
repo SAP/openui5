@@ -276,10 +276,12 @@
 
 			//BCP 1670441899
 			QUnit.test("focused element after picker close", function(assert) {
-				var bOrigTouch = sap.ui.Device.support.touch;
+				var bOrigTouch = sap.ui.Device.support.touch,
+					bOrigDesktop = sap.ui.Device.system.desktop;
 
 				// On a desktop (non-touch) device
 				sap.ui.Device.support.touch = false;
+				sap.ui.Device.system.desktop = true;
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -291,6 +293,7 @@
 
 				// On a touch device
 				sap.ui.Device.support.touch = true;
+				sap.ui.Device.system.desktop = false;
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -300,6 +303,7 @@
 				jQuery("#DP5-cal").control(0).fireCancel();
 				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after cancel");
 
+				sap.ui.Device.system.desktop = bOrigDesktop;
 				sap.ui.Device.support.touch = bOrigTouch;
 			});
 
@@ -415,7 +419,7 @@
 				oDP3.setDateValue();
 				oDP3._fillDateRange();
 				var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
-				var oFocusedDate = oDP3._oCalendar._getFocusedDate().getJSDate();
+				var oFocusedDate = oDP3._oCalendar._getFocusedDate().toUTCJSDate();
 				assert.ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "DP3: focused date equals min date when current date is out of the min/max range");
 
 				oNewDate = new Date(2014, 0, 1);
@@ -659,6 +663,27 @@
 			});
 
 			QUnit.module("ARIA");
+
+			QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
+				var oDP = new sap.m.DatePicker("DP", {}).placeAt("uiArea4");
+				sap.ui.getCore().applyChanges();
+
+				//before opening the popup
+				assert.strictEqual(oDP.$("inner").attr("type"), "text", "DP input has correct type 'text'");
+				assert.ok(!oDP.$("inner").attr("aria-owns"), "DP input does not have 'aria-owns' until the picker gets open");
+				assert.equal(oDP.$("inner").attr("aria-expanded"), "false", "DP input has 'aria-expand' set to false when the picker is not open");
+
+				// open DatePicker
+				oDP.focus();
+				qutils.triggerEvent("click", "DP-icon");
+
+				//after opening popup
+				assert.equal(oDP.$("inner").attr("aria-owns"), "DP-cal", "DP input has correct 'aria-owns' when the picker is open");
+				assert.equal(oDP.$("inner").attr("aria-expanded"), "true", "DP input has 'aria-expand' set to true when the picker is open");
+
+				oDP.destroy();
+			});
+
 			QUnit.test("Tooltip and date annoncement should be set correctly at the described by", function(assert) {
 				var sTooltip = "tooltip";
 				var sPlaceholder = "placeholder";
@@ -828,7 +853,7 @@
 				},
 				/**
 				 * Click on a calendar month from the monthPicker
-				 * @param iIndex {int} 0..11 zero based index of the month
+				 * @param {int} iIndex 0..11 zero based index of the month
 				 */
 				clickOnMonth: function (iIndex) {
 					var $Items = jQuery("#SDP-cal--MP").find(".sapUiCalItem"),
@@ -839,7 +864,7 @@
 				},
 				/**
 				 * Click on a calendar year from the yearPicker
-				 * @param iYear {int} Year
+				 * @param {int} iYear Year
 				 */
 				clickOnYear: function (iYear) {
 					var $Target = jQuery('[data-sap-year-start="' + iYear + '0101"]', '#SDP-cal--YP');

@@ -1,0 +1,6 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
+    <m:VBox id="myVBox">
+        <m:Text id="myText" text="{$this>text}"/>
+        <m:ToggleButton id="myButton" icon="sap-icon://accept" press="onPress"/>
+    </m:VBox>
+</FragmentDefinition>

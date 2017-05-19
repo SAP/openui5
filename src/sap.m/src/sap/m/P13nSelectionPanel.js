@@ -501,12 +501,11 @@ sap.ui.define([
 
 		if (this._moveModelItems(this._getModelItemIndexByColumnKey(oModelItemFrom.columnKey), this._getModelItemIndexByColumnKey(oModelItemTo.columnKey))) {
 			this._switchMarkedTableItemTo(aVisibleTableItems[fcalculateIndexTo()]);
+            this.notifyChange();
 		}
 	};
 
 	/**
-	 * @param {string} sSearchText Table items are filtered by this text. <b>Note:</b> " " is a valid value. The table will be set back if
-	 *        sSearchText="".
 	 * @private
 	 */
 	P13nSelectionPanel.prototype._filterModelItemsBySearchText = function() {

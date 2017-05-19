@@ -3,8 +3,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"myCompany/myApp/test/integration/pages/Common",
-	"myCompany/myApp/test/integration/pages/shareOptions"
+	"mycompany/myapp/test/integration/pages/Common",
+	"mycompany/myapp/test/integration/pages/shareOptions"
 ], function(Opa5, AggregationLengthEquals, AggregationFilled, PropertyStrictEquals, Common, shareOptions) {
 	"use strict";
 
@@ -85,7 +85,10 @@ sap.ui.define([
 					return this.waitFor(createWaitForItemAtPosition({
 						position: iPosition,
 						success: function(oTableItem) {
-							this.getContext().currentItem = oTableItem;
+							// IE will not allow accessing objects of destroyed frames. Reference the strings directly so they can be used after the iFrame is restarted.
+							this.getContext().currentItemBindingPath = oTableItem.getBindingContext().getPath();
+							this.getContext().currentItemId = oTableItem.getBindingContext().getProperty("ProductID");
+							this.getContext().currentItemName = oTableItem.getBindingContext().getProperty("ProductName");
 						}
 					}));
 				},
@@ -244,14 +247,14 @@ sap.ui.define([
 						id: sTableId,
 						viewName: sViewName,
 						matchers: function(oTable) {
-							var iThreshold = oTable.getGrowingThreshold();
+							var iThreshold = Math.min(14, oTable.getGrowingThreshold());
 							return new AggregationLengthEquals({
 								name: "items",
 								length: iThreshold
 							}).isMatching(oTable);
 						},
 						success: function(oTable) {
-							var iGrowingThreshold = oTable.getGrowingThreshold();
+							var iGrowingThreshold = Math.min(14, oTable.getGrowingThreshold());
 							Opa5.assert.strictEqual(oTable.getItems().length, iGrowingThreshold, "The growing Table has " + iGrowingThreshold + " items");
 						},
 						errorMessage: "Table does not have all entries."
@@ -294,7 +297,7 @@ sap.ui.define([
 						id: sTableId,
 						viewName: sViewName,
 						matchers: function(oTable) {
-							iExpectedNumberOfItems = oTable.getGrowingThreshold() * 2;
+							iExpectedNumberOfItems = Math.min(14, oTable.getGrowingThreshold() * 2);
 							return new AggregationLengthEquals({
 								name: "items",
 								length: iExpectedNumberOfItems

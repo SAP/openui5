@@ -1,3 +1,5 @@
+/* global QUnit,sinon,SemanticUtil*/
+
 (function ($, QUnit, sinon, SemanticPage) {
 	"use strict";
 
@@ -89,7 +91,7 @@
 
 		// Assert
 		assert.equal(this.oSemanticPage.getHeaderPinnable(), true,
-			"SemanticPage headerPinnable set to true and retrieved successfully.")
+			"SemanticPage headerPinnable set to true and retrieved successfully.");
 	});
 
 
@@ -110,7 +112,7 @@
 
 		// Assert
 		assert.equal(this.oSemanticPage.getPreserveHeaderStateOnScroll(), false,
-			"SemanticPage preserveHeaderStateOnScroll set to true and retrieved successfully.")
+			"SemanticPage preserveHeaderStateOnScroll set to true and retrieved successfully.");
 	});
 
 
@@ -131,7 +133,7 @@
 
 		// Assert
 		assert.equal(this.oSemanticPage.getToggleHeaderOnTitleClick(), true,
-			"SemanticPage toggleHeaderOnTitleClick set to true and retrieved successfully.")
+			"SemanticPage toggleHeaderOnTitleClick set to true and retrieved successfully.");
 	});
 
 
@@ -547,7 +549,9 @@
 		QUnit.test("test " + oSemanticActionMetaData.className, function (assert) {
 			var oSemanticClass = oSemanticActionMetaData.constructor,
 				sSemanticClassName = oSemanticActionMetaData.className,
+				/*eslint-disable new-cap*/
 				oSemanticAction = new oSemanticClass(), oInternalControl;
+				/*eslint-enable new-cap*/
 
 			// Act
 			this.oSemanticPage["set" + sSemanticClassName](oSemanticAction);

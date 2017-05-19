@@ -1,40 +1,42 @@
 <html>
- <head>
-  <title>TestSuite for sap.ui.core</title>
-  <script src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
-  <script>
+<head>
+    <title>TestSuite for sap.ui.core</title>
+    <script src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+    <script>
 
-  /**
-   * Add new test suites to this test suite function.
-   * Do not add test pages here but in one of the sub testsuites.
-   */
-  function suite() {
-    var suite = new parent.jsUnitTestSuite();
-    var contextPath = "/" + window.location.pathname.split("/")[1];
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.app.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.bootstrap.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.component.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.controls.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.core.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.databinding.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.eventing.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.generic.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.messages.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.mvc.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.odatav4.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.samples.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.tmpl.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.types.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.utils.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.opa.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.gherkin.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.routing.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.service.qunit.html");
-    return suite;
-  }
+        /**
+         * Add new test suites to this test suite function.
+         * Do not add test pages here but in one of the sub testsuites.
+         */
+        function suite() {
+            var suite = new parent.jsUnitTestSuite();
+            var contextPath = "/" + window.location.pathname.split("/")[1];
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.app.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.bootstrap.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.compat.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.component.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.composite.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.controls.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.core.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.databinding.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.eventing.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.generic.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.messages.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.mvc.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.odatav4.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.samples.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.tmpl.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.types.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.utils.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.opa.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.gherkin.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.routing.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/testsuites/testsuite.service.qunit.html");
+            return suite;
+        }
 
-  </script>
- </head>
- <body>
- </body>
+    </script>
+</head>
+<body>
+</body>
 </html>

@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/*global Promise */
 
 	/**
-	 * Utility function which adds SAP-specific parameters to an URI instance
+	 * Utility function which adds SAP-specific parameters to a URI instance
 	 *
 	 * @param {URI} oUri URI.js instance
 	 * @private
@@ -108,7 +108,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// copy all functions from the metadata object except of the
 		// manifest related functions which will be instance specific now
 		for (var m in oMetadata) {
-			if (!/^(getManifest|getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
+			if (!/^(getManifest|getManifestObject|getManifestEntry|getMetadataVersion)$/.test(m) && typeof oMetadata[m] === "function") {
 				oMetadataProxy[m] = oMetadata[m].bind(oMetadata);
 			}
 		}
@@ -116,6 +116,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// return the content of the manifest instead of the static metadata
 		oMetadataProxy.getManifest = function() {
 			return oManifest && oManifest.getJson();
+		};
+		oMetadataProxy.getManifestObject = function() {
+			return oManifest;
 		};
 		oMetadataProxy.getManifestEntry = function(sKey, bMerged) {
 			return getManifestEntry(oMetadata, oManifest, sKey, bMerged);
@@ -411,6 +414,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
+	 * Returns true, if the Component instance is a variant.
+	 * @TODO more details
+	 *
+	 * @return {boolean} true, if the Component instance is a variant
+	 * @private
+	 * @since 1.45.0
+	 */
+	Component.prototype._isVariant = function() {
+		if (this._oManifest) {
+			// read the "/sap.app/id" from static manifest/metadata
+			var sMetadataId = this._oMetadataProxy._oMetadata.getManifestEntry("/sap.app/id");
+			// a variant differs in the "/sap.app/id"
+			return sMetadataId !== this.getManifestEntry("/sap.app/id");
+		} else {
+			return false;
+		}
+	};
+
+	/**
 	 * Activates the Customizing configuration for the given Component.
 	 * @param {string} sComponentName the name of the component to activate
 	 * @private
@@ -449,7 +471,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * <strong>Note</strong>: Ownership for objects is only checked by the framework at the time
 	 * when they are created. It is not checked or updated afterwards. And it can only be detected
 	 * while the {@link sap.ui.core.Component#runAsOwner Component.runAsOwner} function is executing.
-	 * Without further action, this is only the case while the content of an UIComponent is
+	 * Without further action, this is only the case while the content of a UIComponent is
 	 * {@link sap.ui.core.UIComponent#createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
@@ -530,28 +552,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 */
 	Component.prototype._initCompositeSupport = function(mSettings) {
 
-		if (this._oManifest) {
-
-			// activate the instance specific customizing if available
-			var oManifest = this.getManifest();
-			var oUI5 = oManifest && oManifest["sap.ui5"];
-			var oExtends = oUI5 && oUI5["extends"];
-			var oExtensions = oExtends && oExtends["extensions"];
-			if (oExtensions) {
-				var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
-				CustomizingConfiguration.activateForComponentInstance(this);
-			}
-
-		}
-
-		// register the component instance
-		this.getMetadata().onInitComponent();
-
 		// make user specific data available during component instantiation
 		this.oComponentData = mSettings && mSettings.componentData;
 
-		// static initialization
-		this.getMetadata().init();
+		// static initialization (loading dependencies, includes, ... / register customzing)
+		//   => either init the static or the instance manifest
+		if (!this._isVariant()) {
+			this.getMetadata().init();
+		} else {
+			this._oManifest.init(this);
+		}
 
 		// init the component models
 		this.initComponentModels();
@@ -624,16 +634,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		// unregister for messaging (on MessageManager)
 		sap.ui.getCore().getMessageManager().unregisterObject(this);
 
-		// deactivate the instance specific customizing
-		if (this._oManifest) {
-			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
-			if (CustomizingConfiguration) {
-				CustomizingConfiguration.deactivateForComponentInstance(this);
-			}
+		// static initialization (unload includes, ... / unregister customzing)
+		//   => either exit the static or the instance manifest
+		if (!this._isVariant()) {
+			this.getMetadata().exit();
+		} else {
+			this._oManifest.exit(this);
 		}
-
-		// unregister the component instance
-		this.getMetadata().onExitComponent();
 
 	};
 
@@ -877,12 +884,121 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	}
 
 
+	/**
+	 * Creates a nested component that is declared in the <code>sap.ui5/componentUsages</code> section of
+	 * the descriptor (manifest.json). The following snippet shows the declaration:
+	 * <pre>
+	 * {
+	 *   [...]
+	 *   "sap.ui5": {
+	 *     "componentUsages": {
+	 *       "myUsage": {
+	 *         "name": "my.useful.Component"
+	 *       }
+	 *     }
+	 *   }
+	 *   [...]
+	 * }
+	 * </pre>
+	 * The syntax of the configuration object of the component usage matches the
+	 * configuration object of the {#link sap.ui.component} factory function.
+	 *
+	 * This is an example of how the <code>createComponent</code> function can
+	 * be used for asynchronous scenarios:
+	 * <pre>
+	 * oComponent.createComponent("myUsage").then(function(oComponent) {
+	 *   oComponent.doSomething();
+	 * }).catch(function(oError) {
+	 *   jQuery.sap.log.error(oError);
+	 * });
+	 * </pre>
+	 *
+	 * The following example shows how <code>createComponent</code> can be used to create a nested
+	 * component by providing specific properties like <code>id</code>, <code>async</code>,
+	 * <code>settings</code>, or <code>componentData</code>:
+	 * <pre>
+	 * var oComponent = oComponent.createComponent({
+	 *   usage: "myUsage",
+	 *   id: "myId",
+	 *   settings: { ... },
+	 *   componentData: { ... }
+	 * });
+	 * </pre>
+	 * The allowed list of properties are defined in the parameter documentation
+	 * of this function.
+	 *
+	 * The properties can also be defined in the descriptor. These properties can
+	 * be overwritten by the local properties of that function.
+	 *
+	 * @param {string|object} vUsage ID of the component usage or the configuration object that creates the component
+	 * @param {string} vUsage.usage ID of component usage
+	 * @param {string} [vUsage.id] ID of the nested component that is prefixed with <code>autoPrefixId</code>
+	 * @param {boolean} [vUsage.async=true] Indicates whether the component creation is done asynchronously (You should use synchronous creation only if really necessary, because this has a negative impact on performance.)
+	 * @param {object} [vUsage.settings] Settings for the nested component like for {#link sap.ui.component} or the component constructor
+	 * @param {object} [vUsage.componentData] Initial data of the component (@see sap.ui.core.Component#getComponentData)
+	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance (defaults to Promise / asynchronous behavior)
+	 * @public
+	 * @since 1.47.0
+	 */
+	Component.prototype.createComponent = function(vUsage) {
+		jQuery.sap.assert(
+			(typeof vUsage === 'string' && vUsage)
+			|| (typeof vUsage === 'object' && typeof vUsage.usage === 'string' && vUsage.usage),
+			"vUsage either must be a non-empty string or an object with a non-empty usage id"
+		);
+
+		// extract the config from the configuration object
+		var mConfig = {
+			async: true // async is by default true
+		};
+		if (vUsage && typeof vUsage === "object") {
+			mConfig.usage = vUsage.usage;
+			["id", "async", "settings", "componentData"].forEach(function(sName) {
+				if (vUsage[sName] !== undefined) {
+					mConfig[sName] = vUsage[sName];
+				}
+			});
+		} else if (typeof vUsage === "string") {
+			mConfig.usage = vUsage;
+		}
+		// create the component in the owner context of the current component
+		return this._createComponent(mConfig);
+	};
+
+
+	/**
+	 * Internal API to create a nested component with the owner context of the
+	 * current component.
+	 *
+	 * @param {object} mConfig Configuration object that creates the component
+	 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
+	 *
+	 * @private
+	 * @since 1.47.0
+	 */
+	Component.prototype._createComponent = function(mConfig) {
+		// check the existence of the usage (mixin here for re-use in ComponentContainer)
+		if (mConfig && mConfig.usage) {
+			var sUsageId = mConfig.usage;
+			var mUsageConfig = this.getManifestEntry("/sap.ui5/componentUsages/" + sUsageId);
+			if (!mUsageConfig) {
+				throw new Error("Component usage \"" + sUsageId + "\" not declared in Component \"" + this.getManifestObject().getComponentName() + "\"!");
+			}
+			// mix in the component configuration on top of the usage configuration
+			mConfig = jQuery.extend(true, mUsageConfig, mConfig);
+		}
+		// create the nested component in the context of this component
+		return this.runAsOwner(function() {
+			return sap.ui.component(mConfig);
+		});
+	};
+
 
 	/**
 	 * Initializes the Component instance after creation.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
-	 * framework while the constructor of an Component is executed.
+	 * framework while the constructor of a Component is executed.
 	 *
 	 * Subclasses of Component should override this hook to implement any necessary
 	 * initialization.
@@ -1798,13 +1914,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			});
 		}
 
-		function getControllerClass() {
+		function getControllerModuleName() {
+			return jQuery.sap.getResourceName(sName + ".Component", ""); // use empty suffix to suppress ".js"
+		}
+
+		function prepareControllerClass(oClass) {
 
 			var sController = sName + '.Component';
-
-			// require the component controller
-			jQuery.sap.require(sController);
-			var oClass = jQuery.sap.getObject(sController);
 
 			if (!oClass) {
 				var sMsg = "The specified component controller '" + sController + "' could not be found!";
@@ -1961,14 +2077,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						promises.push(oPromise);
 					}
 				},
-				collectAfterModelPreload = function(fnCreatePromise) {
-					if (oManifest && mOptions.createModels && jQuery.sap.getUriParameters().get("sap-ui-xx-preload-component-models-first") === "true") {
-						collect(oManifest.then(fnCreatePromise));
-					} else {
-						collect(fnCreatePromise());
-					}
-				},
-				identity = function($) { return $; };
+				identity = function($) { return $; },
+				phase1Preloads,
+				libs;
 
 			if (oManifest && mOptions.createModels) {
 				collect(oManifest.then(function(oManifest) {
@@ -2029,21 +2140,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				}));
 			}
 
+			phase1Preloads = [];
+
 			// load any required preload bundles
 			if ( Array.isArray(hints.preloadBundles) ) {
 				hints.preloadBundles.forEach(function(vBundle) {
-					collectAfterModelPreload(function() {
-						return jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true);
-					});
+					phase1Preloads.push(
+						jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true) );
 				});
 			}
 
-			// preload required libraries
+			// preload any libraries
 			if ( Array.isArray(hints.libs) ) {
-				collectAfterModelPreload(function() {
-					return sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) );
+				libs = hints.libs.map(processOptions).filter(identity);
+				phase1Preloads.push(
+					sap.ui.getCore().loadLibraries( libs, { preloadOnly: true } )
+				);
+			}
+
+			// sync preloadBundles and preloads of libraries first before requiring the libs
+			// Note: component preloads are assumed to be always independent from libs
+			// therefore those requests are not synchronized with the require calls for the libs
+			phase1Preloads = Promise.all( phase1Preloads );
+			if ( libs && !mOptions.preloadOnly ) {
+				phase1Preloads = phase1Preloads.then( function() {
+					return sap.ui.getCore().loadLibraries( libs );
 				});
 			}
+			collect( phase1Preloads );
 
 			// preload the component itself
 			if (!oManifest) {
@@ -2086,9 +2210,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collectAfterModelPreload(function() {
-						return preload(processOptions(vComp), true);
-					});
+					collect(preload(processOptions(vComp), true));
 				});
 			}
 
@@ -2116,7 +2238,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					return v;
 				}
 			}).then(function() {
-				return mOptions.preloadOnly ? true : getControllerClass();
+				if ( mOptions.preloadOnly ) {
+					return true;
+				}
+
+				return new Promise(function(resolve, reject) {
+					// asynchronously require component controller class
+					sap.ui.require( [ getControllerModuleName() ], function(oClass) {
+						// prepare the loaded class and resolve with it
+						resolve( prepareControllerClass(oClass) );
+					});
+				});
+
 			}).then(function(oControllerClass) {
 				var waitFor = mOptions.waitFor;
 				if (waitFor) {
@@ -2153,7 +2286,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		}
 		preload(sName);
 
-		return getControllerClass();
+		// synchronously load the controller class, prepare and return it
+		return prepareControllerClass(
+			sap.ui.requireSync( getControllerModuleName() )
+		);
 	}
 
 	return Component;

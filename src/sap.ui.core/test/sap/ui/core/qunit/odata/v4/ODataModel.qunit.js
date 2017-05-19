@@ -161,6 +161,11 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("supportReferences", function (assert) {
+		createModel("", {supportReferences : false});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("with serviceUrl params", function (assert) {
 		var oModel,
 			mModelOptions = {};
@@ -267,7 +272,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("Property access from ManagedObject w/o context binding", function (assert) {
+	QUnit.test("Property access from ManagedObject w/o context binding", function (assert) {
 		var oModel = createModel(),
 			oControl = new TestControl({models : oModel}),
 			done = assert.async();
@@ -304,13 +309,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getMetaModel", function (assert) {
-		var oMetaModel = createModel().getMetaModel();
-
-		assert.ok(oMetaModel instanceof ODataMetaModel);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("requestCanonicalPath", function (assert) {
 		var oModel = createModel(),
 			oEntityContext = Context.create(oModel, null, "/EMPLOYEES/42");
@@ -321,23 +319,6 @@ sap.ui.require([
 		return oModel.requestCanonicalPath(oEntityContext).then(function (sCanonicalPath) {
 			assert.strictEqual(sCanonicalPath, "/EMPLOYEES(ID='1')");
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.skip("requestCanonicalPath, context from different model", function (assert) {
-		var oModel = createModel(),
-			oModel2 = createModel(),
-			oEntityContext = Context.create(oModel2, null, "/EMPLOYEES/42");
-
-		this.mock(oEntityContext).expects("requestCanonicalPath").withExactArgs()
-			.returns(Promise.resolve("/EMPLOYEES(ID='1')"));
-		//TODO this check cannot reliably detect whether assert() is active in our code
-		if (jQuery.sap.log.getLevel() > jQuery.sap.log.LogLevel.ERROR) { // not for minified code
-			this.mock(jQuery.sap).expects("assert")
-				.withExactArgs(false, "oEntityContext must belong to this model");
-		}
-
-		oModel.requestCanonicalPath(oEntityContext);
 	});
 
 	//*********************************************************************************************
@@ -446,17 +427,25 @@ sap.ui.require([
 	QUnit.test("submitBatch", function (assert) {
 		var oModel = createModel(),
 			oModelMock = this.mock(oModel),
-			oReturn,
 			oSubmitPromise = {};
 
 		oModelMock.expects("checkGroupId").withExactArgs("groupId", true);
-		oModelMock.expects("_submitBatch").withExactArgs("groupId")
-			.returns(oSubmitPromise);
+		oModelMock.expects("_submitBatch").never(); // not yet
+		this.stub(sap.ui.getCore(), "addPrerenderingTask", function (fnCallback) {
+			setTimeout(function () {
+				// make sure that _submitBatch is called within fnCallback
+				oModelMock.expects("_submitBatch").withExactArgs("groupId")
+					.returns(oSubmitPromise);
+				fnCallback();
+			}, 0);
+		});
 
 		// code under test
-		oReturn = oModel.submitBatch("groupId");
-
-		assert.strictEqual(oReturn, oSubmitPromise);
+		return oModel.submitBatch("groupId").then(function (oResult) {
+			// this proves that submitBatch() returns a promise which is resolved with the result
+			// of _submitBatch(), which in reality is of course a promise itself
+			assert.strictEqual(oResult, oSubmitPromise);
+		});
 	});
 
 	//*********************************************************************************************
@@ -487,10 +476,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
-		var oModel = createModel("", {updateGroupId : "updateGroupId"});
+		var oModel = createModel("", {updateGroupId : "updateGroupId"}),
+			oBinding1 = oModel.bindList("/EMPLOYEES"),
+			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oBinding3 = oModel.bindContext("/EMPLOYEES('1')", undefined, {
+				$$updateGroupId : "anotherGroup"
+			});
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
+		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding3).expects("resetInvalidDataState").never();
 
 		// code under test
 		oModel.resetChanges();
@@ -706,6 +703,29 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getDependentBindings: skip created entities", function (assert) {
+		var oModel = createModel(),
+			oParentBinding = {},
+			oContextCreated = Context.create(oModel, oParentBinding, "/Foo/-1"),
+			oBindingCreated = new Binding(oModel, "bar", oContextCreated),
+			oContext0 = Context.create(oModel, oParentBinding, "/Foo/0"),
+			oBinding0 = new Binding(oModel, "bar", oContext0),
+			oBindingUnresolved = new Binding(oModel, "baz");
+
+		this.mock(oContextCreated).expects("created").withExactArgs()
+			.returns(_SyncPromise.resolve());
+
+		// to be called by V4 binding's c'tors
+		oModel.bindingCreated(oBindingCreated);
+		oModel.bindingCreated(oBinding0);
+		oModel.bindingCreated(oBindingUnresolved);
+
+		// code under test
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding), [oBindingCreated, oBinding0]);
+		assert.deepEqual(oModel.getDependentBindings(oParentBinding, true), [oBinding0]);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createBindingContext - absolute path, no context", function (assert) {
 		var oBindingContext,
 			oModel = createModel();
@@ -724,7 +744,8 @@ sap.ui.require([
 		oModelMock = this.mock(oModel),
 		oContext = new BaseContext(oModel, "/foo");
 
-		oModelMock.expects("resolve").withExactArgs("bar", oContext).returns("/foo/bar");
+		oModelMock.expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
 
 		// code under test
 		oBindingContext = oModel.createBindingContext("bar", oContext);
@@ -892,12 +913,25 @@ sap.ui.require([
 		}, new Error("Unsupported value for binding parameter '$$updateGroupId': ~invalid"));
 	});
 
-	//*********************************************************************************************
 	[{
-		mOptions : {"$expand" : {"foo" : null}, "$select" : ["bar"], "custom" : "baz"},
+		mParameters : {
+			"$expand" : {
+				"foo" : {
+					"$count" : true,
+					"$expand" : {"bar" : {}},
+					"$filter" : "baz eq 0",
+					"$levels" : "max",
+					"$orderby" : "qux",
+					"$search" : "key",
+					"$select" : ["*"]
+				}
+			},
+			"$select" : ["bar"],
+			"custom" : "baz"
+		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {
+		mParameters : {
 			"$apply" : "apply",
 			"$count" : true,
 			"$filter" : "foo eq 42",
@@ -906,22 +940,103 @@ sap.ui.require([
 		},
 		bSystemQueryOptionsAllowed : true
 	}, {
-		mOptions : {"custom" : "foo"}
+		mParameters : {"custom" : "foo"}
 	}, {
-		mOptions : undefined
+		mParameters : undefined
 	}, {
-		mOptions : {"sap-client" : "111"},
+		mParameters : {"sap-client" : "111"},
 		bSapAllowed : true
-	}].forEach(function (o) {
-		QUnit.test("buildQueryOptions success " + JSON.stringify(o), function (assert) {
+	},{
+		mParameters : {
+			$expand : { "TEAM_2_MANAGER" : {} },
+			$select : "bar"
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : { "TEAM_2_MANAGER" : {} },
+			$select : ["bar"]
+		}
+	}, {
+		mParameters : {
+			$expand : { "TEAM_2_MANAGER" : {
+				$expand : "TEAM_2_EMPLOYEES($select=Name)",
+				$select : "Team_Id"
+			}}
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : { "TEAM_2_MANAGER" : {
+				$expand : {
+					TEAM_2_EMPLOYEES : {
+						$select : ["Name"]
+					}
+				},
+				$select : ["Team_Id"]
+			}}
+		}
+	}, {
+		mParameters : {
+			$expand : {
+				"TEAM_2_MANAGER" : true,
+				"TEAM_2_EMPLOYEES" : null,
+				"FOO1" : 42,
+				"FOO2" : false,
+//TODO undefined values are removed by jQuery.extend, but should also be normalized to {}
+				//"FOO3" : undefined
+				"FOO4" : {
+					$count : false
+				}
+			}
+		},
+		bSystemQueryOptionsAllowed : true,
+		expected : {
+			$expand : {
+				"TEAM_2_MANAGER" : {},
+				"TEAM_2_EMPLOYEES" : {},
+				"FOO1" : {},
+				"FOO2" : {},
+//				"FOO3" : {}
+				"FOO4" : {}
+			}
+		}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : "true"
+		},
+		expected : {
+			$count : true
+		}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : "false"
+		},
+		expected : {}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : "TrUe"
+		},
+		expected : {
+			$count : true
+		}
+	}, {
+		bSystemQueryOptionsAllowed : true,
+		mParameters : {
+			$count : false
+		},
+		expected : {}
+	}].forEach(function (oFixture) {
+		QUnit.test("buildQueryOptions success " + JSON.stringify(oFixture), function (assert) {
 			var mOptions,
-				mOriginalOptions = clone(o.mOptions);
+				mOriginalParameters = clone(oFixture.mParameters);
 
-			mOptions = ODataModel.prototype.buildQueryOptions(o.mOptions,
-				o.bSystemQueryOptionsAllowed, o.bSapAllowed);
+			mOptions = ODataModel.prototype.buildQueryOptions(oFixture.mParameters,
+				oFixture.bSystemQueryOptionsAllowed, oFixture.bSapAllowed);
 
-			assert.deepEqual(mOptions, jQuery.extend({}, o.mOptions));
-			assert.deepEqual(o.mOptions, mOriginalOptions);
+			assert.deepEqual(mOptions, oFixture.expected || oFixture.mParameters || {});
+			assert.deepEqual(oFixture.mParameters, mOriginalParameters, "unchanged");
 		});
 	});
 
@@ -932,7 +1047,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("buildQueryOptions: parse system query options", function (assert) {
-		var oExpand = {"foo" : true},
+		var oExpand = {"foo" : null},
 			oParserMock = this.mock(_Parser),
 			aSelect = ["bar"];
 
@@ -971,8 +1086,36 @@ sap.ui.require([
 		bSystemQueryOptionsAllowed : true,
 		error : "System query option select is not supported"
 	}, {
+		mOptions : {"$levels" : 2},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $levels is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$apply" : "bar"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $apply is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$skip" : "10"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $skip is not supported"
+	}, {
+		mOptions : {"$expand" : {"foo" : {"$top" : "10"}}},
+		bSystemQueryOptionsAllowed : true,
+		error : "System query option $top is not supported"
+	}, {
 		mOptions : {"sap-foo" : "300"},
 		error : "Custom query option sap-foo is not supported"
+	}, {
+		mOptions : {"$count" : "foo"},
+		bSystemQueryOptionsAllowed : true,
+		error : "Invalid value for $count: foo"
+	}, {
+		mOptions : {"$count" : {}},
+		bSystemQueryOptionsAllowed : true,
+		error : "Invalid value for $count: [object Object]"
+	}, {
+		mOptions : {"$count" : undefined},
+		bSystemQueryOptionsAllowed : true,
+		error : "Invalid value for $count: undefined"
 	}].forEach(function (o) {
 		QUnit.test("buildQueryOptions error " + JSON.stringify(o), function (assert) {
 			assert.throws(function () {

@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mdc="sap.mdc">
+	<Bar id="bar">
+		<contentLeft>
+			<Title id="title" text="{
+         parts: [
+           {path: '$this>/title'},
+           {path: '$this>/count'}
+         ]}"/>
+		</contentLeft>
+		<contentMiddle>
+			<mdc:InfoButton buttonText="{$this>/buttonText}" infoText="{$this>/buttonInfo}"></mdc:InfoButton>
+		</contentMiddle>
+		<contentRight>
+			<Button text="More ..."></Button>
+		</contentRight>
+	</Bar>
+</core:FragmentDefinition>

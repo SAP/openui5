@@ -7,7 +7,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>qUnit Page for XMLTemplateProcessor</title>
+	<title>QUnit Page for XMLTemplateProcessor</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
@@ -150,12 +150,32 @@
 				});
 			});
 
+ 			QUnit.module("Metadata Contexts");
+
+			QUnit.test("On regular controls with metadataContexts the XMLTemplateProcessor._preprocessMetadataContexts is called", function (assert) {
+				var nodeId = "";
+
+				XMLTemplateProcessor._preprocessMetadataContexts = function(sClassName, oNode, oContext) {
+					nodeId = oNode.getAttribute("id");
+				};
+
+				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+				return sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				}).loaded().then(function (oView) {
+					var oButton = oView.byId("button");
+					assert.equal(nodeId,"button","XMLTemplateProcessor._preprocessMetadataContexts is called");
+					oView.destroy();
+					XMLTemplateProcessor._preprocessMetadataContexts = null;
+				});
+			});
 		});
 	</script>
 </head>
 
 <body>
-	<h1 id="qunit-header">qUnit Page for XMLTemplateProcessor</h1>
+	<h1 id="qunit-header">QUnit Page for XMLTemplateProcessor</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>

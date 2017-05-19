@@ -58,7 +58,7 @@
 						press: function(oEvent) {
 							oPersoService.delPersData();
 							oTPC.refresh().done(function() {
-								sap.ui.commons.MessageBox.alert("Done!", "INFORMATION", "Refresh");
+								sap.ui.commons.MessageBox.show("Done!", "INFORMATION", "Refresh");
 							});
 						}
 					}),
@@ -67,7 +67,7 @@
 						icon: "sap-icon://save",
 						press: function(oEvent) {
 							oTPC.savePersonalizations().done(function() {
-								sap.ui.commons.MessageBox.alert("Done!", "INFORMATION", "Save");
+								sap.ui.commons.MessageBox.show("Done!", "INFORMATION", "Save");
 							});
 						}
 					})

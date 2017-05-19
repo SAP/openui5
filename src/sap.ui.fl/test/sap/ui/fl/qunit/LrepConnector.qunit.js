@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 (function() {
 	"use strict";
 	jQuery.sap.require("sap.ui.fl.LrepConnector");
@@ -91,7 +91,7 @@
 
 	QUnit.test("_getDefaultOptions", function(assert) {
 		//Arrange
-		var defaultHeaderStub = sandbox.stub(this.oLrepConnector, "_getDefaultHeader").returns({
+		sandbox.stub(this.oLrepConnector, "_getDefaultHeader").returns({
 			headers: {
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			}
@@ -329,22 +329,42 @@
 		assert.equal(this.oLrepConnector._aSentRequestListeners[1], fFunction3, "the third function should be still in the list of attached functions");
 	});
 
+	QUnit.test("loadSettings", function(assert) {
+		this.oLrepConnector._sClient = "123";
+		var sExpectedCallUrl = "/sap/bc/lrep/flex/settings" + "?sap-client=" + this.oLrepConnector._sClient;
+
+		var oFakeResponse = {
+			response: {}
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadSettings().then(function() {
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly built");
+		});
+	});
+
 	QUnit.test("loadChanges", function(assert) {
 		var sComponentClassName;
 		this.server = sinon.fakeServer.create();
+		var sEtag = "abc123";
 		this.server.respondWith([200,
-			{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
+			{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321", "etag": sEtag},
 			'{ "changes": [ ], "settings": { "isKeyUser": true, "isAtoAvailable": false, "isAtoEnabled": false, "isProductiveSystem": false }, "messagebundle": {"i_123": "translatedKey"} }'
 		]);
 		this.server.autoRespond = true;
 
 		var that = this;
 		sComponentClassName = "smartFilterBar.Component";
-		return this.oLrepConnector.loadChanges(sComponentClassName).then(function(oResult) {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}).then(function(oResult) {
 			assert.equal(oResult.changes.changes.length, 0);
 			assert.equal(oResult.changes.settings.isKeyUser, true);
 			assert.equal(oResult.changes.componentClassName, that.sComponentClassName);
-			assert.deepEqual(oResult.messagebundle, {"i_123": "translatedKey"}, "returns the responded messagebundle within the result");
+			assert.equal(oResult.etag, sEtag);
+			assert.deepEqual(oResult.changes.messagebundle, {"i_123": "translatedKey"}, "returns the responded messagebundle within the result");
 		});
 	});
 
@@ -368,7 +388,7 @@
 		var mPropertyBag = {
 				appDescriptor: oAppDescriptor
 			};
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(that.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 			assert.ok(that.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 			assert.equal(that.server.requests[0].requestHeaders["X-LRep-AppDescriptor-Id"], "sap.ui.smartFormOData", "Request header shall contain appDescriptorId");
@@ -390,7 +410,7 @@
 				siteId: "dummyId4711"
 			};
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function(oResult) {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(that.server.requests.length, 1, "Only one HTTP request shall be send for fetching changes via getChanges request)");
 			assert.ok(that.server.requests[0].requestHeaders, "Request for getChanges shall contain a request header");
 			assert.equal(that.server.requests[0].requestHeaders["X-LRep-Site-Id"], mPropertyBag.siteId, "Request header shall contain siteId");
@@ -411,7 +431,7 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 			var oCall = oSendStub.getCall(0);
@@ -434,7 +454,7 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 			var oCall = oSendStub.getCall(0);
@@ -456,7 +476,7 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName}, mPropertyBag).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
 
 			var oCall = oSendStub.getCall(0);
@@ -468,9 +488,7 @@
 
 	QUnit.test("when requested, loadChanges adds appVersion parameter to the request URL", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
-		var mPropertyBag = {
-			appVersion: "1.2.3"
-		};
+		var sAppVersion = "1.2.3";
 
 		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName + "?appVersion=1.2.3";
 
@@ -480,12 +498,33 @@
 
 		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
 
-		return this.oLrepConnector.loadChanges(sComponentClassName, mPropertyBag).then(function() {
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
 			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
 
 			var oCall = oSendStub.getCall(0);
 			var aCallArguments = oCall.args;
 			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was included");
+		});
+	});
+
+	QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function(assert) {
+		var sComponentClassName = "smartFilterBar.Component";
+		var sAppVersion = sap.ui.fl.Utils.DEFAULT_APP_VERSION;
+
+		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName;
+
+		var oFakeResponse = {
+			response: {}
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).then(function() {
+			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
 		});
 	});
 
@@ -829,9 +868,7 @@
 	QUnit.test("upsert - all params", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedOptions = {contentType: "text/plain"};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer&changelist=myChangelist";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
 
 		//Act
 		return this.oLrepConnector.upsert("myNamespace/mySubNamespace/", "myName", "myType", "myLayer", "testcontent", "text/plain", "myChangelist").then(function(result) {
@@ -843,9 +880,7 @@
 	QUnit.test("upsert - required only", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedOptions = {contentType: "application/json"};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve(expectedResult));
 
 		//Act
 		return this.oLrepConnector.upsert("myNamespace/mySubNamespace/", "myName", "myType", "myLayer", "{}").then(function(result) {
@@ -857,8 +892,7 @@
 	QUnit.test("deleteFile - all params", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer&changelist=myChangelist";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
 
 		//Act
 		return this.oLrepConnector.deleteFile("myNamespace/mySubNamespace", "myName", "myType", "myLayer", "myChangelist").then(function(result) {
@@ -870,8 +904,7 @@
 	QUnit.test("deleteFile - required only", function(assert) {
 		//Arrange
 		var expectedResult = {abc: 123};
-		var expectedUrl = "/sap/bc/lrep/content/myNamespace/mySubNamespace/myName.myType?layer=myLayer";
-		var sendStub = sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
+		sinon.stub(this.oLrepConnector, "send").returns(Promise.resolve({abc: 123}));
 
 		//Act
 		return this.oLrepConnector.deleteFile("myNamespace/mySubNamespace", "myName", "myType", "myLayer").then(function(result) {

@@ -65,6 +65,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		return true;
 	};
 
+	function getRootFontSize() {
+		var oRootDomRef = document.documentElement;
+
+		if (!oRootDomRef) {
+			return 16; // browser default font size
+		}
+
+		return parseFloat(window.getComputedStyle(oRootDomRef).getPropertyValue("font-size"));
+	}
+
+	/*
+	 * Convert <code>px</code> values to <code>rem</code>.
+	 *
+	 * @param {string|float} vPx The value in <code>px</code> units. E.g.: <code>"16px"</code> or <code>16</code>
+	 * @returns {float} The converted value in <code>rem</code> units. E.g.: <code>1</code>
+	 * @protected
+	 * @since 1.48
+	 */
+	jQuery.sap.pxToRem = function(vPx) {
+		jQuery.sap.assert(((typeof vPx === "string") && (vPx !== "") && !isNaN(parseFloat(vPx)) && (typeof parseFloat(vPx) === "number")) || ((typeof vPx === "number") && !isNaN(vPx)), 'jQuery.sap.pxToRem: either the "vPx" parameter must be an integer, or a string e.g.: "16px"');
+		return parseFloat(vPx) / getRootFontSize();
+	};
+
+	/*
+	 * Convert <code>rem</code> values to <code>px</code>.
+	 *
+	 * @param {string|float} vRem The value in <code>rem</code>. E.g.: <code>"1rem"</code> or <code>1</code>
+	 * @returns {float} The converted value in <code>px</code> units. E.g.: <code>16</code>
+	 * @protected
+	 * @since 1.48
+	 */
+	jQuery.sap.remToPx = function(vRem) {
+		jQuery.sap.assert(((typeof vRem === "string") && (vRem !== "") && !isNaN(parseFloat(vRem)) && (typeof parseFloat(vRem) === "number")) || ((typeof vRem === "number") && !isNaN(vRem)), 'jQuery.sap.remToPx: either the "vRem" parameter must be an integer, or a string e.g.: "1rem"');
+		return parseFloat(vRem) * getRootFontSize();
+	};
 
 	/**
 	 * Sets or gets the position of the cursor in an element that supports cursor positioning
@@ -131,8 +166,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var oDomRef = this.get(0);
 
 		try {
+			// In Chrome 58 and above selection start is set to selection end when the first parameter of a setSelectionRange call is negative.
 			if (typeof (oDomRef.selectionStart) === "number") {
-				oDomRef.setSelectionRange(iStart, iEnd);
+				oDomRef.setSelectionRange(iStart > 0 ? iStart : 0, iEnd);
 			}
 		} catch (e) {
 			// note: some browsers fail to read the "selectionStart" and "selectionEnd" properties from HTMLInputElement, e.g.: The input element's type "number" does not support selection.
@@ -435,11 +471,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 				if (Device.browser.msie || Device.browser.edge) {
 					return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
-				} else if (Device.browser.webkit) {
-					return oDomRef.scrollLeft;
-
-				} else if (Device.browser.firefox) {
+				} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
+					// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
 					return oDomRef.scrollWidth + oDomRef.scrollLeft - oDomRef.clientWidth;
+
+				} else if (Device.browser.webkit) {
+					// WebKit browsers (except Safari 10+, as it's handled above)
+					return oDomRef.scrollLeft;
 
 				} else {
 					// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
@@ -477,11 +515,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			if (Device.browser.msie) {
 				return oDomRef.scrollLeft;
 
-			} else if (Device.browser.webkit) {
-				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
-
-			} else if (Device.browser.firefox) {
+			} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
+				// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
 				return (-oDomRef.scrollLeft);
+
+			} else if (Device.browser.webkit) {
+				// WebKit browsers (except Safari 10+, as it's handled above)
+				return oDomRef.scrollWidth - oDomRef.scrollLeft - oDomRef.clientWidth;
 
 			} else {
 				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
@@ -511,14 +551,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	jQuery.sap.denormalizeScrollLeftRTL = function(iNormalizedScrollLeft, oDomRef) {
 
 		if (oDomRef) {
-			if (Device.browser.msie) {
+			if (Device.browser.msie || Device.browser.edge) {
 				return oDomRef.scrollWidth - oDomRef.clientWidth - iNormalizedScrollLeft;
 
-			} else if (Device.browser.webkit) {
-				return iNormalizedScrollLeft;
-
-			} else if (Device.browser.firefox) {
+			} else if (Device.browser.firefox || (Device.browser.safari && Device.browser.version >= 10)) {
+				// Firefox and Safari 10+ behave the same although Safari is a WebKit browser
 				return oDomRef.clientWidth + iNormalizedScrollLeft - oDomRef.scrollWidth;
+
+			} else if (Device.browser.webkit) {
+				// WebKit browsers (except Safari 10+, as it's handled above)
+				return iNormalizedScrollLeft;
 
 			} else {
 				// unrecognized browser; it is hard to return a best guess, as browser strategies are very different, so return the actual value
@@ -994,7 +1036,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	}
 
 	/**
-	 * Adds the given ID reference to the the aria-labelledby attribute.
+	 * Adds the given ID reference to the aria-labelledby attribute.
 	 *
 	 * @param {string} sID The ID reference of an element
 	 * @param {boolean} [bPrepend=false] whether prepend or not

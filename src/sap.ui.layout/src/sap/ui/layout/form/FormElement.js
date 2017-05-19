@@ -48,6 +48,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 			 */
 			label : {type : "sap.ui.core.Label", altTypes : ["string"], multiple : false},
 
+			/*
+			 * Internal Label if Label is provided as string.
+			 */
+			_label : {type : "sap.ui.core.Label", multiple : false, visibility: "hidden"},
+
 			/**
 			 * Formular controls that belong together to be displayed in one row of a <code>Form</code>.
 			 *
@@ -68,7 +73,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.exit = function(){
 
 		if (this._oLabel) {
-			this._oLabel.destroy();
 			delete this._oLabel;
 		}
 
@@ -96,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		if (typeof oLabel === "string") {
 			if (!this._oLabel) {
 				this._oLabel = sap.ui.layout.form.FormHelper.createLabel(oLabel);
-				this._oLabel.setParent(this);
+				this.setAggregation("_label", this._oLabel, true); // use Aggregation to allow model inheritance
 				this._oLabel.disableRequiredChangeCheck(true);
 				if (this._oLabel.isRequired) {
 					this._oLabel.isRequired = _labelIsRequired;
@@ -117,6 +121,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		}
 
 		_updateLabelFor(this);
+
+		return this;
+
+	};
+
+	FormElement.prototype.destroyLabel = function() {
+
+		this.destroyAggregation("label");
+
+		if (this._oLabel) {
+			this._oLabel.destroy();
+			delete this._oLabel;
+		}
 
 		return this;
 
@@ -143,8 +160,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.addField = function(oField) {
 
 		this.addAggregation("fields", oField);
-		_attachDelegate.call(this, oField);
-		_updateLabelFor(this);
+
+		if (oField) {
+			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+			}
+			_attachDelegate.call(this, oField);
+			_updateLabelFor(this);
+		}
 
 		return this;
 
@@ -153,8 +176,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	FormElement.prototype.insertField = function(oField, iIndex) {
 
 		this.insertAggregation("fields", oField, iIndex);
-		_attachDelegate.call(this, oField);
-		_updateLabelFor(this);
+
+		if (oField) {
+			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+				jQuery.sap.log.warning(oField + " is not valid Form content", this);
+			}
+			_attachDelegate.call(this, oField);
+			_updateLabelFor(this);
+		}
 
 		return this;
 
@@ -305,7 +334,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 		for ( var i = 0; i < aFields.length; i++) {
 			var oField = aFields[i];
-			if (oField.getRequired && oField.getRequired() === true) {
+			if (oField.getRequired && oField.getRequired() === true &&
+					(!oField.getEditable || oField.getEditable())) {
 				return true;
 			}
 		}

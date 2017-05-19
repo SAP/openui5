@@ -1,10 +1,11 @@
 sap.ui.define([
-	"sap/ui/test/Opa5"
-], function(Opa5) {
+	"sap/ui/test/Opa5",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function(Opa5, PropertyStrictEquals) {
 	"use strict";
 
 	function getFrameUrl(sHash, sUrlParameters) {
-		var sUrl = jQuery.sap.getResourcePath("myCompany/myApp/app", ".html");
+		var sUrl = jQuery.sap.getResourcePath("mycompany/myapp/app", ".html");
 		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 
 		if (sHash) {
@@ -16,7 +17,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("myCompany.myApp.test.integration.pages.Common", {
+	return Opa5.extend("mycompany.myapp.test.integration.pages.Common", {
 
 		iStartMyApp: function(oOptions) {
 			var sUrlParameters = "";
@@ -43,6 +44,10 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: sControlType,
 				viewName: sViewName,
+				matchers: new PropertyStrictEquals({
+					name: "unit",
+					value: "EUR"
+				}),
 				success: function(aNumberControls) {
 					Opa5.assert.ok(aNumberControls.every(function(oNumberControl) {
 							return rTwoDecimalPlaces.test(oNumberControl.getNumber());

@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
+	<l:BlockLayoutCell
+		class="headlineCell"
+		title="{
+			path: 'categoryId',
+			formatter: '.formatter.categoryName'
+		}"
+		width="2">
+	</l:BlockLayoutCell>
+</core:FragmentDefinition>

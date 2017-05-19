@@ -7,7 +7,7 @@
 
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>qUnit Page for sap.ui.core.LocalBusyIndicator</title>
+		<title>QUnit Page for sap.ui.core.LocalBusyIndicator</title>
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
@@ -94,15 +94,15 @@
 				"touchend",
 				"click"
 			];
-			
+
 			var sListenerCalled = 'not called';
 			function fnEventListener(oEvent) {
 				sListenerCalled = 'called';
 			}
 
 			// register listener for all prevented events
-			// Note: the issues described in BCP 1680184582 only occurs when the prevent-listener of the LocalBusyIndicator 
-			// is executed __BEFORE__ this listener here. As jQuery uses a while(--i) loop, this means we have to register 
+			// Note: the issues described in BCP 1680184582 only occurs when the prevent-listener of the LocalBusyIndicator
+			// is executed __BEFORE__ this listener here. As jQuery uses a while(--i) loop, this means we have to register
 			// our listener before the LBI registers its own listener.
 			// TODO consider using a capturing phase listener in LBI to make this more robust.
 			for (var i = 0; i < aPreventedEvents.length; i++) {
@@ -122,13 +122,13 @@
 					}
 
 				}
-				
+
 				// hide busy indicator and test that events are no longer prevented
 				this.oListBox.setBusy(false);
 				$LB = this.oListBox.$();
 
 				setTimeout(function() {
-					
+
 					for (var i = 0; i < aPreventedEvents.length; i++) {
 
 						try {
@@ -140,11 +140,11 @@
 						}
 
 					}
-					
+
 					done();
 
 				}.bind(this), 250);
-				
+
 			}.bind(this), 250);
 		});
 
@@ -453,7 +453,7 @@
     </script>
 	</head>
 	<body>
-    <h1 id="qunit-header">qUnit Page for sap.ui.core.LocalBusyIndicator</h1>
+    <h1 id="qunit-header">QUnit Page for sap.ui.core.LocalBusyIndicator</h1>
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>

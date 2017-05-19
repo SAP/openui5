@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 
 
 		/**
-		 * Constructs an instance of a sap.ui.core.FocusHandler.
+		 * Constructs an instance of an sap.ui.core.FocusHandler.
 		 * Keeps track of the focused element.
 		 *
 		 * @class Keeps track of the focused element.

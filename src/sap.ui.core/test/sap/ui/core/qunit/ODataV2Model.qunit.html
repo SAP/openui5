@@ -59,7 +59,10 @@
 <script>
 	sinon.config.useFakeTimers = false;
 
-	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel")
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
+
+	var Filter = sap.ui.model.Filter;
+	var FilterOperator = sap.ui.model.FilterOperator;
 
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
@@ -192,6 +195,8 @@
 	});
 
 	QUnit.test("metadata failed handling", function(assert){
+		assert.expect(3);
+
 		var done = assert.async();
 		var that = this;
 		var mOptions = {
@@ -206,9 +211,9 @@
 			var oModel2 = initModel("/DOESNOTEXIST", mOptions);
 			oModel2.attachMetadataFailed(function(){
 				assert.ok(!oModel2.getServiceMetadata(), "Metadata on second model failed correctly");
+				done();
 			});
 			oModel.detachMetadataFailed(handleFailed);
-			done();
  		};
 		oModel.attachMetadataFailed(handleFailed);
 	});
@@ -1252,6 +1257,26 @@
 		});
 	});
 
+	QUnit.test("test bindElement: relative with path '' ", function(assert){
+		assert.expect(1);
+		var done = assert.async();
+		var oModel = initModel(sURI, {json:false});
+		sap.ui.getCore().setModel(oModel);
+		oPanel.addContent(oLabel);
+		oPanel.bindElement("/Products(3)");
+		oLabel.bindElement({path:"", parameters: {expand:"Category"}});
+		var fnHandler = function() {
+			ok(!oModel.oData["Products(3)"][''], "no empty property created");
+			oLabel.getElementBinding().detachDataReceived(fnHandler);
+			oLabel.unbindElement();
+			oLabel.setBindingContext(null);
+			oPanel.unbindElement();
+			done();
+		}
+		oLabel.getElementBinding().attachDataReceived(fnHandler);
+	});
+
+
 	QUnit.test("test bindElement", function(assert){
 		assert.expect(2);
 		var done = assert.async();
@@ -2017,7 +2042,7 @@
 			oModel.setProperty("/Suppliers(0)/Name", "blabla");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
 			oModel.setProperty("/Suppliers(0)/temp", "temp");
-			assert.equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
+			assert.equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create nonexistent property");
 			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
 			assert.equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
 			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");
@@ -5219,6 +5244,8 @@
 		}});
 	});
 
+	QUnit.module("Model: Response headers");
+
 	QUnit.test("Bindable response headers in metadata", function(assert) {
 		var done = assert.async();
 		assert.expect(4);
@@ -5361,7 +5388,9 @@
 		});
 	});
 
-  QUnit.test("Normalize key", function(assert) {
+	QUnit.module("Model: Key normalization");
+
+ 	QUnit.test("Normalize key", function(assert) {
 		var oModel = initModel(sURI);
 		assert.equal(oModel._normalizeKey("Entity(123M)"), "Entity(123m)", "Number types normalized, single key");
 		assert.equal(oModel._normalizeKey("Entity(a=123M,b=123F,c=123L,d=123D)"), "Entity(a=123m,b=123f,c=123l,d=123d)", "Number types normalized, mutiple keys");
@@ -5372,6 +5401,7 @@
 		assert.equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST')"), "Entity('%2FTEST%2FTEST')", "No double encoding");
 		assert.equal(oModel._normalizeKey("Entity('%2FTEST%2FTEST=123M')"), "Entity('%2FTEST%2FTEST%3D123M')", "No double encoding");
 		assert.equal(oModel._normalizeKey("Entity(%2FTEST%2FTEST=123M)"), "Entity(%2FTEST%2FTEST=123m)", "No double encoding");
+		assert.equal(oModel._normalizeKey("Entity(X'AFFE')"), "Entity(binary'AFFE')", "Binary normalized");
 	});
 
   QUnit.test("Normalize key, model access", function(assert) {
@@ -5398,8 +5428,346 @@
 		})
 	});
 
+	QUnit.module("Unsupported Filter Operators", {
+		beforeEach: function() {
+			var mOptions = {
+				json : true,
+				loadMetadataAsync: true,
+				useBatch: false
+			};
+			this.oModel = initModel(sURI, mOptions);
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+		},
 
-	</script>
+		getErrorWithMessage: function(sFilter) {
+			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
+		}
+	});
+
+	QUnit.module("Unsupported Filter Operators", {
+		beforeEach: function() {
+			this.oModel = new sap.ui.model.ClientModel();
+		},
+
+		getErrorWithMessage: function(sFilter) {
+			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
+		}
+	});
+
+	QUnit.test("Empty Arguments", function(assert) {
+		this.oModel.checkFilterOperation();
+		assert.ok(true, "No arguments lead to a positive result");
+
+		this.oModel.checkFilterOperation([]);
+		assert.ok(true, "Empty array lead to a positive result");
+	});
+
+	QUnit.test("Simple Filters - Supported are OK", function(assert) {
+		// comma separated syntax
+		var oSupported = new Filter("x", FilterOperator.NE, "Foo");
+		this.oModel.checkFilterOperation(oSupported);
+		assert.ok(true, "Valid operators are supported");
+
+		// object syntax
+		var oSupported2 = new Filter({
+			path: "y",
+			operator: FilterOperator.NE,
+			value1: "FooBar"
+		});
+		this.oModel.checkFilterOperation(oSupported2);
+		assert.ok(true, "Valid operators are supported");
+
+		// local fnTest - comma separated (should be ignored)
+		var oSupported3 = new Filter("z", function() {});
+		this.oModel.checkFilterOperation(oSupported3);
+		assert.ok(true, true, "local fnTest is ignored (comma separated syntax)");
+
+		// local fnTest - object syntax (should be ignored)
+		var oSupported4 = new Filter({
+			path: "z",
+			test: function() {}
+		});
+		this.oModel.checkFilterOperation(oSupported4);
+		assert.ok(true, "local fnTest is ignored (object syntax)");
+	});
+
+	QUnit.test("Simple Filters - Unsupported are not OK - Incorrect lambda operator", function(assert) {
+		// Any
+		var oUnsupported3 = new Filter({
+			path: "x",
+			operator: FilterOperator.Any,
+			variable: "id1",
+			condition: new Filter()
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oUnsupported3);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.Any),
+			"Invalid operators are not supported (object syntax)"
+		);
+
+		// All
+		var oUnsupported4 = new Filter({
+			path: "y",
+			operator: FilterOperator.All,
+			variable: "id2",
+			condition: new Filter()
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oUnsupported4);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators are not supported (object syntax)"
+		);
+	});
+
+	QUnit.test("Simple Filters - Unsupported are not OK - Correct lambda operator", function(assert) {
+		// Any
+		var oUnsupported3 = new Filter({
+			path: "x",
+			operator: FilterOperator.Any,
+			variable: "id3",
+			condition: new Filter("snytax", FilterOperator.GT, 200)
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oUnsupported3);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.Any),
+			"Invalid operators are not supported (object syntax)"
+		);
+
+		// All
+		var oUnsupported4 = new Filter({
+			path: "y",
+			operator: FilterOperator.All,
+			variable: "id4",
+			condition: new Filter("snytax", FilterOperator.NE, 66)
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oUnsupported4);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators are not supported (object syntax)"
+		);
+	});
+
+	QUnit.test("Multi Filters (Simple) - Supported are OK", function(assert) {
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter("y", FilterOperator.GT, "Bar");
+
+		// Comma separated syntax
+		var oMultiFilter2 = new Filter([oFilter1, oFilter2], false);
+		this.oModel.checkFilterOperation(oMultiFilter2);
+		assert.ok(true, "Valid operators in multi-filter are supported (comma separated syntax)");
+
+		// Object Syntax
+		var oMultiFilter = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+
+		this.oModel.checkFilterOperation(oMultiFilter);
+		assert.ok(true, "Valid operators in multi-filter are supported (object syntax)");
+	});
+
+	QUnit.test("Multi Filters (Simple) - Unsupported are not OK - incorrect lambda operator", function(assert) {
+		// All
+		var oFilter1 = new Filter({path: "x", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter2 = new Filter("y", FilterOperator.GT, "Bar");
+
+		// Object Syntax
+		var oMultiFilter = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported (object syntax)"
+		);
+
+		// Object Syntax
+		oMultiFilter = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: false
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported (object syntax)"
+		);
+
+		// Comma separated syntax
+		var oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter2);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
+		);
+
+		// any
+		oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		oFilter2 = new Filter({path: "y", operator: FilterOperator.Any, variable: "id2", condition: new Filter()});
+
+		// Comma separated syntax
+		oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter2);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.Any),
+			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
+		);
+	});
+
+	QUnit.test("Multi Filters (Simple) - Unsupported are not OK - correct lambda operator", function(assert) {
+		// All
+		var oFilter1 = new Filter({path: "x", operator: FilterOperator.All, variable: "id1", condition: new Filter("z", FilterOperator.EQ, 100)});
+		var oFilter2 = new Filter("y", FilterOperator.GT, new Filter("z", FilterOperator.NE, 77));
+
+		// Object Syntax
+		var oMultiFilter = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported (object syntax)"
+		);
+
+		// Object Syntax
+		oMultiFilter = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: false
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported (object syntax)"
+		);
+
+		// Comma separated syntax
+		var oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter2);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
+		);
+
+		// any
+		oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		oFilter2 = new Filter({path: "y", operator: FilterOperator.Any, variable: "id3", condition: new Filter("z", FilterOperator.EQ, 110)});
+
+		// Comma separated syntax
+		oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
+
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter2);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.Any),
+			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
+		);
+	});
+
+	QUnit.test("Multi Filters (Complex) - Supported are OK", function(assert) {
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter("y", FilterOperator.GT, "Bar");
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new Filter([oMultiFilter2, oFilter4]);
+
+		this.oModel.checkFilterOperation(oMultiFilter3);
+		assert.ok(true, "Valid operators in multi-filter are supported");
+	});
+
+	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({path: "y", operator: FilterOperator.All, variable: "id1", condition: new Filter()});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new Filter({
+			filters: [oMultiFilter2, oFilter4],
+			and: true
+		});
+
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter3);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported"
+		);
+	});
+
+	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
+		var oFilter1 = new Filter("x", FilterOperator.EQ, "Foo");
+		var oFilter2 = new Filter({
+			path: "y",
+			operator: FilterOperator.All,
+			variable: "id1",
+			condition: new Filter([
+				new Filter("t", FilterOperator.GT, 66),
+				new Filter({path: "g", operator: FilterOperator.Any, variable: "id2", condition: new Filter("f", FilterOperator.NE, "hello")})
+			], true)
+		});
+		var oFilter3 = new Filter("z", FilterOperator.NE, "Bla");
+		var oFilter4 = new Filter("t", FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new Filter({
+			filters: [oMultiFilter2, oFilter4],
+			and: true
+		});
+
+		assert.throws(
+			function() {
+				this.oModel.checkFilterOperation(oMultiFilter3);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.All),
+			"Invalid operators in multi-filter are unsupported"
+		);
+	});
+
+</script>
 
 </head>
 <body>

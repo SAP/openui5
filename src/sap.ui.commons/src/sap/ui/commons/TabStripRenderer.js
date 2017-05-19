@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				rm.writeEscaped(oTitle.getText());
 			} else {
-				jQuery.sap.log.warning("No title configured for " + oTab + ". Either set a string as 'text' property or a sap.ui.core.Title as 'title' aggregation.");
+				jQuery.sap.log.warning("No title configured for " + oTab + ". Either set a string as 'text' property or an sap.ui.core.Title as 'title' aggregation.");
 			}
 			if (oTab.getClosable()) {
 				// close button

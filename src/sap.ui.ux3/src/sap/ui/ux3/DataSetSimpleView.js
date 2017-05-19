@@ -418,7 +418,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	/**
 	 * Function is called when window is resized
 	 *
-	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	DataSetSimpleView.prototype.onresize = function() {
@@ -508,7 +507,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 */
 	DataSetSimpleView.prototype.setScrollArea = function(aScrollArea, bSupress) {
 		if (typeof aScrollArea !== 'string' && !(aScrollArea instanceof jQuery)) {
-			jQuery.sap.log.error('You can only pass a string (ID of scroll area DOM) or an jQuery object as scrollarea');
+			jQuery.sap.log.error('You can only pass a string (ID of scroll area DOM) or a jQuery object as scrollarea');
 		}
 		this.setProperty('scrollArea', aScrollArea, bSupress);
 	};

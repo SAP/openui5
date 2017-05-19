@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 
 
 	/**
-	 * Constructor for a Integer type.
+	 * Constructor for an Integer type.
 	 *
 	 * @class
 	 * This class represents integer simple types.

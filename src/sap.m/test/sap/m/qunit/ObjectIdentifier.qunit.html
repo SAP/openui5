@@ -394,6 +394,7 @@
 
 		//Assert
 		assert.notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
+		assert.ok(oObjectIdentifier.$(oObjectIdentifier.getId() + '-txt'), "The text control can be found by id");
 
 		//Cleanup
 		oObjectIdentifier.destroy();
@@ -429,6 +430,7 @@
 
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			id: "oId",
 			title: 'Test title',
 			titleActive: true
 		});
@@ -438,6 +440,7 @@
 		// assertions
 		assert.equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
 		assert.equal(oObjectIdentifier.$('title').children(0).hasClass("sapMLnk"), true, "A Link control should be rendered inside the title");
+		assert.ok(oObjectIdentifier.$(oObjectIdentifier.getId() + '-link'), "A Link control can be found by id");
 
 		// cleanup
 		oObjectIdentifier.destroy();
@@ -862,11 +865,60 @@
 		oModel.destroy()
 	});
 
+	QUnit.test("Rendered just once when databound in a table", function(assert) {
+		var oSut, oTable, oModel, oTemplate, oRenderSpy;
+
+		//Arrange
+		oSut = new sap.m.ObjectIdentifier({
+			title : "{Name}",
+			titleActive : "{active}"
+		});
+
+		aColumns = [
+			new sap.m.Column({
+				header : new sap.m.Label({
+					text : "Product"
+				})
+			})
+		];
+		jQuery.sap.require("sap.m.ObjectIdentifierRenderer");
+
+		oRenderSpy = sinon.spy(sap.m.ObjectIdentifierRenderer, "render");
+
+		oTemplate = new sap.m.ColumnListItem({
+			cells : [ oSut ]
+		});
+
+		oTable = new sap.m.Table({
+			columns : aColumns
+		});
+		oModel = new sap.ui.model.json.JSONModel({
+			"ProductCollection": [
+				{
+					"active": true,
+					"ProductId": "1239102",
+					"Name": "Power Projector 4713"
+				}]});
+		oTable.setModel(oModel);
+		oTable.bindItems("/ProductCollection", oTemplate);
+		oTable.placeAt("qunit-fixture");
+
+		//Act
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.equal(oRenderSpy.callCount, 1, "The ObjectIdentifierRenderer.render does no invalidate the control");
+
+		//Cleanup
+		oTable.destroy();
+		oRenderSpy.restore();
+	});
+
 </script>
 </head>
 
 <body class="sapUiBody">
-	<h1 id="qunit-header">qUnit Page for sap.m.ObjectIdentifier</h1>
+	<h1 id="qunit-header">QUnit Page for sap.m.ObjectIdentifier</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>

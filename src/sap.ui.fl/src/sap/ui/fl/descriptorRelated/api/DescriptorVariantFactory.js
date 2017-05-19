@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/LrepConnector",
 	"sap/ui/fl/descriptorRelated/internal/Utils",
 	"sap/ui/fl/registry/Settings"
-], function(DescriptorInlineChangeFactory, LrepUtils, LrepConnector, Utils, Settings) {
+], function(DescriptorInlineChangeFactory, FlexUtils, LrepConnector, Utils, Settings) {
 	"use strict";
 
 	/**
@@ -171,13 +171,25 @@ sap.ui.define([
 		if (this._sTransportRequest) {
 		//set to URL-Parameter 'changelist', as done in LrepConnector
 			sRoute += '?changelist=' + this._sTransportRequest;
-		} else if ( this._oSettings.isAtoEnabled() && mMap.layer == 'CUSTOMER' ) {
+		} else if ( this._oSettings.isAtoEnabled() && FlexUtils.isCustomerDependentLayer(mMap.layer) ) {
 			sRoute += '?changelist=ATO_NOTIFICATION';
 		}
 
 		var oLREPConnector = LrepConnector.createConnector();
 
 		return oLREPConnector.send(sRoute, sMethod, mMap);
+	};
+
+	/**
+	 * Returns a copy of the JSON object of the descriptor variant
+	 *
+	 * @return {object} copy of JSON object of the descriptor variant
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorVariant.prototype.getJson = function() {
+		return jQuery.extend(true, {}, this._getMap());
 	};
 
 	DescriptorVariant.prototype._getMap = function() {
@@ -254,9 +266,9 @@ sap.ui.define([
 		} else {
 			Utils.checkParameterAndType(mParameters, "layer", "string");
 			//TODO: is this necessary? already checked in Utils-method? -> checks only type
-			if (mParameters.layer != 'VENDOR' && mParameters.layer != 'CUSTOMER') {
+			if (mParameters.layer != 'VENDOR' && mParameters.layer != 'PARTNER' && !FlexUtils.isCustomerDependentLayer(mParameters.layer)) {
 				//TODO: this should do a reject 	return Promise.reject(oError);
-				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'CUSTOMER'");
+				throw new Error("Parameter \"layer\" needs to be 'VENDOR', 'PARTNER' or customer dependent");
 			}
 		}
 
@@ -264,8 +276,7 @@ sap.ui.define([
 		if (mParameters.isAppVariantRoot){
 			Utils.checkParameterAndType(mParameters, "isAppVariantRoot", "boolean");
 		}
-		//TODO: add a correct application component name
-		return Settings.getInstance("dummy").then(function(oSettings) {
+		return Settings.getInstance().then(function(oSettings) {
 			return Promise.resolve( new DescriptorVariant(mParameters,null,false,oSettings) );
 		});
 	};
@@ -288,8 +299,7 @@ sap.ui.define([
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult){
 			_mResult = mResult;
-			//TODO: add a correct application component name
-			return Settings.getInstance("dummy");
+			return Settings.getInstance();
 		}).then( function(oSettings){
 			var mDescriptorVariantJSON = _mResult.response;
 			if (!jQuery.isPlainObject(mDescriptorVariantJSON)) {
@@ -320,8 +330,7 @@ sap.ui.define([
 		var _mResult;
 		return DescriptorVariantFactory._getDescriptorVariant(sId).then(function(mResult){
 			_mResult = mResult;
-			//TODO: add a correct application component name
-			return Settings.getInstance("dummy");
+			return Settings.getInstance();
 		}).then( function(oSettings){
 			var mDescriptorVariantJSON = JSON.parse(_mResult.response);
 			return Promise.resolve(new DescriptorVariant(mParameter,mDescriptorVariantJSON,true,oSettings));

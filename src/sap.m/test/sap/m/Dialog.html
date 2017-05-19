@@ -1127,6 +1127,21 @@
 				content : [ tbl ]
 			}).addStyleClass("sapUiSizeCompact");
 
+			var dialogWithFixedSizeContent = new sap.m.Dialog('dialogWithFixedSizeContent', {
+				title: "Dialog with fixed size content",
+				content: [new sap.m.Panel({
+					headerText: "Some Panel",
+					height: "2000px",
+					width: "500px"
+				})],
+				resizable: true,
+				endButton: new sap.m.Button('dialogWithFixedSizeContentCloseButton', {
+					text: "Cancel", press: function () {
+						dialogWithFixedSizeContent.close();
+					}
+				})
+			});
+
 			//Added as result of Internal Incident 1570901570
 			var oDialogWithOUTSettedWidthInRTL = new sap.m.Dialog({
 				title: "Title",
@@ -1587,8 +1602,16 @@
 					new sap.m.Button({
 						text : "Dialog with table IE issue",
 						width: _buttonWidth,
-						press : function() {
+						press: function() {
 							dialogWithTable.open();
+						}
+					}),
+
+					new sap.m.Button('dialogWithFixedSizeContentButton', {
+						text : "Dialog with fixed size content",
+						width: _buttonWidth,
+						press: function() {
+							dialogWithFixedSizeContent.open();
 						}
 					})
 				]

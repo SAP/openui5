@@ -218,10 +218,39 @@
 			jQuery.support.hasFlexBoxSupport = false;
 		}
 	});
+
+	QUnit.test("Flexible part Scrolling", function(assert) {
+		var oFlexLabel = new sap.m.Label({
+					text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
+				}),
+				oFixLabel = new sap.m.Label({text: "Ninja!"});
+
+		var oFixFlex = new sap.ui.layout.FixFlex({
+			flexContent: oFlexLabel,
+			fixContent: [oFixLabel]
+		});
+
+		oFixFlex.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var $flexible = oFixFlex.$().find('.sapUiFixFlexFlexible');
+
+		// Assert
+		assert.equal($flexible.css('overflow'), 'hidden', 'Overflow is hidden.');
+
+		oFixFlex.setMinFlexSize(100);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal($flexible.css('overflow'), 'auto', 'Overflow is auto.');
+
+		// Cleanup
+		oFixFlex.destroy();
+	});
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.layout.FixFlex</h1>
+	<h1 id="qunit-header">QUnit Page for sap.ui.layout.FixFlex</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>

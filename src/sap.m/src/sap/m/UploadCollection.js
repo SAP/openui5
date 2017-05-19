@@ -2,7 +2,7 @@
  * ${copyright}
  */
 // Provides control sap.m.UploadCollection.
-sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sap/ui/core/Control', 'sap/ui/core/Icon', 'sap/m/Text', 'sap/m/List', 'sap/ui/unified/FileUploaderParameter', "sap/ui/unified/FileUploader", 'sap/ui/core/format/FileSizeFormat', 'sap/m/Link', 'sap/m/OverflowToolbar', './ObjectAttribute', './ObjectStatus', "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "sap/ui/core/ResizeHandler", "sap/ui/Device", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./ObjectMarkerRenderer", "./TextRenderer", "./DialogRenderer"],
+sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sap/ui/core/Control", "sap/ui/core/Icon", "sap/m/Text", "sap/m/List", "sap/ui/unified/FileUploaderParameter", "sap/ui/unified/FileUploader", "sap/ui/core/format/FileSizeFormat", "sap/m/Link", "sap/m/OverflowToolbar", "./ObjectAttribute", "./ObjectStatus", "./UploadCollectionItem", "sap/ui/core/HTML", "./BusyIndicator", "./CustomListItem", "sap/ui/core/ResizeHandler", "sap/ui/Device", "./CustomListItemRenderer", "sap/ui/core/HTMLRenderer", "./LinkRenderer", "./ObjectAttributeRenderer", "./ObjectStatusRenderer", "./ObjectMarkerRenderer", "./TextRenderer", "./DialogRenderer"],
 	function(jQuery, MessageBox, Dialog, Library, Control, Icon, Text, List, FileUploaderParameter, FileUploader, FileSizeFormat, Link, OverflowToolbar, ObjectAttribute, ObjectStatus, UploadCollectionItem, HTML, BusyIndicator, CustomListItem, ResizeHandler, Device) {
 	"use strict";
 
@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			change : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileDeleted : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
@@ -287,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			filenameLengthExceed : {
 				parameters : {
 					/**
-					* An unique Id of the attached document.
+					* A unique Id of the attached document.
 					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					*/
@@ -307,7 +307,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileRenamed : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter item instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter item instead.
 					 */
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					 */
 					fileName : {type : "string"},
 					/**
-					 * The renamed UI element as a UploadCollectionItem.
+					 * The renamed UI element as an UploadCollectionItem.
 					 * Since version 1.28.0.
 					 */
 					item : {type : "sap.m.UploadCollectionItem"}
@@ -333,7 +333,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			fileSizeExceed : {
 				parameters : {
 					/**
-					 * An unique Id of the attached document.
+					 * A unique Id of the attached document.
 					 * This parameter is deprecated since version 1.28.0, use parameter files instead.
 					 * @deprecated Since version 1.28.0. This parameter is deprecated, use parameter files instead.
 					 */
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			typeMissmatch : {
 				parameters : {
 					/**
-					* An unique Id of the attached document.
+					* A unique Id of the attached document.
 					* This parameter is deprecated since version 1.28.0, use parameter files instead.
 					* @deprecated Since version 1.28.0. Use parameter files instead.
 					*/
@@ -409,6 +409,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					 * A list of uploaded files. Each entry contains the following members.
 					 * fileName	: The name of a file to be uploaded.
 					 * response	: Response message which comes from the server. On the server side, this response has to be put within the 'body' tags of the response document of the iFrame. It can consist of a return code and an optional message. This does not work in cross-domain scenarios.
+					 * reponse	: deprecated Since version 1.48.0. This parameter is deprecated, use parameter response instead.
 					 * responseRaw : HTTP-Response which comes from the server. This property is not supported by Internet Explorer Versions lower than 9.
 					 * status	: Status of the XHR request. This property is not supported by Internet Explorer 9 and lower.
 					 * headers : HTTP-Response-Headers which come from the server. Provided as a JSON-map, i.e. each header-field is reflected by a property in the header-object, with the property value reflecting the header-field's content. This property is not supported by Internet Explorer 9 and lower.
@@ -504,7 +505,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection._displayStatus = "display";
 	UploadCollection._toBeDeletedStatus = "toBeDeleted";
 	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollectionItem has this status only if UploadCollection is used with the property 'instantUpload' = false
-	UploadCollection._placeholderCamera = 'sap-icon://card';
+	UploadCollection._placeholderCamera = "sap-icon://card";
 	UploadCollection._markerMargin = 8; // the left margin for each marker in px
 
 	if (Device.system.phone) {
@@ -717,6 +718,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		} else {
 			this._setFileUploaderVisibility(uploadButtonInvisible);
 		}
+
+		if (this._bDragDropEnabled) {
+			this._unbindDragEnterLeave();
+			this._bDragDropEnabled = false;
+		} else {
+			this._bindDragEnterLeave();
+		}
 		return this;
 	};
 
@@ -776,7 +784,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Sets a UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
+	 * @description Sets an UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
 	 * @param {string} id The id of the item whose selection to be changed.
 	 * @param {boolean} select Sets selected status of the item. Default value is true.
 	 * @returns {sap.m.UploadCollection} The current UploadCollection
@@ -1025,7 +1033,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype.exit = function() {
-		var i, iPendingUploadsNumber;
+		var i, iPendingUploadsNumber, oItemToDestroy;
 		/* _unbindDragEnterLeave has to be called before setting $RootNode to null, because if $RootNode is null, the
 			unbind will only partially be performed as it depends on $RootNode */
 		this._unbindDragEnterLeave();
@@ -1055,6 +1063,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			this._aFileUploadersForPendingUpload = null;
 		}
+		// destroy items with status "uploading" because they are not destroyed with "items" aggregation
+		for (i = 0; i < this.aItems.length; i++) {
+			if (this.aItems[i]._status === UploadCollection._uploadingStatus) {
+				oItemToDestroy = this.aItems.splice(i, 1)[0];
+				if (oItemToDestroy.destroy) {
+					oItemToDestroy.destroy();
+				}
+			}
+		}
 		this._deregisterSizeHandler();
 	};
 
@@ -1068,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._bindDragEnterLeave = function() {
-		this._bDragDropEnabled = this.getUploadEnabled();
+		this._bDragDropEnabled = this._isDragAndDropAllowed();
 		if (!this._bDragDropEnabled) {
 			return;
 		}
@@ -1227,6 +1244,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
+	 * Checks if Drag and Drop is allowed.
+	 * @returns {boolean} True if Drag and Drop is supported based on the running use cases.
+	 * @private
+	 */
+	UploadCollection.prototype._isDragAndDropAllowed = function() {
+		return this.getUploadEnabled() && !this.getUploadButtonInvisible();
+	};
+
+	/**
 	 * Handler when file is dropped on UploadCollection drop enabled area.
 	 * @param {jQuery.Event} event which was fired
 	 * @private
@@ -1323,6 +1349,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._truncateFileName = function(oItem) {
+		if (!oItem) {
+			return;
+		}
+
 		if (oItem._status === "Edit") {
 			var sItemId = oItem.getId() + "-cli";
 			this.$().find("#" + sItemId).find(".sapMUCObjectMarkerContainer").attr("style", "display: none");// the markers are not displayed in edit mode
@@ -1435,9 +1465,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		sFileNameLong = oItem.getFileName();
 
 		if (sStatus === UploadCollection._uploadingStatus) {
-			oBusyIndicator = new sap.m.BusyIndicator(sItemId + "-ia_indicator", {
-				visible: true
-			}).addStyleClass("sapMUCloadingIcon");
+			oBusyIndicator = oItem._getBusyIndicator ? oItem._getBusyIndicator() : oItem._getControl("sap.m.BusyIndicator", {
+				id: sItemId + "-ia_indicator"
+			}, "BusyIndicator").addStyleClass("sapMUCloadingIcon");
 		} else {
 			oItemIcon = this._createIcon(oItem, sItemId, sFileNameLong, that);
 		}
@@ -1497,7 +1527,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		oRm.renderControl(this._getFileNameControl(oItem, that));
 		// if status is uploading only the progress label is displayed under the Filename
 		if (sStatus === UploadCollection._uploadingStatus && !(Device.browser.msie && Device.browser.version <= 9)) {
-			oRm.renderControl(this._createProgressLabel(sItemId, sPercentUploaded));
+			oRm.renderControl(this._createProgressLabel(oItem, sPercentUploaded));
 		} else {
 			if (iMarkersCounter > 0) {
 				oRm.write('<div class="sapMUCObjectMarkerContainer">');// begin of markers container
@@ -1567,7 +1597,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
+	 * @description Gets a file name which is an sap.m.Link in display mode and an sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {object} that Context
 	 * @return {sap.m.Link | sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
@@ -1586,14 +1616,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				bEnabled = false;
 			}
 
-			oFileName = sap.ui.getCore().byId(sItemId + "-ta_filenameHL");
-			if (oFileName) {
-				oFileName.destroy();
-			}
-			oFileName = new sap.m.Link(sItemId + "-ta_filenameHL", {
-				enabled : bEnabled,
-				press : [that, this._triggerLink, this]
-			}).addStyleClass("sapMUCFileName");
+			oFileName = oItem._getFileNameLink ? oItem._getFileNameLink() : oItem._getControl("sap.m.Link", {
+				id: sItemId + "-ta_filenameHL",
+				press: [that, this._triggerLink, this]
+			}, "FileNameLink");
+			oFileName.setEnabled(bEnabled);
+			oFileName.addStyleClass("sapMUCFileName");
 			oFileName.setModel(oItem.getModel());
 			oFileName.setText(sFileNameLong);
 			return oFileName;
@@ -1615,28 +1643,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				}
 			}
 
-			oFileNameEditBox = sap.ui.getCore().byId(sItemId + "-ta_editFileName");
+			oFileNameEditBox = oItem._getFileNameEditBox ? oItem._getFileNameEditBox() : oItem._getControl("sap.m.Input", {
+				id: sItemId + "-ta_editFileName",
+				type: sap.m.InputType.Text
+			}, "FileNameEditBox");
+			oFileNameEditBox.addStyleClass("sapMUCEditBox");
+			oFileNameEditBox.setModel(oItem.getModel());
+			oFileNameEditBox.setValue(sFileName);
+			oFileNameEditBox.setValueState(sValueState);
+			oFileNameEditBox.setFieldWidth("75%");
+			oFileNameEditBox.setValueStateText(sValueStateText);
+			oFileNameEditBox.setDescription(oFile.extension);
+			oFileNameEditBox.setShowValueStateMessage(bShowValueStateMessage);
 
-			if (!oFileNameEditBox) {
-				oFileNameEditBox = new sap.m.Input(sItemId + "-ta_editFileName", {
-					type : sap.m.InputType.Text,
-					fieldWidth: "75%",
-					valueState : sValueState,
-					valueStateText : sValueStateText,
-					showValueStateMessage: bShowValueStateMessage,
-					description: oFile.extension
-				}).addStyleClass("sapMUCEditBox");
-				oFileNameEditBox.setModel(oItem.getModel());
-				oFileNameEditBox.setValue(sFileName);
-			} else {
-				oFileNameEditBox.setModel(oItem.getModel());
-				oFileNameEditBox.setValueState(sValueState);
-				oFileNameEditBox.setFieldWidth("75%");
-				oFileNameEditBox.setValueStateText(sValueStateText);
-				oFileNameEditBox.setValue(sFileName);
-				oFileNameEditBox.setDescription(oFile.extension);
-				oFileNameEditBox.setShowValueStateMessage(bShowValueStateMessage);
-			}
 			if ((iMaxLength - oFile.extension.length) > 0) {
 				oFileNameEditBox.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
 			}
@@ -1651,17 +1670,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @return {sap.m.Label} oProgressLabel
 	 * @private
 	 */
-	UploadCollection.prototype._createProgressLabel = function(sItemId, sPercentUploaded) {
-		var oProgressLabel;
+	UploadCollection.prototype._createProgressLabel = function(oItem, sPercentUploaded) {
+		var oProgressLabel,
+			sItemId = oItem.getId();
 
-		oProgressLabel = sap.ui.getCore().byId(sItemId + "-ta_progress");
-		if (!oProgressLabel) {
-			oProgressLabel = new sap.m.Label(sItemId + "-ta_progress", {
-				text : this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded])
-			}).addStyleClass("sapMUCProgress");
-		} else {
-			oProgressLabel.setText(this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded]));
-		}
+		oProgressLabel = oItem._getProgressLabel ? oItem._getProgressLabel() : oItem._getControl("sap.m.Label", {
+			id: sItemId + "-ta_progress"
+		}, "ProgressLabel").addStyleClass("sapMUCProgress");
+		oProgressLabel.setText(this._oRb.getText("UPLOADCOLLECTION_UPLOADING", [sPercentUploaded]));
 
 		return oProgressLabel;
 	};
@@ -1737,22 +1753,19 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			return aButtons;
 		}
 		if (sStatus === "Edit") {
-			oOkButton = sap.ui.getCore().byId(sItemId + "-okButton");
-			if (!oOkButton) {
-				oOkButton = new sap.m.Button({
-					id : sItemId + "-okButton",
-					text : this._oRb.getText("UPLOADCOLLECTION_OKBUTTON_TEXT"),
-					type : sap.m.ButtonType.Transparent
-				}).addStyleClass("sapMUCOkBtn");
-			}
-			oCancelButton = sap.ui.getCore().byId(sItemId + "-cancelButton");
-			if (!oCancelButton) {
-				oCancelButton = new sap.m.Button({
-					id : sItemId + "-cancelButton",
-					text : this._oRb.getText("UPLOADCOLLECTION_CANCELBUTTON_TEXT"),
-					type : sap.m.ButtonType.Transparent
-				}).addStyleClass("sapMUCCancelBtn");
-			}
+
+			oOkButton = oItem._getOkButton ? oItem._getOkButton() : oItem._getControl("sap.m.Button", {
+				id : sItemId + "-okButton",
+				text : this._oRb.getText("UPLOADCOLLECTION_RENAMEBUTTON_TEXT"),
+				type : Library.ButtonType.Transparent
+			}, "OkButton").addStyleClass("sapMUCOkBtn");
+
+			oCancelButton = oItem._getCancelButton ? oItem._getCancelButton() : oItem._getControl("sap.m.Button", {
+				id : sItemId + "-cancelButton",
+				text : this._oRb.getText("UPLOADCOLLECTION_CANCELBUTTON_TEXT"),
+				type : Library.ButtonType.Transparent
+			}, "CancelButton").addStyleClass("sapMUCCancelBtn");
+
 			aButtons.push(oOkButton);
 			aButtons.push(oCancelButton);
 			return aButtons;
@@ -1767,40 +1780,25 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				bEnabled = false;
 			}
 
-			oEditButton = sap.ui.getCore().byId(sItemId + "-editButton");
-			if (!oEditButton) {
-				if (oItem.getVisibleEdit()) { // if the Edit button is invisible we do not need to render it
-					oEditButton = new sap.m.Button({
-						id : sItemId + "-editButton",
-						icon : "sap-icon://edit",
-						type : sap.m.ButtonType.Standard,
-						enabled : bEnabled,
-						visible : oItem.getVisibleEdit(),
-						tooltip : this._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"),
-						press : [oItem, this._handleEdit, this]
-					}).addStyleClass("sapMUCEditBtn");
-					aButtons.push(oEditButton);
-				}
-			} else if (!oItem.getVisibleEdit()) { // If oEditButton exists and it is invisible, delete it.
-				oEditButton.destroy();
-				oEditButton = null;
-			} else { // oEditButton exists and is visible -> update
+			if (oItem.getVisibleEdit()) { // if the Edit button is invisible we do not need to render it
+				oEditButton = oItem._getEditButton ? oItem._getEditButton() : oItem._getControl("sap.m.Button", {
+					id : sItemId + "-editButton",
+					icon : "sap-icon://edit",
+					type : Library.ButtonType.Standard,
+					tooltip : this._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"),
+					press : [oItem, this._handleEdit, this]
+				}, "EditButton").addStyleClass("sapMUCEditBtn");
 				oEditButton.setEnabled(bEnabled);
 				oEditButton.setVisible(oItem.getVisibleEdit());
 				aButtons.push(oEditButton);
 			}
 
 			sButton = "deleteButton";
-			if (oItem.getVisibleDelete()) { // if a delete button is invisible we do not need to render it
+			if (oItem.getVisibleDelete()) { // if the Delete button is invisible we do not need to render it
 				oDeleteButton = this._createDeleteButton(sItemId, sButton, oItem, this.sErrorState, that);
 				aButtons.push(oDeleteButton);
-			} else { // the button is not visible
-				oDeleteButton = sap.ui.getCore().byId(sItemId + "-" + sButton);
-				if (!!oDeleteButton) { // if a button already exists and it is for this item invisible it should be deleted
-					oDeleteButton.destroy();
-					oDeleteButton = null;
-				}
 			}
+
 			return aButtons;
 		}
 	};
@@ -1818,38 +1816,36 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._createDeleteButton = function(sItemId, sButton, oItem, sErrorState, that) {
-		var bEnabled, oDeleteButton;
+		var bEnabled, oDeleteButton, sGetterName, sTooltip, fnGetter, bVisible, fnPressHandler;
 
 		bEnabled = oItem.getEnableDelete();
 		if (sErrorState === "Error"){
 			bEnabled = false;
 		}
 
-		oDeleteButton = sap.ui.getCore().byId(sItemId + "-" + sButton);
-		if (oDeleteButton) {
-			oDeleteButton.destroy();
+		if (sButton === "deleteButton") {
+			sGetterName = "DeleteButton";
+			fnGetter = oItem._getDeleteButton;
+			sTooltip = this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT");
+			bVisible = oItem.getVisibleDelete();
+			fnPressHandler = [that, this._handleDelete, this];
+		} else {
+			sGetterName = "TerminateButton";
+			fnGetter = oItem._getTerminateButton;
+			sTooltip = this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT");
+			bVisible = this.getTerminationEnabled();
+			fnPressHandler = [oItem, this._handleTerminate, this];
 		}
-		oDeleteButton = new sap.m.Button({
+
+		oDeleteButton = fnGetter ? fnGetter() : oItem._getControl("sap.m.Button", {
 			id : sItemId + "-" + sButton,
 			icon : "sap-icon://sys-cancel",
-			type : sap.m.ButtonType.Standard,
-			enabled : bEnabled,
-			tooltip : this._oRb.getText("UPLOADCOLLECTION_TERMINATEBUTTON_TEXT"),
-			visible : oItem.getVisibleDelete()
-		}).addStyleClass("sapMUCDeleteBtn");
-		if (sButton === "deleteButton") {
-			oDeleteButton.setTooltip(this._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"));
-			oDeleteButton.attachPress(function(oEvent) {
-				this._handleDelete(oEvent, that);
-			}.bind(that));
-		} else if (sButton === "terminateButton") {
-			if (!this.getTerminationEnabled()) {
-				oDeleteButton.setVisible(false);
-			}
-			oDeleteButton.attachPress(function(oEvent) {
-				this._handleTerminate.bind(this)(oEvent, oItem);
-			}.bind(that));
-		}
+			type : Library.ButtonType.Standard,
+			press : fnPressHandler
+		}, sGetterName).addStyleClass("sapMUCDeleteBtn");
+		oDeleteButton.setVisible(bVisible);
+		oDeleteButton.setEnabled(bEnabled);
+		oDeleteButton.setTooltip(sTooltip);
 
 		return oDeleteButton;
 	};
@@ -1860,10 +1856,32 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._fillList = function(aItems) {
-		var that = this;
-		var iMaxIndex = aItems.length - 1;
+		var that = this,
+			iMaxIndex = aItems.length - 1,
+			oItemsBinding = this.getBinding("items"),
+			bGroupCreated = false,
+			sGroupKey,
+			fnGroupHeader = this.getBindingInfo("items") ? this.getBindingInfo("items").groupHeaderFactory : null;
+		var fnGroup = function(oItem) {
+			return oItem.getBindingContext() ? oItemsBinding.getGroup(oItem.getBindingContext()) : null;
+		};
+		var fnGroupKey = function(oItem) {
+			return fnGroup(oItem) && fnGroup(oItem).key;
+		};
 
 		jQuery.each(aItems, function (iIndex, oItem) {
+			// grouping
+			if (oItemsBinding && oItemsBinding.isGrouped() && oItem) {
+				if (!bGroupCreated || sGroupKey !== fnGroupKey(oItem)) {
+					if (fnGroupHeader) {
+						that._oList.addItemGroup(fnGroup(oItem), fnGroupHeader(fnGroup(oItem)), true);
+					} else if (fnGroup(oItem)) {
+						that._oList.addItemGroup(fnGroup(oItem), null, true);
+					}
+					bGroupCreated = true;
+					sGroupKey = fnGroupKey(oItem);
+				}
+			}
 			if (!oItem._status) {
 				//Set default status value -> UploadCollection._displayStatus
 				oItem._status = UploadCollection._displayStatus;
@@ -2060,9 +2078,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Handling of termination of an uploading process
-	 * @param {object} oEvent Event of the upload termination
-	 * @param {object} oContext Context of the upload termination
+	 * Handling of termination of an uploading process
+	 * @param {sap.ui.base.Event} oEvent Event of the upload termination
+	 * @param {sap.m.UploadCollectionItem} oItem Context of the upload termination
 	 * @private
 	 */
 	UploadCollection.prototype._handleTerminate = function(oEvent, oItem) {
@@ -2102,11 +2120,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			for (var i = 0; i < this.aItems.length; i++) {
 				if (this.aItems[i]._status === UploadCollection._uploadingStatus &&
 						this.aItems[i]._requestIdName === oItem._requestIdName) {
+					this.aItems[i]._status = UploadCollection._toBeDeletedStatus;
+					this._oItemForDelete = this.aItems[i];
 					bAbort = true;
 					break;
 				} else if (oItem.getFileName() === this.aItems[i].getFileName() &&
 									 this.aItems[i]._status === UploadCollection._displayStatus) {
 					this.aItems[i]._status = UploadCollection._toBeDeletedStatus;
+					this._oItemForDelete = this.aItems[i];
 					this.fireFileDeleted({
 						documentId : this.aItems[i].getDocumentId(),
 						item : this.aItems[i]
@@ -2137,7 +2158,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sap.m.UploadCollection.prototype._handleOk(oEvent, this, this.editModeItem, false);
 			}
 		if (this.sErrorState !== "Error") {
-			for (i = 0; i < cItems ; i++) {
+			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i].getId() === sItemId) {
 					this.aItems[i]._status = "Edit";
 					break;
@@ -2581,7 +2602,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		var sFileName = oEvent.getParameter("fileName");
 		var cItems = this.aItems.length;
 		for (i = 0; i < cItems ; i++) {
-			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
+			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName
+					&& this.aItems[i]._requestIdName === sRequestId
+					&& (this.aItems[i]._status === UploadCollection._uploadingStatus || this.aItems[i]._status === UploadCollection._toBeDeletedStatus)) {
 				this.aItems.splice(i, 1);
 				this.removeItem(i);
 				break;
@@ -2600,7 +2623,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._onUploadComplete = function(oEvent) {
 		if (oEvent) {
-			var i, sRequestId, sUploadedFile, cItems, bUploadSuccessful = checkRequestStatus();
+			var i, sRequestId, sUploadedFile, cItems, oItemToDestroy, aInProgressStates,
+			bUploadSuccessful = checkRequestStatus();
 			sRequestId = this._getRequestId(oEvent);
 			sUploadedFile = oEvent.getParameter("fileName");
 
@@ -2610,35 +2634,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sUploadedFile = aUploadedFile[0];
 			}
 			cItems = this.aItems.length;
+			aInProgressStates = [UploadCollection._uploadingStatus, UploadCollection._pendingUploadStatus];
 			for (i = 0; i < cItems; i++) {
 				// sRequestId should be null only in case of IE9 because FileUploader does not support header parameters for it
-				if (!sRequestId) {
-					if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-							this.aItems[i]._status === UploadCollection._uploadingStatus &&
-							bUploadSuccessful) {
+				if ((!sRequestId || this.aItems[i]._requestIdName === sRequestId) &&
+					this.aItems[i].getProperty("fileName") === sUploadedFile &&
+					(aInProgressStates.indexOf(this.aItems[i]._status) >= 0)) {
+					if (bUploadSuccessful && this.aItems[i]._status !== UploadCollection._pendingUploadStatus) {
 						this.aItems[i]._percentUploaded = 100;
 						this.aItems[i]._status = UploadCollection._displayStatus;
-						this._oItemToUpdate = null;
-						break;
-					} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-										 this.aItems[i]._status === UploadCollection._uploadingStatus) {
-						this.aItems.splice(i, 1);
-						this._oItemToUpdate = null;
-						break;
 					}
-				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-									 this.aItems[i]._requestIdName === sRequestId &&
-									 this.aItems[i]._status === UploadCollection._uploadingStatus &&
-									 bUploadSuccessful) {
-					this.aItems[i]._percentUploaded = 100;
-					this.aItems[i]._status = UploadCollection._displayStatus;
-					this._oItemToUpdate = null;
-					break;
-				} else if (this.aItems[i].getProperty("fileName") === sUploadedFile &&
-									 this.aItems[i]._requestIdName === sRequestId &&
-									 this.aItems[i]._status === UploadCollection._uploadingStatus ||
-									 this.aItems[i]._status === UploadCollection._pendingUploadStatus) {
-					this.aItems.splice(i, 1);
+					oItemToDestroy = this.aItems.splice(i, 1)[0];
+					if (oItemToDestroy.destroy) {
+						oItemToDestroy.destroy();
+					}
 					this._oItemToUpdate = null;
 					break;
 				}
@@ -2652,7 +2661,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				files : [{
 					fileName : oEvent.getParameter("fileName") || sUploadedFile,
 					responseRaw : oEvent.getParameter("responseRaw"),
-					reponse : oEvent.getParameter("response"),
+					reponse : oEvent.getParameter("response"), // deprecated event property
+					response : oEvent.getParameter("response"),
 					status : oEvent.getParameter("status"),
 					headers : oEvent.getParameter("headers")
 				}]
@@ -2677,7 +2687,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype._onUploadProgress = function(oEvent) {
 		if (oEvent) {
-			var i, sUploadedFile, sPercentUploaded, iPercentUploaded, sRequestId, cItems, oProgressLabel, sItemId, $busyIndicator;
+			var i, sUploadedFile, sPercentUploaded, iPercentUploaded, sRequestId, cItems, oProgressLabel, $busyIndicator, oItem;
 			sUploadedFile = oEvent.getParameter("fileName");
 			sRequestId = this._getRequestId(oEvent);
 			iPercentUploaded = Math.round(oEvent.getParameter("loaded") / oEvent.getParameter("total") * 100);
@@ -2688,15 +2698,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			cItems = this.aItems.length;
 			for (i = 0; i < cItems; i++) {
-				if (this.aItems[i].getProperty("fileName") === sUploadedFile && this.aItems[i]._requestIdName == sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
-					oProgressLabel = sap.ui.getCore().byId(this.aItems[i].getId() + "-ta_progress");
+				oItem = this.aItems[i];
+				if (oItem.getProperty("fileName") === sUploadedFile && oItem._requestIdName == sRequestId && oItem._status === UploadCollection._uploadingStatus) {
+					oProgressLabel = oItem._getProgressLabel ? oItem._getProgressLabel() : oItem._getControl("sap.m.Label", {
+						id: oItem.getId() + "-ta_progress"
+					}, "ProgressLabel");
 					//necessary for IE otherwise it comes to an error if onUploadProgress happens before the new item is added to the list
 					if (!!oProgressLabel) {
 						oProgressLabel.setText(sPercentUploaded);
-						this.aItems[i]._percentUploaded = iPercentUploaded;
+						oItem._percentUploaded = iPercentUploaded;
 						// add ARIA attribute for screen reader support
-						sItemId = this.aItems[i].getId();
-						$busyIndicator = jQuery.sap.byId(sItemId + "-ia_indicator");
+
+						$busyIndicator = jQuery.sap.byId(oItem.getId() + "-ia_indicator");
 						if (iPercentUploaded === 100) {
 							$busyIndicator.attr("aria-label", sPercentUploaded);
 						} else {
@@ -3193,7 +3206,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	/**
 	 * @description Helper function for better Event API. This reference points to the oEvent comming from the FileUploader
-	 * @param {string} Header parameter name (optional)
+	 * @param {string} sHeaderParameterName Header parameter name (optional)
 	 * @returns {UploadCollectionParameter} || {UploadCollectionParameter[]}
 	 * @private
 	 */
@@ -3385,4 +3398,4 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 	return UploadCollection;
 
-}, /* bExport= */ true);
+});

@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 sap.ui.define([
 	"sap/ui/demo/cart/model/formatter",
 	"test/unit/helper/FakeI18nModel"
@@ -46,7 +48,7 @@ sap.ui.define([
 		var oControllerStub = {
 			getResourceBundle: function () {
 				return new FakeI18nModel({
-					"CART_TOTAL_PRICE": "Foo: {0}"
+					"cartTotalPrice": "Foo: {0}"
 				}).getResourceBundle();
 			}
 		};
@@ -86,9 +88,9 @@ sap.ui.define([
 		var oControllerStub = {
 			getResourceBundle: function () {
 				return new FakeI18nModel({
-					"STATUS_A": "1",
-					"STATUS_O": "2",
-					"STATUS_D": "3"
+					"statusA": "1",
+					"statusO": "2",
+					"statusD": "3"
 				}).getResourceBundle();
 			}
 		};
@@ -99,15 +101,15 @@ sap.ui.define([
 		assert.strictEqual(sText, sExpectedText, "Correct text was assigned");
 	}
 
-	QUnit.test("Should provide the status text 'STATUS_A' for products with status A", function (assert) {
+	QUnit.test("Should provide the status text 'statusA' for products with status A", function (assert) {
 		statusTextTestCase.call(this, assert, "A", "1");
 	});
 
-	QUnit.test("Should provide the status text 'STATUS_O' for products with status O", function (assert) {
+	QUnit.test("Should provide the status text 'statusO' for products with status O", function (assert) {
 		statusTextTestCase.call(this, assert, "O", "2");
 	});
 
-	QUnit.test("Should provide the status text 'STATUS_D' for products with status D", function (assert) {
+	QUnit.test("Should provide the status text 'statusD' for products with status D", function (assert) {
 		statusTextTestCase.call(this, assert, "D", "3");
 	});
 
@@ -156,7 +158,7 @@ sap.ui.define([
 		var oControllerStub = {
 			getResourceBundle: function () {
 				return new FakeI18nModel({
-					"CART_SAVED_FOR_LATER_FOOTER_TEXT": "1"
+					"cartSavedForLaterFooterText": "1"
 				}).getResourceBundle();
 			}
 		};
@@ -171,7 +173,7 @@ sap.ui.define([
 		footerTextForCartTestCase.call(this, assert, {}, "");
 	});
 
-	QUnit.test("Should return \"CART_SAVED_FOR_LATER_FOOTER_TEXT\" for products", function (assert) {
+	QUnit.test("Should return \"cartSavedForLaterFooterText\" for products", function (assert) {
 		footerTextForCartTestCase.call(this, assert, {1: "foo"}, "1");
 	});
 });

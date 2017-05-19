@@ -22,7 +22,7 @@ sap.ui.require([
 						return this.waitFor({
 							id: sTableId,
 							viewName: sViewName,
-							matchers:  new AggregationLengthEquals({
+							matchers: new AggregationLengthEquals({
 								name: "items",
 								length: 23
 							}),

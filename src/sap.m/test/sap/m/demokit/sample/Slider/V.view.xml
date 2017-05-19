@@ -2,7 +2,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:VerticalLayout class="sapUiContentPadding">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
 		<Slider value="30" width="90%" class="sapUiSmallMarginBottom" />
 		<Slider value="27" width="10em" class="sapUiSmallMarginBottom" />
 		<Slider value="40" width="15em" class="sapUiSmallMarginBottom" />
@@ -23,12 +23,12 @@
 				class="sapUiSmallMarginBottom" />
 
 		<Text text="Slider with tickmarks"/>
-		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom" width="400px"/>
-		<Slider enableTickmarks="true" class="sapUiSmallMarginBottom" width="400px"/>
-		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom" width="400px"/>
+		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom" width="100%"/>
+		<Slider enableTickmarks="true" class="sapUiSmallMarginBottom" width="100%"/>
+		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom" width="100%"/>
 
 		<Text text="Slider with tickmarks and labels"/>
-		<Slider min="0" max="30" enableTickmarks="true" class="sapUiSmallMarginBottom" width="400px">
+		<Slider min="0" max="30" enableTickmarks="true" class="sapUiSmallMarginBottom" width="100%">
 			<ResponsiveScale tickmarksBetweenLabels="3"/>
 		</Slider>
 

@@ -1,7 +1,8 @@
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/demo/toolpageapp/control/D3Chart",
 	"sap/ui/thirdparty/d3"
-], function (D3Chart, d3) {
+], function ($, D3Chart, d3) {
 	"use strict";
 
 	return D3Chart.extend("sap.ui.demo.toolpageapp.control.D3ColumnChart", {
@@ -20,7 +21,7 @@ sap.ui.define([
 			var selRects = selContainer.selectAll("rect").data(aData);
 
 			// sort the data by "v" parameter and extract the highest value
-			var iHightestValue = aData[Object.keys(aData).sort(function(a, b){return aData[a].v - aData[b].v}).pop()].v;
+			var iHightestValue = aData[Object.keys(aData).sort(function(a, b){return aData[a].v - aData[b].v;}).pop()].v;
 
 			selRects.enter().append("rect");
 			selContainer.select("rect:nth-child(1)").style("fill", sap.ui.core.theming.Parameters.get("sapUiChart1"));
@@ -63,7 +64,7 @@ sap.ui.define([
 			selTexts.attr("x", function (d, i) {
 				var fTextWidth = $(this).width();
 
-				return i * (iSpaceWidth + iBarWidth) + iBarWidth/2 - fTextWidth*0.75;
+				return i * (iSpaceWidth + iBarWidth) + iBarWidth / 2 - fTextWidth * 0.75;
 			}).attr("y", function () {
 				return this._iHeight - 5;
 			}.bind(this));

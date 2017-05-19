@@ -242,6 +242,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: " + fTickmarksDistance + "%;\"></li>");
 			}
 
+			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: 0%;\"></li>");
 			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMax());
 			oRm.write("</ul>");
 		};

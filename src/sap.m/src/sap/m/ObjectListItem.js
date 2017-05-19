@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				activeIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
 				/**
-				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image (in case this version of image dоesn't exist on the server).
+				 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image (in case this version of image doesn't exist on the server).
 				 *
 				 * If bandwidth is key for the application, set this value to false.
 				 */
@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 			this.setAggregation("_objectNumber", new ObjectNumber(this.getId() + "-ObjectNumber", {
 				number: sNumber,
-				numberUnit: sNumberUnit,
+				unit: sNumberUnit,
 				state: oState,
 				textDirection: oTextDirection
 			}), true);
@@ -347,7 +347,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>number</code> property of the control.
-		 * @param sNumber {string} <code>Number</code> showed in <code>ObjectListItem</code>
+		 * @param {string} sNumber <code>Number</code> showed in <code>ObjectListItem</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
@@ -362,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>numberUnit</code> property of the control.
-		 * @param sNumberUnit {string} <code>NumberUnit</code> showed in <code>ObjectListItem</code>
+		 * @param {string} sNumberUnit <code>NumberUnit</code> showed in <code>ObjectListItem</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
@@ -370,14 +370,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 			//Do not rerender the whole control but only ObjectNumber control
 			this.setProperty('numberUnit', sNumberUnit, true);
 			//Rerender only the ObjectNumber internal private field
-			this.getAggregation('_objectNumber').setNumberUnit(sNumberUnit);
+			this.getAggregation('_objectNumber').setUnit(sNumberUnit);
 
 			return this;
 		};
 
 		/**
 		 * Sets the <code>numberTextDirection</code> property of the control.
-		 * @param oTextDirection {sap.ui.core.TextDirection} The text direction of the internal <code>ObjectNumber</code>
+		 * @param {sap.ui.core.TextDirection} oTextDirection The text direction of the internal <code>ObjectNumber</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>numberState</code> property of the control.
-		 * @param oValueState {sap.ui.core.ValueState} The <code>valueState</code> of the internal <code>ObjectNumber</code>
+		 * @param {sap.ui.core.ValueState} oValueState The <code>valueState</code> of the internal <code>ObjectNumber</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */

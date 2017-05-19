@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
-	 * Get the the use-batch extension value if any
+	 * Get the use-batch extension value if any
 	 * @return {boolean} true/false
 	 * @public
 	 */
@@ -834,7 +834,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
-	*  extract the property metadata of a specified property of a entity type out of the metadata document
+	*  extract the property metadata of a specified property of an entity type out of the metadata document
 	*/
 	ODataMetadata.prototype._getPropertyMetadata = function(oEntityType, sProperty) {
 		var oPropertyMetadata, that = this;

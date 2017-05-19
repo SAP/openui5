@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 	"use strict";
 
 		/**
-		 * Instantiates a SAPUI5 Route
+		 * Instantiates an SAPUI5 Route
 		 *
 		 * @class
 		 * @param {sap.ui.core.routing.Router} The router instance, the route will be added to.
@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {sap.ui.base.EventProvider} oEvent.getSource
 			 * @param {object} oEvent.getParameters
 			 * @param {string} oEvent.getParameters.name The name of the route
-			 * @param {object} oEvent.getParameters.arguments An key-value pair object which contains the arguments defined in the route
+			 * @param {object} oEvent.getParameters.arguments A key-value pair object which contains the arguments defined in the route
 			 *  resolved with the corresponding information from the current URL hash
 			 * @param {object} oEvent.getParameters.config The configuration object of the route
 			 * @param {sap.ui.core.routing.Route} [oEvent.getParameters.nestedRoute] The nested route instance of this route. The event
@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {sap.ui.base.EventProvider} oEvent.getSource
 			 * @param {object} oEvent.getParameters
 			 * @param {string} oEvent.getParameters.name The name of the route
-			 * @param {object} oEvent.getParameters.arguments An key-value pair object which contains the arguments defined in the route
+			 * @param {object} oEvent.getParameters.arguments A key-value pair object which contains the arguments defined in the route
 			 *  resolved with the corresponding information from the current URL hash
 			 * @param {object} oEvent.getParameters.config The configuration object of the route
 			 * @param {sap.ui.core.routing.Route} [oEvent.getParameters.nestedRoute] The nested route instance of this route. The event
@@ -329,7 +329,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {sap.ui.base.EventProvider} oEvent.getSource
 			 * @param {object} oEvent.getParameters
 			 * @param {string} oEvent.getParameters.name The name of the route
-			 * @param {object} oEvent.getParameters.arguments An key-value pair object which contains the arguments defined in the route
+			 * @param {object} oEvent.getParameters.arguments A key-value pair object which contains the arguments defined in the route
 			 *  resolved with the corresponding information from the current URL hash
 			 * @param {object} oEvent.getParameters.config The configuration object of the route
 			 * @public

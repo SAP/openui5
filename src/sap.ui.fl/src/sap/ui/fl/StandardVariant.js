@@ -9,7 +9,7 @@ sap.ui.define([
 
 	/**
 	 * StandardVariant handles the execute on select flag for the standard variant.
-	 *        It knows how to create a execute on select for standard variant change, how to retrieve it from a given list of changes, etc.
+	 *        It knows how to create an execute on select for standard variant change, how to retrieve it from a given list of changes, etc.
 	 * @constructor
 	 * @alias sap.ui.fl.StandardVariant
 	 * @author SAP SE

@@ -4,20 +4,32 @@
 
 // Provides control sap.uxap.ObjectPageSubSection.
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/CustomData",
 	"sap/ui/layout/Grid",
+	"sap/ui/layout/GridData",
 	"./ObjectPageSectionBase",
 	"./ObjectPageSubSectionLayout",
 	"./ObjectPageSubSectionMode",
+	"./ObjectPageLazyLoader",
 	"./BlockBase",
-	"sap/ui/layout/GridData",
 	"sap/m/Button",
 	"sap/ui/Device",
-	"./ObjectPageLazyLoader",
 	"sap/ui/core/StashedControlSupport",
 	"./library"
-], function (CustomData, Grid, ObjectPageSectionBase, ObjectPageSubSectionLayout,
-			 ObjectPageSubSectionMode, BlockBase, GridData, Button, Device, ObjectPageLazyLoader, StashedControlSupport, library) {
+], function (jQuery,
+			 CustomData,
+			 Grid,
+			 GridData,
+			 ObjectPageSectionBase,
+			 ObjectPageSubSectionLayout,
+			 ObjectPageSubSectionMode,
+			 ObjectPageLazyLoader,
+			 BlockBase,
+			 Button,
+			 Device,
+			 StashedControlSupport,
+			 library) {
 	"use strict";
 
 	/**
@@ -598,16 +610,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * InsertAggregation is not supported by design.
-	 * If used, it works as addAggregation, e.g. the method adds a single block to the end of blocks or moreBlocks aggregations.
-	 */
-	ObjectPageSubSection.prototype.insertAggregation = function (sAggregationName, oObject, iIndex) {
-		if (this.hasProxy(sAggregationName)) {
-			jQuery.sap.log.warning("ObjectPageSubSection :: used of insertAggregation for " + sAggregationName + " is not supported, will use addAggregation instead");
-			return this.addAggregation(sAggregationName, oObject);
-		}
+	* The <code>insertBlock</code> method is not supported by design.
+	* If used, it works as an <code>addBlock</code>,
+	* adding a single block to the end of blocks aggregations.
+	*/
+	ObjectPageSubSection.prototype.insertBlock = function (oObject, iIndex) {
+		jQuery.sap.log.warning("ObjectPageSubSection :: usage of insertBlock is not supported - addBlock is performed instead.");
+		return this.addAggregation("blocks", oObject);
+	};
 
-		return ObjectPageSectionBase.prototype.insertAggregation.apply(this, arguments);
+	/**
+	* The <code>insertMoreBlock</code> method is not supported by design.
+	* If used, it works as an <code>addMoreBlock</code>,
+	* adding a single block to the end of moreBlocks aggregations.
+	*/
+	ObjectPageSubSection.prototype.insertMoreBlock = function (oObject, iIndex) {
+		jQuery.sap.log.warning("ObjectPageSubSection :: usage of insertMoreBlock is not supported - addMoreBlock is performed instead.");
+		return this.addAggregation("moreBlocks", oObject);
 	};
 
 	ObjectPageSubSection.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {

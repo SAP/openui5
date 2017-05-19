@@ -4,22 +4,23 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>qUnit Page for sap.ui.test.pipelines.PipelineFactory</title>
+	<title>QUnit Page for sap.ui.test.pipelines.PipelineFactory</title>
 
 	<script src="../../../shared-config.js"></script>
 	<script
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m">
 	</script>
+	<script src="../../_includeQUnit.js"></script>
 
 
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		QUnit.config.autostart = false;
 
 		sap.ui.require([
 				"jquery.sap.global",
@@ -91,6 +92,8 @@
 				assert.strictEqual(aResult[0].someName, fnAnonymousFunction , "The resulting object has the anonymous function on a functionName property");
 				assert.strictEqual(aResult[1], oObjectWithFunction , "The matcher was untouched since it was already implementing the contract");
 			});
+
+			QUnit.start();
 
 		});
 	</script>

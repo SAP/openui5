@@ -40,6 +40,12 @@
             </modules>
         </component>
         <component>
+            <name>CA-UI5-BS-FCP</name>
+            <modules>
+                <module>sap/m/PDFViewer</module>
+            </modules>
+        </component>
+        <component>
             <name>CA-UI5-BS-FCW</name>
             <modules>
                 <module>sap/m/FeedInput</module>
@@ -63,7 +69,9 @@
                 <module>sap/m/UploadCollectionParameter</module>
                 <module>sap/m/LoadState</module>
                 <module>sap/m/SelectionDetails</module>
+                <module>sap/m/SelectionDetailsFacade</module>
                 <module>sap/m/SelectionDetailsItem</module>
+                <module>sap/m/SelectionDetailsItemFacade</module>
                 <module>sap/m/SelectionDetailsLine</module>
             </modules>
         </component>

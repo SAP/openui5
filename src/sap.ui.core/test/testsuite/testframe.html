@@ -176,7 +176,7 @@
 			}
 
 			function editInSnippix() {
-				var snippixBaseUrl = "http://veui5infra:8080/snippix/"; /* always use the central snippix to avoid spreading snippets across multiple servers */
+				var snippixBaseUrl = "/snippix/"; /* always use the central snippix to avoid spreading snippets across multiple servers; the correct server is ensured when the button is present */
 				var url = window.frames['sap-ui-ContentWindow'].document.location.href;
 				url = url.replace(/%/g, "%25").replace(/\?/g, "%3F").replace(/&/g, "%26").replace(/#/g, "%23"); // escape special characters in URL
 				window.open(snippixBaseUrl + "?url=" + url, '_blank');

@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 * @class
 	 * The framework generates an input field and a button with text "Browse ...". The API supports features such as on change uploads (the upload starts immediately after a file has been selected), file uploads with explicit calls, adjustable control sizes, text display after uploads, or tooltips containing complete file paths.
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,6 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 */
 	var FileUploader = Control.extend("sap.ui.unified.FileUploader", /** @lends sap.ui.unified.FileUploader.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.ui.unified",
 		properties : {
 
@@ -138,21 +140,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 			/**
 			 * Icon to be displayed as graphical element within the button.
-			 * This can be an URI to an image or an icon font URI.
+			 * This can be a URI to an image or an icon font URI.
 			 * @since 1.26.0
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Icon to be displayed as graphical element within the button when it is hovered (only if also a base icon was specified). If not specified the base icon is used.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 * @since 1.26.0
 			 */
 			iconHovered : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Icon to be displayed as graphical element within the button when it is selected (only if also a base icon was specified). If not specified the base or hovered icon is used.
-			 * If a icon font icon is used, this property is ignored.
+			 * If an icon font icon is used, this property is ignored.
 			 * @since 1.26.0
 			 */
 			iconSelected : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : ''},
@@ -704,7 +706,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	FileUploader.prototype.setValueState = function(sValueState) {
 
 		this.setProperty("valueState", sValueState, true);
-		//as of 1.23.1 oFilePath can be a sap.ui.commons.TextField or a sap.m.Input, which both have a valueState
+		//as of 1.23.1 oFilePath can be an sap.ui.commons.TextField or an sap.m.Input, which both have a valueState
 		if (this.oFilePath.setValueState) {
 			this.oFilePath.setValueState(sValueState);
 		}
@@ -831,7 +833,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		if (uploadForm) {
 			uploadForm.reset();
 		}
-		//clear the value, don't fire change event, and supress the refocusing of the file input field
+		//clear the value, don't fire change event, and suppress the refocusing of the file input field
 		return this.setValue("", false, true);
 	};
 
@@ -1017,7 +1019,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 */
 	FileUploader.prototype.abort = function(sHeaderCheck, sValueCheck) {
 		if (!this.getUseMultipart()) {
-			for (var i = 0; i < this._aXhr.length; i++) {
+			var iStart = this._aXhr.length - 1;
+			for (var i = iStart; i > -1 ; i--) {
 				if (sHeaderCheck && sValueCheck) {
 					for (var j = 0; j < this._aXhr[i].requestHeaders.length; j++) {
 						var sHeader = this._aXhr[i].requestHeaders[j].name;

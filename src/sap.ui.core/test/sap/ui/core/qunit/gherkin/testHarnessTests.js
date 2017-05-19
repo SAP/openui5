@@ -15,8 +15,9 @@ sap.ui.define([
   "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/opaQunit",
   "sap/ui/test/Opa5",
-  "sap/m/Label"
-], function($, qUnitTestHarness, opa5TestHarness, simpleGherkinParser, StepDefinitions, opaTest, Opa5, Label) {
+  "sap/m/Label",
+  "jquery.sap.sjax"
+], function($, qUnitTestHarness, opa5TestHarness, simpleGherkinParser, StepDefinitions, opaTest, Opa5, Label, sjax) {
   'use strict';
 
   var oOpa5 = opa5TestHarness._oOpa5;
@@ -267,7 +268,7 @@ sap.ui.define([
             var iFailedTests = parseInt(sResults[2], 10);
             var iTotalTests = parseInt(sResults[1], 10);
             Opa5.assert.strictEqual(iFailedTests, 3, "Verified failed tests");
-            Opa5.assert.strictEqual(iTotalTests, 4, "Verified total tests");
+            Opa5.assert.strictEqual(iTotalTests, 13, "Verified total tests");
 
             var oCoffee = oFrame$('.test-message').filter(':contains("I should be served a coffee")');
             Opa5.assert.strictEqual(oCoffee.length, 1, 'Verified found text "I should be served a coffee"');
@@ -296,13 +297,15 @@ sap.ui.define([
             Opa5.assert.ok(sNotFoundText.indexOf("expect(0)") === -1,
               'Verified that a (NOT FOUND) test step doesn\'t trigger an expect(0) error"');
 
+            fnScenarioOutlineVerification(oFrame$);
+
             var oNotFoundNotSkipped = oFrame$('.test-message')
               .filter(':contains("(NOT FOUND) this step has no step definition defined")');
-            Opa5.assert.strictEqual(oNotFoundNotSkipped.length, 1, " Verified found oNotFoundNotSkipped text");
+            Opa5.assert.strictEqual(oNotFoundNotSkipped.length, 1, "Verified found oNotFoundNotSkipped text");
 
             var oAtWipSkipped = oFrame$('.module-name')
             .filter(':contains("Feature: a feature whose scenarios are all @wip will be skipped")');
-            Opa5.assert.strictEqual(oAtWipSkipped.length, 1, " Verified found oAtWipSkipped text");
+            Opa5.assert.strictEqual(oAtWipSkipped.length, 1, "Verified found oAtWipSkipped text");
 
             oOpa5.iTeardownMyApp();
           }
@@ -312,6 +315,29 @@ sap.ui.define([
     }
 
   };
+
+  var fnScenarioOutlineVerification = function(local$) {
+
+    var sOne = "Scenario Outline: A scenario outline with two Examples, one of which is @wip, will execute only the other one";
+    var sTwo = "Scenario Outline: a scenario outline with two Examples will execute them all";
+    var sJoin = ": ";
+
+    [
+      [sOne, "famous people #1"].join(sJoin),
+      [sOne, "famous people #2"].join(sJoin),
+      [sOne, "famous people #3"].join(sJoin),
+
+      [sTwo, "ordinary people #1"].join(sJoin),
+      [sTwo, "ordinary people #2"].join(sJoin),
+      [sTwo, "ordinary people #3"].join(sJoin),
+      [sTwo, "fictional people #1"].join(sJoin),
+      [sTwo, "fictional people #2"].join(sJoin),
+      [sTwo, "fictional people #3"].join(sJoin)
+
+    ].forEach(function(text) {
+      Opa5.assert.strictEqual(local$('.test-name').filter(':contains("' + text + '")').length, 1, "Verified " + text)
+    });
+  }
 
   return testHarnessTests;
 

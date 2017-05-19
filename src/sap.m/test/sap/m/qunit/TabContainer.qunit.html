@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>qUnit Page for sap.m.TabContainer</title>
+	<title>QUnit Page for sap.m.TabContainer</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
@@ -170,6 +170,34 @@
 				this.oTabContainer.destroy();
 				this.oTabContainer = null;
 			}
+		});
+
+		//BCP:1770122667
+		QUnit.test("removeItem works before rendering", function(assert) {
+			//arrange
+			var bException = false,
+				oItem = new sap.m.TabContainerItem({
+					name: 'name1',
+					key: 'key1'
+				}),
+				oTabContainer = new sap.m.TabContainer({
+					items: [oItem]
+				});
+
+			//act
+			try{
+				oTabContainer.removeItem(oItem);
+			}catch(e){
+
+				bException = true;
+				throw e;
+			}
+
+			//assert
+			assert.ok(!bException, "removeItem doesn't throw an exception");
+
+			//clean
+			oTabContainer.destroy();
 		});
 
 		QUnit.test("Initialization without parameters", function (assert) {
@@ -505,7 +533,7 @@
 	</script>
 </head>
 <body id="body" class="sapUiBody">
-<h1 id="qunit-header">qUnit Page for sap.m.TabContainer</h1>
+<h1 id="qunit-header">QUnit Page for sap.m.TabContainer</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <ol id="qunit-tests"></ol>

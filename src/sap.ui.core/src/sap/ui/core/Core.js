@@ -7,12 +7,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
 		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
 		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
-		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
+		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
 	function(jQuery, Device, Global,
 		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
 		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
 		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
-		/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
+		/* , jQuerySapAct, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapProperties, jQuerySapResources, jQuerySapScript, jQuerySapSjax */) {
 
 	"use strict";
 
@@ -1183,7 +1183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns true, if the styles of the current theme are already applied, false otherwise.
 	 *
 	 * This function must not be used before the init event of the Core.
-	 * If the styles are not yet applied an theme changed event will follow when the styles will be applied.
+	 * If the styles are not yet applied a theme changed event will follow when the styles will be applied.
 	 *
 	 * @return {boolean} whether the styles of the current theme are already applied
 	 * @public
@@ -2277,7 +2277,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Informs the core about an UIArea that just became invalid.
+	 * Informs the core about a UIArea that just became invalid.
 	 *
 	 * The core might use this information to minimize the set of
 	 * re-rendered UIAreas. But for the time being it just registers
@@ -3014,7 +3014,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	/**
-	 * Notifies the listeners that a event on a control occures
+	 * Notifies the listeners that an event on a control occurs
 	 * @param {map} mParameters { browserEvent: jQuery.EventObject }
 	 * @private
 	 */
@@ -3025,7 +3025,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Handles a control event and forwards it to the registered control event listeners.
 	 *
-	 * @param {jQuery.EventObject} oEvent control event
+	 * @param {jQuery.Event} oEvent control event
 	 * @param {string} sUIAreaId id of the UIArea that received the event
 	 * @private
 	 */
@@ -3644,10 +3644,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {function} fnPrerenderingTask
 	 *   A function that is called before the rendering
+	 * @param {boolean} [bFirst=false]
+	 *   Whether the task should become the first one, not the last one
 	 * @private
 	 */
-	Core.prototype.addPrerenderingTask = function (fnPrerenderingTask) {
-		this.aPrerenderingTasks.push(fnPrerenderingTask);
+	Core.prototype.addPrerenderingTask = function (fnPrerenderingTask, bFirst) {
+		if (bFirst) {
+			this.aPrerenderingTasks.unshift(fnPrerenderingTask);
+		} else {
+			this.aPrerenderingTasks.push(fnPrerenderingTask);
+		}
 		this.addInvalidatedUIArea(); // to trigger rendering
 	};
 
@@ -3717,7 +3723,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * This is a shortcut for <code>sap.ui.getCore().setRoot()</code>.
 	 *
-	 * Internally, if a string is given that does not identify an UIArea or a control
+	 * Internally, if a string is given that does not identify a UIArea or a control
 	 * then implicitly a new <code>UIArea</code> is created for the given DOM reference
 	 * and the given control is added.
 	 *

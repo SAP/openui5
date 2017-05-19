@@ -1,14 +1,14 @@
 sap.ui.define([
-		'sap/m/MessageView',
-		'sap/m/MessagePopoverItem',
-		'sap/m/Link',
-		'sap/m/Dialog',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, JSONModel) {
+	'sap/m/MessageView',
+	'sap/m/MessagePopoverItem',
+	'sap/m/Link',
+	'sap/m/Dialog',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel'
+], function(MessageView, MessagePopoverItem, Link, Dialog, Controller, JSONModel) {
+	"use strict";
 
-
-	oLink = new Link({
+	var oLink = new Link({
 		text: "Show more information",
 		href: "http://sap.com",
 		target: "_blank"

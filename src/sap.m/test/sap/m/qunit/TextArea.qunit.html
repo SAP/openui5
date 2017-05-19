@@ -24,7 +24,8 @@
 	sinon.config.useFakeTimers = true;
 
 	QUnit.test("Should render TextArea correctly", function(assert) {
-		var sut = new sap.m.TextArea();
+		var sut = new sap.m.TextArea(),
+			oCounter, oCounterStyle;
 		sut.placeAt("qunit-fixture");
 		core.applyChanges();
 
@@ -34,6 +35,10 @@
 
 		var $textarea = $("textarea.sapMTextAreaInner");
 		assert.strictEqual($textarea.length, 1, "Textarea is rendered");
+		assert.strictEqual($textarea.hasClass("sapMTextAreaWithCounter"), false, "Textarea doesn't have a counter");
+
+		oCounter = sut.getAggregation("_counter");
+		assert.strictEqual(oCounter.getVisible(), false, "The counter is not visible");
 
 		// check assigned and focus
 		assert.strictEqual(sut._$input[0], $textarea[0], "Textarea set correctly");
@@ -400,6 +405,26 @@
 		oTA.destroy();
 	});
 
+	QUnit.test("height is adjust on resize event", function() {
+		var spyResizeHandler,
+			sLongText = new Array(1000).join("text "),
+			oTA = new sap.m.TextArea({
+			value: sLongText,
+			growing: true,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		spyResizeHandler = this.spy(sap.m.TextArea.prototype, "_resizeHandler");
+
+		oTA.setWidth("500px");
+		this.clock.tick(200);
+
+		assert.ok(oTA._sResizeListenerId, "TextArea has resize handler");
+		assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+		oTA.destroy();
+	});
+
 	QUnit.test("maxHeight should be defined if maxLines is set", function(assert) {
 		var sLongText = new Array(1000).join("text ");
 		var oTA = new sap.m.TextArea({
@@ -489,6 +514,214 @@
 
 		// cleanup
 		oTextArea.destroy();
+	});
+
+	QUnit.module("Paste");
+	QUnit.test("Test the paste at the end of the text", function () {
+		// system under test
+		var oCounter, oCounterStyle,
+				sInitValue = "This is test text. ",
+				sPasteText = "Additional text is added",
+				oTA = new sap.m.TextArea({
+					value: sInitValue,
+					maxLength: 6,
+					showExceededText: true
+				});
+
+		// arrange
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oCounter = oTA.$("counter");
+		oCounterStyle = window.getComputedStyle(oCounter[0]);
+		oTA.onfocusin();
+
+		// assertions
+		assert.strictEqual(oCounter.text(), "13 Characters Exceeded", "the counter content is correct");
+
+		sap.ui.test.qunit.triggerEvent("paste", oTA.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPasteText;
+					}
+				}
+			}
+		});
+
+		oTA.setValue(oTA.getValue() + sPasteText);
+		this.clock.tick(10);
+		sap.ui.test.qunit.triggerEvent("input", oTA);
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), "This is test text. Additional text is added", "The Textarea value is correct");
+		assert.strictEqual(jQuery(oTA.getFocusDomRef()).cursorPos(), oTA.getMaxLength(), "The Textarea cursor position content is correct");
+		assert.strictEqual(oTA.getFocusDomRef().selectionStart, oTA.getMaxLength(), "The Textarea selection start is correct");
+		assert.strictEqual(oTA.getFocusDomRef().selectionEnd, oTA.getValue().length, "The Textarea selection end is correct");
+		assert.strictEqual(oTA.getValue(), sInitValue + sPasteText, "The Textarea value is correct");
+
+		assert.strictEqual(oCounterStyle.visibility, "visible", "The counter is visible");
+		assert.strictEqual(oCounter.text(), "37 Characters Exceeded", "The counter content is correct");
+
+		// cleanup
+		oTA.destroy();
+	});
+
+	QUnit.module("Counter");
+	QUnit.test("Test counter behaviour on showExceededText value changed", function () {
+		// system under test
+		var sInitValue = "This is test text.",
+				iMaxLength = 6,
+				oCounter, oTextArea,
+				oTA = new sap.m.TextArea({
+					value: "",
+					maxLength: iMaxLength,
+					showExceededText: false
+				});
+
+		// arrange
+		oTA.setValue(sInitValue);
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oTA.onfocusin();
+
+		oTextArea = $("textarea.sapMTextAreaInner");
+		oCounter = oTA.$("counter");
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+		assert.strictEqual(oCounter.length, 0, "The counter not defined");
+
+		// arrange
+		oTA.setShowExceededText(true);
+		sap.ui.getCore().applyChanges();
+		oCounter = oTA.$("counter");
+		oCounterStyle = window.getComputedStyle(oCounter[0]);
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), 6, "The TextArea maxLength property is correctly set to 0");
+		assert.strictEqual(oCounter[0].innerText, "0 Characters Left", "The counter is empty");
+
+		//arrange
+		oTA.setValue(sInitValue);
+		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
+		assert.strictEqual(oCounter[0].innerText, "12 Characters Exceeded", "The counter is empty");
+		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");
+		assert.strictEqual(oTA.$("inner").attr("aria-labelledby"), oCounter[0].id, "The TextArea aria-labelledby attribute is set to counter id correctly");
+
+		// arrange
+		oTA.setShowExceededText(false);
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+		assert.strictEqual(oTA.getShowExceededText(), false, "The property showExceededText is false");
+		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), false, "The TextArea haven't got an aria-labelledby attribute");
+
+		// cleanup
+		oTA.destroy();
+	});
+
+	QUnit.test("valueState with showExceededText = true without binding", function () {
+		var sInitValue = "Text",
+			iMaxLength = 40,
+			sValueState = "Error",
+			sInitValue = "Lorem ipsum dolor sit amet, consectetur el",
+			oCounter, oTextArea,
+			oTA = new sap.m.TextArea({
+				value: sInitValue,
+				showExceededText: true,
+				maxLength: iMaxLength,
+				width: "100%",
+				valueState: sValueState,
+				valueLiveUpdate: true,
+				liveChange: function () {
+					oTA.setValueState(oTA.getValue().length > oTA.getMaxLength() ? "Error" : "Success");
+				}
+			});
+
+		// arrange
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+		assert.strictEqual(oTA.getValueState(), sValueState, "valueStat is Error");
+		assert.strictEqual(oTA._maxLengthIsExceeded(), true, "max length is exceeded");
+
+		// arrange
+		oTextArea = $("textarea.sapMTextAreaInner");
+		oCounter = oTA.$("counter");
+		var fnFireLiveChangeSpy = this.spy(oTA, "fireLiveChange");
+		oTA.setValue("This is test text.");
+		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
+		oTA.fireLiveChange();
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), "This is test text.", "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+		assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
+		assert.strictEqual(oTA.getValueState(), sap.ui.core.ValueState.Success, "valueStat is Warning");
+		assert.strictEqual(oTA._maxLengthIsExceeded(), false, "max length is not exceeded");
+
+		// cleanup
+		oTA.destroy();
+	});
+
+	QUnit.test("valueState with showExceededText = true with binding", function () {
+		// system under test
+		var iMaxLength = 40,
+			oCounter, oTextArea,
+			oTA = new sap.m.TextArea({
+				value: "{/value}",
+				showExceededText: true,
+				maxLength: iMaxLength,
+				width: "100%",
+				valueState: "{= ${/value}.length > 40 ? 'Error' : 'Success' }",
+				valueLiveUpdate: true,
+				liveChange: function () { oTA.setValueState(oTA.getValue().length > oTA.getMaxLength() ? "Error" : "Success");}
+			});
+
+		// arrange
+		var oData = {
+			"value": "Lorem ipsum dolor sit amet, consectetur el"
+		};
+
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		oTA.setModel(oModel);
+
+		oTA.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
+		oTA.fireLiveChange();
+
+		oTextArea = $("textarea.sapMTextAreaInner");
+		oCounter = oTA.$("counter");
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), oData.value, "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+		assert.strictEqual(oTA.getValueState(), sap.ui.core.ValueState.Error, "valueStat is Error");
+
+		// arrange
+		oTA.setValue("This is test text.");
+		//fireLiveChange not "input" event because in inputBase onInput: for IE the event is marked as invalid on event simulation
+		oTA.fireLiveChange();
+
+		// assertions
+		assert.strictEqual(oTA.getValue(), "This is test text.", "The TextArea value is correct");
+		assert.strictEqual(oTA.getMaxLength(), iMaxLength, "The TextArea maxLength property is correctly set to 6");
+		assert.strictEqual(oTA.getValueState(), sap.ui.core.ValueState.Success, "valueStat is Success");
+		assert.strictEqual(oTA._maxLengthIsExceeded(), false, "max length is not exceeded");
+
+		// cleanup
+		oTA.destroy();
 	});
 
 })(jQuery, sap.ui.getCore());

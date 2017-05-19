@@ -248,6 +248,22 @@
 		},
 		afterEach: function() {
 			destroyTable(this.table);
+		},
+		checkRowsUpdated: function(aActualReasons, aExpectedReasons) {
+			var oTreeTable = this.table;
+
+			return new Promise(function(resolve) {
+				window.setTimeout(function() {
+					assert.deepEqual(aActualReasons, aExpectedReasons,
+						"VisibleRowCountMode: " + oTreeTable.getVisibleRowCountMode() + " - "
+						+ (aExpectedReasons.length > 0
+							? "The event _rowsUpdated has been fired in order with reasons: " + aExpectedReasons.join(", ")
+							: "The event _rowsUpdated has not been fired")
+					);
+
+					resolve();
+				}, 100);
+			});
 		}
 	});
 
@@ -399,10 +415,58 @@
 		assert.ok(oBinding.getSelectedNodesCount() == 0, "# of selected nodes is correct");
 	});
 
+	QUnit.test("_rowsUpdated - Expand", function(assert) {
+		var done = assert.async();
+		var oTable = this.table;
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Expand
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
+	QUnit.test("_rowsUpdated - Collapse", function(assert) {
+		var done = assert.async();
+		var oTable = this.table;
+		var aFiredReasons = [];
+		var that = this;
+
+		oTable.attachEvent("_rowsUpdated", function(oEvent) {
+			aFiredReasons.push(oEvent.getParameter("reason"));
+		});
+
+		sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, true);
+
+		window.setTimeout(function() {
+			aFiredReasons = [];
+			sap.ui.table.TableUtils.Grouping.toggleGroupHeader(oTable, 0, false);
+
+			that.checkRowsUpdated(aFiredReasons, [
+				sap.ui.table.TableUtils.RowsUpdateReason.Collapse
+			]).then(function() {
+				done();
+			});
+		}, 0);
+	});
+
 	</script>
   </head>
   <body class="sapUiBody">
-    <h1 id="qunit-header">qUnit Page for sap.ui.table.TreeTable</h1>
+    <h1 id="qunit-header">QUnit Page for sap.ui.table.TreeTable</h1>
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
     <ol id="qunit-tests"></ol>

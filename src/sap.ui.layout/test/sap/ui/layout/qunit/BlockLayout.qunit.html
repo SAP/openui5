@@ -74,6 +74,8 @@
 			assert.strictEqual(newCell.getTitleAlignment(), "Begin", "Title Alignment should be Begin by default");
 			assert.strictEqual(newCell.getWidth(), 0, "Should be equal to 0 by default");
 			assert.strictEqual(newCell.getTitleLevel(), "Auto", "Should be equal to Auto by default");
+			assert.strictEqual(newCell.getBackgroundColorSet(), 0, "The default bg color set should be 0");
+			assert.strictEqual(newCell.getBackgroundColorIndex(), 0, "The dafault bg color index shoudl be 0");
 		});
 
 		QUnit.test("Error logging", function (assert) {
@@ -97,7 +99,7 @@
 			});
 		});
 
-		QUnit.test("Width property change invaldiates the guidelines", function (assert) {
+		QUnit.test("Width property change invalidates the guidelines", function (assert) {
 			this.cells[1].setWidth(3);
 			this.cells.forEach(function (cell) {
 				assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should use the 100% width fallback.");

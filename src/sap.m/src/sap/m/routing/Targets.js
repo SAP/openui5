@@ -180,7 +180,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * It's a perfect candidate to lazy load something inside of it.
 		 * <br/>
 		 * <b>Example app structure:</b><br/>
-		 * We have a rootView that is returned by the createContent function of our UIComponent. This view contains a sap.m.App control with the id 'myApp'
+		 * We have a rootView that is returned by the createContent function of our UIComponent. This view contains an sap.m.App control with the id 'myApp'
 		 * <pre>
 		 * <code>
 		 * &lt;View xmlns="sap.m"&gt;

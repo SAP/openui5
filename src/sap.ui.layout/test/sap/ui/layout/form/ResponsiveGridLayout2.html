@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+		<title>ResponsiveGridLayout - sap.ui.layout.form</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.layout.form.GridLayout.gif">
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.ui.layout, sap.m"
+				src="../../../../../resources/sap-ui-core.js"></script>
+
+		<script>
+//			jQuery.sap.require("sap.m.Button");
+
+			var oLayout1 = new sap.ui.layout.form.ResponsiveGridLayout("L1");
+
+			var oForm1 = new sap.ui.layout.form.Form("F1",{
+				title: "Form using ResponsiveGridLayout",
+				editable: false,
+				layout: oLayout1,
+				formContainers: [
+					new sap.ui.layout.form.FormContainer("C1",{
+						title: "Adress",
+						expandable: true,
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "ID",
+								fields: [new sap.m.Text({text: "SAP SE"})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Street / Number",
+								fields: [new sap.m.Text({text: "Dietmar-Hopp-Allee 16"})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: new sap.m.Label({text: "Post code / City"}),
+								fields: [new sap.m.Text({text: "69190 Walldorf"})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Country",
+								fields: [new sap.m.Text({text: "Germany"})]
+							})]
+						}),
+					new sap.ui.layout.form.FormContainer("C2",{
+						title: "Contact",
+						expandable: true,
+						formElements: [
+							new sap.ui.layout.form.FormElement({
+								label: "Phone",
+								fields: [new sap.m.Text({text:"0123456789"})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Mail",
+								fields: [new sap.m.Text({text:"info@sap.com"})]
+							}),
+							new sap.ui.layout.form.FormElement({
+								label: "Web",
+								fields: [new sap.m.Text({text:"http://www.sap.com"})]
+							})
+						]
+					})
+				]
+			}).placeAt("content");
+
+			sap.ui.getCore().byId("C1").setExpandable(true); // to check button is not created twice
+
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1 id="header">Test Page for <code>sap.ui.layout.form.ResponsiveGridLayout</code></h1>
+
+		<div id="content"></div>
+		<br>
+	</body>
+</html>

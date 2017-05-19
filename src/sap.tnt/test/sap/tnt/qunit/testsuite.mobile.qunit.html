@@ -17,15 +17,11 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
-			var isSupported = !sap.ui.Device.browser.msie || sap.ui.Device.browser.version > 9;
-
-			if (isSupported) {
-				suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ExploredSamples.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/NavigationList.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/SideNavigation.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ToolHeader.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ToolPage.qunit.html");
-			}
+			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ExploredSamples.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/NavigationList.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/SideNavigation.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ToolHeader.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/ToolPage.qunit.html");
 
 			// toolpage demo app integration tests
 			suite.addTestPage(contextPath + "/test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html");

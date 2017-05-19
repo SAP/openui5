@@ -1,6 +1,9 @@
+/*global QUnit,sinon*/
+
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 
 (function(ChangeRegistryItem) {
+	"use strict";
 
 	QUnit.module("sap.ui.fl.registry.ChangeRegistryItem", {
 		beforeEach: function() {
@@ -31,7 +34,9 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
 		var errorLogSpy = sinon.spy(jQuery.sap.log, "error");
 
 		//Act
-		var instance = new ChangeRegistryItem({});
+		/*eslint-disable no-new*/
+		new ChangeRegistryItem({});
+		/*eslint-enable no-new*/
 
 		//Assert
 		assert.ok(errorLogSpy.calledTwice);

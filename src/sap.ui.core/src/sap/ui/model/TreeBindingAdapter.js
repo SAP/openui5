@@ -628,7 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				var iRequestedLength = this._calculateRequestLength(iMaxGroupSize, oCurrentSection);
 
-				//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
+				//if we are in the autoexpand mode "bundled", suppress additional requests during the tree traversal
 				//paging is handled differently
 				if (oNode.autoExpand >= 0 && this._autoExpandMode === TreeAutoExpandMode.Bundled) {
 					iRequestedLength = Math.max(0, iMaxGroupSize);
@@ -863,16 +863,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 						that._updateTreeState({groupID: sGroupID, expanded: false});
 					}
 				});
-			}
 
-			// always remove selections from child nodes of the collapsed node
-			jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
-				if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode) && sGroupID !== sGroupIDforCollapsingNode) {
-					//removes the selectAllMode from child nodes
-					oNodeState.selectAllMode = false;
-					that.setNodeSelection(oNodeState, false);
+				var aDeselectedNodeIds = [];
+
+				// always remove selections from child nodes of the collapsed node
+				jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
+					if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode) && sGroupID !== sGroupIDforCollapsingNode) {
+						//removes the selectAllMode from child nodes
+						oNodeState.selectAllMode = false;
+						that.setNodeSelection(oNodeState, false);
+						aDeselectedNodeIds.push(sGroupID);
+					}
+				});
+
+				if (aDeselectedNodeIds.length) {
+					var selectionChangeParams = {
+						rowIndices: []
+					};
+					// Collect the changed indices
+					var iNodeCounter = 0;
+					this._map(this._oRootNode, function (oNode) {
+						if (!oNode || !oNode.isArtificial) {
+							iNodeCounter++;
+						}
+
+						if (oNode && aDeselectedNodeIds.indexOf(oNode.groupID) !== -1) {
+							if (oNode.groupID === this._sLeadSelectionGroupID) {
+								// Lead selection got deselected
+								selectionChangeParams.oldIndex = iNodeCounter;
+								selectionChangeParams.leadIndex = -1;
+							}
+							selectionChangeParams.rowIndices.push(iNodeCounter);
+						}
+					});
+
+					this._publishSelectionChanges(selectionChangeParams);
 				}
-			});
+			}
 
 			if (!bSuppressChange) {
 				this._fireChange({reason: ChangeReason.Collapse});
@@ -1177,33 +1204,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			if (this._oRootNode && this._oRootNode.nodeState.selectAllMode) {
 				var sGroupId, iVisibleDeselectedNodeCount, oParent, oGroupNodeState;
 
+				var oContext, aVisibleGroupIds = [];
+				if (this.filterInfo && this.aAllFilters) {
+					// If we are filtering, we need to map the filtered (visible) contexts to group IDs.
+					// With that we can check whether a node state is actually a visible node
+					for (var i = this.filterInfo.aFilteredContexts.length - 1; i >= 0; i--) {
+						oContext = this.filterInfo.aFilteredContexts[i];
+						aVisibleGroupIds.push(this._calculateGroupID({
+							context: oContext
+						}));
+					}
+				}
+
 				iVisibleDeselectedNodeCount = 0;
 				// If we implicitly deselect all nodes under a group node,
 				//	we need to count them as "visible deselected nodes"
 				for (sGroupId in this._mTreeState.expanded) {
-					oGroupNodeState = this._mTreeState.expanded[sGroupId];
-					if (!oGroupNodeState.selectAllMode && oGroupNodeState.leafCount !== undefined) {
-						iVisibleDeselectedNodeCount += oGroupNodeState.leafCount;
+					if (!this.aAllFilters || aVisibleGroupIds.indexOf(sGroupId) !== -1) { // Not filtering or part of the visible nodes if filtering
+						oGroupNodeState = this._mTreeState.expanded[sGroupId];
+						if (!oGroupNodeState.selectAllMode && oGroupNodeState.leafCount !== undefined) {
+							iVisibleDeselectedNodeCount += oGroupNodeState.leafCount;
+						}
 					}
 				}
 
 				// Except those who got explicitly selected after the parent got collapsed
 				//	and expanded again (and while the root is still in select-all mode)
 				for (sGroupId in this._mTreeState.selected) {
-					oGroupNodeState = this._mTreeState.selected[sGroupId];
-					oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
-					if (oParent && !oParent.selectAllMode) {
-						iVisibleDeselectedNodeCount--;
+					if (!this.aAllFilters || aVisibleGroupIds.indexOf(sGroupId) !== -1) { // Not filtering or part of the visible nodes if filtering
+						oGroupNodeState = this._mTreeState.selected[sGroupId];
+						oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
+						if (oParent && !oParent.selectAllMode) {
+							iVisibleDeselectedNodeCount--;
+						}
 					}
 				}
 
 				// Add those which are explicitly deselected and whose parents *are* in selectAllMode (not covered by the above)
 				for (sGroupId in this._mTreeState.deselected) {
-					oGroupNodeState = this._mTreeState.deselected[sGroupId];
-					oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
-					// If parent is expanded check if its in select all mode
-					if (oParent && oParent.selectAllMode) {
-						iVisibleDeselectedNodeCount++;
+					if (!this.aAllFilters || aVisibleGroupIds.indexOf(sGroupId) !== -1) { // Not filtering or part of the visible nodes if filtering
+						oGroupNodeState = this._mTreeState.deselected[sGroupId];
+						oParent = this._mTreeState.expanded[oGroupNodeState.parentGroupID];
+						// If parent is expanded check if its in select all mode
+						if (oParent && oParent.selectAllMode) {
+							iVisibleDeselectedNodeCount++;
+						}
 					}
 				}
 
@@ -1388,7 +1433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Marks a range of tree nodes as selected/deselected, starting with iFromIndex going to iToIndex.
 		 * The TreeNodes are referenced via their absolute row index.
-		 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
+		 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 		 * Invisible nodes (collapsed child nodes) will not be regarded.
 		 */
 		TreeBindingAdapter.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
@@ -1573,7 +1618,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Gets the collapsing behavior when parent nodes are collapsed.
-		 * @param {boolean} bCollapseRecursive
 		 */
 		TreeBindingAdapter.prototype.getCollapseRecursive = function () {
 			return this.bCollapseRecursive;

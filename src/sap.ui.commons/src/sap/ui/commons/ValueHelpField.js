@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Ico
 
 			/**
 			 * URL of the standard icon for the value help. If no parameter is supplied the default icon image will be shown.
-			 * This can be an URI to an image or an icon font URI.
+			 * This can be a URI to an image or an icon font URI.
 			 */
 			iconURL : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 

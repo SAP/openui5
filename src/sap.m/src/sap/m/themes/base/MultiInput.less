@@ -8,6 +8,7 @@
 //when multiinput width changes the width of the tokenizer should be auto
 .sapMMultiInput {
 	min-width: 7rem; //9.5rem;
+
 }
 
 .sapMMultiInput.sapMInputVH {
@@ -16,6 +17,7 @@
 
 .sapMMultiInput .sapMTokenizer {
 	min-width: 4rem;
+	margin-left: -0.375rem;
 }
 
 .sapMMultiInput .sapMTokenizer.sapMTokenizerEmpty {
@@ -163,8 +165,11 @@ html.sap-tablet .sapMMultiInputMultiModeBorder {
 
 .sapMMultiInputMultiModeBorder .sapMTokenizer {
 	white-space: normal;
-	max-width: calc(~"100% - 2.375rem"); // 100% - icon width 2.375rem
 	box-sizing: border-box;
+}
+
+.sapMMultiInput.sapMInputVH .sapMMultiInputMultiModeBorder .sapMTokenizer {
+	padding-right: 2.375rem; // icon width 2.375rem
 }
 
 .sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken {
@@ -297,8 +302,11 @@ html.sap-phone .sapMTokenizerMultiLine > .sapMTokenizerScrollContainer > .sapMTo
 
 .sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer {
 	white-space: normal;
-	max-width: calc(~"100% - 2rem"); // 100% - icon width 2rem
 	box-sizing: border-box;
+}
+
+.sapUiSizeCompact .sapMMultiInput.sapMInputVH .sapMMultiInputMultiModeBorder .sapMTokenizer {
+	padding-right: 2rem; // icon width 2rem
 }
 
 .sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken {

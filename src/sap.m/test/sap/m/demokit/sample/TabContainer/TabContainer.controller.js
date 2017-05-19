@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast', 'sap/m/TabContainerItem'],
-	function (Controller, JSONModel, MessageToast, TabContainerItem) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast', 'sap/m/TabContainerItem', 'sap/m/MessageBox'],
+	function (Controller, JSONModel, MessageToast, TabContainerItem, MessageBox) {
 		"use strict";
 
 		return Controller.extend("sap.m.sample.TabContainer.TabContainer", {
@@ -65,13 +65,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap
 				var oTabContainer = this.getView().byId("myTabContainer");
 				var oItemToClose = oEvent.getParameter('item');
 
-				sap.m.MessageBox.confirm("Do you want to close the tab '" + oItemToClose.getName() + "'?", {
+				MessageBox.confirm("Do you want to close the tab '" + oItemToClose.getName() + "'?", {
 					onClose: function (oAction) {
-						if (oAction === sap.m.MessageBox.Action.OK) {
+						if (oAction === MessageBox.Action.OK) {
 							oTabContainer.removeItem(oItemToClose);
-							sap.m.MessageToast.show("Item closed: " + oItemToClose.getName(), {duration: 500});
+							MessageToast.show("Item closed: " + oItemToClose.getName(), {duration: 500});
 						} else {
-							sap.m.MessageToast.show("Item close canceled: " + oItemToClose.getName(), {duration: 500});
+							MessageToast.show("Item close canceled: " + oItemToClose.getName(), {duration: 500});
 						}
 					}
 				});

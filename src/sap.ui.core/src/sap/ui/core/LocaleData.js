@@ -356,10 +356,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
 			var aTokens = this._parseSkeletonFormat(sSkeleton),
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
-				sPattern,
+				sPattern, sSinglePattern,
+				oAvailableDateTimeFormats,
 				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
+			var bSymbolFound;
+
+			var sDiffGroup = sIntervalDiff;
+			var oGroup;
+			if (sDiffGroup) {
+				if (sDiffGroup === "a") {
+					sDiffGroup = "Hour";
+				}
+
+				if (sDiffGroup.length === 1) {
+					sDiffGroup = mCLDRSymbols[sDiffGroup] ? mCLDRSymbols[sDiffGroup].group : "";
+				}
+
+				if (sDiffGroup) {
+					oGroup = mCLDRSymbolGroups[sDiffGroup];
+					if (oGroup.index > aTokens[aTokens.length - 1].index) {
+						// if the index of interval diff is greater than the index of the last field
+						// in the sSkeleton, which means the diff unit is smaller than all units in
+						// the skeleton, return a single date pattern which is generated using the
+						// given skeleton
+						return this.getCustomDateTimePattern(sSkeleton, sCalendarType);
+					}
+				}
+			}
 
 			if (sIntervalDiff) {
+				// FieldGroup
+				if (sIntervalDiff.length > 1) {
+					// Find out the symbol of the given group
+					// and set the interval diff
+					bSymbolFound = aTokens.some(function(oToken) {
+						if (oToken.group === sIntervalDiff) {
+							sIntervalDiff = oToken.symbol;
+							return true;
+						}
+					});
+
+					// When no symbol is found
+					// an empty interval diff will be set
+					if (!bSymbolFound) {
+						sIntervalDiff = "";
+					}
+				}
+
+				// Special handling of "a" (Dayperiod)
+				if (sIntervalDiff === "a") {
+					// Find out whether dayperiod is needed
+					// If not, set the internal diff with the actual 'Hour' symbol
+					bSymbolFound = aTokens.some(function(oToken) {
+						if (oToken.group === "Hour") {
+							if (oToken.symbol !== "h" && oToken.symbol !== "K") {
+								sIntervalDiff = oToken.symbol;
+							}
+							return true;
+						}
+					});
+
+					// When no symbol is found
+					// an empty interval diff will be set
+					if (!bSymbolFound) {
+						sIntervalDiff = "";
+					}
+				}
+
 				// Only use best match, if there are no missing tokens, as there is no possibility
 				// to append items on interval formats
 				if (oBestMatch && oBestMatch.missingTokens.length === 0) {
@@ -372,8 +435,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				// If no pattern could be found, get the best availableFormat for the skeleton
 				// and use the fallbackIntervalFormat to create the pattern
 				if (!sPattern) {
-					sPattern = this.getCombinedIntervalPattern(
-						this.getCustomDateTimePattern(sSkeleton, sCalendarType), sCalendarType);
+					oAvailableDateTimeFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "availableFormats");
+					// If it is a mixed skeleton and the greatest interval on time, create a mixed pattern
+					if (rMixedSkeleton.test(sSkeleton) && "ahHkKjJms".indexOf(sIntervalDiff) >= 0) {
+						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType, sIntervalDiff);
+					} else {
+						sSinglePattern = this._getFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType);
+						sPattern = this.getCombinedIntervalPattern(sSinglePattern, sCalendarType);
+					}
 				}
 			} else if (!oBestMatch) {
 				sPattern = sSkeleton;
@@ -633,7 +702,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return sPattern;
 		},
 
-		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType) {
+		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
 			var rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				rWideMonth = /MMMM|LLLL/,
 				rAbbrevMonth = /MMM|LLL/,
@@ -647,7 +716,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			sTimeSkeleton = oResult[2];
 			// Get patterns for date and time separately
 			sDatePattern = this._getFormatPattern(sDateSkeleton, oAvailableFormats, sCalendarType);
-			sTimePattern = this._getFormatPattern(sTimeSkeleton, oAvailableFormats, sCalendarType);
+			if (sIntervalDiff) {
+				sTimePattern = this.getCustomIntervalPattern(sTimeSkeleton, sIntervalDiff, sCalendarType);
+			} else {
+				sTimePattern = this._getFormatPattern(sTimeSkeleton, oAvailableFormats, sCalendarType);
+			}
 			// Combine patterns with datetime pattern, dependent on month and weekday
 			if (rWideMonth.test(sDateSkeleton)) {
 				sStyle = rWeekDay.test(sDateSkeleton) ? "full" : "long";
@@ -1764,7 +1837,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		// normalize language and handle special cases
 		sLanguage = (sLanguage && M_ISO639_OLD_TO_NEW[sLanguage]) || sLanguage;
-		// Special case 1: in a SAP context, the inclusive language code "no" always means Norwegian Bokmal ("nb")
+		// Special case 1: in an SAP context, the inclusive language code "no" always means Norwegian Bokmal ("nb")
 		if ( sLanguage === "no" ) {
 			sLanguage = "nb";
 		}

@@ -1,5 +1,7 @@
+/*global QUnit*/
+
 sap.ui.define([
-	"myCompany/myApp/model/formatter"
+	"mycompany/myapp/model/formatter"
 ], function(formatter) {
 	"use strict";
 

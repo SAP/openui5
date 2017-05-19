@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 
 	/**
 	 * Returns a tree state handle.
-	 * The tree state handle can be used in to restore the tree state for an v2 ODataTreeBinding running in OperationMode.Client.
+	 * The tree state handle can be used in to restore the tree state for a v2 ODataTreeBinding running in OperationMode.Client.
 	 * Please see the constructor documentation of sap.ui.model.odata.v2.ODataTreeBinding for the API documentation of the "treeState" constructor parameter.
 	 *
 	 * @name sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState

@@ -103,17 +103,12 @@ sap.ui.define([
 		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);
-
-		this._oContextMenuControl.openMenu({
-			pageX: oOriginalEvent.pageX,
-			pageY: oOriginalEvent.pageY
-		});
-
+		this._oContextMenuControl.openMenu(oOriginalEvent, oTargetOverlay);
 		this.fireOpenedContextMenu();
 	};
 
 	/**
-	 * Called when an context menu item gets selected by user
+	 * Called when a context menu item gets selected by user
 	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @override
@@ -147,8 +142,9 @@ sap.ui.define([
 		document.activeElement.blur();
 
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var sTargetClasses = oEvent.target.className;
 
-		if (oOverlay && oOverlay.isSelectable()) {
+		if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1) {
 			if (!oOverlay.isSelected()) {
 				oOverlay.setSelected(true);
 			}

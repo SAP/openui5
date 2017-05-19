@@ -68,11 +68,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property text has changed as expected");
 	});
-	
+
 	QUnit.test('When applying a property change which changes a binding on a js control tree, Then', function(assert) {
-		
+
 		this.NEW_VALUE = "{i18n>textKey}";
-		
+
 		this.mExpectedChangeContent = {
 				property : "text",
 				oldValue : this.OLD_VALUE,
@@ -86,21 +86,21 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			content : this.mExpectedChangeContent
 		};
 
-		this.oChange = new Change(this.mSpecificChangeData);		
+		this.oChange = new Change(this.mSpecificChangeData);
 
 		this.oChangeHandler.applyChange(this.oChange, this.oButton, {modifier: JsControlTreeModifier});
 
 		var oBindingInfo = this.oButton.getBindingInfo("text");
-		
+
 		assert.equal(oBindingInfo.parts[0].path, "textKey", "property value binding path has changed as expected");
 		assert.equal(oBindingInfo.parts[0].model, "i18n", "property value binding model has changed as expected");
-		
+
 	});
-	
+
 	QUnit.test('When applying a property change which changes a binding on a xml control tree, Then', function(assert) {
-		
+
 		this.NEW_VALUE = "{i18n>textKey}";
-		
+
 		this.mExpectedChangeContent = {
 				property : "text",
 				oldValue : this.OLD_VALUE,
@@ -114,13 +114,13 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			content : this.mExpectedChangeContent
 		};
 
-		this.oChange = new Change(this.mSpecificChangeData);		
+		this.oChange = new Change(this.mSpecificChangeData);
 
 		this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier});
 
 		assert.equal(this.oXmlButton.getAttribute("text"), this.NEW_VALUE, "property value has changed as expected");
-		
-	});		
+
+	});
 
 //	QUnit.test('When applying broken changes, Then', function(assert) {
 //		var oChange = new Change({

@@ -1,4 +1,7 @@
+/*global QUnit*/
+
 (function ($, QUnit) {
+	"use strict";
 
 	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
 	jQuery.sap.registerModulePath("view", "view");
@@ -21,7 +24,7 @@
 			getBlocks: function (sText) {
 				return [
 					new sap.m.Text({text: sText || "some text"})
-				]
+				];
 			},
 			getObjectPage: function () {
 				return new sap.uxap.ObjectPageLayout();
@@ -48,7 +51,7 @@
 
 		helpers = {
 			generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
-				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar(): oFactory.getObjectPage(),
+				var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar() : oFactory.getObjectPage(),
 					oSection,
 					oSubSection;
 
@@ -182,13 +185,16 @@
 			this.NUMBER_OF_SECTIONS = 3;
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, true);
 			this.oSecondSection = this.oObjectPage.getSections()[1];
+			this.oThirdSection = this.oObjectPage.getSections()[2];
 			this.oObjectPage.setSelectedSection(this.oSecondSection.getId());
 			this.iLoadingDelay = 500;
 			helpers.renderObject(this.oObjectPage);
+
 		},
 		afterEach: function () {
 			this.oObjectPage.destroy();
 			this.oSecondSection = null;
+			this.oThirdSection = null;
 			this.iLoadingDelay = 0;
 		}
 	});
@@ -206,6 +212,24 @@
 			sectionIsSelected(oObjectPage, assert, oExpected);
 			done();
 		}, this.iLoadingDelay);
+	});
+
+	QUnit.test("test selected section when hiding another one", function (assert) {
+		/* Arrange */
+		var oObjectPage = this.oObjectPage,
+			oExpected = {
+				oSelectedSection: this.oSecondSection,
+				sSelectedTitle: this.oSecondSection.getSubSections()[0].getTitle()
+			};
+
+		/* Act: Hide the third section.
+		/* which used to cause a failure, see BCP: 1770148914 */
+		this.oThirdSection.setVisible(false);
+
+		/* Assert:
+		/* The ObjectPage adjusts its layout, */
+		/* but the selected section should remain the same. */
+		sectionIsSelected(oObjectPage, assert, oExpected);
 	});
 
 	QUnit.module("IconTabBar section selection", {
@@ -381,7 +405,7 @@
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", function (assert) {
 		var oObjectPageSectionTitleLevel = sap.ui.core.TitleLevel.H1,
-			oObjectPageMinimumSectionTitleLevel= sap.ui.core.TitleLevel.H6,
+			oObjectPageMinimumSectionTitleLevel = sap.ui.core.TitleLevel.H6,
 			oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(oObjectPageSectionTitleLevel),
 			oSection,
 			$sectionHeader,
@@ -655,7 +679,6 @@
 		var oHeader = new sap.uxap.ObjectPageHeader("header");
 		oObjectPage.addHeaderContent(new sap.m.Text({text: "test"}));
 		oObjectPage.setHeaderTitle(oHeader);
-		var oHeader2 = oObjectPage.getHeaderTitle();
 		var aContent = oObjectPage.getHeaderContent();
 		assert.equal(aContent[0].getText(), "test");
 	});

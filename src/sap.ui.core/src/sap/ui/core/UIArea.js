@@ -433,7 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	};
 
 	/**
-	 * Notifies the UIArea about an just invalidated control.
+	 * Notifies the UIArea about an invalidated control.
 	 *
 	 * The UIArea internally decides whether to re-render just the modified
 	 * controls or the complete content. It also informs the Core when it
@@ -951,7 +951,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	};
 
 	/**
-	 * An UIArea can't be cloned and throws an error when trying to do so.
+	 * UIAreas can't be cloned and throw an error when trying to do so.
 	 */
 	UIArea.prototype.clone = function() {
 		throw new Error("UIArea can't be cloned");

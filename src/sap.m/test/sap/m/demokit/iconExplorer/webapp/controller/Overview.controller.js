@@ -8,8 +8,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/MessageToast",
 	"sap/m/Label",
-	"sap/m/ToggleButton"
-], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton) {
+	"sap/m/ToggleButton",
+	"jquery.sap.global"
+], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, $) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -46,9 +47,6 @@ sap.ui.define([
 			this.setModel(oTagModel, "tags");
 
 			this.getRouter().getRoute("overview").attachPatternMatched(this._updateUI, this);
-
-			// you don't want to know
-			this._finetuneUI();
 		},
 
 		/**
@@ -232,43 +230,47 @@ sap.ui.define([
 		},
 
 		/**
-		 * Copies the value of the code input field to the clipboard and display a message
+		 * Copies the value of the code input field to the clipboard and displays a message
+		 * @public
 		 */
 		onCopyCodeToClipboard: function () {
 			var sString = this.byId("previewCopyCode").getValue(),
-				$temp = $("<input>"),
-				oResourceBundle = this.getResourceBundle();
+				oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText;
 
-			try {
-				$("body").append($temp);
-				$temp.val(sString).select();
-				document.execCommand("copy");
-				$temp.remove();
-
-				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]));
-			} catch (oException) {
-				MessageToast.show(oResourceBundle.getText("previewCopyToClipboardFail", [sString]));
-			}
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
+			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
 		},
 
 		/**
-		 * Copies the value of the code input field to the clipboard and display a message
+		 * Copies the unicode part from the input field to the clipboard and displays a message
+		 * @public
+		 */
+		onCopyUnicodeToClipboard: function () {
+			var oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIconName = this.byId("preview").getBindingContext().getObject().name,
+				sString = this.getModel().getUnicodeHTML(sIconName);
+			sString = sString.substring(2, sString.length - 1);
+			sSuccessText = oResourceBundle.getText("previewCopyUnicodeToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyUnicodeToClipboardFail", [sString]);
+			this._copyStringToClipboard(sString, sSuccessText, sExceptionText);
+		},
+
+		/**
+		 * Copies the icon to the clipboard and displays a message
+		 * @public
 		 */
 		onCopyIconToClipboard: function () {
-			var sString = this.byId("previewCopyCode").getValue();
-			var sIcon = this.getModel().getUnicode(sString);
-			var $temp = $("<input>");
+			var sString = this.byId("previewCopyCode").getValue(),
+				oResourceBundle = this.getResourceBundle(),
+				sSuccessText, sExceptionText,
+				sIcon = this.getModel().getUnicode(sString);
 
-			try {
-				$("body").append($temp);
-				$temp.val(sIcon).select();
-				document.execCommand("copy");
-				$temp.remove();
-
-				MessageToast.show("Icon \"" + sString + "\" has been copied to clipboard");
-			} catch (oException) {
-				MessageToast.show("Icon \"" + sString + "\" could not be copied to clipboard");
-			}
+			sSuccessText = oResourceBundle.getText("previewCopyToClipboardSuccess", [sString]);
+			sExceptionText = oResourceBundle.getText("previewCopyToClipboardFail", [sString]);
+			this._copyStringToClipboard(sIcon, sSuccessText, sExceptionText);
 		},
 
 		/**
@@ -295,69 +297,22 @@ sap.ui.define([
 		/* =========================================================== */
 
 		/**
-		 * Corrects several control issues for improved display in the icon explorer.
-		 * Caution: some of the following hacks are not recommended for standard app development
-		 * @private
+		 * Copies the string to the clipboard and displays a message
+		 * @param {string} copyText the text string that has to be copied to the clipboard
 		 */
-		_finetuneUI : function () {
-			var fnMakeTransparent = function (sId) {
-				this.byId(sId).addEventDelegate({
-					onAfterRendering: function () {
-						try {
-							var $control = this.byId(sId).$();
-							var sBackgroundColor = $control.css("background-color");
-							var sAlphaColor = "rgba(" + sBackgroundColor.match(/rgb\((.+)\)/)[1] + ", 0.80)";
+		_copyStringToClipboard: function (copyText, successText, exceptionText) {
+			var $temp = $("<input>"),
+				oResourceBundle = this.getResourceBundle();
 
-							$control.css("background-color", sAlphaColor);
-						} catch (oException) {
-							// do nothing
-						}
-					}.bind(this)
-				});
-			}.bind(this);
+			try {
+				$("body").append($temp);
+				$temp.val(copyText).select();
+				document.execCommand("copy");
+				$temp.remove();
 
-			/* make preview controls semi-transparent to look better on accent cells */
-			fnMakeTransparent("previewIconTabBar--header");
-			fnMakeTransparent("previewToolbar");
-			fnMakeTransparent("previewListItem");
-			fnMakeTransparent("previewGenericTile");
-
-			/* resize preview icon based on splitter size */
-			// hack: splitter does not have a resize event that we need to resize the content
-			var fnUpdatePreviewSize = function () {
-				var iWidth = this.byId("previewCell").$().width();
-				if (iWidth) {
-					this.byId("previewIcon").setSize((iWidth / 2) + "px");
-				}
-			}.bind(this);
-
-			// if the icon is getting rerendered we also set the size again
-			this.byId("previewIcon").addEventDelegate({
-				onAfterRendering: function () {
-					fnUpdatePreviewSize();
-				}
-			});
-
-			var fnDelayedResize = sap.ui.layout.Splitter.prototype._delayedResize;
-			if (fnDelayedResize) {
-				// caution: overriding prototype methods is dangerous
-				sap.ui.layout.Splitter.prototype._delayedResize = function () {
-					fnDelayedResize.apply(this, arguments);
-					// update icon size after splitter change is applied
-					setTimeout(function () {
-						fnUpdatePreviewSize();
-					}, 0);
-				};
-			}
-
-			// hack: token does not mark the event so the table cell gets highlighted
-			var fnOnTokenTouchstart = sap.m.Token.prototype.ontouchstart;
-			if (fnOnTokenTouchstart) {
-				// caution: overriding prototype methods is dangerous
-				sap.m.Token.prototype.ontouchstart = function () {
-					arguments[0].setMarked();
-					fnOnTokenTouchstart.apply(this, arguments);
-				};
+				MessageToast.show(successText);
+			} catch (oException) {
+				MessageToast.show(exceptionText);
 			}
 		},
 
@@ -374,7 +329,8 @@ sap.ui.define([
 					path: this.getModel().getIconPath(sIcon)
 				});
 
-				this.byId("previewCopyIcon").setHtmlText("<span>" + this.getModel().getUnicodeHTML(sIcon) + "</span>" + sIcon);
+				var sIconSymbol = this.getModel().getUnicodeHTML(sIcon);
+				this.byId("previewCopyIcon").setHtmlText("<span>" + sIconSymbol + "</span>" + sIcon);
 
 				// update the group information with a timeout as this task takes some time to calculate
 				setTimeout(function () {
@@ -445,9 +401,13 @@ sap.ui.define([
 					var sFragmentName = formatter.uppercaseFirstLetter(oQuery.tab);
 
 					// add new content to the end of result container
-					var oResultsFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.ui.demo.iconexplorer.view.browse." + sFragmentName, this);
+					var oResultsFragment = sap.ui.xmlfragment(
+						this.getView().getId(),
+						"sap.ui.demo.iconexplorer.view.browse." + sFragmentName, this);
 					this.byId("resultContainer").addContent(oResultsFragment);
-					this.byId("categorySelection").setVisible(oQuery.tab !== "favorites");
+
+					var bCategoriesVisible = !(Device.system.phone || oQuery.tab == "favorites");
+					this.byId("categorySelection").setVisible(bCategoriesVisible);
 				}
 
 				// icon
@@ -596,9 +556,11 @@ sap.ui.define([
 				var aFilters = [],
 					oFilterTags = (sTagValue ? new Filter("tagString", FilterOperator.Contains, sTagValue) : undefined),
 					oFilterSearchName = (sSearchValue ? new Filter("name", FilterOperator.Contains, sSearchValue) : undefined),
+					fnUmicodeCustomFilter = (sSearchValue ? this._unicodeFilterFactory(sSearchValue) : undefined),
+					oFilterSearchUnicode = (sSearchValue ? new Filter("name", fnUmicodeCustomFilter) : undefined),
 					oFilterSearchTags = (sSearchValue ? new Filter("tagString", FilterOperator.Contains, sSearchValue) : undefined),
 					oFilterSearchNameTags = (sSearchValue ? new Filter({
-						filters: [oFilterSearchTags, oFilterSearchName],
+						filters: [oFilterSearchTags, oFilterSearchName, oFilterSearchUnicode],
 						and: false
 					}) : undefined);
 
@@ -631,6 +593,19 @@ sap.ui.define([
 				oResultBinding.filter(this._vFilterSearch);
 				this.getModel("view").setProperty("/overviewNoDataText", this.getResourceBundle().getText("overviewNoDataWithSearchText"));
 			}
+		},
+
+		/**
+		 * Factory that produces the custom filter for the given unicode query
+		 * @param {string} query the query text that has been entered in the search field and contains the unicode character
+		 * @return {function} the custom filter function that takes the name of the icon and returns true if the icon's unicode contains the query string
+		 * @private
+		 */
+		_unicodeFilterFactory: function(query) {
+			return function (name) {
+				var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase());
+				return sUnicode.indexOf(query) !== -1;
+			}.bind(this);
 		},
 
 		/**

@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require("sap.ui.base.EventProvider");
@@ -209,6 +209,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			content: {something: "createNewVariant"},
 			isVariant: true,
 			packageName: "/UIF/LREP",
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
 			selector: {"persistenceKey": "control1"},
 			id: "0815_1",
 			dependentSelector: {
@@ -223,7 +224,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			},
 			validAppVersions: {
 				creation: "1.0.0",
-				from: "1.0.0"
+				from: "1.0.0",
+				to: "1.0.0"
 			}
 		};
 
@@ -233,13 +235,13 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oCreatedFile.fileName, "0815_1");
 		assert.equal(oCreatedFile.changeType, "filterVariant");
 		assert.equal(oCreatedFile.fileType, "variant");
-		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/changes/");
+		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/adapt/oil/changes/");
 		assert.equal(oCreatedFile.packageName, "/UIF/LREP");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
 		assert.deepEqual(oCreatedFile.selector, {"persistenceKey": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
-		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0"});
+		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
@@ -418,7 +420,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			new sap.ui.core.Control("control4Id"),
 			new sap.ui.core.Control("control5Id")
 		];
-		var aControlId = ["control6Id", "control7Id"];
+		var aControlId = ["control6Id", "control7Id", "control1Id"]; //Control 1 duplicate. Should not be included.
 		var sId;
 
 		var oJsControlTreeModifierGetSelectorStub = this.stub(JsControlTreeModifier, "getSelector");
@@ -457,6 +459,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			idIsLocal: true
 		});
 
+		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({
+			id: "control1",
+			idIsLocal: true
+		});
+
 		var oReturnedControl = new sap.ui.core.Control("control1Id");
 		var oJsControlTreeModifierBySelectorStub = this.stub(JsControlTreeModifier, "bySelector");
 		oJsControlTreeModifierBySelectorStub.onCall(0).returns(oReturnedControl);
@@ -476,7 +483,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(aDependentControl.length, aControl.length);
 
 		var oAppComponent = {
-			createId: function () {return "id";}
+			createId: function (sId) {return sId + "---local";}
 		};
 		var aDependentIdList = oInstance.getDependentIdList(oAppComponent);
 		assert.equal(aDependentIdList.length, 9);
@@ -557,7 +564,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(aDependentControl.length, aControl.length);
 
 		var oAppComponent = {
-			createId: function () {return "id";}
+			createId: function (sId) {return sId + "---local";}
 		};
 		aDependentIdList = oInstance.getDependentIdList(oAppComponent);
 		assert.equal(aDependentIdList.length, 7);

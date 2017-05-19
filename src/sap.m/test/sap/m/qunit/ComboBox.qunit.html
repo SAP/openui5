@@ -5845,6 +5845,43 @@
 			oModel.destroy();
 		});
 
+		QUnit.test("it should open the dropdown list and preselect first item if there is such", function(assert) {
+			// arrange
+			var oItem = new sap.ui.core.Item({
+					text: "Example"
+				}),
+				oComboBox = new sap.m.ComboBox({
+					items: [oItem]
+				}), oFakeEvent = {
+					setMarked: function () {},
+					keyCode: 111 // dummy code (not F4 - 115)
+				},
+				oSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange"),
+				oSelectionSpy = this.spy(oComboBox, "setSelection"),
+				oDomUpdateSpy = this.spy(oComboBox, "updateDomValue"),
+				oSelectTextSpy = this.spy(oComboBox, "selectText");
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oComboBox.onsapshow(oFakeEvent);
+			this.clock.tick(300);
+
+			// assert
+			assert.ok(oSelectionChangeSpy.called, "Selection should be triggered");
+			assert.ok(oSelectionSpy.calledWith(oItem), "First item should be selected");
+			assert.ok(oDomUpdateSpy.calledWith("Example"), "Dom value should be updated with first item's text");
+			assert.ok(oSelectTextSpy.calledWith(0, 7), "Text selection should be performed for the first 7 symbols");
+
+			// cleanup
+			oComboBox.destroy();
+			oSelectionChangeSpy.restore();
+			oSelectionSpy.restore();
+			oDomUpdateSpy.restore();
+			oSelectTextSpy.restore();
+		});
+
 		QUnit.module("onsaphide");
 
 		QUnit.test("onsaphide Alt + UP - open control's picker pop-up", function(assert) {
@@ -10637,21 +10674,6 @@
 
 		QUnit.module("Tablet focus handling");
 
-		QUnit.test("it should focus the picker", function(assert) {
-			this.stub(sap.ui.Device, "system", {
-				desktop: false,
-				tablet: true,
-				phone: false
-			});
-
-			var oComboBox = new sap.m.ComboBox(),
-				oComboBoxPicker = oComboBox.getPicker();
-
-			assert.equal(oComboBoxPicker.getInitialFocus(), oComboBoxPicker.getId(), "Initial focus should be set to the picker");
-
-			oComboBox.destroy();
-		});
-
 		QUnit.test("it should not set the focus to the input", function(assert) {
 			this.stub(sap.ui.Device, "system", {
 				desktop: false,
@@ -10674,6 +10696,84 @@
 			assert.strictEqual(oFocusinStub.callCount, 0, "Focus should not be called");
 
 			oComboBox.destroy();
+		});
+
+		QUnit.test("it should has initial focus set to the input", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: true,
+				phone: false
+			});
+
+			var oComboBox = new sap.m.ComboBox();
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oComboBox.getPicker().getInitialFocus(), oComboBox.getId());
+
+			oComboBox.destroy();
+		});
+
+		QUnit.test("it should initially focus the picker", function(assert) {
+			this.stub(sap.ui.Device, "system", {
+				desktop: false,
+				tablet: true,
+				phone: false
+			});
+
+			var oComboBox = new sap.m.ComboBox(),
+				oFakeEvent = {
+					target: oComboBox.getFocusDomRef(),
+					setMarked: function () { },
+					srcControl: oComboBox
+				};
+
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oComboBox.ontap(oFakeEvent);
+
+			assert.strictEqual(oComboBox.getPicker().getInitialFocus(), oComboBox.getId());
+
+			oComboBox.destroy();
+		});
+
+		QUnit.module("highlighting");
+
+		QUnit.test("_boldItemRef should return a bold string", function(assert) {
+			var oFunctionRef = sap.m.ComboBox.prototype._boldItemRef;
+
+			assert.strictEqual(oFunctionRef("Test", /^t/i, "t"), "<b>T</b>est");
+			assert.strictEqual(oFunctionRef("Test", /^Test/i, "test"), "<b>Test</b>");
+			assert.strictEqual(oFunctionRef("Test", /^/i, ""), "<b></b>Test");
+		});
+
+		QUnit.test("_highlightList should call _boldItemRef on items", function(assert) {
+			// arrange
+			var oComboBox = new sap.m.ComboBox(),
+				oFakeDom = document.createElement("li"),
+				oItem = new sap.ui.core.Item({
+					text: "test"
+				}),
+				oGetVisibleItemsStub = this.stub(oComboBox, "getVisibleItems"),
+				оItemRefStub = this.stub(oItem, "getDomRef");
+
+			// act
+			oFakeDom.innerHTML = "Test";
+			oGetVisibleItemsStub.withArgs().returns([oItem]);
+			оItemRefStub.withArgs().returns(oFakeDom);
+			oComboBox._highlightList("T");
+
+			// assert
+			assert.strictEqual(oFakeDom.innerHTML, "<b>t</b>est", "highlighting should be dont on the dom ref");
+
+			// cleanup
+			oGetVisibleItemsStub.restore();
+			оItemRefStub.restore();
+			oComboBox.destroy();
+			oItem.destroy();
+			oFakeDom = null;
 		});
 		</script>
 	</head>

@@ -3,8 +3,8 @@
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/">
-		<edmx:Include Namespace="com.sap.gateway.default.iwbep.v4_gw_sample_basic.v0001" Alias="GW_SAMPLE_BASIC"/>
+	<edmx:Reference Uri="/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/">
+		<edmx:Include Namespace="com.sap.gateway.default.sap.zui5_epm_sample.v0001" Alias="zui5_epm_sample"/>
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.f4.h_epm_pd_cats-sh.v0001" Alias="SAP__self">
@@ -17,7 +17,7 @@
 			<EntityContainer Name="Container">
 				<EntitySet Name="H_EPM_PD_CATS_SH_SET" EntityType="SAP__self.H_EPM_PD_CATS_SH"/>
 			</EntityContainer>
-			<Annotations Target="GW_SAMPLE_BASIC.Product/Category">
+			<Annotations Target="zui5_epm_sample.Product/Category">
 				<Annotation Term="SAP__common.ValueListMapping">
 					<Record>
 						<PropertyValue Property="CollectionPath" String="H_EPM_PD_CATS_SH_SET"/>

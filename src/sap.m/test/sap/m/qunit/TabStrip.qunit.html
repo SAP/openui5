@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>qUnit Page for sap.m.TabStrip</title>
+	<title>QUnit Page for sap.m.TabStrip</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
@@ -408,6 +408,14 @@
 			assert.strictEqual(document.activeElement.id, oTabStripItemToBeFocused.getId(), "Focus is applied to the right item");
 		});
 
+		QUnit.test("alt + right/left is not handled", function(assert) {
+			var oModifiers = this.sut._oItemNavigation.getDisabledModifiers();
+			assert.ok(oModifiers["sapnext"], "sapnext has disabled modifiers");
+			assert.ok(oModifiers["sapprevious"], "sapprevious has disabled modifiers");
+			assert.equal(oModifiers["sapnext"][0], "alt", "alt is not handled when right is pressed");
+			assert.equal(oModifiers["sapprevious"][0], "alt", "alt is not handled when left is pressed");
+		});
+
 		QUnit.module("Scrolling", {
 			beforeEach: function () {
 				this.sut = new sap.m.TabStrip({
@@ -746,7 +754,7 @@
 	</script>
 </head>
 <body id="body" class="sapUiBody">
-<h1 id="qunit-header">qUnit Page for sap.m.TabStrip</h1>
+<h1 id="qunit-header">QUnit Page for sap.m.TabStrip</h1>
 <h2 id="qunit-banner"></h2>
 <h2 id="qunit-userAgent"></h2>
 <ol id="qunit-tests"></ol>

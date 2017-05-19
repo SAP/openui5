@@ -34,6 +34,7 @@ sap.ui.define([
 		_mLayersIndex : mLayersIndex,
 		_sTopLayer : aLayers[aLayers.length - 1],
 		_sMaxLayer : aLayers[aLayers.length - 1],
+		DEFAULT_APP_VERSION : "DEFAULT_APP_VERSION",
 		/**
 		 * log object exposes available log functions
 		 *
@@ -46,6 +47,9 @@ sap.ui.define([
 			},
 			warning: function (sMessage, sDetails, sComponent) {
 				jQuery.sap.log.warning(sMessage, sDetails, sComponent);
+			},
+			debug: function (sMessage, sDetails, sComponent) {
+				jQuery.sap.log.debug(sMessage, sDetails, sComponent);
 			}
 		},
 
@@ -123,12 +127,12 @@ sap.ui.define([
 				}
 			}
 
-			return Utils._getComponentName(oAppComponent);
+			return Utils.getComponentName(oAppComponent);
 		},
 
 		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
-		 * this is already a application component.
+		 * this is already an application component.
 		 *
 		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
 		 * @returns {String} The component class name, ending with ".Component"
@@ -278,7 +282,7 @@ sap.ui.define([
 		isApplicationVariant: function (oControl) {
 			var sFlexReference = Utils.getComponentClassName(oControl);
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
-			var sComponentName = Utils._getComponentName(oAppComponent);
+			var sComponentName = Utils.getComponentName(oAppComponent);
 			return sFlexReference !== sComponentName;
 		},
 
@@ -363,9 +367,9 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.core.Component} oComponent component instance
 		 * @returns {String} component name
-		 * @private
+		 * @public
 		 */
-		_getComponentName: function (oComponent) {
+		getComponentName: function (oComponent) {
 			var sComponentName = "";
 			if (oComponent) {
 				sComponentName = oComponent.getMetadata().getName();
@@ -475,7 +479,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.Component} oComponent - SAPUI5 component
 		 * @returns {sap.ui.base.Component} found component
-		 * private
+		 * @private
 		 */
 		_getAppComponentForComponent: function (oComponent) {
 			var oSapApp = null;
@@ -770,8 +774,8 @@ sap.ui.define([
 		 * Check if the control id is generated or maintained by the application
 		 *
 		 * @param {sap.ui.core.Control | string} vControl Control instance or id
-		 * @param {sap.ui.core.Component} (optional) oAppComponent application component, needed only if vControl is string (id)
-		 * @param {boolean} (optional) bSuppressLogging flag to suppress the warning in the console
+		 * @param {sap.ui.core.Component} [oAppComponent] oAppComponent application component, needed only if vControl is string (id)
+		 * @param {boolean} [bSuppressLogging] bSuppressLogging flag to suppress the warning in the console
 		 * @returns {boolean} Returns true if the id is maintained by the application
 		 */
 		checkControlId: function (vControl, oAppComponent, bSuppressLogging) {
@@ -879,6 +883,36 @@ sap.ui.define([
 			}
 			this.log.warning("No Manifest received.");
 			return "";
+		},
+
+		/**
+		 * Returns the semantic application version using format: "major.minor.patch".
+		 *
+		 * @param {object} oManifest - Manifest of the component
+		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
+		 * @public
+		 */
+		getAppVersionFromManifest: function (oManifest) {
+			var sVersion = "";
+			if (oManifest){
+				var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+				if (oSapApp && oSapApp.applicationVersion && oSapApp.applicationVersion.version){
+					sVersion = oSapApp.applicationVersion.version;
+				}
+			} else {
+				this.log.warning("No Manifest received.");
+			}
+			return sVersion;
+		},
+
+		/**
+		 * Returns whether provided layer is a customer dependent layer
+		 *
+		 * @returns {boolean} true if provided layer is customer dependent layer else false
+		 * @public
+		 */
+		isCustomerDependentLayer : function(sLayerName) {
+			return (["CUSTOMER", "CUSTOMER_BASE"].indexOf(sLayerName) > -1);
 		}
 	};
 	return Utils;

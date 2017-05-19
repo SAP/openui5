@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>qUnit Page for sap.m.SplitContainer</title>
+		<title>QUnit Page for sap.m.SplitContainer</title>
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
@@ -437,9 +437,8 @@
 				// Act + Render
 				oSplitContainer.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
-
 				// Assert Button is shown
-				assert.ok(!oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is shown");
+				assert.ok(oToolbar.getContent()[0].$(), "the master button is shown");
 
 
 				// Act 2 - change orientation
@@ -447,7 +446,7 @@
 				oSplitContainer._fnResize();
 
 				// Asset Button is removed
-				assert.ok(oToolbar.getContent()[0].$().parent().hasClass("sapMSplitContainerMasterBtnHide"), "the master button is hidden");
+				assert.ok(!oToolbar.getContent()[0], "the master button is removed");
 
 				oSplitContainer.destroy();
 			});
@@ -1104,7 +1103,7 @@
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.SplitContainer</h1>
+		<h1 id="qunit-header">QUnit Page for sap.m.SplitContainer</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>

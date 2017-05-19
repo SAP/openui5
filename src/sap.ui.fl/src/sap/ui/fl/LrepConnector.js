@@ -348,20 +348,23 @@ sap.ui.define([
 	 * Loads the changes for the given component class name.
 	 *
 	 * @see sap.ui.core.Component
-	 * @param {string} sComponentClassName - Component class name
+	 * @param {object} oComponent - Contains component data needed for reading changes
+	 * @param {string} oComponent.name - Name of component
+	 * @param {string} [oComponent.appVersion] - Current running version of application
 	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
 	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
 	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
 	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
 	 *
-	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle) and <code>componentClassName<code>
+	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName<code> and <code>etag<code> value
 	 * @public
 	 */
-	Connector.prototype.loadChanges = function(sComponentClassName, mPropertyBag) {
-		var sUri, oPromise;
+	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
+		var sUri;
 		var mOptions = {};
 		var that = this;
+		var sComponentClassName = oComponent.name;
 
 		if (!sComponentClassName) {
 			return Promise.reject(new Error("Component name not specified"));
@@ -370,7 +373,6 @@ sap.ui.define([
 		sUri = "/sap/bc/lrep/flex/data/";
 
 		var sUpToLayer = "";
-		var sAppVersion = "";
 
 		// fill header attribute: appDescriptor.id
 		if (mPropertyBag) {
@@ -408,11 +410,6 @@ sap.ui.define([
 			if (mPropertyBag.layer) {
 				sUpToLayer = mPropertyBag.layer;
 			}
-
-			// specifies application version
-			if (mPropertyBag.appVersion) {
-				sAppVersion = mPropertyBag.appVersion;
-			}
 		}
 
 		if (sComponentClassName) {
@@ -424,32 +421,47 @@ sap.ui.define([
 		if (sUpToLayer) {
 			sUri += "&upToLayerType=" + sUpToLayer;
 		}
-		if (sAppVersion) {
-			sUri += "&appVersion=" + sAppVersion;
+		if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
+			sUri += "&appVersion=" + oComponent.appVersion;
 		}
 
 		// Replace first & with ?
 		sUri = sUri.replace("&", "?");
 
-		oPromise = this.send(sUri, undefined, undefined, mOptions);
-		return oPromise.then(function(oResponse) {
-			if (oResponse.response) {
+		return this.send(sUri, undefined, undefined, mOptions)
+			.then(function(oResponse) {
 				return {
 					changes: oResponse.response,
-					messagebundle: oResponse.response.messagebundle,
-					componentClassName: sComponentClassName
+					componentClassName: sComponentClassName,
+					etag: oResponse.etag
 				};
-			} else {
-				return Promise.reject("response is empty");
-			}
-		}, function(oError) {
-			if (oError.code === 404 || oError.code === 405) {
-				// load changes based old route, because new route is not implemented
-				return that._loadChangesBasedOnOldRoute(sComponentClassName);
-			} else {
-				throw (oError);
-			}
-		});
+			}, function(oError) {
+				if (oError.code === 404 || oError.code === 405) {
+					// load changes based old route, because new route is not implemented
+					return that._loadChangesBasedOnOldRoute(sComponentClassName);
+				} else {
+					throw (oError);
+				}
+			});
+	};
+
+	/**
+	 * Loads flexibility settings.
+	 *
+	 * @returns {Promise} Returns a Promise with the flexibility settings content
+	 * @public
+	 */
+	Connector.prototype.loadSettings = function() {
+		var sUri = "/sap/bc/lrep/flex/settings";
+
+		if (this._sClient) {
+			sUri += "?sap-client=" + this._sClient;
+		}
+
+		return this.send(sUri, undefined, undefined, {})
+			.then(function(oResponse) {
+				return oResponse.response;
+			});
 	};
 
 	Connector.prototype._loadChangesBasedOnOldRoute = function(sComponentClassName) {
@@ -501,7 +513,7 @@ sap.ui.define([
 
 		if (this._sLanguage) {
 			// Add mandatory "sap-language" URL parameter.
-			// Only use sap-language if there is a sap-language parameter in the original URL.
+			// Only use sap-language if there is an sap-language parameter in the original URL.
 			// If sap-language is not added, the browser language might be used as back-end login language instead of sap-language.
 			aParams.push({
 				name: "sap-language",

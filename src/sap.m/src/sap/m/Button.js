@@ -16,6 +16,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @class
 	 * Enables users to trigger actions. For the button UI, you can define some text or an icon, or both.
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 * @mixes sap.ui.core.ContextMenuSupport
 	 *
 	 * @author SAP SE
@@ -28,6 +29,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	var Button = Control.extend("sap.m.Button", /** @lends sap.m.Button.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		properties : {
 
@@ -106,7 +108,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Event is fired when the user clicks on the control.
 			 */
 			press : {}
-		}
+		},
+		designTime: true
 	}});
 
 
@@ -209,7 +212,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function is called when touchcancel occurs .
-	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
 	Button.prototype.ontouchcancel = function() {
@@ -281,7 +283,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Ensure that the active button state is removed by focus loss.
 	 *
-	 * @param {jQuery.Event} oEvent - the focus event
 	 * @private
 	 */
 	Button.prototype.onfocusout = function() {
@@ -513,7 +514,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var sTooltip = this.getTooltip_AsString();
 
 		if (!sTooltip && !this.getText()) {
-			// get icon-font info. will return null if the icon is a image
+			// get icon-font info. will return null if the icon is an image
 			var oIconInfo = sap.ui.core.IconPool.getIconInfo(this.getIcon());
 
 			// add tooltip if available

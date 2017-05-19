@@ -43,31 +43,22 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 	 * @public
 	 */
 	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl) {
-		var sComponentName, mPropertyBag;
 		var that = this;
 
 		if (oObjectInfo) {
 			var sLayerType = Utils.getCurrentLayer(false);
 
-			if (oControl) {
-				sComponentName = Utils.getComponentClassName(oControl);
-				mPropertyBag = {
-					appDescriptor: Utils.getAppDescriptor(oControl),
-					siteId: Utils.getSiteId(oControl)
-				};
-			}
-
-			// if component name and object layer are known and layer is CUSTOMER
+			// if object layer are known and layer is CUSTOMER
 			// check in settings if the adaptation transport organizer (ATO) is enabled
-			if (sComponentName && sLayerType && sLayerType === 'CUSTOMER') {
+			if (sLayerType && sLayerType === 'CUSTOMER') {
 				// retrieve the settings and check if ATO is enabled
-				FlexSettings.getInstance(sComponentName, mPropertyBag).then(function(oSettings) {
+				FlexSettings.getInstance().then(function(oSettings) {
 					// ATO is enabled - signal that change is to be added to an ATO collection
 					// instead of a transport
 					if (oSettings.isAtoEnabled()) {
 						var oTransport = { transportId: "ATO_NOTIFICATION" };
 						fOkay(that._createEventObject(oObjectInfo, oTransport));
-						// ATO is not enabled - use CTS
+						//ATO is not enabled, use CTS instead
 					} else {
 						that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode);
 					}

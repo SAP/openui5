@@ -14,9 +14,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 *
+	 * A popover-based control that behaves differently according to the device it is on.
 	 * @class
-	 * This control acts responsively to the type of device. It acts as a sap.m.Popover on desktop and tablet, while on phone it acts as a sap.m.Dialog with stretch set to true.
+	 * The responsive popover acts as a {@link sap.m.Popover popover} on desktop and tablet,
+	 * while on phone it acts as a {@ link sap.m.Dialog dialog} with <code>stretch</code> set to true.
+	 * <h3>Usage</h3>
+	 * When you want to make sure that all content is visible on any device.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -543,7 +547,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	/**
-	 * Creates a sap.m.Toolbar for a footer of the ResponsivePopover
+	 * Creates an sap.m.Toolbar for a footer of the ResponsivePopover
 	 * @returns {sap.m.Toolbar} Toolbar with ToolbarSpacer in the content aggregation
 	 * @private
 	 */
@@ -668,7 +672,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Getter for endButton aggregation
-	 * @returns {sap.m.Button} The button that is set as a endButton aggregation
+	 * @returns {sap.m.Button} The button that is set as an endButton aggregation
 	 * @public
 	 */
 	ResponsivePopover.prototype.getEndButton = function(){
@@ -701,7 +705,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	// forward the other necessary methods to the inner instance, but do not check the existence of generated methods like (addItem)
 	["invalidate", "close", "isOpen", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass",
-		"getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay"].forEach(function(sName){
+		"getDomRef", "setBusy", "getBusy", "setBusyIndicatorDelay", "getBusyIndicatorDelay", "addEventDelegate"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function() {
 				if (this._oControl && this._oControl[sName]) {
 					var res = this._oControl[sName].apply(this._oControl ,arguments);

@@ -14,22 +14,27 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
-			var sUrlParameters = "?noglobals=true&sap-ui-animation=false";
+			var sDefaultParameters = "?noglobals=true&sap-ui-animation=false";
 
-			function addTestPage(sUrl) {
-				suite.addTestPage(contextPath + sUrl + sUrlParameters);
+			function addTestPage(sUrl, sParameters) {
+				sParameters = sParameters || sDefaultParameters;
+				suite.addTestPage(contextPath + sUrl + sParameters);
+				// also execute with qunit-2
+				suite.addTestPage(contextPath + sUrl + sParameters + "&sap-ui-qunitversion=2"); // note sParameters is never empty
+				
 			}
 
 			//OPA
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5.qunit.html");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5Extensions.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaPlugin.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/opaQunit.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/_LogCollector.qunit.html");
 
 			// Introduces globals
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/Opa5PageObject.qunit.html?sap-ui-xx-noless=true");
+			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5PageObject.qunit.html", "?sap-ui-xx-noless=true");
 
 			// Actions
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Action.qunit.html");
@@ -37,7 +42,7 @@
 			if (sap.ui.Device.browser.msie) {
 				// The noglobals check is disabled because IE11 creates false negative from the blindlayer
 				// which is kept in the DOM as global variable
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html?sap-ui-animation=false");
+				addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html", "?sap-ui-animation=false");
 			} else {
 				addTestPage("/test-resources/sap/ui/core/qunit/opa/actions/Press.qunit.html");
 			}
@@ -80,7 +85,7 @@
 			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyUIComponent/iStartMyUIComponent.html");
 			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html");
 
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html?sap-ui-debug=true");
+			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaStartup/iStartMyAppInAFrame/iStartMyAppInAFrame.html", "?sap-ui-debug=true");
 
 			return suite;
 		}

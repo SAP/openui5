@@ -1313,7 +1313,7 @@ sap.ui.define([
 
 						var oType = jQuery.sap.getObject(mAssoc.type);
 
-						if (!oType) {
+						if (!(typeof oType === "function")) {
 							continue;
 						}
 

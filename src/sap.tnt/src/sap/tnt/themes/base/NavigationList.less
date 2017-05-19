@@ -43,7 +43,7 @@
 			cursor: auto;
 		}
 	}
-	
+
 	& > .sapMText {
 		color: @sapUiListTextColor;
 	}
@@ -170,7 +170,7 @@
 	outline: none;
 }
 
-.sapTntNavLI li:focus::before,
+.sapTntNavLI li:focus > .sapTntNavLIItem::before,
 .sapTntNavLIItem:focus::before {
 	border: 1px dotted @sapUiContentFocusColor;
 	position: absolute;
@@ -185,7 +185,7 @@
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapTntNavLI li:focus::before,
+	.sapTntNavLI li:focus > .sapTntNavLIItem::before,
 	.sapTntNavLIItem:focus::before {
 		border: 1px dashed @sapUiContentFocusColor;
 	}

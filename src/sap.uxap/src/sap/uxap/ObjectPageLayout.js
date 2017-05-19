@@ -232,7 +232,7 @@ sap.ui.define([
 
 				/**
 				 * The event is fired when the selected section is changed using the navigation.
-				 * @since 1.38.1
+				 * @since 1.40
 				 */
 				navigate: {
 					parameters: {
@@ -322,6 +322,8 @@ sap.ui.define([
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
 		this._oABHelper = new ABHelper(this);
+
+		this._bSuppressLayoutCalculations = false;	// used to temporarily suppress layout/ux rules functionality for bulk updates
 	};
 
 	/**
@@ -450,6 +452,10 @@ sap.ui.define([
 		this._setSectionsFocusValues();
 
 		this._restoreScrollPosition();
+
+		sap.ui.getCore().getEventBus().publish("sap.ui", "ControlForPersonalizationRendered", this);
+
+		this.fireEvent("onAfterRenderingDOMReady");
 	};
 
 	/**
@@ -927,12 +933,18 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
+
+		// Skip all calculations (somebody called _suppressLayoutCalculations and will call _resumeLayoutCalculations once all updates are done)
+		if (this._bSuppressLayoutCalculations) {
+			return;
+		}
+
 		//in case we have added a section or subSection which change the ux rules
 		jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "refreshing ux rules");
 
 		/* obtain the currently selected section in the navBar before navBar is destroyed,
 		 in order to reselect that section after that navBar is reconstructed */
-		var sSelectedSectionId = this._getSelectedSectionId(),
+		var sSelectedSectionId = this.getSelectedSection(),
 			oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId),
 			bSelectionChanged = false;
 
@@ -960,18 +972,24 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageLayout.prototype._getSelectedSectionId = function () {
-
-		var oAnchorBar = this.getAggregation("_anchorBar"),
-			sSelectedSectionId;
-
-		if (oAnchorBar && oAnchorBar.getSelectedSection()) {
-			sSelectedSectionId = oAnchorBar.getSelectedSection().getId();
-		}
-
-		return sSelectedSectionId;
+	/**
+	 * Stop layout calculations temporarily (f.e. to do bulk updates on the object page)
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._suppressLayoutCalculations = function () {
+		this._bSuppressLayoutCalculations = true;
 	};
 
+	/**
+	 * Resume layout calculations and call _adjustLayoutAndUxRules (f.e. once buld updates are over)
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._resumeLayoutCalculations = function () {
+		this._bSuppressLayoutCalculations = false;
+		this._adjustLayoutAndUxRules();
+	};
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
 		var oAnchorBar = this.getAggregation("_anchorBar"),
@@ -1221,7 +1239,6 @@ sap.ui.define([
 	 * Get the destination section of the ongoing scroll
 	 * When this one is non-null, then the page will skip intermediate sections [during the scroll from the current to the destination section]
 	 * and will scroll directly to the given section
-	 * @param sDirectSectionId - the section to be scrolled directly to
 	 */
 	ObjectPageLayout.prototype.getDirectScrollingToSection = function () {
 		return this.sDirectSectionId;
@@ -1661,10 +1678,9 @@ sap.ui.define([
 				iScrollTop = this._$opWrapper.scrollTop();
 				iPageHeight = this.iScreenHeight;
 				sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
-				sSelectedSectionId = this._getSelectedSectionId();
+				sSelectedSectionId = this.getSelectedSection();
 
-
-				if (sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar
+				if (sClosestSectionId && sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar
 					// then change the selection to match the correct section
 					this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[sClosestSectionId].buttonId);
 				}
@@ -1940,7 +1956,7 @@ sap.ui.define([
 
 	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
-	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
+	 * Returns an sap.ui.core.delegate.ScrollEnablement object used to handle scrolling
 	 *
 	 * @type object
 	 * @public

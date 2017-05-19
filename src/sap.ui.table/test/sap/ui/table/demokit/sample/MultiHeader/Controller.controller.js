@@ -1,6 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	'sap/ui/model/json/JSONModel',
+	'sap/ui/model/json/JSONModel'
 ], function(Controller, JSONModel) {
 	"use strict";
 
@@ -26,8 +26,6 @@ sap.ui.define([
 			var oView = this.getView();
 			// set the model to the core
 			oView.setModel(oModel);
-
-			var oTable = oView.byId("table1");
 
 			oView.byId("multiheader").setHeaderSpan([3,2,1]);
 		}

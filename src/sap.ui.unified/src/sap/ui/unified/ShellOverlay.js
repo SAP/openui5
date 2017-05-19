@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * ShellOverlay to be opened in front of a sap.ui.unified.Shell
+	 * ShellOverlay to be opened in front of an sap.ui.unified.Shell
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

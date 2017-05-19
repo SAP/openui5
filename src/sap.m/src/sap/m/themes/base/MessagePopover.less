@@ -3,75 +3,6 @@
 /* Base theme                            */
 /* ===================================== */
 
-.sapMMsgPopover {
-	.sapMSegBBtnMixed {
-		padding-left: 0;
-		padding-right: 0;
-	}
-
-	.sapMDialogScrollCont {
-		padding: 0;
-	}
-
-	.sapMIBar .sapMBarChild {
-		margin-left: .25rem;
-		margin-right: .25rem;
-	}
-
-	.sapMMsgPopoverTitleText,
-	.sapMMsgPopoverDescriptionText {
-		display: block;
-		padding: 0 1rem 0 3rem;
-		margin-top: 1rem;
-	}
-
-	.sapMMsgPopoverDescriptionText {
-		padding-bottom: 1rem;
-		font-size: @sapMFontMediumSize;
-	}
-
-	.sapMMsgPopoverDescriptionLink {
-		margin: 1rem 0 0 3rem;
-	}
-
-	.sapMMsgPopoverDescriptionText:empty {
-		display: none;
-	}
-
-	.sapMMsgPopoverTitleText {
-		vertical-align: middle;
-		font-size: @sapMFontHeader5Size;
-	}
-
-	.sapMSLIDescription {
-		margin-top: 0.125rem;
-		font-size: @sapMFontMediumSize;
-	}
-
-	.sapMSLITitle {
-		padding-bottom: 0;
-		font-size: @sapMFontLargeSize;
-	}
-
-	.sapMSLITitleOnly {
-		font-size: @sapMFontLargeSize;
-	}
-
-	.sapMLIB.sapMLIBActive {
-		.sapMSLIImgIcon {
-			color: @sapUiListActiveTextColor;
-		}
-	}
-
-	.sapMSLIDescIcon .sapMSLIDescriptionDiv {
-		margin-top: 0.125rem;
-	}
-
-	.sapMSLIInfo {
-		margin: 0;
-	}	
-}
-
 .sapMMsgPopover.sapMMsgPopover-init {
 	.sapMNavItem.sapMPage {
 		position: relative;
@@ -80,14 +11,6 @@
 	.sapMIBar {
 		border-bottom: 0;
 	}
-}
-
-.sapMMsgPopoverDescIcon {
-	position: absolute;
-	left: 0;
-	width: 3rem;
-	top: .7rem;
-	font-size: 1.35rem;
 }
 
 .sapMMsgPopoverCloseBtn {
@@ -100,93 +23,19 @@
 
 /* Compact size */
 .sapUiSizeCompact.sapMMsgPopover {
-	&.sapMPopoverArrUp:after,
-	&.sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
-	&.sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
-		bottom: -9px;
-		left: -8px;
-	}
-
-	.sapMMsgPopoverItem {
-		height: 3.5rem;
-	}
-
-	.sapMMsgPopoverItem.sapMSLINoDescIcon {
-		height: 2rem;
-	}
-
 	.sapMMsgPopoverCloseBtn .sapMBtnIcon {
 		width: 1.626rem;
 		height: 1.626rem;
 		font-size: 0.75rem;
 	}
 
-	.sapMList .sapMLIBContent .sapUiIcon {
-		font-size: 1rem;
-	}
-
-	.sapMBtnInner {
-		padding: 0;
-	}
-
-	.sapMMsgPopoverCloseBtn .sapMBtnIcon,
-	.sapMMsgPopoverBackBtn .sapMBtnIcon {
+	.sapMMsgPopoverCloseBtn .sapMBtnIcon {
 		margin-right: 0;
 	}
 
 	.sapMBtnCustomIcon  {
 		margin-left: 0;
 	}
-
-	.sapMMsgPopoverDescIcon {
-		width: 3rem;
-		height: 1.626rem;
-		line-height: 1.626rem;
-		font-size: 1rem;
-	}
-
-	.sapMSLIDescription {
-		margin-top: 0;
-		font-size: @sapMFontMediumSize;
-	}
-
-	.sapMSLITitle {
-		font-size: @sapMFontMediumSize;
-	}
-
-	.sapMSLIDescIcon .sapMSLITitleDiv,
-	.sapMSLIDescIcon .sapMSLIDescriptionDiv {
-		margin-top: 0.125rem;
-		margin-bottom: 0.125rem;
-	}
-}
-
-.sapMMsgPopoverItemSuccess .sapMSLIImgIcon,
-.sapMMsgPopoverBtnSuccess.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconSuccess {
-	color: @sapUiPositiveElement;
-}
-
-.sapMMsgPopoverItemWarning .sapMSLIImgIcon,
-.sapMMsgPopoverBtnWarning.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconWarning {
-	color: @sapUiCriticalElement;
-}
-
-.sapMMsgPopoverItemError .sapMSLIImgIcon,
-.sapMMsgPopoverBtnError.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconError {
-	color: @sapUiNegativeElement;
-}
-
-.sapMMsgPopoverItemInformation .sapMSLIImgIcon,
-.sapMMsgPopoverBtnInformation.sapMSegBBtn .sapUiIcon,
-.sapMMsgPopoverDescIconInformation {
-	color: @sapUiNeutralElement;
-}
-
-.sapMMsgPopoverItem .sapMSLIIconActive {
-	color: @sapUiContentContrastIconColor;
 }
 
 .sapMPopover.sapMMsgPopover.sapMMsgPopover-init {

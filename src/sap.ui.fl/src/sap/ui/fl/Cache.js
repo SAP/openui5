@@ -57,7 +57,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 		Cache._isOn = bActive;
 	};
 
-
 	/**
 	 * Returns the entries stored in the cache.
 	 *
@@ -67,6 +66,74 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 */
 	Cache.getEntries = function () {
 		return Cache._entries;
+	};
+
+	/**
+	 * Clears whole entries stored in the cache.
+	 *
+	 * @protected
+	 * @sap-restricted sap.ui.fl
+	 */
+	Cache.clearEntries = function () {
+		Cache._entries = {};
+	};
+
+	/**
+	 * Returns the entry stored in the cache and creates an entry if needed.
+	 *
+	 * @param {string} sComponentName - Name of the application component
+	 * @param {string} sAppVersion - Current running version of application
+	 * @return {object} Cache entry of specific application component and application version
+	 *
+	 * @protected
+	 */
+	Cache.getEntry = function (sComponentName, sAppVersion) {
+		if (!Cache._entries[sComponentName]) {
+			Cache._entries[sComponentName] = {};
+		}
+		if (!Cache._entries[sComponentName][sAppVersion]) {
+			Cache._entries[sComponentName][sAppVersion] = {
+				file: {
+					changes: {
+						changes: [],
+						contexts: []
+					}
+				}
+			};
+		}
+		return Cache._entries[sComponentName][sAppVersion];
+	};
+
+	/**
+	 * Clears a single entry stored in the cache for a specific application component and application version.
+	 *
+	 * @param {string} sComponentName - Name of the application component
+	 * @param {string} sAppVersion - Current running version of application
+	 *
+	 * @protected
+	 * @sap-restricted sap.ui.fl
+	 */
+	Cache.clearEntry = function (sComponentName, sAppVersion) {
+		Cache.getEntry(sComponentName, sAppVersion);
+		Cache._entries[sComponentName][sAppVersion] = {};
+	};
+
+	/**
+	 * Deletes a single entry stored in the cache for a specific application component and application version.
+	 *
+	 * @param {string} sComponentName - Name of the application component
+	 * @param {string} sAppVersion - Current running version of application
+	 *
+	 * @private
+	 * @sap-restricted sap.ui.fl
+	 */
+	Cache._deleteEntry = function (sComponentName, sAppVersion) {
+		if (Cache._entries[sComponentName] && Cache._entries[sComponentName][sAppVersion]) {
+			delete Cache._entries[sComponentName][sAppVersion];
+		}
+		if (jQuery.isEmptyObject(Cache._entries[sComponentName])) {
+			delete Cache._entries[sComponentName];
+		}
 	};
 
 	/**
@@ -82,19 +149,21 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * loadChanges method of the given LrepConnector.
 	 *
 	 * @param {sap.ui.fl.LrepConnector} oLrepConnector - LrepConnector instance to retrieve the changes with
-	 * @param {string} sComponentName - the component name to retrieve the changes for
-	 * @param {map} mPropertyBag - (optional) contains additional data that are needed for reading of changes
-	 * - appDescriptor that belongs to actual component
-	 * - siteId that belongs to actual component
+	 * @param {object} oComponent - Contains component data needed for reading changes
+	 * @param {string} oComponent.name - Name of the component
+	 * @param {string} oComponent.appVersion - Current running version of application
+	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
+	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
 	 *
 	 * @public
 	 */
-	Cache.getChangesFillingCache = function (oLrepConnector, sComponentName, mPropertyBag) {
+	Cache.getChangesFillingCache = function (oLrepConnector, oComponent, mPropertyBag) {
 		if (!this.isActive()) {
-			return oLrepConnector.loadChanges(sComponentName, mPropertyBag);
+			return oLrepConnector.loadChanges(oComponent, mPropertyBag);
 		}
-
+		var sComponentName = oComponent.name;
 		// in case of no changes present according to async hints
 		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
 			return Promise.resolve({
@@ -102,25 +171,18 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 					changes : [],
 					contexts : []
 				},
-				componentClassName: sComponentName,
-				dummy: true
+				componentClassName: sComponentName
 			});
 		}
 
-		var oCacheEntry = Cache._entries[sComponentName];
-
-		if (!oCacheEntry) {
-			oCacheEntry = Cache._entries[sComponentName] = {};
-		}
+		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
 
 		if (oCacheEntry.promise) {
 			return oCacheEntry.promise;
 		}
 
-		var currentLoadChanges = oLrepConnector.loadChanges(sComponentName, mPropertyBag).then(function (mChanges) {
-			if (oCacheEntry.file) {
-				Utils.log.error('sap.ui.fl.Cache: Cached changes for component ' + sComponentName + ' overwritten.');
-			}
+		var currentLoadChanges = oLrepConnector.loadChanges(oComponent, mPropertyBag).then(function (mChanges) {
 			if (mChanges && mChanges.changes && mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
 				mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
 				Cache._switches[sValue] = true;
@@ -129,7 +191,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;
 		}, function (err) {
-			delete oCacheEntry.promise;
+			Cache._deleteEntry(sComponentName, sAppVersion);
 			throw err;
 		});
 
@@ -140,28 +202,29 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 
 	/**
 	 * @private
-	 *
-	 * @param {string} sComponentName - name of the SAPUI5 component
+	 * @param {object} oComponent - Contains component data needed for getting change array
+	 * @param {string} oComponent.name - Name of the component
+	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @returns {array} Array of changes
 	 */
-	Cache._getChangeArray = function (sComponentName) {
-		var oEntry = Cache._entries[sComponentName];
-		if (oEntry) {
-			if (oEntry.file) {
-				return oEntry.file.changes.changes;
-			}
-		}
+	Cache._getChangeArray = function (oComponent) {
+		var sComponentName = oComponent.name;
+		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var oEntry = Cache.getEntry(sComponentName, sAppVersion);
+		return oEntry.file.changes.changes;
 	};
 
 	/**
 	 * Add a change for the given component to the cached changes.
 	 *
-	 * @param {string} sComponentName Name of the component
-	 * @param {object} oChange The change in JSON format
+	 * @param {object} oComponent - Contains component data needed for adding change
+	 * @param {string} oComponent.name - Name of the component
+	 * @param {string} oComponent.appVersion - Current running version of application
+	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
-	Cache.addChange = function (sComponentName, oChange) {
-		var aChanges = Cache._getChangeArray(sComponentName);
+	Cache.addChange = function (oComponent, oChange) {
+		var aChanges = Cache._getChangeArray(oComponent);
 
 		if (!aChanges) {
 			return;
@@ -173,12 +236,14 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	/**
 	 * Updates a change for the given component in the cached changes.
 	 *
-	 * @param {string} sComponentName Name of the component
-	 * @param {object} oChange The change in JSON format
+	 * @param {object} oComponent - Contains component data needed for adding change
+	 * @param {string} oComponent.name - Name of the component
+	 * @param {string} oComponent.appVersion - Current running version of application
+	 * @param {object} oChange - The change in JSON format
 	 * @public
 	 */
-	Cache.updateChange = function (sComponentName, oChange) {
-		var aChanges = Cache._getChangeArray(sComponentName);
+	Cache.updateChange = function (oComponent, oChange) {
+		var aChanges = Cache._getChangeArray(oComponent);
 
 		if (!aChanges) {
 			return;
@@ -195,12 +260,14 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	/**
 	 * Delete a change for the given component from the cached changes.
 	 *
-	 * @param {string} sComponentName Name of the SAPUI5 component
-	 * @param {object} oChangeDefinition The change in JSON format
+	 * @param {object} oComponent - Contains component data needed for adding change
+	 * @param {string} oComponent.name - Name of the component
+	 * @param {string} oComponent.appVersion - Current running version of application
+	 * @param {object} oChangeDefinition - The change in JSON format
 	 * @public
 	 */
-	Cache.deleteChange = function (sComponentName, oChangeDefinition) {
-		var aChanges = Cache._getChangeArray(sComponentName);
+	Cache.deleteChange = function (oComponent, oChangeDefinition) {
+		var aChanges = Cache._getChangeArray(oComponent);
 
 		if (!aChanges) {
 			return;

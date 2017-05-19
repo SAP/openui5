@@ -378,7 +378,7 @@ span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
 	color:            @sapUiButtonLiteTextColor;
 }
 
-html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
+:not(.sapMBtnDisabled) .sapMBtnTransparent > .sapMBtnIcon {
 	color:            @sapUiButtonIconColor;
 }
 
@@ -399,15 +399,18 @@ html.sap-desktop .sapMBtnTransparent > .sapMBtnIcon {
 /* (add separators, remove top/bottom border)       */
 /* ------------------------------------------------ */
 
-.sapMIBar-CTX .sapMBtnInner {
+.sapMIBar-CTX .sapMBtnInner,
+.sapMBar .sapMBtnInner,
+.sapMHeader-CTX .sapMBtnInner,
+.sapMFooter-CTX .sapMBtnInner {
+	background: @sapUiButtonLiteBackground;
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
-.sapMBar .sapMBtnInner,
-.sapMHeader-CTX .sapMBtnInner,
-.sapMFooter-CTX .sapMBtnInner,
+// in subHeader the default buttons have border
 .sapMSubHeader-CTX .sapMBtnInner {
 	background: @sapUiButtonLiteBackground;
+	border-color: @sapUiButtonBorderColor;
 }
 
 .sapMBar-CTX :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnActive,
@@ -450,7 +453,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 	border-color:     @sapUiButtonLiteBorderColor;
 }
 
-.sapMIBar-CTX .sapMBtnTransparent :not(.sapMBtnDisabled) {
+.sapMIBar-CTX .sapMBtnTransparent:not(.sapMBtnDisabled):not(.sapMToggleBtnPressed) {
 	color:            @sapUiButtonLiteTextColor;
 	text-shadow:      none;
 	border-color:     @sapUiButtonLiteBorderColor;
@@ -489,7 +492,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 	border-color: @sapUiButtonLiteBorderColor;
 }
 
-.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):hover {
+.sapMTB-Transparent-CTX :not(.sapMBtnDisabled) .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):hover {
 	background: @sapUiButtonLiteHoverBackground;
 }
 

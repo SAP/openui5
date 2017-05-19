@@ -13,13 +13,15 @@ sap.ui.define([
 
 				iPressTheProductLink: function () {
 					return this.waitFor({
-						controlType: "sap.m.Link",
+						controlType: "sap.m.ObjectIdentifier",
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
 							path: "/Promoted/0"
 						}),
-						actions: new Press(),
+						actions: new Press({
+							idSuffix: "link"
+						}),
 						errorMessage: "The product link was not displayed"
 					});
 				},

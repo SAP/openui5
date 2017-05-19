@@ -5,6 +5,16 @@
 @import "../../../../../sap/ui/core/themes/base/base.less";
 @import "../../../../../sap/ui/core/themes/base/global.less";
 
+/* shared local library less parameters */
+@_sap_ui_table_RowBorderWidth: 1px;
+@_sap_ui_table_FocusOutlineWidth: 1px;
+@_sap_ui_table_RowHdrWidth: 2rem;
+@_sap_ui_table_RowHdrWidthCozy: 3rem;
+@_sap_ui_table_RowHdrWidthCondensed: 2rem;
+@_sap_ui_table_RowHeight: calc(~"2rem + "@_sap_ui_table_RowBorderWidth);
+@_sap_ui_table_RowHeightCozy: calc(~"3rem + "@_sap_ui_table_RowBorderWidth);
+@_sap_ui_table_RowHeightCondensed: calc(~"1.5rem + "@_sap_ui_table_RowBorderWidth);
+
 @import "Table.less";
 @import "Scrolling.less";
 @import "DragDrop.less";

@@ -7,7 +7,7 @@
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>qUnit Page for sap.ui.core.routing.Router</title>
+<title>QUnit Page for sap.ui.core.routing.Router</title>
 
 <script src="../../../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
@@ -2291,12 +2291,13 @@
 				// System under test
 				this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
 				var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+				var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
 
 
 				// Act
 				this.oRouter.parse(this.sPattern);
 
-				return oPlaceSpy.returnValues[0].then(function() {
+				return oRouteMatchedSpy.returnValues[0].then(function() {
 					// Assert
 					assert.strictEqual(this.oRouter._oTargets._oViews, this.oRouter._oViews, "Targets are using the same view repository");
 					assert.strictEqual(this.oRouter._oTargets._oConfig, this.oDefaults, "Targets are using the same defaults as the router");
@@ -2329,17 +2330,15 @@
 				this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
 				var oPlaceMyTargetSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
 				var oPlaceSecondTargetSpy = this.spy(this.oRouter.getTarget("secondTarget"), "_place");
+				var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
 
 				// Act
 				this.oRouter.parse(this.sPattern);
 
-				assert.strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did place first target");
-				assert.strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did place second target");
-
-				return Promise.all(oPlaceMyTargetSpy.returnValues.concat(oPlaceSecondTargetSpy.returnValues)).then(function() {
+				return oRouteMatchedSpy.returnValues[0].then(function() {
 					// Assert
-					assert.strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did not call place again");
-					assert.strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did not call place again");;
+					assert.strictEqual(oPlaceMyTargetSpy.callCount, 1, "Did place first target");
+					assert.strictEqual(oPlaceSecondTargetSpy.callCount, 1, "Did place second target");
 
 					sinon.assert.calledOn(oPlaceMyTargetSpy, this.oRouter.getTarget("myTarget"));
 					sinon.assert.calledOn(oPlaceSecondTargetSpy, this.oRouter.getTarget("secondTarget"));
@@ -2368,24 +2367,33 @@
 
 				// System under test
 				this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+				// need to use sinon.spy instead of this.spy because this.spy is restored synchronously but this test
+				// has timeout in it.
 				var oPlaceSpy = this.spy(this.oRouter.getTarget("myChild"), "_place");
 				var oPlaceParentSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+				var oRouteMatchedSpy = this.spy(this.oRouter.getRoute("routeName"), "_routeMatched");
 
 				// Act
 				this.oRouter.parse(this.sPattern);
-				assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myChild");
-				assert.strictEqual(oPlaceParentSpy.callCount, 1, "Did place myTarget");
-				sinon.assert.calledOn(oPlaceParentSpy, this.oRouter.getTarget("myTarget"));
-				sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
 
-				Promise.race(oPlaceParentSpy.returnValues).then(function(oViewInfo) {
-					assert.strictEqual(oViewInfo.name, "myTarget");
-				});
+				assert.strictEqual(oRouteMatchedSpy.callCount, 1, "route is matched");
 
-				return Promise.all(oPlaceSpy.returnValues.concat(oPlaceParentSpy.returnValues)).then(function(aViewInfo) {
+				return oRouteMatchedSpy.returnValues[0].then(function() {
 					// Assert
-					assert.strictEqual(aViewInfo[0].name, "myChild");
-					assert.strictEqual(aViewInfo[1].name, "myTarget");
+					assert.strictEqual(oPlaceSpy.callCount, 1, "Did place myChild");
+					assert.strictEqual(oPlaceParentSpy.callCount, 1, "Did place myTarget");
+
+					oPlaceParentSpy.returnValues[0].then(function(oViewInfo) {
+						assert.strictEqual(oViewInfo.name, "myTarget");
+					});
+
+					oPlaceSpy.returnValues[0].then(function(oViewInfo) {
+						assert.strictEqual(oViewInfo.name, "myChild");
+					});
+
+					sinon.assert.calledOn(oPlaceParentSpy, this.oRouter.getTarget("myTarget"));
+					sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
+
 					assert.strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 					assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
 				}.bind(this));
@@ -2782,7 +2790,7 @@
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Router</h1>
+	<h1 id="qunit-header">QUnit Page for sap.ui.core.routing.Router</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>

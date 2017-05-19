@@ -20,7 +20,7 @@ module.exports = function(grunt, config) {
 	}
 
 	// set default port
-	if (typeof grunt.option('port') !== 'number') {
+	if (!grunt.option('port')) {
 		grunt.option('port', 8080);
 	}
 
@@ -28,7 +28,7 @@ module.exports = function(grunt, config) {
 
 		options: {
 			// set default port
-			port: typeof grunt.option('port') === 'number' ? grunt.option('port') : 8080,
+			port: +grunt.option('port'),
 			// use the next best port if specified port is already in use
 			useAvailablePort: true,
 			hostname: '<%= grunt.option("hostname") %>'

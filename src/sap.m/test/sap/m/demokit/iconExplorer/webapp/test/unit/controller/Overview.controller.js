@@ -1,11 +1,14 @@
+/*global QUnit,sinon*/
+
 sap.ui.define([
-		"sap/ui/demo/iconexplorer/controller/Overview.controller",
-		"sap/ui/demo/iconexplorer/controller/BaseController",
-		"sap/ui/base/ManagedObject",
-		"test/unit/helper/FakeI18nModel",
-		"sap/ui/thirdparty/sinon",
-		"sap/ui/thirdparty/sinon-qunit"
-	], function(OverviewController, BaseController ,ManagedObject, FakeI18n) {
+	"sap/ui/demo/iconexplorer/controller/Overview.controller",
+	"sap/ui/demo/iconexplorer/controller/BaseController",
+	"sap/ui/base/ManagedObject",
+	"test/unit/helper/FakeI18nModel",
+	"sap/ui/demo/iconexplorer/model/formatter",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function(OverviewController, BaseController, ManagedObject, FakeI18n, formatter) {
 	"use strict";
 
 	QUnit.module("Overview controller tests", {
@@ -136,4 +139,149 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oRouterStub.navTo, "overview", {query: {tab: "details"}});
 	});
 
+	QUnit.test("Handler for the 'Copy unicode' button correctly recognized unicode and calls the _copyStringToClipboard function with correct parameter", function (assert) {
+		// Arrange
+		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+		sinon.stub(this.oOverviewController, "byId").withArgs("preview").returns({
+			getBindingContext: function() {
+				return {
+					getObject: function() {
+						return {
+							name: "iconName"
+						}
+					}
+				};
+			}
+		});
+		sinon.stub(this.oOverviewController, "getModel").returns({
+			getUnicodeHTML: function() {
+				return "&#xe034;";
+			}
+		});
+
+		// Act
+		this.oOverviewController.onCopyUnicodeToClipboard();
+
+		// Assert
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], "xe034", "Correct string copied to clipboard");
+	});
+
+	QUnit.test("Handler for the 'Copy code' button calls the _copyStringToClipboard function with correct parameter", function (assert) {
+		// Arrange
+		var sTestString = "sap-icon://excel-attachment",
+			sInputId = "previewCopyCode",
+			oInput = new sap.m.Input(sInputId, {
+				value: sTestString
+			});
+		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+		sinon.stub(this.oOverviewController, "getResourceBundle").returns({
+			getText: function() {
+				return "Unicode";
+			}
+		});
+		sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput);
+
+		// Act
+		this.oOverviewController.onCopyCodeToClipboard();
+
+		// Assert
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], sTestString, "Correct string copied to clipboard");
+
+		// Clean up
+		oInput.destroy();
+	});
+
+	QUnit.test("Handler for the 'Copy icon' button calls the _copyStringToClipboard function with correct parameter", function (assert) {
+		// Arrange
+		var sTestString = "sap-icon://excel-attachment",
+			sInputId = "previewCopyCode",
+			sIcon = "icon",
+			oInput = new sap.m.Input(sInputId, {
+				value: sTestString
+			}),
+			oInputStub = sinon.stub(this.oOverviewController, "byId").withArgs(sInputId).returns(oInput),
+			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicode: function() {
+					return sIcon;
+				}
+			});
+		sinon.stub(this.oOverviewController, "_copyStringToClipboard");
+
+		// Act
+		this.oOverviewController.onCopyIconToClipboard();
+
+		// Assert
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.callCount, 1, "String copied to clipbiard exaclty once");
+		assert.strictEqual(this.oOverviewController._copyStringToClipboard.getCalls()[0].args[0], sIcon, "Correct string copied to clipboard");
+
+		// Clean up
+		oInput.destroy();
+	});
+
+	QUnit.test("The formatter for the unicode copy field cuts off the unnessesary characters", function (assert) {
+		// Arrange
+		var sRawUnicodeString = "&#xe000;",
+			sCleanUnicodeString = "xe000",
+			sResult,
+			oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicodeHTML: function() {
+					return sRawUnicodeString;
+				}
+			}),
+			oResourceBundlelStub = sinon.stub(this.oOverviewController, "getResourceBundle").returns({
+				getText: function(bundleName, bundleParameters) {
+					// Assert
+					assert.strictEqual(bundleName, "previewInfoUnicodeWithParams", "Resource bundle called with correct i18n key");
+					assert.strictEqual(bundleParameters[0], sCleanUnicodeString, "Raw unicode haas been transformed correctly");
+				}
+			});
+
+		// Act
+		formatter.getUnicodeTextByName.bind(this.oOverviewController)("iconName");
+
+		// Clean up
+		this.oOverviewController.getModel.restore();
+		this.oOverviewController.getResourceBundle.restore();
+	});
+
+	QUnit.module("Overview controller: searching by unicode filter factory tests", {
+		beforeEach: function () {
+			this.oOverviewController = new OverviewController();
+			this.oGetModelStub = sinon.stub(this.oOverviewController, "getModel").returns({
+				getUnicodeHTML: function() {
+					return "&#xe000;";
+				}
+			});
+		},
+
+		afterEach: function () {
+			this.oOverviewController.destroy();
+		}
+	});
+
+	QUnit.test("The filter produced by the factory function returns true if the model returns unicode string that cotnains query string", function (assert) {
+		// Arrange
+		var fnFilter = this.oOverviewController._unicodeFilterFactory("xe000"),
+			sResult;
+
+		// Act
+		sResult = fnFilter("iconName");
+
+		// Assert
+		assert.ok(sResult, "The unicode of the icon satisfies the query");
+	});
+
+	QUnit.test("The filter produced by the factory function returns false if the model returns unicode string that does not contain query string", function (assert) {
+		// Arrange
+		var fnFilter = this.oOverviewController._unicodeFilterFactory("xe021"),
+			sResult;
+
+		// Act
+		sResult = fnFilter("iconName");
+
+		// Assert
+		assert.notOk(sResult, "The unicode of the icon does not satisfy the query");
+	});
 });

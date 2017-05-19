@@ -700,6 +700,38 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oBinding.filter([oFilter]);
 	});
 
+	QUnit.test("ListBinding filter aborted due to sort", function(){
+		var done = assert.async();
+		var oRequestedSpy, oReceivedSpy;
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oEvent.oSource.getContexts();
+			equal(aContexts.length, 8, "EQ unfiltered content length");
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+			equal(oModel.getProperty("CategoryName", aContexts[7]), "Seafood", "EQ unfiltered content");
+			oBinding.detachChange(handler);
+			setTimeout(handler2, 0);
+		};
+		var handler2 = function() {
+			// data requested and data received should only be called once
+			ok(oRequestedSpy.calledOnce, "fireDataRequested has only be called once");
+			ok(oReceivedSpy.calledOnce, "fireDataReceived has only be called once");
+			done();
+		}
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		oRequestedSpy = sinon.spy(oBinding, "fireDataRequested");
+		oReceivedSpy = sinon.spy(oBinding, "fireDataReceived");
+		oBinding.initialize();
+
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+		oBinding.filter([]);
+		oBinding.sort([]);
+	});
+
 	QUnit.test("ListBinding sort after filter", function(assert){
 		var done = assert.async();
 		var handler = function(oEvent){
@@ -895,6 +927,124 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			oBinding.getContexts();
 		});
 
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Default, initial filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.notOk(oSpy.called, "Binding expanded list with filter must not send a request");
+			oListBinding.detachChange(listhandler);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Default, late filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products");
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			oListBinding.initialize();
+			oBinding.detachChange(handler);
+			oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+			oListBinding.attachChange(listhandler1);
+			oListBinding.setContext(oBinding.getBoundContext());
+		};
+		var listhandler1 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entries contained");
+			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
+			oListBinding.detachChange(listhandler1);
+			oListBinding.attachChange(listhandler2);
+			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		};
+		var listhandler2 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.notOk(oSpy.called, "Filtering expanded list must not send a request");
+			oListBinding.detachChange(listhandler2);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Server, initial filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"), {operationMode: "Server"});
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.ok(oSpy.calledOnce, "Filtering expanded list sent request to the server");
+			oListBinding.detachChange(listhandler);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Server, late filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null, null, {operationMode: "Server"});
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			oListBinding.initialize();
+			oBinding.detachChange(handler);
+			oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+			oListBinding.attachChange(listhandler1);
+			oListBinding.setContext(oBinding.getBoundContext());
+		};
+		var listhandler1 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entries contained");
+			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
+			oListBinding.detachChange(listhandler1);
+			oListBinding.attachChange(listhandler2);
+			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		};
+		var listhandler2 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.ok(oSpy.calledOnce, "Filtering expanded list sent request to the server");
+			oListBinding.detachChange(listhandler2);
+			done();
+		};
+		oBinding.attachChange(handler);
 	});
 
 	QUnit.test("ListBinding Diff", function(assert){
@@ -1391,12 +1541,161 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
 				var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
 				oBinding.filter([oFilter, oFilter2]);
-			}
+			};
 			oBinding.attachChange(handler);
 			oBinding.attachRefresh(fnFilter);
 			oBinding.initialize();
 		});
 
+	});
+
+	QUnit.module("Unsupported Filters", {
+		beforeEach : function() {
+			this.oModel = initModel(false);
+		},
+
+		afterEach : function() {
+			this.oModel = undefined;
+		},
+
+		getErrorWithMessage: function(sFilter) {
+			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
+		}
+	});
+
+	QUnit.test("constructor - Any/All are rejected", function(assert) {
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
+				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+
+				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+
+				this.oModel.bindList("/teamMembers", undefined, undefined, [oMultiFilter]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+	});
+
+	QUnit.test("filter() - Any/All are rejected", function(assert) {
+		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
+
+		// "Any" at last position fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.GT, "Wallace");
+				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any, variable: "id1", condition: new sap.ui.model.Filter()});
+				oListBinding.filter([oFilter, oFilter2]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+
+		// "All" at first position fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id2", condition: new sap.ui.model.Filter()});
+				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Rush");
+				oListBinding.filter([oFilter, oFilter2]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+
+		// Multifilter containing "All" or "Any" fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter({path: "lastName", operator: sap.ui.model.FilterOperator.All, variable: "id3", condition: new sap.ui.model.Filter()});
+				var oFilter2 = new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.EQ, "Bar");
+
+				var oMultiFilter = new sap.ui.model.Filter({
+					filters: [oFilter, oFilter2],
+					and: false
+				});
+				oListBinding.filter([oMultiFilter]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+
+		// Multifilter containing "All" or "Any" fails
+		assert.throws(
+			function() {
+				var oFilter = new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.NE, "Foo");
+				var oFilter2 = new sap.ui.model.Filter({path: "firstName", operator: sap.ui.model.FilterOperator.Any,variable: "id4", condition: new sap.ui.model.Filter()});
+
+				var oMultiFilter = new sap.ui.model.Filter([oFilter, oFilter2], true);
+
+				oListBinding.filter([oMultiFilter]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.Any),
+			"Error thrown if filter instances contain an unsupported FilterOperator"
+		);
+	});
+
+	QUnit.test("Multi Filters (Complex) 1 - Unsupported are not OK", function(assert) {
+		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
+
+		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
+		var oFilter2 = new sap.ui.model.Filter({path: "y", operator: sap.ui.model.FilterOperator.All, variable: "id1", condition: new sap.ui.model.Filter()});
+		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
+		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new sap.ui.model.Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new sap.ui.model.Filter({
+			filters: [oMultiFilter2, oFilter4],
+			and: true
+		});
+
+		assert.throws(
+			function() {
+				oListBinding.filter([oMultiFilter3]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
+		);
+	});
+
+	QUnit.test("Multi Filters (Complex) 2 - Unsupported are not OK", function(assert) {
+		var oListBinding = this.oModel.bindList("/teamMembers", undefined, undefined, []);
+
+		var oFilter1 = new sap.ui.model.Filter("x", sap.ui.model.FilterOperator.EQ, "Foo");
+		var oFilter2 = new sap.ui.model.Filter({
+			path: "y",
+			operator: sap.ui.model.FilterOperator.All,
+			variable: "id1",
+			condition: new sap.ui.model.Filter([
+				new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.GT, 66),
+				new sap.ui.model.Filter({path: "g", operator: sap.ui.model.FilterOperator.Any, variable: "id2", condition: new sap.ui.model.Filter("f", sap.ui.model.FilterOperator.NE, "hello")})
+			], true)
+		});
+		var oFilter3 = new sap.ui.model.Filter("z", sap.ui.model.FilterOperator.NE, "Bla");
+		var oFilter4 = new sap.ui.model.Filter("t", sap.ui.model.FilterOperator.LE, "ZZZ");
+
+		var oMultiFilter1 = new sap.ui.model.Filter({
+			filters: [oFilter1, oFilter2],
+			and: true
+		});
+		var oMultiFilter2 = new sap.ui.model.Filter([oMultiFilter1, oFilter3], false);
+
+		var oMultiFilter3 = new sap.ui.model.Filter({
+			filters: [oMultiFilter2, oFilter4],
+			and: true
+		});
+
+		assert.throws(
+			function() {
+				oListBinding.filter([oMultiFilter3]);
+			},
+			this.getErrorWithMessage(sap.ui.model.FilterOperator.All),
+			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
+		);
 	});
 
 	</script>

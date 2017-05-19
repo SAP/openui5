@@ -1,0 +1,51 @@
+<mvc:View
+		controllerName="sap.m.sample.PlanningCalendarModifyAppointments.Page"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:unified="sap.ui.unified"
+		xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<PlanningCalendar
+				id="PC1"
+				startDate="{path: '/startDate'}"
+				rows="{path: '/people'}"
+				appointmentsVisualization="Filled"
+				appointmentSelect="handleAppointmentSelect"
+				showEmptyIntervalHeaders="false"
+				intervalSelect="handleAppointmentAddWithContext">
+			<toolbarContent>
+				<Title text="Title" titleStyle="H4"/>
+				<ToolbarSpacer/>
+				<Button id="addButton" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add"/>
+			</toolbarContent>
+			<rows>
+				<PlanningCalendarRow
+						icon="{pic}"
+						title="{name}"
+						text="{role}"
+						appointments="{path : 'appointments', templateShareable: 'true'}"
+						intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+					<appointments>
+						<unified:CalendarAppointment
+								startDate="{start}"
+								endDate="{end}"
+								icon="{pic}"
+								title="{title}"
+								text="{info}"
+								type="{type}"
+								tentative="{tentative}">
+						</unified:CalendarAppointment>
+					</appointments>
+					<intervalHeaders>
+						<unified:CalendarAppointment
+								startDate="{start}"
+								endDate="{end}"
+								icon="{pic}"
+								title="{title}"
+								type="{type}">
+						</unified:CalendarAppointment>
+					</intervalHeaders>
+				</PlanningCalendarRow>
+			</rows>
+		</PlanningCalendar>
+	</VBox>
+</mvc:View>

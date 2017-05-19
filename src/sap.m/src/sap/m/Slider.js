@@ -23,7 +23,7 @@ sap.ui.define([
 		 * <strong><i>Overview</i></strong>
 		 *
 		 * A {@link sap.m.Slider} control represents a numerical range and a handle.
-		 * The purpose of the control is to enable visual selection of а value in a continuous numerical range by moving an adjustable handle.
+		 * The purpose of the control is to enable visual selection of a value in a continuous numerical range by moving an adjustable handle.
 		 *
 		 * <strong>Notes:</strong>
 		 * <ul><li>Only horizontal sliders are possible. </li>
@@ -62,6 +62,7 @@ sap.ui.define([
 		 * </ul>
 		 *
 		 * @extends sap.ui.core.Control
+		 * @implements sap.ui.core.IFormContent
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -73,6 +74,7 @@ sap.ui.define([
 		 */
 		var Slider = Control.extend("sap.m.Slider", /** @lends sap.m.Slider.prototype */ { metadata: {
 
+			interfaces: ["sap.ui.core.IFormContent"],
 			library: "sap.m",
 			properties: {
 
@@ -107,7 +109,7 @@ sap.ui.define([
 				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
 				 *
 				 * The step must be positive, if a negative number is provided, the default value will be used instead.
-				 * If the width of the slider converted to pixels is less than the range (max – min), the value will be rounded to multiples of the step size.
+				 * If the width of the slider converted to pixels is less than the range (max - min), the value will be rounded to multiples of the step size.
 				 */
 				step: { type: "float", group: "Data", defaultValue: 1 },
 
@@ -603,6 +605,8 @@ sap.ui.define([
 			});
 
 			oInput.attachChange(this._handleInputChange.bind(this, oInput));
+			oInput.addEventDelegate({onsapdown: this._inputArrowDown}, this);
+			oInput.addEventDelegate({onsapup: this._inputArrowUp}, this);
 
 			oInput.addEventDelegate({
 				onfocusout: function (oEvent) {
@@ -613,6 +617,26 @@ sap.ui.define([
 			});
 
 			return oInput;
+		};
+
+		Slider.prototype._inputArrowDown = function(oEvent) {
+			var oModifiedEvent = oEvent;
+			oModifiedEvent.srcControl = this;
+
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			this.onsapdecrease(oModifiedEvent);
+		};
+
+		Slider.prototype._inputArrowUp = function(oEvent) {
+			var oModifiedEvent = oEvent;
+			oModifiedEvent.srcControl = this;
+
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			this.onsapincrease(oModifiedEvent);
 		};
 
 		Slider.prototype._handleInputChange = function (oInput, oEvent) {

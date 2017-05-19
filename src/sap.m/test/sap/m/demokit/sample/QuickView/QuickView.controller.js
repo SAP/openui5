@@ -153,7 +153,7 @@ sap.ui.define([
 										label: "Name",
 										value: "Adventure Company",
 										url: "http://sap.com",
-										type: sap.m.QuickViewGroupElementType.link
+										elementType: sap.m.QuickViewGroupElementType.link
 									},
 									{
 										label: "Address",

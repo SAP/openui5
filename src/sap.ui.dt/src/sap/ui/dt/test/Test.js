@@ -11,7 +11,7 @@ function(jQuery, ManagedObject) {
 	"use strict";
 
 	/**
-	 * Constructor for an Test.
+	 * Constructor for a Test.
 	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object

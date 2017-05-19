@@ -18,26 +18,18 @@ sap.ui.require([
 
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders");
 
-
 	//*****************************************************************************
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {
-
-		// check no warnings and errors
-		function checkLog() {
-			Then.waitFor({
-				success : function (oControl) {
-					Opa5.getWindow().jQuery.sap.log.getLogEntries().forEach(function (oLog) {
-						var sComponent = oLog.component || "";
-						if ((sComponent.indexOf("sap.ui.model.odata.v4.") === 0
-								|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
-								&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-							Opa5.assert.ok(false, "Warning or error found: " + sComponent
-									+ " Level: " + oLog.level + " Message: " + oLog.message );
-						}
-					});
-				}
-			});
-		}
+		// TODO: take care about TestUtils log message like this:
+		//   "changeset_id-1490715882516-48 - No mock data found sap.ui.test.TestUtils"
+		//   support changesets in $batch
+		var oExpectedLogChangeSetID = {
+				component : "sap.ui.test.TestUtils",
+				level : jQuery.sap.log.Level.ERROR,
+				message : "--changeset_id-",
+				details : "No mock data found"
+			},
+			bRealOData = TestUtils.isRealOData();
 
 		// close schedules dialog
 		function closeSchedules() {
@@ -65,7 +57,7 @@ sap.ui.require([
 
 			Then.waitFor({
 				controlType : "sap.m.Dialog",
-				matchers : new Properties({title : "Success"}),
+				matchers : new Properties({icon : "sap-icon://message-success"}),
 				success : function (aControls) {
 					aControls[0].getButtons()[0].$().tap(); // confirm deletion
 					Opa5.assert.ok(true, "Deleted all selected Schedules");
@@ -86,7 +78,7 @@ sap.ui.require([
 
 			Then.waitFor({
 				controlType : "sap.m.Dialog",
-				matchers : new Properties({title : "Success"}),
+				matchers : new Properties({icon : "sap-icon://message-success"}),
 				success : function (aControls) {
 					aControls[0].getButtons()[0].$().tap(); // confirm success
 					Opa5.assert.ok(true, "Business Partner deleted");
@@ -113,7 +105,7 @@ sap.ui.require([
 
 			Then.waitFor({
 				controlType : "sap.m.Dialog",
-				matchers : new Properties({title : "Success"}),
+				matchers : new Properties({icon : "sap-icon://message-success"}),
 				success : function (aControls) {
 					aControls[0].getButtons()[0].$().tap(); // confirm success
 					Opa5.assert.ok(true, "Selected Sales Order deleted");
@@ -226,7 +218,7 @@ sap.ui.require([
 				matchers : new BindingPath({path: "/SalesOrderList/0"}),
 				success : function (oControl) {
 					var sTypeName,
-					oView = Opa5.getWindow().sap.ui.getCore().byId(sViewName);
+					oView = sap.ui.getCore().byId(sViewName);
 
 					// check for valid automatic type determination for each cell content in 1st row
 					oView.byId("SalesOrders").getItems()[0].getCells().forEach(function (oCell) {
@@ -251,7 +243,7 @@ sap.ui.require([
 				controlType : "sap.m.Text",
 				matchers : new BindingPath({path: "/SalesOrderList/" + (sWaitForOrderIndex | "0")}),
 				success : function (oControl) {
-					var oCore = Opa5.getWindow().sap.ui.getCore(),
+					var oCore = sap.ui.getCore(),
 					aSalesOrderIds = [];
 
 					oCore.byId(sViewName).byId("SalesOrders")
@@ -271,7 +263,7 @@ sap.ui.require([
 					matchers : new BindingPath({path: "/SalesOrderList/2/SO_2_SCHDL/"
 						+ (aExpectedScheduleIds.length - 1 | "0")}),
 					success : function (oControl) {
-						var oCore = Opa5.getWindow().sap.ui.getCore(),
+						var oCore = sap.ui.getCore(),
 						aScheduleIds = [];
 
 						oCore.byId(sViewName).byId("SalesOrderSchedules")
@@ -299,17 +291,18 @@ sap.ui.require([
 			}
 		}
 
-		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders"
-			+ "&sap-language=en"
-			+ (TestUtils.isRealOData() ? "&sap-server=test" : "")
-			+ TestUtils.getRealOData());
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : "sap.ui.core.sample.odata.v4.SalesOrders"
+			}
+		});
 
 		//*****************************************************************************
 		// Check type determination
 
 		verifyTypeDetermination();
 
-		if (TestUtils.isRealOData()) {
+		if (bRealOData) {
 			Opa5.assert.ok(true, "Deletion test skipped because unstable real keys");
 		} else {
 
@@ -405,8 +398,8 @@ sap.ui.require([
 			deleteBusinessPartner();
 
 		}
-
-		checkLog();
-		Then.iTeardownMyAppFrame();
+		Then.onTheMainPage.checkLog(!bRealOData ?
+			[oExpectedLogChangeSetID, oExpectedLogChangeSetID] : undefined);
+		Then.iTeardownMyUIComponent();
 	});
 });

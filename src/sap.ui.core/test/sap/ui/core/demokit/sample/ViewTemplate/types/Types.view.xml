@@ -1,8 +1,8 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.types.Types"
 	xmlns="sap.m"
+	xmlns:ce="sap.ui.codeeditor"
 	xmlns:core="sap.ui.core"
-	xmlns:demokit="sap.ui.demokit"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
@@ -11,14 +11,15 @@
 		<HBox>
 			<Button id="saveButton" text="Save" press="onSave" visible="{ui>/realOData}"/>
 			<Button id="resetButton" binding="{v4>/ResetEdmTypes(...)}" text="Reset" press="onReset" visible="{ui>/realOData}"/>
-			<ToggleButton id="toggleV4" icon="sap-icon://switch-views" press="onV4" pressed="{ui>/v4}" text="V4"/>
-			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
+			<Button id="resetModelButton" icon="sap-icon://sys-cancel" text="Reset Model" tooltip="Reset Model" press="onResetModel"/>
+			<Button id="resetContextBindingButton" icon="sap-icon://sys-cancel" text="Reset ContextBinding" tooltip="Reset ContextBinding" press="onResetContextBinding" visible="{ui>/v4}"/>
+			<ToggleButton id="toggleV4Button" icon="sap-icon://switch-views" press="onV4" pressed="{ui>/v4}" text="V4"/>
+			<ToggleButton id="toggleSourceCodeButton" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 		</HBox>
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="auto" class="sapUiResponsiveMargin">
 			<content>
-				<demokit:CodeViewer class="sapUiExploredCodeViewer" source="{ui>/code}"
-					lineNumbering="true"/>
+				<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
 			</content>
 		</Panel>
 		<form:SimpleForm id="simpleForm" layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
@@ -29,7 +30,7 @@
 			<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
 			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 			<Label text="sap.ui.model.odata.type.Boolean Input Field, NOT nullable"/>
-			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean',
+			<Input id="booleanInput" value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean',
 				constraints: {nullable: false}}"/>
 			<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
 			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
@@ -112,7 +113,7 @@
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000"/>
-			<Input id="Decimal_ID" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3, minimum: '100', minimumExclusive: true, maximum: '1000'}}"/>
+			<Input id="decimalInput" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3, minimum: '100', minimumExclusive: true, maximum: '1000'}}"/>
 
 			<core:Title text="sap.ui.model.odata.type.Double" />
 			<Label text="no constraints"/>

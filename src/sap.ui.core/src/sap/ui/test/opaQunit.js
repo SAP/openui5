@@ -2,7 +2,11 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Opa',
+	'./Opa5'
+], function ($, Opa, Opa5) {
 	"use strict";
 
 	QUnit.testDone(function( details ) {
@@ -78,6 +82,10 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 			expected = null;
 		}
 
+		if ( QUnit.test.length === 2 && async === true ) {
+			throw new Error("Qunit >=2.0 is used, which no longer supports the 'async' parameter for tests.");
+		}
+
 		var testBody = function(assert) {
 			var fnStart = assert.async();
 			config.testName = testName;
@@ -85,6 +93,10 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 			// provide current "assert" object to the tests
 			Opa.assert = assert;
 			Opa5.assert = assert;
+
+			if ( QUnit.test.length === 2 && expected !== null ) {
+				assert.expect(expected);
+			}
 
 			callback.call(this, config.arrangements, config.actions, config.assertions);
 
@@ -96,15 +108,23 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 			});
 
 			promise.fail(function (oOptions) {
-				QUnit.ok(false, oOptions.errorMessage);
+				assert.ok(false, oOptions.errorMessage);
 				Opa.assert = undefined;
 				Opa5.assert = undefined;
 				// let OPA finish before QUnit starts executing the next test
-				setTimeout(fnStart, 0);
+				// call fnStart only when QUnit did not timeout.
+				if ( oOptions.stoppedManually !== false ) {
+					setTimeout(fnStart, 0);
+				}
 			});
 		};
 
-		return QUnit.test(testName, expected, testBody, async);
+		if ( QUnit.test.length === 2 ) {
+			return QUnit.test(testName, testBody);
+		} else {
+			return QUnit.test(testName, expected, testBody, async);
+		}
+
 	};
 	// Export to global namespace to be backwards compatible
 	window.opaTest = opaTest;
@@ -118,6 +138,33 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 		},
 		label: "Opa speed",
 		tooltip: "Each waitFor will be delayed by a number of milliseconds. If it is not set Opa will execute the tests as fast as possible"
+	});
+
+	// synchronously hook QUnit custom async assertions from extension
+	Opa5._getEventProvider().attachEvent('onExtensionAfterInit',function(oEvent) {
+		var oParams = oEvent.getParameters();
+		if (oParams.extension.getAssertions) {
+			var oAssertions = oParams.extension.getAssertions();
+			$.each(oAssertions,function(sName,fnAssertion) {
+				QUnit.assert[sName] = function() {
+					var qunitThis = this;
+					// call the assertion in the app window
+					// assertion is async, push results when ready
+					var oAssertionPromise = fnAssertion.bind(oParams.appWindow)(arguments)
+						.always(function (oResult) {
+							qunitThis.push(
+								oResult.result,
+								oResult.actual,
+								oResult.expected,
+								oResult.message
+							);
+						});
+
+					// schedule async assertion promise on waitFor flow so test waits till assertion is ready
+					Opa.config.assertions._schedulePromiseOnFlow(oAssertionPromise);
+				};
+			});
+		}
 	});
 
 	return opaTest;

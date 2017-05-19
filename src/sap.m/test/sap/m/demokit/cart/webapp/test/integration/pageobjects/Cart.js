@@ -7,8 +7,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/BindingPath',
 	'sap/ui/test/matchers/Ancestor',
-	'sap/ui/test/actions/Press',
-	'sap/ui/test/actions/EnterText'
+	'sap/ui/test/actions/Press'
 ], function (Opa5,
 			 AggregationFilled,
 			 AggregationEmpty,
@@ -17,8 +16,7 @@ sap.ui.define([
 			 AggregationLengthEquals,
 			 BindingPath,
 			 Ancestor,
-			 Press,
-			 EnterText) {
+			 Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -60,38 +58,6 @@ sap.ui.define([
 					return this.waitFor({
 						id : "proceedButton",
 						actions : new sap.ui.test.actions.Press()
-					});
-				},
-
-				iFillTheForm : function () {
-					this.waitFor({
-						viewName : "Order",
-						id: "inputName",
-						actions: new EnterText({ text: "MyName" })
-					});
-					this.waitFor({
-						viewName : "Order",
-						id: "inputAddress",
-						actions: new EnterText({ text: "MyAddress" })
-					});
-					this.waitFor({
-						viewName : "Order",
-						id: "inputMail",
-						actions: new EnterText({ text: "me@example.com" })
-					});
-					return this.waitFor({
-						viewName : "Order",
-						id: "inputNumber",
-						actions: new EnterText({ text: "1234567891234" })
-					});
-				},
-
-				iPressOrderNow : function () {
-					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers: new Properties({ text: "Order Now" }),
-						actions : new Press(),
-						errorMessage : "Did not find the Order Now button"
 					});
 				},
 
@@ -201,12 +167,8 @@ sap.ui.define([
 							}).isMatching(oList);
 							return !bExist;
 						},
-						success : function (oList) {
-							Opa5.assert.strictEqual(
-								oList.getItems().length,
-								0,
-								"The cart does not contain our product"
-							);
+						success: function () {
+							Opa5.assert.ok(true, "The cart does not contain our product");
 						},
 						errorMessage : "The cart contains our product"
 					});
@@ -243,10 +205,16 @@ sap.ui.define([
 						},
 						errorMessage : "The savelist still has entries"
 					});
+				},
+				iShouldSeeTheWelcomeScreen: function () {
+					return this.waitFor({
+						id : "saveForLaterList",
+						success : function (oList) {
+							Opa5.assert.strictEqual(oList.getItems().length, 1, "Product saved for later");
+						}
+					});
 				}
 			}
-
 		}
 	});
-
 });

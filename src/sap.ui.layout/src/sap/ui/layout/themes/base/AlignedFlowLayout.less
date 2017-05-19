@@ -10,7 +10,12 @@
 .sapUiAFLayoutItem {
 	flex-grow: 1;
 	flex-shrink: 0;
+	overflow: hidden;
 	/* text-align: center;  TODO: ? good for galleries, maybe not good for other usages... maybe a property? */
+}
+
+.sapUiAFLayoutItem > * {
+	max-width: 100%;
 }
 
 /* the dummy elements for the last line */
@@ -39,3 +44,6 @@
 	flex-basis: auto !important; /* needs to override inline style */
 	flex-grow: 0;
 }
+
+/* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
+.sapUiContainerContentPadding(~".sapUiAFLayout");

@@ -173,9 +173,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item", "sap/ui/bas
 		 * Overrides the <code>setProperty</code> method in order to avoid unnecessary re-rendering.
 		 *
 		 * @override
-		 * @param sName {string} The name of the property
-		 * @param vValue {boolean | string | object} The value of the property
-		 * @param bSupressInvalidation {boolean} Whether to suppress invalidation
+		 * @param {string} sName The name of the property
+		 * @param {boolean | string | object} vValue The value of the property
+		 * @param {boolean} bSupressInvalidation Whether to suppress invalidation
 		 */
 		TabStripItem.prototype.setProperty = function (sName, vValue, bSupressInvalidation) {
 			if (sName === 'modified') {

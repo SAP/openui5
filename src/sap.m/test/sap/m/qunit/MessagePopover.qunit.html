@@ -94,6 +94,7 @@
 					markupDescription: true
 				});
 
+				this.oButton.addDependent(this.oMessagePopover);
 				this.oButton.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
@@ -111,7 +112,7 @@
 			},
 			openDetailPageAfterOpen: function (oMessagePopover, iItem) {
 				oMessagePopover.attachAfterOpen(function () {
-					var oItem = oMessagePopover._oLists['all'].getItems()[iItem].getDomRef();
+					var oItem = oMessagePopover._oMessageView._oLists['all'].getItems()[iItem].getDomRef();
 					sap.ui.test.qunit.triggerEvent("tap", oItem);
 				});
 			},
@@ -152,11 +153,11 @@
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
 			this.oMessagePopover.attachLongtextLoaded(function () {
-				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("h2") >= 1, true, "There should be an h2 tag");
-				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
-				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
+				assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[4].getDescription().indexOf("h2") >= 1, true, "There should be an h2 tag");
+				assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[4].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
+				assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[4].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
 				doneLongtextLoaded();
-				assert.ok(this.oMessagePopover.getItems()[2].getDescription().indexOf("&") >=0, "Item's description should not be sanitized");
+				assert.ok(this.oMessagePopover._oMessageView.getItems()[2].getDescription().indexOf("&") >=0, "Item's description should not be sanitized");
 			}, this);
 
 			this.oMessagePopover.setAsyncURLHandler(function (config) {
@@ -176,7 +177,6 @@
 				callCount += 1;
 			});
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 			this.server.restore();
@@ -186,10 +186,9 @@
 			var sInterlListItemDescription, sMessagePopoverItemSubtitle;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 
-			sInterlListItemDescription = this.oMessagePopover._oLists.all.getItems()[0].getDescription();
+			sInterlListItemDescription = this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getDescription();
 			sMessagePopoverItemSubtitle = this.oMessagePopover.getItems()[0].getSubtitle();
 
 			assert.strictEqual(sInterlListItemDescription, "Subtitle", "Description of the interal listItem should be binded with the subtitle of the MessagePopoverItem");
@@ -200,11 +199,10 @@
 			var iMPItemCounter, iInterListItemCounter;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 
 			iMPItemCounter = this.oMessagePopover.getItems()[0].getCounter();
-			iInterListItemCounter = this.oMessagePopover._oLists.all.getItems()[0].getCounter();
+			iInterListItemCounter = this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getCounter();
 
 			assert.strictEqual(iInterListItemCounter, 1, "Internal listItem's counter should be set to 1");
 			assert.strictEqual(iInterListItemCounter, iMPItemCounter, "Internal listItem's counter should be the same as MessagePopoverItems's counter");
@@ -213,10 +211,12 @@
 		QUnit.test("No Navigation arrow should be shown if there is no description", function (assert) {
 			var oStandardListItem;
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
-			this.oMessagePopover.getItems()[1].setMarkupDescription(false);
 			this.oMessagePopover.openBy(this.oButton);
-			oStandardListItem = this.oMessagePopover._oLists.all.getItems()[1];
+
+			this.oMessagePopover.getItems()[1].setMarkupDescription(false);
+			sap.ui.getCore().applyChanges();
+
+			oStandardListItem = this.oMessagePopover._oMessageView._oLists.all.getItems()[1];
 
 			assert.strictEqual(oStandardListItem.getType(), "Inactive", "The type of the ListItem should be Inactive");
 		});
@@ -228,7 +228,7 @@
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
 			this.oMessagePopover.setAsyncDescriptionHandler(function (config) {
-				assert.ok(that.oMessagePopover._detailsPage.getBusy(), "when there is an async description loading");
+				assert.ok(that.oMessagePopover._oMessageView._detailsPage.getBusy(), "when there is an async description loading");
 				config.item.setDescription(that.mockMarkupDescription);
 				config.promise.resolve();
 				done();
@@ -236,7 +236,6 @@
 
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
@@ -416,8 +415,8 @@
 			var done = assert.async(),
 				that = this,
 				fnAfterOpen = function() {
-					assert.ok(that.oMessagePopover._isListPage());
-					that.oMessagePopover._navContainer.to(that.oMessagePopover._detailsPage);
+					assert.ok(that.oMessagePopover._oMessageView._isListPage());
+					that.oMessagePopover._oMessageView._navContainer.to(that.oMessagePopover._oMessageView._detailsPage);
 					that.oMessagePopover.close();
 					that.clock.tick(500);
 				};
@@ -426,7 +425,7 @@
 				that.oMessagePopover.openBy(that.oButton);
 				that.clock.tick(500);
 
-				assert.ok(that.oMessagePopover._isListPage());
+				assert.ok(that.oMessagePopover._oMessageView._isListPage());
 				done();
 		});
 
@@ -514,11 +513,10 @@
 					})
 			);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 
 			this.clock.tick(500);
-			assert.equal(this.oMessagePopover.getItems().length, 1, "The message should be one");
+			assert.equal(this.oMessagePopover._oMessageView.getItems().length, 1, "The message should be one");
 
 			// cleanup
 			sap.ui.getCore().getMessageManager().removeAllMessages();
@@ -554,10 +552,9 @@
 				aItems;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
-			aItems = this.oMessagePopover._oLists.all.getItems();
+			aItems = this.oMessagePopover._oMessageView._oLists.all.getItems();
 
 			assert.strictEqual(aItems[0].getInfoState(), ValueState.Error, "The value state should be Error in case of error message.");
 			assert.strictEqual(aItems[1].getInfoState(), ValueState.Warning, "The value state should be Warning in case of warning message.");
@@ -650,13 +647,13 @@
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
-			assert.strictEqual(this.oMessagePopover._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+			assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
 		});
 
 		QUnit.test("aria-labelledby attribute", function (assert) {
 			this.oMessagePopover.openBy(this.oButton);
 			var oDomRef = this.oMessagePopover.getDomRef(),
-				sInvisibleHeadingLabelId = this.oMessagePopover.getId() + "-HeadingDescr",
+				sInvisibleHeadingLabelId = this.oMessagePopover.getId() + "-messageView-HeadingDescr",
 				sActualAriaLabelledBy = oDomRef.getAttribute("aria-labelledby");
 
 			assert.ok(sActualAriaLabelledBy !== null, "should be present");
@@ -742,6 +739,8 @@
 					text: "Show MessagePopover"
 				});
 
+				this.oButton.addDependent(this.oMessagePopover);
+
 				this.oMockupData = {
 					count: 5,
 					messages: [{
@@ -808,7 +807,7 @@
 			},
 			openDetailPageAfterOpen: function(oMessagePopover, iItem) {
 				oMessagePopover.attachAfterOpen(function() {
-					var oItem = oMessagePopover._oLists['all'].getItems()[iItem].getDomRef();
+					var oItem = oMessagePopover._oMessageView._oLists['all'].getItems()[iItem].getDomRef();
 					sap.ui.test.qunit.triggerEvent("tap", oItem);
 				});
 			},
@@ -837,7 +836,6 @@
 
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
@@ -855,7 +853,6 @@
 
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});
@@ -869,11 +866,10 @@
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
-			aItems = this.oMessagePopover._oLists.all.getItems();
+			aItems = this.oMessagePopover._oMessageView._oLists.all.getItems();
 
 			aItems.forEach(function (item) {
 				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
@@ -891,11 +887,10 @@
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
-			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
-			aItems = this.oMessagePopover._oLists.all.getItems();
+			aItems = this.oMessagePopover._oMessageView._oLists.all.getItems();
 
 			aItems.forEach(function (item) {
 				assert.strictEqual(item.getType(), "Navigation", "Should be set if they have a markupDescription");
@@ -1055,11 +1050,11 @@
 			this.oMessagepopover2.openBy(this.oButton2);
 			this.clock.tick(500);
 
-			assert.strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
+			assert.strictEqual(this.oMessagepopover2._oMessageView._oLists.error.getItems()[0].getTitle(), "One", "Title is properly set");
 
 			this.oMessagepopover2.getModel().setProperty("/0/message", "Two");
 			this.clock.tick(500);
-			assert.strictEqual(this.oMessagepopover2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+			assert.strictEqual(this.oMessagepopover2._oMessageView._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
 		});
 
 		QUnit.test("Adding item to MessagePopover", function (assert) {
@@ -1091,12 +1086,149 @@
 			this.oMessagepopover2.getModel().setData(null);
 			sap.ui.getCore().applyChanges();
 
-			this.oMessagepopover2.getModel().setData(tempObject);
+			this.oMessagepopover2.getModel().setData([tempObject]);
 			sap.ui.getCore().applyChanges();
 
 			assert.ok(this.oMessagepopover2.getItems().length);
 
 			tempObject = null;
+		});
+
+		QUnit.module("Refactoring", {
+			beforeEach: function () {
+				var oMessageTemplate = new sap.m.MessagePopoverItem({
+					type: "{type}",
+					title: "{title}",
+					subtitle: "{subtitle}",
+					description: "{description}"
+				});
+
+				var oMockData = {
+					messages: [{
+						type: "Error",
+						title: "Error message",
+						subtitle: "Subtitle",
+						description: "<p>First Error message description</p>"
+					}, {
+						type: "Warning",
+						title: "Warning without description",
+						description: ""
+					}, {
+						type: "Success",
+						title: "Success message",
+						description: "<p>&First Success message description</p>"
+					}]};
+
+				this.oMessagePopover = new sap.m.MessagePopover({
+					items: {
+						path: "/messages",
+						template: oMessageTemplate
+					},
+					initiallyExpanded: true
+				});
+
+				this.oModel = new sap.ui.model.json.JSONModel(oMockData);
+
+				this.oButton = new sap.m.Button({text: "Press me"});
+
+				this.oButton.placeAt("qunit-fixture");
+			},
+			afterEach: function () {
+				// Clean
+				this.oButton.destroy();
+				this.oButton = null;
+
+				this.oMessagePopover.destroy();
+				this.oMessagePopover = null;
+
+				this.oModel = null;
+			}
+		});
+
+		QUnit.test("Model set via addDependent method - before the MessagePopover is opened", function (assert) {
+			//System under test
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oButton.setModel(this.oModel);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			var aMVItems = this.oMessagePopover._oMessageView.getItems();
+			//Assert
+			assert.ok(Array.isArray(aMVItems), "Items array exists in the MessageView");
+			assert.strictEqual(aMVItems.length, 0, "The items array is empty");
+		});
+
+		QUnit.test("Model set via addDependent method - after the MessagePopover is opened", function (assert) {
+			//System under test
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oButton.setModel(this.oModel);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			//Open the MessagePopover
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			var aMVItems = this.oMessagePopover._oMessageView.getItems(),
+					aMPItems = this.oMessagePopover.getItems();
+
+			//Assert
+			assert.ok(Array.isArray(aMVItems), "There is an array of items in the MessageView");
+			assert.strictEqual(aMVItems.length, aMPItems.length, "The items in the MessageView are the same number as in the MessagePopover");
+		});
+
+		QUnit.test("Model set directly on the MessagePopover - before it is opened", function (assert) {
+			//System under test
+			this.oMessagePopover.setModel(this.oModel);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			var aMVItems = this.oMessagePopover._oMessageView.getItems();
+			//Assert
+			assert.ok(Array.isArray(aMVItems), "Items array exists in the MessageView");
+			assert.strictEqual(aMVItems.length, 0, "The items array is empty");
+		});
+
+		QUnit.test("After the MessagePopover is opened - there are items in the MessageView", function (assert) {
+			//System under test
+			this.oMessagePopover.setModel(this.oModel);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			//Open the MessagePopover
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			var aMVItems = this.oMessagePopover._oMessageView.getItems(),
+					aMPItems = this.oMessagePopover.getItems();
+
+			//Assert
+			assert.ok(Array.isArray(aMVItems), "There is an array of items in the MessageView");
+			assert.strictEqual(aMVItems.length, aMPItems.length, "The items in the MessageView are the same number as in the MessagePopover");
+		});
+
+		QUnit.test("Changing property in any MessagePopover item should update the items in the MessageView", function (assert) {
+			//System under test
+			this.oMessagePopover.setModel(this.oModel);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			//Open the MessagePopover
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			var oItem = this.oMessagePopover.getItems()[0];
+			var spyInvalidate = sinon.spy(this.oMessagePopover, "invalidate");
+			oItem.setTitle("Test");
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.strictEqual(spyInvalidate.callCount, 1, "The MessagePopover is invalidated once");
+			assert.strictEqual(this.oMessagePopover.getItems()[0].getTitle() , "Test", "The title of the first item of the MessagePopover is changed");
+			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getTitle() , "Test", "The title of the first item of the MessageView is changed");
+
+			//Clean
+			spyInvalidate.restore();
 		});
 	</script>
 </head>

@@ -26,6 +26,19 @@
 						id="selectedDate"
 						text="No Date Selected"/>
 			</l:HorizontalLayout>
+			<l:HorizontalLayout>
+				<FlexBox
+						height="100px"
+						alignItems="Center"
+						justifyContent="Start">
+					<items>
+						<Label
+								text="Toggle week numbers:"/>
+						<Switch
+								state="true" change="handleShowWeekNumbers"/>
+					</items>
+				</FlexBox>
+			</l:HorizontalLayout>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

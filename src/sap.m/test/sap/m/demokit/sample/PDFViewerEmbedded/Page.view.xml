@@ -1,0 +1,17 @@
+<mvc:View
+	controllerName="sap.m.sample.PDFViewerEmbedded.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	height="100%">
+	<FlexBox direction="Column" fitContainer="true" renderType="Div">
+		<FlexBox>
+			<Button text="Correctly Displayed" press="onCorrectPathClick"/>
+			<Button text="Loading Error" press="onIncorrectPathClick"/>
+		</FlexBox>
+		<PDFViewer source="{/Source}">
+			<layoutData>
+				<FlexItemData growFactor="1" baseSize="100%"/>
+			</layoutData>
+		</PDFViewer>
+	</FlexBox>
+</mvc:View>

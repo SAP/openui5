@@ -1,4 +1,8 @@
-sap.ui.define([], function() {
+/*global QUnit*/
+
+sap.ui.define([
+	"sap/ui/test/opaQunit"
+], function (opaTest) {
 	"use strict";
 
 	QUnit.module("Worklist");
@@ -12,7 +16,6 @@ sap.ui.define([], function() {
 
 		// Assertions
 		Then.onTheWorklistPage.theTableShouldHaveAllEntries().
-		and.theTableShouldContainOnlyFormattedUnitNumbers().
 		and.theTitleShouldDisplayTheTotalAmountOfItems();
 	});
 

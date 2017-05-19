@@ -180,7 +180,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				'master-task-triangle': 0xe258, 'master-task-triangle-2': 0xe259, 'program-triangles': 0xe25a, 'program-triangles-2': 0xe25b,
 				'mirrored-task-circle': 0xe25c, 'mirrored-task-circle-2': 0xe25d, 'checklist-item': 0xe25e, 'checklist-item-2': 0xe25f,
 				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262, 'filter-analytics': 0xe263, 'filter-facets': 0xe264,
-				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
+				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'add-folder': 0xe26e, 'away': 0xe26f,
+				'busy': 0xe270, 'appear-offline': 0xe271, 'blur': 0xe272, 'pixelate': 0xe273,
+				'horizontal-combination-chart': 0xe274, 'add-employee': 0xe275, 'text-color': 0x1e276,
+				'browse-folder': 0xe277, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
 				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c, 'fx': 0x1e26d
 			}
 		};
@@ -413,7 +416,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		/**
 		 * Returns whether the given <code>uri</code> is an icon URI.
 		 *
-		 * A string is an icon URI when it can be parsed as an URI and when it has one of the two forms
+		 * A string is an icon URI when it can be parsed as a URI and when it has one of the two forms
 		 * <ul>
 		 * <li>sap-icon://collectionName/iconName</li>
 		 * <li>sap-icon://iconName</li>
@@ -468,7 +471,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			/* This is the font used in sap.ui.core.Icon */
 			sFontFace = "@font-face {" +
 							"font-family: 'SAP-icons';" +
-							"src: url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+							"src: local('SAP-icons')," + /* local installed font when untrusted font is disabled */
+							"url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
 							"url('" + sFontPath + "SAP-icons.woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
 							"url('" + sFontPath + "SAP-icons.ttf') format('truetype');" + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
 							"font-weight: normal;" +

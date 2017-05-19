@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/m/MessageBox",
-	"sap/m/MessageToast"
-], function (MessageBox, MessageToast) {
+	"sap/m/MessageToast",
+	"jquery.sap.global"
+], function (MessageBox, MessageToast, $) {
 	"use strict";
 
 	return {
@@ -23,18 +24,18 @@ sap.ui.define([
 				case "D":
 					//show message dialog
 					MessageBox.show(
-						oBundle.getText("PRODUCT_STATUS_DISCONTINUED_MSG"), {
+						oBundle.getText("productStatusDiscontinuedMsg"), {
 							icon: MessageBox.Icon.ERROR,
-							titles: oBundle.getText("PRODUCT_STATUS_DISCONTINUED_TITLE"),
+							titles: oBundle.getText("productStatusDiscontinuedTitle"),
 							actions: [MessageBox.Action.CLOSE]
 						});
 					break;
 				case "O":
 					// show message dialog
 					MessageBox.show(
-						oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_MSG"), {
+						oBundle.getText("productStatusOutOfStockMsg"), {
 							icon: MessageBox.Icon.QUESTION,
-							title: oBundle.getText("PRODUCT_STATUS_OUT_OF_STOCK_TITLE"),
+							title: oBundle.getText("productStatusOutOfStockTitle"),
 							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 							onClose: function (oAction) {
 								// order
@@ -76,7 +77,7 @@ sap.ui.define([
 			}
 			//if there is at least one entry, the edit button is shown
 			oCartModel.setProperty("/cartEntries", $.extend({}, oCollectionEntries));
-			MessageToast.show(oBundle.getText("PRODUCT_MSG_ADDED_TO_CART", [oProductToBeAdded.Name] ));
+			MessageToast.show(oBundle.getText("productMsgAddedToCart", [oProductToBeAdded.Name] ));
 		}
 	};
 });

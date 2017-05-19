@@ -1,14 +1,16 @@
+/*global QUnit,sinon */
+
 jQuery.sap.require("sap.ui.fl.RegistrationDelegator");
 
 (function(RegistrationDelegator) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
-
 	QUnit.module("sap.ui.fl.RegistrationDelegator", {
 		beforeEach: function() {
+			this._oSandbox = sinon.sandbox.create();
 		},
 		afterEach: function() {
+			this._oSandbox.restore();
 		}
 	});
 
@@ -18,6 +20,7 @@ jQuery.sap.require("sap.ui.fl.RegistrationDelegator");
 		var registerExtensionProviderStub = sinon.stub(RegistrationDelegator, "registerExtensionProvider");
 		var registerChangesInComponentStub = sinon.stub(RegistrationDelegator, "registerChangesInComponent");
 		var registerXMLPreprocessorStub = sinon.stub(RegistrationDelegator, "registerXMLPreprocessor");
+		var registerEventListenerStub = sinon.stub(RegistrationDelegator, "registerEventListener");
 
 		jQuery.sap.require("sap.ui.fl.library");
 
@@ -26,6 +29,7 @@ jQuery.sap.require("sap.ui.fl.RegistrationDelegator");
 		sinon.assert.calledOnce(registerExtensionProviderStub, "Extension provider called.");
 		sinon.assert.calledOnce(registerChangesInComponentStub, "Changes in Component called.");
 		sinon.assert.calledOnce(registerXMLPreprocessorStub, "XML preprocessor called.");
+		sinon.assert.calledOnce(registerEventListenerStub, "Event Listener called.");
 	});
 
 }(sap.ui.fl.RegistrationDelegator));

@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,browser,expect*/
+
 describe("sap.m.SelectDialog", function () {
+	"use strict";
 
 	it("Should load test page", function () {
 		expect(takeScreenshot()).toLookAs("initial");

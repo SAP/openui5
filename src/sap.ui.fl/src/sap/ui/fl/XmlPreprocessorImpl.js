@@ -32,6 +32,7 @@ sap.ui.define([
 	 * @param {Node} oView XML node of the view to process
 	 * @param {object} mProperties
 	 * @param {string} mProperties.componentId - id of the component creating the view
+	 * @param {string} mPropertyBag.id - id of the processed view
 	 *
 	 * @returns {jquery.sap.promise} result of the processing, promise if executed asynchronously
 	 *
@@ -51,24 +52,30 @@ sap.ui.define([
 			var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
 
 			if (!oComponent) {
-				Utils.log.warning("View is generated without an component. Flexibility features are not possible.");
+				Utils.log.warning("View is generated without a component. Flexibility features are not possible.");
 				return Promise.resolve(oView);
 			}
 
-			var sFlexReference = Utils.getComponentClassName(oComponent);
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
-			var cacheKey = oChangePersistence.getCacheKey();
+			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			var sFlexReference = Utils.getComponentName(oAppComponent);
+			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
+			return oChangePersistence.getCacheKey().then(function(sCacheKey){
+				if (!sCacheKey || sCacheKey === ChangePersistence.NOTAG) {
+					Utils.log.warning("No cache key could be determined for the view; flexibility XML view preprocessing is skipped. " +
+						"The processing will be done later on the JS controls.");
+					return Promise.resolve(oView);
+				}
 
-			if (!cacheKey || cacheKey === ChangePersistence.NOTAG) {
-				Utils.log.warning("No cache key could be determined for the view; flexibility XML view preprocessing is skipped. " +
-					"The processing will be done later on the JS controls.");
+				var oFlexController = FlexControllerFactory.create(sFlexReference, sAppVersion);
+				return oFlexController.processXmlView(oView, mProperties).then(function() {
+					Utils.log.debug("flex processing view " + mProperties.id + " finished");
+					return oView;
+				});
+			}, function () {
+				Utils.log.warning("Error happens when getting flex cache key! flexibility XML view preprocessing is skipped. " +
+				"The processing will be done later on the JS controls.");
 				return Promise.resolve(oView);
-			}
-
-			var oFlexController = FlexControllerFactory.create(sFlexReference);
-			return oFlexController.processXmlView(oView, mProperties).then(function() {
-				jQuery.sap.log.debug("flex processing view " + mProperties.id + " finished");
-				return oView;
 			});
 		} catch (error) {
 			var sError = "view " + mProperties.id + ": " + error;
@@ -88,8 +95,10 @@ sap.ui.define([
 	 */
 	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
 		var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
-		var sFlexReference = Utils.getComponentClassName(oComponent);
-		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference);
+		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		var sFlexReference = Utils.getComponentName(oAppComponent);
+		var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 		return oChangePersistence.getCacheKey();
 	};
 

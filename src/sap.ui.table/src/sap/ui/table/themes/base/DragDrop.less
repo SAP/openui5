@@ -3,8 +3,8 @@
 /* Base theme                             */
 /* ====================================== */
 
-@_sapUiTableColumnDnDHighlightColor: @sapUiListHighlightColor;
-@_sapUiTableReorderIndicatorWidth: 2px;
+@_sap_ui_table_DragDrop_ColumnDnDHighlightColor: @sapUiListHighlightColor;
+@_sap_ui_table_DragDrop_ReorderIndicatorWidth: 2px;
 
 .sapUiTableDragDrop {
 	cursor: move;
@@ -50,14 +50,14 @@
 	top: 0;
 	bottom: 0;
 	left: auto; /*set dynamically*/
-	width: 4 * @_sapUiTableReorderIndicatorWidth;
-	margin-left: (-4) * @_sapUiTableReorderIndicatorWidth + @_sapUiTableReorderIndicatorWidth;
+	width: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	margin-left: (-4) * @_sap_ui_table_DragDrop_ReorderIndicatorWidth + @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	z-index: 3;
 	display: none;
 }
 
 html[dir=rtl] .sapUiTableColReorderIndicator {
-	margin-right: (-4) * @_sapUiTableReorderIndicatorWidth + 2 * @_sapUiTableReorderIndicatorWidth;
+	margin-right: (-4) * @_sap_ui_table_DragDrop_ReorderIndicatorWidth + 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 }
 
 .sapUiTableColReorderIndicatorActive {
@@ -71,11 +71,11 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 
 .sapUiTableColReorderIndicatorInner {
 	position: absolute;
-	top: 4 * @_sapUiTableReorderIndicatorWidth;
-	left: 2 * @_sapUiTableReorderIndicatorWidth;
+	top: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	left: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	bottom: 0;
-	width: @_sapUiTableReorderIndicatorWidth;
-	background-color: @_sapUiTableColumnDnDHighlightColor;
+	width: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 }
 
 .sapUiTableColReorderIndicatorArrow {
@@ -93,19 +93,19 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 }
 
 .sapUiTableColReorderIndicatorArrow:after {
-	height: 2 * @_sapUiTableReorderIndicatorWidth;
-	width: 2 * @_sapUiTableReorderIndicatorWidth;
-	border-radius: @_sapUiTableReorderIndicatorWidth;
-	top: @_sapUiTableReorderIndicatorWidth;
-	left: @_sapUiTableReorderIndicatorWidth;
+	height: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	width: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	border-radius: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	top: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	left: @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
 	background-color: @sapUiListHeaderBackground;
 }
 
 .sapUiTableColReorderIndicatorArrow:before {
-	height: 4 * @_sapUiTableReorderIndicatorWidth;
-	width: 4 * @_sapUiTableReorderIndicatorWidth;
-	border-radius: 2 * @_sapUiTableReorderIndicatorWidth;
-	background-color: @_sapUiTableColumnDnDHighlightColor;
+	height: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	width: 4 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	border-radius: 2 * @_sap_ui_table_DragDrop_ReorderIndicatorWidth;
+	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 }
 
 
@@ -121,14 +121,14 @@ html[data-sap-ui-animation^="on"] .sapUiTableColReorderIndicator {
 	right: 0;
 	bottom: -1px;
 	z-index: 3;
-	border-left: 1px solid @_sapUiTableColumnDnDHighlightColor;
-	border-right: 1px solid @_sapUiTableColumnDnDHighlightColor;
+	border-left: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
+	border-right: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 	background-color: fade(@sapUiBaseColor, 80);
 	box-sizing: border-box;
 }
 
 .sapUiTableLastRow .sapUiTableColReorderFade:after {
-	border-bottom: 1px solid @_sapUiTableColumnDnDHighlightColor;
+	border-bottom: 1px solid @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 }
 
 
@@ -157,13 +157,13 @@ html[dir=rtl] .sapUiTableColRsz {
 }
 
 html.sap-desktop .sapUiTableColRsz:hover {
-	background-color: @_sapUiTableColumnDnDHighlightColor;
+	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 	opacity: 0.5;
 }
 
 .sapUiTableColRszActive,
 html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
-	background-color: @_sapUiTableColumnDnDHighlightColor;
+	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 	opacity: 1;
 }
 
@@ -198,7 +198,7 @@ html.sap-desktop .sapUiTableColRsz.sapUiTableColRszActive:hover {
 
 .sapUiTableInteractiveResizerGhost {
 	position: absolute;
-	background-color: @_sapUiTableColumnDnDHighlightColor;
+	background-color: @_sap_ui_table_DragDrop_ColumnDnDHighlightColor;
 	color: @sapUiContentContrastTextColor;
 	z-index:10000;
 }

@@ -14,7 +14,7 @@ sap.ui.define(['sap/f/semantic/SemanticButton'], function(SemanticButton) {
 	* A semantic-specific button, eligible for the <code>negativeAction</code> aggregation of the
 	* {@link sap.f.semantic.SemanticPage} to be placed in its footer.
 	*
-	* @extends <code>sap.f.semantic.SemanticButton</code>
+	* @extends sap.f.semantic.SemanticButton
 	*
 	* @author SAP SE
 	* @version ${version}

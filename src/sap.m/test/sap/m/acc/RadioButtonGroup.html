@@ -7,7 +7,7 @@
 
     <script src="../shared-config.js"></script>
     <script id="sap-ui-bootstrap"
-            data-sap-ui-libs="sap.m, sap.ui.core, sap.ui.commons"
+            data-sap-ui-libs="sap.m, sap.ui.core"
             src="../../../../resources/sap-ui-core.js">
     </script>
 
@@ -459,7 +459,7 @@
             var oLabel = new sap.m.Label("Label1");
             oLabel.setText("Set Selected Index");
 
-            var oText = new sap.ui.commons.TextField("TF1");
+            var oText = new sap.m.Input("TF1");
             oText.attachChange(handleTextChange);
             oText.setWidth("5em");
             oLabel.setLabelFor(oText);
@@ -467,7 +467,7 @@
             var oLabel2 = new sap.m.Label("Label2");
             oLabel2.setText("Selected Index");
 
-            var oText2 = new sap.ui.commons.TextField("TF2");
+            var oText2 = new sap.m.Input("TF2");
             oText2.setEditable(false);
             oText2.setWidth("5em");
             oText2.setValue(oRBGroupRBG5.getSelectedIndex());
@@ -477,7 +477,7 @@
             oLabel = new sap.m.Label("Label3");
             oLabel.setText("Set Selected ID");
 
-            oText = new sap.ui.commons.TextField("TF3");
+            oText = new sap.m.Input("TF3");
             oText.attachChange(handleTextChangeID);
             oText.setWidth("5em");
             oLabel.setLabelFor(oText);
@@ -485,7 +485,7 @@
             oLabel2 = new sap.m.Label("Label4");
             oLabel2.setText("Selected ID");
 
-            var oText2 = new sap.ui.commons.TextField("TF4");
+            var oText2 = new sap.m.Input("TF4");
             oText2.setEditable(false);
             oText2.setWidth("5em");
             if (oRBGroupRBG5.getSelectedButton()) {
@@ -500,7 +500,7 @@
             oLabel = new sap.m.Label("Label5");
             oLabel.setText("Text");
 
-            oText = new sap.ui.commons.TextField("TF5");
+            oText = new sap.m.Input("TF5");
             oText.attachChange(handleTextChangeText);
             oLabel.setLabelFor(oText);
             oText.setWidth("5em");

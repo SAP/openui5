@@ -171,12 +171,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * An annotation source, containing either an URL to be loaded or an XML string to be parsed.
+	 * An annotation source, containing either a URL to be loaded or an XML string to be parsed.
 	 *
-	 * @typedef {map} ODataAnnotations~Source
+	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.Source
 	 * @property {string} type The source type. Either "url" or "xml".
 	 * @property {string|Promise} data Either the data or a Promise that resolves with the data string as argument.
-	 *           In case the type is set to "url" the data must be an URL, in case it is set to "xml" the data must be
+	 *           In case the type is set to "url" the data must be a URL, in case it is set to "xml" the data must be
 	 *           an XML string.
 	 * @property {string} [xml] (Set internally, available in event-callback) The XML string of the annotation source
 	 * @property {Document} [document] (Set internally, available in event-callback) The parsed XML document of the annotation source
@@ -188,8 +188,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * Adds one or several sources to the annotation loader. Sources will be loaded instantly but merged only after
 	 * the previously added source has either been successfully merged or failed.
 	 *
-	 * @param {string|string[]|ODataAnnotations~Source|ODataAnnotations~Source[]} vSource One or several
-	 *        annotation source(s). Can be either a string or a map of the type <code>ODataAnnotations~Source</code> or an array
+	 * @param {string|string[]|sap.ui.model.odata.v2.ODataAnnotations.Source|sap.ui.model.odata.v2.ODataAnnotations.Source[]} vSource One or several
+	 *        annotation source(s). Can be either a string or a map of the type <code>sap.ui.model.odata.v2.ODataAnnotations.Source</code> or an array
 	 *        containing several (either strings or source objects).
 	 * @returns {Promise} The promise to (load,) parse and merge the given source(s). The Promise resolves on success
 	 *          with an array of maps containing properties <code>source</code> and <code>data</code>. See the parameters of the <code>success</code>
@@ -262,8 +262,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Parameters of the <code>success</code> event
 	 *
-	 * @typedef {map} ODataAnnotations~successParameters
-	 * @property {ODataAnnotations~Source} result The source type. Either "url" or "xml".
+	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.successParameters
+	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source} result The source type. Either "url" or "xml".
 	 * @public
 	 */
 
@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * @event
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
-	 * @param {ODataAnnotations~successParameters} oControlEvent.getParameters
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.successParameters} oControlEvent.getParameters
 	 * @public
 	 */
 
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * (loaded,) parsed and merged into the annotation data.
 	 * The following parameters will be set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
-	 *              the data given as source, either an URL or an XML string depending on how the source was added.
+	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *
 	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 	 * @param {function} fnFunction The event callback. This function will be called in the context of the oListener
@@ -313,8 +313,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Parameters of the <code>error</code> event
 	 *
-	 * @typedef {map} ODataAnnotations~errorParameters
-	 * @property {Error} result The error that occurred. Also contains the properties from ODataAnnotations~Source
+	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.errorParameters
+	 * @property {Error} result The error that occurred. Also contains the properties from sap.ui.model.odata.v2.ODataAnnotations.Source
 	 *           that could be filled up to that point
 	 * @public
 	 */
@@ -324,7 +324,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * merged into the annotation data.
 	 * The following parameters will be set on the event object that is given to the callback function:
 	 *   <code>source</code> - A map containing the properties <code>type</code> - containing either "url" or "xml" - and <code>data</code> containing
-	 *              the data given as source, either an URL or an XML string depending on how the source was added.
+	 *              the data given as source, either a URL or an XML string depending on how the source was added.
 	 *   <code>error</code>  - An Error object describing the problem that occurred
 	 *
 	 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
@@ -354,8 +354,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Parameters of the <code>loaded</code> event
 	 *
-	 * @typedef {map} ODataAnnotations~loadedParameters
-	 * @property {ODataAnnotations~Source[]|Error[]|any} result An array of results and Errors
+	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.loadedParameters
+	 * @property {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} result An array of results and Errors
 	 *           (@see sap.ui.model.v2.ODataAnnotations#success and @see sap.ui.model.v2.ODataAnnotations#error) that
 	 *           occurred while loading a group of annotations
 	 * @public
@@ -486,7 +486,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Parameters of the <code>failed</code> event
 	 *
-	 * @typedef {map} ODataAnnotations~failedParameters
+	 * @typedef {map} sap.ui.model.odata.v2.ODataAnnotations.failedParameters
 	 * @property {Error[]} result An array of Errors (@see sap.ui.model.v2.ODataAnnotations#error) that occurred while
 	 *           loading a group of annotations
 	 * @public
@@ -524,7 +524,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Fires the <code>loaded</code> event with an array of results in the result-parameter of the event
 	 *
-	 * @param {ODataAnnotations~Source[]} aResults An array of results
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} aResults An array of results
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
@@ -546,7 +546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	/**
 	 * Fires the <code>someLoaded</code> event with an array of results and errors in the result-parameter of the event
 	 *
-	 * @param {ODataAnnotations~Source[]|Error[]|any} aResults An array of results and Errors
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} aResults An array of results and Errors
 	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
@@ -566,11 +566,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Loads a given source (ODataAnnotations~Source) if necessary and returns a promise that resolves
+	 * Loads a given source (sap.ui.model.odata.v2.ODataAnnotations.Source) if necessary and returns a promise that resolves
 	 * if the source could be loaded or no laoding is necessary. In case the source type is neither "xml" nor "url" or
 	 * the loading of the source fails, the promise rejects.
 	 *
-	 * @param {ODataAnnotations~Source} mSource The source to be loaded
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source} mSource The source to be loaded
 	 * @returns {Promise} The Promise to load the source if necessary
 	 * @private
 	 */
@@ -603,7 +603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * Loads a source with the type "url" and returns a promise that resolves if the source was successfully loaded or
 	 * rejects in case of failure.
 	 *
-	 * @param {ODataAnnotations~Source} mSource The source of type "url" to be loaded
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source} mSource The source of type "url" to be loaded
 	 * @returns {Promise} The Promise to load the source
 	 * @private
 	 */
@@ -623,7 +623,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 
 			var fnSuccess = function(sData, sStatusText, oXHR) {
 				mSource.xml = oXHR.responseText;
-				mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+
+				if (oXHR.getResponseHeader("Last-Modified")) {
+					mSource.lastModified = new Date(oXHR.getResponseHeader("Last-Modified"));
+				}
+
 				fnResolve(mSource);
 			};
 
@@ -638,10 +642,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * Parses a source as xml an returns a promise that resolves when the source's <code>xml</code> property string could be
+	 * Parses a source as XML and returns a promise that resolves when the source's <code>xml</code> property string could be
 	 * successfully parsed as an XML document.
 	 *
-	 * @param {ODataAnnotations~Source} mSource The source that should be parsed with its <code>xml</code> property set to a string
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source} mSource The source that should be parsed with its <code>xml</code> property set to a string
 	 * @returns {Promise} The Promise to parse the source as XML
 	 * @private
 	 */
@@ -702,7 +706,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * Parses a source that has been parsed to an XML document as annotations and returns a promise that resolves when
 	 * the source's <code>document</code> property could be successfully parsed as an annotations object.
 	 *
-	 * @param {ODataAnnotations~Source} mSource The source that should be parsed with its <code>document</code> property set to an XML document
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source} mSource The source that should be parsed with its <code>document</code> property set to an XML document
 	 * @returns {Promise} The Promise to parse the source as an annotations object
 	 * @private
 	 */
@@ -719,7 +723,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	 * Merges the parsed annotation object of the given source into the internal annotations object. The source's
 	 * <code>annotations</code> property must contain an annotations object.
 	 *
-	 * @param {ODataAnnotations~Source} mSource The source that should be parsed with its <code>annotations</code> property set to an annotations object
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source} mSource The source that should be parsed with its <code>annotations</code> property set to an annotations object
 	 * @returns {Promise} The Promise to merge the source's annotations object into the internal annotations object
 	 * @private
 	 */

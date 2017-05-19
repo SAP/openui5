@@ -31,6 +31,7 @@ sap.ui.define([
 			SemanticContainer.call(this, oContainer, oParent);
 
 			this._aCustomContent = [];
+			this._aSemanticLeftContent = [];
 			this._aSemanticRightContent = [];
 			this._iSemanticLeftContentCount = 1;
 
@@ -132,12 +133,14 @@ sap.ui.define([
 	};
 
 	/*
-	* Cleans the references to all objects in use.
+	* Destroys all the actions - custom and semantic
+	* and cleans all the references in use.
 	*
 	* @returns {sap.f.semantic.SemanticFooter}
 	*/
 	SemanticFooter.prototype.destroy = function() {
 		this._aCustomContent = null;
+		this._aSemanticLeftContent = null;
 		this._aSemanticRightContent = null;
 		this._oSpacer = null;
 
@@ -157,6 +160,7 @@ sap.ui.define([
 
 		this._callContainerAggregationMethod("insertContent", oControl, iIndexToInsert);
 		this._iSemanticLeftContentCount ++;
+		this._aSemanticLeftContent.push(oSemanticControl);
 		this._preProcessControl(oControl);
 
 		return this;
@@ -188,6 +192,7 @@ sap.ui.define([
 
 		this._callContainerAggregationMethod("removeContent", oControl);
 		this._iSemanticLeftContentCount --;
+		this._aSemanticLeftContent.splice(this._aSemanticLeftContent.indexOf(oControl), 1);
 		this._postProcessControl(oControl);
 		return oSemanticControl;
 	};

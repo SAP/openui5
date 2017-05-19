@@ -155,7 +155,7 @@ sap.ui.define([
 	So with properly working native promises, the first then block will be executed before the second response and so the code inside will
 	correctly detect there are pending requests.
 	But with pormise polyfill and if the responses are received in a very short interval and are scheduled in sequential ticks,
-	the promise then's are executed in sequential tickes, AFTER both responces are processed and there are no more pengind requests.
+	the promise then's are executed in sequential tickes, AFTER both responses are processed and there are no more pengind requests.
 	*/
 	if (!Device.browser.msie) {
 		QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {

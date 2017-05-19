@@ -28,12 +28,22 @@
 			</OverflowToolbar>
 			<UploadCollection
 				id="UploadCollection"
-				items="{path : '/items', templateShareable : 'true'}">
+				uploadEnabled="false"
+				items="{
+					path : '/items',
+					templateShareable : false,
+					sorter: {
+						path: 'version',
+						descending: false,
+						group: true
+					},
+					groupHeaderFactory: '.getGroupHeader'
+				}">
 				<toolbar>
 					<OverflowToolbar id="myId">
 						<Title id="attachmentTitle"/>
 						<ToolbarSpacer/>
-						<Button type="Transparent" text="Sort and Filter" press="onViewSettingsPressed"/>
+						<Button type="Transparent" icon="sap-icon://drop-down-list" press="onViewSettingsPressed"/>
 					</OverflowToolbar>
 				</toolbar>
 				<infoToolbar>
@@ -54,8 +64,8 @@
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"
-						attributes="{path : 'attributes', templateShareable : 'true'}"
-						statuses="{path : 'statuses', templateShareable : 'true'}"
+						attributes="{path : 'attributes', templateShareable : false}"
+						statuses="{path : 'statuses', templateShareable : false}"
 						selected="{selected}">
 						<attributes>
 							<ObjectAttribute

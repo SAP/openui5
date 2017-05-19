@@ -11,11 +11,11 @@
 		var oElementEnablementTest = new ElementEnablementTest({
 			type: "sap.m.Image",
 			create: function () {
-				return new Image()
+				return new Image();
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});

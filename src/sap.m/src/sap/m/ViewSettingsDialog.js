@@ -248,7 +248,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		this._sCustomTabsButtonsIdPrefix    = '-custom-button-';
 
 		/* setup a name map between the sortItems
-		 aggregation and a sap.m.List with items
+		 aggregation and an sap.m.List with items
 		 the list itself will not be created right now */
 		this._aggregationToListItems("sortItems", {
 			text: {
@@ -755,7 +755,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		// Attach 'itemPropertyChanged' handler, that will re-initiate (specific) dialog content
 		oObject.attachEvent('itemPropertyChanged', function (sAggregationName, oEvent) {
-			/* If the the changed item was a 'sap.m.ViewSettingsItem'
+			/* If the changed item was a 'sap.m.ViewSettingsItem'
 			 * then threat it differently as filter detail item.
 			 * */
 			if (sAggregationName === 'filterItems' &&
@@ -1299,7 +1299,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 					continue;
 				}
 
-				// set the the selected state on the item
+				// set the selected state on the item
 				oFilterItem.setProperty('selected', oSelectedFilterKeys[sKey], true);
 			}
 		}
@@ -1470,7 +1470,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		if (this._resetButton === undefined) {
 			this._resetButton = new sap.m.Button(this.getId() + "-resetbutton", {
-				icon : IconPool.getIconURI("refresh"),
+				icon : IconPool.getIconURI("clear-filter"),
 				press : function() {
 					that._onClearFilters();
 				},
@@ -1635,7 +1635,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			});
 			oDetailResetButton = new sap.m.Button(this.getId()
 			+ "-detailresetbutton", {
-				icon : IconPool.getIconURI("refresh"),
+				icon : IconPool.getIconURI("clear-filter"),
 				press : function() {
 					that._onClearFilters();
 				},
@@ -1732,12 +1732,14 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			this._filterDetailList.addItem(oListItem);
 		}
 
+		this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
+		this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
+		// add this css style for recognizing when after the sap.m.Bar is SearchField, so we can remove the bar border
+		this._getPage2().getCustomHeader().addStyleClass('sapMVSDBarWithSearch');
+
 		if (bMultiSelectMode) {
-			this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
 			this._selectAllCheckBox = this._createSelectAllCheckbox(aSubFilters, this._filterDetailList);
-			this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
-			// add this css style for recognizing when after the sap.m.Bar is SearchField, so we can remove the bar border
-			this._getPage2().getCustomHeader().addStyleClass('sapMVSDBarWithSearch');
+
 			this._filterDetailList.setHeaderToolbar(new Toolbar({
 				content: [ this._selectAllCheckBox ]
 			}).addStyleClass('sapMVSDFilterHeaderToolbar'));
@@ -1916,7 +1918,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		// add none item to preset filter list
 		if (aPresetFilterItems.length) {
 			oListItem = new sap.m.StandardListItem({
-				id: "none" + LIST_ITEM_SUFFIX,
+				id: this._presetFilterList.getId() + "-none" + LIST_ITEM_SUFFIX,
 				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 				selected : !!this.getSelectedPresetFilterItem()
 			});
@@ -2756,7 +2758,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	}
 
 	/**
-	 * Gets a sap.m.ViewSettingsItem from a list of items by a given key.
+	 * Gets an sap.m.ViewSettingsItem from a list of items by a given key.
 	 *
 	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
 	 * @param sKey
@@ -2779,7 +2781,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	}
 
 	/**
-	 * Finds a sap.m.ViewSettingsItem from a list of items by a given key.
+	 * Finds an sap.m.ViewSettingsItem from a list of items by a given key.
 	 * If it does not succeed logs an error.
 	 *
 	 * @param {sap.m.ViewSettingsItem|string}
@@ -2807,10 +2809,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	}
 
 	/**
-	 * Checks if the item is a sap.m.ViewSettingsItem.
+	 * Checks if the item is an sap.m.ViewSettingsItem.
 	 *
 	 * @param {*} oItem The item to be validated
-	 * @returns {*|boolean} Returns true if the item is a sap.m.ViewSettingsItem
+	 * @returns {*|boolean} Returns true if the item is an sap.m.ViewSettingsItem
 	 * @private
 	 */
 	function validateViewSettingsItem(oItem) {

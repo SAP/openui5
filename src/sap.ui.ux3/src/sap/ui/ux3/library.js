@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global',
 
 
 	/**
-	 * Type of an Feeder.
+	 * Type of a Feeder.
 	 *
 	 * @enum {string}
 	 * @public

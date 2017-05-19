@@ -4,23 +4,23 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>qUnit Page for sap.ui.test.actions.Action</title>
+	<title>QUnit Page for sap.ui.test.actions.Action</title>
 
 	<script src="../../../shared-config.js"></script>
 	<script
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.ui.table">
 	</script>
-
+	<script src="../../_includeQUnit.js"></script>
 
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+
+		QUnit.config.autostart = false;
 
 		sap.ui.require([
 			"sap/ui/test/actions/Action",
@@ -81,6 +81,9 @@
 				oAction.setIdSuffix("three");
 				assert.equal(oAction.$(this.oMyControl)[0].id, "myId-three", "if there is a suffix then its taken");
 			});
+
+			QUnit.start();
+
 		});
 	</script>
 </head>

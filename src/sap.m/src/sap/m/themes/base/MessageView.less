@@ -71,16 +71,6 @@
 
 	.sapMSLIInfo {
 		margin: 0;
-	}	
-}
-
-.sapMMsgView.sapMMsgView-init {
-	.sapMNavItem.sapMPage {
-		position: relative;
-	}
-
-	.sapMIBar {
-		border-bottom: 0;
 	}
 }
 
@@ -90,14 +80,6 @@
 	width: 3rem;
 	top: .7rem;
 	font-size: 1.35rem;
-}
-
-.sapMMsgViewCloseBtn {
-	.sapMBtnIcon {
-		width: 2.5rem;
-		height: 2.5rem;
-		font-size: 1rem;
-	}
 }
 
 /* Compact size */
@@ -117,6 +99,16 @@
 		height: 2rem;
 	}
 
+	.sapMMsgViewItem.sapMSLINoDescIcon .sapMLIBImgNav.sapUiIcon {
+		height: 2rem;
+		line-height: 2rem;
+	}
+
+	.sapMMsgViewItem .sapMLIBImgNav.sapUiIcon {
+		height: 3.4375rem;
+		line-height: 3.4375rem;
+	}
+
 	.sapMMsgViewCloseBtn .sapMBtnIcon {
 		width: 1.626rem;
 		height: 1.626rem;
@@ -131,7 +123,6 @@
 		padding: 0;
 	}
 
-	.sapMMsgViewCloseBtn .sapMBtnIcon,
 	.sapMMsgViewBackBtn .sapMBtnIcon {
 		margin-right: 0;
 	}
@@ -163,6 +154,10 @@
 	}
 }
 
+.sapMMsgViewCloseBtn .sapMBtnIcon {
+	color: @sapUiButtonIconColor;
+}
+
 .sapMMsgViewItemSuccess .sapMSLIImgIcon,
 .sapMMsgViewBtnSuccess.sapMSegBBtn .sapUiIcon,
 .sapMMsgViewDescIconSuccess {
@@ -189,14 +184,4 @@
 
 .sapMMsgViewItem .sapMSLIIconActive {
 	color: @sapUiContentContrastIconColor;
-}
-
-.sapMPopover.sapMMsgView.sapMMsgView-init {
-	.sapMPopoverArr:after {
-		border-top-color: @sapUiPageHeaderBackground;
-	}
-}
-
-.sapMMsgViewCloseBtn .sapMBtnIcon {
-	color: @sapUiButtonIconColor;
 }

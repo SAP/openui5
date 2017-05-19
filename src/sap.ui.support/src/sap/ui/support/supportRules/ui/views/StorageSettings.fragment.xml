@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core">
+	<Popover
+			title="Settings"
+			contentMinWidth="250px"
+			class="sapUiContentPadding"
+			placement="Bottom">
+		<content>
+			<FlexBox
+			alignContent="Center"
+			justifyContent="Center">
+				<l:VerticalLayout>
+					<l:HorizontalLayout>
+						<CheckBox text="I agree to use local storage presystency for:"
+							  select= "onPersistedSettingSelect"
+							  selected="{/persistingSettings}"
+						/>
+					</l:HorizontalLayout>
+					<FlexBox
+							alignContent="Center"
+							justifyContent="Start">
+						<l:VerticalLayout class="customSettingsPadding">
+							<Text text="  Selected Rules"></Text>
+							<Text text="  Execution Scope"></Text>
+							<Text text="  Temporary Rules"></Text>
+							<Button text="Delete Persisted Data" press="deletePersistedData"></Button>
+						</l:VerticalLayout>
+					</FlexBox>
+				</l:VerticalLayout>
+			</FlexBox>
+		</content>
+	</Popover>
+</core:FragmentDefinition>

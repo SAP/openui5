@@ -145,6 +145,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 			BaseObject.apply(this, arguments);
 
+			// create a unique id per manifest
+			this._uid = jQuery.sap.uid();
+
+			// instance variables
+			this._iInstanceCount = 0;
+			this._bIncludesLoaded = false;
+
 			// apply the manifest related values
 			this._oRawManifest = oManifest;
 			this._bProcess = !(mOptions && mOptions.process === false);
@@ -314,6 +321,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 		},
 
+
 		/**
 		 * Loads the included CSS and JavaScript resources. The resources will be
 		 * resolved relative to the component location.
@@ -321,6 +329,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 * @private
 		 */
 		loadIncludes: function() {
+
+			// skip loading includes once already loaded
+			if (this._bIncludesLoaded) {
+				return;
+			}
 
 			var mResources = this.getEntry("/sap.ui5/resources");
 
@@ -358,10 +371,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					if (oCSSResource.uri) {
 						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
 						jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading CSS: \"" + sCssUrl + "\"");
-						jQuery.sap.includeStyleSheet(sCssUrl, oCSSResource.id);
+						jQuery.sap.includeStyleSheet(sCssUrl, {
+							id: oCSSResource.id,
+							"data-sap-ui-manifest-uid": this._uid
+						});
 					}
 				}
 			}
+
+			this._bIncludesLoaded = true;
+
+		},
+
+		/**
+		 * Removes the included CSS resources.
+		 *
+		 * @private
+		 */
+		removeIncludes: function() {
+
+			// skip removing includes when not loaded yet
+			if (!this._bIncludesLoaded) {
+				return;
+			}
+
+			var mResources = this.getEntry("/sap.ui5/resources");
+
+			if (!mResources) {
+				return;
+			}
+
+			var sComponentName = this.getComponentName();
+
+			// remove CSS files
+			var aCSSResources = mResources["css"];
+			if (aCSSResources) {
+				for (var j = 0; j < aCSSResources.length; j++) {
+					var oCSSResource = aCSSResources[j];
+					if (oCSSResource.uri) {
+						var sCssUrl = this.resolveUri(new URI(oCSSResource.uri)).toString();
+						jQuery.sap.log.info("Component \"" + sComponentName + "\" is removing CSS: \"" + sCssUrl + "\"");
+						jQuery("link[data-sap-ui-manifest-uid='" + this._uid + "'][href='" + sCssUrl + "']" + (oCSSResource.id ? "[id='" + oCSSResource.id + "']" : "")).remove();
+					}
+				}
+			}
+
+			this._bIncludesLoaded = false;
 
 		},
 
@@ -465,24 +520,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 * roots, load the dependencies and the includes.
 		 * @private
 		 */
-		init: function() {
+		init: function(oInstance) {
 
-			// version check => only if minVersion is available a warning
-			// will be logged and the debug mode is turned on
-			this.checkUI5Version();
+			if (this._iInstanceCount === 0) {
 
-			// define the resource roots
-			// => if not loaded via manifest first approach the resource roots
-			//    will be registered too late for the AMD modules of the Component
-			//    controller. This is a constraint for the resource roots config
-			//    in the manifest!
-			this.defineResourceRoots();
+				// version check => only if minVersion is available a warning
+				// will be logged and the debug mode is turned on
+				this.checkUI5Version();
 
-			// first the dependencies have to be loaded (other UI5 libraries)
-			this.loadDependencies();
+				// define the resource roots
+				// => if not loaded via manifest first approach the resource roots
+				//    will be registered too late for the AMD modules of the Component
+				//    controller. This is a constraint for the resource roots config
+				//    in the manifest!
+				this.defineResourceRoots();
 
-			// then load the custom scripts and CSS files
-			this.loadIncludes();
+				// load the component dependencies (other UI5 libraries)
+				this.loadDependencies();
+
+				// load the custom scripts and CSS files
+				this.loadIncludes();
+
+				// activate the static customizing
+				this.activateCustomizing();
+
+			}
+
+			// activate the instance customizing
+			if (oInstance) {
+				this.activateCustomizing(oInstance);
+			}
+
+			this._iInstanceCount++;
 
 		},
 
@@ -490,10 +559,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 * Terminates the manifest and does some final clean-up.
 		 * @private
 		 */
-		exit: function() {
-			// TODO: implement unload of CSS, ...
-		}
+		exit: function(oInstance) {
 
+			// ensure that the instance count is never negative
+			var iInstanceCount = Math.max(this._iInstanceCount - 1, 0);
+
+			// deactivate the instance customizing
+			if (oInstance) {
+				this.deactivateCustomizing(oInstance);
+			}
+
+			if (iInstanceCount === 0) {
+
+				// deactivcate the customizing
+				this.deactivateCustomizing();
+
+				// remove the custom scripts and CSS files
+				this.removeIncludes();
+
+			}
+
+			this._iInstanceCount = iInstanceCount;
+
+		},
+
+		/**
+		 * Activates the customizing for the component or a dedicated component
+		 * instance when providing the component instance as parameter.
+		 * @param {sap.ui.core.Component} [oInstance] Reference to the Component instance
+		 * @private
+		 */
+		activateCustomizing: function(oInstance) {
+			// activate the customizing configuration
+			var oUI5Manifest = this.getEntry("sap.ui5", true),
+				mExtensions = oUI5Manifest && oUI5Manifest["extends"] && oUI5Manifest["extends"].extensions;
+			if (!jQuery.isEmptyObject(mExtensions)) {
+				var CustomizingConfiguration = sap.ui.requireSync('sap/ui/core/CustomizingConfiguration');
+				if (!oInstance) {
+					CustomizingConfiguration.activateForComponent(this.getComponentName());
+				} else {
+					CustomizingConfiguration.activateForComponentInstance(oInstance);
+				}
+			}
+		},
+
+		/**
+		 * Deactivates the customizing for the component or a dedicated component
+		 * instance when providing the component instance as parameter.
+		 * @param {sap.ui.core.Component} [oInstance] Reference to the Component instance
+		 * @private
+		 */
+		deactivateCustomizing: function(oInstance) {
+			// deactivate the customizing configuration
+			var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+			if (CustomizingConfiguration) {
+				if (!oInstance) {
+					CustomizingConfiguration.deactivateForComponent(this.getComponentName());
+				} else {
+					CustomizingConfiguration.deactivateForComponentInstance(oInstance);
+				}
+			}
+		}
 
 	});
 

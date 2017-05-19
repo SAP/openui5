@@ -1482,7 +1482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/ListBox', 'sap/ui/core/Contr
 	 */
 
 	/**
-	 * Removes an subList from the aggregation named <code>subLists</code>.
+	 * Removes a subList from the aggregation named <code>subLists</code>.
 	 *
 	 * @param {int | string | sap.ui.ux3.ExactList} vSubList the subList to remove or its index or id
 	 * @return {sap.ui.ux3.ExactList} the removed subList or null

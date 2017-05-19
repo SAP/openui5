@@ -8,6 +8,10 @@
 
 	if (typeof QUnit !== "undefined") {
 
+		// any version < 2.0 activates legacy support
+		// note that the strange negated condition properly handles NaN
+		var bLegacySupport = !(parseFloat(QUnit.version) >= 2.0);
+
 		//extract base URL from script to attach the qunit-reporter-junit script
 		var sDocumentLocation = document.location.href.replace(/\?.*|#.*/g, ""),
 				aScripts = document.getElementsByTagName("script"),
@@ -61,8 +65,10 @@
 		});
 
 		// TODO: Remove deprecated code once all projects adapted
-		QUnit.equals = window.equals = window.equal;
-		QUnit.raises = window.raises = window["throws"];
+		if ( bLegacySupport ) {
+			QUnit.equals = window.equals = window.equal;
+			QUnit.raises = window.raises = window["throws"];
+		}
 
 		// register QUnit event handler to manipulate module names for better reporting in Jenkins
 		QUnit.moduleStart(function(oData) {
@@ -70,20 +76,24 @@
 		});
 		QUnit.testStart(function(oData) {
 			oData.module = sTestPageName + "." + formatModuleName(oData.module);
-			window.assert = QUnit.config.current.assert;
+			if ( bLegacySupport ) {
+				window.assert = QUnit.config.current.assert;
+			}
 		});
 		QUnit.testDone(function(assert) {
-			try {
-				delete window.assert;
-			} catch (ex) {
-				// report that the cleanup of the window.assert compatibility object
-				// failed because some script loaded via script tag defined an assert
-				// function which finally causes the "delete window.assert" to fail
-				if (!window._$cleanupFailed) {
-					QUnit.test("A script loaded via script tag defines a global assert function!", function(assert) {
-						QUnit.ok(QUnit.config.ignoreCleanupFailure, ex);
-					});
-					window._$cleanupFailed = true;
+			if ( bLegacySupport ) {
+				try {
+					delete window.assert;
+				} catch (ex) {
+					// report that the cleanup of the window.assert compatibility object
+					// failed because some script loaded via script tag defined an assert
+					// function which finally causes the "delete window.assert" to fail
+					if (!window._$cleanupFailed) {
+						QUnit.test("A script loaded via script tag defines a global assert function!", function(assert) {
+							assert.ok(QUnit.config.ignoreCleanupFailure, ex);
+						});
+						window._$cleanupFailed = true;
+					}
 				}
 			}
 		});

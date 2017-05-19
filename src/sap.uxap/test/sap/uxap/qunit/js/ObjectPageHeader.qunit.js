@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 (function ($, QUnit) {
 	"use strict";
 
@@ -6,7 +8,7 @@
 	sap.ui.controller("viewController", {});
 
 	var core = sap.ui.getCore(),
-		viewController = new sap.ui.controller("viewController"),
+		viewController = sap.ui.controller("viewController"),
 		oHeaderView = sap.ui.xmlview("UxAP-ObjectPageHeader", {
 			viewName: "view.UxAP-ObjectPageHeader",
 			controller: viewController
@@ -72,6 +74,25 @@
 	QUnit.test("Placeholder rendering", function (assert) {
 		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderPlaceholder"), "placeholder rendered");
 	});
+	QUnit.test("Updates when header invisible", function (assert) {
+		var oPage = oHeaderView.byId("ObjectPageLayout"),
+			oHeader = core.byId("UxAP-ObjectPageHeader--header");
+
+		oPage.setVisible(false);
+		oPage.setShowTitleInHeaderContent(true);
+		core.applyChanges();
+
+		try {
+			oHeader.setObjectSubtitle("Updated");
+			ok(true, "no error upon update");
+		} catch (e) {
+			ok(false, "Expected to succeed");
+		}
+
+		//restore
+		oPage.setVisible(true);
+		oPage.setShowTitleInHeaderContent(false);
+	});
 
 	QUnit.module("image rendering", {
 		beforeEach: function () {
@@ -103,21 +124,21 @@
 
 		assert.notEqual(img1.id, img2.id, "two different images in DOM");
 	});
-    QUnit.test("Images in DOM updated on URI change", function (assert) {
-    	var sUpdatedSrc = "./img/imageID_273624.png";
-        //act
-        this._oPage.getHeaderTitle().setObjectImageURI(sUpdatedSrc);
-        this._oPage.setShowTitleInHeaderContent(true);
-        sap.ui.getCore().applyChanges();
+	QUnit.test("Images in DOM updated on URI change", function (assert) {
+		var sUpdatedSrc = "./img/imageID_273624.png";
+		//act
+		this._oPage.getHeaderTitle().setObjectImageURI(sUpdatedSrc);
+		this._oPage.setShowTitleInHeaderContent(true);
+		sap.ui.getCore().applyChanges();
 
-        assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
+		assert.strictEqual(oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage").length, 2, "two images in DOM");
 
-        var img1 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
-            img2 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
+		var img1 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[0],
+			img2 = oHeaderView.$().find(".sapMImg.sapUxAPObjectPageHeaderObjectImage")[1];
 
-        assert.strictEqual($(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
-        assert.strictEqual($(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
-    });
+		assert.strictEqual($(img1).control()[0].getSrc(), sUpdatedSrc, "image1 is updated");
+		assert.strictEqual($(img2).control()[0].getSrc(), sUpdatedSrc, "image2 is updated");
+	});
 	QUnit.test("Two different placeholders in DOM if showTitleInHeaderContent===true", function (assert) {
 		//act
 		this._oPage.getHeaderTitle().setObjectImageURI("");

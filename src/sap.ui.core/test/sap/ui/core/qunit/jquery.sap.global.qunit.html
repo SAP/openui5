@@ -514,6 +514,34 @@
 				}, 0);
 			});
 
+			QUnit.test("async readyState without listener", function(assert) {
+				var asyncXHR = new XMLHttpRequest(),
+					done = assert.async();
+				asyncXHR.open("GET", "#", true);
+				asyncXHR.send();
+				setTimeout(function() {
+					assert.equal(asyncXHR.readyState, 4, "Ready state should be 4 after request is completed");
+					done();
+				}, 100);
+			});
+
+			QUnit.test("setTimeout/setInterval with strings", 2, function(assert) {
+				var iInterval,
+					done = assert.async();
+
+				setTimeout("window.bTimeout = true", 0);
+				iInterval = setInterval("window.bInterval = true", 0);
+
+				setTimeout(function() {
+					assert.ok(window.bTimeout, "String based timeout has been triggered");
+					assert.ok(window.bInterval, "String based interval has been triggered");
+					clearInterval(iInterval);
+					delete window.bTimeout;
+					delete window.bInterval;
+					done();
+				}, 100)
+			});
+
 			QUnit.test("sync/Promise/setTimeout", 12, function(assert) {
 				var bSyncOngoing = false,
 					bTimeoutTriggered = false,

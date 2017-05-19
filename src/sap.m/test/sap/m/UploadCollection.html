@@ -745,7 +745,14 @@
 		items : {
 			path : "/items/",
 			template : oItemTemplate,
-			templateShareable : false
+			templateShareable : false,
+			sorter : new sap.ui.model.Sorter("contributor", false, function (oContext) {
+				return {
+					// the items that do not have a contributor property
+					// will be grouped separately at the end of the list under an empty group header
+					key: oContext.getProperty("contributor")
+				};
+			})
 		},
 		sameFilenameAllowed : "{/sameFilenameAllowed}",
 		fileType : oFileTypesMultiComboBox.getSelectedKeys(),

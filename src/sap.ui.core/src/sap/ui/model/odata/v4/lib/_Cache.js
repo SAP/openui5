@@ -33,8 +33,11 @@ sap.ui.define([
 	 *   The function to process the converted options getting the name and the value
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions) {
+	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions,
+			bSortExpandSelect) {
 		Object.keys(mQueryOptions).forEach(function (sKey) {
 			var vValue = mQueryOptions[sKey];
 
@@ -44,23 +47,15 @@ sap.ui.define([
 
 			switch (sKey) {
 				case "$expand":
-					vValue = Cache.convertExpand(vValue);
-					break;
-				case "$apply":
-				case "$count":
-				case "$filter":
-				case "$orderby":
-				case "$search":
+					vValue = Cache.convertExpand(vValue, bSortExpandSelect);
 					break;
 				case "$select":
 					if (Array.isArray(vValue)) {
-						vValue = vValue.join(",");
+						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
 					}
 					break;
 				default:
-					if (sKey[0] === '$') {
-						throw new Error("Unsupported system query option " + sKey);
-					}
+					// nothing to do
 			}
 			fnResultHandler(sKey, vValue);
 		});
@@ -191,14 +186,19 @@ sap.ui.define([
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function Cache(oRequestor, sResourcePath, mQueryOptions) {
+	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
 		this.mChangeListeners = {};
-		this.mPatchRequests = {};
+		this.mPatchRequests = {}; //map path to an array of (PATCH) promises
+		this.mPostRequests = {}; //map path to an array of entity data (POST bodies)
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath + Cache.buildQueryString(mQueryOptions);
+		this.sResourcePath = sResourcePath
+			+ Cache.buildQueryString(mQueryOptions, false, bSortExpandSelect);
+		this.bSortExpandSelect = bSortExpandSelect;
 	}
 
 	/**
@@ -311,6 +311,91 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
+	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
+	 * with an Error object, the POST request is automatically added again to the same batch
+	 * group (for application group IDs) or parked (for '$auto' or '$direct'). Parked POST requests
+	 * are repeated with the next update of the entity data.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {string|SyncPromise} vPostPath
+	 *   The path for the POST request or a SyncPromise that resolves with that path
+	 * @param {string} sPath
+	 *   The entity's path within the cache
+	 * @param {string} [oEntityData={}]
+	 *   The initial entity data
+	 * @param {function} fnCancelCallback
+	 *   A function which is called after a transient entity has been canceled from the cache
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a POST request fails
+	 * @returns {Promise}
+	 *   A promise which is resolved without data when the POST request has been successfully sent
+	 *   and the entity has been marked as non-transient
+	 */
+	Cache.prototype.create = function (sGroupId, vPostPath, sPath, oEntityData,
+			fnCancelCallback, fnErrorCallback) {
+		var vCacheData, aCollection, sNavigationProperty, aSegments, that = this;
+
+		// Clean-up when the create has been canceled.
+		function cleanUp() {
+			that.removeByPath(that.mPostRequests, sPath, oEntityData);
+			delete aCollection[-1];
+			fnCancelCallback();
+		}
+
+		// Sets a marker that the create request is pending, so that update and delete fail.
+		function setCreatePending() {
+			oEntityData["@$ui5.transient"] = true;
+		}
+
+		function request(sPostGroupId) {
+			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
+			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
+				sPostPath += Cache.buildQueryString(that.mQueryOptions, true);
+				that.addByPath(that.mPostRequests, sPath, oEntityData);
+				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
+						setCreatePending, cleanUp)
+					.then(function (oResult) {
+						delete oEntityData["@$ui5.transient"];
+						// now the server has one more element
+						addToCount(that.mChangeListeners, sPath, aCollection, 1);
+						that.removeByPath(that.mPostRequests, sPath, oEntityData);
+						// update the cache with the POST response
+						_Helper.updateCacheAfterPost(that.mChangeListeners,
+							_Helper.buildPath(sPath, "-1"), oEntityData, oResult,
+							_Helper.getSelectForPath(that.mQueryOptions, sPath));
+					}, function (oError) {
+						if (oError.canceled) {
+							// for cancellation no error is reported via fnErrorCallback
+							throw oError;
+						}
+						if (fnErrorCallback) {
+							fnErrorCallback(oError);
+						}
+						return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
+							? "$parked." + sPostGroupId : sPostGroupId);
+				});
+			});
+		}
+
+		// clone data to avoid modifications outside the cache
+		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
+
+		aSegments = sPath.split("/");
+		sNavigationProperty = aSegments.pop();
+		vCacheData = this.fetchValue("$cached", aSegments.join("/")).getResult();
+		aCollection = sNavigationProperty ? vCacheData[sNavigationProperty] : vCacheData;
+		if (!Array.isArray(aCollection)) {
+			throw new Error("Create is only supported for collections; '" + sPath
+					+ "' does not reference a collection");
+		}
+		aCollection[-1] = oEntityData;
+
+		return request(sGroupId);
+	};
+
+	/**
 	 * Deregisters the given change listener.
 	 *
 	 * @param {string} sPath
@@ -381,6 +466,8 @@ sap.ui.define([
 	Cache.prototype.hasPendingChangesForPath = function (sPath) {
 		return Object.keys(this.mPatchRequests).some(function (sRequestPath) {
 			return isSubPath(sRequestPath, sPath);
+		}) || Object.keys(this.mPostRequests).some(function (sRequestPath) {
+			return isSubPath(sRequestPath, sPath);
 		});
 	};
 
@@ -430,17 +517,34 @@ sap.ui.define([
 	 *   yet.
 	 */
 	Cache.prototype.resetChangesForPath = function (sPath) {
+		var that = this;
+
 		Object.keys(this.mPatchRequests).forEach(function (sRequestPath) {
 			var i, aPromises;
 
 			if (isSubPath(sRequestPath, sPath)) {
-				aPromises = this.mPatchRequests[sRequestPath];
+				aPromises = that.mPatchRequests[sRequestPath];
 				for (i = aPromises.length - 1; i >= 0; i--) {
-					this.oRequestor.removePatch(aPromises[i]);
+					that.oRequestor.removePatch(aPromises[i]);
 				}
-				delete this.mPatchRequests[sRequestPath];
+				delete that.mPatchRequests[sRequestPath];
 			}
-		}, this);
+		});
+
+		Object.keys(this.mPostRequests).forEach(function (sRequestPath) {
+			var aEntities, i, sTransientGroup;
+
+			if (isSubPath(sRequestPath, sPath)) {
+				aEntities = that.mPostRequests[sRequestPath];
+				for (i = aEntities.length - 1; i >= 0; i--) {
+					sTransientGroup = aEntities[i]["@$ui5.transient"];
+					if (sTransientGroup) {
+						that.oRequestor.removePost(sTransientGroup, aEntities[i]);
+					}
+				}
+				delete that.mPostRequests[sRequestPath];
+			}
+		});
 	};
 
 	/**
@@ -478,6 +582,8 @@ sap.ui.define([
 	 *   Path of the property to update, relative to the entity
 	 * @param {any} vValue
 	 *   The new value
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a PATCH request fails
 	 * @param {string} sEditUrl
 	 *   The edit URL for the entity which is updated via PATCH
 	 * @param {string} [sEntityPath]
@@ -485,7 +591,8 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise for the PATCH request
 	 */
-	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, sEditUrl, sEntityPath) {
+	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
+			sEntityPath) {
 		var aPropertyPath = sPropertyPath.split("/"),
 			that = this;
 
@@ -506,6 +613,27 @@ sap.ui.define([
 				// write the previous value into the cache
 				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity,
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
+			}
+
+			function patch() {
+				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId,
+					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
+				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+				return oPatchPromise.then(function (oPatchResult) {
+					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					// update the cache with the PATCH response
+					_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
+					return oPatchResult;
+				}, function (oError) {
+					that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
+					if (!oError.canceled) {
+						fnErrorCallback(oError);
+						if (sGroupId !== "$auto" && sGroupId !== "$direct") {
+							return patch();
+						}
+					}
+					throw oError;
+				});
 			}
 
 			if (!oEntity) {
@@ -543,18 +671,7 @@ sap.ui.define([
 			}
 			// send and register the PATCH request
 			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
-			oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId,
-				{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
-			that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-			return oPatchPromise.then(function (oPatchResult) {
-				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-				// update the cache with the PATCH response
-				_Helper.updateCache(that.mChangeListeners, sEntityPath, oEntity, oPatchResult);
-				return oPatchResult;
-			}, function (oError) {
-				that.removeByPath(that.mPatchRequests, sFullPath, oPatchPromise);
-				throw oError;
-			});
+			return patch();
 		});
 	};
 
@@ -585,77 +702,6 @@ sap.ui.define([
 
 	// make CollectionCache a Cache
 	CollectionCache.prototype = Object.create(Cache.prototype);
-
-	/**
-	 * Creates a transient entity with index -1 in the list and adds a POST request to the batch
-	 * group with the given ID. If the POST request failed, <code>fnErrorCallback</code> is called
-	 * with an Error object, the POST request is automatically added again to the same batch
-	 * group (for application group IDs) or parked (for '$auto' or '$direct'). Parked POST requests
-	 * are repeated with the next update of the entity data.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string} sPostPath
-	 *   The path for the POST request
-	 * @param {string} sPath
-	 *   The entity's path within the cache
-	 * @param {string} [oEntityData={}]
-	 *   The initial entity data
-	 * @param {function} fnCancelCallback
-	 *   A function which is called after a transient entity has been canceled from the cache
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a POST request fails
-	 * @returns {Promise}
-	 *   A promise which is resolved without data when the POST request has been successfully sent
-	 *   and the entity has been marked as non-transient
-	 */
-	CollectionCache.prototype.create = function (sGroupId, sPostPath, sPath, oEntityData,
-			fnCancelCallback, fnErrorCallback) {
-		var that = this;
-
-		// Clean-up when the create has been canceled.
-		function cleanUp() {
-			delete that.aElements[-1];
-			fnCancelCallback();
-		}
-
-		// Sets a marker that the create request is pending, so that update and delete fail.
-		function setCreatePending() {
-			oEntityData["@$ui5.transient"] = true;
-		}
-
-		function request(sPostGroupId) {
-			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
-			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
-					setCreatePending, cleanUp)
-				.then(function (oResult) {
-					delete oEntityData["@$ui5.transient"];
-					// now the server has one more element
-					addToCount(that.mChangeListeners, "", that.aElements, 1);
-					// update the cache with the POST response
-					_Helper.updateCache(that.mChangeListeners, "-1", oEntityData, oResult);
-				}, function (oError) {
-					if (oError.canceled) {
-						// for cancellation no error is reported via fnErrorCallback
-						throw oError;
-					}
-					if (fnErrorCallback) {
-						fnErrorCallback(oError);
-					}
-					return request(sPostGroupId === "$auto" || sPostGroupId === "$direct"
-						? "$parked." + sPostGroupId : sPostGroupId);
-				});
-		}
-
-		// clone data to avoid modifications outside the cache
-		oEntityData = oEntityData ? JSON.parse(JSON.stringify(oEntityData)) : {};
-
-		this.aElements[-1] = oEntityData;
-		// provide undefined ETag so that _Helper.updateCache() also updates ETag from server
-		oEntityData["@odata.etag"] = undefined;
-		sPostPath += Cache.buildQueryString(this.mQueryOptions, true);
-		return request(sGroupId);
-	};
 
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
@@ -699,19 +745,6 @@ sap.ui.define([
 			that.registerChange(sPath, oListener);
 			return that.drillDown(that.aElements, sPath);
 		});
-	};
-
-	/**
-	 * Returns <code>true</code> if there are pending changes below the given path.
-	 *
-	 * @param {string} sPath
-	 *   The relative path of a binding; must not end with '/'
-	 * @returns {boolean}
-	 *   <code>true</code> if there are pending changes
-	 */
-	CollectionCache.prototype.hasPendingChangesForPath = function (sPath) {
-		return !!(sPath === "" && this.aElements[-1] && this.aElements[-1]["@$ui5.transient"])
-			|| Cache.prototype.hasPendingChangesForPath.call(this, sPath);
 	};
 
 	/**
@@ -789,27 +822,6 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * Resets all pending changes below the given path.
-	 *
-	 * @param {string} [sPath]
-	 *   The path
-	 * @throws {Error}
-	 *   If there is a change which has been sent to the server and for which there is no response
-	 *   yet.
-	 */
-	CollectionCache.prototype.resetChangesForPath = function (sPath) {
-		var sTransientGroup;
-
-		if (sPath === "" && this.aElements[-1]) {
-			sTransientGroup = this.aElements[-1]["@$ui5.transient"];
-			if (sTransientGroup) {
-				this.oRequestor.removePost(sTransientGroup, this.aElements[-1]);
-			}
-		}
-		Cache.prototype.resetChangesForPath.call(this, sPath);
-	};
-
 	//*********************************************************************************************
 	// PropertyCache
 	//*********************************************************************************************
@@ -840,6 +852,16 @@ sap.ui.define([
 	 *   Deletion of a property is not supported.
 	 */
 	PropertyCache.prototype._delete = function () {
+		throw new Error("Unsupported");
+	};
+
+	/**
+	 * Not supported.
+	 *
+	 * @throws {Error}
+	 *   Creation of a property is not supported.
+	 */
+	PropertyCache.prototype.create = function () {
 		throw new Error("Unsupported");
 	};
 
@@ -901,12 +923,14 @@ sap.ui.define([
 	 *   A resource path relative to the service URL
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may lead to
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost) {
+	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost) {
 		Cache.apply(this, arguments);
 
 		this.bPost = bPost;
@@ -1020,6 +1044,8 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {string}
 	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
 	 * @example
@@ -1042,30 +1068,38 @@ sap.ui.define([
 	 *		"sap-client" : "003"
 	 *	}
 	 */
-	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions) {
+	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect) {
 		return _Helper.buildQuery(
-			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions));
+			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect));
 	};
 
 	/**
-	 *  Converts the value for a "$expand" in mQueryParams.
+	 * Converts the value for a "$expand" in mQueryParams.
 	 *
-	 *  @param {object} mExpandItems The expand items, a map from path to options
-	 *  @returns {string} The resulting value for the query string
-	 *  @throws {Error} If the expand items are not an object
+	 * @param {object} mExpandItems The expand items, a map from path to options
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @returns {string} The resulting value for the query string
+	 * @throws {Error} If the expand items are not an object
 	 */
-	Cache.convertExpand = function (mExpandItems) {
-		var aResult = [];
+	Cache.convertExpand = function (mExpandItems, bSortExpandSelect) {
+		var aKeys,
+			aResult = [];
 
 		if (!mExpandItems || typeof mExpandItems !== "object") {
 			throw new Error("$expand must be a valid object");
 		}
 
-		Object.keys(mExpandItems).forEach(function (sExpandPath) {
+		aKeys = Object.keys(mExpandItems);
+		if (bSortExpandSelect) {
+			aKeys = aKeys.sort();
+		}
+		aKeys.forEach(function (sExpandPath) {
 			var vExpandOptions = mExpandItems[sExpandPath];
 
 			if (vExpandOptions && typeof vExpandOptions === "object") {
-				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions));
+				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions,
+					bSortExpandSelect));
 			} else {
 				aResult.push(sExpandPath);
 			}
@@ -1080,15 +1114,17 @@ sap.ui.define([
 	 * @param {string} sExpandPath The expand path
 	 * @param {boolean|object} vExpandOptions
 	 *   The options; either a map or simply <code>true</code>
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {string} The resulting string for the OData query in the form "path" (if no
 	 *   options) or "path($option1=foo;$option2=bar)"
 	 */
-	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions) {
+	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions, bSortExpandSelect) {
 		var aExpandOptions = [];
 
 		convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
 			aExpandOptions.push(sOptionName + '=' + vOptionValue);
-		});
+		}, undefined, bSortExpandSelect);
 		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
 			: sExpandPath;
 	};
@@ -1101,9 +1137,12 @@ sap.ui.define([
 	 * @param {object} mQueryOptions The query options
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {object} The converted query options
 	 */
-	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions) {
+	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions,
+			bSortExpandSelect) {
 		var mConvertedQueryOptions = {};
 
 		if (!mQueryOptions) {
@@ -1111,7 +1150,7 @@ sap.ui.define([
 		}
 		convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
 			mConvertedQueryOptions[sKey] = vValue;
-		}, bDropSystemQueryOptions);
+		}, bDropSystemQueryOptions, bSortExpandSelect);
 		return mConvertedQueryOptions;
 	};
 
@@ -1131,11 +1170,13 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.create = function (oRequestor, sResourcePath, mQueryOptions) {
-		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions);
+	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
+		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 	};
 
 	/**
@@ -1175,6 +1216,8 @@ sap.ui.define([
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
 	 *   {foo : ["bar", "baz"]} results in the query string "foo=bar&foo=baz"
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @param {boolean} [bPost]
 	 *   Whether the cache uses POST requests. If <code>true</code>, only {@link #post} may
 	 *   lead to a request, {@link #read} may only read from the cache; otherwise {@link #post}
@@ -1182,8 +1225,9 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bPost) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bPost);
+	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
+			bPost) {
+		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost);
 	};
 
 	/**

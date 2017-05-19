@@ -1663,14 +1663,14 @@ if (typeof window.sap.ui !== "object") {
 	 * The current height of the document's window in pixels.
 	 *
 	 * @name sap.ui.Device.resize.height
-	 * @type integer
+	 * @type int
 	 * @public
 	 */
 	/**
 	 * The current width of the document's window in pixels.
 	 *
 	 * @name sap.ui.Device.resize.width
-	 * @type integer
+	 * @type int
 	 * @public
 	 */
 
@@ -1815,7 +1815,7 @@ if (typeof window.sap.ui !== "object") {
 	var bKeyboardOpen = false;
 	var iLastResizeTime;
 	var rInputTagRegex = /INPUT|TEXTAREA|SELECT/;
-	// On iPhone with iOS version 7.0.x and on iPad with iOS version 7.x (tested with all versions below 7.1.1), there's a invalide resize event fired
+	// On iPhone with iOS version 7.0.x and on iPad with iOS version 7.x (tested with all versions below 7.1.1), there's an invalid resize event fired
 	// when changing the orientation while keyboard is shown.
 	var bSkipFirstResize = device.os.ios && device.browser.name === "sf" &&
 		((device.system.phone && device.os.version >= 7 && device.os.version < 7.1) || (device.system.tablet && device.os.version >= 7));
@@ -1827,7 +1827,7 @@ if (typeof window.sap.ui !== "object") {
 			if (bKeyboardOpen && bFromOrientationChange) {
 				return !device.orientation.landscape;
 			}
-			if (bKeyboardOpen) { //when keyboard opens, the last orientation change value will be retured.
+			if (bKeyboardOpen) { //when keyboard opens, the last orientation change value will be returned.
 				return device.orientation.landscape;
 			}
 		} else if (device.support.matchmedia && device.support.orientation) { //most desktop browsers and windows phone/tablet which not support orientationchange
@@ -1840,7 +1840,7 @@ if (typeof window.sap.ui !== "object") {
 
 	function handleMobileOrientationResizeChange(evt) {
 		if (evt.type == "resize") {
-			// supress the first invalid resize event fired before orientationchange event while keyboard is open on iPhone 7.0.x
+			// suppress the first invalid resize event fired before orientationchange event while keyboard is open on iPhone 7.0.x
 			// because this event has wrong size infos
 			if (bSkipFirstResize && rInputTagRegex.test(document.activeElement.tagName) && !bOrientationchange) {
 				return;

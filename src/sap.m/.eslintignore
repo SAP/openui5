@@ -1,4 +1,2 @@
 # Note: Changes to this file also must be applied to the top level .eslintignore file.
 target
-test
-!test/sap/m/demokit

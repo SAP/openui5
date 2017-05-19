@@ -6,7 +6,7 @@
 	<Panel
 		id="results"
 		width="auto"
-		class="sapUiSmallMargin sapUiNoContentPadding"
+		class="sapUiTinyMargin sapUiNoContentPadding"
 		content="{
 			path: '/groups/0/icons',
 			length: '50',
@@ -20,7 +20,7 @@
 		}">
 		<l:VerticalLayout
 			width="130px"
-			class="sapThemeBaseBG-asBackgroundColor sapUiSmallMarginEnd sapUiSmallMarginBottom visualLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
+			class="sapThemeBaseBG-asBackgroundColor sapUiTinyMargin visualLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
 			<core:Icon size="1rem" src="sap-icon://{name}" color="Default"/>
 			<core:Icon size="1.25rem" src="sap-icon://{name}" color="Default"/>
 			<core:Icon size="1.375rem" src="sap-icon://{name}" color="Default"/>

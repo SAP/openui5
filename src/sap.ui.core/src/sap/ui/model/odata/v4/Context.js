@@ -161,7 +161,7 @@ sap.ui.define([
 		if (this.isTransient()) {
 			return that.oBinding._delete(sGroupId, "n/a", that);
 		}
-		return this.requestCanonicalPath().then(function (sCanonicalPath) {
+		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
 		});
 	};
@@ -177,6 +177,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.deregisterChange = function (sPath, oListener) {
+		// Note: iIndex === -2 is OK here, no listener will be found...
 		this.oBinding.deregisterChange(sPath, oListener, this.iIndex);
 	};
 
@@ -243,7 +244,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener) {
-		return this.oBinding.fetchValue(sPath, oListener, this.iIndex);
+		return this.iIndex === -2
+			? _SyncPromise.resolve()
+			: this.oBinding.fetchValue(sPath, oListener, this.iIndex);
 	};
 
 	/**
@@ -415,6 +418,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.hasPendingChangesForPath = function (sPath) {
+		// Note: iIndex === -2 is OK here, no changes will be found...
 		return this.oBinding.hasPendingChangesForPath(_Helper.buildPath(this.iIndex, sPath));
 	};
 
@@ -511,6 +515,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.resetChangesForPath = function (sPath) {
+		// Note: iIndex === -2 is OK here, no changes will be found...
 		this.oBinding.resetChangesForPath(_Helper.buildPath(this.iIndex, sPath));
 	};
 
@@ -540,6 +545,8 @@ sap.ui.define([
 	 *   Name of property to update
 	 * @param {any} vValue
 	 *   The new value
+	 * @param {function} fnErrorCallback
+	 *   A function which is called with an Error object each time a PATCH request fails
 	 * @param {string} [sEditUrl]
 	 *   The edit URL corresponding to the entity to be updated
 	 * @param {string} [sPath]
@@ -549,9 +556,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, sEditUrl, sPath) {
+	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, fnErrorCallback,
+			sEditUrl, sPath) {
 		var that = this;
 
+		// Note: iIndex === -2 will fail with "No instance to calculate key predicate" below
 		sPath = _Helper.buildPath(this.iIndex, sPath);
 
 		if (this.isTransient()) {
@@ -559,12 +568,13 @@ sap.ui.define([
 			sEditUrl = "n/a";
 		}
 		if (sEditUrl) {
-			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl, sPath);
+			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback,
+				sEditUrl, sPath);
 		}
 
-		return this.requestCanonicalPath().then(function (sEditUrl) {
-			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, sEditUrl.slice(1),
-				sPath);
+		return this.fetchCanonicalPath().then(function (sEditUrl) {
+			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback,
+				sEditUrl.slice(1), sPath);
 		});
 	};
 

@@ -36,7 +36,7 @@ sap.ui.define([
 		var that = this;
 
 		var oGetContentPromise = new Promise(function (fnResolve, fnReject) {
-			sContentSuffix = HtmlEscapeUtils.unescapeSlashes(sContentSuffix);
+			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
 			var sContextSuffix = that._getContextSuffix(sLayerSuffix, bReadRuntimeContext, bReadContextMetadata);
 			var sUrl = LrepConnector.sContentPathPrefix + (sContentSuffix ? "" : "/") + sContentSuffix + sLayerSuffix + sContextSuffix;
@@ -78,7 +78,7 @@ sap.ui.define([
 	 *
 	 * @param {String} sLayer - determines the layer for deleting the content
 	 * @param {String} sNamespace - namespace of the file
-	 * @param {String} sFilename - name of the file
+	 * @param {String} sFileName - name of the file
 	 * @param {String} sFileType - type of the file
 	 * @returns {Promise} Promise of DELETE content request to the back end
 	 * @public
@@ -138,7 +138,10 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector._getLayerSuffix = function (sLayer) {
-		return sLayer !== "All" ? "?sLayer=" + sLayer : "";
+		if (sLayer === "All"){
+			return "";
+		}
+		return "?layer=" + sLayer;
 	};
 
 	/**
@@ -236,6 +239,7 @@ sap.ui.define([
 		jQuery.ajax({
 			url: sUrl,
 			contentType: "text/plain",
+			dataType: "text",
 			data: oData,
 			beforeSend: function (oRequest) {
 				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);
@@ -275,11 +279,11 @@ sap.ui.define([
 	 * @param {Function} fnReject - callback function if request was rejected
 	 * @private
 	 */
-	LrepConnector._sendDeletionRequest = function (sXcsrfToken, sUrl, fnResolve, fnReject) {
+	LrepConnector._sendDeletionRequest = function (oXcsrfToken, sUrl, fnResolve, fnReject) {
 		jQuery.ajax({
 			url: sUrl,
 			beforeSend: function (oRequest) {
-				oRequest.setRequestHeader("X-CSRF-Token", sXcsrfToken);
+				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);
 			},
 			type: "DELETE",
 			success: function (oData) {

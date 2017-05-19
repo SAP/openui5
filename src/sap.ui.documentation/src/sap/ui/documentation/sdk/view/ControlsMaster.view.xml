@@ -1,0 +1,64 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.ControlsMaster"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		class="sapContrast sapContrastPlus">
+	<Page
+			id="exploredMasterPage"
+			showFooter="false"
+			navButtonPress="onNavBack"
+			showNavButton="false"
+			showHeader="false"
+			class="sapUiDocumentationMasterPage">
+
+		<!-- Header -->
+		<subHeader>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<SearchField
+						id="searchField"
+						placeholder="Filter"
+						width="100%"
+						liveChange="handleListFilter">
+				</SearchField>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://drop-down-list" press="handleListSettings" />
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://action-settings" press="handleSettings" />
+			</Toolbar>
+		</subHeader>
+
+		<!-- Navigation List -->
+		<content>
+			<List id="exploredMasterList"
+				  mode="{viewModel>/listMode}"
+				  selectionChange="onNavToEntity"
+				  items="{path: '/entities',
+				  groupHeaderFactory: '.getGroupHeader',
+				  sorter: [{
+						path: 'category',
+						descending: false,
+						group: true
+					},{
+						path: 'name',
+						descending: false
+					}]}">
+				<infoToolbar>
+					<Toolbar id="vsFilterBar"
+							active="true"
+							visible="false"
+							press="handleListSettings">
+						<Label id="vsFilterLabel" />
+					</Toolbar>
+				</infoToolbar>
+				<items>
+					<StandardListItem
+							title="{name}"
+							counter="{sampleCount}"
+							type="{viewModel>/listItemType}"
+							press="onNavToEntity" />
+				</items>
+			</List>
+		</content>
+	</Page>
+</mvc:View>

@@ -477,6 +477,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		}
 	};
 
+	MultiInput.prototype.onmousedown = function (e) {
+		if (e.target == this.getDomRef('border')) {
+			e.preventDefault();
+		}
+	};
+
 	MultiInput.prototype._openMultiLineOnDesktop = function() {
 		var that = this;
 
@@ -626,7 +632,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Function adds an validation callback called before any new token gets added to the tokens aggregation
+	 * Function adds a validation callback called before any new token gets added to the tokens aggregation
 	 *
 	 * @param {function} fValidator
 	 * @public
@@ -636,7 +642,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Function removes an validation callback
+	 * Function removes a validation callback
 	 *
 	 * @param {function} fValidator
 	 * @public
@@ -669,7 +675,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 		var oFocusedElement = jQuery(document.activeElement).control()[0];
 
 		if (!oFocusedElement) {
-			// we cannot rule out that the focused element does not correspond to a SAPUI5 control in which case oFocusedElement
+			// we cannot rule out that the focused element does not correspond to an SAPUI5 control in which case oFocusedElement
 			// is undefined
 			return;
 		}
@@ -683,10 +689,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	/**
-	 * Function is called on keyboard backspace, if cursor is in front of an token, token gets selected and deleted
+	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapbackspace = function (oEvent) {
@@ -705,7 +711,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on delete keyboard input, deletes selected tokens
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapdelete = function (oEvent) {
@@ -903,7 +909,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 			if (oEvent.srcControl === this) {
 				Tokenizer.prototype.onsapprevious.apply(this._tokenizer, arguments);
 
-				// we need this otherwise navigating with the left arrow key will trigger a scroll an the Tokens
+				// we need this otherwise navigating with the left arrow key will trigger a scroll of the Tokens
 				oEvent.preventDefault();
 			}
 		}
@@ -952,7 +958,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on keyboard enter, if possible, adds entered text as new token
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
@@ -1091,7 +1097,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
 
-		if (this.getEditable() && this.getEnableMultiLineMode()) {
+		if (this.getEditable() && this.getEnableMultiLineMode() && (!oEvent.target.classList.contains("sapMInputValHelp") && !oEvent.target.classList.contains("sapMInputValHelpInner"))) {
 			this.openMultiLine();
 		}
 
@@ -1391,12 +1397,19 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 
 		this.detachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.detachLiveChange(this._onLiveChange, this);
+		this._tokenizer.detachTokenChange(this._onTokenChange, this);
+		this._tokenizer.detachTokenUpdate(this._onTokenUpdate, this);
 
 		oClone = Input.prototype.clone.apply(this, arguments);
 
 		oTokenizerClone = this._tokenizer.clone();
 		oClone._tokenizer = oTokenizerClone;
 		oClone.setAggregation("tokenizer", oTokenizerClone, true);
+
+		this._tokenizer.attachTokenChange(this._onTokenChange, this);
+		this._tokenizer.attachTokenUpdate(this._onTokenUpdate, this);
+		oClone._tokenizer.attachTokenChange(oClone._onTokenChange, oClone);
+		oClone._tokenizer.attachTokenUpdate(oClone._onTokenUpdate, oClone);
 
 		this.attachSuggestionItemSelected(this._onSuggestionItemSelected, this);
 		this.attachLiveChange(this._onLiveChange, this);

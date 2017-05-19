@@ -45,11 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			rm.writeClasses();
 
 			// ARIA
-			if (control.getHasListBoxRole()) {
-				role = 'listbox';
-			} else {
-				role = expanded ? 'tree' : 'toolbar';
-			}
+			role = expanded ? 'tree' : 'toolbar';
 
 			rm.writeAttribute("role", role);
 

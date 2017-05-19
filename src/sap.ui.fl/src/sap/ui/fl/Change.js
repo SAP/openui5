@@ -89,7 +89,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the the original language in ISO 639-1 format
+	 * Returns the original language in ISO 639-1 format
 	 *
 	 * @returns {String} Original language
 	 *
@@ -103,7 +103,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the the context in which the change should be applied
+	 * Returns the context in which the change should be applied
 	 *
 	 * @returns {Object[]} context - List of objects determine the context
 	 * @returns {string} selector  - names the key of the context
@@ -462,8 +462,8 @@ sap.ui.define([
 	 * @param {string} sAlias - Dependent object is saved under this alias
 	 * @param {object} mPropertyBag
 	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
-	 * @param {sap.ui.core.Component} (optional) mPropertyBag.appComponent - Application component; only needed if vControl is a string or an XML node
-	 * @param {object} (optional) mAdditionalSelectorInformation - Additional mapped data which is added to the selector
+	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - Application component; only needed if <code>vControl</code> is a string or an XML node
+	 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
 	 *
 	 * @throws {Exception} oException - If sAlias already exists, an error is thrown
 	 * @public
@@ -511,6 +511,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag
 	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component, needed to retrieve the control from the selector
+	 * @param {Node} mPropertyBag.view - only for xml processing: the xml node of the view
 	 *
 	 * @returns {array | object} dependent selector list in format selectorPropertyName:selectorPropertyValue or the selector saved under the alias
 	 *
@@ -536,11 +537,11 @@ sap.ui.define([
 		oDependentSelector = this._oDefinition.dependentSelector[sAlias];
 		if (Array.isArray(oDependentSelector)) {
 			oDependentSelector.forEach(function (oSelector) {
-				aDependentControls.push(oModifier.bySelector(oSelector, oAppComponent));
+				aDependentControls.push(oModifier.bySelector(oSelector, oAppComponent, mPropertyBag.view));
 			});
 			return aDependentControls;
 		} else {
-			return oModifier.bySelector(oDependentSelector, oAppComponent);
+			return oModifier.bySelector(oDependentSelector, oAppComponent, mPropertyBag.view);
 		}
 	};
 
@@ -574,7 +575,9 @@ sap.ui.define([
 					if (oDependentSelector.idIsLocal) {
 						sId = oAppComponent.createId(oDependentSelector.id);
 					}
-					aDependentIds.push(sId);
+					if (aDependentIds.indexOf(sId) === -1) {
+						aDependentIds.push(sId);
+					}
 				});
 
 				this._aDependentIdList = aDependentIds;
@@ -595,7 +598,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates and returns a instance of change instance
+	 * Creates and returns an instance of change instance
 	 *
 	 * @param {Object}  [oPropertyBag] property bag
 	 * @param {String}  [oPropertyBag.service] name of the OData service
@@ -604,12 +607,16 @@ sap.ui.define([
 	 *                                      these texts will be connected to the translation process
 	 * @param {Object}  [oPropertyBag.content] content of the new change
 	 * @param {Boolean} [oPropertyBag.isVariant] variant?
-	 * @param {String}  [oPropertyBag.namespace] namespace
 	 * @param {String}  [oPropertyBag.packageName] ABAP package name
 	 * @param {Object}  [oPropertyBag.selector] name value pair of the attribute and value
 	 * @param {String}  [oPropertyBag.id] name/id of the file. if not set implicitly created
 	 * @param {Boolean} [oPropertyBag.isVariant] name of the component
 	 * @param {Boolean} [oPropertyBag.isUserDependent] true for enduser changes
+	 * @param {String}  [oPropertyBag.context] ID of the context
+	 * @param {Object}  [oPropertyBag.dependentSelector] List of selectors saved under an alias for creating the dependencies between changes
+	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
+	 * @param {String}  [oPropertyBag.reference] Application component name
+	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -631,7 +638,7 @@ sap.ui.define([
 			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
-			namespace: Utils.createNamespace(oPropertyBag, "changes"),
+			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),
 			conditions: {},

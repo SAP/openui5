@@ -27,8 +27,7 @@ sap.ui.define(['./library'],
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 		 */
 		AlignedFlowLayoutRenderer.render = function (oRm, oControl) {
-			var aContent = oControl.getContent(),
-				iContentLength = aContent.length;
+			var aContent = oControl.getContent();
 
 			oRm.write("<ul");
 			oRm.writeControlData(oControl);
@@ -38,10 +37,7 @@ sap.ui.define(['./library'],
 
 			this.renderItems(oRm, oControl, aContent);
 			this.renderEndItem(oRm, oControl);
-
-			if (iContentLength) {
-				this.renderSpacers(oRm, oControl, iContentLength);
-			}
+			this.renderSpacers(oRm, oControl);
 
 			oRm.write("</ul>");
 		};
@@ -74,7 +70,7 @@ sap.ui.define(['./library'],
 			oRm.write("<li");
 			oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Item");
 			oRm.addStyle("flex-basis", oControl.getMinItemWidth());
-			oRm.addStyle("max-width", "calc(2*" + oControl.getMinItemWidth() + ")"); // FIXME: max-width needs to be discussed, maybe optional (affects behavior when items do not even fill first row)
+			oRm.addStyle("max-width", oControl.getMaxItemWidth());
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
@@ -139,31 +135,24 @@ sap.ui.define(['./library'],
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
-		 * @param {int} iVisibleItems The number of items that should be visible
 		 */
-		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl, iVisibleItems) {
+		AlignedFlowLayoutRenderer.renderSpacers = function(oRm, oControl) {
+			var iSpacers = oControl.getNumberOfSpacers(),
+				sMinItemWidth = oControl.getMinItemWidth(),
+				sMaxItemWidth = oControl.getMaxItemWidth(),
+				CSS_CLASS = AlignedFlowLayoutRenderer.CSS_CLASS;
 
-			// TODO: what's a reasonable value? Make it configurable?
-			// But this only has an effect when all items fit into the first line and the control gets even wider.
-			var sMaxWidth = "calc(2*" + oControl.getMinItemWidth() + ")";
-
-			// We never need more than (windowWidth/minItemWidth). They just need to fill one row.
-			iVisibleItems = Math.max(1, iVisibleItems - 2);
-
-			// TODO: limit the iVisibleItems in case there are very many items. First try:
-			iVisibleItems = Math.min(iVisibleItems, 100); // FIXME: magic number... let's assume there are never more than 100 items in the first row.
-
-			for (var i = 0; i < iVisibleItems; i++) {
+			for (var i = 0; i < iSpacers; i++) {
 				oRm.write("<li");
 
-				if (i === (iVisibleItems - 1)) {
+				if (i === (iSpacers - 1)) {
 					oRm.writeAttribute("id", oControl.getId() + "-last");
 				}
 
-				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Item");
-				oRm.addClass(AlignedFlowLayoutRenderer.CSS_CLASS + "Spacer");
-				oRm.addStyle("flex-basis", oControl.getMinItemWidth());
-				oRm.addStyle("max-width", sMaxWidth);
+				oRm.addClass(CSS_CLASS + "Item");
+				oRm.addClass(CSS_CLASS + "Spacer");
+				oRm.addStyle("flex-basis", sMinItemWidth);
+				oRm.addStyle("max-width", sMaxItemWidth);
 				oRm.writeClasses();
 				oRm.writeStyles();
 				oRm.write("></li>");

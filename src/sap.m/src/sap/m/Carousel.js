@@ -12,15 +12,46 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new Carousel.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Carousel control can be used to navigate through a list of sap.m controls just like flipping through the pages of a book by swiping right or left. <br>
-	 * An indicator shows the current position within the control list. If the pages are less than 9, the page indicator is represented with bullets. If the pages are 9 or more, the page indicator is numeric.<br>
-	 * When displayed in a desktop browser, a left- and right-arrow button is displayed on the carousel's sides, which can be used to navigate through the carousel.
-	 *
-	 * Note: When displayed in Internet Explorer 9, page changes are not animated.
+	 * The carousel allows the user to browse through a set of items by swiping right or left.
+	 * <h3>Overview</h3>
+	 * The control is mostly used for showing a gallery of images, but can hold any sap.m control.
+	 * <h3>Structure</h3>
+	 * The carousel consists of a the following elements:
+	 * <ul>
+	 * <li>Content area - displays the different items.</li>
+	 * <li>Navigation - arrows to the left and right for switching between items.</li>
+	 * <li>(optional) Paging - indicator at the bottom to show the current position in the set.</li>
+	 * </ul>
+	 * The paging indicator can be configured as follows:
+	 * <ul>
+	 * <li><code>showPageIndicator</code> - determines if the indicator is displayed.</li>
+	 * <li>If the pages are less than 9, the page indicator is represented with bullets.</li>
+	 * <li>If the pages are 9 or more, the page indicator is numeric.</li>
+	 * <li><code>pageIndicatorPlacement</code> - determines where the indicator is located. Default (<code>sap.m.PlacementType.Bottom</code>) - below the content.</li>
+	 *</ul>
+	 * Additionally, you can also change the location of the navigation arrows.
+	 * By setting <code>arrowsPlacement</code> to <code>sap.m.CarouselArrowsPlacement.PageIndicator</code>, the arrows will be located at the bottom by the paging indicator.
+	 * <h3>Usage</h3>
+	 * <h4> When to use</h4>
+	 * <ul>
+	 * <li>The items you want to display are very different from each other.</li>
+	 * <li>You want to display the items one after the other.</li>
+	 * </ul>
+	 * <h4> When not to use</h4>
+	 * <ul>
+	 * <li>The items you want to display need to be visible at the same time.</li>
+	 * <li>The items you want to display are uniform and very similar</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li>On touch devices, navigation is performed with swipe gestures (swipe right or swipe left).</li>
+	 * <li>On desktop, navigation is done with the navigation arrows.</li>
+	 * <li>The paging indicator (when activated) is visible on each form factor.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -450,6 +481,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		jQuery.sap.log.debug("sap.m.Carousel: firing pageChanged event: old page: " + sOldActivePageId
 				+ ", new page: " + sNewActivePageId);
 
+		// close the soft keyboard
+		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+			jQuery(document.activeElement).blur();
+		}
+
 		this.firePageChanged( { oldActivePageId: sOldActivePageId,
 			newActivePageId: sNewActivePageId});
 
@@ -457,8 +493,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (document.getElementById(sId)) {
 			document.getElementById(sId).innerHTML = sNewPageNumber;
 		}
-
-
 	};
 
 	/**

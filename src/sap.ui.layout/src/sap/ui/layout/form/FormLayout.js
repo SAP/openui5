@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 	};
 
 	/*
-	 * gets the layout data of a element (container, control...) for the needed layout data type
+	 * gets the layout data of an element (container, control...) for the needed layout data type
 	 */
 	FormLayout.prototype.getLayoutDataForElement = function(oElement, sType){
 

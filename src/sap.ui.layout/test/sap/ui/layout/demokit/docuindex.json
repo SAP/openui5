@@ -119,7 +119,8 @@
 				"since" : "1.34",
 				"formFactors" : "-",
 				"samples" : [
-					"sap.ui.layout.sample.BlockLayoutDefault"
+					"sap.ui.layout.sample.BlockLayoutDefault",
+					"sap.ui.layout.sample.BlockLayoutCustomBackground"
 				]
 			},
 			{
@@ -312,7 +313,7 @@
 			{
 				"id": "sap.ui.layout.sample.Splitter4",
 				"name": "Splitter Layout - 3 areas",
-				"description": "Simple splitter example with with three content areas"
+				"description": "Simple splitter example with three content areas"
 			},
 			{
 				"id": "sap.ui.layout.sample.SplitterNested1",
@@ -323,6 +324,11 @@
 				"id": "sap.ui.layout.sample.BlockLayoutDefault",
 				"name": "Block Layout ",
 				"description": "The Block Layout  is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
+				"name": "BlockLayout with custom backgorund for the cells",
+				"description": "The BlockLayout could be used with different backgrounds for its cells."
 			},
 			{
 				"id": "sap.ui.layout.sample.ResponsiveSplitter",

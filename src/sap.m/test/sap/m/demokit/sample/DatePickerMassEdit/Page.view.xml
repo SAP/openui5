@@ -1,0 +1,45 @@
+<mvc:View
+		controllerName="sap.m.sample.DatePickerMassEdit.Page"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<Table
+				id="selectionTable"
+				mode="MultiSelect"
+				items="{
+					path: 'products>/ProductCollection'
+				}"
+				selectionChange="handleTableSelectionChange">
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Products" level="H2"/>
+					<ToolbarSpacer/>
+					<Button text="Change Dates" id="changeDatesButton" enabled="false" press="onChangeDatesPress"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Product Name"/>
+				</Column>
+				<Column>
+					<Text text="Supplier Name"/>
+				</Column>
+				<Column>
+					<Text text="Time of buying"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem vAlign="Middle" type="Navigation">
+					<cells>
+						<Text text="{products>Name}" wrapping="false"/>
+						<Text text="{products>SupplierName}" wrapping="false"/>
+						<DatePicker
+								id="datePicker"
+								value="{products>DateOfSale}" valueFormat="yyyy-MM-dd" displayFormat="long"
+								change="handleDateChange"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</VBox>
+</mvc:View>

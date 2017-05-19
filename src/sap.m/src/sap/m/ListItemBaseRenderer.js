@@ -70,26 +70,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	};
 
 	ListItemBaseRenderer.renderModeContent = function(rm, oLI, oModeControl) {
-		var sMode = oLI.getMode(),
-			mModeConfig = {
-				Delete : "D",
-				MultiSelect : "M",
-				SingleSelect : "S",
-				SingleSelectLeft : "SL"
-			};
-
-		rm.write("<div");
-		rm.writeAttribute("id", oLI.getId() + "-mode");
-		rm.addClass("sapMLIBSelect" + mModeConfig[sMode]);
-		this.decorateMode(rm, oLI);
-		rm.writeClasses();
-		rm.writeStyles();
-		rm.write(">");
+		this.decorateMode(oModeControl, oLI);
 		rm.renderControl(oModeControl);
-		rm.write("</div>");
 	};
 
-	ListItemBaseRenderer.decorateMode = function(rm, oLI) {
+	ListItemBaseRenderer.decorateMode = function(oModeControl, oLI) {
+
+		/* Remove animation classes to avoid unexpected re-rendering bahavior */
+		oModeControl.removeStyleClass("sapMLIBSelectAnimation sapMLIBUnselectAnimation");
+
 		// determine whether animation is necessary or not
 		if (!sap.ui.getCore().getConfiguration().getAnimation() ||
 			!oLI.getListProperty("modeAnimationOn")) {
@@ -105,9 +94,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		}
 
 		if (sMode == sap.m.ListMode.None) {
-			rm.addClass("sapMLIBUnselectAnimation");
+			oModeControl.addStyleClass("sapMLIBUnselectAnimation");
 		} else {
-			rm.addClass("sapMLIBSelectAnimation");
+			oModeControl.addStyleClass("sapMLIBSelectAnimation");
 		}
 	};
 

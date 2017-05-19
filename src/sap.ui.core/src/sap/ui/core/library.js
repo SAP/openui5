@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"void",
 
 			// simple types and enums
+			"sap.ui.core.AbsoluteCSSSize",
 			"sap.ui.core.AccessibleRole",
 			"sap.ui.core.AccessibleLandmarkRole",
 			"sap.ui.core.BarColor",
@@ -62,11 +63,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.Label",
 			"sap.ui.core.PopupInterface",
 			"sap.ui.core.Toolbar",
-			"sap.ui.core.IContextMenu"
+			"sap.ui.core.IContextMenu",
+			"sap.ui.core.IFormContent"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
 			"sap.ui.core.Control",
+			"sap.ui.core.FragmentControl",
 			"sap.ui.core.HTML",
 			"sap.ui.core.Icon",
 			"sap.ui.core.InvisibleText",
@@ -133,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	/* eslint-enable no-undef */
 
 	/**
-	 * @classdesc A string type that represents CSS size values.
+	 * @classdesc A string type that represents non-relative CSS size values.
 	 *
 	 * This is a subtype of the <code>'&lt;length&gt; type'</code> defined in the CSS specifications.
 	 * Allowed values are only absolute CSS sizes like &quot;1px&quot; or &quot;2em&quot;. Percentage
@@ -142,7 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * are allowed as long as they do not use percentage sizes.
 	 *
 	 * Note that CSS might not allow all these values for every CSS property representing a size.
-	 * So even if a value is accepted by <code>sap.ui.core.CSSSize</code>, it still might have no effect
+	 * So even if a value is accepted by <code>sap.ui.core.AbsoluteCSSSize</code>, it still might have no effect
 	 * in a specific context. In other words: UI5 controls usually don't extend the range of allowed
 	 * values in CSS.
 	 *
@@ -150,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * <b>Units</b>
 	 *
 	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Supported absolute units
-	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported yet.
+	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported.
 	 *
 	 *
 	 * <b>Mathematical Expressions</b>
@@ -943,7 +946,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @classdesc A string type representing an Id or a name.
 	 *
 	 * Allowed is a sequence of characters (capital/lowercase), digits, underscores, dashes, points and/or colons.
-	 * It may start with a character, number or underscore only.
+	 * It may start with a character or underscore only.
 	 *
 	 * @final
 	 * @namespace
@@ -1099,7 +1102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		None : "None",
 
 		/**
-		 * Message is an success message
+		 * Message is a success message
 		 * @public
 		 */
 		Success : "Success"
@@ -1145,7 +1148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 
 	/**
-	 * Orientation of an UI element
+	 * Orientation of a UI element
 	 *
 	 * @enum {string}
 	 * @public
@@ -1467,6 +1470,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 *
 	 * @function
 	 * @name sap.ui.core.IContextMenu.openAsContextMenu
+	 */
+
+	/**
+	 * Marker interface for controls that can be used as content of <code>sap.ui.layout.form.Form</code>
+	 * or <code>sap.ui.layout.form.SimpleForm</code>.
+	 *
+	 * If the control's width must not be adjusted by the <code>Form</code> control to meet the cell's width, the
+	 * control must implement the <code>getFormDoNotAdjustWidth</code> function and return <code>true</code>.
+	 *
+	 * @since 1.48.0
+	 * @name sap.ui.core.IFormContent
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * In the <code>Form</code> control all content controls are positioned on a grid cell base. By default
+	 * the controls use the full width of the used grid cell. But for some controls (like image controls),
+	 * this is not the desired behavior. In this case the control must keep its original width.
+	 *
+	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cell's width
+	 * @since 1.48.0
+	 * @public
+	 * @function
+	 * @name sap.ui.core.IFormContent.getFormDoNotAdjustWidth
 	 */
 
 	/**

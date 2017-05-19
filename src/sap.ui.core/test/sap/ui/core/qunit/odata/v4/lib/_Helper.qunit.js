@@ -468,7 +468,7 @@ sap.ui.require([
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),
 			sResolvedServiceUrl = TestUtils.proxy(
-				"/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/");
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/");
 
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
@@ -591,9 +591,182 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("namespace", function (assert) {
 		assert.strictEqual(_Helper.namespace("Products"), "");
-		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.Products"), "GW_SAMPLE_BASIC");
-		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.v1.Products"), "GW_SAMPLE_BASIC.v1");
-		assert.strictEqual(_Helper.namespace("GW_SAMPLE_BASIC.v1.Products/Category/type.cast"),
-			"GW_SAMPLE_BASIC.v1");
+		assert.strictEqual(_Helper.namespace("zui5_epm_sample.Products"), "zui5_epm_sample");
+		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products"), "zui5_epm_sample.v1");
+		assert.strictEqual(_Helper.namespace("zui5_epm_sample.v1.Products/Category/type.cast"),
+			"zui5_epm_sample.v1");
+	});
+
+	//*********************************************************************************************
+	[{
+		options : {
+			$select : ["Param1", "Param2"]
+		},
+		sPath : "",
+		result: ["Param1", "Param2"]
+	}, {
+		options : {},
+		sPath : "",
+		result : undefined
+	}, {
+		options : undefined,
+		sPath : "",
+		result : undefined
+	}, {
+		options : undefined,
+		sPath : "FooSet",
+		result : undefined
+	}, {
+		options : {
+			$select : ["Param1", "Param2"]
+		},
+		sPath : "FooSet",
+		result: undefined
+	}, {
+		options : {
+			$expand : {
+				FooSet : {
+					$select : ["Param1", "Param2"]
+				}
+			}
+		},
+		sPath : "FooSet",
+		result : ["Param1", "Param2"]
+	}, {
+		options : {
+			$expand : {
+				FooSet : true
+			}
+		},
+		sPath : "FooSet/BarSet",
+		result : undefined
+	}, {
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : ["Param1", "Param2"]
+						}
+					},
+					$select : ["Param3", "Param4"]
+				}
+			}
+		},
+		sPath : "FooSet/42/BarSet",
+		result : ["Param1", "Param2"]
+	}, {
+		options : {
+			$expand : {
+				FooSet : {
+					$expand : {
+						BarSet : {
+							$select : ["Param1", "Param2"]
+						}
+					},
+					$select : ["Param3", "Param4"]
+				}
+			}
+		},
+		sPath : "FooSet/-1/BarSet",
+		result : ["Param1", "Param2"]
+	}].forEach(function (o) {
+		QUnit.test("getSelectForPath: " + o.sPath, function (assert) {
+			assert.deepEqual(_Helper.getSelectForPath(o.options, o.sPath), o.result);
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bUseProperties) {
+		QUnit.test("updateCacheAfterPost: simple/complex and not wanted properties," +
+			" bUseProperties: " + bUseProperties, function (assert) {
+			var oCacheBefore = {
+					Address : {
+						City : "Walldorf"
+					},
+					ComplexNullable : null
+				},
+				oCacheAfter = {
+					PartnerId : "4711",
+					Address : {
+						City : "Walldorf",
+						GeoLocation : {
+							Latitude : "49.3",
+							Longitude : "8.6"
+						},
+						PostalCode : "69190",
+						Nullable : null
+					},
+					ComplexNullable : {
+						bar : null,
+						baz : null,
+						foo : "foo"
+					}
+				},
+				oChangeListener = {},
+				oHelperMock = this.mock(_Helper);
+
+			if (!bUseProperties) {
+				oCacheAfter.Address.notWanted = "foo";
+				oHelperMock.expects("fireChange")
+					.withExactArgs(oChangeListener, "SO_2_BP/Address/notWanted", "foo");
+				oCacheAfter.notWanted = "bar";
+				oHelperMock.expects("fireChange")
+					.withExactArgs(oChangeListener, "SO_2_BP/notWanted", "bar");
+				// we expect an event for the structual property baz because the productive
+				// code does not know that baz is NOT a property
+				oHelperMock.expects("fireChange")
+					.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/baz", null);
+			}
+
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/GeoLocation/Latitude", "49.3");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/GeoLocation/Longitude", "8.6");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/Nullable", null);
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/PostalCode", "69190");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/bar", null);
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/foo", "foo");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
+
+			// code under test
+			_Helper.updateCacheAfterPost(oChangeListener, "SO_2_BP", oCacheBefore, {
+				PartnerId : "4711",
+				Address : {
+					City : "Walldorf",
+					GeoLocation : {
+						Latitude : "49.3",
+						Longitude : "8.6"
+					},
+					notWanted : "foo",
+					Nullable : null,
+					PostalCode : "69190"
+				},
+				ComplexNullable : {
+					bar : null,
+					baz : null,
+					foo : "foo"
+				},
+				notWanted : "bar"},
+				bUseProperties ? [
+					"Address/City",
+					"Address/Foo/Bar",
+					"Address/GeoLocation/Latitude",
+					"Address/GeoLocation/Longitude",
+					"Address/Nullable",
+					"Address/PostalCode",
+					"ComplexNullable/bar",
+					"ComplexNullable/baz/belowBaz",
+					"ComplexNullable/foo",
+					"PartnerId"] : undefined
+			);
+
+			assert.deepEqual(oCacheBefore, oCacheAfter);
+		});
 	});
 });

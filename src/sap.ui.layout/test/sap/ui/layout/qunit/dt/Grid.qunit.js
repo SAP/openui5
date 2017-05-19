@@ -16,11 +16,11 @@
 					content: [
 						new Text({text: "Text"})
 					]
-				})
+				});
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});
@@ -58,15 +58,11 @@
 						}],
 						source: {
 							aggregation: "content",
-							parent: oView.byId("myGrid"),
-							publicAggregation: "content",
-							publicParent: oView.byId("myGrid")
+							parent: oView.byId("myGrid")
 						},
 						target: {
 							aggregation: "content",
-							parent: oView.byId("myGrid"),
-							publicAggregation: "content",
-							publicParent: oView.byId("myGrid")
+							parent: oView.byId("myGrid")
 						}
 					};
 				}

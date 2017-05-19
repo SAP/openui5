@@ -27,6 +27,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	 * removal of controls contained by the content aggregation. For example the destruction of a Control via the <code>
 	 * destroy</code> method. All functions can be called but may not work properly or lead to unexpected side effects.
 	 *
+	 * <strong>Note:</strong><br>
+	 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag. If
+	 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
+	 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
+	 *
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
 	 *
@@ -42,14 +47,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		specialSettings : {
 
 			/**
-			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * If an XMLView instance is used to represent an HTML subtree of another XMLView,
 			 * then that other XMLView is provided with this setting to be able to delegate
 			 * View functionality (createId, getController) to that 'real' view.
 			 */
 			containingView : { type: 'sap.ui.core.mvc.XMLView', visibility: 'hidden' },
 
 			/**
-			 * If an XMLView instance is used to represent a HTML subtree of another XMLView,
+			 * If an XMLView instance is used to represent an HTML subtree of another XMLView,
 			 * that subtree is provided with this setting.
 			 */
 			xmlNode : { type: 'Element', visibility: 'hidden' },
@@ -76,12 +81,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 *
 		 * <strong>Note</strong>: if a <code>Document</code> is given, it might be modified during view construction.
 		 *
+		 * <strong>Note:</strong><br>
+		 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag. If
+		 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
+		 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
+		 *
 		 * <strong>Note</strong>: if you enable caching, you need to take care of the invalidation via keys. Automatic
 		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change. This is
 		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
 		 * key format.
 		 *
-		 * The controller property can hold an controller instance. If a controller instance is given,
+		 * The controller property can hold a controller instance. If a controller instance is given,
 		 * it overrides the controller defined in the view.
 		 *
 		 * Like with any other control, ID is optional and one will be created automatically.
@@ -275,7 +285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		}
 
 		function writeCache(mCacheInput, xContent) {
-			// we don´t want to write the key into the cache
+			// we don't want to write the key into the cache
 			var sKey = mCacheInput.key;
 			delete mCacheInput.key;
 			mCacheInput.xml = jQuery.sap.serializeXML(xContent);

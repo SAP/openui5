@@ -7,7 +7,7 @@
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Dialog - sap.ui.commons - qUnit test page</title>
+<title>Dialog - sap.ui.commons - QUnit test page</title>
 
 <script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
@@ -285,7 +285,7 @@
 				assert.strictEqual(that.oDialog.sDragMode, 'resize', 'should be trigger resize mode');
 
 				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousemove');
-				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the begining and once after resize is finished');
+				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the beginning and once after resize is finished');
 				assert.strictEqual(invalidateSpy.callCount, 0, 'should not cause rerendering');
 				assert.strictEqual(popupPositionSpy.callCount, 1,'The popup setPosition is not called as handler is deregistered, but Dialog.open calls it');
 
@@ -449,7 +449,7 @@
 				assert.strictEqual(that.oDialog.sDragMode, 'resize', 'should be trigger resize mode');
 
 				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mousemove');
-				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the begining and once after resize is finished');
+				assert.strictEqual(setPropertySpy.callCount, 4,'should set its the width and height once at the beginning and once after resize is finished');
 				assert.strictEqual(invalidateSpy.callCount, 0, 'should not cause rerendering');
 
 				sap.ui.test.qunit.triggerMouseEvent(gripHandleRef, 'mouseup');

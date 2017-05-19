@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/m/SelectRendere
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oSelect {sap.m.TabStripSelect} An object representation of the <code>TabStripSelect</code> control that should be rendered
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TabStripSelect} oSelect An object representation of the <code>TabStripSelect</code> control that should be rendered
 		 */
 		TabStripSelectRenderer.render = function(oRm, oSelect) {
 			var	sTooltip = ValueStateSupport.enrichTooltip(oSelect, oSelect.getTooltip_AsString()),

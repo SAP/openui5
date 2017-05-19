@@ -5,10 +5,12 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Text",
 	"sap/m/TextArea",
-	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout"
-], function (Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, VerticalLayout) {
+	"sap/m/Button"
+], function (Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button) {
 	"use strict";
+
+	var oTable;
+
 	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
 
 		onInit: function () {
@@ -110,7 +112,6 @@ sap.ui.define([
 			var sOperationMode = oViewModel.getProperty("/operationMode");
 
 			// threshold for OperationMode.Auto
-			var sBindingThreshold = oViewModel.getProperty("/bindingThreshold");
 			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
 
 			// table threshold
@@ -135,7 +136,6 @@ sap.ui.define([
 			var sHierarchyNodeFor = oView.byId("hierarchyNodeFor").getValue();
 			var sHierarchyDrillStateFor = oView.byId("hierarchyDrillStateFor").getValue();
 			var sHierarchyDescendantCountFor = oView.byId("hierarchyDescendantCountFor").getValue();
-			var sHierarchyExternalKeyFor = oView.byId("hierarchyExternalKeyFor").getValue();
 
 			// table propertis
 			var iVisibleRowCount = oViewModel.getProperty("/visibleRowCount");
@@ -226,10 +226,10 @@ sap.ui.define([
 			//for easier table dbg
 			window.oTable = oTable;
 		},
-		
+
 		ensureCorrectChangeGroup: function (sEntityType) {
 			this._sTreeChangeGroup = this._sTreeChangeGroup || ("sapTreeHM-" + jQuery.sap.uid());
-			
+
 			// make sure we have a change group
 			var mChangeGroups = this.oODataModel.getChangeGroups();
 			var oEntityType = {name: sEntityType || "orgHierarchyType"};
@@ -271,7 +271,7 @@ sap.ui.define([
 				}
 			}, false);
 
-			var that =this;
+			var that = this;
 			var fnRowsUpdated = function() {
 				var oViewModel = that.getView().getModel();
 				oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
@@ -310,13 +310,9 @@ sap.ui.define([
 		 * jQuery Measure Tools
 		 */
 		attachMeasurementTools: function () {
-			var oViewModel = that.getView().getModel();
+			var oViewModel = this.getView().getModel();
 			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
-				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
-			});
-
-			var aRenderMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
-				return oMeasurement.categories.indexOf("Render") > -1? oMeasurement : null;
+				return oMeasurement.categories.indexOf("JS") > -1 ? oMeasurement : null;
 			});
 
 			function getValue(attributeName, oObject) {
@@ -327,7 +323,7 @@ sap.ui.define([
 				}
 			}
 			//set test result
-			var iCreateRows = Math.round(getValue("duration", aJSMeasure[0])* 1) / 1;
+			var iCreateRows = Math.round(getValue("duration", aJSMeasure[0]) * 1) / 1;
 			var iUpdateTableContent = Math.round(getValue("duration", aJSMeasure[1]) * 1) / 1;
 			var iUpdateRowHeader = Math.round(getValue("duration", aJSMeasure[2]) * 1) / 1;
 			var iSyncColumnHeaders = Math.round(getValue("duration", aJSMeasure[3]) * 1) / 1;
@@ -503,11 +499,11 @@ sap.ui.define([
 		onSave: function () {
 			MessageToast.show("Submitting changes...");
 			var oBinding = oTable.getBinding();
-			
+
 			oTable.setBusyIndicatorDelay(1);
 			oTable.setEnableBusyIndicator(true);
 			oTable.setBusy(true);
-			
+
 			// send collected change data to the back-end
 			oBinding.submitChanges({
 				success: function (oData) {
@@ -515,7 +511,7 @@ sap.ui.define([
 					oTable.setBusy(false);
 					// re-setup and clear the clipboard
 					this.setupCutAndPaste();
-					
+
 					// check if the change responses are missing --> at least one change failed
 					if (oData.__batchResponses && oData.__batchResponses[0] &&
 						!oData.__batchResponses[0].__changeResponses) {
@@ -535,7 +531,7 @@ sap.ui.define([
 							this.showErrorDialogue(sErrorCode, sErrorMessage);
 						}
 					}
-					
+
 				}.bind(this),
 				error: function (oEvent) {
 					this.showErrorDialogue("error");
@@ -640,9 +636,9 @@ sap.ui.define([
 			var sCSV = "Run;VisibleRowCount;VisibleRowCountMode;Overall;Before Rendering;Rendering;After Rendering;Table Create;Factor of After Rendering in Rendering;Table._createRows;Table._updateTableContent;Table._syncColumnHeaders;Table._updateRowHeader\n";
 
 			for (var i = 0; i < iRun; i++) {
-				sCSV += (i+1) + ";"
-						+ this.aVisibleRow[i].VisibleRowCount +";"
-						+ this.aVisibleRow[i].VisibleRowCountMode +";"
+				sCSV += (i + 1) + ";"
+						+ this.aVisibleRow[i].VisibleRowCount + ";"
+						+ this.aVisibleRow[i].VisibleRowCountMode + ";"
 						+ this.aRenderResults[i].overall + ";"
 						+ this.aRenderResults[i].onBeforeRendering + ";"
 						+ this.aRenderResults[i].rendering + ";"
@@ -694,10 +690,9 @@ sap.ui.define([
 			var sFileName = "TreeTableODataPerformanceTestResults.csv";
 			var oBlob = new Blob([sCSV], { type: 'application/csv;charset=utf-8' });
 
-			if (navigator.appVersion.toString().indexOf('.NET') > 0)
+			if (navigator.appVersion.toString().indexOf('.NET') > 0) {
 				window.navigator.msSaveBlob(oBlob, sFileName);
-			else
-			{
+			} else {
 				var oLink = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
 				oLink.href = URL.createObjectURL(oBlob);
 				oLink.download = sFileName;

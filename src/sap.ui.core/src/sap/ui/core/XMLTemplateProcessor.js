@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 				oView._sapui_declarativeSourceInfo = {
 					// the node representing the current control
 					xmlNode: xmlNode,
-					// the the document root node
+					// the document root node
 					xmlRootNode: oView._oContainingView === oView ? xmlNode :
 						oView._oContainingView._sapui_declarativeSourceInfo.xmlRootNode
 				};
@@ -228,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 					} else {
 
-						// assumption: an ELEMENT_NODE with non-XHTML namespace is a SAPUI5 control and the namespace equals the library name
+						// assumption: an ELEMENT_NODE with non-XHTML namespace is an SAPUI5 control and the namespace equals the library name
 						var aChildren = createControlOrExtension(xmlNode);
 
 						for (var i = 0; i < aChildren.length; i++) {
@@ -414,7 +414,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
 							}
 						} else if (sName === 'metadataContexts') {
-							var oMetaContextsInfo = ManagedObject.bindingParser(sValue, oView._oContainingView.oController);
+							var oMetaContextsInfo;
+
+							if (XMLTemplateProcessor._preprocessMetadataContexts) {
+								oMetaContextsInfo =  XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(),node,oView._oContainingView.oController);
+							}
 
 							if (oMetaContextsInfo) {
 								mSettings.metadataContexts = mSettings.metadataContexts || {};
@@ -510,7 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 					// inspect only element nodes
 					if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
 
-						if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.mdc.fragmentcontrol/1") {
+						if (childNode.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.fragmentcontrol/1") {
 							mSettings[localName(childNode)] = childNode.querySelector("*");
 							return;
 						}
@@ -648,6 +652,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 			}
 
 		};
+
+		/**
+		 * Preprocessor for special setting metadataContexts.
+		 * Needs to be re-implemented.
+		 *
+		 * @param {string} sClassName - The class of the control to be created
+		 * @param {object} oNode - The XML node
+		 * @param {object} oContext - The current context of the control
+		 * @private
+		 */
+		XMLTemplateProcessor._preprocessMetadataContexts = null;
 
 	return XMLTemplateProcessor;
 

@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 
 	/**
 	 * Returns whether the length which can be retrieved using getLength() is a known, final length,
-	 * or an preliminary or estimated length which may change if further data is requested.
+	 * or a preliminary or estimated length which may change if further data is requested.
 	 *
 	 * @return {boolean} returns whether the length is final
 	 * @since 1.24

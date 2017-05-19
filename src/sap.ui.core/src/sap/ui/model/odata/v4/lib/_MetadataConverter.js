@@ -802,7 +802,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Processes a Member element within a EnumType.
+	 * Processes a Member element within an EnumType.
 	 * @param {Element} oElement The element
 	 * @param {object} oAggregate The aggregate
 	 */

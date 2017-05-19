@@ -1,0 +1,7 @@
+<mvc:View
+	controllerName="sap.m.sample.PDFViewerPopup.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	height="100%">
+	<Button text="Open PDF in a popup" press="onPress"/>
+</mvc:View>

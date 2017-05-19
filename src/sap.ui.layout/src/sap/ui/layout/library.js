@@ -76,6 +76,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.ui.layout.form.Form": "sap/ui/layout/flexibility/Form",
+				"sap.ui.layout.form.FormContainer": "sap/ui/layout/flexibility/FormContainer",
+				"sap.ui.layout.form.FormElement": "sap/ui/layout/flexibility/FormElement",
 				"sap.ui.layout.HorizontalLayout": {
 					"moveControls": "default",
 					"hideControl": "default",
@@ -266,6 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		ColorSet4: "ColorSet4"
 	};
 
+
 	sap.ui.layout.form = sap.ui.layout.form || {};
 
 	/**
@@ -406,11 +410,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		Begin : "Begin"
 	};
 
-	// factory for Form to create labels an buttons to be overwritten by commons and mobile library
+	// factory for Form to create labels and buttons to be overwritten by commons and mobile library
 	if (!sap.ui.layout.form.FormHelper) {
 		sap.ui.layout.form.FormHelper = {
 			createLabel: function(sText){ throw new Error("no Label control available!"); }, /* must return a Label control */
-			createButton: function(sId, fPressFunction){ throw new Error("no Button control available!"); }, /* must return a button control */
+			createButton: function(sId, fPressFunction, fnCallback){ throw new Error("no Button control available!"); }, /* must return a button control */
 			setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){ throw new Error("no Button control available!"); },
 			addFormClass: function(){ return null; },
 			setToolbar: function(oToolbar){ return oToolbar; }, /* allow to overwrite toolbar settings */

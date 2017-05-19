@@ -45,10 +45,15 @@ sap.ui.define([
 			groupId : true,
 			operationMode : true,
 			serviceUrl : true,
+			supportReferences : true,
 			synchronizationMode : true,
 			updateGroupId : true
 		},
+		// system query options allowed in mParameters
 		aSystemQueryOptions = ["$apply", "$count", "$expand", "$filter", "$orderby", "$search",
+			"$select"],
+		// system query options allowed within a $expand query option
+		aExpandQueryOptions = ["$count", "$expand", "$filter", "$levels", "$orderby", "$search",
 			"$select"];
 
 	/**
@@ -72,8 +77,10 @@ sap.ui.define([
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch; other values result in an error
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
-	 *   The default operation mode for sorting. Only
-	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported since 1.39.0.
+	 *   The operation mode for sorting and filtering with the model's operation mode as default.
+	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
+	 *   supported. All other operation modes including <code>undefined</code> lead to an error if
+	 *   'vFilters' or 'vSorters' are given or if {@link #filter} or {@link #sort} is called.
 	 * @param {string} mParameters.serviceUrl
 	 *   Root URL of the service to request data from. The path part of the URL must end with a
 	 *   forward slash according to OData V4 specification ABNF, rule "serviceRoot". You may append
@@ -81,6 +88,10 @@ sap.ui.define([
 	 *   "/MyService/?custom=foo".
 	 *   See specification "OData Version 4.0 Part 2: URL Conventions", "5.2 Custom Query Options".
 	 *   OData system query options and OData parameter aliases lead to an error.
+	 * @param {boolean} [mParameters.supportReferences=true]
+	 *   Whether <code>&lt;edmx:Reference></code> and <code>&lt;edmx:Include></code> directives are
+	 *   supported in order to load schemas on demand from other $metadata documents and include
+	 *   them into the current service ("cross-service references").
 	 * @param {string} mParameters.synchronizationMode
 	 *   Controls synchronization between different bindings which refer to the same data for the
 	 *   case data changes in one binding. Must be set to 'None' which means bindings are not
@@ -176,12 +187,13 @@ sap.ui.define([
 
 					this.oMetaModel = new ODataMetaModel(
 						_MetadataRequestor.create(mHeaders, this.mUriParameters),
-						this.sServiceUrl + "$metadata", mParameters.annotationURI, this);
+						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
+						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
 						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {
-								sap.ui.getCore()
-									.addPrerenderingTask(that._submitBatch.bind(that, sGroupId));
+								sap.ui.getCore().addPrerenderingTask(
+									that._submitBatch.bind(that, sGroupId));
 							}
 						});
 
@@ -248,8 +260,8 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search and $select
-	 *   "5.1 System Query Options"; OData V4 only allows $apply, $count, $filter, $orderby and
+	 *   <li> The $count, $expand, $filter, $levels, $orderby, $search and $select
+	 *   "5.1 System Query Options"; OData V4 only allows $count, $filter, $levels, $orderby and
 	 *   $search inside resource paths that identify a collection. In our case here, this means you
 	 *   can only use them inside $expand.
 	 *   </ul>
@@ -340,7 +352,7 @@ sap.ui.define([
 	 *   The following OData query options are allowed:
 	 *   <ul>
 	 *   <li> All "5.2 Custom Query Options" except for those with a name starting with "sap-"
-	 *   <li> The $apply, $count, $expand, $filter, $orderby, $search, and $select
+	 *   <li> The $apply, $count, $expand, $filter, $levels, $orderby, $search, and $select
 	 *   "5.1 System Query Options"
 	 *   </ul>
 	 *   All other query options lead to an error.
@@ -387,8 +399,7 @@ sap.ui.define([
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameter "$$groupId".
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via
 	 *   {@link ODataModel#createBindingContext}.
@@ -401,12 +412,6 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link #submitBatch}.
-	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
-	 *   or the model's update group ID is used,
-	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   For valid values, see parameter "$$groupId".
 	 * @returns {sap.ui.model.odata.v4.ODataPropertyBinding}
 	 *   The property binding
 	 * @throws {Error}
@@ -486,19 +491,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Constructs a map of query options from the given options. Options starting with '$$' indicate
-	 * binding-specific parameters, which must not be part of a back end query; they are ignored and
-	 * not added to the map. The following query options are disallowed:
+	 * Constructs a map of query options from the given binding parameters.
+	 * Parameters starting with '$$' indicate binding-specific parameters, which must not be part
+	 * of a back end query; they are ignored and not added to the map.
+	 * The following query options are disallowed:
 	 * <ul>
 	 * <li> System query options (key starts with "$"), unless
 	 * <code>bSystemQueryOptionsAllowed</code> is set
 	 * <li> Parameter aliases (key starts with "@")
 	 * <li> Custom query options starting with "sap-", unless <code>bSapAllowed</code> is set
 	 * </ul>
-
 	 *
-	 * @param {object} [mOptions={}]
-	 *   Map of query options
+	 * @param {object} [mParameters={}]
+	 *   Map of binding parameters
 	 * @param {boolean} [bSystemQueryOptionsAllowed=false]
 	 *   Whether system query options are allowed
 	 * @param {boolean} [bSapAllowed=false]
@@ -510,69 +515,83 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.buildQueryOptions = function (mOptions, bSystemQueryOptionsAllowed,
+	ODataModel.prototype.buildQueryOptions = function (mParameters, bSystemQueryOptionsAllowed,
 			bSapAllowed) {
-		var mResult = {};
+		var sParameterName,
+			mTransformedOptions = jQuery.extend(true, {}, mParameters);
 
 		/**
-		 * Validates an expand item.
+		 * Parses the query options for the given option name "sOptionName" in the given map of
+		 * query options "mOptions" to an object if necessary.
+		 * Validates if the given query option name is allowed.
 		 *
-		 * @param {boolean|object} vExpandOptions
-		 *   The expand options (the value for the "$expand" in the hierarchical options);
-		 *   either a map or simply true if there are no options
+		 * @param {object} mOptions Map of query options by name
+		 * @param {string} sOptionName Name of the query option
+		 * @param {string[]} aAllowed The allowed system query options
+		 * @throws {error} If the given query option name is not allowed
 		 */
-		function validateExpandItem(vExpandOptions) {
-			var sOption;
+		function parseAndValidateSystemQueryOption (mOptions, sOptionName, aAllowed) {
+			var sExpandOptionName,
+				mExpandOptions,
+				sExpandPath,
+				vValue = mOptions[sOptionName];
 
-			if (typeof vExpandOptions === "object") {
-				for (sOption in vExpandOptions) {
-					validateSystemQueryOption(sOption, vExpandOptions[sOption]);
-				}
+			if (!bSystemQueryOptionsAllowed || aAllowed.indexOf(sOptionName) < 0) {
+					throw new Error("System query option " + sOptionName + " is not supported");
 			}
-		}
-
-		/**
-		 * Validates a system query option.
-		 * @param {string} sOption The name of the option
-		 * @param {any} vValue The value of the option
-		 */
-		function validateSystemQueryOption(sOption, vValue) {
-			var sPath;
-
-			if (!bSystemQueryOptionsAllowed || aSystemQueryOptions.indexOf(sOption) < 0) {
-				throw new Error("System query option " + sOption + " is not supported");
+			if ((sOptionName === "$expand" || sOptionName === "$select")
+					&& typeof vValue === "string") {
+				vValue = _Parser.parseSystemQueryOption(sOptionName + "=" + vValue)[sOptionName];
+				mOptions[sOptionName] = vValue;
 			}
-			if (sOption === "$expand") {
-				for (sPath in vValue) {
-					validateExpandItem(vValue[sPath]);
-				}
-			}
-		}
-
-		if (mOptions) {
-			Object.keys(mOptions).forEach(function (sKey) {
-				var vValue = mOptions[sKey];
-
-				if (sKey.indexOf("$$") === 0) {
-					return;
-				}
-
-				if (sKey[0] === "@") {
-					throw new Error("Parameter " + sKey + " is not supported");
-				}
-				if (sKey[0] === "$") {
-					if ((sKey === "$expand" || sKey === "$select")
-							&& typeof vValue === "string") {
-						vValue = _Parser.parseSystemQueryOption(sKey + "=" + vValue)[sKey];
+			if (sOptionName === "$expand") {
+				for (sExpandPath in vValue) {
+					mExpandOptions = vValue[sExpandPath];
+					if (mExpandOptions === null || typeof mExpandOptions !== "object") {
+						// normalize empty expand options to {}
+						mExpandOptions = vValue[sExpandPath] = {};
 					}
-					validateSystemQueryOption(sKey, vValue);
-				} else if (!bSapAllowed && sKey.indexOf("sap-") === 0) {
-					throw new Error("Custom query option " + sKey + " is not supported");
+					for (sExpandOptionName in mExpandOptions) {
+						parseAndValidateSystemQueryOption(mExpandOptions, sExpandOptionName,
+							aExpandQueryOptions);
+					}
 				}
-				mResult[sKey] = vValue;
-			});
+			} else if (sOptionName === "$count" ) {
+				if (typeof vValue  === "boolean") {
+					if (!vValue) {
+						delete mOptions.$count;
+					}
+				} else {
+					switch (typeof vValue === "string" && vValue.toLowerCase()) {
+						case "false":
+							delete mOptions.$count;
+							break;
+						case "true":
+							mOptions.$count = true;
+							break;
+						default:
+							throw new Error("Invalid value for $count: " + vValue);
+					}
+				}
+			}
 		}
-		return mResult;
+
+		if (mParameters) {
+			for (sParameterName in mParameters) {
+				if (sParameterName.indexOf("$$") === 0) { // binding-specific parameter
+					delete mTransformedOptions[sParameterName];
+				} else if (sParameterName[0] === "@") { // OData parameter alias
+					throw new Error("Parameter " + sParameterName + " is not supported");
+				} else if (sParameterName[0] === "$") { // OData system query option
+					parseAndValidateSystemQueryOption(mTransformedOptions, sParameterName,
+						aSystemQueryOptions);
+				// OData custom query option
+				} else if (!bSapAllowed && sParameterName.indexOf("sap-") === 0) {
+					throw new Error("Custom query option " + sParameterName + " is not supported");
+				}
+			}
+		}
+		return mTransformedOptions;
 	};
 
 	/**
@@ -718,17 +737,21 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Binding|sap.ui.model.Context} oParent
 	 *   The parent binding or context
+	 * @param {boolean} bSkipCreatedEntities
+	 *   Whether to skip bindings with a context that has been created by ODataListBinding#create
 	 * @returns {sap.ui.model.Binding[]}
 	 *   A list of all dependent bindings, never <code>null</code>
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.getDependentBindings = function (oParent) {
+	ODataModel.prototype.getDependentBindings = function (oParent, bSkipCreatedEntities) {
 		return this.aAllBindings.filter(function (oBinding) {
+			var oContext = oBinding.getContext();
+
 			return oBinding.isRelative()
-				&& (oBinding.getContext() === oParent
-						|| oBinding.getContext() && oBinding.getContext().getBinding
-							&& oBinding.getContext().getBinding() === oParent
+				&& !(bSkipCreatedEntities && oContext && oContext.created && oContext.created())
+				&& (oContext === oParent
+						|| oContext && oContext.getBinding && oContext.getBinding() === oParent
 					);
 		});
 	};
@@ -949,9 +972,10 @@ sap.ui.define([
 
 	/**
 	 * Resets all property changes and created entities associated with the given group ID which
-	 * have not been successfully submitted via {@link #submitBatch}. This function does not reset
-	 * the deletion of entities (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution
-	 * of OData operations (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
+	 * have not been successfully submitted via {@link #submitBatch}. Resets also invalid user
+	 * input for the same group ID. This function does not reset the deletion of entities
+	 * (see {@link sap.ui.model.odata.v4.Context#delete}) and the execution of OData operations
+	 * (see {@link sap.ui.model.odata.v4.ODataContextBinding#execute}).
 	 *
 	 * @param {string} [sGroupId]
 	 *   The application group ID, which is a non-empty string consisting of alphanumeric
@@ -971,6 +995,11 @@ sap.ui.define([
 		this.checkGroupId(sGroupId, true);
 
 		this.oRequestor.cancelChanges(sGroupId);
+		this.aAllBindings.forEach(function (oBinding) {
+			if (sGroupId === oBinding.getUpdateGroupId()) {
+				oBinding.resetInvalidDataState();
+			}
+		});
 	};
 
 	/**
@@ -1050,9 +1079,15 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataModel.prototype.submitBatch = function (sGroupId) {
+		var that = this;
+
 		this.checkGroupId(sGroupId, true);
 
-		return this._submitBatch(sGroupId);
+		return new Promise(function (resolve) {
+			sap.ui.getCore().addPrerenderingTask(function () {
+				resolve(that._submitBatch(sGroupId));
+			});
+		});
 	};
 
 	/**

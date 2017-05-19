@@ -162,7 +162,6 @@
 		dti0.focus();
 		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").val("33 May, 2012");
 		qutils.triggerKeyboardEvent("__input0-Picker-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		debugger;
 		oDatePicker.$().children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
 		assert.equal(sId, dti0.getId(), "Change event fired");
 		assert.equal(sValue, "33 May, 2012", "Value of event has entered value if invalid");

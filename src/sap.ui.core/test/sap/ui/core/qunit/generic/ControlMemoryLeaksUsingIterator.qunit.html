@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>QUnit Page for memory leak detection in UI5 controls</title>
+
+		<!--
+
+		The approach of this test is to generically identify all available libraries and control.
+		and then instantiate, render and destroy every single control. Afterwards the list of currently existing controls
+		is compared with the list before control instantiation to identify any leaked controls.
+
+		Some controls statically create instances of sap.ui.core.InvisibleText for accessibility reasons. These
+		InvisibleText controls are re-used by all instances of the same control type and hence never destroyed.
+		While technically a leak, the overhead is small and not growing over time, so these are not considered
+		as leaks in this test. To exclude these false positives, there are TWO instances of each control type created.
+		Only leaks also caused by the second instance are considered to be real issues.
+
+		-->
+
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m,sap.ui.commons,sap.ui.unified"
+				data-sap-ui-noConflict="true"
+				>
+		</script>
+
+		<script>
+			var aExcludedControls = [
+				"sap.m.DateTimeInput", // has a DatePicker leak
+				"sap.m.PlanningCalendar", // can be rendered but fails when properties generically filled ("viewKey")
+				"sap.ui.comp.odata.FieldSelector", // has a known leak
+				"sap.ui.comp.valuehelpdialog.ValueHelpDialog",  // has a known leak
+				"sap.ui.mdc.FilterField" // has a known leak
+			];
+
+			sap.ui.getCore().attachInit(function(){
+				'use strict';
+
+				sap.ui.require(["sap/ui/qunit/utils/ControlIterator", "sap/ui/qunit/utils/MemoryLeakCheck"],
+						function(ControlIterator, MemoryLeakCheck) {
+
+					ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
+
+						MemoryLeakCheck.checkControl(
+							function() {
+								return new oControlClass();
+							},
+							!oInfo.canRender
+						);
+
+					},{
+						excludedControls: aExcludedControls,
+						excludedLibraries: ["sap.viz"],
+						done: function(oResultInfo) {
+							// QUnit is made available by MemoryLeakCheck
+							QUnit.test("Test summary (" + oResultInfo.testedControlCount + " controls in " + oResultInfo.testedLibraryCount + " libraries)", function(assert){
+								assert.ok(true, "Tested Controls: " + oResultInfo.testedControlCount);
+								assert.ok(true, "Tested Libraries: " + oResultInfo.testedLibraryCount);
+							});
+						}
+					});
+				});
+			});
+
+		</script>
+
+
+		<style>
+			/* clean up bad settings done by controls */
+			.sap-desktop ::-webkit-scrollbar {
+				width: 16px !important;
+			}
+			html {
+				overflow: auto !important;
+			}
+		</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

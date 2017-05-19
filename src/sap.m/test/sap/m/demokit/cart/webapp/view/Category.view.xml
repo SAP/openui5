@@ -1,4 +1,5 @@
 <mvc:View
+	id="categoryView"
 	controllerName="sap.ui.demo.cart.controller.Category"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -11,12 +12,12 @@
 		<headerContent>
 			<ToggleButton
 				icon="sap-icon://complete"
-				tooltip="{i18n>CATEGORY_AVAILABILITY_FILTER_TOOLTIP}"
+				tooltip="{i18n>categoryAvailabilityFilterTooltip}"
 				press="onAvailabilityFilterToggle"
 				pressed="{ui>/availabilityFilterOn}"/>
 			<Button
 				icon="sap-icon://cart"
-				tooltip="{i18n>TO_CART_BUTTON_TOOLTIP}"
+				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress">
 			</Button>
 		</headerContent>
@@ -24,8 +25,8 @@
 			<List
 				id="productList"
 				mode="{device>/listMode}"
-				select="onProductListSelect"
-				noDataText="{i18n>CATEGORY_NO_DATA}"
+				selectionChange="onProductListSelect"
+				noDataText="{i18n>categoryNoData}"
 				busyIndicatorDelay="0"
 				items="{
 					path : 'Products',

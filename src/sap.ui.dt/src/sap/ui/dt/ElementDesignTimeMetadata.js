@@ -90,7 +90,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	/**
-	 * Creates a aggregation DT metadata class for an aggregation,
+	 * Creates an aggregation DT metadata class for an aggregation,
 	 * ensure to destroy it if it is no longer needed, otherwise you get memory leak.
 	 * @param {string} sAggregationName an aggregation name
 	 * @return {sap.ui.dt.AggregationDesignTimeMetadata} returns the aggregation DT metadata for an aggregation with a given name
@@ -120,6 +120,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	 * @return {object} returns the relevant container
 	 * @public
 	 */
+	//TODO: Remove this method as soon as DTMetadata propagation is finalized
 	ElementDesignTimeMetadata.prototype.getRelevantContainer = function(oElement) {
 		var fnGetRelevantContainer = this.getData().getRelevantContainer;
 		if (!fnGetRelevantContainer || typeof fnGetRelevantContainer !== "function") {

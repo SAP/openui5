@@ -101,6 +101,14 @@ sap.ui.define([
 					 */
 					_nextButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 				},
+				associations: {
+					/**
+					 * This association controls the current activated step of the wizard (meaning the last step)
+					 * For example if we have A->B->C->D steps, we are on step A and we setCurrentStep(C) A,B and C are going to be activated. D will still remain unvisited.
+					 * The parameter needs to be a Wizard step that is part of the current Wizard
+					 */
+					currentStep: {type: "sap.m.WizardStep", multiple: false}
+				},
 				events: {
 					/**
 					 * The StepActivated event is fired every time a new step is activated.
@@ -159,6 +167,13 @@ sap.ui.define([
 		};
 
 		Wizard.prototype.onAfterRendering = function () {
+			if (!this.getCurrentStep()) {
+				this.setAssociation("currentStep", this.getSteps()[0], true);
+			}
+
+			var step = sap.ui.getCore().byId(this.getCurrentStep());
+
+			this._activateAllPreceedingSteps(step);
 			this._attachScrollHandler();
 		};
 
@@ -299,7 +314,7 @@ sap.ui.define([
 					}
 				};
 
-			this.$().find("#" + this.getId() + "-step-container").animate(scrollProps, animProps);
+			jQuery(this.getDomRef("step-container")).animate(scrollProps, animProps);
 
 			return this;
 		};
@@ -314,21 +329,22 @@ sap.ui.define([
 		Wizard.prototype.discardProgress = function (step) {
 			var progressAchieved = this.getProgress(),
 				steps = this._stepPath,
-				index = this._stepPath.indexOf(step) + 1;
+				index = this._stepPath.indexOf(step),
+				progressNavigatorIndex = index + 1;
 
-			if (index > progressAchieved || index <= 0) {
+			if (progressNavigatorIndex > progressAchieved || progressNavigatorIndex <= 0) {
 				jQuery.sap.log.warning("The given step is either not yet reached, or is not present in the wizard control.");
 				return this;
 			}
 
-			this._getProgressNavigator().discardProgress(index, true);
+			this._getProgressNavigator().discardProgress(progressNavigatorIndex, true);
 
 			this._updateNextButtonState();
 			this._setNextButtonPosition();
 			this._restoreInitialValidatedState(index);
-			this._stepPath[index - 1]._markAsLast();
+			this._stepPath[index]._markAsLast();
 
-			for (var i = index; i < steps.length; i++) {
+			for (var i = progressNavigatorIndex; i < steps.length; i++) {
 				steps[i]._deactivate();
 				if (steps[i].getSubsequentSteps().length > 1) {
 					steps[i].setNextStep(null);
@@ -339,13 +355,25 @@ sap.ui.define([
 				step.setNextStep(null);
 			}
 
-			steps.splice(index);
+			steps.splice(progressNavigatorIndex);
 			this._updateProgressNavigator();
+			this.setAssociation("currentStep", step);
 
 			return this;
 		};
 
 		/**************************************** PROXY METHODS ***************************************/
+
+		Wizard.prototype.setCurrentStep = function (stepId) {
+			this.setAssociation("currentStep", stepId, true);
+			var step = (typeof stepId === "string") ? sap.ui.getCore().byId(stepId) : stepId;
+
+			if (step && this._isStepReachable(step)) {
+				this._activateAllPreceedingSteps(step);
+			}
+
+			return this;
+		};
 
 		/**
 		 * Sets the visiblity of the next button.
@@ -443,6 +471,48 @@ sap.ui.define([
 
 		/**************************************** PRIVATE METHODS ***************************************/
 
+		Wizard.prototype._activateAllPreceedingSteps = function (step) {
+			if (this._stepPath.indexOf(step) >= 0) {
+				this.discardProgress(step);
+				return;
+			}
+
+			while (this.getProgressStep() !== step) {
+				this.nextStep();
+			}
+		};
+
+		/**
+		 * Checks if in branching mode and the nextStep association of the currentStep is not set.
+		 */
+		Wizard.prototype._isNextStepDetermined = function () {
+			if (!this.getEnableBranching()) {
+				return true;
+			}
+
+			var currentStep = sap.ui.getCore().byId(this.getCurrentStep());
+			return currentStep._getNextStepReference() !== null;
+		};
+
+		/**
+		 * Searches for the given step, starting from the firstStep, checking the nextStep in the path.
+		 */
+		Wizard.prototype._isStepReachable = function (step) {
+			if (this.getEnableBranching()) {
+				var stepIterator = this._getStartingStep();
+				while (stepIterator !== step) {
+					stepIterator = stepIterator._getNextStepReference();
+					if (stepIterator == null) {
+						return false;
+					}
+				}
+
+				return true;
+			} else {
+				return this.getSteps().indexOf(step) >= 0;
+			}
+		};
+
 		Wizard.prototype._initScrollEnablement = function () {
 			return new ScrollEnablement(this, null, {
 				scrollContainerId: this.getId() + "-step-container",
@@ -459,8 +529,7 @@ sap.ui.define([
 		Wizard.prototype._initProgressNavigator = function () {
 			var that = this,
 				progressNavigator = new WizardProgressNavigator(this.getId() + "-progressNavigator", {
-					stepChanged: this._handleStepChanged.bind(this),
-					stepActivated: this._handleStepActivated.bind(this)
+					stepChanged: this._handleStepChanged.bind(this)
 				});
 
 			progressNavigator._setOnEnter(function (event, stepIndex) {
@@ -516,26 +585,31 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._handleNextButtonPress = function () {
-			var isStepFinal,
-				progressNavigator = this._getProgressNavigator(),
+			var progressNavigator = this._getProgressNavigator(),
 				lastStepInPath = this._stepPath[this._stepPath.length - 1],
 				progressAchieved = progressNavigator.getProgress(),
-				stepCount = progressNavigator.getStepCount();
-
-			if (this.getEnableBranching()) {
-				isStepFinal = lastStepInPath._isLeaf();
-			} else {
-				isStepFinal = progressAchieved === stepCount;
-			}
+				stepCount = progressNavigator.getStepCount(),
+				isStepFinal = this.getEnableBranching() ? lastStepInPath._isLeaf() : progressAchieved === stepCount;
 
 			if (isStepFinal) {
 				this.fireComplete();
 			} else {
+				var progressStep = this.getProgressStep();
+				progressStep._complete();
+
+				if (!this._isNextStepDetermined()) {
+					throw new Error("The wizard is in branching mode, and the nextStep association is not set.");
+				}
+
 				if (progressAchieved === stepCount) {
 					progressNavigator.setStepCount(stepCount + 1);
 					progressNavigator.rerender();
 				}
+
 				progressNavigator.incrementProgress();
+				this._handleStepActivated(progressNavigator.getProgress());
+				this._handleStepChanged(progressNavigator.getProgress());
+				this.setAssociation("currentStep", this._stepPath[this._stepPath.length - 1], true);
 			}
 
 			this._updateNextButtonState();
@@ -599,7 +673,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._handleStepChanged = function (event) {
-			var previousStepIndex = event.getParameter("current") - 2;
+			var previousStepIndex = ((typeof event === "number") ? event : event.getParameter("current")) - 2;
 			var previousStep = this._stepPath[previousStepIndex];
 			var subsequentStep = this._getNextStep(previousStep, previousStepIndex);
 			var focusFirstElement = sap.ui.Device.system.desktop ? true : false;
@@ -611,12 +685,9 @@ sap.ui.define([
 		 * @param {jQuery.Event} event
 		 * @private
 		 */
-		Wizard.prototype._handleStepActivated = function (event) {
-			var index = event.getParameter("index"),
-				previousStepIndex = index - 2,
+		Wizard.prototype._handleStepActivated = function (index) {
+			var previousStepIndex = index - 2,
 				previousStep = this._stepPath[previousStepIndex];
-
-			previousStep._complete();
 
 			var nextStep = this._getNextStep(previousStep, previousStepIndex);
 
@@ -775,10 +846,16 @@ sap.ui.define([
 
 			var button = this._getNextButton(),
 				progress = this._getProgressNavigator().getProgress(),
+				currentStep = this._stepPath[progress - 2],
+				configuration = sap.ui.getCore().getConfiguration(),
 				progressStep = this._stepPath[progress - 1];
 
 			if (progressStep) {
 				progressStep.addContent(button);
+
+				if (!configuration.getAnimation() && currentStep) {
+					currentStep.rerender();
+				}
 			}
 		};
 
@@ -883,8 +960,6 @@ sap.ui.define([
 				return;
 			}
 
-
-
 			var scrollTop = event.target.scrollTop,
 				progressNavigator = this._getProgressNavigator(),
 				currentStepDOM = this._stepPath[progressNavigator.getCurrentStep() - 1].getDomRef();
@@ -898,16 +973,23 @@ sap.ui.define([
 				stepChangeThreshold = 100;
 
 			if (scrollTop + stepChangeThreshold >= stepOffset + stepHeight && progressNavigator._isActiveStep(progressNavigator._currentStep + 1)) {
-				progressNavigator.nextStep(true);
+				progressNavigator.nextStep();
 			}
 
 			if (scrollTop + stepChangeThreshold <= stepOffset) {
-				progressNavigator.previousStep(true);
+				progressNavigator.previousStep();
 			}
 		};
 
 		Wizard.prototype._containsStep = function (step) {
 			return this.getSteps().some(function (ourStep) { return ourStep === step; });
+		};
+
+		Wizard.prototype._checkCircularReference = function (step) {
+			if (this._stepPath.indexOf(step) >= 0) {
+				throw new Error("The step that you are trying to activate has already been visited. You are creating " +
+				"a loop inside the wizard.");
+			}
 		};
 
 		/**
@@ -917,10 +999,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._activateStep = function (step) {
-			if (this._stepPath.indexOf(step) >= 0) {
-				throw new Error("The step that you are trying to activate has already been visited. You are creating " +
-				"a loop inside the wizard.");
-			}
+			this._checkCircularReference(step);
 
 			this._stepPath.push(step);
 			step._activate();

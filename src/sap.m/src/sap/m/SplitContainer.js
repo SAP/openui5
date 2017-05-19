@@ -591,6 +591,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sap.ui.Device.os.windows && sap.ui.Device.browser.internet_explorer) { // not for windows_phone
 			this._oMasterNav.$().append('<iframe class="sapMSplitContainerMasterBlindLayer" src="about:blank"></iframe>');
 		}
+
+		// "sapMSplitContainerNoTransition" prevents initial flickering, after that it needs to be removed
+		jQuery.sap.delayedCall(0, this, function () {
+			this._oMasterNav.removeStyleClass("sapMSplitContainerNoTransition");
+		});
 	};
 	/**************************************************************
 	* END - Life Cycle Methods
@@ -632,7 +637,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		var bIsMasterNav = true,
-			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"); // find the closest master or detail DOM element because SplitContainers may be nested
+			$targetContainer = jQuery(oEvent.target).closest(".sapMSplitContainerDetail, .sapMSplitContainerMaster"), // find the closest master or detail DOM element because SplitContainers may be nested
+			metaData = oEvent.srcControl.getMetadata();
 
 		if ($targetContainer.length > 0 && $targetContainer.hasClass("sapMSplitContainerDetail")) {
 			bIsMasterNav = false;
@@ -646,7 +652,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// press isn't occurring in master area
 				&& !bIsMasterNav
 				// press isn't triggered by the showMasterButton
-				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)) {
+				&& !jQuery.sap.containsOrEquals(this._oShowMasterBtn.getDomRef(), oEvent.target)
+				&& (!metaData.getEvent("tap") || !metaData.getEvent("press"))) {
 			this.hideMaster();
 		}
 	};
@@ -2024,8 +2031,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 								fnCallBack(oPage);
 							}
 						}
-						this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnShow", false);
-						this._oShowMasterBtn.$().parent().toggleClass("sapMSplitContainerMasterBtnHide", true);
+
+						this._oShowMasterBtn.destroy();
 						/*eslint-disable no-loop-func */
 						this._oShowMasterBtn.$().parent().bind("webkitAnimationEnd animationend", function(){
 							jQuery(this).unbind("webkitAnimationEnd animationend");

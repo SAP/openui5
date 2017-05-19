@@ -1,5 +1,9 @@
-sap.ui.define(['sap/ui/test/Opa5'],
-	function(Opa5) {
+/*global QUnit*/
+
+sap.ui.define([
+	"sap/ui/test/Opa5",
+	"sap/ui/test/opaQunit"
+], function (Opa5, opaTest) {
 	"use strict";
 
 	QUnit.module("EditSave");
@@ -93,13 +97,25 @@ sap.ui.define(['sap/ui/test/Opa5'],
 
 						var sName = oName.getValue();
 						oName.setValue("Foobar");
-						var sFirstCountry = oCountry.getItems()[0].getText();
-						var oSecondItem = oCountry.getItems()[1];
-						var sSecondCountry = oSecondItem.getText();
-						this.getContext().sSecondCountry = sSecondCountry;
-						this.getContext().sFirstCountry = sFirstCountry;
+
+						// helper function to select anything else except the currently selected item
+						function generateRandomExcept(iMin, iMax, iIndex) {
+							var iNum = Math.floor(Math.random() * (iMax - iMin + 1)) + iMin;
+							return (iNum === iIndex ? generateRandomExcept(iMin, iMax, iIndex) : iNum);
+						}
+
+						var iSelectedIndex = oCountry.getSelectedIndex();
+						var iAnotherIndex = generateRandomExcept(0, oCountry.getItems().length - 1, iSelectedIndex);
+						var sSelectedCountry = oCountry.getSelectedItem().getText();
+						var oAnotherCountry = oCountry.getItems()[iAnotherIndex];
+						var sAnotherCountry = oAnotherCountry.getText();
+
+						this.getContext().sSelectedCountry = sSelectedCountry;
+						this.getContext().sAnotherCountry = sAnotherCountry;
 						this.getContext().sName = sName;
-						oCountry.setSelectedKey(oSecondItem.getKey());
+						oCountry.setSelectedKey(oAnotherCountry.getKey());
+
+						Opa5.assert.ok(true, "Selected the item with key '" + oAnotherCountry.getKey() + "'");
 					},
 					errorMessage : "did not find the inputs name and country"
 				});
@@ -109,7 +125,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 		assertions : new Opa5({
 			iShouldBeOnTheEditPage : function () {
 				return this.waitFor({
-					id : "FormChange354",
+					controlType: "sap.ui.layout.form.Form",
 					success : function () {
 						Opa5.assert.ok("Did navigate to the edit page");
 					},
@@ -125,7 +141,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 						oCountry = aInputs[1];
 
 						Opa5.assert.strictEqual(oName.getText(), "Foobar", "the name text was correct");
-						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sSecondCountry, "the country text was correct");
+						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sAnotherCountry, "the country text was correct");
 					},
 					errorMessage : "did not find the texts for country and name"
 				});
@@ -139,7 +155,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 						oCountry = aInputs[1];
 
 						Opa5.assert.strictEqual(oName.getText(), this.getContext().sName, "the name text was restored");
-						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sFirstCountry, "the country text was restored");
+						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sSelectedCountry, "the country text was restored");
 					},
 					errorMessage : "did not find the texts for country and name"
 				});

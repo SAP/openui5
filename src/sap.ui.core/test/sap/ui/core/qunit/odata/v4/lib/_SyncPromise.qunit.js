@@ -11,14 +11,23 @@ sap.ui.require([
 	"use strict";
 
 	function assertFulfilled(assert, oSyncPromise, vExpectedResult) {
+		function checkEqual(vResult) {
+			if (Array.isArray(vExpectedResult)) {
+				assert.deepEqual(vResult, vExpectedResult);
+			} else {
+				assert.strictEqual(vResult, vExpectedResult);
+			}
+		}
+
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
 		assert.strictEqual(oSyncPromise.isPending(), false);
 		assert.strictEqual(oSyncPromise.isRejected(), false);
-		if (Array.isArray(vExpectedResult)) {
-			assert.deepEqual(oSyncPromise.getResult(), vExpectedResult);
-		} else {
-			assert.strictEqual(oSyncPromise.getResult(), vExpectedResult);
-		}
+		checkEqual(oSyncPromise.getResult(), vExpectedResult);
+		oSyncPromise.then(function (vResult) {
+			checkEqual(vResult, vExpectedResult);
+		}, function (vReason) {
+			assert.ok(false, "unexpected failure: " + vReason);
+		});
 	}
 
 	function assertPending(assert, oSyncPromise) {
@@ -33,6 +42,14 @@ sap.ui.require([
 		assert.strictEqual(oSyncPromise.isPending(), false);
 		assert.strictEqual(oSyncPromise.isRejected(), true);
 		assert.strictEqual(oSyncPromise.getResult(), vExpectedReason);
+		oSyncPromise.catch(function (vReason) {
+			assert.strictEqual(vReason, vExpectedReason);
+		});
+		oSyncPromise.then(function () {
+			assert.ok(false, "unexpected success");
+		}, function (vReason) {
+			assert.strictEqual(vReason, vExpectedReason);
+		});
 	}
 
 	//*********************************************************************************************
@@ -410,7 +427,7 @@ sap.ui.require([
 			oSyncPromise = _SyncPromise.resolve();
 
 		this.mock(oSyncPromise).expects("then")
-			.withExactArgs(undefined, fnOnRejected)
+			.withExactArgs(undefined, sinon.match.same(fnOnRejected))
 			.returns(oNewPromise);
 
 		assert.strictEqual(oSyncPromise.catch(fnOnRejected), oNewPromise);
@@ -508,5 +525,62 @@ sap.ui.require([
 		fnRequest = _SyncPromise.createRequestMethod("fetch");
 
 		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("toString", function (assert) {
+		var oPromise;
+
+		assert.strictEqual(_SyncPromise.resolve("/EMPLOYEES").toString(), "/EMPLOYEES");
+		assert.strictEqual(_SyncPromise.resolve().toString(), "undefined");
+		assert.strictEqual(_SyncPromise.resolve(null).toString(), "null");
+		assert.strictEqual(_SyncPromise.resolve(42).toString(), "42");
+
+		assert.strictEqual(_SyncPromise.all([
+				_SyncPromise.resolve(42),
+				"Foo",
+				true
+			]).toString(), "42,Foo,true");
+
+		assert.strictEqual(_SyncPromise.reject(new Error("rejected")).toString(),
+			"Error: rejected");
+
+		oPromise = _SyncPromise.resolve(Promise.reject(new Error("rejected")));
+
+		assert.strictEqual(oPromise.toString(), "SyncPromise: pending");
+		return oPromise.catch(function () {
+			assert.strictEqual(oPromise.toString(), "Error: rejected");
+		});
+	});
+
+	//*********************************************************************************************
+	[undefined, new Error()].forEach(function (vReason) {
+		QUnit.test("_SyncPromise.reject", function (assert) {
+			assertRejected(assert, _SyncPromise.reject(vReason), vReason);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("'then' on a _SyncPromise.reject()", function (assert) {
+		var bCalled = false,
+			oNewSyncPromise,
+			oReason = {},
+			oSyncPromise = _SyncPromise.reject(oReason);
+
+		oNewSyncPromise = oSyncPromise
+			.then(/* then w/o callbacks does not change result */)
+			.then(null, "If onRejected is not a function, it must be ignored")
+			.then(function () {
+				assert.ok(false);
+			}, function (vReason) {
+				assertRejected(assert, oSyncPromise, oReason);
+				assert.strictEqual(vReason, oReason);
+				assert.strictEqual(bCalled, false, "then called exactly once");
+				bCalled = true;
+				return "OK";
+			});
+
+		assertFulfilled(assert, oNewSyncPromise, "OK");
+		assert.strictEqual(bCalled, true, "called synchronously");
 	});
 });

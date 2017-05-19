@@ -301,6 +301,8 @@
 				assert.strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "0", 'The "aria-valuenow" attribute is set to its default value');
 				assert.strictEqual(jQuery(oSlider.getFocusDomRef()).attr("aria-disabled"), undefined, 'The "aria-disabled" attribute is set not set by default');
 				assert.strictEqual(oSlider.getDomRef("progress").getAttribute("aria-hidden"), "true");
+				assert.strictEqual(oSlider.getShowAdvancedTooltip(), false, "By default the sliders advanced tooltips are not shown");
+				assert.strictEqual(oSlider.getInputsAsTooltips(), false, "By default the sliders advanced tooltips are not of type input");
 
 				// cleanup
 				oSlider.destroy();
@@ -1969,6 +1971,80 @@
 				// Assert
 				assert.ok(oEventSpyPreventDefault.callCount === 0, "The method is skipped and the event went to the global KH");
 				assert.ok(oEventSpySetMarked.callCount === 0, "The method is skipped and the event went to the global KH");
+			});
+
+			/* ------------------------------ */
+			/* oInput onsapdown               */
+			/* ------------------------------ */
+
+			QUnit.test("Tooltip firing events: onsapdecrease", function(assert) {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step: 0.05,
+					value: 0.5,
+					min: 0,
+					max: 1,
+					showAdvancedTooltip: true,
+					inputsAsTooltips: true
+				});
+
+				// arrange
+				var fnFireChangeSpy = this.spy(oSlider, "fireChange");
+				var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
+				var fnArrowDownSpy = this.spy(oSlider, "onsapdecrease");
+
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("Tooltip-inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+
+				// assert
+				assert.strictEqual(oSlider.getValue(), 0.45, "The slider value must be decreased to 0.45");
+				assert.strictEqual(fnArrowDownSpy.callCount, 1);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			/* ------------------------------ */
+			/* oInput onsapup               */
+			/* ------------------------------ */
+
+			QUnit.test("Tooltip firing events: onsapincrease", function(assert) {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step: 0.05,
+					value: 0.5,
+					min: 0,
+					max: 1,
+					showAdvancedTooltip: true,
+					inputsAsTooltips: true
+				});
+
+				// arrange
+				var fnFireChangeSpy = this.spy(oSlider, "fireChange");
+				var fnFireLiveChangeSpy = this.spy(oSlider, "fireLiveChange");
+				var fnArrowDownSpy = this.spy(oSlider, "onsapincrease");
+
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				sap.ui.test.qunit.triggerKeydown(oSlider.getDomRef("Tooltip-inner"), jQuery.sap.KeyCodes.ARROW_UP);
+
+				// assert
+				assert.strictEqual(oSlider.getValue(), 0.55, "The slider value must be increased to 0.55");
+				assert.strictEqual(fnArrowDownSpy.callCount, 1);
+				assert.strictEqual(fnFireChangeSpy.callCount, 1);
+				assert.strictEqual(fnFireLiveChangeSpy.callCount, 1);
+
+				// cleanup
+				oSlider.destroy();
 			});
 		</script>
 	</head>

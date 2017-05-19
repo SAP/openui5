@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/ui/base/Object
 		 * @param {object} oParams the navigation parameters
 		 * @param {boolean} bBack forces the nav container to show a backwards transition
 		 * @private
-		 * @returns {boolean} if an navigation occured - if the page is already displayed false is returned
+		 * @returns {boolean} if a navigation occured - if the page is already displayed false is returned
 		 */
 		TargetHandler.prototype._applyNavigationResult = function(oParams, bBack) {
 			var oTargetControl = oParams.targetControl,

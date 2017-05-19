@@ -72,7 +72,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * attaches an callback to an event on the event provider of Settings
+	 * attaches a callback to an event on the event provider of Settings
 	 *
 	 * @param {string} sEventId name of the event
 	 * @param {function} oCallback
@@ -84,7 +84,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * detaches an callback to an event on the event provider of Settings
+	 * detaches a callback to an event on the event provider of Settings
 	 *
 	 * @param {string} sEventId name of the event
 	 * @param {function} oCallback
@@ -99,41 +99,57 @@ sap.ui.define([
 	 * Returns a settings instance after reading the settings from the back end if not already done. There is only one instance of settings during a
 	 * session.
 	 *
-	 * @param {string} sComponentName - Current UI5 component name
-	 * @param {map} [mPropertyBag] - Contains additional data that are needed for reading of changes
-	 * @param {object} [mPropertyBag.appDescriptor] - <code>appDescriptor<code> that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - <code>siteId<code> that belongs to actual component
+	 * @param {string} [sComponentName] - Current SAPUI5 component name
+	 * @param {string} [sAppVersion] - Current application version
+	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
+	 * @param {object} [mPropertyBag.appDescriptor] - App descriptor belonging to actual component
+	 * @param {string} [mPropertyBag.siteId] - Side ID that belongs to actual component
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @public
 	 */
-	Settings.getInstance = function(sComponentName, mPropertyBag) {
+	Settings.getInstance = function(sComponentName, sAppVersion, mPropertyBag) {
 		if (Settings._instance) {
 			return Promise.resolve(Settings._instance);
 		}
-
-		return Cache.getChangesFillingCache(LrepConnector.createConnector(), sComponentName, mPropertyBag)
-			.then(Settings._storeInstance.bind(Settings));
+		if (sComponentName) {
+			sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+			return Cache.getChangesFillingCache(LrepConnector.createConnector(), { name: sComponentName, appVersion: sAppVersion }, mPropertyBag)
+				.then(function (oFileContent) {
+					var oSettings = {};
+					if (oFileContent.changes && oFileContent.changes.settings) {
+						oSettings = oFileContent.changes.settings;
+					}
+					return Settings._storeInstance(oSettings);
+				});
+		}
+		return Settings._loadSettings();
 	};
 
 	/**
-	 * Writes the data received from the back end or cache into an internal map and then returns the settings object within a Promise.
+	 * Sends request to the back end for settings content. Stores content into internal setting instance and returns the instance.
 	 *
-	 * @param oFileContent - data received from the back end or cache
+	 * @returns {Promise} With parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
+	 * @private
+	 */
+	Settings._loadSettings = function() {
+		return LrepConnector.createConnector().loadSettings().then(function (oSettings){
+			return Settings._storeInstance(oSettings);
+		});
+	};
+
+	/**
+	 * Writes the data received from the back end or cache into an internal instance and then returns the settings object within a Promise.
+	 *
+	 * @param oSettings - Data received from the back end or cache
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @protected
 	 *
 	 */
-	Settings._storeInstance = function(oFileContent) {
-		var oSettings;
-
-		if (oFileContent.changes && oFileContent.changes.settings) {
-			oSettings = new Settings(oFileContent.changes.settings);
-		} else {
-			oSettings = new Settings({});
+	Settings._storeInstance = function(oSettings) {
+		if (!Settings._instance) {
+			Settings._instance = new Settings(oSettings);
 		}
-
-		Settings._instance = oSettings;
-		return oSettings;
+		return Settings._instance;
 	};
 
 	/**
@@ -336,7 +352,7 @@ sap.ui.define([
 		this._hasMergeErrorOccoured = bErrorOccured;
 	};
 	/**
-	 * Checks if an merge error occured during merging changes into the view on startup
+	 * Checks if a merge error occured during merging changes into the view on startup
 	 */
 	Settings.prototype.hasMergeErrorOccured = function() {
 		return this._hasMergeErrorOccured;

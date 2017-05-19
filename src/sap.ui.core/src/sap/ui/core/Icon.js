@@ -21,6 +21,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 *
 	 * A set of built in Icons is available and they can be fetched by calling sap.ui.core.IconPool.getIconURI and set this value to the src property on the Icon.
 	 * @extends sap.ui.core.Control
+	 * @implements sap.ui.core.IFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -33,11 +34,12 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 */
 	var Icon = Control.extend("sap.ui.core.Icon", /** @lends sap.ui.core.Icon.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.ui.core",
 		properties : {
 
 			/**
-			 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with a Icon name parameter and an optional collection parameter which is required when using application extended Icons. A list of standard FontIcon is available here.
+			 * This property should be set by the return value of calling sap.ui.core.IconPool.getIconURI with an Icon name parameter and an optional collection parameter which is required when using application extended Icons. A list of standard FontIcon is available here.
 			 */
 			src : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
@@ -292,7 +294,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	Icon.prototype.setSrc = function(sSrc) {
 		var oIconInfo = IconPool.getIconInfo(sSrc),
 			$Icon = this.$(),
-			bOutputIconLabel, sIconLabel, sTooltip, bUseIconTooltip, aLabelledBy, oInvisibleText;
+			sIconLabel, sTooltip, bUseIconTooltip, aLabelledBy, oInvisibleText;
 
 		// when the given sSrc can't be found in IconPool, rerender the icon is needed.
 		this.setProperty("src", sSrc, !!oIconInfo);
@@ -305,7 +307,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 			sTooltip = this.getTooltip_AsString();
 			aLabelledBy = this.getAriaLabelledBy();
 			bUseIconTooltip = this.getUseIconTooltip();
-			bOutputIconLabel = this._shouldOutputIconLabel();
 			sIconLabel = this._getIconLabel();
 
 			if (sTooltip || (bUseIconTooltip && oIconInfo.text)) {
@@ -315,7 +316,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 			}
 
 			if (aLabelledBy.length === 0) { // Only adapt "aria-label" if there is no "labelledby" as this is managed separately
-				if (bOutputIconLabel) {
+				if (sIconLabel) {
 					$Icon.attr("aria-label", sIconLabel);
 				} else {
 					$Icon.attr("aria-label", null);
@@ -445,21 +446,46 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 		return this;
 	};
 
-	Icon.prototype._shouldOutputIconLabel = function() {
+	/**
+	 * Returns the string which is set to the 'title' attribute of the DOM output
+	 *
+	 * @return {string|undefined} the string which is output as title attribute
+	 * @private
+	 */
+	Icon.prototype._getOutputTitle = function() {
 		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
-			sAlt = this.getAlt(),
 			sTooltip = this.getTooltip_AsString(),
 			bUseIconTooltip = this.getUseIconTooltip();
 
-		return !!(sAlt || sTooltip || (bUseIconTooltip && oIconInfo));
+		if (sTooltip || (bUseIconTooltip && oIconInfo && oIconInfo.text)) {
+			return sTooltip || oIconInfo.text;
+		}
 	};
 
+	/**
+	 * Returns the label which is output to either aria-label or the invisible text which
+	 * is refered in the aria-labelledby attributes.
+	 *
+	 * Screen reader reads out the value which is set to the 'title' attribute. Thus the
+	 * aria-label or aria-labelledBy is used only when the label string is different than
+	 * the string used as 'title' attribute. When the label string is the same as the one
+	 * which is set to the 'title' attribute of the DOM, this method returns undefined in
+	 * order not to set the aria-label or aria-labelledby attribute.
+	 *
+	 * @return {string} the label when it's necessary to be output
+	 * @private
+	 */
 	Icon.prototype._getIconLabel = function() {
 		var oIconInfo = IconPool.getIconInfo(this.getSrc()),
 			sAlt = this.getAlt(),
-			sTooltip = this.getTooltip_AsString();
+			sTooltip = this.getTooltip_AsString(),
+			bUseIconTooltip = this.getUseIconTooltip(),
+			sLabel = sAlt || sTooltip || (bUseIconTooltip && oIconInfo && (oIconInfo.text || oIconInfo.name)),
+			sOutputTitle = this._getOutputTitle();
 
-		return sAlt || sTooltip || oIconInfo.text || oIconInfo.name;
+		if (sLabel && sLabel !== sOutputTitle) {
+			return sLabel;
+		}
 	};
 
 	Icon.prototype._createInvisibleText = function(sText) {
@@ -482,8 +508,8 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	Icon.prototype._getAccessibilityAttributes = function() {
 		var aLabelledBy = this.getAriaLabelledBy(),
 			mAccAttributes = {},
-			bOutputIconLabel = this._shouldOutputIconLabel(),
-			oInvisibleText, sIconLabel;
+			sIconLabel = this._getIconLabel(),
+			oInvisibleText;
 
 		if (this.getDecorative()) {
 			mAccAttributes.role = "presentation";
@@ -496,17 +522,13 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 			}
 		}
 
-		if (bOutputIconLabel) {
-			sIconLabel = this._getIconLabel();
-		}
-
 		if (aLabelledBy.length > 0) {
-			if (bOutputIconLabel) {
+			if (sIconLabel) {
 				oInvisibleText = this._createInvisibleText(sIconLabel);
 				aLabelledBy.push(oInvisibleText.getId());
 			}
 			mAccAttributes.labelledby = aLabelledBy.join(" ");
-		} else if (bOutputIconLabel) {
+		} else if (sIconLabel) {
 			mAccAttributes.label = sIconLabel;
 		}
 

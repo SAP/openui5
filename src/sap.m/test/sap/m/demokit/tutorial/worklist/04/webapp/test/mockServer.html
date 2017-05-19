@@ -12,14 +12,14 @@
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
-			data-sap-ui-resourceroots='{"myCompany.myApp": "../"}'
+			data-sap-ui-resourceroots='{"mycompany.myapp": "../"}'
 			data-sap-ui-frameOptions='allow'> 	// NON-SECURE setting for testing environment
 	</script>
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
-				"myCompany/myApp/localService/mockserver",
+				"mycompany/myapp/localService/mockserver",
 				"sap/m/Shell",
 				"sap/ui/core/ComponentContainer"
 			], function (server, Shell, ComponentContainer) {
@@ -29,7 +29,7 @@
 				new Shell({
 					app: new ComponentContainer({
 						height : "100%",
-						name : "myCompany.myApp"
+						name : "mycompany.myapp"
 					})
 				}).placeAt("content");
 			});

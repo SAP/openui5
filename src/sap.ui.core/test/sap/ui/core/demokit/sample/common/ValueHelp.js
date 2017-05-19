@@ -129,7 +129,7 @@ sap.ui.define([
 				oComboBox.attachSelectionChange(onSelectionChange);
 			}, function (oError) {
 				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp");
+					"sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 
@@ -190,7 +190,7 @@ sap.ui.define([
 
 			}, function (oError) {
 				jQuery.sap.log.error(oError, undefined,
-					"sap.ui.core.sample.odata.v4.SalesOrders.ValueHelp");
+					"sap.ui.core.sample.common.ValueHelp");
 			});
 		},
 

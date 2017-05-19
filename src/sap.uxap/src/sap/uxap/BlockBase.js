@@ -26,7 +26,7 @@ sap.ui.define([
 		 * A block is the main element that will be displayed, mainly in an object page, but not necessarily
 		 * only there.
 		 *
-		 * A block is a control that use a XML view for storing its internal control tree.
+		 * A block is a control that use an XML view for storing its internal control tree.
 		 * A block is a control that has modes and a view associated to each modes.
 		 * At rendering time, the view associated to the mode is rendered.
 		 *

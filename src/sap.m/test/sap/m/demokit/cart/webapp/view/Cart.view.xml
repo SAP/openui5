@@ -1,4 +1,5 @@
 <mvc:View
+	id="cartView"
 	controllerName="sap.ui.demo.cart.controller.Cart"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -30,8 +31,8 @@
 				<Button
 					id="proceedButton"
 					type="Accept"
-					text="{i18n>CART_PROCEED_BUTTON_TEXT}"
-					tooltip="{i18n>CART_PROCEED_BUTTON_TOOLTIP}"
+					text="{i18n>cartProceedButtonText}"
+					tooltip="{i18n>cartProceedButtonTooltip}"
 					enabled="{
 						path: 'cartProducts>/cartEntries',
 						formatter: '.formatter.hasItems'
@@ -40,8 +41,8 @@
 					press="onProceedButtonPress" />
 				<Button
 					id="doneButton"
-					text="{i18n>CART_DONE_BUTTON_TEXT}"
-					tooltip="{i18n>CART_DONE_BUTTON_TOOLTIP}"
+					text="{i18n>cartDoneButtonText}"
+					tooltip="{i18n>cartDoneButtonTooltip}"
 					icon="sap-icon://accept"
 					enabled="true"
 					visible="{cfg>/inDelete}"
@@ -57,8 +58,8 @@
 				}"
 				mode="{cfg>/listMode}"
 				delete="onCartEntriesDelete"
-				select="onEntryListSelect"
-				noDataText="{i18n>CART_NO_DATA}"
+				selectionChange="onEntryListSelect"
+				noDataText="{i18n>cartNoData}"
 				items="{
 					path : 'cartProducts>/cartEntries',
 					sorter : {
@@ -86,7 +87,7 @@
 							<ObjectAttribute
 								active="true"
 								press="onSaveForLater"
-								text="{i18n>CART_SAVE_FOR_LATER_LINK_TEXT}" />
+								text="{i18n>cartSaveForLaterLinkText}" />
 						</attributes>
 						<firstStatus>
 							<ObjectStatus
@@ -107,7 +108,7 @@
 				mode="{cfg>/listMode}"
 				showNoData="false"
 				delete="onSaveForLaterDelete"
-				select="onEntryListSelect"
+				selectionChange="onEntryListSelect"
 				items="{
 					path : 'cartProducts>/savedForLaterEntries',
 					sorter : {
@@ -134,7 +135,7 @@
 							<ObjectAttribute
 								active="true"
 								press="onAddBackToBasket"
-								text="{i18n>CART_ADD_TO_CART_LINK_TEXT}" />
+								text="{i18n>cartAddToCartLinkText}" />
 						</attributes>
 						<firstStatus>
 							<ObjectStatus

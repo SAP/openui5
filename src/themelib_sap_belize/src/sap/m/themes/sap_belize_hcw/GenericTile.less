@@ -19,7 +19,7 @@
 .sapMGTOverlay {
 	background-color: fade(@sapUiBlockLayerBackground, 70);
 }
-/************************ LINE MODE COZY ********************/
+/************************ LINE MODE LIST VIEW ********************/
 
 .sapMGT.sapMGTLineMode {
 	border: 0.0625rem solid @sapUiTileBorderColor;
@@ -35,9 +35,9 @@
 	}
 }
 
-/************************ LINE MODE COMPACT *****************/
+/************************ LINE MODE FLOATING VIEW *****************/
 
-.sapUiSizeCompact {
+.sapUiMedia-GenericTileDeviceSet-large {
 	.sapMGT.sapMGTLineMode {
 		font-size: @sapMFontMediumSize;
 		border: none;
@@ -94,7 +94,7 @@
 	}
 }
 
-.sap-desktop .sapUiSizeCompact .sapMGT.sapMGTLineMode {
+.sap-desktop.sapUiMedia-GenericTileDeviceSet-large .sapMGT.sapMGTLineMode {
 	&:hover {
 		box-shadow: none !important;
 	}

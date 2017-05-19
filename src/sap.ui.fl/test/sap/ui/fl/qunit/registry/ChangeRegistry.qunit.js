@@ -1,4 +1,4 @@
-/*globals QUnit*/
+/*global QUnit*/
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
 jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
@@ -321,7 +321,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 	});
 
-	QUnit.test("getRegistryItem - technical ChangeHandlers", function(assert) {
+	QUnit.test("getRegistryItem - developerMode ChangeHandlers", function(assert) {
 		var mDeveloperModeLayerPermissions = this.instance._oSettings.getDeveloperModeLayerPermissions();
 		var sControlType = "sap.ui.fl.DummyControl1";
 		var sPropertyChangeType = "propertyChange";

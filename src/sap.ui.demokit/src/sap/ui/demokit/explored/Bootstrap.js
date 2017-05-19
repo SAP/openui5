@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ComponentContainer', 'sap/m/She
 					fnPrependZero;
 
 				// define search tags
-				oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(" ", "") + " " + oEnt.category;
+				oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(/ /g, "") + " " + oEnt.category;
 
 				// check samples property
 				if (oEnt.samples && !(oEnt.samples instanceof Array)) {

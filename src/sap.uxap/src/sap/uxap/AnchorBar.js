@@ -86,7 +86,7 @@ sap.ui.define([
 		this._sSelectedKey = null; // keep track of sap.uxap.HierarchicalSelect selected key
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
-		//are we on a rtl scenario?
+		//are we on an rtl scenario?
 		//IE handles rtl in a transparent way (positions positives, scroll starts at the end)
 		//while firefox, safari and chrome have a special management (scroll at the beginning and negative positioning)
 		//therefore we will apply some specific actions only if are in rtl and not in IE.
@@ -94,7 +94,7 @@ sap.ui.define([
 
 		//there are 2 different uses cases:
 		//case 1: on a real phone we don't need the scrolling anchorBar, just the hierarchicalSelect
-		//case 2: on a a real ipad or a desktop we need both as the size may change
+		//case 2: on a real tablet or a desktop we need both as the size may change
 		this._bHasButtonsBar = Device.system.tablet || Device.system.desktop;
 
 		this._oSelect = this._getHierarchicalSelect();
@@ -421,7 +421,7 @@ sap.ui.define([
 			// determine the next section that will appear selected in the anchorBar after the scroll
 			var sNextSelectedSection = sRequestedSectionId;
 
-			// if the requestedSection is a subsection, the the nextSelectedSection will be its parent (since anchorBar contains only first-level sections)
+			// if the requestedSection is a subsection, the nextSelectedSection will be its parent (since anchorBar contains only first-level sections)
 			if (oRequestedSection instanceof library.ObjectPageSubSection &&
 				oRequestedSectionParent instanceof library.ObjectPageSection) {
 				sNextSelectedSection = oRequestedSectionParent.getId();
@@ -724,7 +724,7 @@ sap.ui.define([
 
 	// use type 'object' because Metamodel doesn't know ScrollEnablement
 	/**
-	 * Returns a sap.ui.core.delegate.ScrollEnablement object used to handle scrolling.
+	 * Returns an sap.ui.core.delegate.ScrollEnablement object used to handle scrolling.
 	 *
 	 * @type object
 	 * @public
@@ -917,7 +917,7 @@ sap.ui.define([
 	/**
 	 * Handler for F6 and Shift + F6 group navigation
 	 *
-	 * @param oEvent {jQuery.EventObject}
+	 * @param {jQuery.Event} oEvent
 	 * @param bShiftKey serving as a reference if shift is used
 	 * @private
 	 */
@@ -961,7 +961,7 @@ sap.ui.define([
 
 		this._sHierarchicalSelectMode = AnchorBar._hierarchicalSelectModes.Text;
 
-		//save max for arrow show/hide management, the max position is the required scroll for the the item to be fully visible
+		//save max for arrow show/hide management, the max position is the required scroll for the item to be fully visible
 		this._iMaxPosition = -1;
 
 		//show/hide scrolling arrows

@@ -209,10 +209,17 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	 * @private
 	 */
 	PropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
-		var that = this;
+		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null,
+			oDataState = this.getDataState(),
+			that = this;
+
+		function fireChange() {
+			that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+			oDataState.changed(false);
+			that._sDataStateTimout = null;
+		}
+
 		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
-			var oDataState = this.getDataState();
 			if (sResolvedPath) {
 				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
 			}
@@ -220,13 +227,11 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 				if (this.mEventRegistry["DataStateChange"]) {
 					this.fireEvent("DataStateChange", { dataState: oDataState });
 				}
-				if (this.mEventRegistry["AggregatedDataStateChange"]) {
+				if (this.bIsBeingDestroyed) {
+					fireChange();
+				} else if (this.mEventRegistry["AggregatedDataStateChange"]) {
 					if (!this._sDataStateTimout) {
-						this._sDataStateTimout = setTimeout(function() {
-							that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-							oDataState.changed(false);
-							that._sDataStateTimout = null;
-						}, 0);
+						this._sDataStateTimout = setTimeout(fireChange, 0);
 					}
 				}
 			}

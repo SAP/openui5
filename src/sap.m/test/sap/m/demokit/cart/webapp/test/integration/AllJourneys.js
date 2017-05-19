@@ -7,8 +7,8 @@ sap.ui.define([
 	'sap/ui/demo/cart/test/pageobjects/Dialog',
 	// journeys
 	"sap/ui/demo/cart/test/WelcomeJourney",
-	"sap/ui/demo/cart/test/BuyProductJourney",
-	"sap/ui/demo/cart/test/DeleteProductJourney"
+	"sap/ui/demo/cart/test/DeleteProductJourney",
+	"sap/ui/demo/cart/test/BuyProductJourney"
 ], function () {
 	"use strict";
 });

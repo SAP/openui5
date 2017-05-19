@@ -1,4 +1,4 @@
-/*globals QUnit, sinon*/
+/*global QUnit, sinon*/
 jQuery.sap.require("sap.ui.fl.PreprocessorImpl");
 jQuery.sap.require("sap.ui.core.Component");
 jQuery.sap.require("sap.ui.base.ManagedObject");
@@ -16,9 +16,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	var sandbox = sinon.sandbox.create();
 	var controls = [];
-	var mProperties = {
-		componentId: "preprocessorTest.Component"
-	};
 
 	QUnit.module("sap.ui.fl.PreprocessorImpl", {
 		beforeEach: function() {
@@ -74,9 +71,20 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				resolve(oFileContent);
 			}
 		);
-
+		var oAppComponent = {
+			getManifest: function () {
+				return {
+					"sap.app" : {
+						applicationVersion : {
+							version : "1.2.3"
+						}
+					}
+				};
+			}
+		};
 		sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
-
+		sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+		sandbox.stub(Utils, "getComponentName").returns("ui.s2p.mm.purchorder.approve.Component");
 
 		// decode
 		var oExtensionProvider = new PreprocessorImpl();
@@ -160,8 +168,6 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				resolve(oFileContent);
 			}
 		);
-
-		sandbox.stub(sap.ui, "component");
 		sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 
 		// view, controller and component definition
@@ -169,6 +175,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oComp = sap.ui.component({
 			name: "sap.ui.fl.PreprocessorImpl.testResources"
 		});
+		sandbox.stub(sap.ui, "component").returns(oComp);
 
 		var view1 = sap.ui.view({
 			viewName: "sap.ui.fl.PreprocessorImpl.testResources.view1",

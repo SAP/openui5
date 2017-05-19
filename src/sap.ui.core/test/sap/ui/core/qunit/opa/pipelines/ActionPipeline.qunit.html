@@ -4,22 +4,23 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>qUnit Page for sap.ui.test.pipelines.ActionPipeline</title>
+	<title>QUnit Page for sap.ui.test.pipelines.ActionPipeline</title>
 
 	<script src="../../../shared-config.js"></script>
 	<script
 			src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m">
 	</script>
+	<script src="../../_includeQUnit.js"></script>
 
 
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		QUnit.config.autostart = false;
 
 		sap.ui.require([
 			"jquery.sap.global",
@@ -70,6 +71,9 @@
 				sinon.assert.calledWith(fnFirstAction, oControlStub);
 				sinon.assert.calledWith(fnSecondAction, oControlStub);
 			});
+
+			QUnit.start();
+
 		});
 	</script>
 </head>

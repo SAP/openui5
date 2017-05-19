@@ -498,6 +498,14 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this._mAssociations = normalize(oStaticInfo.associations, this.metaFactoryAssociation);
 		this._mEvents = normalize(oStaticInfo.events, this.metaFactoryEvent);
 
+		// as oClassInfo is volatile, we need to store the info
+		if (typeof oClassInfo.metadata["designTime"] === "boolean") {
+			this._bHasDesignTime = oClassInfo.metadata["designTime"];
+		} else if (oClassInfo.metadata["designTime"]) {
+			this._bHasDesignTime = true;
+			this._oDesignTime = oClassInfo.metadata["designTime"];
+		}
+
 		if ( oClassInfo.metadata.__version > 1.0 ) {
 			this.generateAccessors();
 		}
@@ -1164,24 +1172,89 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		}
 	};
 
+	// ---- Design Time capabilities -------------------------------------------------------------
+
+	/**
+	 * Returns a promise that resolves with the own, unmerged designtime data.
+	 * If the class is marked as having no designtime data, the promise will resolve with null.
+	 *
+	 * @private
+	 */
+	function loadOwnDesignTime(oMetadata) {
+		if (oMetadata._oDesignTime || !oMetadata._bHasDesignTime) {
+			return Promise.resolve(oMetadata._oDesignTime || null);
+		}
+		return new Promise(function(fnResolve) {
+			var sModule = jQuery.sap.getResourceName(oMetadata.getName(), ".designtime");
+			sap.ui.require([sModule], function(oDesignTime) {
+				oMetadata._oDesignTime = oDesignTime;
+				fnResolve(oDesignTime);
+			});
+		});
+	}
+
+	/**
+	 * Load and returns the design time metadata asynchronously.
+	 *
+	 * Be aware that ManagedObjects do not ensure to have unique IDs. This may lead to
+	 * issues if you would like to persist DesignTime based information. In that case
+	 * you need to take care of identification yourself.
+	 *
+	 * @return {Promise} A promise which will return the loaded design time metadata
+	 * @private
+	 * @sap-restricted sap.ui.fl com.sap.webide
+	 * @since 1.48.0
+	 */
+	ManagedObjectMetadata.prototype.loadDesignTime = function() {
+		if (!this._oDesignTimePromise) {
+
+			// Note: parent takes care of merging its ancestors
+			var oWhenParentLoaded;
+			var oParent = this.getParent();
+			// check if the mixin is applied to the parent
+			if (oParent instanceof ManagedObjectMetadata) {
+				oWhenParentLoaded = oParent.loadDesignTime();
+			} else {
+				oWhenParentLoaded = Promise.resolve(null);
+			}
+
+			// Note that the ancestor designtimes and the own designtime will be loaded 'in parallel',
+			// only the merge is done in sequence by chaining promises
+			this._oDesignTimePromise = loadOwnDesignTime(this).then(function(oOwnDesignTime) {
+				return oWhenParentLoaded.then(function(oParentDesignTime) {
+					// we use jQuery.sap.extend to be able to also overwrite properties with null or undefined
+					// using deep extend to inherit full parent designtime, unwanted inherited properties have to be overwritten with undefined
+					return jQuery.sap.extend(true, {}, oParentDesignTime, oOwnDesignTime);
+				});
+			});
+		}
+
+		return this._oDesignTimePromise;
+	};
+
 	// ---- autoid creation -------------------------------------------------------------
 
 	/**
 	 * Usage counters for the different UID tokens
 	 */
-	var mUIDCounts = {};
+	var mUIDCounts = {},
+		sUIDPrefix;
 
 	function uid(sId) {
 		jQuery.sap.assert(!/[0-9]+$/.exec(sId), "AutoId Prefixes must not end with numbers");
 
-		sId = sap.ui.getCore().getConfiguration().getUIDPrefix() + sId;
+		//read prefix from configuration only once
+		sId = (sUIDPrefix || (sUIDPrefix = sap.ui.getCore().getConfiguration().getUIDPrefix())) + sId;
 
-		// initialize counter
-		mUIDCounts[sId] = mUIDCounts[sId] || 0;
+		// read counter (or initialize it)
+		var iCount = mUIDCounts[sId] || 0;
+
+		// increment counter
+		mUIDCounts[sId] = iCount + 1;
 
 		// combine prefix + counter
 		// concatenating sId and a counter is only safe because we don't allow trailing numbers in sId!
-		return (sId + mUIDCounts[sId]++);
+		return sId + iCount;
 	}
 
 	/**
@@ -1224,6 +1297,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		return uid(sId);
 	};
 
+	var rGeneratedUID;
+
 	/**
 	 * Test whether a given ID looks like it was automatically generated.
 	 *
@@ -1249,13 +1324,10 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 	 * @public
 	 */
 	ManagedObjectMetadata.isGeneratedId = function(sId) {
-		var sPrefix = jQuery.sap.escapeRegExp(sap.ui.getCore().getConfiguration().getUIDPrefix());
+		sUIDPrefix = sUIDPrefix || sap.ui.getCore().getConfiguration().getUIDPrefix();
+		rGeneratedUID = rGeneratedUID || new RegExp( "(^|-{1,3})" + jQuery.sap.escapeRegExp(sUIDPrefix) );
 
-		var rIsGenerated = new RegExp(
-			"(^|-{1,3})" + sPrefix
-		);
-
-		return rIsGenerated.test(sId);
+		return rGeneratedUID.test(sId);
 	};
 
 	return ManagedObjectMetadata;

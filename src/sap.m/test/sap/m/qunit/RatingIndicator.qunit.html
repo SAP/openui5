@@ -141,7 +141,7 @@
 		assert.strictEqual(oRating0.getEnabled(), true, "By default the rating is enabled " + oRating0);
 		assert.strictEqual(oRating0.getMaxValue(), 5, "By default the rating max value is 5 on " + oRating0);
 		assert.strictEqual(oRating0.getValue(), 0, "By default the rating value is 0 on " + oRating0);
-		assert.strictEqual(oRating0._iPxIconSize, 16, "By default the rating size is 16 px on " + oRating0);
+		assert.strictEqual(oRating0._iPxIconSize, 22, "By default the rating size is 22 px on " + oRating0);
 		assert.strictEqual(oRating0.getIconSelected(), "", "By default the selected icon is empty on " + oRating0);
 		assert.strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
 		assert.strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
@@ -238,7 +238,7 @@
 		assert.strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
 		assert.strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
 
-		// check the the calculation of _toPx function are correct
+		// check the calculation of _toPx function are correct
 		assert.strictEqual(oRating9._toPx(), false, "The result of undefined must be false");
 		assert.strictEqual(oRating9._toPx("0"), 0, "The result of 0 must be 0");
 		assert.strictEqual(oRating9._toPx("10px"), 10, "The result of 10px must be 10");
@@ -288,6 +288,30 @@
 		oRating.setValue(null);
 		assert.strictEqual(oRating.getValue(), 0, "The rating value is 0 after calling the setter with \"null\" on " + oRating);
 
+		oRating.destroy();
+	});
+
+	test("Popover should be in compact mode if one of it's parents is compact", function () {
+		var oRating = new sap.m.RatingIndicator({
+			value: 5
+		});
+
+		// System under Test
+		oRating.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oRating._getDensityMode(), "Cozy", "The density mode is Cozy");
+
+		jQuery("html").addClass("sapUiSizeCompact");
+		assert.strictEqual(oRating._getDensityMode(), "Compact", "The density mode is Compact");
+
+		jQuery("html").removeClass("sapUiSizeCompact");
+		jQuery("html").addClass("sapUiSizeCondensed");
+		assert.strictEqual(oRating._getDensityMode(), "Condensed", "The density mode is Cozy");
+
+		jQuery("html").removeClass("sapUiSizeCondensed");
+		jQuery("html").addClass("sapUiSizeCozy");
+		assert.strictEqual(oRating._getDensityMode(), "Cozy", "The density mode is Cozy");
 		oRating.destroy();
 	});
 

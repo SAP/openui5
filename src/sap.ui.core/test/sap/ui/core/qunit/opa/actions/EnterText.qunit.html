@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>qUnit Page for sap.ui.test.actions.EnterText</title>
+	<title>QUnit Page for sap.ui.test.actions.EnterText</title>
 
 	<script src="../../../shared-config.js"></script>
 	<script
@@ -12,11 +12,10 @@
 			data-sap-ui-language="en"
 			data-sap-ui-libs="sap.m">
 	</script>
+	<script src="../../_includeQUnit.js"></script>
 
 
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-css");
-		jQuery.sap.require("sap.ui.thirdparty.qunit");
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
@@ -84,7 +83,7 @@
 				var sTextToEnter = testInfo.textToEnter || "foO";
 				var sTextInControl = testInfo.textInControl || "A";
 
-				function createControl () {
+				function createControl (assert) {
 					// Arrange
 					oControl = new testInfo.Control({
 								value: sTextInControl
@@ -111,7 +110,7 @@
 					return oControl;
 				}
 
-				function checkLiveChange (bClearValue) {
+				function checkLiveChange (assert, bClearValue) {
 					var sStartValue = bClearValue ? "" : sTextInControl,
 						sValueToCheck = sStartValue,
 						iLiveChangeCalls = 0;
@@ -132,7 +131,7 @@
 				}
 
 				function testBody (assert, bClearText) {
-					this.oControl = createControl();
+					this.oControl = createControl(assert);
 
 					// System under Test
 					var oEnterTextAction = new EnterText({
@@ -141,7 +140,7 @@
 					});
 
 					if (testInfo.liveChangeEventParameter) {
-						oControl.attachLiveChange(checkLiveChange(bClearText), this);
+						oControl.attachLiveChange(checkLiveChange(assert, bClearText), this);
 					} else {
 						fnLiveChangeTriggered();
 					}

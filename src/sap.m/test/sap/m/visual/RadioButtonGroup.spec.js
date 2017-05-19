@@ -1,4 +1,7 @@
+/*global describe,it,element,by,takeScreenshot,expect*/
+
 describe('sap.m.RadioButtonGroup', function() {
+	"use strict";
 
 	// initial loading
 	it('should load test page', function () {

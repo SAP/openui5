@@ -11,11 +11,11 @@
 		var oElementEnablementTest = new ElementEnablementTest({
 			type: "sap.m.Title",
 			create: function () {
-				return new Title()
+				return new Title();
 			}
 		});
 		oElementEnablementTest.run().then(function (oData) {
-			var oReport = new QUnitReport({
+			new QUnitReport({
 				data: oData
 			});
 		});

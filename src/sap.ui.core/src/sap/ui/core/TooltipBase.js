@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 
 	/**
 	 * When a control that has a Tooltip gets the focus, this method is called.
-	 * @param {jQuery.EventObject} oEvent The event that occurred on the Control that has extended Tooltip.
+	 * @param {jQuery.Event} oEvent The event that occurred on the Control that has extended Tooltip.
 	 * @private
 	 */
 	TooltipBase.prototype.onfocusin = function(oEvent) {
@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 
 	/**
 	 * When a control that has a Tooltip looses the focus, this method is called.
-	 * @param {jQuery.EventObject} oEvent The event that occurred on the extended Tooltip.
+	 * @param {jQuery.Event} oEvent The event that occurred on the extended Tooltip.
 	 * @private
 	 */
 	TooltipBase.prototype.onfocusout = function(oEvent) {
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 
 	/**
 	* Handle the mouseover event of a Control that has a Tooltip.
-	* @param {jQuery.EventObject} oEvent - The event that occurred on the Control.
+	* @param {jQuery.Event} oEvent - The event that occurred on the Control.
 	* @private
 	 */
 	TooltipBase.prototype.onmouseover = function(oEvent) {
@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 				jQuery.sap.clearDelayedCall(TooltipBase.sOpenTimeout);
 			}
 			TooltipBase.sOpenTimeout = jQuery.sap.delayedCall(this.getOpenDelay(), this, "openPopup", [this._currentControl]);
-			// We need this for the scenario if the both a child and his parent have an RichTooltip
+			// We need this for the scenario if the both a child and his parent have a RichTooltip
 			oEvent.stopPropagation();
 			oEvent.preventDefault();
 		}
@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 
 	/**
 	 * Handle the mouseout event  of a Control that has a Tooltip.
-	 * @param {jQuery.EventObject} oEvent Event that occurred on the Control that has extended Tooltip.
+	 * @param {jQuery.Event} oEvent Event that occurred on the Control that has extended Tooltip.
 	 * @private
 	 */
 	TooltipBase.prototype.onmouseout = function(oEvent) {

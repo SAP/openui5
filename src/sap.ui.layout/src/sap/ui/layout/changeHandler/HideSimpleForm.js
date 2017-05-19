@@ -17,12 +17,21 @@ sap.ui.define([
 	 */
 	var HideForm = { };
 
-	var getFirstToolbarOrTitle = function(oControl) {
-		var oTitleOrToolbar = oControl.getAggregation("form").getFormContainers()[0].getTitle() || oControl.getAggregation("form").getFormContainers()[0].getToolbar();
-		if (!oTitleOrToolbar && oControl.getAggregation("form").getFormContainers()[1]) {
-			oTitleOrToolbar = oControl.getAggregation("form").getFormContainers()[1].getTitle() || oControl.getAggregation("form").getFormContainers()[1].getToolbar();
+	var fnIsTitleOrToolbar = function(oControl, oModifier){
+		var sControlType = oModifier.getControlType(oControl);
+		return (sControlType === "sap.ui.core.Title") ||
+			(sControlType === "sap.m.Title") ||
+			(sControlType === "sap.m.Toolbar") ||
+			(sControlType === "sap.m.OverflowToolbar");
+	};
+
+	var fnGetFirstToolbarOrTitle = function(aContent, oModifier) {
+		var iIndex;
+		for (iIndex = 0; iIndex < aContent.length; ++iIndex){
+			if (fnIsTitleOrToolbar(aContent[iIndex], oModifier)){
+				return aContent[iIndex];
+			}
 		}
-		return oTitleOrToolbar;
 	};
 
 	/**
@@ -60,9 +69,8 @@ sap.ui.define([
 				}
 				if (iStart >= 0 && index > iStart) {
 					if ((oModifier.getControlType(oField) === "sap.m.Label") ||
-							(oModifier.getControlType(oField) === "sap.ui.core.Title") ||
-							(oModifier.getControlType(oField) === "sap.m.Title") ||
-							(oModifier.getControlType(oField) === "sap.m.Toolbar")) {
+						(oModifier.getControlType(oField) === "sap.ui.comp.smartfield.SmartLabel") ||
+						fnIsTitleOrToolbar(oField, oModifier)) {
 						return true;
 					} else {
 						oModifier.setVisible(oField, false);
@@ -70,7 +78,7 @@ sap.ui.define([
 				}
 			});
 		} else if (oChangeDefinition.changeType === "removeSimpleFormGroup") {
-			var oTitleOrToolbar = getFirstToolbarOrTitle(oControl);
+			var oTitleOrToolbar = fnGetFirstToolbarOrTitle(aContent, oModifier);
 			var bFirstContainerWithoutTitle = oTitleOrToolbar && !oRemovedElement;
 			aContent.some(function (oField, index) {
 				// if there is no Title/Toolbar, there is only the one FormContainer without Title/Toolbar.
@@ -89,9 +97,7 @@ sap.ui.define([
 						iStart = index;
 					}
 					if (iStart >= 0 && index > iStart) {
-						if ((oModifier.getControlType(oField) === "sap.ui.core.Title") ||
-							(oModifier.getControlType(oField) === "sap.m.Title") ||
-							(oModifier.getControlType(oField) === "sap.m.Toolbar")) {
+						if (fnIsTitleOrToolbar(oField, oModifier)) {
 							if (iStart === 0) {
 								oModifier.removeAggregation(oControl, "content", oField, oView);
 								oModifier.insertAggregation(oControl, "content", oField, 0, oView);

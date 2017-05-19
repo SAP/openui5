@@ -36,27 +36,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
-	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
-	 *   Note: The binding creates its own data service request if it is absolute or if it has any
-	 *   parameters or if it is relative and has a context created via
-	 *   {@link ODataModel#createBindingContext}.
-	 *   All "5.2 Custom Query Options" are allowed except for those with a name starting with
-	 *   "sap-". All other query options lead to an error.
-	 *   Query options specified for the binding overwrite model query options.
-	 * @param {string} [mParameters.$$groupId]
-	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
-	 *   specified, either the parent binding's group ID (if the binding is relative) or the
-	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
-	 *   specified in {@link sap.ui.model.odata.v4.ODataModel#submitBatch}.
-	 * @param {string} [mParameters.$$updateGroupId]
-	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
-	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
-	 *   or the model's update group ID is used,
-	 *   see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
-	 *   For valid values, see parameter "$$groupId".
+	 *   Map of binding parameters
 	 * @throws {Error}
 	 *   If disallowed binding parameters are provided
 	 *
@@ -88,10 +68,8 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-					["$$groupId", "$$updateGroupId"]);
+				oBindingParameters = this.oModel.buildBindingParameters(mParameters, ["$$groupId"]);
 				this.sGroupId = oBindingParameters.$$groupId;
-				this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 				// Note: no system query options supported at property binding
 				this.mQueryOptions = this.oModel.buildQueryOptions(mParameters,
 					/*bSystemQueryOptionsAllowed*/false);
@@ -234,7 +212,7 @@ sap.ui.define([
 		}
 		if (!this.bRequestTypeFailed && !this.oType && this.sInternalType !== "any") {
 			// request type only once
-			aPromises.push(this.oModel.getMetaModel().requestUI5Type(sResolvedPath)
+			aPromises.push(this.oModel.getMetaModel().fetchUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
 				})["catch"](function (oError) {
@@ -250,6 +228,9 @@ sap.ui.define([
 					bDataRequested = true;
 					that.fireDataRequested();
 				}, that);
+			}
+			if (that.oContext.getIndex() === -2) {
+				bForceUpdate = false; // no "change" event for virtual parent context
 			}
 			return that.oContext.fetchValue(that.sPath, that);
 		});
@@ -297,13 +278,15 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.destroy = function () {
-		var oCache = this.oCachePromise.getResult(); // cache promise is always fulfilled
+		var that = this;
 
-		if (oCache) {
-			oCache.deregisterChange(undefined, this);
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(this.sPath, this);
-		}
+		this.oCachePromise.then(function (oCache) {
+			if (oCache) {
+				oCache.deregisterChange(undefined, that);
+			} else if (that.oContext) {
+				that.oContext.deregisterChange(that.sPath, that);
+			}
+		});
 		this.oModel.bindingDestroyed(this);
 		this.oCachePromise = undefined;
 		PropertyBinding.prototype.destroy.apply(this, arguments);
@@ -462,6 +445,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * A method to reset invalid data state, to be called by
+	 * {@link sap.ui.model.odata.v4.ODataBinding#resetChanges}.
+	 * Fires a change event if the data state is invalid to ensure that invalid user input, having
+	 * not passed the validation, is also reset.
+	 *
+	 * @private
+	 */
+	ODataPropertyBinding.prototype.resetInvalidDataState = function () {
+		if (this.getDataState().isControlDirty()) {
+			this._fireChange({reason : ChangeReason.Change});
+		}
+	};
+
+	/**
 	 * Sets the (base) context if the binding path is relative. Triggers (@link #fetchCache) to
 	 * create a cache and {@link #checkUpdate} to check for the current value if the
 	 * context has changed. In case of absolute bindings nothing is done.
@@ -474,10 +471,8 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.setContext = function (oContext) {
-		var oCache = this.oCachePromise.getResult();
-
 		if (this.oContext !== oContext) {
-			if (!oCache && this.oContext) {
+			if (this.bRelative && this.oContext && this.oContext.deregisterChange) {
 				this.oContext.deregisterChange(this.sPath, this);
 			}
 			this.oContext = oContext;
@@ -537,6 +532,12 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
 		var that = this;
 
+		function reportError(oError) {
+			that.oModel.reportError("Failed to update path "
+				+ that.oModel.resolve(that.sPath, that.oContext),
+				sClassName, oError);
+		}
+
 		if (typeof vValue === "function" || typeof vValue === "object") {
 			throw new Error("Not a primitive value");
 		}
@@ -549,13 +550,10 @@ sap.ui.define([
 						that.oModel.resolve(that.sPath, that.oContext), sClassName);
 					// do not update that.vValue!
 				} else if (that.oContext) {
-					that.oContext.updateValue(sGroupId, that.sPath, vValue)
-					["catch"](function (oError) {
-						if (!oError.canceled) {
-							that.oModel.reportError("Failed to update path "
-								+ that.oModel.resolve(that.sPath, that.oContext),
-								sClassName, oError);
-						}
+					that.oContext.updateValue(sGroupId, that.sPath, vValue, reportError)
+					["catch"](function () {
+						// updateValue is only rejected when the PATCH was canceled
+						// Avoid "Uncaught (in promise)"
 					});
 				} else {
 					jQuery.sap.log.warning("Cannot set value on relative binding without context",
