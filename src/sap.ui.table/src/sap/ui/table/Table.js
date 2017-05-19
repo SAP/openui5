@@ -2754,7 +2754,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (oClosestTd && ($ClosestTd.hasClass("sapUiTableTd") || $ClosestTd.hasClass("sapUiTableTDDummy"))
 			&& TableUtils.isRowSelectionAllowed(this)) {
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
-			if ($row.length === 1) {
+			if ($row.length === 1 && !$row.hasClass("sapUiTableColHdrTr")) {
 				var iIndex = parseInt($row.attr("data-sap-ui-rowindex"), 10);
 				this._onRowSelect(this.getRows()[iIndex].getIndex(), bShift, bCtrl);
 				return;
