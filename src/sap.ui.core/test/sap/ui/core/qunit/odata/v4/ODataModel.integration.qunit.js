@@ -345,7 +345,7 @@ sap.ui.require([
 			if (this.oModel.submitBatch) {
 				//TODO basically, we should rather stub the requestor's jQuery.ajax() call only
 				for (sName in mRequestorStubs) {
-					this.stub(this.oModel.oRequestor, sName, mRequestorStubs[sName]);
+					sinon.stub(this.oModel.oRequestor, sName, mRequestorStubs[sName]);
 				}
 				this.oModel.oRequestor.restore = function () {
 					for (sName in mRequestorStubs) {
@@ -2267,11 +2267,11 @@ sap.ui.require([
 				that = this;
 
 			this.expectRequest({
-					groupId : "group",
-					method : "GET",
-					url : sUrlPrefix + "$skip=0&$top=100"
-				}, {"value" : [mFrederic, mJonathan]})
-			.expectChange("text", false);
+				groupId : "group",
+				method : "GET",
+				url : sUrlPrefix + "$skip=0&$top=100"
+			}, {"value" : [mFrederic, mJonathan]})
+				.expectChange("text", false);
 
 			return this.createView(assert, sView, oModel).then(function () {
 				that.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
@@ -2282,11 +2282,11 @@ sap.ui.require([
 					var oListBinding = that.oView.byId("table").getBinding("items");
 
 					that.expectRequest({
-							groupId : "group",
-							method : "GET",
-							url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
-						}, {"value" : [mJonathan, mFrederic]})
-					.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
+						groupId : "group",
+						method : "GET",
+						url : sUrlPrefix + "$orderby=Name%20desc&$skip=0&$top=100"
+					}, {"value" : [mJonathan, mFrederic]})
+						.expectChange("text", ["Jonathan Smith", "Frederic Fall"]);
 
 					oListBinding.changeParameters({
 						"$orderby" : "Name desc"
@@ -2299,6 +2299,96 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
+	// Scenario: Change a property in a dependent binding below a list binding with an own cache and
+	// change the list binding's row (-> the dependent binding's context)
+	QUnit.test("Pending change in hidden cache", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="teamSet" items="{/TEAMS}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="teamId" text="{Team_Id}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<Table id="employeeSet" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$orderby : \'Name\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="employeeId" text="{ID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>\
+<VBox id="objectPage" binding="{path: \'\', parameters : {$$updateGroupId : \'update\'}}">\
+	<Text id="employeeName" text="{Name}"/>\
+</VBox>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100",
+				{value: [{"Team_Id" : "1"}, {"Team_Id" : "2"}]})
+			.expectChange("teamId", ["1", "2"])
+			.expectChange("employeeId", false)
+			.expectChange("employeeName");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(
+					"TEAMS('1')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
+					{value : [{ID : "01"}, {ID : "02"}]})
+				.expectChange("employeeId", ["01", "02"]);
+
+			// "select" the first row in the team table
+			that.oView.byId("employeeSet").setBindingContext(
+				that.oView.byId("teamSet").getItems()[0].getBindingContext());
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('01')?$select=ID,Name", {
+					ID : "01",
+					Name : "Frederic Fall",
+					"@odata.etag" : "eTag"
+				})
+				.expectChange("employeeName", "Frederic Fall");
+
+			// "select" the first row in the employee table
+			that.oView.byId("objectPage").setBindingContext(
+				that.oView.byId("employeeSet").getItems()[0].getBindingContext());
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oListBinding = that.oView.byId("teamSet").getBinding("items");
+
+			that.expectRequest({
+					groupId : "update",
+					headers : {"If-Match" : "eTag"},
+					method : "PATCH",
+					payload : {"Name" : "foo"},
+					url : "EMPLOYEES('01')"
+				})
+				.expectChange("employeeName", "foo");
+
+			// Modify the employee name in the object page
+			that.oView.byId("employeeName").getBinding("text").setValue("foo");
+			assert.ok(oListBinding.hasPendingChanges());
+
+			return that.waitForChanges(assert).then(function () {
+				that.expectRequest(
+						"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100",
+						{value : [{ID : "03"}, {ID : "04"}]})
+					.expectChange("employeeId", ["03", "04"])
+					.expectChange("employeeName", null);
+
+				// "select" the second row in the team table
+				that.oView.byId("employeeSet").setBindingContext(
+					that.oView.byId("teamSet").getItems()[1].getBindingContext());
+				assert.ok(oListBinding.hasPendingChanges());
+				return that.waitForChanges(assert);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Usage of Any/All filter values on the list binding
 	[{
 		filter : new Filter({
