@@ -1,0 +1,41 @@
+<!--/**************************************************************************
+* Note: This file intentionally contains errors for illustration purposes!    *
+*  The Troubleshooting Tutorial in the official UI5 documentation will show   *
+*  how to analyze and debug them with the support tools delivered by UI5.     *
+******************************************************************************/-->
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta charset="UTF-8">
+
+    <title>Heap Of Shards</title>
+
+    <script id="sap-ui-bootstrap"
+            src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+            data-sap-ui-libs="sap.m, sap.f"
+            data-sap-ui-theme="sap_belize"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-preload="async"
+            data-sap-ui-resourceroots='{"sap.ui.demo.HeapOfShards": "."}'>
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <script>
+        sap.ui.getCore().attachInit(function () {
+            new sap.m.Shell({
+                app: new sap.ui.core.ComponentContainer({
+                    height: "100%",
+                    name: "sap.ui.demo.HeapOfShards"
+                })
+            }).placeAt("content");
+        });
+    </script>
+</head>
+
+<body class="sapUiBody" id="content">
+</body>
+
+</html>
