@@ -979,8 +979,12 @@ sap.ui.define([
 							iLength : iLength
 						};
 					}
-					if (bFireChange && bContextsCreated) {
-						that._fireChange({reason: sChangeReason});
+					if (bFireChange) {
+						if (bContextsCreated) {
+							that._fireChange({reason: sChangeReason});
+						} else { // we cannot keep a diff if we do not tell the control to fetch it!
+							that.oDiff = undefined;
+						}
 					}
 				}
 				if (bDataRequested) {
