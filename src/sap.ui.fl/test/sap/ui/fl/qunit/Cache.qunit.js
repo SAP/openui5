@@ -345,6 +345,114 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		}
 	});
 
+	QUnit.test('if cache key equals NO CHANGES, a cache entry is available and no change information is passed by cache key', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var sAppVersion = "oldVersion";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : sAppVersion
+		};
+		var mPropertyBag = {
+			cacheKey: "<NO CHANGES>"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1"}
+				]
+			}
+		};
+		Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
+			sinon.assert.notCalled(that.oLrepConnector.loadChanges);
+			assert.deepEqual(oResult, oEntry, "then the available cache entry is returned");
+		});
+	});
+
+	QUnit.test('if cache key equals NO CHANGES, no cache entry is available and no change information is passed by cache key', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var sAppVersion = "oldVersion";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : sAppVersion
+		};
+		var mPropertyBag = {
+			cacheKey: "<NO CHANGES>"
+		};
+		var oEntry = {
+			changes: {
+				changes: []
+			}
+		};
+		Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
+			sinon.assert.notCalled(that.oLrepConnector.loadChanges);
+			assert.deepEqual(oResult, oEntry, "then an empty array is returned");
+		});
+	});
+
+	QUnit.test('if cache key not equals NO CHANGES, a cache entry is available and no change information is passed by cache key', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var sAppVersion = "oldVersion";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : sAppVersion
+		};
+		var mPropertyBag = {
+			cacheKey: "TEST"
+		};
+		var oEntry = {
+			changes: {
+				changes: [
+					{something: "1"}
+				]
+			}
+		};
+		Cache._entries[sTestComponentName][sAppVersion].promise = Promise.resolve(oEntry);
+
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oEntry));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
+			sinon.assert.notCalled(that.oLrepConnector.loadChanges);
+			assert.deepEqual(oResult, oEntry, "then the available cache entry is returned");
+		});
+	});
+
+	QUnit.test('if cache key not equals NO CHANGES, a cache entry is not available and no change information is passed by cache key', function(assert) {
+		var that = this;
+		var sTestComponentName = "testComponent";
+		var sAppVersion = "oldVersion";
+		var oComponent = {
+			name : sTestComponentName,
+			appVersion : sAppVersion
+		};
+		var mPropertyBag = {
+			cacheKey: "TEST"
+		};
+		var oChange = {
+			changes: {
+				changes: [
+					{something: "1"}
+				]
+			}
+		};
+		sinon.stub(this.oLrepConnector, 'loadChanges').returns(Promise.resolve(oChange));
+
+		return Cache.getChangesFillingCache(this.oLrepConnector, oComponent, mPropertyBag).then(function(oResult) {
+			sinon.assert.calledOnce(that.oLrepConnector.loadChanges);
+			assert.deepEqual(oResult, oChange, "then a backend request load changes should be executed");
+		});
+	});
+
 	QUnit.test('addChange with a new application version', function(assert) {
 		var that = this;
 		var sTestComponentName = "testComponent";
