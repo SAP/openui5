@@ -606,5 +606,39 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "59e937866a82ac65752cbb128c664c7325ebd957",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
+      },
+      {
+        "id": "83fbaaecd24160f846e7b1a948186c457483f247",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - column header spans in XML view",
+        "references": []
+      }
+    ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "545733434a02aff94436ca6edb5d1bda4cb63439",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "35e1f62dc19f58700168337ca33f2b124fed8bad",
+        "type": "FIX",
+        "text": " Table: Null pointer exception on dummy column click in the header",
+        "references": []
+      }
+    ]
   }
 }

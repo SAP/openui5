@@ -200,5 +200,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "42863597b234ee557b847a764d21dac0812bddef",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CalendarDateInterval: setStartDate to min/max date no longer throws an error.",
+        "references": []
+      },
+      {
+        "id": "0fd276b117cc3d046c6893e7c3315bf07f736b88",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": []
+      }
+    ]
   }
 }

@@ -90,8 +90,15 @@
       }
     ]
   },
-  "1.46.7": {
-    "date": "April 2017",
-    "notes": []
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "0e419dd361cc0ff1880f347ff5f57fec80cdaa61",
+        "type": "FIX",
+        "text": " sap.ui.dt : suppress sync during element modification",
+        "references": []
+      }
+    ]
   }
 }

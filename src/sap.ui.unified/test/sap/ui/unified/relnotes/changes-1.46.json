@@ -186,5 +186,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "ab4ad9b19bd0c6180b061722eb3a43c2db742881",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "103d34e4bf173769ac18904689979e2142bed16c",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CalendarDateInterval: setStartDate to min/max date no longer throws an error.",
+        "references": []
+      }
+    ]
   }
 }

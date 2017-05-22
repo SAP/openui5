@@ -879,5 +879,75 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "58f0226ae05e15c572dc00ce99c8b80964563678",
+        "type": "FIX",
+        "text": " core.Icon: avoid the same aria label read twice",
+        "references": []
+      },
+      {
+        "id": "a7f53414c07df938a775614281c9085ad9e469af",
+        "type": "FIX",
+        "text": " core.IconPool: add local font path for SAP-icons Icon Font",
+        "references": []
+      },
+      {
+        "id": "34fa83060c0153f2c9fb0228beeeef0ffeb6bd84",
+        "type": "FIX",
+        "text": " core.routing: execute view processing within 0 timeout for IE/Edge",
+        "references": []
+      },
+      {
+        "id": "500f12a494115d91192d0dbe7da78affa58e896e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context: fix sap.m.Input change event value",
+        "references": []
+      }
+    ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "68b1b2bf441b24e4cc446cc8f564c374ff981ed6",
+        "type": "FIX",
+        "text": " core.DateFormat: make format capable of parsing AM/PM variants",
+        "references": []
+      },
+      {
+        "id": "5cb611d8b810975633be32bb614061bfedb99c3e",
+        "type": "FIX",
+        "text": " handlebars: ensure proper context stacking in compat mode",
+        "references": []
+      },
+      {
+        "id": "ffc7e279706397f8b7effc55ece0d250a685a0a3",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Check whether a refresh is needed",
+        "references": []
+      },
+      {
+        "id": "b91042b5f202af6c4805afc96cbee0304c53fe0c",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Remove pretend request",
+        "references": []
+      },
+      {
+        "id": "56e9442df3aea5c1d69de91dc32eb2d369a49e1e",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Skip data evens for aborted requests",
+        "references": []
+      },
+      {
+        "id": "8637151f7bffb42ce3af78ece7468743f494f6f8",
+        "type": "FIX",
+        "text": " v2.ODataModel: Make abort call error handler sync",
+        "references": []
+      }
+    ]
   }
 }

@@ -640,5 +640,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "bf314d73cd36695054238b5c80f8dd5347e4229e",
+        "type": "FIX",
+        "text": " sap.m.Button: Correct color on press when inside OverflowToolbar",
+        "references": []
+      },
+      {
+        "id": "ab4ad9b19bd0c6180b061722eb3a43c2db742881",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      }
+    ]
   }
 }

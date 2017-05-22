@@ -482,5 +482,27 @@
         "references": []
       }
     ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "d06f118d1bac4ef8ecd36ffdafca368cd7f71d70",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: correct hover style when \"Accept\"/\"Reject\" type",
+        "references": []
+      }
+    ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "769a4c10db9a9eca5eddf06499487372a4905b41",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
   }
 }

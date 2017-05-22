@@ -794,5 +794,52 @@
         "references": []
       }
     ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "a67e2ac4778af23eb02d68ce726c3e87938fc7fd",
+        "type": "FIX",
+        "text": " core.DateFormat: make format capable of parsing AM/PM variants",
+        "references": []
+      },
+      {
+        "id": "95e572f49a37e1807d38c4478715998a491b7023",
+        "type": "FIX",
+        "text": " core.Icon: avoid the same aria label read twice",
+        "references": []
+      },
+      {
+        "id": "5c3a7dc1f690cc3528e3bd475cdb79fc3506ace3",
+        "type": "FIX",
+        "text": " core.IconPool: add local font path for SAP-icons Icon Font",
+        "references": []
+      },
+      {
+        "id": "f46b7a2d80f9eb6a5bb6a082bca80a1fe5f98587",
+        "type": "FIX",
+        "text": " core.routing: execute view processing within 0 timeout for IE/Edge",
+        "references": []
+      },
+      {
+        "id": "5bf2b8574f3fe574a2275957c29b6ce8fb71f82d",
+        "type": "FIX",
+        "text": " handlebars: ensure proper context stacking in compat mode",
+        "references": []
+      },
+      {
+        "id": "82d2e4663d94d1ea53a0b2345aa3aecf67384bdb",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.Context: fix sap.m.Input change event value",
+        "references": []
+      },
+      {
+        "id": "a10e8723bd4cf357204a99e0e40b4fbdc44d531b",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Remove pretend request",
+        "references": []
+      }
+    ]
   }
 }

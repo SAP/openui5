@@ -490,5 +490,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "a0f40b43f3f93076d9ad4ac142065330b249b7a8",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "7ae9711009b0a214d791538fc8d730db9a3e3e5f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
+      }
+    ]
   }
 }

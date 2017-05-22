@@ -982,5 +982,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.22": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "3726e22b3431c0efd9083ef68594cc7235933bc5",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Ensure visibility of scrollbars in IE on Win 10",
+        "references": []
+      }
+    ]
   }
 }

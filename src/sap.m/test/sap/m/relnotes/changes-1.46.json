@@ -2140,5 +2140,148 @@
         "references": []
       }
     ]
+  },
+  "1.46.8": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "f59dfe7d1b8690f7c74dadcf4794b9e1b0047d6e",
+        "type": "FIX",
+        "text": " Remove Cyrillic characters from the code",
+        "references": []
+      },
+      {
+        "id": "8e5bc87407f18f3e2dfa3cbd394e483677fa13e1",
+        "type": "FIX",
+        "text": " sap.m.Button: Text has correct color, disabled button no hover in overflowToolbar",
+        "references": []
+      },
+      {
+        "id": "2fa069b5d067b7943974af3190d5db91ef5cabf4",
+        "type": "FIX",
+        "text": " sap.m.Button: Transparent type button has correct Icon color",
+        "references": []
+      },
+      {
+        "id": "c12abeec5854c1eafad78468ab9b591e0a8a51e9",
+        "type": "FIX",
+        "text": " sap.m.Button: removed border inside floating footer",
+        "references": []
+      },
+      {
+        "id": "14cd7533cd1f15585a2dbb8a6d0d4acfb167a803",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Month and year picker layout corrected",
+        "references": []
+      },
+      {
+        "id": "f2b4064fa1b4537de26c57aca81fa1784b8013d0",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: When data model is updated, the selected tab is now correct",
+        "references": []
+      },
+      {
+        "id": "193a6912d3b4adbb0ac6825c241589f72ebac66d",
+        "type": "FIX",
+        "text": " sap.m.Label: Height when used in sap.ui.table.*",
+        "references": []
+      },
+      {
+        "id": "357a6f39ad7ae18fbd498b83b04ccd8e2c969fcb",
+        "type": "FIX",
+        "text": " sap.m.Label: Last letter is no longer cut in the InfoToolbar",
+        "references": []
+      },
+      {
+        "id": "ab4ad9b19bd0c6180b061722eb3a43c2db742881",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "df44a267e5b2a9daf2034d8c82816e2465f0bf38",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Has correct default color",
+        "references": []
+      },
+      {
+        "id": "62f1729824c31f7aed7cf14609dc407b7982305b",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader - icon support keyboard press event for responsive mode as well.",
+        "references": []
+      },
+      {
+        "id": "61c55a48b55812eb8cda1a9a256a1ef7f90fc85d",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: removed usage of deprecated property numberUnit of sap.m.ObjectNumber",
+        "references": []
+      },
+      {
+        "id": "0279877261aaa47032ab454ba690fcb0afd31602",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in Edge when animated",
+        "references": []
+      },
+      {
+        "id": "6a44cbaaee8d3276f67c1ddcbec70793fdf9276c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments are correctly positioned when property showRowHeader is set to false",
+        "references": []
+      },
+      {
+        "id": "f28155575556fffbce5ed709b4518cb54e450a7b",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Change \u0026 LiveChange events are now fired properly on click.",
+        "references": []
+      },
+      {
+        "id": "94720027fcfd6357087d11747c03737716e87a92",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Select fires only once for overflowed buttons",
+        "references": []
+      },
+      {
+        "id": "c278dd77bf7ca02cec4312498bebd4b4b0e48cb5",
+        "type": "FIX",
+        "text": " sap.m.Slider: Slider in not cut off in compactMode anymore",
+        "references": []
+      },
+      {
+        "id": "9e7aeddbe55f2474f91ff98a4e3668446ddd060e",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: Initial flickering when mode\u003d\"HideMode\" is now removed",
+        "references": []
+      },
+      {
+        "id": "efdda56bcd42cb8168a44d1d9ec0103b0387f974",
+        "type": "FIX",
+        "text": " sap.m.Table: Wrong colspan calculation is fixed for nodata cases.",
+        "references": []
+      },
+      {
+        "id": "45c8602fa46dc210a18b0a7230d5554d26b33ee2",
+        "type": "FIX",
+        "text": " sap.m.TextArea: IE11 new line is doubled.",
+        "references": []
+      },
+      {
+        "id": "9175eceb9c60eb20211c4bb12ed06c93e6961b46",
+        "type": "FIX",
+        "text": " sap.m.ToggleButton: correct hover style when \"Accept\"/\"Reject\" type",
+        "references": []
+      },
+      {
+        "id": "4abc1304fc92de38bd1d59733fcbbec286a01148",
+        "type": "FIX",
+        "text": " sap.m.Tree: adjust css for Treeitem",
+        "references": []
+      },
+      {
+        "id": "da33720f1821c2a6bedd8b64a02101dae4df0100",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Select all does not trigger re-rendering",
+        "references": []
+      }
+    ]
   }
 }
