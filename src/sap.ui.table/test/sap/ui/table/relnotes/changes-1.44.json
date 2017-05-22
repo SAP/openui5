@@ -623,5 +623,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "545733434a02aff94436ca6edb5d1bda4cb63439",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "35e1f62dc19f58700168337ca33f2b124fed8bad",
+        "type": "FIX",
+        "text": " Table: Null pointer exception on dummy column click in the header",
+        "references": []
+      }
+    ]
   }
 }

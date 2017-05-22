@@ -2120,5 +2120,70 @@
         "references": []
       }
     ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "ba224b8fa7d37cf6202dedb76f3257539f23eef3",
+        "type": "FIX",
+        "text": " Remove Cyrillic characters from the code",
+        "references": []
+      },
+      {
+        "id": "04b631f99391f7aa5e1b0b2fa19b2aedc63dd2e3",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: Month and year picker layout corrected",
+        "references": []
+      },
+      {
+        "id": "d1e3b030f31fd544d80c9bea16dece7b312db170",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: When data model is updated, the selected tab is now correct",
+        "references": []
+      },
+      {
+        "id": "d0a64f1090536a16994ea1803c3755581afee092",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: Has correct default color",
+        "references": []
+      },
+      {
+        "id": "8b6d80de3438353641d32fb289dadb93199cd25d",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader - icon support keyboard press event for responsive mode as well.",
+        "references": []
+      },
+      {
+        "id": "25c417f1ed521665db7c6cbbeda335513d196ca4",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: renderer does not invalidate itself anymore.",
+        "references": []
+      },
+      {
+        "id": "2ecea43fed17951b85adc3823eb87ecd71c0c163",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Select fires only once for overflowed buttons",
+        "references": []
+      },
+      {
+        "id": "c53bacc0a930a3843b8d4e4b9ba8031d82accbe6",
+        "type": "FIX",
+        "text": " sap.m.Table: Wrong colspan calculation is fixed for nodata cases.",
+        "references": []
+      },
+      {
+        "id": "d77e0c1770ea55c1ff23c92738a07167166da3f5",
+        "type": "FIX",
+        "text": " sap.m.Token: Fire press event after triggering delete event fixed.",
+        "references": []
+      },
+      {
+        "id": "8379179e9c765ef4069739c837d092bc691a7af6",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Select all does not trigger re-rendering",
+        "references": []
+      }
+    ]
   }
 }

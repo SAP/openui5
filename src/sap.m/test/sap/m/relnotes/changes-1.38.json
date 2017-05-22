@@ -3313,5 +3313,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.22": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "453d139912b95461aad22c946a4ba912e6a6727c",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Value plus delimiter is a valid single value",
+        "references": []
+      },
+      {
+        "id": "bc55789f49ca635090cd7bedb302629ec2b69b09",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: fixed suggestion behaviour",
+        "references": []
+      },
+      {
+        "id": "486b813ef2aa6f951a13cd9550310831d9624863",
+        "type": "FIX",
+        "text": " sap.m.Panel: Drawing in Edge and IE when animated",
+        "references": []
+      }
+    ]
   }
 }

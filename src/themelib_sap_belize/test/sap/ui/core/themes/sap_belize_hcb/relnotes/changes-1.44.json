@@ -493,5 +493,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.14": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "769a4c10db9a9eca5eddf06499487372a4905b41",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
   }
 }
