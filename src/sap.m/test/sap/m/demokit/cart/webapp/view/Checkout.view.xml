@@ -89,9 +89,10 @@
 									class="sapUiSmallMarginBottom"
 									text="{i18n>checkoutPaymentText}" />
 							<HBox
-									alignItems="Center"
-									justifyContent="Center"
-									width="100%">
+								renderType="Bare"
+								alignItems="Center"
+								justifyContent="Center"
+								width="100%">
 								<SegmentedButton
 										select="setPaymentMethod"
 										id="paymentMethodSelection"
@@ -297,9 +298,10 @@
 									class="sapUiSmallMarginBottom"
 									text="{i18n>checkoutDeliverytypeText}" />
 							<HBox
-									alignItems="Center"
-									justifyContent="Center"
-									width="100%">
+								renderType="Bare"
+								alignItems="Center"
+								justifyContent="Center"
+								width="100%">
 								<SegmentedButton
 										id="deliveryType"
 										selectedKey="{/SelectedDeliveryMethod}">
