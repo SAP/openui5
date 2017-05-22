@@ -173,7 +173,43 @@
 
     QUnit.test("setValue()", function(){
         var that = this.rangeSlider.setValue();
-        assert.ok(that === this.rangeSlider, "The function should not do anything and return this for chaning");
+        assert.ok(that === this.rangeSlider, "The function should not do anything and return this for chaining");
+    });
+
+    QUnit.test("XML value", function (assert) {
+        var oRangeSlider,
+            sXMLText = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"><RangeSlider id="range" range="5,20" /></mvc:View>',
+            oView = sap.ui.xmlview({viewContent: sXMLText});
+
+        oView.placeAt(DOM_RENDER_LOCATION);
+        sap.ui.getCore().applyChanges();
+
+        oRangeSlider = oView.byId("range");
+
+        assert.ok(oRangeSlider, "Slider should have been initialized");
+        assert.deepEqual(oRangeSlider.getRange(), [5, 20], "Range's string array should have been parsed properly");
+
+        oRangeSlider.destroy();
+        oRangeSlider = null;
+        oView.destroy();
+    });
+
+    QUnit.test("invalid XML value", function (assert) {
+        var oRangeSlider,
+            oErrorLogSpy = this.stub(jQuery.sap.log, "error"),
+            sXMLText = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"><RangeSlider id="range" range="5,xx" /></mvc:View>',
+            oView = sap.ui.xmlview({viewContent: sXMLText});
+
+        oView.placeAt(DOM_RENDER_LOCATION);
+        sap.ui.getCore().applyChanges();
+
+        oRangeSlider = oView.byId("range");
+
+        assert.ok(oErrorLogSpy.calledOnce, "An error was logged");
+
+        oRangeSlider.destroy();
+        oRangeSlider = null;
+        oView.destroy();
     });
 
     QUnit.test("_calculateHandlePosition()", function(){
