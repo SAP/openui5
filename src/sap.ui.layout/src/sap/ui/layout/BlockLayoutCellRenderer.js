@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Parameters) {
+sap.ui.define(['jquery.sap.global', './library'],
+	function(jQuery, library) {
 		"use strict";
 
 		var BlockLayoutCellRenderer = {};
@@ -14,41 +14,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 			this.endCell(rm);
 		};
 
-		BlockLayoutCellRenderer.startCell = function (rm, blockLayoutCell) {
-			rm.write("<div");
-			rm.writeControlData(blockLayoutCell);
-			rm.addClass("sapUiBlockLayoutCell");
-			if (blockLayoutCell._getDifferentSBreakpointSize()) {
-				this.setDifferentSBreakpointSize(rm, blockLayoutCell._getWidthToRowWidthRatio());
+		BlockLayoutCellRenderer.startCell = function (oRm, oBlockLayoutCell) {
+			var sCellColor = this.getCellColor(oRm, oBlockLayoutCell);
+
+			oRm.write("<div");
+			oRm.writeControlData(oBlockLayoutCell);
+			oRm.addClass("sapUiBlockLayoutCell");
+			sCellColor && oRm.addClass(sCellColor); // Set any of the predefined cell colors
+
+			if (oBlockLayoutCell._getDifferentSBreakpointSize()) {
+				this.setDifferentSBreakpointSize(oRm, oBlockLayoutCell._getWidthToRowWidthRatio());
 			} else {
-				this.setWidth(rm, blockLayoutCell);
+				this.setWidth(oRm, oBlockLayoutCell);
 			}
 
-			this.addColoringStyle(rm, blockLayoutCell);
-			rm.writeStyles();
-			rm.writeClasses();
-			rm.write(">");
+			oRm.writeStyles();
+			oRm.writeClasses();
+			oRm.write(">");
 		};
 
-		BlockLayoutCellRenderer.addColoringStyle = function (rm, blockLayoutCell) {
-			var setIndex = blockLayoutCell.getBackgroundColorSet(),
-				colorIndex = blockLayoutCell.getBackgroundColorIndex(),
-				letters = ['', 'A', 'B', 'C', 'D'],
-				letterIndex = letters[colorIndex];
+		BlockLayoutCellRenderer.getCellColor = function (oRm, oBlockLayoutCell) {
+			var sColorSet = oBlockLayoutCell.getBackgroundColorSet(),
+				sColorIndex = oBlockLayoutCell.getBackgroundColorShade();
 
-			var param = Parameters.get("_sap_ui_layout_BlockLayout_BlockColorAccentType" + setIndex + letterIndex);
-
-			if (setIndex !== 0 && colorIndex !== 0) {
-				rm.addStyle("background-color", param);
+			if (!sColorSet && !sColorIndex) {
+				return "";
+			} else if (( sColorSet && !sColorIndex ) || ( !sColorSet && sColorIndex )) { // XOR check. Both values need to be either defined or not defined.
+				jQuery.sap.log.warning("Both, backgroundColorSet and backgroundColorShade should be defined. ColoSet is not applied to " + oBlockLayoutCell.getId() + ".");
+				return "";
 			}
 
-			if (colorIndex > 4) {
-				jQuery.sap.log.warning("You are using a color index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
-			}
+			// Get only the unique part of the string
+			sColorSet = sColorSet.replace("ColorSet", "");
+			sColorIndex = sColorIndex.replace("Shade", "");
 
-			if (setIndex > 10) {
-				jQuery.sap.log.warning("You are using a set index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
-			}
+			return "sapUiBlockLayoutCellColor" + sColorSet + sColorIndex;
 		};
 
 		BlockLayoutCellRenderer.setDifferentSBreakpointSize = function (rm, widthToRowWidthRatio) {
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 					rm.addStyle("width", width + "%");
 				}
 			} else {
-				var flex = (blockLayoutCell.getWidth() == 0 ) ? 1 : blockLayoutCell.getWidth();
+				var flex = (blockLayoutCell.getWidth() === 0 ) ? 1 : blockLayoutCell.getWidth();
 				this.addFlex(rm, flex);
 			}
 		};
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 				}
 
 				var level = blockLayoutCell.getTitleLevel(),
-					autoLevel = level == sap.ui.core.TitleLevel.Auto,
+					autoLevel = level === sap.ui.core.TitleLevel.Auto,
 					tag = autoLevel ? "h2" : level;
 
 				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 			var content = blockLayoutCell.getContent(),
 				contentClass = "sapUiBlockCellContent ";
 
-			if (blockLayoutCell.getTitleAlignment() == "Center") {
+			if (blockLayoutCell.getTitleAlignment() === "Center") {
 				contentClass += "sapUiBlockCellCenteredContent";
 			}
 
