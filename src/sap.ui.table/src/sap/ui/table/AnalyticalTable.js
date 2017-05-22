@@ -228,14 +228,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.bindRows = function(oBindingInfo) {
-		// API Compatibility (sPath, oTemplate, oSorter, aFilters)
-		oBindingInfo = this._applyBindingInfoToModel.apply(this, arguments);
+		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
 
-		var vReturn = Table.prototype.bindRows.call(this, oBindingInfo);
+		if (oBindingInfo != null) {
+			this._applyAnalyticalBindingInfo(oBindingInfo);
+			this._updateTotalRow(true);
+		}
 
-		this._updateTotalRow(true);
-
-		return vReturn;
+		return Table.prototype.bindRows.call(this, oBindingInfo);
 	};
 
 	/**
@@ -249,9 +249,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this.setProperty("firstVisibleRow", 0, true);
 
-			// The current syntax for _bindAggregation is sPath can be an object wrapping the other parameters
-			// in this case we have to sanitize the parameters, so the ODataModelAdapter will instantiate the correct binding.
-			this._applyBindingInfoToModel.call(this, Array.prototype.slice.call(arguments, 1));
+			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 		}
 
 		// Create the binding.
@@ -322,23 +320,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._applyBindingInfoToModel = function (oBindingInfo) {
-		// Old API compatibility (sPath, oTemplate|fFactory, oSorter, aFilters)
-		if (typeof oBindingInfo === "string") {
-			oBindingInfo = {
-				path: oBindingInfo,
-				sorter: arguments[2],
-				filters: arguments[3],
-				template: arguments[1]
-			};
-
-			// Allow to pass a factory function as the 2nd parameter.
-			if (typeof oBindingInfo.template === "function") {
-				oBindingInfo.factory = oBindingInfo.template;
-				delete oBindingInfo.template;
-			}
-		}
-
+	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function (oBindingInfo) {
 		// extract the sorters from the columns (TODO: reconsider this!)
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
@@ -367,15 +349,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
+	};
 
-		// This may fail, in case the model is not yet set.
-		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)
-		var oModel = this.getModel(oBindingInfo.model);
-		if (oModel) {
+	AnalyticalTable.prototype._applyODataModelAnalyticalAdapter = function (oModel) {
+		if (oModel != null) {
 			ODataModelAdapter.apply(oModel);
 		}
-
-		return oBindingInfo;
 	};
 
 	AnalyticalTable.prototype._getColumnInformation = function() {
