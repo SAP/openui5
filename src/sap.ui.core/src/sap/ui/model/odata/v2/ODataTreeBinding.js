@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			if (mParameters) {
-				this.sBatchGroupId = mParameters.groupId || mParameters.batchGroupId;
+				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
 
 			this.bInitial = true;
@@ -1138,7 +1138,8 @@ sap.ui.define(['jquery.sap.global',
 			urlParameters: aURLParams,
 			success: fnSuccess,
 			error: fnError,
-			sorters: this.aSorters
+			sorters: this.aSorters,
+			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
 		});
 	};
 
@@ -1217,9 +1218,9 @@ sap.ui.define(['jquery.sap.global',
 		if (typeof bForceUpdate === "string") {
 			sGroupId = bForceUpdate;
 		}
-		this.sRefreshGroup = sGroupId;
+		this.sRefreshGroupId = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshGroup = undefined;
+		this.sRefreshGroupId = undefined;
 	};
 
 	/**
