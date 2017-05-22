@@ -880,7 +880,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	SelectDialog.prototype._updateStarted = function (oEvent) {
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 			if (this._oDialog.isOpen() && this._iListUpdateRequested) {
-				// only set busy mode when we have an oData model
+				// only set busy mode when we have an OData model
 				this._setBusy(true);
 			} else {
 				this._bInitBusy = true;
@@ -895,7 +895,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
-	// only reset busy mode when we have an oData model
+	// only reset busy mode when we have an OData model
 	this._updateSelectionIndicator();
 	if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 		this._setBusy(false);

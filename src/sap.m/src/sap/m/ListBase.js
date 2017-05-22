@@ -452,7 +452,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		}
 	};
 
-	// this gets called via JSON and oData model when binding is updated
+	// this gets called via JSON and OData model when binding is updated
 	// if there is no data this should get called anyway
 	// TODO: if there is a network error this will not get called
 	// but we need to turn back to initial state

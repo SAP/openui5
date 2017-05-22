@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		},
 
 		/**
-		 * refresh items only for oData model.
+		 * refresh items only for OData model.
 		 */
 		refreshItems : function(sChangeReason) {
 			if (!this._bDataRequested) {
