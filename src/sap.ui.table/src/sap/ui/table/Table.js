@@ -2496,26 +2496,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (TableUtils.isVariableRowHeightEnabled(this) && this._getRowCount() < this.getVisibleRowCount()) {
 			return 0;
 		} else {
-			// If there are 2 scrollable rows of 50 pixels height, the scrollbar should have a scroll range of 100 pixels. If zoomed in Chrome,
-			// the heights of elements can be slightly lower (below 1 pixel) than their original value, so the scroll range could be only 99.2 pixels.
-			// In this case the scrolling logic would not determine that the rows should be scrolled to the end.
-			// Therefore we need to check if the scroll position is at its maximum by reading the DOM.
-			if (Device.browser.chrome && window.devicePixelRatio != 1) {
-				var oVSb = this._getScrollExtension().getVerticalScrollbar();
+			var iRowIndex = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
+			var nDistanceToMaximumScrollPosition = this._getVirtualScrollRange() - iScrollTop;
 
-				if (oVSb != null) {
-					var nDeviationFromMaximumScrollPosition = this._getVirtualScrollRange() - oVSb.scrollTop;
+			// Calculation of the firstVisibleRow index can be inaccurate when scrolled to the end. This can happen due to rounding errors in case of
+			// large data or when zoomed in Chrome. In this case it can not be scrolled to the last row. To overcome this issue we consider the table
+			// to be scrolled to the end when the scroll position is less than 1 pixel away from the maximum.
+			var bScrolledToBottom = nDistanceToMaximumScrollPosition < 1;
 
-					// When there is less than 1 pixel left until the calculated value for the maximum scroll position is reached, we can
-					// consider the table to be scrolled to the end.
-					if (nDeviationFromMaximumScrollPosition < 1) {
-						return this._getMaxRowIndex();
-					}
-				}
-			}
-
-			var iFirstVisibleRow = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
-			return Math.min(this._getMaxRowIndex(), iFirstVisibleRow);
+			return bScrolledToBottom ? this._getMaxRowIndex() : iRowIndex;
 		}
 	};
 
