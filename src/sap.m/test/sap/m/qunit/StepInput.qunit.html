@@ -248,8 +248,23 @@
 			//assert
 			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 					"The decrement button is enabled because the value > min");
-		});
 
+			//act
+			this.stepInput.setEnabled(false);
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"The increment button is disabled because setEnabled is set to false");
+
+			//act
+			this.stepInput.setEnabled(true);
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The increment button is enabled because setEnabled is set to true");
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The decrement button is enabled because setEnabled is set to true");
+		});
 
 		QUnit.test("Increment button enabled/disabled state", function (assert) {
 			//act
