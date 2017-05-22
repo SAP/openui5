@@ -156,7 +156,7 @@ function (jQuery, storage, constants) {
 		if (tempRules) {
 			tempRules.forEach(function (tempRule) {
 				var ruleName = tempRule.id;
-				data[constants.TEMP_RuleSetS_NAME].RuleSet._mRules[ruleName] = tempRule;
+				data[constants.TEMP_RULESETS_NAME].RuleSet._mRules[ruleName] = tempRule;
 			});
 		}
 	};
@@ -166,7 +166,7 @@ function (jQuery, storage, constants) {
 	 * @param {Array} libraries The data for the libraries and their rules
 	 */
 	RuleSet.storeSelectionOfRules = function (libraries) {
-		var selectedRules = extractRulesSettingsToSave(libraries);
+		var selectedRules = RuleSet._extractRulesSettingsToSave(libraries);
 		storage.setSelectedRules(selectedRules);
 	};
 
@@ -199,9 +199,10 @@ function (jQuery, storage, constants) {
 	 * Extracts all the settings needed to be save from the libraries' rules
 	 * @param {Array} libraries The libraries and rules loaded from the model
 	 * @returns {Object} The extracted settings the should be persisted
+	 * @private
 	 */
-	function extractRulesSettingsToSave(libraries) {
-		var librarySettings = Object.create(null);
+	RuleSet._extractRulesSettingsToSave = function (libraries) {
+		var librarySettings = {};
 		var libraryRules;
 		var librariesCount = libraries.length;
 		var rulesCount;
@@ -210,12 +211,12 @@ function (jQuery, storage, constants) {
 
 		for (var libraryIndex = 0; libraryIndex < librariesCount; libraryIndex += 1) {
 			libraryName = libraries[libraryIndex].title;
-			librarySettings[libraryName] = Object.create(null);
+			librarySettings[libraryName] = {};
 			libraryRules = libraries[libraryIndex].rules;
 
 			rulesCount = libraryRules.length;
 			for (var rulesIndex = 0; rulesIndex < rulesCount; rulesIndex += 1) {
-				ruleSettings = Object.create(null);
+				ruleSettings = {};
 				ruleSettings.id = libraryRules[rulesIndex].id;
 				ruleSettings.selected = libraryRules[rulesIndex].selected;
 				librarySettings[libraryName][ruleSettings.id] = ruleSettings;
@@ -223,7 +224,7 @@ function (jQuery, storage, constants) {
 		}
 
 		return librarySettings;
-	}
+	};
 
 	return RuleSet;
 }, true);
