@@ -81,7 +81,7 @@ sap.ui.define([
 	 */
 	FakeLrepConnectorLocalStorage.prototype.deleteChange = function(oChange) {
 
-		FakeLrepLocalStorage.deleteChange(oChange.fileName);
+		FakeLrepLocalStorage.deleteChange(oChange.sChangeName);
 
 		return Promise.resolve({
 			response: undefined,
