@@ -39,5 +39,27 @@
         "references": []
       }
     ]
+  },
+  "1.44.1": {
+    "date": "November 2016",
+    "notes": [
+      {
+        "id": "1a3f719e840acfff5e56dcfc4aa322a8f650dc93",
+        "type": "FIX",
+        "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
+        "references": []
+      }
+    ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "0b487c57d684084a2a902b9178aece249fdb0dfd",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      }
+    ]
   }
 }

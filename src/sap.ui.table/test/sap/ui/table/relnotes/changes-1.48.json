@@ -213,5 +213,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "c4bd78eea0fd5e0533763261b9a2f0c07e1c16b1",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "66747e3d072575e17281822d7dbc3302470e2eef",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
+      }
+    ]
   }
 }

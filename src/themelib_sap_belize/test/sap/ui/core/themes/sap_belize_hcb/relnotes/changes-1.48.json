@@ -267,5 +267,34 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "77ca030a28e989af5f5231cb9b9b6431a77ae1d0",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayoutCell - added 2 new properties for predefined themable colors also added contrast container capabilities",
+        "references": []
+      },
+      {
+        "id": "14c4dd876b42b7ae53ba11d41a038ff3505a25c8",
+        "type": "FIX",
+        "text": " sap.m.Menu: Item separator position and height corrected",
+        "references": []
+      },
+      {
+        "id": "b615ffc8a614b483ed716dcf2bcaddba86927d62",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Fixes MessageViewItems Icons in HCB/HCW",
+        "references": []
+      },
+      {
+        "id": "0518fdbb10272ba696a6f275dc53e70a3bf93c72",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
   }
 }

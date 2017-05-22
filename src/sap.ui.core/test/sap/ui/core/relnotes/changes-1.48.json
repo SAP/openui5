@@ -597,5 +597,58 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "1da0cbf2e52515c0c074b9f97b5da05cab50b2b3",
+        "type": "FEATURE",
+        "text": " Filter: Support for Any and All",
+        "references": []
+      },
+      {
+        "id": "5cc4c942eea1f7fcc196de68e2185780c1b455e8",
+        "type": "FEATURE",
+        "text": " sap.ui.debug.TechnicalInfo - New implementation for the Technical Info Dialog",
+        "references": []
+      },
+      {
+        "id": "d489180807a20b7581dc670f3bfe6c8bf8e9c3f8",
+        "type": "FEATURE",
+        "text": " sap.ui.debug.TechnicalInfo - Select Debug Packages Redesign",
+        "references": []
+      },
+      {
+        "id": "42e05748d3219c736ee72febfcc34a67279709c5",
+        "type": "FIX",
+        "text": " Messaging: normalization of message targets",
+        "references": []
+      },
+      {
+        "id": "3e1543ab6dbd303f49d9f767215fa826f9cf9255",
+        "type": "FIX",
+        "text": " core.DateFormat: make format capable of parsing AM/PM variants",
+        "references": []
+      },
+      {
+        "id": "3460b7982d02547b2cc51b079a439f15b8d56958",
+        "type": "FIX",
+        "text": " core.Icon: avoid the same aria label read twice",
+        "references": []
+      },
+      {
+        "id": "e6fd842b6ddf76fc09525ad8e684d711c3ea1ea4",
+        "type": "FIX",
+        "text": " core.routing: execute view processing within 0 timeout for IE/Edge",
+        "references": []
+      },
+      {
+        "id": "35407c84b65ab6e2d5f8c014ba963884a239a9ea",
+        "type": "FIX",
+        "text": " handlebars: ensure proper context stacking in compat mode",
+        "references": []
+      }
+    ]
   }
 }

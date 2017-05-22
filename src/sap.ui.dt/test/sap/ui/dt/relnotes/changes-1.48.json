@@ -105,5 +105,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "3377fd5d932ce772a0bc2e6c220bab948717abb4",
+        "type": "FIX",
+        "text": " sap.ui.dt: Delete actions in aggregations",
+        "references": []
+      },
+      {
+        "id": "b4a6c5b050e56c812ed533ceb3c5e346946c4d4b",
+        "type": "FIX",
+        "text": " sap.ui.dt: checks for empty aggregations in DT metadata",
+        "references": []
+      },
+      {
+        "id": "6d3a125905540bcea3ade2b98637972d03442d56",
+        "type": "FIX",
+        "text": ": DT - only add scrollbar if overflow scroll or auto",
+        "references": []
+      }
+    ]
   }
 }

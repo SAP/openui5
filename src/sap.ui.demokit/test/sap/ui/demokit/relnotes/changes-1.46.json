@@ -21,5 +21,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "7e25dbedea34a95bd17a51f28e7982213377ba89",
+        "type": "FIX",
+        "text": " SDK: accept hash for LICENSE.txt",
+        "references": []
+      }
+    ]
   }
 }

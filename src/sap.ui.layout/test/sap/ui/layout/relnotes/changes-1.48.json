@@ -117,5 +117,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.1": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "77ca030a28e989af5f5231cb9b9b6431a77ae1d0",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayoutCell - added 2 new properties for predefined themable colors also added contrast container capabilities",
+        "references": []
+      },
+      {
+        "id": "3a1a56281da6d493abbd236382a21b107093b2dd",
+        "type": "FIX",
+        "text": " sap.ui.layout.Form: Enables createContainer",
+        "references": []
+      },
+      {
+        "id": "ced8051b821a0e465bc92447bf617d78378b82af",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: PaneContainer\u0027s content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
   }
 }

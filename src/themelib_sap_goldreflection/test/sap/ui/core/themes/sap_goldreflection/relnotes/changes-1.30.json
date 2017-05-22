@@ -1,31 +1,64 @@
 {
-	"1.30.0": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "09fe985c2614825fbc6c4059313e9abbf32fcf18",
-				"type": "FEATURE",
-				"text": "sap.unified.Calendar: New Dates row view implemented",
-				"references": []
-			},
-			{
-				"id": "9ddd02abfc8b543f2e9e953f2679a6f4126daff4",
-				"type": "FIX",
-				"text": "sap.ui.commons.ComboBox: Fixed text alignment in Internet Explorer 10",
-				"references": []
-			},
-			{
-				"id": "694022645a63f4414070347184bfc345ad038706",
-				"type": "FIX",
-				"text": "sap.ui.unified.Menu/sap.ui.commons.Menu: Internet Explorer 8 support removed",
-				"references": []
-			},
-			{
-				"id": "4d8c6a6806f1fde33ea176dfa6ec6b8995f82a05",
-				"type": "FIX",
-				"text": "Tree: Scrollbars in 100% height containers avoided",
-				"references": []
-			}
-		]
-	}
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "09fe985c2614825fbc6c4059313e9abbf32fcf18",
+        "type": "FEATURE",
+        "text": "sap.unified.Calendar: New Dates row view implemented",
+        "references": []
+      },
+      {
+        "id": "9ddd02abfc8b543f2e9e953f2679a6f4126daff4",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Fixed text alignment in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "694022645a63f4414070347184bfc345ad038706",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu/sap.ui.commons.Menu: Internet Explorer 8 support removed",
+        "references": []
+      },
+      {
+        "id": "4d8c6a6806f1fde33ea176dfa6ec6b8995f82a05",
+        "type": "FIX",
+        "text": "Tree: Scrollbars in 100% height containers avoided",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1688e37f38d1556e0e9fe4ac6cc8eaeb777732bc",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1ee7ae9b2a6c3b0ec69d1262a9892e8ecaf0d18f",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      }
+    ]
+  },
+  "1.30.11": {
+    "date": "December 2015",
+    "notes": [
+      {
+        "id": "763d5eb8f0db76eeed73882139ef8b4d7f38b325",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
+  }
 }

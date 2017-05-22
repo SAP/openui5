@@ -1,0 +1,41 @@
+{
+  "1.42.3": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "1cefafc4662997371ad56d2c0f11c18b1ca76efa",
+        "type": "FIX",
+        "text": "Theme image URLs in commons/ux3/layout libraries",
+        "references": []
+      },
+      {
+        "id": "77dde6ce91f5e2bdde68202190da194a3d813e81",
+        "type": "FIX",
+        "text": "sap.ui.core.theming.Parameters: Correctly rewrite relative urls",
+        "references": []
+      }
+    ]
+  },
+  "1.42.7": {
+    "date": "December 2016",
+    "notes": [
+      {
+        "id": "56d3a0b8570752e2216614bb2034861d1d5d7585",
+        "type": "FIX",
+        "text": " BusyIndicator (Global): Fix missing wait cursor",
+        "references": []
+      }
+    ]
+  },
+  "1.42.8": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "8524b737621f06e3f998c1858051f2065dd413b2",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Remove top and bottom padding of an inbox task icon in a table cell in the Gold Reflection theme to ensure the default row height.",
+        "references": []
+      }
+    ]
+  }
+}

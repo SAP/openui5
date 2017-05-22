@@ -1,66 +1,66 @@
 {
-	"1.30.0": {
-		"date": "April 2015",
-		"notes": [
-			{
-				"id": "4b3308080fdacf4fc4ecf5f92e2bd95ed7b35ce5",
-				"type": "FEATURE",
-				"text": "DesignTime: Renamed CSS classes according to SAPUI5 specification",
-				"references": []
-			},
-			{
-				"id": "5e581ebc4901a716e966685950081b22738286b0",
-				"type": "FEATURE",
-				"text": "Introduced first version of UI5 design time",
-				"references": []
-			},
-			{
-				"id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
-				"type": "FIX",
-				"text": "Ensured existence of namespace during Core.initLibrary()",
-				"references": []
-			},
-			{
-				"id": "b6c552c6a3b9b7d72ebd7b6c10a1573958f3595d",
-				"type": "FIX",
-				"text": "designTime: Cleaned up style.css and added LESS support",
-				"references": []
-			},
-			{
-				"id": "d17f7a9e9dc8d475ccb28fbc79dc45bf683f183b",
-				"type": "INTERNAL",
-				"text": "fixes typo in DragElementWrapper and formatting in library.js",
-				"references": []
-			},
-			{
-				"id": "f42f5e60370e8fea561524e44fa308d97422e23a",
-				"type": "FIX",
-				"text": "Parent-path search algorithm fixed",
-				"references": []
-			},
-			{
-				"id": "db62a9aa0cb16485e7d9d0ea04d17654b99dc0f9",
-				"type": "FIX",
-				"text": "sap.ui.dt : Fixed bNestedView handling and unsupported badge",
-				"references": []
-			},
-			{
-				"id": "d0d084de1a767ef9c6d330977fe9f320ab440857",
-				"type": "FEATURE",
-				"text": "sap.ui.dt: Added utility function to find the next parent block",
-				"references": []
-			}
-		]
-	},
-	"1.30.5": {
-		"date": "August 2015",
-		"notes": [
-			{
-				"id": "8b4a6698787f351aa491984c873fc7d7bf4fd631",
-				"type": "FEATURE",
-				"text": "sap.ui.dt: Added safari support",
-				"references": []
-			}
-		]
-	}
+  "1.30.0": {
+    "date": "April 2015",
+    "notes": [
+      {
+        "id": "4b3308080fdacf4fc4ecf5f92e2bd95ed7b35ce5",
+        "type": "FEATURE",
+        "text": "DesignTime: Renamed CSS classes according to SAPUI5 specification",
+        "references": []
+      },
+      {
+        "id": "5e581ebc4901a716e966685950081b22738286b0",
+        "type": "FEATURE",
+        "text": "Introduced first version of UI5 design time",
+        "references": []
+      },
+      {
+        "id": "3091a5245e3fa2097a56d577b9d8951c051a8ea9",
+        "type": "FIX",
+        "text": "Ensured existence of namespace during Core.initLibrary()",
+        "references": []
+      },
+      {
+        "id": "b6c552c6a3b9b7d72ebd7b6c10a1573958f3595d",
+        "type": "FIX",
+        "text": "designTime: Cleaned up style.css and added LESS support",
+        "references": []
+      },
+      {
+        "id": "d17f7a9e9dc8d475ccb28fbc79dc45bf683f183b",
+        "type": "INTERNAL",
+        "text": "fixes typo in DragElementWrapper and formatting in library.js",
+        "references": []
+      },
+      {
+        "id": "f42f5e60370e8fea561524e44fa308d97422e23a",
+        "type": "FIX",
+        "text": "Parent-path search algorithm fixed",
+        "references": []
+      },
+      {
+        "id": "db62a9aa0cb16485e7d9d0ea04d17654b99dc0f9",
+        "type": "FIX",
+        "text": "sap.ui.dt : Fixed bNestedView handling and unsupported badge",
+        "references": []
+      },
+      {
+        "id": "d0d084de1a767ef9c6d330977fe9f320ab440857",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Added utility function to find the next parent block",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "8b4a6698787f351aa491984c873fc7d7bf4fd631",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Added safari support",
+        "references": []
+      }
+    ]
+  }
 }

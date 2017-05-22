@@ -15,5 +15,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.3": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "16e6ca38a1dddad43481987915b899ddf1555825",
+        "type": "FIX",
+        "text": " sap.ui.layout: missing less files for sap_goldreflection:",
+        "references": []
+      }
+    ]
   }
 }

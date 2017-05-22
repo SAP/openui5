@@ -1,24 +1,35 @@
 {
-	"1.38.0": {
-		"date": "April 2016",
-		"notes": [
-			{
-				"id": "590c934741e977aa9877caa17681342df57a0aac",
-				"type": "FIX",
-				"text": "DOMUtil.getSize to also support transition style on the control",
-				"references": []
-			}
-		]
-	},
-	"1.38.3": {
-		"date": "June 2016",
-		"notes": [
-			{
-				"id": "3b98f5ab155448d4e8342b377c5723e03f06caff",
-				"type": "FIX",
-				"text": "sap.ui.dt prevent cut for not movable overlays",
-				"references": []
-			}
-		]
-	}
+  "1.38.0": {
+    "date": "April 2016",
+    "notes": [
+      {
+        "id": "590c934741e977aa9877caa17681342df57a0aac",
+        "type": "FIX",
+        "text": "DOMUtil.getSize to also support transition style on the control",
+        "references": []
+      }
+    ]
+  },
+  "1.38.3": {
+    "date": "June 2016",
+    "notes": [
+      {
+        "id": "3b98f5ab155448d4e8342b377c5723e03f06caff",
+        "type": "FIX",
+        "text": "sap.ui.dt prevent cut for not movable overlays",
+        "references": []
+      }
+    ]
+  },
+  "1.38.5": {
+    "date": "July 2016",
+    "notes": [
+      {
+        "id": "c67c47462071cd666eaff05e4fd04f3970168b7f",
+        "type": "FIX",
+        "text": "fixes incident1680124836",
+        "references": []
+      }
+    ]
+  }
 }

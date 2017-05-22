@@ -93,5 +93,107 @@
         "references": []
       }
     ]
+  },
+  "1.44.5": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "4a92cd53a76e593caa84308d3dc4f8b0aa8ab8f2",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Control no longer flickers",
+        "references": []
+      },
+      {
+        "id": "b8ccbbd8d751913101011ed5b7ef36ebf2adf6ec",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Unwanted scrollbar is now removed",
+        "references": []
+      },
+      {
+        "id": "23fff59d552a3722687b4e42a7a0a9ee62b225e4",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: Destroy render manager only if it exists",
+        "references": []
+      },
+      {
+        "id": "41dc917ab52976b83d2a6bd0b6cf33a80603a238",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Unsubscribing to __preserveContent fixed",
+        "references": []
+      },
+      {
+        "id": "f213b3af5b800e8ac314a6011268718cc6ee8713",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm adding content twice",
+        "references": []
+      }
+    ]
+  },
+  "1.44.6": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "710ca0259d141d9dfbb014a0d7bcd35968c1c6ce",
+        "type": "FIX",
+        "text": " sap.m.ResponsiveSplitter: Overlapping text and navigation CSS issue fixed",
+        "references": []
+      },
+      {
+        "id": "361f3ca6eb6acb76e83dea989f061f9935ad3683",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Scrollbar is now correctly displayed",
+        "references": []
+      }
+    ]
+  },
+  "1.44.8": {
+    "date": "February 2017",
+    "notes": [
+      {
+        "id": "6f7cffd2e523bd5c8163c9ca84cc4019f6862a65",
+        "type": "FIX",
+        "text": " sap.ui.layout.form.SimpleForm: Docu fix",
+        "references": []
+      }
+    ]
+  },
+  "1.44.10": {
+    "date": "March 2017",
+    "notes": [
+      {
+        "id": "5079f3bd13883c3f0aa3d284708f73e6947ae7d3",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Calcuation after resizing is wrong",
+        "references": []
+      }
+    ]
+  },
+  "1.44.12": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "386e73e461619212c7b1453b8ef1ac137a5222ba",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayoutCell: Prevents longer elements from breaking the layout",
+        "references": []
+      },
+      {
+        "id": "51ec4f5e3a556767b4ef0995cef1952e01734ffc",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex When minFlexSize is not set, the flexible part doesn\u0027t have scrolling any more",
+        "references": []
+      }
+    ]
+  },
+  "1.44.13": {
+    "date": "May 2017",
+    "notes": [
+      {
+        "id": "adf858bd1d04a27889a7431d1ceb964cea4091ca",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: PaneContainer\u0027s content is now properly resized and rendered.",
+        "references": []
+      }
+    ]
   }
 }
