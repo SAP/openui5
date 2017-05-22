@@ -549,6 +549,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			} else {
 				$parentContainer.prepend($this);
 			}
+			oParent.applyStyles();
 		}
 	};
 
