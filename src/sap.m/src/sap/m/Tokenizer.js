@@ -504,12 +504,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype._cut = function() {
-		var self = this;
-		var cutToClipboard = function(oEvent) {
-			var selectedTokens = self.getSelectedTokens(),
+		var self = this,
+			selectedTokens = self.getSelectedTokens(),
 			selectedText = "",
 			removedTokens = [],
-			token;
+			token,
+			cutToClipboard = function(oEvent) {
+				if (oEvent.clipboardData) {
+					oEvent.clipboardData.setData('text/plain', selectedText);
+				} else {
+					oEvent.originalEvent.clipboardData.setData('text/plain', selectedText);
+				}
+
+				oEvent.preventDefault();
+			};
 
 		for (var i = 0; i < selectedTokens.length; i++) {
 			token = selectedTokens[i];
@@ -532,19 +540,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		if (oEvent.clipboardData) {
-			oEvent.clipboardData.setData('text/plain', selectedText);
+		if (Device.browser.msie && window.clipboardData) {
+			window.clipboardData.setData("text", selectedText);
 		} else {
-			oEvent.originalEvent.clipboardData.setData('text/plain', selectedText);
+			document.addEventListener('cut', cutToClipboard);
+			document.execCommand('cut');
+			document.removeEventListener('cut', cutToClipboard);
 		}
-		oEvent.preventDefault();
-	};
-
-	document.addEventListener('cut', cutToClipboard);
-
-	document.execCommand('cut');
-
-	document.removeEventListener('cut', cutToClipboard);
 	};
 
 	/**
