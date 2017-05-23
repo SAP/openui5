@@ -64,11 +64,13 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 				/**
 				 * The Background color set from which the background color will be selected.
 				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer.
+				 * @since 1.48
 				 */
 				backgroundColorSet: { type: "int", group: "Appearance", defaultValue: 0 },
 				/**
 				 * The index of the background color in the color set from which the color will be selected.
-				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer.
+				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer..
+				 * @since 1.48
 				 */
 				backgroundColorIndex: { type: "int", group: "Appearance", defaultValue: 0 }
 			},
@@ -81,6 +83,11 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 
 			}
 		}});
+
+		BlockLayoutCell.CONSTANTS = {
+			maxColorIndex: 4,
+			maxSetIndex: 11
+		};
 
 		/**
 		 * When the width is set, the cell needs to notify the parent row if it's in scrollable mode
@@ -97,6 +104,13 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 				}
 			}
 			return this;
+		};
+
+		/**
+		 * If the theme is changed and the cell has some color applied, we need to invalidate the cell to force rerendering
+		 */
+		BlockLayoutCell.prototype.onThemeChanged = function () {
+			this.invalidate();
 		};
 
 		/**

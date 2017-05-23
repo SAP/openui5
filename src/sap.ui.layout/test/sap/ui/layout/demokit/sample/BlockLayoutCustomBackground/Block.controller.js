@@ -18,9 +18,9 @@ sap.ui.define([
 		onAfterRendering: function () {
 			this.setBLCells();
 		},
-		createDummyContent: function (index) {
+		createDummyContent: function (index, addContrast) {
 			var text = new sap.m.Text({text: index + "Lorem ipsum"});
-			text.addStyleClass("sapContrast");
+			addContrast ? text.addStyleClass("sapContrast").addStyleClass("sapContrastPlus") : "";
 			return new sap.ui.layout.BlockLayoutCell({
 				content: text
 			});
@@ -44,7 +44,7 @@ sap.ui.define([
 					colorIndex = colorIndex >= 4 ? 1 : colorIndex + 1;
 				}
 
-				var cellContent = this.createDummyContent(i);
+				var cellContent = this.createDummyContent(i, colorSet < 9);
 				cellContent.setBackgroundColorSet(colorSet);
 				cellContent.setBackgroundColorIndex(colorIndex);
 				row.addContent(cellContent);
