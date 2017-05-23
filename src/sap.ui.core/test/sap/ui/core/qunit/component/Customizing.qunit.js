@@ -92,6 +92,9 @@ sap.ui.define([
 		// extension within extension
 		assert.ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
 		assert.ok(jQuery.sap.domById("theComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
+		// check ID prefixing of views in extensions by checking their existence
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customSubSubView1"), "XMLView Extension should be rendered");
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customSubSubView1--customFrag1Btn"), "Button of XMLView Extension should be rendered");
 	});
 
 
