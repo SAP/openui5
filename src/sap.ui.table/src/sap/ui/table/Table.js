@@ -1016,7 +1016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (iFixedColumnCount > 0) {
-			var iUsedHorizontalTableSpace = TableUtils.Column.getMinColumnWidth() + oSizes.tableRowHdrScrWidth;
+			var iUsedHorizontalTableSpace = oSizes.tableRowHdrScrWidth;
 
 			var oVsb = this.getDomRef("vsb");
 			if (oVsb) {
@@ -1033,6 +1033,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// If the columns fit into the table, we do not need to ignore the fixed column count.
 			// Otherwise, check if the new fixed columns fit into the table. If they don't, the fixed column count setting will be ignored.
 			var bNonFixedColumnsFitIntoTable = oSizes.tableCtrlScrollWidth === oSizes.tableCtrlScrWidth; // Also true if no non-fixed columns exist.
+
+			if (!bNonFixedColumnsFitIntoTable) { // horizontal scroll bar should be at least 48px wide
+				iUsedHorizontalTableSpace += TableUtils.Column.getMinColumnWidth();
+			}
+
 			var bFixedColumnsFitIntoTable = oSizes.tableCtrlFixedWidth + iUsedHorizontalTableSpace <= oSizes.tableCntWidth; // Also true if no fixed columns exist.
 			var bIgnoreFixedColumnCountCandidate = false;
 
