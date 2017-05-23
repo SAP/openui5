@@ -334,7 +334,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					this.aRBs = [];
 				}
 
-				var iLength = this.aRBs.length;
+				var iLength = this.aRBs.length,
+					iMaxLength = this.getButtons().length;
+
+				iIndex = Math.max(Math.min(iIndex, iMaxLength), 0);
 
 				if (!this._bUpdateButtons) {
 					if (this.getSelectedIndex() === undefined || iLength == 0) {
