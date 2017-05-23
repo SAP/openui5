@@ -76,7 +76,8 @@ sap.ui.define([
 
 	/**
 	 * Deletes a Fake Lrep change in localStorage
-	 * @param  {Object} oChange - the change Object
+	 * @param  {Object} oChange - The change object
+	 * @param  {Object} oChange.sChangeName - File name of the change object
 	 * @returns {Promise} Returns a promise to the result of the request
 	 */
 	FakeLrepConnectorLocalStorage.prototype.deleteChange = function(oChange) {
