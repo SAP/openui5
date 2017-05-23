@@ -49,6 +49,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		version: "${version}",
 		extensions: {
 			flChangeHandlers: {
+				"sap.uxap.ObjectPageHeader" : "sap/uxap/flexibility/ObjectPageHeader",
 				"sap.uxap.ObjectPageLayout": {
 					"moveControls": {
 						"changeHandler": "default",
@@ -83,6 +84,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 						}
 					}
 				},
+				"sap.uxap.ObjectPageSubSection" : "sap/uxap/flexibility/ObjectPageSubSection",
 				"sap.ui.core._StashedControl" : {
 					"unstashControl": {
 						"changeHandler": "default",
