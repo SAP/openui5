@@ -33,24 +33,23 @@ sap.ui.define(['jquery.sap.global', './library'],
 			} else {
 				oRm.addClass("sapUiBlockHorizontalCellsRow");
 			}
-
-			if (oBlockLayoutRow._rowSCase) {
-				oRm.addClass("sapUiBlockRowSCase");
-			}
 		};
 
 		BlockLayoutRowRenderer.renderContent = function (oRm, oBlockLayoutRow) {
 			var aContent = oBlockLayoutRow.getContent(),
-				scrollable = oBlockLayoutRow.getScrollable(),
+				bScrollable = oBlockLayoutRow.getScrollable(),
 				oBackgrounds = sap.ui.layout.BlockBackgroundType,
 				sLayoutBackground = oBlockLayoutRow.getParent().getBackground(),
-				aAccentedCells = oBlockLayoutRow.getAccentCells();
+				aAccentedCells = oBlockLayoutRow.getAccentCells(),
+				iContentCounter = 0,
+				flexWidth;
 
-			aContent.forEach(function (cell) {
-				if (scrollable) {
-					cell.addStyleClass("sapUiBlockScrollableCell");
+			aContent.forEach(function (oCell, index) {
+				(index % 2) == 0 ? oCell.addStyleClass("sapUiBlockLayoutOddCell") : oCell.addStyleClass("sapUiBlockLayoutEvenCell");
+				if (bScrollable) {
+					oCell.addStyleClass("sapUiBlockScrollableCell");
 				} else {
-					cell.addStyleClass("sapUiBlockHorizontalCell");
+					oCell.addStyleClass("sapUiBlockHorizontalCell");
 				}
 			});
 
@@ -63,7 +62,30 @@ sap.ui.define(['jquery.sap.global', './library'],
 					break;
 			}
 
-			aContent.forEach(oRm.renderControl);
+			var arrangement = oBlockLayoutRow._getCellArangementForCurrentSize();
+			if (bScrollable || !arrangement) {
+				/**
+				 * The arrangement is passed from the BlockLayout to the BlockLayoutRow after the BlockLayout is rendered.
+				 * This means that we need to rerender the BlockLayoutRow after its initial rendering, because the size was previously unknown
+				 */
+				aContent.forEach(oRm.renderControl);
+			} else {
+				for (var i = 0; i < arrangement.length; i++) {
+					var aSubRow = arrangement[i];
+					oRm.write("<div ");
+					oRm.addStyle("display", "flex");
+					oRm.writeStyles();
+					oRm.write(">");
+
+					for (var j = 0; j < aSubRow.length; j++) {
+						flexWidth = aSubRow[j];
+						aContent[iContentCounter]._setFlexWidth(flexWidth);
+						oRm.renderControl(aContent[iContentCounter]);
+						iContentCounter++;
+					}
+					oRm.write("</div>");
+				}
+			}
 		};
 
 		BlockLayoutRowRenderer.endRow = function (oRm) {

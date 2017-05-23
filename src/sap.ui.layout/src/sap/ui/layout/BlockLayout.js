@@ -85,14 +85,16 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * @type {{breakPointM: number, breakPointL: number}}
 		 */
 		BlockLayout.CONSTANTS = {
-			breakPointM : 600,
-			breakPointL : 1024,
 			SIZES: {
 				S: 600,  //Phone
 				M: 1024, //Tablet
 				L: 1440, //Desktop
 				XL: null //LargeDesktop
 			}
+		};
+
+		BlockLayout.prototype.init = function () {
+			this._currentBreakpoint = null;
 		};
 
 		BlockLayout.prototype.onBeforeRendering = function () {
@@ -120,6 +122,8 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 			if (this.hasStyleClass("sapUiBlockLayoutBackground" + sCurBackground)) {
 				this.removeStyleClass("sapUiBlockLayoutBackground" + sCurBackground, true);
 			}
+
+			sNewBackground = sNewBackground ? sNewBackground : "Default";
 			this.addStyleClass("sapUiBlockLayoutBackground" + sNewBackground, true);
 
 			// Invalidate the whole block layout as the background dependencies, row color sets and accent cells should be resolved properly
@@ -145,12 +149,24 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 			// Not possible to use sap.ui.Device directly as it calculates window size, but here is needed parent's size
 			for (sProp in mSizes) {
 				if (mSizes.hasOwnProperty(sProp) && (mSizes[sProp] === null || mSizes[sProp] > iWidth)) {
+					if (this._currentBreakpoint != sProp) {
+						this._currentBreakpoint = sProp;
+						this._notifySizeListeners();
+					}
+
 					this.addStyleClass("sapUiBlockLayoutSize" + sProp, true);
 					break;
 				}
 			}
 
 			jQuery.sap.delayedCall(0, this, "_attachResizeHandler");
+		};
+
+		BlockLayout.prototype._notifySizeListeners = function () {
+			var that = this;
+			this.getContent().forEach(function (oRow) {
+				oRow._onParentSizeChange(that._currentBreakpoint);
+			});
 		};
 
 		/**
