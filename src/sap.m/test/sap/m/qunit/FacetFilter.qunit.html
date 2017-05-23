@@ -365,10 +365,10 @@
 		equal(oList.getItems()[0].getType(), sap.m.ListType.Navigation, "List item type should be Navigation");
 		equal(oList.getItems()[0].getTitle(), sFacet1, "The first facet should be " + sFacet1);
 		equal(oList.getItems()[0].getCounter(), iFacet1AllCount, "The first facet all count should be " + iFacet1AllCount);
-		equal(oList.getItems()[0].getTooltip(), sFacet1,"The first facet should have tooltip same as title");
+		equal(oList.getItems()[0].getTooltip(), null,"The facet shouldn't have tooltip");
 		equal(oList.getItems()[1].getTitle(), sFacet2, "The second facet should be " + sFacet2);
 		equal(oList.getItems()[1].getCounter(), iFacet2AllCount, "The second facet all count should be " + iFacet2AllCount);
-		equal(oList.getItems()[1].getTooltip(), sFacet2,"The second facet should have tooltip same as title");
+		equal(oList.getItems()[1].getTooltip(), null,"The facet shouldn't have tooltip");
 		for(var i=0; i < oList.getItems().length; i++) {
 
 			var aCustomData1 = oList.getItems()[i].getCustomData();
