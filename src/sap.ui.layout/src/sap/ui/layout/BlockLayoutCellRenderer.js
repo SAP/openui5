@@ -21,12 +21,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 			oRm.writeControlData(oBlockLayoutCell);
 			oRm.addClass("sapUiBlockLayoutCell");
 			sCellColor && oRm.addClass(sCellColor); // Set any of the predefined cell colors
-
-			if (oBlockLayoutCell._getDifferentSBreakpointSize()) {
-				this.setDifferentSBreakpointSize(oRm, oBlockLayoutCell._getWidthToRowWidthRatio());
-			} else {
-				this.setWidth(oRm, oBlockLayoutCell);
-			}
+			this.setWidth(oRm, oBlockLayoutCell);
 
 			oRm.writeStyles();
 			oRm.writeClasses();
@@ -51,18 +46,6 @@ sap.ui.define(['jquery.sap.global', './library'],
 			return "sapUiBlockLayoutCellColor" + sColorSet + sColorIndex;
 		};
 
-		BlockLayoutCellRenderer.setDifferentSBreakpointSize = function (rm, widthToRowWidthRatio) {
-			switch (widthToRowWidthRatio) {
-				case 0.25:
-					rm.addClass("sapUiBlockSmallCell");
-					break;
-				case 0.5:
-					rm.addClass("sapUiBlockMediumCell");
-					break;
-				default: break;
-			}
-		};
-
 		BlockLayoutCellRenderer.setWidth = function (rm, blockLayoutCell) {
 			if (blockLayoutCell._getParentRowScrollable()) {
 				var width = blockLayoutCell.getWidth();
@@ -70,8 +53,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 					rm.addStyle("width", width + "%");
 				}
 			} else {
-				var flex = (blockLayoutCell.getWidth() === 0 ) ? 1 : blockLayoutCell.getWidth();
-				this.addFlex(rm, flex);
+				this.addFlex(rm, blockLayoutCell._getFlexWidth());
 			}
 		};
 
