@@ -18,7 +18,8 @@
 					{path: 'cartProducts>/savedForLaterEntries'}
 				 ], formatter : '.formatter.hasItems'}"
 				visible="{cfg>/notInDelete}"
-				press="onEditOrDoneButtonPress" />
+				press="onEditOrDoneButtonPress"
+				tooltip="{i18n>cartEditButtonTooltip}"/>
 		</headerContent>
 		<footer>
 			<Toolbar>
@@ -32,7 +33,6 @@
 					id="proceedButton"
 					type="Accept"
 					text="{i18n>cartProceedButtonText}"
-					tooltip="{i18n>cartProceedButtonTooltip}"
 					enabled="{
 						path: 'cartProducts>/cartEntries',
 						formatter: '.formatter.hasItems'
@@ -42,8 +42,6 @@
 				<Button
 					id="doneButton"
 					text="{i18n>cartDoneButtonText}"
-					tooltip="{i18n>cartDoneButtonTooltip}"
-					icon="sap-icon://accept"
 					enabled="true"
 					visible="{cfg>/inDelete}"
 					press="onEditOrDoneButtonPress" />
