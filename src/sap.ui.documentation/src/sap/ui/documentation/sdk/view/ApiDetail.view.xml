@@ -129,6 +129,16 @@
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
 
+										<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText" visible="{topics>/hasAnnotations}">
+											<m:Text text="A detailed description of the OData annotations handled by this control is available"/>
+											<m:Link text="here" press="onAnnotationsLinkPress"/>
+											<m:Text text="."/>
+										</layout:HorizontalLayout>
+										<layout:HorizontalLayout class="sapUiDocumentationAnnotationsText" visible="{topics>/hasAnnotations}">
+											<m:Label text="Annotation Limitations:" design="Bold"/>
+											<m:Text text="Qualifier support for entity types is limited for this control."/>
+										</layout:HorizontalLayout>
+
 										<m:Table visible="{topics>/hasChildren}"
 												 items="{ path : 'topics>/controlChildren'}"
 												 showSeparators="Inner"

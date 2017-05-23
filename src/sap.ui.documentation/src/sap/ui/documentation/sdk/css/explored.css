@@ -147,3 +147,11 @@ code {
 .sapUiDocumentationImplementsDiv .sapMLabel {
 	line-height: 1.5rem;
 }
+
+.sapUiDocumentationAnnotationsText .sapMLnk {
+	margin-left: 0.25rem;
+}
+
+.sapUiDocumentationAnnotationsText .sapMLabel {
+	margin-right: 0.25rem;
+}
