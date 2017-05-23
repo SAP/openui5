@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/model/odata/ODataUtils", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, ODataUtils, Device, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
 // shortcuts for enums
@@ -340,7 +340,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		code:      sCode,
 		message:   sText,
 		descriptionUrl: sDescriptionUrl,
-		target:    sTarget,
+		target:    ODataUtils._normalizeKey(sTarget),
 		processor: this._processor,
 		technical: bIsTechnical,
 		persistent: bPersistent
