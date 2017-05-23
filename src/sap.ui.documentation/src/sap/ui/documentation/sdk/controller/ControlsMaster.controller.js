@@ -552,8 +552,7 @@ sap.ui.define([
 				var BusyDialog,
 					bCompact = this._oCore.byId('CompactModeSwitch').getState(),
 					sTheme = this._oCore.byId('ThemeSelect').getSelectedKey(),
-					bRTL = this._oCore.byId('RTLSwitch').getState(),
-					bRTLChanged = (bRTL !== this._oViewSettings.rtl);
+					bRTL = this._oCore.byId('RTLSwitch').getState();
 
 				this._oSettingsDialog.close();
 
@@ -581,33 +580,7 @@ sap.ui.define([
 				// If we are navigating outside the Explored App section: view settings should be reset
 				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
 
-				if (bRTLChanged) {
-					this._handleRTL(bRTL);
-				}
-			},
-
-			/**
-			 * Handles RTL|LTR mode switch of the Explored App
-			 * @param {boolean} bSwitch to RTL mode
-			 * @private
-			 */
-			_handleRTL: function (bSwitch) {
-				// Include HashChanger only in this case
-				jQuery.sap.require("sap.ui.core.routing.HashChanger");
-
-				var HashChanger = sap.ui.require("sap/ui/core/routing/HashChanger"),
-					oHashChanger = new HashChanger(),
-					sHash = oHashChanger.getHash(),
-					oUri = window.location;
-
-				// TODO: remove this fix when microsoft fix this under IE11 on Win 10
-				if (!oUri.origin) {
-					oUri.origin = oUri.protocol + "//" + oUri.hostname + (oUri.port ? ':' + oUri.port : '');
-				}
-
-				// Add or remove the switch - Keep in mind that we are using window.location directly instead of the
-				// reference. Changing the reference won't redirect the browser to the new URL.
-				window.location = oUri.origin + oUri.pathname + (bSwitch ? "?sap-ui-rtl=true#" + sHash : "#/" + sHash);
+				sap.ui.getCore().getConfiguration().setRTL(bRTL);
 			}
 		});
 	}
