@@ -1198,8 +1198,8 @@ sap.ui.require([
 			this.mock(oBinding).expects("selectKeyProperties")
 				.withExactArgs(sinon.match.object, "/EMPLOYEES");
 			this.oLogMock.expects("error").withExactArgs(
-				"Failed to enhance query options for auto-$expand/$select as the child "
-					+ "binding's path '" + sPath.slice(1)
+				"Failed to enhance query options for auto-$expand/$select as the path "
+					+ "'/EMPLOYEES" + sPath
 					+ "' does not point to a property",
 				JSON.stringify(oFixture.oProperty),
 				"sap.ui.model.odata.v4.ODataParentBinding");

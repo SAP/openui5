@@ -331,6 +331,7 @@ sap.ui.define([
 		var sBaseMetaPath,
 			oCanUseCachePromise,
 			sChildMetaPath,
+			sFullMetaPath,
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			that = this;
@@ -341,8 +342,6 @@ sap.ui.define([
 		 * @returns {SyncPromise} A promise that is resolved with the property
 		 */
 		function fetchPropertyAndType() {
-			var sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
-
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
 				if (oProperty && oProperty.$kind === "NavigationProperty") {
 					// Ensure that the target type of the navigation property is available
@@ -363,6 +362,7 @@ sap.ui.define([
 
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sChildMetaPath = oMetaModel.getMetaPath("/" + sChildPath).slice(1);
+		sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
 		aPromises = [
 			this.doFetchQueryOptions(this.oContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
@@ -398,8 +398,8 @@ sap.ui.define([
 				return false;
 			}
 			jQuery.sap.log.error("Failed to enhance query options for "
-					+ "auto-$expand/$select as the child binding's path '"
-					+  sChildPath
+					+ "auto-$expand/$select as the path '"
+					+ sFullMetaPath
 					+ "' does not point to a property",
 				JSON.stringify(oProperty),
 				"sap.ui.model.odata.v4.ODataParentBinding");
