@@ -261,7 +261,7 @@ sap.ui.require([
 		createView : function (assert, sViewXML, oModel, oController) {
 			var sName,
 				mRequestorStubs = {
-					cancelChangeRequests : cancelChangeRequests,
+					cancelChangesByFilter : cancelChangesByFilter,
 					hasPendingChanges : function () {
 						assert.ok(false, "hasPendingChanges");
 					},
@@ -274,10 +274,10 @@ sap.ui.require([
 				that = this;
 
 			/*
-			 * Stub function for _Requestor#cancelChangeRequests. Can only handle the case that
+			 * Stub function for _Requestor#cancelChangesByFilter. Can only handle the case that
 			 * there is no candidate request to potentially cancel at all.
 			 */
-			function cancelChangeRequests(fnFilter, sGroupId) {
+			function cancelChangesByFilter(fnFilter, sGroupId) {
 				if (sGroupId) {
 					assert.notOk(sGroupId in that.mBatchQueue);
 				} else {

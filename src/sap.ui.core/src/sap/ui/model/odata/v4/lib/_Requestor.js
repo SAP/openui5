@@ -127,6 +127,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Cancels all change requests for a given group. All pending change requests that have a
+	 * <code>$cancel</code> callback are rejected with an error with property
+	 * <code>canceled = true</code>. They are canceled in reverse order to properly undo stacked
+	 * changes (like multiple PATCHes for the same property).
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be canceled
+	 * @throws {Error}
+	 *   If change requests for the given group ID are running
+	 *
+	 * @private
+	 */
+	Requestor.prototype.cancelChanges = function (sGroupId) {
+		if (this.mRunningChangeRequests[sGroupId]) {
+			throw new Error("Cannot cancel the changes for group '" + sGroupId
+				+ "', the batch request is running");
+		}
+		this.cancelChangesByFilter(function () {
+			return true;
+		}, sGroupId);
+	};
+
+	/**
 	 * Cancels all change requests for which the <code>$cancel</code> callback is defined and the
 	 * given filter function returns <code>true</code>. For these requests the callback is called
 	 * and the related promises are rejected with an error having property
@@ -143,7 +166,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.cancelChangeRequests = function (fnFilter, sGroupId) {
+	Requestor.prototype.cancelChangesByFilter = function (fnFilter, sGroupId) {
 		var bCanceled = false,
 			that = this;
 
@@ -181,29 +204,6 @@ sap.ui.define([
 			}
 		}
 		return bCanceled;
-	};
-
-	/**
-	 * Cancels change requests for a given group. All pending change requests that have a
-	 * <code>$cancel</code> callback are rejected with an error with property
-	 * <code>canceled = true</code>. They are canceled in reverse order to properly undo stacked
-	 * changes (like multiple PATCHes for the same property).
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be canceled
-	 * @throws {Error}
-	 *   If change requests for the given group ID are running.
-	 *
-	 * @private
-	 */
-	Requestor.prototype.cancelChanges = function (sGroupId) {
-		if (this.mRunningChangeRequests[sGroupId]) {
-			throw new Error("Cannot cancel the changes for group '" + sGroupId
-				+ "', the batch request is running");
-		}
-		this.cancelChangeRequests(function () {
-			return true;
-		}, sGroupId);
 	};
 
 	/**
@@ -282,7 +282,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.removePatch = function (oPromise) {
-		var bCanceled = this.cancelChangeRequests(function (oChangeRequest) {
+		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
 				return oChangeRequest.$promise === oPromise;
 			});
 		if (!bCanceled) {
@@ -304,7 +304,7 @@ sap.ui.define([
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 */
 	Requestor.prototype.removePost = function (sGroupId, oBody) {
-		var bCanceled = this.cancelChangeRequests(function (oChangeRequest) {
+		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
 			return oChangeRequest.body === oBody;
 		}, sGroupId);
 		if (!bCanceled) {
