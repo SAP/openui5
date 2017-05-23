@@ -1,54 +1,57 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, JSONModel) {
+	'jquery.sap.global',
+	'sap/ui/core/mvc/Controller',
+	'sap/ui/model/json/JSONModel'
+], function (jQuery, Controller, JSONModel) {
 	"use strict";
 
 	var BlockController = Controller.extend("sap.ui.layout.sample.BlockLayoutCustomBackground.Block", {
 		onInit: function () {
-			this.oModel = new JSONModel({
-				dataObjectsCount: 11,
-				maxCellsPerRow: 4,
-				colorSet: "ColorSet1"
-			});
-			this.getView().setModel(this.oModel);
+			var oView = this.getView(),
+				oModel = new JSONModel();
+
+			oView.setModel(oModel);
+			this._fillModel(this._modelData);
 		},
-		onAfterRendering: function () {
-			this.setBLCells();
+		_modelData: {
+			selectEnabled: true,
+			colorSet: "ColorSet5",
+			shades: [
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeA,
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeB,
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeC,
+				sap.ui.layout.BlockLayoutCellColorShade.ShadeD
+			],
+			contrastCells: []
 		},
-		createContent: function (index) {
-			var text = new sap.m.Text({text: index + "Lorem ipsum"});
-			return new sap.ui.layout.BlockLayoutCell({
-				content: text
-			});
+		_fillModel: function (oData) {
+			var oModel = this.getView().getModel();
+			oModel.setData(oData);
 		},
-		setBLCells: function () {
-			var oBlockLayout2 = this.getView().byId("BlockLayoutTwo"),
-				oBLRow = null,
-				sColorSet = this.oModel.getProperty("/colorSet"),
-				sColorShade = "A",
-				bCreateRow = true,
-				iDataObjCount = parseInt(this.oModel.getProperty("/dataObjectsCount"), 10),
-				iMaxCellsPerRow = parseInt(this.oModel.getProperty("/maxCellsPerRow"), 10);
+		handleChecked: function (oEvent) {
+			var bChecked = oEvent.getParameter("selected");
 
-			oBlockLayout2.destroyContent();
+			if (bChecked) {
+				this._fillModel(this._modelData);
+			} else {
+				this._modelData = this.getView().getModel().getData();
+				this._fillModel({selectEnabled: false});
+			}
+		},
+		handleContrastCellSelection: function (oEvent) {
+			var oView = this.getView(),
+				oItem = oEvent.getParameter("changedItem"),
+				bSelected = oEvent.getParameter("selected"),
+				oBLCell = oView.byId(oItem.getKey());
 
-			for (var i = 1; i <= iDataObjCount; i++) {
-				if (bCreateRow) {
-					oBLRow = new sap.ui.layout.BlockLayoutRow();
-					oBlockLayout2.addContent(oBLRow);
-					bCreateRow = false;
-					sColorShade = sColorShade === "D" ? "A" : String.fromCharCode(sColorShade.charCodeAt(0) + 1);
-				}
+			if (!oBLCell) {
+				return;
+			}
 
-				var oBLCell = this.createContent(i);
-				oBLCell.setBackgroundColorSet(sColorSet);
-				oBLCell.setBackgroundColorShade("Shade" + sColorShade);
-				oBLRow.addContent(oBLCell);
-				sColorShade = sColorShade === "D" ? "A" : String.fromCharCode(sColorShade.charCodeAt(0) + 1);
-
-				bCreateRow = i % iMaxCellsPerRow === 0;
+			if (bSelected) {
+				oBLCell.addStyleClass("sapContrast").addStyleClass("sapContrastPlus");
+			} else {
+				oBLCell.removeStyleClass("sapContrast").removeStyleClass("sapContrastPlus");
 			}
 		}
 	});
