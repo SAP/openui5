@@ -791,7 +791,7 @@
 		var oTouchmove = {
 			touches: {
 				0: {
-					pageX: 2,
+					pageX: 7,
 					identifier: 1,
 					target: oSwitch.getDomRef()
 				},
@@ -801,7 +801,7 @@
 
 			changedTouches: {
 				0: {
-					pageX: 2,
+					pageX: 7,
 					identifier: 1,
 					target: oSwitch.getDomRef()
 				},
@@ -813,7 +813,7 @@
 		var oTouchend = {
 			changedTouches: {
 				0: {
-					pageX: 2,
+					pageX: 7,
 					identifier: 1,
 					target: oSwitch.getDomRef()
 				},
@@ -830,7 +830,8 @@
 
 		// act
 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
-		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);	// drag the switch handle 1px to the right
+		// drag the switch handle 7px to the right - we compensate for touch/slide threshold which is 6px
+		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);
 		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
 		this.clock.tick(sap.m.Switch._TRANSITIONTIME + 1);	// wait some ms after the CSS transition is completed
 
