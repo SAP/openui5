@@ -309,6 +309,7 @@
 							<quiet>true</quiet>
 							<includes>
 								<include>src/**</include>
+								<include>test/**</include>
 							</includes>
 							<plugins>
 								<openui5>${project.build.directory}/eslint-plugin-openui5/plugin.js</openui5>

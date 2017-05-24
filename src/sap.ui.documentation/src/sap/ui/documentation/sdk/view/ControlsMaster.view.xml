@@ -8,16 +8,10 @@
 			showFooter="false"
 			navButtonPress="onNavBack"
 			showNavButton="false"
+			showHeader="false"
 			class="sapUiDocumentationMasterPage">
 
 		<!-- Header -->
-		<customHeader>
-			<Toolbar>
-				<Title text="UI5 Explored" />
-				<ToolbarSpacer/>
-			</Toolbar>
-		</customHeader>
-
 		<subHeader>
 			<Toolbar>
 				<ToolbarSpacer/>

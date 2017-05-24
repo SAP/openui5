@@ -667,7 +667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowUpdate = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Update), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showUpdate", bFlag, true);
 		return this;
 	};
@@ -679,7 +679,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowFollow = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Follow), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showFollow", bFlag, true);
 		return this;
 	};
@@ -691,7 +691,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowFlag = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Flag), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showFlag", bFlag, true);
 		return this;
 	};
@@ -703,7 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowFavorite = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Favorite), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showFavorite", bFlag, true);
 		return this;
 	};
@@ -715,7 +715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowOpen = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Open), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showOpen", bFlag, true);
 		return this;
 	};
@@ -727,7 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setFollowState = function(oFollowState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("followState", oFollowState, true);
 		return this;
 	};
@@ -739,7 +739,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setFlagState = function(oFlagState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("flagState", oFlagState, true);
 		return this;
 	};
@@ -751,7 +751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setUpdateState = function(oUpdateState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("updateState", oUpdateState, true);
 		return this;
 	};
@@ -762,14 +762,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setFavoriteState = function(oFavoriteState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("favoriteState", oFavoriteState, true);
 		return this;
 	};
 
 	// Implementation of API method
 	ActionBar.prototype.setThingIconURI = function(oIcon) {
-	    // supress rendering
+	    // suppress rendering
 		this.setProperty("thingIconURI", oIcon, true);
 		var oUpdateAction = this.mActionMap[this.mActionKeys.Update];
 		if (oUpdateAction && this._feeder) {

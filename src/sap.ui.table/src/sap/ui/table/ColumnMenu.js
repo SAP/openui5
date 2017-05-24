@@ -390,7 +390,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @private
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(sId, oColumn) {
-		var sText = oColumn.getName() || (oColumn.getLabel() && oColumn.getLabel().getText ? oColumn.getLabel().getText() : null);
+
+		function getLabelText(oLabel) {
+			return oLabel && oLabel.getText && oLabel.getText();
+		}
+		var sText = oColumn.getName() || getLabelText(oColumn.getLabel());
+
+		if (!sText) { // try the multiple labels case
+			oColumn.getMultiLabels().forEach( function(oLabel, index) {
+				if (TableUtils.Column.getHeaderSpan(oColumn, index) === 1) {
+					sText = getLabelText(oLabel) || sText;
+				}
+			});
+		}
+
 		return new MenuItem(sId, {
 			text: sText,
 			icon: oColumn.getVisible() ? "sap-icon://accept" : null,

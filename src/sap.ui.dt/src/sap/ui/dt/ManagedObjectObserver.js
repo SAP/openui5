@@ -102,7 +102,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Starts observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * Starts observing the target object. Override this method in classes which extend ManagedObjectObserver.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oTarget The target to observe
 	 * @protected
@@ -379,9 +379,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Stops observing the target object. Override this method in classes wich extend ManagedObjectObserver.
+	 * Stops observing the target object. Override this method in classes which extend ManagedObjectObserver.
 	 *
-	 * @param {sap.ui.base.ManagedObject} oTarget The target to unobserve
 	 * @protected
 	 */
 	ManagedObjectObserver.prototype.unobserve = function() {

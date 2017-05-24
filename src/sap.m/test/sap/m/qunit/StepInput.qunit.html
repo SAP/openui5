@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>qUnit Page for sap.m.StepInput</title>
+	<title>QUnit Page for sap.m.StepInput</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
@@ -248,8 +248,23 @@
 			//assert
 			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 					"The decrement button is enabled because the value > min");
-		});
 
+			//act
+			this.stepInput.setEnabled(false);
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"The increment button is disabled because setEnabled is set to false");
+
+			//act
+			this.stepInput.setEnabled(true);
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The increment button is enabled because setEnabled is set to true");
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The decrement button is enabled because setEnabled is set to true");
+		});
 
 		QUnit.test("Increment button enabled/disabled state", function (assert) {
 			//act
@@ -408,7 +423,7 @@
 			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
-		QUnit.test("displayValuePrecision formating when digits after the dot are more then the value precision", function (assert) {
+		QUnit.test("displayValuePrecision formating when digits after the dot are more than the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -417,7 +432,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
 		});
 
-		QUnit.test("displayValuePrecision formating when digits after the dot are less then the value precision", function (assert) {
+		QUnit.test("displayValuePrecision formating when digits after the dot are less than the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(5);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -942,7 +957,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
 		});
 
-		QUnit.test("less then Min value set via binding", function (assert) {
+		QUnit.test("less than Min value set via binding", function (assert) {
 			this.oModel.setData({
 				vValue: 4,
 				vMin: 5

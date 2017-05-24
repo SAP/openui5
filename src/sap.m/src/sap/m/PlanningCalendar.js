@@ -45,10 +45,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * and navigation for moving through the intervals using arrows or selecting a specific interval with a picker.
 	 * Custom views can be configured using the <code>views</code> aggregation. If not configured, the following set of default
 	 * built-in views is available - Hours, Days, 1 Week, 1 Month, and Months. Setting a custom view(s) replaces the built-in ones.</li>
-	 * <li>The rows of the <code>PlanningCalendar</code> that contain the the assigned appointments.
+	 * <li>The rows of the <code>PlanningCalendar</code> that contain the assigned appointments.
 	 * They can be configured with the <code>rows</code> aggregation, which is of type
 	 * {@link sap.m.PlanningCalendarRow PlanningCalendarRow}.</li>
 	 * </ul>
+	 *
+	 * Since 1.48 the empty space in the cell that is below an appointment can be removed by adding
+	 * the <code>sapUiCalendarAppFitVertically</code> CSS class to the <code>PlanningCalendar</code>.
+	 * Please note that it should be used only for a <code>PlanningCalendar</code> with one appointment per day
+	 * for a row that doesn't have interval headers set.
+	 *
+	 * Since 1.44 alternating row colors can be suppressed by adding the <code>sapMPlanCalSuppressAlternatingRowColors</code>
+	 * CSS class to the <code>PlanningCalendar</code>.
 	 *
 	 * <h3>Responsive behavior</h3>
 	 *
@@ -60,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.34.0
+	 * @since 1.34
 	 * @alias sap.m.PlanningCalendar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -171,7 +179,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * the <code>minDate</code> is set to the first date of the month in which the <code>maxDate</code> belongs.
 			 * @since 1.38.0
 			 */
-			maxDate : {type : "object", group : "Misc", defaultValue : null}
+			maxDate : {type : "object", group : "Misc", defaultValue : null},
+
+			/**
+			 * If set the day names are shown in a separate line.
+			 * If not set the day names are shown inside the single days.
+			 * @since 1.50
+			 */
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -872,7 +887,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oInterval = new oIntervalMetadata.oClass(this.getId() + oIntervalMetadata.sIdSuffix, {
 						startDate: new Date(oStartDate.getTime()), // use new date object
 						days: iIntervals,
-						showDayNamesLine: false,
+						showDayNamesLine: this.getShowDayNamesLine(),
 						pickerPopup: true
 					});
 
@@ -1050,6 +1065,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		_setSelectionMode.call(this);
 
 		return this;
+
+	};
+
+
+	PlanningCalendar.prototype.setShowDayNamesLine = function(bShowDayNamesLine){
+
+		var intervalMetadata,
+			sInstanceName,
+			oCalDateInterval;
+
+		for (intervalMetadata in  INTERVAL_METADATA) {
+			sInstanceName = INTERVAL_METADATA[intervalMetadata].sInstanceName;
+			if (this[sInstanceName]) {
+				oCalDateInterval = this[sInstanceName];
+				oCalDateInterval.setShowDayNamesLine(bShowDayNamesLine);
+			}
+		}
+
+		return this.setProperty("showDayNamesLine", bShowDayNamesLine, false);
 
 	};
 
@@ -1685,7 +1719,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>press</code> event of the <code>PlanningCalendar</code>'s today button
-	 * @param oEvent {jQuery.Event}
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleTodayPress = function (oEvent) {
@@ -1717,7 +1751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>startDateChange</code> event of the <code>PlanningCalendar</code>
-	 * @param oEvent {jQuery.Event}
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleStartDateChange = function(oEvent){

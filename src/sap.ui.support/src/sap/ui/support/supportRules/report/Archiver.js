@@ -50,9 +50,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/jszip', 'sap/ui/core/util
 	};
 
 	/**
-	 * Downloads a zip
+	 * Downloads a zip file
+	 * @public
+	 * @param {string} fileName the name of the zip file
 	 */
-	Archiver.prototype.download = function() {
+	Archiver.prototype.download = function(fileName) {
 		var oZip = new JSZip();
 
 		if (oZip) {
@@ -64,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/jszip', 'sap/ui/core/util
 				type : "blob"
 			});
 
-			File.save(oContent, "SAPUI5TechnicalReport", "zip", "application/zip");
+			File.save(oContent, fileName, "zip", "application/zip");
 		}
 	};
 

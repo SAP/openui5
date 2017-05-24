@@ -628,7 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				var iRequestedLength = this._calculateRequestLength(iMaxGroupSize, oCurrentSection);
 
-				//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
+				//if we are in the autoexpand mode "bundled", suppress additional requests during the tree traversal
 				//paging is handled differently
 				if (oNode.autoExpand >= 0 && this._autoExpandMode === TreeAutoExpandMode.Bundled) {
 					iRequestedLength = Math.max(0, iMaxGroupSize);
@@ -863,16 +863,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 						that._updateTreeState({groupID: sGroupID, expanded: false});
 					}
 				});
-			}
 
-			// always remove selections from child nodes of the collapsed node
-			jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
-				if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode) && sGroupID !== sGroupIDforCollapsingNode) {
-					//removes the selectAllMode from child nodes
-					oNodeState.selectAllMode = false;
-					that.setNodeSelection(oNodeState, false);
+				var aDeselectedNodeIds = [];
+
+				// always remove selections from child nodes of the collapsed node
+				jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
+					if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode) && sGroupID !== sGroupIDforCollapsingNode) {
+						//removes the selectAllMode from child nodes
+						oNodeState.selectAllMode = false;
+						that.setNodeSelection(oNodeState, false);
+						aDeselectedNodeIds.push(sGroupID);
+					}
+				});
+
+				if (aDeselectedNodeIds.length) {
+					var selectionChangeParams = {
+						rowIndices: []
+					};
+					// Collect the changed indices
+					var iNodeCounter = 0;
+					this._map(this._oRootNode, function (oNode) {
+						if (!oNode || !oNode.isArtificial) {
+							iNodeCounter++;
+						}
+
+						if (oNode && aDeselectedNodeIds.indexOf(oNode.groupID) !== -1) {
+							if (oNode.groupID === this._sLeadSelectionGroupID) {
+								// Lead selection got deselected
+								selectionChangeParams.oldIndex = iNodeCounter;
+								selectionChangeParams.leadIndex = -1;
+							}
+							selectionChangeParams.rowIndices.push(iNodeCounter);
+						}
+					});
+
+					this._publishSelectionChanges(selectionChangeParams);
 				}
-			});
+			}
 
 			if (!bSuppressChange) {
 				this._fireChange({reason: ChangeReason.Collapse});
@@ -1406,7 +1433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Marks a range of tree nodes as selected/deselected, starting with iFromIndex going to iToIndex.
 		 * The TreeNodes are referenced via their absolute row index.
-		 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
+		 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 		 * Invisible nodes (collapsed child nodes) will not be regarded.
 		 */
 		TreeBindingAdapter.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
@@ -1591,7 +1618,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Gets the collapsing behavior when parent nodes are collapsed.
-		 * @param {boolean} bCollapseRecursive
 		 */
 		TreeBindingAdapter.prototype.getCollapseRecursive = function () {
 			return this.bCollapseRecursive;

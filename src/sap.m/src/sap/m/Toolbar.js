@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 			/**
 			 * Defines the width of the control.
-			 * By default, Toolbar is a block element. If the the width is not explicitly set, the control will assume its natural size.
+			 * By default, Toolbar is a block element. If the width is not explicitly set, the control will assume its natural size.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
@@ -534,8 +534,8 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Sets landmarks members to the bar instance
 	 *
-	 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
-	 * @param sContext {string} context of the bar
+	 * @param {boolean} bHasLandmarkInfo indicates that bar has landmarkinfo
+	 * @param {string} sContext context of the bar
 	 * @private
 	 */
 	Toolbar.prototype._setLandmarkInfo = BarInPageEnabler.prototype._setLandmarkInfo;

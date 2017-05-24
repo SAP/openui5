@@ -71,7 +71,7 @@ sap.ui.require([
 	 * @param {string} sTitle
 	 *   The module's title
 	 */
-	function initModule(sTitle) {
+	function module(sTitle) {
 		QUnit.module(sTitle, {
 			beforeEach : function () {
 				this.oLogMock = sinon.mock(jQuery.sap.log);
@@ -260,7 +260,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.type.DateTime");
+	module("sap.ui.model.odata.type.DateTime");
 
 	dateTime("sap.ui.model.odata.type.DateTime");
 
@@ -347,7 +347,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	initModule("sap.ui.model.odata.type.DateTimeOffset");
+	module("sap.ui.model.odata.type.DateTimeOffset");
 
 	dateTime("sap.ui.model.odata.type.DateTimeOffset");
 
@@ -504,7 +504,7 @@ sap.ui.require([
 		}
 
 		oDateTimeOffset0.validateValue("2000-01-01T16:00:00Z");
-		assert.throws(oDateTimeOffset0, "2000-01-01T16:00:00.0Z");
+		throws(oDateTimeOffset0, "2000-01-01T16:00:00.0Z");
 
 		// @see _AnnotationHelperExpression.qunit.js
 		[
@@ -531,7 +531,7 @@ sap.ui.require([
 			"-0006-12-24T00:00:00Z",
 			"-6-12-24T16:00:00Z"
 		].forEach(function (sValue) {
-			assert.throws(oDateTimeOffset12, sValue);
+			throws(oDateTimeOffset12, sValue);
 		});
 	});
 });

@@ -367,7 +367,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions) {
-		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions);
+		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
+			this.oModel.bAutoExpandSelect);
 	};
 
 	/**
@@ -434,7 +435,8 @@ sap.ui.define([
 			if (that.oOperation.bAction) {
 				// Recreate the cache, because the query options might have changed
 				oCache = _Cache.createSingle(that.oModel.oRequestor,
-					(sPathPrefix + that.sPath).slice(1, -5), mQueryOptions, true);
+					(sPathPrefix + that.sPath).slice(1, -5), mQueryOptions,
+					that.oModel.bAutoExpandSelect, true);
 				if (that.bRelative && that.oContext.getBinding) {
 					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
 					// if no ETag is available
@@ -464,7 +466,8 @@ sap.ui.define([
 				}
 				sOperationPath = (sPathPrefix + that.sPath.replace("...", aParameters.join(',')))
 					.slice(1);
-				oCache = _Cache.createSingle(that.oModel.oRequestor, sOperationPath, mQueryOptions);
+				oCache = _Cache.createSingle(that.oModel.oRequestor, sOperationPath, mQueryOptions,
+					that.oModel.bAutoExpandSelect);
 				oPromise = oCache.fetchValue(sGroupId);
 			}
 			that.oCachePromise = _SyncPromise.resolve(oCache);

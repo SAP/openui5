@@ -94,7 +94,7 @@ sap.ui.define([
 	 * Checks whether a keyboard event was triggered by a specific key combination.
 	 * On Mac systems the Meta key will be checked instead of the Ctrl key.
 	 *
-	 * @param {KeyboardEvent} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The keyboard event object.
 	 * @param {int|string|null} key The key code integer, or character string, of the key which should have been pressed.
 	 *                              If an <code>integer</code> is passed, the value will be compared with the <code>keyCode</code> value.
 	 *                              If a <code>string</code> is passed, the value will be compared with the string representation of the
@@ -132,7 +132,7 @@ sap.ui.define([
 	 * only be opened on keyup.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {UIEvent} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	TableKeyboardDelegate._handleSpaceAndEnter = function(oTable, oEvent) {
@@ -1985,7 +1985,7 @@ sap.ui.define([
 
 					} else if (iColSpan > iPageSize) {
 						// If the focused cell is a column span bigger than a page size,
-						// then set the focus the the next column in the row.
+						// then set the focus the next column in the row.
 						TableUtils.focusItem(this, iFocusedIndex + iColSpan, null);
 
 					} else if (iFocusedCellInRow + iColSpan - iRowHeaderOffset + iPageSize > iVisibleColumnCount) {

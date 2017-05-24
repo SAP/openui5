@@ -84,9 +84,9 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/Control'],
 		/**
 		 * Overwrites the method in order to suppress invalidation for some properties.
 		 *
-		 * @param sName {string} Property name to be set
-		 * @param vValue {boolean | string | object} Property value to be set
-		 * @param bSuppressInvalidation {boolean} Whether invalidation to be suppressed
+		 * @param {string} sName Property name to be set
+		 * @param {boolean | string | object} vValue Property value to be set
+		 * @param {boolean} bSuppressInvalidation Whether invalidation to be suppressed
 		 * @return {sap.m.TabContainerItem} This instance for chaining
 		 * @public
 		 */

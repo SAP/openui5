@@ -566,6 +566,75 @@
 			assert.ok(bFocusable, "Map is :sapFocusable");
 		});
 
+		QUnit.module("rtl vertical scrolling", {
+			beforeEach: function() {
+				this.container = document.createElement("div");
+				this.$container = jQuery(this.container);
+				this.container.setAttribute("style", "direction:rtl;overflow-x:scroll;overflow-y:hidden;width:100px;height:20px");
+				this.element = document.createElement("div");
+				this.element.setAttribute("style", "width:200px;height:10px;background:linear-gradient(to right,red,yellow);");
+				this.container.appendChild(this.element);
+				document.body.appendChild(this.container);
+			},
+			afterEach: function() {
+				document.body.removeChild(this.container);
+			}
+		});
+
+		QUnit.test("scrollLeftRTL - get", function(assert) {
+			var iScrollLeft = this.$container.scrollLeftRTL();
+			assert.strictEqual(iScrollLeft, 100, "initial scroll position is set to 100");
+		});
+
+		QUnit.test("scrollLeftRTL - set", function(assert) {
+			this.$container.scrollLeftRTL(100);
+			assert.strictEqual(this.$container.scrollLeftRTL(), 100, "scroll left for 100px");
+
+			this.$container.scrollLeftRTL(0);
+			assert.strictEqual(this.$container.scrollLeftRTL(), 0, "scroll back for 100px");
+
+			this.$container.scrollLeftRTL(101);
+			assert.strictEqual(this.$container.scrollLeftRTL(), 100, "scroll left exceeding width");
+		});
+
+		QUnit.test("scrollRightRTL", function(assert) {
+			var iScrollRight = jQuery.fn.scrollRightRTL.call(this.$container);
+			assert.strictEqual(iScrollRight, 0, "initial scroll position is set to 0");
+		});
+
+		// validate the denormalization against the actual scrolling results, as they are browser dependent
+		QUnit.test("denormalizeScrollLeftRTL", function(assert) {
+			var iScrollLeft = jQuery.sap.denormalizeScrollLeftRTL(0, this.container);
+			this.$container.scrollLeftRTL(0);
+			assert.strictEqual(iScrollLeft, this.container.scrollLeft, "call with 0 - " + this.container.scrollLeft);
+
+			iScrollLeft = jQuery.sap.denormalizeScrollLeftRTL(100, this.container);
+			this.$container.scrollLeftRTL(100);
+			assert.strictEqual(iScrollLeft, this.container.scrollLeft, "call with 100 - " + this.container.scrollLeft);
+
+			// the following test is browser dependent
+			// iScrollLeft = jQuery.sap.denormalizeScrollLeftRTL(101, this.container);
+			// this.$container.scrollLeftRTL(101);
+			// assert.strictEqual(iScrollLeft, this.container.scrollLeft, "call with 101 exceeding width - " + this.container.scrollLeft);
+
+			iScrollLeft = jQuery.sap.denormalizeScrollLeftRTL(100);
+			assert.strictEqual(iScrollLeft, undefined, "call without domref - undefined");
+		});
+
+		QUnit.test("denormalizeScrollBeginRTL", function(assert) {
+			// the following 3 tests are browser dependent
+			// var iScrollBegin = jQuery.sap.denormalizeScrollBeginRTL(0, this.container);
+			// assert.strictEqual(iScrollBegin, 100, "call with 0 - 100");
+
+			// iScrollBegin = jQuery.sap.denormalizeScrollBeginRTL(100, this.container);
+			// assert.strictEqual(iScrollBegin, 0, "call with 100 - 0");
+
+			// iScrollBegin = jQuery.sap.denormalizeScrollBeginRTL(101, this.container);
+			// assert.strictEqual(iScrollBegin, -1, "call with 101 (exceeding width) - -1");
+
+			iScrollBegin = jQuery.sap.denormalizeScrollBeginRTL(100);
+			assert.strictEqual(iScrollBegin, undefined, "call without domref - undefined");
+		});
 
 		</script>
 	</head>

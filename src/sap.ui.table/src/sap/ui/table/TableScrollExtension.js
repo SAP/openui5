@@ -23,7 +23,7 @@ sap.ui.define([
 		 * Will be called when scrolled horizontally. Because the table does not render/update the data of all columns (only the visible ones),
 		 * we need to update the content of the columns which became visible.
 		 *
-		 * @param {UIEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		onScroll: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -155,7 +155,7 @@ sap.ui.define([
 		/**
 		 * Will be called when scrolled vertically. Updates the visualized data by applying the first visible row from the vertical scrollbar.
 		 *
-		 * @param {UIEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		onScroll: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -220,7 +220,7 @@ sap.ui.define([
 		 * Will be called when the vertical scrollbar is clicked.
 		 * Resets the vertical scroll flags.
 		 *
-		 * @param {MouseEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The mouse event object.
 		 */
 		onScrollbarMouseDown: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -321,7 +321,7 @@ sap.ui.define([
 	var ExtensionHelper = {
 		/**
 		 * Will be called when scrolled with the mouse wheel.
-		 * @param {WheelEvent} oEvent The event object.
+		 * @param {jQuery.Event} oEvent The wheel event object.
 		 */
 		onMouseWheelScrolling: function(oEvent) {
 			var oScrollExtension = this._getScrollExtension();
@@ -432,8 +432,8 @@ sap.ui.define([
 	}
 
 	var ExtensionDelegate = {
-		_ontouchstart: onTouchStart, // qUnit helper
-		_ontouchmove: onTouchMove,   // qUnit helper
+		_ontouchstart: onTouchStart, // QUnit helper
+		_ontouchmove: onTouchMove,   // QUnit helper
 		onAfterRendering: function(oEvent) {
 			VerticalScrollingHelper.restoreScrollPosition(this);
 			HorizontalScrollingHelper.restoreScrollPosition(this);

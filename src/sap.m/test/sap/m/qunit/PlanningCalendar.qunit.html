@@ -3330,6 +3330,89 @@
 
 		});
 
+		QUnit.module('showDayNamesLine', {
+			beforeEach: function () {
+				this.oPC = new sap.m.PlanningCalendar("OPC");
+				this.oPC.placeAt('uiArea1');
+			},
+
+			afterEach: function () {
+				this.oPC.destroy();
+				this.oPC = null;
+			}
+		});
+
+		QUnit.test("test default value", function (assert) {
+			var oCalDateInt;
+
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			sap.ui.getCore().applyChanges();
+			oCalDateInt = sap.ui.getCore().byId("OPC-DateInt");
+			assert.equal(oCalDateInt.getShowDayNamesLine(), false, "the default property of the CalendarDateInterval in the days view is false");
+
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Week);
+			sap.ui.getCore().applyChanges();
+			oCalDateInt = sap.ui.getCore().byId("OPC-WeekInt");
+			assert.equal(oCalDateInt.getShowDayNamesLine(), false, "the default property of the CalendarWeekInterval in the week view is false");
+
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.OneMonth);
+			sap.ui.getCore().applyChanges();
+			oCalDateInt = sap.ui.getCore().byId("OPC-OneMonthInt");
+			assert.equal(oCalDateInt.getShowDayNamesLine(), false, "the default property of the CalendarOneMonthInterval in the one month view is false");
+
+		});
+
+		QUnit.test("Toggle showDayNamesLine", function (assert) {
+			var oCalDateInt,
+				oCalWeekInt,
+				oCalOneMonthInt;
+			//initialize the views
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Week);
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.OneMonth);
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+			sap.ui.getCore().applyChanges();
+
+			oCalDateInt = sap.ui.getCore().byId("OPC-DateInt");
+			oCalWeekInt = sap.ui.getCore().byId("OPC-WeekInt");
+			oCalOneMonthInt = sap.ui.getCore().byId("OPC-OneMonthInt");
+
+			this.oPC.setShowDayNamesLine(true);
+			assert.equal(oCalDateInt.getShowDayNamesLine(), true, "the property is passed to the CalendarDateInterval in the days view after setting the property to the Hour view");
+
+			assert.equal(oCalWeekInt.getShowDayNamesLine(), true, "the property is passed to the CalendarWeekInterval in the week view after setting the property to the Hour view");
+
+			assert.equal(oCalOneMonthInt.getShowDayNamesLine(), true, "the property is passed to the CalendarOneMonthInterval in the one month view after setting the property to the Hour view");
+
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
+			sap.ui.getCore().applyChanges();
+			this.oPC.setShowDayNamesLine(false);
+			assert.equal(oCalDateInt.getShowDayNamesLine(), false, "the property is passed to the CalendarDateInterval in the days view after setting the property to the Day view");
+
+			assert.equal(oCalWeekInt.getShowDayNamesLine(), false, "the property is passed to the CalendarWeekInterval in the week view after setting the property to the Day view");
+
+			assert.equal(oCalOneMonthInt.getShowDayNamesLine(), false, "the property is passed to the CalendarOneMonthInterval in the one month view after setting the property to the Day view");
+
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.Week);
+			sap.ui.getCore().applyChanges();
+			this.oPC.setShowDayNamesLine(true);
+			assert.equal(oCalDateInt.getShowDayNamesLine(), true, "the property is passed to the CalendarDateInterval in the days view after setting the property to the Week view");
+
+			assert.equal(oCalWeekInt.getShowDayNamesLine(), true, "the property is passed to the CalendarWeekInterval in the week view after setting the property to the Week view");
+
+			assert.equal(oCalOneMonthInt.getShowDayNamesLine(), true, "the property is passed to the CalendarOneMonthInterval in the one month view after setting the property to the Week view");
+
+			this.oPC.setViewKey(sap.ui.unified.CalendarIntervalType.OneMonth);
+			sap.ui.getCore().applyChanges();
+			this.oPC.setShowDayNamesLine(false);
+			assert.equal(oCalDateInt.getShowDayNamesLine(), false, "the property is passed to the CalendarDateInterval in the days view after setting the property to the OneMonth view");
+
+			assert.equal(oCalWeekInt.getShowDayNamesLine(), false, "the property is passed to the CalendarWeekInterval in the week view after setting the property to the OneMonth view");
+
+			assert.equal(oCalOneMonthInt.getShowDayNamesLine(), false, "the property is passed to the CalendarOneMonthInterval in the one month view after setting the property to the OneMonth view");
+
+		});
+
 	</script>
 
 </head>

@@ -22,9 +22,9 @@
 				var CalendarDate = sap.ui.unified.calendar.CalendarDate;
 				/**
 				 * Generate correct Date even for years before 1901
-				 * @param iYear {int} [0..9999] Full Year
-				 * @param iMonth {int} [0..11] Zero based month index
-				 * @param iDay {int} [1..31] Day of the month
+				 * @param {int} iYear [0..9999] Full Year
+				 * @param {int} iMonth [0..11] Zero based month index
+				 * @param {int} iDay [1..31] Day of the month
 				 * @param [bUTC=false] {boolean} Should the returned date be a UTC date
 				 * @returns {Date} Date
 				 */
@@ -44,9 +44,9 @@
 
 				/**
 				 * Generate correct Date even for years before 1901
-				 * @param iYear {int} [0..9999] Full Year
-				 * @param iMonth {int} [0..11] Zero based month index
-				 * @param iDay {int} [1..31] Day of the month
+				 * @param {int} iYear [0..9999] Full Year
+				 * @param {int} iMonth [0..11] Zero based month index
+				 * @param {int} iDay [1..31] Day of the month
 				 * @param [bUTC=false] {boolean} Should the returned date be a UTC date
 				 * @returns {sap.ui.unified.calendar.CalendarDate} Date
 				 */
@@ -116,7 +116,7 @@
 					 * @param {sap.ui.unified.calendar.CalendarDate} oFirstVisibleDate Expected first visible day.
 					 * @param {sap.ui.unified.calendar.CalendarDate} oLastVisibleDate Expected last visible day.
 					 * @param {int} iVisibleDaysExpected visible days.
-					 * @param sTargetMonthName {string} Name of the target month used for test description.
+					 * @param {string} sTargetMonthName Name of the target month used for test description.
 					 * @param {boolean} [bForRendering=false] should days before 0001-01-01 be included in the returned array.
 					 */
 					assertByDate: function (oFocusDate, oFirstVisibleDate, oLastVisibleDate, iVisibleDays, sTargetMonthName, bForRendering) {
@@ -237,7 +237,7 @@
 
 						if($Focus.length === 0) {
 							oAssert.ok(false, "The focus should be on the browser tab on which this " +
-								"qUnit is executed. If not the test will fail!");
+								"QUnit is executed. If not the test will fail!");
 							fnDone(); // Complete async test
 							return;
 						}

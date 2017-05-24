@@ -1,4 +1,5 @@
 <mvc:View
+	id="cartView"
 	controllerName="sap.ui.demo.cart.controller.Cart"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -17,7 +18,8 @@
 					{path: 'cartProducts>/savedForLaterEntries'}
 				 ], formatter : '.formatter.hasItems'}"
 				visible="{cfg>/notInDelete}"
-				press="onEditOrDoneButtonPress" />
+				press="onEditOrDoneButtonPress"
+				tooltip="{i18n>cartEditButtonTooltip}"/>
 		</headerContent>
 		<footer>
 			<Toolbar>
@@ -31,7 +33,6 @@
 					id="proceedButton"
 					type="Accept"
 					text="{i18n>cartProceedButtonText}"
-					tooltip="{i18n>cartProceedButtonTooltip}"
 					enabled="{
 						path: 'cartProducts>/cartEntries',
 						formatter: '.formatter.hasItems'
@@ -41,8 +42,6 @@
 				<Button
 					id="doneButton"
 					text="{i18n>cartDoneButtonText}"
-					tooltip="{i18n>cartDoneButtonTooltip}"
-					icon="sap-icon://accept"
 					enabled="true"
 					visible="{cfg>/inDelete}"
 					press="onEditOrDoneButtonPress" />
@@ -57,7 +56,7 @@
 				}"
 				mode="{cfg>/listMode}"
 				delete="onCartEntriesDelete"
-				select="onEntryListSelect"
+				selectionChange="onEntryListSelect"
 				noDataText="{i18n>cartNoData}"
 				items="{
 					path : 'cartProducts>/cartEntries',
@@ -107,7 +106,7 @@
 				mode="{cfg>/listMode}"
 				showNoData="false"
 				delete="onSaveForLaterDelete"
-				select="onEntryListSelect"
+				selectionChange="onEntryListSelect"
 				items="{
 					path : 'cartProducts>/savedForLaterEntries',
 					sorter : {

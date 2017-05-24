@@ -298,58 +298,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		aSelect : undefined,
-		aKeys : ["Param1", "Param2"]
-	}, {
-		aSelect : "*",
-		aKeys : ["Param1", "Param2"]
-	}, {
-		aSelect : ["Param"],
-		aKeys : ["Param", "@odata.etag"]
-	}].forEach(function (oFixture) {
-		QUnit.test("updateAfterPost: aSelect = " + oFixture.aSelect, function (assert) {
-			var mChangeListeners = {},
-				sPath = "path",
-				oCacheValue = {},
-				oPostValue = {Param1 : "", Param2 : ""};
-
-			this.mock(_Helper).expects("updateCache")
-				.withExactArgs(sinon.match.same(mChangeListeners), sPath,
-					sinon.match.same(oCacheValue),sinon.match.same(oPostValue),
-					oFixture.aKeys);
-
-			// code under test
-			_Helper.updateAfterPost(
-				mChangeListeners, sPath, oCacheValue, oPostValue, oFixture.aSelect
-			);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.skip("updateAfterPost: add structured attribute", function (assert) {
-		var oCacheData = {
-				Address : {
-					City : "Walldorf"
-				}
-			};
-
-		_Helper.updateAfterPost({}, "SO_2_BP", oCacheData, {
-			Address : {
-				City : "Walldorf",
-				PostalCode : "69190"
-			}
-		});
-
-		assert.deepEqual(oCacheData, {
-			Address : {
-				City : "Walldorf",
-				PostalCode : "69190"
-			}
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("updateCache: simple", function (assert) {
 		var mChangeListeners = {
 				"SO_2_SOITEM/Note" : [{onChange : function () {}}, {onChange : function () {}}],
@@ -725,6 +673,100 @@ sap.ui.require([
 	}].forEach(function (o) {
 		QUnit.test("getSelectForPath: " + o.sPath, function (assert) {
 			assert.deepEqual(_Helper.getSelectForPath(o.options, o.sPath), o.result);
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bUseProperties) {
+		QUnit.test("updateCacheAfterPost: simple/complex and not wanted properties," +
+			" bUseProperties: " + bUseProperties, function (assert) {
+			var oCacheBefore = {
+					Address : {
+						City : "Walldorf"
+					},
+					ComplexNullable : null
+				},
+				oCacheAfter = {
+					PartnerId : "4711",
+					Address : {
+						City : "Walldorf",
+						GeoLocation : {
+							Latitude : "49.3",
+							Longitude : "8.6"
+						},
+						PostalCode : "69190",
+						Nullable : null
+					},
+					ComplexNullable : {
+						bar : null,
+						baz : null,
+						foo : "foo"
+					}
+				},
+				oChangeListener = {},
+				oHelperMock = this.mock(_Helper);
+
+			if (!bUseProperties) {
+				oCacheAfter.Address.notWanted = "foo";
+				oHelperMock.expects("fireChange")
+					.withExactArgs(oChangeListener, "SO_2_BP/Address/notWanted", "foo");
+				oCacheAfter.notWanted = "bar";
+				oHelperMock.expects("fireChange")
+					.withExactArgs(oChangeListener, "SO_2_BP/notWanted", "bar");
+				// we expect an event for the structual property baz because the productive
+				// code does not know that baz is NOT a property
+				oHelperMock.expects("fireChange")
+					.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/baz", null);
+			}
+
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/GeoLocation/Latitude", "49.3");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/GeoLocation/Longitude", "8.6");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/Nullable", null);
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/Address/PostalCode", "69190");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/bar", null);
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/ComplexNullable/foo", "foo");
+			oHelperMock.expects("fireChange")
+				.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
+
+			// code under test
+			_Helper.updateCacheAfterPost(oChangeListener, "SO_2_BP", oCacheBefore, {
+				PartnerId : "4711",
+				Address : {
+					City : "Walldorf",
+					GeoLocation : {
+						Latitude : "49.3",
+						Longitude : "8.6"
+					},
+					notWanted : "foo",
+					Nullable : null,
+					PostalCode : "69190"
+				},
+				ComplexNullable : {
+					bar : null,
+					baz : null,
+					foo : "foo"
+				},
+				notWanted : "bar"},
+				bUseProperties ? [
+					"Address/City",
+					"Address/Foo/Bar",
+					"Address/GeoLocation/Latitude",
+					"Address/GeoLocation/Longitude",
+					"Address/Nullable",
+					"Address/PostalCode",
+					"ComplexNullable/bar",
+					"ComplexNullable/baz/belowBaz",
+					"ComplexNullable/foo",
+					"PartnerId"] : undefined
+			);
+
+			assert.deepEqual(oCacheBefore, oCacheAfter);
 		});
 	});
 });

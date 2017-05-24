@@ -113,15 +113,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 
 	TreeTable.prototype.bindRows = function(oBindingInfo) {
-		// Old API compatibility (sPath, oTemplate, oSorter, aFilters)
-		if (typeof oBindingInfo === "string") {
-			oBindingInfo = {
-				path: oBindingInfo,
-				sorter: arguments[2],
-				filters: arguments[3],
-				template: arguments[1]
-			};
-		}
+		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
 
 		if (oBindingInfo != null) {
 			if (oBindingInfo.parameters == null) {
@@ -134,13 +126,28 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 			// If the number of expanded levels is not specified in the binding parameters, we use the corresponding table property
 			// to determine the value.
 			oBindingInfo.parameters.numberOfExpandedLevels = oBindingInfo.parameters.numberOfExpandedLevels || (this.getExpandFirstLevel() ? 1 : 0);
-
-			oBindingInfo.events = {
-				selectionChanged: this._onSelectionChanged.bind(this)
-			};
 		}
 
 		return Table.prototype.bindRows.call(this, oBindingInfo);
+	};
+
+	/**
+	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
+	 *
+	 * @override {@link sap.ui.table.Table#_bindAggregation}
+	 */
+	TreeTable.prototype._bindAggregation = function(sName, oBindingInfo) {
+		// Create the binding.
+		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
+
+		var oBinding = this.getBinding("rows");
+
+		if (sName === "rows" && oBinding != null) {
+			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
+			oBinding.attachEvents({
+				selectionChanged: this._onSelectionChanged.bind(this)
+			});
+		}
 	};
 
 	/**
@@ -432,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	/**
 	 * Marks a range of tree nodes as selected, starting with iFromIndex going to iToIndex.
 	 * The TreeNodes are referenced via their absolute row index.
-	 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
+	 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
 	 *
 	 * Please also take notice of the fact, that "addSelectionInterval" does not change any other selection.
@@ -468,7 +475,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	/**
 	 * All rows/tree nodes inside the range (including boundaries) will be deselected.
 	 * Tree nodes are referenced with theit absolute row index inside the tree-
-	 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
+	 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
 	 *
 	 * @param {int} iFromIndex The starting index of the range which will be deselected.
@@ -642,20 +649,44 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
 	 * @public
-	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
+	 * @name sap.ui.table.TreeTable#getEnableGrouping
 	 * @function
 	 */
 
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>TreeTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
+	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
+	 * @see {@link sap.ui.table.TreeTable#setUseGroupMode}
+	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
 	 * @public
 	 */
-	TreeTable.prototype.setEnableGrouping = function(bEnableGrouping) {
-		jQuery.sap.log.warning("The property enableGrouping is not supported by control sap.ui.table.TreeTable");
+	TreeTable.prototype.setEnableGrouping = function() {
+		jQuery.sap.log.warning("The property enableGrouping is not supported by the sap.ui.table.TreeTable control");
+		return this;
+	};
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @public
+	 * @name sap.ui.table.TreeTable#getGroupBy
+	 * @function
+	 */
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @public
+	 */
+	TreeTable.prototype.setGroupBy = function() {
+		jQuery.sap.log.warning("The groupBy association is not supported by the sap.ui.table.TreeTable control");
 		return this;
 	};
 

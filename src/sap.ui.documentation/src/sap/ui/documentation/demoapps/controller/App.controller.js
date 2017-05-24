@@ -5,6 +5,7 @@
 /*global Promise*/
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"jquery.sap.global",
 	"sap/ui/documentation/demoapps/model/sourceFileDownloader",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/library"
-], function (Controller, JSONModel, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
+], function (Controller, Device, JSONModel, $, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("sap.ui.documentation.demoapps.controller.App", {
@@ -25,6 +26,10 @@ sap.ui.define([
 		/* event handlers                                              */
 		/* =========================================================== */
 
+		/**
+		 * Called when the controller is instantiated.
+		 * @public
+		 */
 		onInit: function() {
 			var oVersionInfo = sap.ui.getVersionInfo(),
 				oViewModel = new JSONModel({
@@ -32,6 +37,93 @@ sap.ui.define([
 				});
 
 			this.getView().setModel(oViewModel, "appView");
+
+			// manually call the handler once at startup as device API won't do this for us
+			this._onOrientationChange({
+				landscape: Device.orientation.landscape
+			});
+			this._onResize({
+				name: (Device.resize.width <= 600 ? "Phone" : "NoPhone")
+			});
+		},
+
+		/**
+		 * Called before the view is rendered.
+		 * @public
+		 */
+		onBeforeRendering: function() {
+			this._deregisterOrientationChange();
+		},
+
+		/**
+		 * Called after the view is rendered.
+		 * @public
+		 */
+		onAfterRendering: function() {
+			this._registerOrientationChange();
+			this._registerResize();
+		},
+
+		/**
+		 * Called when the controller is destroyed.
+		 * @public
+		 */
+		onExit: function() {
+			this._deregisterOrientationChange();
+			this._deregisterResize();
+		},
+
+		/**
+		 * Registers an event listener on device orientation change
+		 * @private
+		 */
+		_registerOrientationChange: function () {
+			Device.orientation.attachHandler(this._onOrientationChange, this);
+		},
+
+		/**
+		 * Deregisters the event listener for device orientation change
+		 * @private
+		 */
+		_deregisterOrientationChange: function () {
+			Device.media.detachHandler(this._onOrientationChange, this);
+		},
+
+		/**
+		 * Registers an event listener on device resize
+		 * @private
+		 */
+		_registerResize: function () {
+			Device.media.attachHandler(this._onResize, this);
+		},
+
+		/**
+		 * Deregisters the event listener for device resize
+		 * @private
+		 */
+		_deregisterResize: function () {
+			Device.orientation.detachHandler(this._onResize, this);
+		},
+
+		/**
+		 * Switches the maximum height of the phone image for optimal display in landscape mode
+		 * @param {sap.ui.base.Event} oEvent Device orientation change event
+		 * @private
+		 */
+		_onOrientationChange: function(oEvent) {
+			this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
+		},
+
+		/**
+		* Switches the image to phone and hides the download icon when decreasing the window size
+		* @param {sap.ui.base.Event} oEvent Device media change event
+		* @private
+		*/
+		_onResize: function(oEvent) {
+			this.byId("phoneImage").setVisible(oEvent.name === "Phone");
+			this.byId("desktopImage").setVisible(oEvent.name !== "Phone");
+			this.byId("phoneImage").toggleStyleClass("phoneHeaderImageDesktop", oEvent.name === "Phone");
+			this.byId("download").setIcon(oEvent.name === "Phone" || oEvent.name === "Tablet" ? "" : "sap-icon://download");
 		},
 
 		/**

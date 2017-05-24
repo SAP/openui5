@@ -105,7 +105,7 @@
 				assert.ok(expected.hasOwnProperty(aKeys[i]), "expected keys should contain actual key '" + aKeys[i] +"'");
 			}
 
-			// check fallback to default with a non existant key
+			// check fallback to default with a non existent key
 			var sValue = oProps.getProperty("initially-undefined","Default given");
 			assert.strictEqual(sValue, "Default given", "fallback to provided default");
 

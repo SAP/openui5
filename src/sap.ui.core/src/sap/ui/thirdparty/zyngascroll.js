@@ -176,7 +176,7 @@
 		/**
 		 * Stops the given animation.
 		 *
-		 * @param id {Integer} Unique animation ID
+		 * @param {Integer} id Unique animation ID
 		 * @return {Boolean} Whether the animation was stopped (aka, was running before)
 		 */
 		stop: function(id) {
@@ -192,7 +192,7 @@
 		/**
 		 * Whether the given animation is still running.
 		 *
-		 * @param id {Integer} Unique animation ID
+		 * @param {Integer} id Unique animation ID
 		 * @return {Boolean} Whether the animation is still running
 		 */
 		isRunning: function(id) {
@@ -203,16 +203,16 @@
 		/**
 		 * Start the animation.
 		 *
-		 * @param stepCallback {Function} Pointer to function which is executed on every step.
+		 * @param {Function} stepCallback Pointer to function which is executed on every step.
 		 *   Signature of the method should be `function(percent, now, virtual) { return continueWithAnimation; }`
-		 * @param verifyCallback {Function} Executed before every animation step.
+		 * @param {Function} verifyCallback Executed before every animation step.
 		 *   Signature of the method should be `function() { return continueWithAnimation; }`
-		 * @param completedCallback {Function}
+		 * @param {Function} completedCallback
 		 *   Signature of the method should be `function(droppedFrames, finishedAnimation) {}`
-		 * @param duration {Integer} Milliseconds to run the animation
-		 * @param easingMethod {Function} Pointer to easing function
+		 * @param {Integer} duration Milliseconds to run the animation
+		 * @param {Function} easingMethod Pointer to easing function
 		 *   Signature of the method should be `function(percent) { return modifiedValue; }`
-		 * @param root {Element ? document.body} Render root, when available. Used for internal
+		 * @param {Element ? document.body} root Render root, when available. Used for internal
 		 *   usage of requestAnimationFrame.
 		 * @return {Integer} Identifier of animation. Can be used to stop it any time.
 		 */
@@ -372,14 +372,14 @@ var Scroller;
 	// Open source under the BSD License.
 
 	/**
-	 * @param pos {Number} position between 0 (start of effect) and 1 (end of effect)
+	 * @param {Number} pos position between 0 (start of effect) and 1 (end of effect)
 	**/
 	var easeOutCubic = function(pos) {
 		return (Math.pow((pos - 1), 3) + 1);
 	};
 
 	/**
-	 * @param pos {Number} position between 0 (start of effect) and 1 (end of effect)
+	 * @param {Number} pos position between 0 (start of effect) and 1 (end of effect)
 	**/
 	var easeInOutCubic = function(pos) {
 		if ((pos /= 0.5) < 1) {
@@ -558,10 +558,10 @@ var Scroller;
 		 * Requires the available space for the outer element and the outer size of the inner element.
 		 * All values which are falsy (null or zero etc.) are ignored and the old value is kept.
 		 *
-		 * @param clientWidth {Integer ? null} Inner width of outer element
-		 * @param clientHeight {Integer ? null} Inner height of outer element
-		 * @param contentWidth {Integer ? null} Outer width of inner element
-		 * @param contentHeight {Integer ? null} Outer height of inner element
+		 * @param {Integer ? null} clientWidth Inner width of outer element
+		 * @param {Integer ? null} clientHeight Inner height of outer element
+		 * @param {Integer ? null} contentWidth Outer width of inner element
+		 * @param {Integer ? null} contentHeight Outer height of inner element
 		 */
 		setDimensions: function(clientWidth, clientHeight, contentWidth, contentHeight) {
 
@@ -596,8 +596,8 @@ var Scroller;
 		/**
 		 * Sets the client coordinates in relation to the document.
 		 *
-		 * @param left {Integer ? 0} Left position of outer element
-		 * @param top {Integer ? 0} Top position of outer element
+		 * @param {Integer ? 0} left Left position of outer element
+		 * @param {Integer ? 0} top Top position of outer element
 		 */
 		setPosition: function(left, top) {
 
@@ -612,8 +612,8 @@ var Scroller;
 		/**
 		 * Configures the snapping (when snapping is active)
 		 *
-		 * @param width {Integer} Snapping width
-		 * @param height {Integer} Snapping height
+		 * @param {Integer} width Snapping width
+		 * @param {Integer} height Snapping height
 		 */
 		setSnapSize: function(width, height) {
 
@@ -630,10 +630,10 @@ var Scroller;
 		 * the user event is released during visibility of this zone. This was introduced by some apps on iOS like
 		 * the official Twitter client.
 		 *
-		 * @param height {Integer} Height of pull-to-refresh zone on top of rendered list
-		 * @param activateCallback {Function} Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release.
-		 * @param deactivateCallback {Function} Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled.
-		 * @param startCallback {Function} Callback to execute to start the real async refresh action. Call {@link #finishPullToRefresh} after finish of refresh.
+		 * @param {Integer} height Height of pull-to-refresh zone on top of rendered list
+		 * @param {Function} activateCallback Callback to execute on activation. This is for signalling the user about a refresh is about to happen when he release.
+		 * @param {Function} deactivateCallback Callback to execute on deactivation. This is for signalling the user about the refresh being cancelled.
+		 * @param {Function} Callback to execute to start the real async refresh action. Call {@link #finishPullToRefresh} startCallback after finish of refresh.
 		 */
 		activatePullToRefresh: function(height, activateCallback, deactivateCallback, startCallback) {
 
@@ -703,10 +703,10 @@ var Scroller;
 		 * Zooms to the given level. Supports optional animation. Zooms
 		 * the center when no coordinates are given.
 		 *
-		 * @param level {Number} Level to zoom to
-		 * @param animate {Boolean ? false} Whether to use animation
-		 * @param originLeft {Number ? null} Zoom in at given left coordinate
-		 * @param originTop {Number ? null} Zoom in at given top coordinate
+		 * @param {Number} level Level to zoom to
+		 * @param {Boolean ? false} animate Whether to use animation
+		 * @param {Number ? null} originLeft Zoom in at given left coordinate
+		 * @param {Number ? null} originTop Zoom in at given top coordinate
 		 */
 		zoomTo: function(level, animate, originLeft, originTop) {
 
@@ -766,10 +766,10 @@ var Scroller;
 		/**
 		 * Zooms the content by the given factor.
 		 *
-		 * @param factor {Number} Zoom by given factor
-		 * @param animate {Boolean ? false} Whether to use animation
-		 * @param originLeft {Number ? 0} Zoom in at given left coordinate
-		 * @param originTop {Number ? 0} Zoom in at given top coordinate
+		 * @param {Number} factor Zoom by given factor
+		 * @param {Boolean ? false} animate Whether to use animation
+		 * @param {Number ? 0} originLeft Zoom in at given left coordinate
+		 * @param {Number ? 0} originTop Zoom in at given top coordinate
 		 */
 		zoomBy: function(factor, animate, originLeft, originTop) {
 
@@ -783,10 +783,10 @@ var Scroller;
 		/**
 		 * Scrolls to the given position. Respect limitations and snapping automatically.
 		 *
-		 * @param left {Number?null} Horizontal scroll position, keeps current if value is <code>null</code>
-		 * @param top {Number?null} Vertical scroll position, keeps current if value is <code>null</code>
-		 * @param animate {Boolean?false} Whether the scrolling should happen using an animation
-		 * @param zoom {Number?null} Zoom level to go to
+		 * @param {Number?null} left Horizontal scroll position, keeps current if value is <code>null</code>
+		 * @param {Number?null} top Vertical scroll position, keeps current if value is <code>null</code>
+		 * @param {Boolean?false} animate Whether the scrolling should happen using an animation
+		 * @param {Number?null} zoom Zoom level to go to
 		 */
 		scrollTo: function(left, top, animate, zoom) {
 
@@ -865,9 +865,9 @@ var Scroller;
 		/**
 		 * Scroll by the given offset
 		 *
-		 * @param left {Number ? 0} Scroll x-axis by given offset
-		 * @param top {Number ? 0} Scroll x-axis by given offset
-		 * @param animate {Boolean ? false} Whether to animate the given change
+		 * @param {Number ? 0} left Scroll x-axis by given offset
+		 * @param {Number ? 0} top Scroll x-axis by given offset
+		 * @param {Boolean ? false} animate Whether to animate the given change
 		 */
 		scrollBy: function(left, top, animate) {
 
@@ -1287,9 +1287,9 @@ var Scroller;
 		/**
 		 * Applies the scroll position to the content element
 		 *
-		 * @param left {Number} Left scroll position
-		 * @param top {Number} Top scroll position
-		 * @param animate {Boolean?false} Whether animation should be used to move to the new coordinates
+		 * @param {Number} left Left scroll position
+		 * @param {Number} top Top scroll position
+		 * @param {Boolean?false} animate Whether animation should be used to move to the new coordinates
 		 */
 		__publish: function(left, top, zoom, animate) {
 
@@ -1454,7 +1454,7 @@ var Scroller;
 		/**
 		 * Called on every step of the animation
 		 *
-		 * @param inMemory {Boolean?false} Whether to not render the current step, but keep it in memory only. Used internally only!
+		 * @param {Boolean?false} inMemory Whether to not render the current step, but keep it in memory only. Used internally only!
 		 */
 		__stepThroughDeceleration: function(render) {
 

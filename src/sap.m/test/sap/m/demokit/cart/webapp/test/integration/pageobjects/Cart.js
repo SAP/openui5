@@ -48,7 +48,7 @@ sap.ui.define([
 				iPressOnTheAcceptButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new Properties({ icon : "sap-icon://accept"}),
+						matchers : new Properties({ text : "Save Changes"}),
 						actions : new Press(),
 						errorMessage : "The accept button could not be pressed"
 					});

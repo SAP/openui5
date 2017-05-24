@@ -2,13 +2,6 @@
 	"use strict";
 
 	try {
-		sap.ui.getCore().loadLibrary("sap.ui.commons");
-	}catch (e){
-		jQuery.sap.log.error("This test page requires the library 'sap.ui.commons' which is not available.");
-		throw (e);
-	}
-
-	try {
 		sap.ui.getCore().loadLibrary("sap.m");
 	} catch (e) {
 		jQuery.sap.log.error("This test page requires the library 'sap.m' which is not available.");

@@ -330,6 +330,8 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 
 		if (oGeometry && oGeometry.visible) {
 			var $overlay = this.$();
+			var iScrollingWidth = DOMUtil.getScrollbarWidth();
+			var mSize = oGeometry.size;
 
 			// ensure visibility
 			$overlay.css("display", "block");
@@ -339,9 +341,12 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			var iParentScrollTop = (oOverlayParent && oOverlayParent instanceof Overlay) ? oOverlayParent.$().scrollTop() : null;
 			var iParentScrollLeft = (oOverlayParent && oOverlayParent instanceof Overlay) ? oOverlayParent.$().scrollLeft() : null;
 			var mParentOffset = (oOverlayParent && oOverlayParent instanceof Overlay) ? oOverlayParent.$().offset() : null;
-			var mPosition = DOMUtil.getOffsetFromParent(oGeometry.position, mParentOffset, iParentScrollTop, iParentScrollLeft);
 
-			var mSize = oGeometry.size;
+			if (mParentOffset && jQuery('html').attr('dir') === 'rtl' && DOMUtil.hasVerticalScrollBar(oOverlayParent.getDomRef())) {
+				mParentOffset.left += iScrollingWidth;
+			}
+
+			var mPosition = DOMUtil.getOffsetFromParent(oGeometry.position, mParentOffset, iParentScrollTop, iParentScrollLeft);
 
 			// OVERLAY SIZE
 			$overlay.css("width", mSize.width + "px");
@@ -371,11 +376,12 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
 						if (!this._oDummyScrollContainer) {
 							this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer' style='height: " + iScrollHeight + "px; width: " + iScrollWidth + "px;'></div>");
-							if (iScrollHeight > mSize.height && oOverlayParent.$) {
+
+							if (oOverlayParent.$ && DOMUtil.hasVerticalScrollBar(oGeometry.domRef)) {
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarVertical");
 							}
-							if (iScrollWidth > mSize.width && oOverlayParent.$) {
+							if (oOverlayParent.$ && DOMUtil.hasHorizontalScrollBar(oGeometry.domRef)) {
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBar");
 								oOverlayParent.$().addClass("sapUiDtOverlayWithScrollBarHorizontal");
 							}
@@ -509,6 +515,8 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 					} else {
 						$clonedDom.empty();
 					}
+
+					//TODO: disable update
 					DOMUtil.cloneDOMAndStyles(oDomRef, $clonedDom);
 				};
 

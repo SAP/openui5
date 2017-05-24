@@ -1969,7 +1969,7 @@
 		};
 		/**
 		 * Adds a performance measurement with all data
-		 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
+		 * This is useful to add external measurements (e.g. from a backend) to the common measurement UI
 		 *
 		 * @param {string} sId ID of the measurement
 		 * @param {string} sInfo Info for the measurement
@@ -4035,7 +4035,7 @@
 		 *
 		 * <b>Asynchronous Contract</b><br>
 		 * <code>sap.ui.define</code> is designed to support real Asynchronous Module Definitions (AMD)
-		 * in future, although it internally still uses the the old synchronous module loading of UI5.
+		 * in future, although it internally still uses the old synchronous module loading of UI5.
 		 * Callers of <code>sap.ui.define</code> therefore must not rely on any synchronous behavior
 		 * that they might observe with the current implementation.
 		 *

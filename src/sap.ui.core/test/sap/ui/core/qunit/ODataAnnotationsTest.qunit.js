@@ -89,13 +89,13 @@ function runODataAnnotationTests() {
 	}, {
 		name			 : "Northwind",
 		service		  : "fakeService://testdata/odata/northwind/",
-		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTENT",
 		serviceValid	 : true,
 		annotationsValid : "none"
 	},{
 		name			 : "Invalid",
-		service		  : "fakeService://testdata/odata/NOT_EXISTANT/",
-		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		service		  : "fakeService://testdata/odata/NOT_EXISTENT/",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTENT",
 		serviceValid	 : false,
 		annotationsValid : "none"
 	},{
@@ -121,14 +121,14 @@ function runODataAnnotationTests() {
 	}, {
 		name			 : "Northwind",
 		service		  : "fakeService://testdata/odata/northwind/",
-		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTENT",
 		serviceValid	 : true,
 		annotationsValid : "none",
 		sharedMetadata   : true
 	},{
 		name			 : "Invalid",
-		service		  : "fakeService://testdata/odata/NOT_EXISTANT/",
-		annotations	  : "fakeService://testdata/odata/NOT_EXISTANT",
+		service		  : "fakeService://testdata/odata/NOT_EXISTENT/",
+		annotations	  : "fakeService://testdata/odata/NOT_EXISTENT",
 		serviceValid	 : false,
 		annotationsValid : "none",
 		sharedMetadata   : true

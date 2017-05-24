@@ -100,7 +100,7 @@ Optionally, only a selected library can be checked or just a single file or dire
 
 ### Running the Unit Tests
 
-The UI5 unit tests are implemented using jQuery's qUnit testing framework and run by a Selenium-based infrastructure.
+The UI5 unit tests are implemented using jQuery's QUnit testing framework and run by a Selenium-based infrastructure.
 
 To execute the unit tests, navigate to the root directory of the repository and execute:
 ```

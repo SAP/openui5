@@ -16,7 +16,15 @@ sap.ui.define(function() {
 	 */
 	var OperationMode = {
 		/**
-		 * Operations are executed on the OData service, by appending corresponding URL parameters
+		 * By default, all operations are executed on the server in the OData service request (<code>Server</code> mode).
+		 * Only if the collection is already expanded and all entries are available on the client, all operations are executed
+		 * on the client (<code>Client</code> mode).
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Operations are executed on the server in the OData service request, by appending corresponding URL parameters
 		 * (<code>$filter</code>, <code>$orderby</code>).
 		 * Each change in filtering or sorting triggers a new request to the server.
 		 * @public
@@ -24,7 +32,7 @@ sap.ui.define(function() {
 		Server: "Server",
 
 		/**
-		 * Operations are executed on the client, all entries must be available to be able to do so.
+		 * Operations are executed on the client. This only works if all entries are loaded on the client.
 		 * The initial request fetches the complete collection, filtering and sorting does not trigger further requests.
 		 * @public
 		 */

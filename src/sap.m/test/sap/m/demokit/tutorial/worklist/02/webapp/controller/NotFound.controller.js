@@ -1,9 +1,9 @@
 sap.ui.define([
-	"myCompany/myApp/controller/BaseController"
+	"mycompany/myapp/controller/BaseController"
 ], function(BaseController) {
 	"use strict";
 
-	return BaseController.extend("myCompany.myApp.controller.NotFound", {
+	return BaseController.extend("mycompany.myapp.controller.NotFound", {
 
 		/**
 		 * Navigates to the worklist when the link is pressed

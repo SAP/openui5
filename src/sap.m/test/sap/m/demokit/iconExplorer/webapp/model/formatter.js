@@ -29,6 +29,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * Retrieves formatted text containing the unicode of the icon identified by the icon's name. Used as a formatter in the view.
+		 * @param {string} name the icon's name
+		 * @return {strng} the formattet text taht contains unicode of the queried icon
+		 * @public
+		 */
+		getUnicodeTextByName: function (name) {
+			name = name || "";
+			var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase()),
+				sFormattedText;
+			sUnicode = sUnicode.substring(2, sUnicode.length - 1);
+			sFormattedText = this.getResourceBundle().getText("previewInfoUnicodeWithParams", [sUnicode]);
+			return sFormattedText;
+		},
+
+		/**
 		 * Makes the first letter of a string uppercase
 		 * @param {string} sValue the value to be formatted
 		 * @return {string} the expected result

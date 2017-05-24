@@ -22,31 +22,30 @@
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<!-- Test functions -->
 	<script>
-		jQuery.sap.require("sap.ui.thirdparty.sinon");
-		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 		jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
 		var CalendarDate = sap.ui.unified.calendar.CalendarDate;
 
 		QUnit.module("Constructor");
 		//check with no parameters
-		QUnit.test("works properly without any parameters", function (assert) {
+		QUnit.test("Without any parameters", function (assert) {
 			//Act
 			var oCurrentJSDate = new Date(),
 					oCalendarDate = new CalendarDate();
 
 			//Assert
-			assert.equal(oCalendarDate.getYear(), oCurrentJSDate.getFullYear(), "getYear() should return the same value as the one given in the constructor");
-			assert.equal(oCalendarDate.getMonth(), oCurrentJSDate.getMonth(), "getMonth() should return the same value as the one given in the constructor");
-			assert.equal(oCalendarDate.getDate(), oCurrentJSDate.getDate(), "getDate() should return the same value as the one given in the constructor");
-			assert.equal(oCalendarDate.getDay(), oCurrentJSDate.getDay(), "getDay() should return the same value as the one given in the constructor");
+			assert.equal(oCalendarDate.getYear(), oCurrentJSDate.getFullYear(), "getYear() should return the current year");
+			assert.equal(oCalendarDate.getMonth(), oCurrentJSDate.getMonth(), "getMonth() should return the current month");
+			assert.equal(oCalendarDate.getDate(), oCurrentJSDate.getDate(), "getDate() should return the current date");
+			assert.equal(oCalendarDate.getDay(), oCurrentJSDate.getDay(), "getDay() should return the current day of week");
 
 		});
 
-		//check with null and undefined as a parameter
-		QUnit.test("single parameter constructor does not accept invalid values", function () {
+		QUnit.test("With 1 parameter(CalendarDate), which does not accept invalid values", function () {
 			//Act
 			var oCalendarDate,
 					oObject = {};
@@ -84,8 +83,7 @@
 
 		});
 
-		//check with a parameter of the same type CalendarDate (passed as a parameter)
-		QUnit.test("works properly with a passed parameter of the same type - CalendarDate", function (assert) {
+		QUnit.test("With 1 parameter(CalendarDate)", function (assert) {
 			//Act
 			var oCurrentCalendarDate = new CalendarDate(),
 					oCalendarDate = new CalendarDate(oCurrentCalendarDate);
@@ -94,15 +92,15 @@
 			assert.notEqual(oCalendarDate.getYear(), undefined, "oCalendarDate.getYear() is not undefined. Some of the next tests may be skipped.");
 
 			if (oCalendarDate.getYear()) {
-				assert.equal(oCalendarDate.getYear(), oCurrentCalendarDate.getYear(), "getYear() should return the same value as the one given in the constructor");
-				assert.equal(oCalendarDate.getMonth(), oCurrentCalendarDate.getMonth(), "getMonth() should return the same value as the one given in the constructor");
-				assert.equal(oCalendarDate.getDate(), oCurrentCalendarDate.getDate(), "getDate() should return the same value as the one given in the constructor");
-				assert.equal(oCalendarDate.getDay(), oCurrentCalendarDate.getDay(), "getDay() should return the same value as the one given in the constructor");
+				assert.equal(oCalendarDate.getYear(), oCurrentCalendarDate.getYear(), "getYear() should return the same value as the CalendarDate given in the constructor");
+				assert.equal(oCalendarDate.getMonth(), oCurrentCalendarDate.getMonth(), "getMonth() should return the same value as the CalendarDate given in the constructor");
+				assert.equal(oCalendarDate.getDate(), oCurrentCalendarDate.getDate(), "getDate() should return the same value as the CalendarDate given in the constructor");
+				assert.equal(oCalendarDate.getDay(), oCurrentCalendarDate.getDay(), "getDay() should return the same value as the one CalendarDate given in the constructor");
 			}
 
 		});
 
-		QUnit.test("works properly with a passed parameter of the same type - CalendarDate and Non-gregorian calendar type", function () {
+		QUnit.test("With 2 parameters(CalendarDate, CalendarType(Non-gregorian))", function () {
 			//Act
 			var oSourceJSDate = new Date(2017, 3, 23),
 					oSourceCalendarDate = new CalendarDate(oSourceJSDate.getFullYear(), oSourceJSDate.getMonth(), oSourceJSDate.getDate(),
@@ -122,30 +120,32 @@
 
 		});
 
-		//check with 2 parameters- one of type CalendarDate (passed as a parameter) and one of type string (Calendar type) (Islamic, Gregorian, Japaneese)
-		QUnit.test("works properly with second parameter - a calendar type", function (assert) {
+		QUnit.test("With 2 parameters(CalendarDate, CalendarType(Gregorian))", function (assert) {
 			//Act
 			var oSourceDate = new CalendarDate(2017, 3, 22),
 					oTargetCalendarDate;
 
-			//Assert
-
+			//Act
 			oTargetCalendarDate = new CalendarDate(oSourceDate, "Gregorian");
+			//Assert
 			assert.notEqual(oTargetCalendarDate.getYear(), undefined, "getYear() is not undefined. Some of the next tests may be skipped.");
 			if (oTargetCalendarDate.getYear()) {
 				assert.equal(oTargetCalendarDate.getYear(), oSourceDate.getYear(), "works for a Gregorian calendar");
 
+				//Act
 				oTargetCalendarDate = new CalendarDate(oSourceDate, "Islamic");
+				//Assert
 				assert.notEqual(oTargetCalendarDate.getYear(), oSourceDate.getYear(), "works for an Islamic calendar");
 
+				//Act
 				oTargetCalendarDate = new CalendarDate(oSourceDate, "Japanese");
+				//Assert
 				assert.notEqual(oTargetCalendarDate.getYear(), oSourceDate.getYear(), "works for a Japanese calendar");
 			}
 		});
 
-		//check with 3 parameters - date, month, year
 		//check year
-		QUnit.test("accepts strings for the year, month and date parameters", function () {
+		QUnit.test("With 3 parameters(year, month, date) as strings. ", function () {
 			//Act
 			var oCalendarDate = new CalendarDate("2017", "0", "1");
 
@@ -156,7 +156,7 @@
 
 		});
 
-		QUnit.test("accepts numbers for the year, month and date parameters", function () {
+		QUnit.test("With 3 parameters(year, month, date) as numbers", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(2017, 0, 1);
 
@@ -167,7 +167,7 @@
 
 		});
 
-		QUnit.test("accepts two digit year, which is considered as a full year", function () {
+		QUnit.test("With 3 parameters(year, month, date), where year is with 2 digits, which is considered as a full year", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(17, 0, 1);
 
@@ -176,7 +176,7 @@
 
 		});
 
-		QUnit.test("accepts 0 as a year parameter", function () {
+		QUnit.test("With 3 parameters(year, month, date), where 0 is accepted as a year", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(0, 0, 1);
 
@@ -185,7 +185,7 @@
 
 		});
 
-		QUnit.test("accepts -1 as a year parameter", function () {
+		QUnit.test("With 3 parameters(year, month, date), where -1 is accepted as a year", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(-1, 0, 1);
 
@@ -194,8 +194,7 @@
 
 		});
 
-		//check month
-		QUnit.test("works properly with a value outside month range", function () {
+		QUnit.test("With 3 parameters(year, month, date), where month value outside month range", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(2017, 12, 1);
 
@@ -215,8 +214,7 @@
 
 		});
 
-		//check date
-		QUnit.test("works properly with a value outside date range", function () {
+		QUnit.test("With 3 parameters(year, month, date), where date value is outside date range", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(2017, 0, 32);
 
@@ -245,7 +243,7 @@
 			assert.equal(oCalendarDate.getMonth(), 4, "getMonth() should return the previous month, when -1 as a date parameter is passed");
 		});
 
-		QUnit.test("works properly in a leap year)", function () {
+		QUnit.test("With 3 parameters(year, month, date), where the year is a leap one)", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(2016, 1, 29);
 
@@ -255,7 +253,7 @@
 
 		});
 
-		QUnit.test("works properly with a value outside date range in a leap year", function () {
+		QUnit.test("With 3 parameters(year, month, date), where date value is outside date range and the year is leap one", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(2016, 1, 30);
 
@@ -265,7 +263,7 @@
 
 		});
 
-		QUnit.test("works properly with a value outside date range with month and year recalculations", function () {
+		QUnit.test("With 3 parameters(year, month, date), where date value is outside date range with month and year recalculations", function () {
 			//Act
 			var oCalendarDate = new CalendarDate(2017, 11, 32);
 
@@ -276,8 +274,7 @@
 
 		});
 
-		//check with 4 parameters - date, month, year, string (Calendar type) (Islamic, Gregorian, Japaneese)
-		QUnit.test("works properly with a fourth parameter - a calendar type", function (assert) {
+		QUnit.test("With 4 parameters(year, month, date, calendarType)", function (assert) {
 			//Act
 			var oSourceDate = new CalendarDate(2017, 3, 22),
 					oTargetCalendarDate;
@@ -310,6 +307,7 @@
 			assert.equal(oCalendarDate.getYear(), 2000, "setYear() works properly");
 			assert.equal(oCalendarDate.getMonth(), 6, "setMonth() works properly");
 			assert.equal(oCalendarDate.getDate(), 23, "setDate() works properly");
+			assert.equal(oCalendarDate.getDay(), 0, "getDay() works properly");
 
 		});
 

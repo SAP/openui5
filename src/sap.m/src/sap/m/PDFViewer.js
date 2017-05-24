@@ -10,9 +10,10 @@ sap.ui.define([
 		"./library",
 		"sap/ui/core/Control",
 		"sap/ui/Device",
-		"sap/m/PDFViewerRenderManager"
+		"sap/m/PDFViewerRenderManager",
+		"sap/m/MessageBox"
 	],
-	function (jQuery, library, Control, Device, PDFViewerRenderManager) {
+	function (jQuery, library, Control, Device, PDFViewerRenderManager, MessageBox) {
 		"use strict";
 
 		var aAllowedMimeTypes = Object.freeze([
@@ -53,12 +54,12 @@ sap.ui.define([
 						 * Defines the height of the PDF viewer control, respective to the height of
 						 * the parent container. Can be set to a percent, pixel, or em value.
 						 */
-						height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
+						height: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
 						/**
 						 * Defines the width of the PDF viewer control, respective to the width of the
 						 * parent container. Can be set to a percent, pixel, or em value.
 						 */
-						width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
+						width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
 						/**
 						 * Specifies the path to the PDF file to display. Can be set to a relative or
 						 * an absolute path.
@@ -66,26 +67,33 @@ sap.ui.define([
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
 						 * A custom error message that is displayed when the PDF file cannot be loaded.
-						 * the PDF file.
+						 * @deprecated since version 1.50.0
 						 */
 						errorMessage: {type: "string", group: "Misc", defaultValue: null},
 						/**
-						 * A custom text that is displayed instead of the loaded PDF frame when an error
-						 * occurs.
+						 * A custom text that is displayed instead of the PDF file content when the PDF
+						 * file cannot be loaded.
 						 */
 						errorPlaceholderMessage: {type: "string", group: "Misc", defaultValue: null},
 						/**
 						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
 						 * is set to open in a popup dialog.
+						 * @deprecated since version 1.50.0
 						 */
-						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null}
+						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null},
+
+						/**
+						 * A custom title for the PDF viewer. Works only if the PDF viewer is embedded in
+						 * the layout.
+						 */
+						title: {type: "string", group: "Misc", defaultValue: null}
 					},
 					aggregations: {
 						/**
 						 * A custom control that can be used instead of the error message specified by the
 						 * errorPlaceholderMessage property.
 						 */
-						errorPlaceholder: {type : "sap.ui.core.Control", multiple : false},
+						errorPlaceholder: {type: "sap.ui.core.Control", multiple: false},
 						/**
 						 * A multiple aggregation for buttons that can be added to the footer of the popup
 						 * dialog. Works only if the PDF viewer is set to open in a popup dialog.
@@ -108,6 +116,8 @@ sap.ui.define([
 						 * example, the default configuration of the Mozilla Firefox browser may not allow checking
 						 * the loaded content. This may also happen when the source PDF file is stored in a different
 						 * domain.
+						 * If you want no error message to be displayed when this event is fired, call the
+						 * preventDefault() method inside the event handler.
 						 */
 						sourceValidationFailed: {}
 					}
@@ -159,8 +169,11 @@ sap.ui.define([
 			this._bIsPopupOpen = false;
 
 			this._initPopupControl();
+			this._initPopupDownloadButtonControl();
 			this._initPlaceholderLinkControl();
 			this._initPlaceholderMessagePageControl();
+			this._initToolbarDownloadButtonControl();
+			this._initOverflowToolbarControl();
 
 			this._initControlState();
 		};
@@ -179,8 +192,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param sWidth
-		 *
+		 * Sets the width of the PDFViewer.
+		 * @param {sap.ui.core.CSSSize} sWidth The width of the PDFViewer as CSS size.
+		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
 		 * @public
 		 */
 		PDFViewer.prototype.setWidth = function (sWidth) {
@@ -195,8 +209,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param sHeight
-		 *
+		 * Sets the height of the PDFViewer.
+		 * @param {sap.ui.core.CSSSize} sHeight The height of the PDFViewer as CSS size.
+		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
 		 * @public
 		 */
 		PDFViewer.prototype.setHeight = function (sHeight) {
@@ -208,6 +223,14 @@ sap.ui.define([
 
 			oDomRef.css("height", this._getRenderHeight());
 			return this;
+		};
+
+		PDFViewer.prototype.onBeforeRendering = function () {
+			// IE things
+			// because of the detecting error state in IE (double call of unload listener)
+			// it is important to reset the flag before each render
+			// otherwise it wrongly detects error state (the unload listener is called once even in valid use case)
+			this._bOnBeforeUnloadFired = false;
 		};
 
 		/**
@@ -265,13 +288,26 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._fireErrorEvent = function () {
+			this._renderErrorState();
+			this.fireEvent("error", {}, true);
+		};
+
+		/**
+		 * @private
+		 */
+		PDFViewer.prototype._renderErrorState = function () {
+			var oDownloadButton = this._objectsRegister.getToolbarDownloadButtonControl();
+			oDownloadButton.setEnabled(false);
+
+			var oDownloadButton = this._objectsRegister.getPopupDownloadButtonControl();
+			oDownloadButton.setEnabled(false);
+
 			this.setBusy(false);
 			this._bRenderPdfContent = false;
 			// calls controls invalidate because the error state should be render.
 			// It is controlled by the state variable called _bRenderPdfContent
 			// The main invalidate set the state of the control to the default and tries to load and render pdf
 			Control.prototype.invalidate.call(this);
-			this.fireEvent("error", {}, true);
 		};
 
 		/**
@@ -280,6 +316,7 @@ sap.ui.define([
 		PDFViewer.prototype._fireLoadedEvent = function () {
 			this._bRenderPdfContent = true;
 			this.setBusy(false);
+			this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
 			this.fireEvent("loaded");
 		};
 
@@ -307,7 +344,10 @@ sap.ui.define([
 				} catch (error) {
 					// even though the sourceValidationFailed event is fired, the default behaviour is to continue.
 					// when preventDefault is on event object is called, the rendering ends up with error
-					bContinue = this.fireEvent("sourceValidationFailed", {}, true);
+					if (!Device.browser.firefox && this.fireEvent("sourceValidationFailed", {}, true)) {
+						this._showMessageBox();
+						return;
+					}
 				}
 
 				if (bContinue && isSupportedMimeType(sCurrentContentType)) {
@@ -338,6 +378,9 @@ sap.ui.define([
 			switch (oEvent.target.readyState) {
 				case INTERACTIVE_READY_STATE: // IE11 only fires interactive
 				case COMPLETE_READY_STATE:
+					// iframe content is not loaded when interactive ready state is fired
+					// even though complete ready state should be fired. We were not able to simulate firing complete ready state
+					// on IE. Therefore the validation of source is not possible.
 					this._fireLoadedEvent();
 					break;
 			}
@@ -376,6 +419,28 @@ sap.ui.define([
 			if (!isSupportedMimeType(sCurrentContentType)) {
 				this._fireErrorEvent();
 			}
+		};
+
+		/**
+		 * @param oEvent
+		 * @private
+		 */
+		PDFViewer.prototype._onDownloadButtonClickListener = function (oEvent) {
+			var oWindow = window.open(this.getSource());
+			oWindow.focus();
+		};
+
+		/**
+		 * @param string oClickedButtonId
+		 * @private
+		 */
+		PDFViewer.prototype._onSourceValidationErrorMessageBoxCloseListener = function (oClickedButtonId) {
+			if (oClickedButtonId === MessageBox.Action.CANCEL) {
+				this._renderErrorState();
+			} else {
+				this._fireLoadedEvent();
+			}
+
 		};
 
 		/**
@@ -517,12 +582,31 @@ sap.ui.define([
 		};
 
 		/**
+		 * @private
+		 */
+		PDFViewer.prototype._showMessageBox = function () {
+			MessageBox.show(this._getLibraryResourceBundle().getText("PDF_VIEWER_SOURCE_VALIDATION_MESSAGE_TEXT"), {
+				icon: MessageBox.Icon.WARNING,
+				title: this._getLibraryResourceBundle().getText("PDF_VIEWER_SOURCE_VALIDATION_MESSAGE_HEADER"),
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				defaultAction: MessageBox.Action.CANCEL,
+				id: this.getId() + "-validationErrorSourceMessageBox",
+				styleClass: "sapUiSizeCompact",
+				contentWidth: '100px',
+				onClose: this._onSourceValidationErrorMessageBoxCloseListener.bind(this)
+			});
+		};
+
+		/**
 		 * Lifecycle method
 		 * @private
 		 */
 		PDFViewer.prototype.exit = function () {
 			jQuery.each(this._objectsRegister, function (iIndex, fnGetObject) {
-				fnGetObject().destroy();
+				var oObject = fnGetObject(true);
+				if (oObject) {
+					oObject.destroy();
+				}
 			});
 		};
 

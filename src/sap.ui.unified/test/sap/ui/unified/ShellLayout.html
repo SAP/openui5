@@ -15,32 +15,32 @@
 	<script>
 	function createContent(sText){
 		var aContent = [];
-		aContent.push(new sap.ui.commons.TextView({text: sText}));
-		aContent.push(new sap.ui.commons.Button({
+		aContent.push(new sap.m.Text({text: sText}));
+		aContent.push(new sap.m.Button({
 			text: "Pane",
 			press: function(){
 				oShell.setShowPane(!oShell.getShowPane());
 			}
 		}));
-		aContent.push(new sap.ui.commons.Button({
+		aContent.push(new sap.m.Button({
 			text: "CurtainPane",
 			press: function(){
 				oShell.setShowCurtainPane(!oShell.getShowCurtainPane());
 			}
 		}));
-		aContent.push(new sap.ui.commons.Button({
+		aContent.push(new sap.m.Button({
 			text: "HeaderHiding",
 			press: function(){
 				oShell.setHeaderHiding(!oShell.getHeaderHiding());
 			}
 		}));
-		aContent.push(new sap.ui.commons.Button({
+		aContent.push(new sap.m.Button({
 			text: "Curtain",
 			press: function(){
 				oShell.setShowCurtain(!oShell.getShowCurtain());
 			}
 		}));
-		aContent.push(new sap.ui.commons.Button({
+		aContent.push(new sap.m.Button({
 			text: "HeaderVisible",
 			press: function(){
 				oShell.setHeaderVisible(!oShell.getHeaderVisible());
@@ -75,34 +75,34 @@
 		alert("Item pressed");
 	}
 
-	var oAddItem = new sap.ui.commons.Button({
+	var oAddItem = new sap.m.Button({
 		text: "Add Header Item",
 		press: function(){
 			oHeader.addHeadItem(new sap.ui.unified.ShellHeadItem({
-				icon: oImage.getChecked() ? "../images/icon.gif" : "sap-icon://search",
+				icon: oImage.getSelected() ? "../images/icon.gif" : "sap-icon://search",
 				press: itemPressed
 			}));
 		}
 	});
 
-	var oAddEndItem = new sap.ui.commons.Button({
+	var oAddEndItem = new sap.m.Button({
 		text: "Add Header End Item",
 		press: function(){
 			oHeader.addHeadEndItem(new sap.ui.unified.ShellHeadItem({
-				icon: oImage.getChecked() ? "../images/icon.gif" : "sap-icon://search",
+				icon: oImage.getSelected() ? "../images/icon.gif" : "sap-icon://search",
 				press: itemPressed
 			}));
 		}
 	});
 
-	var oAddUserItem = new sap.ui.commons.Button({
+	var oAddUserItem = new sap.m.Button({
 		text: "Add User Item",
 		press: function(){
 			if(oHeader.getUser()){
 				oHeader.destroyUser();
 			}
 			oHeader.setUser(new sap.ui.unified.ShellHeadUserItem({
-				image: oImage.getChecked() ? "../images/person.jpg" : "sap-icon://person-placeholder",
+				image: oImage.getSelected() ? "../images/person.jpg" : "sap-icon://person-placeholder",
 				username: oUsername.getValue(),
 				tooltip: "User item tooltip",
 				press: itemPressed
@@ -110,14 +110,14 @@
 		}
 	});
 
-	var oSetLogo = new sap.ui.commons.Button({
+	var oSetLogo = new sap.m.Button({
 		text: "Set Logo",
 		press: function(){
 			oHeader.setLogo("images/testlogo_200x50.png");
 		}
 	});
 
-	var oSetSearch = new sap.ui.commons.Button({
+	var oSetSearch = new sap.m.Button({
 		text: "Set Search",
 		press: function(){
 			if(!oHeader.getSearch()){
@@ -126,8 +126,9 @@
 		}
 	});
 
-	var oUsername = new sap.ui.commons.TextField({
+	var oUsername = new sap.m.Input({
 		value: "Karl Mustermann",
+		width: "200px",
 		change: function(){
 			if(oHeader.getUser()){
 				oHeader.getUser().setUsername(oUsername.getValue());
@@ -135,9 +136,9 @@
 		}
 	});
 
-	var oImage = new sap.ui.commons.CheckBox({text: "Use Image"});
+	var oImage = new sap.m.CheckBox({text: "Use Image"});
 
-	var oClear = new sap.ui.commons.Button({
+	var oClear = new sap.m.Button({
 		text: "Clear",
 		press: function(){
 			oHeader.destroyUser();
@@ -148,11 +149,8 @@
 		}
 	});
 
-	var aAdditionalContent = [new sap.ui.commons.HorizontalDivider(),
-	        		          oAddItem, oAddEndItem, oAddUserItem,
-	        		          new sap.ui.commons.HorizontalDivider(),
+	var aAdditionalContent = [oAddItem, oAddEndItem, oAddUserItem,
 	        		          oSetLogo, oSetSearch,
-	        		          new sap.ui.commons.HorizontalDivider(),
 	        		          oUsername, oImage, oClear];
 	for(var i=0; i<aAdditionalContent.length; i++){
 		oShell.addContent(aAdditionalContent[i]);

@@ -286,7 +286,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the managed object model of the the fragment control
+	 * Returns the managed object model of the fragment control
 	 *
 	 * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model of the fragment control
 	 *

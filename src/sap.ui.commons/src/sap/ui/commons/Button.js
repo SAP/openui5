@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// webkit && firefox on mac does not focus a Button on click, it even unfocuses it onmousedown!
 		if (bFocus && (!!sap.ui.Device.browser.webkit || (!!sap.ui.Device.browser.firefox && navigator.platform.indexOf("Mac") === 0))) {
 			if (sap.ui.Device.browser.mobile && !!sap.ui.Device.browser.webkit) {
-				//In mobile Webkit Browsers (IPad) the focus must be set immediately to ensure that a focusout happens whereever the
+				//In mobile Webkit Browsers (IPad) the focus must be set immediately to ensure that a focusout happens wherever the
 				//focus currently is. The deleayedCall below is still needed due to the reason described above. (CSN 2536817 2012)
 				this.focus();
 			}

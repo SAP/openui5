@@ -24,7 +24,7 @@
 			<f:content>
 				<core:Title text="Office" />
 				<Label text="Name" />
-				<Input value="{SupplierName}" />
+				<Input id="name" value="{SupplierName}" />
 				<Label text="Street/No." />
 				<Input value="{Street}">
 				</Input>

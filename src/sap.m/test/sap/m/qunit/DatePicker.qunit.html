@@ -853,7 +853,7 @@
 				},
 				/**
 				 * Click on a calendar month from the monthPicker
-				 * @param iIndex {int} 0..11 zero based index of the month
+				 * @param {int} iIndex 0..11 zero based index of the month
 				 */
 				clickOnMonth: function (iIndex) {
 					var $Items = jQuery("#SDP-cal--MP").find(".sapUiCalItem"),
@@ -864,7 +864,7 @@
 				},
 				/**
 				 * Click on a calendar year from the yearPicker
-				 * @param iYear {int} Year
+				 * @param {int} iYear Year
 				 */
 				clickOnYear: function (iYear) {
 					var $Target = jQuery('[data-sap-year-start="' + iYear + '0101"]', '#SDP-cal--YP');

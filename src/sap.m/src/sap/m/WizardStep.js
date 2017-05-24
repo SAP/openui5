@@ -152,7 +152,7 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 		}
 
 		if (this.getSubsequentSteps().length === 1) {
-			return sap.ui.getCore().byId(this.getSubsequentSteps[0]);
+			return sap.ui.getCore().byId(this.getSubsequentSteps()[0]);
 		}
 
 		return null;

@@ -421,7 +421,7 @@ sap.ui.define([
 			// determine the next section that will appear selected in the anchorBar after the scroll
 			var sNextSelectedSection = sRequestedSectionId;
 
-			// if the requestedSection is a subsection, the the nextSelectedSection will be its parent (since anchorBar contains only first-level sections)
+			// if the requestedSection is a subsection, the nextSelectedSection will be its parent (since anchorBar contains only first-level sections)
 			if (oRequestedSection instanceof library.ObjectPageSubSection &&
 				oRequestedSectionParent instanceof library.ObjectPageSection) {
 				sNextSelectedSection = oRequestedSectionParent.getId();
@@ -917,7 +917,7 @@ sap.ui.define([
 	/**
 	 * Handler for F6 and Shift + F6 group navigation
 	 *
-	 * @param oEvent {jQuery.EventObject}
+	 * @param {jQuery.Event} oEvent
 	 * @param bShiftKey serving as a reference if shift is used
 	 * @private
 	 */
@@ -961,7 +961,7 @@ sap.ui.define([
 
 		this._sHierarchicalSelectMode = AnchorBar._hierarchicalSelectModes.Text;
 
-		//save max for arrow show/hide management, the max position is the required scroll for the the item to be fully visible
+		//save max for arrow show/hide management, the max position is the required scroll for the item to be fully visible
 		this._iMaxPosition = -1;
 
 		//show/hide scrolling arrows

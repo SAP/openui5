@@ -4,6 +4,7 @@
 
 .aboutLink {
 	vertical-align: text-bottom;
+	margin-left: 0.25rem;
 }
 
 .rateButton.sapMBtn span {
@@ -92,48 +93,48 @@
 }
 
 /* ActionButton */
-.sapUiDemokit .sapUiDocActionButton {
+.sapUiDemokit .actionButton {
 	padding-top: 0;
 	height: 2.375rem;
 }
 
-.sapUiDemokit .sapUiDocActionButton .sapMBtnInner {
+.sapUiDemokit .actionButton .sapMBtnInner {
 	padding-left: 0.875rem;
 	padding-right: 0.875rem;
 	height: 2.375rem;
 }
 
-.sapUiDemokit .sapUiDocActionButton .sapMBtnInner.sapMBtnIconFirst {
+.sapUiDemokit .actionButton .sapMBtnInner.sapMBtnIconFirst {
 	padding-left: 2.1875rem;
 }
 
-.sapUiDemokit .sapUiDocActionButton .sapMBtnContent,
-.sapUiDemokit .sapUiDocActionButton .sapMBtnIcon  {
+.sapUiDemokit .actionButton .sapMBtnContent,
+.sapUiDemokit .actionButton .sapMBtnIcon  {
 	line-height: 2.375rem;
 	font-size: 1.1rem;
 }
 
 @media only screen and (min-width: 64rem) {
-	.sapUiDemokit .sapUiDocActionButton {
+	.sapUiDemokit .actionButton {
 		padding-top: 0;
 		height: 3.25rem;
 	}
 
-	.sapUiDemokit .sapUiDocActionButton .sapMBtnInner {
+	.sapUiDemokit .actionButton .sapMBtnInner {
 		height: 3.250rem;
 	}
 
-	.sapUiDemokit .sapUiDocActionButton .sapMBtnInner.sapMBtnIconFirst {
+	.sapUiDemokit .actionButton .sapMBtnInner.sapMBtnIconFirst {
 		padding-left: 2.5rem;
 	}
 
-	.sapUiDemokit .sapUiDocActionButton .sapMBtnIcon {
+	.sapUiDemokit .actionButton .sapMBtnIcon {
 		margin-left: 0.6rem;
 		margin-right: 0.6rem;
 	}
 
-	.sapUiDemokit .sapUiDocActionButton .sapMBtnContent,
-	.sapUiDemokit .sapUiDocActionButton .sapMBtnIcon {
+	.sapUiDemokit .actionButton .sapMBtnContent,
+	.sapUiDemokit .actionButton .sapMBtnIcon {
 		line-height: 3.25rem;
 		font-size: 1.375rem;
 	}
@@ -557,4 +558,8 @@ html.sap-phone .sapUiDocumentationTopicTitle {
 
 .sapUiDocumentationReturnsTable {
 	margin-top: 20px;
+}
+
+.sapUiDocumentationBorrowedTitle {
+	font-size: 1.25rem !important;
 }

@@ -49,7 +49,7 @@ sap.ui.define([
 	 * @param {map} [mParameters.metadataUrlParams] Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
 	 * @param {string} [mParameters.defaultBindingMode=OneWay] Sets the default binding mode for the model
 	 * @param {string} [mParameters.defaultCountMode=sap.ui.model.odata.CountMode.Request] Sets the default count mode for the model
-	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Server] Sets the default operation mode for the model
+	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Default] Sets the default operation mode for the model
 	 * @param {string} [mParameters.defaultUpdateMethod=sap.ui.model.odata.UpdateMethod.Merge] Default update method which is used for all update requests
 	 * @param {map} [mParameters.metadataNamespaces] Map of namespaces (name => URI) used for parsing the service metadata
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
@@ -138,7 +138,7 @@ sap.ui.define([
 			this.bLoadAnnotationsJoined = bLoadAnnotationsJoined !== false;
 			this.sAnnotationURI = sAnnotationURI;
 			this.sDefaultCountMode = sDefaultCountMode || CountMode.Request;
-			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Server;
+			this.sDefaultOperationMode = sDefaultOperationMode || OperationMode.Default;
 			this.sMetadataLoadEvent = null;
 			this.oMetadataFailedEvent = null;
 			this.sRefreshGroupId = undefined;
@@ -369,7 +369,8 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Fired, when the annotations document was successfully loaded.
+	 * Fired, when the annotations document was successfully loaded. If there are more than one annotation documents loaded then this
+	 * event is fired if at least one document was successfully loaded. Event is fired only once for all annotation documents.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
@@ -378,12 +379,12 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.odata.v2.ODataAnnotations~Source[]} oEvent.getParameters.result One or several annotation source(s)
+	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} oEvent.getParameters.result An array consisting of one or several annotation sources and/or errors containing a source property and error details.
 	 * @public
 	 */
 
 	/**
-	 * Fired, when the annotations document failed to loaded.
+	 * Fired, when the annotations document failed to loaded. Event is fired only once for all annotation documents.
 	 *
 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
 	 *
@@ -1488,6 +1489,8 @@ sap.ui.define([
 	 * entity needs to be fetched from the server asynchronously. In case no callback function
 	 * is provided, the request will not be triggered.
 	 *
+	 * If a callback function is given, the created binding context for a fetched entity is passed as argument to the given callback function.
+	 *
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath Binding path
 	 * @param {object} [oContext] Binding context
@@ -1495,9 +1498,9 @@ sap.ui.define([
 	 * @param {string} [mParameters.expand] Value for the OData <code>$expand</code> query parameter which should be included in the request
 	 * @param {string} [mParameters.select] Value for the OData <code>$select</code> query parameter which should be included in the request
 	 * @param {map} [mParameters.custom] Optional map of custom query parameters, names of custom parameters must not start with <code>$</code>.
-	 * @param {function} [fnCallBack] Function to be called when context has been created
+	 * @param {function} [fnCallBack] Function to be called when context has been created. The parameter of the callback function is the newly created binding context.
 	 * @param {boolean} [bReload] Whether to reload data
-	 * @return {sap.ui.model.Context} The created binding context
+	 * @return {sap.ui.model.Context} The created binding context, only if the data is already available and the binding context could be created synchronously
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
@@ -1930,7 +1933,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._removeEntity = function(sKey) {
-		sKey = sKey && this._normalizeKey(sKey);
+		sKey = sKey && ODataUtils._normalizeKey(sKey);
 		delete this.oData[sKey];
 		delete this.mChangedEntities[sKey];
 		delete this.mContexts["/" + sKey];
@@ -1944,7 +1947,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getEntity = function(sKey) {
-		sKey = sKey && this._normalizeKey(sKey);
+		sKey = sKey && ODataUtils._normalizeKey(sKey);
 		return this.oData[sKey];
 	};
 
@@ -1966,7 +1969,7 @@ sap.ui.define([
 		} else if (typeof vValue === 'string') {
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey && this._normalizeKey(sKey);
+		return sKey && ODataUtils._normalizeKey(sKey);
 	};
 
 	/**
@@ -2020,34 +2023,6 @@ sap.ui.define([
 		}
 		sKey += ")";
 		return sKey;
-	};
-
-	/**
-	 * Normalizes the given canonical key.
-	 *
-	 * Although keys contained in OData response must be canonical, there are
-	 * minor differences (like capitalization of suffixes for Decimal, Double,
-	 * Float) which can differ and cause equality checks to fail.
-	 *
-	 * @param {string} sKey The canonical key of an entity
-	 * @returns {string} Normalized key of the entry
-	 * @private
-	 */
-	// Define regular expression and function outside function to avoid instatiation on every call
-	var rNormalizeString = /([(=,])('.*?')([,)])/g,
-		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
-		rNormalizeBinary = /([(=,])(X')/g,
-		fnNormalizeString = function(value, p1, p2, p3) {
-			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
-		},
-		fnNormalizeCase = function(value) {
-			return value.toLowerCase();
-		},
-		fnNormalizeBinary = function(value, p1) {
-			return p1 + "binary'";
-		};
-	ODataModel.prototype._normalizeKey = function(sKey) {
-		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
 	};
 
 	/**
@@ -3343,7 +3318,6 @@ sap.ui.define([
 	 *
 	 * @param {object} oRequest The request
 	 * @param {object} oResponse The response
-	 * @param {function} fnError The error callback function
 	 * @param {boolean} bBatch Process success for single/batch request
 	 * @private
 	 */

@@ -10,7 +10,7 @@
 				width="100%">
 			<items>
 				<Image
-						src="./resources/sap/ui/documentation/sdk/images/SAP_grad_R_min.png"
+						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
 						height="2.5rem">
 				</Image>
 				<FlexBox

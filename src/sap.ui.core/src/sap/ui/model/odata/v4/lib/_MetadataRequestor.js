@@ -53,7 +53,11 @@ sap.ui.define([
 							}
 							fnResolve(oJSON);
 						}, function (jqXHR, sTextStatus, sErrorMessage) {
-							fnReject(_Helper.createError(jqXHR));
+							var oError = _Helper.createError(jqXHR);
+
+							jQuery.sap.log.error("GET " + sUrl, oError.message,
+								"sap.ui.model.odata.v4.lib._MetadataRequestor");
+							fnReject(oError);
 						});
 					});
 				}
