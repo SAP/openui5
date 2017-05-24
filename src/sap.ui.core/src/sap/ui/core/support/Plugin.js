@@ -96,7 +96,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 		return this._title;
 	};
 
-
 	/**
 	 * Returns whether a plugin instance can run in the diagnostics tool window, default is <code>true</code>.
 	 * Plugins that are <b>only</b> available on the application window should return <code>false</code> and overwrite
