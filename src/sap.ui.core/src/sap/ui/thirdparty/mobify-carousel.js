@@ -376,8 +376,6 @@ Mobify.UI.Carousel = (function($, Utils) {
 	    			canceled = true;
 	    			return;
 	    		}
-	    		// mark the event for components that needs to know if the event was handled by the carousel
-	    		e.setMarked();
 	        	//SAP MODIFICATION END
 
 	            dragging = true;
@@ -431,8 +429,6 @@ Mobify.UI.Carousel = (function($, Utils) {
 	            if (!dragging || e.isMarked("delayedMouseEvent")) {
 	                return;
 	            }
-	            // mark the event for components that needs to know if the event was handled by the carousel
-	            e.setMarked();
 	            // SAP MODIFICATION END
 
 	            dragging = false;
