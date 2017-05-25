@@ -628,7 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				var iRequestedLength = this._calculateRequestLength(iMaxGroupSize, oCurrentSection);
 
-				//if we are in the autoexpand mode "bundled", supress additional requests during the tree traversal
+				//if we are in the autoexpand mode "bundled", suppress additional requests during the tree traversal
 				//paging is handled differently
 				if (oNode.autoExpand >= 0 && this._autoExpandMode === TreeAutoExpandMode.Bundled) {
 					iRequestedLength = Math.max(0, iMaxGroupSize);
@@ -1433,7 +1433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Marks a range of tree nodes as selected/deselected, starting with iFromIndex going to iToIndex.
 		 * The TreeNodes are referenced via their absolute row index.
-		 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
+		 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 		 * Invisible nodes (collapsed child nodes) will not be regarded.
 		 */
 		TreeBindingAdapter.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {
@@ -1618,7 +1618,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Gets the collapsing behavior when parent nodes are collapsed.
-		 * @param {boolean} bCollapseRecursive
 		 */
 		TreeBindingAdapter.prototype.getCollapseRecursive = function () {
 			return this.bCollapseRecursive;

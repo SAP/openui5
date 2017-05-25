@@ -361,6 +361,38 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		return ajaxPromises;
 	};
 
+	/**
+	 * Factory function for creating a RuleSet. Helps reducing API complexity.
+	 * @private
+	 * @param {object} librarySupport object to be used for RuleSet creation
+	 * @returns {object} ruleset object to be added to _mRuleSets
+	 */
+	Main.prototype._createRuleSet = function (librarySupport) {
+		var oLib = {
+			name: librarySupport.name,
+			niceName: librarySupport.niceName
+		};
+		var oRuleSet = new RuleSet(oLib);
+
+		for (var i = 0; i < librarySupport.ruleset.length; i++) {
+			var ruleset = librarySupport.ruleset[i];
+
+			// If the ruleset contains arrays of rules make sure we add them.
+			if (jQuery.isArray(ruleset)) {
+				for (var k = 0; k < ruleset.length; k++) {
+					oRuleSet.addRule(ruleset[k]);
+				}
+			} else {
+				oRuleSet.addRule(ruleset);
+			}
+		}
+
+		return {
+			lib: oLib,
+			ruleset: oRuleSet
+		};
+	};
+
 	Main.prototype._fetchSupportRuleSets = function (libNames) {
 		libNames = libNames || [];
 		libNames = libNames.concat(Object.keys(sap.ui.getCore().getLoadedLibraries()));
@@ -374,8 +406,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				RuleSet.versionInfo = versionInfo;
 
 				var libFetchPromises = that._fetchLibraryFiles(libNames, function (libName) {
-					var normalizedLibName = libName.replace('.' + customSuffix, '');
-					that._mRuleSets[normalizedLibName] = jQuery.sap.getObject(libName).library.support;
+					var normalizedLibName = libName.replace('.' + customSuffix, ''),
+						libSupport = jQuery.sap.getObject(libName).library.support;
+
+					if (libSupport.ruleset instanceof RuleSet) {
+						that._mRuleSets[normalizedLibName] = libSupport;
+					} else {
+						that._mRuleSets[normalizedLibName] = that._createRuleSet(libSupport);
+					}
 				});
 
 				Promise.all(libFetchPromises).then(function () {
@@ -656,13 +694,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @return {object} contains all the information required to create a report.
 	 */
 	Main.prototype._getReportData = function (reportConstants) {
-		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel());
-
+		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel()),
+			rules = this._mRuleSets,
+			selectedRules = this._oSelectedRulesIds;
 		return {
 			issues: issues,
 			technical: this._oDataCollector.getTechInfoJSON(),
 			application: this._oDataCollector.getAppInfo(),
-			rules: IssueManager.getRulesViewModel(this._mRulesets, this._oSelectedRulesIds, issues),
+			rules: IssueManager.getRulesViewModel(rules, selectedRules, issues),
 			scope: {
 				executionScope: this._oExecutionScope,
 				scopeDisplaySettings: {
@@ -671,7 +710,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				}
 			},
 			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
-			analysisDurationTitle: reportConstants.analysisDurationTitle
+			analysisDurationTitle: reportConstants.analysisDurationTitle,
+			name: constants.SUPPORT_ASSISTANT_NAME
 		};
 	};
 

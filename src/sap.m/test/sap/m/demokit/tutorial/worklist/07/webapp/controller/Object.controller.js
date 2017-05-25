@@ -1,16 +1,16 @@
 /*global location*/
 sap.ui.define([
-	"myCompany/myApp/controller/BaseController",
+	"mycompany/myapp/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/History",
-	"myCompany/myApp/model/formatter",
+	"mycompany/myapp/model/formatter",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
 ], function(BaseController, JSONModel, History, formatter, DateFormat, Filter, FilterOperator) {
 	"use strict";
 
-	return BaseController.extend("myCompany.myApp.controller.Object", {
+	return BaseController.extend("mycompany.myapp.controller.Object", {
 
 		formatter: formatter,
 

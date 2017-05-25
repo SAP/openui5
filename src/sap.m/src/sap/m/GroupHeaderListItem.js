@@ -90,6 +90,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			oParent.getColumns().forEach(function(oColumn) {
 				oColumn.clearLastValue();
 			});
+
+			// defines the tag name
+			this.TagName = "tr";
 		}
 	};
 

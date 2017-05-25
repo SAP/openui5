@@ -313,6 +313,22 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.strictEqual(aDirtyChanges[0].getComponent(), 'testScenarioComponent');
 	});
 
+	QUnit.test("addPreparedChange shall add a change to flex persistence", function(assert) {
+
+		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
+		var oChange = new Change(labelChangeContent);
+
+		var oPrepChange = this.oFlexController.addPreparedChange(oChange, oComponent);
+		assert.ok(oPrepChange);
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(this.oFlexController.getComponentName(), this.oFlexController.getAppVersion());
+		var aDirtyChanges = oChangePersistence.getDirtyChanges();
+
+		assert.strictEqual(aDirtyChanges.length, 1);
+		assert.strictEqual(aDirtyChanges[0].getSelector().id, "abc123");
+		assert.strictEqual(aDirtyChanges[0].getNamespace(), "b");
+	});
+
 	QUnit.test("addChange shall add a change and contain the applicationVersion in the connector", function(assert) {
 		var oControl = new Control();
 

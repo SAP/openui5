@@ -73,10 +73,16 @@
 	});
 
 
-	var oDialog = new sap.ui.commons.Dialog({
+	var oDialog = new sap.m.Dialog({
 		width: "200px",
 		height: "200px",
-		title: "Dialog"
+		title: "Dialog",
+		endButton: new sap.m.Button({
+			text: "Close",
+			press: function() {
+				oDialog.close();
+			}
+		})
 	});
 
 	var oCntnt = {
@@ -85,57 +91,57 @@
 				new CurtainContent("CurtainContent", {
 					text: "Title",
 					content: [
-						new sap.ui.commons.Button({
+						new sap.m.Button({
 							text: "Focussable Button #1",
 							press: function() { alert("Yay, you pressed a button..."); }
 						}),
-						new sap.ui.commons.TextView({text: "This is the search screen\n\n"+sLorem})
+						new sap.m.Text({text: "This is the search screen\n\n"+sLorem})
 					]
 				})
 			],
 			curtPane: [
-		       new sap.ui.commons.Button({
+		       new sap.m.Button({
 		        	text: "Focussable Pane Button #1",
 		        	press: function() { alert("Yay, you pressed a button..."); }
 		        }),
-		       new sap.ui.commons.TextView({text: "Configure the search screen ...\n\n"+sLorem})
+		       new sap.m.Text({text: "Configure the search screen ...\n\n"+sLorem})
 		    ],
 			items: [curtainConfigItm, homeItm],
 			rightItems: [filterItm, closeItm, logoffItm]
 		},
 		"HOME" : {
 			pane: [
- 				new sap.ui.commons.Button({
+ 				new sap.m.Button({
 		        	text: "Focussable Button #2",
 		        	press: function() { alert("Yay, you pressed a button..."); }
 		        }),
-			   new sap.ui.commons.TextView({text: "Configure the home screen ...\n\n"+sLorem})
+			   new sap.m.Text({text: "Configure the home screen ...\n\n"+sLorem})
  			],
-			cntnt: [new sap.ui.commons.Button({
+			cntnt: [new sap.m.Button({
 			        	text: "Click to open App 1",
 			        	press: function(){setState("APP1");}
 			        }),
-			        new sap.ui.commons.Button({
+			        new sap.m.Button({
 			        	text: "Click to open App 2",
 			        	press: function(){setState("APP2");}
 			        }),
-			        new sap.ui.commons.Button({
+			        new sap.m.Button({
 			        	text: "Open a dialog",
 			        	press: function(){
 			        		oDialog.open();
 			        	}
 			        }),
-			        new sap.ui.commons.TextView({text: "Your home screen\n\n"+sLorem})],
+			        new sap.m.Text({text: "Your home screen\n\n"+sLorem})],
 			items: [configItm],
 			rightItems: [logoffItm]
 		},
 		"APP1" : {
-			cntnt: [new sap.ui.commons.TextView({text: "This is App 1\n\n"+sLorem})],
+			cntnt: [new sap.m.Text({text: "This is App 1\n\n"+sLorem})],
 			items: [homeItm],
 			rightItems: [logoffItm]
 		},
 		"APP2" : {
-			cntnt: [new sap.ui.commons.TextView({text: "This is App 2\n\n"+sLorem})],
+			cntnt: [new sap.m.Text({text: "This is App 2\n\n"+sLorem})],
 			items: [homeItm],
 			rightItems: [logoffItm]
 		}

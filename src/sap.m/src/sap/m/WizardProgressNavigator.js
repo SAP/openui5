@@ -227,7 +227,6 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 
 	/**
 	 * Moves the selection backwards by one step.
-	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @public
 	 */
@@ -243,7 +242,6 @@ function (library, Control, ResizeHandler, ItemNavigation, Device, jQuery) {
 
 	/**
 	 * Moves the selection forwards by one step.
-	 * @param {boolean} suppressEvent - Suppress the stepChanged event.
 	 * @returns {sap.m.WizardProgressNavigator} Pointer to the control instance for chaining.
 	 * @public
 	 */

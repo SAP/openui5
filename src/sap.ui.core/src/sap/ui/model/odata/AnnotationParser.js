@@ -99,7 +99,7 @@ var AnnotationParser =  {
 		for (var i = 0; i < aSpecialCases.length; ++i) {
 			var sSpecialCase = aSpecialCases[i];
 
-			mTargetAnnotations[sSpecialCase] = mTargetAnnotations[sSpecialCase] || {}; // Make sure the the target namespace exists
+			mTargetAnnotations[sSpecialCase] = mTargetAnnotations[sSpecialCase] || {}; // Make sure the target namespace exists
 			for (sTarget in mSourceAnnotations[sSpecialCase]) {
 				for (sTerm in mSourceAnnotations[sSpecialCase][sTarget]) {
 					// Now merge every term

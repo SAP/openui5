@@ -124,6 +124,14 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 	margin-bottom: 0.25rem;
 }
 
+/* Removes the empty space in the cell that is below an appointment.
+Use it only if there's one appointment per day for a row that doesn't have interval headers set. */
+.sapMPlanCal.sapUiCalendarAppFitVertically .sapUiCalendarApp {
+	height: 4rem;
+	margin-bottom: 0;
+	line-height: 3rem;
+}
+
 .sapUiCalendarRowAppsRedHeight > .sapUiCalendarRowApps > .sapUiCalendarApp.sapUiCalendarAppTitleOnly{
 	height: 1.375rem;
 }

@@ -542,11 +542,11 @@
 
 			assert.throws(function () {
 				CalendarUtils._checkYearInValidRange(-1);
-			}, "Year is less then 1");
+			}, "Year is less than 1");
 
 			assert.throws(function () {
 				CalendarUtils._checkYearInValidRange(100000);
-			}, "Year is more then 9999");
+			}, "Year is more than 9999");
 
 			assert.throws(function () {
 				CalendarUtils._checkYearInValidRange();

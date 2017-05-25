@@ -102,7 +102,46 @@
 								press: oController.onPress
 							})
 						]
-					})]
+					}),
+					new sap.m.OverflowToolbar({
+						id: "overflowtb0",
+						content: [
+							new sap.m.Button({
+								id: "btn4",
+								text: "Button 1",
+								icon: "sap-icon://cart-3",
+								press: oController.onPress
+							}),
+							new sap.m.Button({
+								id: "btn5",
+								text: "Button 2",
+								icon: "sap-icon://cart-4",
+								press: oController.onPress
+							}),
+							new sap.m.Button({
+								id: "btn6",
+								text: "Button 3",
+								icon:"sap-icon://cart-5",
+								press: oController.onPress
+							}),
+							new sap.m.ToolbarSpacer(),
+							new sap.m.Text({text: "Overflow Toolbar"}),
+							new sap.m.ToolbarSpacer(),
+							new sap.m.MenuButton({
+								id: "mbtn1",
+								text: "MenuButton_2",
+								menu: new sap.m.Menu({
+									itemSelected: oController.onItemPress,
+									items: [
+										new sap.m.MenuItem({id: "mitem3", icon:"sap-icon://accept", text: "Item1"}),
+										new sap.m.MenuItem({id: "mitem4", icon:"sap-icon://decline", text: "Item2", press: oController.onPress})
+									]
+								})
+							})
+
+						]
+					})
+				]
 			}
 		});
 

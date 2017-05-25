@@ -1,4 +1,6 @@
-<mvc:View controllerName="sap.ui.demo.cart.controller.Home"
+<mvc:View
+	id="homeView"
+	controllerName="sap.ui.demo.cart.controller.Home"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -16,7 +18,7 @@
 			</Button>
 		</headerContent>
 		<subHeader>
-			<Toolbar id="searchBar">
+			<Toolbar id="searchBar33343">
 				<SearchField
 					id="searchField"
 					liveChange="onSearch"
@@ -37,7 +39,7 @@
 				visible="false"
 				id="productList"
 				mode="{device>/listMode}"
-				select="onProductListSelect"
+				selectionChange="onProductListSelect"
 				noDataText="{i18n>homeNoData}"
 				items="{
 					path : '/Products',

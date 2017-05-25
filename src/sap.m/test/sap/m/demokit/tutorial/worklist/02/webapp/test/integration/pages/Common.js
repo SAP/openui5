@@ -5,7 +5,7 @@ sap.ui.define([
 	"use strict";
 
 	function getFrameUrl(sHash, sUrlParameters) {
-		var sUrl = jQuery.sap.getResourcePath("myCompany/myApp/app", ".html");
+		var sUrl = jQuery.sap.getResourcePath("mycompany/myapp/app", ".html");
 		sUrlParameters = sUrlParameters ? "?" + sUrlParameters : "";
 
 		if (sHash) {
@@ -17,7 +17,7 @@ sap.ui.define([
 		return sUrl + sUrlParameters + sHash;
 	}
 
-	return Opa5.extend("myCompany.myApp.test.integration.pages.Common", {
+	return Opa5.extend("mycompany.myapp.test.integration.pages.Common", {
 
 		iStartMyApp: function(oOptions) {
 			var sUrlParameters = "";

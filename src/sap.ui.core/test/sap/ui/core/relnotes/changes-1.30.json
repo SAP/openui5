@@ -227,7 +227,7 @@
 			{
 				"id": "23be6d6248779b79b514c775f816afb3777010bc",
 				"type": "FIX",
-				"text": "Enabled sap-ui-core-nojQuery.js to work with JQueryFilter",
+				"text": "Enabled sap-ui-core-nojQuery.js to work with jQueryFilter",
 				"references": []
 			},
 			{
@@ -527,7 +527,7 @@
 			{
 				"id": "f84948f9ffd5e1c0531b007bcd063c0ba58ee9ac",
 				"type": "FIX",
-				"text": "sap.ui.core.routing.HashChanger: Initialized flag marked before firing the the hashchange event",
+				"text": "sap.ui.core.routing.HashChanger: Initialized flag marked before firing the hashchange event",
 				"references": []
 			},
 			{

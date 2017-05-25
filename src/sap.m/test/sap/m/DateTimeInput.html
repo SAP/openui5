@@ -11,6 +11,7 @@
 
 <script>
 	var nNow = new Date().getTime(),
+		list, oListWithTypes,
 		oModel = new sap.ui.model.json.JSONModel();
 
 	oModel.setData({
@@ -175,6 +176,67 @@
 				}
 			}),
 			new sap.m.Input("I2", {value: "Content of events DateTimeInput", editable: false}),
+			/*Table examinating different combination beetween DateTimeInput's type property and binding pattern of 'value'*/
+			oListWithTypes = new sap.m.Table({
+				inset: true,
+				headerText: "Databinding type vs DateTypeInput type",
+				columns: [
+					new sap.m.Column({
+						header: new sap.m.Label({text: "'type' property"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Supported bindings"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "DateTimeInput"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Input bound to the same model property, without binding type"})
+					})
+				],
+				items : [
+					new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Select({
+								items: [
+									new sap.ui.core.Item({text: "sap.m.DateTimeInputType.Date", key: sap.m.DateTimeInputType.Date}),
+									new sap.ui.core.Item({text: "sap.m.DateTimeInputType.Time", key: sap.m.DateTimeInputType.Time}),
+									new sap.ui.core.Item({text: "sap.m.DateTimeInputType.DateTime", key: sap.m.DateTimeInputType.DateTime})
+								],
+								selectedKey: sap.m.DateTimeInputType.Date,
+								change: function(oEvent) {
+									var oSelectedItem = oEvent.getParameter("selectedItem"),
+										oDateTimeInput = oEvent.getSource().getParent().getCells()[2];
+									oDateTimeInput.setType(oSelectedItem.getKey(), "string");
+								}
+							}),
+							new sap.m.Select({
+								items: [
+									new sap.ui.core.Item({text: "sap.ui.model.type.Date", key: "sap/ui/model/type/Date"}),
+									new sap.ui.core.Item({text: "sap.ui.model.type.Time", key: "sap/ui/model/type/Time"}),
+									new sap.ui.core.Item({text: "sap.ui.model.type.DateTime", key: "sap/ui/model/type/DateTime"}),
+									new sap.ui.core.Item({text: "sap.ui.model.odata.type.DateTimeOffset", key: "sap/ui/model/odata/type/DateTimeOffset"}),
+								],
+								selectedKey: "sap/ui/model/type/Date",
+								change: function(oEvent) {
+									var oSelectedItem = oEvent.getParameter("selectedItem"),
+											oDateTimeInput = oEvent.getSource().getParent().getCells()[2],
+											oBI = oDateTimeInput.getBinding("value"),
+											fnClass = sap.ui.requireSync(oSelectedItem.getKey()),
+											oClass = new fnClass();
+									oBI.setType(oClass, "string");
+									oDateTimeInput.rerender();
+								}
+							}),
+							new sap.m.DateTimeInput("DTIBinding",{
+								type: sap.m.DateTimeInputType.Date,
+								value: {path: "/dateVal1", type: new sap.ui.model.type.Date()}
+							}).setModel(oModel),
+							new sap.m.Input({value:{path: "/dateVal1"}}).setModel(oModel)
+						],
+					})
+				]
+			})
 		]
 	});
 

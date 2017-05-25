@@ -631,7 +631,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * Animates slider scrolling.
 		 *
 		 * @private
-		 * @param iSpeed {number} Animating speed
+		 * @param {number} iSpeed Animating speed
 		 */
 		TimePickerSlider.prototype._animateScroll = function(iSpeed) {
 			var $Container = this._getSliderContainerDomRef(),
@@ -840,11 +840,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		/**
 		 * Handles the cycle effect of the slider's list items.
 		 *
-		 * @param iContainerHeight {number} Height of the slider container
-		 * @param iContentHeight {number} Height of the slider content
-		 * @param iTop {number} Current top position
-		 * @param fDragMargin {number} Remaining scroll limit
-		 * @param iContentRepeatNumber {number} Content repetition counter
+		 * @param {number} iContainerHeight Height of the slider container
+		 * @param {number} iContentHeight Height of the slider content
+		 * @param {number} iTop Current top position
+		 * @param {number} fDragMargin Remaining scroll limit
+		 * @param {number} iContentRepeatNumber Content repetition counter
 		 * @returns {number} Newly calculated top position
 		 * @private
 		 */
@@ -867,7 +867,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		/**
 		 * Calculates the index of the snapped element and selects it.
 		 *
-		 * @param iCurrentItem {number} Index of the selected item
+		 * @param {number} iCurrentItem Index of the selected item
 		 * @private
 		 */
 		TimePickerSlider.prototype._scrollerSnapped = function(iCurrentItem) {
@@ -1001,7 +1001,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		/**
 		 * Helper function which enables selecting a slider item with an index offset.
 		 *
-		 * @param iIndexOffset {number} The index offset to be scrolled to
+		 * @param {number} iIndexOffset The index offset to be scrolled to
 		 * @private
 		 */
 		TimePickerSlider.prototype._offsetValue = function(iIndexOffset) {
@@ -1138,7 +1138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Default onTouchStart handler.
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		var onTouchStart = function (oEvent) {
 			var iPageY = oEvent.touches && oEvent.touches.length ? oEvent.touches[0].pageY : oEvent.pageY;
@@ -1157,7 +1157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Default onTouchMove handler.
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		var onTouchMove = function (oEvent) {
 			var iPageY = oEvent.touches && oEvent.touches.length ? oEvent.touches[0].pageY : oEvent.pageY;
@@ -1185,7 +1185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Default onTouchEnd handler.
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		var onTouchEnd = function (oEvent) {
 			var iPageY = oEvent.changedTouches && oEvent.changedTouches.length ? oEvent.changedTouches[0].pageY : oEvent.pageY;

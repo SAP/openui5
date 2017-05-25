@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * <b>Note:</b> the start of the interval calculation is always on the corresponding date at 00:00.
 			 *
-			 * An interval longer then 720 minutes is not allowed. Please use the <code>CalendarDateInterval</code> instead.
+			 * An interval longer than 720 minutes is not allowed. Please use the <code>CalendarDateInterval</code> instead.
 			 *
 			 * A day must be divisible by this interval size. One interval must not include more than one day.
 			 */

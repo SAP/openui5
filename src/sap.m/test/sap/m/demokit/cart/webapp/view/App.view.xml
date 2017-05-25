@@ -1,4 +1,6 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc"
+<mvc:View
+	id="appView"
+	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	displayBlock="true">
 	<App id="App" class="sapUiDemoCart"/>

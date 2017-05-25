@@ -536,7 +536,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * The the actual component for the control
+		 * the actual component for the control
 		 * @param {string} controlName
 		 * @return {string} sActualControlComponent
 		 */

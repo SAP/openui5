@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters', 'sap/ui/layout/BlockLayoutCell'],
+	function(jQuery, library, Parameters, BlockLayoutCell) {
 		"use strict";
 
 		var BlockLayoutCellRenderer = {};
@@ -24,13 +24,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 				this.setWidth(rm, blockLayoutCell);
 			}
 
-			this.addColoringStyle(rm, blockLayoutCell);
 			rm.writeStyles();
 			rm.writeClasses();
 			rm.write(">");
 		};
 
 		BlockLayoutCellRenderer.addColoringStyle = function (rm, blockLayoutCell) {
+			var theme = sap.ui.getCore().getConfiguration().getTheme().toLowerCase();
+			if (!theme || theme.indexOf("hcb") > 0 || theme.indexOf("hcw") > 0) {
+				return;
+			}
+
 			var setIndex = blockLayoutCell.getBackgroundColorSet(),
 				colorIndex = blockLayoutCell.getBackgroundColorIndex(),
 				letters = ['', 'A', 'B', 'C', 'D'],
@@ -42,11 +46,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 				rm.addStyle("background-color", param);
 			}
 
-			if (colorIndex > 4) {
+			if (colorIndex > BlockLayoutCell.maxColorIndex) {
 				jQuery.sap.log.warning("You are using a color index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
 			}
 
-			if (setIndex > 10) {
+			if (setIndex > BlockLayoutCell.maxSetIndex) {
 				jQuery.sap.log.warning("You are using a set index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
 			}
 		};
@@ -113,7 +117,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters
 				contentClass += "sapUiBlockCellCenteredContent";
 			}
 
-			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' >");
+			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' ");
+			this.addColoringStyle(rm, blockLayoutCell);
+			rm.writeStyles();
+			rm.write(">");
+
 			this.addTitle(rm, blockLayoutCell);
 			content.forEach(rm.renderControl);
 			rm.write("</div>");

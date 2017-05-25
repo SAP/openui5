@@ -514,7 +514,7 @@
 			{
 				"id": "66ddd3eec3130f56fd271fed1cb2ad121cbddfe3",
 				"type": "FIX",
-				"text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+				"text": ": Do not run OPA QUnit test under IOS  on non-safari browsers",
 				"references": []
 			}
 		]
@@ -974,7 +974,7 @@
 			{
 				"id": "79bb6de0f060691b43b8228ad0bc6d31256b3fdf",
 				"type": "FIX",
-				"text": "BusyIndicator: Supress 'touchmove' on Control Level",
+				"text": "BusyIndicator: suppress 'touchmove' on Control Level",
 				"references": []
 			},
 			{

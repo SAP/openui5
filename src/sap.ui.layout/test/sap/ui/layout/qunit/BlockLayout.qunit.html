@@ -99,7 +99,7 @@
 			});
 		});
 
-		QUnit.test("Width property change invaldiates the guidelines", function (assert) {
+		QUnit.test("Width property change invalidates the guidelines", function (assert) {
 			this.cells[1].setWidth(3);
 			this.cells.forEach(function (cell) {
 				assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should use the 100% width fallback.");

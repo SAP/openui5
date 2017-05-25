@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 		/**
 		 * Handler for oninput event
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		TimePicker.prototype.oninput = function (oEvent) {
 			MaskInput.prototype.oninput.apply(this, arguments);
@@ -971,7 +971,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		/**
 		 * Handles the press event of the OK button.
 		 *
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 * @private
 		 */
 		TimePicker.prototype._handleOkPress = function(oEvent) {
@@ -1358,7 +1358,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					&& this.aAllowedHours.indexOf(this.sLeadingChar + sChar) !== -1) {
 				return this.sLeadingChar + sChar;
 			} else if (iPlacePosition === this.iHourNumber2Index //the second hour number
-					&& this.aAllowedHours.indexOf(sCurrentInputValue[this.iHourNumber1Index] + sChar) === -1) { //allow it only if the the whole hour string is a valid hour
+					&& this.aAllowedHours.indexOf(sCurrentInputValue[this.iHourNumber1Index] + sChar) === -1) { //allow it only if the whole hour string is a valid hour
 				return ""; //which is invalid and won't pass the test
 			} else if ((iPlacePosition === this.iMinuteNumber1Index || iPlacePosition === this.iSecondNumber1Index)
 					&& !this._oTimePicker._isCharAllowed(sChar, iPlacePosition)

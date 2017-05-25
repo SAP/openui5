@@ -347,7 +347,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>number</code> property of the control.
-		 * @param sNumber {string} <code>Number</code> showed in <code>ObjectListItem</code>
+		 * @param {string} sNumber <code>Number</code> showed in <code>ObjectListItem</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
@@ -362,7 +362,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>numberUnit</code> property of the control.
-		 * @param sNumberUnit {string} <code>NumberUnit</code> showed in <code>ObjectListItem</code>
+		 * @param {string} sNumberUnit <code>NumberUnit</code> showed in <code>ObjectListItem</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
@@ -377,7 +377,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>numberTextDirection</code> property of the control.
-		 * @param oTextDirection {sap.ui.core.TextDirection} The text direction of the internal <code>ObjectNumber</code>
+		 * @param {sap.ui.core.TextDirection} oTextDirection The text direction of the internal <code>ObjectNumber</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */
@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Sets the <code>numberState</code> property of the control.
-		 * @param oValueState {sap.ui.core.ValueState} The <code>valueState</code> of the internal <code>ObjectNumber</code>
+		 * @param {sap.ui.core.ValueState} oValueState The <code>valueState</code> of the internal <code>ObjectNumber</code>
 		 * @override
 		 * @returns {sap.m.ObjectListItem} this pointer for chaining
 		 */

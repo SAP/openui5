@@ -1957,7 +1957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Marks a range of tree nodes as selected/deselected, starting with iFromIndex going to iToIndex.
 	 * The TreeNodes are referenced via their absolute row index.
-	 * Please be aware, that the absolute row index only applies to the the tree which is visualized by the TreeTable.
+	 * Please be aware, that the absolute row index only applies to the tree which is visualized by the TreeTable.
 	 * Invisible nodes (collapsed child nodes) will not be regarded.
 	 */
 	ODataTreeBindingFlat.prototype.addSelectionInterval = function (iFromIndex, iToIndex) {

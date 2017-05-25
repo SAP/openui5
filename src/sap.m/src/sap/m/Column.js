@@ -142,6 +142,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
+			this._detachMediaContainerWidthChange(this._notifyResize, this, this.getId());
 			sap.ui.Device.media.removeRangeSet(this.getId());
 			this._media = null;
 		}

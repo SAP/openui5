@@ -1,10 +1,10 @@
 sap.ui.define([
-	"myCompany/myApp/controller/BaseController",
+	"mycompany/myapp/controller/BaseController",
 	"sap/ui/model/json/JSONModel"
 ], function(BaseController, JSONModel) {
 	"use strict";
 
-	return BaseController.extend("myCompany.myApp.controller.App", {
+	return BaseController.extend("mycompany.myapp.controller.App", {
 
 		onInit: function() {
 			var oViewModel,

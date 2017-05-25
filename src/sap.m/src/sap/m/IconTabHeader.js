@@ -1475,7 +1475,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handles the touch cancel event.
 	 *
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	IconTabHeader.prototype.ontouchcancel = IconTabHeader.prototype.ontouchend;

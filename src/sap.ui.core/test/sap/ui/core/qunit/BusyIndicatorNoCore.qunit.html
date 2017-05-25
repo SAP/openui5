@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>qUnit Page for sap.ui.core.BusyIndicator BEFORE Core is Ready</title>
+	<title>QUnit Page for sap.ui.core.BusyIndicator BEFORE Core is Ready</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
@@ -67,7 +67,7 @@
 				assert.ok(oSpyShow.callCount > 1, "'show' called more than once");
 
 				assert.equal(oSpyShowNowIfRequested.callCount, 1, "'_showNowIfRequested' was called exactly 1");
-				
+
 				var bCalledWithDelay = false;
 				for (var i = 0; i < oSpyShow.args.length; i++) {
 					bCalledWithDelay = oSpyShow.args[i].length == 1 && oSpyShow.args[i][0] === 0;
@@ -96,7 +96,7 @@
 				done();
 			}.bind(this), 1000);
 		});
-		
+
 		// make sure the BusyIndicator is not rendered initially
 		QUnit.test("Check if the 'show()' logic is performed only once, when called multiple times before core is initialized", function(assert) {
 			var done = assert.async();
@@ -110,7 +110,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.core.BusyIndicator</h1>
+	<h1 id="qunit-header">QUnit Page for sap.ui.core.BusyIndicator</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>

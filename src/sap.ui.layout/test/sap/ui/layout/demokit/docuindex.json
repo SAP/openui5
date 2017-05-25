@@ -313,7 +313,7 @@
 			{
 				"id": "sap.ui.layout.sample.Splitter4",
 				"name": "Splitter Layout - 3 areas",
-				"description": "Simple splitter example with with three content areas"
+				"description": "Simple splitter example with three content areas"
 			},
 			{
 				"id": "sap.ui.layout.sample.SplitterNested1",

@@ -30,7 +30,7 @@ sap.ui.define([
 
 	/**
 	 * Unregisters the special methods needed to proxy forwarding from the given element
-	 * @param oForwardedControl {sap.ui.core.Element} the forwarded instance to unregister
+	 * @param {sap.ui.core.Element} oForwardedControl the forwarded instance to unregister
 	 *
 	 * @private
 	 */

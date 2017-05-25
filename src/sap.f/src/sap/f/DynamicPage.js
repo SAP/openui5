@@ -103,7 +103,7 @@ sap.ui.define([
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
-				 * Determines whether the the user can switch between the expanded/collapsed states of the
+				 * Determines whether the user can switch between the expanded/collapsed states of the
 				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>. If set to
 				 * <code>false</code>, the <code>DynamicPageTitle</code> is not clickable and the application
 				 * must provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
@@ -1431,7 +1431,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches the the <code>DynamicPage</code> content scroll handler.
+	 * Detaches the <code>DynamicPage</code> content scroll handler.
 	 * @private
 	 */
 	DynamicPage.prototype._detachScrollHandler = function () {

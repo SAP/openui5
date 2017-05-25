@@ -1204,7 +1204,7 @@
 			{
 				"id": "ab1022261a30937ef7c75eff1975bd2b3b64feaa",
 				"type": "FIX",
-				"text": "Added native promise support to qUnit test for modern browsers",
+				"text": "Added native promise support to QUnit test for modern browsers",
 				"references": []
 			},
 			{
@@ -2451,7 +2451,7 @@
 			{
 				"id": "fe66224a3d8ffa026cab8f0b8b52639e4eb995fb",
 				"type": "FIX",
-				"text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+				"text": ": Do not run OPA QUnit test under IOS  on non-safari browsers",
 				"references": []
 			}
 		]

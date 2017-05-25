@@ -574,7 +574,7 @@ sap.ui.define([
 
 	/**
 	 * Instantiates a nav container for the column and binds events
-	 * @param sColumn - the column for which a nav container must be created
+	 * @param {string} sColumn - the column for which a nav container must be created
 	 * @returns {*}
 	 * @private
 	 */
@@ -595,8 +595,8 @@ sap.ui.define([
 	/**
 	 * Proxies the navigation events from the internal nav containers to the app.
 	 * @param oEvent
-	 * @param bAfter
-	 * @param sColumn
+	 * @param {boolean} bAfter
+	 * @param {string} sColumn
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._handleNavigationEvent = function(oEvent, bAfter, sColumn){
@@ -644,7 +644,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the content of a column by flushing its container div only
-	 * @param sColumn
+	 * @param {string} sColumn
 	 * @param oControl
 	 * @private
 	 */
@@ -930,7 +930,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the size (in %) of a column based on the current layout
-	 * @param sColumn - string: begin/mid/end
+	 * @param {string} sColumn - string: begin/mid/end
 	 * @returns {*}
 	 * @private
 	 */
@@ -1007,7 +1007,7 @@ sap.ui.define([
 
 	/**
 	 * Called when the layout arrows were clicked.
-	 * @param sShiftDirection - left/right (direction of the arrow)
+	 * @param {string} sShiftDirection - left/right (direction of the arrow)
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._onArrowClick = function (sShiftDirection) {
@@ -1083,8 +1083,8 @@ sap.ui.define([
 
 	/**
 	 * Changes the visibility of a navigation button.
-	 * @param sButton
-	 * @param bShow
+	 * @param {string} sButton
+	 * @param {boolean} bShow
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._toggleButton = function (sButton, bShow) {
@@ -1570,8 +1570,8 @@ sap.ui.define([
 
 	/**
 	 * Returns a string, representing the relative percentage sizes of the columns for the given layout in the format "begin/mid/end" (f.e. "33/67/0")
-	 * @param sLayout - the layout
-	 * @param bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
+	 * @param {string} sLayout - the layout
+	 * @param {boolean} bAsArray - return an array in the format [33, 67, 0] instead of a string "33/67/0"
 	 * @returns {string|array}
 	 * @sap-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 * @private
@@ -1668,7 +1668,7 @@ sap.ui.define([
 
 	/**
 	 * Creates an invisible text in the static area and returns its id
-	 * @param sResourceBundleKey
+	 * @param {string} sResourceBundleKey
 	 * @private
 	 * @returns {string}
 	 */
@@ -1688,7 +1688,7 @@ sap.ui.define([
 
 	/**
 	 * Adds a new entry to the history
-	 * @param sLayout
+	 * @param {string} sLayout
 	 */
 	LayoutHistory.prototype.addEntry = function (sLayout) {
 		if (typeof sLayout !== "undefined") {

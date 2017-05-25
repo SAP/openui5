@@ -306,8 +306,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// note: do not rely on a specific granularity of the touchmove event.
 				// On windows 8 surfaces, the touchmove events are dispatched even if
 				// the user doesn’t move the touch point along the surface.
-				oTouch.pageX === this._iStartPressPosX) {
-
+				// BCP:1770100948 - A threshold of 5px is added for accidental movement of the finger.
+				Math.abs(oTouch.pageX - this._iStartPressPosX) < 6) {
 				return;
 			}
 

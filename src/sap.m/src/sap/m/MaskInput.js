@@ -795,7 +795,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Handles <code>onKeyPress</code> event.
-	 * @param {jQuery.event} oEvent The jQuery event object
+	 * @param {jQuery.Event} oEvent The jQuery event object
 	 * @private
 	 */
 	MaskInput.prototype._keyPressHandler = function (oEvent) {
@@ -880,7 +880,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Handles <code>onKeyDown</code> event.
-	 * @param {jQuery.event} oEvent The jQuery event object
+	 * @param {jQuery.Event} oEvent The jQuery event object
 	 * @private
 	 */
 	MaskInput.prototype._keyDownHandler = function (oEvent, oKey) {

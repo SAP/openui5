@@ -929,6 +929,124 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	});
 
+	QUnit.test("ListBinding on expanded data, operationmode Default, initial filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.notOk(oSpy.called, "Binding expanded list with filter must not send a request");
+			oListBinding.detachChange(listhandler);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Default, late filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products");
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			oListBinding.initialize();
+			oBinding.detachChange(handler);
+			oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+			oListBinding.attachChange(listhandler1);
+			oListBinding.setContext(oBinding.getBoundContext());
+		};
+		var listhandler1 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entries contained");
+			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
+			oListBinding.detachChange(listhandler1);
+			oListBinding.attachChange(listhandler2);
+			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		};
+		var listhandler2 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.notOk(oSpy.called, "Filtering expanded list must not send a request");
+			oListBinding.detachChange(listhandler2);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Server, initial filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null,  new sap.ui.model.Filter("ProductName", "EQ", "Chai"), {operationMode: "Server"});
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
+		};
+		var listhandler = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.ok(oSpy.calledOnce, "Filtering expanded list sent request to the server");
+			oListBinding.detachChange(listhandler);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding on expanded data, operationmode Server, late filter", function(assert){
+		var done = assert.async();
+		var oSpy = sinon.spy(oModel, "_request");
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+		var oListBinding = oModel.bindList("Products", null, null, null, {operationMode: "Server"});
+		var handler = function() {
+			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
+			oSpy.reset();
+			oListBinding.initialize();
+			oBinding.detachChange(handler);
+			oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+			oListBinding.attachChange(listhandler1);
+			oListBinding.setContext(oBinding.getBoundContext());
+		};
+		var listhandler1 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 12, "12 entries contained");
+			assert.notOk(oSpy.called, "Binding expanded list must not send a request");
+			oListBinding.detachChange(listhandler1);
+			oListBinding.attachChange(listhandler2);
+			oListBinding.filter(new sap.ui.model.Filter("ProductName", "EQ", "Chai"));
+		};
+		var listhandler2 = function() {
+			var aContexts = oListBinding.getContexts();
+			assert.equal(aContexts.length, 1, "1 entry contained");
+			assert.ok(oSpy.calledOnce, "Filtering expanded list sent request to the server");
+			oListBinding.detachChange(listhandler2);
+			done();
+		};
+		oBinding.attachChange(handler);
+	});
+
 	QUnit.test("ListBinding Diff", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories");

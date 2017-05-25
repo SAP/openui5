@@ -926,7 +926,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 	/**
 	 * Returns text for ARIA label.
-	 * If the the application provides a specific tooltip, the ARIA label is equal to the tooltip text.
+	 * If the application provides a specific tooltip, the ARIA label is equal to the tooltip text.
 	 * If the application doesn't provide a tooltip or the provided tooltip contains only white spaces,
 	 * calls _getAriaAndTooltipText to get text.
 	 *
@@ -946,7 +946,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 	/**
 	 * Returns text for tooltip or null.
-	 * If the the application provides a specific tooltip, the returned string is equal to the tooltip text.
+	 * If the application provides a specific tooltip, the returned string is equal to the tooltip text.
 	 * If the tooltip provided by the application is a string of only white spaces, the function returns null.
 	 *
 	 * @returns {String} Text for tooltip or null.

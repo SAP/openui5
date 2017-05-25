@@ -11,7 +11,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 ], function(jQuery, Core, URI/*, jQuerySapScript, jQuerySapSjax */) {
 	"use strict";
 	/*global QUnit, sinon */
-	// Note: The dependency to Sinon.js has been omitted deliberately. Most test files load it via
+	// Note: The dependency to Sinon.JS has been omitted deliberately. Most test files load it via
 	// <script> anyway and declaring the dependency would cause it to be loaded twice.
 
 	var rBatch = /\/\$batch($|\?)/,
@@ -443,7 +443,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 
 		/**
 		 * @returns {boolean}
-		 *   <code>true</code> if the the real OData service is used.
+		 *   <code>true</code> if the real OData service is used.
 		 */
 		isRealOData : function () {
 			return bRealOData;

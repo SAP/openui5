@@ -149,7 +149,6 @@
 
 			/**
 			 * Will be invoked by <code>sap.ui.core.Core</code> to notify the plugin to start
-			 * @param {sap.ui.core.Core} oCore reference to the Core
 			 * @public
 			 */
 			LessSupport.prototype.stopPlugin = function() {

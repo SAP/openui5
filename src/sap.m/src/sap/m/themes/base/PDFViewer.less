@@ -1,4 +1,8 @@
 
+.sapMPDFViewerLoading {
+	visibility: hidden;
+}
+
 .sapMPDFViewerWrapper {
 	width: 100%;
 	height: 100%;
@@ -12,7 +16,15 @@
 	outline: 0 none;
 }
 
+.sapMPDFViewerContent.sapMPDFViewerEmbeddedContent {
+	height: calc(~'100% - 3.5rem');
+}
+
 .sapMPDFViewerError {
 	width: 100%;
 	height: 100%;
+}
+
+.sapMPDFViewerError.sapMPDFViewerEmbeddedContent {
+	height: calc(~'100% - 3.5rem');
 }

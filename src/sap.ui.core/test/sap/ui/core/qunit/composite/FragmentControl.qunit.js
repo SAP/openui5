@@ -616,7 +616,7 @@ sap.ui.require([
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-        assert.ok(fnInitialTemplatingSpy.calledOnce);
+		assert.ok(fnInitialTemplatingSpy.calledOnce);
 
 		var oView = oComponentContainer.getComponentInstance().getRootControl();
 		var oFragmentControl = oView.byId("IDLabelButtonTemplate");

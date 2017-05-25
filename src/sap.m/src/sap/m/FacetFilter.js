@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 */
 	FacetFilter.prototype.getLists = function() {
 
-		// Override to make sure we also return a list if it it is currently displayed
+		// Override to make sure we also return a list if it is currently displayed
 		// in a display container (like the Popover or Dialog). When a list is displayed it is removed from the lists aggregation
 		// and placed into the display container, so it will no longer be part of the lists aggregation.
 		var aLists = this.getAggregation("lists");
@@ -1501,7 +1501,6 @@ oPopover.setContentWidth("30%");
 				path: "/items",
 				template: new sap.m.StandardListItem({
 					title: "{text}",
-			    tooltip:"{text}",
 					counter: "{count}",
 					type: sap.m.ListType.Navigation,
 					customData : [ new sap.ui.core.CustomData({
@@ -1519,7 +1518,6 @@ oPopover.setContentWidth("30%");
 
 			aFacetFilterLists.push({
 				text: oList.getTitle(),
-				tooltip:oList.getTitle(),
 				count: oList.getAllCount(),
 				index : i
 			});
