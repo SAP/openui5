@@ -470,6 +470,8 @@
 		var token1 = new sap.m.Token();
 		this.multiInput1.addToken(token1);
 
+		sap.ui.getCore().applyChanges();
+
 		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
 		assert.ok(token1.getSelected(), "Token got selected");
 
@@ -489,8 +491,10 @@
 		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
 
 		token = new sap.m.Token({selected: false});
-
 		this.multiInput1.addToken(token);
+
+		sap.ui.getCore().applyChanges();
+
 		this.multiInput1._getIsSuggestionPopupOpen = function(){ return true; };
 
 		this.multiInput1.onsapprevious(new jQuery.Event("onsapprevious", {srcControl: that.multiInput1}));

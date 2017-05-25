@@ -149,9 +149,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// */
 
 	Tokenizer.prototype.init = function() {
-		//if bScrollToEndIsActive === true, than tokenizer will keep last token visible
-		this._bScrollToEndIsActive = false;
-
 		this.bAllowTextSelection = false;
 
 		this._aTokenValidators = [];
@@ -179,20 +176,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Tokenizer.prototype.scrollToEnd = function() {
+		var domRef = this.getDomRef(),
+			that;
 
-		if (!this._bScrollToEndIsActive) {
-			this._bScrollToEndIsActive = true;
-
-			var that = this;
-			var domRef = this.getDomRef();
-			if (domRef) {
-				this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(domRef, function() {
-					that._doScrollToEnd();
-				});
-			}
+		if (!domRef) {
+			return;
 		}
 
-		this._doScrollToEnd();
+		if (!this._sResizeHandlerId) {
+			that = this;
+			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(domRef, function() {
+				that.scrollToEnd();
+			});
+		}
+
+		var scrollDiv = this.$().find(".sapMTokenizerScrollContainer")[0];
+		domRef.scrollLeft = scrollDiv.scrollWidth;
 	};
 
 
@@ -209,73 +208,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {number}
 	 *          nWidth - the new width in pixels
 	 */
-	Tokenizer.prototype.setPixelWidth = function(nWidth){
+	Tokenizer.prototype.setPixelWidth = function(nWidth) {
+		if (typeof nWidth !== "number") {
+			jQuery.sap.log.warning("Tokenizer.setPixelWidth called with invalid parameter. Expected parameter of type number.");
+			return;
+		}
 
-		this._truncateLastToken(nWidth);
-
-		var sWidth = (nWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
-		this.$().css("width", sWidth);
+		this.setWidth(nWidth + "px");
 
 		if (this._oScroller) {
 			this._oScroller.refresh();
 		}
 
-	};
-
-	/**
-	 * Function if the last token is wider than the given tokenizer width, the token gets truncated
-	 *
-	 * @private
-	 * @param {number}
-	 *          nWidth - the new width in pixels
-	 */
-	Tokenizer.prototype._truncateLastToken = function(nWidth){
-		var lastToken = this._removeLastTokensTruncation();
-		if (lastToken === null) {
-			return;
-		}
-
-		var that = this;
-		var $LastToken = lastToken.$();
-
-		// when token selected we no longer truncate; thereby the delete icon is visible
-		var fSelectHandler = null;
-		fSelectHandler = function() {
-			lastToken.removeStyleClass("sapMTokenTruncate");
-			this.$().removeAttr("style");
-			this.detachSelect(fSelectHandler);
-			that.scrollToEnd();
-		};
-
-
-		var widthOfLastToken = $LastToken.width();
-		if (!lastToken.getSelected() && nWidth >= 0 && widthOfLastToken >= 0 && nWidth < widthOfLastToken) {
-			// truncate last token if not selected and not completely visible
-			$LastToken.outerWidth(nWidth, true);
-			lastToken.addStyleClass("sapMTokenTruncate");
-			lastToken.attachSelect(fSelectHandler);
-		} else {
-			// last token is completely visible
-			lastToken.detachSelect(fSelectHandler);
-		}
-
-		this.scrollToEnd();
-	};
-
-	/**
-	 * Function scrolls the tokens to the end by setting the scrollWidth to the scroll dom container
-	 *
-	 * @private
-	 */
-	Tokenizer.prototype._doScrollToEnd = function(){
-		var thisDomRef = this.getDomRef();
-		if (!thisDomRef) {
-			return;
-		}
-
-		var $this = this.$();
-		var scrollDiv = $this.find(".sapMTokenizerScrollContainer")[0];
-		$this[0].scrollLeft = scrollDiv.scrollWidth;
 	};
 
 	/**
@@ -285,43 +229,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 */
 	Tokenizer.prototype.scrollToStart = function() {
-		this._deactivateScrollToEnd();
+		var domRef = this.getDomRef();
 
-		var thisDomRef = this.getDomRef();
-
-		if (!thisDomRef) {
+		if (!domRef) {
 			return;
 		}
 
-		var jMultiInput = jQuery(thisDomRef);
-		jMultiInput[0].scrollLeft = 0;
+		this._deactivateScrollToEnd();
+
+		domRef.scrollLeft = 0;
 	};
 
 	Tokenizer.prototype._deactivateScrollToEnd = function(){
 		this._deregisterResizeHandler();
-		this._bScrollToEndIsActive = false;
-	};
-
-	/**
-	 * Function removes the truncation from the last token, by clearing the style attribute
-	 *
-	 * @private
-	 *
-	 * @returns
-	 * 	(sap.m.Token) - the last token
-	 */
-	Tokenizer.prototype._removeLastTokensTruncation = function(){
-		var aTokens = this.getTokens();
-		var oLastToken = null;
-		if (aTokens.length > 0) {
-			oLastToken = aTokens[aTokens.length - 1];
-			var $LastToken = oLastToken.$();
-			if ($LastToken.length > 0) {
-				$LastToken[0].style.cssText = "";
-			}
-		}
-
-		return oLastToken;
 	};
 
 	/**
@@ -337,9 +257,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return 0;
 		}
 
-		//if the last token is truncated, the scrollWidth will be incorrect
-		this._removeLastTokensTruncation();
-
 		return this.$().children(".sapMTokenizerScrollContainer")[0].scrollWidth;
 	};
 
@@ -353,16 +270,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype.onAfterRendering = function() {
-
-		if (Control.prototype.onAfterRendering) {
-			Control.prototype.onAfterRendering.apply(this, arguments);
-		}
-
-		var that = this;
-
-		if (this._bScrollToEndIsActive) {
+		if (!this._sResizeHandlerId) {
+			var that = this;
 			this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
-				that._doScrollToEnd();
+				that.scrollToEnd();
 			});
 		}
 	};
@@ -389,17 +300,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._changeAllTokensSelection(false);
 			this._oSelectionOrigin = null;
 		}
-	};
-
-	/**
-	 * Handle the tab key event, deselects token
-	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
-	 * @private
-	 */
-	Tokenizer.prototype.saptabnext = function(oEvent) {
-		this._changeAllTokensSelection(false);
 	};
 
 	/**
@@ -582,11 +482,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	Tokenizer.prototype._ensureTokenVisible = function(oToken) {
+		if (!oToken || !oToken.getDomRef() || !this.getDomRef()) {
+			return;
+		}
+
 		var iTokenizerLeftOffset = this.$().offset().left,
-			iTokenLeftOffset = oToken.$().offset().left;
+			iTokenizerWidth = this.$().width(),
+			iTokenLeftOffset = oToken.$().offset().left,
+			iTokenWidth = oToken.$().width();
+
+		if (this.getTokens().indexOf(oToken) == 0) {
+			this.$().scrollLeft(0);
+			return;
+		}
 
 		if (iTokenLeftOffset < iTokenizerLeftOffset) {
 			this.$().scrollLeft(this.$().scrollLeft() - iTokenizerLeftOffset + iTokenLeftOffset);
+		}
+
+		if (iTokenLeftOffset - iTokenizerLeftOffset + iTokenWidth > iTokenizerWidth) {
+			this.$().scrollLeft(this.$().scrollLeft() + (iTokenLeftOffset - iTokenizerLeftOffset + iTokenWidth - iTokenizerWidth));
 		}
 	};
 
@@ -616,20 +531,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
+		var targetToken;
+
 		if (index > 0) {
-			var oPrevToken = this.getTokens()[index - 1];
+			targetToken = this.getTokens()[index - 1];
 
-			this._changeAllTokensSelection(false, oPrevToken);
+			this._changeAllTokensSelection(false, targetToken);
 
-			oPrevToken._changeSelection(true);
-			oPrevToken.focus();
+			targetToken._changeSelection(true);
+			targetToken.focus();
+
 		} else  {
-			var token = this.getTokens()[this.getTokens().length - 1];
-			token._changeSelection(true);
-			token.focus();
+			targetToken = this.getTokens()[this.getTokens().length - 1];
+			targetToken._changeSelection(true);
+			targetToken.focus();
 		}
 
 		this._deactivateScrollToEnd();
+
+		this._ensureTokenVisible(targetToken);
 
 		// mark the event that it is handled by the control
 		oEvent.setMarked();
@@ -668,6 +588,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oNextToken._changeSelection(true);
 
 			oNextToken.focus();
+
+			this._ensureTokenVisible(oNextToken);
 		} else {
 			// focus is on last token - we do not handle this event and let it bubble
 			return;
@@ -961,8 +883,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		this.addAggregation("tokens", oToken, bSuppressInvalidate);
 
-		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
-
 		this.fireTokenChange({
 			token : oToken,
 			type : Tokenizer.TokenChangeType.Added
@@ -994,7 +914,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this.invalidate();
-		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 
 		this.fireTokenChange({
 			addedTokens : aTokens,
