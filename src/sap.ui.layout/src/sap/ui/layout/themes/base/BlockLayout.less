@@ -53,11 +53,10 @@
 @_sap_ui_layout_BlockLayout_BlockColorAccentType10C: darken(@sapUiGroupContentBackground,12);
 @_sap_ui_layout_BlockLayout_BlockColorAccentType10D: darken(@sapUiGroupContentBackground,14);
 
-.sapUiBlockLayout {
-	.sapUiFormResLayout > div {
-		background-color: inherit;
-	}
-}
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11A: @sapUiBaseColor;
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11B: darken(@sapUiBaseColor, 7);
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11C: darken(@sapUiBaseColor, 10);
+@_sap_ui_layout_BlockLayout_BlockColorAccentType11D: darken(@sapUiBaseColor, 14);
 
 .setCellsColorDoubles (@evenCell, @oddCell) {
 	// Match every even cell
@@ -68,6 +67,51 @@
 	// Match every odd cell
 	.sapUiBlockLayoutCell:nth-child(2n+1) {
 		background-color: @oddCell;
+	}
+}
+
+// Create classes which would just set background color of the BlockLayout cells
+.generateCellColorSets (@backgroundColorSet, @backgroundColorShade) {
+	@css-param: "@{backgroundColorSet}@{backgroundColorShade}"; // Concat the params
+	@css-selector: ~"sapUiBlockLayoutCellColor@{css-param}"; // Create the css selector string
+	@color-param: "_sap_ui_layout_BlockLayout_BlockColorAccentType@{css-param}"; // Build the color param name
+
+	// Build the real CSS selector.
+	// The output would be something like this: .sapUiBlockLayoutCellColor1A { background-color: "#996b00"; }
+	.@{css-selector} {
+		background-color: @@color-param;
+
+		.sapUiBlockCellContent {
+			color: contrast(@@color-param, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+
+			.sapMText {
+				color: inherit;
+			}
+		}
+
+		.sapUiBlockCellTitle {
+			color: contrast(@@color-param, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+		}
+	}
+}
+
+//Define a loop and go trough 11 color sets and for each set apply 4 shades
+.loop-cell-colors(@i: 1) when (@i =< 11) {
+	.generateCellColorSets(@i, "A");
+	.generateCellColorSets(@i, "B");
+	.generateCellColorSets(@i, "C");
+	.generateCellColorSets(@i, "D");
+
+	.loop-cell-colors(@i + 1); // Execute next loop iteration
+}
+
+//Execute Loop through color sets
+.loop-cell-colors(1);
+
+
+.sapUiBlockLayout {
+	.sapUiFormResLayout > div {
+		background-color: inherit;
 	}
 }
 
