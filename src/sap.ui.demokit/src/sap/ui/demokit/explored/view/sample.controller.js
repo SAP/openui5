@@ -149,6 +149,11 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 					oHtmlControl.$().on("load", function () {
 						var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 
+						// Some samples don't have the framework loaded (f.e. hello world)
+						if (!oSampleFrame.sap) {
+							return;
+						}
+
 						oSampleFrame.sap.ui.getCore().attachInit(function() {
 							var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 							oSampleFrame.sap.ui.getCore().applyTheme(sap.ui.getCore().getConfiguration().getTheme());

@@ -310,6 +310,12 @@ sap.ui.define([
 					oControlData.hasSpecialSettings = false;
 				}
 
+				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
+					oControlData.hasAnnotations = true;
+				} else {
+					oControlData.hasAnnotations = false;
+				}
+
 				if (oControlData.hasMethods) {
 					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
 				}
@@ -832,6 +838,10 @@ sap.ui.define([
 				var type = e.getSource().getText();
 				type = type.replace('[]', ''); // remove array brackets before navigation
 				this.getRouter().navTo("apiId", {id: type}, true);
+			},
+
+			onAnnotationsLinkPress: function (oEvent) {
+				// scroll to Annotations section here
 			},
 
 			backToSearch: function () {
