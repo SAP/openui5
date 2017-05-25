@@ -1501,7 +1501,6 @@ oPopover.setContentWidth("30%");
 				path: "/items",
 				template: new sap.m.StandardListItem({
 					title: "{text}",
-			    tooltip:"{text}",
 					counter: "{count}",
 					type: sap.m.ListType.Navigation,
 					customData : [ new sap.ui.core.CustomData({
@@ -1519,7 +1518,6 @@ oPopover.setContentWidth("30%");
 
 			aFacetFilterLists.push({
 				text: oList.getTitle(),
-				tooltip:oList.getTitle(),
 				count: oList.getAllCount(),
 				index : i
 			});
