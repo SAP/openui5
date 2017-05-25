@@ -10746,7 +10746,7 @@
 
 			assert.strictEqual(oFunctionRef("Test", /^t/i, "t"), "<b>T</b>est");
 			assert.strictEqual(oFunctionRef("Test", /^Test/i, "test"), "<b>Test</b>");
-			assert.strictEqual(oFunctionRef("Test", /^/i, ""), "<b></b>Test");
+			assert.strictEqual(oFunctionRef("Test", /^/i, ""), "Test");
 		});
 
 		QUnit.test("_highlightList should call _boldItemRef on items", function(assert) {
