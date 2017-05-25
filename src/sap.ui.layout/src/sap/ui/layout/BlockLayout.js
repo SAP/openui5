@@ -30,9 +30,9 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 *
 		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
 		 *
-		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 10 different nuances.
-		 * The main colors of the sets can be changed in Theme Designer. To set the background of a particular cell, set <code>backgroundColorSet</code> (main color)
-		 * and <code>backgroundColorIndex</code> (nuance) to a value between 1 and 10.
+		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 4 different shades.
+		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
+		 * and <code>backgroundColorShade</code> (shade).
 		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use</h4>

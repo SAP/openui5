@@ -59,8 +59,8 @@
 				<l:BlockLayoutCell
 						width="2"
 						class="largeCell"
-						backgroundColorSet="6"
-						backgroundColorIndex="2">
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeB">
 					<custom:TitleLink
 							width="100%"
 							text="Get Started"
@@ -77,8 +77,8 @@
 				<l:BlockLayoutCell
 						width="2"
 						class="largeCell"
-						backgroundColorSet="6"
-						backgroundColorIndex="3">
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
@@ -139,8 +139,8 @@
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 						class="largeCell"
-						backgroundColorSet="6"
-						backgroundColorIndex="4">
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeD">
 					<custom:TitleLink
 							width="100%"
 							text="Essentials"
