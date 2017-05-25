@@ -212,12 +212,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 
 		this._bIntervalSelection = false;
 		this._bOnlyCalendar = true;
+		//We need to know is the current instance subclass of the DatePicker(DateTimePicker) or not.
+		this._bDatePickerInstance = this.getMetadata().getName() === "sap.m.DatePicker";
 
 		this._bValid = true;
 
 		this._oMinDate = new Date(1, 0, 1);
 		this._oMinDate.setFullYear(1); // otherwise year 1 will be converted to year 1901
-		this._oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
+		this._oMaxDate = this._bDatePickerInstance ? new Date(9999, 11, 31) : new Date(9999, 11, 31, 23, 59, 59, 99);
 
 	};
 
@@ -247,6 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 		this._sUsedValuePattern = undefined;
 		this._sUsedValueCalendarType = undefined;
 		this._oValueFormat = undefined;
+		this._bDatePickerInstance = undefined;
 
 	};
 
@@ -549,6 +552,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 			this._oCalendar.setMinDate(oDate);
 		}
 
+		if (this._bDatePickerInstance) {
+			this._oMinDate.setHours(0, 0, 0, 0);//clear the time part
+		}
+
 		return this;
 
 	};
@@ -584,6 +591,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', 'sap/ui/mode
 
 		if (this._oCalendar) {
 			this._oCalendar.setMaxDate(oDate);
+		}
+
+		if (this._bDatePickerInstance) {
+			this._oMaxDate.setHours(0, 0, 0, 0);//clear the time part
 		}
 
 		return this;
