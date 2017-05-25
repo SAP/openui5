@@ -325,7 +325,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}
 
 			var internalLibName = customizableLibName + '.internal';
-			var libraryInternalResourceRoot = supportModulesRoot.replace('/resources', '') + 'test-resources/' + libPath + '/internal';
+			var libraryInternalResourceRoot = supportModulesRoot.replace('resources/', '') + 'test-resources/' + libPath + '/internal';
 
 			jQuery.sap.registerModulePath(internalLibName, libraryInternalResourceRoot);
 
@@ -406,14 +406,25 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				RuleSet.versionInfo = versionInfo;
 
 				var libFetchPromises = that._fetchLibraryFiles(libNames, function (libName) {
-					var normalizedLibName = libName.replace('.' + customSuffix, ''),
-						libSupport = jQuery.sap.getObject(libName).library.support;
+					var normalizedLibName = libName.replace("." + customSuffix, "").replace(".internal", ""),
+						libSupport = jQuery.sap.getObject(libName).library.support,
+						library = that._mRuleSets[normalizedLibName];
 
 					if (libSupport.ruleset instanceof RuleSet) {
-						that._mRuleSets[normalizedLibName] = libSupport;
+						if (library) {
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, libSupport.ruleset._mRules);
+						} else {
+							library = libSupport;
+						}
 					} else {
-						that._mRuleSets[normalizedLibName] = that._createRuleSet(libSupport);
+						if (library) {
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, that._createRuleSet(libSupport));
+						} else {
+							library = that._createRuleSet(libSupport);
+						}
 					}
+
+					that._mRuleSets[normalizedLibName] = library;
 				});
 
 				Promise.all(libFetchPromises).then(function () {
@@ -440,9 +451,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		});
 
 		var libFetchPromises = this._fetchLibraryFiles(libNames, function (libName) {
-			libName = libName.replace('.' + customSuffix, '');
+			libName = libName.replace("." + customSuffix, "").replace(".internal", "");
 
-			data.push(libName);
+			if (data.indexOf(libName) < 0) {
+				data.push(libName);
+			}
 		});
 
 		Promise.all(libFetchPromises).then(function () {
