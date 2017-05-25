@@ -361,6 +361,38 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		return ajaxPromises;
 	};
 
+	/**
+	 * Factory function for creating a RuleSet. Helps reducing API complexity.
+	 * @private
+	 * @param {object} librarySupport object to be used for RuleSet creation
+	 * @returns {object} ruleset object to be added to _mRuleSets
+	 */
+	Main.prototype._createRuleSet = function (librarySupport) {
+		var oLib = {
+			name: librarySupport.name,
+			niceName: librarySupport.niceName
+		};
+		var oRuleSet = new RuleSet(oLib);
+
+		for (var i = 0; i < librarySupport.ruleset.length; i++) {
+			var ruleset = librarySupport.ruleset[i];
+
+			// If the ruleset contains arrays of rules make sure we add them.
+			if (jQuery.isArray(ruleset)) {
+				for (var k = 0; k < ruleset.length; k++) {
+					oRuleSet.addRule(ruleset[k]);
+				}
+			} else {
+				oRuleSet.addRule(ruleset);
+			}
+		}
+
+		return {
+			lib: oLib,
+			ruleset: oRuleSet
+		};
+	};
+
 	Main.prototype._fetchSupportRuleSets = function (libNames) {
 		libNames = libNames || [];
 		libNames = libNames.concat(Object.keys(sap.ui.getCore().getLoadedLibraries()));
@@ -374,8 +406,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				RuleSet.versionInfo = versionInfo;
 
 				var libFetchPromises = that._fetchLibraryFiles(libNames, function (libName) {
-					var normalizedLibName = libName.replace('.' + customSuffix, '');
-					that._mRuleSets[normalizedLibName] = jQuery.sap.getObject(libName).library.support;
+					var normalizedLibName = libName.replace('.' + customSuffix, ''),
+						libSupport = jQuery.sap.getObject(libName).library.support;
+
+					if (libSupport.ruleset instanceof RuleSet) {
+						that._mRuleSets[normalizedLibName] = libSupport;
+					} else {
+						that._mRuleSets[normalizedLibName] = that._createRuleSet(libSupport);
+					}
 				});
 
 				Promise.all(libFetchPromises).then(function () {
