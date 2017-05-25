@@ -12,7 +12,17 @@
 }
 
 .contextCheckBoxAlign.sapMCb {
-	margin-left: -0.8125rem;
+	margin-left: -0.5rem;
+	margin-top: -0.5rem;
+}
+
+.sapUiFeedbackDialogTextArea.sapMInputBaseWidthPadding {
+	padding-top: 0;
+}
+
+/* Custom html wrapping Label */
+.sapUiFeedbackDialogNoteLabel {
+	white-space: pre-line;
 }
 
 .sapUiDocumentationJsDoc {
