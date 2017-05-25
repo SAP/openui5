@@ -115,24 +115,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Fired when the tokens aggregation changed (add / remove token)
 			 */
 			tokenUpdate: {
-				/**
-				 * Type of tokenChange event.
-				 * There are two TokenUpdate types: "added", "removed"
-				 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
-				 */
-				type: {type: "string"},
+				parameters: {
+					/**
+					 * Type of tokenChange event.
+					 * There are two TokenUpdate types: "added", "removed"
+					 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
+					 */
+					type: {type: "string"},
 
-				/**
-				 * The array of tokens that are added.
-				 * This parameter is used when tokenUpdate type is "added".
-				 */
-				addedTokens: {type: "sap.m.Token[]"},
+					/**
+					 * The array of tokens that are added.
+					 * This parameter is used when tokenUpdate type is "added".
+					 */
+					addedTokens: {type: "sap.m.Token[]"},
 
-				/**
-				 * The array of tokens that are removed.
-				 * This parameter is used when tokenUpdate type is "removed".
-				 */
-				removedTokens: {type: "sap.m.Token[]"}
+					/**
+					 * The array of tokens that are removed.
+					 * This parameter is used when tokenUpdate type is "removed".
+					 */
+					removedTokens: {type: "sap.m.Token[]"}
+				}
 			}
 		}
 	}});
