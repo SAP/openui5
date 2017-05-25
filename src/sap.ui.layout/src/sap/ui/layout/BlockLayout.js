@@ -22,13 +22,18 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * <ul>
 		 * <li>Layout only (default) - a layout scheme and no background colors</li>
 		 * <li>Bright - a layout scheme with bright colors</li>
-		 * <li>Mixed - a layout scheme with a mix of light and dark colors</li>
 		 * <li>Accent - a layout scheme with four pre-defined color sets</li>
 		 * <li>Dashboard - a layout scheme with additional borders and no background colors</li>
+		 * <li>Mixed - a layout scheme with a mix of light and dark colors</li>
 		 * </ul>
 		 * Background colors are attached directly to the blocks of the layout.
 		 *
 		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
+		 *
+		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 11 pre-defined color sets, each with 4 different shades.
+		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
+		 * and <code>backgroundColorShade</code> (shade).
+		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use</h4>
 		 * <ul>

@@ -28,16 +28,17 @@
 					<ComboBox
 						change="setBLCells"
 						value="{/colorSet}">
-						<core:Item key="1" text="1" />
-						<core:Item key="2" text="2" />
-						<core:Item key="3" text="3" />
-						<core:Item key="4" text="4" />
-						<core:Item key="5" text="5" />
-						<core:Item key="6" text="6" />
-						<core:Item key="7" text="7" />
-						<core:Item key="8" text="8" />
-						<core:Item key="9" text="9" />
-						<core:Item key="10" text="10" />
+						<core:Item key="ColorSet1" text="ColorSet1" />
+						<core:Item key="ColorSet2" text="ColorSet2" />
+						<core:Item key="ColorSet3" text="ColorSet3" />
+						<core:Item key="ColorSet4" text="ColorSet4" />
+						<core:Item key="ColorSet5" text="ColorSet5" />
+						<core:Item key="ColorSet6" text="ColorSet6" />
+						<core:Item key="ColorSet7" text="ColorSet7" />
+						<core:Item key="ColorSet8" text="ColorSet8" />
+						<core:Item key="ColorSet9" text="ColorSet9" />
+						<core:Item key="ColorSet10" text="ColorSet10" />
+						<core:Item key="ColorSet11" text="ColorSet11" />
 					</ComboBox>
 				</f:content>
 		</f:SimpleForm>
@@ -52,7 +53,7 @@
 				<l:BlockLayoutCell
 						id="Accent1"
 						width="2"
-						class="sapContrast"
+						class="sapContrast sapContrastPlus"
 						title="Cell with sapContrast applied">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
 					<RadioButtonGroup columns="2" selectedIndex="2" class="sapUiMediumMarginTop">
@@ -64,14 +65,14 @@
 					</RadioButtonGroup>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
-						backgroundColorSet="1"
-						backgroundColorIndex="3"
+						backgroundColorSet="ColorSet1"
+						backgroundColorShade="ShadeC"
 						title="25% width cell">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
-						backgroundColorSet="5"
-						backgroundColorIndex="1"
+						backgroundColorSet="ColorSet5"
+						backgroundColorShade="ShadeA"
 						titleAlignment="End"
 						title="End aligned title">
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."/>
@@ -79,12 +80,17 @@
 			</l:BlockLayoutRow>
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="customCellImageBackground"
-						title="Custom background cell">
-					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr. Is this text even readable ?"/>
+						class="customCellImageBackground">
+					<Title
+						class="sapContrast sapContrastPlus"
+						titleStyle="H2"
+						text= "Custom background cell" />
+					<Text
+						class="sapContrast sapContrastPlus"
+						text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
-						class="sapContrast"
+						class="sapContrast sapContrastPlus"
 						title="Another cell with sapContrast applied">
 					<FeedInput
 							showIcon="true" />
