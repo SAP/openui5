@@ -63,15 +63,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Convenience method for getting the resource bundle.
-			 * @public
-			 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
-			 */
-			getResourceBundle : function () {
-				return this.getOwnerComponent().getModel("i18n").getResourceBundle();
-			},
-
-			/**
 			 * Convenience method for getting the application configuration located in manifest.json.
 			 * @public
 			 * @returns {object} the configuration of the component

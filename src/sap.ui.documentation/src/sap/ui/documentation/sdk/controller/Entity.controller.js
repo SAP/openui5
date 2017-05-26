@@ -280,7 +280,7 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				return (sDeprecated) ? this.getView().getModel("i18n").getProperty("deprecated") : "";
+				return (sDeprecated) ? "Deprecated" : "";
 			},
 
 			/**
