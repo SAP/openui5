@@ -582,6 +582,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
 			sDisplayFormat = oBinding.oType.getOutputPattern();
+		} else if (oBinding && oBinding.oType && oBinding.oType.oFormat) {
+			sDisplayFormat = oBinding.oType.oFormat.oFormatOptions.pattern;
 		} else {
 			sDisplayFormat = this.getDisplayFormat();
 		}
