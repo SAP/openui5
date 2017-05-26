@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global',
 								start: new Date("2017", "0", "25", "11", "30"),
 								end: new Date("2017", "0", "25", "13", "30"),
 								title: "Lunch",
-								type: "Type03",
+								type: "Type01",
 								tentative: true
 							},
 							{
@@ -368,7 +368,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "16", "23", "59"),
 									title: "Vacation",
 									info: "out of office",
-									type: "Type04",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -376,7 +376,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "18", "22", "0"),
 									title: "Workshop",
 									info: "regular",
-									type: "Type07",
+									type: "Type08",
 									pic: "sap-icon://sap-ui5",
 									tentative: false
 								},
@@ -384,7 +384,7 @@ sap.ui.define(['jquery.sap.global',
 									start: new Date("2017", "0", "19", "08", "30"),
 									end: new Date("2017", "0", "19", "18", "30"),
 									title: "Meet John Doe",
-									type: "Type02",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "19", "16", "0"),
 									title: "Team meeting",
 									info: "room 1",
-									type: "Type01",
+									type: "Type08",
 									pic: "sap-icon://sap-ui5",
 									tentative: false
 								},
@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global',
 									start: new Date("2017", "0", "19", "07", "00"),
 									end: new Date("2017", "0", "19", "17", "30"),
 									title: "Discussion with clients",
-									type: "Type02",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "20", "23", "59"),
 									title: "Vacation",
 									info: "out of office",
-									type: "Type04",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -416,14 +416,14 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "27", "17", "30"),
 									title: "Discussion with clients",
 									info: "out of office",
-									type: "Type02",
+									type: "Type08",
 									tentative: false
 								},
 								{
 									start: new Date("2017", "2", "13", "9", "0"),
 									end: new Date("2017", "2", "17", "10", "0"),
 									title: "Payment week",
-									type: "Type06"
+									type: "Type08"
 								},
 								{
 									start: new Date("2017", "03", "10", "0", "0"),
@@ -465,6 +465,7 @@ sap.ui.define(['jquery.sap.global',
 					oInfoInput,
 					oOKButton,
 					aAppointments,
+					sGroupAppointmentType,
 					sValue;
 
 				if (oAppointment) {
@@ -494,10 +495,18 @@ sap.ui.define(['jquery.sap.global',
 					this._oPopover.openBy(oAppointment);
 				} else {
 					aAppointments = oEvent.getParameter("appointments");
-					sValue = aAppointments.length + " Appointments selected";
-					sap.m.MessageBox.information(
-						sValue
-					);
+					sGroupAppointmentType = aAppointments[0].getType();
+					aAppointments.forEach(function(oAppointment) {
+						if (sGroupAppointmentType !== oAppointment.getType()){
+							sGroupAppointmentType = sap.ui.unified.CalendarDayType.None;
+						}
+					});
+					if (sGroupAppointmentType === sap.ui.unified.CalendarDayType.None) {
+						sValue = aAppointments.length + " Appointments of different types selected";
+					} else {
+						sValue = aAppointments.length + " Appointments of the same " + sGroupAppointmentType + " selected";
+					}
+					sap.m.MessageBox.information(sValue);
 				}
 			},
 
