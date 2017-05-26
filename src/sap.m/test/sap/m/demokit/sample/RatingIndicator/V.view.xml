@@ -4,6 +4,8 @@
 	xmlns="sap.m">
 	<l:VerticalLayout
 		class="sapUiContentPadding">
+		<Label text="Rating Indicator default size " labelFor="RI_default"/>
+		<RatingIndicator id="RI_default" maxValue="5" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with size L" labelFor="RI_L"/>
 		<RatingIndicator id="RI_L" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="32px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with size M" labelFor="RI_M"/>
