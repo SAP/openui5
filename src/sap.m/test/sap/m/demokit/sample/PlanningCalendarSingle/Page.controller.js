@@ -234,6 +234,11 @@ sap.ui.define([
 
 				oData.people[0].appointments.push(oAppointment);
 				oModel.setData(oData);
+			},
+
+			toggleDayNamesLine: function (oEvent) {
+				var oPC = this.getView().byId("PC1");
+				oPC.setShowDayNamesLine(!oPC.getShowDayNamesLine());
 			}
 
 		});

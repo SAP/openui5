@@ -211,7 +211,7 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
-					values: oDoc.values,
+					values: oDoc ? oDoc.values : [],
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
 						about: !!oDoc,
@@ -280,7 +280,7 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				return (sDeprecated) ? this.getView().getModel("i18n").getProperty("deprecated") : "";
+				return (sDeprecated) ? "Deprecated" : "";
 			},
 
 			/**

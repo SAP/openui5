@@ -890,16 +890,14 @@
 			}
 		}
 
-		assert.expect(18);
+		assert.expect(14);
 
-		_test(475, 1, false).then(function() {
-			return _test(474, 2, true);
+		_test(480, 1, false).then(function() {
+			return _test(470, 2, true);
 		}).then(function() {
 			return _test(450, 1, true);
 		}).then(function() {
-			return _test(400, 1, true);
-		}).then(function() {
-			return _test(475, 2, false);
+			return _test(480, 2, false);
 		}).then(function() {
 			done();
 		});

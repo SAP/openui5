@@ -94,7 +94,8 @@ sap.ui.define([
 				 * Actions available for this Subsection
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
-			}
+			},
+			designTime: true
 		}
 	});
 

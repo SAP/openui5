@@ -123,16 +123,20 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
+				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
+
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
 				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
 
+					oApiDetailObjectPage._suppressLayoutCalculations();
 					this._bindData(this._sTopicid);
 					this._bindEntityData(this._sTopicid);
 					this._createMethodsSummary();
 					this._createEventsSummary();
+					oApiDetailObjectPage._resumeLayoutCalculations();
 
 					if (this._sEntityType) {
 						this._scrollToEntity(this._sEntityType, this._sEntityId);
@@ -308,6 +312,12 @@ sap.ui.define([
 					oControlData.hasSpecialSettings = true;
 				} else {
 					oControlData.hasSpecialSettings = false;
+				}
+
+				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
+					oControlData.hasAnnotations = true;
+				} else {
+					oControlData.hasAnnotations = false;
 				}
 
 				if (oControlData.hasMethods) {
@@ -832,6 +842,10 @@ sap.ui.define([
 				var type = e.getSource().getText();
 				type = type.replace('[]', ''); // remove array brackets before navigation
 				this.getRouter().navTo("apiId", {id: type}, true);
+			},
+
+			onAnnotationsLinkPress: function (oEvent) {
+				// scroll to Annotations section here
 			},
 
 			backToSearch: function () {

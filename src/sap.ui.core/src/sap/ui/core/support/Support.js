@@ -553,10 +553,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 
 	function wrapPlugin(oPlugin) {
-		oPlugin.$().replaceWith("<div  id='" + oPlugin.getId() + "-Panel' class='sapUiSupportPnl'><h2 id='" + oPlugin.getId() + "-PanelHeader' class='sapUiSupportPnlHdr'>" +
-				oPlugin.getTitle() + "<div id='" + oPlugin.getId() + "-PanelHandle' class='sapUiSupportPnlHdrHdl sapUiSupportPnlHdrHdlClosed'></div></h2><div id='" +
-				oPlugin.getId() + "-PanelContent' class='sapUiSupportPnlCntnt sapUiSupportHidden'><div id='" +
-				oPlugin.getId() + "' class='sapUiSupportPlugin'></div></div></div>");
+		oPlugin.$().replaceWith(
+			"<div  id='" + oPlugin.getId() + "-Panel' class='sapUiSupportPnl'>" +
+				"<div id='" + oPlugin.getId() + "-PanelHeader' class='sapUiSupportPnlHdr'>" +
+					"<div id='" + oPlugin.getId() + "-PanelHandle' class='sapUiSupportPnlHdrHdl sapUiSupportPnlHdrHdlClosed'>" +
+					"</div>" +
+					"<div class='sapUiSupportPanelTitle'>" + oPlugin.getTitle() + "</div>" +
+				"</div>" +
+				"<div id='" + oPlugin.getId() + "-PanelContent' class='sapUiSupportPnlCntnt sapUiSupportHidden'>" +
+					"<div id='" + oPlugin.getId() + "' class='sapUiSupportPlugin'></div>" +
+				"</div>" +
+			"</div>");
 
 		oPlugin.$("PanelHeader").click(function(){
 			var jHandleRef = oPlugin.$("PanelHandle");

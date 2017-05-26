@@ -94,8 +94,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 		//hidden status
 		this._isHidden = false;
 
-		this._oParentObjectPageLayout = undefined; //store the parent objectPageLayout
-
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 	};
 
@@ -231,11 +229,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._getObjectPageLayout = function () {
-		if (!this._oParentObjectPageLayout) {
-			this._oParentObjectPageLayout = library.Utilities.getClosestOPL(this);
-		}
-
-		return this._oParentObjectPageLayout;
+		return library.Utilities.getClosestOPL(this);
 	};
 
 	/**

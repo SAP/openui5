@@ -62,8 +62,9 @@ sap.ui.define(['jquery.sap.global'],
 					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/api.json',
 					dataType : 'json',
 					success : function(vResponse) {
-						oLibraryDataCache[sLibraryName] = vResponse.symbols;
-						resolve(vResponse.symbols);
+						var aResult = vResponse.symbols || [];
+						oLibraryDataCache[sLibraryName] = aResult;
+						resolve(aResult);
 					},
 					error : function (err) {
 						jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);

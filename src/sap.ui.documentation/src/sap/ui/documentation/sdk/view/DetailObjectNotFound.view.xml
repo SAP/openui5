@@ -5,8 +5,8 @@
 
 	<MessagePage
 			id="page"
-			title="{i18n>detailTitle}"
-			text="{i18n>noObjectFoundText}"
+			title="Object not found"
+			text="Object not found"
 			icon="{sap-icon://product}"
 			description=""
 			showNavButton="{device>/system/phone}"

@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
 	 * @public
 	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
 	 * @function
@@ -194,11 +194,33 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to this in order to allow method chaining
 	 * @public
 	 */
-	AnalyticalTable.prototype.setEnableGrouping = function(bEnableGrouping) {
-		jQuery.sap.log.error("The property enableGrouping is not supported by control sap.ui.table.AnalyticalTable!");
+	AnalyticalTable.prototype.setEnableGrouping = function() {
+		jQuery.sap.log.error("The property enableGrouping is not supported by the sap.ui.table.AnalyticalTable control");
+		return this;
+	};
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @public
+	 * @name sap.ui.table.AnalyticalTable#getGroupBy
+	 * @function
+	 */
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to this in order to allow method chaining
+	 * @public
+	 */
+	AnalyticalTable.prototype.setGroupBy = function() {
+		jQuery.sap.log.warning("The groupBy association is not supported by the sap.ui.table.AnalyticalTable control");
 		return this;
 	};
 

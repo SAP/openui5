@@ -33,7 +33,7 @@
 									class="sapUiHideOnPhone"
 									visible="{=!${device>/system/phone}}"
 									icon="sap-icon://full-screen"
-									tooltip="{i18n>sampleFullScreenTooltip}"
+									tooltip="Show this sample in full screen mode"
 									press="onToggleFullScreen" />
 						</actions>
 					</ObjectPageHeader>
@@ -68,7 +68,7 @@
 							</m:ObjectAttribute>
 
 							<m:HBox class="sapUiDocumentationImplementsDiv sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
-								<m:Text text="Implements:"/>
+								<m:Label text="Implements:"/>
 								<m:HBox items="{path: 'topics>/implementsParsed'}">
 										<m:HBox>
 											<m:Link text="{topics>name}" href="#/api/{topics>href}"/>
@@ -128,6 +128,16 @@
 									<layout:VerticalLayout>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
+
+										<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText" visible="{topics>/hasAnnotations}">
+											<m:Text text="A detailed description of the OData annotations handled by this control is available"/>
+											<m:Link text="here" press="onAnnotationsLinkPress"/>
+											<m:Text text="."/>
+										</layout:HorizontalLayout>
+										<layout:HorizontalLayout class="sapUiDocumentationAnnotationsText" visible="{topics>/hasAnnotations}">
+											<m:Label text="Annotation Limitations:" design="Bold"/>
+											<m:Text text="Qualifier support for entity types is limited for this control."/>
+										</layout:HorizontalLayout>
 
 										<m:Table visible="{topics>/hasChildren}"
 												 items="{ path : 'topics>/controlChildren'}"
@@ -226,7 +236,6 @@
 
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
 											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
@@ -243,14 +252,20 @@
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
 
-													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
-														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</layout:VerticalLayout>
+													<m:VBox>
+														<core:HTML content="{parts: [{path: 'topics>description'}],
+																				 	  formatter: '.formatDescription'}"/>
 
-													<core:HTML content="{parts: [{path: 'topics>description'},
-																					 {path: 'topics>deprecated/text'},
-																					 {path: 'topics>deprecated/since'}],
-																			 	  formatter: '.formatDescription'}"/>
+														<m:MessageStrip  width="100%"
+															visible="{=${topics>deprecated} !== undefined}"
+															text="Deprecated since version {topics>deprecated/since}. {topics>deprecated/text}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															class="sapUiMediumMarginBottom">
+														</m:MessageStrip>
+													</m:VBox>
+
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
@@ -270,10 +285,17 @@
 								<blocks>
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'events>description'},
-																				{path: 'events>deprecated/text'},
-																				{path: 'events>deprecated/since'}],
+										<core:HTML content="{parts: [{path: 'events>description'}],
 																			 formatter: '.formatDescription'}"/>
+
+										<m:MessageStrip
+											visible="{=${events>deprecated} !== undefined}"
+											text="Deprecated since version {events>deprecated/since}. {events>deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 
 										<m:Table items="{ path : 'events>parameters'}"
 												 showSeparators="Inner"
@@ -323,10 +345,17 @@
 
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'methods>description'},
-																	{path: 'methods>deprecated/text'},
-																	{path: 'methods>deprecated/since'}],
+										<core:HTML content="{parts: [{path: 'methods>description'}],
 																			 formatter: '.formatDescription'}"/>
+
+										<m:MessageStrip
+											visible="{=${methods>deprecated} !== undefined}"
+											text="Deprecated since version {methods>deprecated/since}. {methods>deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 
 										<m:Table items="{ path : 'methods>parameters'}"
 												 showSeparators="Inner"

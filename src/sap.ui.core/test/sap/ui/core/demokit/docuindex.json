@@ -117,7 +117,8 @@
 					"sap.ui.core.sample.gherkin.GherkinWithUIComponent",
 					"sap.ui.comp.sample.smartfilterbartest",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
-					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters"
+					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
+					"sap.ui.core.sample.OpaWithSupportAssistant"
 				]
 			},
 			{
@@ -606,6 +607,11 @@
 				"id": "sap.ui.core.sample.OpaGetStarted",
 				"name": "Simulating a simple backend request with OPA5",
 				"description": "This example is complementary to the OPA get started section in the developer guide. It shows how to simulate a simple backend server request with OPA5 and Sinon.JS"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaWithSupportAssistant",
+				"name": "Running OPA tests with Support Assistant checks",
+				"description": ""
 			}
 		]
 	}

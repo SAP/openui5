@@ -72,3 +72,8 @@
 .sapMGHLICell {
 	padding: 0 1rem;
 }
+
+/* group headers should have background color grey so that they are distinguishable from ListItems */
+.sapMListTbl .sapMGHLI.sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover) {
+	background: @sapUiListTableGroupHeaderBackground;
+}

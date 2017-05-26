@@ -255,7 +255,8 @@ sap.ui.define([
 						domRef: {type: "string"}
 					}
 				}
-			}
+			},
+			designTime: true
 		}
 	});
 
