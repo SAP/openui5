@@ -635,11 +635,7 @@ sap.ui.define([
 		 * @private
 		 */
 		BlockBase.prototype._getObjectPageLayout = function () {
-			if (!this._oParentObjectPageLayout) {
-				this._oParentObjectPageLayout = library.Utilities.getClosestOPL(this);
-			}
-
-			return this._oParentObjectPageLayout;
+			return library.Utilities.getClosestOPL(this);
 		};
 
 		/**
