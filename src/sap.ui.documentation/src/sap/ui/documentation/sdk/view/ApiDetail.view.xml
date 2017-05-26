@@ -212,8 +212,8 @@
 									<layout:VerticalLayout width="100%">
 										<core:HTML content="{parts: [{path: 'topics>/constructor/description'}],
 																	  formatter: '.formatDescription'}{}"/>
-										<ce:CodeEditor height="2rem" width="100%" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
-													   value="{parts: [{path: 'topics>/name' },
+										<ce:CodeEditor height="auto" maxLines="20" width="100%" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
+														syntaxHints="false" value="{parts: [{path: 'topics>/name' },
 																			{path: 'topics>/constructor/parameters' }],
 																	 		formatter: '.formatConstructor'}"/>
 									</layout:VerticalLayout>
