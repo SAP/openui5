@@ -182,6 +182,11 @@
 			"pattern": "search/{searchParam}",
 			"name": "search",
 			"target": ["searchPage"]
+		  },
+			{
+				"pattern": "releasenotes.html",
+				"name": "releaseNotes",
+				"target": ["topicMaster", "releaseNotes"]
 		  }
 		],
 
@@ -288,6 +293,12 @@
 		  "notFound": {
 			"viewName": "NotFound",
 			"viewId": "notFound"
+		  },
+			"releaseNotes": {
+				"viewName": "ReleaseNotes",
+				"viewLevel": 2,
+				"viewId": "releaseNotes",
+				"controlAggregation": "detailPages"
 		  }
 		}
 	  }
