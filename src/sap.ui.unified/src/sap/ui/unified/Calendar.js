@@ -355,9 +355,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Calendar.prototype.removeSelectedDate = function(oSelectedDate) {
+		this._bDateRangeChanged = true;
+		return this.removeAggregation("selectedDates", oSelectedDate);
+	};
+
 	// overwrite removing of date ranged because invalidate don't get information about it
 	Calendar.prototype.removeAllSelectedDates = function() {
-
 		this._bDateRangeChanged = true;
 		var aRemoved = this.removeAllAggregation("selectedDates");
 		return aRemoved;
