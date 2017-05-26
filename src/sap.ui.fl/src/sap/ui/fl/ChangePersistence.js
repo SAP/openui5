@@ -164,13 +164,36 @@ sap.ui.define([
 				sSelectorId = oComponent.createId(sSelectorId);
 			}
 
-			if (!this._mChanges.mChanges[sSelectorId]) {
-				this._mChanges.mChanges[sSelectorId] = [];
+			this._addMapEntry(sSelectorId, oChange);
+
+			// add legacy change twice to ensure a different component ID on creation does not interfere
+			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") != -1) {
+				var sComponentPrefix = sSelectorId.split("---")[0];
+
+				// if the component prefix does not match the application component
+				// add the app component prefixed selector as well
+				if (sComponentPrefix !== oComponent.getId()) {
+					sSelectorId = sSelectorId.split("---")[1];
+					sSelectorId = oComponent.createId(sSelectorId);
+					this._addMapEntry(sSelectorId, oChange);
+				}
 			}
-			this._mChanges.mChanges[sSelectorId].push(oChange);
 		}
 
 		return this._mChanges;
+	};
+
+	/**
+	 *
+	 * @param {string} sSelectorId key in the mapping for which the entry should be written
+	 * @param {sap.ui.fl.Change} change which should be added into the mapping
+	 * @private
+	 */
+	ChangePersistence.prototype._addMapEntry = function (sSelectorId, oChange) {
+		if (!this._mChanges.mChanges[sSelectorId]) {
+			this._mChanges.mChanges[sSelectorId] = [];
+		}
+		this._mChanges.mChanges[sSelectorId].push(oChange);
 	};
 
 	ChangePersistence.prototype._addDependency = function (oDependentChange, oChange) {
