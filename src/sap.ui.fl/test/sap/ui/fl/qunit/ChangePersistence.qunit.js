@@ -620,6 +620,95 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
+	QUnit.test("loadChangesMapForComponent adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
+		var sAppComponentId = "appComponentId";
+
+		var oComponent = {
+			getId: function () {
+				return sAppComponentId;
+			},
+			createId: function (sSuffix) {
+				return sAppComponentId + "---" + sSuffix;
+			}
+		};
+
+		var oChange = new Change({
+			fileName:"change1",
+			fileType: "change",
+			layer: "USER",
+			selector: { id: oComponent.createId("controlId") },
+			dependentSelector: []
+		});
+
+		this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
+
+		assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 1, "thje change was written only once");
+		assert.equal(this.oChangePersistence._mChanges.mChanges[oComponent.createId("controlId")][0], oChange,
+			"the change was written for the selector ID");
+	});
+
+	QUnit.test("loadChangesMapForComponent adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
+		var sAppComponentId = "appComponentId";
+
+		var oComponent = {
+			getId: function () {
+				return sAppComponentId;
+			},
+			createId: function (sSuffix) {
+				return sAppComponentId + "---" + sSuffix;
+			}
+		};
+
+		var oChange = new Change({
+			fileName:"change1",
+			fileType: "change",
+			layer: "USER",
+			selector: { id: "anotherComponentId---controlId" },
+			dependentSelector: []
+		});
+
+		this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
+
+		assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 2, "the change was written twice");
+		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"].length, 1,
+			"a change was written for the original selector ID");
+		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"][0], oChange,
+			"the change was written for the original selector ID");
+		assert.equal(this.oChangePersistence._mChanges.mChanges["appComponentId---controlId"].length, 1,
+			"a change was written for the selector ID concatenated with the app component ID");
+		assert.equal(this.oChangePersistence._mChanges.mChanges["appComponentId---controlId"][0], oChange,
+			"the change was written for the app selector ID");
+	});
+
+	QUnit.test("loadChangesMapForComponent adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
+		var sAppComponentId = "appComponentId";
+
+		var oComponent = {
+			getId: function () {
+				return sAppComponentId;
+			},
+			createId: function (sSuffix) {
+				return sAppComponentId + "---" + sSuffix;
+			}
+		};
+
+		var oChange = new Change({
+			fileName:"change1",
+			fileType: "change",
+			layer: "USER",
+			selector: { id: "anotherComponentId---controlId", idIsLocal: false },
+			dependentSelector: []
+		});
+
+		this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
+
+		assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 1, "the change was written only once");
+		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"].length, 1,
+			"a change was written for the original selector ID");
+		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"][0], oChange,
+			"the change was written for the original selector ID");
+	});
+
 	QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
 
 		var that = this;
