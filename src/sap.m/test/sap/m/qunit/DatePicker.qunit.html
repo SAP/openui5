@@ -13,6 +13,7 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
+			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-language="en-US">
 		</script>
@@ -25,8 +26,51 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
+		<script id="myxml" type="text/xmldata">
+		<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="my.own.controller">
+			<VBox>
+				<DatePicker id="picker1"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset'
+					}"
+					displayFormat= "dd+MM+yyyy"
+				/>
+				<DatePicker id="picker2"
+					valueFormat= "dd+MM+yyyy"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset',
+						constraints: { nullable: false }
+					}"
+				/>
+				<DatePicker id="picker3"
+					displayFormat= "dd+MM+yyyy"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset',
+						formatOptions: {
+							style: 'short'
+						}
+					}"
+					valueFormat= "dd+MM+yyyy"
+				/>
+				<DatePicker id="picker4"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset',
+						formatOptions: {
+							pattern: 'dd+MM+yyyy'
+						}
+					}"
+				/>
+			</VBox>
+		</mvc:View>
+		</script>
+
 		<!-- Test functions -->
 		<script>
+			jQuery.sap.require("sap.ui.test.TestUtils");
 
 			var bChange = false;
 			var sValue = "";
@@ -147,6 +191,47 @@
 				assert.equal(jQuery("#DP5").children("div.sapMInputDivWrapper").children("input").val(), "Safar 10, 1437 AH", "DP5: defined islamic output format used");
 				assert.equal(jQuery("#DP6").children("div.sapMInputDivWrapper").children("input").val(), "11/23/15", "DP6: defined output format from binding used");
 				assert.equal(jQuery("#DP7").children("div.sapMInputDivWrapper").children("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
+			});
+
+			QUnit.module("data binding");
+
+			QUnit.test("data binding with OData", function(assert) {
+				var done = assert.async();
+				sap.ui.controller("my.own.controller", {
+					onInit: function() {
+						this.getView().bindObject("/EdmTypesCollection(ID='1')");
+					}
+				});
+
+				sap.ui.test.TestUtils.useFakeServer(sinon.sandbox.create(),
+					"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
+						"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
+							source : "metadataV2.xml"
+						},
+						"/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
+							source : "EdmTypesV2.json"
+						}
+					});
+
+				var oModelV2 = new sap.ui.model.odata.v2.ODataModel({
+					serviceUrl : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+					useBatch : false
+				});
+
+				var view = sap.ui.view({ viewContent: document.scripts.myxml.innerText, type: sap.ui.core.mvc.ViewType.XML })
+					.setModel(oModelV2)
+					.placeAt("qunit-fixture");
+
+				oModelV2.attachRequestCompleted(function () {
+					var oDate = new Date(1420529121547); // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
+					var format = sap.ui.core.format.DateFormat;
+
+					assert.equal(view.byId("picker1")._$input.val(), format.getDateTimeInstance().format(oDate), "picker1 has correct value!");
+					assert.equal(view.byId("picker2")._$input.val(), format.getDateTimeInstance().format(oDate), "picker2 has correct value!");
+					assert.equal(view.byId("picker3")._$input.val(), format.getDateTimeInstance({style: "short"}).format(oDate), "picker3 has correct value!");
+					assert.equal(view.byId("picker4")._$input.val(), format.getDateTimeInstance({pattern: "dd+MM+yyyy"}).format(oDate), "picker4 has correct value!");
+					done();
+				});
 			});
 
 			QUnit.module("API");
