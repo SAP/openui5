@@ -111,7 +111,7 @@ sap.ui.define([
 
 					var aFilters = [];
 					if (sFilterArgument) {
-						var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
+						var oNameFilter = new Filter("name", FilterOperator.Contains, sFilterArgument);
 						aFilters.push(oNameFilter);
 					}
 
