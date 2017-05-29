@@ -726,6 +726,42 @@
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
 		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
 	});
+
+	QUnit.module("getURIOrderByOptionValue");
+
+	QUnit.test("single sort sondition", function (assert) {
+		var oModel = getModelInstance(),
+			oSortExpression = new odata4analytics.SortExpression(oModel, {}, {});
+
+		oSortExpression._aSortCondition.push(
+			{property : {name : "GrossAmount"}, order : "desc"}
+		);
+
+		// code under test
+		assert.strictEqual(oSortExpression.getURIOrderByOptionValue(), "GrossAmount desc");
+	});
+
+	QUnit.test("multiple sort conditions", function (assert) {
+		var oModel = getModelInstance(),
+			oSortExpression = new odata4analytics.SortExpression(oModel);
+
+		oSortExpression._aSortCondition.push(
+			{property : {name : "GrossAmount"}, order : "desc"},
+			{property : {name : "NetValue"}, order : "asc"}
+		);
+
+		// code under test
+		assert.strictEqual(oSortExpression.getURIOrderByOptionValue(),
+			"GrossAmount desc,NetValue asc");
+	});
+
+	QUnit.test("without sort conditions", function (assert) {
+		var oModel = getModelInstance(),
+			oSortExpression = new odata4analytics.SortExpression(oModel);
+
+		// code under test
+		assert.strictEqual(oSortExpression.getURIOrderByOptionValue(), "");
+	});
 </script>
 </head>
 <body>
