@@ -35,7 +35,8 @@
 
 			var sSelectedAppointmentId = "";
 			var iSelectedGroupAppointments = 0;
-			var bMultiSelect = false;
+			var bMultiSelect = false,
+				sDomRefId;
 			var handleSelect = function(oEvent){
 				sSelectedAppointmentId = "";
 				iSelectedGroupAppointments = 0;
@@ -47,6 +48,7 @@
 					iSelectedGroupAppointments = aAppointments.length;
 				}
 				bMultiSelect = oEvent.getParameter("multiSelect");
+				sDomRefId = oEvent.getParameter("domRefId");
 			};
 
 			var oIntervalStartDate;
@@ -869,6 +871,7 @@
 				assert.ok(sap.ui.getCore().byId("App4").getSelected(), "Appointment1: selected property set");
 				assert.ok(sap.ui.getCore().byId("App5").getSelected(), "Appointment1: selected property set");
 				assert.ok(sap.ui.getCore().byId("App6").getSelected(), "Appointment1: selected property set");
+				assert.equal(sDomRefId, "Row1-Group0", "sDomRefId returns the right ID of the group appointment");
 			});
 
 			QUnit.test("click on appointment", function(assert) {
@@ -884,6 +887,7 @@
 				assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
 				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
 				assert.ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
+				assert.equal(sDomRefId, "App1", "sDomRefId returns the right ID of the appointment");
 
 				qutils.triggerEvent("tap", "App2-Title");
 				assert.ok(!sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property not longer set");
@@ -896,6 +900,7 @@
 				assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
 				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
 				assert.ok(sAriaLabel1.indexOf(sSelectedTextId) == -1, "Appointment1: selected ARIA text is removed");
+				assert.equal(sDomRefId, "App2", "sDomRefId returns the right ID of the appointment");
 
 				qutils.triggerEvent("tap", "App3-Text", {ctrlKey: true});
 				assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected still property set");
@@ -908,6 +913,7 @@
 				assert.ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
 				sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
 				assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is still rendered");
+				assert.equal(sDomRefId, "App3", "sDomRefId returns the right ID of the appointment");
 			});
 
 			QUnit.test("click on interval", function(assert) {

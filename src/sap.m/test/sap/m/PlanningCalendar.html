@@ -90,30 +90,46 @@
 		var handleAppointmentSelect = function(oEvent){
 			var oInput = sap.ui.getCore().byId("I1"),
 				oAppointment = oEvent.getParameter("appointment"),
+				sPopoverValue,
+				bDiffType,
+				aAppointments,
 				sValue,
-				sMessageBoxValue,
-				bDiffType;
+				sGroupAppointmentType,
+				sGroupAppDomRefId = oEvent.getParameter("domRefId"),
+				sTitle,
+				i;
+
 			if (oAppointment) {
 				oInput.setValue("Appointment selected: " + oAppointment.getId());
+				sPopoverValue = "Appointment selected: " + oAppointment.getId();
+				sTitle = "Appointment";
 			} else {
-				var aAppointments = oEvent.getParameter("appointments"),
-					sValue = aAppointments.length + " Appointments selected: ",
-					sGroupAppointmentType = aAppointments[0].getType();
-				for (var i = 1; i < aAppointments.length; i++) {
+				aAppointments = oEvent.getParameter("appointments");
+				sValue = aAppointments.length + " Appointments selected: ";
+				sGroupAppointmentType = aAppointments[0].getType();
+				sTitle = "Group Appointment";
+				for (i = 1; i < aAppointments.length; i++) {
 					if (sGroupAppointmentType !== aAppointments[i].getType()) {
 						bDiffType = true;
 					}
 					sValue = sValue + aAppointments[i].getId() + " ";
 				}
 				oInput.setValue(sValue);
+				if (bDiffType) {
+					sPopoverValue = aAppointments.length + " Appointments of different types selected";
+				} else {
+					sPopoverValue = aAppointments.length + " Appointments of " + sGroupAppointmentType + " selected";
+				}
 			}
-			jQuery.sap.require("sap.m.MessageBox");
-			if (bDiffType) {
-				sMessageBoxValue = aAppointments.length + " Appointments of different types selected";
-			} else {
-				sMessageBoxValue = aAppointments.length + " Appointments of " + sGroupAppointmentType + " selected";
-			}
-			sap.m.MessageBox.information(sMessageBoxValue);
+			jQuery.sap.require("sap.m.Popover");
+			var oPopover = new sap.m.Popover({
+				title: sTitle,
+				content: new sap.m.Label({
+					text: sPopoverValue
+				})
+			});
+			oPopover.addStyleClass("sapUiPopupWithPadding");
+			oPopover.openBy(document.getElementById(sGroupAppDomRefId));
 			setEventLog("'appointmentSelect' for appointment: " + (oAppointment ? oAppointment.getTitle() : "<no app>"));
 		};
 
