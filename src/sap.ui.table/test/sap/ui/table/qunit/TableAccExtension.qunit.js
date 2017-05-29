@@ -588,9 +588,6 @@
 
 		if (bFocus) {
 			aLabels.push(oTable.getId() + "-rownumberofrows");
-			if (iRow == 0) {
-				aLabels.push(oTable.getId() + "-ariarowselected");
-			}
 			if (bGroup) {
 				aLabels.push(oTable.getId() + "-ariarowgrouplabel");
 			} else if (bSum) {
