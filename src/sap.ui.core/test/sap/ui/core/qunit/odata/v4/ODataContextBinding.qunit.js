@@ -1191,7 +1191,8 @@ sap.ui.require([
 						oSingleCache = {
 							deregisterChange : function () {},
 							post : function () {},
-							read : function () {}
+							read : function () {},
+							setActive : function () {}
 						},
 						oSingleCacheMock = this.mock(oSingleCache),
 						that = this;
