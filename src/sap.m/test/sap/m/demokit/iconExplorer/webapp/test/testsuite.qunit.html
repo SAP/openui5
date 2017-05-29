@@ -13,8 +13,7 @@
 				sContextPath = location.pathname.substring(0, location.pathname.lastIndexOf("/") + 1);
 
 			oSuite.addTestPage(sContextPath + "unit/unitTests.qunit.html");
-			// temporarily disabled until root cause for the failing voter test is found
-			// oSuite.addTestPage(sContextPath + "integration/opaTests.qunit.html");
+			oSuite.addTestPage(sContextPath + "integration/opaTests.qunit.html");
 
 			return oSuite;
 		}
