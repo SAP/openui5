@@ -431,7 +431,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sSelectedKey = this.getSelectedKey(),
 			i = 0,
 			oParent = this.getParent(),
-			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar;
+			bIsParentIconTabBar = oParent instanceof sap.m.IconTabBar,
+			bIsParentToolHeader = oParent && oParent.getMetadata().getName() == 'sap.tnt.ToolHeader';
 
 		if (this._sResizeListenerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
@@ -462,7 +463,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			//in case the selected tab is not visible anymore, the selected tab will change to the first visible tab
-			if (this.oSelectedItem && !this.oSelectedItem.getVisible()) {
+			if (!bIsParentToolHeader && this.oSelectedItem && !this.oSelectedItem.getVisible()) {
 				for (i = 0; i < aItems.length; i++) { // tab item
 					if (!(aItems[i] instanceof sap.m.IconTabSeparator) && aItems[i].getVisible()) {
 						this.oSelectedItem = aItems[i];
@@ -628,8 +629,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
 		this.oSelectedItem = oItem;
+		var sSelectedKey = this.oSelectedItem._getNonEmptyKey();
+
 		this.setProperty("selectedKey", sSelectedKey, true);
 		if (bIsParentIconTabBar) {
 			oParent.setProperty("selectedKey", sSelectedKey, true);
