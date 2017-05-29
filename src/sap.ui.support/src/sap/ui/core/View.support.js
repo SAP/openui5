@@ -119,7 +119,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 							var sFullName = oXMLView._xContent.attributes.item(i).value;
 
 							// check all explicit namespaces except for the injected support namespace
-							if (sName.match("xmlns:") && sLocalName !== "xmlns:support") {
+							// and the mvc, because the use of mvc is checked in other rule
+							if (sName.match("xmlns:")
+								&& sLocalName !== "xmlns:support"
+								&& sLocalName !== "mvc") {
 								for (var j = 0; j < oXMLView._xContent.children.length; j++) {
 									var sContent = oXMLView._xContent.children[j].outerHTML;
 
