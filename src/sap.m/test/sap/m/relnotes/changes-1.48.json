@@ -1602,6 +1602,12 @@
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: Select all does not trigger re-rendering",
         "references": []
+      },
+      {
+        "id": "e9318c98f9bc96fd055b631a49f9547fa4900a56",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Density mode implementation",
+        "references": []
       }
     ]
   }
