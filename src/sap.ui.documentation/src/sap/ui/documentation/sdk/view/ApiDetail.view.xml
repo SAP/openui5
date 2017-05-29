@@ -125,7 +125,15 @@
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
-									<layout:VerticalLayout>
+									<layout:VerticalLayout width="100%">
+										<m:MessageStrip  width="100%"
+											visible="{=${topics>/deprecated} !== undefined}"
+											text="Deprecated since version {topics>/deprecated/since}. {topics>/deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
 
