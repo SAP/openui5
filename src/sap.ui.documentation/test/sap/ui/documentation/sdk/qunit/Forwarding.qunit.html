@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
+<script src="../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m">
+
+</script>
+
+<link rel="stylesheet"
+	href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+
+<!-- QUnit libraries -->
+<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script>
+
+	var sBaseURL = window.location.origin + "/" + window.location.pathname.split( '/' )[1] + "/documentation.html", // this corresponds to current base path of demokit
+
+	fnCompareOnhashchange = function(assert, iframe, sRequestPath, sRedirecPath) {
+
+		var done = assert.async(),
+			sRequestURL = sBaseURL + sRequestPath,
+			sRedirectURL = sBaseURL + sRedirecPath;
+
+		iframe.onload = function() {
+			this.contentWindow.addEventListener("hashchange", function(oEvent) {
+				assert.equal(oEvent.newURL, sRedirectURL, "forward is correct");
+				done();
+			}, false);
+
+		};
+
+		iframe.src = sRequestURL;
+	}
+</script>
+
+<script>
+
+	QUnit.module("Documentation", {
+		beforeEach: function () {
+			this.iframe = document.createElement('iframe');
+			this.iframe.style.display = "none";
+			document.body.appendChild(this.iframe);
+		},
+		afterEach: function () {
+			this.iframe.parentNode.removeChild(this.iframe);
+			this.iframe = null;
+		}
+	});
+
+	QUnit.test("docu redirect", function(assert) {
+
+		var sId = "95d113be50ae40d5b0b562b84d715227",
+			sRequestHash = "#docs/guide/" + sId + ".html",
+			sRedirectHash = "#/topic/" + sId;
+
+		fnCompareOnhashchange(assert, this.iframe, sRequestHash, sRedirectHash);
+	});
+
+
+	QUnit.module("API Reference", {
+		beforeEach: function () {
+			this.iframe = document.createElement('iframe');
+			this.iframe.style.display = "none";
+			document.body.appendChild(this.iframe);
+		},
+		afterEach: function () {
+			this.iframe.parentNode.removeChild(this.iframe);
+			this.iframe = null;
+		}
+	});
+
+	QUnit.test("api redirect basic", function(assert) {
+
+		var sRequestHash = "#docs/api/symbols/jQuery.html",
+			sRedirectHash = "#/api/jQuery";
+
+		fnCompareOnhashchange(assert, this.iframe, sRequestHash, sRedirectHash);
+	});
+
+	QUnit.test("api redirect constructor", function(assert) {
+
+		var sRequestHash = "#docs/api/symbols/sap.ui.base.ManagedObject.html#constructor",
+			sRedirectHash = "#/api/sap.ui.base.ManagedObject/constructor";
+
+		fnCompareOnhashchange(assert, this.iframe, sRequestHash, sRedirectHash);
+	});
+
+	QUnit.test("api redirect method", function(assert) {
+
+		var sRequestHash = "#docs/api/symbols/sap.ui.base.ManagedObject.html#.create",
+			sRedirectHash = "#/api/sap.ui.base.ManagedObject/.create";
+
+		fnCompareOnhashchange(assert, this.iframe, sRequestHash, sRedirectHash);
+	});
+
+	QUnit.test("api redirect event type", function(assert) {
+
+		var sRequestHash = "#docs/api/symbols/sap.ui.base.ManagedObject.html#event:modelContextChange",
+			sRedirectHash = "#/api/sap.ui.base.ManagedObject/events/modelContextChange";
+
+		fnCompareOnhashchange(assert, this.iframe, sRequestHash, sRedirectHash);
+	});
+
+
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	<div id="content"></div>
+</body>
+</html>
