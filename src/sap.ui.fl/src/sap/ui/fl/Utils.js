@@ -313,7 +313,7 @@ sap.ui.define([
 		 * Determines whether a layer is higher than the max layer.
 		 *
 		 * @param {String} sLayer - Layer name to be evaluated
-		 * @returns {boolean} <code>true<code> if input layer is higher than max layer, otherwise <code>false<code>
+		 * @returns {boolean} <code>true</code> if input layer is higher than max layer, otherwise <code>false</code>
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isOverMaxLayer
@@ -325,7 +325,7 @@ sap.ui.define([
 		/**
 		 * Determines if filtering of changes based on layer is required.
 		 *
-		 * @returns {boolean} <code>true<code> if the top layer is also the max layer, otherwise <code>false<code>
+		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isLayerFilteringRequired

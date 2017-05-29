@@ -767,7 +767,7 @@ sap.ui.define([
 	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
 	 *   reset to <code>undefined</code>.
 	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
@@ -883,7 +883,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 */
 	PropertyCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
@@ -1001,7 +1001,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet

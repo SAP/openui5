@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			showTitleSelector : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Determines the value state of the <code>number<code> and <code>numberUnit<code> properties.
+			 * Determines the value state of the <code>number</code> and <code>numberUnit</code> properties.
 			 * @since 1.16.0
 			 */
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
 
 			/**
-			 * Determines whether the <code>ObjectHeader<code> is rendered with a different design that
+			 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
 			 * reacts responsively to the screen sizes.
 			 *
 			 * <b>Note:</b> Be aware that the design and behavior of the responsive <code>ObjectHeader</code>

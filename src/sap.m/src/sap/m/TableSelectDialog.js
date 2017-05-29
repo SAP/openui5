@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Table select dialog supports multi-selection when the <code>multiSelect</code> property is set.
 	 *
 	 * The selected items can be stored for later editing when the <code>rememberSelections</code> property is set.
-	 * <b>Note:<b> This property has to be set before the dialog is opened.
+	 * <b>Note:</b> This property has to be set before the dialog is opened.
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
 	 * <ul>

@@ -852,7 +852,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests a module for the given <code>sModuleName<code>.
+	 * Requests a module for the given <code>sModuleName</code>.
 	 *
 	 * @param {string} sModuleName
 	 *   The name of the module to fetch (e.g. sap.ui.model.odata.type.Int16)

@@ -241,7 +241,7 @@ sap.ui.define(['jquery.sap.global', './Popover', './TabStripSelectList', './libr
 
 
 		/**
-		 * Handles the <code>touchstart<code> event on the <code>TabStripSelect</code>.
+		 * Handles the <code>touchstart</code> event on the <code>TabStripSelect</code>.
 		 *
 		 * @param {jQuery.Event} oEvent The event object
 		 * @private

@@ -48,7 +48,7 @@ sap.ui.define([
 		 * Handler if a route was matched;
 		 * Obtains information about layer, namespace, filename, and file type from the route's arguments, and then requests content from Layered Repository.
 		 * @param {Object} oRouteMatch - route object which is specified in the router and matched via regexp
-		 * @returns {Promise} - <code>LRepConnector<code> "getContent" promise
+		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onRouteMatched: function (oRouteMatch) {
@@ -84,8 +84,8 @@ sap.ui.define([
 		 * @param {Object} oModelData - model data of current page
 		 * @param {Object} oPage - current page used to set display busy mode on/off
 		 * @param {Object} sContentSuffix - content suffix to send metadata request
-		 * @param {Object} oData - data which is received from <code>LRepConnector<code> "getContent" promise
-		 * @returns {Promise} - <code>LRepConnector<code> "getContent" promise
+		 * @param {Object} oData - data which is received from <code>LRepConnector</code> "getContent" promise
+		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
@@ -104,9 +104,9 @@ sap.ui.define([
 
 		/**
 		 * Handler for a "Save" action in "Edit" mode;
-		 * Checks the current layer, namespace, filename, and file type and calls <code>LRepConnector<code> "saveFile" to save the file;
+		 * Checks the current layer, namespace, filename, and file type and calls <code>LRepConnector</code> "saveFile" to save the file;
 		 * After the file has been successfully saved, navigates to "Display" mode of the content.
-		 * @returns {Promise} - <code>LRepConnector<code> "saveFiles" promise
+		 * @returns {Promise} - <code>LRepConnector</code> "saveFiles" promise
 		 * @public
 		 */
 		onSave: function () {

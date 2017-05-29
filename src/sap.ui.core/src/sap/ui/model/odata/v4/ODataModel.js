@@ -98,7 +98,7 @@ sap.ui.define([
 	 *   synchronized at all; all other values are not supported and lead to an error.
 	 * @param {string} [mParameters.updateGroupId]
 	 *   The group ID that is used for update requests. If no update group ID is specified,
-	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined<code>,
+	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined</code>,
 	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
 	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root

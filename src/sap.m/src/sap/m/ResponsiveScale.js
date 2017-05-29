@@ -134,7 +134,7 @@ sap.ui.define([
 		 * The implementation of 2) (the walk step/jump) is also an integer which is on power of 2. For example if we start from position
 		 * <b>1</b> (the second element in the array), we'll visit the following nodes: 1, 3, 5, 7, 9, etc.
 		 * Then if we move the starting pointer to the next visible node, its index (it's 2) is integer on power of 2,
-		 * the jump would become <b>4</b>: 2, 6, 10, 14, 18, 22, etc. Remember that we want to remove every second <b>visible<b>
+		 * the jump would become <b>4</b>: 2, 6, 10, 14, 18, 22, etc. Remember that we want to remove every second <b>visible</b>
 		 * node and 1, 3, 5, 7, 9 are already invisible. So, if we continue in that manner, we'll always move the starting
 		 * pointer to the next integer which is on power of 2 and the jump step would be the next integer which is on power of 2.
 		 * For example:
