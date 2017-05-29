@@ -26,7 +26,7 @@ sap.ui.define([
 
 				// Type that will be used to generate the content. Own ExportType's can be created to support other formats
 				exportType : new ExportTypeCSV({
-					separatorChar : ";"
+					separatorChar : ","
 				}),
 
 				// Pass in the model created above
