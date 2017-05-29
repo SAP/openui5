@@ -629,7 +629,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function () {
-		this._tokenizer._doScrollToEnd();
+		this._tokenizer.scrollToEnd();
 		Input.prototype.onAfterRendering.apply(this, arguments);
 	};
 
