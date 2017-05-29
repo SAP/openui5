@@ -384,6 +384,7 @@
 	QUnit.module("Bugfixes");
 
 	QUnit.test("MessageManager: Message sorting", function(assert) {
+		assert.expect(3);
 		var done = assert.async();
 		var MessageType = sap.ui.core.MessageType;
 		var aCorrectOrder = [ MessageType.Error, MessageType.Error, MessageType.Warning, MessageType.Success, MessageType.Information ];
@@ -449,10 +450,55 @@
 
 		setTimeout(function() {
 			assert.ok(bCorrectOrder, "Messages have been propagated asynchronously and are correctly sorted");
+			sap.ui.getCore().getMessageManager().removeMessages(aMessages);
+			oInput.destroy();
 			done();
-		}, 50);
+		}, 0);
 	});
 
+	QUnit.test("Message: Change Message Processor", function(assert) {
+		assert.expect(4);
+		var done = assert.async();
+		
+		var oModel = new sap.ui.model.json.JSONModel();
+		var oInput = new sap.m.Input("inputField01", {
+			value: "{/test}"
+		});
+		oInput.setModel(oModel);
+		sap.ui.getCore().getMessageManager().registerObject(oInput);
+		
+		sap.ui.getCore().getMessageManager().addMessages(new sap.ui.core.message.Message({
+			type: sap.ui.core.MessageType.Information,
+			id: "test-info",
+			processor: oModel,
+			target: "/test"
+		}));
+
+		
+		setTimeout(function() {
+			var aMessages = oInput.getBinding("value").getDataState().getMessages();
+			assert.equal(aMessages.length, 1, "The message was propagated through the binding");
+			assert.ok(aMessages[0].getMessageProcessor() instanceof sap.ui.model.Model, "The message is processed by a model");
+			
+			var oMessage = aMessages[0];
+			
+			sap.ui.getCore().getMessageManager().removeMessages(oMessage);
+			oMessage.setMessageProcessor(new sap.ui.core.message.ControlMessageProcessor());
+			oMessage.setTarget("inputField01/test");
+			sap.ui.getCore().getMessageManager().addMessages(oMessage);
+			
+			setTimeout(function() {
+				aMessages = oInput.getBinding("value").getDataState().getMessages();
+				assert.equal(aMessages.length, 0, "The message was not propagated through the binding");
+				assert.ok(oMessage.getMessageProcessor() instanceof sap.ui.core.message.ControlMessageProcessor, "The message is processed by the ControlMessageProcessor");
+				
+				oInput.destroy();
+				sap.ui.getCore().getMessageManager().removeMessages(oMessage);
+				done();
+			}, 0);
+		}, 0);
+
+	});
 </script>
 
 </head>
