@@ -648,6 +648,24 @@
         "type": "FIX",
         "text": " handlebars: ensure proper context stacking in compat mode",
         "references": []
+      },
+      {
+        "id": "e9318c98f9bc96fd055b631a49f9547fa4900a56",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Density mode implementation",
+        "references": []
+      },
+      {
+        "id": "700097d3abb14a1c9c08a6651a73be6e76162d0a",
+        "type": "FIX",
+        "text": " ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": []
+      },
+      {
+        "id": "40c63752478ccf4cdcf6c666a6e33ad1b2f759d1",
+        "type": "FIX",
+        "text": " ScrollEnablement: inform growing when scrollTo method is called.",
+        "references": []
       }
     ]
   }

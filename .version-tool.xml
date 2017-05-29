@@ -23,8 +23,8 @@
           "src/sap.ui.codeeditor/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/sap.ui.commons/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
@@ -53,12 +53,42 @@
           "src/sap.ui.codeeditor/pom.xml": "1",
           "pom.xml": "2",
           "src/testsuite/pom.xml": "1",
-          "src/sap.ui.commons/pom.xml": "1",
           "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
           "src/testsuite-utils/pom.xml": "1"
         }
       },
       "lastCommitId": "b5b0c9c7176cb3c835c80e884bfcc7ab95f382ae"
+    },
+    "rel-1.48.1": {
+      "changes": {
+        "default": {
+          "src/sap.ui.demokit/pom.xml": "1",
+          "src/sap.ui.unified/pom.xml": "1",
+          "src/sap.ui.ux3/pom.xml": "1",
+          "src/sap.ui.core/pom.xml": "1",
+          "src/sap.uxap/pom.xml": "1",
+          "src/sap.ui.documentation/pom.xml": "1",
+          "src/sap.m/pom.xml": "1",
+          "package.json": "1",
+          "src/sap.ui.table/pom.xml": "1",
+          "src/sap.ui.fl/pom.xml": "1",
+          "src/sap.ui.dt/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/sap.f/pom.xml": "1",
+          "src/sap.ui.layout/pom.xml": "1",
+          "src/themelib_sap_belize/pom.xml": "1",
+          "src/sap.tnt/pom.xml": "1",
+          "src/sap.ui.suite/pom.xml": "1",
+          "src/sap.ui.codeeditor/pom.xml": "1",
+          "pom.xml": "2",
+          "src/testsuite/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
+          "src/testsuite-utils/pom.xml": "1"
+        }
+      },
+      "lastCommitId": "1f3e0c007efd3df1be68925fb0354ede35109b16"
     }
   }
 }
