@@ -54,9 +54,16 @@ sap.ui.define([
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
 
-
 				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
 				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
+
+				this.oRouter.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+				this.oRouter.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+				this.oRouter.getRoute("entityPropertiesLegacyRoute").attachPatternMatched({entityType: "properties"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityAggregationsLegacyRoute").attachPatternMatched({entityType: "aggregations"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityAssociationsLegacyRoute").attachPatternMatched({entityType: "associations"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
 				// apply content density mode to root view
 				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
@@ -122,6 +129,18 @@ sap.ui.define([
 					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
 				}
 				return sLink;
+			},
+
+			_forwardToAPIRef: function(oEvent, oData) {
+				oData || (oData = {});
+				oData['id'] = oEvent.getParameter("arguments").id;
+				this.oRouter.navTo("apiId", oData);
+			},
+
+			_onEntityOldRouteMatched: function(oEvent) {
+				this.oRouter.navTo("entity", {
+					id: oEvent.getParameter("arguments").id
+				});
 			},
 
 			onRouteChange: function (oEvent) {
