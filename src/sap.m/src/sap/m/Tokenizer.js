@@ -423,6 +423,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (token.getEditable()) {
 				self.removeToken(token);
 				removedTokens.push(token);
+				token.destroy();
 			}
 		}
 

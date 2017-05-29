@@ -463,13 +463,6 @@
 		},
 		afterEach : function() {
 			this.tokenizer.destroy();
-			// items might have been removed from aggregation, so destroy them separately
-			["t1", "t2", "t3"].forEach(function(sId) {
-				var oToken = sap.ui.getCore().byId(sId);
-				if ( oToken ) {
-					oToken.destroy();
-				}
-			});
 		}
 	});
 
