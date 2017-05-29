@@ -3708,23 +3708,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Get the value for the OData system query option $orderby corresponding to
 		 * this expression.
 		 *
-		 * @param {object} oSelectedPropertyNames Object with properties requested for $select
-		 *
 		 * @returns {string} The $orderby value for the sort expressions
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.SortExpression#getURIOrderByOptionValue
 		 */
-		getURIOrderByOptionValue : function(oSelectedPropertyNames) {
+		getURIOrderByOptionValue : function() {
 			if (this._aSortCondition.length == 0) {
 				return "";
 			}
 
 			var sOrderByOptionString = "";
 			for (var i = -1, oCondition; (oCondition = this._aSortCondition[++i]) !== undefined;) {
-				if (!oSelectedPropertyNames[oCondition.property.name]) {
-					continue; // sorting of aggregated entities is meaningful only if the sorted property is also selected
-				}
 				sOrderByOptionString += (sOrderByOptionString == "" ? "" : ",") + oCondition.property.name + " " + oCondition.order;
 			}
 
@@ -4629,7 +4624,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 			case "$orderby": {
 				var sSortOption = null;
 				if (this._oSortExpression) {
-					sSortOption = this._oSortExpression.getURIOrderByOptionValue(this._oSelectedPropertyNames);
+					sSortOption = this._oSortExpression.getURIOrderByOptionValue();
 				}
 				sQueryOptionValue = (sSortOption ? sSortOption : null);
 				break;
