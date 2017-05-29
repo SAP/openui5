@@ -25,7 +25,7 @@
 							loop="true"
 							pageChanged="onCarouselPageChanged">
 							<pages>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselShipping',
@@ -37,7 +37,7 @@
 										text="{i18n>welcomeCarouselShipping}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselInviteFriend',
@@ -49,7 +49,7 @@
 										text="{i18n>welcomeCarouselInviteFriend}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselTablet',
@@ -61,7 +61,7 @@
 										text="{i18n>welcomeCarouselTablet}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselCreditCard',

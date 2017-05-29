@@ -58,17 +58,19 @@
 						}" />
 				</firstStatus>
 			</ObjectHeader>
-			<VBox alignItems="Center">
-				<Image
-					id = "productImage"
-					src= "{
+			<VBox
+				alignItems="Center"
+				renderType="Div">
+					<Image
+						id = "productImage"
+						src= "{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
 						}"
-					decorative="true"
-					class="sapUiSmallMargin"
-					press="onPicturePress"
-					width="100%"
+						decorative="true"
+						class="sapUiSmallMargin"
+						press="onPicturePress"
+						width="100%"
 					/>
 			</VBox>
 		</content>
