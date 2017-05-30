@@ -160,7 +160,7 @@ sap.ui.define([
                   QUnit.config.current.assertions.pop(); // don't break QUnit expect() behaviour
                 }
                 oTestStep.parameters = (oTestStep.parameters || []).concat([Given, When, Then]);
-                oTestGenerator.execute(oTestStep);
+                oTestGenerator.execute(oTestStep, Opa5.assert);
               }
             });
           }.bind(this));
