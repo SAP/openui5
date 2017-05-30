@@ -682,6 +682,17 @@ sap.ui.define([
 			},
 
 			/**
+			 * Formats the name of a property or a method depending on if it's static or not
+			 * @param sName {string} - Name
+			 * @param sClassName {string} - Name of the class
+			 * @param bStatic {boolean} - If it's static
+			 * @returns {string} - Formatted name
+			 */
+			formatEntityName: function (sName, sClassName, bStatic) {
+				return (bStatic === true) ? sClassName + "." + sName : sName;
+			},
+
+			/**
 			 * Formats the description of the property
 			 * @param description - the description of the property
 			 * @param deprecatedText - the text explaining this property is deprecated
@@ -763,19 +774,6 @@ sap.ui.define([
 				} else {
 					return "";
 				}
-			},
-
-			/**
-			 * Helper function retrieving method name
-			 * @param methodInfo - object containing information about the method or the method parameter
-			 * @returns {string} - the name of the method or empty string
-			 */
-			formatMethodsName: function (methodInfo) {
-
-					return methodInfo ? methodInfo.name : "";
-
-
-
 			},
 
 			/**
