@@ -192,7 +192,12 @@
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+
+													<m:Text class="sapUiDocumentationParamBold" text="{parts: [
+															{path: 'topics>name'},
+															{path: 'topics>/name'},
+															{path: 'topics>static'}],
+														formatter: '.formatEntityName'}" wrapping="false"/>
 
 													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
 														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
@@ -347,8 +352,11 @@
 									   subSections="{ path : 'methods>/methods'}" >
 						<subSections>
 
-							<ObjectPageSubSection title="{parts: [{path: 'methods>'}],
-																   formatter: '.formatMethodsName'}">
+							<ObjectPageSubSection title="{parts: [
+												{path: 'methods>name'},
+												{path: 'topics>/name'},
+												{path: 'methods>static'}
+											], formatter: '.formatEntityName'}">
 								<blocks>
 
 									<layout:VerticalLayout>
