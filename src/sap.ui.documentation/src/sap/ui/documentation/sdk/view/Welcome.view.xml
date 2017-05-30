@@ -49,8 +49,8 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						backgroundColorSet="5"
-						backgroundColorIndex="4">
+					backgroundColorSet="ColorSet5"
+					backgroundColorShade="ShadeD">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
