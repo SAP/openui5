@@ -709,6 +709,8 @@ sap.ui.define(['jquery.sap.global',
 							text: sGroupPopoverValue
 						})
 					});
+				} else {
+					this._oGroupPopover.getContent()[0].setText(sGroupPopoverValue);
 				}
 				this._oGroupPopover.addStyleClass("sapUiPopupWithPadding");
 				this._oGroupPopover.openBy(document.getElementById(sGroupAppDomRefId));
