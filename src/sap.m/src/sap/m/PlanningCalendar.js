@@ -258,7 +258,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					 * If set, the appointment was selected using multiple selection (e.g. Shift + single mouse click),
 					 * meaning more than the current appointment could be selected.
 					 */
-					multiSelect : {type : "boolean"}
+					multiSelect : {type : "boolean"},
+
+					/**
+					 * Gives the ID of the DOM element of the clicked appointment
+					 * @since 1.50.0
+					 */
+					domRefId: {type: "string"}
 				}
 			},
 
@@ -1949,27 +1955,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _handleAppointmentSelect(oEvent) {
 
-		var oAppointment = oEvent.getParameter("appointment");
-		var bMultiSelect = oEvent.getParameter("multiSelect");
-		var aAppointments = oEvent.getParameter("appointments");
+		var oAppointment = oEvent.getParameter("appointment"),
+			bMultiSelect = oEvent.getParameter("multiSelect"),
+			aAppointments = oEvent.getParameter("appointments"),
+			sGroupAppointmentDomRef = oEvent.getParameter("domRefId"),
+			oEventParam,
+			aRows,
+			oRow,
+			oCalendarRow,
+			aRowAppointments,
+			oRowAppointment,
+			i, j;
 
 		if (!bMultiSelect) {
 			// deselect appointments of other rows
-			var aRows = this.getRows();
-			for (var i = 0; i < aRows.length; i++) {
-				var oRow = aRows[i];
-				var oCalendarRow = oRow.getCalendarRow();
+			aRows = this.getRows();
+			for (i = 0; i < aRows.length; i++) {
+				oRow = aRows[i];
+				oCalendarRow = oRow.getCalendarRow();
 				if (oEvent.oSource != oCalendarRow) {
-					var aRowAppointments = oRow.getAppointments();
-					for (var j = 0; j < aRowAppointments.length; j++) {
-						var oRowAppointment = aRowAppointments[j];
+					aRowAppointments = oRow.getAppointments();
+					for (j = 0; j < aRowAppointments.length; j++) {
+						oRowAppointment = aRowAppointments[j];
 						oRowAppointment.setSelected(false);
 					}
 				}
 			}
 		}
 
-		this.fireAppointmentSelect({appointment: oAppointment, appointments: aAppointments, multiSelect: bMultiSelect});
+		oEventParam = {appointment: oAppointment, appointments: aAppointments, multiSelect: bMultiSelect, domRefId: sGroupAppointmentDomRef};
+		this.fireAppointmentSelect(oEventParam);
 
 	}
 
