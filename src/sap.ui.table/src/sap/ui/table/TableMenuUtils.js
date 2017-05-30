@@ -68,13 +68,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				}
 
 				var oCellInfo = MenuUtils.TableUtils.getCellInfo($TableCell);
-				var iColumnIndex;
+				var iColumnIndex = oCellInfo.columnIndex;
+				var iRowIndex = oCellInfo.rowIndex;
 				var bExecuteDefault;
 
-				if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.COLUMNHEADER) {
+				if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.COLUMNHEADER)) {
 					var bCellHasMenuButton = $TableCell.find(".sapUiTableColDropDown").length > 0;
-
-					iColumnIndex = MenuUtils.TableUtils.getColumnHeaderCellInfo($TableCell).index;
 
 					if (Device.system.desktop || bCellHasMenuButton) {
 						MenuUtils.removeColumnHeaderCellMenu(oTable, iColumnIndex);
@@ -93,12 +92,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						MenuUtils.applyColumnHeaderCellMenu(oTable, iColumnIndex, $TableCell);
 					}
 
-				} else if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.DATACELL) {
-					var oCellIndices = MenuUtils.TableUtils.getDataCellInfo(oTable, $TableCell);
-					var iRowIndex = oCellIndices.rowIndex;
-
+				} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.DATACELL)) {
 					bExecuteDefault = true;
-					iColumnIndex = oCellIndices.columnIndex;
 
 					if (bFireEvent) {
 						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, true);

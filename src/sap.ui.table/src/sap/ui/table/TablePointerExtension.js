@@ -54,7 +54,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		 * interactive control inside a table cell.
 		 */
 		_skipClick : function(oEvent, $Target, oCellInfo) {
-			if (oCellInfo.type != TableUtils.CELLTYPES.DATACELL && oCellInfo.type != TableUtils.CELLTYPES.ROWACTION) {
+			if (!oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION)) {
 				return false;
 			}
 
@@ -744,8 +744,11 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		onmousedown : function(oEvent) {
 			var oPointerExtension = this._getPointerExtension();
 			var $Cell = TableUtils.getCell(this, oEvent.target);
-			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+			var oCellInfo = TableUtils.getCellInfo($Cell);
 			var $Target = jQuery(oEvent.target);
+			var oColumn;
+			var oMenu;
+			var bMenuOpen;
 
 			// check whether item navigation should be reapplied from scratch
 			this._getKeyboardExtension().initItemNavigation();
@@ -762,11 +765,10 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 					this._iLastHoveredColumnIndex = parseInt(iColIndex, 10);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
-				} else if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
-					var iIndex = TableUtils.getColumnHeaderCellInfo($Cell).index;
-					var oColumn = this.getColumns()[iIndex];
-					var oMenu = oColumn.getAggregation("menu");
-					var bMenuOpen = oMenu && oMenu.bOpen;
+				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
+					oColumn = this.getColumns()[oCellInfo.columnIndex];
+					oMenu = oColumn.getAggregation("menu");
+					bMenuOpen = oMenu && oMenu.bOpen;
 
 					if (!bMenuOpen) {
 						// A long click starts column reordering, so it should not also open the menu in the onclick event handler.
@@ -779,7 +781,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 					if (this.getEnableColumnReordering()
 						&& !(this._isTouchEvent(oEvent) && $Target.hasClass("sapUiTableColDropDown")) /*Target is not the mobile column menu button*/) {
 						// Start column reordering
-						this._getPointerExtension().doReorderColumn(iIndex, oEvent);
+						this._getPointerExtension().doReorderColumn(oCellInfo.columnIndex, oEvent);
 					}
 				}
 
@@ -800,19 +802,18 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 					return;
 				}
 
-				if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
-					var oColumnHeaderCellInfo = TableUtils.getColumnHeaderCellInfo($Cell);
-					var oColumn = this.getColumns()[oColumnHeaderCellInfo.index];
-					var oMenu = oColumn.getAggregation("menu");
-					var bMenuOpen = oMenu && oMenu.bOpen;
+				if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
+					oColumn = this.getColumns()[oCellInfo.columnIndex];
+					oMenu = oColumn.getAggregation("menu");
+					bMenuOpen = oMenu && oMenu.bOpen;
 
 					if (!bMenuOpen) {
 						oPointerExtension._bShowMenu = true;
 					} else {
 						oPointerExtension._bHideMenu = true;
 					}
-				} else if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-					var bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
+				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
+					bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
 					var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
 
 					if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
@@ -866,9 +867,9 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 
 			var $Cell = TableUtils.getCell(this, oEvent.target);
-			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+			var oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+			if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var oPointerExtension = this._getPointerExtension();
 				if (oPointerExtension._bShowMenu) {
 					TableUtils.Menu.openContextMenu(this, oEvent.target, false);
@@ -881,7 +882,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
-					if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+					if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
 						this._toggleSelectAll();
 					} else {
 						ExtensionHelper._handleClickSelection(oEvent, $Cell, this);
