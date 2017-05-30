@@ -39,8 +39,7 @@
 											id="download"
 											text="{i18n>downloadButtonText}"
 											type="Emphasized"
-											press="onDownloadButtonPress"
-											icon="sap-icon://download">
+											press="onDownloadButtonPress">
 									</Button>
 								</l:VerticalLayout>
 								<Image

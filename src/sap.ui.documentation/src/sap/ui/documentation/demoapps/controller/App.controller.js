@@ -123,7 +123,6 @@ sap.ui.define([
 			this.byId("phoneImage").setVisible(oEvent.name === "Phone");
 			this.byId("desktopImage").setVisible(oEvent.name !== "Phone");
 			this.byId("phoneImage").toggleStyleClass("phoneHeaderImageDesktop", oEvent.name === "Phone");
-			this.byId("download").setIcon(oEvent.name === "Phone" || oEvent.name === "Tablet" ? "" : "sap-icon://download");
 		},
 
 		/**
