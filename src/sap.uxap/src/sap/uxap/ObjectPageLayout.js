@@ -159,6 +159,7 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the footer is visible.
+				 * @since 1.40
 				 */
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
@@ -190,6 +191,7 @@ sap.ui.define([
 
 				/**
 				 * Object page floating footer.
+				 * @since 1.40
 				 */
 				footer: {type: "sap.m.IBar", multiple: false},
 
