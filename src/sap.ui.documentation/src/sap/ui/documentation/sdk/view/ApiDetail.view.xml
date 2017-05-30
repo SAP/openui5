@@ -249,6 +249,7 @@
 
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Visibility"/></m:Column>
 											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
@@ -264,6 +265,7 @@
 													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
+													<m:Text text="{topics>visibility}" wrapping="false"/>
 
 													<m:VBox>
 														<core:HTML content="{parts: [{path: 'topics>description'}],
@@ -298,8 +300,8 @@
 								<blocks>
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'events>description'}],
-																			 formatter: '.formatDescription'}"/>
+										<core:HTML content="{parts: [{path: 'events>description'}, {path: 'events>visibility'}],
+																			 formatter: '.formatDescriptionDetails'}"/>
 
 										<m:MessageStrip
 											visible="{=${events>deprecated} !== undefined}"
@@ -361,8 +363,8 @@
 
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'methods>description'}],
-																			 formatter: '.formatDescription'}"/>
+										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>visibility'}],
+																			 formatter: '.formatDescriptionDetails'}"/>
 
 										<m:MessageStrip
 											visible="{=${methods>deprecated} !== undefined}"

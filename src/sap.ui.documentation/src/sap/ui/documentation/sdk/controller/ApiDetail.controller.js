@@ -700,7 +700,7 @@ sap.ui.define([
 			 * @remturns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
-				var result = description;
+				var result = description || "";
 
 				if (deprecatedSince || deprecatedText) {
 					result += "<span class=\"sapUiDocumentationDeprecated\">";
@@ -718,6 +718,23 @@ sap.ui.define([
 					}
 
 					result += "</span>";
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of events and methods in details
+			 * @param description - the description of the event/method
+			 * @param visibility - the visibility of the event/method
+			 * @remturns string - the formatted description
+			 */
+			formatDescriptionDetails: function (description, visibility) {
+				var result = description || "";
+
+				if (visibility) {
+					result += '<br/><br/>Visibility: ' + visibility + '.';
 				}
 
 				result = this._wrapInSpanTag(result);
