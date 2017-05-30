@@ -140,7 +140,7 @@ sap.ui.define([
 
 			_viewSettingsResetOnNavigation: function (oEvent) {
 				var sRouteName = oEvent.getParameter("name");
-				if (["group", "entity", "sample", "code", "controls", "controlsMaster"].indexOf(sRouteName) === -1) {
+				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster"].indexOf(sRouteName) === -1) {
 					// Reset view settings
 					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
 						this._oDefaultSettings.compactOn);
