@@ -1,50 +1,50 @@
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPageColorPatternA {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPageColorPatternA {
 	background-color: #ffffff;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternB {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternB {
 	background-color: #eff4f9;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternBContrast {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternBContrast {
 	background-color: #3F5161;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternC {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternC {
 	background-color: #d5e2ef;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternD {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternD {
 	background-color: #cadbeb;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesColorPatternE {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesColorPatternE {
 	background-color: #bbd0e6;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiBlockLayout .sapUiBlockLayoutRow.sapUiBlockHorizontalCellsRow .sapUiBlockLayoutCell.demokitInitialPagesColorPatternFContrast {
 	background-color: #2f3c48;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesWhiteText {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText {
 	color: #fff;
 	text-shadow: none;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesWhiteText .sapMLnk {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText .sapMLnk {
 	color: #fff;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesWhiteText .sapMLnk:hover:not(.sapMLnkDsbl) {
 	color: #7ed0ff;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesBrightIcon {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightIcon {
 	color: #CAE4FB;
 }
 
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesBrightLink.sapMLnk,
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk,
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitInitialPagesBrightLink.sapMLnk:hover {
 	color: #7ed0ff;
 }
 
