@@ -603,7 +603,7 @@ sap.ui.define([
 			 * @returns string - The code needed to create an object of that class
 			 */
 			formatConstructor: function (name, params) {
-				var result = "new ";
+				var result = 'new ';
 
 				if (name) {
 					result += name + '(';
@@ -613,7 +613,7 @@ sap.ui.define([
 					params.forEach(function (element, index, array) {
 						result += element.name;
 
-						if (element.optional === "true") {
+						if (element.optional) {
 							result += '?';
 						}
 
@@ -791,6 +791,39 @@ sap.ui.define([
 				} else {
 					return "";
 				}
+			},
+
+			formatMethodCode: function(sName, aParams, aReturnValue) {
+				var result = sName + '(';
+
+				if (aParams.length > 0) {
+					aParams.forEach(function (element, index, array) {
+						if (element.isSubProperty || element.isSubSubProperty) {
+							return;
+						}
+
+						result += element.name;
+
+						if (element.optional) {
+							result += '?';
+						}
+
+						if (index < array.length - 1) {
+							result += ', ';
+						}
+					});
+				}
+
+				result += ') : ';
+
+				if (aReturnValue) {
+					result += aReturnValue.type;
+				} else {
+					result += 'void';
+				}
+
+
+				return result;
 			},
 
 			/**
