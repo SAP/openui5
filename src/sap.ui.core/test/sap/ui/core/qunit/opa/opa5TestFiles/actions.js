@@ -265,8 +265,8 @@ sap.ui.define([
 	QUnit.test("Should not execute any subsequent successes as soon as an exception gets thrown in an inner actions", function (assert) {
 		var oOpa = new Opa5(),
 			// make sure no waitFors are in the queue
-			fnDone = assert.async(),
-			fnSuccessSpy = sinon.spy();
+			fnSuccessSpy = sinon.spy(),
+			fnEmptyQueueFail = sinon.spy();
 
 		oOpa.waitFor({
 			actions: function () {
@@ -280,14 +280,10 @@ sap.ui.define([
 			success: fnSuccessSpy
 		});
 
-		var oEmptyQueuePromise = oOpa.emptyQueue();
-
-		assert.throws(function () {
-			sinon.assert.notCalled(fnSuccessSpy);
-			this.oClock.tick(100);
-		}.bind(this));
-
-		oEmptyQueuePromise.always(fnDone);
+		oOpa.emptyQueue().fail(fnEmptyQueueFail);
+		this.oClock.tick(100);
+		sinon.assert.notCalled(fnSuccessSpy);
+		sinon.assert.calledOnce(fnEmptyQueueFail);
 	});
 
 	QUnit.module("Async actions 2 controls", {

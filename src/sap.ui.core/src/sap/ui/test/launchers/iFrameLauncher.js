@@ -262,6 +262,9 @@ sap.ui.define([
 	}
 
 	function destroyFrame () {
+		if (!oFrameWindow) {
+			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown has been called but there was no start");
+		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
 		oFrameWindow.onerror = $.noop;
 		for (var i = 0; i < $Frame.length; i++) {

@@ -38,13 +38,12 @@ sap.ui.define([
 		fnCheck();
 
 		function fnCheck () {
-			var oResult;
 			oLogCollector.getAndClearLog();
-			try {
-				oResult = fnCallback();
-			} catch (oError) {
-				oDeferred.reject(oOptions, oError);
-				throw oError;
+			var oResult = fnCallback();
+
+			if (oResult.error) {
+				oDeferred.reject(oOptions);
+				return;
 			}
 
 			if (oResult.result) {
@@ -59,6 +58,10 @@ sap.ui.define([
 				// timeout not yet reached
 				return;
 			}
+
+			// Timeout is reached and the check never returned true.
+			// Execute the error function (if provided in the options) and reject the queue promise.
+			addErrorMessageToOptions("Opa timeout", oOptions);
 
 			if (oOptions.error) {
 				try {
@@ -96,6 +99,37 @@ sap.ui.define([
 			});
 			queue = aNewWaitFors.concat(queue);
 		}
+	}
+
+	function getMessageForException (oError) {
+		var sExceptionText = oError.toString();
+		// Some browsers don't have the stack property it will be added later for those browsers
+		if (oError.stack) {
+			sExceptionText += "\n" + oError.stack;
+		}
+
+		var sErrorMessage = "Exception thrown by the testcode:'" + sExceptionText + "'";
+		return sErrorMessage;
+	}
+
+	function addErrorMessageToOptions (sErrorMessage, oOptions, oErrorStack) {
+		var sLogs = oLogCollector.getAndClearLog();
+		if (sLogs) {
+			sErrorMessage += "\nThis is what Opa logged:\n" + sLogs;
+		}
+
+		if (!oErrorStack && oOptions._stack) {
+			// if we do not have a stack in the exception (IE) manually add it
+			sErrorMessage += addStacks(oOptions);
+		}
+
+		if (oOptions.errorMessage) {
+			oOptions.errorMessage += "\n" + sErrorMessage;
+		} else {
+			oOptions.errorMessage = sErrorMessage;
+		}
+
+		oLogger.error(oOptions.errorMessage, "Opa");
 	}
 
 	function createStack (iDropCount) {
@@ -371,46 +405,15 @@ sap.ui.define([
 
 		internalEmpty(oDeferred);
 
-		return oDeferred.promise().fail(function(oOptions, oError){
+		return oDeferred.promise().fail(function (oOptions) {
 			queue = [];
-			var oStackOptions,
-				sErrorMessage = "";
-
-			if (oOptions.errorMessage) {
-				sErrorMessage = oOptions.errorMessage + "\n";
-			}
 
 			if (isStopped) {
-				sErrorMessage += oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
-				oStackOptions = { _stack : createStack(1) };
-			} else if (!oError) {
-				sErrorMessage += "Opa timeout";
-			} else if (oError) {
-				var sExceptionText = oError.toString();
-				// Some browsers don't have the stack property it will be added later for those browsers
-				if (oError.stack) {
-					sExceptionText += "\n" + oError.stack;
-				}
-
-				sErrorMessage += "Exception thrown by the testcode:'" + sExceptionText + "'";
+				var sErrorMessage = oOptions.stoppedManually ? "Queue was stopped manually" : "QUnit timeout";
+				oOptions._stack = createStack(1);
+				addErrorMessageToOptions(sErrorMessage, oOptions);
 			}
 
-			if (!oStackOptions) {
-				oStackOptions = oOptions;
-			}
-
-			var sLogs = oLogCollector.getAndClearLog();
-			if (sLogs) {
-				sErrorMessage += "\nThis is what Opa logged:\n" + sLogs;
-			}
-
-			if (!(oError && oError.stack)) {
-				// if we do not have a stack in the exception (IE) manually add it
-				sErrorMessage += addStacks(oStackOptions);
-			}
-
-			oLogger.error(sErrorMessage, "Opa");
-			oOptions.errorMessage = sErrorMessage;
 		}).always(function () {
 			timeout = -1;
 			oDeferred = null;
@@ -492,7 +495,8 @@ sap.ui.define([
 		 * @param {string} [options.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa is QUnit.
 		 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 */
 		waitFor : function (options) {
 			var deferred = $.Deferred(),
@@ -507,19 +511,24 @@ sap.ui.define([
 			options._stack = createStack(1 + options._stackDropCount);
 			delete options._stackDropCount;
 
-			deferred.promise(this);
+			// create a new deferred for each new queue element and decorate a copy of this which will be returned in the end
+			// this way a promise result handler can be attached to any waitFor statement at any time
+			var _this = $.extend({}, this);
+			deferred.promise(_this);
 
 			queue.push({
 				callback : function () {
-					var bResult = true;
+					var bCheckPassed = true;
 
 					//no check - all ok
 					if (options.check) {
 						try {
-							bResult = options.check.apply(this, arguments);
+							bCheckPassed = options.check.apply(this, arguments);
 						} catch (oError) {
-							deferred.reject(options, oError);
-							throw oError;
+							var sErrorMessage = "Failure in Opa check function\n" + getMessageForException(oError);
+							addErrorMessageToOptions(sErrorMessage, options, oError.stack);
+							deferred.reject(options);
+							return {result: false, error: true, arguments : arguments};
 						}
 					}
 
@@ -528,12 +537,16 @@ sap.ui.define([
 						return { result: true, arguments: arguments };
 					}
 
-					if (bResult) {
+					if (bCheckPassed) {
 						if (options.success) {
 							var oWaitForCounter = Opa._getWaitForCounter();
-							// do not catch here, there is another catch around the whole function
 							try {
 								options.success.apply(this, arguments);
+							} catch (oError) {
+								var sErrorMessage = "Failure in Opa success function\n" + getMessageForException(oError);
+								addErrorMessageToOptions(sErrorMessage, options, oError.stack);
+								deferred.reject(options);
+								return {result: false, error: true, arguments : arguments};
 							} finally {
 								ensureNewlyAddedWaitForStatementsPrepended(oWaitForCounter, options);
 							}
@@ -545,7 +558,8 @@ sap.ui.define([
 				}.bind(this),
 				options : options
 			});
-			return this;
+
+			return _this;
 		},
 
 		/**

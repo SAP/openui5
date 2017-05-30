@@ -61,8 +61,8 @@
 									name: "samples.components.button"
 								});
 							},
-							function(sError) {
-								return sError.toString() === "sap.ui.test.launchers.componentLauncher: Start was called twice without teardown";
+							function(oError) {
+								return oError instanceof Error && oError.message === "sap.ui.test.launchers.componentLauncher: Start was called twice without teardown";
 							},
 							"Exception was thrown"
 						);
@@ -81,8 +81,8 @@
 							function() {
 								componentLauncher.teardown();
 							},
-							function(sError) {
-								return sError.toString() === "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start";
+							function(oError) {
+								return oError instanceof Error && oError.message === "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start";
 							},
 							"Exception was thrown"
 						);
