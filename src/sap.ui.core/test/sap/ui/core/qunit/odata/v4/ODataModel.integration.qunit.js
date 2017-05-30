@@ -1800,6 +1800,42 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Behaviour of a bound action if nothing is available before the execute
+	QUnit.test("Bound action", function (assert) {
+		var sView = '\
+<VBox binding="{/EMPLOYEES(\'1\')}">\
+	<VBox id="action" \
+			binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee(...)}">\
+		<Text id="teamId" text="{TEAM_ID}" />\
+	</VBox>\
+</VBox>',
+			that = this;
+
+		this.expectChange("teamId"); // no event initially
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest("EMPLOYEES('1')", {
+					"@odata.etag" : "eTag"
+				})
+				.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "eTag"},
+					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+						+ ".AcChangeTeamOfEmployee",
+					payload : {
+						"TeamID" : "42"
+					}
+				}, {
+					"TEAM_ID" : "42"
+				})
+				.expectChange("teamId", null) // TODO unexpected change
+				.expectChange("teamId", "42");
+
+			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute();
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Enable autoExpandSelect on an operation
 	QUnit.test("Auto-$expand/$select: Function import", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
