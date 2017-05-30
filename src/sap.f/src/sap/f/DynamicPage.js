@@ -941,7 +941,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
-	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout<code>),
+	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
 	 * thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
 	 * @param {Number} iWidth - the actual width of the control
 	 * @private

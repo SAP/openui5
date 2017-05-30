@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version 1.37.0-SNAPSHOT
 	 * @experimental Since 1.25.0
-	 * @param {object} oComponent - Component data to initiate <code>ChangePersistence<code> instance
+	 * @param {object} oComponent - Component data to initiate <code>ChangePersistence</code> instance
 	 * @param {string} oComponent.name - Name of the component this instance is responsible for
 	 * @param {string} oComponent.appVersion - Version of application
 	 */
@@ -91,15 +91,15 @@ sap.ui.define([
 	 * Verifies whether a change fulfils the preconditions.
 	 *
 	 * All changes need to be matched with current active contexts;
-	 * only changes whose <code>fileType<code> is 'change' and whose <code>changeType<code> is different from 'defaultVariant' are valid;
-	 * if <code>bIncludeVariants<code> parameter is true, the changes with 'variant' <code>fileType<code> or 'defaultVariant' <code>changeType<code> are also valid;
-	 * standard UI changes must have a selector <code>id<code>, smart variants must have a selector <code>persistencyKey<code>.
+	 * only changes whose <code>fileType</code> is 'change' and whose <code>changeType</code> is different from 'defaultVariant' are valid;
+	 * if <code>bIncludeVariants</code> parameter is true, the changes with 'variant' <code>fileType</code> or 'defaultVariant' <code>changeType</code> are also valid;
+	 * standard UI changes must have a selector <code>id</code>, smart variants must have a selector <code>persistencyKey</code>.
 	 *
 	 * @param {sap.ui.fl.context.Context[]} aActiveContexts - Array of current active contexts
 	 * @param {boolean} [bIncludeVariants] - Indicates that smart variants shall be included
 	 * @param {object} oChangeContent - Content of the change
 	 *
-	 * @returns {boolean} <code>true<code> if all the preconditions are fulfilled
+	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
 	 * @public
 	 */
 	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeContent) {

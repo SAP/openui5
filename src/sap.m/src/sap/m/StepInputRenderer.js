@@ -5,7 +5,7 @@ sap.ui.define([], function () {
 	"use strict";
 
 	/**
-	 * <code>StepInput renderer<code>
+	 * <code>StepInput renderer</code>
 	 * @namespace
 	 */
 	var StepInputRenderer = {};

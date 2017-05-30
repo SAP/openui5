@@ -442,7 +442,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		metadata: {
 			events: {
 				/**
-				 * Fired on interaction with the <code>ColorPickerBox<code>.
+				 * Fired on interaction with the <code>ColorPickerBox</code>.
 				 */
 				select: {
 					parameters: {
@@ -451,7 +451,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 				},
 				/**
-				 * Fired on size change of the <code>ColorPickerBox<code>.
+				 * Fired on size change of the <code>ColorPickerBox</code>.
 				 */
 				resize: {
 					parameters: {

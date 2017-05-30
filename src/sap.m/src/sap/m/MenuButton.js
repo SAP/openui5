@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * Defines the text of the <code>MenuButton</code>.
 				 * <br/><b>Note:</b> In <code>Split</code> <code>buttonMode</code> with <code>useDefaultActionOnly</code>
 				 * set to <code>false</code>, the text is changed to display the last selected item's text,
-				 * while in <code>Regular</code> <code>buttonMode<code> the text stays unchanged.
+				 * while in <code>Regular</code> <code>buttonMode</code> the text stays unchanged.
 				 */
 				text : {type : "string", group : "Misc", defaultValue : null},
 

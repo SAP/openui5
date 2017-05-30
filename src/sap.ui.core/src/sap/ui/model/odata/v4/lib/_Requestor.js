@@ -62,7 +62,7 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a new <code>_Requestor<code> instance for the given service URL and default
+	 * Constructor for a new <code>_Requestor</code> instance for the given service URL and default
 	 * headers.
 	 *
 	 * @param {string} sServiceUrl
@@ -640,7 +640,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * The <code>_Requestor<code> module which offers a factory method.
+	 * The <code>_Requestor</code> module which offers a factory method.
 	 *
 	 * @private
 	 */
@@ -694,7 +694,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a new <code>_Requestor<code> instance for the given service URL and default
+		 * Creates a new <code>_Requestor</code> instance for the given service URL and default
 		 * headers.
 		 *
 		 * @param {string} sServiceUrl
@@ -710,7 +710,7 @@ sap.ui.define([
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
-		 *   <code>_Requestor<code> always sets the "Content-Type" header to
+		 *   <code>_Requestor</code> always sets the "Content-Type" header to
 		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" value.
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
@@ -719,7 +719,7 @@ sap.ui.define([
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
 		 * @returns {object}
-		 *   A new <code>_Requestor<code> instance
+		 *   A new <code>_Requestor</code> instance
 		 */
 		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
 			return new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);

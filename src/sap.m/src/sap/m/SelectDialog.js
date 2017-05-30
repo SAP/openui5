@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * where a filter function can be applied to the list binding. </li>
 	 * <li> The growing functionality of the list does not support two-way Binding, so if you use this control with a JSON model
 	 * make sure the binding mode is set to <code>OneWay</code> and that you update the selection model manually with
-	 * the items passed in the <code>confirm<code> event. </li>
+	 * the items passed in the <code>confirm</code> event. </li>
 	 * <li> In the multi-select mode of the select dialog, checkboxes are provided for choosing multiple entries. </li>
 	 * <li> You can set <code>rememberSelections</code> to true to store the current selection and load this state
 	 * when the dialog is opened again. </li>

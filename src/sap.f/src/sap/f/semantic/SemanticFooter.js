@@ -244,7 +244,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Inserts a <code>sap.m.ToolbarSpacer<code>
+	* Inserts a <code>sap.m.ToolbarSpacer</code>
 	* between the <code>footerLeft</code> and <code>footerRight</code> areas.
 	*
 	* @returns {sap.f.semantic.SemanticFooter}
@@ -255,7 +255,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Returns lazily a <code>sap.m.ToolbarSpacer<code> instance.
+	* Returns lazily a <code>sap.m.ToolbarSpacer</code> instance.
 	*
 	* @returns {sap.m.ToolbarSpacer}
 	*/

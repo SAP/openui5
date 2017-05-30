@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			/**
 			 * Toolbar of the Table (if not set it will be hidden)
-			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension<code> aggregation instead.
+			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false, deprecated: true},
 

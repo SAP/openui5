@@ -121,7 +121,7 @@ sap.ui.define([
 				/**
 				 * Define the value.
 				 *
-				 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties <code>min<code>/<code>max</code> are used instead.
+				 * If the value is lower/higher than the allowed minimum/maximum, the value of the properties <code>min</code>/<code>max</code> are used instead.
 				 */
 				value: { type: "float", group: "Data", defaultValue: 0 },
 

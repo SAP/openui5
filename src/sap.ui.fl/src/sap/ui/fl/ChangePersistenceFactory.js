@@ -23,7 +23,7 @@ sap.ui.define([
 	 * Creates or returns an instance of the ChangePersistence
 	 * @param {String} sComponentName - Name of the component
 	 * @param {String} sAppVersion - Current running version of application
-	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence<code> instance
+	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence</code> instance
 	 *
 	 * @public
 	 */

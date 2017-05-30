@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * <h4>When not to use</h4>
 	 * <ul>
 	 * <li>The operation takes less than one second.</li>
-	 * <li>You need to block the screen and prevent the user from starting another activity. In this case, use the {@link sap.m.BusyDialog busy dialog}.
+	 * <li>You need to block the screen and prevent the user from starting another activity. In this case, use the {@link sap.m.BusyDialog busy dialog}.</li>
 	 * <li>Do not change the mouse cursor to indicate the ongoing operation.</li>
 	 * <li>Do not show multiple busy indicators at once</li>
 	 * </ul>

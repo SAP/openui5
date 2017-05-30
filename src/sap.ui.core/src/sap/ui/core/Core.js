@@ -1362,7 +1362,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {string|object} libConfig Name of the library to preload or settings object describing library
 	 * @param {string} [libConfig.name] Name of the library to preload
-	 * @param {boolean|undefined} [libConfig.json] Whether library supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 * @param {boolean|undefined} [libConfig.json] Whether library supports only json (<code>true</code>) or only JS (<code>false</code>)
 	 *                               or whether both should be tried (undefined)
 	 * @returns {Promise} A promise to be fulfilled when the lib has been preloaded
 	 * @private
@@ -1489,7 +1489,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {string|object} libConfig Name of the library to preload or settings object describing library.
 	 * @param {string} [libConfig.name] Name of the library to preload
-	 * @param {boolean|undefined} [libConfig.json] Whether lib supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 * @param {boolean|undefined} [libConfig.json] Whether lib supports only json (<code>true</code>) or only JS (<code>false</code>)
 	 *                               or whether both should be tried (undefined)
 	 * @private
 	 */

@@ -44,12 +44,12 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b>  The following scenarios are possible, depending on where the focus
 				 * was before navigation to a new page:
-				 * <ul><li>If <code>autoFocus<code> is set to <code>true<code> and the focus was
+				 * <ul><li>If <code>autoFocus</code> is set to <code>true</code> and the focus was
 				 * inside the current page, the focus will be moved automatically on the new page.</li>
-				 * <li>If <code>autoFocus<code> is set to <code>false<code> and the focus was inside
+				 * <li>If <code>autoFocus</code> is set to <code>false</code> and the focus was inside
 				 * the current page, the focus will disappear.
 				 * <li>If the focus was outside the current page, after the navigation it will remain
-				 * unchanged regardless of what is set to the <code>autoFocus<code> property.</li></ul>
+				 * unchanged regardless of what is set to the <code>autoFocus</code> property.</li></ul>
 				 *
 				 * @since 1.30
 				 */
