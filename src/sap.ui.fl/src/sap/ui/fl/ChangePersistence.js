@@ -217,7 +217,7 @@ sap.ui.define([
 			this._addMapEntry(sSelectorId, oChange);
 
 			// add legacy change twice to ensure a different component ID on creation does not interfere
-			if (typeof (oSelector.idIsLocal) === "undefined" && sSelectorId.indexOf("---") != -1) {
+			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") != -1) {
 				var sComponentPrefix = sSelectorId.split("---")[0];
 
 				// if the component prefix does not match the application component
