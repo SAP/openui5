@@ -16,7 +16,40 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.TextArea</code> enables multi-line text input.
+	 * A control that is used for multi-line input of text.
+	 * <h3>Overview</h3>
+	 * The text area is used to enter multiple lines of text. When empty, it can hold a placeholder similar to an {@link sap.m.Input input}.
+	 * You can define the height and width of the text area and also determine specific behavior when handling long texts.
+	 * <h3>Structure</h3>
+	 * Parameters that determine the size:
+	 * <ul>
+	 * <li><code>rows</code> - Number of visible text lines (overruled by <code>height</code>, if both are set)</li>
+	 * <li><code>cols</code> - Number of visible characters per line line (overruled by <code>width</code>, if both are set)</li>
+	 * <li><code>height</code> - Height of the control</li>
+	 * <li><code>width</code> - Width of the control</li>
+	 * </ul>
+	 * Parameters that determine the behavior:
+	 * <ul>
+	 * <li><code>growing</code> - The text area adjusts its size based on the content</li>
+	 * <li><code>growingMaxLines</code> - Threshold for the <code>growing</code> property (shouldn't exceed the screen size)</li>
+	 * <li><code>maxLength</code> - Maximum number of characters that can be entered in a text area</li>
+	 * <li><code>wrapping</code> - The way the entered text is wrapped by the control</li>
+	 * <li><code>showExceededText</code> - Determines how text beyond the <code>maxLength</code> length is handled</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You want to enter multiple lines of text.</li>
+	 * <li>Always provide labels for a text area.</li>
+	 * <li>A placeholder does not substitute a label.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li>On smaller screens, you can scroll down the text area to see the entire text. To indicate that the text continues, the control shows only half of the last line.</li>
+	 * <li>If you have a growing text area, have in mind that its maximum height should not exceed the height of the screen. If that is the case, the screen height is used instead.</li>
+	 * <li>If <code>showExceededText</code> is set to TRUE and you paste a longer text, all characters beyond the <code>maxLength</code> limit are automatically selected.</li>
+	 * <li>If <code>showExceededText</code> is set to TRUE, the control will display a counter for the remaining characters.
+	 *
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
