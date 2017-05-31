@@ -36,12 +36,6 @@ sap.ui.define([
 				this._loadRuntimeAuthoring();
 
 				this.getView().setModel(this._viewModel);
-
-				var that = this;
-
-				ControlsInfo.listeners.push(function () {
-					that._loadSample();
-				});
 			},
 
 			/* =========================================================== */
@@ -55,18 +49,14 @@ sap.ui.define([
 					this._oRTA.stop(true);
 				}
 
-				this._loadSample();
+				ControlsInfo.loadData().then(function (oData) {
+						this._loadSample(oData);
+					}.bind(this));
+
 			},
 
-			_loadSample: function() {
-				var oModelData = this._viewModel.getData();
-
-				if (!ControlsInfo.data) {
-					return;
-				}
-
-				// retrieve sample object
-				var oSample = ControlsInfo.data.samples[this._sId];
+			_loadSample: function(oData) {
+				var oSample = oData.samples[this._sId];
 				if (!oSample) {
 					return;
 				}
@@ -75,6 +65,7 @@ sap.ui.define([
 				var oPage = this.getView().byId("page");
 				var oHistory = History.getInstance();
 				var oPrevHash = oHistory.getPreviousHash();
+				var oModelData = this._viewModel.getData();
 				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;

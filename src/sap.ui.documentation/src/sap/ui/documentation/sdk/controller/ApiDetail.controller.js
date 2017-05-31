@@ -69,11 +69,6 @@ sap.ui.define([
 					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
 				}
 
-				ControlsInfo.listeners.push(function(){
-					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
-				}.bind(this));
-				ControlsInfo.init();
-
 				this.setModel(new JSONModel(), "topics");
 				this.setModel(new JSONModel(), "constructorParams");
 				this.setModel(new JSONModel(), 'methods');
@@ -262,13 +257,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Callback function, executed once the <code>ControlsInfo</code> is loaded.
-			 */
-			_onControlsInfoLoaded : function () {
-				this._bindEntityData(this._sTopicid);
-			},
-
-			/**
 			 * Creates the <code>Entity</code> model,
 			 * based on the <code>ControlsInfo</code> data.
 			 * <b>Note:</b>
@@ -278,13 +266,13 @@ sap.ui.define([
 			 * whenever a different topic has been selected.
 			 */
 			_bindEntityData : function (sTopicId) {
-				if (!ControlsInfo || !ControlsInfo.data) {
-					return;
-				}
 
-				var oEntityData = this._getEntityData(sTopicId);
+				ControlsInfo.loadData().then(function(oControlsData) {
+					var oEntityData = this._getEntityData(sTopicId, oControlsData);
 
-				this.getModel("entity").setData(oEntityData, false);
+					this.getModel("entity").setData(oEntityData, false);
+				});
+
 			},
 
 			_bindData : function (sTopicId) {
@@ -440,13 +428,13 @@ sap.ui.define([
 			 * @param {Object} oLibData
 			 * @return {Object}
 			 */
-			_getEntityData: function (sEntityName) {
-				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+			_getEntityData: function (sEntityName, oControlsData) {
+				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
 					return entity.id === sEntityName;
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
 
-				var sAppComponent = this._getControlComponent(sEntityName);
+				var sAppComponent = this._getControlComponent(sEntityName, oControlsData);
 
 				return {
 					appComponent: sAppComponent || this.NOT_AVAILABLE,

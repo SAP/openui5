@@ -30,10 +30,6 @@ sap.ui.define([
 				this.router.getRoute("code_file").attachPatternMatched(this.onRouteMatched, this);
 				this._codeCache = {};
 
-				ControlsInfo.listeners.push(function () {
-					this._loadCode();
-				}.bind(this));
-
 				this._bFirstLoad = true;
 			},
 
@@ -47,18 +43,18 @@ sap.ui.define([
 				this._sId = oEvt.getParameter("arguments").id;
 				this._sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
-				this._loadCode();
+				ControlsInfo.loadData().then(function(oData) {
+					this._loadCode(oData);
+				}.bind(this));
+
 			},
 
-			_loadCode: function () {
-				if (!ControlsInfo.data) {
-					return;
-				}
+			_loadCode: function (oData) {
 
 				var sFileName = this._sFileName;
 
 				// retrieve sample object
-				var oSample = ControlsInfo.data.samples[this._sId];
+				var oSample = oData.samples[this._sId];
 				if (!oSample) {
 					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, { path: this._sId });
 					return;

@@ -117,8 +117,8 @@ sap.ui.define([
 			 * @param {string} sControlName
 			 * @return {string} the actual component
 			 */
-			_getControlComponent: function (sControlName) {
-				var oLibComponentModel = ControlsInfo.data.libComponentInfos,
+			_getControlComponent: function (sControlName, oControlsData) {
+				var oLibComponentModel = oControlsData.libComponentInfos,
 					oLibInfo = new LibraryInfo();
 				return oLibInfo._getActualComponent(oLibComponentModel, sControlName);
 			},
