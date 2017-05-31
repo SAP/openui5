@@ -769,7 +769,7 @@
 	 * Start from the left top cell -> to the right top cell -> to the right bottom cell -> to the left bottom cell -> to the left top cell.
 	 *
 	 * @param assert
-	 * @param bShowInfo
+	 * @param {boolean} bShowInfo
 	 * @private
 	 */
 	function _testArrowKeys(assert, bShowInfo) {
@@ -4338,9 +4338,9 @@
 	/**
 	 * Opens a column header context menu and closes it by pressing the Escape key.
 	 *
-	 * @param sKey The key to press.
-	 * @param bKeydown Indicates whether to trigger keydown or keyup.
-	 * @param bShift
+	 * @param {string} sKey The key to press.
+	 * @param {boolean} bKeydown Indicates whether to trigger keydown or keyup.
+	 * @param {boolean} bShift
 	 * @param assert
 	 * @private
 	 */
@@ -5734,7 +5734,7 @@
 	 * Navigates back using Shift+TAB.
 	 *
 	 * @param assert
-	 * @param bShowInfo
+	 * @param {boolean} bShowInfo
 	 * @private
 	 */
 	function _testActionModeTabNavigation(assert, bShowInfo) {
@@ -6214,7 +6214,7 @@
 	 *
 	 * @param assert
 	 * @param iCol Column number. Set -1 for the row headers and -2 for the row actions column
-	 * @param bCtrlKey Set true if the Ctrl key should be used by navigation
+	 * @param {boolean} bCtrlKey Set true if the Ctrl key should be used by navigation
 	 * @private
 	 */
 	function goUpDownWithArrowKeys(assert, iCol, bCtrlKey) {

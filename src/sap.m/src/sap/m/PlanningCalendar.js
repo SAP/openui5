@@ -1660,7 +1660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 *
-	 * @param bUpdateRows
+	 * @param {boolean} bUpdateRows
 	 * @private
 	 */
 	PlanningCalendar.prototype._updateCurrentTimeVisualization = function (bUpdateRows) {

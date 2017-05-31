@@ -76,7 +76,7 @@ sap.ui.define([
 
 	/**
 	 * Firefox only function - load sinon as often as needed until it is defined.
-	 * @param fnDone executed when sinon is loaded
+	 * @param {function} fnDone executed when sinon is loaded
 	 */
 	function loadSinon(fnDone) {
 		oFrameWindow.sap.ui.require(["sap/ui/thirdparty/sinon"], function (sinon) {

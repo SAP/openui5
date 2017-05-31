@@ -67,8 +67,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param sProperty name of the property
-	 * @param sValue value of the property
+	 * @param {string} sProperty name of the property
+	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.setStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		if (typeof (sValue) === "string") {
@@ -103,8 +103,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param sProperty name of the property
-	 * @param sValue value of the property
+	 * @param {string} sProperty name of the property
+	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.setOldSpecStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		// Choose specification
@@ -155,8 +155,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param sProperty name of the property
-	 * @param sValue value of the property
+	 * @param {string} sProperty name of the property
+	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.writeStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		var sPropertyPrefix = "";

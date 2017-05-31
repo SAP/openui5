@@ -724,7 +724,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 *
 		 * @param {Object} $Ref
 		 * @param {number} iRealDuration
-		 * @param fnOpened
+		 * @param {function} fnOpened
 		 * @private
 		 */
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
@@ -738,7 +738,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 *
 		 * @param {Object} $Ref
 		 * @param {number} iRealDuration
-		 * @param fnClose
+		 * @param {function} fnClose
 		 * @private
 		 */
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {

@@ -579,7 +579,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 
 			/**
 			 *
-			 * @param sName name of the single target
+			 * @param {string} sName name of the single target
 			 * @param vData event data
 			 * @private
 			 * @name sap.ui.core.routing.Targets.#_displaySingleTarget
@@ -588,7 +588,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			/**
 			 * Called by the UIComponent since the rootView id is not known in the constructor
 			 *
-			 * @param sId
+			 * @param {string} sId
 			 * @private
 			 */
 			_setRootViewId: function (sId) {

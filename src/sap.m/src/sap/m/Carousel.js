@@ -605,7 +605,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Gets the icon of the requested arrow (left/right).
 	 * @private
-	 * @param sName left or right
+	 * @param {string} sName left or right
 	 * @returns icon of the requested arrow
 	 */
 	Carousel.prototype._getNavigationArrow = function(sName) {

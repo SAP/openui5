@@ -239,7 +239,7 @@ sap.ui.define([
 
 	/**
 	 * Returns information about the current layout
-	 * @param sLayout
+	 * @param {sap.f.LayoutType} sLayout
 	 * @returns {{layout: string, maxColumnsCount: number, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 * @private
 	 */

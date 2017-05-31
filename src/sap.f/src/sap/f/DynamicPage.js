@@ -352,7 +352,7 @@ sap.ui.define([
 
 	/**
 	 * Hides/shows the footer container.
-	 * @param bShow
+	 * @param {boolean} bShow
 	 * @private
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {

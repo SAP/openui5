@@ -1200,7 +1200,7 @@ oninput      <does not trigger>						the dom is "SAP9",
 	/**
 	 * Checks if a given character belongs to an RTL language
 	 * @private
-	 * @param sString
+	 * @param {string} sString
 	 * @returns {boolean}
 	 */
 	MaskInput.prototype._isRtlChar = function (sString) {
@@ -1216,7 +1216,7 @@ oninput      <does not trigger>						the dom is "SAP9",
 	 * Fix an issue with Chrome where first and last positions are switched
 	 * @private
 	 * @param iCurrentPosition
-	 * @param sDirection
+	 * @param {string} sDirection
 	 * @returns {*}
 	 */
 	MaskInput.prototype._fixWebkitBorderPositions = function (iCurrentPosition, sDirection) {
@@ -1307,7 +1307,7 @@ oninput      <does not trigger>						the dom is "SAP9",
 	/**
 	 * Determine the right caret position based on the current selection state
 	 * @private
-	 * @param sDirection
+	 * @param {string} sDirection
 	 * @returns {int} iNewCaretPos
 	 */
 	MaskInput.prototype._determineRtlCaretPositionFromSelection = function (sDirection, bWithChromeFix) {

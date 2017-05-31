@@ -265,7 +265,7 @@ sap.ui
 			/**
 			 * Returns the data model of the given EntitySet name.
 			 *
-			 * @param sEntitySetName EntitySet name
+			 * @param {string} sEntitySetName EntitySet name
 			 * @return {array} data model of the given EntitySet
 			 * @public
 			 */
@@ -282,7 +282,7 @@ sap.ui
 
 			/**
 			 * Sets the data of the given EntitySet name with the given array.
-			 * @param sEntitySetName EntitySet name
+			 * @param {string} sEntitySetName EntitySet name
 			 * @param aData
 			 * @public
 			 */

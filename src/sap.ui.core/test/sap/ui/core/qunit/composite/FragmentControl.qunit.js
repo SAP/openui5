@@ -5,7 +5,7 @@ setBlanketFilters("sap/ui/core/FragmentControl.js");
 
 /**
  * setBlanketFilters
- * @param sFilters comma separated strings to filter the paths for blanket
+ * @param {string} sFilters comma separated strings to filter the paths for blanket
  */
 function setBlanketFilters(sFilters) {
 	if (top === window) { //only in local environment

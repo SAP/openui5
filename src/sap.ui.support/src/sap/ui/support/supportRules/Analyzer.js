@@ -40,8 +40,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		 * Adds a task to with a name to the analyzer.
 		 * The fnTaskProcessor function is called if the task is run for every object in aObjects.
 		 *
-		 * @param sTaskName
-		 * @param fnTaskProcessor
+		 * @param {string} sTaskName
+		 * @param {function} fnTaskProcessor
 		 * @param aObjects
 		 */
 		Analyzer.prototype.addTask = function (sTaskName, fnTaskProcessor, aObjects) {

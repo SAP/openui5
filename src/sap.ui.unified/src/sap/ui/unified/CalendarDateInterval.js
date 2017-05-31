@@ -653,8 +653,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Date that should be taken to create the local JavaScript date.
 	 * E.g. if the date is Dec 21th 1981, the local date (CEST) would be Dec 21th, 1981 00:00:00 GMT +02:00
-	 * @param bSetFocusDate if true, sets this date as focused date
-	 * @param bNoEvent describes whether the startDateChange event was previously thrown
+	 * @param {boolean} bSetFocusDate if true, sets this date as focused date
+	 * @param {boolean} bNoEvent describes whether the startDateChange event was previously thrown
 	 * @private
 	*/
 	CalendarDateInterval.prototype._setStartDate = function (oStartDate, bSetFocusDate, bNoEvent) {

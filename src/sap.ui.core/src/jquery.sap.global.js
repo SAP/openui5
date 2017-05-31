@@ -853,7 +853,7 @@
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
 	 *
-	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
+	 * @param {string} sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
 	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
 	 *
 	 * @private

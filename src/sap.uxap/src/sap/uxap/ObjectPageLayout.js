@@ -797,7 +797,7 @@ sap.ui.define([
 
 	/**
 	 * Overrides the setter for the useIconTabBar property
-	 * @param bValue
+	 * @param {boolean} bValue
 	 * @returns this
 	 */
 	ObjectPageLayout.prototype.setUseIconTabBar = function (bValue) {
@@ -1231,7 +1231,7 @@ sap.ui.define([
 	 * Set for reference the destination section of the ongoing scroll
 	 * When this one is set, then the page will skip intermediate sections [during the scroll from the current to the destination section]
 	 * and will scroll directly to the given section
-	 * @param sDirectSectionId - the section to be scrolled directly to
+	 * @param {string} sDirectSectionId - the section to be scrolled directly to
 	 */
 	ObjectPageLayout.prototype.setDirectScrollingToSection = function (sDirectSectionId) {
 		this.sDirectSectionId = sDirectSectionId;
@@ -1611,7 +1611,7 @@ sap.ui.define([
 
 	/**
 	 * Set a given section as the currently scrolled section and update the anchorBar relatively
-	 * @param sSectionId the section id
+	 * @param {string} sSectionId the section id
 	 * @private
 	 */
 	ObjectPageLayout.prototype._setAsCurrentSection = function (sSectionId) {
@@ -1862,7 +1862,7 @@ sap.ui.define([
 
 	/**
 	 * toggles the header state
-	 * @param bStick boolean true for fixing the header, false for keeping it moving
+	 * @param {boolean} bStick boolean true for fixing the header, false for keeping it moving
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeader = function (bStick) {
@@ -1887,7 +1887,7 @@ sap.ui.define([
 	/**
 	 * Restores the focus after moving the Navigation bar after moving it between containers
 	 * @private
-	 * @param fnMoveNavBar a function that moves the navigation bar
+	 * @param {function} fnMoveNavBar a function that moves the navigation bar
 	 * @returns this
 	 */
 	ObjectPageLayout.prototype._restoreFocusAfter = function (fnMoveNavBar) {

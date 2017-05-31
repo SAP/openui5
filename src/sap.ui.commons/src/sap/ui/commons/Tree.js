@@ -391,7 +391,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Move the focus by one position, either UP or DOWN depending of "bMoveUp"
-	 * @param bMoveUp When true the focus is move up. Otherwise, it's moved down
+	 * @param {boolean} bMoveUp When true the focus is move up. Otherwise, it's moved down
 	 * @private
 	 */
 	Tree.prototype.moveFocus = function(bMoveUp){

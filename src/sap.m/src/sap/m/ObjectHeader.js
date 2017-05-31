@@ -559,7 +559,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the new text for the tooltip of the select title arrow to the internal aggregation
 	 * @override
 	 * @public
-	 * @param sTooltip the tooltip of the title selector
+	 * @param {string} sTooltip the tooltip of the title selector
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
@@ -1211,7 +1211,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns <code>true</code> if the name of the current media range of the control is <code>sRangeName</code>
 	 *
-	 * @param sRangeName - media range set
+	 * @param {string} sRangeName - media range set
 	 * @returns {boolean}
 	 * @private
 	 */

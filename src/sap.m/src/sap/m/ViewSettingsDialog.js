@@ -2768,7 +2768,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * Gets an sap.m.ViewSettingsItem from a list of items by a given key.
 	 *
 	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
-	 * @param sKey
+	 * @param {string} sKey
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
 	 */

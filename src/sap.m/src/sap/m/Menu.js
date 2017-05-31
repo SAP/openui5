@@ -144,7 +144,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Opens the <code>Menu</code> next to the given control.
 		 * @param oControl The control that defines the position for the menu
-		 * @param bWithKeyboard Whether the menu is opened with a shortcut or not
+		 * @param {boolean} bWithKeyboard Whether the menu is opened with a shortcut or not
 		 * @public
 		 */
 		Menu.prototype.openBy = function(oControl, bWithKeyboard) {

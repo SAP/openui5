@@ -95,7 +95,7 @@ sap.ui.define([
 
 	/**
 	 * A shorthand for calling Toolbar.prototype methods
-	 * @param sFuncName - the name of the method
+	 * @param {string} sFuncName - the name of the method
 	 * @param aArguments - the arguments to pass in the form of array
 	 * @returns {*}
 	 * @private
@@ -509,7 +509,7 @@ sap.ui.define([
 
 	/**
 	 * Closes the action sheet, resets the toolbar, and re-initializes variables to force a full layout recalc
-	 * @param bHardReset - skip the optimization, described in _setControlsOverflowAndShrinking
+	 * @param {boolean} bHardReset - skip the optimization, described in _setControlsOverflowAndShrinking
 	 * @private
 	 */
 	OverflowToolbar.prototype._resetAndInvalidateToolbar = function (bHardReset) {
@@ -731,7 +731,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param bValue
+	 * @param {boolean} bValue
 	 * @returns {OverflowToolbar}
 	 * @private
 	 */

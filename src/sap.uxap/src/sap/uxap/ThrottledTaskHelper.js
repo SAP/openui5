@@ -18,7 +18,7 @@ sap.ui.define([
 	var ThrottledTask = BaseObject.extend("ThrottledTask", {
 
 		/**
-		 * @param fnTask - the function to throttle
+		 * @param {function} fnTask - the function to throttle
 		 * @param iDelay - the delay for throttling
 		 */
 		constructor: function (fnTask, iDelay, oContext) {
