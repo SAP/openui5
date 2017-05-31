@@ -1639,11 +1639,21 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
-			var bDefaultKey = (sKey === "");
+			var bDefaultKey = (sKey === ""),
+				// the correct solution for tackling the coupling of selectedKey and value should be by using debounce
+				// however this makes the API async, which alters the existing behaviour of the control
+				// that's why the solution is implemented with skipModelUpdate property
+				bSkipModelUpdate = this.mBindingInfos["selectedKey"] && this.mBindingInfos["selectedKey"].skipModelUpdate;
 
 			if (bDefaultKey) {
 				this.setSelection(null);
-				this.setValue("");
+
+				// if the setSelectedKey in called from ManagedObject's updateProperty
+				// on model change the value property should not be changed
+				if (!bSkipModelUpdate) {
+					this.setValue("");
+				}
+
 				return this;
 			}
 
@@ -1651,7 +1661,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oItem) {
 				this.setSelection(oItem);
-				this.setValue(this._getSelectedItemText(oItem));
+
+				// if the setSelectedKey in called from ManagedObject's updateProperty
+				// on model change the value property should not be changed
+				if (!bSkipModelUpdate) {
+					this.setValue(this._getSelectedItemText(oItem));
+				}
+
 				return this;
 			}
 
