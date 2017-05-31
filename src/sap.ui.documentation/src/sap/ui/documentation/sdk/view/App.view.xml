@@ -42,9 +42,9 @@
 						</IconTabFilter>
 						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
-						</IconTabFilter>
 						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
+						</IconTabFilter>
+						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
 						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
 						</IconTabFilter>

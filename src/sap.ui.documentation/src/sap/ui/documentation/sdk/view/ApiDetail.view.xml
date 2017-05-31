@@ -268,8 +268,8 @@
 													<m:Text text="{topics>visibility}" wrapping="false"/>
 
 													<m:VBox>
-														<core:HTML content="{parts: [{path: 'topics>description'}],
-																				 	  formatter: '.formatDescription'}"/>
+														<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
+																				 	  formatter: '.formatDescriptionSince'}"/>
 
 														<m:MessageStrip  width="100%"
 															visible="{=${topics>deprecated} !== undefined}"
@@ -300,7 +300,7 @@
 								<blocks>
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'events>description'}, {path: 'events>visibility'}],
+										<core:HTML content="{parts: [{path: 'events>description'}, {path: 'events>visibility'}, {path: 'events>since'}],
 																			 formatter: '.formatDescriptionDetails'}"/>
 
 										<m:MessageStrip
@@ -363,7 +363,7 @@
 
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>visibility'}],
+										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>visibility'}, {path: 'methods>since'}],
 																			 formatter: '.formatDescriptionDetails'}"/>
 
 										<m:MessageStrip
