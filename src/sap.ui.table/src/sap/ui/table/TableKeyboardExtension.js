@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				bIEFocusOutlineWorkaroundApplied = true;
 			}
 			var oCellInfo = TableUtils.getCellInfo(oElement) || {};
-			if (oCellInfo.type) {
+			if (oCellInfo.cell) {
 				oCellInfo.cell.attr("data-sap-ui-table-focus", Date.now());
 			}
 		}
@@ -103,7 +103,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		}
 
 	};
-
 
 	/*
 	 * Provides utility functions used this extension
@@ -305,7 +304,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 	});
 
-
 	/*
 	 * Check whether item navigation should be reapplied from scratch and initializes it if needed.
 	 * @public (Part of the API for Table control only!)
@@ -316,7 +314,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		}
 	};
 
-
 	/*
 	 * Invalidates the item navigation (forces a re-initialization with the next initItemNavigation call)
 	 * @public (Part of the API for Table control only!)
@@ -324,7 +321,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	TableKeyboardExtension.prototype.invalidateItemNavigation = function() {
 		this._itemNavigationInvalidated = true;
 	};
-
 
 	/**
 	 * Makes the table enter or leave the action mode.
@@ -430,7 +426,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		return this._oLastFocusedCellInfo;
 	};
 
-
 	/**
 	 * Sets the focus to the specified element and marks the resulting focus event to be ignored.
 	 *
@@ -442,7 +437,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		this._setFocus(oElement);
 		this._bIgnoreFocusIn = false;
 	};
-
 
 	/**
 	 * Sets the focus to the specified element.
@@ -456,11 +450,14 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		}
 
 		var oTable = this.getTable();
-		var oCellInfo = TableUtils.getCellInfo(oElement) || {};
-		if (oCellInfo.type && oTable) {
+		var oCellInfo = TableUtils.getCellInfo(oElement);
+
+		if (oCellInfo.cell && oTable) {
 			var $Elem = jQuery(oElement);
+
 			if ($Elem.attr("tabindex") != "0") {
 				var oItemNav = oTable._getItemNavigation();
+
 				if (oItemNav && oItemNav.aItemDomRefs) {
 					for (var i = 0; i < oItemNav.aItemDomRefs.length; i++) {
 						if (oItemNav.aItemDomRefs[i]) {
@@ -475,7 +472,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		oElement.focus();
 	};
 
-
 	/*
 	 * Returns the type of the related table
 	 * @see TableExtension.TABLETYPES
@@ -484,7 +480,6 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	TableKeyboardExtension.prototype._getTableType = function() {
 		return this._type;
 	};
-
 
 	return TableKeyboardExtension;
 
