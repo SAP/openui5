@@ -4736,6 +4736,10 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 		var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
 		var oElem, $Element;
 
+		function isTextSelected(oInputElement) {
+			return oInputElement.selectionStart === 0 && oInputElement.selectionEnd === oInputElement.value.length;
+		}
+
 		// Focus cell with a focusable & tabbable element inside.
 		oElem = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and tabbable input element: Table is in Navigation Mode");
@@ -4746,6 +4750,7 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 		oElem = $Element[0];
 		assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(isTextSelected(oElem), "The text in the input element is selected");
 
 		// Focus cell with a focusable & non-tabbable element inside.
 		oTable._getKeyboardExtension().setActionMode(false);
@@ -4758,6 +4763,7 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 		oElem = $Element[0];
 		assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(isTextSelected(oElem), "The text in the input element is selected");
 
 		return $Element[0];
 	},
@@ -5052,6 +5058,13 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 		bShowInfo = false;
 	}
 
+	function assertTextSelection(oInputElement) {
+		if (oInputElement instanceof window.HTMLInputElement) {
+			assert.ok(oInputElement.selectionStart === 0 && oInputElement.selectionEnd === oInputElement.value.length,
+				"The text in the input element is selected");
+		}
+	}
+
 	/* Table Grouping Setup:
 	 *
 	 * [G] = Group header row
@@ -5151,6 +5164,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 								oElem = $InteractiveElement[0];
 								assert.strictEqual(document.activeElement, oElem,
 									"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+								assertTextSelection(document.activeElement);
 							}
 						}
 
@@ -5251,6 +5265,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 							oElem = $InteractiveElement[0];
 							assert.strictEqual(document.activeElement, oElem,
 								"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+							assertTextSelection(document.activeElement);
 
 							var bIsFirstInteractiveElementInRow = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
 							var bRowHasInteractiveRowHeader = bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
