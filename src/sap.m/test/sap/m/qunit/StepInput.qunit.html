@@ -766,10 +766,8 @@
 					value: 4,
 					max: 10,
 					min: -4,
-					ariaLabelledBy: "__text0",
-					ariaDescribedBy: "__text0"
+					ariaLabelledBy: "__text0"
 				});
-
 				this.stepInput.placeAt('qunit-fixture');
 				oCore.applyChanges();
 			},
@@ -778,82 +776,155 @@
 			}
 		});
 
-		QUnit.test("Spinner specific aria attributes", function (assert) {
+		QUnit.test("Internal 'sap.m.Input' has correct ARIA attributes when StepInput is initialized with default values", function (assert) {
 			//prepare
-			var $input = this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix());
-
-			//assert
-			strictEqual($input.attr("role"), "spinbutton", "To have a proper role");
-			ok($input.attr("aria-valuenow"), "To have set a value");
-			ok($input.attr("aria-valuemin"), "To have set a min value");
-			ok($input.attr("aria-valuemax"), "To have set a max value");
-			strictEqual($input.attr("aria-labelledby"), "__text0", "To have a label");
-			strictEqual($input.attr("aria-describedby"), "__text0", "To have a desribedby");
-		});
-
-		QUnit.test("Spinner alter aria attributes", function () {
-			//prepare & act
-			var $input = this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix());
-			//assert
-			strictEqual($input.attr("aria-valuenow"), "4", "To have set value on init");
-
+			var oSUT = new sap.m.StepInput(),
+				oInput = oSUT._getInput(),
+				$Input;
 			//act
-			this.stepInput.setValue(9);
-			strictEqual($input.attr("aria-valuenow"), "9", "To have properly changed the value");
-
-			//act
-			this.stepInput.setEditable(false);
-			sap.ui.getCore().applyChanges();
-
-			//assert
-			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-readonly"), "true",
-					"To set state to read only");
-
-			this.stepInput.setEditable(true);
-			sap.ui.getCore().applyChanges();
-			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-readonly"),
-					undefined,
-					"To set it as editable");
-
-			//act
-			this.stepInput.setEnabled(false);
-			sap.ui.getCore().applyChanges();
-			//assert
-			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-disabled"), "true",
-					"To set state to disabled");
-
-			//act
-			this.stepInput.setEnabled(true);
-			sap.ui.getCore().applyChanges();
-			strictEqual(this.stepInput._getInput().$(NumericInputRenderer.getInnerSuffix()).attr("aria-disabled"), undefined,
-					"To set it as editable");
-		});
-	QUnit.module("binding", {
-		beforeEach: function () {
-			this.stepInput = new sap.m.StepInput({
-				value: {
-					path: "/vValue"
-				},
-				displayValuePrecision: {
-					path: "/vPrecision"
-				},
-				max: {
-					path: "/vMax"
-				},
-				min: {
-					path: "/vMin"
-				}
-			});
-
-			this.oModel = new sap.ui.model.json.JSONModel();
-
-			this.stepInput.placeAt('qunit-fixture');
+			oSUT.placeAt('qunit-fixture');
 			oCore.applyChanges();
-		},
-		afterEach: function () {
-			this.stepInput.destroy();
-		}
-	});
+			$Input = oInput.$(oInput.getRenderer().getInnerSuffix());
+			//assert
+			assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
+			assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
+			assert.ok($Input.is("[aria-valuenow]"), "Internal Input has 'aria-valuenow' attribute");
+			assert.strictEqual($Input.attr("aria-valuenow"), "0", "Internal input's 'aria-valuenow' attribute has correct value");
+			assert.notOk($Input.is("[aria-valuemin]"), "Internal Input doesn't have 'aria-valuemin' attribute");
+			assert.notOk($Input.is("[aria-valuemax]"), "Internal Input doesn't have 'aria-valuemax' attribute");
+			/* Inherited InputBase aria properties */
+			assert.notOk(oInput.$().is("[title]"), "Internal Input wrapper doesn't have 'title' attribute");
+			assert.notOk($Input.is("[name]"), "Internal Input doesn't have 'name' attribute");
+			assert.notOk($Input.is("[placeholder]"), "Internal Input doesn't have 'placeholder' attribute");
+			assert.notOk($Input.is("[aria-invalid]"), "Internal Input doesn't have 'aria-invalid' attribute");
+			assert.notOk($Input.is("[aria-readonly]"), "Internal Input doesn't have 'aria-readonly' attribute");
+			assert.notOk($Input.is("[aria-disabled]"), "Internal Input doesn't have 'aria-disabled' attribute");
+			assert.notOk($Input.is("[aria-required]"), "Internal Input doesn't have 'aria-required' attribute");
+			assert.notOk($Input.is("[aria-labelledby]"), "Internal Input doesn't have 'aria-labelledby' attribute");
+			assert.notOk($Input.is("[aria-describedby]"), "Internal Input doesn't have 'aria-describedby' attribute");
+			//clean
+			oSUT.destroy();
+		});
+
+		QUnit.test("Internal 'sap.m.Input' has correct ARIA attributes when initialized with specific values", function (assert) {
+			//prepare
+			var oSUT = new sap.m.StepInput({
+					name: "useful name",
+					required: true,
+					editable: false,
+					enabled: false,
+					placeholder: 'useful placeholder',
+					tooltip: 'useful tooltip',
+					min: 0,
+					max: 10,
+					value: 15
+				}),
+				oInput = oSUT._getInput(),
+				$Input;
+			//act
+			oSUT.placeAt('qunit-fixture');
+			oCore.applyChanges();
+			$Input = oInput.$(oInput.getRenderer().getInnerSuffix());
+			//assert
+			assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
+			assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
+			assert.ok($Input.is("[aria-valuenow]"), "Internal Input has 'aria-valuenow' attribute");
+			/** ToDo: This should be corrected when we apply the latest IxD specification */
+			assert.strictEqual($Input.attr("aria-valuenow"), "10", "Internal input's 'aria-valuenow' attribute has correct value");
+			assert.ok($Input.is("[aria-valuemin]"), "Internal Input has 'aria-valuemin' attribute");
+			assert.strictEqual($Input.attr("aria-valuemin"), "0", "Internal input's 'aria-valuemin' attribute has correct value");
+			assert.ok($Input.is("[aria-valuemax]"), "Internal Input has 'aria-valuemax' attribute");
+			assert.strictEqual($Input.attr("aria-valuemax"), "10", "Internal input's 'aria-valuemax' attribute has correct value");
+			/* Inherited InputBase aria properties */
+			assert.ok(oInput.$().is("[title]"), "Internal Input wrapper has 'title' attribute");
+			assert.strictEqual(oInput.$().attr("title"), 'useful tooltip', "Internal input's wrapper 'title' attribute has correct value");
+			assert.ok($Input.is("[name]"), "Internal Input has 'name' attribute");
+			assert.strictEqual($Input.attr("name"), 'useful name', "Internal input's 'name' attribute has correct value");
+			assert.ok($Input.is("[placeholder]"), "Internal Input has 'placeholder' attribute");
+			assert.strictEqual($Input.attr("placeholder"), 'useful placeholder', "Internal input's 'placeholder' attribute has correct value");
+			/** ToDo: This should be corrected when we apply the latest IxD specification */
+			assert.notOk($Input.is("[aria-invalid]"), "Internal Input has 'aria-invalid' attribute");
+			assert.ok($Input.is("[aria-readonly]"), "Internal Input has 'aria-readonly' attribute");
+			assert.strictEqual($Input.attr("aria-readonly"), 'true', "Internal input's 'aria-readonly' attribute has correct value");
+			assert.ok($Input.is("[aria-disabled]"), "Internal Input has 'aria-disabled' attribute");
+			assert.strictEqual($Input.attr("aria-disabled"), 'true', "Internal input's 'aria-disabled' attribute has correct value");
+			assert.ok($Input.is("[aria-required]"), "Internal Input has 'aria-required' attribute");
+			assert.strictEqual($Input.attr("aria-required"), 'true', "Internal input's 'aria-required' attribute has correct value");
+			assert.ok($Input.is("[aria-labelledby]"), "Internal Input has 'aria-labelledby' attribute");
+			assert.strictEqual($Input.attr("aria-labelledby"), oInput.getId() + '-labelledby', "Internal input's 'aria-labelledby' attribute has correct value");
+			assert.ok($Input.is("[aria-describedby]"), "Internal Input has 'aria-describedby' attribute");
+			assert.strictEqual($Input.attr("aria-describedby"), oInput.getId() + '-describedby', "Internal input's 'aria-describedby' attribute has correct value");
+			//clean
+			oSUT.destroy();
+		});
+
+		QUnit.test("StepInput correctly alters its internal 'sap.m.Input' ARIA attributes on property changes", function (assert) {
+			//prepare
+			var oInput = this.stepInput._getInput();
+			var sInputSuffix = oInput.getRenderer().getInnerSuffix();
+			//assert - initial values
+			assert.ok(oInput.$(sInputSuffix).is('[aria-valuenow]'), "'aria-valuenow' attribute is rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
+			//act - change the 'value' property
+			this.stepInput.setValue(9);
+			oCore.applyChanges();
+			//assert - expect aria-valuenow to be changed accordingly
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "9", "'aria-valuenow' attribute was updated when the 'value' property was changed");
+			//act - change the 'editable' property
+			this.stepInput.setEditable(false);
+			oCore.applyChanges();
+			//assert - expect 'aria-readonly=true' to be rendered in the DOM
+			assert.ok(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute was rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-readonly"), "true", "'aria-readonly' attribute was updated when the 'editable' property was changed");
+			//act - change the 'editable' property
+			this.stepInput.setEditable(true);
+			oCore.applyChanges();
+			//assert - expect 'aria-readonly' not to be rendered in the DOM
+			assert.notOk(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute is not rendered in the DOM");
+			//act - change the 'enabled' property
+			this.stepInput.setEnabled(false);
+			oCore.applyChanges();
+			//assert - expect 'aria-disabled=true' to be rendered in the DOM
+			assert.ok(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute was rendered");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-disabled"), "true", "'aria-disabled' attribute was updated when the 'enabled' property was changed");
+			//act - change the 'enabled' property
+			this.stepInput.setEnabled(true);
+			oCore.applyChanges();
+			//assert - expect 'aria-disabled' not to be rendered on the DOM
+			assert.notOk(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute is not rendered in the DOM");
+			//act - simulate changing the 'value' outside the possible range with typing
+			oInput.$(sInputSuffix).val(11);
+			qutils.triggerKeydown(oInput.$(sInputSuffix)[0], jQuery.sap.KeyCodes.TAB, false, false, false);
+			oCore.applyChanges();
+			//assert - expect 'aria-invalid=true' to be rendered in the DOM
+			assert.ok(oInput.$(sInputSuffix).is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
+		});
+
+		QUnit.module("binding", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+					value: {
+						path: "/vValue"
+					},
+					displayValuePrecision: {
+						path: "/vPrecision"
+					},
+					max: {
+						path: "/vMax"
+					},
+					min: {
+						path: "/vMin"
+					}
+				});
+				this.oModel = new sap.ui.model.json.JSONModel();
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
 
 		QUnit.test("When value set via binding is undefined", function (assert) {
 			this.oModel.setData({});
