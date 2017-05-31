@@ -5352,6 +5352,10 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 		var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
 		var oElem, $Element;
 
+		function isTextSelected(oInputElement) {
+			return oInputElement.selectionStart === 0 && oInputElement.selectionEnd === oInputElement.value.length;
+		}
+
 		// Focus cell with a focusable & tabbable element inside.
 		oElem = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Focus cell with a focusable and tabbable input element: Table is in Navigation Mode");
@@ -5362,6 +5366,7 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 		oElem = $Element[0];
 		assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(isTextSelected(oElem), "The text in the input element is selected");
 
 		// Focus cell with a focusable & non-tabbable element inside.
 		oTable._getKeyboardExtension().setActionMode(false);
@@ -5374,6 +5379,7 @@ QUnit.module("TableKeyboardDelegate2 - Action Mode > Enter and Leave", {
 		oElem = $Element[0];
 		assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(isTextSelected(oElem), "The text in the input element is selected");
 
 		return $Element[0];
 	},
@@ -5755,6 +5761,13 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 		bShowInfo = false;
 	}
 
+	function assertTextSelection(oInputElement) {
+		if (oInputElement instanceof window.HTMLInputElement) {
+			assert.ok(oInputElement.selectionStart === 0 && oInputElement.selectionEnd === oInputElement.value.length,
+				"The text in the input element is selected");
+		}
+	}
+
 	/* Table Grouping Setup:
 	 *
 	 * [G] = Group header row
@@ -5852,6 +5865,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 								oElem = $InteractiveElements[0];
 								assert.strictEqual(document.activeElement, oElem,
 									"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+								assertTextSelection(document.activeElement);
 
 								if (iColumnIndex === iColumnCount - 1 && iActionItemCount === 0) {
 									resolve();
@@ -6035,6 +6049,7 @@ function _testActionModeTabNavigation(assert, bShowInfo) {
 							oElem = $InteractiveElements[0];
 							assert.strictEqual(document.activeElement, oElem,
 								"Row " + (iRowIndex + 1) + " (Absolute: " + (iAbsoluteRowIndex + 1) + "): Cell " + (iColumnIndex + 1) + ": Interactive element focused");
+							assertTextSelection(document.activeElement);
 
 							var bIsFirstInteractiveElementInRow = TableKeyboardDelegate2._getFirstInteractiveElement(oTable.getRows()[iRowIndex])[0] === oElem;
 							var bRowHasInteractiveRowHeader = bTableHasRowSelectors || TableUtils.Grouping.isInGroupingRow(TableUtils.getCell(oTable, oElem));
@@ -6193,9 +6208,32 @@ QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns, Empty Row Actions, Fix
 QUnit.module("TableKeyboardDelegate2 - Action Mode > Ctrl + Up/Down Keys", {
 	beforeEach: function() {
 		setupTest();
+
+		function addColumn(sTitle, sText) {
+			oTable.addColumn(new sap.ui.table.Column({
+				label: sTitle,
+				width: "100px",
+				template: new TestInputControl({
+					text: "{" + sText + "}",
+					index: iNumberOfCols,
+					visible: true,
+					tabbable: true
+				})
+			}));
+			iNumberOfCols++;
+
+			for (var i = 0; i < iNumberOfRows; i++) {
+				oTable.getModel().getData().rows[i][sText] = sText + (i + 1);
+			}
+		}
+
+		addColumn("Focusable & Tabbable", "Focus&Tab");
+
+		sap.ui.getCore().applyChanges();
 	},
 	afterEach: function() {
 		teardownTest();
+		iNumberOfCols -= 1;
 	}
 });
 
@@ -6216,22 +6254,43 @@ function goUpDownWithArrowKeys(assert, iCol, bCtrlKey) {
 			default: return getCell(iRow, iCol, bFocus, assert);
 		}
 	}
+
+	function assertTextSelection(oInputElement) {
+		if (oInputElement instanceof window.HTMLInputElement) {
+			assert.ok(oInputElement.selectionStart === 0 && oInputElement.selectionEnd === oInputElement.value.length,
+				"The text in the input element is selected");
+		}
+	}
+
 	var oElem;
 	var iVisibleRows = oTable.getVisibleRowCount();
 	var i;
 	var bActionMode = iCol !== -1; // Row headers behave the same with and without the Ctrl key
-	oElem = getRowCell(0, true, assert);
+
+	if (iCol >= 0) {
+		// Pressing Ctrl+Down on a column header cell should not cause the table to enter the edit mode.
+		oElem = getColumnHeader(iCol, true, assert);
+		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
+		oElem = checkFocus(getCell(0, iCol), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+	} else {
+		oElem = getRowCell(0, true, assert);
+	}
+
 	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true); // use ctrl to go into the action mode
 	oElem = checkFocus(getRowCell(1), assert, bActionMode);
+	assertTextSelection(oElem[0]);
 	// go to the bottom row
 	for (i = 2; i < iVisibleRows; i++) {
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
 		oElem = checkFocus(getRowCell(i), assert, bActionMode);
+		assertTextSelection(oElem[0]);
 	}
 	// scroll to the bottom
 	for (i = iVisibleRows; i < iNumberOfRows; i++) {
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
 		oElem = checkFocus(getRowCell(iVisibleRows - 1), assert, bActionMode);
+		assertTextSelection(oElem[0]);
 	}
 	// ctrl-down at the last row switches the action mode off
 	qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
@@ -6241,11 +6300,13 @@ function goUpDownWithArrowKeys(assert, iCol, bCtrlKey) {
 		// at the last row, always press the ctrl key to switch to the action mode again
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, i == iVisibleRows - 2 || bCtrlKey);
 		oElem = checkFocus(getRowCell(i), assert, bActionMode);
+		assertTextSelection(oElem[0]);
 	}
 	// scroll to the top
 	for (i = iVisibleRows; i < iNumberOfRows; i++) {
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
 		oElem = checkFocus(getRowCell(0), assert, bActionMode);
+		assertTextSelection(oElem[0]);
 	}
 	// ctrl-up on the first row switches the action mode off
 	qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
@@ -6253,11 +6314,11 @@ function goUpDownWithArrowKeys(assert, iCol, bCtrlKey) {
 }
 
 QUnit.test("Navigate with Ctrl key", function(assert) {
-	goUpDownWithArrowKeys(assert, 0, true);
+	goUpDownWithArrowKeys(assert, iNumberOfCols - 1, true);
 });
 
 QUnit.test("Navigate without Ctrl key", function(assert) {
-	goUpDownWithArrowKeys(assert, 0, false);
+	goUpDownWithArrowKeys(assert, iNumberOfCols - 1, false);
 });
 
 QUnit.test("Navigate Row Actions", function(assert) {
