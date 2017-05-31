@@ -452,6 +452,31 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 		return this;
 	};
+	/**
+	 * Enables/Disables busy state.
+	 * @overwrite
+	 * @public
+	 * @param {boolean} flag for enabling busy indicator
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
+	 */
+	TableSelectDialog.prototype.setBusy = function () {
+		// Overwrite setBusy as it should be handled in the "real" dialog
+		this._oDialog.setBusy.apply(this._oDialog, arguments);
+
+		// Should return "this"
+		return this;
+	};
+
+	/**
+	 * Gets current busy state.
+	 * @overwrite
+	 * @public
+	 * @returns {boolean} value of currtent busy state.
+	 */
+	TableSelectDialog.prototype.getBusy = function () {
+		// Overwrite getBusy as it should be handled in the "real" dialog
+		return this._oDialog.getBusy.apply(this._oDialog, arguments);
+	};
 
 	/**
 	 * Sets the busyIndicatorDelay value to the internal table
@@ -461,6 +486,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 */
 	TableSelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
 		this._oTable.setBusyIndicatorDelay(iValue);
+		this._oDialog.setBusyIndicatorDelay(iValue);
 		this.setProperty("busyIndicatorDelay", iValue, true);
 
 		return this;
