@@ -34,6 +34,8 @@ sap.ui.require([
 			}
 		});
 
+		sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+
 		// Create, modify and delete of an unsaved sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
 		if (!bRealOData) {
@@ -226,8 +228,8 @@ sap.ui.require([
 		}
 
 		// delete the last created SalesOrder again
-		Then.onTheMainPage.cleanUp();
-		Then.onTheMainPage.checkLog(bRealOData
+		When.onAnyPage.cleanUp("SalesOrders");
+		Then.onAnyPage.checkLog(bRealOData
 			? [oExpectedLog, oExpectedLog, oExpectedLog]
 			: undefined);
 		Then.iTeardownMyUIComponent();

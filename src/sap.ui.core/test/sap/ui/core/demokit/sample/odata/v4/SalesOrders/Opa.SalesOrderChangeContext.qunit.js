@@ -53,7 +53,7 @@ sap.ui.require([
 		Then.onTheMainPage.checkSalesOrderLineItemNote(0,
 			"EPM DG: SO ID 0500000000 Item 0000000010");
 
-		Then.onTheMainPage.checkLog();
+		Then.onAnyPage.checkLog();
 		Then.iTeardownMyUIComponent();
 	});
 });

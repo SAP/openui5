@@ -28,6 +28,8 @@ sap.ui.require([
 			}
 		});
 
+		sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
+
 		// Preparation: create a new sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
 		When.onTheMainPage.pressCreateSalesOrdersButton();
@@ -89,8 +91,8 @@ sap.ui.require([
 		Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
 
 		// delete the last created SalesOrder again
-		Then.onTheMainPage.cleanUp();
-		Then.onTheMainPage.checkLog(bRealOData ? [{
+		When.onAnyPage.cleanUp("SalesOrders");
+		Then.onAnyPage.checkLog(bRealOData ? [{
 			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 			level : jQuery.sap.log.Level.ERROR,
 			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Note"
