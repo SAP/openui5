@@ -41,22 +41,20 @@ sap.ui.define([], function() {
 			},
 			form : {
 				inHiddenTree : true,
-				getIndex : function(oSimpleForm, oFormContainer) {
-					var iIndex = 0;
-					var aFormContainers = oSimpleForm.getAggregation("form").getFormContainers();
+				getIndex : function(oForm, oFormContainer) {
+					var aFormContainers = oForm.getAggregation("form").getFormContainers();
 
 					if (oFormContainer) {
-						iIndex = aFormContainers.indexOf(oFormContainer) + 1;
-					} else {
-						var oTitle = aFormContainers[aFormContainers.length - 1].getTitle();
-						// if there is no Title in the FormContainer, the SimpleForm is empty and
-						// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
-						if (oTitle !== null ) {
-							iIndex = aFormContainers.length;
-						}
+						return aFormContainers.indexOf(oFormContainer) + 1;
+					}
+					// if there is no Elements in the FormContainer, the SimpleForm is empty and
+					// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
+					if (aFormContainers[0].getFormElements().length === 0 &&
+						aFormContainers[0].getTitle() === null) {
+						return 0;
 					}
 
-					return iIndex;
+					return aFormContainers.length;
 				},
 				ignore : false,
 				childNames : function (oElement){
