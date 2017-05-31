@@ -39,6 +39,19 @@ sap.ui.define([
 	var COLUMN_RESIZE_STEP_CSS_SIZE = "1em";
 
 	/**
+	 * Selects the text of an input element.
+	 *
+	 * @param {HTMLInputElement} oInputElement The input element whose text will be selected.
+	 */
+	function selectText(oInputElement) {
+		if (!(oInputElement instanceof window.HTMLInputElement)) {
+			return;
+		}
+
+		oInputElement.select();
+	}
+
+	/**
 	 * New Delegate for keyboard events of sap.ui.table.Table controls.
 	 *
 	 * @class Delegate for keyboard events of sap.ui.table.Table controls.
@@ -548,6 +561,7 @@ sap.ui.define([
 			oKeyboardExtension._suspendItemNavigation();
 			oActiveElement.tabIndex = -1;
 			oKeyboardExtension._setSilentFocus($InteractiveElements[0]);
+			selectText($InteractiveElements[0]);
 			return true;
 
 		} else if ($ParentCell !== null) {
@@ -802,6 +816,7 @@ sap.ui.define([
 		if (oKeyboardExtension.isInActionMode()) {
 			$DataCell = TableUtils.getParentDataCell(this, oEvent.target);
 			var $RowActionCell = TableUtils.getParentRowActionCell(this, oEvent.target);
+			var $InteractiveElement;
 
 			if ($DataCell === null && $RowActionCell === null) {
 				if (oCellInfo.isOfType(CellType.ROWHEADER)) {
@@ -848,7 +863,9 @@ sap.ui.define([
 							if (bTableHasRowSelectors || bScrolledRowIsGroupHeaderRow) {
 								TableKeyboardDelegate._focusRowSelector(this, oCellInfo.rowIndex);
 							} else {
-								TableKeyboardDelegate._getFirstInteractiveElement(oRow).focus();
+								$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
+								$InteractiveElement.focus();
+								selectText($InteractiveElement[0]);
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -863,17 +880,23 @@ sap.ui.define([
 					if (bTableHasRowSelectors || bNextRowIsGroupHeaderRow) {
 						TableKeyboardDelegate._focusRowSelector(this, iNextRowIndex);
 					} else {
-						TableKeyboardDelegate._getFirstInteractiveElement(oNextRow).focus();
+						$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oNextRow);
+						$InteractiveElement.focus();
+						selectText($InteractiveElement[0]);
 					}
 				}
 
 			} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
 				oEvent.preventDefault();
-				TableKeyboardDelegate._getFirstInteractiveElement(oRow).focus();
+				$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
+				$InteractiveElement.focus();
+				selectText($InteractiveElement[0]);
 
 			} else {
 				oEvent.preventDefault();
-				TableKeyboardDelegate._getNextInteractiveElement(this, oEvent.target).focus();
+				$InteractiveElement = TableKeyboardDelegate._getNextInteractiveElement(this, oEvent.target);
+				$InteractiveElement.focus();
+				selectText($InteractiveElement[0]);
 			}
 
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
@@ -909,6 +932,7 @@ sap.ui.define([
 		if (oKeyboardExtension.isInActionMode()) {
 			$DataCell = TableUtils.getParentDataCell(this, oEvent.target);
 			var $RowActionCell = TableUtils.getParentRowActionCell(this, oEvent.target);
+			var $InteractiveElement;
 
 			if ($DataCell === null && $RowActionCell === null) {
 				if (oCellInfo.isOfType(CellType.ROWHEADER)) {
@@ -961,7 +985,9 @@ sap.ui.define([
 							if (bScrolledRowIsGroupHeaderRow) {
 								TableKeyboardDelegate._focusRowSelector(this, oCellInfo.rowIndex);
 							} else {
-								TableKeyboardDelegate._getLastInteractiveElement(oRow).focus();
+								$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
+								$InteractiveElement.focus();
+								selectText($InteractiveElement[0]);
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -976,13 +1002,17 @@ sap.ui.define([
 					if (bPreviousRowIsGroupHeaderRow) {
 						TableKeyboardDelegate._focusRowSelector(this, iPreviousRowIndex);
 					} else {
-						TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow).focus();
+						$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow);
+						$InteractiveElement.focus();
+						selectText($InteractiveElement[0]);
 					}
 				}
 
 			} else {
 				oEvent.preventDefault();
-				TableKeyboardDelegate._getPreviousInteractiveElement(this, oEvent.target).focus();
+				$InteractiveElement = TableKeyboardDelegate._getPreviousInteractiveElement(this, oEvent.target);
+				$InteractiveElement.focus();
+				selectText($InteractiveElement[0]);
 			}
 
 		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER) || oEvent.target === this.getDomRef("noDataCnt")) {
@@ -1029,6 +1059,7 @@ sap.ui.define([
 				// skip additional focus handling in KeyboardExtension:
 				keyboardExtension._actionMode = !!interactiveElement;
 				keyboardExtension._setSilentFocus(interactiveElement || cell);
+				selectText(interactiveElement);
 			}
 		}
 		if (iCellType === CellType.ROWHEADER) {
@@ -1075,6 +1106,7 @@ sap.ui.define([
 					this.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
 							focusTableCell(oTable, oCellInfo.rowIndex, oCellInfo.columnIndex, oCellInfo.type, true);
+							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 						}, 0);
 					});
 				}
@@ -1083,6 +1115,7 @@ sap.ui.define([
 					oKeyboardExtension.setActionMode(false); // go out of the action mode on the bottom row
 				} else {
 					focusTableCell(oTable, oCellInfo.rowIndex + 1, oCellInfo.columnIndex, oCellInfo.type, bFocusActive);
+					oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 				}
 			}
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
@@ -1206,6 +1239,7 @@ sap.ui.define([
 					this.attachEventOnce("_rowsUpdated", function() {
 						setTimeout(function() {
 							focusTableCell(oTable, oCellInfo.rowIndex, oCellInfo.columnIndex, oCellInfo.type, true);
+							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 						}, 0);
 					});
 				}
@@ -1215,6 +1249,7 @@ sap.ui.define([
 				preventItemNavigation(oEvent, !!bFocusActive || oCellInfo.isOfType(CellType.ROWACTION));
 			} else { // focus the data cell above the current one
 				focusTableCell(oTable, oCellInfo.rowIndex - 1, oCellInfo.columnIndex, oCellInfo.type, bFocusActive);
+				oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
 			}
 		}
 	};
