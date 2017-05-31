@@ -328,23 +328,15 @@ sap.ui.define([
 
 		var oTable = oRow.getParent();
 		var aCells = oRow.getCells();
-		var oCellDomRef;
 		var $Cell;
 		var $InteractiveElements;
 
-		for (var i = 0; i < aCells.length; i++) {
-			oCellDomRef = aCells[i].getDomRef();
-			$Cell = TableUtils.getCell(oTable, oCellDomRef);
-			$InteractiveElements = this._getInteractiveElements($Cell);
-
-			if ($InteractiveElements !== null) {
-				return $InteractiveElements.first();
-			}
+		if (TableUtils.hasRowActions(oTable)) {
+			aCells.push(oRow.getAggregation("_rowAction"));
 		}
 
-		if (TableUtils.hasRowActions(oTable)) {
-			oCellDomRef = oRow.getAggregation("_rowAction").getDomRef();
-			$Cell = TableUtils.getCell(oTable, oCellDomRef);
+		for (var i = 0; i < aCells.length; i++) {
+			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
 			$InteractiveElements = this._getInteractiveElements($Cell);
 
 			if ($InteractiveElements !== null) {
@@ -369,23 +361,15 @@ sap.ui.define([
 
 		var oTable = oRow.getParent();
 		var aCells = oRow.getCells();
-		var oCellDomRef;
 		var $Cell;
 		var $InteractiveElements;
 
 		if (TableUtils.hasRowActions(oTable)) {
-			oCellDomRef = oRow.getAggregation("_rowAction").getDomRef();
-			$Cell = TableUtils.getParentRowActionCell(oTable, oCellDomRef);
-			$InteractiveElements = this._getInteractiveElements($Cell);
-
-			if ($InteractiveElements !== null) {
-				return $InteractiveElements.last();
-			}
+			aCells.push(oRow.getAggregation("_rowAction"));
 		}
 
 		for (var i = aCells.length - 1; i >= 0; i--) {
-			oCellDomRef = aCells[i].getDomRef();
-			$Cell = TableUtils.getParentDataCell(oTable, oCellDomRef);
+			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
 			$InteractiveElements = this._getInteractiveElements($Cell);
 
 			if ($InteractiveElements !== null) {
@@ -415,53 +399,39 @@ sap.ui.define([
 			return null;
 		}
 
-		var $DataCell;
-		var $RowActionCell = TableUtils.getParentRowActionCell(oTable, oElement);
+		var $Cell = TableUtils.getParentCell(oTable, oElement);
 		var $InteractiveElements;
 		var oCellInfo;
+		var oCellContent;
 		var aCells;
 		var oColumn;
 		var iColumnIndexInCellsAggregation;
 		var iColumnIndexToStartSearch;
 
-		if ($RowActionCell !== null) {
-			// The interactive element is inside a row action cell.
-			// Search for the previous interactive element in the row action cell.
-			$InteractiveElements = this._getInteractiveElements($RowActionCell);
-			if ($InteractiveElements[0] !== $Element[0]) {
-				return $InteractiveElements.eq($InteractiveElements.index(oElement) - 1);
-			}
+		// Search for the previous interactive element in the current cell.
+		$InteractiveElements = this._getInteractiveElements($Cell);
+		if ($InteractiveElements[0] !== $Element[0]) {
+			return $InteractiveElements.eq($InteractiveElements.index(oElement) - 1);
+		}
 
-			// The interactive element is the first inside a row action cell.
-			// Start to search for the previous interactive element from the last data cell in the row.
-			oCellInfo = TableUtils.getCellInfo($RowActionCell);
-			aCells = oTable.getRows()[oCellInfo.rowIndex].getCells();
-			$DataCell = TableUtils.getParentDataCell(oTable, aCells[aCells.length - 1].getDomRef());
-			oCellInfo = TableUtils.getCellInfo($DataCell);
-			oColumn = oTable.getColumns()[oCellInfo.columnIndex];
-			iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
-			iColumnIndexToStartSearch = iColumnIndexInCellsAggregation;
+		// The previous interactive element could not be found in the current cell. Prepare the next search.
+		oCellInfo = TableUtils.getCellInfo($Cell);
+		aCells = oTable.getRows()[oCellInfo.rowIndex].getCells();
+
+		if (oCellInfo.isOfType(CellType.ROWACTION)) {
+			iColumnIndexToStartSearch = aCells.length - 1;
 		} else {
-			// Start to look for the previous interactive element from the cell the interactive element is inside.
-			$DataCell = TableUtils.getParentDataCell(oTable, oElement);
-			oCellInfo = TableUtils.getCellInfo($DataCell);
-			aCells = oTable.getRows()[oCellInfo.rowIndex].getCells();
 			oColumn = oTable.getColumns()[oCellInfo.columnIndex];
 			iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
 			iColumnIndexToStartSearch = iColumnIndexInCellsAggregation - 1;
-
-			// Search for the previous interactive element in the current cell.
-			$InteractiveElements = this._getInteractiveElements($DataCell);
-			if ($InteractiveElements[0] !== $Element[0]) {
-				return $InteractiveElements.eq($InteractiveElements.index(oElement) - 1);
-			}
 		}
 
 		// Perform the search to the left iterating from cell to cell.
+		// A possibly existing row action cell would have been analyzed in the beginning.
 		for (var i = iColumnIndexToStartSearch; i >= 0; i--) {
-			var oCellDomRef = aCells[i].getDomRef();
-			$DataCell = TableUtils.getParentDataCell(oTable, oCellDomRef);
-			$InteractiveElements = this._getInteractiveElements($DataCell);
+			oCellContent = aCells[i].getDomRef();
+			$Cell = TableUtils.getParentCell(oTable, oCellContent);
+			$InteractiveElements = this._getInteractiveElements($Cell);
 
 			if ($InteractiveElements !== null) {
 				return $InteractiveElements.last();
@@ -490,53 +460,54 @@ sap.ui.define([
 			return null;
 		}
 
-		var $DataCell = TableUtils.getParentDataCell(oTable, oElement);
-		var $RowActionCell = null;
+		var $Cell = TableUtils.getParentCell(oTable, oElement);
 		var $InteractiveElements;
 		var oCellInfo;
+		var oCellContent;
+		var aCells;
+		var oColumn;
+		var oRow;
+		var iColumnIndexInCellsAggregation;
 
-		if ($DataCell !== null) {
-			oCellInfo = TableUtils.getCellInfo($DataCell);
-			var oRow = oTable.getRows()[oCellInfo.rowIndex];
-			var aCells = oRow.getCells();
+		// Search for the next interactive element in the current cell.
+		$InteractiveElements = this._getInteractiveElements($Cell);
+		if ($InteractiveElements.get(-1) !== $Element[0]) {
+			return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
+		}
 
-			// First search for the next interactive element in the current cell.
-			$InteractiveElements = this._getInteractiveElements($DataCell);
-			if ($InteractiveElements.get(-1) !== $Element[0]) {
-				return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
-			}
+		// The next interactive element could not be found in the current cell. Prepare the next search.
+		oCellInfo = TableUtils.getCellInfo($Cell);
 
-			// Search in the next cells.
-			var oColumn = oTable.getColumns()[oCellInfo.columnIndex];
-			var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
-			for (var i = iColumnIndexInCellsAggregation + 1; i < aCells.length; i++) {
-				var oCellDomRef = aCells[i].getDomRef();
-				$DataCell = TableUtils.getParentDataCell(oTable, oCellDomRef);
-				$InteractiveElements = this._getInteractiveElements($DataCell);
+		if (oCellInfo.isOfType(CellType.ROWACTION)) {
+			return null; // The passed element is already the last interactive element in this row.
+		} else {
+			oColumn = oTable.getColumns()[oCellInfo.columnIndex];
+			iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
+		}
 
-				if ($InteractiveElements !== null) {
-					return $InteractiveElements.first();
-				}
-			}
+		oRow = oTable.getRows()[oCellInfo.rowIndex];
+		aCells = oRow.getCells();
+		oColumn = oTable.getColumns()[oCellInfo.columnIndex];
+		iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
 
-			// Search in the row action cell.
-			if (TableUtils.hasRowActions(oTable)) {
-				$RowActionCell = TableUtils.getParentRowActionCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
+		// Search in the next cells.
+		for (var i = iColumnIndexInCellsAggregation + 1; i < aCells.length; i++) {
+			oCellContent = aCells[i].getDomRef();
+			$Cell = TableUtils.getParentCell(oTable, oCellContent);
+			$InteractiveElements = this._getInteractiveElements($Cell);
+
+			if ($InteractiveElements !== null) {
+				return $InteractiveElements.first();
 			}
 		}
 
+		// Search in the row action cell.
 		if (TableUtils.hasRowActions(oTable)) {
-			if ($RowActionCell === null) {
-				$RowActionCell = TableUtils.getParentRowActionCell(oTable, oElement);
-			}
+			$Cell = TableUtils.getParentCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
+			$InteractiveElements = this._getInteractiveElements($Cell);
 
-			if ($RowActionCell !== null) {
-				// The interactive element is inside a row action cell.
-				// Search for the next interactive element in the row action cell.
-				$InteractiveElements = this._getInteractiveElements($RowActionCell);
-				if ($InteractiveElements.get(-1) !== $Element[0]) {
-					return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
-				}
+			if ($InteractiveElements.get(-1) !== $Element[0]) {
+				return $InteractiveElements.eq($InteractiveElements.index(oElement) + 1);
 			}
 		}
 
@@ -553,8 +524,7 @@ sap.ui.define([
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oActiveElement = document.activeElement;
 		var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements(oActiveElement);
-		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
-		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
+		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
 		if ($InteractiveElements !== null) {
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
@@ -563,8 +533,7 @@ sap.ui.define([
 			oKeyboardExtension._setSilentFocus($InteractiveElements[0]);
 			selectText($InteractiveElements[0]);
 			return true;
-
-		} else if ($ParentCell !== null) {
+		} else if ($Cell !== null) {
 			// Target is an interactive element inside a data cell.
 			this._getKeyboardExtension()._suspendItemNavigation();
 			return true;
@@ -580,13 +549,12 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.leaveActionMode = function() {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oActiveElement = document.activeElement;
+		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
 		oKeyboardExtension._resumeItemNavigation();
 
-		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
-		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
-		if ($ParentCell !== null) {
-			oKeyboardExtension._setSilentFocus($ParentCell);
+		if ($Cell !== null) {
+			oKeyboardExtension._setSilentFocus($Cell);
 		} else {
 			oActiveElement.blur();
 			oKeyboardExtension._setSilentFocus(oActiveElement);
@@ -622,9 +590,8 @@ sap.ui.define([
 			 }*/
 		}
 
-		var $ParentDataCell = TableUtils.getParentDataCell(this, $Target);
-		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, $Target);
-		var bIsInteractiveElement = $ParentCell !== null && TableKeyboardDelegate._isElementInteractive($Target);
+		var $Cell = TableUtils.getParentCell(this, $Target);
+		var bIsInteractiveElement = $Cell !== null && TableKeyboardDelegate._isElementInteractive($Target);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
 			// Leave the action mode when focusing an element in the table which is not supported by the action mode.
@@ -811,28 +778,16 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.onsaptabnext = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
-		var $Cell, $DataCell;
+		var $Cell;
 
 		if (oKeyboardExtension.isInActionMode()) {
-			$DataCell = TableUtils.getParentDataCell(this, oEvent.target);
-			var $RowActionCell = TableUtils.getParentRowActionCell(this, oEvent.target);
 			var $InteractiveElement;
-
-			if ($DataCell === null && $RowActionCell === null) {
-				if (oCellInfo.isOfType(CellType.ROWHEADER)) {
-					$Cell = jQuery(oEvent.target);
-				} else {
-					return; // Not an interactive element, selector cell, or group row header cell.
-				}
-			} else if ($DataCell !== null) {
-				// The target is an interactive element inside a data cell.
-				$Cell = $DataCell;
-			} else {
-				// The target is an interactive element inside a row action cell.
-				$Cell = $RowActionCell;
-			}
-
+			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
+
+			if ($Cell === null) {
+				return; // Not a table cell or an element inside a table cell.
+			}
 
 			var oRow = this.getRows()[oCellInfo.rowIndex];
 			var $LastInteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
@@ -915,11 +870,12 @@ sap.ui.define([
 			oKeyboardExtension._setSilentFocus(this.$().find(".sapUiTableOuterAfter"));
 
 		} else if (oCellInfo.cell === null) {
-			$DataCell = TableUtils.getParentDataCell(this, oEvent.target);
-			if ($DataCell !== null) {
+			$Cell = TableUtils.getParentCell(this, oEvent.target);
+
+			if ($Cell !== null) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
-				$DataCell.focus();
+				$Cell.focus();
 			}
 		}
 	};
@@ -927,28 +883,16 @@ sap.ui.define([
 	TableKeyboardDelegate.prototype.onsaptabprevious = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
-		var $Cell, $DataCell;
+		var $Cell;
 
 		if (oKeyboardExtension.isInActionMode()) {
-			$DataCell = TableUtils.getParentDataCell(this, oEvent.target);
-			var $RowActionCell = TableUtils.getParentRowActionCell(this, oEvent.target);
 			var $InteractiveElement;
-
-			if ($DataCell === null && $RowActionCell === null) {
-				if (oCellInfo.isOfType(CellType.ROWHEADER)) {
-					$Cell = jQuery(oEvent.target);
-				} else {
-					return; // Not an interactive element, selector cell, or group row header cell.
-				}
-			} else if ($DataCell !== null) {
-				// The target is an interactive element inside a data cell.
-				$Cell = $DataCell;
-			} else {
-				// The target is an interactive element inside a row action cell.
-				$Cell = $RowActionCell;
-			}
-
+			$Cell = TableUtils.getCell(this, oEvent.target);
 			oCellInfo = TableUtils.getCellInfo($Cell);
+
+			if ($Cell === null) {
+				return; // Not a table cell or an element inside a table cell.
+			}
 
 			var oRow = this.getRows()[oCellInfo.rowIndex];
 			var iAbsoluteRowIndex = oRow.getIndex();
@@ -1027,11 +971,12 @@ sap.ui.define([
 			this._getKeyboardExtension()._setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
 
 		} else if (oCellInfo.cell === null) {
-			$DataCell = TableUtils.getParentDataCell(this, oEvent.target);
-			if ($DataCell !== null) {
+			$Cell = TableUtils.getParentCell(this, oEvent.target);
+
+			if ($Cell !== null) {
 				// The target is a non-interactive element inside a data cell. We are not in action mode, so focus the cell.
 				oEvent.preventDefault();
-				$DataCell.focus();
+				$Cell.focus();
 			}
 		}
 	};

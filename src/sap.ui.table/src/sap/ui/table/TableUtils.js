@@ -51,21 +51,6 @@ sap.ui.define([
 	CELLTYPE.ANYROWHEADER = CELLTYPE.ROWHEADER | CELLTYPE.COLUMNROWHEADER;
 	CELLTYPE.ANY = CELLTYPE.ANYCONTENTCELL | CELLTYPE.ANYCOLUMNHEADER;
 
-	function _getParentCell(oTable, oElement, sSelector) {
-		if (oTable == null || oElement == null || sSelector == null) {
-			return null;
-		}
-
-		var $Element = jQuery(oElement);
-		var $ParentCell = $Element.parent().closest(sSelector, oTable.getDomRef());
-
-		if ($ParentCell.length > 0) {
-			return $ParentCell;
-		}
-
-		return null;
-	}
-
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
 	 *
@@ -764,35 +749,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the data cell which is the parent of the specified element.
+		 * Returns the table cell which is either the parent of an element, or returns the element if it is a table cell itself.
 		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
-		 * @param {jQuery|HTMLElement} oElement An element inside a table data cell.
-		 * @returns {jQuery|null} Returns <code>null</code>, if the passed element is not inside a data cell.
-		 * @private
-		 */
-		getParentDataCell: function(oTable, oElement) {
-			return _getParentCell(oTable, oElement, ".sapUiTableTd");
-		},
-
-		/**
-		 * Returns the row action cell which is the parent of the specified element.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
-		 * @param {jQuery|HTMLElement} oElement An element inside a table row action cell.
-		 * @returns {jQuery|null} Returns <code>null</code>, if the passed element is not inside a row action cell.
-		 * @private
-		 */
-		getParentRowActionCell: function(oTable, oElement) {
-			return _getParentCell(oTable, oElement, ".sapUiTableRowAction");
-		},
-
-		/**
-		 * Returns the table cell which is either the parent of the specified element, or returns the specified element itself if it is a table cell.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent.
-		 * @param {jQuery|HTMLElement} oElement An element inside a table cell. Can be a jQuery object or a DOM Element.
-		 * @returns {jQuery|null} Returns null if the passed element is not inside a table cell or a table cell itself.
+		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the cell.
+		 * @param {jQuery|HTMLElement} oElement A table cell or an element inside a table cell.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the element is neither a table cell nor inside a table cell.
 		 * @private
 		 */
 		getCell: function(oTable, oElement) {
@@ -803,33 +764,44 @@ sap.ui.define([
 			var $Element = jQuery(oElement);
 			var $Cell;
 			var oTableElement = oTable.getDomRef();
+			var aTableCellSelectors = [
+				".sapUiTableTd",
+				".sapUiTableCol",
+				".sapUiTableRowHdr",
+				".sapUiTableRowAction",
+				".sapUiTableColRowHdr"
+			];
+			var sSelector;
 
-			$Cell = $Element.closest(".sapUiTableTd", oTableElement);
-			if ($Cell.length > 0) {
-				return $Cell;
-			}
+			for (var i = 0; i < aTableCellSelectors.length; i++) {
+				sSelector = aTableCellSelectors[i];
+				$Cell = $Element.closest(sSelector, oTableElement);
 
-			$Cell = $Element.closest(".sapUiTableCol", oTableElement);
-			if ($Cell.length > 0) {
-				return $Cell;
-			}
-
-			$Cell = $Element.closest(".sapUiTableRowHdr", oTableElement);
-			if ($Cell.length > 0) {
-				return $Cell;
-			}
-
-			$Cell = $Element.closest(".sapUiTableRowAction", oTableElement);
-			if ($Cell.length > 0) {
-				return $Cell;
-			}
-
-			$Cell = $Element.closest(".sapUiTableColRowHdr", oTableElement);
-			if ($Cell.length > 0) {
-				return $Cell;
+				if ($Cell.length > 0) {
+					return $Cell;
+				}
 			}
 
 			return null;
+		},
+
+		/**
+		 * Returns the table cell which is the parent of an element.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table used as the context within which to search for the parent cell.
+		 * @param {jQuery|HTMLElement} oElement An element inside a table cell.
+		 * @returns {jQuery|null} Returns <code>null</code>, if the element is not inside a table cell.
+		 * @private
+		 */
+		getParentCell: function(oTable, oElement) {
+			var $Element = jQuery(oElement);
+			var $Cell = TableUtils.getCell(oTable, oElement);
+
+			if ($Cell === null || $Cell[0] === $Element[0]) {
+				return null; // The element is not inside a table cell.
+			} else {
+				return $Cell;
+			}
 		},
 
 		/**
