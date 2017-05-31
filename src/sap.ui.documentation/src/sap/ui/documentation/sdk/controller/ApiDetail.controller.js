@@ -697,7 +697,7 @@ sap.ui.define([
 			 * @param description - the description of the property
 			 * @param deprecatedText - the text explaining this property is deprecated
 			 * @param deprecatedSince - the verstion when this property was deprecated
-			 * @remturns string - the formatted description
+			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
 				var result = description || "";
@@ -728,13 +728,35 @@ sap.ui.define([
 			 * Formats the description of events and methods in details
 			 * @param description - the description of the event/method
 			 * @param visibility - the visibility of the event/method
-			 * @remturns string - the formatted description
+			 * @param since - the since version information of the event/method
+			 * @returns string - the formatted description
 			 */
-			formatDescriptionDetails: function (description, visibility) {
+			formatDescriptionDetails: function (description, visibility, since) {
 				var result = description || "";
 
 				if (visibility) {
-					result += '<br/><br/>Visibility: ' + visibility + '.';
+					result += '<br/><br/><i>Visibility: ' + visibility + '.</i>';
+				}
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of control properties
+			 * @param description - the description of the property
+			 * @param since - the since version information of the property
+			 * @returns string - the formatted description
+			 */
+			formatDescriptionSince: function (description, since) {
+				var result = description || "";
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
 				}
 
 				result = this._wrapInSpanTag(result);
