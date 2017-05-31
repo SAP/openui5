@@ -142,12 +142,18 @@
 										<Text text="{= ${/selectedIssue/issues}.indexOf(${}) + 1 }"></Text>
 									</t:template>
 								</t:Column>
-								<t:Column label="Control Id">
+								<t:Column
+										sortProperty="context/id"
+										filterProperty="context/id"
+										label="Control Id">
 									<t:template>
 										<Text text="{context/id}"></Text>
 									</t:template>
 								</t:Column>
-								<t:Column label="Class name">
+								<t:Column
+										sortProperty="context/className"
+										filterProperty="context/className"
+										label="Class name">
 									<t:template>
 										<Text text="{context/className}"></Text>
 									</t:template>
