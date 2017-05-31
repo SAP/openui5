@@ -220,7 +220,9 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 				sap.ui.require([
 					"sap/ui/rta/RuntimeAuthoring"],
 				function (RuntimeAuthoring) {
-					this._oRTA = new RuntimeAuthoring();
+					this._oRTA = new RuntimeAuthoring({flexSettings: {
+					developerMode: false
+				}});
 					this.getView().byId("toggleRTA").setVisible(true);
 				}.bind(this));
 			} catch (oException) {
