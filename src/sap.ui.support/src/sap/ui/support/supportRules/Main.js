@@ -285,6 +285,24 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._fetchNonLoadedRuleSets();
 			});
 		}, this);
+
+		CommunicationBus.subscribe(channelNames.REQUEST_RULES_MODEL, function (deserializedRules) {
+			if (deserializedRules) {
+				CommunicationBus.publish(channelNames.GET_RULES_MODEL, IssueManager.getTreeTableViewModel(deserializedRules));
+			}
+		}, this);
+
+		CommunicationBus.subscribe(channelNames.REQUEST_ISSUES, function (issues) {
+			if (issues) {
+				var groupedIssues = IssueManager.groupIssues(issues),
+					issuesModel = IssueManager.getIssuesViewModel(groupedIssues);
+
+				CommunicationBus.publish(channelNames.GET_ISSUES, {
+					groupedIssues: groupedIssues,
+					issuesModel: issuesModel
+				});
+			}
+		}, this);
 	};
 
 	Main.prototype._getLoadFromSupportOrigin = function () {
@@ -587,7 +605,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * Called after the analyzer finished and reports whether there are issues or not.
 	 */
 	Main.prototype._done = function () {
-		var issues = IssueManager.getIssuesViewModel(),
+		var issues = IssueManager.getIssuesModel(),
 			elementTree = this._createElementTree();
 
 		CommunicationBus.publish(channelNames.ON_ANALYZE_FINISH, {
@@ -707,7 +725,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @return {object} contains all the information required to create a report.
 	 */
 	Main.prototype._getReportData = function (reportConstants) {
-		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel()),
+		var issues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
 			rules = this._mRuleSets,
 			selectedRules = this._oSelectedRulesIds;
 		return {
