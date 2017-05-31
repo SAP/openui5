@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, sValue);
 
-				if (oItemAdditionalTextRef) {
+				if (oItemAdditionalTextRef && oItem.getAdditionalText) {
 					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, sValue);
 				}
 			}, this);
