@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @param {string} sKey resource bundle key
 	 * @param aArgs used to fill dynamic resource content
-	 * @return the resource if it was found in the bundle or 'sKey' if no matching
+	 * @return {string} the resource if it was found in the bundle or 'sKey' if no matching
 	 *		 resource was available.
 	 * @private
 	 */
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * a warning will be logged and 'undefined is returned'
 	 *
 	 * @param {string} sActionId
-	 * @return new or pooled instance of the specified action or 'undefined'
+	 * @return {object} new or pooled instance of the specified action or 'undefined'
 	 */
 	ActionBar.prototype._getSocialAction = function (sActionId) {
 
@@ -985,9 +985,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Calls '_addSocialAction' or '_removeSocialAction' depending on 'bFlag'.
 	 *
-	 * @param oSocialAction social action to deal with.
+	 * @param {object} oSocialAction social action to deal with.
 	 * @param {boolean} bFlag show the action or not.
-	 * @return the sap.ui.ux3.ActionBar instance
+	 * @return {sap.ui.ux3.ActionBar} the sap.ui.ux3.ActionBar instance
 	 * @see sap.ui.ux3.ActionBar._addSocialAction
 	 * @see sap.ui.ux3.ActionBar._removeSocialAction
 	 * @private
@@ -1042,7 +1042,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @param oBusinessAction business action to be removed
 	 * @param {boolean} bRerender if this flag is set, business actions are re-rendered.
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
+	 * @return {sap.ui.ux3.ActionBar] sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */
 	ActionBar.prototype._removeBusinessAction = function(oBusinessAction, bRerender) {

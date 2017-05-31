@@ -267,7 +267,7 @@ sap.ui.define([
 	/**
 	 * Validates the entered parameters, and returns what the actual display type parameter would be.
 	 *
-	 * @returns {sap.f.AvatarType|*}
+	 * @returns {sap.f.AvatarType}
 	 * @private
 	 */
 	Avatar.prototype._getActualDisplayType = function () {
@@ -291,7 +291,7 @@ sap.ui.define([
 	 * Returns the path for the default icon, based on the value of the <code>DisplayShape</code> property.
 	 *
 	 * @param {sap.f.AvatarShape} sDisplayShape
-	 * @returns {*}
+	 * @returns {string} the default icon
 	 * @private
 	 */
 	Avatar.prototype._getDefaultIconPath = function (sDisplayShape) {
