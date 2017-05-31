@@ -37,6 +37,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		};
 
 		var IssueManager = {
+
 			/**
 			 * Adds an issue to the list of issues found
 			 * @param {object} oIssue
@@ -65,6 +66,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 				// Reset issues array
 				_aIssues = [];
+
 			},
 			/**
 			 * @returns {array} Issue history - array of objects.
@@ -100,7 +102,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @returns {array} Issues in ViewModel format
 			 * Converts the issues inside the IssueManager
 			 */
-			getIssuesViewModel: function () {
+			getIssuesModel: function () {
 				var viewModel = [];
 				this.walkIssues(function (issue) {
 					viewModel.push(_convertIssueToViewModel(issue));
@@ -111,72 +113,158 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @returns {object} All the rules with issues, selected flag and issueCount properties
 			 * The issues are in ViewModel format
 			 * @param {object} rules All the rules from _mRulesets
-			 * @param {object} selectedRulesIDs The selected rules ids
 			 * @param {array} issues The issues to map to the rulesViewModel.
 			 * The issues passes should be grouped and in ViewModel format
 			 */
-			getRulesViewModel: function (rules, selectedRulesIDs, issues) {
-				var rulesViewModel = {},
-					issueCount = 0,
-					group = {},
-					library = {},
-					rule = {},
-					rulesCopy = jQuery.extend(true, {}, rules),
-					issuesCopy = jQuery.extend(true, {}, issues);
+				getRulesViewModel: function (rules, selectedRulesIDs, issues) {
+					var rulesViewModel = {},
+						issueCount = 0,
+						group = {},
+						library = {},
+						rule = {},
+						rulesCopy = jQuery.extend(true, {}, rules),
+						issuesCopy = jQuery.extend(true, {}, issues);
 
-				for (group in rulesCopy) {
-					rulesViewModel[group] = jQuery.extend(true, {}, rulesCopy[group].ruleset._mRules);
-					library = rulesViewModel[group];
-
-					// Create non-enumerable properties
-					Object.defineProperty(library, 'selected', {
-						enumerable: false,
-						configurable: true,
-						writable: true,
-						value: false
-					});
-					Object.defineProperty(library, 'issueCount', {
-						enumerable: false,
-						configurable: true,
-						writable: true,
-						value: 0
-					});
-
-					for (rule in rulesCopy[group].ruleset._mRules) {
-						library[rule] = jQuery.extend(true, [], library[rule]);
+					for (group in rulesCopy) {
+						rulesViewModel[group] = jQuery.extend(true, {}, rulesCopy[group].ruleset._mRules);
+						library = rulesViewModel[group];
 
 						// Create non-enumerable properties
-						Object.defineProperty(library[rule], 'selected', {
+						Object.defineProperty(library, 'selected', {
 							enumerable: false,
 							configurable: true,
 							writable: true,
 							value: false
 						});
-						Object.defineProperty(library[rule], 'issueCount', {
+						Object.defineProperty(library, 'issueCount', {
 							enumerable: false,
 							configurable: true,
 							writable: true,
 							value: 0
 						});
 
-						// Add selected flag to library and rule level.
-						if (selectedRulesIDs[rule]) {
-							library[rule].selected = true;
-							library.selected = true;
-						}
+						for (rule in rulesCopy[group].ruleset._mRules) {
+							library[rule] = jQuery.extend(true, [], library[rule]);
 
-						// Add issue count to library and rule level.
-						if (issuesCopy[group] && issuesCopy[group][rule]) {
-							// Not creating a new array to keep the properties.
-							library[rule].push.apply(library[rule], issuesCopy[group][rule]);
-							issueCount = issuesCopy[group][rule].length;
-							library[rule].issueCount = issueCount;
-							library.issueCount += issueCount;
+							// Create non-enumerable properties
+							Object.defineProperty(library[rule], 'selected', {
+								enumerable: false,
+								configurable: true,
+								writable: true,
+								value: false
+							});
+							Object.defineProperty(library[rule], 'issueCount', {
+								enumerable: false,
+								configurable: true,
+								writable: true,
+								value: 0
+							});
+
+							// Add selected flag to library and rule level.
+							if (selectedRulesIDs[rule]) {
+								library[rule].selected = true;
+								library.selected = true;
+							}
+
+							// Add issue count to library and rule level.
+							if (issuesCopy[group] && issuesCopy[group][rule]) {
+								// Not creating a new array to keep the properties.
+								library[rule].push.apply(library[rule], issuesCopy[group][rule]);
+								issueCount = issuesCopy[group][rule].length;
+								library[rule].issueCount = issueCount;
+								library.issueCount += issueCount;
+							}
 						}
 					}
+
+					return rulesViewModel;
+
+			},
+			/**
+			 * The rules are in TreeTable format
+			 * @returns {object} All the rules in TreeTable usable model
+			 * @param {object} TreeTableModel All the rules in treeTable usable format.
+			 */
+			getTreeTableViewModel: function(rules) {
+				var index = 0,
+					innerIndex = 0,
+					treeTableModel = {},
+					rulesViewModel;
+
+				rulesViewModel = this.getRulesViewModel(rules, [], []);
+				for (var libraryName in rulesViewModel) {
+					treeTableModel[index] = {
+						name: libraryName,
+						type: "lib",
+						rules: []
+					};
+
+					for (var ruleName in rulesViewModel[libraryName]) {
+						treeTableModel[index][innerIndex] = {
+							name: rulesViewModel[libraryName][ruleName].title,
+							description: rulesViewModel[libraryName][ruleName].description,
+							id: rulesViewModel[libraryName][ruleName].id,
+							audiences: rulesViewModel[libraryName][ruleName].audiences,
+							categories: rulesViewModel[libraryName][ruleName].categories,
+							minversion: rulesViewModel[libraryName][ruleName].minversion,
+							resolution: rulesViewModel[libraryName][ruleName].resolution,
+							title:  rulesViewModel[libraryName][ruleName].title,
+							libName: libraryName
+						};
+						innerIndex++;
+					}
+					index++;
+				}
+				return treeTableModel;
+			},
+
+			/**
+			 * The issues are in TreeTable format
+			 * @returns {object} All the issues in TreeTable usable model
+			 * @param {object} issuesModel All the issues after they have been grouped by groupIssues().
+			 */
+			getIssuesViewModel: function(issuesModel) {
+
+				var treeTableModel = {},
+					index = 0,
+					innerIndex = 0,
+					issueCount = 0;
+
+				for (var libName in issuesModel) {
+					treeTableModel[index] = {
+						name: libName,
+						showAudiences: false,
+						showCategories: false,
+						type: "lib"
+					};
+
+					for (var rule in issuesModel[libName]) {
+						treeTableModel[index][innerIndex] = {
+							name: issuesModel[libName][rule][0].name + " (" + issuesModel[libName][rule].length + " issues)",
+							showAudiences: true,
+							showCategories: true,
+							categories: issuesModel[libName][rule][0].categories.join(", "),
+							audiences: issuesModel[libName][rule][0].audiences.join(", "),
+							issueCount: issuesModel[libName][rule].length,
+							description: issuesModel[libName][rule][0].description,
+							resolution: issuesModel[libName][rule][0].resolution,
+							type: "rule",
+							ruleLibName: issuesModel[libName][rule][0].ruleLibName,
+							ruleId: issuesModel[libName][rule][0].ruleId
+						};
+
+						issueCount += issuesModel[libName][rule].length;
+						innerIndex++;
+					}
+
+					treeTableModel[index].name += " (" + issueCount + " issues)";
+					treeTableModel[index].issueCount = issueCount;
+					issueCount = 0;
+					innerIndex = 0;
+					index++;
 				}
 
-				return rulesViewModel;
+				return treeTableModel;
 			},
 			clearHistory: function () {
 				_aHistory = [];

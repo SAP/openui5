@@ -96,17 +96,6 @@ sap.ui.define([
 				that._settingsPopover.openBy(source);
 			}, 0);
 		},
-
-		onNavConAfterNavigate: function (oEvent) {
-			var to = oEvent.getParameter("to");
-			if (to === this.getView().byId("analysis")) {
-				setTimeout(function () {
-					to.getController().markLIBAsSelected();
-				}, 250);
-			}
-		},
-
-
 		goToAnalysis: function (evt) {
 			var navCon = this.getView().byId("navCon");
 			navCon.to(this.getView().byId("analysis"), "show");

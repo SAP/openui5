@@ -246,7 +246,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"],
 				return;
 			}
 
-			selectedElement = this._ElementTreeContainer.querySelector("#" + elementID);
+			selectedElement = this._ElementTreeContainer.querySelector("[data-id=" + elementID + "]");
 
 			if (selectedElement === null) {
 				jQuery.sap.log.warning("The selected element is not a child of the ElementTree");
@@ -409,7 +409,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"],
 				this.onSelectionChanged(id);
 			}
 
-			if (targetElement.classList.contains("showNumbOfIssues")) {
 				this.clearSelection();
 
 				target.setAttribute("selected", "true");
@@ -417,7 +416,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"],
 				if (bNotify) {
 					this.onIssueCountClicked(id);
 				}
-			}
 		};
 
 		/**

@@ -57,7 +57,7 @@
 
 					<contentRight>
 						<Button text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis"/>
-						<Button text="{= 'Issues (' + ${/issues}.length + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
+						<Button text="{= 'Issues (' + ${/issuesCount} + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
 
 						<c:Icon src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon"/>
 
@@ -73,8 +73,7 @@
 
 			<l:flexContent>
 				<NavContainer
-					id="navCon"
-					afterNavigate="onNavConAfterNavigate">
+					id="navCon">
 					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis"></mvc:XMLView>
 					<mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues"></mvc:XMLView>
 				</NavContainer>
