@@ -339,9 +339,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
 		var x = oEvent.pageX - jQuery(oOpenerRef.getDomRef()).offset().left,
 			y = oEvent.pageY - jQuery(oOpenerRef.getDomRef()).offset().top,
+			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
 			eDock = sap.ui.core.Popup.Dock;
 
-		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef, x + " " + y, 'flip');
+		if (bRTL) {
+			x = oOpenerRef.getDomRef().clientWidth - x;
+		}
+
+		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef,  x + " " + y, 'flip');
 	};
 
 	/**
