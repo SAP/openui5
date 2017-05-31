@@ -12,8 +12,9 @@ sap.ui.define([
 		"sap/ui/documentation/library",
 		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/core/IconPool",
-		"sap/m/SplitAppMode"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool, SplitAppMode) {
+		"sap/m/SplitAppMode",
+		"sap/m/MessageBox"
+	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool, SplitAppMode, MessageBox) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
@@ -28,7 +29,8 @@ sap.ui.define([
 						bSearchMode: false,
 						version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
 						fullVersion: sap.ui.version,
-						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
+						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
+						isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav)
 					});
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
@@ -272,6 +274,9 @@ sap.ui.define([
 				oNavCon.back();
 			},
 
+			/**
+			 * Opens a dialog to give feedback on the demo kit
+			 */
 			feedbackDialogOpen: function () {
 				var that = this;
 
@@ -284,6 +289,7 @@ sap.ui.define([
 					this._oFeedbackDialog.contextData = Fragment.byId("feedbackDialogFragment", "contextData");
 					this._oFeedbackDialog.ratingStatus = Fragment.byId("feedbackDialogFragment", "ratingStatus");
 					this._oFeedbackDialog.ratingStatus.value = 0;
+					this._oFeedbackDialog.sendButton = Fragment.byId("feedbackDialogFragment", "sendButton");
 					this._oFeedbackDialog.ratingBar = [
 						{
 							button : Fragment.byId("feedbackDialogFragment", "excellent"),
@@ -330,11 +336,16 @@ sap.ui.define([
 					this._oFeedbackDialog.updateContextData();
 				}
 				this._oFeedbackDialog.updateContextData();
-				this._oFeedbackDialog.open();
+				if (!this._oFeedbackDialog.isOpen()) {
+					jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oFeedbackDialog);
+					this._oFeedbackDialog.open();
+				}
 			},
 
+			/**
+			 * Event handler for the send feedback button
+			 */
 			onFeedbackDialogSend: function() {
-				var that = this;
 				var data = {};
 
 				if (this._oFeedbackDialog.contextCheckBox.getSelected()) {
@@ -359,6 +370,7 @@ sap.ui.define([
 					};
 				}
 
+				// send feedback
 				this._oFeedbackDialog.setBusyIndicatorDelay(0);
 				this._oFeedbackDialog.setBusy(true);
 
@@ -370,34 +382,48 @@ sap.ui.define([
 				}).
 				done(
 					function () {
-						sap.m.MessageBox.success('Success');
-						that._oFeedbackDialog.reset();
-						that._oFeedbackDialog.close();
-						that._oFeedbackDialog.setBusy(false);
-					}
+						MessageBox.success("Your feedback has been sent", {title: "Thank you!"});
+						this._oFeedbackDialog.reset();
+						this._oFeedbackDialog.close();
+						this._oFeedbackDialog.setBusy(false);
+					}.bind(this)
 				).
 				fail(
-					function (err) {
-						sap.m.MessageBox.error('Fail',err);
-						that._oFeedbackDialog.setBusy(false);
-					}
+					function (oRequest, sStatus, sError) {
+						var sErrorDetails = sError; // + "\n" + oRequest.responseText;
+						MessageBox.error("An error occurred sending your feedback:\n" + sErrorDetails, {title: "Sorry!"});
+						this._oFeedbackDialog.setBusy(false);
+					}.bind(this)
 				);
 
 			},
 
+			/**
+			 * Event handler for the cancel feedback button
+			 */
 			onFeedbackDialogCancel: function () {
 				this._oFeedbackDialog.reset();
 				this._oFeedbackDialog.close();
 			},
 
+			/**
+			 * Event handler for the toggle context link
+			 */
 			onShowHideContextData: function () {
 				this._oFeedbackDialog.contextData.setVisible(!this._oFeedbackDialog.contextData.getVisible());
 			},
 
+			/**
+			 * Event handler for the context selection checkbox
+			 */
 			onContextSelect: function() {
 				this._oFeedbackDialog.updateContextData();
 			},
 
+			/**
+			 * Event handler for the rating to update the label and the data
+			 * @param {sap.ui.base.Event}
+			 */
 			onPressRatingButton: function(oEvent) {
 				var that = this;
 				var oPressedButton = oEvent.getSource();
@@ -430,15 +456,22 @@ sap.ui.define([
 				});
 
 				function setRatingStatus(sState, sText, iValue) {
-					var sendButton = Fragment.byId("feedbackDialogFragment", "sendButton");
 					that._oFeedbackDialog.ratingStatus.setState(sState);
 					that._oFeedbackDialog.ratingStatus.setText(sText);
 					that._oFeedbackDialog.ratingStatus.value = iValue;
-					if (iValue) {
-						sendButton.setEnabled(true);
+					if (iValue || that._oFeedbackDialog.textInput.getValue()) {
+						that._oFeedbackDialog.sendButton.setEnabled(true);
 					} else {
-						sendButton.setEnabled(false);
+						that._oFeedbackDialog.sendButton.setEnabled(false);
 					}
+				}
+			},
+
+			onFeedbackInput : function() {
+				if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
+					this._oFeedbackDialog.sendButton.setEnabled(true);
+				} else {
+					this._oFeedbackDialog.sendButton.setEnabled(false);
 				}
 			},
 
