@@ -232,7 +232,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 					/**
 					 * Indicates whether the <code>listItem</code> parameter is selected or not.
 					 */
-					selected : {type : "boolean"}
+					selected : {type : "boolean"},
+
+					/**
+					 * Indicates whether the select all action is triggered or not.
+					 */
+					selectAll : {type : "boolean"}
 				}
 			},
 
@@ -752,8 +757,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		}, this);
 
 		if (bFireEvent && aChangedListItems.length) {
-			this._fireSelectionChangeEvent(aChangedListItems);
+			this._fireSelectionChangeEvent(aChangedListItems, bFireEvent);
 		}
+
 		return this;
 	};
 
@@ -1116,7 +1122,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 	};
 
 	// Fire selectionChange event and support old select event API
-	ListBase.prototype._fireSelectionChangeEvent = function(aListItems) {
+	ListBase.prototype._fireSelectionChangeEvent = function(aListItems, bSelectAll) {
 		var oListItem = aListItems && aListItems[0];
 		if (!oListItem) {
 			return;
@@ -1126,7 +1132,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		this.fireSelectionChange({
 			listItem : oListItem,
 			listItems : aListItems,
-			selected : oListItem.getSelected()
+			selected : oListItem.getSelected(),
+			selectAll: !!bSelectAll
 		});
 
 		// support old API
