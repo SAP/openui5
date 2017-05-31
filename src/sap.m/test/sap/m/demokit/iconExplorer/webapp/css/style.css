@@ -93,6 +93,9 @@
 .sapUiDemoIconExplorer .previewIcon {
 	font-size: 100px;
 }
+.sapUiDemoIconExplorer .tagsArea {
+	white-space: pre-line;
+}
 
 html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
 .sapUiDemoIconExplorer .gridLayoutCell,
