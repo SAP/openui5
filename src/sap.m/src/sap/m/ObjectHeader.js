@@ -1099,8 +1099,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * @param [string]
-	 *            sId control id to be escaped
+	 * @param {string}
+	 *            [sId] control id to be escaped
 	 * @returns escaped control id with "#" prefix
 	 * @private
 	 */

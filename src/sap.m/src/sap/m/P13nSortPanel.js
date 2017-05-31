@@ -187,11 +187,11 @@ sap.ui.define([
 	 * setter for the supported operations array
 	 *
 	 * @public
-	 * @param {array} array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
+	 * @param {array} aOperations - array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
 	 * @returns {sap.m.P13nSortPanel} this for chaining
 	 */
-	P13nSortPanel.prototype.setOperations = function(aOperation) {
-		this._aOperations = aOperation;
+	P13nSortPanel.prototype.setOperations = function(aOperations) {
+		this._aOperations = aOperations;
 
 		if (this._oSortPanel) {
 			this._oSortPanel.setOperations(this._aOperations);

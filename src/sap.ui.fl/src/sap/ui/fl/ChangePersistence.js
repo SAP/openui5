@@ -200,8 +200,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.core.UIComponent} component containing the control for which the change should be added
-	 * @param {sap.ui.fl.Change} change which should be added into the mapping
+	 * @param {sap.ui.core.UIComponent} oComponent - component containing the control for which the change should be added
+	 * @param {sap.ui.fl.Change} oChange - change which should be added into the mapping
 	 * @see sap.ui.fl.Change
 	 * @returns {map} mChanges - map with added change
 	 * @private

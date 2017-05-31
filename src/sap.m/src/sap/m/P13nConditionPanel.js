@@ -363,9 +363,9 @@ sap.ui.define([
 	 * @param {string} sType defines the type for which this operations will be used. is <code>sType</code> is not defined the operations will be used as default
 	 *        operations.
 	 */
-	P13nConditionPanel.prototype.setOperations = function(aOperation, sType) {
+	P13nConditionPanel.prototype.setOperations = function(aOperations, sType) {
 		sType = sType || "default";
-		this._oTypeOperations[sType] = aOperation;
+		this._oTypeOperations[sType] = aOperations;
 
 		this._updateAllOperations();
 	};

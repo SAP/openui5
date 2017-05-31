@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 	/**
 	 * Sets the multiSelect property (default value is <code>true</code>).
-	 * @param {boolean}	bMultiSelect New value for property multiSelect
+	 * @param {boolean}	bVal New value for property multiSelect
 	 * @returns {sap.m.FacetFilterList}	this to allow method chaining
 	 */
 	FacetFilterList.prototype.setMultiSelect = function(bVal) {

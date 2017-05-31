@@ -1464,7 +1464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	 * propagation of the event to other delegates or the element and so on.
 	 *
 	 * @see sap.ui.core.Element.prototype._callEventHandles
-	 * @param {boolean} bStopDelegate
+	 * @param {boolean} bStopHandlers
 	 */
 	jQuery.Event.prototype.stopImmediatePropagation = function(bStopHandlers) {
 

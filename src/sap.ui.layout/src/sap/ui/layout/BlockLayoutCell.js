@@ -89,8 +89,8 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 		/**
 		 * When the width is set, the cell needs to notify the parent row if it's in scrollable mode
 		 * to update the other cells as well.
-		 * @param width of the cell
-		 * @returns {BlockLayoutCell}
+		 * @param {int} width - The width of the cell
+		 * @returns {sap.ui.layout.BlockLayoutCell} this pointer for chaining
 		 */
 		BlockLayoutCell.prototype.setWidth = function (width) {
 			this.setProperty("width", width);

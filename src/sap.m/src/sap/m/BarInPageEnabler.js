@@ -67,7 +67,7 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 		/**
 		 * Sets the HTML tag of the root element.
-		 * @param {string} sTag
+		 * @param {string} sNewTag
 		 * @returns {sap.m.IBar} this for chaining
 		 * @protected
 		 */

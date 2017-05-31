@@ -295,7 +295,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 	 * Parses the formatted value
 	 *
 	 * @private
-	 * @param {Object} With scale and value
+	 * @param {string} sValue - With scale and value
 	 */
 	NumericContent.prototype._parseFormattedValue = function(sValue) {
 

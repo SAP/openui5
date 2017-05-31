@@ -1050,6 +1050,9 @@ oninput      <does not trigger>						the dom is "SAP9",
 	};
 
 	/**
+	 * @param {Array} aMask
+	 * @param {string} sPlaceholderSymbol
+	 * @param {Array} aRules
 	 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 	 * @private
 	 */
@@ -1063,6 +1066,8 @@ oninput      <does not trigger>						the dom is "SAP9",
 
 	/**
 	 * Builds the test rules according to the mask input rule's regex string.
+	 * @param {Array} aMask
+	 * @param {Array} aRules
 	 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 	 * @private
 	 */
