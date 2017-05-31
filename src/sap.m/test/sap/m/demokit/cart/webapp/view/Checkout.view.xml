@@ -121,33 +121,74 @@
 								nextStep="billingStep"
 								activate="checkCreditCardStep"
 								icon="sap-icon://credit-card">
-								<MessageStrip text="{i18n>checkoutCreditcardMessage}" />
-								<form:SimpleForm editable="true">
-									<Label
-										text="{i18n>checkoutCreditcardName}"
-										required="true" />
-									<Input
-										id="creditCardName"
-										placeholder="{i18n>creditCardHolderText}"
-										value="{/CreditCard/Name}"
-										liveChange="checkCreditCardStep"
-										valueLiveUpdate="true" />
-									<Label text="{i18n>checkoutCreditcardCardno}" />
-									<Input
-										placeholder="{i18n>creditCardNumberText}"
-										value="{/CreditCard/CardNumber}"/>
-									<Label text="{i18n>checkoutCreditcardCode}" />
-									<Input
-										placeholder="{i18n>creditCardSecurityNumberText}"
-										value="{/CreditCard/SecurityCode}"/>
-									<Label text="{i18n>checkoutCreditcardExpiration}" />
-									<DatePicker
-										value="{/CreditCard/Expire}"
-										valueFormat="MM/YYYY"
-										displayFormat="MM/YYYY"/>
-								</form:SimpleForm>
-							</WizardStep>
-							<WizardStep
+							<MessageStrip text="{i18n>checkoutCreditcardMessage}" />
+							<form:SimpleForm
+								editable="true"
+								layout="ResponsiveGridLayout">
+								<Label
+									labelFor="creditCardName"
+									text="{i18n>checkoutCreditcardName}"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="creditCardName"
+									placeholder="{i18n>creditCardHolderText}"
+									value="{/CreditCard/Name}"
+									liveChange="checkCreditCardStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCreditcardCardno}"
+									labelFor="creditCardNumber">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="creditCardNumber"
+									placeholder="{i18n>creditCardNumberText}"
+									value="{/CreditCard/CardNumber}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCreditcardCode}"
+									labelFor="creditCardSecurityNumber">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="creditCardSecurityNumber"
+									placeholder="{i18n>creditCardSecurityNumberText}"
+									value="{/CreditCard/SecurityCode}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label text="{i18n>checkoutCreditcardExpiration}">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<DatePicker
+									value="{/CreditCard/Expire}"
+									valueFormat="MM/YYYY"
+									displayFormat="MM/YYYY">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</DatePicker>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
 								id="bankAccountStep"
 								title="{i18n>checkoutBankaccontTitle}"
 								nextStep="billingStep"
@@ -177,141 +218,284 @@
 								nextStep="billingStep"
 								activate="checkCashOnDeliveryStep"
 								icon="sap-icon://money-bills">
-								<MessageStrip text="{i18n>checkoutCodMessage}" />
-								<form:SimpleForm editable="true">
-									<Label
-										text="{i18n>checkoutCodFirstname}"
-										required="true" />
-									<Input
-										id="cashOnDeliveryName"
-										placeholder="{i18n>firstNameText}"
-										value="{/CashOnDelivery/FirstName}"
-										liveChange="checkCashOnDeliveryStep"
-										valueLiveUpdate="true" />
-									<Label text="{i18n>checkoutCodLastname}" />
-									<Input
-										placeholder="{i18n>lastNameText}"
-										value="{/CashOnDelivery/LastName}" />
-									<Label text="{i18n>checkoutCodPhone}" />
-									<Input
-										placeholder="{i18n>phoneNumberText}"
-										value="{/CashOnDelivery/PhoneNumber}"/>
-									<Label text="{i18n>checkoutCodEmail}" />
-									<Input
-										placeholder="{i18n>emailAddressText}"
-										value="{/CashOnDelivery/Email}"
-										/>
-								</form:SimpleForm>
-							</WizardStep>
-							<WizardStep
+							<MessageStrip text="{i18n>checkoutCodMessage}" />
+							<form:SimpleForm
+								editable="true"
+								layout="ResponsiveGridLayout">
+								<Label
+									text="{i18n>checkoutCodFirstname}"
+									required="true"
+									labelFor="cashOnDeliveryName">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryName"
+									placeholder="{i18n>firstNameText}"
+									value="{/CashOnDelivery/FirstName}"
+									liveChange="checkCashOnDeliveryStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCodLastname}"
+									labelFor="cashOnDeliveryLastName">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryLastName"
+									placeholder="{i18n>lastNameText}"
+									value="{/CashOnDelivery/LastName}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCodPhone}"
+									labelFor="cashOnDeliveryPhoneNumber">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryPhoneNumber"
+									placeholder="{i18n>phoneNumberText}"
+									value="{/CashOnDelivery/PhoneNumber}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCodEmail}"
+									labelFor="cashOnDeliveryEmail">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryEmail"
+									placeholder="{i18n>emailAddressText}"
+									value="{/CashOnDelivery/Email}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
 								id="billingStep"
 								title="{i18n>checkoutBillingaddressTitle}"
 								subsequentSteps="deliveryAddressStep, deliveryTypeStep"
 								activate="checkBillingStep"
 								complete="billingAddressComplete"
 								icon="sap-icon://sales-quote">
-								<MessageStrip text="{i18n>checkoutBillingaddressMessage}" />
-								<form:SimpleForm editable="true">
-									<Label text="{i18n>checkoutBillingaddressDifferentdeliveryadddress}" />
-									<CheckBox
-										id="differentDeliveryAddress"
-										selected="{/DifferentDeliveryAddress}"
-										select="setDifferentDeliveryAddress" />
-									<Label
-										text="{i18n>checkoutBillingaddressAdddress}"
-										required="true" />
-									<Input
-										id="billingAddressAddress"
-										placeholder="{i18n>addressText}"
-										value="{/BillingAddress/Address}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutBillingaddressCity}"
-										required="true" />
-									<Input
-										id="billingAddressCity"
-										placeholder="{i18n>cityText}"
-										value="{/BillingAddress/City}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutBillingaddressZip}"
-										required="true" />
-									<Input
-										id="billingAddressZip"
-										placeholder="{i18n>zipCodeText}"
-										value="{/BillingAddress/ZipCode}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutBillingaddressCountry}"
-										required="true" />
-									<Input
-										id="billingAddressCountry"
-										placeholder="{i18n>countryText}"
-										value="{/BillingAddress/Country}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutBillingaddressNote}"
-										required="false" />
-									<TextArea
-										rows="8"
-										placeholder="{i18n>noteText}"
-										value="{/BillingAddress/Note}"/>
-								</form:SimpleForm>
-							</WizardStep>
-							<WizardStep
+							<MessageStrip text="{i18n>checkoutBillingaddressMessage}" />
+							<form:SimpleForm
+								layout="ResponsiveGridLayout"
+								editable="true">
+								<Label text="{i18n>checkoutBillingaddressDifferentdeliveryadddress}">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<CheckBox
+									id="differentDeliveryAddress"
+									selected="{/DifferentDeliveryAddress}"
+									select="setDifferentDeliveryAddress">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</CheckBox>
+								<Label
+									text="{i18n>checkoutBillingaddressAdddress}"
+									required="true"
+									labelFor="billingAddressAddress">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="billingAddressAddress"
+									placeholder="{i18n>addressText}"
+									value="{/BillingAddress/Address}"
+									liveChange="checkBillingStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutBillingaddressCity}"
+									required="true"
+									labelFor="billingAddressCity">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="billingAddressCity"
+									placeholder="{i18n>cityText}"
+									value="{/BillingAddress/City}"
+									liveChange="checkBillingStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutBillingaddressZip}"
+									required="true"
+									labelFor="billingAddressZip">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="billingAddressZip"
+									placeholder="{i18n>zipCodeText}"
+									value="{/BillingAddress/ZipCode}"
+									liveChange="checkBillingStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutBillingaddressCountry}"
+									required="true"
+									labelFor="billingAddressCountry">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="billingAddressCountry"
+									placeholder="{i18n>countryText}"
+									value="{/BillingAddress/Country}"
+									liveChange="checkBillingStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutBillingaddressNote}"
+									required="false">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<TextArea
+									rows="8"
+									placeholder="{i18n>noteText}"
+									value="{/BillingAddress/Note}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</TextArea>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
 								id="deliveryAddressStep"
 								title="{i18n>checkoutDeliveryaddressTitle}"
 								nextStep="deliveryTypeStep"
 								icon="sap-icon://sales-quote">
-								<form:SimpleForm editable="true">
-									<Label
-										text="{i18n>checkoutDeliveryaddressAdddress}"
-										required="true"/>
-									<Input
-										id="deliveryAddressAddress"
-										placeholder="{i18n>addressText}"
-										value="{/DeliveryAddress/Address}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutDeliveryaddressCity}"
-										required="true"/>
-									<Input
-										id="deliveryAddressCity"
-										placeholder="{i18n>cityText}"
-										value="{/DeliveryAddress/City}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutDeliveryaddressZip}"
-										required="true"/>
-									<Input
-										id="deliveryAddressZip"
-										placeholder="{i18n>zipCodeText}"
-										value="{/DeliveryAddress/ZipCode}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
-									<Label
-										text="{i18n>checkoutDeliveryaddressCountry}"
-										required="true"/>
-									<Input
-										id="deliveryAddressCountry"
-										placeholder="{i18n>countryText}"
-										value="{/DeliveryAddress/Country}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
-									<Label text="{i18n>checkoutDeliveryaddressNote}" />
-									<TextArea
-										rows="8"
-										placeholder="{i18n>noteText}"
-										value="{/DeliveryAddress/Note}"/>
-								</form:SimpleForm>
-							</WizardStep>
-							<WizardStep
+							<form:SimpleForm
+								editable="true"
+								layout="ResponsiveGridLayout">
+								<Label
+									text="{i18n>checkoutDeliveryaddressAdddress}"
+									required="true"
+									labelFor="deliveryAddressAddress">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="deliveryAddressAddress"
+									placeholder="{i18n>addressText}"
+									value="{/DeliveryAddress/Address}"
+									liveChange="checkDeliveryStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutDeliveryaddressCity}"
+									required="true"
+									labelFor="deliveryAddressCity">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="deliveryAddressCity"
+									placeholder="{i18n>cityText}"
+									value="{/DeliveryAddress/City}"
+									liveChange="checkDeliveryStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutDeliveryaddressZip}"
+									required="true"
+									labelFor="deliveryAddressZip">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="deliveryAddressZip"
+									placeholder="{i18n>zipCodeText}"
+									value="{/DeliveryAddress/ZipCode}"
+									liveChange="checkDeliveryStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutDeliveryaddressCountry}"
+									required="true"
+									labelFor="deliveryAddressCountry">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="deliveryAddressCountry"
+									placeholder="{i18n>countryText}"
+									value="{/DeliveryAddress/Country}"
+									liveChange="checkDeliveryStep"
+									valueLiveUpdate="true">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label text="{i18n>checkoutDeliveryaddressNote}">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<TextArea
+									rows="8"
+									placeholder="{i18n>noteText}"
+									value="{/DeliveryAddress/Note}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</TextArea>
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
 								id="deliveryTypeStep"
 								title="{i18n>checkoutDeliverytypeTitle}"
 								icon="sap-icon://insurance-car">
@@ -347,14 +531,16 @@
 				showHeader="false">
 				<content>
 					<form:SimpleForm
-						editable="false"
-						layout="ResponsiveGridLayout">
+							editable="false"
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="checkoutItems">
 						<form:toolbar>
 							<Toolbar id="toolbarProductList">
 								<Title
-									text="{i18n>checkoutSummaryTitle1}"
-									level="H4"
-									titleStyle="H4" />
+										id="checkoutItems"
+										text="{i18n>checkoutSummaryTitle1}"
+										level="H4"
+										titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
 									id="backtoList"
@@ -413,11 +599,12 @@
 							</List>
 						</form:content>
 					</form:SimpleForm>
-					<form:SimpleForm>
+					<form:SimpleForm ariaLabelledBy="tootalPriceTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarTotalPrice">
 								<ToolbarSpacer />
 								<Title
+									id="tootalPriceTitle"
 									level="H4"
 									titleStyle="H4"
 									text="{
@@ -430,10 +617,12 @@
 
 					<form:SimpleForm
 						editable="false"
-						layout="ResponsiveGridLayout">
+						layout="ResponsiveGridLayout"
+						ariaLabelledBy="toolbarPaymentTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarPayment">
 								<Title
+									id="toolbarPaymentTitle"
 									text="{i18n>checkoutSummaryTitle2}"
 									level="H4"
 									titleStyle="H4" />
@@ -456,12 +645,14 @@
 					</form:SimpleForm>
 
 					<form:SimpleForm
-						visible="{= ${/SelectedPayment}==='Credit Card' ? true : false}"
-						editable="false"
-						layout="ResponsiveGridLayout">
+							visible="{= ${/SelectedPayment}==='Credit Card' ? true : false}"
+							editable="false"
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="creditCardPaymentTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarCreditCard">
 								<Title
+									id="creditCardPaymentTitle"
 									text="{i18n>checkoutSummaryTitle3cc}"
 									level="H4"
 									titleStyle="H4" />
@@ -512,10 +703,12 @@
 					<form:SimpleForm
 						visible="{= ${/SelectedPayment}==='Cash on Delivery' ? true : false}"
 						editable="false"
-						layout="ResponsiveGridLayout">
+						layout="ResponsiveGridLayout"
+						ariaLabelledBy="cashOnDeliveryTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarCOD">
 								<Title
+									id="cashOnDeliveryTitle"
 									text="{i18n>checkoutSummaryTitle3cod}"
 									level="H4"
 									titleStyle="H4" />
@@ -543,12 +736,14 @@
 						</form:content>
 					</form:SimpleForm>
 					<form:SimpleForm
-						title=""
-						editable="false"
-						layout="ResponsiveGridLayout">
+							title=""
+							editable="false"
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="billingAddressTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarBilling">
 								<Title
+									id="billingAddressTitle"
 									text="{i18n>checkoutSummaryTitle4}"
 									level="H4"
 									titleStyle="H4" />
@@ -578,12 +773,14 @@
 						</form:content>
 					</form:SimpleForm>
 					<form:SimpleForm
-						title=""
-						editable="false"
-						layout="ResponsiveGridLayout">
+							title=""
+							editable="false"
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="deliveryTypeTitle" >
 						<form:toolbar>
 							<Toolbar id="toolbarShippping">
 								<Title
+									id="deliveryTypeTitle"
 									text="{i18n>checkoutSummaryTitle5}"
 									level="H4"
 									titleStyle="H4" />
@@ -607,10 +804,12 @@
 					<form:SimpleForm
 						editable="false"
 						layout="ResponsiveGridLayout"
-						visible="{= ${/DifferentDeliveryAddress}}">
+						visible="{= ${/DifferentDeliveryAddress}}"
+						ariaLabelledBy="shippingAddressTitle1">
 						<form:toolbar>
 							<Toolbar id="toolbar5ShippingAddress">
 								<Title
+									id="shippingAddressTitle1"
 									text="{i18n>checkoutDeliveryaddressTitle}"
 									level="H4"
 									titleStyle="H4" />
@@ -642,10 +841,12 @@
 					<form:SimpleForm
 						editable="false"
 						layout="ResponsiveGridLayout"
-						visible="{= !${/DifferentDeliveryAddress}}">
+						visible="{= !${/DifferentDeliveryAddress}}"
+						ariaLabelledBy="shippingAddressTitle2">
 						<form:toolbar>
 							<Toolbar id="toolbar5SameAsBilling">
 								<Title
+									id="shippingAddressTitle2"
 									text="{i18n>checkoutDeliveryaddressTitle}"
 									level="H4"
 									titleStyle="H4" />

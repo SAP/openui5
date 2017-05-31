@@ -46,7 +46,7 @@
 						title="{i18n>productMeasuresAttributeText}"
 						text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
 				</attributes>
-				<firstStatus>
+				<statuses>
 					<ObjectStatus
 						text="{
 							path : 'Status',
@@ -56,7 +56,7 @@
 							path : 'Status',
 							formatter : '.formatter.statusState'
 						}" />
-				</firstStatus>
+				</statuses>
 			</ObjectHeader>
 			<VBox
 				alignItems="Center"
