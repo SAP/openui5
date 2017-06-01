@@ -134,12 +134,12 @@
 			});
 
 			QUnit.test("when getIndex is called in a simpleForm without Title", function(assert) {
-				var that = this;
-				return sap.ui.dt.ElementUtil.loadDesignTimeMetadata(this.oSimpleForm).then(function(oDesignTime) {
-					var fnGetIndex = oDesignTime.aggregations.form.getIndex;
-					that.oSimpleForm.removeContent(that.oSimpleForm.getAggregation("form").getFormContainers()[0].getTitle());
-					assert.equal(fnGetIndex(that.oSimpleForm), 0, "then the new index should be 0");
-				});
+				var oForm = this.oSimpleForm.getAggregation('form');
+				var oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
+				var fnGetIndex = oSimpleFormOverlay.getDesignTimeMetadata().getAggregation('form').getIndex;
+				oForm.getFormContainers()[0].removeAllFormElements();
+				this.oSimpleForm.removeContent(oForm.getAggregation("formContainers")[0].getTitle())
+				assert.equal(fnGetIndex(this.oSimpleForm), 0, "then the new index should be 0");
 			});
 
 			QUnit.test("when rename is called in a simpleForm without Title", function(assert) {
