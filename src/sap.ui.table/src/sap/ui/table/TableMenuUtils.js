@@ -273,7 +273,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 
 					// Open the menu below the cell if is is not already open.
 					var oCell =  oRow.getCells()[iColumnIndex];
-					var $Cell =  MenuUtils.TableUtils.getParentDataCell(oTable, oCell.getDomRef());
+					var $Cell =  MenuUtils.TableUtils.getParentCell(oTable, oCell.getDomRef());
 
 					if ($Cell !== null && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
 						oCell = $Cell[0];
