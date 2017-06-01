@@ -1014,7 +1014,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchCache: operation binding", function (assert) {
-		var oCachePromise = {},
+		var oCachePromise = _SyncPromise.resolve({
+				setActive : function () {}
+			}),
 			oBinding = new ODataBinding({
 				oCachePromise : oCachePromise,
 				oOperation : {}
@@ -1023,8 +1025,7 @@ sap.ui.require([
 		// code under test
 		oBinding.fetchCache({/*oContext: not needed*/});
 
-		assert.strictEqual(oBinding.oCachePromise, oCachePromise,
-			"cache promise not changed for operation bindings");
+		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 	});
 
 	//*********************************************************************************************
