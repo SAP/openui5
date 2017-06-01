@@ -189,6 +189,7 @@
 				"category" : "Data Binding",
 				"since" : "1.38",
 				"samples" : [
+					"sap.ui.core.sample.odata.v4.ConsumeV2Service",
 					"sap.ui.core.sample.odata.v4.ListBinding",
 					"sap.ui.core.sample.odata.v4.SalesOrders",
 					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
@@ -464,6 +465,11 @@
 				"id": "sap.ui.core.sample.View.preprocessor",
 				"name": "Preprocessor example with XMLView",
 				"description": "A small example for View Preprocessor usage with XMLViews."
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.ConsumeV2Service",
+				"name": "OData V2 Service Consumption",
+				"description": "Example for OData V2 service consumption with an OData V4 model"
 			},
 			{
 				"id": "sap.ui.core.sample.odata.v4.ListBinding",
