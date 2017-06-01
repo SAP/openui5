@@ -28,6 +28,7 @@ sap.ui.define([
 					"css/titles.css",
 					"css/welcome.css",
 					"css/landingPage.css",
+					"css/apiReference.css",
 					"css/headers.css",
 					"thirdparty/google-code-prettify/prettify.css",
 					"thirdparty/google-code-prettify/prettify.js",
