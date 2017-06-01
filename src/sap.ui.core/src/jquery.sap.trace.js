@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 's
 					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
 					"", "", "", "", // 4 empty fields
 					format(oInteraction.busyDuration, 16), // busy duration
-					"", "", "", // 3 empty fields
+					"", "", "", "", // 4 empty fields
 					format(oInteraction.component, 70, true) // application_name with 70 characters, trimmed from left
 				].join(",");
 			}
