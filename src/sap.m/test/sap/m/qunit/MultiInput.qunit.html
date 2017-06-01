@@ -513,6 +513,26 @@
 		assert.equal(this.multiInput1.getTokens().length, 0, "Token got deleted");
 	});
 
+	QUnit.test("delete tokens via backspace and prevent default", function(assert) {
+
+		this.multiInput1.attachTokenUpdate(function (evt) {
+			evt.preventDefault();
+		});
+
+		assert.equal(this.multiInput1.getTokens().length, 0, "MultiInput contains 0 tokens");
+
+		var token1 = new sap.m.Token();
+		this.multiInput1.addToken(token1);
+
+		sap.ui.getCore().applyChanges();
+
+		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
+		assert.ok(token1.getSelected(), "Token got selected");
+
+		this.multiInput1.onsapbackspace({preventDefault:function(){}, stopPropagation:function(){}, setMarked:function(){}});
+		assert.equal(this.multiInput1.getTokens().length, 1, "Token is not deleted");
+	});
+
 	QUnit.test("test keyboard navigation", function(assert){
 		var token = new sap.m.Token({selected: true}),
 			that = this;

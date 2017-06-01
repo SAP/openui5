@@ -150,6 +150,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				 * Fired when the tokens aggregation changed (add / remove token)
 				 */
 				tokenUpdate: {
+					allowPreventDefault : true,
 					parameters: {
 						/**
 						 * Type of tokenChange event.
@@ -241,8 +242,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	MultiInput.prototype._onTokenUpdate = function (args) {
-		this.fireTokenUpdate(args.getParameters());
-		this.invalidate();
+		var eventResult = this.fireTokenUpdate(args.getParameters());
+
+		if (!eventResult) {
+			args.preventDefault();
+		} else {
+			this.invalidate();
+		}
 	};
 
 	MultiInput.prototype._onSuggestionItemSelected = function (eventArgs) {
