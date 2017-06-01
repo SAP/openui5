@@ -465,14 +465,27 @@
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
 
+		this.oTable._aGroupedColumns = new Array(5);
 		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 5, "Property NumberOfExpandedLevels - From BindingInfo");
 
+		this.oTable._aGroupedColumns = [];
+		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
+		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
+		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - From BindingInfo");
+
+		this.oTable._aGroupedColumns = new Array(4);
 		oBindingInfo = {};
 		this.oTable.setNumberOfExpandedLevels(4);
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property SumOnTop - Custom");
+		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property NumberOfExpandedLevels - Custom");
+
+		this.oTable._aGroupedColumns = [];
+		oBindingInfo = {};
+		this.oTable.setNumberOfExpandedLevels(4);
+		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
+		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - Custom");
 	});
 
 	QUnit.test("Simple expand/collapse", function (assert) {
