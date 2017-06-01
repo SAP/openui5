@@ -62,6 +62,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 					 * <p><code>class, style,</code> and <code>target</code> attributes are allowed.
 					 * If <code>target</code> is not set, links open in a new window by default.
 					 * <p>Only safe <code>href</code> attributes can be used. See {@link jQuery.sap.validateUrl}.
+					 *
+					 * <b>Note:</b> Keep in mind that not supported HTML tags and
+					 * the content nested inside them are both not rendered by the control.
 					 */
 					htmlText: {type: "string", group: "Misc", defaultValue: ""},
 
