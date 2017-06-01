@@ -1064,7 +1064,7 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		sinon.spy(oRequestor, "cancelChangeRequests");
+		sinon.spy(oRequestor, "cancelChangesByFilter");
 
 		// code under test
 		oRequestor.cancelChanges("groupId");
@@ -1074,7 +1074,7 @@ sap.ui.require([
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
 		sinon.assert.calledOnce(fnCancelPost);
-		sinon.assert.calledWithExactly(oRequestor.cancelChangeRequests, sinon.match.func,
+		sinon.assert.calledWithExactly(oRequestor.cancelChangesByFilter, sinon.match.func,
 			"groupId");
 
 		// code under test
@@ -1238,7 +1238,7 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/Service/"),
 			oTestPromise;
 
-		sinon.spy(oRequestor, "cancelChangeRequests");
+		sinon.spy(oRequestor, "cancelChangesByFilter");
 		oTestPromise = Promise.all([
 			oRequestor.request("POST", "Products", "groupId", {}, oBody, undefined, fnCancel1)
 				.then(function () {
@@ -1253,7 +1253,7 @@ sap.ui.require([
 		// code under test
 		oRequestor.removePost("groupId", oBody);
 
-		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
+		assert.ok(oRequestor.cancelChangesByFilter.calledWithExactly(sinon.match.func, "groupId"));
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [

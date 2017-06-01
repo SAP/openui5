@@ -564,9 +564,6 @@ sap.ui.require([
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
 						sinon.match.same(oEntity), sinon.match.same(oOldData));
 				oRequestCall.args[0][6](); // call onCancel
-				throw oError;
-			}).catch(function (oResult) {
-				assert.strictEqual(oResult, oError);
 			});
 
 			// code under test
@@ -666,7 +663,6 @@ sap.ui.require([
 						.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
 							sinon.match.same(oEntity), sinon.match.same(oOldData));
 					oRequestCall.args[0][6](); // call onCancel
-					throw oError2;
 				});
 			});
 

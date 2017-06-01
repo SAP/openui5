@@ -59,24 +59,6 @@ function (Helper, Opa5, Properties) {
 						viewName : sViewName
 					});
 				},
-				checkLog : function () {
-					return this.waitFor({
-						success : function (oControl) {
-							jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
-
-									if (Helper.isRelevantLog(oLog)) {
-										Opa5.assert.ok(false,
-											"Unexpected warning or error found: " + sComponent
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message );
-									}
-								});
-							Opa5.assert.ok(true, "Log checked");
-						}
-					});
-				},
 				checkTeamIDInForm : function (sTeamID) {
 					return this.waitFor({
 						controlType : "sap.m.Text",

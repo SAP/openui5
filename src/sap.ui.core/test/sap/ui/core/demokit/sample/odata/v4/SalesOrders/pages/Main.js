@@ -2,11 +2,9 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/core/sample/common/Helper",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
@@ -14,8 +12,8 @@ sap.ui.require([
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press,
-	BindingPath, Interactable, Properties) {
+function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPath, Interactable,
+	Properties) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
@@ -139,24 +137,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 					});
 				}
 			}
-		},
-		/*
-		 * Actions and assertions for the "Error" information dialog
-		 */
-		onTheErrorInfo : {
-			actions : {
-				confirm : function () {
-					return this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-error"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap();
-							Opa5.assert.ok(true, "Confirm 'Error'");
-						}
-					});
-				}
-			},
-			assertions : {}
 		},
 		/*
 		 * Actions and assertions for the main view of the Sales Orders application
@@ -458,6 +438,17 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						}
 					});
 				},
+				resetSalesOrderListChanges : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							oTable.getBinding("items").resetChanges();
+							Opa5.assert.ok(true, "SalesOrders reset by API");
+						},
+						viewName : sViewName
+					});
+				},
 				selectFirstSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -465,6 +456,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (aControls) {
 							aControls[0].$().tap();
+							Opa5.assert.ok(true, "First Sales Order selected: " +
+								aControls[0].getText());
 						},
 						viewName : sViewName
 					});
@@ -634,61 +627,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						viewName : sViewName
 					});
 				},
-				checkLog : function (aExpected) {
-					return this.waitFor({
-						success : function (oControl) {
-							var aLogEntries = jQuery.sap.log.getLogEntries(),
-								iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex || 0;
-
-							function isExpected(oLog) {
-								if (!aExpected) {
-									return false;
-								}
-								return aExpected.some(function (oExpected, i) {
-									if (oLog.component === oExpected.component &&
-											oLog.level === oExpected.level &&
-											oLog.message.indexOf(oExpected.message) >= 0 &&
-											(!oExpected.details ||
-												oLog.details.indexOf(oExpected.details) >= 0 )) {
-										aExpected.splice(i, 1);
-										return true;
-									}
-								});
-							}
-
-							sap.ui.test.Opa.getContext().iNextLogIndex = aLogEntries.length;
-							aLogEntries.splice(iStartIndex).forEach(function (oLog) {
-								var sComponent = oLog.component || "";
-
-								if (Helper.isRelevantLog(oLog)) {
-									if (isExpected(oLog)) {
-										Opa5.assert.ok(true,
-											"Expected Warning or error found: " + sComponent
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message
-											+ (oLog.details ? " Details: " + oLog.details : ""));
-									} else {
-										Opa5.assert.ok(false,
-											"Unexpected warning or error found: " + sComponent
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message
-											+ (oLog.details ? " Details: " + oLog.details : ""));
-									}
-								}
-							});
-							if (aExpected) {
-								aExpected.forEach(function (oExpected) {
-								Opa5.assert.ok(false,
-									"Expected warning or error not logged: " + oExpected.component
-									+ " Level: " + oExpected.level
-									+ " Message: " + oExpected.message
-									+ (oExpected.details ? " Details: " + oExpected.details : ""));
-								});
-							}
-							Opa5.assert.ok(true, "Log checked");
-						}
-					});
-				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -821,40 +759,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						},
 						viewName : sViewName
 					});
-				},
-				cleanUp : function() {
-					return this.waitFor({
-						controlType : "sap.m.Table",
-						autoWait : false,
-						id : "SalesOrders",
-						success : function (oSalesOrderTable) {
-							var aPromises = [],
-								bCleanUpFinished = false,
-								// use private requestor to prevent additional read requests(ETag)
-								// which need additional mockdata
-								oRequestor = oSalesOrderTable.getModel().oRequestor;
-							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
-								aPromises.push(oRequestor.request("DELETE",
-									"SalesOrderList('" + sOrderId + "')", "Cleanup",
-									{"If-Match" : "*"}));
-								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
-							});
-							sap.ui.test.Opa.getContext().aOrderIds = [];
-							oRequestor.submitBatch("Cleanup").then(function () {
-								Opa5.assert.ok(true, "Cleanup finished");
-								bCleanUpFinished = true;
-							}, function (oError) {
-								Opa5.assert.ok(false, "Cleanup failed: " + oError.message);
-								bCleanUpFinished = true;
-							});
-							return this.waitFor({
-								check : function() {
-									return bCleanUpFinished;
-								}
-							});
-						},
-						viewName : sViewName
-					});
 				}
 			}
 		},
@@ -925,24 +829,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						success : function (aControls) {
 							aControls[0].getButtons()[0].$().tap(); // confirm deletion
 							Opa5.assert.ok(true, "Confirm Delete Sales Line Item Order");
-						}
-					});
-				}
-			},
-			assertions : {}
-		},
-		/*
-		 * Actions and assertions for the "Success" information dialog
-		 */
-		onTheSuccessInfo : {
-			actions : {
-				confirm : function () {
-					return this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-success"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap();
-							Opa5.assert.ok(true, "Confirm 'Success'");
 						}
 					});
 				}

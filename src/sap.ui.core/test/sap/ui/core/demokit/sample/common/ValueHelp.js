@@ -67,6 +67,7 @@ sap.ui.define([
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
+								change: that.onValueChange.bind(that),
 								editable : true,
 								id : that.getId() + "-field",
 								showValueHelp : true,
@@ -131,6 +132,10 @@ sap.ui.define([
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
+		},
+
+		onValueChange : function (oEvent) {
+			this.setProperty("value", oEvent.getParameter("newValue"));
 		},
 
 		onValueHelp : function (oEvent) {

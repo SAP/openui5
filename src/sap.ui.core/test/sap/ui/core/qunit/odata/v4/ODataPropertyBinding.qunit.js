@@ -1147,46 +1147,73 @@ sap.ui.require([
 				synchronizationMode : "None"
 			}),
 			oModelMock = this.mock(oModel),
+			oMetaModelMock = this.mock(oModel.oMetaModel),
 			oControl = new TestControl({
 				models : oModel,
-				objectBindings : "/SalesOrderList('0500000000')"
+				objectBindings : "/BusinessPartnerList('0100000000')"
 			}),
-			oContextMock = this.oSandbox.mock(oControl.getObjectBinding().getBoundContext());
+			oParentBinding = oControl.getObjectBinding(),
+			oContext = oParentBinding.getBoundContext(),
+			oParentBindingMock = this.oSandbox.mock(oParentBinding);
 
 		oCacheMock.expects("fetchValue")
-			.withExactArgs("$direct", "Note", sinon.match.func, sinon.match.object)
-			.returns(_SyncPromise.resolve("Some note")); // text property of control
+			.withExactArgs("$direct", "Address/City", sinon.match.func, sinon.match.object)
+			.returns(_SyncPromise.resolve("Heidelberg")); // text property of control
 		oControl.applySettings({
-			text : "{path : 'Note', type : 'sap.ui.model.odata.type.String'}"
+			text : "{path : 'Address/City', type : 'sap.ui.model.odata.type.String'}"
 		});
 		oModelMock.expects("checkGroupId").withExactArgs(undefined);
-		oContextMock.expects("updateValue")
-			.withExactArgs(undefined, "Note", "foo", sinon.match.func)
+		oMetaModelMock.expects("fetchUpdateData")
+			.withExactArgs("Address/City", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve({
+				editUrl : "/BusinessPartnerList('0100000000')",
+				entityPath : "/BusinessPartnerList/0", // not realistic, but different to editUrl
+				propertyPath : "Address/City"
+			}));
+		oParentBindingMock.expects("updateValue").withExactArgs(undefined, "Address/City", "foo",
+				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0")
 			.returns(Promise.resolve());
 
 		// code under test
 		oControl.setText("foo");
 
 		oModelMock.expects("checkGroupId").withExactArgs("up");
-		oContextMock.expects("updateValue")
-			.withExactArgs("up", "Note", "bar", sinon.match.func)
+		oMetaModelMock.expects("fetchUpdateData")
+			.withExactArgs("Address/City", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve({
+				editUrl : "/BusinessPartnerList('0100000000')",
+				entityPath : "/BusinessPartnerList/0", // not realistic, but different to editUrl
+				propertyPath : "Address/City"
+			}));
+		oParentBindingMock.expects("updateValue").withExactArgs("up", "Address/City", "bar",
+				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0")
 			.returns(Promise.resolve());
 
 		// code under test
 		oControl.getBinding("text").setValue("bar", "up");
 	});
-	//TODO relative path which is not simply a property name (Address/Street)?
 
 	//*********************************************************************************************
 	QUnit.test("setValue (relative binding): error handling", function (assert) {
-		var oContext = Context.create(this.oModel, null, "/ProductList('HT-1000')"),
+		var oParentBinding = {
+				updateValue : function () {}
+			},
+			oContext = Context.create(this.oModel, oParentBinding, "/ProductList('HT-1000')"),
 			sMessage = "This call intentionally failed",
 			oError = new Error(sMessage),
 			oPromise = Promise.resolve(),
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
-		this.oSandbox.mock(oContext).expects("updateValue")
-			.withExactArgs(undefined, "Name", "foo", sinon.match.func)
+		this.oSandbox.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("Name", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve({
+				editUrl : "/ProductList('HT-1000')",
+				entityPath : "/ProductList/0", // not realistic, but different to editUrl
+				propertyPath : "Name"
+			}));
+		this.oSandbox.mock(oParentBinding).expects("updateValue")
+			.withExactArgs(undefined, "Name", "foo", sinon.match.func, "/ProductList('HT-1000')",
+				"/ProductList/0")
 			.callsArgWith(3, oError)
 			.returns(oPromise);
 		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
@@ -1200,16 +1227,48 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setValue (relative binding): canceled", function (assert) {
+	QUnit.test("setValue (relative binding): fetchUpdataData fails", function (assert) {
 		var oContext = Context.create(this.oModel, null, "/ProductList('HT-1000')"),
+			sMessage = "This call intentionally failed",
+			oError = new Error(sMessage),
+			oPromise = Promise.reject(oError),
+			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
+
+		this.oSandbox.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("Name", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+		this.oSandbox.mock(this.oModel).expects("reportError").withExactArgs(
+			"Failed to update path /ProductList('HT-1000')/Name", sClassName,
+			sinon.match.same(oError));
+
+		// code under test
+		oPropertyBinding.setValue("foo");
+
+		return oPromise.catch(function () {}); // wait, but do not fail
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setValue (relative binding): canceled", function (assert) {
+		var oParentBinding = {
+				updateValue : function () {}
+			},
+			oContext = Context.create(this.oModel, oParentBinding, "/ProductList('HT-1000')"),
 			oError = new Error(),
 			oPromise = Promise.reject(oError),
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
 		oError.canceled = true;
 
-		this.oSandbox.mock(oContext).expects("updateValue")
-			.withExactArgs(undefined, "Name", "foo", sinon.match.func)
+		this.oSandbox.mock(this.oModel.oMetaModel).expects("fetchUpdateData")
+			.withExactArgs("Name", sinon.match.same(oContext))
+			.returns(_SyncPromise.resolve({
+				editUrl : "/ProductList('HT-1000')",
+				entityPath : "/ProductList/0", // not realistic, but different to editUrl
+				propertyPath : "Name"
+			}));
+		this.oSandbox.mock(oParentBinding).expects("updateValue")
+			.withExactArgs(undefined, "Name", "foo", sinon.match.func, "/ProductList('HT-1000')",
+				"/ProductList/0")
 			.returns(oPromise);
 		this.oSandbox.mock(this.oModel).expects("reportError").never();
 
@@ -1499,20 +1558,20 @@ sap.ui.require([
 				oBinding = oControl.getBinding("text"),
 				oSandbox = this.oSandbox;
 
-			return new Promise(function (resolve, reject) {
+			return new Promise(function (resolve) {
 				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
 				oBinding.attachEventOnce("change", function () {
 					var sPhoneNumber = oControl.getText().indexOf("/") < 0
 							? "06227/34567"
 							: "0622734567",
-						fnSpy = oSandbox.spy(oBinding.getContext(), "updateValue");
+						fnSpy = oSandbox.spy(oBinding.getContext().getBinding(), "updateValue");
 
 					// code under test
 					oControl.setText(sPhoneNumber);
 
-					// wait for Context#updateValue to finish (then the response has been processed)
-					// assertion is only that no error/warning logs happen
-					resolve(fnSpy.returnValues[0]);
+					// Wait for ODataParentBinding#updateValue to finish (then the response has
+					// been processed). The assertion is only that no error/warning logs happen.
+					resolve();
 				});
 			});
 		});
