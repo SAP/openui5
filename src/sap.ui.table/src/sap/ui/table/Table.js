@@ -735,7 +735,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._bInvalid = true;
 
 		this._bIsScrollVertical = null;
-		this._bIgnoreFixedColumnCount = false;
 	};
 
 
@@ -1059,13 +1058,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (iFixedColumnCount > 0) {
-			var iColumnAreaWidth = oSizes.tableCtrlFixedWidth + oSizes.tableCtrlScrWidth;
-			var iFixedColumnsWidthThreshold = iFixedHeaderWidthSum + TableUtils.Column.getMinColumnWidth();
-			var bFixedColumnsFitIntoTable = iColumnAreaWidth > iFixedColumnsWidthThreshold;
+			var iUsedHorizontalTableSpace = oSizes.tableRowHdrScrWidth;
 
-			// Render fixed columns as scrollable columns when there is not enough space available.
-			if (this._bIgnoreFixedColumnCount === bFixedColumnsFitIntoTable) {
-				this._bIgnoreFixedColumnCount = !bFixedColumnsFitIntoTable;
+			var oVsb = this.getDomRef("vsb");
+			if (oVsb) {
+				iUsedHorizontalTableSpace += oVsb.offsetWidth;
+			}
+
+			if (TableUtils.hasRowActions(this)) {
+				var oRowActions = this.getDomRef("sapUiTableRowActionScr");
+				if (oRowActions) {
+					iUsedHorizontalTableSpace += oRowActions.offsetWidth;
+				}
+			}
+
+			// If the columns fit into the table, we do not need to ignore the fixed column count.
+			// Otherwise, check if the new fixed columns fit into the table. If they don't, the fixed column count setting will be ignored.
+			var bNonFixedColumnsFitIntoTable = oSizes.tableCtrlScrollWidth === oSizes.tableCtrlScrWidth; // Also true if no non-fixed columns exist.
+
+			if (!bNonFixedColumnsFitIntoTable) { // horizontal scroll bar should be at least 48px wide
+				iUsedHorizontalTableSpace += TableUtils.Column.getMinColumnWidth();
+			}
+
+			var bFixedColumnsFitIntoTable = oSizes.tableCtrlFixedWidth + iUsedHorizontalTableSpace <= oSizes.tableCntWidth; // Also true if no fixed columns exist.
+			var bIgnoreFixedColumnCountCandidate = false;
+
+			if (!bNonFixedColumnsFitIntoTable || !bFixedColumnsFitIntoTable) {
+				bIgnoreFixedColumnCountCandidate = (oSizes.tableCntWidth - iUsedHorizontalTableSpace < iFixedHeaderWidthSum);
+			}
+
+			if (this._bIgnoreFixedColumnCount !== bIgnoreFixedColumnCountCandidate) {
+				this._bIgnoreFixedColumnCount = bIgnoreFixedColumnCountCandidate;
 				this.invalidate();
 			}
 		}

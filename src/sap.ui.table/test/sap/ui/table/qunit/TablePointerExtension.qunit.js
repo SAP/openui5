@@ -81,7 +81,7 @@
 
 		assert.equal($Resizer.length, 1, "The handle to resize the table is visible");
 		assert.equal($Table.offset().top, 0, "Initial Offset");
-		assert.equal(oTable.getVisibleRowCount(), 3, "Initial visible rows");
+		assert.equal(oTable.getVisibleRowCount(), 5, "Initial visible rows");
 		testAdaptations(false);
 
 		qutils.triggerMouseEvent(oTable.$("sb"), "mousedown", 0, 0, 10, iY, 0);
@@ -94,7 +94,7 @@
 		}
 		qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
 		// resized table by 110px, in cozy mode this allows 2 rows to be added
-		assert.equal(oTable.getVisibleRowCount(), 5, "Visible rows after resize");
+		assert.equal(oTable.getVisibleRowCount(), 7, "Visible rows after resize");
 		assert.ok(iInitialHeight < $Table.height(), "Height of the table increased");
 		testAdaptations(false);
 	});

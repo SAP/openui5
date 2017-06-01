@@ -844,63 +844,19 @@
 	});
 
 	QUnit.test("No fixed column used, when table is too small.", function(assert) {
-		var done = assert.async();
-		var fResolve;
-		var iActualRenderCount = 0;
-		var iExpectedRenderCount;
-		var iAfterRenderingTimeoutId = null;
-		var bFixedColumnsIgnored;
-
 		oTable.setFixedColumnCount(3);
+		oTable.setWidth("400px");
 
-		oTable.addEventDelegate({
-			onAfterRendering: assertFixedColumns
-		});
+		sap.ui.getCore().applyChanges();
 
-		function _test(iWidth, _iExpectedRenderCount, bExpectedFixedColumnsIgnored) {
-			return new Promise(function(resolve) {
-				iActualRenderCount = 0;
-				iExpectedRenderCount = _iExpectedRenderCount;
-				iAfterRenderingTimeoutId = null;
-				bFixedColumnsIgnored = bExpectedFixedColumnsIgnored;
-				oTable.setWidth(iWidth + "px");
-				sap.ui.getCore().applyChanges();
-				fResolve = resolve;
-			});
-		}
+		assert.equal(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
+		assert.equal(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
 
-		function assertFixedColumns() {
-			iActualRenderCount++;
+		oTable.setWidth("500px");
 
-			if (iAfterRenderingTimeoutId === null) {
-				iAfterRenderingTimeoutId = window.setTimeout(function() {
-					assert.strictEqual(iActualRenderCount, iExpectedRenderCount, "Number of renderings should be: " + iExpectedRenderCount);
+		sap.ui.getCore().applyChanges();
 
-					if (bFixedColumnsIgnored) {
-						assert.ok(oTable._bIgnoreFixedColumnCount, "Fixed columns are ignored");
-						assert.strictEqual(oTable.getFixedColumnCount(), 0, "getFixedColumnCount returns 0");
-						assert.strictEqual(oTable.getProperty("fixedColumnCount"), 3, "The value of the fixedColumnCount property is 3");
-					} else {
-						assert.ok(!oTable._bIgnoreFixedColumnCount, "Fixed columns are not ignored");
-						assert.strictEqual(oTable.getFixedColumnCount(), 3, "getFixedColumnCount returns 3");
-					}
-
-					fResolve();
-				}, 100)
-			}
-		}
-
-		assert.expect(14);
-
-		_test(480, 1, false).then(function() {
-			return _test(470, 2, true);
-		}).then(function() {
-			return _test(450, 1, true);
-		}).then(function() {
-			return _test(480, 2, false);
-		}).then(function() {
-			done();
-		});
+		assert.equal(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
 	});
 
 	QUnit.module("API assertions", {
