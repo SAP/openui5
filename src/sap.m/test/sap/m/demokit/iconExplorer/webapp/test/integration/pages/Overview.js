@@ -300,12 +300,8 @@ sap.ui.define([
 						id: "categorySelection",
 						viewName: sViewName,
 						actions: [
-							// combo box does not fully support enter text action so we fire the event manually
-							new EnterText({text: sName}),
-							function (oControl) {
-								oControl.onChange();
-								oControl.fireSelectionChange({ selectedItem: oControl.getSelectableItems()[0]});
-							}],
+							new EnterText({text: sName})
+						],
 						errorMessage: "Failed to find the category selection in overview view.'"
 					});
 

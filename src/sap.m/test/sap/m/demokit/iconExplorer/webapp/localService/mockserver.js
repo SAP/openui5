@@ -5,12 +5,16 @@ sap.ui.define([
 ], function (jQuery, JSONModel, sinon) {
     "use strict";
 
+    var iAutoRespondAfterDefault = 10;
+
     return {
         /**
          * Initializes the mock server.
          * @public
          */
         init: function () {
+            var oUriParameters = jQuery.sap.getUriParameters();
+
             var sGroupsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/groups.json");
             var sTagsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/tags.json");
 
@@ -23,7 +27,7 @@ sap.ui.define([
 
             this.oServer = sinon.fakeServer.create();
             this.oServer.autoRespond = true;
-            this.oServer.autoRespondAfter = 10;
+            this.oServer.autoRespondAfter = (oUriParameters.get("serverDelay") || iAutoRespondAfterDefault);
 
             sinon.fakeServer.xhr.useFilters = true;
             this.oServer.xhr.addFilter(function (method, url) {
