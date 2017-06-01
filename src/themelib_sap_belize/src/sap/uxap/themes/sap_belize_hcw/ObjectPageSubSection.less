@@ -3,17 +3,17 @@
 /* Belize High Contrast White theme               */
 /* ============================================== */
 
-.sapUxAPObjectPageSubSection:focus,
-.sapUxAPObjectPageSubSectionHeaderTitle:focus {
+.sapUxAPObjectPageSubSection:focus {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border-color: transparent;
 	border-radius: 0;
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
-	&:focus:before {
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapUxAPObjectPageSubSection:focus:before {
 		border-width: 0.125rem;
 	}
 }
