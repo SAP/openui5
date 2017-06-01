@@ -530,11 +530,8 @@
 				id="summaryPage"
 				showHeader="false">
 				<content>
-					<form:SimpleForm
-							editable="false"
-							layout="ResponsiveGridLayout"
-							ariaLabelledBy="checkoutItems">
-						<form:toolbar>
+					<Panel>
+						<headerToolbar>
 							<Toolbar id="toolbarProductList">
 								<Title
 										id="checkoutItems"
@@ -552,8 +549,8 @@
 									</customData>
 								</Button>
 							</Toolbar>
-						</form:toolbar>
-						<form:content>
+						</headerToolbar>
+						<content>
 							<List
 								id="summaryEntryList"
 								footerText="{
@@ -597,9 +594,9 @@
 									</ObjectListItem>
 								</items>
 							</List>
-						</form:content>
-					</form:SimpleForm>
-					<form:SimpleForm ariaLabelledBy="tootalPriceTitle">
+						</content>
+					</Panel>
+					<form:SimpleForm>
 						<form:toolbar>
 							<Toolbar id="toolbarTotalPrice">
 								<ToolbarSpacer />
