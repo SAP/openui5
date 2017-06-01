@@ -112,6 +112,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 			/**
 			 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
+			 *
+			 * <b>Note:</b> It is recommended to use the <code>sap.m.ViewSettingsFilterItem</code> as it fits best at the filter page.
 			 * @since 1.16
 			 */
 			filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
@@ -297,10 +299,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
-		if ( this._bAppendedToUIArea ) {
+		if ( this._bAppendedToUIArea && this._dialog ) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
 			oStatic = sap.ui.getCore().getUIArea(oStatic);
-			oStatic.removeContent(this, true);
+			oStatic.removeContent(this._dialog, true);
 		}
 
 		// controls that are internally managed and may or may not be assigned to an
@@ -755,7 +757,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		// Attach 'itemPropertyChanged' handler, that will re-initiate (specific) dialog content
 		oObject.attachEvent('itemPropertyChanged', function (sAggregationName, oEvent) {
-			/* If the the changed item was a 'sap.m.ViewSettingsItem'
+			/* If the changed item was a 'sap.m.ViewSettingsItem'
 			 * then threat it differently as filter detail item.
 			 * */
 			if (sAggregationName === 'filterItems' &&
@@ -1013,11 +1015,16 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.open = function(sPageId) {
+
 		// add to static UI area manually because we don't have a renderer
+
 		if (!this.getParent() && !this._bAppendedToUIArea) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
 			oStatic = sap.ui.getCore().getUIArea(oStatic);
-			oStatic.addContent(this, true);
+			// add as content the Dialog to the Static area and not the ViewSettingsDialog
+			// once the Static area is invalidated, the Dialog will be rendered and not the ViewSettingsDialog which has no renderer
+			// and uses the renderer of the Dialog
+			oStatic.addContent(this._getDialog(), true);
 			this._bAppendedToUIArea = true;
 		}
 
@@ -1299,7 +1306,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 					continue;
 				}
 
-				// set the the selected state on the item
+				// set the selected state on the item
 				oFilterItem.setProperty('selected', oSelectedFilterKeys[sKey], true);
 			}
 		}
@@ -2761,7 +2768,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * Gets an sap.m.ViewSettingsItem from a list of items by a given key.
 	 *
 	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
-	 * @param sKey
+	 * @param {string} sKey
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
 	 */

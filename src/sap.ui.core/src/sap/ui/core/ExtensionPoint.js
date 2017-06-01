@@ -58,12 +58,14 @@ sap.ui.define(['jquery.sap.global'],
 			if (extensionConfig) {
 				if (extensionConfig.className) {
 					jQuery.sap.require(extensionConfig.className); // make sure oClass.getMetadata() exists
-					var oClass = jQuery.sap.getObject(extensionConfig.className);
+					var oClass = jQuery.sap.getObject(extensionConfig.className),
+						sId = oView && extensionConfig.id ? oView.createId(extensionConfig.id) : extensionConfig.id;
 					jQuery.sap.log.info("Customizing: View extension found for extension point '" + sExtName
 							+ "' in View '" + oView.sViewName + "': " + extensionConfig.className + ": " + (extensionConfig.viewName || extensionConfig.fragmentName));
 
 					if (extensionConfig.className === "sap.ui.core.Fragment") {
 						var oFragment = new oClass({
+							id: sId,
 							type: extensionConfig.type,
 							fragmentName: extensionConfig.fragmentName,
 							containingView: oView
@@ -71,7 +73,7 @@ sap.ui.define(['jquery.sap.global'],
 						vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else if (extensionConfig.className === "sap.ui.core.mvc.View") {
-						var oView = sap.ui.view({type: extensionConfig.type, viewName: extensionConfig.viewName});
+						var oView = sap.ui.view({type: extensionConfig.type, viewName: extensionConfig.viewName, id: sId});
 						vResult = [oView]; // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 					} else {

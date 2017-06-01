@@ -240,9 +240,9 @@ sap.ui.define([
 	 * Setter for the supported Include operations array.
 	 *
 	 * @public
-	 * @param {sap.m.P13nConditionOperation[]} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
+	 * @param {sap.m.P13nConditionOperation[]} aOperation - array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
 	 *        <code>sap.m.P13nConditionOperation.EQ</code>]
-	 * @param {string} the type for which the operations are defined
+	 * @param {string} sType - the type for which the operations are defined
 	 */
 	P13nFilterPanel.prototype.setIncludeOperations = function(aOperation, sType) {
 		sType = sType || "default";
@@ -271,9 +271,9 @@ sap.ui.define([
 	 * Setter for the supported exclude operations array.
 	 *
 	 * @public
-	 * @param {sap.m.P13nConditionOperation[]} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
+	 * @param {sap.m.P13nConditionOperation[]} aOperation - array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
 	 *        <code>sap.m.P13nConditionOperation.EQ</code>]
-	 * @param {string} the type for which the operations are defined
+	 * @param {string} sType - the type for which the operations are defined
 	 */
 	P13nFilterPanel.prototype.setExcludeOperations = function(aOperation, sType) {
 		sType = sType || "default";
@@ -288,7 +288,7 @@ sap.ui.define([
 	 * Getter for the exclude operations.
 	 *
 	 * @public
-	 * @param {string} the type for which the operations are defined
+	 * @param {string} sType - the type for which the operations are defined
 	 * @returns {sap.m.P13nConditionOperation[]} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
 	 *          <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
@@ -303,7 +303,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
-	 * @param {array} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
+	 * @param {array} aKeyFields - array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
 	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields) {
 		this._aKeyFields = aKeyFields;

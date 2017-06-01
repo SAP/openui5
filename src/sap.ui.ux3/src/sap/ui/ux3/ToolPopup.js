@@ -373,7 +373,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
             /**
              * Handler for focus, adapted for this control,
-             * @param {jQuery.EventObject} oEvent
+             * @param {jQuery.Event} oEvent
              *
              * @private
              */
@@ -957,7 +957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
              * Additionally it is necessary to restore the focus as if the ToolPopup was closed via "close()".
              * If the corresponding suppress-parameter was given to "close" no focus will be restored.
              *
-             * @param {jQuery.EventObject} oEvent
+             * @param {jQuery.Event} oEvent
              * @private
              */
             var fnOnClosed = function (oEvent) {
@@ -1387,7 +1387,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
         /**
          * Overriden setter for the max width internally.
          *
-         * @param sMaxWidth
+         * @param {sap.ui.core.CSSSize} sMaxWidth
+         * @public
          */
         ToolPopup.prototype.setMaxWidth = function (sMaxWidth) {
             var pattern = /[0-9]+px/;

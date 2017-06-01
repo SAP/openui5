@@ -795,7 +795,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Handles <code>onKeyPress</code> event.
-	 * @param {jQuery.event} oEvent The jQuery event object
+	 * @param {jQuery.Event} oEvent The jQuery event object
 	 * @private
 	 */
 	MaskInput.prototype._keyPressHandler = function (oEvent) {
@@ -880,7 +880,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Handles <code>onKeyDown</code> event.
-	 * @param {jQuery.event} oEvent The jQuery event object
+	 * @param {jQuery.Event} oEvent The jQuery event object
 	 * @private
 	 */
 	MaskInput.prototype._keyDownHandler = function (oEvent, oKey) {
@@ -1050,6 +1050,9 @@ oninput      <does not trigger>						the dom is "SAP9",
 	};
 
 	/**
+	 * @param {Array} aMask
+	 * @param {string} sPlaceholderSymbol
+	 * @param {Array} aRules
 	 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 	 * @private
 	 */
@@ -1063,6 +1066,8 @@ oninput      <does not trigger>						the dom is "SAP9",
 
 	/**
 	 * Builds the test rules according to the mask input rule's regex string.
+	 * @param {Array} aMask
+	 * @param {Array} aRules
 	 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 	 * @private
 	 */
@@ -1195,7 +1200,7 @@ oninput      <does not trigger>						the dom is "SAP9",
 	/**
 	 * Checks if a given character belongs to an RTL language
 	 * @private
-	 * @param sString
+	 * @param {string} sString
 	 * @returns {boolean}
 	 */
 	MaskInput.prototype._isRtlChar = function (sString) {
@@ -1211,7 +1216,7 @@ oninput      <does not trigger>						the dom is "SAP9",
 	 * Fix an issue with Chrome where first and last positions are switched
 	 * @private
 	 * @param iCurrentPosition
-	 * @param sDirection
+	 * @param {string} sDirection
 	 * @returns {*}
 	 */
 	MaskInput.prototype._fixWebkitBorderPositions = function (iCurrentPosition, sDirection) {
@@ -1302,7 +1307,7 @@ oninput      <does not trigger>						the dom is "SAP9",
 	/**
 	 * Determine the right caret position based on the current selection state
 	 * @private
-	 * @param sDirection
+	 * @param {string} sDirection
 	 * @returns {int} iNewCaretPos
 	 */
 	MaskInput.prototype._determineRtlCaretPositionFromSelection = function (sDirection, bWithChromeFix) {

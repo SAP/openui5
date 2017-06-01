@@ -77,7 +77,9 @@ sap.ui.define([
 		persistingSettings: false,
 		loadingAdditionalRuleSets: false,
 		analyzedFinish: false,
-		selectedRules: true
+		selectedRules: true,
+		filteredIssues: null,
+		issuesCount: 0
 	});
 
 	return model;

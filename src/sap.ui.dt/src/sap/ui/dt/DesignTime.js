@@ -363,7 +363,6 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 	/**
 	 * Removes all root elements from the DesignTime and destroys overlays for them and theire public descendants
-	 * @param {string|sap.ui.core.Element} element or elemet's id
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
@@ -508,6 +507,14 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 		var sAggregationName = oEvent.getParameter("name");
 		this._createChildOverlaysForAggregation(oElementOverlay, sAggregationName);
+		// if aggregation overlay is created without element overlay being created (not syncing),
+		// the aggregation overlay must be registered on the plugins
+		if (this._iOverlaysPending === 0){
+			var aPlugins = this.getPlugins();
+			aPlugins.forEach(function(oPlugin) {
+				oPlugin.callAggregationOverlayRegistrationMethods(oElementOverlay);
+			});
+		}
 	};
 
 	/**

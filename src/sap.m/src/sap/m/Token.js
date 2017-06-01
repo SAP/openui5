@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Function is called on keyboard backspace, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
@@ -313,7 +313,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Function is called on keyboard delete, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Function is called on keyboard space, select/deselect token
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	Token.prototype.onsapspace = function(oEvent) {

@@ -59,9 +59,9 @@ sap.ui.define([
 		 * How many tickmarks could be placed on the axis/scale?
 		 *
 		 *
-		 * @param fSize {float} - Size of the scale. This is the distance between the start and end point i.e. 0..100
-		 * @param fStep {float} - The step walking from start to end.
-		 * @param iTickmarksThreshold {int} - Limits the number of tickmarks.
+		 * @param {float} fSize - Size of the scale. This is the distance between the start and end point i.e. 0..100
+		 * @param {float} fStep - The step walking from start to end.
+		 * @param {int} iTickmarksThreshold - Limits the number of tickmarks.
 		 *
 		 * @returns {number}
 		 */
@@ -80,8 +80,8 @@ sap.ui.define([
 		 * The result of this method still might not be an integer, but at least there's a try to optimize the space,
 		 * so the tickmarks would look like in the best case.
 		 *
-		 * @param iTickmarksCount {int}
-		 * @param iMaxPossibleTickmarks {int}
+		 * @param {int} iTickmarksCount
+		 * @param {int} iMaxPossibleTickmarks
 		 * @returns {int}
 		 * @private
 		 */
@@ -104,10 +104,10 @@ sap.ui.define([
 		 * Actually this calculates the distance between the first and the second tickmark, but as it's
 		 * assumed that the tickmarks are spread evenly, it doesn't matter.
 		 *
-		 * @param iTickmarksCount {int} - Number of tickmarks that'd be drawn
-		 * @param fStart {float} - The start value of the scale.
-		 * @param fEnd {float} - The end value of the scale.
-		 * @param fStep {float} - The step walking from start to end.
+		 * @param {int} iTickmarksCount - Number of tickmarks that'd be drawn
+		 * @param {float} fStart - The start value of the scale.
+		 * @param {float} fEnd - The end value of the scale.
+		 * @param {float} fStep - The step walking from start to end.
 		 * @returns {float}
 		 * @private
 		 */
@@ -134,7 +134,7 @@ sap.ui.define([
 		 * The implementation of 2) (the walk step/jump) is also an integer which is on power of 2. For example if we start from position
 		 * <b>1</b> (the second element in the array), we'll visit the following nodes: 1, 3, 5, 7, 9, etc.
 		 * Then if we move the starting pointer to the next visible node, its index (it's 2) is integer on power of 2,
-		 * the jump would become <b>4</b>: 2, 6, 10, 14, 18, 22, etc. Remember that we want to remove every second <b>visible<b>
+		 * the jump would become <b>4</b>: 2, 6, 10, 14, 18, 22, etc. Remember that we want to remove every second <b>visible</b>
 		 * node and 1, 3, 5, 7, 9 are already invisible. So, if we continue in that manner, we'll always move the starting
 		 * pointer to the next integer which is on power of 2 and the jump step would be the next integer which is on power of 2.
 		 * For example:

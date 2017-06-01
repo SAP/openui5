@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>qUnit Page for sap.m.ViewSettingsDialog</title>
+		<title>QUnit Page for sap.m.ViewSettingsDialog</title>
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
@@ -2643,10 +2643,43 @@
 			//clean
 			oItem.destroy();
 		});
+
+		QUnit.test("ViewSettingsDialog opens every time after destroy", function (assert) {
+			//arrange
+			var oVSD,
+				fnCreateDialog = function() {
+					oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+						title: "View Setting Dialog"
+					});
+					oVSD.open();
+				};
+
+			//act
+			fnCreateDialog();
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.equal(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
+
+			//act
+			oVSD._dialog.getEndButton().firePress();
+			sap.ui.getCore().applyChanges();
+			oVSD.destroy();
+			fnCreateDialog();
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.equal(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
+
+			//clean
+			oVSD.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.ViewSettingsDialog</h1>
+		<h1 id="qunit-header">QUnit Page for sap.m.ViewSettingsDialog</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>

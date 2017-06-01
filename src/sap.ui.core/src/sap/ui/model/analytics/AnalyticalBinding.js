@@ -999,7 +999,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getAnalyticalInfoForColumn
-	 * @param sColumnName the column name.
+	 * @param {string} sColumnName the column name.
 	 * @return {object}
 	 *            analytical information for the column; see {@link #updateAnalyticalInfo}
 	 *            for an explanation of the object structure

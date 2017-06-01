@@ -103,7 +103,7 @@ sap.ui.define([
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
 				/**
-				 * Determines whether the the user can switch between the expanded/collapsed states of the
+				 * Determines whether the user can switch between the expanded/collapsed states of the
 				 * <code>DynamicPageHeader</code> by clicking on the <code>DynamicPageTitle</code>. If set to
 				 * <code>false</code>, the <code>DynamicPageTitle</code> is not clickable and the application
 				 * must provide other means for expanding/collapsing the <code>DynamicPageHeader</code>, if necessary.
@@ -352,7 +352,7 @@ sap.ui.define([
 
 	/**
 	 * Hides/shows the footer container.
-	 * @param bShow
+	 * @param {boolean} bShow
 	 * @private
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {
@@ -941,7 +941,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
-	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout<code>),
+	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
 	 * thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
 	 * @param {Number} iWidth - the actual width of the control
 	 * @private
@@ -1431,7 +1431,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Detaches the the <code>DynamicPage</code> content scroll handler.
+	 * Detaches the <code>DynamicPage</code> content scroll handler.
 	 * @private
 	 */
 	DynamicPage.prototype._detachScrollHandler = function () {

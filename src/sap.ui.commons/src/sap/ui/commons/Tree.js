@@ -391,7 +391,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Move the focus by one position, either UP or DOWN depending of "bMoveUp"
-	 * @param bMoveUp When true the focus is move up. Otherwise, it's moved down
+	 * @param {boolean} bMoveUp When true the focus is move up. Otherwise, it's moved down
 	 * @private
 	 */
 	Tree.prototype.moveFocus = function(bMoveUp){
@@ -641,8 +641,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Clones a flat object removing a key/value pair from the old one
-	 * @param oObject {object} The object from which the key shall be removed
-	 * @param sKeyToRemove {string} Key to be removed from the object
+	 * @param {object} oObject The object from which the key shall be removed
+	 * @param {string} sKeyToRemove Key to be removed from the object
 	 * @returns {object} The new object without the removed key
 	 * @private
 	 */

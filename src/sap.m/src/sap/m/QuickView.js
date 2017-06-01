@@ -18,11 +18,25 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class The QuickView control renders a responsive popover (sap.m.Popover or sap.m.Dialog)
-	 * and displays information of an object in a business-card format. It also allows this object to be linked to
-	 * another object using one of the links in the responsive popover. Clicking that link updates the information in the
-	 * popover with the data of the linked object. Unlimited number of objects can be linked.
-	 *
+	 * @class A responsive popover that displays information on an object in a business-card format.
+	 * <h3>Overview</h3>
+	 * The quick view is used to show business information on either a person or an entity (e.g. a company). It uses a set of pre-defined controls.
+	 * Objects can be linked together and you can navigate between several objects. An unlimited number of objects can be linked.
+	 * <h3>Structure</h3>
+	 * Each card is represented by a {@link sap.m.QuickViewPage} which holds all the information (icon, title, header, description) for the object.
+	 * A single quick view can hold multiple objects, each showing information on a single entity.
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You want to display a concise overview of an object (an employee or a company).</li>
+	 * <li>Information on the object can be split into concrete groups.</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>You want to display complex information about an object.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * The quick view is displayed in a {@link sap.m.Popover popover} on desktop and a full-screen {@link sap.m.Dialog dialog} on mobile devices.
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE

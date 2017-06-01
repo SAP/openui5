@@ -117,7 +117,8 @@
 					"sap.ui.core.sample.gherkin.GherkinWithUIComponent",
 					"sap.ui.comp.sample.smartfilterbartest",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
-					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters"
+					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
+					"sap.ui.core.sample.OpaWithSupportAssistant"
 				]
 			},
 			{
@@ -302,6 +303,18 @@
 					"Reuse an Existing Route",
 					"Handlle Invalid Hashes by Listening to Bypassed Events",
 					"Listen to Matched Events of Any Route"
+				]
+			},
+			{
+				"id": "sap.ui.core.tutorial.troubleshooting",
+				"name": "Troubleshooting",
+				"category": "Tutorial",
+				"since": "1.48",
+				"formFactors": "-",
+				"description": "In this tutorial, we will show you some tools that will help you when you run into problems with your SAPUI5 app.",
+				"docuLink": "#docs/guide/5661952e72df471b932eddc10350c081.html",
+				"samplesAsSteps": [
+					"Troubleshooting"
 				]
 			},
 			{
@@ -606,6 +619,11 @@
 				"id": "sap.ui.core.sample.OpaGetStarted",
 				"name": "Simulating a simple backend request with OPA5",
 				"description": "This example is complementary to the OPA get started section in the developer guide. It shows how to simulate a simple backend server request with OPA5 and Sinon.JS"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaWithSupportAssistant",
+				"name": "Running OPA tests with Support Assistant checks",
+				"description": ""
 			}
 		]
 	}

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>qUnit Page for sap.m.IconTabBar</title>
+		<title>QUnit Page for sap.m.IconTabBar</title>
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
@@ -2672,12 +2672,42 @@
 				assert.strictEqual(this.oIconTabBar.$().find('.sapMITBSelected').length, 1, "A tab is selected");
 			});
 
+			QUnit.module("IconTabHeader Tabs",{
+				beforeEach: function () {
+					this.oIconTabHeader = new sap.m.IconTabHeader({
+						items: [
+							new sap.m.IconTabFilter({
+								text: 'Filter 1'
+							}),
+							new sap.m.IconTabFilter({
+								text: 'Filter 2'
+							})
+						]
+					});
+					this.oIconTabHeader.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oIconTabHeader.destroy();
+					this.oIconTabHeader = null;
+				}
+			});
+
+			QUnit.test("Remove Tab", function (assert) {
+				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBFilter').length, 2, "2 tabs are displayed");
+
+				this.oIconTabHeader.getItems()[0].setVisible(false);
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBFilter').length, 1, "1 tab are displayed");
+			});
+
 		</script>
 
 
 	</head>
 	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.IconTabBar</h1>
+		<h1 id="qunit-header">QUnit Page for sap.m.IconTabBar</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

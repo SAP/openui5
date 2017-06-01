@@ -186,6 +186,9 @@ sap.ui.define([
 
 						}.bind(this)
 					});
+				} else {
+					// If we already have the control just navigate to the new URL
+					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
 				}
 
 				return this._oHtmlControl;

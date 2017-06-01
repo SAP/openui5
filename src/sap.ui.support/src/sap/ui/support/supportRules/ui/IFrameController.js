@@ -41,7 +41,7 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 		toolFrame.src = sUrl;
 
 		style.width = "100%";
-		style.height = "50%";
+		style.height = "28px";
 		style.position = "absolute";
 		style.left = "0";
 		style.bottom = "0";
@@ -143,7 +143,7 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 	 * Toggles frame state between hidden and shown
 	 * Default is shown
 	 *
-	 * @param hidden {boolean} should the frame hide or not
+	 * @param {boolean} hidden should the frame hide or not
 	 */
 	IFrameController.prototype.toggleHide = function (hidden) {
 		var toolFrameStyle = document.getElementById("sap-ui-supportToolsFrame").style;

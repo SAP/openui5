@@ -43,7 +43,7 @@ sap.ui.define([
 	 * demo: {
 	 * 	text: "sap.m", // legacy entry, name of the library
 	 * 	links: {
-	 *		icon: an index of the sapui5 icon font
+	 *		icon: an index of the icon font
 	 *		text: the name of the app
 	 *		description: a short description text
 	 *		ref: a link to the demo app entry point

@@ -212,7 +212,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Function is called when touchcancel occurs .
-	 * @param {jQuery.Event} oEvent - the touch event.
 	 * @private
 	 */
 	Button.prototype.ontouchcancel = function() {
@@ -284,7 +283,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Ensure that the active button state is removed by focus loss.
 	 *
-	 * @param {jQuery.Event} oEvent - the focus event
 	 * @private
 	 */
 	Button.prototype.onfocusout = function() {

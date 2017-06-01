@@ -1992,7 +1992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Checks if a model refresh is needed, either because the the data provided by the sPath and oContext is stored
+	 * Checks if a model refresh is needed, either because the data provided by the sPath and oContext is stored
 	 * in the model or new data is added (POST). For batch requests all embedded requests are checked separately.
 	 *
 	 * @return {boolean}
@@ -2193,7 +2193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @param {object} [mParameters] Optional, can contain the following attributes: oContext, fnSuccess, fnError, sETag:
 	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success]  a callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+	 *		The handler can have the following parameters: <code>oData</code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
@@ -2278,7 +2278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+	 *		The handler can have the following parameters: <code>oData</code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {boolean} [mParameters.async=false] Whether or not to send the request asynchronously. Default: false

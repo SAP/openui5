@@ -1,13 +1,19 @@
 <mvc:View
+	id="welcomeView"
 	controllerName="sap.ui.demo.cart.controller.Welcome"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
+		id="page"
 		showHeader="{device>/isPhone}"
 		class="customBackground">
 		<customHeader>
-			<Toolbar><Button icon="sap-icon://menu2" press="onShowCategories"/></Toolbar>
+			<Toolbar>
+				<Button
+					icon="sap-icon://menu2"
+					press="onShowCategories"/>
+			</Toolbar>
 		</customHeader>
 		<content>
 			<l:BlockLayout background="Light">
@@ -19,7 +25,7 @@
 							loop="true"
 							pageChanged="onCarouselPageChanged">
 							<pages>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselShipping',
@@ -31,7 +37,7 @@
 										text="{i18n>welcomeCarouselShipping}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselInviteFriend',
@@ -43,7 +49,7 @@
 										text="{i18n>welcomeCarouselInviteFriend}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselTablet',
@@ -55,7 +61,7 @@
 										text="{i18n>welcomeCarouselTablet}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselCreditCard',
@@ -91,7 +97,8 @@
 								vSpacing="0"
 								hSpacing="0">
 								<FlexBox
-									height="3.5rem">
+									height="3.5rem"
+									renderType="Bare">
 									<l:VerticalLayout>
 										<ObjectIdentifier
 											title="{view>Product/Name}"
@@ -167,7 +174,9 @@
 								defaultSpan="XL12 L12 M12 S12"
 								vSpacing="0"
 								hSpacing="0">
-								<FlexBox height="3.5rem">
+								<FlexBox
+									height="3.5rem"
+									renderType="Bare">
 									<l:VerticalLayout>
 										<ObjectIdentifier
 											title="{view>Product/Name}"
@@ -226,12 +235,10 @@
 					</l:content>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
 			<Title
 				text="{i18n>favoritTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
-
 			<l:BlockLayout background="Dashboard">
 				<l:BlockLayoutRow
 					id="favoriteRow"
@@ -242,7 +249,9 @@
 								defaultSpan="XL12 L12 M12 S12"
 								vSpacing="0"
 								hSpacing="0">
-								<FlexBox height="3.5rem">
+								<FlexBox
+									height="3.5rem"
+									renderType="Bare">
 									<l:VerticalLayout>
 										<ObjectIdentifier
 											title="{view>Product/Name}"

@@ -351,6 +351,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
+				var scrollPosY;
+				var scrollPosX;
+
 				that._setDimensions();
 				that._adjustScrollingPane();
 
@@ -363,12 +366,32 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				} else {
 					// the top and left position need to be calculated with the
 					// window scroll position
-					oPosition.at.top = 'calc(50% + ' + (window.scrollY === undefined ? window.pageYOffset : window.scrollY) + 'px)';
+					if (window.scrollY === undefined) {
+						scrollPosY = window.pageYOffset;
+					} else {
+						scrollPosY = window.scrollY;
+					}
+
+					// on iOS this can be a negative integer
+					// which is causing the dialog to be rendered partially off-screen
+					if (scrollPosY < 0) {
+						scrollPosY = 0;
+					}
+
+					oPosition.at.top = 'calc(50% + ' + scrollPosY + 'px)';
 
 					if (that._bRTL) {
 						oPosition.at.left = 'auto'; // RTL mode adds right 50% so we have to remove left 50%
 					} else {
-						oPosition.at.left = 'calc(50% + ' + (window.scrollX === undefined ? window.pageXOffset : window.scrollX) + 'px)';
+						if (window.scrollX === undefined) {
+							scrollPosX = window.pageXOffset;
+						} else {
+							scrollPosX = window.scrollX;
+						}
+						if (scrollPosX < 0) {
+							scrollPosX = 0;
+						}
+						oPosition.at.left = 'calc(50% + ' + scrollPosX + 'px)';
 					}
 				}
 
@@ -606,7 +629,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		/**
 		 * Event handler for the focusin event.
 		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onfocusin = function (oEvent) {
@@ -652,7 +675,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * Event handler for the escape key pressed event.
 		 * If it occurs and the developer hasn't defined the escapeHandler property, the Dialog is immediately closed.
 		 * Else the escapeHandler is executed and the developer may prevent the closing of the Dialog.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onsapescape = function(oEvent) {
@@ -701,7 +724,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 *
 		 * @param {Object} $Ref
 		 * @param {number} iRealDuration
-		 * @param fnOpened
+		 * @param {function} fnOpened
 		 * @private
 		 */
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
@@ -715,7 +738,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 *
 		 * @param {Object} $Ref
 		 * @param {number} iRealDuration
-		 * @param fnClose
+		 * @param {function} fnClose
 		 * @private
 		 */
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
@@ -1224,7 +1247,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._registerResizeHandler = function () {
 			var _$srollSontent = this.$("scroll");
 
-			//The content have to have explicit size so the scroll will work when the user's content is larger then the available space.
+			//The content have to have explicit size so the scroll will work when the user's content is larger than the available space.
 			//This can be removed and the layout change to flex when the support for IE9 is dropped
 			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
 			Device.resize.attachHandler(this._onResize, this);
@@ -1246,7 +1269,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		/**
 		 *
-		 * @param oScrollDomRef
 		 * @private
 		 */
 		Dialog.prototype._registerContentResizeHandler = function() {

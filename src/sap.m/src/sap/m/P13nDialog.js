@@ -405,7 +405,7 @@ sap.ui.define([
 	/**
 	 * Map an item of type <code>sap.m.P13nPanel</code> to an item of type <code>sap.m.IconTabBarFilter</code>
 	 *
-	 * @param {sap.m.P13nPanel} oItem
+	 * @param {sap.m.P13nPanel} oPanel
 	 * @returns {sap.m.Button | sap.m.StandardListItem | null}
 	 * @private
 	 * @name P13nDialog#_mapPanelToNavigationItem

@@ -91,7 +91,7 @@ sap.ui.define([
 
 	/**
 	 * Function which is called on mouse-over on the registered control to trigger the flexibility framework
-	 * @param {sap.ui.core.Event} oEvent Event parameters
+	 * @param {jQuery.Event} oEvent Event parameters
 	 *
 	 * @public
 	 */
@@ -115,7 +115,7 @@ sap.ui.define([
 
 	/**
 	 * Function which is called on mouse-out on the registered control to notify that the control is not in scope anymore for flexibility
-	 * @param {sap.ui.core.Event} oEvent Event parameters
+	 * @param {jQuery.Event} oEvent Event parameters
 	 *
 	 * @public
 	 */

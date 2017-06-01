@@ -96,7 +96,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles the the initial mode selection between overflowSelect and normal mode
+	 * Handles the initial mode selection between overflowSelect and normal mode
 	 *
 	 * @private
 	 * @returns {object} this

@@ -412,15 +412,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 		rm.writeAttribute("tabindex", "-1");
 
-		if (nSpan > 1) {
-			rm.writeAttribute("colspan", nSpan);
-		}
-
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER", {
+		var mAccParams = {
 			column: oColumn,
 			headerId: sHeaderId,
 			index: iIndex
-		});
+		};
+
+		if (nSpan > 1) {
+			rm.writeAttribute("colspan", nSpan);
+			mAccParams.colspan = true;
+		}
+
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "COLUMNHEADER", mAccParams);
 
 		rm.addClass("sapUiTableCol");
 		if (bLastFixed) {
@@ -441,6 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 		}
 		rm.write("><div");
 		rm.addClass("sapUiTableColCell");
+		rm.writeAttribute("id", sHeaderId + "-inner");
 		rm.writeClasses();
 		var sHAlign = Renderer.getTextAlign(oColumn.getHAlign(), oLabel && oLabel.getTextDirection && oLabel.getTextDirection());
 		if (sHAlign) {

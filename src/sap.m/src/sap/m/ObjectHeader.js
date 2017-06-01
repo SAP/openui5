@@ -135,7 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			showTitleSelector : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Determines the value state of the <code>number<code> and <code>numberUnit<code> properties.
+			 * Determines the value state of the <code>number</code> and <code>numberUnit</code> properties.
 			 * @since 1.16.0
 			 */
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
@@ -160,7 +160,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
 
 			/**
-			 * Determines whether the <code>ObjectHeader<code> is rendered with a different design that
+			 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
 			 * reacts responsively to the screen sizes.
 			 *
 			 * <b>Note:</b> Be aware that the design and behavior of the responsive <code>ObjectHeader</code>
@@ -559,7 +559,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the new text for the tooltip of the select title arrow to the internal aggregation
 	 * @override
 	 * @public
-	 * @param sTooltip the tooltip of the title selector
+	 * @param {string} sTooltip the tooltip of the title selector
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
@@ -1099,8 +1099,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * @param [string]
-	 *            sId control id to be escaped
+	 * @param {string}
+	 *            [sId] control id to be escaped
 	 * @returns escaped control id with "#" prefix
 	 * @private
 	 */
@@ -1211,7 +1211,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns <code>true</code> if the name of the current media range of the control is <code>sRangeName</code>
 	 *
-	 * @param sRangeName - media range set
+	 * @param {string} sRangeName - media range set
 	 * @returns {boolean}
 	 * @private
 	 */

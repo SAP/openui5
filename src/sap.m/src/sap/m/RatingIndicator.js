@@ -221,7 +221,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handler for theme changing
 	 *
-	 * @param oEvent {jQuery.Event} oEvent The event object passed to the event handler.
+	 * @param {jQuery.Event} oEvent The event object passed to the event handler.
 	 */
 	RatingIndicator.prototype.onThemeChanged = function (oEvent) {
 		this.invalidate(); // triggers a re-rendering
@@ -555,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				fStep = 1;
 				break;
 			case sap.m.RatingIndicatorVisualMode.Half:
-				// If the the value is half, we return 0.5 in order to allow/force only full value selection via keyboard.
+				// If the value is half, we return 0.5 in order to allow/force only full value selection via keyboard.
 				if (this.getValue() % 1 === 0.5) {
 					fStep = 0.5;
 				} else {

@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Table select dialog supports multi-selection when the <code>multiSelect</code> property is set.
 	 *
 	 * The selected items can be stored for later editing when the <code>rememberSelections</code> property is set.
-	 * <b>Note:<b> This property has to be set before the dialog is opened.
+	 * <b>Note:</b> This property has to be set before the dialog is opened.
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
 	 * <ul>
@@ -452,6 +452,31 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 		return this;
 	};
+	/**
+	 * Enables/Disables busy state.
+	 * @overwrite
+	 * @public
+	 * @param {boolean} flag for enabling busy indicator
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
+	 */
+	TableSelectDialog.prototype.setBusy = function () {
+		// Overwrite setBusy as it should be handled in the "real" dialog
+		this._oDialog.setBusy.apply(this._oDialog, arguments);
+
+		// Should return "this"
+		return this;
+	};
+
+	/**
+	 * Gets current busy state.
+	 * @overwrite
+	 * @public
+	 * @returns {boolean} value of currtent busy state.
+	 */
+	TableSelectDialog.prototype.getBusy = function () {
+		// Overwrite getBusy as it should be handled in the "real" dialog
+		return this._oDialog.getBusy.apply(this._oDialog, arguments);
+	};
 
 	/**
 	 * Sets the busyIndicatorDelay value to the internal table
@@ -461,6 +486,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 */
 	TableSelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
 		this._oTable.setBusyIndicatorDelay(iValue);
+		this._oDialog.setBusyIndicatorDelay(iValue);
 		this.setProperty("busyIndicatorDelay", iValue, true);
 
 		return this;
@@ -861,12 +887,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Shows a busy indicator and hides searchField and list in the dialog.
 	 * Event function that is called when the model sends a request to update the data.
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	TableSelectDialog.prototype._updateStarted = function (oEvent) {
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 			if (this._oDialog.isOpen() && this._iTableUpdateRequested) {
-				// only set busy mode when we have an oData model
+				// only set busy mode when we have an OData model
 				this._setBusy(true);
 			} else {
 				this._bInitBusy = true;
@@ -878,11 +904,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Hides the busy indicator and shows searchField and list in the dialog.
 	 * Event function that is called when the model request is finished.
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	TableSelectDialog.prototype._updateFinished = function (oEvent) {
 		this._updateSelectionIndicator();
-		// only reset busy mode when we have an oData model
+		// only reset busy mode when we have an OData model
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 			this._setBusy(false);
 			this._bInitBusy = false;

@@ -3,7 +3,6 @@
  */
 
 /* eslint-disable quotes */
-/* global QUnit,sinon */
 
 sap.ui.define([
   "jquery.sap.global",
@@ -24,12 +23,12 @@ sap.ui.define([
       });
 
       this.register(/^It's too late to drink coffee$/i, function() {
-        assert.expect(0);
+        this.assert.expect(0);
       });
 
       this.register(/^coffee is best served espresso style$/i, function() {
-        assert.expect(1);
-        assert.ok(true);
+        this.assert.expect(1);
+        this.assert.ok(true);
       });
 
       this.register(/^an @wip feature grows no moss$/i, function() {
@@ -37,15 +36,15 @@ sap.ui.define([
       });
 
       this.register(/^this test step will get skipped$/i, function() {
-        assert.ok(false, "we expect this test to never run because the step before it is not found");
+        this.assert.ok(false, "we expect this test to never run because the step before it is not found");
       });
 
       this.register(/^the user '<USER>' has been given <NUMBER> cups of coffee$/i, function() {
-        assert.ok(false, "we expect this step to never run, which will cause this test to fail if it's run anyway");
+        this.assert.ok(false, "we expect this step to never run, which will cause this test to fail if it's run anyway");
       });
 
       this.register(/^(.*?) pays on average (.*?) for a cup of coffee$/i, function(sPerson, sAmount) {
-        assert.ok(true, "Verified: woah, " + sPerson + " pays a lot of money for coffee");
+        this.assert.ok(true, "Verified: woah, " + sPerson + " pays a lot of money for coffee");
       });
     }
   });

@@ -59,7 +59,7 @@ sap.ui.define([
 		this._oFCL = oFlexibleColumnLayout;
 		this._mode = "Normal";
 
-		// Currently only the the default 3-column type is configurable
+		// Currently only the default 3-column type is configurable
 		this._defaultLayoutType = LT.OneColumn;
 		this._defaultTwoColumnLayoutType = [LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(oSettings.defaultTwoColumnLayoutType) !== -1 ?
 			oSettings.defaultTwoColumnLayoutType : LT.TwoColumnsBeginExpanded;
@@ -163,7 +163,7 @@ sap.ui.define([
 	 *
 	 * About the format of return value, see: {@link sap.f.FlexibleColumnLayoutSemanticHelper#getCurrentUIState}
 	 *
-	 * @param iLevel - the view level that should be represented. 0 means initial (master only), 1 - master-detail,
+	 * @param {int} iNextLevel - the view level that should be represented. 0 means initial (master only), 1 - master-detail,
 	 * 2 - master-detail-detail, 3 and above - subsequent views
 	 *
 	 * @public
@@ -239,7 +239,7 @@ sap.ui.define([
 
 	/**
 	 * Returns information about the current layout
-	 * @param sLayout
+	 * @param {sap.f.LayoutType} sLayout
 	 * @returns {{layout: string, maxColumnsCount: number, columnsSizes: {beginColumn, midColumn, endColumn}, columnsVisibility: {beginColumn, midColumn, endColumn}, isFullScreen, isLogicallyFullScreen, actionButtonsInfo: {midColumn, endColumn}}}
 	 * @private
 	 */

@@ -5,8 +5,8 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:c="sap.ui.core"
 		xmlns:f="sap.ui.layout.form"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:tnt="sap.tnt">
+		xmlns:t="sap.ui.table"
+		xmlns:mvc="sap.ui.core.mvc">
 			<l:Splitter>
 				<l:contentAreas>
 					<Page class="sapUiSupportToolIssuesPage">
@@ -14,10 +14,11 @@
 							<Toolbar id="filtersBar" height="{/filterBarHeight}">
 								<FlexBox alignContent="Center"
 										direction="Column"
-										justifyContent="Center">
+										justifyContent="Center"
+										width="100%">
 									<items>
-										<HBox alignItems="Center"
-											  justifyContent="Center"
+										<HBox alignItems="Start"
+											  justifyContent="Start"
 											  height="100%">
 											<l:VerticalLayout>
 												<Label text="Severity:" class="customMargin" />
@@ -51,52 +52,60 @@
 													<c:ListItem key="{}" text="{}" />
 												</Select>
 											</l:VerticalLayout>
-											<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection" class="customRightClass"></Button>
-											<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed} &amp;&amp; ${/issues}.length > 0}">
-												<menu>
-													<Menu itemSelected="onReportPress">
-														<items>
-															<MenuItem text="View" press="onViewReport"/>
-															<MenuItem text="Download" press="onDownloadReport"/>
-														</items>
-													</Menu>
-												</menu>
-											</MenuButton>
-
+											<HBox alignItems="End"
+													justifyContent="End"
+													height="100%">
+												<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection"></Button>
 											</HBox>
-										</items>
+											<HBox alignItems="End"
+												  justifyContent="End"
+												  height="100%">
+												<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
+													<menu>
+														<Menu itemSelected="onReportPress">
+															<items>
+																<MenuItem text="View" press="onViewReport"/>
+																<MenuItem text="Download" press="onDownloadReport"/>
+															</items>
+														</Menu>
+													</menu>
+												</MenuButton>
+											</HBox>
+										</HBox>
+									</items>
 								</FlexBox>
 							</Toolbar>
 						</customHeader>
 						<subHeader>
 							<Toolbar id="messegeStrip" height="{/messegeStripHeight}">
 								<FlexBox alignItems="Center"
-										justifyContent="Start">
+										 justifyContent="Start">
 									<items>
 										<l:VerticalLayout>
-											<Text text="Note: The issues list is cut down to the first 1000 issues, matching the filter criteria."
-													  visible="{= ${/issues}.length > 1000}"/>
-											<Text  text="{= 'Displaying: ' + ${/visibleIssuesCount} + ' out of ' + ${/maxIssuesDisplayedNumber} + ' (scope: ' + ${/analyzeContext/displayName} + ')' }"/>
+											<Text  text="{= 'Displaying: ' + ${/visibleIssuesCount} + ' out of ' + ${/issuesCount} + ' (scope: ' + ${/analyzeContext/displayName} + ')' }"/>
 										</l:VerticalLayout>
 									</items>
 								</FlexBox>
 							</Toolbar>
 						</subHeader>
-						<List
-								id="issuesList"
-								mode="SingleSelectMaster"
-								itemPress="onIssuePressed"
-								items="{path: '/issues'}">
-							<StandardListItem
-									type="Active"
-									icon="{path:'severity', formatter:'.filterSevirityIcon'}"
-									info="{path:'severity', formatter:'.filterSevirityText'}"
-									infoState="{path:'severity', formatter:'.filterSevirityState'}"
-									description="{description}"
-									press="onIssuePressed"
-									visible="{path:'', formatter:'.filterIssueListItems'}"
-									title="{name}"/>
-						</List>
+						<t:TreeTable
+							id="issuesList"
+							selectionMode="Single"
+							selectionBehavior="RowOnly"
+							enableColumnReordering="false"
+							expandFirstLevel="true"
+							rows="{path: '/issues'}"
+							rowSelectionChange="onRowSelectionChanged"
+							rowHeight="24"
+							visibleRowCountMode="Auto">
+							<t:columns>
+								<t:Column label="Issues">
+									<t:template>
+										<Text text="{name}"></Text>
+									</t:template>
+								</t:Column>
+							</t:columns>
+						</t:TreeTable>
 					</Page>
 					<Page showHeader="false">
 						<f:SimpleForm editable="true"
@@ -108,19 +117,50 @@
 								<Text text="{/selectedIssue/description}" />
 								<Label text="Resolution" />
 								<Text text="{/selectedIssue/resolution}" />
-								<Label text="Details" />
-								<Text text="{/selectedIssue/details}" />
 								<Label text="URLs" />
-								<l:VerticalLayout
-									content="{/selectedIssue/resolutionUrls}">
-									<Link text="{text}" press="openDocumentation" />
+								<l:VerticalLayout>
+									<l:VerticalLayout
+										content="{/selectedIssue/resolutionUrls}">
+										<Link text="{text}" press="openDocumentation" />
+									</l:VerticalLayout>
 								</l:VerticalLayout>
-								<Label text="Element ClassName" />
-								<Text text="{/selectedIssue/context/className}" />
-								<Label text="Element id" />
-								<Text text="{/selectedIssue/context/id}" />
 							</f:content>
 						</f:SimpleForm>
+						<t:Table
+							visible="{= ${/selectedIssue} !== null}"
+							rows="{path: '/selectedIssue/issues'}"
+							rowHeight="24"
+							selectionMode="Single"
+							selectionBehavior="RowOnly"
+							enableColumnReordering="false"
+							visibleRowCountMode="Auto"
+							rowSelectionChange="onRowSelection"
+							id="issueTable">
+							<t:columns>
+								<t:Column label="Index" width="50px">
+									<t:template>
+										<Text text="{= ${/selectedIssue/issues}.indexOf(${}) + 1 }"></Text>
+									</t:template>
+								</t:Column>
+								<t:Column
+										sortProperty="context/id"
+										filterProperty="context/id"
+										label="Control Id">
+									<t:template>
+										<Text text="{context/id}"></Text>
+									</t:template>
+								</t:Column>
+								<t:Column
+										sortProperty="context/className"
+										filterProperty="context/className"
+										label="Class name">
+									<t:template>
+										<Text text="{context/className}"></Text>
+									</t:template>
+								</t:Column>
+							</t:columns>
+
+						</t:Table>
 					</Page>
 					<c:HTML id="elementTreeContainer" content='&lt;control-tree&gt;  &lt;/control-tree&gt;'>
 					</c:HTML>

@@ -228,8 +228,8 @@ sap.ui.define([
 			downloadMockFile : function(sFile) {
 
 				var sRef = jQuery.sap.getModulePath("sap.ui.demo.mock");
-				var sWrongPath = "test-resources/sap/ui/demokit/explored/img/";
-				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/demokit/explored/img/";
+				var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/";
+				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/";
 				var oRegExp = new RegExp(sWrongPath,"g");
 				var sMockData = this.fetchSourceFile(sRef, sFile);
 

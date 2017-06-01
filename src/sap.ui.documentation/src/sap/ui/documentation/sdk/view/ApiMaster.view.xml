@@ -27,7 +27,12 @@
 					id="tree"
 					mode="SingleSelectMaster"
 					selectionChange="onNodeSelect"
-					items="{ path: 'treeData>/' }">
+					items="{
+						path: 'treeData>/',
+						sorter : {
+							path : 'name'
+						}
+					}">
 				<StandardTreeItem
 						title="{treeData>text}"
 						selected="{treeData>isSelected}">

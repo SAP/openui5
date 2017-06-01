@@ -150,24 +150,26 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				 * Fired when the tokens aggregation changed (add / remove token)
 				 */
 				tokenUpdate: {
-					/**
-					 * Type of tokenChange event.
-					 * There are two TokenUpdate types: "added", "removed"
-					 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
-					 */
-					type: {type: "string"},
+					parameters: {
+						/**
+						 * Type of tokenChange event.
+						 * There are two TokenUpdate types: "added", "removed"
+						 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
+						 */
+						type: {type: "string"},
 
-					/**
-					 * The array of tokens that are added.
-					 * This parameter is used when tokenUpdate type is "added".
-					 */
-					addedTokens: {type: "sap.m.Token[]"},
+						/**
+						 * The array of tokens that are added.
+						 * This parameter is used when tokenUpdate type is "added".
+						 */
+						addedTokens: {type: "sap.m.Token[]"},
 
-					/**
-					 * The array of tokens that are removed.
-					 * This parameter is used when tokenUpdate type is "removed".
-					 */
-					removedTokens: {type: "sap.m.Token[]"}
+						/**
+						 * The array of tokens that are removed.
+						 * This parameter is used when tokenUpdate type is "removed".
+						 */
+						removedTokens: {type: "sap.m.Token[]"}
+					}
 				}
 			}
 		}
@@ -627,7 +629,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function () {
-		this._tokenizer._doScrollToEnd();
+		this._tokenizer.scrollToEnd();
 		Input.prototype.onAfterRendering.apply(this, arguments);
 	};
 
@@ -692,7 +694,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapbackspace = function (oEvent) {
@@ -711,7 +713,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on delete keyboard input, deletes selected tokens
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapdelete = function (oEvent) {
@@ -958,7 +960,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on keyboard enter, if possible, adds entered text as new token
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {

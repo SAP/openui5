@@ -267,8 +267,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * rerender the content if different collection or collection item is selected
 	 *
-	 * @param int Index of the collection that should be rendered
-	 *
 	 * @private
 	 */
 	CollectionInspector.prototype.rerenderContent = function() {
@@ -586,7 +584,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Updates the css classes for the selected items
 	 *
-	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	CollectionInspector.prototype.refreshSelectionHighlighting = function() {

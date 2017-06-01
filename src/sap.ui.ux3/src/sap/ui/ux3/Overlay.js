@@ -176,12 +176,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 
 	/**
 	 *
-	 * @param fFocusFirst
-	 * @param fFocusLast
-	 * @param fApplyChanges
+	 * @param {function} fnFocusFirst
+	 * @param {function} fnFocusLast
+	 * @param {function} fnApplyChanges
 	 * @private
 	 */
-	Overlay.prototype._initDom = function(fFocusFirst, fFocusLast, fApplyChanges) {
+	Overlay.prototype._initDom = function(fnFocusFirst, fnFocusLast, fnApplyChanges) {
 		//Override the popup theming and init the focus handling
 		var oShell = jQuery(".sapUiUx3Shell").control();
 		this._oShell = oShell.length ? oShell[0] : null;
@@ -189,7 +189,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		this.$().css("position", "fixed");
 		if (oShell) {
 			this._bFocusEventsRegistered = true;
-			oShell.syncWithCanvasSize(this.getId(), true, fFocusFirst, fFocusLast, fApplyChanges);
+			oShell.syncWithCanvasSize(this.getId(), true, fnFocusFirst, fnFocusLast, fnApplyChanges);
 			this.$("firstFocusDummyPaneFw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusFirstHdr,oShell));
 			this.$("firstFocusDummyPaneBw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusLastTool,oShell));
 			this.$("LastFocusDummyPane").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusPaneStart,oShell));
@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/**
 	 * Handle the click event happening on the Overlay.
 	 *
-	 * @param {jQuery.EventObject} oEvent
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Overlay.prototype.onclick = function(oEvent) {
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/**
 	 * Handle the sapselect pseudo event happening on the Overlay.
 	 *
-	 * @param {jQuery.EventObject} oEvent
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Overlay.prototype.onsapselect = function(oEvent) {
@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	/**
 	 * Event handling for Overlay Buttons.
 	 *
-	 * @param {jQuery.EventObject} oEvent
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Overlay.prototype._handleButtonEvent = function(oEvent) {

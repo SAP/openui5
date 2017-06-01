@@ -8,8 +8,9 @@ sap.ui.define([
 		"sap/ui/core/routing/History",
 		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
-	], function (Controller, History, LibraryInfo, ControlsInfo, JSDocUtil) {
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
+		"sap/ui/Device"
+	], function (Controller, History, LibraryInfo, ControlsInfo, JSDocUtil, Device) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
@@ -59,15 +60,6 @@ sap.ui.define([
 			 */
 			setModel : function (oModel, sName) {
 				return this.getView().setModel(oModel, sName);
-			},
-
-			/**
-			 * Convenience method for getting the resource bundle.
-			 * @public
-			 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
-			 */
-			getResourceBundle : function () {
-				return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			},
 
 			/**
@@ -167,6 +159,33 @@ sap.ui.define([
 				});
 
 				return '<span class="sapUiDocumentationJsDoc">' + sFormattedTextBlock + '</span>';
+			},
+
+			/**
+			 * Switches the maximum height of the phone image for optimal display in landscape mode
+			 * @param {sap.ui.base.Event} oEvent Device orientation change event
+			 * @private
+			 */
+			_onOrientationChange: function(oEvent) {
+				if (Device.system.phone) {
+					this.byId("phoneImage").toggleStyleClass("phoneHeaderImageLandscape", oEvent.landscape);
+				}
+			},
+
+			/**
+			 * Registers an event listener on device orientation change
+			 * @private
+			 */
+			_registerOrientationChange: function () {
+				Device.orientation.attachHandler(this._onOrientationChange, this);
+			},
+
+			/**
+			 * Deregisters the event listener for device orientation change
+			 * @private
+			 */
+			_deregisterOrientationChange: function () {
+				Device.orientation.detachHandler(this._onOrientationChange, this);
 			}
 		});
 

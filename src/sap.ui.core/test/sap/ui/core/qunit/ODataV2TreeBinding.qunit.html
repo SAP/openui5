@@ -490,6 +490,97 @@
 		});
 	});
 
+	QUnit.test("Init binding with deferred group ID", 0, function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredGroups(["PONY"]);
+
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				groupId: "PONY"
+			});
+
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+
+				assert.ok(false, "Change event should not get fired");
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+			setTimeout(done, 11);
+		});
+	});
+
+	QUnit.test("Init binding with deferred group ID in Client mode", 0, function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredGroups(["PONY"]);
+
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				groupId: "PONY",
+				operationMode: sap.ui.model.odata.OperationMode.Client
+			});
+
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+
+				assert.ok(false, "Change event should not get fired");
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+			setTimeout(done, 11);
+		});
+	});
+
+	QUnit.test("Refresh binding with deferred group ID", 2, function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredGroups(["PONY"]);
+
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				}
+			});
+
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+				assert.ok(true, "Data loaded");
+
+				oBinding.attachRefresh(handler2);
+				oBinding.refresh("PONY");
+				setTimeout(done, 11);
+			};
+
+			var handler2 = function(oEvent) {
+				oBinding.detachChange(handler2);
+				assert.ok(true, "Refresh fired");
+
+				oBinding.attachRefresh(handler3);
+				oBinding.getRootContexts();
+			};
+
+			var handler3 = function(oEvent) {
+				oBinding.detachChange(handler3);
+
+				assert.ok(false, "Change event should not get fired after refresh");
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
 	QUnit.test("No navigation object specified", function(assert) {
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {

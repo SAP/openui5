@@ -84,12 +84,12 @@ sap.ui.define([
 
 	/**
 	 * This method is called to render the content
-	 * @param {*} oHeaderContentItem header content item
-	 * @param {*} iIndex index
-	 * @param {*} oRm oRm
-	 * @param {*} bRenderTitle render title
-	 * @param {*} oTitle header title
-	 * @param {*} oControl control
+	 * @param {sap.ui.core.Control} oHeaderContentItem header content item
+	 * @param {int} iIndex index
+	 * @param {sap.ui.core.RenderManager} oRm oRm
+	 * @param {boolean} bRenderTitle render title
+	 * @param {sap.uxap.ObjectPageHeader} oTitle header title
+	 * @param {sap.ui.core.Control} oControl control
 	 */
 	ObjectPageHeaderContentRenderer._renderHeaderContentItem = function (oHeaderContentItem, iIndex, oRm, bRenderTitle, oTitle, oControl) {
 		var bHasSeparatorBefore = false,

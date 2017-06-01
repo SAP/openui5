@@ -269,7 +269,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Load language dependent text for given resource bundle key and optional
 	 * arguments, if the resource contains dynamic content
 	 *
-	 * @param sKey resource bundle key
+	 * @param {string} sKey resource bundle key
 	 * @param aArgs used to fill dynamic resource content
 	 * @return the resource if it was found in the bundle or 'sKey' if no matching
 	 *		 resource was available.
@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * that 'sActionId' taken from 'this.mActionKeys', otherwise
 	 * a warning will be logged and 'undefined is returned'
 	 *
-	 * @param sActionId
+	 * @param {string} sActionId
 	 * @return new or pooled instance of the specified action or 'undefined'
 	 */
 	ActionBar.prototype._getSocialAction = function (sActionId) {
@@ -663,11 +663,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/*
 	 * Shows or hides standard button 'Update' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowUpdate = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Update), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showUpdate", bFlag, true);
 		return this;
 	};
@@ -675,11 +675,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/*
 	 * Shows or hides standard button 'Follow' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowFollow = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Follow), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showFollow", bFlag, true);
 		return this;
 	};
@@ -687,11 +687,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/*
 	 * Shows or hides standard button 'Flag' on toolbar
 	 *
-	 * @param bFlag show or hide this social action on the toolbar
+	 * @param {boolean} bFlag show or hide this social action on the toolbar
 	 */
 	ActionBar.prototype.setShowFlag = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Flag), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showFlag", bFlag, true);
 		return this;
 	};
@@ -703,7 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowFavorite = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Favorite), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showFavorite", bFlag, true);
 		return this;
 	};
@@ -715,7 +715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 */
 	ActionBar.prototype.setShowOpen = function(bFlag) {
 		this._setShowSocialAction(this._getSocialAction(this.mActionKeys.Open), bFlag);
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("showOpen", bFlag, true);
 		return this;
 	};
@@ -727,7 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setFollowState = function(oFollowState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("followState", oFollowState, true);
 		return this;
 	};
@@ -739,7 +739,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setFlagState = function(oFlagState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("flagState", oFlagState, true);
 		return this;
 	};
@@ -751,7 +751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setUpdateState = function(oUpdateState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("updateState", oUpdateState, true);
 		return this;
 	};
@@ -762,14 +762,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * @private
 	 */
 	ActionBar.prototype._setFavoriteState = function(oFavoriteState) {
-		// supress rerendering
+		// suppress rerendering
 		this.setProperty("favoriteState", oFavoriteState, true);
 		return this;
 	};
 
 	// Implementation of API method
 	ActionBar.prototype.setThingIconURI = function(oIcon) {
-	    // supress rendering
+	    // suppress rendering
 		this.setProperty("thingIconURI", oIcon, true);
 		var oUpdateAction = this.mActionMap[this.mActionKeys.Update];
 		if (oUpdateAction && this._feeder) {
@@ -986,7 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * Calls '_addSocialAction' or '_removeSocialAction' depending on 'bFlag'.
 	 *
 	 * @param oSocialAction social action to deal with.
-	 * @param bFlag show the action or not.
+	 * @param {boolean} bFlag show the action or not.
 	 * @return the sap.ui.ux3.ActionBar instance
 	 * @see sap.ui.ux3.ActionBar._addSocialAction
 	 * @see sap.ui.ux3.ActionBar._removeSocialAction
@@ -1041,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * and buttons. Calls rerenderBusinessActions if param 'bRerender' is true
 	 *
 	 * @param oBusinessAction business action to be removed
-	 * @param bRerender if this flag is set, business actions are re-rendered.
+	 * @param {boolean} bRerender if this flag is set, business actions are re-rendered.
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */

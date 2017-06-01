@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>qUnit Page for sap.m.StepInput</title>
+	<title>QUnit Page for sap.m.StepInput</title>
 
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
@@ -248,8 +248,23 @@
 			//assert
 			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 					"The decrement button is enabled because the value > min");
-		});
 
+			//act
+			this.stepInput.setEnabled(false);
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
+					"The increment button is disabled because setEnabled is set to false");
+
+			//act
+			this.stepInput.setEnabled(true);
+			oCore.applyChanges();
+			//assert
+			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The increment button is enabled because setEnabled is set to true");
+			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
+					"The decrement button is enabled because setEnabled is set to true");
+		});
 
 		QUnit.test("Increment button enabled/disabled state", function (assert) {
 			//act
@@ -408,7 +423,7 @@
 			strictEqual(this.stepInput.getDisplayValuePrecision(), 0, "The displayValuePrecision is set to 0");
 		});
 
-		QUnit.test("displayValuePrecision formating when digits after the dot are more then the value precision", function (assert) {
+		QUnit.test("displayValuePrecision formating when digits after the dot are more than the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(2);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -417,7 +432,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "1.10", "The input value is correctly formatted");
 		});
 
-		QUnit.test("displayValuePrecision formating when digits after the dot are less then the value precision", function (assert) {
+		QUnit.test("displayValuePrecision formating when digits after the dot are less than the value precision", function (assert) {
 			this.stepInput.setDisplayValuePrecision(5);
 			this.stepInput.setValue(1.104);
 			oCore.applyChanges();
@@ -809,7 +824,7 @@
 			//act
 			oSUT.placeAt('qunit-fixture');
 			oCore.applyChanges();
-			$Input = oSUT.$('input-inner');
+			$Input = oInput.$(oInput.getRenderer().getInnerSuffix());
 			//assert
 			assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
 			assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
@@ -844,70 +859,72 @@
 		});
 
 		QUnit.test("StepInput correctly alters its internal 'sap.m.Input' ARIA attributes on property changes", function (assert) {
+			//prepare
+			var oInput = this.stepInput._getInput();
+			var sInputSuffix = oInput.getRenderer().getInnerSuffix();
 			//assert - initial values
-			assert.ok(this.stepInput.$('input-inner').is('[aria-valuenow]'), "'aria-valuenow' attribute is rendered in the DOM");
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-valuenow]'), "'aria-valuenow' attribute is rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
 			//act - change the 'value' property
 			this.stepInput.setValue(9);
 			oCore.applyChanges();
 			//assert - expect aria-valuenow to be changed accordingly
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-valuenow"), "9", "'aria-valuenow' attribute was updated when the 'value' property was changed");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "9", "'aria-valuenow' attribute was updated when the 'value' property was changed");
 			//act - change the 'editable' property
 			this.stepInput.setEditable(false);
 			oCore.applyChanges();
 			//assert - expect 'aria-readonly=true' to be rendered in the DOM
-			assert.ok(this.stepInput.$('input-inner').is('[aria-readonly]'), "'aria-readonly' attribute was rendered in the DOM");
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-readonly"), "true", "'aria-readonly' attribute was updated when the 'editable' property was changed");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute was rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-readonly"), "true", "'aria-readonly' attribute was updated when the 'editable' property was changed");
 			//act - change the 'editable' property
 			this.stepInput.setEditable(true);
 			oCore.applyChanges();
 			//assert - expect 'aria-readonly' not to be rendered in the DOM
-			assert.notOk(this.stepInput.$('input-inner').is('[aria-readonly]'), "'aria-readonly' attribute is not rendered in the DOM");
+			assert.notOk(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute is not rendered in the DOM");
 			//act - change the 'enabled' property
 			this.stepInput.setEnabled(false);
 			oCore.applyChanges();
 			//assert - expect 'aria-disabled=true' to be rendered in the DOM
-			assert.ok(this.stepInput.$('input-inner').is('[aria-disabled]'), "'aria-disabled' attribute was rendered");
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-disabled"), "true", "'aria-disabled' attribute was updated when the 'enabled' property was changed");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute was rendered");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-disabled"), "true", "'aria-disabled' attribute was updated when the 'enabled' property was changed");
 			//act - change the 'enabled' property
 			this.stepInput.setEnabled(true);
 			oCore.applyChanges();
 			//assert - expect 'aria-disabled' not to be rendered on the DOM
-			assert.notOk(this.stepInput.$('input-inner').is('[aria-disabled]'), "'aria-disabled' attribute is not rendered in the DOM");
+			assert.notOk(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute is not rendered in the DOM");
 			//act - simulate changing the 'value' outside the possible range with typing
-			this.stepInput.$('input-inner').val(11);
-			qutils.triggerKeydown(this.stepInput.$('input-inner')[0], jQuery.sap.KeyCodes.TAB, false, false, false);
+			oInput.$(sInputSuffix).val(11);
+			qutils.triggerKeydown(oInput.$(sInputSuffix)[0], jQuery.sap.KeyCodes.TAB, false, false, false);
 			oCore.applyChanges();
 			//assert - expect 'aria-invalid=true' to be rendered in the DOM
-			assert.ok(this.stepInput.$('input-inner').is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
-			assert.strictEqual(this.stepInput.$('input-inner').attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
 		});
-	QUnit.module("binding", {
-		beforeEach: function () {
-			this.stepInput = new sap.m.StepInput({
-				value: {
-					path: "/vValue"
-				},
-				displayValuePrecision: {
-					path: "/vPrecision"
-				},
-				max: {
-					path: "/vMax"
-				},
-				min: {
-					path: "/vMin"
-				}
-			});
 
-			this.oModel = new sap.ui.model.json.JSONModel();
-
-			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
-		},
-		afterEach: function () {
-			this.stepInput.destroy();
-		}
-	});
+		QUnit.module("binding", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+					value: {
+						path: "/vValue"
+					},
+					displayValuePrecision: {
+						path: "/vPrecision"
+					},
+					max: {
+						path: "/vMax"
+					},
+					min: {
+						path: "/vMin"
+					}
+				});
+				this.oModel = new sap.ui.model.json.JSONModel();
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
 
 		QUnit.test("When value set via binding is undefined", function (assert) {
 			this.oModel.setData({});
@@ -942,7 +959,7 @@
 			strictEqual(this.stepInput.getAggregation("_input")._getInputValue(), "6.000", "The input is set and formated correctly");
 		});
 
-		QUnit.test("less then Min value set via binding", function (assert) {
+		QUnit.test("less than Min value set via binding", function (assert) {
 			this.oModel.setData({
 				vValue: 4,
 				vMin: 5

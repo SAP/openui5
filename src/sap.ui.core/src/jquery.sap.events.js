@@ -1329,7 +1329,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 
 				// note: in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0,
 				// with the exception of BACKSPACE (key code of 8).
-				// note: in IE the ESCAPE key is also fired for the the keypress event
+				// note: in IE the ESCAPE key is also fired for the keypress event
 				return (iKeyCode === 0 ||	// in Firefox, almost all noncharacter keys that fire the keypress event have a key code of 0, with the exception of BACKSPACE (key code of 8)
 						iKeyCode === mKeyCodes.BACKSPACE ||
 						iKeyCode === mKeyCodes.ESCAPE ||
@@ -1464,7 +1464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 	 * propagation of the event to other delegates or the element and so on.
 	 *
 	 * @see sap.ui.core.Element.prototype._callEventHandles
-	 * @param {boolean} bStopDelegate
+	 * @param {boolean} bStopHandlers
 	 */
 	jQuery.Event.prototype.stopImmediatePropagation = function(bStopHandlers) {
 

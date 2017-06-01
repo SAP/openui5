@@ -285,6 +285,24 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._fetchNonLoadedRuleSets();
 			});
 		}, this);
+
+		CommunicationBus.subscribe(channelNames.REQUEST_RULES_MODEL, function (deserializedRules) {
+			if (deserializedRules) {
+				CommunicationBus.publish(channelNames.GET_RULES_MODEL, IssueManager.getTreeTableViewModel(deserializedRules));
+			}
+		}, this);
+
+		CommunicationBus.subscribe(channelNames.REQUEST_ISSUES, function (issues) {
+			if (issues) {
+				var groupedIssues = IssueManager.groupIssues(issues),
+					issuesModel = IssueManager.getIssuesViewModel(groupedIssues);
+
+				CommunicationBus.publish(channelNames.GET_ISSUES, {
+					groupedIssues: groupedIssues,
+					issuesModel: issuesModel
+				});
+			}
+		}, this);
 	};
 
 	Main.prototype._getLoadFromSupportOrigin = function () {
@@ -325,7 +343,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}
 
 			var internalLibName = customizableLibName + '.internal';
-			var libraryInternalResourceRoot = supportModulesRoot.replace('/resources', '') + 'test-resources/' + libPath + '/internal';
+			var libraryInternalResourceRoot = supportModulesRoot.replace('resources/', '') + 'test-resources/' + libPath + '/internal';
 
 			jQuery.sap.registerModulePath(internalLibName, libraryInternalResourceRoot);
 
@@ -361,6 +379,38 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		return ajaxPromises;
 	};
 
+	/**
+	 * Factory function for creating a RuleSet. Helps reducing API complexity.
+	 * @private
+	 * @param {object} librarySupport object to be used for RuleSet creation
+	 * @returns {object} ruleset object to be added to _mRuleSets
+	 */
+	Main.prototype._createRuleSet = function (librarySupport) {
+		var oLib = {
+			name: librarySupport.name,
+			niceName: librarySupport.niceName
+		};
+		var oRuleSet = new RuleSet(oLib);
+
+		for (var i = 0; i < librarySupport.ruleset.length; i++) {
+			var ruleset = librarySupport.ruleset[i];
+
+			// If the ruleset contains arrays of rules make sure we add them.
+			if (jQuery.isArray(ruleset)) {
+				for (var k = 0; k < ruleset.length; k++) {
+					oRuleSet.addRule(ruleset[k]);
+				}
+			} else {
+				oRuleSet.addRule(ruleset);
+			}
+		}
+
+		return {
+			lib: oLib,
+			ruleset: oRuleSet
+		};
+	};
+
 	Main.prototype._fetchSupportRuleSets = function (libNames) {
 		libNames = libNames || [];
 		libNames = libNames.concat(Object.keys(sap.ui.getCore().getLoadedLibraries()));
@@ -374,8 +424,25 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				RuleSet.versionInfo = versionInfo;
 
 				var libFetchPromises = that._fetchLibraryFiles(libNames, function (libName) {
-					var normalizedLibName = libName.replace('.' + customSuffix, '');
-					that._mRuleSets[normalizedLibName] = jQuery.sap.getObject(libName).library.support;
+					var normalizedLibName = libName.replace("." + customSuffix, "").replace(".internal", ""),
+						libSupport = jQuery.sap.getObject(libName).library.support,
+						library = that._mRuleSets[normalizedLibName];
+
+					if (libSupport.ruleset instanceof RuleSet) {
+						if (library) {
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, libSupport.ruleset._mRules);
+						} else {
+							library = libSupport;
+						}
+					} else {
+						if (library) {
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, that._createRuleSet(libSupport));
+						} else {
+							library = that._createRuleSet(libSupport);
+						}
+					}
+
+					that._mRuleSets[normalizedLibName] = library;
 				});
 
 				Promise.all(libFetchPromises).then(function () {
@@ -402,9 +469,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		});
 
 		var libFetchPromises = this._fetchLibraryFiles(libNames, function (libName) {
-			libName = libName.replace('.' + customSuffix, '');
+			libName = libName.replace("." + customSuffix, "").replace(".internal", "");
 
-			data.push(libName);
+			if (data.indexOf(libName) < 0) {
+				data.push(libName);
+			}
 		});
 
 		Promise.all(libFetchPromises).then(function () {
@@ -536,7 +605,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * Called after the analyzer finished and reports whether there are issues or not.
 	 */
 	Main.prototype._done = function () {
-		var issues = IssueManager.getIssuesViewModel(),
+		var issues = IssueManager.getIssuesModel(),
 			elementTree = this._createElementTree();
 
 		CommunicationBus.publish(channelNames.ON_ANALYZE_FINISH, {
@@ -656,7 +725,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @return {object} contains all the information required to create a report.
 	 */
 	Main.prototype._getReportData = function (reportConstants) {
-		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel()),
+		var issues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
 			rules = this._mRuleSets,
 			selectedRules = this._oSelectedRulesIds;
 		return {
@@ -672,7 +741,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				}
 			},
 			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
-			analysisDurationTitle: reportConstants.analysisDurationTitle
+			analysisDurationTitle: reportConstants.analysisDurationTitle,
+			name: constants.SUPPORT_ASSISTANT_NAME
 		};
 	};
 

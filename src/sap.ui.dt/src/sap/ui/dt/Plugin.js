@@ -147,9 +147,10 @@ function(ManagedObject) {
 	};
 
 	/**
-	 * @private
+	 * @param {sap.ui.dt.Overlay} oElementOverlay to call registration methods for
+	 * @protected
 	 */
-	Plugin.prototype._callAggregationOverlayRegistrationMehods = function(oElementOverlay) {
+	Plugin.prototype.callAggregationOverlayRegistrationMethods = function(oElementOverlay) {
 		if (this.registerAggregationOverlay) {
 			var aAggregationOverlays = oElementOverlay.getAggregationOverlays();
 			aAggregationOverlays.forEach(this.registerAggregationOverlay.bind(this));
@@ -165,7 +166,7 @@ function(ManagedObject) {
 			this.registerElementOverlay(oElementOverlay);
 		}
 
-		this._callAggregationOverlayRegistrationMehods(oElementOverlay);
+		this.callAggregationOverlayRegistrationMethods(oElementOverlay);
 	};
 
 	/**

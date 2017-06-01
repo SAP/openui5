@@ -5,7 +5,7 @@ sap.ui.define([], function () {
 	"use strict";
 
 	/**
-	 * <code>StepInput renderer<code>
+	 * <code>StepInput renderer</code>
 	 * @namespace
 	 */
 	var StepInputRenderer = {};
@@ -61,9 +61,7 @@ sap.ui.define([], function () {
 				oButton.addStyleClass(sClass);
 			});
 
-			if (bDisableButton) {
-				oButton.addStyleClass("sapMStepInputIconDisabled");
-			}
+			bDisableButton ? oButton.addStyleClass("sapMStepInputIconDisabled") : oButton.removeStyleClass("sapMStepInputIconDisabled");
 			oRm.renderControl(oButton);
 		};
 

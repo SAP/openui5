@@ -17,14 +17,40 @@ sap.ui.define([
 	 * The border width of a row in pixels.
 	 *
 	 * @type {int}
+	 * @static
 	 * @constant
 	 */
 	var ROW_BORDER_WIDTH = 1;
 
-	/*
-	 * @see TableUtils#getParentRowActionCell
-	 * @see TableUtils#getParentDataCell
+	/**
+	 * Table cell type.
+	 *
+	 * @type {sap.ui.table.TableUtils.CellType}
+	 * @static
+	 * @constant
+	 * @typedef {Object} sap.ui.table.TableUtils.CellType
+	 * @property {int} DATACELL - Data cell.
+	 * @property {int} COLUMNHEADER - Column header cell.
+	 * @property {int} ROWHEADER - Row header cell.
+	 * @property {int} ROWACTION - Row action cell.
+	 * @property {int} COLUMNROWHEADER - SelectAll cell.
+	 * @property {int} ANYCONTENTCELL - Any cell of a row in the table content area (table body).
+	 * @property {int} ANYCOLUMNHEADER - Any cell of a row in the table header area (table head).
+	 * @property {int} ANYROWHEADER - Any row header cell (including the SelectAll cell).
+	 * @property {int} ANY - Any table cell.
 	 */
+	var CELLTYPE = {
+		DATACELL: 1, // Standard data cell (standard, group or sum)
+		COLUMNHEADER: 2, // Column header
+		ROWHEADER: 4, // Row header (standard, group or sum)
+		ROWACTION: 8, // Row action (standard, group or sum)
+		COLUMNROWHEADER: 16 // Select all row selector (top left cell)
+	};
+	CELLTYPE.ANYCONTENTCELL = CELLTYPE.ROWHEADER | CELLTYPE.DATACELL | CELLTYPE.ROWACTION;
+	CELLTYPE.ANYCOLUMNHEADER = CELLTYPE.COLUMNHEADER | CELLTYPE.COLUMNROWHEADER;
+	CELLTYPE.ANYROWHEADER = CELLTYPE.ROWHEADER | CELLTYPE.COLUMNROWHEADER;
+	CELLTYPE.ANY = CELLTYPE.ANYCONTENTCELL | CELLTYPE.ANYCOLUMNHEADER;
+
 	function _getParentCell(oTable, oElement, sSelector) {
 		if (oTable == null || oElement == null || sSelector == null) {
 			return null;
@@ -55,16 +81,10 @@ sap.ui.define([
 		Column: TableColumnUtils, //Make column utils available here
 		Menu: TableMenuUtils, //Make menu utils available here
 
-		/*
- 		 * Known basic cell types in the table
+		/**
+		 * @type {sap.ui.table.TableUtils.CellType}
 		 */
-		CELLTYPES : {
-			DATACELL : "DATACELL", // standard data cell (standard, group or sum)
-			COLUMNHEADER : "COLUMNHEADER", // column header
-			ROWHEADER : "ROWHEADER", // row header (standard, group or sum)
-			ROWACTION : "ROWACTION", // cell of the row action column
-			COLUMNROWHEADER : "COLUMNROWHEADER" // select all row selector (top left cell)
-		},
+		CELLTYPE: CELLTYPE,
 
 		/**
 		 * The default row heights in pixels for the different content densities.
@@ -363,17 +383,15 @@ sap.ui.define([
 			// Variable oRowIndicator is a jQuery object or DOM element.
 			} else {
 				var $Cell = jQuery(oRowIndicator);
-				var oCellInfo = this.getCellInfo($Cell[0]);
-				var bIsRowSelectionAllowed = this.isRowSelectionAllowed(oTable);
+				var oCellInfo = TableUtils.getCellInfo($Cell[0]);
+				var bIsRowSelectionAllowed = TableUtils.isRowSelectionAllowed(oTable);
 
-				if (oCellInfo !== null
-					&& !TableUtils.Grouping.isInGroupingRow($Cell[0])
-					&& ((oCellInfo.type === this.CELLTYPES.DATACELL && bIsRowSelectionAllowed)
-					|| (oCellInfo.type === this.CELLTYPES.ROWACTION && bIsRowSelectionAllowed)
-					|| (oCellInfo.type === this.CELLTYPES.ROWHEADER && this.isRowSelectorSelectionAllowed(oTable)))) {
+				if (!TableUtils.Grouping.isInGroupingRow($Cell[0])
+					&& ((oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION) && bIsRowSelectionAllowed)
+					|| (oCellInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER) && TableUtils.isRowSelectorSelectionAllowed(oTable)))) {
 
 					var iAbsoluteRowIndex;
-					if (oCellInfo.type === this.CELLTYPES.DATACELL) {
+					if (oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL)) {
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.closest("tr", oTable.getDomRef()).attr("data-sap-ui-rowindex"), 10)].getIndex();
 					} else { // CELLTYPES.ROWHEADER, CELLTYPES.ROWACTION
 						iAbsoluteRowIndex = oTable.getRows()[parseInt($Cell.attr("data-sap-ui-rowindex"), 10)].getIndex();
@@ -584,116 +602,114 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the cell type and the jQuery wrapper object of the given cell dom ref or
-		 * null if the given dom element is not a table cell.
-		 * {type: <TYPE>, cell: <$CELL>}
-		 * @param {Object} oCellRef DOM reference of table cell
-		 * @return {Object}
-		 * @type {Object}
-		 * @property {sap.ui.table.CELLTYPES} type
-		 * @property {Object} cell jQuery object of the cell
-		 * @see TableUtils.CELLTYPES
+		 * The following rules apply for the cell information.
+		 * <ul>
+		 *     <li><b>type</b>: Is <code>0</code>, if the cell is not a table cell.</li>
+		 *     <li><b>rowIndex</b>: Is <code>null</code>, if the cell is not a table cell or the SelectAll cell. The header rows and content rows have
+		 *     their own index areas. This means, that the index of the first content row starts from 0 again.</li>
+		 *     <li><b>columnIndex</b>: The index of the column in the <code>columns</code> aggregation. Is <code>null</code>, if the cell is not a
+		 *     table cell. Is <code>-1</code> for row header cells (including the SelectAll cell). Is <code>-2</code> for row action cells.</li>
+		 *     <li><b>spanLength</b>: Is <code>null</code>, if the cell is not a table cell. For all cells (including the SelectAll cell) other
+		 *     than column header cells the <code>spanLength</code> is always <code>1</code>.</li>
+		 *     <li><b>cell</b>: Is <code>null</code>, if the cell is not a table cell.</li>
+		 * </ul>
+		 *
+		 * @typedef {Object} sap.ui.table.TableUtils.CellInfo
+		 * @property {sap.ui.table.TableUtils.CellType} [type] The type of the cell.
+		 * @property {int|null} [rowIndex] The index of the row the cell is inside.
+		 * @property {int|null} columnIndex The index of the column, in the <code>columns</code> aggregation, the cell is inside.
+		 * @property {int|null} columnSpan The amount of columns the cell spans over.
+		 * @property {jQuery|null} cell The jQuery reference to the table cell.
+		 * @property {sap.ui.table.TableUtils.CellInfo#isOfType} isOfType Function to check for the type of the cell.
+		 */
+
+		/**
+		 * Collects all available information of a table cell by reading the DOM and returns them in a single object.
+		 *
+		 * @param {jQuery|HTMLElement} oCellRef DOM reference of a table cell.
+		 * @returns {sap.ui.table.TableUtils.CellInfo} An object containing information about the cell.
+		 * @see sap.ui.table.TableUtils.CellInfo
 		 * @private
 		 */
-		getCellInfo : function(oCellRef) {
-			if (!oCellRef) {
-				return null;
-			}
+		getCellInfo: function(oCellRef) {
+			var oCellInfo;
 			var $Cell = jQuery(oCellRef);
-			if ($Cell.hasClass("sapUiTableTd")) {
-				return {type: TableUtils.CELLTYPES.DATACELL, cell: $Cell};
-			} else if ($Cell.hasClass("sapUiTableCol")) {
-				return {type: TableUtils.CELLTYPES.COLUMNHEADER, cell: $Cell};
-			} else if ($Cell.hasClass("sapUiTableRowHdr")) {
-				return {type: TableUtils.CELLTYPES.ROWHEADER, cell: $Cell};
-			} else if ($Cell.hasClass("sapUiTableRowAction")) {
-				return {type: TableUtils.CELLTYPES.ROWACTION, cell: $Cell};
-			} else if ($Cell.hasClass("sapUiTableColRowHdr")) {
-				return {type: TableUtils.CELLTYPES.COLUMNROWHEADER, cell: $Cell};
+			var sColumnId;
+			var oColumn;
+			var rRowIndex;
+			var aRowIndexMatch;
+			var iRowIndex;
+
+			// Initialize cell info object with default values.
+			oCellInfo = {
+				type: 0,
+				cell: null,
+				rowIndex: null,
+				columnIndex: null,
+				columnSpan: null
+			};
+
+			if ($Cell.hasClass("sapUiTableTd")) { // Data Cell
+				sColumnId = $Cell.data("sap-ui-colid");
+				oColumn = sap.ui.getCore().byId(sColumnId);
+
+				oCellInfo.type = TableUtils.CELLTYPE.DATACELL;
+				oCellInfo.rowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
+				oCellInfo.columnIndex = oColumn.getIndex();
+				oCellInfo.columnSpan = 1;
+
+			} else if ($Cell.hasClass("sapUiTableCol")) { // Column Header Cell
+				rRowIndex = /_([\d]+)/;
+				sColumnId = $Cell.attr("id");
+				aRowIndexMatch = rRowIndex.exec(sColumnId);
+				iRowIndex =  aRowIndexMatch == null || aRowIndexMatch[1] == null ? 0 : parseInt(aRowIndexMatch[1], 10);
+
+				oCellInfo.type = TableUtils.CELLTYPE.COLUMNHEADER;
+				oCellInfo.rowIndex = iRowIndex;
+				oCellInfo.columnIndex = parseInt($Cell.data("sap-ui-colindex"), 10);
+				oCellInfo.columnSpan = parseInt($Cell.attr("colspan") || 1, 10);
+
+			} else if ($Cell.hasClass("sapUiTableRowHdr")) { // Row Header Cell
+				oCellInfo.type = TableUtils.CELLTYPE.ROWHEADER;
+				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"), 10);
+				oCellInfo.columnIndex = -1;
+				oCellInfo.columnSpan = 1;
+
+			} else if ($Cell.hasClass("sapUiTableRowAction")) { // Row Action Cell
+				oCellInfo.type = TableUtils.CELLTYPE.ROWACTION;
+				oCellInfo.rowIndex = parseInt($Cell.data("sap-ui-rowindex"), 10);
+				oCellInfo.columnIndex = -2;
+				oCellInfo.columnSpan = 1;
+
+			} else if ($Cell.hasClass("sapUiTableColRowHdr")) { // SelectAll Cell
+				oCellInfo.type = TableUtils.CELLTYPE.COLUMNROWHEADER;
+				oCellInfo.columnIndex = -1;
+				oCellInfo.columnSpan = 1;
 			}
-			return null;
-		},
 
-		/**
-		 * Returns the index and span information of a column header cell.
-		 *
-		 * @param {jQuery|HtmlElement} oCell The column header cell.
-		 * @returns {{index: int, span: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table column header cell.
-		 * @private
-		 */
-		getColumnHeaderCellInfo: function(oCell) {
-			if (oCell == null) {
-				return null;
+			// Set the cell object for easier access to the cell for the caller.
+			if (oCellInfo.type !== 0) {
+				oCellInfo.cell = $Cell;
 			}
 
-			var $Cell = jQuery(oCell);
-			var oCellInfo = this.getCellInfo($Cell);
-
-			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
-				return {
-					index: parseInt($Cell.data("sap-ui-colindex"), 10),
-					span: parseInt($Cell.attr("colspan") || 1, 10)
-				};
-			} else {
-				return null;
-			}
-		},
-
-		/**
-		 * Returns the row index and column index of a data cell.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {jQuery|HtmlElement} oCell The data cell.
-		 * @returns {{rowIndex: int, columnIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table data cell.
-		 */
-		getDataCellInfo: function(oTable, oCell) {
-			if (oTable == null || oCell == null) {
-				return null;
-			}
-
-			var $Cell = jQuery(oCell);
-			var oCellInfo = this.getCellInfo($Cell);
-
-			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-				var sColumnId = $Cell.data("sap-ui-colid");
-				var oColumn = sap.ui.getCore().byId(sColumnId);
-
-				if (oColumn != null) {
-					var iColumnIndex = oColumn.getIndex();
-					var iRowIndex = parseInt($Cell.parent().data("sap-ui-rowindex"), 10);
-
-					return {
-						rowIndex: iRowIndex,
-						columnIndex: iColumnIndex
-					};
+			/**
+			 * Function to check whether a cell is of certain types. Cell types are flags and have to be passed as a bitmask.
+			 * Returns true if the cell is of one of the specified types, otherwise false. Also returns false if no or an invalid bitmask
+			 * is specified.
+			 *
+			 * @name sap.ui.table.TableUtils.CellInfo#isOfType
+			 * @param {int} cellTypeMask Bitmask of cell types to check.
+			 * @returns {boolean} Whether the specified cell type mask matches the type of the cell.
+			 * @see CELLTYPE
+			 */
+			oCellInfo.isOfType = function(cellTypeMask) {
+				if (cellTypeMask == null) {
+					return false;
 				}
-			}
+				return (this.type & cellTypeMask) > 0;
+			};
 
-			return null;
-		},
-
-		/**
-		 * Returns the row index of a row action cell.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {jQuery|HtmlElement} oCell The row action cell.
-		 * @returns {{rowIndex: int}|null} Returns <code>null</code> if <code>oCell</code> is not a table row action cell.
-		 */
-		getRowActionCellInfo: function(oTable, oCell) {
-			if (oTable == null || oCell == null) {
-				return null;
-			}
-
-			var $Cell = jQuery(oCell);
-			var oCellInfo = this.getCellInfo($Cell);
-
-			if (oCellInfo !== null && oCellInfo.type === TableUtils.CELLTYPES.ROWACTION) {
-				return {
-					rowIndex: parseInt($Cell.data("sap-ui-rowindex"), 10)
-				};
-			} else {
-				return null;
-			}
+			return oCellInfo;
 		},
 
 		/**
@@ -844,7 +860,7 @@ sap.ui.define([
 			}
 
 			// make sure that each DOM element of the table can only have one resize handler in order to avoid memory leaks
-			this.deregisterResizeHandler(oTable, sIdSuffix);
+			TableUtils.deregisterResizeHandler(oTable, sIdSuffix);
 
 			if (!oTable._mResizeHandlerIds) {
 				oTable._mResizeHandlerIds = {};
@@ -914,8 +930,10 @@ sap.ui.define([
 
 		/**
 		 * Checks whether the cell of the given DOM reference is in the last row (from DOM point of view) of the scrollable area.
-		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @param {Object|int} row Cell DOM reference or row index
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @param {jQuery|HTMLElement|int} row The row element or row index.
+		 * @returns {boolean} Returns <code>true</code>, if the row is the last scrollable row of the table based on the data.
 		 * @private
 		 */
 		isLastScrollableRow : function(oTable, row) {

@@ -571,7 +571,7 @@ sap.ui.define([
 			});
 
 			// load version info into view model
-			var oVersionInfo;
+			var oVersionInfo = {};
 			try {
 				oVersionInfo = Global.getVersionInfo();
 				oViewModel.setProperty("/ProductName", oVersionInfo.name);

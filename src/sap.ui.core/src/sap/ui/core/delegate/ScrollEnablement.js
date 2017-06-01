@@ -442,7 +442,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 						if (fVerticalMove < 0 && fScrollTop < 10) {
 							this._fnScrollLoadCallback();
 						}
-					} else if (fVerticalMove > 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100) {
+					} else if (fVerticalMove >= 0 && $Container[0].scrollHeight - fScrollTop - $Container[0].clientHeight < 100) {
 						this._fnScrollLoadCallback();
 					}
 				}

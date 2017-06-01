@@ -17,7 +17,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oPage an object representation of the control that should be rendered
+	 * @param {sap.m.Page} oPage an object representation of the control that should be rendered
 	 */
 	PageRenderer.render = function(oRm, oPage) {
 		var oHeader = null,
@@ -122,6 +122,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 	 * Renders the bar control if it is defined. Also adds classes to it.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.m.Page} oPage
 	 * @param {sap.m.IBar} oBarControl the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {object} oOptions object containing the tag, contextClass and styleClass added to the bar
 	 */
@@ -143,7 +144,7 @@ sap.ui.define(['sap/m/PageAccessibleLandmarkInfo', 'sap/ui/Device'],
 	 *	Check whether THIS page is used in scenario where its header should be light
 	 *	Important for Belize styling
 	 *
-	 * @param oPage
+	 * @param {sap.m.Page} oPage
 	 * @returns {boolean}
 	 * @private
 	 */

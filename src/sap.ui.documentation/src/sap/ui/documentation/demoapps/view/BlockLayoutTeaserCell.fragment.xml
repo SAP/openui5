@@ -4,7 +4,6 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:custom="sap.ui.documentation.sdk.controls">
 <l:BlockLayoutCell
-	class="sapUiContentPadding"
 	width="4">
 	<l:Grid
 		hSpacing="0"

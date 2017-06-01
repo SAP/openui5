@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the space event on the menu open button.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype._handleKeyDown = function (oEvent) {
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * in order to re-initialize item navigation
 		 * with the currently visible items. Update the visibility of the overflow button.
 		 *
-		 * @param bClearTabStops Whether the tab indices of all toolbar items should be set to -1
+		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */
 		Toolbar.prototype.updateAfterResize = function (bClearTabStops) {
@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * visible one.
 		 *
 		 * @param iAllItemsBeforeBreak The number of currently visible toolbar items
-		 * @param bClearTabStops Whether the tab indices of all toolbar items should be set to -1
+		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */
 		Toolbar.prototype.updateItemNavigation = function (iAllItemsBeforeBreak, bClearTabStops) {
@@ -342,7 +342,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Returns the number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism).
 		 * If the toolbar has not been rendered yet, value "0" is returned.
 		 * Requirement here is that every control has exactly one root HTML element.
-		 * @param bIncludeItemsWithAPIPropertyVisibleFalse if true the items with property "visible"=false will be also
+		 * @param {boolean} bIncludeItemsWithAPIPropertyVisibleFalse if true the items with property "visible"=false will be also
 		 * included, although they may not be hidden due to the overflow mechanism.
 		 * @return The number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism).
 		 * @private
@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Modifies the visibility of the overflow button
 		 *
-		 * @param bOverflow whether the overflow button should be displayed
+		 * @param {boolean} bOverflow whether the overflow button should be displayed
 		 * @private
 		 */
 		Toolbar.prototype.updateOverflowIcon = function (bOverflow) {
@@ -449,7 +449,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the click event on the menu open button.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype.onclick = function (oEvent) {
@@ -464,7 +464,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the arrow down event on the menu open button. This opens the popup, if closed.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype.onsapdown = function (oEvent) {
@@ -482,7 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the arrow up event on the menu open button. This closes the popup, if open.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype.onsapup = function (oEvent) {
@@ -823,7 +823,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Handle the onsapescape event on the overflow popup, this closes the popup
 			 *
-			 * @param {jQuery.EventObject} oEvent The forwarded browser event
+			 * @param {jQuery.Event} oEvent The forwarded browser event
 			 * @private
 			 */
 			onsapescape: function (oEvent) {
@@ -833,7 +833,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Handle the tab key event on the overflow popup, this closes the popup
 			 *
-			 * @param {jQuery.EventObject} oEvent the forwarded browser event
+			 * @param {jQuery.Event} oEvent the forwarded browser event
 			 * @private
 			 */
 			// Should ideally advance to the next tab position but currently only focuses the overflow button again.
@@ -846,7 +846,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Handle the tab back key event on the overflow popup, this closes the popup
 			 *
-			 * @param {jQuery.EventObject} oEvent The forwarded browser event
+			 * @param {jQuery.Event} oEvent The forwarded browser event
 			 * @private
 			 */
 			// Should ideally advance to the next tab position but currently only focuses the overflow button again.
@@ -900,7 +900,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles the right side resize event.
 		 *
-		 * @param {jQuery.Event}  oEvent Event object
 		 * @private
 		 */
 		Toolbar.prototype.onrightsideresize = function () {

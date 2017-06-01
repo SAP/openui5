@@ -85,9 +85,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		 * Changes dynamically row's color set
 		 * Note: this might invalidate cells inside and also change color sets of the other BlockLayoutRow-s below it.
 		 *
-		 * @param sType
-		 * @returns {BlockLayoutRow}
+		 * @param {sap.ui.layout.BlockRowColorSets} sType
+		 * @returns {sap.ui.layout.BlockLayoutRow}
 		 * @since 1.42
+		 * @public
 		 */
 		BlockLayoutRow.prototype.setRowColorSet = function (sType) {
 			// Apply here so if there's an exception the code bellow won't be executed
@@ -240,7 +241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 					sCalculatedStyleClass = "sapUiBlockLayoutBackgroundColorSetGray" + ((iInvertCellColorsModulo % 2) + 1);
 
-					// If the the cell already has the expected class, shouldn't loop further as everything below is already adjusted
+					// If the cell already has the expected class, shouldn't loop further as everything below is already adjusted
 					if (oCell.hasStyleClass(sCalculatedStyleClass)) {
 						continue;
 					}
@@ -401,10 +402,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		/**
 		 * Checks for specific cases when two row color sets share the same colors e.g. Light and Mixed backgrounds
 		 *
-		 * @param sStyleClass
-		 * @param sLayoutBackground
-		 * @param bIsColorInverted
-		 * @param sType
+		 * @param {string} sStyleClass
+		 * @param {sap.ui.layout.BlockBackgroundType} sLayoutBackground
+		 * @param {boolean} bIsColorInverted
+		 * @param {sap.ui.layout.BlockRowColorSets} sType
 		 * @returns {boolean}
 		 * @private
 		 */

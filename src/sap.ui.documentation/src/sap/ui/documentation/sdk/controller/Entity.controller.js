@@ -9,11 +9,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
-		"sap/ui/documentation/sdk/util/ObjectSearch",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/Device"
 	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
-				 EntityInfo, ObjectSearch, ToggleFullScreenHandler, Device) {
+				 EntityInfo, ToggleFullScreenHandler, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -30,10 +29,7 @@ sap.ui.define([
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
-				ControlsInfo.listeners.push(function () {
-					// We need to execute this after the library component info is loaded
-					jQuery.sap.delayedCall(0, this, this._loadSample);
-				}.bind(this));
+				ControlsInfo.listeners.push(this._loadSample.bind(this));
 
 				this.getView().setModel(new JSONModel());
 			},
@@ -112,20 +108,10 @@ sap.ui.define([
 				var sNewId = this._sNewId,
 					sNewTab = this._sNewTab;
 
-				// find entity in index
-				// (can be null if the entity is not in the index, e.g. for base classes and types)
-
-
-				// set entity model
-				var oEntData = {
-					entityCount : ControlsInfo.data.entityCount,
-					entities : ControlsInfo.data.entities
-				};
-
-				var oEntModel = new JSONModel(oEntData);
-
-				var sPath = ObjectSearch.getEntityPath(oEntData, sNewId);
-				var oEntity = sPath ?  oEntModel.getProperty(sPath) : null;
+				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+					return entity.id === sNewId;
+				});
+				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
 
 				// set data model
 				var oData;
@@ -225,7 +211,7 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
-					values: oDoc.values,
+					values: oDoc ? oDoc.values : [],
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
 						about: !!oDoc,
@@ -294,7 +280,7 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				return (sDeprecated) ? this.getView().getModel("i18n").getProperty("deprecated") : "";
+				return (sDeprecated) ? "Deprecated" : "";
 			},
 
 			/**

@@ -65,7 +65,7 @@ sap.ui.define([
 			/**
 			 * Scans the items aggregation of a sap.m.Tree for an item that has custom data with key="topicId" and value=sId
 			 * Note: It's important to always fetch the items before searching as they change dynamically when nodes expand/collapse
-			 * @param sId
+			 * @param {string} sId
 			 * @returns {null}
 			 * @private
 			 */
@@ -93,16 +93,34 @@ sap.ui.define([
 			 */
 			onTreeFilter: function (oEvent) {
 				var oTree = this.byId("tree");
-				var sFilterArgument = oEvent.getParameter("newValue");
-
-				var aFilters = [];
-				if (sFilterArgument) {
-					var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
-					aFilters.push(oNameFilter);
-				}
+				var sFilterArgument = oEvent.getParameter("newValue").trim();
 				var oBinding = oTree.getBinding("items");
-				oBinding.filter(aFilters);
-				this._expandAllNodes();
+
+				if (this._filterTimeout) {
+					jQuery.sap.clearDelayedCall(this._filterTimeout);
+				}
+
+				this._filterTimeout = jQuery.sap.delayedCall(250, this, function () {
+
+					// 0 characters - clear filters and collapse all nodes
+					if (sFilterArgument.length === 0) {
+						oBinding.filter([]);
+						this._collapseAllNodes();
+						return;
+					}
+
+					var aFilters = [];
+					if (sFilterArgument) {
+						var oNameFilter = new Filter("name", FilterOperator.Contains, sFilterArgument);
+						aFilters.push(oNameFilter);
+					}
+
+					oBinding.filter(aFilters);
+					this._expandAllNodes();
+
+					this._filterTimeout = null;
+				});
+
 			},
 
 			_expandAllNodes: function () {

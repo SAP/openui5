@@ -130,7 +130,7 @@ sap.ui.define([
 				preserveHeaderStateOnScroll: {type: "boolean", group: "Behavior", defaultValue: false},
 
 				/**
-				* Determines whether the the user can switch between the expanded/collapsed states of the
+				* Determines whether the user can switch between the expanded/collapsed states of the
 				* header by clicking on the title.
 				*
 				* If set to <code>false</code>, the title is not clickable and the application
@@ -305,7 +305,7 @@ sap.ui.define([
 
 				/**
 				* The <code>customShareActions</code> are placed in the <code>ShareMenu</code> area of the
-				* <code>SemanticPage</code> title, right after the the semantic actions.
+				* <code>SemanticPage</code> title, right after the semantic actions.
 				*/
 				customShareActions: {type: "sap.m.Button", multiple: true},
 

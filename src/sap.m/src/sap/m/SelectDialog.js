@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * where a filter function can be applied to the list binding. </li>
 	 * <li> The growing functionality of the list does not support two-way Binding, so if you use this control with a JSON model
 	 * make sure the binding mode is set to <code>OneWay</code> and that you update the selection model manually with
-	 * the items passed in the <code>confirm<code> event. </li>
+	 * the items passed in the <code>confirm</code> event. </li>
 	 * <li> In the multi-select mode of the select dialog, checkboxes are provided for choosing multiple entries. </li>
 	 * <li> You can set <code>rememberSelections</code> to true to store the current selection and load this state
 	 * when the dialog is opened again. </li>
@@ -875,12 +875,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Event function that is called when the model sent a request to update the data.
 	 * It shows a busy indicator and hides searchField and list in the dialog.
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateStarted = function (oEvent) {
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 			if (this._oDialog.isOpen() && this._iListUpdateRequested) {
-				// only set busy mode when we have an oData model
+				// only set busy mode when we have an OData model
 				this._setBusy(true);
 			} else {
 				this._bInitBusy = true;
@@ -892,10 +892,10 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Event function that is called when the model request is finished.
 	 * It hides the busy indicator and shows searchField and list in the dialog.
 	 * @private
-	 * @param {jQuery.EventObject} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
-	// only reset busy mode when we have an oData model
+	// only reset busy mode when we have an OData model
 	this._updateSelectionIndicator();
 	if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 		this._setBusy(false);

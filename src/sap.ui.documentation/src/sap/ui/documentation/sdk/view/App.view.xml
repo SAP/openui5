@@ -20,7 +20,7 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/OpenUI5_logo_only.png"
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_openui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
 					height="2rem"
 					class="sapLogo"
@@ -42,9 +42,9 @@
 						</IconTabFilter>
 						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTab" text="Explored" key="controls">
-						</IconTabFilter>
 						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
+						</IconTabFilter>
+						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
 						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
 						</IconTabFilter>
@@ -53,11 +53,11 @@
 
 				<ToolbarSpacer visible="{=!${appView>/bPhoneSize}}">
 					<layoutData>
-						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="16px" />
+						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
 					</layoutData>
 				</ToolbarSpacer>
 
-				<ObjectStatus text="Beta version - still under construction!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
+				<ObjectStatus text="Version {appView>/version} - development in progress!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
@@ -75,7 +75,7 @@
 					<menu>
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
-								<MenuItem text="Version {appView>/version}" />
+								<MenuItem text="Version {appView>/version}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
 								<MenuItem text="Legal" visible="{=!${appView>/isOpenUI5}}"/>

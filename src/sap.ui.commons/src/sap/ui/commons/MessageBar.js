@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// **************************************************
 	/**
 	* Overwrites the native D&D, not to see the native ghost.
-	* @param {sap.ui.core.BrowserEvent} oEvent The forwarded browser event
+	* @param {jQuery.Event} oEvent The forwarded browser event
 	* @private
 	*/
 	MessageBar.prototype.ondragstart = function(oEvent){
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Handles the move event.
-	 * @param {DOMEvent} event The event raised by the browser.
+	 * @param {jQuery.Event} event The event raised by the browser.
 	 * @private
 	 */
 	MessageBar.prototype.handleMove = function (event) {

@@ -154,7 +154,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * @param {string} oComponent.appVersion - Current running version of application
 	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>sideId</code> that belongs to actual component
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
 	 *
 	 * @public
@@ -164,6 +164,13 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			return oLrepConnector.loadChanges(oComponent, mPropertyBag);
 		}
 		var sComponentName = oComponent.name;
+		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
+
+		if (oCacheEntry.promise) {
+			return oCacheEntry.promise;
+		}
+
 		// in case of no changes present according to async hints
 		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
 			return Promise.resolve({
@@ -173,13 +180,6 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 				},
 				componentClassName: sComponentName
 			});
-		}
-
-		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
-		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
-
-		if (oCacheEntry.promise) {
-			return oCacheEntry.promise;
 		}
 
 		var currentLoadChanges = oLrepConnector.loadChanges(oComponent, mPropertyBag).then(function (mChanges) {

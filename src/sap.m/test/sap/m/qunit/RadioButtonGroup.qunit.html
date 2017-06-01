@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>RadioButton - sap.m - qUnit test</title>
+		<title>RadioButton - sap.m - QUnit test</title>
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
@@ -367,11 +367,44 @@
 			assert.equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
 			assert.equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
 		});
+
+		QUnit.module("Methods", {
+			beforeEach : function() {
+				this.rbg = new sap.m.RadioButtonGroup({
+					buttons : [
+						new sap.m.RadioButton({enabled : false, text : "Option 1"})
+					]
+				});
+
+				this.rbg.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.rbg.destroy();
+			}
+		});
+
+		QUnit.test("InsertRadioButton", function(assert) {
+
+			// insert a button at out of bounds indexes
+
+			var oNewButton = new sap.m.RadioButton({text:'radio200'});
+			this.rbg.insertButton(oNewButton, 200);
+
+			oNewButton = new sap.m.RadioButton({text:'radio-200'});
+			this.rbg.insertButton(oNewButton, -200);
+
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.equal(this.rbg.$().find('.sapMRb').length, 3, "Buttons are rendered correctly");
+		});
+
 		</script>
 	</head>
 	<body id="body">
 
-		<h1 id="qunit-header">qUnit Page for sap.m.RadioButton</h1>
+		<h1 id="qunit-header">QUnit Page for sap.m.RadioButton</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

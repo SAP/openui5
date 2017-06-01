@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param fValue
+	 * @param {float} fValue
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -331,7 +331,8 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param fValue @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @param {float} fValue
+	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RangeSlider.prototype.setValue2 = function(fValue) {
@@ -494,7 +495,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	/**
 	 * Function is called when Slider is moved
 	 *
-	 * @param {DOM.Event} event Event object
+	 * @param {jQuery.Event} event Event object
 	 * @private
 	 */
 	RangeSlider.prototype.handleMove = function(event) {
@@ -527,7 +528,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * fires the change event. The liveChange event must be fired too if the change
 	 * event is fired.
 	 *
-	 * @param bNoLiveChange fire no LiveChange event
+	 * @param {boolean} bNoLiveChange fire no LiveChange event
 	 * @private
 	 */
 	RangeSlider.prototype.handleFireChange = function(bNoLiveChange) {

@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					minWidth : minWidth,
 					weight : weight,
 					linebreakable : bLinebreakable,
-					// since the margin of the element is used outside of it it
+					// since the margin of the element is used outside of it
 					// becomes padding
 					padding : bMargin,
 					control : aControls[i],

@@ -159,6 +159,7 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the footer is visible.
+				 * @since 1.40
 				 */
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
@@ -190,6 +191,7 @@ sap.ui.define([
 
 				/**
 				 * Object page floating footer.
+				 * @since 1.40
 				 */
 				footer: {type: "sap.m.IBar", multiple: false},
 
@@ -322,6 +324,8 @@ sap.ui.define([
 		this._iResizeId = ResizeHandler.register(this, this._onUpdateScreenSize.bind(this));
 
 		this._oABHelper = new ABHelper(this);
+
+		this._bSuppressLayoutCalculations = false;	// used to temporarily suppress layout/ux rules functionality for bulk updates
 	};
 
 	/**
@@ -793,7 +797,7 @@ sap.ui.define([
 
 	/**
 	 * Overrides the setter for the useIconTabBar property
-	 * @param bValue
+	 * @param {boolean} bValue
 	 * @returns this
 	 */
 	ObjectPageLayout.prototype.setUseIconTabBar = function (bValue) {
@@ -931,6 +935,12 @@ sap.ui.define([
 	 */
 
 	ObjectPageLayout.prototype._adjustLayoutAndUxRules = function () {
+
+		// Skip all calculations (somebody called _suppressLayoutCalculations and will call _resumeLayoutCalculations once all updates are done)
+		if (this._bSuppressLayoutCalculations) {
+			return;
+		}
+
 		//in case we have added a section or subSection which change the ux rules
 		jQuery.sap.log.debug("ObjectPageLayout :: _requestAdjustLayout", "refreshing ux rules");
 
@@ -962,6 +972,25 @@ sap.ui.define([
 					}
 				}.bind(this));
 		}
+	};
+
+	/**
+	 * Stop layout calculations temporarily (f.e. to do bulk updates on the object page)
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._suppressLayoutCalculations = function () {
+		this._bSuppressLayoutCalculations = true;
+	};
+
+	/**
+	 * Resume layout calculations and call _adjustLayoutAndUxRules (f.e. once buld updates are over)
+	 * @private
+	 * @sap-restricted
+	 */
+	ObjectPageLayout.prototype._resumeLayoutCalculations = function () {
+		this._bSuppressLayoutCalculations = false;
+		this._adjustLayoutAndUxRules();
 	};
 
 	ObjectPageLayout.prototype._setSelectedSectionId = function (sSelectedSectionId) {
@@ -1202,7 +1231,7 @@ sap.ui.define([
 	 * Set for reference the destination section of the ongoing scroll
 	 * When this one is set, then the page will skip intermediate sections [during the scroll from the current to the destination section]
 	 * and will scroll directly to the given section
-	 * @param sDirectSectionId - the section to be scrolled directly to
+	 * @param {string} sDirectSectionId - the section to be scrolled directly to
 	 */
 	ObjectPageLayout.prototype.setDirectScrollingToSection = function (sDirectSectionId) {
 		this.sDirectSectionId = sDirectSectionId;
@@ -1212,7 +1241,6 @@ sap.ui.define([
 	 * Get the destination section of the ongoing scroll
 	 * When this one is non-null, then the page will skip intermediate sections [during the scroll from the current to the destination section]
 	 * and will scroll directly to the given section
-	 * @param sDirectSectionId - the section to be scrolled directly to
 	 */
 	ObjectPageLayout.prototype.getDirectScrollingToSection = function () {
 		return this.sDirectSectionId;
@@ -1583,7 +1611,7 @@ sap.ui.define([
 
 	/**
 	 * Set a given section as the currently scrolled section and update the anchorBar relatively
-	 * @param sSectionId the section id
+	 * @param {string} sSectionId the section id
 	 * @private
 	 */
 	ObjectPageLayout.prototype._setAsCurrentSection = function (sSectionId) {
@@ -1834,7 +1862,7 @@ sap.ui.define([
 
 	/**
 	 * toggles the header state
-	 * @param bStick boolean true for fixing the header, false for keeping it moving
+	 * @param {boolean} bStick boolean true for fixing the header, false for keeping it moving
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeader = function (bStick) {
@@ -1859,7 +1887,7 @@ sap.ui.define([
 	/**
 	 * Restores the focus after moving the Navigation bar after moving it between containers
 	 * @private
-	 * @param fnMoveNavBar a function that moves the navigation bar
+	 * @param {function} fnMoveNavBar a function that moves the navigation bar
 	 * @returns this
 	 */
 	ObjectPageLayout.prototype._restoreFocusAfter = function (fnMoveNavBar) {

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>qUnit Page for sap.m.TableSelectDialog</title>
+		<title>QUnit Page for sap.m.TableSelectDialog</title>
 
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
@@ -298,7 +298,16 @@
 
 		app.addPage(page).placeAt("content");
 
-		QUnit.module("Initial Check");
+		QUnit.module("Initial Check", {
+			beforeEach : function () {
+				sinon.config.useFakeTimers = true;
+				this.clock = sinon.useFakeTimers();
+			},
+			afterEach : function () {
+				this.clock.restore();
+				sinon.config.useFakeTimers = false;
+			}
+		});
 
 		QUnit.test("Initialization", function(assert) {
 			assert.ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
@@ -322,7 +331,23 @@
 
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+			assert.strictEqual(oTableSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The delay value of dialog should be ' + iDelay);
 			assert.strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+		});
+
+		QUnit.test("setBusy propagation test", function(assert) {
+			var iDelay = 10;
+			oTableSelectDialog.setBusyIndicatorDelay(iDelay);
+			oTableSelectDialog.open();
+			oTableSelectDialog.setBusy(true);
+
+			this.clock.tick(50);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTableSelectDialog.getBusy(), true, 'The Dialog should be in busy state');
+
+			this.clock.tick(1000);
+			oTableSelectDialog.setBusy(false);
+			assert.strictEqual(oTableSelectDialog.getBusy(), false, 'The Dialog should not be in busy state');
 		});
 
 		QUnit.module("Bindings Check");
@@ -675,7 +700,7 @@
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.TableSelectDialog</h1>
+		<h1 id="qunit-header">QUnit Page for sap.m.TableSelectDialog</h1>
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>

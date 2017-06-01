@@ -1067,7 +1067,7 @@
 			{
 				"id": "6f0033cdd569c181d933c92ec553ce2ac0df3df8",
 				"type": "FIX",
-				"text": "m.Page: Start in qUnit Async-Test Moved",
+				"text": "m.Page: Start in QUnit Async-Test Moved",
 				"references": []
 			},
 			{
@@ -1121,19 +1121,19 @@
 			{
 				"id": "602f83b56ad3fadb6f853f0905855ed958697eb1",
 				"type": "FIX",
-				"text": "openUI5 templates app - generated after misc template changes",
+				"text": "OpenUI5 templates app - generated after misc template changes",
 				"references": []
 			},
 			{
 				"id": "4803ca7485770ab364149b91e5cd4c57fff82f1f",
 				"type": "FIX",
-				"text": "openUI5 templates app - nav back fixes",
+				"text": "OpenUI5 templates app - nav back fixes",
 				"references": []
 			},
 			{
 				"id": "38eca585c95cec068403d7a3fb215cdce78ce346",
 				"type": "FIX",
-				"text": "openUI5 templates app : fixed missing History in define + fixed Master-Detail phone journey",
+				"text": "OpenUI5 templates app : fixed missing History in define + fixed Master-Detail phone journey",
 				"references": []
 			},
 			{

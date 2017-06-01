@@ -76,7 +76,7 @@ sap.ui.define([
 
 	/**
 	 * Firefox only function - load sinon as often as needed until it is defined.
-	 * @param fnDone executed when sinon is loaded
+	 * @param {function} fnDone executed when sinon is loaded
 	 */
 	function loadSinon(fnDone) {
 		oFrameWindow.sap.ui.require(["sap/ui/thirdparty/sinon"], function (sinon) {
@@ -262,6 +262,9 @@ sap.ui.define([
 	}
 
 	function destroyFrame () {
+		if (!oFrameWindow) {
+			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown has been called but there was no start");
+		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
 		oFrameWindow.onerror = $.noop;
 		for (var i = 0; i < $Frame.length; i++) {

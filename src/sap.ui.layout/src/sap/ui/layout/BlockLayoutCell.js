@@ -63,14 +63,18 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 				width: { type: "int", group: "Appearance", defaultValue: 0 },
 				/**
 				 * The Background color set from which the background color will be selected.
-				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer.
+				 * By using background colors from the predefined sets your colors could later be customized from the Theme Designer.
+				 * <b>Note:</b> backgroundColorSet should be used only in combination with backgroundColorShade.
+				 * @since 1.48
 				 */
-				backgroundColorSet: { type: "int", group: "Appearance", defaultValue: 0 },
+				backgroundColorSet: { type: "sap.ui.layout.BlockLayoutCellColorSet", group: "Appearance" },
 				/**
 				 * The index of the background color in the color set from which the color will be selected.
-				 * By using backgroundcolors from the predefined sets your colors could later be customized from the theme designer.
+				 * By using background colors from the predefined sets your colors could later be customized from the Theme Designer.
+				 * <b>Note:</b> backgroundColorShade should be used only in combination with backgroundColorSet.
+				 * @since 1.48
 				 */
-				backgroundColorIndex: { type: "int", group: "Appearance", defaultValue: 0 }
+				backgroundColorShade: { type: "sap.ui.layout.BlockLayoutCellColorShade", group: "Appearance" }
 			},
 			defaultAggregation : "content",
 			aggregations : {
@@ -85,8 +89,8 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 		/**
 		 * When the width is set, the cell needs to notify the parent row if it's in scrollable mode
 		 * to update the other cells as well.
-		 * @param The width of the cell
-		 * @returns {BlockLayoutCell}
+		 * @param {int} width - The width of the cell
+		 * @returns {sap.ui.layout.BlockLayoutCell} this pointer for chaining
 		 */
 		BlockLayoutCell.prototype.setWidth = function (width) {
 			this.setProperty("width", width);
@@ -97,6 +101,13 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/theming/Paramete
 				}
 			}
 			return this;
+		};
+
+		/**
+		 * If the theme is changed and the cell has some color applied, we need to invalidate the cell to force rerendering
+		 */
+		BlockLayoutCell.prototype.onThemeChanged = function () {
+			this.invalidate();
 		};
 
 		/**

@@ -138,7 +138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 				oView._sapui_declarativeSourceInfo = {
 					// the node representing the current control
 					xmlNode: xmlNode,
-					// the the document root node
+					// the document root node
 					xmlRootNode: oView._oContainingView === oView ? xmlNode :
 						oView._oContainingView._sapui_declarativeSourceInfo.xmlRootNode
 				};

@@ -218,7 +218,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 					 * If set, the appointment was selected by multiple selection (e.g. shift + mouse click).
 					 * So more than the current appointment could be selected.
 					 */
-					multiSelect : {type : "boolean"}
+					multiSelect : {type : "boolean"},
+
+					/**
+					 * Gives the ID of the DOM element of the clicked appointment
+					 * @since 1.50
+					 */
+					domRefId: {type: "string"}
 				}
 			},
 
@@ -1142,7 +1148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 		var oGroupAppointment;
 		var oLocaleData = _getLocaleData.call(this);
 		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
-		var iDay = oDate.getDay();
+		var iDay = oDate.getUTCDay();
 		var oGroupStartDate = new UniversalDate(oDate.getTime());
 		oGroupStartDate.setUTCHours(0);
 		oGroupStartDate.setUTCMinutes(0);
@@ -1531,9 +1537,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 				sAriaLabelSelected = oOtherAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
 				oOtherAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 			}
-			this.fireSelect({appointments: oAppointment._aAppointments, multiSelect: !bRemoveOldSelection});
-		}else {
-			this.fireSelect({appointment: oAppointment, multiSelect: !bRemoveOldSelection});
+			this.fireSelect({
+				appointments: oAppointment._aAppointments,
+				multiSelect: !bRemoveOldSelection,
+				domRefId: oAppointment.getId()
+			});
+		} else {
+			this.fireSelect({
+				appointment: oAppointment,
+				multiSelect: !bRemoveOldSelection,
+				domRefId: oAppointment.getId()
+			});
 		}
 
 	}

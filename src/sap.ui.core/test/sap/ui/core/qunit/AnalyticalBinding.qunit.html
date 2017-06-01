@@ -293,6 +293,93 @@
 		});
 	});
 
+	QUnit.test("selectionChanged event with selectAll and collapse", function(assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function () {
+
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 10);
+
+			function fnChangeHandler1 (oEvent) {
+				oBinding.detachChange(fnChangeHandler1);
+				oBinding.getContexts(0, 1000);
+				oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+				oBinding.selectAll();
+			};
+
+			function fnSelectionChangeHandler1 (oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
+				oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
+
+				assert.equal(oEvent.mParameters.leadIndex, 228, "Event 1: leadIndex should be 228");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event 1: oldIndex should be -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 106,
+					"Event 1: length of changedIndices should be 106");
+
+				// code under Test
+				oBinding.collapse(1);
+			};
+
+			function fnSelectionChangeHandler2 (oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
+
+				assert.equal(oEvent.mParameters.leadIndex, 228, "Event 2: leadIndex should be 228");
+				assert.equal(oEvent.mParameters.oldIndex, 228, "Event 2: oldIndex should be 228");
+				assert.equal(oEvent.mParameters.rowIndices.length, 1,
+					"Event 2: length of changedIndices should be 1");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [3],
+					"Changed indices after collapse is correct");
+
+				done();
+			};
+		});
+	});
+
+	QUnit.test("selectionChanged event with collapse: deselect lead selection", function(assert) {
+		var done = assert.async();
+
+		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2}, function () {
+
+			oBinding.attachChange(fnChangeHandler1);
+			var aContexts = oBinding.getContexts(0, 20, 10);
+
+			function fnChangeHandler1 (oEvent) {
+				oBinding.detachChange(fnChangeHandler1);
+				oBinding.getContexts(0, 1000);
+				oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+				oBinding.setSelectedIndex(14);
+
+			};
+
+			function fnSelectionChangeHandler1 (oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
+				oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
+
+				assert.equal(oEvent.mParameters.leadIndex, 14, "Event 1: leadIndex should be 14");
+				assert.equal(oEvent.mParameters.oldIndex, -1, "Event 1: oldIndex should be -1");
+				assert.equal(oEvent.mParameters.rowIndices.length, 1,
+					"Event 1: length of changedIndices should be 1");
+
+				//Code under Test
+				oBinding.collapse(0);
+			};
+
+			function fnSelectionChangeHandler2 (oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
+
+				assert.equal(oEvent.mParameters.leadIndex, -1, "Event 2: leadIndex should be -1");
+				assert.equal(oEvent.mParameters.oldIndex, 15, "Event 2: oldIndex should be 15");
+				assert.equal(oEvent.mParameters.rowIndices.length, 1,
+					"Event 2: length of changedIndices should be 1");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [15],
+					"Changed indices after collapse is correct");
+
+				done();
+			};
+		});
+	});
+
 	QUnit.test("Check if custom URL parameters are attached", function(assert) {
 		var done = assert.async();
 		var that = this;

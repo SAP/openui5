@@ -149,6 +149,11 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 					oHtmlControl.$().on("load", function () {
 						var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 
+						// Some samples don't have the framework loaded (f.e. hello world)
+						if (!oSampleFrame.sap) {
+							return;
+						}
+
 						oSampleFrame.sap.ui.getCore().attachInit(function() {
 							var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 							oSampleFrame.sap.ui.getCore().applyTheme(sap.ui.getCore().getConfiguration().getTheme());
@@ -220,7 +225,9 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 				sap.ui.require([
 					"sap/ui/rta/RuntimeAuthoring"],
 				function (RuntimeAuthoring) {
-					this._oRTA = new RuntimeAuthoring();
+					this._oRTA = new RuntimeAuthoring({flexSettings: {
+					developerMode: false
+				}});
 					this.getView().byId("toggleRTA").setVisible(true);
 				}.bind(this));
 			} catch (oException) {

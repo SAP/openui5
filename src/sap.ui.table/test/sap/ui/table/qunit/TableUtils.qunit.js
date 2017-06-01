@@ -164,42 +164,146 @@
 		oTable.setFixedBottomRowCount(0);
 	});
 
-	QUnit.test("getCellInfo", function(assert) {
-		oTable.setRowActionCount(2);
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
-		sap.ui.getCore().applyChanges();
+QUnit.test("getCellInfo", function(assert) {
+	initRowActions(oTable, 1, 1);
+	oTable.getColumns()[1].setVisible(false);
+	oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
+	oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_2"}));
+	oTable.getColumns()[2].setHeaderSpan(2);
+	sap.ui.getCore().applyChanges();
 
-		var oCell = getCell(0, 0);
-		var oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.DATACELL, "DATACELL: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "DATACELL: Cell");
+	/* Data Cells */
 
-		oCell = getColumnHeader(0);
-		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.COLUMNHEADER, "COLUMNHEADER: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "COLUMNHEADER: Cell");
+	var oCell = getCell(0, 0);
+	var oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Data Cell: Correct cell object returned");
+	assert.strictEqual(oInfo.isOfType(), false, "No parameter was passed to isOfType() -> Returned false");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is DATACELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is ANYCONTENTCELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
 
-		oCell = getRowHeader(0);
-		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.ROWHEADER, "ROWHEADER: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "ROWHEADER: Cell");
+	oInfo = TableUtils.getCellInfo(getCell(1, 1));
+	assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
+	assert.strictEqual(oInfo.columnIndex, 2, "Column Index: 2");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
 
-		oCell = getRowAction(0);
-		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.ROWACTION, "ROWACTION: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "ROWACTION: Cell");
+	/* Column Header Cells */
 
-		oCell = getSelectAll();
-		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.COLUMNROWHEADER, "COLUMNROWHEADER: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "COLUMNROWHEADER: Cell");
+	oCell = getColumnHeader(0);
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Column Header Cell: Correct cell object returned");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is COLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is not ANYCONTENTCELL");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is ANYCOLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
 
-		oInfo = TableUtils.getCellInfo(null);
-		assert.ok(!oInfo, "No info on null");
+	oCell = getColumnHeader(1);
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, 2, "Column Index: 2");
+	assert.strictEqual(oInfo.columnSpan, 2, "Span Length: 2");
 
-		oInfo = TableUtils.getCellInfo(jQuery.sap.domById("outerelement"));
-		assert.ok(!oInfo, "No info on dom elements which are no table cells");
-	});
+	oCell = getColumnHeader(2);
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+	oCell = jQuery.sap.domById(getColumnHeader(2).attr("id") + "_1");
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
+	assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+	/* Row Header Cells */
+
+	oCell = getRowHeader(0);
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Row Header Cell: Correct cell object returned");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is ROWHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is ANYCONTENTCELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is ANYROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, -1, "Column Index: -1");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+	/* Row Action Cells */
+
+	oCell = getRowAction(0);
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Row Action Cell: Correct cell object returned");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is ROWACTION");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is ANYCONTENTCELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+	assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+	assert.strictEqual(oInfo.columnIndex, -2, "Column Index: -2");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+	/* SelectAll Cell */
+
+	oCell = getSelectAll();
+	oInfo = TableUtils.getCellInfo(oCell);
+	assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "SelectAll Cell: Correct cell object returned");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is COLUMNROWHEADER");
+	assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is not ANYCONTENTCELL");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is ANYCOLUMNHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is ANYROWHEADER");
+	assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+	assert.strictEqual(oInfo.rowIndex, null, "Row Index: null");
+	assert.strictEqual(oInfo.columnIndex, -1, "Column Index: -1");
+	assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+	/* Not a table cell */
+
+	var oDefaultInfo = {
+		type: 0,
+		cell: null,
+		rowIndex: null,
+		columnIndex: null,
+		columnSpan: null
+	};
+
+	oInfo = TableUtils.getCellInfo(null);
+	delete oInfo.isOfType;
+	assert.deepEqual(oInfo, oDefaultInfo, "Passed null as parameter -> Returned the info object with default values");
+
+	oInfo = TableUtils.getCellInfo(jQuery.sap.domById("outerelement"));
+	delete oInfo.isOfType;
+	assert.deepEqual(oInfo, oDefaultInfo, "Passed a dom element which is no table cell -> Returned the info object with default values");
+});
 
 	QUnit.test("hasRowHeader", function(assert) {
 		assert.ok(TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'MultiToggle'");
@@ -448,42 +552,6 @@
 		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 3 (Visible Column 2)");
 		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,2");
 		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
-	});
-
-	QUnit.test("getDataCellInfo", function(assert) {
-		oTable.getColumns()[2].setVisible(false);
-		initRowActions(oTable, 1, 1);
-
-		assert.strictEqual(TableUtils.getDataCellInfo(), null, "Returned null: Passed nothing");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable), null, "Returned null: No cell passed");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable, getRowHeader(0)), null, "Returned null: Row Header cell passed");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable, getRowAction(0)), null, "Returned null: Row Action cell passed");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable, getColumnHeader(0)), null, "Returned null: Column Header cell passed");
-
-		var oInfo = TableUtils.getDataCellInfo(oTable, getCell(0, 0));
-		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
-		assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
-
-		oInfo = TableUtils.getDataCellInfo(oTable, getCell(1, 1));
-		assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
-		assert.strictEqual(oInfo.columnIndex, 1, "Column Index: 1");
-
-		oInfo = TableUtils.getDataCellInfo(oTable, getCell(2, 2));
-		assert.strictEqual(oInfo.rowIndex, 2, "Row Index: 2");
-		assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
-	});
-
-	QUnit.test("getRowActionCellInfo", function(assert) {
-		initRowActions(oTable, 1, 1);
-
-		assert.strictEqual(TableUtils.getRowActionCellInfo(), null, "Returned null: Passed nothing");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable), null, "Returned null: No cell passed");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getRowHeader(0)), null, "Returned null: Row Header cell passed");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getCell(0, 0)), null, "Returned null: Data cell passed");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getColumnHeader(0)), null, "Returned null: Column Header cell passed");
-
-		var oInfo = TableUtils.getRowActionCellInfo(oTable, getRowAction(0));
-		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
 	});
 
 	QUnit.test("getFirstFixedButtomRowIndex", function(assert) {
@@ -736,19 +804,6 @@
 		assert.ok(TableUtils.getCell(oTable, oElement).is(oElement), "Returned Data Cell");
 		assert.ok(TableUtils.getCell(oTable, oElement.find(":first")).is(oElement), "Returned Data Cell");
 	});
-
-	QUnit.test("getColumnHeaderCellInfo", function(assert) {
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(), null, "Returned null: Passed nothing");
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getSelectAll()), null, "Returned null: Passed SelectAll Cell");
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getRowHeader(0)), null, "Returned null: Passed Row Header Cell");
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getCell(0, 0)), null, "Returned null: Passed Data Cell");
-
-		var oActualColumnHeaderInfo = TableUtils.getColumnHeaderCellInfo(getColumnHeader(1));
-		jQuery.sap.log.debug("oActualColumnHeaderInfo", oActualColumnHeaderInfo);
-		assert.strictEqual(oActualColumnHeaderInfo.index, 1, "Correct index information returned");
-		assert.strictEqual(oActualColumnHeaderInfo.span, 1, "Correct span information returned");
-	});
-
 
 	QUnit.module("Cozy", {
 		beforeEach: function() {

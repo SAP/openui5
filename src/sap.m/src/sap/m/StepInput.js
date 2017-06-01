@@ -44,7 +44,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					max: {type: "float", group: "Data"},
 					/**
 					 * Increases/decreases the value of the input.
-					 * <ul><b>Note:</b> <li>The value of the <code>step</code> property should not contain more digits after the decimal point than what is set to the <code>displayValuePrecision</code> property, as it may lead to an increase/decrease that is not visible for the user. For example, if the <code>value</code> is set to 1.22 and the <code>displayValuePrecision</code> is set to one digit after the decimal, the user will see 1.2. In this case, if the the <code>value</code> of the <code>step</code> property is set to 1.005 and the user selects <code>increase</code>, the resulting value will increase to 1.2261 but the displayed value will remain as 1.2 as it will be rounded to the first digit after the decimal point.</li> <li>Depending on what is set for the <code>value</code> and the <code>displayValuePrecision</code> properties, it is possible the displayed value to be rounded to a higher number, for example to 3.0 when the actual value is 2.99.</li></ul>
+					 * <ul><b>Note:</b> <li>The value of the <code>step</code> property should not contain more digits after the decimal point than what is set to the <code>displayValuePrecision</code> property, as it may lead to an increase/decrease that is not visible for the user. For example, if the <code>value</code> is set to 1.22 and the <code>displayValuePrecision</code> is set to one digit after the decimal, the user will see 1.2. In this case, if the <code>value</code> of the <code>step</code> property is set to 1.005 and the user selects <code>increase</code>, the resulting value will increase to 1.2261 but the displayed value will remain as 1.2 as it will be rounded to the first digit after the decimal point.</li> <li>Depending on what is set for the <code>value</code> and the <code>displayValuePrecision</code> properties, it is possible the displayed value to be rounded to a higher number, for example to 3.0 when the actual value is 2.99.</li></ul>
 					 */
 					step: {type: "float", group: "Data", defaultValue: 1},
 					/**
@@ -58,23 +58,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					value: {type: "float", group: "Data", defaultValue: 0},
 					/**
 					 * Defines the name of the control for the purposes of form submission.
+					 * @since 1.44.15
 					 */
 					name: { type: "string", group: "Misc", defaultValue: null },
 					/**
 					 * Defines a short hint intended to aid the user with data entry when the control has no value.
-					 * @since 1.50
+					 * @since 1.44.15
 					 */
 					placeholder: { type: "string", group: "Misc", defaultValue: null },
 					/**
 					 * Indicates that user input is required. This property is only needed for accessibility purposes when a single relationship between
 					 * the field and a label (see aggregation <code>labelFor</code> of <code>sap.m.Label</code>) cannot be established
 					 * (e.g. one label should label multiple fields).
-					 * @since 1.50
+					 * @since 1.44.15
 					 */
 					required : {type : "boolean", group : "Misc", defaultValue : false},
 					/**
 					 * Defines the width of the control.
-					 * @since 1.50
 					 */
 					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
 					/**
@@ -376,7 +376,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Sets a new tooltip for this object.
 		 * @link sap.ui.core.Element#setTooltip
-		 * @param sTooltip {string|sap.ui.core.TooltipBase}
+		 * @param {string|sap.ui.core.TooltipBase} sTooltip
 		 */
 		StepInput.prototype.setTooltip = function (sTooltip) {
 			//We need to call the special logic implemented in InputBase.prototype.setTooltip
@@ -459,7 +459,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Handles the button press.
 		 *
-		 * @params {boolean} isPlusButton Indicates the pressed button either the increment or decrement one
+		 * @param {boolean} isPlusButton Indicates the pressed button either the increment or decrement one
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 * @private
 		 */
@@ -488,9 +488,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Handles whether the increment and decrement buttons should be enabled/disabled based on different situations.
 		 *
-		 * @params {number} value Indicates the value in the input
-		 * @params {number} max Indicates the max
-		 * @params {number} min Indicates the min
+		 * @param {number} value Indicates the value in the input
+		 * @param {number} max Indicates the max
+		 * @param {number} min Indicates the min
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype._disableButtons = function (value, max, min) {
@@ -779,7 +779,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 * Applies change on the visible value but doesn't force the other checks that come with <code>this.setValue</code>.
 		 * Usable for Keyboard Handling when resetting initial value with ESC key.
 		 *
-		 * @param fNewValue
+		 * @param {float} fNewValue
 		 * @private
 		 */
 		StepInput.prototype._applyValue = function (fNewValue) {
@@ -892,7 +892,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Sets the editable property.
 		 *
-		 * @params {boolean} editable - Indicates if the value is editable
+		 * @param {boolean} editable - Indicates if the value is editable
 		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setEditable = function (editable) {
@@ -932,7 +932,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 
 		/**
 		 * <code>liveChange</code> handler.
-		 * @param {oEvent} oEvent Event object
+		 * @param {sap.ui.base.Event} oEvent Event object
 		 * @private
 		 */
 		StepInput.prototype._inputLiveChangeHandler = function (oEvent) {
@@ -942,9 +942,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Returns a default value depending of the given value, min and max properties.
 		 *
-		 * @params {number} value Indicates the value
-		 * @params {number} max Indicates the max
-		 * @params {number} min Indicates the min
+		 * @param {number} value Indicates the value
+		 * @param {number} max Indicates the max
+		 * @param {number} min Indicates the min
 		 * @returns {number} The default value
 		 * @private
 		 */
@@ -966,7 +966,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		/**
 		 * Checks whether the value is a number like (coercion may take place).
 		 *
-		 * @params {variant} val - Holds the value
+		 * @param {variant} val - Holds the value
 		 * @returns {boolean}
 		 * @private
 		 */

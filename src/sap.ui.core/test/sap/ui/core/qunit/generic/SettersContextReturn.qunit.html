@@ -27,6 +27,7 @@
 			// Exclude libraries - we need this to exclude libraries that will not be tested at this point in time
 			aExcludedLibraries = [
 				"sap.ui.core",
+				"sap.ui.export",
 				"sap.ui.ux3",
 				"sap.ui.table",
 				"sap.ui.suite",
@@ -106,7 +107,7 @@
 			/**
 			 * Creates assertions for all setters from classes provided with the <code>aClasses</code> array
 			 * @param aClasses list of classes to be tested
-			 * @param fnAssert QUnit assert
+			 * @param {function} fnAssert QUnit assert
 			 */
 			function assertAllSettersFromList (aClasses, fnAssert) {
 				var iLength = aClasses.length,
@@ -186,7 +187,7 @@
 
 			/**
 			 * Returns libraries object containing all loaded libraries and their controls
-			 * @param aExcludedLibraries {Array} - list of libraries to exclude
+			 * @param {Array} aExcludedLibraries - list of libraries to exclude
 			 * @returns {object} libraries object
 			 */
 			function getLibraries (aExcludedLibraries) {

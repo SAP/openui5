@@ -380,6 +380,34 @@
 				oCalM.destroy();
 			});
 
+			QUnit.test("Remove selectedDate", function(assert) {
+				//Arrange
+				var done = assert.async(),
+						oSelectedDateRange = new sap.ui.unified.DateRange({startDate: new Date()}),
+						oCal = new sap.ui.unified.Calendar("calSelectedDates", {selectedDates: oSelectedDateRange}),
+						oInvalidateMonthSpy = sinon.spy(oCal, "_invalidateMonth");
+
+				oCal.placeAt("uiArea1");
+				//Act
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				var $selectedDates = oCal.$().find(".sapUiCalItems .sapUiCalItemSel");
+				assert.equal($selectedDates.size(), 1, "Initially there should be one selected date");
+
+				//Act
+				oCal.removeSelectedDate(oSelectedDateRange);
+				setTimeout(function() {
+					//Assert
+					assert.equal(oInvalidateMonthSpy.callCount, 1, "oInvalidateMonthSpy should be called once, " +
+							"otherwise the removed selected date will still be shown as selected");
+
+					// clean up
+					oCal.destroy();
+					oInvalidateMonthSpy.restore();
+					done();
+				}, 100);
+			});
 
 			QUnit.module("Interaction");
 
@@ -800,7 +828,7 @@
 
 					if($Focus.length === 0) {
 						oAssert.ok(false, "The focus should be on the browser tab on which this " +
-							"qUnit is executed. If not the test will fail!");
+							"QUnit is executed. If not the test will fail!");
 						fnDone(); // Complete async test
 						return;
 					}

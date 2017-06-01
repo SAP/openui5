@@ -187,7 +187,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Applies the the given map of parameters to this binding's parameters and triggers the
+	 * Applies the given map of parameters to this binding's parameters and triggers the
 	 * creation of a new cache if called with a change reason.
 	 *
 	 * @param {object} [mParameters]

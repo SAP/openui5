@@ -853,7 +853,7 @@
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
 	 *
-	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
+	 * @param {string} sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
 	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
 	 *
 	 * @private
@@ -1720,8 +1720,8 @@
 		 * Activates or deactivates the performance measure functionality
 		 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
 		 * like "javascript", "require", "xmlhttprequest", "render"
-		 * @param {boolean} bOn state of the perfomance measurement functionality to set
-		 * @param {string | string[]}  An optional list of categories that should be measured
+		 * @param {boolean} bOn - state of the perfomance measurement functionality to set
+		 * @param {string | string[]} aCategories - An optional list of categories that should be measured
 		 *
 		 * @return {boolean} current state of the perfomance measurement functionality
 		 * @name jQuery.sap.measure#setActive
@@ -1969,7 +1969,7 @@
 		};
 		/**
 		 * Adds a performance measurement with all data
-		 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
+		 * This is useful to add external measurements (e.g. from a backend) to the common measurement UI
 		 *
 		 * @param {string} sId ID of the measurement
 		 * @param {string} sInfo Info for the measurement
@@ -4035,7 +4035,7 @@
 		 *
 		 * <b>Asynchronous Contract</b><br>
 		 * <code>sap.ui.define</code> is designed to support real Asynchronous Module Definitions (AMD)
-		 * in future, although it internally still uses the the old synchronous module loading of UI5.
+		 * in future, although it internally still uses the old synchronous module loading of UI5.
 		 * Callers of <code>sap.ui.define</code> therefore must not rely on any synchronous behavior
 		 * that they might observe with the current implementation.
 		 *

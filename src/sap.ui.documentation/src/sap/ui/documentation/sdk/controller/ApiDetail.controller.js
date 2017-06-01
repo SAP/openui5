@@ -9,10 +9,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
-		"sap/ui/documentation/sdk/util/ObjectSearch",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/uxap/ObjectPageSubSection"
-	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ObjectSearch, ToggleFullScreenHandler, ObjectPageSubSection) {
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -47,7 +46,8 @@ sap.ui.define([
 				"int",
 				"boolean",
 				"string",
-				"string[]"
+				"string[]",
+				"number"
 			],
 
 			/* =========================================================== */
@@ -70,19 +70,23 @@ sap.ui.define([
 				this.setModel(new JSONModel(), 'methods');
 				this.setModel(new JSONModel(), 'events');
 				this.setModel(new JSONModel(), "entity");
-			},
+				this.setModel(new JSONModel(), "borrowedMethods");
+				this.setModel(new JSONModel(), "borrowedEvents");
 
-			onBeforeRendering: function() {
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				this.getView().byId("apiDetailObjectPage").attachEvent("onAfterRenderingDOMReady", function () {
+					jQuery.sap.delayedCall(250, this, function () {
+						this._scrollToEntity(this._sEntityType, this._sEntityId);
+					});
+				}, this);
 			},
 
 			onAfterRendering: function() {
-				Device.orientation.attachHandler(jQuery.proxy(this._fnOrientationChange, this));
+				this._createMethodsSummary();
+				this._createEventsSummary();
 			},
 
 			onExit: function() {
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
-				Device.orientation.detachHandler(jQuery.proxy(this._fnOrientationChange, this));
 			},
 
 			onJSDocLinkClick: function (oEvt) {
@@ -119,26 +123,42 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
+				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
+
 				this._sTopicid = oEvent.getParameter("arguments").id;
-				this._bindData(this._sTopicid);
-				this._createMethodsSummary();
-				this._createEventsSummary();
-				this._bindEntityData();
+				this._sEntityType = oEvent.getParameter("arguments").entityType;
+				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
-				this._scrollContentToTop();
-				this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
 
-				if (this.extHookonTopicMatched) {
-					this.extHookonTopicMatched(this._sTopicid);
-				}
+					oApiDetailObjectPage._suppressLayoutCalculations();
+					this._bindData(this._sTopicid);
+					this._bindEntityData(this._sTopicid);
+					this._createMethodsSummary();
+					this._createEventsSummary();
+					oApiDetailObjectPage._resumeLayoutCalculations();
+
+					if (this._sEntityType) {
+						this._scrollToEntity(this._sEntityType, this._sEntityId);
+					} else {
+						this._scrollContentToTop();
+					}
+
+					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+
+				}.bind(this));
+
 			},
 
 			_createMethodsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-methodsSummary", "sap.ui.documentation.sdk.view.ApiDetailMethodsSummary", this);
 				var oSection = this.getView().byId("methods");
-				if (oSection.getSubSections().length > 0) {
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
 					return;
 				}
+
 				oSection.insertSubSection(new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
@@ -150,9 +170,12 @@ sap.ui.define([
 			_createEventsSummary: function () {
 				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-eventsSummary", "sap.ui.documentation.sdk.view.ApiDetailEventsSummary", this);
 				var oSection = this.getView().byId("events");
-				if (oSection.getSubSections().length > 0) {
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
 					return;
 				}
+
 				oSection.insertSubSection(new ObjectPageSubSection({
 					title: "Summary",
 					blocks: [
@@ -173,7 +196,12 @@ sap.ui.define([
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
 
-				var aSubSections = this.getView().byId(sSectionId).getSubSections();
+				var oSection = this.getView().byId(sSectionId);
+				if (!oSection) {
+					return;
+				}
+
+				var aSubSections = oSection.getSubSections();
 				var aFilteredSubSections = aSubSections.filter(function (oSubSection) {
 					return oSubSection.getTitle() === sSubSectionTitle;
 				});
@@ -193,7 +221,7 @@ sap.ui.define([
 			 * Callback function, executed once the <code>ControlsInfo</code> is loaded.
 			 */
 			_onControlsInfoLoaded : function () {
-				this._bindEntityData();
+				this._bindEntityData(this._sTopicid);
 			},
 
 			/**
@@ -205,22 +233,14 @@ sap.ui.define([
 			 * After that, the method is called in <code>_onTopicMatched</code>,
 			 * whenever a different topic has been selected.
 			 */
-			_bindEntityData : function () {
+			_bindEntityData : function (sTopicId) {
 				if (!ControlsInfo || !ControlsInfo.data) {
 					return;
 				}
 
-				var oLibData = {
-					entityCount : ControlsInfo.data.entityCount,
-					entities : ControlsInfo.data.entities
-				}, oEntityModelData = this._getEntityData(oLibData);
+				var oEntityData = this._getEntityData(sTopicId);
 
-				if (!this._oEntityModel) {
-					this._oEntityModel = new JSONModel();
-					this.getModel("entity").setData(this._oEntityModel, false /* no merge with previous data */);
-				}
-
-				this._oEntityModel.setData(oEntityModelData);
+				this.getModel("entity").setData(oEntityData, false);
 			},
 
 			_bindData : function (sTopicId) {
@@ -233,10 +253,6 @@ sap.ui.define([
 					oEventsModel = {events: []},
 					oUi5Metadata;
 
-				if (!oControlData && !aControlChildren) {
-					jQuery.sap.delayedCall(250, this, this._bindData, [sTopicId]);
-					return;
-				}
 
 				if (aControlChildren) {
 					if (!oControlData) {
@@ -298,6 +314,12 @@ sap.ui.define([
 					oControlData.hasSpecialSettings = false;
 				}
 
+				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
+					oControlData.hasAnnotations = true;
+				} else {
+					oControlData.hasAnnotations = false;
+				}
+
 				if (oControlData.hasMethods) {
 					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
 				}
@@ -306,16 +328,35 @@ sap.ui.define([
 					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
 
+				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData);
+
+				if (oControlData.implements && oControlData.implements.length) {
+					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
+						var aDisplayNameArr = item.split("."),
+							sDisplayName = aDisplayNameArr[aDisplayNameArr.length - 1];
+						return {
+							href: item,
+							name: sDisplayName,
+							isLast: idx === array.length - 1
+						};
+					});
+					oControlData.hasImplementsData = true;
+				} else {
+					oControlData.hasImplementsData = false;
+				}
+
 				oControlData.isClass = oControlData.kind === "class";
 				oControlData.isDerived = !!oControlData.extends;
-				oControlData.extends = oControlData.extends || this.NOT_AVAILABLE;
-				oControlData.since = oControlData.since || this.NOT_AVAILABLE;
+				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
+				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
 
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
 				this.getModel('methods').setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
 				this.getModel('events').setDefaultBindingMode("OneWay");
+				this.getModel('borrowedMethods').setData(oControlData.borrowed.methods, false);
+				this.getModel('borrowedEvents').setData(oControlData.borrowed.events, false);
 
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
@@ -342,10 +383,13 @@ sap.ui.define([
 			 * @param {Object} oLibData
 			 * @return {Object}
 			 */
-			_getEntityData: function (oLibData) {
-				var sEntityName = this._sTopicid,
-					oEntity = ObjectSearch.getEntityById(oLibData, sEntityName),
-					sAppComponent = this._getControlComponent(sEntityName);
+			_getEntityData: function (sEntityName) {
+				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+					return entity.id === sEntityName;
+				});
+				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
+
+				var sAppComponent = this._getControlComponent(sEntityName);
 
 				return {
 					appComponent: sAppComponent || this.NOT_AVAILABLE,
@@ -354,15 +398,6 @@ sap.ui.define([
 				};
 			},
 
-			_fnOrientationChange: function(e) {
-				var page = this.getView().byId("apiDetailPage");
-
-				if (e.landscape) {
-					page.setShowHeader(false);
-				} else {
-					page.setShowHeader(true);
-				}
-			},
 			/**
 			 * Adjusts methods info so that it can be easily displayed in a table
 			 * @param methods - the methods array initially coming from the server
@@ -378,10 +413,12 @@ sap.ui.define([
 				var result = methods.filter(function (method) {
 					return true; //method.visibility === "public";
 				}).map(function (method) {
+					var subParameters = [];
 					method.parameters = method.parameters || [];
 
 					// Handle multiple values
 					method.parameters = method.parameters.map(function (param) {
+						var paramProperties, paramTypes;
 						var types = (param.type || "").split("|");
 						param.types = [];
 						for (var i = 0; i < types.length; i++) {
@@ -390,6 +427,24 @@ sap.ui.define([
 								isLast: i === types.length - 1
 							});
 						}
+
+						if (param.parameterProperties) {
+							paramProperties = param.parameterProperties;
+							for (var prop in paramProperties) {
+								paramTypes = (paramProperties[prop].type || "").split("|");
+								paramProperties[prop].types = [];
+								paramProperties[prop].types = paramTypes.map(function (currentType, idx, array) {
+									return {
+										value: currentType,
+										isLast: idx === array.length - 1
+									};
+								});
+								paramProperties[prop].isSubProperty = true;
+								paramProperties[prop].phoneName = param.name + '.' + paramProperties[prop].name;
+								subParameters.push(paramProperties[prop]);
+							}
+						}
+
 						return param;
 					});
 
@@ -405,6 +460,8 @@ sap.ui.define([
 						}
 					}
 
+					method.parameters = method.parameters.concat(subParameters);
+
 					return method;
 
 				});
@@ -413,6 +470,65 @@ sap.ui.define([
 				result.unshift({});
 
 				return result;
+			},
+
+			buildBorrowedModel: function(sTopicId, aLibsData) {
+				var aBaseClassMethods,
+					aBaseClassEvents,
+					sBaseClass,
+					aBorrowChain,
+					oBaseClass;
+
+				aBorrowChain = {
+					methods: [],
+					events: []
+				};
+				sBaseClass = aLibsData[sTopicId].extends;
+
+				var fnVisibilityFilter = function (item) {
+					return item.visibility === "public";
+				};
+
+				var fnMethodsMapper = function (item) {
+					return {
+						name: item.name,
+						link: "#/api/" + sBaseClass + "/methods/" + item.name
+					};
+				};
+
+				var fnEventsMapper = function (item) {
+					return {
+						name: item.name,
+						link: "#/api/" + sBaseClass + "/events/" + item.name
+					};
+				};
+
+				while (sBaseClass) {
+					oBaseClass = aLibsData[sBaseClass];
+					if (!oBaseClass) {
+						break;
+					}
+
+					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter).map(fnMethodsMapper);
+					if (aBaseClassMethods.length) {
+						aBorrowChain.methods.push({
+							name: sBaseClass,
+							methods: aBaseClassMethods
+						});
+					}
+
+					aBaseClassEvents = (oBaseClass.events || []).filter(fnVisibilityFilter).map(fnEventsMapper);
+					if (aBaseClassEvents.length) {
+						aBorrowChain.events.push({
+							name: sBaseClass,
+							events: aBaseClassEvents
+						});
+					}
+
+					sBaseClass = oBaseClass.extends;
+				}
+
+				return aBorrowChain;
 			},
 
 			/**
@@ -430,14 +546,32 @@ sap.ui.define([
 				// Transform the key-value pairs of event parameters into an array
 				var result = events.map(function (event) {
 					if (event.parameters) {
-						var aParameters = [];
+						var aParameters = [], currentParam, subParam, subSubParam;
 						for (var i in event.parameters) {
 							if (event.parameters.hasOwnProperty(i)) {
-								aParameters.push(event.parameters[i]);
+								currentParam = event.parameters[i];
+								aParameters.push(currentParam);
+								if (currentParam.parameterProperties) {
+									for (var j in currentParam.parameterProperties) {
+										subParam = currentParam.parameterProperties[j];
+										subParam.isSubProperty = true;
+										subParam.phoneName = currentParam.name + '.' + subParam.name;
+										aParameters.push(subParam);
+										if (subParam.parameterProperties) {
+											for (var k in subParam.parameterProperties) {
+												subSubParam = subParam.parameterProperties[k];
+												subSubParam.isSubSubProperty = true;
+												subSubParam.phoneName = currentParam.name + '.' + subParam.name + '.' + subSubParam.name;
+												aParameters.push(subSubParam);
+											}
+										}
+									}
+								}
 							}
 						}
 						event.parameters = aParameters;
 					}
+
 					return event;
 				});
 
@@ -548,14 +682,25 @@ sap.ui.define([
 			},
 
 			/**
+			 * Formats the name of a property or a method depending on if it's static or not
+			 * @param sName {string} - Name
+			 * @param sClassName {string} - Name of the class
+			 * @param bStatic {boolean} - If it's static
+			 * @returns {string} - Formatted name
+			 */
+			formatEntityName: function (sName, sClassName, bStatic) {
+				return (bStatic === true) ? sClassName + "." + sName : sName;
+			},
+
+			/**
 			 * Formats the description of the property
 			 * @param description - the description of the property
 			 * @param deprecatedText - the text explaining this property is deprecated
 			 * @param deprecatedSince - the verstion when this property was deprecated
-			 * @remturns string - the formatted description
+			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
-				var result = description;
+				var result = description || "";
 
 				if (deprecatedSince || deprecatedText) {
 					result += "<span class=\"sapUiDocumentationDeprecated\">";
@@ -573,6 +718,45 @@ sap.ui.define([
 					}
 
 					result += "</span>";
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of events and methods in details
+			 * @param description - the description of the event/method
+			 * @param visibility - the visibility of the event/method
+			 * @param since - the since version information of the event/method
+			 * @returns string - the formatted description
+			 */
+			formatDescriptionDetails: function (description, visibility, since) {
+				var result = description || "";
+
+				if (visibility) {
+					result += '<br/><br/><i>Visibility: ' + visibility + '.</i>';
+				}
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of control properties
+			 * @param description - the description of the property
+			 * @param since - the since version information of the property
+			 * @returns string - the formatted description
+			 */
+			formatDescriptionSince: function (description, since) {
+				var result = description || "";
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
 				}
 
 				result = this._wrapInSpanTag(result);
@@ -632,19 +816,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Helper function retrieving method name
-			 * @param methodInfo - object containing information about the method or the method parameter
-			 * @returns {string} - the name of the method or empty string
-			 */
-			formatMethodsName: function (methodInfo) {
-
-					return methodInfo ? methodInfo.name : "";
-
-
-
-			},
-
-			/**
 			 * Helper function retrieving method parameter name
 			 * @param methodInfo - object containing information about the method or the method parameter
 			 * @returns {string} - the name of the parameter or empty string
@@ -678,6 +849,28 @@ sap.ui.define([
 				return this._baseTypes.indexOf(sEventText) === -1;
 			},
 
+			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
+				if (bPhoneSize && (isSubProperty || isSubSubProperty)) {
+					return "sapUiDocumentationParamPhone";
+				} else if (isSubSubProperty) {
+					return "sapUiDocumentationParamSubSub";
+				} else if (isSubProperty) {
+					return "sapUiDocumentationParamSub";
+				} else {
+					return "sapUiDocumentationParamBold";
+				}
+			},
+
+			formatMethodClassName: function (isSubProperty, bPhoneSize) {
+				if (bPhoneSize && isSubProperty) {
+					return "sapUiDocumentationParamPhone";
+				} else if (isSubProperty) {
+					return "sapUiDocumentationParamSub";
+				} else {
+					return "sapUiDocumentationParamBold";
+				}
+			},
+
 			/**
 			 * Event handler when a link pointing to a non-base type is pressed
 			 * @param e
@@ -686,6 +879,10 @@ sap.ui.define([
 				var type = e.getSource().getText();
 				type = type.replace('[]', ''); // remove array brackets before navigation
 				this.getRouter().navTo("apiId", {id: type}, true);
+			},
+
+			onAnnotationsLinkPress: function (oEvent) {
+				// scroll to Annotations section here
 			},
 
 			backToSearch: function () {

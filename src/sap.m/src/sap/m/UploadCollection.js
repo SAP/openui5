@@ -1500,7 +1500,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 	/**
 	 * @description Renders fileName, attributes, statuses and buttons(except for IE9) into the oContainer. Later it should be moved to the UploadCollectionItemRenderer.
-	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
+	 * @param {sap.m.UploadCollectionItem} oItem Base information to generate the list items
 	 * @param {string} sContainerId ID of the container where the content will be rendered to
 	 * @param {object} that Context
 	 * @private
@@ -1570,7 +1570,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 	/**
 	 * @description Renders buttons of the item in scope.
 	 * @param {object} oRm Render manager
-	 * @param {sap.ui.core.Item} oItem Item in scope
+	 * @param {sap.m.UploadCollectionItem} oItem Item in scope
 	 * @param {string} sStatus Internal status of the item in scope
 	 * @param {string} sItemId ID of the container where the content will be rendered to
 	 * @param {object} that Context
@@ -1598,7 +1598,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 	/**
 	 * @description Gets a file name which is an sap.m.Link in display mode and an sap.m.Input with a description (file extension) in edit mode
-	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
+	 * @param {sap.m.UploadCollectionItem} oItem Base information to generate the list items
 	 * @param {object} that Context
 	 * @return {sap.m.Link | sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
 	 * @private
@@ -1665,8 +1665,8 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 	/**
 	 * @description Creates a label for upload progress
-	 * @param {string} sItemId ID of the item being processed
-	 * @param {string} sPercentUploaded per cent having been uploaded
+	 * @param {sap.m.UploadCollectionItem} oItem The item being processed
+	 * @param {string} sPercentUploaded The percentage to be shown in the label
 	 * @return {sap.m.Label} oProgressLabel
 	 * @private
 	 */
@@ -1684,7 +1684,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 	/**
 	 * @description Creates an icon or image
-	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
+	 * @param {sap.m.UploadCollectionItem} oItem Base information to generate the list items
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {string} sFileNameLong file name
 	 * @param {object} that Context
@@ -1735,7 +1735,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 	/**
 	 * @description Gets Edit and Delete Buttons
-	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
+	 * @param {sap.m.UploadCollectionItem} oItem Base information to generate the list items
 	 * @param {string} sStatus status of the item: edit, display, uploading
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {object} that Context
@@ -2602,7 +2602,9 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		var sFileName = oEvent.getParameter("fileName");
 		var cItems = this.aItems.length;
 		for (i = 0; i < cItems ; i++) {
-			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
+			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName
+					&& this.aItems[i]._requestIdName === sRequestId
+					&& (this.aItems[i]._status === UploadCollection._uploadingStatus || this.aItems[i]._status === UploadCollection._toBeDeletedStatus)) {
 				this.aItems.splice(i, 1);
 				this.removeItem(i);
 				break;
@@ -3237,8 +3239,8 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 	/**
 	 * @description Helper function for ASCII encoding within header parameters
-	 * @param {string}
-	 * @returns {string}
+	 * @param {string} value The input value that will be encoded
+	 * @returns {string} The string that is encoded
 	 * @private
 	 */
 	UploadCollection.prototype._encodeToAscii = function (value) {

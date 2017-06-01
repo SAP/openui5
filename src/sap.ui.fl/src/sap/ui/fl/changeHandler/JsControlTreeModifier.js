@@ -46,7 +46,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			 * Unbind a property
 			 * The value should not be reset to default when unbinding (bSuppressReset = true)
 			 * @param  {sap.ui.core.Control} oControl  The control containing the property
-			 * @param  {String} sPropertyName  The property to be unbound
+			 * @param  {string} sPropertyName  The property to be unbound
 			 */
 			unbindProperty: function (oControl, sPropertyName) {
 				if (oControl) {
@@ -91,7 +91,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 
 			/** SUBSTITUTION UNTIL SmartForm has adopted to the bySelector
 			 *
-			 * @param sId
+			 * @param {sap.ui.core.ID} sId
 			 * @returns {*|Node}
 			 */
 			byId: function (sId) {
@@ -101,8 +101,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			/**
 			 * Returns the control for the given id. Undefined if control cannot be found.
 			 *
-			 * @param {string} sId control id
-			 * @returns {sap.ui.core.Control} Control
+			 * @param {sap.ui.core.ID} sId Control id
+			 * @returns {sap.ui.core.Element} Control
 			 * @private
 			 */
 			_byId: function (sId) {
@@ -180,7 +180,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			 * Removes the object from the aggregation of the given control
 			 *
 			 * @param {sap.ui.core.Control}
-			 *          oParent - the control for which the changes should be fetched
+			 *          oControl - the parent control for which the changes should be fetched
 			 * @param {string}
 			 *          sName - aggregation name
 			 * @param {object}

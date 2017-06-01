@@ -82,7 +82,7 @@ sap.ui.define([
 				this.bDataAvailable = true;
 			}	else {
 				// call getLength when metadata is already loaded or don't do anything
-				// if the the metadata gets loaded it will call a refresh on all bindings
+				// if the metadata gets loaded it will call a refresh on all bindings
 				if (this.oModel.getServiceMetadata()) {
 					this.resetData();
 				}

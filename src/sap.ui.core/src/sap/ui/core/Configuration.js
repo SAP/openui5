@@ -840,7 +840,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * <b>Note</b>: When a format locale is set, it has higher priority than a number,
 		 * date or time format defined with a call to <code>setLegacyNumberFormat</code>,
-		 * <code>setLegacyDateFormat</code> or <code>setLegacyTimeFormat<code>.
+		 * <code>setLegacyDateFormat</code> or <code>setLegacyTimeFormat</code>.
 		 *
 		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
 		 *

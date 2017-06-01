@@ -100,7 +100,6 @@ sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', '
 	 * "as is", or an arbitrary content control, which is wrapped with a new
 	 * (default) matrix layout cell first and then added to the row.
 	 *
-	 * @param {sap.ui.core.Control|sap.ui.commons.layout.MatrixLayoutCell|string} rowContent to add
 	 * @return {sap.ui.commons.layout.MatrixLayout} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

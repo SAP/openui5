@@ -1,4 +1,4 @@
-<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="fragments">
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
     <m:VBox>
         <FragmentProxy ref="{$this>textToggleButton}"/>
         <m:Button text="Refresh" press="onPressRefresh"/>

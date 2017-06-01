@@ -333,9 +333,24 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @since 1.48
 		 */
 		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, sValue) {
-			var sTextReplacement = "<b>" + sItemText.slice(0, sValue.length) + "</b>";
+			var sResult;
 
-			return sItemText.replace(oRegex, sTextReplacement);
+			var sTextReplacement = "<b>" + jQuery.sap.encodeHTML(sItemText.slice(0, sValue.length)) + "</b>";
+
+			// parts should always be max of two because regex is not defined as global
+			// see above method
+			var aParts = sItemText.split(oRegex);
+
+			if (aParts.length === 1) {
+				// no match found, return value as it is
+				sResult = jQuery.sap.encodeHTML(sItemText);
+			} else {
+				sResult = aParts.map(function (sPart) {
+					return jQuery.sap.encodeHTML(sPart);
+				}).join(sTextReplacement);
+			}
+
+			return sResult;
 		};
 
 		/**
@@ -695,8 +710,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onItemPress = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("item");
+			var sText = oItem.getText();
 
-			this.updateDomValue(oItem.getText());
+			this.updateDomValue(sText);
 
 			this.close();
 
@@ -1623,11 +1639,21 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
-			var bDefaultKey = (sKey === "");
+			var bDefaultKey = (sKey === ""),
+				// the correct solution for tackling the coupling of selectedKey and value should be by using debounce
+				// however this makes the API async, which alters the existing behaviour of the control
+				// that's why the solution is implemented with skipModelUpdate property
+				bSkipModelUpdate = this.mBindingInfos["selectedKey"] && this.mBindingInfos["selectedKey"].skipModelUpdate;
 
 			if (bDefaultKey) {
 				this.setSelection(null);
-				this.setValue("");
+
+				// if the setSelectedKey in called from ManagedObject's updateProperty
+				// on model change the value property should not be changed
+				if (!bSkipModelUpdate) {
+					this.setValue("");
+				}
+
 				return this;
 			}
 
@@ -1635,7 +1661,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oItem) {
 				this.setSelection(oItem);
-				this.setValue(this._getSelectedItemText(oItem));
+
+				// if the setSelectedKey in called from ManagedObject's updateProperty
+				// on model change the value property should not be changed
+				if (!bSkipModelUpdate) {
+					this.setValue(this._getSelectedItemText(oItem));
+				}
+
 				return this;
 			}
 

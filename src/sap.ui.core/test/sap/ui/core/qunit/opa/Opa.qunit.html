@@ -3,7 +3,7 @@
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>qUnit Page for sap.ui.test.Opa</title>
+<title>QUnit Page for sap.ui.test.Opa</title>
 
 <script src="../../shared-config.js"></script>
 <script src="../../../../../../resources/sap-ui-core.js"
@@ -283,27 +283,23 @@ sap.ui.require([
 
 	QUnit.module("Exception Handling");
 
-	QUnit.test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
+	QUnit.test("Should reject the emptyQueue promise if there is an error in the check or success", function(assert) {
 
 		var oError = new Error("OpaError"),
 			fnFaultyFunction = function() {
 				throw oError;
 			},
-			fnClockTick = function() {
-				this.clock.tick(100);
-			}.bind(this),
 			oOpa = new Opa(),
 			oOpa1 = new Opa(),
 			fnSpy = this.spy();
 
 		oOpa.waitFor({check : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		assert.throws(fnClockTick, oError, "Exception thrown for check");
-
 		this.clock.tick(100);
-
 		oOpa1.waitFor({success : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		assert.throws(fnClockTick, oError, "Exception thrown for success");
-		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases")
+		this.clock.tick(100);
+		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases");
+		assert.ok(fnSpy.args[0][0].errorMessage.match("^Failure in Opa check function\n"), "Unexpected error message");
+		assert.ok(fnSpy.args[1][0].errorMessage.match("^Failure in Opa success function\n"), "Unexpected error message");
 	});
 
 
@@ -313,14 +309,11 @@ sap.ui.require([
 			fnFaultyFunction = function() {
 				throw oError;
 			},
-			fnClockTick = function() {
-				this.clock.tick(100);
-			}.bind(this),
 			oOpa = new Opa(),
 			fnCheck = this.spy( function() {
 				return false;
 			}),
-			fnSuccess = this.spy();
+			fnFail = this.spy();
 
 		oOpa.waitFor({
 			check : fnFaultyFunction
@@ -329,17 +322,51 @@ sap.ui.require([
 			check : fnCheck
 		});
 
-		oOpa.emptyQueue();
-
-		assert.throws(fnClockTick, oError, "Exception thrown for check");
-		oOpa.emptyQueue().done(fnSuccess);
-
+		oOpa.emptyQueue().fail(fnFail);
 		this.clock.tick(100);
-		assert.strictEqual(fnSuccess.callCount, 1, "Called success");
+		var errorMessage = fnFail.args[0][0].errorMessage;
+		assert.strictEqual(fnFail.callCount, 1, "Called error handler");
+		assert.ok(errorMessage.match("^Failure in Opa check function\n"), "Unexpected error message");
+		assert.ok(errorMessage.match("Exception thrown by the testcode"), "Unexpected error message");
+		assert.ok(errorMessage.match("Error: OpaError"), "Unexpected error message");
 		assert.strictEqual(fnCheck.callCount, 0, "Never called check since the previous wait for threw an exception");
 
 	});
 
+	QUnit.test("Should be able to handle a waitFor error and reject the empty queue", function (assert) {
+		var oOpa = new Opa(),
+			fnSuccess = this.spy(),
+			fnEmptyQueueFail = this.spy(),
+			fnWaitForFail = this.spy(),
+			// enqueue the waitFors first
+			oFailingWaitFor = oOpa.waitFor({
+				success: function() {
+					throw new Error("OpaError");
+				}
+			});
+
+		oOpa.waitFor({
+			success: fnSuccess
+		});
+
+		// then attach a handler to one of the waitFors.
+		// the handler works ok if it is attached before another waitFor is enqueued, but we need to be able to attach it at any point
+		oFailingWaitFor.fail(fnWaitForFail);
+
+		oOpa.emptyQueue().fail(fnEmptyQueueFail);
+		this.clock.tick(100);
+		assert.strictEqual(fnWaitForFail.callCount, 1, "Should call waitFor error handler");
+		assert.strictEqual(fnEmptyQueueFail.callCount, 1, "Should call emptyQueue error handler");
+		assert.ok(fnWaitForFail.calledBefore(fnEmptyQueueFail), "Should call waitFor error handler before emptyQueue error handler");
+
+		[fnWaitForFail, fnEmptyQueueFail].forEach(function (fnSpy) {
+			var errorMessage = fnSpy.args[0][0].errorMessage;
+			assert.ok(errorMessage.match("^Failure in Opa success function\n"), "Unexpected error message");
+			assert.ok(errorMessage.match("Exception thrown by the testcode"), "Unexpected error message");
+			assert.ok(errorMessage.match("Error: OpaError"), "Unexpected error message");
+		});
+		assert.strictEqual(fnSuccess.callCount, 0, "Should never call the second success since the previous waitFor threw an exception");
+	});
 
 	QUnit.module("StopQueue", {
 		beforeEach : function () {

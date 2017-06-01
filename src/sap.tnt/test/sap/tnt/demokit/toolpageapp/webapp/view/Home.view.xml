@@ -27,8 +27,8 @@
 				<l:BlockLayoutCell
 					class="sapUiResponsiveContentPadding sapUiSmallMarginBegin"
 					title="{i18n>shopAdminTitle}"
-					backgroundColorSet="9"
-					backgroundColorIndex="2"
+					backgroundColorSet="ColorSet9"
+					backgroundColorShade="ShadeB"
 					titleAlignment="Left"/>
 			</l:BlockLayoutRow>
 
@@ -123,8 +123,8 @@
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 					class="sapUiNoContentPadding"
-					backgroundColorSet="9"
-					backgroundColorIndex="2"
+					backgroundColorSet="ColorSet9"
+					backgroundColorShade="ShadeB"
 					width="3">
 					<Table
 						items="{path:'customer>/customers', templateShareable: false}"

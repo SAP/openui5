@@ -5,7 +5,7 @@ setBlanketFilters("sap/ui/core/FragmentControl.js");
 
 /**
  * setBlanketFilters
- * @param sFilters comma separated strings to filter the paths for blanket
+ * @param {string} sFilters comma separated strings to filter the paths for blanket
  */
 function setBlanketFilters(sFilters) {
 	if (top === window) { //only in local environment
@@ -616,7 +616,7 @@ sap.ui.require([
 		}).placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-        assert.ok(fnInitialTemplatingSpy.calledOnce);
+		assert.ok(fnInitialTemplatingSpy.calledOnce);
 
 		var oView = oComponentContainer.getComponentInstance().getRootControl();
 		var oFragmentControl = oView.byId("IDLabelButtonTemplate");

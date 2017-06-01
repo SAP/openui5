@@ -161,6 +161,7 @@
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" />
         <exclude name="sap/ui/thirdparty/jszip.js" />
         <exclude name="sap/ui/thirdparty/punycode.js" />
+        <exclude name="sap/ui/thirdparty/qunit-2.js" />
         <exclude name="sap/ui/thirdparty/qunit.js" />
         <exclude name="sap/ui/thirdparty/qunit-composite.js" />
         <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />

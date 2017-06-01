@@ -19,7 +19,7 @@
 							class="sapUiHideOnPhone"
 							visible="{=!${device>/system/phone}}"
 							icon="sap-icon://full-screen"
-							tooltip="{i18n>sampleFullScreenTooltip}"
+							tooltip="Show this sample in full screen mode"
 							press="onToggleFullScreen" />
 				</actions>
 			</ObjectPageHeader>
@@ -28,6 +28,17 @@
 		<headerContent>
 			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
 				<l:VerticalLayout class="sapUiLargeMarginEnd" width="100%">
+					<m:ObjectAttribute
+							class="sapUiTinyMarginBottom"
+							title="API Reference"
+							text="{/name}"
+							active="true"
+							press="onAPIRefPress" >
+						<m:customData>
+							<core:CustomData key="name" value="{/name}" />
+						</m:customData>
+					</m:ObjectAttribute>
+
 					<m:ObjectAttribute
 							class="sapUiTinyMarginBottom"
 							title="Inherited from"
@@ -40,26 +51,15 @@
 					</m:ObjectAttribute>
 
 					<m:ObjectAttribute
-							class="sapUiTinyMarginBottom"
 							title="Application Component"
 							text="{/appComponent}" />
-
-					<m:ObjectAttribute
-							title="Available since"
-							text="{/entity/since}" />
 				</l:VerticalLayout>
 
 				<l:VerticalLayout class="sapUiLargeMarginLeft" width="100%">
 					<m:ObjectAttribute
 							class="sapUiTinyMarginBottom"
-							title="API Reference"
-							text="{/name}"
-							active="true"
-							press="onAPIRefPress" >
-						<m:customData>
-							<core:CustomData key="name" value="{/name}" />
-						</m:customData>
-					</m:ObjectAttribute>
+							title="Available since"
+							text="{/entity/since}" />
 
 					<m:ObjectAttribute
 							class="sapUiTinyMarginBottom"

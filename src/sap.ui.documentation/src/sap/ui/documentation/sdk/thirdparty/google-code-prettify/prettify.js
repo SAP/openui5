@@ -1475,10 +1475,10 @@ var prettyPrint;
 
   /**
    * Pretty print a chunk of code.
-   * @param sourceCodeHtml {string} The HTML to pretty print.
-   * @param opt_langExtension {string} The language name to use.
+   * @param {string} sourceCodeHtml The HTML to pretty print.
+   * @param {string} opt_langExtension The language name to use.
    *     Typically, a filename extension like 'cpp' or 'java'.
-   * @param opt_numberLines {number|boolean} True to number lines,
+   * @param {number|boolean} opt_numberLines True to number lines,
    *     or the 1-indexed number of the first line in sourceCodeHtml.
    */
   function $prettyPrintOne(sourceCodeHtml, opt_langExtension, opt_numberLines) {

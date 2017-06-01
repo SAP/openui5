@@ -1,4 +1,5 @@
 <mvc:View
+	id="productView"
 	controllerName="sap.ui.demo.cart.controller.Product"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -45,7 +46,7 @@
 						title="{i18n>productMeasuresAttributeText}"
 						text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
 				</attributes>
-				<firstStatus>
+				<statuses>
 					<ObjectStatus
 						text="{
 							path : 'Status',
@@ -55,19 +56,21 @@
 							path : 'Status',
 							formatter : '.formatter.statusState'
 						}" />
-				</firstStatus>
+				</statuses>
 			</ObjectHeader>
-			<VBox alignItems="Center">
-				<Image
-					id = "productImage"
-					src= "{
+			<VBox
+				alignItems="Center"
+				renderType="Div">
+					<Image
+						id = "productImage"
+						src= "{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
 						}"
-					decorative="true"
-					class="sapUiSmallMargin"
-					press="onPicturePress"
-					width="100%"
+						decorative="true"
+						class="sapUiSmallMargin"
+						press="onPicturePress"
+						width="100%"
 					/>
 			</VBox>
 		</content>

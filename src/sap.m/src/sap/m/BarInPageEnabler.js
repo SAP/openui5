@@ -32,8 +32,8 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 	/**
 	 * Creates (if not already created) and returns an invisible text element for screan reader support
-	 * @param sType - the type of the control we want to get a label for
-	 * @param sText - the text to be used
+	 * @param {string} sType - the type of the control we want to get a label for
+	 * @param {string} sText - the text to be used
 	 * @private
 	 */
 	var _ensureInvisibleText = function(sType, sText) {
@@ -67,7 +67,7 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 		/**
 		 * Sets the HTML tag of the root element.
-		 * @param {string} sTag
+		 * @param {string} sNewTag
 		 * @returns {sap.m.IBar} this for chaining
 		 * @protected
 		 */
@@ -154,8 +154,8 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		/**
 		 * Sets landmarks members to the bar instance
 		 *
-		 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
-		 * @param sContext {string} context of the bar
+		 * @param {boolean} bHasLandmarkInfo indicates that bar has landmarkinfo
+		 * @param {string} sContext context of the bar
 		 * @private
 		 */
 		_setLandmarkInfo: function (bHasLandmarkInfo, sContext) {

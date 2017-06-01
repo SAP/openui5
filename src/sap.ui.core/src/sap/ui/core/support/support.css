@@ -3,10 +3,9 @@
 /* ============================================= */
 
 .sapUiSupportBody {
-	/*background-color: #F2F2F2;*/
 	color: #000000;
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 12px;
+	font-size: 14px;
 	margin: 0;
 	padding: 0;
 	height: 100%;
@@ -19,28 +18,90 @@
 }
 
 .sapUiSupportHdr {
-	position: relative;
-	border-top: 2px solid #009de0;
-	border-bottom: 1px solid #009de0;
-	background-color:#f5f5f5;
-	height: 30px;
-	margin: 0;
+	background-color: rgb(47, 60, 72);
+	color: rgb(202, 228, 251);
+	font-weight: normal;
 }
 
-.sapUiSupportHdr > img {
-	position: absolute;
-	left: 10px;
-	height: 29px;
-	display: none;
+button.sapUiSupportRoundedButton {
+
+	border-radius: 3px;
+	border: 1px solid;
+	text-align: center;
+	font-size: 14px;
+	padding: 0.25rem 0.5rem;
+	margin: 2px 0;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: content-box;
+	background-color: #ffffff;
+	border-color: #bfbfbf;
+	color: #346187;
+}
+
+.sapUiSupportExportButton {
+	margin-top: 5px;
+	width: 180px;
+}
+
+button.sapUiSupportHelpButton {
+	text-align: center;
+	padding: 0.25rem 0.5rem;
+	margin: 0 0.25rem;	font-family: "SAP-icons";
+	font-size: 17px;
+	border: none;
+	background-color: rgb(47, 60, 72);
+	color: rgb(202, 228, 251);
+}
+
+button.sapUiSupportHelpButton:hover {
+	background-color: rgba(99, 127, 153, 0.5);
+}
+
+.sapUiButtonsContainer {
+	padding: 0.4rem 0.25rem;
+	display: -ms-flexbox;
+	margin: 0;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	-webkit-justify-content: flex-end;
+	-ms-flex-pack: end;
+	justify-content: flex-end;
+	-webkit-align-content: center;
+	-ms-flex-line-pack: stretch;
+	align-content: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+
+.sapUiButtonsContainer .title {
+	-webkit-flex: 1 1 auto;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+	-webkit-align-self: flex-start;
+	-ms-flex-item-align: start;
+	align-self: auto;
+}
+
+.sapUiButtonsContainer button.sapUiSupportRoundedButton {
+	-webkit-flex: 0 1 auto;
+	-ms-flex: 0 1 auto;
+	flex: 0 1 auto;
 }
 
 .sapUiSupportHdr > div {
-	color: #007DC0;
+	color: rgb(202, 228, 251);
+	background-color: rgb(47, 60, 72);
 	font-size: 18px;
 	font-weight: normal;
-	left: 10px;
-	position: absolute;
-	top: 5px;
+	margin-left: 8px;
 }
 
 .sapUiSupportPnl {
@@ -50,48 +111,48 @@
 }
 
 .sapUiSupportCntnt {
-	position: absolute;
-	top: 40px;
-	bottom: 0;
 	overflow: auto;
 	width: 100%;
 	min-width: 700px;
 }
 
 .sapUiSupportPnlHdr {
-	margin-top: 0;
-	margin-bottom: 5px;
 	color: #555;
-	border-bottom: 1px solid #007DC0;
+	border-bottom: 1px solid #cbcbcb;
 	height: 25px;
 	font-weight: normal;
 	font-size: 18px;
-	padding-left: 5px;
-	padding-right: 5px;
+	padding: 0.5rem;
 	position: relative;
 	cursor: pointer;
 }
 
 .sapUiSupportPnlHdr:hover {
-	color: #007DC0; /* indicate it is clickable */
+	color: #427CAC; /* indicate it is clickable */
 }
 
 .sapUiSupportPnlHdrHdl {
-	border-color: #444444;
-	border-right: 1px solid #444444;
-	border-style: solid;
-	border-width: 3px 1px 1px;
 	cursor: pointer;
 	height: 7px;
-	position: absolute;
-	right: 5px;
-	top: 8px;
 	width: 10px;
+	display: inline-block;
 }
 
-.sapUiSupportPnlHdrHdl.sapUiSupportPnlHdrHdlClosed {
-	border-width: 3px 0px 0px;
-	width: 12px;
+.sapUiSupportPnlHdrHdl::before {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e1e2";
+}
+
+.sapUiSupportPnlHdr .sapUiSupportPanelTitle {
+	display: inline-block;
+	padding: 0 0.7rem;
+}
+
+.sapUiSupportPnlHdrHdl.sapUiSupportPnlHdrHdlClosed:before {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e0e3";
 }
 
 .sapUiSupportPnlCntnt {
@@ -113,9 +174,10 @@
 .sapUiSupportLink:focus,
 .sapUiSupportLink:visited,
 .sapUiSupportLink:hover {
-	color: #0078BB;
+	color: #0070b1;
 	text-decoration: none;
 	display: inline-block;
+	font-size: 0.875rem;
 }
 
 .sapUiSupportLink:hover {
@@ -133,25 +195,45 @@
 }
 
 .sapUiSupportLabel {
-	font-weight: bold;
+	font-weight: normal;
+	color: #666666;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	display: inline-block;
+	padding: 0.25rem 0.5rem;
 }
 
 .sapUiSupportToolbar {
 	background-color: #F2F2F2;
-	height: 28px;
-	margin-bottom: 5px;
+	height: 31px;
+	padding-bottom: 5px;
 	padding-left: 5px;
 	padding-right: 5px;
+	-webkit-box-sizing: border-box;
 }
 
-.sapUiSupportTxtFld,
-.sapUiSupportBtn {
+.sapUiSupportTxtFld {
 	border: 1px solid #BFBFBF;
 	font-size: 14px;
-	height: 22px;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
+}
+
+.sapUiSupportTab {
+	border-width: 1px 1px 0 0;
+	-webkit-box-sizing: border-box;
+	padding: 0.3rem 0.7rem;
+	border-color: #ababab;
+}
+
+.sapUiSupportTabLeft {
+	border-width: 1px 1px 0 1px;
+	border-top-left-radius: 3px;
+}
+
+.sapUiSupportTabRight {
+	border-top-right-radius: 3px;
 }
 
 .sapUiSupportTxtFld {
@@ -161,42 +243,37 @@
 
 .sapUiSupportTxtFld:hover,
 .sapUiSupportTxtFld:focus {
-	border-color: #007DC0;
+	border-color: #427CAC;
 }
 
-.sapUiSupportBtn {
-	background-color: #E2E2E2;
-	border-color: #A3A3A3;
-	padding-bottom: 3px;
-	cursor: pointer;
+.sapUiSupportRoundedButton:hover,
+.sapUiSupportTab:hover {
+	color: #346187;
+	border-color: #bfbfbf;
+	background-color: #ebebeb;
 }
 
-.sapUiSupportBtn:hover,
-.sapUiSupportBtn:focus,
-.sapUiSupportBtn.active {
-	color: #FFFFFF;
-	border-color: #00689E;
-	background-color: #007DC0;
+.sapUiSupportRoundedButton:active {
+	color: #ffffff;
+	border-color: #427cac;
+	background-color: #427cac;
 }
 
-.sapUiSupportBtn.active {
-	cursor: default;
+.sapUiSupportRoundedButton:focus,
+.sapUiSupportTab:focus,
+.sapUiSupportTab:active {
+	color: #ffffff;
+	background-color: #346187;
 }
 
-.sapUiSupportToolbar > .sapUiSupportBtn,
+.sapUiSupportPerfHeaderFilters .sapUiSupportTxtFld,
 .sapUiSupportToolbar > .sapUiSupportTxtFld {
-	margin-top: 3px;
+	margin-top: 2px;
 	vertical-align: top;
 }
 
 .sapUiSupportToolbar > .sapUiSupportLink {
 	margin-top: 6px;
-	vertical-align: top;
-}
-
-.sapUiSupportToolbar > .sapUiSupportLabel {
-	position: relative;
-	top: 6px;
 	vertical-align: top;
 }
 
@@ -217,16 +294,25 @@
 
 #sapUiSupportTechInfo-Refresh {
 	position: absolute;
-	right: 5px;
-}
-
-.sapUiSupportTechInfoBorder {
-	border: 1px solid #E2E2E2;
+	right: 15px;
 }
 
 #sapUiSupportTrace,
 #sapUiSupportMessageTest {
 	overflow: hidden;
+}
+
+.infoTable {
+	border-collapse: collapse;
+	margin: 5px;
+}
+
+/*.infoTable tr:nth-child(even) {
+	background: #f5f5f5;
+}*/
+
+.infoTable td {
+	padding: 5px;
 }
 
 #sapUiSupportMessageTest > .sapUiSupportToolbar > button {
@@ -263,20 +349,17 @@
 
 #sapUiSupportTrace .sapUiSupportTraceEntry {
 	border-bottom: 1px solid #BFBFBF;
+	margin-top: 10px;
 }
 
 #sapUiSupportTrace .sapUiSupportTraceEntryTime {
 	width: 100px;
 }
 
-#sapUiSupportTrace > .sapUiSupportToolbar > .sapUiSupportLabel {
-	margin-left: 10px;
-	font-weight: normal;
-}
-
 #sapUiSupportTrace > .sapUiSupportToolbar > select,
 #sapUiSupportTrace > .sapUiSupportToolbar > input {
 	margin-left: 5px;
+	height: 26px;
 }
 
 #sapUiSupportControlTree {
@@ -284,17 +367,25 @@
 	overflow: hidden;
 }
 
-.sapUiSupportDottedContainer,
+.sapUISupportLabel {
+	margin: 0.25rem auto;
+}
+
+.sapUiSupportContainer,
 #sapUiSupportControlTreeArea,
 #sapUiSupportControlPropertiesArea {
 	height: 454px;
 	width: 48%;
 	border: 1px dotted black;
 	background-color: white;
-	padding: 5px;
+	padding: 3px;
 	overflow: auto;
 	float: left;
 	position: relative;
+}
+.sapUiSupportContainer {
+	border: 0;
+	height: auto;
 }
 
 #sapUiSupportControlPropertiesArea {
@@ -325,18 +416,13 @@ ul.sapUiSupportControlTreeList li {
 }
 
 #sapUiSupportControlTreeArea li img.sapUiControlTreeIcon {
-	margin-top: 7px;
-	margin-right: 4px;
-}
-
-#sapUiSupportControlTreeArea li img.sapUiControlPicture {
 	margin-top: 5px;
-	margin-right: 5px;
+	margin-right: 3px;
 }
 
 #sapUiSupportControlTreeArea li div {
 	overflow: hidden;
-	padding: 7px;
+	padding: 2px 5px;
 }
 
 #sapUiSupportControlTreeArea li.sapUiControlTreeLink span {
@@ -345,7 +431,7 @@ ul.sapUiSupportControlTreeList li {
 }
 
 #sapUiSupportControlTreeArea .sapUiSupportControlTreeSelected {
-	background-color: #007DC0;
+	background-color: #427CAC;
 	color: white;
 }
 
@@ -363,8 +449,7 @@ ul.sapUiSupportControlTreeList li {
 
 #sapUiSupportControlTabs {
 	width: 48%;
-	height: 22px;
-	padding: 3px 12px 6px 0;
+	padding-right: 8px;
 	overflow: auto;
 	float: right;
 }
@@ -412,10 +497,6 @@ ul.sapUiSupportControlTreeList li {
 	box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
-}
-
-#sapUiSupportPerf > .sapUiSupportToolbar > .sapUiSupportLabel {
-	font-weight: normal;
 }
 
 #sapUiSupportPerf > .sapUiSupportToolbar > button {
@@ -466,15 +547,25 @@ html[data-sap-ui-browser^="sf"] #sapUiSupportControlPropertiesArea ul li .set {
 
 select.sapUiSupportAutocomplete {
 	width: 198px;
-	height: 22px;
-	padding: 1px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 
+/*
 input[type="text"].sapUiSupportAutocomplete {
-	margin-left: -197px;
+	margin-left: -195px;
 	padding: 0 5px;
 	width: 168px;
-	height: 18px;
+	height: 23px;
+	border: none;
+}
+*/
+
+input.sapUiSupportAutocomplete[type="text"] {
+	margin-left: -195px;
+	width: 174px;
+	height: 20px;
 	border: none;
 }
 
@@ -549,26 +640,12 @@ ul.sapUiSupportBreakpointList li:hover img {
 	display: inline;
 }
 
-#sapUiSupportControlTabProperties,
-#sapUiSupportControlTabBindingInfos {
-	margin-right: 3px;
-}
 
 /* DEBUGGING */
-
-#sapUiSupportDebugging {
-	height: 400px;
-}
-
-#sapUiSupportDebugging > .sapUiSupportDottedContainer {
-	height: 278px;
-	margin: 6px 0;
-}
 
 #sapUiSupportDebugging > #sapUiSupportDebuggingRebootContainer {
 	box-sizing: border-box;
 	width: 100%;
-	height: 82px;
 }
 
 #sapUiSupportDebuggingRebootSelect {
@@ -577,9 +654,15 @@ ul.sapUiSupportBreakpointList li:hover img {
 }
 
 #sapUiSupportDebuggingRebootInput {
-	width: 533px;
+	/*height: 26px;*/
+	font-size: 14px;
+	padding: 4px;
 	box-sizing: border-box;
-	width: calc(100% - 142px);
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	width: calc(100% - 161px);
+	margin-right: 5px;
+	border-width: 1px;
 }
 
 #sapUiSupportDebuggingMethodContainer {
@@ -591,8 +674,8 @@ ul.sapUiSupportBreakpointList li:hover img {
 }
 
 #sapUiSupportDebuggingClassInput {
-	margin-left: -227px;
-	width: 198px;
+	margin-left: -225px;
+	width: 204px;
 }
 
 #sapUiSupportDebuggingMethodSelect {
@@ -604,8 +687,8 @@ html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodSelect {
 }
 
 #sapUiSupportDebuggingMethodInput {
-	margin-left: -149px;
-	width: 120px;
+	margin-left: -148px;
+	width: 119px;
 }
 
 html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodInput {
@@ -613,10 +696,14 @@ html[data-sap-ui-browser^="sf"] #sapUiSupportDebuggingMethodInput {
 	width: 110px;
 }
 
-#sapUiSupportDebuggingAddClass,
 #sapUiSupportDebuggingAddBreakpoint {
 	margin-left: 32px;
 }
+
+#sapUiSupportDebuggingAddClass {
+	margin-left: 25px;
+}
+
 
 html[data-sap-ui-browser^="ie"] #sapUiSupportDebuggingAddClass,
 html[data-sap-ui-browser^="ie"] #sapUiSupportDebuggingAddBreakpoint {
@@ -644,7 +731,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 #sapUiSupportDebuggingClassList li.selected div,
 #sapUiSupportDebuggingClassList li div:hover {
 	color: #fff;
-	background-color: #007dc0;
+	background-color: #427CAC;
 	cursor: pointer;
 }
 
@@ -953,7 +1040,11 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 #sapUiSupportPerfHeaderFilterMinDuration {
+	box-sizing: border-box;
 	width: 50px;
+	height: 26px;
+	line-height: 2;
+	margin-top: 2px;
 }
 
 #sapUiSupportPerfHeaderFilterSort {
@@ -1321,7 +1412,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 .sapUiSupportIntToggleRecordingBtn::before,
 #sapUiSupportPerfToggleRecordingBtn::before {
 	border: solid 5px #bf3020;
-	border-radius: 5px;
+	border-radius: 3px;
 	content: '';
 	display: inline-block;
 	height: 0;
@@ -1375,6 +1466,15 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	border-radius: 3px;
 	border-color: #417BAB;
 	float: right;
+}
+
+.sapUiSupportSelect {
+	height: 26px;
+	/*padding: 0.20rem 0.9rem;*/
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	/*margin-top: 12px;*/
 }
 
 .sapUiFormResGridCont > .sapUiFormElementLbl.sapUiRespGridBreak {

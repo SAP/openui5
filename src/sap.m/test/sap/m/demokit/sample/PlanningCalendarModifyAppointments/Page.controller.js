@@ -2,12 +2,14 @@ sap.ui.define(['jquery.sap.global',
 		'sap/m/MessageBox',
 		'sap/m/Button',
 		'sap/m/Dialog',
+		'sap/m/Label',
+		'sap/m/Popover',
 		'sap/m/List',
 		'sap/m/StandardListItem',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'],
-	function(MessageBox, jQuery, Button, Dialog, List, StandardListItem, Fragment, Controller, JSONModel) {
+	function(MessageBox, jQuery, Button, Dialog, Label, Popover, List, StandardListItem, Fragment, Controller, JSONModel) {
 		"use strict";
 
 		var PageController = Controller.extend("sap.m.sample.PlanningCalendarModifyAppointments.Page", {
@@ -121,7 +123,7 @@ sap.ui.define(['jquery.sap.global',
 								start: new Date("2017", "0", "25", "11", "30"),
 								end: new Date("2017", "0", "25", "13", "30"),
 								title: "Lunch",
-								type: "Type03",
+								type: "Type01",
 								tentative: true
 							},
 							{
@@ -368,7 +370,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "16", "23", "59"),
 									title: "Vacation",
 									info: "out of office",
-									type: "Type04",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -376,7 +378,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "18", "22", "0"),
 									title: "Workshop",
 									info: "regular",
-									type: "Type07",
+									type: "Type08",
 									pic: "sap-icon://sap-ui5",
 									tentative: false
 								},
@@ -384,7 +386,7 @@ sap.ui.define(['jquery.sap.global',
 									start: new Date("2017", "0", "19", "08", "30"),
 									end: new Date("2017", "0", "19", "18", "30"),
 									title: "Meet John Doe",
-									type: "Type02",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -392,7 +394,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "19", "16", "0"),
 									title: "Team meeting",
 									info: "room 1",
-									type: "Type01",
+									type: "Type08",
 									pic: "sap-icon://sap-ui5",
 									tentative: false
 								},
@@ -400,7 +402,7 @@ sap.ui.define(['jquery.sap.global',
 									start: new Date("2017", "0", "19", "07", "00"),
 									end: new Date("2017", "0", "19", "17", "30"),
 									title: "Discussion with clients",
-									type: "Type02",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -408,7 +410,7 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "20", "23", "59"),
 									title: "Vacation",
 									info: "out of office",
-									type: "Type04",
+									type: "Type08",
 									tentative: false
 								},
 								{
@@ -416,14 +418,14 @@ sap.ui.define(['jquery.sap.global',
 									end: new Date("2017", "0", "27", "17", "30"),
 									title: "Discussion with clients",
 									info: "out of office",
-									type: "Type02",
+									type: "Type08",
 									tentative: false
 								},
 								{
 									start: new Date("2017", "2", "13", "9", "0"),
 									end: new Date("2017", "2", "17", "10", "0"),
 									title: "Payment week",
-									type: "Type06"
+									type: "Type08"
 								},
 								{
 									start: new Date("2017", "03", "10", "0", "0"),
@@ -457,47 +459,12 @@ sap.ui.define(['jquery.sap.global',
 			},
 
 			handleAppointmentSelect: function (oEvent) {
-				var oFrag =  sap.ui.core.Fragment,
-					oAppointment = oEvent.getParameter("appointment"),
-					oAppBC,
-					oDateTimePickerStart,
-					oDateTimePickerEnd,
-					oInfoInput,
-					oOKButton,
-					aAppointments,
-					sValue;
+				var oAppointment = oEvent.getParameter("appointment");
 
 				if (oAppointment) {
-					if (!this._oPopover) {
-						this._oPopover = sap.ui.xmlfragment("myPopoverFrag", "sap.m.sample.PlanningCalendarModifyAppointments.Details", this);
-						this.getView().addDependent(this._oPopover);
-					}
-
-					// the binding context is needed, because later when the OK button is clicked, the information must be updated
-					oAppBC = oAppointment.getBindingContext();
-
-					this._oPopover.setBindingContext(oAppBC);
-
-					oDateTimePickerStart = oFrag.byId("myPopoverFrag", "startDate");
-					oDateTimePickerEnd = oFrag.byId("myPopoverFrag", "endDate");
-					oInfoInput = oFrag.byId("myPopoverFrag", "moreInfo");
-					oOKButton = oFrag.byId("myPopoverFrag", "OKButton");
-
-					oDateTimePickerStart.setDateValue(oAppointment.getStartDate());
-					oDateTimePickerEnd.setDateValue(oAppointment.getEndDate());
-					oInfoInput.setValue(oAppointment.getText());
-
-					oDateTimePickerStart.setValueState("None");
-					oDateTimePickerEnd.setValueState("None");
-
-					this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oOKButton);
-					this._oPopover.openBy(oAppointment);
+					this._handleSingleAppointment(oAppointment);
 				} else {
-					aAppointments = oEvent.getParameter("appointments");
-					sValue = aAppointments.length + " Appointments selected";
-					sap.m.MessageBox.information(
-						sValue
-					);
+					this._handleGroupAppointments(oEvent);
 				}
 			},
 
@@ -506,16 +473,16 @@ sap.ui.define(['jquery.sap.global',
 					oStartValue = oFrag.byId("myPopoverFrag", "startDate").getDateValue(),
 					oEndValue = oFrag.byId("myPopoverFrag", "endDate").getDateValue(),
 					sInfoValue = oFrag.byId("myPopoverFrag", "moreInfo").getValue(),
-					sAppointmentPath = this._oPopover.getBindingContext().sPath;
+					sAppointmentPath = this._oDetailsPopover.getBindingContext().sPath;
 
-				this._oPopover.getModel().setProperty(sAppointmentPath + "/start", oStartValue);
-				this._oPopover.getModel().setProperty(sAppointmentPath + "/end", oEndValue);
-				this._oPopover.getModel().setProperty(sAppointmentPath + "/info", sInfoValue);
-				this._oPopover.close();
+				this._oDetailsPopover.getModel().setProperty(sAppointmentPath + "/start", oStartValue);
+				this._oDetailsPopover.getModel().setProperty(sAppointmentPath + "/end", oEndValue);
+				this._oDetailsPopover.getModel().setProperty(sAppointmentPath + "/info", sInfoValue);
+				this._oDetailsPopover.close();
 			},
 
 			handleCancelButton: function (oEvent) {
-				this._oPopover.close();
+				this._oDetailsPopover.close();
 			},
 
 			handleAppointmentCreate: function (oEvent) {
@@ -679,6 +646,74 @@ sap.ui.define(['jquery.sap.global',
 					this.getView().addDependent(that.oNewAppointmentDialog);
 
 				}
+			},
+
+			_handleSingleAppointment: function (oAppointment) {
+				var oFrag =  sap.ui.core.Fragment,
+					oAppBC,
+					oDateTimePickerStart,
+					oDateTimePickerEnd,
+					oInfoInput,
+					oOKButton;
+
+				if (!this._oDetailsPopover) {
+					this._oDetailsPopover = sap.ui.xmlfragment("myPopoverFrag", "sap.m.sample.PlanningCalendarModifyAppointments.Details", this);
+					this.getView().addDependent(this._oDetailsPopover);
+				}
+
+				// the binding context is needed, because later when the OK button is clicked, the information must be updated
+				oAppBC = oAppointment.getBindingContext();
+
+				this._oDetailsPopover.setBindingContext(oAppBC);
+
+				oDateTimePickerStart = oFrag.byId("myPopoverFrag", "startDate");
+				oDateTimePickerEnd = oFrag.byId("myPopoverFrag", "endDate");
+				oInfoInput = oFrag.byId("myPopoverFrag", "moreInfo");
+				oOKButton = oFrag.byId("myPopoverFrag", "OKButton");
+
+				oDateTimePickerStart.setDateValue(oAppointment.getStartDate());
+				oDateTimePickerEnd.setDateValue(oAppointment.getEndDate());
+				oInfoInput.setValue(oAppointment.getText());
+
+				oDateTimePickerStart.setValueState("None");
+				oDateTimePickerEnd.setValueState("None");
+
+				this.updateButtonEnabledState(oDateTimePickerStart, oDateTimePickerEnd, oOKButton);
+				this._oDetailsPopover.openBy(oAppointment);
+			},
+
+			_handleGroupAppointments: function (oEvent) {
+				var aAppointments,
+					sGroupAppointmentType,
+					sGroupPopoverValue,
+					sGroupAppDomRefId,
+					bTypeDiffer;
+
+				aAppointments = oEvent.getParameter("appointments");
+				sGroupAppointmentType = aAppointments[0].getType();
+				sGroupAppDomRefId = oEvent.getParameter("domRefId");
+				bTypeDiffer = aAppointments.some(function (oAppointment) {
+					return sGroupAppointmentType !== oAppointment.getType();
+				});
+
+				if (bTypeDiffer) {
+					sGroupPopoverValue = aAppointments.length + " Appointments of different types selected";
+				} else {
+					sGroupPopoverValue = aAppointments.length + " Appointments of the same " + sGroupAppointmentType + " selected";
+				}
+
+				if (!this._oGroupPopover) {
+					this._oGroupPopover = new Popover({
+						title: "Group Appointments",
+						content: new Label({
+							text: sGroupPopoverValue
+						})
+					});
+				} else {
+					this._oGroupPopover.getContent()[0].setText(sGroupPopoverValue);
+				}
+				this._oGroupPopover.addStyleClass("sapUiPopupWithPadding");
+				this._oGroupPopover.openBy(document.getElementById(sGroupAppDomRefId));
 			}
 
 		});

@@ -276,7 +276,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the enter key event
 	 *
-	 * @param {jQuery.Event} event - the keyboard event.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
 	PullToRefresh.prototype.onsapenter = function(oEvent) {

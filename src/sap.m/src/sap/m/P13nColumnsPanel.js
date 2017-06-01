@@ -1075,7 +1075,6 @@ sap.ui.define([
 	 * This method shall reorder all existing table items. First all selected, and then the unselected items in an alphabetical order
 	 *
 	 * @private
-	 * @param {object} oColumnsItem is an item from columnsItems aggregation
 	 */
 	P13nColumnsPanel.prototype._reOrderExistingTableItems = function() {
 		var aExistingTableItems = null, aExistingSelectedTableItems = null;
