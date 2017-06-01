@@ -379,7 +379,10 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	/**
 	 * Gets the marker text.
 	 *
-	 * @returns {String}, concatenated from type and additionalInfo text
+	 * @param {object} oType The object type
+	 * @param {string} sType The string type
+	 * @param {string} sAdditionalInfo The additional information
+	 * @returns {String} concatenated from type and additionalInfo text
 	 * @private
 	 */
 	ObjectMarker.prototype._getMarkerText = function (oType, sType, sAdditionalInfo) {
@@ -440,7 +443,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 
 	/**
 	 * Returns the inner control.
-	 *
+	 * @returns {object} The inner control
 	 * @private
 	 */
 	ObjectMarker.prototype._getInnerControl = function () {
@@ -458,7 +461,7 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Control", 'sap/ui/core/Renderer
 	/**
 	 * Returns an inner control: <code>sap.m.Text</code> if <code>ObjectMarker</code> is non-interactive or
 	 * <code>sap.m.Link</code> - if interactive.
-	 *
+	 * @returns {object} The inner control
 	 * @private
 	 */
 	ObjectMarker.prototype._createInnerControl = function () {

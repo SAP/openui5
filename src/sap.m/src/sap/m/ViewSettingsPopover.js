@@ -384,7 +384,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		/**
 		 * Updates the text of the title aggregation.
 		 * @param {string} sText String to be shown as new title
-		 * @param {boolean} bSkipTranslate Weather to translate a key ot displayed a string directly
+		 * @param {boolean} bSkipTranslate Whether to translate a key ot displayed a string directly
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._updateTitleText = function (sText, bSkipTranslate) {
@@ -409,7 +409,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 		/**
 		 * Goes to the details page.
-		 * @param {object} oParentItem
+		 * @param {Object} oParentItem The parent item
 		 * @param {boolean} bDisableSlideEffect Flag enabling or disabling the slide animation on pages navigation
 		 * @private
 		 */
@@ -831,8 +831,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 		/**
 		 * Creates "select all" checkbox.
-		 * @param {array} aFilterSubItems
-		 * @param {object} oFilterDetailList
+		 * @param {array} aFilterSubItems The filter sub-items
+		 * @param {Object} oFilterDetailList The filter details list
+		 * @returns {sap.m.CheckBox} The created checkBox
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._getSelectAllCheckbox = function (aFilterSubItems, oFilterDetailList) {
@@ -1072,7 +1073,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 		/**
 		 * Gets <code>LabelledBy</code> association or create label and return its ID
-		 * @returns {string}
+		 * @returns {sap.ui.core.InvisibleText} The created label
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._getPopoverAriaLabel = function () {
@@ -1089,7 +1090,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		/**
 		 * Determine if a string is actually a name of one of the items aggregations.
 		 * @param {string} sAggregationName Suggested name of aggregation
-		 * @returns {boolean}
+		 * @returns {boolean} Whether a string is actually a name of one of the items aggregations
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._isItemsAggregation = function (sAggregationName) {
@@ -1351,7 +1352,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		/**
 		 * Handles ViewSettingsItem property change
 		 *
-		 * @param {object} oEvent
+		 * @param {Object} oEvent The fired event
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._handleViewSettingsItemPropertyChanged = function (oEvent) {
@@ -1371,7 +1372,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		/**
 		 * Handles FilterDetailItem aggregation change to redraw its corresponding list item
 		 *
-		 * @param {object} oEvent
+		 * @param {Object} oEvent The fired event
 		 * @private
 		 */
 		ViewSettingsPopover.prototype._handleFilterDetailItemsAggregationChange = function (oEvent) {
@@ -1397,10 +1398,10 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		/**
 		 * Ensures proper <code>ViewSettingsItem</code> inheritance in context of List.
 		 *
-		 * @param {object} oViewSettingsItem
-		 * @param {string} sType
-		 * @param {boolean} bHasDetailsPage
-		 * @returns {sap.ui.core.Element}
+		 * @param {object} oViewSettingsItem The sap.m.ViewSettingsItem to be inherit
+		 * @param {string} sType Its type
+		 * @param {boolean} bHasDetailsPage Whether it has details page
+		 * @returns {sap.ui.core.Element} The created list item
 		 */
 		ViewSettingsPopover.prototype._createListItemFromViewSettingsItem = function (oViewSettingsItem, sType, bHasDetailsPage) {
 			var oListItem,

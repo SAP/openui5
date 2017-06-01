@@ -913,9 +913,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 	};
 
 	/**
-	 * Creates a DateRange with the first and the last visible days in the calendar popup
-	 * @param {sap.ui.unified.Calendar} oCalendar
-	 * @returns {sap.ui.unified.DateRange}
+	 * Creates a DateRange with the first and the last visible days in the calendar popup.
+	 * @param {sap.ui.unified.Calendar} oCalendar the calendar whose DatesRange is wanted
+	 * @returns {sap.ui.unified.DateRange} the DateRange of the visible dates
 	 * @private
 	 */
 	DatePicker.prototype._getVisibleDatesRange = function (oCalendar) {
@@ -992,6 +992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} Current accessibility state of the control.
 	 * @protected
 	 */
 	DatePicker.prototype.getAccessibilityInfo = function() {

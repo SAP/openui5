@@ -103,8 +103,8 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 	};
 
 	/**
-	 * Gets the icon of the StandardTile control.
-	 *
+	 * Gets the icon of the <code>StandardTile</code> control.
+	 * @returns {Object} The icon of the control
 	 * @public
 	 */
 	StandardTile.prototype.getIcon = function() {
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 
 	/**
 	 * Lazy loads StandardTile icon image.
-	 *
+	 * @returns {Object} The icon image
 	 * @private
 	 */
 	StandardTile.prototype._getImage = function() {
