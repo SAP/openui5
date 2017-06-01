@@ -54,6 +54,16 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	var DynamicPageTitle = Control.extend("sap.f.DynamicPageTitle", /** @lends sap.f.DynamicPageTitle.prototype */ {
 		metadata: {
 			library: "sap.f",
+			properties: {
+				/**
+				* Determines which of the <code>DynamicPageTitle</code> areas (Begin, Middle) is primary.
+				*
+				* <b>Note:</b> The primary area is shrinking at lower rate, remaining visible as much as it can.
+				*
+				* @since 1.50
+				*/
+				primaryArea : {type: "sap.f.DynamicPageTitleArea", group: "Appearance", defaultValue: sap.f.DynamicPageTitleArea.Begin}
+			},
 			aggregations: {
 
 				/**
@@ -67,6 +77,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 				 * suitable for {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
+
+				/**
+				* The content is positioned in the <code>DynamicPageTitle</code> middle area
+				* and displayed in both expanded and collapsed (snapped) states.
+				* @since 1.50
+				*/
+				content: {type: "sap.ui.core.Control", multiple: true},
 
 				/**
 				 * The content that is displayed in the <code>DynamicPageTitle</code> in collapsed (snapped) state.
@@ -111,6 +128,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 		this._setShowExpandContent(this._getShowExpandContent());
 	};
 
+	DynamicPageTitle.prototype.setPrimaryArea = function (sArea) {
+		if (this.getDomRef()) {
+			this._toggleAreaPriorityClasses(sArea === library.DynamicPageTitleArea.Begin);
+		}
+		return this.setProperty("primaryArea", sArea, true);
+	};
+
+
 	/**
 	 * Fires the <code>DynamicPageTitle</code> press event.
 	 * @param {jQuery.Event} oEvent
@@ -144,6 +169,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	 * @private
 	 */
 	DynamicPageTitle.prototype._cacheDomElements = function () {
+		this.$beginArea = this.$("left-inner");
+		this.$middleArea = this.$("content");
 		this.$snappedWrapper = this.$("snapped-wrapper");
 		this.$expandWrapper = this.$("expand-wrapper");
 	};
@@ -258,6 +285,51 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 	DynamicPageTitle.prototype._getShowExpandContent = function () {
 		return this._bShowExpandContent;
 	};
+
+	/**
+	 * Updates the priority classes of the <code>DynamicPageTitle</code> areas.
+	 * @param {boolean} isPrimaryAreaBegin
+	 * @private
+	 * @since 1.50
+	 */
+	DynamicPageTitle.prototype._toggleAreaPriorityClasses = function (isPrimaryAreaBegin) {
+		this.$beginArea.toggleClass("sapFDynamicPageTitleAreaHighPriority", isPrimaryAreaBegin);
+		this.$beginArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", !isPrimaryAreaBegin);
+		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaHighPriority", !isPrimaryAreaBegin);
+		this.$middleArea.toggleClass("sapFDynamicPageTitleAreaLowPriority", isPrimaryAreaBegin);
+	};
+
+	DynamicPageTitle.prototype._getState = function () {
+		var oActionsBar = this._getOverflowToolbar(),
+			sID = this.getId(),
+			aActions = oActionsBar.getContent(),
+			aContent = this.getContent(),
+			oHeading = this.getHeading(),
+			aSnapContent = this.getSnappedContent(),
+			aExpandContent = this.getExpandedContent(),
+			bHasExpandedContent = aExpandContent.length > 0,
+			bHasSnappedContent = aExpandContent.length > 0,
+			bShowSnapContent = this._getShowSnapContent(),
+			sAriaText = this._oRB.getText("TOGGLE_HEADER"),
+			sPrimaryArea = this.getPrimaryArea();
+
+			return {
+				id: sID,
+				actionBar: oActionsBar,
+				hasActions: aActions.length > 0,
+				content: aContent,
+				heading: oHeading,
+				snappedContent: aSnapContent,
+				expandedContent: aExpandContent,
+				hasSnappedContent: bHasSnappedContent,
+				hasExpandedContent: bHasExpandedContent,
+				hasAdditionalContent: bHasExpandedContent || bHasSnappedContent,
+				showSnapContent: bShowSnapContent,
+				isPrimaryAreaBegin: sPrimaryArea === "Begin",
+				ariaText: sAriaText
+			};
+	};
+
 
 	return DynamicPageTitle;
 }, /* bExport= */ false);
