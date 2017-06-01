@@ -3844,6 +3844,43 @@ sap.ui.require([
 		assert.strictEqual(oHeaderContext.getPath(), "/TEAMS/EMPLOYEES");
 		// TODO How do dependent bindings learn of the changed context?
 	});
+
+	//*********************************************************************************************
+	QUnit.test("BCP: 1770275040 Error occurs in table growing", function (assert) {
+		var done = assert.async(),
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
+			bChangeFired = false,
+			aContexts,
+			oData = createData(50);
+
+		this.oModel.oRequestor.request.restore();
+		this.mock(this.oModel.oRequestor).expects("request")
+			.withExactArgs("GET", "EMPLOYEES?sap-client=111&$skip=0&$top=50", "$auto", undefined,
+				undefined, sinon.match.func)
+			.returns(Promise.resolve(oData));
+
+		oBinding.bUseExtendedChangeDetection = true;
+		oBinding.attachEvent("change", function (oEvent) {
+			assert.strictEqual(bChangeFired, false);
+			bChangeFired = true;
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			setTimeout(function () {
+				assert.strictEqual(oBinding.oDiff, undefined, "no 2nd change event, no diff!");
+				done();
+			}, 0);
+		});
+
+		aContexts = oBinding.getContexts(0, 50);
+		assert.strictEqual(aContexts.length, 0);
+		assert.strictEqual(aContexts.dataRequested, true);
+		assert.deepEqual(aContexts.diff, []);
+
+		// code under test
+		aContexts = oBinding.getContexts(0, 50);
+		assert.strictEqual(aContexts.length, 0);
+		assert.strictEqual(aContexts.dataRequested, true);
+		assert.deepEqual(aContexts.diff, []);
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select

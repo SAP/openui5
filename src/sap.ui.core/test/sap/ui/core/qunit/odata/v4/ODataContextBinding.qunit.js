@@ -1200,15 +1200,20 @@ sap.ui.require([
 						{$$groupId : "groupId"});
 					oBindingMock = this.mock(oBinding);
 
-					oBindingMock.expects("_fetchOperationMetadata").twice()
-						.returns(Promise.resolve({$kind : "Action"}));
+					// code under test - must not ask its context
+					assert.strictEqual(oBinding.fetchValue().getResult(), undefined);
+
+					oBindingMock.expects("_fetchOperationMetadata")
+						.returns(_SyncPromise.resolve({$kind : "Action"}));
 					if (!bBaseContext) {
 						this.mock(oParentContext1).expects("fetchCanonicalPath")
 							.withExactArgs()
-							.returns(Promise.resolve("/EntitySet(ID='1')/navigation1"));
-						this.mock(oBinding.getContext()).expects("getObject")
+							.returns(_SyncPromise.resolve("/EntitySet(ID='1')/navigation1"));
+						this.mock(oParentContext1).expects("fetchValue")
 							.withExactArgs(sPathPrefix)
-							.returns({"@odata.etag" : "etag"});
+							.returns(_SyncPromise.resolve(Promise.resolve({
+								"@odata.etag" : "etag"
+							})));
 					}
 					oCacheMock.expects("createSingle")
 						.withExactArgs(sinon.match.same(this.oModel.oRequestor),
@@ -1228,13 +1233,15 @@ sap.ui.require([
 						// code under test: setContext clears the cache
 						oBinding.setContext(oParentContext2);
 
+						oBindingMock.expects("_fetchOperationMetadata")
+							.returns(Promise.resolve({$kind : "Action"}));
 						if (!bBaseContext) {
 							that.mock(oParentContext2).expects("fetchCanonicalPath")
 								.withExactArgs()
 								.returns(Promise.resolve("/EntitySet(ID='2')/navigation1"));
-							that.mock(oBinding.getContext()).expects("getObject")
+							that.mock(oParentContext2).expects("fetchValue")
 								.withExactArgs(sPathPrefix)
-								.returns({}); // no ETag
+								.returns(_SyncPromise.resolve(Promise.resolve({}))); // no ETag
 						}
 						oCacheMock.expects("createSingle")
 							.withExactArgs(sinon.match.same(that.oModel.oRequestor),

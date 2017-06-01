@@ -422,7 +422,6 @@ sap.ui.define([
 		 */
 		function createCacheAndRequest(oOperationMetadata, sPathPrefix) {
 			var oCache,
-				sETag,
 				iIndex,
 				aOperationParameters,
 				sOperationPath,
@@ -438,13 +437,18 @@ sap.ui.define([
 					(sPathPrefix + that.sPath).slice(1, -5), mQueryOptions,
 					that.oModel.bAutoExpandSelect, true);
 				if (that.bRelative && that.oContext.getBinding) {
-					// @odata.etag is not added to path to avoid "failed to drill-down" in cache
-					// if no ETag is available
+					// do not access @odata.etag directly to avoid "failed to drill-down" in cache
+					// if it is not available
 					iIndex = that.sPath.lastIndexOf("/");
-					sETag = that.oContext.getObject(
-						iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")["@odata.etag"];
+					oPromise = that.oContext
+						.fetchValue(iIndex >= 0 ? that.sPath.slice(0, iIndex) : "")
+						.then(function (oEntity) { return oEntity["@odata.etag"]; });
+				} else {
+					oPromise = _SyncPromise.resolve(); // no parent cache -> no ETag
 				}
-				oPromise = oCache.post(sGroupId, that.oOperation.mParameters, sETag);
+				oPromise = oPromise.then(function (sETag) {
+					return oCache.post(sGroupId, that.oOperation.mParameters, sETag);
+				});
 			} else {
 				// the function must always recreate the cache because the parameters influence the
 				// resource path
@@ -581,7 +585,7 @@ sap.ui.define([
 					throw oError;
 				});
 			}
-			if (that.oContext && that.oContext.fetchValue) {
+			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
 				return that.oContext.fetchValue(_Helper.buildPath(that.sPath, sPath), oListener);
 			}
 		});

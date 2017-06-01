@@ -331,6 +331,7 @@ sap.ui.define([
 		var sBaseMetaPath,
 			oCanUseCachePromise,
 			sChildMetaPath,
+			sFullMetaPath,
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			that = this;
@@ -341,8 +342,6 @@ sap.ui.define([
 		 * @returns {SyncPromise} A promise that is resolved with the property
 		 */
 		function fetchPropertyAndType() {
-			var sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
-
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
 				if (oProperty && oProperty.$kind === "NavigationProperty") {
 					// Ensure that the target type of the navigation property is available
@@ -363,6 +362,7 @@ sap.ui.define([
 
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sChildMetaPath = oMetaModel.getMetaPath("/" + sChildPath).slice(1);
+		sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
 		aPromises = [
 			this.doFetchQueryOptions(this.oContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
@@ -398,8 +398,8 @@ sap.ui.define([
 				return false;
 			}
 			jQuery.sap.log.error("Failed to enhance query options for "
-					+ "auto-$expand/$select as the child binding's path '"
-					+  sChildPath
+					+ "auto-$expand/$select as the path '"
+					+ sFullMetaPath
 					+ "' does not point to a property",
 				JSON.stringify(oProperty),
 				"sap.ui.model.odata.v4.ODataParentBinding");
@@ -619,22 +619,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the value for the given property name inside the entity with the given relative path;
+	 * Updates the value for the given property path inside the entity with the given absolute path;
 	 * the value is updated in this binding's cache or in its parent context in case it has no
 	 * cache.
 	 *
 	 * @param {string} [sGroupId=getUpdateGroupId()]
 	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyName
-	 *   Name of property to update
+	 * @param {string} sPropertyPath
+	 *   The path of the property relative to the entity
 	 * @param {any} vValue
 	 *   The new value
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an Error object each time a PATCH request fails
 	 * @param {string} sEditUrl
-	 *   The edit URL for the entity which is updated
-	 * @param {string} [sPath]
-	 *   Some relative path
+	 *   The edit URL corresponding to the entity to be updated
+	 * @param {string} sEntityPath
+	 *   The resolved, absolute entity path (as delivered from ODataMetaModel#fetchUpdateData)
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>update</code> call
 	 * @throws {Error}
@@ -642,9 +642,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue,
-			fnErrorCallback, sEditUrl, sPath) {
-		var oCache;
+	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
+		fnErrorCallback, sEditUrl, sEntityPath) {
+		var oCache, sResolvedPath;
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("PATCH request not allowed");
@@ -653,11 +653,13 @@ sap.ui.define([
 		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			return oCache.update(sGroupId, sPropertyName, vValue, fnErrorCallback, sEditUrl, sPath);
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
+				sEntityPath.slice(sResolvedPath.length + 1));
 		}
 
-		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback, sEditUrl,
-			_Helper.buildPath(this.sPath, sPath));
+		return this.oContext.getBinding()
+			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath);
 	};
 
 	return function (oPrototype) {

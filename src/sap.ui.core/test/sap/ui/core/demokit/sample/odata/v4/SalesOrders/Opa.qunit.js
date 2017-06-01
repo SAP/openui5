@@ -398,7 +398,7 @@ sap.ui.require([
 			deleteBusinessPartner();
 
 		}
-		Then.onTheMainPage.checkLog(!bRealOData ?
+		Then.onAnyPage.checkLog(!bRealOData ?
 			[oExpectedLogChangeSetID, oExpectedLogChangeSetID] : undefined);
 		Then.iTeardownMyUIComponent();
 	});
