@@ -2205,6 +2205,69 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.test("setSelectedKey() on unbindObject call", function(assert) {
+			var oComboBox = new sap.m.ComboBox({
+				selectedKey: "{value}",
+				value: "{value}"
+			});
+
+			var oData = {
+				"context": [
+					{"value": "1"},
+					{"value": "2"}
+				]
+			};
+			var oModel = new sap.ui.model.json.JSONModel(oData);
+
+			oComboBox.setModel(oModel);
+			oComboBox.bindObject("/context/0");
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oComboBox.unbindObject();
+			assert.strictEqual(oComboBox.getModel().oData.context[0].value, "1", "unbindObject doesn't overwrite model");
+
+			oComboBox.destroy();
+		});
+
+		QUnit.test("setSelectedKey() on unbindObject call when value is not bound", function(assert) {
+			var oComboBox = new sap.m.ComboBox({
+				selectedKey: "{value}",
+				items: {
+					path: "/items",
+					template: new sap.ui.core.Item({
+						key: "{value}",
+						text: "{value}"
+					})
+				}
+			});
+
+			var oData = {
+				"items": [
+					{"value": "1"},
+					{"value": "2"}
+				]
+			};
+			var oModel = new sap.ui.model.json.JSONModel(oData);
+
+			oComboBox.setModel(oModel);
+			oComboBox.bindObject("/items/0");
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oComboBox.getValue(), "1", "the value is set properly");
+			oComboBox.unbindObject();
+
+			assert.strictEqual(oComboBox.getValue(), "", "the value is set properly after unbindObject is called");
+			assert.strictEqual(oComboBox.getModel().oData.items[0].value, "1", "unbindObject doesn't overwrite model");
+
+			oComboBox.destroy();
+		});
+
 		QUnit.module("setMaxWidth()");
 
 		QUnit.test("setMaxWidth()", function(assert) {
