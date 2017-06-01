@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		var oRouters = {};
 
 		/**
-		 * Instantiates an SAPUI5 Router
+		 * Instantiates a SAPUI5 Router
 		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider

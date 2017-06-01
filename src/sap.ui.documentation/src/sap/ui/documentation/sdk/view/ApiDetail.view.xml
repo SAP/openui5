@@ -229,6 +229,42 @@
 														syntaxHints="false" value="{parts: [{path: 'topics>/name' },
 																			{path: 'topics>/constructor/parameters' }],
 																	 		formatter: '.formatConstructor'}"/>
+
+										<m:Table items="{ path : 'constructorParams>/parameters'}"
+												showSeparators="Inner"
+		 										fixedLayout="true">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+														<custom:ParamText customClass="{parts: [{path: 'constructorParams>isSubProperty'},
+																								{path: 'constructorParams>isSubSubProperty'},
+																								{path: 'appView>/bPhoneSize'}],
+																								formatter: '.formatEventClassName'}"
+																		  text="{= ${constructorParams>name}}"/>
+
+														<layout:VerticalLayout content="{constructorParams>types}">
+															<m:HBox>
+																<m:items>
+																	<m:Link text="{constructorParams>value}"
+																			enabled="{parts: [{path: 'constructorParams>value'}],
+																				  formatter: '.formatLinkEnabled'}"
+																			press="onTypeLinkPress"/>
+																	<m:Text text="or" visible="{= ${constructorParams>isLast} === false}" wrapping="false"/>
+																</m:items>
+															</m:HBox>
+														</layout:VerticalLayout>
+
+														<core:HTML content="{parts: [{path: 'constructorParams>description'}],
+																	 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
 									</layout:VerticalLayout>
 								</blocks>
 							</ObjectPageSubSection>
@@ -381,7 +417,7 @@
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
@@ -420,7 +456,7 @@
 												 fixedLayout="true">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Returns"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
