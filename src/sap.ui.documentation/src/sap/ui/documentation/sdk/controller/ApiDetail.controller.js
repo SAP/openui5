@@ -20,6 +20,9 @@ sap.ui.define([
 			EVENT: 'event',
 			PARAM: 'param',
 			NOT_AVAILABLE: 'N/A',
+			ANNOTATIONS_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html',
+			ANNOTATIONS_NAMESPACE_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/',
+			ANNOTATION_DESCRIPTION_STRIP_REGEX: /<i>XML[\s\S].*Example/,
 
 			/**
 			 * Determines if the type can be navigated to
@@ -85,6 +88,7 @@ sap.ui.define([
 			onAfterRendering: function() {
 				this._createMethodsSummary();
 				this._createEventsSummary();
+				this._createAnnotationsSummary();
 			},
 
 			onExit: function() {
@@ -138,6 +142,7 @@ sap.ui.define([
 					this._bindEntityData(this._sTopicid);
 					this._createMethodsSummary();
 					this._createEventsSummary();
+					this._createAnnotationsSummary();
 					oApiDetailObjectPage._resumeLayoutCalculations();
 
 					if (this._sEntityType) {
@@ -186,6 +191,23 @@ sap.ui.define([
 				}), 0);
 			},
 
+			_createAnnotationsSummary: function () {
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-annotationsSummary", "sap.ui.documentation.sdk.view.ApiDetailAnnotationsSummary", this);
+				var oSection = this.getView().byId("annotations");
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
+					return;
+				}
+
+				oSection.insertSubSection(new ObjectPageSubSection({
+					title: "Summary",
+					blocks: [
+						oSummaryTable
+					]
+				}), 0);
+			},
+
 			scrollToMethod: function (oEvent) {
 				var oLink = oEvent.getSource();
 				this._scrollToEntity("methods", oLink.getText());
@@ -194,6 +216,11 @@ sap.ui.define([
 			scrollToEvent: function (oEvent) {
 				var oLink = oEvent.getSource();
 				this._scrollToEntity("events", oLink.getText());
+			},
+
+			scrollToAnnotation: function (oEvent) {
+				var oLink = oEvent.getSource();
+				this._scrollToEntity("annotations", oLink.getText());
 			},
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
@@ -319,6 +346,7 @@ sap.ui.define([
 
 				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
 					oControlData.hasAnnotations = true;
+					oUi5Metadata.annotations.unshift({});
 				} else {
 					oControlData.hasAnnotations = false;
 				}
@@ -794,6 +822,76 @@ sap.ui.define([
 			},
 
 			/**
+			 * Formats the description of annotations
+			 * @param description - the description of the annotation
+			 * @param since - the since version information of the annotation
+			 * @returns string - the formatted description
+			 */
+			formatAnnotationDescription: function (description, since) {
+				var result = description || "";
+
+				result += '<br/>For more information, see ' + '<a target="_blank" href="' + this.ANNOTATIONS_LINK + '">OData v4 Annotations</a>';
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of annotations in summary table
+			 * @param description - the description of the annotation
+			 * @returns string - the formatted description
+			 */
+			formatAnnotationDescriptionSummary: function (description) {
+				var result = description || "";
+
+				result = result.split(this.ANNOTATION_DESCRIPTION_STRIP_REGEX)[0];
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the target and applies to texts of annotations
+			 * @param target - the array of texts to be formatted
+			 * @returns string - the formatted text
+			 */
+			formatAnnotationTarget: function (target) {
+				var result = "";
+
+				if (target) {
+					target.forEach(function (element) {
+						result += element + '<br/>';
+					});
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the namespace of annotations
+			 * @param namespace - the namespace to be formatted
+			 * @returns string - the formatted text
+			 */
+			formatAnnotationNamespace: function (namespace) {
+				var result,
+					aNamespaceParts = namespace.split(".");
+
+				if (aNamespaceParts[0] === "Org" && aNamespaceParts[1] === "OData") {
+					result = '<a target="_blank" href="' + this.ANNOTATIONS_NAMESPACE_LINK + namespace + '.xml">' + namespace + '</a>';
+				} else {
+					result = namespace;
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
 			 * Checks if the list has elements that have public visibility
 			 * @param elements - a list of properties/methods/aggregations/associations etc.
 			 * @returns {boolean} - true if the list has at least one public element
@@ -912,7 +1010,7 @@ sap.ui.define([
 			},
 
 			onAnnotationsLinkPress: function (oEvent) {
-				// scroll to Annotations section here
+				this._scrollToEntity("annotations", "Summary");
 			},
 
 			backToSearch: function () {

@@ -647,6 +647,46 @@
 						</subSections>
 					</ObjectPageSection>
 
+					<ObjectPageSection id="annotations"
+									   title="Annotations"
+									   visible="{topics>/hasAnnotations}"
+									   subSections="{ path : 'topics>/ui5-metadata/annotations'}" >
+						<subSections>
+							<ObjectPageSubSection title="{= ${topics>annotation} !== 'undefined' ? ${topics>annotation} : '(' + ${topics>namespace} + ')' }">
+								<blocks>
+									<layout:VerticalLayout width="100%">
+
+										<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
+																			 formatter: '.formatAnnotationDescription'}"/>
+
+										<m:Table
+											 showSeparators="Inner"
+											 fixedLayout="true">
+										<m:columns>
+											<m:Column vAlign="Top" width="45%"><m:Label text="Namespace"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Target Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Applies To"/></m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<core:HTML content="{parts: [{path: 'topics>namespace'}],
+																			 formatter: '.formatAnnotationNamespace'}"/>
+													<core:HTML content="{parts: [{path: 'topics>target'}],
+																			 formatter: '.formatAnnotationTarget'}"/>
+													<core:HTML content="{parts: [{path: 'topics>appliesTo'}],
+																			 formatter: '.formatAnnotationTarget'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+
+									</layout:VerticalLayout>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
 					<core:ExtensionPoint name="customSections" />
 
 				</sections>
