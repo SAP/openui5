@@ -1,5 +1,5 @@
 /* override header cell background color for non-accessibility themes */
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineCell {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoApps .headlineCell {
 	background-color: white !important;
 }
 
