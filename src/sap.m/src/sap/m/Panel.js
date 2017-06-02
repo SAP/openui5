@@ -331,7 +331,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// 'offsetTop' measures the vertical space occupied by siblings before this one
 		// Earlier each previous sibling's height was calculated separately and then all height values were summed up
-		iAdjustedContentHeight = thisDomRef.clientHeight - oPanelContent.offsetTop;
+		iAdjustedContentHeight =  this.$().height() - oPanelContent.offsetTop;
 		oPanelContent.style.height = iAdjustedContentHeight + 'px';
 	};
 
