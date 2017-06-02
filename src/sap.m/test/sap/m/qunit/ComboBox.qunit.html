@@ -10796,7 +10796,7 @@
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			oFakeEvent = { target: oComboBox.getDomRef("arrow") }
+			oFakeEvent = { target: oComboBox.getDomRef("arrow") };
 
 			oComboBox.onfocusin(oFakeEvent);
 
@@ -10830,14 +10830,17 @@
 			});
 
 			var oComboBox = new sap.m.ComboBox(),
-				oFakeEvent = {
-					target: oComboBox.getFocusDomRef(),
-					setMarked: function () { },
-					srcControl: oComboBox
-				};
+				oFakeEvent;
 
 			oComboBox.placeAt("content");
 			sap.ui.getCore().applyChanges();
+
+			oFakeEvent = {
+				target: oComboBox.getFocusDomRef(),
+				setMarked: function () {
+				},
+				srcControl: oComboBox
+			};
 
 			oComboBox.ontap(oFakeEvent);
 
