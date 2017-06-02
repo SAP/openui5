@@ -36,7 +36,7 @@ sap.ui.define([
 
 			// model used to manipulate control states
 			oViewModel = new JSONModel({
-				growingThreshold : 50,
+				growingThreshold : 200,
 				iconFilterCount: this.getResourceBundle().getText("overviewTabAllInitial"),
 				overviewNoDataText : this.getResourceBundle().getText("overviewNoDataText")
 			});
