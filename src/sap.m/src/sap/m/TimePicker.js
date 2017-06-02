@@ -150,7 +150,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * The seconds slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					secondsStep: {type: "int", group: "Misc", defaultValue: 1}
+					secondsStep: {type: "int", group: "Misc", defaultValue: 1},
+
+					/**
+					 * Sets the default start value for the slider.
+					 * The start value overrides the current slider value and will
+					 * always be displayed when the slider is opened.
+					 */
+					startValue: {type: "string", group : "Data", defaultValue : null }
 				},
 				aggregations: {
 					/**
@@ -308,7 +315,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			/* Set the timevalues of the picker here to prevent user from seeing it */
 			var oSliders = this._getSliders();
 
-			oSliders.setTimeValues(this.getDateValue());
+			var startValue = this.getStartValue();
+
+			if (startValue) {
+				var oDate = this._parseValue(startValue);
+				oSliders.setTimeValues(oDate);
+			} else {
+				oSliders.setTimeValues(this.getDateValue());
+			}
+
 			oSliders.collapseAll();
 
 			/* Mark input as active */
