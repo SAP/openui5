@@ -637,7 +637,8 @@
 		  "since": "1.30",
 		  "samples": [
 			"sap.m.sample.MessageStrip",
-			"sap.m.sample.DynamicMessageStripGenerator"
+			"sap.m.sample.DynamicMessageStripGenerator",
+			"sap.m.sample.MessageStripWithEnableFormattedText"
 		  ]
 		},
 		{
@@ -2422,6 +2423,11 @@
 		  "id": "sap.m.sample.MessageStrip",
 		  "name": "Message Strip",
 		  "description": "MessageStrip for showing status messages."
+		},
+		{
+			"id": "sap.m.sample.MessageStripWithEnableFormattedText",
+			"name": "Message Strip with enableFormattedText",
+			"description": "Using the MessageStrip in Formatted Text mode for showing status messages with additional formatting."
 		},
 		{
 		  "id": "sap.m.sample.DynamicMessageStripGenerator",
