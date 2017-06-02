@@ -26,6 +26,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Navigation direction.
+	 *
+	 * @type {{LEFT: string, RIGHT: string, UP: string, DOWN: string}}
+	 * @static
+	 * @constant
+	 */
+	var NavigationDirection = {
+		LEFT: "Left",
+		RIGHT: "Right",
+		UP: "Up",
+		DOWN: "Down"
+	};
+
+	/**
 	 * The selectors which define whether an element is interactive. Due to the usage of pseudo selectors this can only be used in jQuery.
 	 *
 	 * @type {string}
@@ -37,6 +51,16 @@ sap.ui.define([
 	// Workaround until (if ever) these values can be set by applications.
 	var HORIZONTAL_SCROLLING_PAGE_SIZE = 5;
 	var COLUMN_RESIZE_STEP_CSS_SIZE = "1em";
+
+	/**
+	 * Prevent forwarding the keyboard event to the item navigation.
+	 *
+	 * @param {jQuery.Event} oEvent The keyboard event object.
+	 * @param {boolean} [bPrevent=true] Whether to prevent forwarding the event to the item navigation.
+	 */
+	function preventItemNavigation(oEvent, bPrevent) {
+		oEvent.setMarked("sapUiTableSkipItemNavigation", bPrevent !== false);
+	}
 
 	/**
 	 * Selects the text of an input element.
@@ -247,14 +271,146 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the focus to a row header cell of a table.
+	 * Focus a content cell or the first interactive element inside a content cell.
+	 * If there are no interactive elements, the cell is focused instead.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {int} iRowIndex The index of the row header cell to focus.
+	 * @param {sap.ui.table.TableUtils.CellType} iCellType The type of the cell.
+	 * @param {int} iRowIndex Index of the row in the rows aggregation.
+	 * @param {int} [iColumnIndex] Index of the column in the columns aggregation. Only required for data cells.
+	 * @param {boolean} [bFirstInteractiveElement=false] If <code>true</code>, the first interactive element in a cell is focused.
 	 * @private
 	 */
-	TableKeyboardDelegate._focusRowSelector = function(oTable, iRowIndex) {
-		oTable._getKeyboardExtension()._setFocus(oTable.getDomRef("rowsel" + iRowIndex));
+	TableKeyboardDelegate._focusCell = function(oTable, iCellType, iRowIndex, iColumnIndex, bFirstInteractiveElement) {
+		if (oTable == null
+			|| iCellType == null
+			|| iRowIndex == null || iRowIndex < 0 || iRowIndex >= oTable.getRows().length) {
+			return;
+		}
+
+		var oRow = oTable.getRows()[iRowIndex];
+		var $Cell;
+
+		if (iCellType === CellType.ROWHEADER) {
+			oTable._getKeyboardExtension()._setFocus(oTable.getDomRef("rowsel" + iRowIndex));
+			return;
+		} else if (iCellType === CellType.ROWACTION) {
+			$Cell = TableUtils.getCell(oTable, oRow.getAggregation("_rowAction").getDomRef());
+		} else if (iCellType === CellType.DATACELL
+				   && (iColumnIndex != null && iColumnIndex >= 0 && iColumnIndex < TableUtils.getVisibleColumnCount(oTable))) {
+			var oColumn = oTable.getColumns()[iColumnIndex];
+			var iColumnIndexInCellsAggregation = TableKeyboardDelegate._getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn);
+
+			$Cell = TableUtils.getCell(oTable, oRow.getCells()[iColumnIndexInCellsAggregation].getDomRef());
+		}
+
+		if ($Cell == null) {
+			return;
+		}
+
+		if (bFirstInteractiveElement) {
+			var $InteractiveElements = TableKeyboardDelegate._getInteractiveElements($Cell);
+
+			if ($InteractiveElements != null) {
+				$InteractiveElements[0].focus();
+				selectText($InteractiveElements[0]);
+				return;
+			}
+		}
+
+		$Cell.focus();
+	};
+
+	/**
+	 * Sets the focus to the next cell (or the first interactive element inside that cell) in the specified direction.
+	 * Scrolling will be performed when necessary.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {jQuery.Event} oEvent The keyboard event object.
+	 * @param {NavigationDirection} sDirection The direction in which to navigate.
+	 * @private
+	 */
+	TableKeyboardDelegate._navigate = function(oTable, oEvent, sDirection) {
+		if (oEvent.isMarked()) {
+			return; // Do not interfere with embedded controls that react on the keyboard event.
+		}
+
+		var oKeyboardExtension = oTable._getKeyboardExtension();
+		var bActionMode = oKeyboardExtension.isInActionMode();
+		var oCellInfo = TableUtils.getCellInfo(TableUtils.getCell(oTable, oEvent.target));
+		var bScrolled = false;
+
+		if ((sDirection === NavigationDirection.UP || sDirection === NavigationDirection.DOWN) && oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
+			var bActionModeNavigation = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bActionMode;
+
+			preventItemNavigation(oEvent); // On action mode navigation the item navigation should not handle the keyboard event.
+
+			if (sDirection === NavigationDirection.UP) {
+				if (TableUtils.isFirstScrollableRow(oTable, oCellInfo.cell)) {
+					bScrolled = oTable._getScrollExtension().scroll(false, false, true); // Scroll one row up.
+				}
+			} else if (TableUtils.isLastScrollableRow(oTable, oCellInfo.cell)) {
+				bScrolled = oTable._getScrollExtension().scroll(true, false, true); // Scroll one row down.
+			}
+
+			if (bScrolled) {
+				if (bActionModeNavigation) {
+					oTable.attachEventOnce("_rowsUpdated", function() {
+						setTimeout(function() {
+							TableKeyboardDelegate._focusCell(oTable, oCellInfo.type, oCellInfo.rowIndex, oCellInfo.columnIndex, true);
+							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
+						}, 0);
+					});
+				}
+			} else if (sDirection === NavigationDirection.UP && oCellInfo.rowIndex === 0) {
+				// Let the item navigation focus the column header cell, but not in the row action column.
+				preventItemNavigation(oEvent, oCellInfo.isOfType(CellType.ROWACTION) || bActionModeNavigation);
+				// Leave the action mode when trying to navigate up on the first row.
+				oKeyboardExtension.setActionMode(false);
+			} else if (sDirection === NavigationDirection.DOWN && oCellInfo.rowIndex === oTable.getVisibleRowCount() - 1) {
+				// Leave the action mode when trying to navigate down on the last row.
+				oKeyboardExtension.setActionMode(false);
+			} else {
+				// Focus the data cell above/below the currently focused one.
+				var iDirectedDistance = sDirection === NavigationDirection.DOWN ? 1 : -1;
+				TableKeyboardDelegate._focusCell(
+					oTable, oCellInfo.type, oCellInfo.rowIndex + iDirectedDistance, oCellInfo.columnIndex, bActionModeNavigation);
+				oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
+			}
+
+		} else if (sDirection === NavigationDirection.DOWN && oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
+			var iHeaderRowCount = TableUtils.getHeaderRowCount(oTable);
+
+			if (TableUtils.isNoDataVisible(oTable)) {
+				var oFocusInfo = TableUtils.getFocusedItemInfo(oTable);
+				if (oFocusInfo.row - iHeaderRowCount <= 1) { // We are in the last column header row.
+					// Prevent navigation to the table content.
+					preventItemNavigation(oEvent);
+				}
+
+			} else if (oCellInfo.isOfType(CellType.COLUMNROWHEADER) && iHeaderRowCount > 1) {
+				// Special logic needed because if the column header has multiple rows,
+				// for the SelectAll cell multiple elements are added to the item navigation.
+				preventItemNavigation(oEvent);
+				// Focus the first row header.
+				TableUtils.focusItem(oTable, iHeaderRowCount * (TableUtils.getVisibleColumnCount(oTable) + 1/*Row Headers*/), oEvent);
+			}
+
+		} else if (sDirection === NavigationDirection.LEFT && !bActionMode) {
+			var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
+
+			if (oCellInfo.isOfType(CellType.COLUMNHEADER) && bIsRTL) {
+				var oFocusedItemInfo = TableUtils.getFocusedItemInfo(oTable);
+				var iFocusedColumn = oFocusedItemInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
+				var iColumnCount = TableUtils.getVisibleColumnCount(oTable);
+
+				if (TableUtils.hasRowActions(oTable) && iFocusedColumn === iColumnCount - 1) {
+					// Do not navigate to the row actions column header cell.
+					preventItemNavigation(oEvent);
+				}
+			}
+		}
+		// Navigation to the right is completely handled by the item navigation.
 	};
 
 	/**
@@ -816,7 +972,7 @@ sap.ui.define([
 							var bScrolledRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
 
 							if (bTableHasRowSelectors || bScrolledRowIsGroupHeaderRow) {
-								TableKeyboardDelegate._focusRowSelector(this, oCellInfo.rowIndex);
+								TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 							} else {
 								$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
 								$InteractiveElement.focus();
@@ -833,7 +989,7 @@ sap.ui.define([
 					var bNextRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oNextRow.getDomRef());
 
 					if (bTableHasRowSelectors || bNextRowIsGroupHeaderRow) {
-						TableKeyboardDelegate._focusRowSelector(this, iNextRowIndex);
+						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iNextRowIndex);
 					} else {
 						$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oNextRow);
 						$InteractiveElement.focus();
@@ -904,7 +1060,7 @@ sap.ui.define([
 
 			if (bIsFirstInteractiveElementInRow && bRowHasInteractiveRowHeader) {
 				oEvent.preventDefault();
-				TableKeyboardDelegate._focusRowSelector(this, oCellInfo.rowIndex);
+				TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 
 			} else if ((bIsFirstInteractiveElementInRow && !bRowHasInteractiveRowHeader) || oCellInfo.isOfType(CellType.ROWHEADER)) {
 				var bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(this, $Cell);
@@ -927,7 +1083,7 @@ sap.ui.define([
 							var bScrolledRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oRow.getDomRef());
 
 							if (bScrolledRowIsGroupHeaderRow) {
-								TableKeyboardDelegate._focusRowSelector(this, oCellInfo.rowIndex);
+								TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, oCellInfo.rowIndex);
 							} else {
 								$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
 								$InteractiveElement.focus();
@@ -944,7 +1100,7 @@ sap.ui.define([
 					var bPreviousRowIsGroupHeaderRow = TableUtils.Grouping.isGroupingRow(oPreviousRow.getDomRef());
 
 					if (bPreviousRowIsGroupHeaderRow) {
-						TableKeyboardDelegate._focusRowSelector(this, iPreviousRowIndex);
+						TableKeyboardDelegate._focusCell(this, CellType.ROWHEADER, iPreviousRowIndex);
 					} else {
 						$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow);
 						$InteractiveElement.focus();
@@ -981,113 +1137,14 @@ sap.ui.define([
 		}
 	};
 
-	//
-	// Helper functions for arrow key navigation
-	//
-
-	/**
-	 * Focus the first interactive element in a table cell or the cell itself.
-	 * If there are no active elements, the cell is focused instead.
-	 * @param {sap.ui.table.Table} oTable The table control
-	 * @param {int} iRow Row index
-	 * @param {int} iCol Column index for data cells
-	 * @param {sap.ui.table.TableUtils.CellType} iCellType Cell type
-	 * @param {boolean} bActive if true, focus the first interactive element in a data cell
-	 */
-	function focusTableCell(oTable, iRow, iCol, iCellType, bActive) {
-		var $cell;
-		function focusCell() {
-			var cell = $cell && $cell[0];
-			if (cell) {
-				var interactiveElement = (bActive ? TableKeyboardDelegate._getInteractiveElements(cell) || [] : [])[0];
-				var keyboardExtension = oTable._getKeyboardExtension();
-				// skip additional focus handling in KeyboardExtension:
-				keyboardExtension._actionMode = !!interactiveElement;
-				keyboardExtension._setSilentFocus(interactiveElement || cell);
-				selectText(interactiveElement);
-			}
-		}
-		if (iCellType === CellType.ROWHEADER) {
-			oTable.$().find('.sapUiTableRowHdr[data-sap-ui-rowindex="' + iRow + '"]').focus();
-		} else if (iCellType === CellType.ROWACTION) {
-			$cell = oTable.$().find('.sapUiTableRowAction[data-sap-ui-rowindex="' + iRow + '"]');
-			focusCell();
-		} else if (iCellType === CellType.DATACELL) {
-			var oCol =  oTable.getColumns()[iCol];
-			$cell = oCol ? oTable.$().find('[data-sap-ui-rowindex="' + iRow + '"] [data-sap-ui-colid="' + oCol.getId() + '"]') : null;
-			focusCell();
-		}
-	}
-
-	function preventItemNavigation(oEvent, bPrevent) {
-		oEvent.setMarked("sapUiTableSkipItemNavigation", bPrevent !== false);
-	}
-
 	TableKeyboardDelegate.prototype.onsapdown = function(oEvent) {
-
-		if (oEvent.isMarked()) {
-			return; // Do not interfere with embedded controls that react on the down key
-		}
-
-		var oKeyboardExtension = this._getKeyboardExtension();
-		var bInActionMode = oKeyboardExtension.isInActionMode();
-		var oCellInfo = TableUtils.getCellInfo(TableUtils.getCell(this, oEvent.target));
-		var bScrolled = false;
-		var oTable = this;
-
-		// go into the action mode if the Ctrl key is pressed or if action mode is active
-		var bFocusActive = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bInActionMode;
-
-		if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
-			preventItemNavigation(oEvent);
-
-			// Scroll down if needed
-			if (TableUtils.isLastScrollableRow(this, oCellInfo.cell)) {
-				bScrolled = this._getScrollExtension().scroll(true, false, true);
-			}
-			if (bScrolled) {
-				if (bFocusActive) {
-					// Focus the first interactive element in the new table cell, if any
-					this.attachEventOnce("_rowsUpdated", function() {
-						setTimeout(function() {
-							focusTableCell(oTable, oCellInfo.rowIndex, oCellInfo.columnIndex, oCellInfo.type, true);
-							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
-						}, 0);
-					});
-				}
-			} else {
-				if (oCellInfo.rowIndex === oTable.getVisibleRowCount() - 1) {
-					oKeyboardExtension.setActionMode(false); // go out of the action mode on the bottom row
-				} else {
-					focusTableCell(oTable, oCellInfo.rowIndex + 1, oCellInfo.columnIndex, oCellInfo.type, bFocusActive);
-					oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
-				}
-			}
-		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
-			var iHeaderRowCount = TableUtils.getHeaderRowCount(this);
-
-			if (TableUtils.isNoDataVisible(this)) {
-				var oFocusInfo = TableUtils.getFocusedItemInfo(this);
-				if (oFocusInfo.row - iHeaderRowCount <= 1) { // We are in the last column header row
-					//Just prevent the navigation to the table content
-					preventItemNavigation(oEvent);
-				}
-
-			} else if (oCellInfo.isOfType(CellType.COLUMNROWHEADER) && iHeaderRowCount > 1) {
-				// Special logic needed because if the column header has multiple rows,
-				// for the SelectAll cell multiple elements are added to the item navigation.
-				preventItemNavigation(oEvent);
-				// Focus the first row header.
-				TableUtils.focusItem(this, iHeaderRowCount * (TableUtils.getVisibleColumnCount(this) + 1/*Row Headers*/), oEvent);
-			}
-		}
+		TableKeyboardDelegate._navigate(this, oEvent, NavigationDirection.DOWN);
 	};
 
 	TableKeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
-
-		// Ctrl + down -> implemented in the onsapdown handler
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			return TableKeyboardDelegate.prototype.onsapdown.call(this, oEvent);
+			TableKeyboardDelegate._navigate(this, oEvent, NavigationDirection.DOWN);
+			return;
 		}
 
 		var oKeyboardExtension = this._getKeyboardExtension();
@@ -1159,52 +1216,15 @@ sap.ui.define([
 	};
 
 	TableKeyboardDelegate.prototype.onsapup = function(oEvent) {
-
-		if (oEvent.isMarked()) {
-			return; // Do not interfere with embedded controls that react on the up key
-		}
-
-		var oKeyboardExtension = this._getKeyboardExtension();
-		var bInActionMode = oKeyboardExtension.isInActionMode();
-		var oCellInfo = TableUtils.getCellInfo(TableUtils.getCell(this, oEvent.target));
-		var bScrolled = false;
-		var oTable = this;
-
-		// go into the action mode if the Ctrl key is pressed or if action mode is active
-		var bFocusActive = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bInActionMode;
-
-		if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
-			preventItemNavigation(oEvent); // default action, see one exception below
-
-			if (TableUtils.isFirstScrollableRow(this, oCellInfo.cell)) {
-				bScrolled = this._getScrollExtension().scroll(false, false, true);
-			}
-			if (bScrolled) {
-				if (bFocusActive) {
-					this.attachEventOnce("_rowsUpdated", function() {
-						setTimeout(function() {
-							focusTableCell(oTable, oCellInfo.rowIndex, oCellInfo.columnIndex, oCellInfo.type, true);
-							oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
-						}, 0);
-					});
-				}
-			} else if (oCellInfo.rowIndex === 0) {
-				// exit active mode; in case of the navigation mode, go to column header cells but not from row actions
-				oKeyboardExtension.setActionMode(false);
-				preventItemNavigation(oEvent, !!bFocusActive || oCellInfo.isOfType(CellType.ROWACTION));
-			} else { // focus the data cell above the current one
-				focusTableCell(oTable, oCellInfo.rowIndex - 1, oCellInfo.columnIndex, oCellInfo.type, bFocusActive);
-				oEvent.preventDefault(); // Prevent positioning the cursor. The text should be selected instead.
-			}
-		}
+		TableKeyboardDelegate._navigate(this, oEvent, NavigationDirection.UP);
 	};
 
 	TableKeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 
-		// Ctrl + up -> implemented in the onsapup handler
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
-			return TableKeyboardDelegate.prototype.onsapup.call(this, oEvent);
+			TableKeyboardDelegate._navigate(this, oEvent, NavigationDirection.UP);
+			return;
 		}
 
 		if (TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT) &&
@@ -1275,23 +1295,7 @@ sap.ui.define([
 	};
 
 	TableKeyboardDelegate.prototype.onsapleft = function(oEvent) {
-		if (this._getKeyboardExtension().isInActionMode()) {
-			return;
-		}
-
-		var bIsRTL = sap.ui.getCore().getConfiguration().getRTL();
-		var oCellInfo = TableUtils.getCellInfo(oEvent.target) || {};
-
-		if (oCellInfo.isOfType(CellType.COLUMNHEADER) && bIsRTL) {
-			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
-			var iFocusedColumn = oFocusedItemInfo.cellInRow - (TableUtils.hasRowHeader(this) ? 1 : 0);
-			var iColumnCount = TableUtils.getVisibleColumnCount(this);
-
-			if (TableUtils.hasRowActions(this) && iFocusedColumn === iColumnCount - 1) {
-				// Do not navigate to the row actions column header cell.
-				preventItemNavigation(oEvent);
-			}
-		}
+		TableKeyboardDelegate._navigate(this, oEvent, NavigationDirection.LEFT);
 	};
 
 	TableKeyboardDelegate.prototype.onsapleftmodifiers = function(oEvent) {
