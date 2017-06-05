@@ -38,6 +38,9 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			oRm.writeStyles();
 			oRm.write(">");
 
+			// Begin column content
+			FCLRenderer.renderColumnContentWrapper(oRm);
+
 			// Arrow - collapse begin
 			FCLRenderer.renderArrow(oRm, oBeginColumnBackArrow);
 
@@ -63,6 +66,9 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			// Arrow - expand begin
 			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
 
+			// Mid column content
+			FCLRenderer.renderColumnContentWrapper(oRm);
+
 			// Arrow - expand end
 			FCLRenderer.renderArrow(oRm, oMidColumnBackArrow);
 
@@ -87,6 +93,9 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			// Arrow - right
 			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
 
+			// End column content
+			FCLRenderer.renderColumnContentWrapper(oRm);
+
 			oRm.write("</div>");
 		};
 
@@ -95,6 +104,13 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 				oArrow.addStyleClass("sapContrastPlus");
 				oRm.renderControl(oArrow);
 			}
+		};
+
+		FCLRenderer.renderColumnContentWrapper = function (oRm) {
+			oRm.write("<div");
+			oRm.addClass("sapFFCLColumnContent");
+			oRm.writeClasses();
+			oRm.write("></div>");
 		};
 
 		return FCLRenderer;
