@@ -147,6 +147,15 @@
 											<m:Text text="Qualifier support for entity types is limited for this control."/>
 										</layout:HorizontalLayout>
 
+										<m:MessageStrip
+											visible="{=${topics>/experimental} !== undefined}"
+											text="Experimental API since version {topics>/experimental/since} {topics>/experimental/text}"
+											type="Warning"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+
 										<m:Table visible="{topics>/hasChildren}"
 												 items="{ path : 'topics>/controlChildren'}"
 												 showSeparators="Inner"
@@ -315,6 +324,14 @@
 															showCloseButton="false"
 															class="sapUiMediumMarginBottom">
 														</m:MessageStrip>
+														<m:MessageStrip  width="100%"
+															visible="{=${topics>experimental} !== undefined}"
+															text="Experimental API since {topics>experimental/since} {topics>experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															class="sapUiMediumMarginBottom">
+														</m:MessageStrip>
 													</m:VBox>
 
 												</m:cells>
@@ -343,6 +360,14 @@
 											visible="{=${events>deprecated} !== undefined}"
 											text="Deprecated since version {events>deprecated/since}. {events>deprecated/text}"
 											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+										<m:MessageStrip
+											visible="{=${events>experimental} !== undefined}"
+											text="Experimental API since {events>experimental/since} {events>experimental/text}"
+											type="Warning"
 											showIcon="true"
 											showCloseButton="false"
 											class="sapUiMediumMarginBottom">
@@ -406,6 +431,14 @@
 											visible="{=${methods>deprecated} !== undefined}"
 											text="Deprecated since version {methods>deprecated/since}. {methods>deprecated/text}"
 											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+										<m:MessageStrip
+											visible="{=${methods>experimental} !== undefined}"
+											text="Experimental API since {methods>experimental/since} {methods>experimental/text}"
+											type="Warning"
 											showIcon="true"
 											showCloseButton="false"
 											class="sapUiMediumMarginBottom">
