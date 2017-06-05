@@ -15,5 +15,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "d9774c6c169d63906dab5a0ae5bd640ad45f823c",
+        "type": "FIX",
+        "text": " Selector not set for FlexCommand \u0026 destroyed element change save problem",
+        "references": []
+      }
+    ]
   }
 }

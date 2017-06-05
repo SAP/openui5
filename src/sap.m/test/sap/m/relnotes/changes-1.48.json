@@ -1604,5 +1604,100 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "493f1a86783234a773d549be0cdb6bc833605ab6",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Density mode implementation",
+        "references": []
+      },
+      {
+        "id": "c6d8d32a688b688b7a295f9a483ac2d45f544bed",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "a03062a7179cb1625c934003cea6f83785e868d6",
+        "type": "FIX",
+        "text": " sap.m.Column - explicitly detach media listener before removing the range set",
+        "references": []
+      },
+      {
+        "id": "6ec86884346d000ddc6e7f5b3e276c18b0e0250b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: ComboBox doesn\u0027t throw an error when sap.ui.core.Item is used",
+        "references": []
+      },
+      {
+        "id": "d26b4229eee80494c1b33fa639eb2113e695535e",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Fix failing qUnit tests.",
+        "references": []
+      },
+      {
+        "id": "b2114183d13353c1cf45bf16188a3dab8c5ddedc",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: items read only once",
+        "references": []
+      },
+      {
+        "id": "c10b6933ca45edfc2278957de25bf938fede5ed6",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestion items in Korean are now correctly selected in Chrome",
+        "references": []
+      },
+      {
+        "id": "bbf653cf759b58b30f453fb55fadede9e51d1527",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now correctly aligned with the sap.m.Link in a HorizontalLayout",
+        "references": []
+      },
+      {
+        "id": "7d4906908830d1126c985d8538e87e13414c9ca2",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Cut functionality now works correctly in IE",
+        "references": []
+      },
+      {
+        "id": "95336cba6fdec2b322a54540ec61e09129af2efd",
+        "type": "FIX",
+        "text": " sap.m.Popover: Fix failing qUnit tests.",
+        "references": []
+      },
+      {
+        "id": "3263429583985a24d44a96ad276ff57fb67af5b8",
+        "type": "FIX",
+        "text": " sap.m.Slider: Slider in not cut off in compactMode anymore",
+        "references": []
+      },
+      {
+        "id": "de9cd02c0ba40e12035578d195da82761b31b2c1",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete button is now correctly visible in compact mode",
+        "references": []
+      },
+      {
+        "id": "6011c9203cb498d0ce676d4e3e364bd12f80f23a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: \"Select all\" style fixed",
+        "references": []
+      },
+      {
+        "id": "1f3fac54280a1db7ac2d84f02e4fcce77d91c05e",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Set correct content in Static area",
+        "references": []
+      },
+      {
+        "id": "dfc7fda5e07b57c869e66ef676dcb2af9a01c131",
+        "type": "FIX",
+        "text": " sap.m.Wizard - _getNextStepreference() returns a wrong result if the sebsequentSteps have a length of 1",
+        "references": []
+      }
+    ]
   }
 }

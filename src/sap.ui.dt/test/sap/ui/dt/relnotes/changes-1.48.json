@@ -128,5 +128,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "607cf4f00cc985b5edd58b2259a9287639451f30",
+        "type": "FIX",
+        "text": " Prevent calling unobserve() more than once and eslint fixes",
+        "references": []
+      },
+      {
+        "id": "3cec496f2e80fa888125dc7eec2b1234b8542e76",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
   }
 }

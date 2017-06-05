@@ -104,5 +104,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "f9951b351bc287263bad3195cc3f0edb43a6ad36",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      }
+    ]
   }
 }

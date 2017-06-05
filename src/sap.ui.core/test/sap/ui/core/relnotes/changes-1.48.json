@@ -650,5 +650,58 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "493f1a86783234a773d549be0cdb6bc833605ab6",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: Density mode implementation",
+        "references": []
+      },
+      {
+        "id": "77c1c90811410a8e61abcf8a2266c74623906df7",
+        "type": "FEATURE",
+        "text": " sap.ui.support: OPA test example added",
+        "references": []
+      },
+      {
+        "id": "9ae21d0ccf19ee64ba57a82939a9cc512a652e40",
+        "type": "FIX",
+        "text": " ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": []
+      },
+      {
+        "id": "6c0e53e79449a7219c0956ad1c92cd88c884e0f9",
+        "type": "FIX",
+        "text": " LocalBusyIndicator: Control still blocked when busy set to \"false\"",
+        "references": []
+      },
+      {
+        "id": "8122a4a3591036927cae0f44b29a7755142cd8e7",
+        "type": "FIX",
+        "text": " ScrollEnablement: inform growing when scrollTo method is called.",
+        "references": []
+      },
+      {
+        "id": "f9951b351bc287263bad3195cc3f0edb43a6ad36",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "4b79afcd7111c44c46ce6ea5bc9525a768736856",
+        "type": "FIX",
+        "text": " jquery.sap.trace: FESR - new field for app_id in optional header",
+        "references": []
+      },
+      {
+        "id": "e37d4c8855d8b292a11c9c2e598d3a0a51f0b159",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Touch events inside the control are now propagated correctly",
+        "references": []
+      }
+    ]
   }
 }

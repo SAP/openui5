@@ -140,5 +140,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "c6d8d32a688b688b7a295f9a483ac2d45f544bed",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "b5016dc4da1550ed500c2f48888b1c47fe77f1d1",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Appointments are aggregated equally across time zones",
+        "references": []
+      }
+    ]
   }
 }

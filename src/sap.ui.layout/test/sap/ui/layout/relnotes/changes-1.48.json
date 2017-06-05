@@ -140,5 +140,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5483a4acc33d00082fad5de09674eea011165095",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      },
+      {
+        "id": "3cec496f2e80fa888125dc7eec2b1234b8542e76",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
   }
 }

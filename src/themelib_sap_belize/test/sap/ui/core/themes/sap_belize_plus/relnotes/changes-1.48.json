@@ -296,5 +296,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "f9951b351bc287263bad3195cc3f0edb43a6ad36",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "0fde5566416adc756c8fda8216503b8c09ad5e74",
+        "type": "FIX",
+        "text": " sap.m.Menu: Items have borders in hcw and hcb themes on phone",
+        "references": []
+      },
+      {
+        "id": "6011c9203cb498d0ce676d4e3e364bd12f80f23a",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: \"Select all\" style fixed",
+        "references": []
+      }
+    ]
   }
 }

@@ -230,5 +230,34 @@
         "references": []
       }
     ]
+  },
+  "1.48.2": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "7aaa73077051525d5c46a06dd70c3b1e06acdfa7",
+        "type": "FIX",
+        "text": " AnalyticalTable: Consider groups on initial numberOfExpandedLevels",
+        "references": []
+      },
+      {
+        "id": "0982ad552e823ff4ef5eebc2bc77a4f866e25edd",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "33cac69194d687049a9231ca177b3dc93f736ea6",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC Announcement of Selection on RowHeaders",
+        "references": []
+      },
+      {
+        "id": "3387c6c6ee93feac76f90772f102ff4e6493a5d4",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Screenreader Support Adaptations",
+        "references": []
+      }
+    ]
   }
 }
