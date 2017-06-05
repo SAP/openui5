@@ -988,11 +988,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			type: Tokenizer.TokenUpdateType.Removed
 		});
 
-		var oParent = this.getParent();
+		var oParent = this.getParent(),
+			bIsParentMultiInput = oParent && oParent instanceof sap.m.MultiInput;
 
-		if (oParent && oParent instanceof sap.m.MultiInput && !oParent._bUseDialog) {
+		if (bIsParentMultiInput) {
 			// not set focus to MultiInput in phone mode
-			oParent.$('inner').focus();
+			if (!oParent._bUseDialog) {
+				oParent.$('inner').focus();
+			}
+		} else {
+			this.focus();
 		}
 
 		this._doSelect();
