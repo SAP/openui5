@@ -446,6 +446,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 				var bItemsVisible = !!aVisibleItems.length;
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
+				var bDesktopPlatform = sap.ui.Device.system.desktop;
 
 				if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 
@@ -463,8 +464,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 					if (oControl._bDoTypeAhead) {
 
-						// note: timeout required for a Android and Windows Phone bug
-						setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
+						if (bDesktopPlatform) {
+							fnSelectTextIfFocused.call(oControl, sValue.length, oControl.getValue().length);
+						} else {
+							// timeout required for an Android and Windows Phone bug
+							setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
+						}
 					}
 				}
 
