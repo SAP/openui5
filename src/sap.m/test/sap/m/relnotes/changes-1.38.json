@@ -3336,5 +3336,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.23": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "002152ecf4a9f9b2725a2fb77b6e01e2218200f1",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Setting range from XMLView enabled",
+        "references": []
+      }
+    ]
   }
 }
