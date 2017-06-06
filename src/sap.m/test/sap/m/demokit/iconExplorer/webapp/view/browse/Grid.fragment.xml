@@ -10,7 +10,7 @@
 			class="sapUiTinyMargin sapUiNoContentPadding"
 			content="{
 				path: '/groups/0/icons',
-				length: '50',
+				length: '200',
 				sorter: {
 					path: 'name',
 					descending: false
