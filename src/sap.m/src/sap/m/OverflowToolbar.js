@@ -67,6 +67,13 @@ sap.ui.define([
 	 * <li>{@link sap.ui.comp.smartfield.SmartField}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li></ul>
 	 *
+	 * <b>Note:</b> The <code>OverflowToolbar</code> is an adaptive container that checks the available
+	 * width and hides the part of its content that doesn't fit. It is intended that simple controls,
+	 * such as {@link sap.m.Button} and {@link sap.m.Label} are used as content. Embedding other
+	 * adaptive container controls, such as {@link sap.m.Breadcrumbs}, results in competition for the available
+	 * space - both controls calculate the available space based on the other one's size and both change their
+	 * width at the same time, leading to incorrectly distributed space.
+	 *
 	 * <h3>Responsive behavior</h3>
 	 *
 	 * The height of the toolbar changes on desktop, tablet, and smartphones.
