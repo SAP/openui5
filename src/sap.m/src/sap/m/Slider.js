@@ -248,7 +248,7 @@ sap.ui.define([
 			this._fHandleWidth = this.$("handle").width();
 
 			this._fTooltipHalfWidthPercent =
-				((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
+					((this._fSliderWidth - (this._fSliderWidth - (this._iLongestRangeTextWidth / 2 + this._CONSTANTS.CHARACTER_WIDTH_PX))) / this._fSliderWidth) * 100;
 		};
 
 		/**
@@ -307,7 +307,7 @@ sap.ui.define([
 		 * @returns {number}
 		 * @private
 		 */
-		Slider.prototype._getValueOfPercent = function (fPercent) {
+		Slider.prototype._getValueOfPercent = function(fPercent) {
 			var fMin = this.getMin();
 			var fValue = (fPercent * (this.getMax() - fMin) / 100) + fMin;
 			var valuePrecision = ("" + this.getStep()).split(".")[1];
@@ -737,6 +737,11 @@ sap.ui.define([
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
+			// Should be prevent as in Safari while dragging the handle everything else gets selection.
+			// As part of the Slider, Inputs in the tooltips should be excluded
+			if (oEvent.target.className.indexOf("sapMInput") === -1) {
+				oEvent.preventDefault();
+			}
 
 			// only process single touches
 			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
