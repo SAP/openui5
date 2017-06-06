@@ -150,7 +150,8 @@ sap.ui.define([
 				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
 				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
-			}
+			},
+			designTime : true
 		}
 	});
 
