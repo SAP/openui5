@@ -1095,43 +1095,45 @@ QUnit.test("getCellInfo", function(assert) {
 		return $InteractiveElements[0];
 	}
 
-	QUnit.test("getParentDataCell", function(assert) {
-		var oCell = getCell(0, iNumberOfCols - 1);
-		var $ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
-
-		$ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell[0]));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
-
-		oCell = getCell(0, iNumberOfCols - 2);
-		$ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
-
-		$ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell[0]));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
-
-		$ParentDataCell = TableUtils.getParentDataCell(oTable);
-		assert.strictEqual($ParentDataCell, null, "No element parameter passed: Null was returned");
-	});
-
-	QUnit.test("getParentRowActionCell", function(assert) {
+	QUnit.test("getParentCell", function(assert) {
 		initRowActions(oTable, 1, 1);
 
-		var oCell = getRowAction(0);
-		var $ParentRowActionCell = TableUtils.getParentRowActionCell(oTable, _getFirstInteractiveElement(oCell));
-		assert.strictEqual($ParentRowActionCell.length, 1, "A row action cell was returned");
-		assert.strictEqual($ParentRowActionCell[0], oCell[0], "jQuery object passed: The correct row action cell was returned");
+		/* Data Cell */
 
-		$ParentRowActionCell = TableUtils.getParentRowActionCell(oTable, _getFirstInteractiveElement(oCell[0]));
-		assert.strictEqual($ParentRowActionCell.length, 1, "A row action cell was returned");
-		assert.strictEqual($ParentRowActionCell[0], oCell[0], "DOM element passed: The correct row action cell was returned");
+		var oCell = getCell(0, iNumberOfCols - 1);
+		var $ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
 
-		$ParentRowActionCell = TableUtils.getParentRowActionCell(oTable);
-		assert.strictEqual($ParentRowActionCell, null, "No element parameter passed: Null was returned");
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
+
+		oCell = getCell(0, iNumberOfCols - 2);
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
+
+		/* Row Action Cell */
+		oCell = getRowAction(0);
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell.length, 1, "A row action cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct row action cell was returned");
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]));
+		assert.strictEqual($ParentCell.length, 1, "A row action cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct row action cell was returned");
+
+		/* Invalid parameters */
+
+		$ParentCell = TableUtils.getParentCell(oTable);
+		assert.strictEqual($ParentCell, null, "No element passed: Null was returned");
+
+		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, iNumberOfCols - 1)));
+		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
 	});
-
 }());

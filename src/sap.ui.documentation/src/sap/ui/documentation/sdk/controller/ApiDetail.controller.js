@@ -41,6 +41,7 @@ sap.ui.define([
 				"any",
 				"object",
 				"object[]",
+				"object|object[]",
 				"function",
 				"float",
 				"int",
@@ -67,6 +68,7 @@ sap.ui.define([
 				ControlsInfo.init();
 
 				this.setModel(new JSONModel(), "topics");
+				this.setModel(new JSONModel(), "constructorParams");
 				this.setModel(new JSONModel(), 'methods');
 				this.setModel(new JSONModel(), 'events');
 				this.setModel(new JSONModel(), "entity");
@@ -249,6 +251,7 @@ sap.ui.define([
 					aTreeData = this.getOwnerComponent().getModel("treeData").getData(),
 					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
+					oConstructorParamsModel = { parameters : []},
 					oMethodsModel = {methods: []},
 					oEventsModel = {events: []},
 					oUi5Metadata;
@@ -320,6 +323,15 @@ sap.ui.define([
 					oControlData.hasAnnotations = false;
 				}
 
+				if (oControlData.hasConstructor && oControlData.constructor.parameters) {
+					for (var i = 0; i < oControlData.constructor.parameters.length; i++) {
+						this.subParamPhoneName = oControlData.constructor.parameters[i].name;
+						oConstructorParamsModel.parameters =
+							oConstructorParamsModel.parameters.concat(this._getParameters(oControlData.constructor.parameters[i]));
+					}
+					this.subParamPhoneName = '';
+				}
+
 				if (oControlData.hasMethods) {
 					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
 				}
@@ -351,6 +363,7 @@ sap.ui.define([
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
 
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
+				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
 				this.getModel('methods').setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
@@ -537,7 +550,6 @@ sap.ui.define([
 			 * @returns {Array} - the adjusted array
 			 */
 			buildEventsModel: function (events) {
-
 				// No events, do nothing
 				if (events.length === 0) {
 					return events;
@@ -546,37 +558,77 @@ sap.ui.define([
 				// Transform the key-value pairs of event parameters into an array
 				var result = events.map(function (event) {
 					if (event.parameters) {
-						var aParameters = [], currentParam, subParam, subSubParam;
-						for (var i in event.parameters) {
-							if (event.parameters.hasOwnProperty(i)) {
-								currentParam = event.parameters[i];
-								aParameters.push(currentParam);
-								if (currentParam.parameterProperties) {
-									for (var j in currentParam.parameterProperties) {
-										subParam = currentParam.parameterProperties[j];
-										subParam.isSubProperty = true;
-										subParam.phoneName = currentParam.name + '.' + subParam.name;
-										aParameters.push(subParam);
-										if (subParam.parameterProperties) {
-											for (var k in subParam.parameterProperties) {
-												subSubParam = subParam.parameterProperties[k];
-												subSubParam.isSubSubProperty = true;
-												subSubParam.phoneName = currentParam.name + '.' + subParam.name + '.' + subSubParam.name;
-												aParameters.push(subSubParam);
-											}
-										}
-									}
-								}
-							}
-						}
+						var aParameters = [];
+						event.parameters.map(function(oParam) {
+							this.subParamPhoneName = oParam.name;
+							aParameters = aParameters.concat(this._getParameters(oParam));
+						}, this);
+						this.subParamPhoneName = '';
+
 						event.parameters = aParameters;
 					}
 
 					return event;
-				});
+				}, this);
 
 				// Prepend an empty item so that it is replaced by the summary subsection
 				result.unshift({});
+
+				return result;
+			},
+
+			subParamLevel: 0,
+			subParamPhoneName: '',
+
+			_getParameters: function (oParam) {
+				var result = [oParam];
+
+				if (oParam.parameterProperties) {
+					var types = (oParam.type || "").split("|"),
+						paramTypes;
+
+					oParam.types = [];
+					for (var i = 0; i < types.length; i++) {
+						oParam.types.push({
+							value: types[i],
+							isLast: i === types.length - 1
+						});
+					}
+
+					this.subParamLevel++;
+					for (var subParam in oParam.parameterProperties) {
+							var subPropertyString = 'is';
+
+							for (var i = 0; i < this.subParamLevel; i++) {
+								subPropertyString += 'Sub';
+							}
+
+							subPropertyString += 'Property';
+
+							this.subParamPhoneName += '.' + subParam;
+
+							oParam.parameterProperties[subParam][subPropertyString] = true;
+							oParam.parameterProperties[subParam].phoneName = this.subParamPhoneName;
+
+							paramTypes = (oParam.parameterProperties[subParam].type || "").split("|");
+							oParam.parameterProperties[subParam].types = [];
+							oParam.parameterProperties[subParam].types = paramTypes.map(function (currentType, idx, array) {
+								return {
+									value: currentType,
+									isLast: idx === array.length - 1
+								};
+							});
+
+							result = result.concat(this._getParameters(oParam.parameterProperties[subParam]));
+
+							if (this.subParamPhoneName.indexOf('.') > -1) {
+								this.subParamPhoneName = this.subParamPhoneName.substring(0, this.subParamPhoneName.lastIndexOf('.'));
+							} else {
+								this.subParamPhoneName = '';
+							}
+					}
+					this.subParamLevel--;
+				}
 
 				return result;
 			},

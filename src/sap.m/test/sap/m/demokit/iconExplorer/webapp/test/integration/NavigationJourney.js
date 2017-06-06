@@ -8,8 +8,11 @@ sap.ui.define([
 	QUnit.module("Navigation");
 
 	opaTest("Should see the busy indicator on app view while icon metadata is loaded", function (Given, When, Then) {
+
 		// Arrangements
-		Given.iStartMyApp();
+		Given.iStartMyApp({
+            delay: 2000 // to really see the busy indicator
+        });
 
 		//Actions
 		When.onTheOverviewPage.iLookAtTheScreen();

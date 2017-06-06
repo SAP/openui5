@@ -1,0 +1,39 @@
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc p {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #333333;
+}
+
+html:not(.sapUiTheme-sap_belize) .sapUiDocumentationJsDoc p {
+	font-family: "72-Web", Arial, Helvetica, sans-serif;
+}
+
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc p,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a {
+	color: #ffffff;
+}
+
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc p,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc a {
+	color: #000000;
+}
+
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc a:hover,
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a:hover {
+	text-decoration: none;
+}
+
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a {
+	color: #0070b1;
+}
+
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a:hover {
+	text-decoration: underline;
+}
+
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcw) .sapUiDocumentationJsDoc a:focus {
+	outline: 0.125rem dotted #ffffff;
+}
+html:not(.sapUiTheme-sap_belize):not(.sapUiTheme-sap_belize_hcb) .sapUiDocumentationJsDoc a:focus {
+	outline: 0.125rem dotted #000000;
+}

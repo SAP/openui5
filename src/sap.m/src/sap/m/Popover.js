@@ -319,10 +319,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this._marginBottom = 10;
 
 			this._$window = jQuery(window);
-			this._initialWindowDimensions = {
-				width: this._$window.width(),
-				height: this._$window.height()
-			};
+			this._initialWindowDimensions = {};
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
@@ -493,6 +490,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 */
 		Popover.prototype.onBeforeRendering = function () {
 			var oNavContent, oPageContent;
+
+			if (!this._initialWindowDimensions.width || !this._initialWindowDimensions.height) {
+				this._initialWindowDimensions = {
+					width: this._$window.width(),
+					height: this._$window.height()
+				};
+			}
 
 			// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
 			if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
@@ -741,7 +745,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 */
 		Popover.prototype.close = function () {
 			var eOpenState = this.oPopup.getOpenState(),
-				bSameFocusElement;
+				bSameFocusElement, oActiveElement;
 
 			if (eOpenState === sap.ui.core.OpenState.CLOSED || eOpenState === sap.ui.core.OpenState.CLOSING) {
 				return this;
@@ -753,9 +757,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this.oPopup.close(true);
 
 			if (this._oPreviousFocus) {
+				oActiveElement = document.activeElement || {};
 				// if the current focused control/element is the same as the focused control/element before popover is open, no need to restore focus.
 				bSameFocusElement = (this._oPreviousFocus.sFocusId === sap.ui.getCore().getCurrentFocusedControlId()) ||
-					(this._oPreviousFocus.sFocusId === document.activeElement.id);
+					(this._oPreviousFocus.sFocusId === oActiveElement.id);
 
 				// restore previous focus, if the current control isn't the same control as
 				if (!bSameFocusElement) {

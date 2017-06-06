@@ -262,7 +262,8 @@
 												path: 'tags',
 												templateShareable: true
 											}"
-											editable="false">
+											editable="false"
+											class="tagsArea" >
 											<Token text="{name}" press="onTagSelect"/>
 										</Tokenizer>
 									</Panel>

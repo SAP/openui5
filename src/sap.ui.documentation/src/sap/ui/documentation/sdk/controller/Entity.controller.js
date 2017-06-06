@@ -9,10 +9,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/Device"
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
 	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
-				 EntityInfo, ToggleFullScreenHandler, Device) {
+				 EntityInfo, ToggleFullScreenHandler) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -25,6 +24,8 @@ sap.ui.define([
 
 				this.router = this.getRouter();
 				this.router.getRoute("entity").attachPatternMatched(this.onRouteMatched, this);
+
+				this._oObjectPage = this.getView().byId("ObjectPageLayout");
 
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
@@ -105,8 +106,7 @@ sap.ui.define([
 					return;
 				}
 
-				var sNewId = this._sNewId,
-					sNewTab = this._sNewTab;
+				var sNewId = this._sNewId;
 
 				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
 					return entity.id === sNewId;
@@ -142,20 +142,24 @@ sap.ui.define([
 				}
 
 				// handle unknown tab
-				if (this._TAB_KEYS.indexOf(sNewTab) === -1) {
-					sNewTab = "samples";
+				if (this._TAB_KEYS.indexOf(this._sNewTab) === -1) {
+					this._sNewTab = "samples";
 				}
 
 				// handle invisible tab
-				if (!oData.show[sNewTab]) {
-					sNewTab = "samples";
+				if (!oData.show[this._sNewTab]) {
+					this._sNewTab = "samples";
 				}
+
+				this._switchPageTab();
+
 			},
+
 
 			onRouteMatched: function (oEvt) {
 
 				this._sNewId = oEvt.getParameter("arguments").id;
-				this._sNewTab = oEvt.getParameter("arguments").part;
+				this._sNewTab = oEvt.getParameter("arguments").sectionTab;
 
 				this._loadSample();
 			},
@@ -281,6 +285,17 @@ sap.ui.define([
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
 				return (sDeprecated) ? "Deprecated" : "";
+			},
+
+			_switchPageTab: function () {
+
+				var oSection = this.getView().byId(this._sNewTab);
+				if (!oSection) {
+					return;
+				}
+				if (this._oObjectPage) {
+					this._oObjectPage.setSelectedSection(oSection.getId());
+				}
 			},
 
 			/**

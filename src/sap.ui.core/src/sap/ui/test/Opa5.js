@@ -234,7 +234,8 @@ sap.ui.define([
 		 * after UIComponent is destroyed
 		 *
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
-		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * If no UIComponent has been started or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -258,12 +259,15 @@ sap.ui.define([
 		};
 
 		/**
-		 * Tears down an IFrame or a component, launched by
-		 * @link{sap.ui.test.Opa5#iStartMyAppInAFrame} or @link{sap.ui.test.Opa5#iStartMyUIComponent}.
-		 * This function desinged for making your test's teardown independent of the startup.
-		 * If nothing has been started, this function will throw an error.
+		 * Tears down the started application regardless of how it was started.
+		 * Removes the IFrame launched by @link{sap.ui.test.Opa5#iStartMyAppInAFrame}
+		 * or destroys the UIComponent launched by @link{sap.ui.test.Opa5#iStartMyUIComponent}.
+		 * This function is designed to make the test's teardown independent of the startup.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
-		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * If nothing has been started or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * @public
+		 * @function
 		 */
 		Opa5.prototype.iTeardownMyApp = function () {
 			var that = this;
@@ -330,7 +334,8 @@ sap.ui.define([
 		/**
 		 * Removes the IFrame from the DOM and removes all the references to its objects
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
-		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -339,7 +344,8 @@ sap.ui.define([
 		/**
 		 * Removes the IFrame from the DOM and removes all the references to its objects
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
-		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */

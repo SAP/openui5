@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TimePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', 'sap/ui/model/odata/type/Time', './TimePickerSliders'],
-	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimeODataModel, TimePickerSliders) {
+sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', 'sap/ui/model/odata/type/Time', './TimePickerSliders', './MaskEnabler'],
+	function(jQuery, InputBase, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimeODataModel, TimePickerSliders, MaskEnabler) {
 		"use strict";
 
 		/**
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * For larger screens, such as tablet or desktop, it opens as a popover. For
 		 * mobile devices, it opens in full screen.
 		 *
-		 * @extends sap.m.MaskInput
+		 * @extends sap.m.InputBase
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @since 1.32
 		 * @alias sap.m.TimePicker
 		 */
-		var TimePicker = MaskInput.extend("sap.m.TimePicker", /** @lends sap.m.TimePicker.prototype */ {
+		var TimePicker = InputBase.extend("sap.m.TimePicker", /** @lends sap.m.TimePicker.prototype */ {
 			metadata : {
 				library : "sap.m",
 				properties : {
@@ -150,9 +150,32 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * The seconds slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					secondsStep: {type: "int", group: "Misc", defaultValue: 1}
+					secondsStep: {type: "int", group: "Misc", defaultValue: 1},
+
+					/**
+					 * Defines a placeholder symbol. Shown at the position where there is no user input yet.
+					 */
+					placeholderSymbol: {type: "string", group: "Misc", defaultValue: "_"},
+
+					/**
+					 * Mask defined by its characters type (respectively, by its length).
+					 * You should consider the following important facts:
+					 * 1. The mask characters normally correspond to an existing rule (one rule per unique char).
+					 * Characters which don't, are considered immutable characters (for example, the mask '2099', where '9' corresponds to a rule
+					 * for digits, has the characters '2' and '0' as immutable).
+					 * 2. Adding a rule corresponding to the <code>placeholderSymbol</code> is not recommended and would lead to an unpredictable behavior.
+					 * 3. You can use the special escape character '^' called "Caret" prepending a rule character to make it immutable.
+					 * Use the double escape '^^' if you want to make use of the escape character as an immutable one.
+					 */
+					mask: {type: "string", group: "Misc", defaultValue: null}
 				},
 				aggregations: {
+
+					/**
+					 A list of validation rules (one rule per mask character).
+					 */
+					rules: {type: "sap.m.MaskInputRule", multiple: true, singularName: "rule"},
+
 					/**
 					 * Internal aggregation that contains the inner _picker pop-up.
 					 */
@@ -162,6 +185,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 		IconPool.insertFontFaceStyle();
 		EnabledPropagator.call(TimePicker.prototype, true);
+		MaskEnabler.call(TimePicker.prototype);
 
 		var TimeFormatStyles = {
 				Short: "short",
@@ -182,7 +206,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.init = function() {
 
-			MaskInput.prototype.init.apply(this, arguments);
+			MaskEnabler.init.apply(this, arguments);
 
 			this.setDisplayFormat(getDefaultDisplayFormat());
 
@@ -217,7 +241,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				this._oTimeSemanticMaskHelper.destroy();
 			}
 
-			MaskInput.prototype.exit.apply(this, arguments);
+			MaskEnabler.exit.apply(this, arguments);
 
 			this._removePickerEvents();
 
@@ -229,13 +253,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this._sUsedValuePattern = null;
 			this._sValueFormat = null;
 			this._sLastChangeValue = null;
-		};
-
-		/**
-		 * Called before the control is rendered.
-		 */
-		TimePicker.prototype.onBeforeRendering = function() {
-			MaskInput.prototype.onBeforeRendering.apply(this, arguments);
 		};
 
 		/**
@@ -274,28 +291,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var oPicker = this._getPicker();
 			var bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
 
-			MaskInput.prototype.onfocusin.apply(this, arguments);
+			MaskEnabler.onfocusin.apply(this, arguments);
 
 			if (oPicker && oPicker.isOpen() && !bIconClicked) {
 				this._closePicker();
 			}
-		};
-
-		/**
-		 * Handler for oninput event
-		 * @param {jQuery.Event} oEvent  Event object
-		 */
-		TimePicker.prototype.oninput = function (oEvent) {
-			MaskInput.prototype.oninput.apply(this, arguments);
-		};
-
-		/**
-		 * Handles the focusout event.
-		 *
-		 * @param {jQuery.Event} oEvent Event object
-		 */
-		TimePicker.prototype.onfocusout = function (oEvent) {
-			MaskInput.prototype.onfocusout.apply(this, arguments);
 		};
 
 		/**
@@ -547,7 +547,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			this._initMask();
 
-			MaskInput.prototype.setValue.call(this, sValue);
+			MaskEnabler.setValue.call(this, sValue);
 			this._sLastChangeValue = sValue;
 			this._bValid = true;
 
@@ -780,7 +780,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 				oEvent.preventDefault(); //ie expands the address bar on F4
 			} else {
-				MaskInput.prototype.onkeydown.call(this, oEvent);
+				MaskEnabler.onkeydown.call(this, oEvent);
 			}
 		};
 
@@ -1494,7 +1494,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {
 			var oRenderer = this.getRenderer();
-			var oInfo = MaskInput.prototype.getAccessibilityInfo.apply(this, arguments);
+			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
 			if (this._bValid) {
 				var oDate = this.getDateValue();

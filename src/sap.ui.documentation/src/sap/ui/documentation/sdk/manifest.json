@@ -119,7 +119,7 @@
 			"target": ["controlsMaster", "group"]
 		  },
 		  {
-			"pattern": "entity/{id}",
+			"pattern": "entity/{id}/:sectionTab:",
 			"name": "entity",
 			"target": ["controlsMaster", "entity"]
 		  },

@@ -52,21 +52,19 @@ sap.ui.define([], function() {
 					plural : "GROUP_CONTROL_NAME_PLURAL"
 				},
 				getIndex : function(oForm, oFormContainer) {
-					var iIndex = 0;
 					var aFormContainers = oForm.getFormContainers();
 
 					if (oFormContainer) {
-						iIndex = aFormContainers.indexOf(oFormContainer) + 1;
-					} else {
-						var aFormElements = aFormContainers[aFormContainers.length - 1].getFormElements();
-						// if there is no Elements in the FormContainer, the SimpleForm is empty and
-						// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
-						if (aFormElements.length > 0) {
-							iIndex = aFormContainers.length;
-						}
+						return aFormContainers.indexOf(oFormContainer) + 1;
+					}
+					// if there is no Elements in the FormContainer, the SimpleForm is empty and
+					// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
+					if (aFormContainers[0].getFormElements().length === 0 &&
+						aFormContainers[0].getTitle() === null) {
+						return 0;
 					}
 
-					return iIndex;
+					return aFormContainers.length;
 				},
 				beforeMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
 					if (oSimpleForm){

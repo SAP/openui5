@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, sValue);
 
-				if (oItemAdditionalTextRef) {
+				if (oItemAdditionalTextRef && oItem.getAdditionalText) {
 					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, sValue);
 				}
 			}, this);
@@ -1643,7 +1643,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				// the correct solution for tackling the coupling of selectedKey and value should be by using debounce
 				// however this makes the API async, which alters the existing behaviour of the control
 				// that's why the solution is implemented with skipModelUpdate property
-				bSkipModelUpdate = this.mBindingInfos["selectedKey"] && this.mBindingInfos["selectedKey"].skipModelUpdate;
+				bSkipModelUpdate = this.isBound("selectedKey") && this.isBound("value") && this.getBindingInfo("selectedKey").skipModelUpdate;
 
 			if (bDefaultKey) {
 				this.setSelection(null);
@@ -1685,6 +1685,48 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
 			return (vSelectedItem === null) ? null : sap.ui.getCore().byId(vSelectedItem) || null;
+		};
+
+		ComboBox.prototype.updateItems = function () {
+			var vResult,
+				oSelectedItem = this.getSelectedItem(), //Get selected item before model update
+				sSelectedKey = this.getSelectedKey(); //Get selected key before model update
+
+			vResult = ComboBoxBase.prototype.updateItems.apply(this, arguments); //Update
+
+			//Debounce & emulate onBeforeRendering- all setters are done
+			jQuery.sap.clearDelayedCall(this._debounceItemsUpdate);
+			this._debounceItemsUpdate = jQuery.sap.delayedCall(0, this, "_syncItemsSelection", [sSelectedKey, oSelectedItem]);
+
+			return vResult;
+		};
+
+		/**
+		 * Synchronizes combobox's model update with selected key.
+		 *
+		 * @param sSelectedKey
+		 * @param oSelectedItem
+		 * @private
+		 */
+		ComboBox.prototype._syncItemsSelection = function (sSelectedKey, oSelectedItem) {
+			var bHasMatchingElement, aNewItems;
+
+			// The method should be executed only when there's previous selection
+			// and that previous selection differs from the current one.
+			if (!oSelectedItem || oSelectedItem === this.getSelectedItem()) {
+				return;
+			}
+
+			// Get the items after model update
+			aNewItems = this.getItems();
+
+			// Find out if there's an item with the same key, to select it
+			bHasMatchingElement = aNewItems.some(function (oItem) {
+				return sSelectedKey === oItem.getKey();
+			});
+
+			// Select the item or set null if there's no record with that key
+			this.setSelectedItem(bHasMatchingElement && sSelectedKey ? this.getItemByKey(sSelectedKey) : null);
 		};
 
 		/**
