@@ -12,12 +12,12 @@
             data-sap-ui-resourceroots='{
 				"appUnderTest" : "./"
 			}'
-            data-sap-ui-preload="async">
+            data-sap-ui-preload='async'>
     </script>
     <script>
 		sap.ui.getCore().attachInit(function () {
-			new sap.m.Shell("Shell", {
-				title: "Application under test",
+			new sap.m.Shell('Shell', {
+				title: 'Application under test',
 				app: new sap.ui.core.ComponentContainer({
 					name: 'appUnderTest'
 				})
@@ -25,5 +25,5 @@
 		});
     </script>
 </head>
-<body class='sapUiBody' id='content'></body>
+<body class="sapUiBody" id="content"></body>
 </html>

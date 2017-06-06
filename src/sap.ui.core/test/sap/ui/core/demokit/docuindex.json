@@ -623,7 +623,7 @@
 			{
 				"id": "sap.ui.core.sample.OpaWithSupportAssistant",
 				"name": "Running OPA tests with Support Assistant checks",
-				"description": ""
+				"description": "This sample demonstrates how to extend existing OPA test/journey by plugging calls to Support Assistant extension assertions, with different severity and check scope parameters"
 			}
 		]
 	}
