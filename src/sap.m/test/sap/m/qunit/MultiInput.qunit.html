@@ -688,6 +688,7 @@
 		this.multiInput1.addToken(token1);
 		this.multiInput1.setValue("text");
 		this.multiInput1._$input.focus();
+		this.multiInput1._$input[0].setSelectionRange(3, 3);
 
 		sap.ui.getCore().applyChanges();
 
