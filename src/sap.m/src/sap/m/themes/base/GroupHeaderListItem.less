@@ -45,7 +45,6 @@
 	align-items: flex-end;
 }
 
-
 .sapMListUl .sapMLIB.sapMGHLI {
 	height: 2rem;
 	line-height: 2rem;
@@ -74,6 +73,7 @@
 }
 
 /* group headers should have background color grey so that they are distinguishable from ListItems */
-.sapMListTbl .sapMGHLI.sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover) {
+.sapMListTbl .sapMGHLI.sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
+.sapMListTbl .sapMGHLI.sapMLIB.sapMLIBTypeInactive {
 	background: @sapUiListTableGroupHeaderBackground;
 }
