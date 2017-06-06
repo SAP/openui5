@@ -302,7 +302,7 @@ function(
 		ElementUtil.executeActions(aActions);
 		assert.equal(ElementUtil.hasAncestor(this.oButton, this.oHorizontalLayoutChild), false, 'then afterwards the button is no longer an ancestor of the horizontal layout');
 		assert.equal(ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout), true, 'and the button is still an ancestor of the vertical layout');
-		var aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
+		aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
 		assert.equal(aChildren.length, 6, 'then the vertical layout has now 6 children');
 	});
 

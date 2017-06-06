@@ -93,6 +93,23 @@
 				assert.ok(oInnerLayoutOverlay, "an overlay for the root contol of the UIComponent is created");
 				assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
 			});
+
+			QUnit.test("When asking for the component container overlays...", function(assert) {
+				var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
+				var oComponentContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponentContainer);
+
+				assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
+				assert.equal(oComponentOverlay.getElement(), this.oComponent.getId(), "the UIComponent overlay points to the UI Component");
+				assert.ok(oComponentContainerOverlay, "an overlay for the ComponentContainer is created");
+				assert.equal(oComponentContainerOverlay.getElement(), this.oComponentContainer.getId(), "the ComponentContainer  overlay points to the ComponentContainer");
+			});
+
+			QUnit.test("When asking for the component container association....", function(assert) {
+				var sComponentId = sap.ui.dt.ElementUtil.getAssociation(this.oComponentContainer, "component");
+				var oComponent = sap.ui.dt.ElementUtil.getAssociationInstances(this.oComponentContainer, "component");
+				assert.equal(sComponentId, this.oComponent.getId(), "the UIComponent returned is the same as expected");
+				assert.equal(oComponent.getId(), this.oComponent.getId(), "the UIComponent returned is the same as expected");
+			});
 		</script>
 	</head>
 	<body>
