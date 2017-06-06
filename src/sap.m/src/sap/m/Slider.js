@@ -822,6 +822,11 @@ sap.ui.define([
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
+			// Should be prevent as in Safari while dragging the handle everything else gets selection.
+			// As part of the Slider, Inputs in the tooltips should be excluded
+			if (oEvent.target.className.indexOf("sapMInput") === -1) {
+				oEvent.preventDefault();
+			}
 
 			// only process single touches
 			if (sap.m.touch.countContained(oEvent.touches, this.getId()) > 1 ||
