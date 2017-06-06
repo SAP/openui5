@@ -237,7 +237,8 @@
 										<ce:CodeEditor height="auto" maxLines="20" width="100%" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
 														syntaxHints="false" value="{parts: [{path: 'topics>/name' },
 																			{path: 'topics>/constructor/parameters' }],
-																	 		formatter: '.formatConstructor'}"/>
+																	 		formatter: '.formatConstructor'}"
+																	 		class="sapUiSmallMarginBottom"/>
 
 										<m:Table items="{ path : 'constructorParams>/parameters'}"
 												showSeparators="Inner"
@@ -310,7 +311,7 @@
 													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
-													<m:Text text="{topics>visibility}" wrapping="false"/>
+													<m:ObjectStatus text="{topics>visibility}" state="{= ${topics>visibility} === 'public' ? 'Success' : 'Warning'}" />
 
 													<m:VBox>
 														<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
@@ -353,8 +354,10 @@
 								<blocks>
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'events>description'}, {path: 'events>visibility'}, {path: 'events>since'}],
-																			 formatter: '.formatDescriptionDetails'}"/>
+										<core:HTML content="{parts: [{path: 'events>description'}, {path: 'events>since'}],
+																			 formatter: '.formatDescriptionSince'}"/>
+
+										<m:ObjectStatus text="Visibility: {events>visibility}" state="{= ${events>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
 										<m:MessageStrip
 											visible="{=${events>deprecated} !== undefined}"
@@ -424,8 +427,10 @@
 
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>visibility'}, {path: 'methods>since'}],
-																			 formatter: '.formatDescriptionDetails'}"/>
+										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>since'}],
+																			 formatter: '.formatDescriptionSince'}"/>
+
+										<m:ObjectStatus text="Visibility: {methods>visibility}" state="{= ${methods>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
 
 										<m:MessageStrip
 											visible="{=${methods>deprecated} !== undefined}"

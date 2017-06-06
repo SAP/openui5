@@ -777,28 +777,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Formats the description of events and methods in details
-			 * @param description - the description of the event/method
-			 * @param visibility - the visibility of the event/method
-			 * @param since - the since version information of the event/method
-			 * @returns string - the formatted description
-			 */
-			formatDescriptionDetails: function (description, visibility, since) {
-				var result = description || "";
-
-				if (visibility) {
-					result += '<br/><br/><i>Visibility: ' + visibility + '.</i>';
-				}
-
-				if (since) {
-					result += '<br/><br/><i>Since: ' + since + '.</i>';
-				}
-
-				result = this._wrapInSpanTag(result);
-				return result;
-			},
-
-			/**
 			 * Formats the description of control properties
 			 * @param description - the description of the property
 			 * @param since - the since version information of the property
