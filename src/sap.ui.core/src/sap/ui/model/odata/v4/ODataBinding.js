@@ -29,10 +29,6 @@ sap.ui.define([
 			oCurrentCache,
 			that = this;
 
-		if (this.oOperation) { // operation binding manages its cache on its own
-			return;
-		}
-
 		if (!this.bRelative) {
 			oContext = undefined;
 		}
@@ -110,7 +106,7 @@ sap.ui.define([
 			oQueryOptionsPromise,
 			that = this;
 
-		// operation binding
+		// operation binding manages its cache on its own
 		if (this.oOperation) {
 			return _SyncPromise.resolve(undefined);
 		}
