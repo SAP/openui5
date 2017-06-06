@@ -4136,6 +4136,7 @@
 						"The second control in the summary bar content should be a spacer so that the reset button is displayed on the right side of the toolbar");
 				var oResetButton = oSummaryBar.getContent()[2];
 				assert.ok(oResetButton instanceof sap.m.Button, "The third control in the summary bar content should be a button");
+				assert.ok(oResetButton.$().hasClass("sapUiSizeCompact"), "The button should be in compact size");
 			} else {
 
 				assert.equal(oSummaryBar.getContent().length, 1,
