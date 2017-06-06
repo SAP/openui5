@@ -483,6 +483,7 @@
 
 		// assert
 		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
+		assert.equal(document.activeElement, this.tokenizer.$()[0], "tokenizer is focused");
 	});
 
 	QUnit.test("backspace with editable=false", function(assert) {
