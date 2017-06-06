@@ -371,4 +371,84 @@ sap.ui.require([
 			AnnotationHelper.getValueListType(mScope["tea_busi.Worker"].ID, oDetails),
 			oResult);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("label - DataField has a label", function (assert) {
+		var oAnnotationHelperMock = this.mock(AnnotationHelper),
+			oContext = {},
+			oModel = {
+				createBindingContext : function () {}
+			},
+			oDetails = {
+				context : {
+					getModel : function () { return oModel; }
+				}
+			},
+			vRawValue = {
+				Label : "ID",
+				Value : {}
+			};
+		this.mock(oModel).expects("createBindingContext")
+			.withExactArgs("Label", sinon.match.same(oDetails.context))
+			.returns(oContext);
+		oAnnotationHelperMock.expects("value")
+			.withExactArgs(vRawValue.Label, sinon.match({
+				context : sinon.match.same(oContext)
+			}));
+
+		// code under test
+		AnnotationHelper.label(vRawValue, oDetails);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("label - follow the path", function (assert) {
+		var oAnnotationHelperMock = this.mock(AnnotationHelper),
+			oContext = {
+				getObject : function () {}
+			},
+			oModel = {
+				createBindingContext : function () {}
+			},
+			oDetails = {
+				context : {
+					getModel : function () { return oModel; }
+				}
+			},
+			vRawValue = {
+				Value : {
+					$Path : "PhoneNumber"
+				}
+			},
+			vResult = {};
+
+		this.mock(oModel).expects("createBindingContext")
+			.withExactArgs("Value/$Path@com.sap.vocabularies.Common.v1.Label",
+				sinon.match.same(oDetails.context))
+			.returns(oContext);
+		this.mock(oContext).expects("getObject")
+			.withExactArgs("")
+			.returns(vResult);
+		oAnnotationHelperMock.expects("value")
+			.withExactArgs(sinon.match.same(vResult), sinon.match({
+				context : sinon.match.same(oContext)
+			}));
+
+		// code under test
+		AnnotationHelper.label(vRawValue, oDetails);
+	});
+
+	//*********************************************************************************************
+	[
+		{},
+		{Value : {$Path : ""}},
+		{Value : "PhoneNumber"},
+		{Value : {$Apply : ["foo", "/", "bar"], $Function : "odata.concat"}}
+	].forEach(function (vRawValue) {
+		var sTitle = "label - returns undefined, vRawValue = " + JSON.stringify(vRawValue);
+
+		QUnit.test(sTitle, function (assert) {
+			// code under test
+			assert.strictEqual(AnnotationHelper.label(vRawValue, {/*oDetails*/}), undefined);
+		});
+	});
 });

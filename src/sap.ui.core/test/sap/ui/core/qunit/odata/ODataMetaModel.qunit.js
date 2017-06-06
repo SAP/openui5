@@ -316,6 +316,71 @@ sap.ui.require([
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
+		', sCurrencyCodeViaPath = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="foo.bar" sap:schema-version="1"\
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<ComplexType Name="Foo">\
+				<Property Name="Price" Type="Edm.Decimal" sap:unit="Currency/Code"/>\
+				<Property Name="BadPrice" Type="Edm.Decimal" sap:unit="Code"/>\
+				<Property Name="WrongSemantics" Type="Edm.Decimal" sap:unit="Currency/BadCode"/>\
+				<Property Name="Currency" Type="foo.bar.Currency"/>\
+			</ComplexType>\
+			<ComplexType Name="Currency">\
+				<Property Name="Code" Type="Edm.String" sap:semantics="currency-code"/>\
+				<Property Name="BadCode" Type="Edm.String" sap:semantics="wrongSemantics"/>\
+			</ComplexType>\
+			<EntityType Name="Product" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="ProductId" />\
+				</Key>\
+				<Property Name="ProductId" Type="Edm.String" MaxLength="20" />\
+				<Property Name="Price" Type="Edm.Decimal" sap:unit="to_Currency/Code" />\
+				<NavigationProperty Name="to_Currency"\
+					Relationship="foo.bar.ProductCurrency"\
+					FromRole="ToRole_ProductCurrency" ToRole="FromRole_ProductCurrency" />\
+			</EntityType>\
+			<EntityType Name="Currency" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Id" />\
+				</Key>\
+				<Property Name="Id" Type="Edm.String" MaxLength="20" />\
+				<Property Name="Code" Type="Edm.String" sap:semantics="currency-code" />\
+			</EntityType>\
+			<Association Name="ProductCurrency" sap:content-version="1">\
+				<End Type="foo.bar.Currency" Multiplicity="1"\
+					Role="FromRole_ProductCurrency" />\
+				<End Type="foo.bar.Product" Multiplicity="*"\
+					Role="ToRole_ProductCurrency" />\
+				<ReferentialConstraint>\
+					<Principal Role="FromRole_ProductCurrency">\
+						<PropertyRef Name="CurrencyId" />\
+					</Principal>\
+					<Dependent Role="ToRole_ProductCurrency">\
+						<PropertyRef Name="Id" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<EntityContainer Name="foo.bar_Entities" m:IsDefaultEntityContainer="true"\
+				sap:supported-formats="atom json xlsx">\
+				<EntitySet Name="Products" EntityType="foo.bar.Product"\
+					sap:content-version="1" />\
+				<EntitySet Name="Currencies" EntityType="foo.bar.Currency"\
+					sap:content-version="1" />\
+				<AssociationSet Name="ProductCurrenciesSet"\
+					Association="foo.bar.ProductCurrency" sap:content-version="1">\
+					<End EntitySet="Currencies" Role="FromRole_ProductCurrency" />\
+					<End EntitySet="Products" Role="ToRole_ProductCurrency" />\
+				</AssociationSet>\
+			</EntityContainer>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
 		', sEmptyAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
@@ -472,6 +537,8 @@ sap.ui.require([
 		',
 		mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
+			"/fake/currencyCodeViaPath/$metadata" :
+				{headers : mHeaders, message : sCurrencyCodeViaPath},
 			"/fake/emptyDataServices/$metadata" :
 				{headers : mHeaders, message : sEmptyDataServices},
 			"/fake/emptyEntityType/$metadata" : {headers : mHeaders, message : sEmptyEntityType},
@@ -2732,6 +2799,45 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
+	[false, true].forEach(function (bWarn) {
+		QUnit.test("Get sap:semantics for sap:unit via a path, warn=" + bWarn, function (assert) {
+			var oMetaModel, oModel;
+
+			this.oLogMock.expects("isLoggable").twice()
+				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.returns(bWarn);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Path 'Code' for sap:unit cannot be resolved",
+					"foo.bar.Foo/BadPrice", sComponent);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Unsupported sap:semantics='wrongSemantics' "
+						+ "at sap:unit='Currency/BadCode'; "
+						+ "expected 'currency-code' or 'unit-of-measure'",
+					"foo.bar.Foo/WrongSemantics", sComponent);
+
+			oModel = new ODataModel("/fake/currencyCodeViaPath", {json : true});
+
+			// code under test
+			oMetaModel = oModel.getMetaModel();
+
+			return oMetaModel.loaded().then(function () {
+				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/"
+						+ "[${namespace}==='foo.bar']/entityType/"
+						+ "[$\{name}==='Product']/property/[$\{name}==='Price']/"
+						+ "Org.OData.Measures.V1.ISOCurrency/Path"),
+					"to_Currency/Code");
+				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/"
+						+ "[${namespace}==='foo.bar']/complexType/"
+						+ "[$\{name}==='Foo']/property/[$\{name}==='Price']/"
+						+ "Org.OData.Measures.V1.ISOCurrency/Path"),
+					"Currency/Code");
+				assert.notOk("undefined" in oMetaModel.getObject("/dataServices/schema/"
+						+ "[${namespace}==='foo.bar']/complexType/"
+						+ "[$\{name}==='Foo']/property/[$\{name}==='WrongSemantics']"));
+			});
+		});
+	});
 
 	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?

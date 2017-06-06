@@ -188,9 +188,9 @@ sap.ui.define([
 					}
 					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
-					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
 					that.oModel = new JSONModel(oData);
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData, that);
 					jQuery.sap.measure.end(sPerformanceLoad);
 				}
 
