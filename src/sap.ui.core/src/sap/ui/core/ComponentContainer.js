@@ -140,7 +140,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			oComponent = oComponentContainer.getComponentInstance();
 			if (oComponent) {
 				oComponent.setContainer(oComponentContainer);
-				oComponentContainer.propagateProperties();
+				oComponentContainer.propagateProperties(true); //propagate all
 			}
 		}
 	}
