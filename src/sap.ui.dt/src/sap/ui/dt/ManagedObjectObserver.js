@@ -274,6 +274,64 @@ sap.ui.define([
 			return vOriginalReturn;
 		}.bind(this);
 
+		// We wrap the native addAssociation method of the control with our logic
+		this._fnOriginalAddAssociation = oTarget.addAssociation;
+		oTarget.addAssociation = function(sAssociationName, oObject, bSuppressInvalidate) {
+			this._bAddOrSetAssociationCall = true;
+			var vOriginalReturn = this._fnOriginalAddAssociation.apply(oTarget, arguments);
+			this.fireModified({
+				type: "addOrSetAggregation",
+				name : sAssociationName,
+				value: oObject,
+				target: oTarget
+			});
+			return vOriginalReturn;
+		}.bind(this);
+
+		// We wrap the native setAssociation method of the control with our logic
+		this._fnOriginalSetAssociation = oTarget.setAssociation;
+		oTarget.setAssociation = function(sAssociationName, oObject, bSuppressInvalidate) {
+			// same mutator as addAssociation for multiple = false associations
+			this._bAddOrSetAssociationCall = true;
+			var vOriginalReturn = this._fnOriginalSetAssociation.apply(oTarget, arguments);
+			this.fireModified({
+				type: "addOrSetAggregation",
+				name : sAssociationName,
+				value: oObject,
+				target: oTarget
+			});
+			return vOriginalReturn;
+		}.bind(this);
+
+		// We wrap the native removeAssociation method of the control with our logic
+		this._fnOriginalRemoveAssociation = oTarget.removeAssociation;
+		oTarget.removeAssociation = function(sAssociationName, vObject, bSuppressInvalidate) {
+			this._bRemoveAssociationCall = true;
+			var vOriginalReturn = this._fnOriginalRemoveAssociation.apply(oTarget, arguments);
+			this.fireModified({
+				type: "removeAggregation",
+				name : sAssociationName,
+				value: vObject,
+				target: oTarget
+			});
+			return vOriginalReturn;
+		}.bind(this);
+
+		// We wrap the native removeAllAssociations method of the control with our logic
+		this._fnOriginalRemoveAllAssociation = oTarget.removeAllAssociation;
+		oTarget.removeAllAssociation = function(sAssociationName, bSuppressInvalidate) {
+			this._bRemoveAllAssociationCall = true;
+			var aRemovedObjects = oTarget.getAssociation(sAssociationName);
+			var vOriginalReturn = this._fnOriginalRemoveAllAssociation.apply(oTarget, arguments);
+			this.fireModified({
+				type: "removeAllAggregation",
+				name : sAssociationName,
+				value: aRemovedObjects,
+				target: oTarget
+			});
+			return vOriginalReturn;
+		}.bind(this);
+
 		this._aOriginalAddMutators = {};
 		this._aOriginalInsertMutators = {};
 		this._aOriginalRemoveMutators = {};
@@ -376,6 +434,66 @@ sap.ui.define([
 			}.bind(this);
 		}.bind(this), this);
 
+		var mAllAssociations = oTarget.getMetadata().getAllAssociations();
+		Object.keys(mAllAssociations).forEach(function(sAssociationName) {
+			var oAssociation = mAllAssociations[sAssociationName];
+			var _fnOriginalAddMutator = oTarget[oAssociation._sMutator];
+			this._aOriginalAddMutators[oAssociation.name] = _fnOriginalAddMutator;
+			oTarget[oAssociation._sMutator] = function(oObject) {
+				this._bAddOrSetAssociationCall = false;
+				// if addAssociation or setAssociation method wasn't called directly
+
+				var vOriginalReturn;
+				vOriginalReturn = _fnOriginalAddMutator.apply(oTarget, arguments);
+
+				if (!this._bAddOrSetAssociationCall) {
+					this.fireModified({
+						type: "addOrSetAggregation",
+						name : oAssociation.name,
+						value: oObject,
+						target: oTarget
+					});
+				}
+				return vOriginalReturn;
+			}.bind(this);
+
+			var _fnOriginalRemoveMutator = oTarget[oAssociation._sRemoveMutator];
+			this._aOriginalRemoveMutators[oAssociation.name] = _fnOriginalRemoveMutator;
+			oTarget[oAssociation._sRemoveMutator] = function(vObject, bSuppressInvalidate) {
+				this._bRemoveAssociationCall = false;
+				var vOriginalReturn = _fnOriginalRemoveMutator.apply(oTarget, arguments);
+				// if removeAssociation method wasn't called directly
+				if (!this._bRemoveAssociationCall) {
+					this.fireModified({
+						type: "removeAggregation",
+						name : oAssociation.name,
+						value: vObject,
+						target: oTarget
+					});
+				}
+				return vOriginalReturn;
+			}.bind(this);
+
+			var _fnOriginalRemoveAllMutator = oTarget[oAssociation._sRemoveAllMutator];
+			this._aOriginalRemoveAllMutators[oAssociation.name] = _fnOriginalRemoveAllMutator;
+			oTarget[oAssociation._sRemoveAllMutator] = function(bSuppressInvalidate) {
+				this._bRemoveAllAssociationCall = false;
+				var aRemovedObjects = this.getAssociation(sAssociationName);
+				var vOriginalReturn = _fnOriginalRemoveAllMutator.apply(oTarget, arguments);
+				// if removeAllAssociation method wasn't called directly
+				if (!this._bRemoveAllAssociationCall) {
+					this.fireModified({
+						type: "removeAllAggregation",
+						name : oAssociation.name,
+						value: aRemovedObjects,
+						target: oTarget
+					});
+				}
+				return vOriginalReturn;
+			}.bind(this);
+
+		}.bind(this), this);
+
 	};
 
 	/**
@@ -402,6 +520,11 @@ sap.ui.define([
 			oTarget.removeAllAggregation = this._fnOriginalRemoveAllAggregation;
 			oTarget.destroyAggregation = this._fnOriginalDestroyAggregation;
 
+			oTarget.addAssociation = this._fnOriginalAddAssociation;
+			oTarget.removeAssociation = this._fnOriginalRemoveAssociation;
+			oTarget.setAssociation = this._fnOriginalSetAssociation;
+			oTarget.removeAllAssociation = this._fnOriginalRemoveAllAssociation;
+
 			var mAllAggregations = oTarget.getMetadata().getAllAggregations();
 			Object.keys(mAllAggregations).forEach(function(sAggregationName) {
 				var oAggregation = mAllAggregations[sAggregationName];
@@ -410,6 +533,14 @@ sap.ui.define([
 				oTarget[oAggregation._sRemoveMutator] = this._aOriginalRemoveMutators[oAggregation.name];
 				oTarget[oAggregation._sRemoveAllMutator] = this._aOriginalRemoveAllMutators[oAggregation.name];
 				oTarget[oAggregation._sDestructor] = this._aOriginalDestructors[oAggregation.name];
+			}, this);
+
+			var mAllAssociations = oTarget.getMetadata().getAllAssociations();
+			Object.keys(mAllAssociations).forEach(function(sAssociationName) {
+				var oAssociation = mAllAssociations[sAssociationName];
+				oTarget[oAssociation._sMutator] = this._aOriginalAddMutators[oAssociation.name];
+				oTarget[oAssociation._sRemoveMutator] = this._aOriginalRemoveMutators[oAssociation.name];
+				oTarget[oAssociation._sRemoveAllMutator] = this._aOriginalRemoveAllMutators[oAssociation.name];
 			}, this);
 			oTarget.detachEvent("_change", this._fnFireModified, this);
 		}

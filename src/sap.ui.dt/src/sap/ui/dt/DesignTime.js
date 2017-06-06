@@ -408,7 +408,6 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._createElementOverlay = function(oElement) {
-		oElement = ElementUtil.fixComponentContainerElement(oElement);
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElement && !oElement.bIsDestroyed && !oElementOverlay) {
 			if (this._iOverlaysPending === 0) {
@@ -491,9 +490,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	*/
 	DesignTime.prototype._createChildOverlaysForAggregation = function(oElementOverlay, sAggregationName) {
-		var oElement = oElementOverlay.getElementInstance();
-		var vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
-		ElementUtil.iterateOverElements(vChildren, function(oChild) {
+		OverlayUtil.iterateOverAggregationLikeChildren(oElementOverlay, sAggregationName, function(oChild) {
 			this._createElementOverlay(oChild);
 		}.bind(this));
 	};
@@ -568,7 +565,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 		var oParentAggregationOverlay = oParentOverlay.getAggregationOverlay(sAggregationName);
 		// oElement can be of an alternative type (setLabel(sText) for example)
-		if (oChild instanceof sap.ui.core.Element) {
+		if (oChild instanceof sap.ui.base.ManagedObject) {
 			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
 			if (!oChildElementOverlay) {
 				oChildElementOverlay = this._createElementOverlay(oChild);

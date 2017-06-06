@@ -701,7 +701,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			}
 		}.bind(this));
 
-		// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
+		// create aggregation overlays also for a hidden aggregations and aggregation-like associations which are not ignored in the DT Metadata
 		var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
 		if (mAggregationsMetadata) {
 			var aAggregationNames = Object.keys(mAggregationsMetadata);
@@ -773,13 +773,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				}
 			}
 
-			var aAggregationElements = ElementUtil.getAggregation(this.getElementInstance(), sAggregationName);
-			aAggregationElements.forEach(function(oAggregationElement) {
+			OverlayUtil.iterateOverAggregationLikeChildren(this, sAggregationName, function(oAggregationElement) {
 				var oChildElementOverlay = OverlayRegistry.getOverlay(oAggregationElement);
 				if (oChildElementOverlay  && oChildElementOverlay.getParent() !== this) {
 					oAggregationOverlay.addChild(oChildElementOverlay);
 				}
-			}, this);
+			}.bind(this));
 		}
 	};
 
