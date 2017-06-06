@@ -10672,6 +10672,85 @@
 			oCB.destroy();
 		});
 
+		QUnit.test("Changing models resets the selection if item is not there", function (assert) {
+			//Setup
+			var oData = {list: [{id: "1", text: "1"}]},
+				oModel = new sap.ui.model.json.JSONModel(oData),
+				oItemsTemplate = new sap.ui.core.Item({key: "{id}", text: "{text}"}),
+				oComboBox = new sap.m.ComboBox({
+					items: {
+						path: "/list",
+						template: oItemsTemplate
+					}
+				});
+
+			oComboBox.setModel(oModel);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.ok(!oComboBox.getSelectedItem(), "No item is currently selected");
+			assert.ok(!oComboBox.getSelectedKey(), "No item is currently selected");
+
+			//Act
+			oComboBox.setSelectedKey("1");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.ok(oComboBox.getSelectedKey(), "Item is selected");
+			assert.strictEqual(oComboBox.getSelectedItem().getKey(), "1", "Item 1 is selected");
+
+			//Act
+			oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}]);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.ok(!oComboBox.getSelectedItem(), "No item is currently selected");
+			assert.ok(!oComboBox.getSelectedKey(), "No item is currently selected");
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+
+		QUnit.test("Changing models keeps the selection if item is there", function (assert) {
+			//Setup
+			var oData = {list: [{id: "1", text: "1"}, {id: "2", text: "2"}]},
+				oModel = new sap.ui.model.json.JSONModel(oData),
+				oItemsTemplate = new sap.ui.core.Item({key: "{id}", text: "{text}"}),
+				oComboBox = new sap.m.ComboBox({
+					items: {
+						path: "/list",
+						template: oItemsTemplate
+					}
+				});
+
+			//Act
+			oComboBox.setModel(oModel);
+			oComboBox.placeAt("content");
+			oComboBox.setSelectedKey("2");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.ok(oComboBox.getSelectedKey(), "Item is selected");
+			assert.strictEqual(oComboBox.getSelectedItem().getKey(), "2", "Item 2 is selected");
+
+			//Act
+			oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "33", text: "33"}]);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.ok(oComboBox.getSelectedKey(), "Item is still selected");
+			assert.strictEqual(oComboBox.getSelectedItem().getKey(), "2", "Item 2 is still selected");
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("Tablet focus handling");
 
 		QUnit.test("it should not set the focus to the input", function(assert) {
