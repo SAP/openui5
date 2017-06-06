@@ -71,7 +71,7 @@ sap.ui.define(["./MessageStripUtilities"],
 	MessageStripRenderer.renderCloseButton = function (oRm) {
 		oRm.write("<button");
 		oRm.writeAttribute("class", MSUtils.CLASSES.CLOSE_BUTTON);
-		oRm.writeAttribute("aria-label", MSUtils.RESOURCE_BUNDLE.getText("CLOSE"));
+		oRm.writeAttribute("title", MSUtils.RESOURCE_BUNDLE.getText("CLOSE"));
 		oRm.write("></button>");
 	};
 
