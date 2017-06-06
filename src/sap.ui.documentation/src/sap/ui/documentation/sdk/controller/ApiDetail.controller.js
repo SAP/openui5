@@ -62,6 +62,10 @@ sap.ui.define([
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
+				if ( !window.prettyPrint ) {
+					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
+				}
+
 				ControlsInfo.listeners.push(function(){
 					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
 				}.bind(this));
@@ -126,6 +130,17 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (oEvent) {
 				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
+
+				oApiDetailObjectPage.addEventDelegate({
+					onAfterRendering: function () {
+						var elementsWithPreTag = jQuery('pre');
+						for (var i = 0; i < elementsWithPreTag.length; i++) {
+							elementsWithPreTag[i].setAttribute('class', 'prettyprint');
+						}
+
+						window.prettyPrint();
+					}
+				});
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
