@@ -69,6 +69,7 @@
 
 			QUnit.module('Creating BusyDialog with all available properties.', {
 				beforeEach: function () {
+					this.bIE_Edge = sap.ui.Device.browser.msie || sap.ui.Device.browser.edge;
 					this.busyDialog = new sap.m.BusyDialog({
 						text: 'I am a busy screen with text and a cancel button.',
 						title: 'Loading ...',
@@ -109,7 +110,12 @@
 				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton button rendered.');
 
 				//test the close button text
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'Abort', 'should have CancelButton text set properly.');
+				//IE and Edge do not support BDI tag so it is not rendered
+				if(!this.bIE_Edge) {
+					assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'Abort', 'should have CancelButton text set properly.');
+				} else {
+					assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'Abort', 'should have CancelButton text set properly.');
+				}
 			});
 
 			// =========================================================================================================
@@ -118,6 +124,7 @@
 
 			QUnit.module('Creating Default BusyDialog.', {
 				beforeEach: function () {
+					this.bIE_Edge = sap.ui.Device.browser.msie || sap.ui.Device.browser.edge;
 					this.busyDialog = new sap.m.BusyDialog();
 					this.id = '#' + this.busyDialog.sId;
 					this.busyDialog.open();
@@ -191,8 +198,12 @@
 
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should have footer after being set.');
 				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton after setShowCancelButton being set.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test', 'should have a button with string that is previously set.');
-
+				//IE and Edge do not support BDI tag so it is not rendered
+				if (!this.bIE_Edge) {
+					assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test', 'should have a button with string that is previously set.');
+				} else {
+					assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'test', 'should have a button with string that is previously set.');
+				}
 
 				this.busyDialog.setCancelButtonText('');
 				sap.ui.getCore().applyChanges();
@@ -205,7 +216,12 @@
 
 				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should render the footer if the CancelButtonText is changed from an empty string.');
 				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have rendered CancelButton.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				//IE and Edge do not support BDI tag so it is not rendered
+				if (!this.bIE_Edge) {
+					assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				} else {
+					assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				}
 			});
 
 			QUnit.test('Setting BusyIndicator properties', function (assert) {
@@ -259,6 +275,7 @@
 				assert.strictEqual(isClosedByUser, false, 'should pass cancelPressed: false on closing by calling the close() method.');
 
 				this.busyDialog._getCancelButton().firePress();
+				this.clock.tick(500);
 				assert.strictEqual(fnEventSpy.callCount, 2, 'should fire close event after pressing the CancelButton.');
 				assert.strictEqual(isClosedByUser, true, 'should pass cancelPressed: true on closing by pressing the CancelButton.');
 
