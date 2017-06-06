@@ -20,6 +20,7 @@ sap.ui.define([
 
 		oOpa5.waitFor({
 			success: function () {
+				assert.ok(oOpa5.hasUIComponentStarted() && oOpa5.hasAppStarted(), "UIComponent has started");
 				assert.ok($(".sapUiOpaComponent").is(":visible"), "Component is launched");
 			}
 		});
@@ -27,6 +28,7 @@ sap.ui.define([
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
+			assert.ok(!(oOpa5.hasUIComponentStarted() || oOpa5.hasAppStarted()), "UIComponent has been torn down");
 			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
 			fnDone();
 		});
@@ -41,7 +43,7 @@ sap.ui.define([
 
 		oOpa5.waitFor({
 			success: function () {
-				assert.ok(IFrameLauncher.hasLaunched(), "IFrame has launched");
+				assert.ok(oOpa5.hasAppStartedInAFrame() && oOpa5.hasAppStarted(), "IFrame has launched");
 				assert.ok($(".opaFrame").is(":visible"), "IFrame is visible");
 			}
 		});
@@ -49,6 +51,7 @@ sap.ui.define([
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
+			assert.ok(!(oOpa5.hasAppStartedInAFrame() || oOpa5.hasAppStarted()), "IFrame has been torn down");
 			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
 			fnDone();
 		});
