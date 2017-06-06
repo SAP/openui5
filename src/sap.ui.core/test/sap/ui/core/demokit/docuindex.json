@@ -547,13 +547,13 @@
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
-				"name" : "Theme-dependent CSS-classes",
-				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
+				"name" : "Theme-independent CSS-classes",
+				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-independent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
 			},
 			{
 				"id" : "sap.ui.core.sample.BasicThemeParameters",
 				"name" : "Basic Theme Parameters",
-				"description" : "This sample displays a set of basic theme parameters. Available in the predefined themes 'Blue Crystal' and 'High Contrast Black'. They can be used for custom HTML or custom controls to ensure theme-dependent styling. Please ensure a semantic correct usage."
+				"description" : "Sample provides a link to the Theme Parameter Toolbox. There you can easily search, preview, and filter semantic theme parameters."
 			},
 			{
 				"id" : "sap.ui.core.sample.PatternMatching",
