@@ -296,7 +296,7 @@
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Visibility"/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="Block"></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
