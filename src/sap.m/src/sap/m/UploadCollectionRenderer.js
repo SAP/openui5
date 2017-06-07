@@ -1,8 +1,8 @@
 /*!
 * ${copyright}
 */
-sap.ui.define([ 'jquery.sap.global' ],
-	function(jQuery) {
+sap.ui.define([ 'jquery.sap.global', './ListItemBaseRenderer'],
+	function(jQuery, ListItemBaseRenderer) {
 	"use strict";
 
 
@@ -30,15 +30,19 @@ sap.ui.define([ 'jquery.sap.global' ],
 		oRm.write("</div>");
 	};
 
-	UploadCollectionRenderer.renderNoData = function(oRm, oControl) {
+	UploadCollectionRenderer.renderNoData = function (oRm, oControl) {
 		// If noDataText or noDataDescription property are set by user, the user's text will be rendered.
 		// If it is not set, the default no data text or description from resource bundle will be rendered.
 		var oUploadCollection = oControl.getParent();
-		oRm.write("<div");
-		oRm.writeAttribute("id", oUploadCollection.getId() + "-no-data-page");
-		oRm.addClass("sapMUCNoDataPage");
+		oRm.write("<li");
+		oRm.writeAttribute("tabindex", 0);
+		oRm.writeAttribute("id", oUploadCollection._oList.getId("nodata"));
+		oRm.addClass("sapMLIB sapMUCNoDataPage");
+		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, oRm);
 		oRm.writeClasses();
+		oRm.writeAttribute("id", oUploadCollection.getId() + "-no-data-page");
 		oRm.write(">");
+
 		oRm.renderControl(oUploadCollection.getAggregation("_noDataIcon"));
 
 		oRm.write("<div");
@@ -58,7 +62,7 @@ sap.ui.define([ 'jquery.sap.global' ],
 			oRm.writeEscaped(oUploadCollection.getNoDataDescription());
 			oRm.write("</div>");
 		}
-		oRm.write("</div>");
+		oRm.write("</li>");
 	};
 
 	UploadCollectionRenderer.renderDragDropOverlay = function(oRm, oControl) {

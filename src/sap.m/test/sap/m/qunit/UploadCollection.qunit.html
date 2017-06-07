@@ -347,11 +347,15 @@
 	QUnit.test("No data rendering", function(assert) {
 		//Arrange
 		this.oUploadCollection.unbindAggregation("items");
-		var oSpy = sinon.spy(sap.m.UploadCollectionRenderer, "renderNoData");
+		var oSpy = sinon.spy(sap.m.UploadCollectionRenderer, "renderNoData"),
+			oSpyLIBRenderer = sinon.spy(sap.m.ListItemBaseRenderer, "addFocusableClasses");
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.ok(oSpy.calledOnce, "no data rendering in upload collection is called");
+		assert.ok(oSpyLIBRenderer.calledOnce, "Method addFocusableClasses of ListItemBaseRenderer is called");
+		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMLIB"), "The nodata area contains class sapMLIB");
+		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMUCNoDataPage"), "The nodata area contains class sapMUCNoDataPage");
 		oSpy.restore();
 	});
 
