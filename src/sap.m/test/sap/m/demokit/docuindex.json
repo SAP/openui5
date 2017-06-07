@@ -54,6 +54,18 @@
 				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json"
 			},
 			{
+				"icon": "begin",
+				"text": "OpenUI5 Basic Template",
+				"desc": "Best-practice starting point for building a freestyle app",
+				"ref" : "test-resources/sap/m/demokit/basicTemplate/webapp/index.html",
+				"links": {
+					"Run Integration Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/unitTests.qunit.html"
+				},
+				"category": "Template",
+				"config": "test-resources/sap/m/demokit/basicTemplate/demoapp.json"
+			},
+			{
 				"icon": "legend",
 				"text": "Bulletin Board",
 				"desc": "Worklist app created with the 'Testing' tutorial" ,
