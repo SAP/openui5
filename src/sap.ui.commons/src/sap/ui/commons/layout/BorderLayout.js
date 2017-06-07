@@ -136,9 +136,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 	/**
 	 * Returns the area of the given type. If the area does not exist, it will be created when create is set to true.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
-	 * @param {boolean} bCreate
-	 * @type sap.ui.commons.layout.BorderLayoutAreaTypes
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId The aria ID
+	 * @param {boolean} bCreate Whether the aria must be created
+	 * @returns {sap.ui.commons.layout.BorderLayoutArea} The aria
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -150,11 +151,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 	/**
 	 * Creates the specified area and adds the given controls to it. Returns the created area.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies which area will be created. If the area is already available, the method call is ignored.
-	 * @param {sap.ui.core.Control} oControls
+	 * @param {sap.ui.core.Control} oContent
 	 *         Any number of controls can be submitted to be added to the newly created area; where each control is submitted as one argument.
-	 * @type sap.ui.commons.layout.BorderLayoutArea
+	 * @returns {sap.ui.commons.layout.BorderLayoutArea} The created aria
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -166,9 +168,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 	/**
 	 * Returns the object of the specified area. If the area does not exist, the area will be created and returned.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose object will be returned.
-	 * @type sap.ui.commons.layout.BorderLayoutArea
+	 * @returns {sap.ui.commons.layout.BorderLayoutArea} The aria
+	 * @type {sap.ui.commons.layout.BorderLayoutArea}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -178,11 +181,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Returns a JSON-like object that contains all property values of the requested area
+	 * Returns a JSON-like object that contains all property values of the requested area.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose data will be returned
-	 * @type object
+	 * @returns {object} The aria data
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -200,13 +204,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Sets the properties of the specified area with the given values
+	 * Sets the properties of the specified area with the given values.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose properties will be set
 	 * @param {object} oData
 	 *         JSON-like object that contains the values to be set
-	 * @type void
+	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -217,13 +222,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Adds controls to the specified area
+	 * Adds controls to the specified area.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area where controls will be added
-	 * @param {sap.ui.core.Control} oControls
-	 *         N controls can be submitted to be added. Each control is submitted as one argument.
-	 * @type void
+	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -241,14 +245,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 	/**
 	 * Inserts controls to an area at a given index.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area where the controls shall be inserted.
 	 * @param {int} iIndex
 	 *         Specifies the index where the controls shall be added. For a negative value of iIndex, the content is inserted at
 	 *         position '0'; for a value greater than the current size of the aggregation, the content is inserted at the last position.
-	 * @param {sap.ui.core.Control} oControl
-	 *         N controls can be submitted to be added. Each control is submitted as one argument.
-	 * @type void
+	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -264,18 +267,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Removes the content with the given index from an area
+	 * Removes the content with the given index from an area.
 	 *
 	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
 	 *         Specifies the area whose content shall be removed
-	 * @param {int} iIndex
-	 *         Specifies the index of the control that shall be removed
-	 * @type void
+	 * @param {*} vElement The content to be removed
+	 *         Specifies the control that shall be removed
+	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	BorderLayout.prototype.removeContent = function(sAreaId, vElement) {
-		var oArea = this.getAreaById(sAreaId);
+	BorderLayout.prototype.removeContent = function(oAreaId, vElement) {
+		var oArea = this.getAreaById(oAreaId);
 		if ( oArea ) {
 			oArea.removeContent(vElement);
 		}
@@ -284,11 +288,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Removes all content from an area
+	 * Removes all content from an area.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose content shall be removed
-	 * @type void
+	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -302,11 +307,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Returns all controls inside the specified area inside an array
+	 * Returns all controls inside the specified area inside an array.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose content controls shall be returned.
-	 * @type sap.ui.core.Control[]
+	 * @returns {sap.ui.core.Control[]} The array with the content
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -317,15 +323,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Determines the index of a given content control
+	 * Determines the index of a given content control.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
-	 *         Specifies the area that will be searched
-	 * @param {sap.ui.core.Control} oContent
-	 *         Specifies the control whose index will be searched
-	 * @type int
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId Specifies the area that will be searched
+	 * @param {sap.ui.core.Control} oContent Specifies the control whose index will be searched
+	 * @returns {int} The index of the content
+	 *
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	BorderLayout.prototype.indexOfContent = function(sAreaId, oContent) {
 		var oArea = this.getAreaById(sAreaId);
@@ -334,11 +338,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/core/Contr
 
 
 	/**
-	 * Destroys the content of the specified area
+	 * Destroys the content of the specified area.
 	 *
-	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} oAreaId
+	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose content will be destroyed
-	 * @type void
+	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
