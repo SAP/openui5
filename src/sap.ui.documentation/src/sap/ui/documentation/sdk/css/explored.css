@@ -139,13 +139,21 @@ code {
 	margin-bottom: 0.5rem;
 }
 
-.sapUiDocumentationImplementsDiv .sapMLnk {
+.sapUiDocumentationHeaderNavLinks {
+	min-width: 100%;
+}
+
+.sapUiDocumentationHeaderNavLinks .sapMLnk {
 	line-height: 1.5rem;
 	margin-left: 0.25rem;
 }
 
-.sapUiDocumentationImplementsDiv .sapMLabel {
+.sapUiDocumentationHeaderNavLinks .sapMLabel {
 	line-height: 1.5rem;
+}
+
+.sapUiDocumentationHeaderNavLinks .sapMFlexItem:nth-child(2) {
+	min-width: 2rem !important;
 }
 
 .sapUiDocumentationAnnotationsText .sapMLnk {

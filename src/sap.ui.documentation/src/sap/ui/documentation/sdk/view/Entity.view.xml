@@ -28,27 +28,16 @@
 		<headerContent>
 			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
 				<l:VerticalLayout class="sapUiLargeMarginEnd" width="100%">
-					<m:ObjectAttribute
-							class="sapUiTinyMarginBottom"
-							title="API Reference"
-							text="{/name}"
-							active="true"
-							press="onAPIRefPress" >
-						<m:customData>
-							<core:CustomData key="name" value="{/name}" />
-						</m:customData>
-					</m:ObjectAttribute>
 
-					<m:ObjectAttribute
-							class="sapUiTinyMarginBottom"
-							title="Inherited from"
-							text="{/baseTypeText}"
-							active="true"
-							press="onTypeLinkPress" >
-						<m:customData>
-							<core:CustomData key="type" value="{/baseType}" />
-						</m:customData>
-					</m:ObjectAttribute>
+					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
+						<m:Label text="API Reference:"/>
+						<m:Link text="{/name}" enabled="true" href="#/api/{/name}"/>
+					</m:HBox>
+
+					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
+						<m:Label text="Inherited from:"/>
+						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"/>
+					</m:HBox>
 
 					<m:ObjectAttribute
 							title="Application Component"
