@@ -111,7 +111,8 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * The component displayed in this ComponentContainer.
 			 */
 			component : {type : "sap.ui.core.UIComponent", multiple : false}
-		}
+		},
+		designTime : true
 	}});
 
 
