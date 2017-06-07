@@ -2990,7 +2990,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function. If empty, this binding adapter is used.
 	 *
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @protected

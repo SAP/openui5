@@ -3304,7 +3304,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
@@ -3346,7 +3347,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
@@ -3386,7 +3388,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
@@ -3428,7 +3431,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
