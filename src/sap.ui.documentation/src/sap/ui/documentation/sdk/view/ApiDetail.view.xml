@@ -425,7 +425,7 @@
 											], formatter: '.formatEntityName'}">
 								<blocks>
 
-									<layout:VerticalLayout>
+									<layout:VerticalLayout width="100%">
 
 										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>since'}],
 																			 formatter: '.formatDescriptionSince'}"/>
@@ -449,9 +449,17 @@
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 
+										<ce:CodeEditor height="auto" maxLines="20" width="100%" editable="false" lineNumbers="true"
+													   syntaxHints="false"
+													   value="{parts: [{path: 'methods>name' },
+													   			{path: 'methods>parameters'},
+													   			{path: 'methods>returnValue'}],
+																formatter: '.formatMethodCode'}"/>
+
 										<m:Table items="{ path : 'methods>parameters'}"
 												 showSeparators="Inner"
-												 fixedLayout="true">
+												 fixedLayout="true"
+												 visible="{= ${methods>parameters}.length > 0}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
@@ -491,7 +499,8 @@
 
 										<m:Table showSeparators="Inner"
 												 class="sapUiDocumentationReturnsTable"
-												 fixedLayout="true">
+												 fixedLayout="true"
+												 visible="{= ${methods>returnValue} !== undefined}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Returns"/></m:Column>
 												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
