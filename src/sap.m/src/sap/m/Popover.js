@@ -498,8 +498,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				};
 			}
 
-			// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
-			if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
+			// TODO: Nice to refactor scrolling related code - ambiguous
+			if (!this.getHorizontalScrolling() && !this.getVerticalScrolling()) {
+				//  If both properties are false - we do not need scroll enablement for sure
+				this._forceDisableScrolling = true;
+			} else if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
+				// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
 				this._forceDisableScrolling = true;
 				jQuery.sap.log.info("VerticalScrolling and horizontalScrolling in sap.m.Popover with ID " + this.getId() + " has been disabled because there's scrollable content inside");
 			} else {
