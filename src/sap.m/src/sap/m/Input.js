@@ -1059,10 +1059,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-		if (!this._oSuggestionPopup || !this._oSuggestionPopup.isOpen()) {
+		if (sDir !== "up" && sDir !== "down") {
 			return;
 		}
-		if (sDir !== "up" && sDir !== "down") {
+
+		oEvent.setMarked();
+
+		if (!this._oSuggestionPopup || !this._oSuggestionPopup.isOpen()) {
 			return;
 		}
 
