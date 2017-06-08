@@ -129,7 +129,7 @@ sap.ui.define([
           oTestGenerator.setUp();
         },
         afterEach: function() {
-          if (componentLauncher.hasLaunched() || iFrameLauncher.hasLaunched()) {
+          if (this._oOpa5.hasAppStarted()) {
             this._oOpa5.iTeardownMyApp();
           }
 
