@@ -345,24 +345,19 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				var items = this.getItems();
 				var that = this;
 
-				this._oMessageView.removeAllItems();
+				this._oMessageView.destroyItems();
 
 				items.forEach(function (item) {
-
 					// we need to know if the MessagePopover's item was changed so to
 					// update the MessageView's items as well
 					item._updateProperties(function () {
 						that._bItemsChanged = true;
 					});
 
-					this._oMessageView.addItem(new sap.m.MessageItem({
-						type: item.getType(),
-						title: item.getTitle(),
-						subtitle: item.getSubtitle(),
-						description: item.getDescription(),
-						markupDescription: item.getMarkupDescription(),
-						longtextUrl: item.getLongtextUrl(),
-						counter: item.getCounter()
+					// we need to clone the item along with its bindings and aggregations
+					this._oMessageView.addItem(item.clone("", "", {
+						cloneChildren: true,
+						cloneBinding: true
 					}));
 				}, this);
 
