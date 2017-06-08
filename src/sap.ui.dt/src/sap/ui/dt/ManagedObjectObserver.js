@@ -570,7 +570,7 @@ sap.ui.define([
 	 * @return {sap.ui.base.ManagedObject} The instance of the associated target to observe.
 	 */
 	ManagedObjectObserver.prototype.getTargetInstance = function() {
-		return sap.ui.getCore().byId(this.getTarget());
+		return ElementUtil.getElementInstance(this.getTarget());
 	};
 
 	return ManagedObjectObserver;
