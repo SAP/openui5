@@ -190,7 +190,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			if (sKey == "Cal") {
 				oCalendar.$().css("display", "");
 				oSliders.$().css("display", "none");
-				oCalendar.focus();
 			} else {
 				oCalendar.$().css("display", "none");
 				oSliders.$().css("display", "");
