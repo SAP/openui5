@@ -262,7 +262,21 @@ UI5 Control Development Guidelines
     -   Use parameters like `@sapUiTextInverted` for bright-on-dark scenarios
     -   If no suitable parameter exists, derive the color by calculation from a suitable parameter
 -   Do not add parameters to the public API (using annotations) without sufficient clarification with designers and Product Owners
--   You can (but do not need to) create your own internal control-specific parameters. If you do, also prefix their name with your control name (e.g. `@sapUiBtnDisabledText`).
+-   If you create your own local parameters, you must ensure that the names you define are unique by using name(space) prefixes.
+    -   For **control-specific** parameters in ```*.less``` files, use a combination of the library name and the ```*.less``` file name for the prefix. Start with an underscore. Separate each part of the library namespace and the file name from each other using underscores as well.
+    -   **Tip**
+    -   For example, you can define the following prefix:
+    -   **Library:** ```sap.ui.core```
+    -   **File:** ```sap/ui/core/themes/base/MyControl.less```
+    -   **Prefix:** ```@_sap_ui_core_MyControl_```
+    -   For **library-specific** parameters in ```library.source.less``` files, use the library name for the prefix. Start with an underscore. Separate each part of the library namespace from each other using underscores.
+    -   **Tip**
+    -   For example, you can define the following prefix:
+    -   **Library:** ```sap.ui.core```
+    -   **File:** ```sap/ui/core/themes/base/library.source.less```
+    -   **Prefix:** ```@_sap_ui_core_```
+    -   **Caution**
+    -   Local parameters themselves must **not** contain underscores. For example, do not write ```@_sap_ui_core_MyControl_Some_Color```, but write ```@_sap_ui_core_MyControl_SomeColor``` instead.
 -   When defining URLs as parameters use the proper `url()` format: ```@sapUiMyUrl: url(./path/to/img.png)```
     -   Do **NOT** use escaped strings (`~`): ~~@sapUiMyUrl: ~"path/to/img.png"~~
     -   Do **NOT** use absolute urls: ~~@sapUiMyUrl: url(/absolute/path/to/img.png)~~
