@@ -431,16 +431,16 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                 oTooltipsContainer.style[sAdjustPropertyStart] = 0 + "%";
             } else if (fStartPct >= (100 - 3 * this._fTooltipHalfWidthPercent)) {
                 oTooltipsContainer.style[sAdjustPropertyStart] = (100 - 4 * this._fTooltipHalfWidthPercent) + "%";
-            } else {
+                } else {
                 oTooltipsContainer.style[sAdjustPropertyStart] = fStartPct - this._fTooltipHalfWidthPercent + "%";
-            }
+                }
 
             //Right Tooltip
             if (fEndPct >= (100 - this._fTooltipHalfWidthPercent)) {
                 oTooltipsContainer.style[sAdjustPropertyEnd] = 0 + "%";
             } else {
                 oTooltipsContainer.style[sAdjustPropertyEnd] = (100 - fEndPct - this._fTooltipHalfWidthPercent) + "%";
-            }
+                }
 
             this._swapTooltips(aRange);
         };
@@ -625,6 +625,11 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
+            // Should be prevent as in Safari while dragging the handle everything else gets selection.
+            // As part of the RangeSlider, Inputs in the tooltips should be excluded
+            if (oEvent.target.className.indexOf("sapMInput") === -1) {
+                oEvent.preventDefault();
+            }
 
             // we need to recalculate the styles since something may have changed
             // the screen size between touches.
@@ -999,7 +1004,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             oEvent.preventDefault();
 
             if (this.getEnabled()) {
-                iHandleIndex = this._getIndexOfHandle(oEvent.target);
+            iHandleIndex = this._getIndexOfHandle(oEvent.target);
                 fDistanceToStart = this.getRange()[iHandleIndex] - this.getMin();
 
                 this._updateSliderValues(fDistanceToStart, oEvent.target);
