@@ -322,6 +322,30 @@
 				oDTP.destroy();
 			});
 
+			QUnit.test("Open picker on small screen", function(assert) {
+				//Prepare
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+				jQuery("html").addClass("sapUiMedia-Std-Phone");
+
+				var oDTP5 = new sap.m.DateTimePicker("DTP5", {
+								dateValue: new Date()
+							}).placeAt("uiArea5");
+				sap.ui.getCore().applyChanges();
+
+				var done = assert.async();
+
+				oDTP5.focus();
+				qutils.triggerEvent("click", "DTP5-icon");
+				sap.ui.getCore().applyChanges();
+				setTimeout(function(){
+					assert.ok(jQuery("#DTP5-RP-popover")[0], "popover is rendered");
+					assert.ok(jQuery("#DTP5-RP-popover").is(":visible"), "popover is visible");
+					oDTP5.destroy();
+					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					jQuery("html").removeClass("sapUiMedia-Std-Phone");
+					done();
+				}, 400);
+			});
 		</script>
 
 	</head>
@@ -340,9 +364,7 @@
 		<br>
 		<div id="uiArea4"></div>
 		<br>
-		<div id="uiArea5"></div>
-		<br>
-		<div id="uiArea6"></div>
+		<div id="uiArea5" style="width:200px;"></div>
 		<br>
 		<div id="uiArea7"></div>
 		<br>
