@@ -768,7 +768,7 @@
 	 * Navigates all around the table using the arrow keys, takes virtual vertical scrolling into account.
 	 * Start from the left top cell -> to the right top cell -> to the right bottom cell -> to the left bottom cell -> to the left top cell.
 	 *
-	 * @param assert
+	 * @param {object} assert the QUnit assert object
 	 * @param {boolean} bShowInfo
 	 * @private
 	 */
@@ -4341,7 +4341,7 @@
 	 * @param {string} sKey The key to press.
 	 * @param {boolean} bKeydown Indicates whether to trigger keydown or keyup.
 	 * @param {boolean} bShift
-	 * @param assert
+	 * @param {object} assert the QUnit assert object
 	 * @private
 	 */
 	function _testColumnHeaderContextMenus(sKey, bKeydown, bShift, assert) {
@@ -5746,7 +5746,7 @@
 	 * Navigates through the whole table, from the first to the last cell including scrolling, using TAB while in action mode.
 	 * Navigates back using Shift+TAB.
 	 *
-	 * @param assert
+	 * @param {object} assert the QUnit assert object
 	 * @param {boolean} bShowInfo
 	 * @private
 	 */
@@ -6257,8 +6257,8 @@
 	/**
 	 * Navigates through the whole table with up and down keys, from the first to the last row in the specified column including scrolling.
 	 *
-	 * @param assert
-	 * @param iCol Column number. Set -1 for the row headers and -2 for the row actions column
+	 * @param {object} assert the QUnit assert object
+	 * @param {int} iCol Column number. Set -1 for the row headers and -2 for the row actions column
 	 * @param {boolean} bCtrlKey Set true if the Ctrl key should be used by navigation
 	 * @private
 	 */

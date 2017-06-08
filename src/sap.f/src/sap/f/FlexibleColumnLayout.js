@@ -961,7 +961,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the maximum number of columns that can be displayed at once for a certain control width
-	 * @param iWidth
+	 * @param {int} iWidth
 	 * @returns {number}
 	 * @private
 	 */

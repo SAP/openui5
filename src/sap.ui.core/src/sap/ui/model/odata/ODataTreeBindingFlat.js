@@ -926,7 +926,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 	/**
 	 * Sets the number of expanded levels to the given level.
-	 * @param iLevel the number of expanded levels
+	 * @param {int} iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.expandToLevel = function (iLevel) {
 		if (iLevel > this.getNumberOfExpandedLevels()) {
@@ -999,7 +999,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Sets the number of expanded levels to the given level.
 	 * Makes sure to adapt the selection accordingly.
-	 * @param iLevel the number of expanded levels
+	 * @param {int} iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.collapseToLevel = function (iLevel) {
 		if (iLevel < this.getNumberOfExpandedLevels()) {
@@ -2697,7 +2697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 	/**
 	 * Gets the node info for the given row-index.
-	 * @param iRowIndex
+	 * @param {int} iRowIndex
 	 * @returns
 	 */
 	ODataTreeBindingFlat.prototype.getNodeInfoByRowIndex = function(iRowIndex) {

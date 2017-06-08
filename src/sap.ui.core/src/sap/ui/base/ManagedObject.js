@@ -3102,7 +3102,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sName the name of the property to update
 	 * @param {any} oValue the new value to set for the property in the model
-	 * @param {any} oOldValue the old value of the property in the model
+	 * @param {any} oOldValue the previous value of the property
 	 * @private
 	 */
 	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){

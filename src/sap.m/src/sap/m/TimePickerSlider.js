@@ -517,8 +517,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Updates the visibility of the slider's items based on the step and the selected value.
-		 * @param iNewValue The new selected value of the slider
-		 * @param iStep The precision step used for the slider
+		 * @param {int} iNewValue The new selected value of the slider
+		 * @param {int} iStep The precision step used for the slider
 		 * @private
 		 */
 		TimePickerSlider.prototype._updateStepAndValue = function(iNewValue, iStep) {

@@ -411,12 +411,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', './Respons
 			return false;
 		};
 
-		/**
-		 * Sets the minutes slider step.
-		 * @param iStep The step used to generate values for the minutes slider
-		 * @returns {*} this
-		 * @public
-		 */
 		TimePicker.prototype.setMinutesStep = function(iStep) {
 			var oSliders = this._getSliders();
 
@@ -426,12 +420,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', './Respons
 			return this.setProperty("minutesStep", iStep, true);
 		};
 
-		/**
-		 * Sets the seconds slider step.
-		 * @param iStep The step used to generate values for the seconds slider
-		 * @returns {*} this
-		 * @public
-		 */
 		TimePicker.prototype.setSecondsStep = function(iStep) {
 			var oSliders = this._getSliders();
 

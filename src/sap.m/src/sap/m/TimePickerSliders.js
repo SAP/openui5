@@ -185,12 +185,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			return this;
 		};
 
-		/**
-		 * Sets the minutes slider step.
-		 * @param iValue The step used to generate values for the minutes slider
-		 * @returns {*} this
-		 * @public
-		 */
 		TimePickerSliders.prototype.setMinutesStep = function(iValue) {
 			this.setProperty("minutesStep", iValue, true);
 			var aColumns = this.getAggregation("_columns");
@@ -204,12 +198,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			return this;
 		};
 
-		/**
-		 * Sets the seconds slider step.
-		 * @param iValue The step used to generate values for the seconds slider
-		 * @returns {*} this
-		 * @public
-		 */
 		TimePickerSliders.prototype.setSecondsStep = function(iValue) {
 			this.setProperty("secondsStep", iValue, true);
 			var aColumns = this.getAggregation("_columns");
