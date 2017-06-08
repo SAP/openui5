@@ -85,6 +85,6 @@ sap.ui.define([
 		When.onThePreviewPage.iCopyToClipBoard();
 
 		// Assertions
-		Then.onTheAppPage.iShouldSeeMessageToast();
+		Then.onTheAppPage.iShouldSeeAMessageToast("Copy to clipboard");
 	});
 });

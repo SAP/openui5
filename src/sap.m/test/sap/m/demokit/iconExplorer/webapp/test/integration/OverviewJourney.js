@@ -19,7 +19,7 @@ sap.ui.define([
 			and.theTitleShouldDisplayTheTotalAmountOfItems();
 	});
 
-	opaTest("Should be able to load 50 more items", function(Given, When, Then) {
+	opaTest("Should be able to load 200 more items", function(Given, When, Then) {
 		//Actions
 		When.onTheOverviewPage.iPressOnMoreData();
 

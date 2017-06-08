@@ -149,10 +149,13 @@ sap.ui.define([
 				}
 
 				// there is no addEventDelegateOnce so we remove and add it for all items
-				this.byId("results").getAggregation(this._sAggregationName).forEach(function (oItem) {
-					oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
-					oItem.addEventDelegate(this._oPressLayoutCellDelegate);
-				}.bind(this));
+				var aItems = this.byId("results").getAggregation(this._sAggregationName);
+				if (aItems) {
+					aItems.forEach(function (oItem) {
+						oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
+						oItem.addEventDelegate(this._oPressLayoutCellDelegate);
+					}.bind(this));
+				}
 			}
 		},
 
@@ -216,9 +219,10 @@ sap.ui.define([
 			var sModelName = (this._oCurrentQueryContext.tab === "favorites" ? "fav" : undefined),
 				oBindingContext = oEvent.getSource().getBindingContext(sModelName),
 				sName = oBindingContext.getProperty("name"),
-				oResourceBundle = this.getResourceBundle();
+				oResourceBundle = this.getResourceBundle(),
+				bFavorite = this.getModel("fav").toggleFavorite(oBindingContext);
 
-			if (this.getModel("fav").toggleFavorite(oBindingContext)) {
+			if (bFavorite) {
 				MessageToast.show(oResourceBundle.getText("overviewFavoriteAdd", [sName]));
 			} else {
 				MessageToast.show(oResourceBundle.getText("overviewFavoriteRemove", [sName]));
@@ -305,7 +309,7 @@ sap.ui.define([
 		},
 
 		/* =========================================================== */
-		/* internal methods                                            */
+		/* internal method                                             */
 		/* =========================================================== */
 
 		/**
