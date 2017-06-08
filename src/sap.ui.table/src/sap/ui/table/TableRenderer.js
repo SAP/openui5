@@ -14,7 +14,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	/**
 	 * Table renderer.
+	 *
 	 * @namespace
+	 * @name sap.ui.table.TableRenderer
 	 */
 	var TableRenderer = {};
 

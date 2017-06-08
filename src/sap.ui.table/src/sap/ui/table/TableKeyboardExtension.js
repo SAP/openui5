@@ -3,11 +3,13 @@
  */
 
 // Provides helper sap.ui.table.TableKeyboardExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/ItemNavigation', './TableUtils', './TableKeyboardDelegate2', 'sap/ui/Device'],
-	function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate, Device) {
+sap.ui.define([
+	"jquery.sap.global", "./TableExtension", "sap/ui/core/delegate/ItemNavigation", "./TableUtils", "./TableKeyboardDelegate2", "sap/ui/Device"
+], function(jQuery, TableExtension, ItemNavigation, TableUtils, TableKeyboardDelegate, Device) {
 	"use strict";
 
 	var bIEFocusOutlineWorkaroundApplied = false;
+
 	function applyIEFocusOutlineWorkaround(oElement) {
 		/*
 		 * In Internet Explorer there are problems with the focus outline on tables.
@@ -21,11 +23,11 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		 */
 		if (Device.browser.msie) {
 			if (!bIEFocusOutlineWorkaroundApplied) {
-				jQuery('head').append(
-					'<style type="text/css">' +
-						'/* Avoid focus outline problems in tables */\n' +
-						'.sapUiTableStatic[data-sap-ui-table-focus]{}' +
-					'</style>'
+				jQuery("head").append(
+					"<style type=\"text/css\">" +
+					"/* Avoid focus outline problems in tables */\n" +
+					".sapUiTableStatic[data-sap-ui-table-focus]{}" +
+					"</style>"
 				);
 				bIEFocusOutlineWorkaroundApplied = true;
 			}
@@ -42,8 +44,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * "this" in the function context is the table instance
 	 */
 	var ItemNavigationDelegate = {
-
-		_forward : function(oTable, oEvent) {
+		_forward: function(oTable, oEvent) {
 			var oIN = oTable._getItemNavigation();
 
 			if (oIN != null
@@ -54,24 +55,23 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				oIN["on" + oEvent.type](oEvent);
 			}
 		},
-
 		onfocusin: function(oEvent) {
 			ItemNavigationDelegate._forward(this, oEvent);
 			applyIEFocusOutlineWorkaround(oEvent.target);
 		},
-		onsapfocusleave: 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onmousedown: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapnext: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapnextmodifiers: 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapprevious: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapfocusleave: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onmousedown: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapnext: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapnextmodifiers: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapprevious: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
 		onsappreviousmodifiers: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsappageup: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsappagedown: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsaphome: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsaphomemodifiers: 	function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapend: 				function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapendmodifiers: 		function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
-		onsapkeyup: 			function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
+		onsappageup: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsappagedown: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsaphome: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsaphomemodifiers: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapend: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapendmodifiers: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); },
+		onsapkeyup: function(oEvent) { ItemNavigationDelegate._forward(this, oEvent); }
 
 	};
 
@@ -80,9 +80,9 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * "this" in the function context is the table instance.
 	 */
 	var ExtensionDelegate = {
-
-		onfocusin : function(oEvent) {
+		onfocusin: function(oEvent) {
 			var oExtension = this._getKeyboardExtension();
+
 			if (!oExtension._bIgnoreFocusIn) {
 				oExtension.initItemNavigation();
 				if (ExtensionHelper.isItemNavigationInvalid(this)) {
@@ -98,22 +98,18 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				oEvent.preventDefault();
 				oEvent.setMarked("sapUiTableSkipItemNavigation");
 			}
-
-
 		}
-
 	};
 
 	/*
 	 * Provides utility functions used this extension
 	 */
 	var ExtensionHelper = {
-
 		/*
 		 * Initialize ItemNavigations (content and header) and transfer relevant dom elements.
 		 * TabIndexes are set by the ItemNavigation.
 		 */
-		_initItemNavigation : function(oExtension) {
+		_initItemNavigation: function(oExtension) {
 			var oTable = oExtension.getTable();
 
 			if (TableUtils.isBusyIndicatorVisible(oTable)) {
@@ -132,14 +128,14 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				aRowHdrDomRefs, aRowActionDomRefs, $topLeft, $middleLeft, $bottomLeft;
 
 			if (bHasFixedColumns) {
-				$topLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
-				$middleLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
-				$bottomLeft = $Table.find('.sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
+				$topLeft = $Table.find(".sapUiTableCtrlFixed.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)");
+				$middleLeft = $Table.find(".sapUiTableCtrlFixed.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)");
+				$bottomLeft = $Table.find(".sapUiTableCtrlFixed.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)");
 			}
 
-			var $topRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)');
-			var $middleRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)');
-			var $bottomRight = $Table.find('.sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)');
+			var $topRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixed:not(.sapUiTableCHT)");
+			var $middleRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowScroll:not(.sapUiTableCHT)");
+			var $bottomRight = $Table.find(".sapUiTableCtrlScroll.sapUiTableCtrlRowFixedBottom:not(.sapUiTableCHT)");
 
 			if (bHasRowHeader) {
 				aRowHdrDomRefs = $Table.find(".sapUiTableRowHdr").get();
@@ -156,17 +152,17 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 					aItemDomRefs.push(aRowHdrDomRefs[i]);
 				}
 				if (bHasFixedColumns) {
-					aItemDomRefs = aItemDomRefs.concat($topLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+					aItemDomRefs = aItemDomRefs.concat($topLeft.find("tr[data-sap-ui-rowindex=\"" + i + "\"]").find("td[tabindex]").get());
 				}
-				aItemDomRefs = aItemDomRefs.concat($topRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				aItemDomRefs = aItemDomRefs.concat($topRight.find("tr[data-sap-ui-rowindex=\"" + i + "\"]").find("td[tabindex]").get());
 				if (bHasFixedColumns) {
-					aItemDomRefs = aItemDomRefs.concat($middleLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+					aItemDomRefs = aItemDomRefs.concat($middleLeft.find("tr[data-sap-ui-rowindex=\"" + i + "\"]").find("td[tabindex]").get());
 				}
-				aItemDomRefs = aItemDomRefs.concat($middleRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				aItemDomRefs = aItemDomRefs.concat($middleRight.find("tr[data-sap-ui-rowindex=\"" + i + "\"]").find("td[tabindex]").get());
 				if (bHasFixedColumns) {
-					aItemDomRefs = aItemDomRefs.concat($bottomLeft.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+					aItemDomRefs = aItemDomRefs.concat($bottomLeft.find("tr[data-sap-ui-rowindex=\"" + i + "\"]").find("td[tabindex]").get());
 				}
-				aItemDomRefs = aItemDomRefs.concat($bottomRight.find('tr[data-sap-ui-rowindex="' + i + '"]').find('td[tabindex]').get());
+				aItemDomRefs = aItemDomRefs.concat($bottomRight.find("tr[data-sap-ui-rowindex=\"" + i + "\"]").find("td[tabindex]").get());
 				if (bHasRowActions) {
 					aItemDomRefs.push(aRowActionDomRefs[i]);
 				}
@@ -176,8 +172,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			if (oTable.getColumnHeaderVisible()) {
 				var aHeaderDomRefs = [];
 
-				var $FixedHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlFixed>tbody>tr"); //.sapUiTableColHdrCnt .sapUiTableCtrlFixed .sapUiTableColHdrTr"); //returns the .sapUiTableColHdr elements
-				var $ScrollHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlScroll>tbody>tr"); //".sapUiTableColHdrCnt .sapUiTableCtrlScr .sapUiTableColHdrTr"); //returns the .sapUiTableColHdr elements
+				// Returns the .sapUiTableColHdr elements (.sapUiTableColHdrCnt .sapUiTableCtrlFixed .sapUiTableColHdrTr)
+				var $FixedHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlFixed>tbody>tr");
+				// Returns the .sapUiTableColHdr elements (.sapUiTableColHdrCnt .sapUiTableCtrlScr .sapUiTableColHdrTr)
+				var $ScrollHeaders = $Table.find(".sapUiTableCHT.sapUiTableCtrlScroll>tbody>tr");
 
 				for (var i = 0; i < TableUtils.getHeaderRowCount(oTable); i++) {
 					if (bHasRowHeader) {
@@ -224,20 +222,21 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			oExtension._itemNavigationInvalidated = false;
 		},
 
-		getInitialItemNavigationIndex : function(oExtension) {
+		getInitialItemNavigationIndex: function(oExtension) {
 			return TableUtils.hasRowHeader(oExtension.getTable()) ? 1 : 0;
 		},
 
-		isItemNavigationInvalid : function(oExtension) {
+		isItemNavigationInvalid: function(oExtension) {
 			return !oExtension._itemNavigation || oExtension._itemNavigationInvalidated;
 		}
 	};
 
 	/**
 	 * Extension for sap.ui.table.Table which handles keyboard related things.
+	 * <b>This is an internal class that is only intended to be used inside the sap.ui.table library! Any usage outside the sap.ui.table library is
+	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles keyboard related things.
-	 *
 	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
@@ -245,16 +244,17 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * @private
 	 * @alias sap.ui.table.TableKeyboardExtension
 	 */
-	var TableKeyboardExtension = TableExtension.extend("sap.ui.table.TableKeyboardExtension", /* @lends sap.ui.table.TableKeyboardExtension */ {
-
-		/*
-		 * @see TableExtension._init
+	var TableKeyboardExtension = TableExtension.extend("sap.ui.table.TableKeyboardExtension",
+		/** @lends sap.ui.table.TableKeyboardExtension.prototype */ {
+		/**
+		 * @override
+		 * @inheritDoc
+		 * @returns {string} The name of this extension.
 		 */
-		_init : function(oTable, sTableType, mSettings) {
+		_init: function(oTable, sTableType, mSettings) {
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
-			this._type = sTableType;
 			this._delegate = new TableKeyboardDelegate(sTableType);
 			this._actionMode = false;
 
@@ -263,24 +263,36 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 			oTable.addEventDelegate(this._delegate, oTable);
 			oTable.addEventDelegate(ItemNavigationDelegate, oTable);
 
-			oTable._getItemNavigation = function() { return this._itemNavigation; }.bind(this);
+			/**
+			 * Gets the item navigation.
+			 *
+			 * @alias sap.ui.table.Table#_getItemNavigation
+			 * @returns {sap.ui.core.delegate.ItemNavigation} The item navigation.
+			 * @private
+			 */
+			oTable._getItemNavigation = function() {
+				return this._itemNavigation;
+			}.bind(this);
 
 			return "KeyboardExtension";
 		},
 
-		/*
-		 * Enables debugging for the extension
+		/**
+		 * Enables debugging for the extension. Internal helper classes become accessible.
+		 *
+		 * @private
 		 */
-		_debug : function() {
+		_debug: function() {
 			this._ExtensionHelper = ExtensionHelper;
 			this._ItemNavigationDelegate = ItemNavigationDelegate;
 			this._ExtensionDelegate = ExtensionDelegate;
 		},
 
-		/*
-		 * @see sap.ui.base.Object#destroy
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
-		destroy : function() {
+		destroy: function() {
 			// Deregister the delegates
 			var oTable = this.getTable();
 			if (oTable) {
@@ -301,12 +313,12 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 
 			TableExtension.prototype.destroy.apply(this, arguments);
 		}
-
 	});
 
-	/*
+	/**
 	 * Check whether item navigation should be reapplied from scratch and initializes it if needed.
-	 * @public (Part of the API for Table control only!)
+	 *
+	 * @public
 	 */
 	TableKeyboardExtension.prototype.initItemNavigation = function() {
 		if (ExtensionHelper.isItemNavigationInvalid(this)) {
@@ -314,9 +326,10 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		}
 	};
 
-	/*
-	 * Invalidates the item navigation (forces a re-initialization with the next initItemNavigation call)
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Invalidates the item navigation (forces a re-initialization with the next initItemNavigation call).
+	 *
+	 * @public
 	 */
 	TableKeyboardExtension.prototype.invalidateItemNavigation = function() {
 		this._itemNavigationInvalidated = true;
@@ -326,13 +339,15 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * Makes the table enter or leave the action mode.
 	 *
 	 * Hooks:
-	 * <code>enterActionMode()</code> - Called when trying to enter the action mode. The action mode will only be entered if this hook returns <code>true</code>.
+	 * <code>enterActionMode()</code> - Called when trying to enter the action mode. The action mode will only be entered if this hook returns
+	 * <code>true</code>.
 	 * <code>leaveActionMode()</code> - Called when leaving the action mode.
 	 * Additional parameters passed after <code>bEnter</code> will be forwarded to the calls of the hooks.
 	 *
 	 * In the action mode the user can navigate through the interactive controls of the table.
 	 *
-	 * @param {boolean} bEnter If set to <code>true</code>, the table will try to enter the action mode, otherwise the table will leave the action mode.
+	 * @param {boolean} bEnter If set to <code>true</code>, the table will try to enter the action mode, otherwise the table will leave the action
+	 *     mode.
 	 * @public (Part of the API for Table control only!)
 	 */
 	TableKeyboardExtension.prototype.setActionMode = function(bEnter) {
@@ -344,19 +359,23 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 		}
 	};
 
-	/*
-	 * Returns true when the table is in action mode, false otherwise.
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Returns whether the table is in action mode.
+	 *
+	 * @returns {boolean} Returns <code>true/code>, if the table is in action mode.
+	 * @public
 	 */
 	TableKeyboardExtension.prototype.isInActionMode = function() {
 		return this._actionMode;
 	};
 
-	/*
+	/**
 	 * Sets the focus depending on the noData or overlay mode.
 	 * The previous focused element is given (potentially this is not anymore the active focused element,
-	 * e.g. see Table.setShowOverlay -> tue to CSS changes the focused element might be hidden which forces a focus change)
-	 * @public (Part of the API for Table control only!)
+	 * e.g. see Table.setShowOverlay -> tue to CSS changes the focused element might be hidden which forces a focus change).
+	 *
+	 * @param {HTMLElement} oPreviousFocusRef The previously focused element.
+	 * @public
 	 */
 	TableKeyboardExtension.prototype.updateNoDataAndOverlayFocus = function(oPreviousFocusRef) {
 		var oTable = this.getTable();
@@ -375,52 +394,59 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 				oTable.$("noDataCnt").focus(); // Set focus on NoData Container if it was on the content before
 			}
 		} else if (jQuery.sap.containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
-				|| jQuery.sap.containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
+				   || jQuery.sap.containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
 			// The overlay or noData area is not shown but was shown before
 			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
 		}
 	};
 
-	/*
+	/**
 	 * Suspends the event handling of the item navigation.
-	 * @protected (Only to be used by the keyboard delegate)
+	 *
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._suspendItemNavigation = function() {
 		this._itemNavigationSuspended = true;
 	};
 
-	/*
+	/**
 	 * Resumes the event handling of the item navigation.
-	 * @protected (Only to be used by the keyboard delegate)
+	 *
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._resumeItemNavigation = function() {
 		this._itemNavigationSuspended = false;
 	};
 
-	/*
-	 * Returnes whether the item navigation is suspended.
-	 * @protected (Only to be used by the keyboard delegate)
+	/**
+	 * Returns whether the item navigation is suspended.
+	 *
+	 * @returns {boolean} Returns <code>true</code>, if the item navigation is suspended.
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._isItemNavigationSuspended = function() {
 		return this._itemNavigationSuspended;
 	};
 
-	/*
-	 * Returns the combined info about the last focused data cell (based on the item navigation)
-	 * @protected (Only to be used by the keyboard delegate)
+	/**
+	 * Returns the combined info about the last focused data cell (based on the item navigation).
+	 *
+	 * @protected
+	 * @returns {sap.ui.table.TableUtils.FocusedItemInfo} The cell info of the last focused cell.
 	 */
 	TableKeyboardExtension.prototype._getLastFocusedCellInfo = function() {
 		var iHeader = TableUtils.getHeaderRowCount(this.getTable());
 		if (!this._oLastFocusedCellInfo || this._oLastFocusedCellInfo.header != iHeader) {
 			var oInfo = TableUtils.getFocusedItemInfo(this.getTable());
 			var iDfltIdx = ExtensionHelper.getInitialItemNavigationIndex(this);
+
 			return {
-				cellInRow : iDfltIdx,
-				row : iHeader,
-				header : iHeader,
-				cellCount : oInfo.cellCount,
-				columnCount : oInfo.columnCount,
-				cell : oInfo.columnCount * iHeader + iDfltIdx
+				cellInRow: iDfltIdx,
+				row: iHeader,
+				header: iHeader,
+				cellCount: oInfo.cellCount,
+				columnCount: oInfo.columnCount,
+				cell: oInfo.columnCount * iHeader + iDfltIdx
 			};
 		}
 		return this._oLastFocusedCellInfo;
@@ -430,7 +456,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * Sets the focus to the specified element and marks the resulting focus event to be ignored.
 	 *
 	 * @param {jQuery|HTMLElement} oElement The element to be focused.
-	 * @protected (Only to be used by the keyboard delegate)
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._setSilentFocus = function(oElement) {
 		this._bIgnoreFocusIn = true;
@@ -442,7 +468,7 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	 * Sets the focus to the specified element.
 	 *
 	 * @param {jQuery|HTMLElement} oElement The element to be focused.
-	 * @protected (Only to be used by the keyboard delegate)
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._setFocus = function(oElement) {
 		if (!oElement) {
@@ -473,14 +499,23 @@ sap.ui.define(['jquery.sap.global', './TableExtension', 'sap/ui/core/delegate/It
 	};
 
 	/*
-	 * Returns the type of the related table
-	 * @see TableExtension.TABLETYPES
-	 * @protected (Only to be used by the keyboard delegate)
+	 * Returns the type of the related table.
+	 *
+	 * @returns {sap.ui.table.TableExtension.TABLETYPES} The type of the table.
+	 * @protected
 	 */
 	TableKeyboardExtension.prototype._getTableType = function() {
 		return this._type;
 	};
 
 	return TableKeyboardExtension;
-
 }, /* bExport= */ true);
+
+/**
+ * Gets the keyboard extension.
+ *
+ * @name sap.ui.table.Table#_getKeyboardExtension
+ * @function
+ * @returns {sap.ui.table.TableKeyboardExtension} The keyboard extension.
+ * @private
+ */
