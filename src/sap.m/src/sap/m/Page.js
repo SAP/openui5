@@ -236,9 +236,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			}
 		};
 
-        Page.prototype.onAfterRendering = function () {
-            jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
-        };
+    Page.prototype.onAfterRendering = function () {
+      jQuery.sap.delayedCall(10, this, this._adjustFooterPadding);
+      jQuery.sap.delayedCall(10, this, this._adjustFooterWidth);
+    };
 
 		/**
 		 * Called when the control is destroyed.
@@ -399,6 +400,14 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 			this.setProperty("icon", sIconSrc, true);
 			return this;
+		};
+
+		Page.prototype._adjustFooterPadding = function() {
+				if (!this.getShowFooter() || !this.getFooter() || !sap.ui.Device.browser.safari) {
+					return;
+				}
+				var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last();
+				$footer.css("padding-bottom","3rem"); /*TO DO: need to change 3REM to appropriate value based on screen */
 		};
 
 		Page.prototype._adjustFooterWidth = function () {
