@@ -72,6 +72,55 @@
 				}
 			}),
 
+
+			// button to show the message toast with array of controls as the content
+			oButton1 = new sap.m.Button("show-custom-button", {
+				text: "Custom content",
+				press: function () {
+					// text control for display in toast
+					var oContentText1 = new sap.m.Text({
+						text: oTextArea0.getValue(),
+						textAlign: "Center"
+					}),
+
+					// button control for display in toast
+					oContentButton1 = new sap.m.Button({
+						text: "Action",
+						type: "Emphasized",
+						press: function (oEvent) {
+							// close the toast - the user has interacted with it, it is no longer needed
+							sap.m.MessageToast.close(oEvent.getSource());
+							// call the function the button is to trigger
+							sap.m.MessageToast.show("Action button pressed");
+						}
+					// add space between the buttons
+					}).addStyleClass("sapUiSmallMarginBegin");
+
+					// suggest autoClose = false
+					if (oCheckBox0.getSelected() === true) {
+						sap.m.MessageToast.show("autoClose=false suggested");
+					}
+
+					// show the MessageToast
+					sap.m.MessageToast.show([oContentText1, oContentButton1], {
+						duration: Number(oInput0.getValue()),
+						width: oInput1.getValue(),
+						my: sKey = oSelect0.getSelectedItem().getKey(),
+						at: sKey,
+						offset: oInput2.getValue(),
+						autoClose: oCheckBox0.getSelected(),
+						onClose: function() {
+							sap.m.MessageToast.show("The onClose callback function was called", {
+								width: "100%",
+								my: "center bottom",
+								at: "center bottom"
+							});
+						}
+					});
+				}
+			// add space between the buttons
+			}).addStyleClass("sapUiSmallMarginBegin"),
+
 			// select
 			oSelect0 = new sap.m.Select("select-list", {
 				items: [
@@ -190,7 +239,7 @@
 			oPage1 = new sap.m.Page("page1", {
 				title: "Mobile MessageToast control",
 				enableScrolling : true,
-				content : [ oList, oTextArea0, oButton0 ]
+				content : [ oList, oTextArea0, oButton0, oButton1 ]
 			});
 
 			oApp.addPage(oPage1);

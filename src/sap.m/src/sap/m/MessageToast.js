@@ -12,13 +12,22 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * <h3>Overview</h3>
 		 * A message toast is a small, non-disruptive popup for success or information messages that disappears automatically after a few seconds.
 		 * Toasts automatically disappear after a timeout unless the user moves the mouse over the toast or taps on it.
+		 * Toasts can display a simple string message or an array of controls.
+		 * Although a MessageToast can contain any array of controls, consider user experience:
+		 * MessageToast popups should be used for non-disruptive notifications, with quick to understand content.
+		 * If adding custom content, keep the user inputs intuitive and minimalist (one or two buttons is often sufficient).
 		 * <h4>Notes:</h4>
 		 * <ul>
 		 * <li>If the configured message contains HTML code or script tags, those will be escaped.</li>
 		 * <li>Line breaks (\r\n, \n\r, \r, \n) will be visualized.</li>
 		 * <li>Only one message toast can be shown at a time in the same place.</li>
+		 * <li> To allow the user to interact with controls in the Toast, set <code>autoClose: false</code>. </li>
+		 * <li> To close the Toast following a user interaction, call [MessageToast.close]{@link sap.m.MessageToast.close}. In order to identify the pop-up
+		 * with which the user has just interacted, a control within the toast must be provided, typically
+		 * the source of the user-triggered event. </li>
 		 * </ul>
-		 * <h4>Example:</h4>
+		 * <h3>Examples</h3>
+		 * <h4>Example with default options</h4>
 		 * Here is an example of a MessageToast with all default options:
 		 * <pre>
 		 * sap.m.MessageToast.show("This message should appear in the message toast", {
@@ -36,10 +45,39 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 *     closeOnBrowserNavigation: true   // default
 		 * });
 		 * </pre>
+		 *
+		 * <h4>Example with custom content</h4>
+		 * Here is an example of a MessageToast with custom content:
+		 * <pre>
+		 * // text control for display in toast
+		 * var oContentText1 = new sap.m.Text({
+		 * 	text: "Something's just happened",
+		 * 	textAlign: "Center"
+		 * }),
+		 *
+		 * // button control for display in toast
+		 * oContentButton1 = new sap.m.Button({
+		 * 	text: "Undo",
+		 * 	type: "Emphasized",
+		 * 	press: function (oEvent) {
+		 * 		// close the toast - the user has interacted with it, it is no longer needed
+		 * 		sap.m.MessageToast.close(oEvent.getSource());
+		 * 		// call the function the button is to trigger
+		 * 		sap.m.MessageToast.show("Action button pressed");
+		 * 	}
+		 * // add space between the buttons
+		 * }).addStyleClass("sapUiSmallMarginBegin");
+		 *
+		 * // show the MessageToast
+		 * sap.m.MessageToast.show([oContentText1, oContentButton1], {
+		 * 	autoClose: false
+		 * });
+		 * </pre>
+		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use:</h4>
 		 * <ul>
-		 * <li>You want to display a short success of information message.</li>
+		 * <li>You want to display a short success or information message.</li>
 		 * <li>You do not want to interrupt users while they are performing an action.</li>
 		 * <li>You want to confirm a successful action.</li>
 		 * </ul>
@@ -49,9 +87,13 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * <li>You want to interrupt users while they are performing an action.</li>
 		 * <li>You want to make sure that users read the message before they leave the page.</li>
 		 * <li>You want users to be able to copy some part of the message text. (In this case, show a success {@link sap.m.Dialog Message Dialog}.)</li>
+		 * <li> You want to display a complex interface or larger volumes of information. Consider instead using a {@link sap.m.Dialog Dialog}
+		 * or navigating to an alternative view (navigation to which could be triggered by a MessageToast containing a button, for example). </li>
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>
 		 * The message toast has the same behavior on all devices. However, you can adjust the width of the control, for example, for use on a desktop device.
+		 *
+		 *
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -72,6 +114,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			ENABLESELECTIONCLASS = "sapUiSelectable",
 			BELIZECONTRAST = "sapContrast",
 			BELIZECONTRASTPLUS = "sapContrastPlus";
+
+		// key of custom data for storing reference to the popup instance
+		MessageToast.sPopupKey = "MessageToastPopup";
 
 		MessageToast._mSettings = {
 			duration: 3000,
@@ -334,11 +379,37 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		/* =========================================================== */
 
 		/**
-		 * Creates and displays a simple message toast notification message with the given text, and optionally other options.
+		* Closes an instance of a MessageToast popup.
+		*
+		* @param {sap.ui.core.Control} oChild Reference to a control within the toast popup. Typically an individual toast would be closed in response to a user-triggered event from within the toast. The most straightforward way to close the toast is to pass the source of the event to MessageToast.close. The correct toast to close is identified by recursively getting parents of oChild until a toast popup instance is found.
+		* @type void
+		* @public
+		*/
+		MessageToast.close = function(oChild) {
+
+			// Popups are stored as references on the MessageToast container control in MessageToast.show
+			// Recursively look up the control tree until a control is found containing the Popup reference
+			var fnLookupPopup = function (oChild) {
+				// check whether the current control has the data attached
+				if (oChild.data().hasOwnProperty(MessageToast.sPopupKey)) {
+					// data is there, return it
+					return oChild.data(MessageToast.sPopupKey);
+				} else {
+					// didn't find the data, look up the control tree to find an ancestor with it
+					return fnLookupPopup(oChild.getParent());
+				}
+			};
+
+			// get the reference to the sap.ui.core.Popup, stored on the MessageToast container then close it
+			fnLookupPopup(oChild).close();
+		};
+
+		/**
+		 * Creates and displays a typically small, short-lived notification popup.
+		 * In order to allow users to interact with controls in the toast, set <code>autoClose: false</code>.
+		 * The only mandatory parameter is <code>oContent</code>.
 		 *
-		 * The only mandatory parameter is <code>sMessage</code>.
-		 *
-		 * @param {string} sMessage The message to be displayed.
+		 * @param {sap.ui.core.Control|string} oContent A control or array of controls to be placed in the toast. If a string is provided, the string is displayed as a text in the popup.
 		 * @param {object} [mOptions] Object which can contain all other options. Not all entries in this object are required. This property is optional.
 		 * @param {int} [mOptions.duration=3000] Time in milliseconds before the close animation starts. Needs to be a finite positive nonzero integer.
 		 * @param {sap.ui.core.CSSSize} [mOptions.width='15em'] The width of the message toast, this value can be provided in %, em, px and all possible CSS measures.
@@ -356,10 +427,11 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 		 * @type void
 		 * @public
 		 */
-		MessageToast.show = function(sMessage, mOptions) {
+		MessageToast.show = function(oContent, mOptions) {
 			var that = this,
-				mSettings = jQuery.extend({}, this._mSettings, { message: sMessage }),
+				mSettings = jQuery.extend({}, this._mSettings, { message: "" }), // if omitted, mSettings.message returns "undefined"
 				oPopup = new Popup(),
+				oContentContainer,
 				iPos,
 				oMessageToastDomRef,
 				sPointerEvents = "mousedown." + CSSCLASS + " touchstart." + CSSCLASS,
@@ -374,8 +446,31 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 			// validate all settings
 			this._validateSettings(mSettings);
 
+			// if content is a string, set as a text control for backward compatibility
+			if (typeof oContent === "string") {
+				oContent = new sap.m.Text({
+					text: oContent,
+					textAlign: "Center"
+				});
+			}
+
+			// group content into a single container control so the popup instance key can be added later
+			oContentContainer = new sap.m.FlexBox({
+				// add the content to the items of the container
+				items: oContent,
+				alignItems: "Center",
+				alignContent: "Center",
+				justifyContent: "Center"
+			});
+
+			// add the popup reference to the container so the popup can be closed in response to events - used by MessageToast.close
+			oContentContainer.data(MessageToast.sPopupKey, oPopup);
+
 			// create the message toast HTML markup
 			oMessageToastDomRef = createHTMLMarkup(mSettings);
+
+			// place the content container at the DomRef so it gets added to the popup
+			oContentContainer.placeAt(oMessageToastDomRef);
 
 			// save this pop-up instance and the position,
 			// to be used inside fnMTAttachClosed closure
