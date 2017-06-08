@@ -972,12 +972,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 
-		this.fireTokenChange({
-			addedTokens : [],
-			removedTokens : tokensToBeDeleted,
-			type : Tokenizer.TokenChangeType.TokensChanged
-		});
-
 		eventResult = this.fireTokenUpdate({
 			addedTokens : [],
 			removedTokens : tokensToBeDeleted,
@@ -996,6 +990,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		this.scrollToEnd();
+
+		this.fireTokenChange({
+			addedTokens : [],
+			removedTokens : tokensToBeDeleted,
+			type : Tokenizer.TokenChangeType.TokensChanged
+		});
 
 		var oParent = this.getParent(),
 			bIsParentMultiInput = oParent && oParent instanceof sap.m.MultiInput;
@@ -1095,21 +1095,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._onTokenDelete = function(token) {
 		if (token && this.getEditable()) {
 
-			this.fireTokenChange({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenChangeType.TokensChanged
-			});
-
 			var eventResult = this.fireTokenUpdate({
 				addedTokens : [],
 				removedTokens : [token],
 				type : Tokenizer.TokenUpdateType.Removed
 			});
 
-			if (eventResult) {
-				token.destroy();
+			if (!eventResult) {
+				return;
 			}
+
+			token.destroy();
+
+			this.fireTokenChange({
+				addedTokens : [],
+				removedTokens : [token],
+				type : Tokenizer.TokenChangeType.TokensChanged
+			});
 		}
 	};
 
