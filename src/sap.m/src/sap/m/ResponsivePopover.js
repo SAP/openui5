@@ -17,7 +17,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * A popover-based control that behaves differently according to the device it is on.
 	 * @class
 	 * The responsive popover acts as a {@link sap.m.Popover popover} on desktop and tablet,
-	 * while on phone it acts as a {@ link sap.m.Dialog dialog} with <code>stretch</code> set to true.
+	 * while on phone it acts as a {@link sap.m.Dialog dialog} with <code>stretch</code> set to true.
+	 *
+	 * <b>Note:</b> It is recommended that <code>ResponsivePopover</code> is used in fragments otherwise there might
+	 * be some implications on the user experience. For example, on desktop, open or close functions
+	 * of the <code>Popover</code> might not be called.
+	 *
 	 * <h3>Usage</h3>
 	 * When you want to make sure that all content is visible on any device.
 	 *
