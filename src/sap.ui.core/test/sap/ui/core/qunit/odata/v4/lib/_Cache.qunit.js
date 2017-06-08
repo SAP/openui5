@@ -751,7 +751,7 @@ sap.ui.require([
 	[
 		{index : 1, length : 1, result : [{key : "b"}]},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}]},
-		{index : 4, length : 5, result : [], count : 4},
+		{index : 4, length : 5, result : []}, // don't set count, it can be anything between 0 and 4
 		{index : 1, length : 5, result : [{key : "b"}, {key : "c"}], count : 3}
 	].forEach(function (oFixture) {
 		QUnit.test("CollectionCache#read(" + oFixture.index + ", " + oFixture.length + ")",
@@ -781,7 +781,7 @@ sap.ui.require([
 
 			assert.ok(!oPromise.isFulfilled());
 			assert.ok(!oPromise.isRejected());
-			return oPromise.then(function (aResult) {
+			return oPromise.then(function (oResult) {
 				var oExpectedResult = {
 						"@odata.context" : "$metadata#TEAMS",
 						value : oFixture.result
@@ -792,8 +792,8 @@ sap.ui.require([
 						sinon.match.same(oCache.mChangeListeners), "",
 						sinon.match.same(oCache.aElements), {$count : oFixture.count});
 				}
-				oExpectedResult.value.$count = oFixture.count;
-				assert.deepEqual(aResult, oExpectedResult);
+				assert.deepEqual(oResult, oExpectedResult);
+				assert.strictEqual(oResult.value.$count, oFixture.count);
 			});
 		});
 	});
