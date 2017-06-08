@@ -87,6 +87,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
 
 			/**
+			 * Determines the tooltip text of the <code>ObjectHeader</code> icon.
+			 */
+			iconTooltip : {type : "string", group : "Accessibility", defaultValue : null},
+
+			/**
 			 * By default, this is set to <code>true</code> but then one or more requests are sent trying to get
 			 * the density perfect version of image if this version of image doesn't exist on the server.
 			 *
@@ -968,6 +973,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var mProperties = jQuery.extend(
 			{
 				src : this.getIcon(),
+				tooltip: this.getIconTooltip(),
 				alt: this.getIconAlt(),
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware()
