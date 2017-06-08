@@ -237,10 +237,10 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			var oCfg = window["sap-ui-config"] || {};
 			oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
 			for (var n in M_SETTINGS) {
-				if ( oCfg.hasOwnProperty(n.toLowerCase()) ) {
-					setValue(n, oCfg[n.toLowerCase()]);
-				} else if ( !/^xx-/.test(n) && oCfg.hasOwnProperty("xx-" + n.toLowerCase()) ) {
-					setValue(n, oCfg["xx-" + n.toLowerCase()]);
+				if ( oCfg.hasOwnProperty(n) ) {
+					setValue(n, oCfg[n]);
+				} else if ( !/^xx-/.test(n) && oCfg.hasOwnProperty("xx-" + n) ) {
+					setValue(n, oCfg["xx-" + n]);
 				}
 			}
 
