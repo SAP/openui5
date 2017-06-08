@@ -937,76 +937,72 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 
 	/**
 	 * Returns an unused column template clone. Unused means, it does not have a parent.
-	 * @param {sap.ui.core.Control[]} aTemplateClones Array of available column template clones
-	 * @returns {sap.ui.core.Control|undefined} Column template clone or undefined if all clones have parents
+	 *
+	 * @returns {sap.ui.core.Control|null} Column template clone, or <code>null</code> if all clones have parents
 	 * @private
 	 */
-	Column.prototype._getFreeTemplateClone = function(aTemplateClones) {
-		for (var i = 0, l = aTemplateClones.length; i < l; i++) {
-			if (aTemplateClones[i] && aTemplateClones[i].bIsDestroyed) {
-				// remove destroyed clones
-				this._aTemplateClones.splice(i, 1);
-				continue;
-			}
+	Column.prototype._getFreeTemplateClone = function() {
+		var oFreeTemplateClone = null;
 
-			if (aTemplateClones[i] && !aTemplateClones[i].getParent()) {
-				return aTemplateClones[i];
+		for (var i = 0; i < this._aTemplateClones.length; i++) {
+			if (this._aTemplateClones[i] == null || this._aTemplateClones[i].bIsDestroyed) {
+				this._aTemplateClones.splice(i, 1); // Remove the reference to a destroyed clone.
+				i--;
+			} else if (oFreeTemplateClone === null && this._aTemplateClones[i].getParent() == null) {
+				oFreeTemplateClone = this._aTemplateClones[i];
 			}
 		}
+
+		return oFreeTemplateClone;
 	};
 
 	/**
 	 * Returns a column template clone. It either finds an unused clone or clones a new one from the column template.
+	 *
 	 * @param {int} iIndex Index of the column in the column aggregation of the table
-	 * @returns {sap.ui.core.Control} Clone of the column template
+	 * @returns {sap.ui.core.Control|null} Clone of the column template, or <code>null</code> if no column template is defined
 	 * @protected
 	 */
-	// for performance reasons, the index of the column in the column aggregation must
-	// be provided by the caller. Otherwise the columns aggregation would be looped over and over again to
-	// figure out the index.
-	Column.prototype.getTemplateClone = function(iIndex, iRowIndex) {
-		var oClone = this._getFreeTemplateClone(this._aTemplateClones);
-		var oTable = this.getParent();
+	Column.prototype.getTemplateClone = function(iIndex) {
+		// For performance reasons, the index of the column in the column aggregation must be provided by the caller.
+		// Otherwise the columns aggregation would be looped over and over again to figure out the index.
+		if (iIndex == null) {
+			return null;
+		}
 
-		if (!oClone) {
-			// no clone found, create a new one
+		var oClone = this._getFreeTemplateClone();
+
+		if (oClone === null) {
+			// No free template clone available, create one.
 			var oTemplate = this.getTemplate();
 			if (oTemplate) {
-
-				// Legacy fallback to old cell id scheme for transition phase of visual tests (1.44 only!)
-				var sSuffix;
-				if (oTable && oTable._bUseLegacyCellIds && iRowIndex >= 0) {
-					var _sSuffix = "col" + iIndex + "-row" + iRowIndex;
-					if (!sap.ui.getCore().byId(oTemplate.getId() + "-" + _sSuffix)){
-						sSuffix = _sSuffix;
-					}
-				}
-
-				oClone = oTemplate.clone(sSuffix);
+				oClone = oTemplate.clone();
+				this._aTemplateClones.push(oClone);
 			}
 		}
 
-		if (oClone) {
-			// update sap-ui-* as the column index in the column aggregation may have changed
+		if (oClone != null) {
+			// Update sap-ui-* as the column index in the column aggregation may have changed.
 			oClone.data("sap-ui-colindex", iIndex);
 			oClone.data("sap-ui-colid", this.getId());
-			this._aTemplateClones.push(oClone);
 
-			if (oTable) {
+			var oTable = this.getParent();
+			if (oTable != null) {
 				oTable._getAccExtension().addColumnHeaderLabel(this, oClone);
 			}
-
-			return oClone;
 		}
+
+		return oClone;
 	};
 
 	/**
-	 * Destroys all column template clones and clears the clone stack
+	 * Destroys all column template clones and clears the clone stack.
+	 *
 	 * @private
 	 */
 	Column.prototype._destroyTemplateClones = function() {
-		for (var i = 0, l = this._aTemplateClones.length; i < l; i++) {
-			if (this._aTemplateClones[i]) {
+		for (var i = 0; i < this._aTemplateClones.length; i++) {
+			if (this._aTemplateClones[i] != null && !this._aTemplateClones[i].bIsDestroyed) {
 				this._aTemplateClones[i].destroy();
 			}
 		}
