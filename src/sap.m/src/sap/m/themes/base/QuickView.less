@@ -11,21 +11,27 @@
 	height: 100%;
 }
 
-.sapMQuickViewPage.sapMNavItem {
-	vertical-align: top;
-	display: inline-block;
+.sapMQuickViewPage {
+	.sapUiHLayout.sapUiHLayoutNoWrap .sapUiHLayoutChildWrapper {
+		max-width: 100%;
+	}
+
+	&.sapMNavItem {
+		vertical-align: top;
+		display: inline-block;
+
+		&.sapMNavItemHidden {
+			display: none;
+		}
+
+		&.sapMNavItemOffset {
+			left: -100%;
+		}
+	}
 }
 
 .sapMQuickViewCard .sapMQuickViewPage.sapMNavItem {
 	width: 100% !important;
-}
-
-.sapMQuickViewPage.sapMNavItem.sapMNavItemHidden {
-	display: none;
-}
-
-.sapMQuickViewPage.sapMNavItem.sapMNavItemOffset {
-	left: -100%;
 }
 
 html.sap-desktop .sapMQuickViewPage .sapUiFormResGrid > div,
