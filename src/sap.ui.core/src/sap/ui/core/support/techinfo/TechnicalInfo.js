@@ -550,11 +550,10 @@ sap.ui.define([
 		 * @return {JSONModel} Model with filled data.
 		 */
 		_createViewModel: function () {
-			var sDefaultBootstrapURL = new URI(jQuery.sap.getResourcePath(""), window.location.href ) + "/sap/ui/support/",
+			var sDefaultBootstrapURL = new URI(jQuery.sap.getResourcePath(""), window.location.origin + window.location.pathname) + "/sap/ui/support/",
 				sDefaultSelectedLocation = "standard",
 				sDefaultOpenInNewWindow = false;
 
-			//check if storage is empty and sets default.
 			this._saveLocalStorageDefault("sap-ui-standard-bootstrap-URL", sDefaultBootstrapURL);
 			this._saveLocalStorageDefault("sap-ui-selected-location", sDefaultSelectedLocation);
 			this._saveLocalStorageDefault("sap-ui-open-sa-in-new-window", sDefaultOpenInNewWindow);
