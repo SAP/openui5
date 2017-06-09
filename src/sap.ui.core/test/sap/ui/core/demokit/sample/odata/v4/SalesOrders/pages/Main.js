@@ -8,12 +8,10 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPath, Interactable,
-	Properties) {
+function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable, Properties) {
 	"use strict";
 	var ID_COLUMN_INDEX = 0,
 		NOTE_COLUMN_INDEX = 5,
@@ -262,8 +260,11 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 				},
 				firstSalesOrderIsVisible : function () {
 					return this.waitFor({
-						controlType : "sap.m.Text",
-						matchers : new BindingPath({path : "/SalesOrderList/0"}),
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						check : function (oSalesOrderTable) {
+							return  oSalesOrderTable.getItems().length > 0;
+						},
 						success : function (oControl) {
 							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
@@ -271,7 +272,8 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 							sap.ui.test.Opa.getContext().firstSalesOrderId = sSalesOrderId;
 							Opa5.assert.ok(true, "First SalesOrderID " + sSalesOrderId);
 
-						}
+						},
+						viewName : sViewName
 					});
 				},
 				firstSalesOrderIsAtPos0 : function () {
@@ -307,17 +309,6 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 						id : "cancelSalesOrderListChanges",
 						success : function (oCancelSalesOrderListChangesButton) {
 							Opa5.assert.ok(true, "Cancel Sales Order List Changes button pressed");
-						},
-						viewName : sViewName
-					});
-				},
-				pressConfirmSalesOrdersButton : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "confirmSalesOrder",
-						success : function (oCreateSalesOrderButton) {
-							Opa5.assert.ok(true, "Confirm Sales Order button pressed");
 						},
 						viewName : sViewName
 					});
@@ -394,8 +385,8 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
-						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
-						id : /-field/,
+						// "0" is the index, "field" is the prefix for the control within ValueHelp
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Product.Category pressed");
 							return this.waitFor({
@@ -413,8 +404,8 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.ComboBox",
-						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
-						id : /-field/,
+						// "0" is the index, "field" is the prefix for the control within ValueHelp
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Product.TypeCode pressed");
 						},
@@ -424,8 +415,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 				rememberCreatedSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						matchers : new BindingPath({path : "/SalesOrderList/0"}),
-						success : function (oControl) {
+						success : function () {
 							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
@@ -453,7 +443,6 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 					return this.waitFor({
 						controlType : "sap.m.Text",
 						id : /--SalesOrders_ID-/,
-						matchers : new BindingPath({path : "/SalesOrderList/0"}),
 						success : function (aControls) {
 							aControls[0].$().tap();
 							Opa5.assert.ok(true, "First Sales Order selected: " +
@@ -499,20 +488,6 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "sortBySalesOrderID",
-						viewName : sViewName
-					});
-				},
-				// Uses #changeParameters() to delete the 'Note' entry of the $select query option,
-				// in order to achieve that the edit text note is not shown anymore
-				unselectSODetailsNoteWithChangeParameters : function () {
-					return this.waitFor({
-						controlType : "sap.m.VBox",
-						id : "ObjectPage",
-						success : function (oSODetails) {
-							oSODetails.getBindingContext().getBinding().changeParameters({
-								$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,SalesOrderID'
-							});
-						},
 						viewName : sViewName
 					});
 				}
@@ -580,7 +555,7 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 						viewName : sViewName
 					});
 				},
-				checkFirstGrossAmountGreater : function (sAmount) {
+				checkFirstGrossAmountGreater : function (sExpectedAmount) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrders",
@@ -590,7 +565,8 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 							if (aTableItems.length > 0) {
 								sAmount = aTableItems[0].getBindingContext()
 									.getProperty("GrossAmount");
-								Opa5.assert.ok(ODataUtils.compare(sAmount, "1000", true) > 0);
+								Opa5.assert.ok(
+									ODataUtils.compare(sAmount, sExpectedAmount, true) > 0);
 							}
 						},
 						viewName : sViewName
@@ -652,16 +628,6 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, BindingPat
 							Opa5.assert.strictEqual(oRow.getCells()[NOTE_COLUMN_INDEX].getValue(),
 								sExpectedNote,
 								"Note of row " + iRow + " as expected " + sExpectedNote);
-						},
-						viewName : sViewName
-					});
-				},
-				checkSalesOrderDetailsNote: function () {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : "Note",
-						success : function (oSONote) {
-							Opa5.assert.strictEqual(oSONote.getValue(), "");
 						},
 						viewName : sViewName
 					});

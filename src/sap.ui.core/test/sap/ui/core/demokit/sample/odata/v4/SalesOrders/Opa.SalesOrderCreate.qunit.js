@@ -7,12 +7,10 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Device, Opa5, opaTest, Press, BindingPath, Interactable, Properties,
-		TestUtils) {
+], function (jQuery, Device, Opa5, opaTest, Press, Interactable, Properties, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
