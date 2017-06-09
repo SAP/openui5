@@ -9,7 +9,9 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax='complex'>
 	</script>
 
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -557,6 +559,32 @@
 			//the { bracket in JSON is escaped with \ becaouse of the binding - when set to complex binding the "\" is not displayed
 			assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null,'\t').replace(/{/gi, "\\{"));
 			assert.ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("pass text with special characters in details", function (assert) {
+			var deploymentErrorDetails = "sequenceflow4 : Error in element 'SequenceFlow4' field 'Condition': Dynamically evaluated expression is expected, e.g. {context.variableOfInterest == 'value of interest'} servicetask1 : Flow element 'ServiceTask1' is not properly connected to other flow elements";
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialogdetails",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: deploymentErrorDetails,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagedialogdetails");
+			assert.ok(oMessageBox, "Dialog should be created");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
+			sap.ui.getCore().applyChanges();
+			assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), deploymentErrorDetails);
 			oMessageBox.destroy();
 		});
 
