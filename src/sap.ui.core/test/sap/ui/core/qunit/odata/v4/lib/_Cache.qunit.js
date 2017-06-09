@@ -992,6 +992,23 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#updataCache", function(assert) {
+		var oCache = new _Cache(this.oRequestor, "~foo~"),
+			oCacheData = {},
+			oUpdateData = {};
+
+		oCache.fetchValue = function () {};
+		this.mock(oCache).expects("fetchValue")
+			.withExactArgs().returns(_SyncPromise.resolve(oCacheData));
+		this.mock(_Helper).expects("updateCache")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+				sinon.match.same(oCacheData), sinon.match.same(oUpdateData));
+
+		//code under test
+		oCache.updateCache(oUpdateData);
+	});
+
+	//*********************************************************************************************
 	[
 		{index : 1, length : 1, result : [{key : "b"}], types : true},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}], types : true},

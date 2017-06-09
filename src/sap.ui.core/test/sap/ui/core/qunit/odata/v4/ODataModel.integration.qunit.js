@@ -462,8 +462,9 @@ sap.ui.require([
 		 * The following code (either {@link #createView} or anything before
 		 * {@link #waitForChanges}) is expected to perform the given request.
 		 *
-		 * @param {string|object} vRequest The request with the properties "method", "url" and
-		 *   "headers". A string is interpreted as URL with method "GET".
+		 * @param {string|object} vRequest The request with the properties "method", "url",
+		 *   "groupId" (default "$direct") and "headers". A string is interpreted as URL with method
+		 *   "GET".
 		 * @param {object} [oResponse] The response message to be returned from the requestor.
 		 * @returns {object} The test instance for chaining
 		 */
@@ -1376,6 +1377,100 @@ sap.ui.require([
 			// code under test
 			that.oView.byId("text").getBinding("text").setValue("Jonathan Schmidt");
 
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property of a complex type that the parent binding points to and expects
+	// that the old value is restored when resetChanges is called
+	QUnit.test("Modify w/ context binding on ComplexType, canceled", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'42\')}">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<FlexBox binding="{path: \'Address\', parameters: {$$updateGroupId: \'update\'}}">\
+		<Text id="city" text="{City}" />\
+	</FlexBox>\
+</FlexBox>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('42')", {
+				"@odata.etag" : "etag",
+				"BusinessPartnerID" : "42",
+				"Address" : {
+					"City" : "Walldorf"
+				}
+			})
+			.expectRequest("BusinessPartnerList('42')/Address", {
+				"City" : "Walldorf"
+			})
+			.expectChange("id", "42")
+			.expectChange("city", "Walldorf");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			// restore requestor to test proper cancel handling without simulating the requestor
+			that.oModel.oRequestor.restore();
+			that.expectChange("city", "heidelberg")  // from setValue
+				.expectChange("city", "Walldorf"); // restored old value
+
+			that.oView.byId("city").getBinding("text").setValue("heidelberg");
+			that.oView.getModel().resetChanges("update");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Modify a property of a complex type that the parent binding points to and
+	// succesfully submit the change
+	QUnit.test("Modify w/ context binding on ComplexType, success", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'42\')}">\
+	<Text id="id" text="{BusinessPartnerID}"/>\
+	<FlexBox binding="{path: \'Address\', parameters: {$$updateGroupId: \'update\'}}">\
+		<Text id="city" text="{City}" />\
+	</FlexBox>\
+</FlexBox>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('42')", {
+				"@odata.etag" : "etag",
+				"BusinessPartnerID" : "42",
+				"Address" : {
+					"City" : "Walldorf"
+				}
+			})
+			.expectRequest("BusinessPartnerList('42')/Address", {
+				"City" : "Walldorf"
+			})
+			.expectChange("id", "42")
+			.expectChange("city", "Walldorf");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					groupId : "update",
+					method : "PATCH",
+					url : "BusinessPartnerList('42')",
+					headers : {
+						"If-Match" : "etag"
+					},
+					payload : {
+						"Address" : {
+							"City" : "heidelberg"
+						}
+					}
+				}, {
+					"@odata.etag" : "changed",
+					"Address" : {
+						"City" : "Heidelberg"
+					}
+				})
+				.expectChange("city", "heidelberg")  // from setValue
+				.expectChange("city", "Heidelberg"); // from the response
+
+			that.oView.byId("city").getBinding("text").setValue("heidelberg");
+			that.oView.getModel().submitBatch("update");
 			return that.waitForChanges(assert);
 		});
 	});
