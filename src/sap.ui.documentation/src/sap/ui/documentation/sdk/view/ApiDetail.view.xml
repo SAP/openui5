@@ -24,8 +24,7 @@
 							  visible="false">
 				<headerTitle>
 					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
-									  objectSubtitle="{ parts : [{path: 'topics>/deprecated'}],
-                                                                                                                                                                                                                                formatter: '.formatSubtitle'}">
+									  objectSubtitle="{ parts : [{path: 'topics>/deprecated'}], formatter: '.formatSubtitle'}">
 						<actions>
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 							<ObjectPageHeaderActionButton
@@ -43,31 +42,18 @@
 				<headerContent>
 					<layout:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
 						<layout:VerticalLayout width="100%">
-							<m:ObjectAttribute
-									visible="{=${topics>/isClass}}"
-									title="Control Sample"
-									text="{entity>/sample}"
-									active="{entity>/hasSample}"
-									press="onSampleLinkPress"
-									class="sapUiTinyMarginBottom">
-								<m:customData>
-									<core:CustomData key="name" value="{topics>/name}" />
-								</m:customData>
-							</m:ObjectAttribute>
 
-							<m:ObjectAttribute
-									visible="{=${topics>/isClass}}"
-									title="Inherited from"
-									text="{topics>/extendsText}"
-									active="{topics>/isDerived}"
-									press="onTypeLinkPress"
-									class="sapUiTinyMarginBottom">
-								<m:customData>
-									<core:CustomData key="type" value="{topics>/extends}" />
-								</m:customData>
-							</m:ObjectAttribute>
+							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
+								<m:Label text="Control Sample:"/>
+								<m:Link text="{entity>/sample}" enabled="{=${entity>/hasSample}}" href="#/entity/{topics>/name}"/>
+							</m:HBox>
 
-							<m:HBox class="sapUiDocumentationImplementsDiv sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
+							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
+								<m:Label text="Inherited from:"/>
+								<m:Link text="{topics>/extendsText}" enabled="{=${topics>/isDerived}}" press="onTypeLinkPress"/>
+							</m:HBox>
+
+							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
 								<m:Label text="Implements:"/>
 								<m:HBox items="{path: 'topics>/implementsParsed'}">
 										<m:HBox>
@@ -237,12 +223,12 @@
 										<ce:CodeEditor height="auto" maxLines="20" width="100%" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
 														syntaxHints="false" value="{parts: [{path: 'topics>/name' },
 																			{path: 'topics>/constructor/parameters' }],
-																	 		formatter: '.formatConstructor'}"
-																	 		class="sapUiSmallMarginBottom"/>
+																			formatter: '.formatConstructor'}"
+																			class="sapUiSmallMarginBottom"/>
 
 										<m:Table items="{ path : 'constructorParams>/parameters'}"
 												showSeparators="Inner"
-		 										fixedLayout="true">
+												fixedLayout="true">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
@@ -315,7 +301,7 @@
 
 													<m:VBox>
 														<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
-																				 	  formatter: '.formatDescriptionSince'}"/>
+																					  formatter: '.formatDescriptionSince'}"/>
 
 														<m:MessageStrip  width="100%"
 															visible="{=${topics>deprecated} !== undefined}"
@@ -558,7 +544,7 @@
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
-																      formatter: '.formatLinkEnabled'}"
+																	  formatter: '.formatLinkEnabled'}"
 															press="onTypeLinkPress"/>
 
 													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
@@ -646,7 +632,7 @@
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																					 {path: 'topics>deprecated/text'},
 																					 {path: 'topics>deprecated/since'}],
-																			 	  formatter: '.formatDescription'}"/>
+																				  formatter: '.formatDescription'}"/>
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
