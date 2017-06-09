@@ -307,12 +307,13 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		assert.equal(oGetChangePersistenceForComponentCall, sAppVariantId, "the component name was passed correct");
 	});
 
-	QUnit.test("onLoadComponent determines the cache key within the async hints", function (assert) {
+	QUnit.test("onLoadComponent passes the cache key and url from within the async hints", function (assert) {
 
 		var oComponent = {
 			name : "componentName"
 		};
 		var sCacheKey = "abc123";
+		var sUrl = "/a/url/for/the/bachend/call/~" + sCacheKey + "~/";
 
 		var oConfig = {
 			"name": oComponent.name,
@@ -321,7 +322,8 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 					{
 						"name": "sap.ui.fl.changes",
 						"reference": oComponent.name + ".Component",
-						"cachebusterToken": sCacheKey
+						"cachebusterToken": sCacheKey,
+						"url": sUrl
 					}
 				]
 			}
@@ -352,7 +354,8 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
 		assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
-		assert.equal(oGetChangesForComponentCall.cacheKey, sCacheKey, "the cacneKey was determined correct");
+		assert.equal(oGetChangesForComponentCall.cacheKey, sCacheKey, "the cacheKey was determined correct");
+		assert.equal(oGetChangesForComponentCall.url, sUrl, "the url was determined correct");
 	});
 
 	QUnit.test("onLoadComponent sets max layer filter passed on component data", function (assert) {

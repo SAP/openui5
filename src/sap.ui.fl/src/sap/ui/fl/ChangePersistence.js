@@ -146,6 +146,8 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.sCurrentLayer] - Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
 	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes shall be loaded without layer filtering
 	 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants shall be included
+	 * @param {string} [mPropertyBag.cacheKey] - key to validate the client side stored cache entry
+	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Resolving with an array of changes
 	 * @public
