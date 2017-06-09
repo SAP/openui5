@@ -23,7 +23,8 @@
 							id="welcomeCarousel"
 							showPageIndicator="false"
 							loop="true"
-							pageChanged="onCarouselPageChanged">
+							pageChanged="onCarouselPageChanged"
+							visible="{= ${device>/isPhone}!==true }">
 							<pages>
 								<VBox renderType="Bare">
 									<Image
