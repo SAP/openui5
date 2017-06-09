@@ -389,6 +389,7 @@ sap.ui.define([
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
+				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
@@ -524,7 +525,7 @@ sap.ui.define([
 					methods: [],
 					events: []
 				};
-				sBaseClass = aLibsData[sTopicId].extends;
+				sBaseClass = aLibsData[sTopicId] ? aLibsData[sTopicId].extends : "";
 
 				var fnVisibilityFilter = function (item) {
 					return item.visibility === "public";
@@ -946,7 +947,7 @@ sap.ui.define([
 			formatMethodCode: function(sName, aParams, aReturnValue) {
 				var result = sName + '(';
 
-				if (aParams.length > 0) {
+				if (aParams && aParams.length > 0) {
 					aParams.forEach(function (element, index, array) {
 						if (element.isSubProperty || element.isSubSubProperty) {
 							return;
