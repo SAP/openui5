@@ -207,6 +207,7 @@ sap.ui.define([
 					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
 					models : { undefined : oModel,
 						ui : new JSONModel({
+								bCreateItemPending : false,
 								bLineItemSelected : false,
 								bRealOData : bRealOData,
 								bSalesOrderSelected : false,
