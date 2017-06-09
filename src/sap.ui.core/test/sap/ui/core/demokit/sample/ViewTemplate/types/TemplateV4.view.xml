@@ -4,8 +4,7 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	width="100%">
 	<template:repeat list="{meta>@com.sap.vocabularies.UI.v1.Identification}" var="field">
-		<Label text="{field>Label}"/>
-		<Input value="{= '{' + ${field>Value/$Path} + '}' }"/>
+		<Label labelFor="Identification::{field>Value/$Path}" text="{field>Label}"/>
+		<Input id="Identification::{field>Value/$Path}" value="{= '{' + ${field>Value/$Path} + '}' }"/>
 	</template:repeat>
 </mvc:View>
-
