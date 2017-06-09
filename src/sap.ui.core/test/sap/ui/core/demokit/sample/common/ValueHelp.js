@@ -29,7 +29,18 @@ sap.ui.define([
 			aggregations : {
 				field : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 			},
-			events : {/*TODO*/}
+			associations: {
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute
+				 * aria-labelledby).
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					singularName: "ariaLabelledBy"
+				}
+			},
+			events : {}
 		},
 
 		renderer : {
@@ -45,12 +56,20 @@ sap.ui.define([
 
 		init : function () {
 			this.attachModelContextChange(this.onModelContextChange);
-			this.setAggregation("field", new Input({
-				editable : this.getEditable(),
-				id : this.getId() + "-field",
-				showValueHelp : false,
-				value : this.getValue()
-			}));
+		},
+
+		addAssociation : function() {
+			var oField = this.getAggregation("field");
+
+			oField.addAssociation.apply(oField, arguments);
+			return this;
+		},
+
+		removeAssociation : function() {
+			var oField = this.getAggregation("field");
+
+			oField.removeAssociation.apply(oField, arguments);
+			return this;
 		},
 
 		onModelContextChange : function (oEvent) {
@@ -63,6 +82,8 @@ sap.ui.define([
 
 					if (oField) {
 						oField.destroy();
+						//TODO ARIA support, e.g. repeat previous addAssociation() calls!
+						throw new Error("Unsupported: onModelContextChange called twice");
 					}
 					switch (sValueListType) {
 						case ValueListType.Standard:
