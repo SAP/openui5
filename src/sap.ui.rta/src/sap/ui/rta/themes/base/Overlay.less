@@ -1,0 +1,221 @@
+/******************************************************************
+	Style of the RTA Overlays
+*******************************************************************/
+@sapUiRtaActiveBG : fade(@sapUiSelected, 10%);
+@sapRtaBaseBG : white;
+@sapUiRtaBorder: @sapUiSelected;
+@sapUiRtaHoverBG : fade(darken(@sapRtaBaseBG, 100%), 10.8%);
+@sapUiRtaActiveHoverBG : fade(@sapUiSelected, 20%);
+
+.sapUiRtaMarginBottom {
+	margin-bottom: 40px;
+}
+
+.sapUiRta {
+	&.sapUiRtaPersonalize {
+		.sapUiRtaPersDelete {
+			.sapUiRtaPersDeleteClick {
+				text-align: center;
+				vertical-align: middle;
+				height: 1.5rem;
+				width: 1.5rem;
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				z-index: 1;
+
+				.sapUiRtaPersDeleteIconOuter {
+					display: inline-block;
+					box-sizing: border-box;
+					text-align: center;
+					border-radius: 50%;
+					border: 0.125rem solid #ffffff;
+					cursor: pointer;
+					z-index: 1;
+					opacity: 1;
+					width: 1.5rem;
+					height: 1.5rem;
+					background-color: @sapUiRtaBorder;
+					box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+
+					.sapUiIcon {
+						color: @sapUiWhite;
+						font-size: 0.69rem;
+						line-height: 1.25rem;
+					}
+				}
+			}
+
+			&.sapUiRtaOverlayPlaceholder {
+				.sapUiRtaPersDeleteClick {
+					display: none;
+				}
+			}
+		}
+		.sapUiRtaPersAdd, .sapUiRtaPersAddTop {
+			.sapUiRtaPersAddIconOuter {
+				position: absolute;
+				text-align: center;
+				width: 100%;
+				height: 40px;
+				cursor: default;
+
+				.sapMBtn {
+					color: @sapUiRtaBorder;
+					height: 100%;
+
+					.sapMBtnInner {
+						border: none;
+					}
+				}
+			}
+
+		}
+		.sapUiRtaPersAdd {
+			> .sapUiRtaPersAddIconOuter {
+				bottom: -40px;
+				top: auto;
+			}
+		}
+	}
+
+	.sapUiRtaOverlayHover {
+		-webkit-transition: background 0.1s cubic-bezier(1,.01,1,0);
+		-moz-transition: background 0.1s cubic-bezier(1,.01,1,0);
+		-o-transition: background 0.1s cubic-bezier(1,.01,1,0);
+		transition: background 0.1s cubic-bezier(1,.01,1,0);
+
+		&:after {
+			content: " ";
+			border: 1px dotted @sapUiRtaBorder;
+		}
+	}
+
+	.sapUiDtOverlayFocusable {
+		&:focus {
+			&:before {
+				right: 0;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				// IE doesn't support width/height: 'initial'.
+				// With the property 'auto' the same effect is achieved.
+				// When initial is supported, auto is ignored.
+				width: auto;
+				width: initial;
+				height: auto;
+				height: initial;
+				z-index: 1; /* ObjectPage Header fix */
+			}
+		}
+	}
+
+	.sapUiDtOverlaySelected {
+		&.sapUiDtOverlayWithScrollBar:after {
+			bottom: 0;
+			right: 0;
+			top: 0;
+			left: 0;
+			// IE doesn't support width/height: 'initial'.
+			// With the property 'auto' the same effect is achieved.
+			// When initial is supported, auto is ignored.
+			width: auto;
+			width: initial;
+			height: auto;
+			height: initial;
+		}
+
+		&:after {
+			border: 2px solid @sapUiRtaBorder;
+		}
+
+		&.sapUiDtOverlayFocusable {
+			&:focus {
+				&:before {
+					top: 2px;
+					left: 2px;
+					bottom: 2px;
+					right: 2px;
+					// IE doesn't support width/height: 'initial'.
+					// With the property 'auto' the same effect is achieved.
+					// When initial is supported, auto is ignored.
+					width: auto;
+					width: initial;
+					height: auto;
+					height: initial;
+					z-index: 1; /* ObjectPage Header fix */
+				}
+			}
+		}
+	}
+
+	.sapUiDtOverlayTargetZone {
+		&:after {
+			border: 1px dashed @sapUiRtaBorder;
+		}
+
+		>.sapUiDtOverlayChildren {
+			>.sapUiRtaOverlayPlaceholder {
+				border: none;
+			}
+		}
+		&.sapUiDtOverlayDropZone >.sapUiDtOverlayChildren >.sapUiRtaOverlayPlaceholder {
+			background: transparent;
+		}
+	}
+
+
+	.sapUiDtOverlayDropZone {
+		>.sapUiDtOverlayChildren {
+			>.sapUiDtOverlayMovable {
+				// no "border"
+				&:after {
+					content: none;
+				}
+				background: @sapUiRtaActiveBG;
+			}
+
+			>.sapUiRtaOverlayPlaceholder {
+				background: @sapRtaBaseBG!important;
+				// no "border"
+				&:after {
+					content: none;
+				}
+				// no "focus" border
+				&:focus {
+					&:before {
+						content: none;
+					}
+				}
+
+				// all descendants
+				* {
+					background: @sapRtaBaseBG;
+					// no "border"
+					&:after {
+						content: none;
+					}
+					// no "focus" border
+					&:focus {
+						&:before {
+							content: none;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.sapUiRtaEditableField {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.sapUiDtDragGhost {
+		background: @sapUiRtaActiveBG;
+//		box-shadow: 0.375rem 0.375rem 0.375rem 0.375rem @sapUiContentShadowColor;
+	}
+}

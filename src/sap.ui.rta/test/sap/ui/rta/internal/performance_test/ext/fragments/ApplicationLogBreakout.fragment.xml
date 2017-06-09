@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" xmlns:uxap="sap.uxap" xmlns="sap.m">
+	<l:VerticalLayout>
+		<core:ComponentContainer id="123456789" name="sap.nw.core.applogs.lib.reuse.applogs" propagateModel="true"
+			settings='\{"logDataServiceUrl": "/sap/opu/odata/sap/APL_LOG_MANAGEMENT_SRV/", "logHandle":"%7BXO%7BoGxc7jMHbsFQ2lOKDG" ,"showFilterBar": false \}'></core:ComponentContainer>
+	</l:VerticalLayout>
+</core:FragmentDefinition>

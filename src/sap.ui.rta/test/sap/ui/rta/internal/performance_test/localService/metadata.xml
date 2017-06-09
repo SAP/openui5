@@ -1,0 +1,1098 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+    xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+    xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+    xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="./destinations/UIA_000/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value"
+        xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="STTA_PROD_MAN" xml:lang="en" sap:schema-version="1"
+            xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="I_CurrencyType" sap:label="Currency" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Currency"/>
+                </Key>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:text="Currency_Text" sap:label="Currency" sap:creatable="false" sap:semantics="currency-code"/>
+                <Property Name="Currency_Text" Type="Edm.String" MaxLength="40" sap:label="Long Text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Decimals" Type="Edm.Byte" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CurrencyISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO code" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_ContactPersonType" sap:label="Contact Person" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ContactPersonUUID"/>
+                </Key>
+                <Property Name="ContactPersonUUID" Type="Edm.Guid" Nullable="false" sap:label="Node Key" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FirstName" Type="Edm.String" MaxLength="40" sap:label="First Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="MiddleName" Type="Edm.String" MaxLength="40" sap:label="Middle Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LastName" Type="Edm.String" MaxLength="40" sap:label="Last Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="SystemUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="User Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Initials" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Initials" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="GenderCode" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Gender" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Phone" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Fax" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="MobilePhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Mobile" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EmailAddress" Type="Edm.String" MaxLength="255" sap:label="E-Mail" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PreferredLanguage" Type="Edm.String" MaxLength="2" sap:text="to_PreferredLanguage/Language_Text" sap:label="Language Key" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="BirthDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Date of Birth" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FormattedContactName" Type="Edm.String" MaxLength="88" sap:display-format="UpperCase" sap:label="Name" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="to_Address" Relationship="STTA_PROD_MAN.assoc_E533E59EC8F77897B25326F25D768FBA" FromRole="FromRole_assoc_E533E59EC8F77897B25326F25D768FBA" ToRole="ToRole_assoc_E533E59EC8F77897B25326F25D768FBA" sap:filterable="false"/>
+                <NavigationProperty Name="to_PreferredLanguage" Relationship="STTA_PROD_MAN.assoc_AC31DA71D04046692D7A32E33A959187" FromRole="FromRole_assoc_AC31DA71D04046692D7A32E33A959187" ToRole="ToRole_assoc_AC31DA71D04046692D7A32E33A959187" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_DimensionUnitType" sap:label="Dimension Unit" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UnitOfMeasure"/>
+                </Key>
+                <Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="UnitOfMeasure_Text" sap:label="Int. meas. unit" sap:creatable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="UnitOfMeasure_Text" Type="Edm.String" MaxLength="10" sap:label="Measuremt unit text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO code" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_EmployeeType" sap:label="Employee" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="EmployeeUUID"/>
+                </Key>
+                <Property Name="EmployeeUUID" Type="Edm.Guid" Nullable="false" sap:label="Node Key" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="GenderCode" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Gender" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="Employee" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:text="FormattedName" sap:label="Employee ID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EmployeePictureURL" Type="Edm.String" MaxLength="255" sap:display-format="UpperCase" sap:label="Pic URI" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FirstName" Type="Edm.String" MaxLength="40" sap:label="First Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="MiddleName" Type="Edm.String" MaxLength="40" sap:label="Middle Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LastName" Type="Edm.String" MaxLength="40" sap:label="Last Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FormattedName" Type="Edm.String" MaxLength="88" sap:display-format="UpperCase" sap:label="Ordered By" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="JobTitle" Type="Edm.String" MaxLength="9" sap:display-format="UpperCase" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="OrganizationRole" Type="Edm.String" MaxLength="22" sap:display-format="UpperCase" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CompanyName" Type="Edm.String" MaxLength="80" sap:label="Company" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Initials" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Initials" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PreferredLanguage" Type="Edm.String" MaxLength="2" sap:label="Language Key" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Phone No." sap:creatable="false" sap:updatable="false"/>
+                <Property Name="MobilePhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Mobile Phone Number" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Phone No." sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EmailAddress" Type="Edm.String" MaxLength="255" sap:label="E-Mail" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EmploymentStartDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Valid From" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EmploymentEndDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Valid Until" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="SalaryCurrency" Type="Edm.String" MaxLength="5" sap:label="Currency Code" sap:creatable="false" sap:updatable="false" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="SalaryAmount" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="SalaryCurrency" sap:label="Salary" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCityName" Type="Edm.String" MaxLength="40" sap:label="City" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkCountry" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="WorkStreetName" Type="Edm.String" MaxLength="60" sap:label="Street" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WorkPostalCode" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HomeCity" Type="Edm.String" MaxLength="40" sap:label="City" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HomeCountry" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="HomeStreeName" Type="Edm.String" MaxLength="60" sap:label="Street" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HomePostalCode" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_ProductCategoryType" sap:label="Product Category" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ProductCategory"/>
+                </Key>
+                <Property Name="ProductCategory" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Category" sap:creatable="false"/>
+                <Property Name="MainProductCategory" Type="Edm.String" MaxLength="40" sap:label="Main Category" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <NavigationProperty Name="to_MainCategory" Relationship="STTA_PROD_MAN.assoc_BBDC3EA034F824A7382F8EEF561C1160" FromRole="FromRole_assoc_BBDC3EA034F824A7382F8EEF561C1160" ToRole="ToRole_assoc_BBDC3EA034F824A7382F8EEF561C1160" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_ProductMainCategoryType" sap:label="Main Product Category" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="MainProductCategory"/>
+                </Key>
+                <Property Name="MainProductCategory" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Main Category" sap:creatable="false"/>
+                <NavigationProperty Name="to_Category" Relationship="STTA_PROD_MAN.assoc_7E7B0A0C8B5C13EA9F1539058CD60B89" FromRole="FromRole_assoc_7E7B0A0C8B5C13EA9F1539058CD60B89" ToRole="ToRole_assoc_7E7B0A0C8B5C13EA9F1539058CD60B89" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_ProductReviewType" sap:label="Product Review" sap:semantics="aggregate" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.String" Nullable="false"/>
+                <Property Name="NumberOfReviewPosts" Type="Edm.Int32" sap:aggregation-role="measure" sap:label="Number of Reviews" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Product" Type="Edm.String" MaxLength="10" sap:aggregation-role="dimension" sap:display-format="UpperCase" sap:label="Product ID" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="AverageRatingValue" Type="Edm.Decimal" Precision="4" Scale="2" sap:aggregation-role="measure" sap:label="Average Rating" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_ProductSalesDataType" sap:label="Product Sales Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Product"/>
+                    <PropertyRef Name="DeliveryDateTime"/>
+                </Key>
+                <Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Product" sap:creatable="false"/>
+                <Property Name="DeliveryDateTime" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" sap:label="Delivery Time" sap:creatable="false"/>
+                <Property Name="DeliveryYear" Type="Edm.String" MaxLength="4" sap:display-format="NonNegative" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DeliveryMonth" Type="Edm.String" MaxLength="2" sap:display-format="NonNegative" sap:text="DeliveryMonth_Text" sap:label="Month" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DeliveryMonth_Text" Type="Edm.String" MaxLength="10" sap:label="Month" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Revenue" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="Currency" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Currency" Type="Edm.String" MaxLength="5" sap:label="Currency Code" sap:creatable="false" sap:updatable="false" sap:semantics="currency-code"/>
+                <Property Name="Quantity" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="ProductBaseUnit" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductBaseUnit" Type="Edm.String" MaxLength="3" sap:label="Base Unit" sap:creatable="false" sap:updatable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:label="Price" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Supplier" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Supplier" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_Product_EType" sap:label="Product" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Product"/>
+                </Key>
+                <Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="Product_Text" sap:label="Product" sap:creatable="false"/>
+                <Property Name="Product_Text" Type="Edm.String" MaxLength="255" sap:label="Product Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductUUID" Type="Edm.Guid" sap:label="Node Key" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductType" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:label="Type Code" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="ProductCategory" Type="Edm.String" MaxLength="40" sap:label="Category" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="CreatedByUser" Type="Edm.Guid" sap:label="Created By (UUID)" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Created At" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LastChangedByUser" Type="Edm.Guid" sap:label="Changed By (UUID)" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="LastChangedDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Changed At" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="Currency" sap:label="Price" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Currency" Type="Edm.String" MaxLength="5" sap:label="Currency Code" sap:creatable="false" sap:updatable="false" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="Height" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimensionUnit" sap:label="Height" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Width" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimensionUnit" sap:label="Width" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Depth" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimensionUnit" sap:label="Length" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DimensionUnit" Type="Edm.String" MaxLength="3" sap:label="Dimension Unit" sap:creatable="false" sap:updatable="false" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="ProductPictureURL" Type="Edm.String" MaxLength="255" sap:display-format="UpperCase" sap:label="Image" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductValueAddedTax" Type="Edm.Byte" sap:label="Tax Tariff Code" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="Supplier" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Supplier" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="ProductBaseUnit" Type="Edm.String" MaxLength="3" sap:label="Base Unit" sap:creatable="false" sap:updatable="false" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="Weight" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="WeightUnit" sap:label="Weight" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="WeightUnit" Type="Edm.String" MaxLength="3" sap:label="Weight Unit" sap:creatable="false" sap:updatable="false" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="OriginalLanguage" Type="Edm.String" MaxLength="2" sap:label="Original Language" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="SupplierUUID" Type="Edm.Guid" sap:label="Supplier (UUID)" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="I_DraftAdministrativeDataType" sap:label="Draft Administrative Data" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Draft (Technical ID)" sap:creatable="false"/>
+                <Property Name="DraftEntityType" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Draft Entity ID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Created at" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="CreatedByUserDescription" sap:label="Created by User" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Last Change at" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="LastChangedByUserDescription" sap:label="Last Changed by User" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftAccessType" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Draft Access Type" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProcessingStartDateTime" Type="Edm.DateTimeOffset" Precision="7" sap:label="Processing Start" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:text="InProcessByUserDescription" sap:label="In Process by User" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftIsKeptByUser" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Kept by User" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EnqueueStartDateTime" Type="Edm.Decimal" Precision="21" Scale="7" sap:label="Enqueue Start" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Created by me" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftIsLastChangedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Last changed by me" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="In process by me" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CreatedByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LastChangedByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="InProcessByUserDescription" Type="Edm.String" MaxLength="80" sap:label="Description" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_QuantityUnitType" sap:label="Quantity Unit" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UnitOfMeasure"/>
+                </Key>
+                <Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="UnitOfMeasure_Text" sap:label="Int. meas. unit" sap:creatable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="UnitOfMeasure_Text" Type="Edm.String" MaxLength="10" sap:label="Measuremt unit text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO code" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_StockAvailabilityTextType" sap:label="Product Stock Availability Text" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="StockAvailability"/>
+                    <PropertyRef Name="Language"/>
+                </Key>
+                <Property Name="StockAvailability" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:label="Stock Avail." sap:creatable="false"/>
+                <Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Language" sap:creatable="false"/>
+                <Property Name="StockAvailabilityText" Type="Edm.String" MaxLength="60" sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_WeightUnitType" sap:label="Weight Unit" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="UnitOfMeasure"/>
+                </Key>
+                <Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="UnitOfMeasure_Text" sap:label="Int. meas. unit" sap:creatable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="UnitOfMeasure_Text" Type="Edm.String" MaxLength="10" sap:label="Measuremt unit text" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="UnitOfMeasureISOCode" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="ISO code" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPM_I_ProductTypeType" sap:label="EPM Demo: Product Type" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ProductType"/>
+                </Key>
+                <Property Name="ProductType" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="ProductType_Text" sap:label="Type Code" sap:creatable="false"/>
+                <Property Name="ProductType_Text" Type="Edm.String" MaxLength="60" sap:label="Short Descript." sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="SEPM_I_ProductValueAddedTaxType" sap:label="EPM Demo: Product Value Added Tax" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ProductValueAddedTax"/>
+                </Key>
+                <Property Name="ProductValueAddedTax" Type="Edm.Byte" Nullable="false" sap:text="ProductValueAddedTax_Text" sap:label="Tax Tariff Code" sap:creatable="false"/>
+                <Property Name="ProductValueAddedTax_Text" Type="Edm.String" MaxLength="60" sap:label="Short Descript." sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="STTA_C_MP_ProductType" sap:label="Product" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ProductDraftUUID"/>
+                    <PropertyRef Name="ActiveProduct"/>
+                </Key>
+                <Property Name="DimensionUnit" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="to_DimensionUnit/UnitOfMeasure_Text" sap:label="Dimension Unit" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="ProductPictureURL" Type="Edm.String" MaxLength="255" sap:display-format="UpperCase" sap:label="Image" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductValueAddedTax" Type="Edm.Byte" Nullable="false" sap:text="to_ProductValueAddedTax/ProductValueAddedTax_Text" sap:label="Tax Tariff Code" sap:value-list="standard"/>
+                <Property Name="Supplier" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="to_Supplier/CompanyName" sap:label="Supplier" sap:value-list="standard"/>
+                <Property Name="ProductBaseUnit" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="to_ProductBaseUnit/UnitOfMeasure_Text" sap:label="Base Unit" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="Weight" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="WeightUnit" sap:label="Weight"/>
+                <Property Name="WeightUnit" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="to_WeightUnit/UnitOfMeasure_Text" sap:label="Weight Unit" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="OriginalLanguage" Type="Edm.String" MaxLength="2" sap:text="to_OriginalLanguage/Language_Text" sap:label="Original Language" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Is active" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has active" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has draft" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductDraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Product Draft UUID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ActiveProduct" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Product" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="Product_Text" sap:label="Product"/>
+                <Property Name="Product_Text" Type="Edm.String" MaxLength="255" sap:label="Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductType" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="to_ProductType/ProductType_Text" sap:label="Type Code" sap:value-list="standard"/>
+                <Property Name="ProductCategory" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Category" sap:value-list="standard"/>
+                <Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3" sap:unit="Currency" sap:label="Price"/>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:text="to_Currency/Currency_Text" sap:label="Currency" sap:value-list="standard" sap:semantics="currency-code"/>
+                <Property Name="Height" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimensionUnit" sap:label="Height"/>
+                <Property Name="Width" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimensionUnit" sap:label="Width"/>
+                <Property Name="Depth" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="DimensionUnit" sap:label="Length"/>
+                <NavigationProperty Name="DraftAdministrativeData" Relationship="STTA_PROD_MAN.assoc_A1A1B47C7CDCA02F276D9B933931A575" FromRole="FromRole_assoc_A1A1B47C7CDCA02F276D9B933931A575" ToRole="ToRole_assoc_A1A1B47C7CDCA02F276D9B933931A575" sap:filterable="false"/>
+                <NavigationProperty Name="SiblingEntity" Relationship="STTA_PROD_MAN.assoc_CA7FD133E64D1F4D6EF2AC596869E06C" FromRole="FromRole_assoc_CA7FD133E64D1F4D6EF2AC596869E06C" ToRole="ToRole_assoc_CA7FD133E64D1F4D6EF2AC596869E06C" sap:filterable="false"/>
+                <NavigationProperty Name="to_AllEmployeeContacts" Relationship="STTA_PROD_MAN.assoc_610BFD11C6811495F2433BC9322E1D51" FromRole="FromRole_assoc_610BFD11C6811495F2433BC9322E1D51" ToRole="ToRole_assoc_610BFD11C6811495F2433BC9322E1D51" sap:filterable="false"/>
+                <NavigationProperty Name="to_CollaborativeReview" Relationship="STTA_PROD_MAN.assoc_4A88E0D201A7FD86F36F3A21ADF3730C" FromRole="FromRole_assoc_4A88E0D201A7FD86F36F3A21ADF3730C" ToRole="ToRole_assoc_4A88E0D201A7FD86F36F3A21ADF3730C" sap:filterable="false"/>
+                <NavigationProperty Name="to_Currency" Relationship="STTA_PROD_MAN.assoc_F3DD99926035C571B73B274081F04C45" FromRole="FromRole_assoc_F3DD99926035C571B73B274081F04C45" ToRole="ToRole_assoc_F3DD99926035C571B73B274081F04C45" sap:filterable="false"/>
+                <NavigationProperty Name="to_CurrencyValueHelp" Relationship="STTA_PROD_MAN.assoc_13A156C01D358634B2F7918B58868BD3" FromRole="FromRole_assoc_13A156C01D358634B2F7918B58868BD3" ToRole="ToRole_assoc_13A156C01D358634B2F7918B58868BD3" sap:filterable="false"/>
+                <NavigationProperty Name="to_DimensionUnit" Relationship="STTA_PROD_MAN.assoc_D4F09154B261CA1A3AE13E8E8C828413" FromRole="FromRole_assoc_D4F09154B261CA1A3AE13E8E8C828413" ToRole="ToRole_assoc_D4F09154B261CA1A3AE13E8E8C828413" sap:filterable="false"/>
+                <NavigationProperty Name="to_EmployeeContact" Relationship="STTA_PROD_MAN.assoc_AA0232FAD0A9B32E9BDD377116D7ACD9" FromRole="FromRole_assoc_AA0232FAD0A9B32E9BDD377116D7ACD9" ToRole="ToRole_assoc_AA0232FAD0A9B32E9BDD377116D7ACD9" sap:filterable="false"/>
+                <NavigationProperty Name="to_OriginalLanguage" Relationship="STTA_PROD_MAN.assoc_6FB396892FC799505FC1B25B77C3F75F" FromRole="FromRole_assoc_6FB396892FC799505FC1B25B77C3F75F" ToRole="ToRole_assoc_6FB396892FC799505FC1B25B77C3F75F" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductBaseUnit" Relationship="STTA_PROD_MAN.assoc_1CFBA454D6776235AC82D5D484CD805C" FromRole="FromRole_assoc_1CFBA454D6776235AC82D5D484CD805C" ToRole="ToRole_assoc_1CFBA454D6776235AC82D5D484CD805C" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductCategory" Relationship="STTA_PROD_MAN.assoc_C6F576663EDC3F4628CF5A6F395C3B75" FromRole="FromRole_assoc_C6F576663EDC3F4628CF5A6F395C3B75" ToRole="ToRole_assoc_C6F576663EDC3F4628CF5A6F395C3B75" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductSalesData" Relationship="STTA_PROD_MAN.assoc_F65FF65AEC969EDA1D9AE6136D8AFE58" FromRole="FromRole_assoc_F65FF65AEC969EDA1D9AE6136D8AFE58" ToRole="ToRole_assoc_F65FF65AEC969EDA1D9AE6136D8AFE58" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductText" Relationship="STTA_PROD_MAN.assoc_60FC9E64EF14221419561505B7CED3DA" FromRole="FromRole_assoc_60FC9E64EF14221419561505B7CED3DA" ToRole="ToRole_assoc_60FC9E64EF14221419561505B7CED3DA" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductTextInCurrentLang" Relationship="STTA_PROD_MAN.assoc_5EB7FA3F5F36B711285268B730AF6BA3" FromRole="FromRole_assoc_5EB7FA3F5F36B711285268B730AF6BA3" ToRole="ToRole_assoc_5EB7FA3F5F36B711285268B730AF6BA3" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductTextInOriginalLang" Relationship="STTA_PROD_MAN.assoc_25D3EEED88D4FD467E28B88E3DC78FAF" FromRole="FromRole_assoc_25D3EEED88D4FD467E28B88E3DC78FAF" ToRole="ToRole_assoc_25D3EEED88D4FD467E28B88E3DC78FAF" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductType" Relationship="STTA_PROD_MAN.assoc_592F7BDD7E35D2779C06351F29B3C4BA" FromRole="FromRole_assoc_592F7BDD7E35D2779C06351F29B3C4BA" ToRole="ToRole_assoc_592F7BDD7E35D2779C06351F29B3C4BA" sap:filterable="false"/>
+                <NavigationProperty Name="to_ProductValueAddedTax" Relationship="STTA_PROD_MAN.assoc_1D09D0A10D3F3FCBFF63F9A620758DFD" FromRole="FromRole_assoc_1D09D0A10D3F3FCBFF63F9A620758DFD" ToRole="ToRole_assoc_1D09D0A10D3F3FCBFF63F9A620758DFD" sap:filterable="false"/>
+                <NavigationProperty Name="to_StockAvailability" Relationship="STTA_PROD_MAN.assoc_8B0F205EC5CB4210B0D720F1988F4D9B" FromRole="FromRole_assoc_8B0F205EC5CB4210B0D720F1988F4D9B" ToRole="ToRole_assoc_8B0F205EC5CB4210B0D720F1988F4D9B" sap:filterable="false"/>
+                <NavigationProperty Name="to_Supplier" Relationship="STTA_PROD_MAN.assoc_2CCAF987BA334B3BD1DF2404F50BC9C5" FromRole="FromRole_assoc_2CCAF987BA334B3BD1DF2404F50BC9C5" ToRole="ToRole_assoc_2CCAF987BA334B3BD1DF2404F50BC9C5" sap:filterable="false"/>
+                <NavigationProperty Name="to_WeightUnit" Relationship="STTA_PROD_MAN.assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A" FromRole="FromRole_assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A" ToRole="ToRole_assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="I_LanguageType" sap:label="Language" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Language"/>
+                </Key>
+                <Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" sap:text="Language_Text" sap:label="Language Key" sap:creatable="false"/>
+                <Property Name="Language_Text" Type="Edm.String" MaxLength="16" sap:label="Name" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="LanguageISOCode" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:label="Lang. (ISO 639)" sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="STTA_C_MP_ProductTextType" sap:label="Product Text" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="ProductTextDraftUUID"/>
+                    <PropertyRef Name="ActiveProduct"/>
+                    <PropertyRef Name="ActiveLanguage"/>
+                </Key>
+                <Property Name="ProductTextDraftUUID" Type="Edm.Guid" Nullable="false" sap:label="Text Draft UUID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ActiveProduct" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Product ID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ActiveLanguage" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Language" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="ProductDraftUUID" Type="Edm.Guid" sap:label="Product Draft UUID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" sap:text="to_Language/Language_Text" sap:label="Language" sap:value-list="standard"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Name"/>
+                <Property Name="Description" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Description"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Is active" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has active" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" sap:display-format="UpperCase" sap:label="Has draft" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Relationship="STTA_PROD_MAN.assoc_131B7A7F5D8DBFE72DFFFCD85F85790B" FromRole="FromRole_assoc_131B7A7F5D8DBFE72DFFFCD85F85790B" ToRole="ToRole_assoc_131B7A7F5D8DBFE72DFFFCD85F85790B" sap:filterable="false"/>
+                <NavigationProperty Name="SiblingEntity" Relationship="STTA_PROD_MAN.assoc_94BE833F7529004F3C7B247B0E21F936" FromRole="FromRole_assoc_94BE833F7529004F3C7B247B0E21F936" ToRole="ToRole_assoc_94BE833F7529004F3C7B247B0E21F936" sap:filterable="false"/>
+                <NavigationProperty Name="to_Language" Relationship="STTA_PROD_MAN.assoc_BB75D199DF66689C71B2451B6096BF61" FromRole="FromRole_assoc_BB75D199DF66689C71B2451B6096BF61" ToRole="ToRole_assoc_BB75D199DF66689C71B2451B6096BF61" sap:filterable="false"/>
+                <NavigationProperty Name="to_Product" Relationship="STTA_PROD_MAN.assoc_B0042F2939020522959773C819B71E42" FromRole="FromRole_assoc_B0042F2939020522959773C819B71E42" ToRole="ToRole_assoc_B0042F2939020522959773C819B71E42" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="STTA_C_MP_StockAvailabilityType" sap:label="Product Stock availability" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Product"/>
+                </Key>
+                <Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Product" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Quantity" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="QuantityUnit" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="QuantityUnit" Type="Edm.String" MaxLength="3" sap:text="to_QuantityUnit/UnitOfMeasure_Text" sap:label="Unit of Measure" sap:creatable="false" sap:updatable="false" sap:value-list="standard" sap:semantics="unit-of-measure"/>
+                <Property Name="StockAvailability" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:text="StockAvailability_Text" sap:label="Availability" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="StockAvailability_Text" Type="Edm.String" MaxLength="60" sap:label="Short Text" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="to_Product" Relationship="STTA_PROD_MAN.assoc_08ACFD9AF068973DC35CA9455F12989B" FromRole="FromRole_assoc_08ACFD9AF068973DC35CA9455F12989B" ToRole="ToRole_assoc_08ACFD9AF068973DC35CA9455F12989B" sap:filterable="false"/>
+                <NavigationProperty Name="to_QuantityUnit" Relationship="STTA_PROD_MAN.assoc_30E97A1817DB91E10E0B409CCC9B2420" FromRole="FromRole_assoc_30E97A1817DB91E10E0B409CCC9B2420" ToRole="ToRole_assoc_30E97A1817DB91E10E0B409CCC9B2420" sap:filterable="false"/>
+                <NavigationProperty Name="to_StockAvailabilityText" Relationship="STTA_PROD_MAN.assoc_786E8B13B6C8E47AEB9297316F3ED443" FromRole="FromRole_assoc_786E8B13B6C8E47AEB9297316F3ED443" ToRole="ToRole_assoc_786E8B13B6C8E47AEB9297316F3ED443" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_C_CurrencyValueHelpType" sap:label="Currency" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Currency"/>
+                </Key>
+                <Property Name="Currency" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Currency" sap:creatable="false" sap:semantics="currency-code"/>
+                <Property Name="CurrencyName" Type="Edm.String" MaxLength="255" sap:label="Currency Desc." sap:creatable="false" sap:updatable="false"/>
+            </EntityType>
+            <EntityType Name="STTA_C_MP_SupplierType" sap:label="Supplier" sap:value-list="true" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Supplier"/>
+                </Key>
+                <Property Name="Supplier" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="CompanyName" sap:label="Supplier" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CompanyName" Type="Edm.String" MaxLength="80" sap:label="Company" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="EmailAddress" Type="Edm.String" MaxLength="255" sap:label="E-Mail" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FaxNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Fax" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PhoneNumber" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Phone" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="URL" Type="Edm.String" sap:label="URI" sap:creatable="false" sap:updatable="false"/>
+                <NavigationProperty Name="to_Address" Relationship="STTA_PROD_MAN.assoc_A221B65B414CF2AEED541F62B20ABA7D" FromRole="FromRole_assoc_A221B65B414CF2AEED541F62B20ABA7D" ToRole="ToRole_assoc_A221B65B414CF2AEED541F62B20ABA7D" sap:filterable="false"/>
+                <NavigationProperty Name="to_ContactPerson" Relationship="STTA_PROD_MAN.assoc_0D499B904BC470BA6DC52ABBD4B26555" FromRole="FromRole_assoc_0D499B904BC470BA6DC52ABBD4B26555" ToRole="ToRole_assoc_0D499B904BC470BA6DC52ABBD4B26555" sap:filterable="false"/>
+                <NavigationProperty Name="to_PrimaryContactPerson" Relationship="STTA_PROD_MAN.assoc_C77BAC6634F075BFCA23B1ECDA5C65B1" FromRole="FromRole_assoc_C77BAC6634F075BFCA23B1ECDA5C65B1" ToRole="ToRole_assoc_C77BAC6634F075BFCA23B1ECDA5C65B1" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="SEPMRA_I_AddressType" sap:label="Address" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="AddressUUID"/>
+                </Key>
+                <Property Name="AddressUUID" Type="Edm.Guid" Nullable="false" sap:label="Address UUID" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="CityName" Type="Edm.String" MaxLength="40" sap:label="City" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PostalCode" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="StreetName" Type="Edm.String" MaxLength="60" sap:label="Street" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="HouseNumber" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Building" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Country" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+                <Property Name="AddressValidityStartDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Valid From" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="AddressValidityEndDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Valid Until" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Latitude" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Latitude" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="Longitude" Type="Edm.Decimal" Precision="15" Scale="12" sap:label="Longitude" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="FormattedAddress" Type="Edm.String" MaxLength="157" sap:display-format="UpperCase" sap:label="Address" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="AddressType" Type="Edm.String" MaxLength="2" sap:display-format="UpperCase" sap:label="Address Type" sap:creatable="false" sap:updatable="false" sap:value-list="standard"/>
+            </EntityType>
+            <ComplexType Name="STTA_C_MP_ProductValidationFunction">
+                <Property Name="IsValid" Type="Edm.Boolean" Nullable="false" sap:label="Is valid" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <ComplexType Name="STTA_C_MP_ProductTextValidationFunction">
+                <Property Name="IsValid" Type="Edm.Boolean" Nullable="false" sap:label="Is valid" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </ComplexType>
+            <Association Name="assoc_BBDC3EA034F824A7382F8EEF561C1160" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductCategoryType" Multiplicity="1" Role="FromRole_assoc_BBDC3EA034F824A7382F8EEF561C1160"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductMainCategoryType" Multiplicity="0..1" Role="ToRole_assoc_BBDC3EA034F824A7382F8EEF561C1160"/>
+            </Association>
+            <Association Name="assoc_7E7B0A0C8B5C13EA9F1539058CD60B89" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductMainCategoryType" Multiplicity="1" Role="FromRole_assoc_7E7B0A0C8B5C13EA9F1539058CD60B89"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductCategoryType" Multiplicity="*" Role="ToRole_assoc_7E7B0A0C8B5C13EA9F1539058CD60B89"/>
+            </Association>
+            <Association Name="assoc_131B7A7F5D8DBFE72DFFFCD85F85790B" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="1" Role="FromRole_assoc_131B7A7F5D8DBFE72DFFFCD85F85790B"/>
+                <End Type="STTA_PROD_MAN.I_DraftAdministrativeDataType" Multiplicity="0..1" Role="ToRole_assoc_131B7A7F5D8DBFE72DFFFCD85F85790B"/>
+            </Association>
+            <Association Name="assoc_94BE833F7529004F3C7B247B0E21F936" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="1" Role="FromRole_assoc_94BE833F7529004F3C7B247B0E21F936"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="0..1" Role="ToRole_assoc_94BE833F7529004F3C7B247B0E21F936"/>
+            </Association>
+            <Association Name="assoc_BB75D199DF66689C71B2451B6096BF61" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="1" Role="FromRole_assoc_BB75D199DF66689C71B2451B6096BF61"/>
+                <End Type="STTA_PROD_MAN.I_LanguageType" Multiplicity="0..1" Role="ToRole_assoc_BB75D199DF66689C71B2451B6096BF61"/>
+            </Association>
+            <Association Name="assoc_B0042F2939020522959773C819B71E42" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="1" Role="FromRole_assoc_B0042F2939020522959773C819B71E42"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="0..1" Role="ToRole_assoc_B0042F2939020522959773C819B71E42"/>
+            </Association>
+            <Association Name="assoc_AC31DA71D04046692D7A32E33A959187" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ContactPersonType" Multiplicity="1" Role="FromRole_assoc_AC31DA71D04046692D7A32E33A959187"/>
+                <End Type="STTA_PROD_MAN.I_LanguageType" Multiplicity="0..1" Role="ToRole_assoc_AC31DA71D04046692D7A32E33A959187"/>
+            </Association>
+            <Association Name="assoc_E533E59EC8F77897B25326F25D768FBA" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ContactPersonType" Multiplicity="1" Role="FromRole_assoc_E533E59EC8F77897B25326F25D768FBA"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_AddressType" Multiplicity="0..1" Role="ToRole_assoc_E533E59EC8F77897B25326F25D768FBA"/>
+            </Association>
+            <Association Name="assoc_A1A1B47C7CDCA02F276D9B933931A575" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_A1A1B47C7CDCA02F276D9B933931A575"/>
+                <End Type="STTA_PROD_MAN.I_DraftAdministrativeDataType" Multiplicity="0..1" Role="ToRole_assoc_A1A1B47C7CDCA02F276D9B933931A575"/>
+            </Association>
+            <Association Name="assoc_CA7FD133E64D1F4D6EF2AC596869E06C" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_CA7FD133E64D1F4D6EF2AC596869E06C"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="0..1" Role="ToRole_assoc_CA7FD133E64D1F4D6EF2AC596869E06C"/>
+            </Association>
+            <Association Name="assoc_610BFD11C6811495F2433BC9322E1D51" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_610BFD11C6811495F2433BC9322E1D51"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_EmployeeType" Multiplicity="*" Role="ToRole_assoc_610BFD11C6811495F2433BC9322E1D51"/>
+            </Association>
+            <Association Name="assoc_4A88E0D201A7FD86F36F3A21ADF3730C" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_4A88E0D201A7FD86F36F3A21ADF3730C"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductReviewType" Multiplicity="0..1" Role="ToRole_assoc_4A88E0D201A7FD86F36F3A21ADF3730C"/>
+            </Association>
+            <Association Name="assoc_F3DD99926035C571B73B274081F04C45" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_F3DD99926035C571B73B274081F04C45"/>
+                <End Type="STTA_PROD_MAN.I_CurrencyType" Multiplicity="0..1" Role="ToRole_assoc_F3DD99926035C571B73B274081F04C45"/>
+            </Association>
+            <Association Name="assoc_13A156C01D358634B2F7918B58868BD3" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_13A156C01D358634B2F7918B58868BD3"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_C_CurrencyValueHelpType" Multiplicity="0..1" Role="ToRole_assoc_13A156C01D358634B2F7918B58868BD3"/>
+            </Association>
+            <Association Name="assoc_D4F09154B261CA1A3AE13E8E8C828413" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_D4F09154B261CA1A3AE13E8E8C828413"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_DimensionUnitType" Multiplicity="0..1" Role="ToRole_assoc_D4F09154B261CA1A3AE13E8E8C828413"/>
+            </Association>
+            <Association Name="assoc_AA0232FAD0A9B32E9BDD377116D7ACD9" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_AA0232FAD0A9B32E9BDD377116D7ACD9"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_EmployeeType" Multiplicity="*" Role="ToRole_assoc_AA0232FAD0A9B32E9BDD377116D7ACD9"/>
+            </Association>
+            <Association Name="assoc_6FB396892FC799505FC1B25B77C3F75F" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_6FB396892FC799505FC1B25B77C3F75F"/>
+                <End Type="STTA_PROD_MAN.I_LanguageType" Multiplicity="0..1" Role="ToRole_assoc_6FB396892FC799505FC1B25B77C3F75F"/>
+            </Association>
+            <Association Name="assoc_1CFBA454D6776235AC82D5D484CD805C" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_1CFBA454D6776235AC82D5D484CD805C"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_QuantityUnitType" Multiplicity="0..1" Role="ToRole_assoc_1CFBA454D6776235AC82D5D484CD805C"/>
+            </Association>
+            <Association Name="assoc_C6F576663EDC3F4628CF5A6F395C3B75" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_C6F576663EDC3F4628CF5A6F395C3B75"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductCategoryType" Multiplicity="0..1" Role="ToRole_assoc_C6F576663EDC3F4628CF5A6F395C3B75"/>
+            </Association>
+            <Association Name="assoc_F65FF65AEC969EDA1D9AE6136D8AFE58" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_F65FF65AEC969EDA1D9AE6136D8AFE58"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ProductSalesDataType" Multiplicity="*" Role="ToRole_assoc_F65FF65AEC969EDA1D9AE6136D8AFE58"/>
+            </Association>
+            <Association Name="assoc_60FC9E64EF14221419561505B7CED3DA" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_60FC9E64EF14221419561505B7CED3DA"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="*" Role="ToRole_assoc_60FC9E64EF14221419561505B7CED3DA"/>
+            </Association>
+            <Association Name="assoc_5EB7FA3F5F36B711285268B730AF6BA3" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_5EB7FA3F5F36B711285268B730AF6BA3"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="0..1" Role="ToRole_assoc_5EB7FA3F5F36B711285268B730AF6BA3"/>
+            </Association>
+            <Association Name="assoc_25D3EEED88D4FD467E28B88E3DC78FAF" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_25D3EEED88D4FD467E28B88E3DC78FAF"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductTextType" Multiplicity="0..1" Role="ToRole_assoc_25D3EEED88D4FD467E28B88E3DC78FAF"/>
+            </Association>
+            <Association Name="assoc_592F7BDD7E35D2779C06351F29B3C4BA" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_592F7BDD7E35D2779C06351F29B3C4BA"/>
+                <End Type="STTA_PROD_MAN.SEPM_I_ProductTypeType" Multiplicity="0..1" Role="ToRole_assoc_592F7BDD7E35D2779C06351F29B3C4BA"/>
+            </Association>
+            <Association Name="assoc_1D09D0A10D3F3FCBFF63F9A620758DFD" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_1D09D0A10D3F3FCBFF63F9A620758DFD"/>
+                <End Type="STTA_PROD_MAN.SEPM_I_ProductValueAddedTaxType" Multiplicity="0..1" Role="ToRole_assoc_1D09D0A10D3F3FCBFF63F9A620758DFD"/>
+            </Association>
+            <Association Name="assoc_8B0F205EC5CB4210B0D720F1988F4D9B" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_8B0F205EC5CB4210B0D720F1988F4D9B"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_StockAvailabilityType" Multiplicity="0..1" Role="ToRole_assoc_8B0F205EC5CB4210B0D720F1988F4D9B"/>
+            </Association>
+            <Association Name="assoc_2CCAF987BA334B3BD1DF2404F50BC9C5" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_2CCAF987BA334B3BD1DF2404F50BC9C5"/>
+                <End Type="STTA_PROD_MAN.STTA_C_MP_SupplierType" Multiplicity="0..1" Role="ToRole_assoc_2CCAF987BA334B3BD1DF2404F50BC9C5"/>
+            </Association>
+            <Association Name="assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_ProductType" Multiplicity="1" Role="FromRole_assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_WeightUnitType" Multiplicity="0..1" Role="ToRole_assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A"/>
+            </Association>
+            <Association Name="assoc_08ACFD9AF068973DC35CA9455F12989B" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_StockAvailabilityType" Multiplicity="1" Role="FromRole_assoc_08ACFD9AF068973DC35CA9455F12989B"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_Product_EType" Multiplicity="0..1" Role="ToRole_assoc_08ACFD9AF068973DC35CA9455F12989B"/>
+            </Association>
+            <Association Name="assoc_30E97A1817DB91E10E0B409CCC9B2420" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_StockAvailabilityType" Multiplicity="1" Role="FromRole_assoc_30E97A1817DB91E10E0B409CCC9B2420"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_QuantityUnitType" Multiplicity="0..1" Role="ToRole_assoc_30E97A1817DB91E10E0B409CCC9B2420"/>
+            </Association>
+            <Association Name="assoc_786E8B13B6C8E47AEB9297316F3ED443" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_StockAvailabilityType" Multiplicity="1" Role="FromRole_assoc_786E8B13B6C8E47AEB9297316F3ED443"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_StockAvailabilityTextType" Multiplicity="0..1" Role="ToRole_assoc_786E8B13B6C8E47AEB9297316F3ED443"/>
+            </Association>
+            <Association Name="assoc_A221B65B414CF2AEED541F62B20ABA7D" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_SupplierType" Multiplicity="1" Role="FromRole_assoc_A221B65B414CF2AEED541F62B20ABA7D"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_AddressType" Multiplicity="0..1" Role="ToRole_assoc_A221B65B414CF2AEED541F62B20ABA7D"/>
+            </Association>
+            <Association Name="assoc_0D499B904BC470BA6DC52ABBD4B26555" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_SupplierType" Multiplicity="1" Role="FromRole_assoc_0D499B904BC470BA6DC52ABBD4B26555"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ContactPersonType" Multiplicity="*" Role="ToRole_assoc_0D499B904BC470BA6DC52ABBD4B26555"/>
+            </Association>
+            <Association Name="assoc_C77BAC6634F075BFCA23B1ECDA5C65B1" sap:content-version="1">
+                <End Type="STTA_PROD_MAN.STTA_C_MP_SupplierType" Multiplicity="1" Role="FromRole_assoc_C77BAC6634F075BFCA23B1ECDA5C65B1"/>
+                <End Type="STTA_PROD_MAN.SEPMRA_I_ContactPersonType" Multiplicity="0..1" Role="ToRole_assoc_C77BAC6634F075BFCA23B1ECDA5C65B1"/>
+            </Association>
+            <EntityContainer Name="STTA_PROD_MAN_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="I_Currency" EntityType="STTA_PROD_MAN.I_CurrencyType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_ContactPerson" EntityType="STTA_PROD_MAN.SEPMRA_I_ContactPersonType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_DimensionUnit" EntityType="STTA_PROD_MAN.SEPMRA_I_DimensionUnitType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_Employee" EntityType="STTA_PROD_MAN.SEPMRA_I_EmployeeType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_ProductCategory" EntityType="STTA_PROD_MAN.SEPMRA_I_ProductCategoryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_ProductMainCategory" EntityType="STTA_PROD_MAN.SEPMRA_I_ProductMainCategoryType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_ProductReview" EntityType="STTA_PROD_MAN.SEPMRA_I_ProductReviewType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_ProductSalesData" EntityType="STTA_PROD_MAN.SEPMRA_I_ProductSalesDataType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_Product_E" EntityType="STTA_PROD_MAN.SEPMRA_I_Product_EType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_DraftAdministrativeData" EntityType="STTA_PROD_MAN.I_DraftAdministrativeDataType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_QuantityUnit" EntityType="STTA_PROD_MAN.SEPMRA_I_QuantityUnitType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_StockAvailabilityText" EntityType="STTA_PROD_MAN.SEPMRA_I_StockAvailabilityTextType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_WeightUnit" EntityType="STTA_PROD_MAN.SEPMRA_I_WeightUnitType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPM_I_ProductType" EntityType="STTA_PROD_MAN.SEPM_I_ProductTypeType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="SEPM_I_ProductValueAddedTax" EntityType="STTA_PROD_MAN.SEPM_I_ProductValueAddedTaxType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="STTA_C_MP_Product" EntityType="STTA_PROD_MAN.STTA_C_MP_ProductType" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="I_Language" EntityType="STTA_PROD_MAN.I_LanguageType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="STTA_C_MP_ProductText" EntityType="STTA_PROD_MAN.STTA_C_MP_ProductTextType" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="STTA_C_MP_StockAvailability" EntityType="STTA_PROD_MAN.STTA_C_MP_StockAvailabilityType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_C_CurrencyValueHelp" EntityType="STTA_PROD_MAN.SEPMRA_C_CurrencyValueHelpType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="STTA_C_MP_Supplier" EntityType="STTA_PROD_MAN.STTA_C_MP_SupplierType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <EntitySet Name="SEPMRA_I_Address" EntityType="STTA_PROD_MAN.SEPMRA_I_AddressType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:searchable="true" sap:content-version="1"/>
+                <AssociationSet Name="assoc_94BE833F7529004F3C7B247B0E21F936" Association="STTA_PROD_MAN.assoc_94BE833F7529004F3C7B247B0E21F936" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_ProductText" Role="FromRole_assoc_94BE833F7529004F3C7B247B0E21F936"/>
+                    <End EntitySet="STTA_C_MP_ProductText" Role="ToRole_assoc_94BE833F7529004F3C7B247B0E21F936"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_AA0232FAD0A9B32E9BDD377116D7ACD9" Association="STTA_PROD_MAN.assoc_AA0232FAD0A9B32E9BDD377116D7ACD9" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_AA0232FAD0A9B32E9BDD377116D7ACD9"/>
+                    <End EntitySet="SEPMRA_I_Employee" Role="ToRole_assoc_AA0232FAD0A9B32E9BDD377116D7ACD9"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_8B0F205EC5CB4210B0D720F1988F4D9B" Association="STTA_PROD_MAN.assoc_8B0F205EC5CB4210B0D720F1988F4D9B" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_8B0F205EC5CB4210B0D720F1988F4D9B"/>
+                    <End EntitySet="STTA_C_MP_StockAvailability" Role="ToRole_assoc_8B0F205EC5CB4210B0D720F1988F4D9B"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_1D09D0A10D3F3FCBFF63F9A620758DFD" Association="STTA_PROD_MAN.assoc_1D09D0A10D3F3FCBFF63F9A620758DFD" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_1D09D0A10D3F3FCBFF63F9A620758DFD"/>
+                    <End EntitySet="SEPM_I_ProductValueAddedTax" Role="ToRole_assoc_1D09D0A10D3F3FCBFF63F9A620758DFD"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_BB75D199DF66689C71B2451B6096BF61" Association="STTA_PROD_MAN.assoc_BB75D199DF66689C71B2451B6096BF61" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_ProductText" Role="FromRole_assoc_BB75D199DF66689C71B2451B6096BF61"/>
+                    <End EntitySet="I_Language" Role="ToRole_assoc_BB75D199DF66689C71B2451B6096BF61"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_1CFBA454D6776235AC82D5D484CD805C" Association="STTA_PROD_MAN.assoc_1CFBA454D6776235AC82D5D484CD805C" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_1CFBA454D6776235AC82D5D484CD805C"/>
+                    <End EntitySet="SEPMRA_I_QuantityUnit" Role="ToRole_assoc_1CFBA454D6776235AC82D5D484CD805C"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_2CCAF987BA334B3BD1DF2404F50BC9C5" Association="STTA_PROD_MAN.assoc_2CCAF987BA334B3BD1DF2404F50BC9C5" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_2CCAF987BA334B3BD1DF2404F50BC9C5"/>
+                    <End EntitySet="STTA_C_MP_Supplier" Role="ToRole_assoc_2CCAF987BA334B3BD1DF2404F50BC9C5"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_BBDC3EA034F824A7382F8EEF561C1160" Association="STTA_PROD_MAN.assoc_BBDC3EA034F824A7382F8EEF561C1160" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="SEPMRA_I_ProductCategory" Role="FromRole_assoc_BBDC3EA034F824A7382F8EEF561C1160"/>
+                    <End EntitySet="SEPMRA_I_ProductMainCategory" Role="ToRole_assoc_BBDC3EA034F824A7382F8EEF561C1160"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_5EB7FA3F5F36B711285268B730AF6BA3" Association="STTA_PROD_MAN.assoc_5EB7FA3F5F36B711285268B730AF6BA3" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_5EB7FA3F5F36B711285268B730AF6BA3"/>
+                    <End EntitySet="STTA_C_MP_ProductText" Role="ToRole_assoc_5EB7FA3F5F36B711285268B730AF6BA3"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_60FC9E64EF14221419561505B7CED3DA" Association="STTA_PROD_MAN.assoc_60FC9E64EF14221419561505B7CED3DA" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_60FC9E64EF14221419561505B7CED3DA"/>
+                    <End EntitySet="STTA_C_MP_ProductText" Role="ToRole_assoc_60FC9E64EF14221419561505B7CED3DA"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_13A156C01D358634B2F7918B58868BD3" Association="STTA_PROD_MAN.assoc_13A156C01D358634B2F7918B58868BD3" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_13A156C01D358634B2F7918B58868BD3"/>
+                    <End EntitySet="SEPMRA_C_CurrencyValueHelp" Role="ToRole_assoc_13A156C01D358634B2F7918B58868BD3"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_F3DD99926035C571B73B274081F04C45" Association="STTA_PROD_MAN.assoc_F3DD99926035C571B73B274081F04C45" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_F3DD99926035C571B73B274081F04C45"/>
+                    <End EntitySet="I_Currency" Role="ToRole_assoc_F3DD99926035C571B73B274081F04C45"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_AC31DA71D04046692D7A32E33A959187" Association="STTA_PROD_MAN.assoc_AC31DA71D04046692D7A32E33A959187" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="SEPMRA_I_ContactPerson" Role="FromRole_assoc_AC31DA71D04046692D7A32E33A959187"/>
+                    <End EntitySet="I_Language" Role="ToRole_assoc_AC31DA71D04046692D7A32E33A959187"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_592F7BDD7E35D2779C06351F29B3C4BA" Association="STTA_PROD_MAN.assoc_592F7BDD7E35D2779C06351F29B3C4BA" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_592F7BDD7E35D2779C06351F29B3C4BA"/>
+                    <End EntitySet="SEPM_I_ProductType" Role="ToRole_assoc_592F7BDD7E35D2779C06351F29B3C4BA"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_C77BAC6634F075BFCA23B1ECDA5C65B1" Association="STTA_PROD_MAN.assoc_C77BAC6634F075BFCA23B1ECDA5C65B1" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Supplier" Role="FromRole_assoc_C77BAC6634F075BFCA23B1ECDA5C65B1"/>
+                    <End EntitySet="SEPMRA_I_ContactPerson" Role="ToRole_assoc_C77BAC6634F075BFCA23B1ECDA5C65B1"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_E533E59EC8F77897B25326F25D768FBA" Association="STTA_PROD_MAN.assoc_E533E59EC8F77897B25326F25D768FBA" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="SEPMRA_I_ContactPerson" Role="FromRole_assoc_E533E59EC8F77897B25326F25D768FBA"/>
+                    <End EntitySet="SEPMRA_I_Address" Role="ToRole_assoc_E533E59EC8F77897B25326F25D768FBA"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_4A88E0D201A7FD86F36F3A21ADF3730C" Association="STTA_PROD_MAN.assoc_4A88E0D201A7FD86F36F3A21ADF3730C" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_4A88E0D201A7FD86F36F3A21ADF3730C"/>
+                    <End EntitySet="SEPMRA_I_ProductReview" Role="ToRole_assoc_4A88E0D201A7FD86F36F3A21ADF3730C"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_7E7B0A0C8B5C13EA9F1539058CD60B89" Association="STTA_PROD_MAN.assoc_7E7B0A0C8B5C13EA9F1539058CD60B89" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="SEPMRA_I_ProductMainCategory" Role="FromRole_assoc_7E7B0A0C8B5C13EA9F1539058CD60B89"/>
+                    <End EntitySet="SEPMRA_I_ProductCategory" Role="ToRole_assoc_7E7B0A0C8B5C13EA9F1539058CD60B89"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_6FB396892FC799505FC1B25B77C3F75F" Association="STTA_PROD_MAN.assoc_6FB396892FC799505FC1B25B77C3F75F" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_6FB396892FC799505FC1B25B77C3F75F"/>
+                    <End EntitySet="I_Language" Role="ToRole_assoc_6FB396892FC799505FC1B25B77C3F75F"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_30E97A1817DB91E10E0B409CCC9B2420" Association="STTA_PROD_MAN.assoc_30E97A1817DB91E10E0B409CCC9B2420" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_StockAvailability" Role="FromRole_assoc_30E97A1817DB91E10E0B409CCC9B2420"/>
+                    <End EntitySet="SEPMRA_I_QuantityUnit" Role="ToRole_assoc_30E97A1817DB91E10E0B409CCC9B2420"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A" Association="STTA_PROD_MAN.assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A"/>
+                    <End EntitySet="SEPMRA_I_WeightUnit" Role="ToRole_assoc_13AE2FE382BBC1CCFFFD5DF57B135E6A"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_08ACFD9AF068973DC35CA9455F12989B" Association="STTA_PROD_MAN.assoc_08ACFD9AF068973DC35CA9455F12989B" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_StockAvailability" Role="FromRole_assoc_08ACFD9AF068973DC35CA9455F12989B"/>
+                    <End EntitySet="SEPMRA_I_Product_E" Role="ToRole_assoc_08ACFD9AF068973DC35CA9455F12989B"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_B0042F2939020522959773C819B71E42" Association="STTA_PROD_MAN.assoc_B0042F2939020522959773C819B71E42" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_ProductText" Role="FromRole_assoc_B0042F2939020522959773C819B71E42"/>
+                    <End EntitySet="STTA_C_MP_Product" Role="ToRole_assoc_B0042F2939020522959773C819B71E42"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_0D499B904BC470BA6DC52ABBD4B26555" Association="STTA_PROD_MAN.assoc_0D499B904BC470BA6DC52ABBD4B26555" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Supplier" Role="FromRole_assoc_0D499B904BC470BA6DC52ABBD4B26555"/>
+                    <End EntitySet="SEPMRA_I_ContactPerson" Role="ToRole_assoc_0D499B904BC470BA6DC52ABBD4B26555"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_25D3EEED88D4FD467E28B88E3DC78FAF" Association="STTA_PROD_MAN.assoc_25D3EEED88D4FD467E28B88E3DC78FAF" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_25D3EEED88D4FD467E28B88E3DC78FAF"/>
+                    <End EntitySet="STTA_C_MP_ProductText" Role="ToRole_assoc_25D3EEED88D4FD467E28B88E3DC78FAF"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_610BFD11C6811495F2433BC9322E1D51" Association="STTA_PROD_MAN.assoc_610BFD11C6811495F2433BC9322E1D51" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_610BFD11C6811495F2433BC9322E1D51"/>
+                    <End EntitySet="SEPMRA_I_Employee" Role="ToRole_assoc_610BFD11C6811495F2433BC9322E1D51"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_CA7FD133E64D1F4D6EF2AC596869E06C" Association="STTA_PROD_MAN.assoc_CA7FD133E64D1F4D6EF2AC596869E06C" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_CA7FD133E64D1F4D6EF2AC596869E06C"/>
+                    <End EntitySet="STTA_C_MP_Product" Role="ToRole_assoc_CA7FD133E64D1F4D6EF2AC596869E06C"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_A221B65B414CF2AEED541F62B20ABA7D" Association="STTA_PROD_MAN.assoc_A221B65B414CF2AEED541F62B20ABA7D" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Supplier" Role="FromRole_assoc_A221B65B414CF2AEED541F62B20ABA7D"/>
+                    <End EntitySet="SEPMRA_I_Address" Role="ToRole_assoc_A221B65B414CF2AEED541F62B20ABA7D"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_D4F09154B261CA1A3AE13E8E8C828413" Association="STTA_PROD_MAN.assoc_D4F09154B261CA1A3AE13E8E8C828413" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_D4F09154B261CA1A3AE13E8E8C828413"/>
+                    <End EntitySet="SEPMRA_I_DimensionUnit" Role="ToRole_assoc_D4F09154B261CA1A3AE13E8E8C828413"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_131B7A7F5D8DBFE72DFFFCD85F85790B" Association="STTA_PROD_MAN.assoc_131B7A7F5D8DBFE72DFFFCD85F85790B" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_ProductText" Role="FromRole_assoc_131B7A7F5D8DBFE72DFFFCD85F85790B"/>
+                    <End EntitySet="I_DraftAdministrativeData" Role="ToRole_assoc_131B7A7F5D8DBFE72DFFFCD85F85790B"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_C6F576663EDC3F4628CF5A6F395C3B75" Association="STTA_PROD_MAN.assoc_C6F576663EDC3F4628CF5A6F395C3B75" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_C6F576663EDC3F4628CF5A6F395C3B75"/>
+                    <End EntitySet="SEPMRA_I_ProductCategory" Role="ToRole_assoc_C6F576663EDC3F4628CF5A6F395C3B75"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_786E8B13B6C8E47AEB9297316F3ED443" Association="STTA_PROD_MAN.assoc_786E8B13B6C8E47AEB9297316F3ED443" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_StockAvailability" Role="FromRole_assoc_786E8B13B6C8E47AEB9297316F3ED443"/>
+                    <End EntitySet="SEPMRA_I_StockAvailabilityText" Role="ToRole_assoc_786E8B13B6C8E47AEB9297316F3ED443"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_F65FF65AEC969EDA1D9AE6136D8AFE58" Association="STTA_PROD_MAN.assoc_F65FF65AEC969EDA1D9AE6136D8AFE58" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_F65FF65AEC969EDA1D9AE6136D8AFE58"/>
+                    <End EntitySet="SEPMRA_I_ProductSalesData" Role="ToRole_assoc_F65FF65AEC969EDA1D9AE6136D8AFE58"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_A1A1B47C7CDCA02F276D9B933931A575" Association="STTA_PROD_MAN.assoc_A1A1B47C7CDCA02F276D9B933931A575" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="STTA_C_MP_Product" Role="FromRole_assoc_A1A1B47C7CDCA02F276D9B933931A575"/>
+                    <End EntitySet="I_DraftAdministrativeData" Role="ToRole_assoc_A1A1B47C7CDCA02F276D9B933931A575"/>
+                </AssociationSet>
+                <FunctionImport Name="STTA_C_MP_ProductActivation" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductType" EntitySet="STTA_C_MP_Product" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductCopy" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductType" EntitySet="STTA_C_MP_Product" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType" sap:applicable-path="IsActiveEntity">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductCopywithparams" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductType" EntitySet="STTA_C_MP_Product" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="Supplier" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductDelete" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductType" EntitySet="STTA_C_MP_Product" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductEdit" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductType" EntitySet="STTA_C_MP_Product" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductPreparation" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductType" EntitySet="STTA_C_MP_Product" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductValidation" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductValidationFunction" m:HttpMethod="GET" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductType">
+                    <Parameter Name="ProductDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductTextPreparation" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductTextType" EntitySet="STTA_C_MP_ProductText" m:HttpMethod="POST" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductTextType">
+                    <Parameter Name="ProductTextDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="ActiveLanguage" Type="Edm.String" Mode="In" MaxLength="2"/>
+                </FunctionImport>
+                <FunctionImport Name="STTA_C_MP_ProductTextValidation" ReturnType="STTA_PROD_MAN.STTA_C_MP_ProductTextValidationFunction" m:HttpMethod="GET" sap:action-for="STTA_PROD_MAN.STTA_C_MP_ProductTextType">
+                    <Parameter Name="ProductTextDraftUUID" Type="Edm.Guid" Mode="In"/>
+                    <Parameter Name="ActiveProduct" Type="Edm.String" Mode="In" MaxLength="10"/>
+                    <Parameter Name="ActiveLanguage" Type="Edm.String" Mode="In" MaxLength="2"/>
+                </FunctionImport>
+            </EntityContainer>
+            <Annotations Target="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_Product"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.DraftRoot">
+                    <Record>
+                        <PropertyValue Property="ActivationAction" String="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductActivation"/>
+                        <PropertyValue Property="EditAction" String="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductEdit"/>
+                        <PropertyValue Property="PreparationAction" String="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductPreparation"/>
+                        <PropertyValue Property="ValidationFunction" String="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductValidation"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductText"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.DraftNode">
+                    <Record>
+                        <PropertyValue Property="PreparationAction" String="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductTextPreparation"/>
+                        <PropertyValue Property="ValidationFunction" String="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductTextValidation"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.DraftActivationVia">
+                    <Collection>
+                        <String>STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_Product</String>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_ProductCategoryType/MainProductCategory"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Main Product Category"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_I_ProductMainCategory"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="MainProductCategory"/>
+                                    <PropertyValue Property="ValueListProperty" String="MainProductCategory"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_ContactPersonType/PreferredLanguage"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Language"/>
+                        <PropertyValue Property="CollectionPath" String="I_Language"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="PreferredLanguage"/>
+                                    <PropertyValue Property="ValueListProperty" String="Language"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Language_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/DimensionUnit"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Dimension Unit"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_I_DimensionUnit"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="DimensionUnit"/>
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/ProductValueAddedTax"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="EPM Demo: Product Value Added Tax"/>
+                        <PropertyValue Property="CollectionPath" String="SEPM_I_ProductValueAddedTax"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ProductValueAddedTax"/>
+                                    <PropertyValue Property="ValueListProperty" String="ProductValueAddedTax"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="ProductValueAddedTax_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/Supplier"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Supplier"/>
+                        <PropertyValue Property="CollectionPath" String="STTA_C_MP_Supplier"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="Supplier"/>
+                                    <PropertyValue Property="ValueListProperty" String="Supplier"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyName"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="EmailAddress"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="FaxNumber"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="PhoneNumber"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="URL"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/ProductBaseUnit"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Quantity Unit"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_I_QuantityUnit"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ProductBaseUnit"/>
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/WeightUnit"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Weight Unit"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_I_WeightUnit"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="WeightUnit"/>
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/OriginalLanguage"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Language"/>
+                        <PropertyValue Property="CollectionPath" String="I_Language"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="OriginalLanguage"/>
+                                    <PropertyValue Property="ValueListProperty" String="Language"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Language_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/ProductType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="EPM Demo: Product Type"/>
+                        <PropertyValue Property="CollectionPath" String="SEPM_I_ProductType"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ProductType"/>
+                                    <PropertyValue Property="ValueListProperty" String="ProductType"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="ProductType_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/ProductCategory"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Product Category"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_I_ProductCategory"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="ProductCategory"/>
+                                    <PropertyValue Property="ValueListProperty" String="ProductCategory"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="MainProductCategory"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType/Currency"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Currency"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_C_CurrencyValueHelp"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="Currency"/>
+                                    <PropertyValue Property="ValueListProperty" String="Currency"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CurrencyName"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductTextType/Language"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Language"/>
+                        <PropertyValue Property="CollectionPath" String="I_Language"/>
+                        <PropertyValue Property="SearchSupported" Bool="false"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="Language"/>
+                                    <PropertyValue Property="ValueListProperty" String="Language"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="Language_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_StockAvailabilityType/QuantityUnit"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ValueList">
+                    <Record>
+                        <PropertyValue Property="Label" String="Quantity Unit"/>
+                        <PropertyValue Property="CollectionPath" String="SEPMRA_I_QuantityUnit"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="QuantityUnit"/>
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="UnitOfMeasure_Text"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_ProductCategoryType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>ProductCategory</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_ProductMainCategoryType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>MainProductCategory</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_Product_EType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>Product</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_QuantityUnitType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>UnitOfMeasure</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_WeightUnitType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>UnitOfMeasure</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>Product</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_ProductTextType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>Language</PropertyPath>
+                        <PropertyPath>ActiveProduct</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_DimensionUnitType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>UnitOfMeasure</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_C_MP_SupplierType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>Supplier</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.SEPMRA_I_EmployeeType"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.SemanticKey">
+                    <Collection>
+                        <PropertyPath>Employee</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="STTA_PROD_MAN.STTA_PROD_MAN_Entities/STTA_C_MP_ProductCopywithparams/Supplier"
+                xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+                    <Record>
+                        <PropertyValue Property="CollectionPath" String="STTA_C_MP_Supplier"/>
+                        <PropertyValue Property="SearchSupported" Bool="true"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="Supplier"/>
+                                    <PropertyValue Property="ValueListProperty" String="Supplier"/>
+                                </Record>
+                                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="CompanyName"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link rel="self" href="./destinations/UIA_000/sap/opu/odata/sap/STTA_PROD_MAN/$metadata"
+                xmlns:atom="http://www.w3.org/2005/Atom"/>
+                <atom:link rel="latest-version" href="./destinations/UIA_000/sap/opu/odata/sap/STTA_PROD_MAN/$metadata"
+                    xmlns:atom="http://www.w3.org/2005/Atom"/>
+                </Schema>
+            </edmx:DataServices>
+        </edmx:Edmx>

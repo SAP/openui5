@@ -1,0 +1,109 @@
+{
+  "1.46.0": {
+    "date": "January 2017",
+    "notes": [
+      {
+        "id": "546c9de78992c7d6449cbfea47d2be9c02eb026b",
+        "type": "FIX",
+        "text": " - Eslint error-corrected",
+        "references": []
+      },
+      {
+        "id": "d4a9a0079280e9e94d5bd97392ebc9d9cb8dda59",
+        "type": "FIX",
+        "text": " Delete save behavior in onRestore of RTA",
+        "references": []
+      },
+      {
+        "id": "03a4ec379c744ad67f4b47ceb56b2cb39ea68288",
+        "type": "FIX",
+        "text": " Delete unused commands in rta",
+        "references": []
+      },
+      {
+        "id": "6c6b8afaa4c73cfc08fa5f9e4b2f5c66adaeec2b",
+        "type": "FIX",
+        "text": " Delete unused messagebundle texts",
+        "references": []
+      },
+      {
+        "id": "2635bbb35642be372eb9440912ec970d2d2505b6",
+        "type": "FIX",
+        "text": " Enable unit test again",
+        "references": []
+      },
+      {
+        "id": "aa8e043f90096c2210e529297339ac6f66b1c61b",
+        "type": "FIX",
+        "text": " Enable unit tests again",
+        "references": []
+      },
+      {
+        "id": "e7c204463b354df5139f3475360b9bc6272fa099",
+        "type": "FIX",
+        "text": " Fix error in Setting plugin",
+        "references": []
+      },
+      {
+        "id": "e1d47628c8ea04e547a942da9d0c9832bc19ee77",
+        "type": "FIX",
+        "text": " RTA triggered from Dialog can\u0027t be closed in FLP",
+        "references": []
+      },
+      {
+        "id": "e61f3c5887c24f1bd213c5a022cb445f25a2b67e",
+        "type": "FIX",
+        "text": " RTA: \"array\" is not a valid type for Move command metadata",
+        "references": []
+      },
+      {
+        "id": "17f2868d7d86b1e5c64bec86b4c16bcf574ca604",
+        "type": "FIX",
+        "text": " RTA: Split duplicate id issue",
+        "references": []
+      },
+      {
+        "id": "90c4933802046d5ed83e5a79c2ce44d84c44a4de",
+        "type": "FIX",
+        "text": " adapt determination for offset",
+        "references": []
+      },
+      {
+        "id": "6e12b51efbe9499ffe710f3269c50f4dcc987ded",
+        "type": "FIX",
+        "text": " check target zone move action",
+        "references": []
+      },
+      {
+        "id": "70a73956174e0586652285d6361a187b5db54ed6",
+        "type": "FIX",
+        "text": " fix 2 minor bugs",
+        "references": []
+      },
+      {
+        "id": "759a709a818981a6d3eba61471fe2bad7547210b",
+        "type": "FIX",
+        "text": " fl error on exit of RTA in test application",
+        "references": []
+      },
+      {
+        "id": "6875a1b1bdf6ad0d1e4d2c284f36caf5e7937561",
+        "type": "FIX",
+        "text": " sap.ui.rta Add dialog restart should be working again",
+        "references": []
+      },
+      {
+        "id": "28fc3704f67e8b05804725035f0cb8d8995e90b8",
+        "type": "FIX",
+        "text": " set offset in the copied text area of the rename plugin",
+        "references": []
+      },
+      {
+        "id": "f051f6612140272809ae2a779d2b81f6784c0e06",
+        "type": "FIX",
+        "text": " stabilized combine plugin",
+        "references": []
+      }
+    ]
+  }
+}

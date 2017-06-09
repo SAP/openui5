@@ -1,0 +1,45 @@
+<mvc:View
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:FullscreenPage
+		id="page"
+		title="Testdata ObjectPage Stashed">
+
+		<semantic:content>
+	
+			<!-- Object Page -->		
+			<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="{ConfigModel>/subSectionLayout}" flexEnabled="true">
+				<headerTitle>
+					<ObjectPageHeader
+							objectTitle="ObjectPage BlockBase"
+							objectSubtitle=""
+							objectImageURI="">
+						<actions>
+							<ObjectPageHeaderActionButton icon="sap-icon://synchronize" press="toggleTitle" text="toggle title"/>
+						</actions>
+					</ObjectPageHeader>
+				</headerTitle>
+				<sections>
+					<ObjectPageSection id="ObjectPageSection1" title="ObjectPage Section 1">
+					</ObjectPageSection>
+					
+					<ObjectPageSection id="ObjectPageSection2" title="ObjectPage Section 2">
+					</ObjectPageSection>
+		
+					<ObjectPageSection id="ObjectPageSection3" title="ObjectPage Section 3" stashed="true">
+					</ObjectPageSection>
+					
+					<ObjectPageSection id="ObjectPageSection4" title="ObjectPage Section 4" visible="false">
+					</ObjectPageSection>					
+				
+				</sections>
+			</ObjectPageLayout>
+				
+		</semantic:content>
+
+	</semantic:FullscreenPage>
+
+</mvc:View>

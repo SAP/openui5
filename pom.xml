@@ -49,6 +49,7 @@
 		<module>src/sap.ui.demokit</module>
 		<module>src/sap.uxap</module>
 		<module>src/sap.ui.fl</module>
+		<module>src/sap.ui.rta</module>
 		<module>src/sap.ui.codeeditor</module>
 		<module>src/sap.ui.support</module>
 
