@@ -351,7 +351,9 @@
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.ok(oSpy.calledOnce, "no data rendering in upload collection is called");
+		assert.equal(oSpy.callCount, 1, "no data rendering in upload collection is called once");
+		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMLIB"), "The nodata area contains class sapMLIB");
+		assert.ok(this.oUploadCollection._oList.$("nodata").hasClass("sapMUCNoDataPage"), "The nodata area contains class sapMUCNoDataPage");
 		oSpy.restore();
 	});
 
