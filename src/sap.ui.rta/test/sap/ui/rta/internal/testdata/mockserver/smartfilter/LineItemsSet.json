@@ -1,0 +1,1313 @@
+[
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412042014120400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412042014120400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "1181082.74",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417651200000)/",
+    "BLDAT": "/Date(1417651200000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "1"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412052014120500012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412052014120500012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "208.26",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417737600000)/",
+    "BLDAT": "/Date(1417737600000)/",
+    "Cnt": 3,
+    "MyBoolean": false,
+    "YourBoolean": true,
+    "Id": "2"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412302014123000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412302014123000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "6684.23",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1419897600000)/",
+    "BLDAT": "/Date(1419897600000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "3"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412112014121100012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412112014121100012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "8149.72",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1418256000000)/",
+    "BLDAT": "/Date(1418256000000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "4"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412032014120300012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412032014120300012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "1418880.43",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417564800000)/",
+    "BLDAT": "/Date(1417564800000)/",
+    "Cnt": 6,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "5"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201412052014120500012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201412052014120500012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "-100.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1417737600000)/",
+    "BLDAT": "/Date(1417737600000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "6"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412082014120800012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412082014120800012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "1388.36",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417996800000)/",
+    "BLDAT": "/Date(1417996800000)/",
+    "Cnt": 5,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "7"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.3.-.-.-.-.-.-._.201409012014090100012014EURSP1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.3.-.-.-.-.-.-._.201409012014090100012014EURSP1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "SP1",
+    "Dmbtr": "700.00",
+    "Hwaer": "EUR",
+    "Name1": "müller",
+    "BUDAT": "/Date(1409529600000)/",
+    "BLDAT": "/Date(1409529600000)/",
+    "Cnt": 5,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "8"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201412052014120500012014EURJS_TEST._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201412052014120500012014EURJS_TEST._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "JS_TEST",
+    "Dmbtr": "1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Metzgerei Mettmann",
+    "BUDAT": "/Date(1417737600000)/",
+    "BLDAT": "/Date(1417737600000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "9"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412092014120900012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412092014120900012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "12911.50",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1418083200000)/",
+    "BLDAT": "/Date(1418083200000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "10"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411082014110800012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411082014110800012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "16.68",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1415404800000)/",
+    "BLDAT": "/Date(1415404800000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "11"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411142014111400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411142014111400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "229.15",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1415923200000)/",
+    "BLDAT": "/Date(1415923200000)/",
+    "Cnt": 30,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "12"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412142014121400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412142014121400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "120.79",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1418515200000)/",
+    "BLDAT": "/Date(1418515200000)/",
+    "Cnt": 23,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "13"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411122014111200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411122014111200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "509.34",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1415750400000)/",
+    "BLDAT": "/Date(1415750400000)/",
+    "Cnt": 8,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "14"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411182014111800012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411182014111800012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "3302.85",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416268800000)/",
+    "BLDAT": "/Date(1416268800000)/",
+    "Cnt": 7,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "15"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411132014111300012014EUREB01._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411132014111300012014EUREB01._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "EB01",
+    "Dmbtr": "59892.90",
+    "Hwaer": "EUR",
+    "Name1": "Elke",
+    "BUDAT": "/Date(1415836800000)/",
+    "BLDAT": "/Date(1415836800000)/",
+    "Cnt": 13,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "16"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411132014111300012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411132014111300012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "876.99",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1415836800000)/",
+    "BLDAT": "/Date(1415836800000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "17"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201301142014011400012014EURHAEU03D._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201301142014011400012014EURHAEU03D._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HAEU03D",
+    "Dmbtr": "1000000000.00",
+    "Hwaer": "EUR",
+    "Name1": "Haeu03d",
+    "BUDAT": "/Date(1389657600000)/",
+    "BLDAT": "/Date(1358121600000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "18"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201411142014111700012014EURHOFFMANNT._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201411142014111700012014EURHOFFMANNT._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HOFFMANNT",
+    "Dmbtr": "0.00",
+    "Hwaer": "EUR",
+    "Name1": "Thomas",
+    "BUDAT": "/Date(1416182400000)/",
+    "BLDAT": "/Date(1415923200000)/",
+    "Cnt": 8,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "19"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201311012014110100012014EURTILL7._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201311012014110100012014EURTILL7._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL7",
+    "Dmbtr": "0.00",
+    "Hwaer": "EUR",
+    "Name1": "West Walldorf",
+    "BUDAT": "/Date(1414800000000)/",
+    "BLDAT": "/Date(1383264000000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "20"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201408012014080100012014EURER_1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201408012014080100012014EURER_1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "ER_1",
+    "Dmbtr": "-1500.00",
+    "Hwaer": "EUR",
+    "Name1": "Elena Renkewitsch",
+    "BUDAT": "/Date(1406851200000)/",
+    "BLDAT": "/Date(1406851200000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "21"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201406062014060600012014EURER_1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201406062014060600012014EURER_1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "ER_1",
+    "Dmbtr": "0.00",
+    "Hwaer": "EUR",
+    "Name1": "Elena Renkewitsch",
+    "BUDAT": "/Date(1402012800000)/",
+    "BLDAT": "/Date(1402012800000)/",
+    "Cnt": 8,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "22"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411202014112000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411202014112000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "-13.68",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416441600000)/",
+    "BLDAT": "/Date(1416441600000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "23"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411252014112500012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411252014112500012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "1532.73",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416873600000)/",
+    "BLDAT": "/Date(1416873600000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "24"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411302014113000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411302014113000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "-4.17",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417305600000)/",
+    "BLDAT": "/Date(1417305600000)/",
+    "Cnt": 7,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "25"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411272014112700012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411272014112700012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "16.66",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417046400000)/",
+    "BLDAT": "/Date(1417046400000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "26"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411292014112900012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411292014112900012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "-37.49",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417219200000)/",
+    "BLDAT": "/Date(1417219200000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "27"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201401212014012100012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201401212014012100012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "940.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1390262400000)/",
+    "BLDAT": "/Date(1390262400000)/",
+    "Cnt": 10,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "28"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411192014111900012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411192014111900012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "-100.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1416355200000)/",
+    "BLDAT": "/Date(1416355200000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "29"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411182014112000012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411182014112000012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-100.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1416441600000)/",
+    "BLDAT": "/Date(1416268800000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "30"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411212014112100012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411212014112100012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "-45.81",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416528000000)/",
+    "BLDAT": "/Date(1416528000000)/",
+    "Cnt": 22,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "31"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412212014122100012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412212014122100012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "12.50",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1419120000000)/",
+    "BLDAT": "/Date(1419120000000)/",
+    "Cnt": 9,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "32"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411262014112600012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411262014112600012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "4730.85",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416960000000)/",
+    "BLDAT": "/Date(1416960000000)/",
+    "Cnt": 12,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "33"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411202014112000012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411202014112000012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-765.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1416441600000)/",
+    "BLDAT": "/Date(1416441600000)/",
+    "Cnt": 8,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "34"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411192014111900012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411192014111900012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-100.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1416355200000)/",
+    "BLDAT": "/Date(1416355200000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "35"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411212014112100012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411212014112100012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-670.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1416528000000)/",
+    "BLDAT": "/Date(1416528000000)/",
+    "Cnt": 6,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "36"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411242014112400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411242014112400012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "264.18",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416787200000)/",
+    "BLDAT": "/Date(1416787200000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "37"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411222014112200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411222014112200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "-8.33",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1416614400000)/",
+    "BLDAT": "/Date(1416614400000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "38"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411242014112400012014EUREB01._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411242014112400012014EUREB01._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "EB01",
+    "Dmbtr": "79.33",
+    "Hwaer": "EUR",
+    "Name1": "Elke",
+    "BUDAT": "/Date(1416787200000)/",
+    "BLDAT": "/Date(1416787200000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "39"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411242014112400012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411242014112400012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-2000.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1416787200000)/",
+    "BLDAT": "/Date(1416787200000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "40"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201407252014072500012014EURTORSTEN._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201407252014072500012014EURTORSTEN._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TORSTEN",
+    "Dmbtr": "700.00",
+    "Hwaer": "EUR",
+    "Name1": "torsten",
+    "BUDAT": "/Date(1406246400000)/",
+    "BLDAT": "/Date(1406246400000)/",
+    "Cnt": 8,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "41"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411252014112500012014EUREB01._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411252014112500012014EUREB01._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "EB01",
+    "Dmbtr": "38.50",
+    "Hwaer": "EUR",
+    "Name1": "Elke",
+    "BUDAT": "/Date(1416873600000)/",
+    "BLDAT": "/Date(1416873600000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "42"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201411262014112600012014EURWILZBACH1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201411262014112600012014EURWILZBACH1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "WILZBACH1",
+    "Dmbtr": "245.00",
+    "Hwaer": "EUR",
+    "Name1": "Wilzbach 1",
+    "BUDAT": "/Date(1416960000000)/",
+    "BLDAT": "/Date(1416960000000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "43"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411272014112700012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201411272014112700012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-1334.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1417046400000)/",
+    "BLDAT": "/Date(1417046400000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "44"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411102014111000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201411102014111000012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "-41.66",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1415577600000)/",
+    "BLDAT": "/Date(1415577600000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "45"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412022014120200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412022014120200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "11370.47",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1417478400000)/",
+    "BLDAT": "/Date(1417478400000)/",
+    "Cnt": 7,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "46"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412122014121200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201412122014121200012014EURJ001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "J001",
+    "Dmbtr": "16.66",
+    "Hwaer": "EUR",
+    "Name1": "JP Morgan Chase",
+    "BUDAT": "/Date(1418342400000)/",
+    "BLDAT": "/Date(1418342400000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "47"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201402182014021800012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201402182014021800012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL",
+    "Dmbtr": "-21000.00",
+    "Hwaer": "EUR",
+    "Name1": "Oppert",
+    "BUDAT": "/Date(1392681600000)/",
+    "BLDAT": "/Date(1392681600000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "48"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401162014011600012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401162014011600012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL",
+    "Dmbtr": "19780.00",
+    "Hwaer": "EUR",
+    "Name1": "Oppert",
+    "BUDAT": "/Date(1389830400000)/",
+    "BLDAT": "/Date(1389830400000)/",
+    "Cnt": 12,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "49"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401182014011500012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401182014011500012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL",
+    "Dmbtr": "-2500.00",
+    "Hwaer": "EUR",
+    "Name1": "Oppert",
+    "BUDAT": "/Date(1389744000000)/",
+    "BLDAT": "/Date(1390003200000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "50"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201401312014013100012014EURKAST01D._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201401312014013100012014EURKAST01D._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "KAST01D",
+    "Dmbtr": "-1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Karl Karl",
+    "BUDAT": "/Date(1391126400000)/",
+    "BLDAT": "/Date(1391126400000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "51"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201412022014120200012014EURMG001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201412022014120200012014EURMG001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "MG001",
+    "Dmbtr": "1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Grünewald & Friends",
+    "BUDAT": "/Date(1417478400000)/",
+    "BLDAT": "/Date(1417478400000)/",
+    "Cnt": 6,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "52"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201412022014120200012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201412022014120200012014EURC0001._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "C0001",
+    "Dmbtr": "-1400.00",
+    "Hwaer": "EUR",
+    "Name1": "Bohr und Hammer GmbH",
+    "BUDAT": "/Date(1417478400000)/",
+    "BLDAT": "/Date(1417478400000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "53"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.10.-.-.-.-.-.-._.201410012014100100012014EUR0000000012._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.10.-.-.-.-.-.-._.201410012014100100012014EUR0000000012._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "12",
+    "Dmbtr": "5.00",
+    "Hwaer": "EUR",
+    "Name1": "Maier",
+    "BUDAT": "/Date(1412121600000)/",
+    "BLDAT": "/Date(1412121600000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "54"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201408012014080100012014EURTORSTEN._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.7.-.-.-.-.-.-._.201408012014080100012014EURTORSTEN._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TORSTEN",
+    "Dmbtr": "-35.00",
+    "Hwaer": "EUR",
+    "Name1": "torsten",
+    "BUDAT": "/Date(1406851200000)/",
+    "BLDAT": "/Date(1406851200000)/",
+    "Cnt": 3,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "55"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201408012014080100012014EURWILZBACH1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201408012014080100012014EURWILZBACH1._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "WILZBACH1",
+    "Dmbtr": "40.00",
+    "Hwaer": "EUR",
+    "Name1": "Wilzbach 1",
+    "BUDAT": "/Date(1406851200000)/",
+    "BLDAT": "/Date(1406851200000)/",
+    "Cnt": 7,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "56"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.6.-.-.-.-.-.-._.201405072014050700012014EURTILL12._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.6.-.-.-.-.-.-._.201405072014050700012014EURTILL12._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL12",
+    "Dmbtr": "2000.00",
+    "Hwaer": "EUR",
+    "Name1": "TILL12",
+    "BUDAT": "/Date(1399420800000)/",
+    "BLDAT": "/Date(1399420800000)/",
+    "Cnt": 6,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "57"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201402132014021300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201402132014021300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1392249600000)/",
+    "BLDAT": "/Date(1392249600000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "58"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201409012014090100012014EURHOFFMANNT._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.9.-.-.-.-.-.-._.201409012014090100012014EURHOFFMANNT._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HOFFMANNT",
+    "Dmbtr": "1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Thomas",
+    "BUDAT": "/Date(1409529600000)/",
+    "BLDAT": "/Date(1409529600000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "59"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.10.-.-.-.-.-.-._.201401102014011000012014EUR0000000012._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.10.-.-.-.-.-.-._.201401102014011000012014EUR0000000012._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "12",
+    "Dmbtr": "-200.00",
+    "Hwaer": "EUR",
+    "Name1": "Maier",
+    "BUDAT": "/Date(1389312000000)/",
+    "BLDAT": "/Date(1389312000000)/",
+    "Cnt": 17,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "60"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201401132014011300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201401132014011300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "2000.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1389571200000)/",
+    "BLDAT": "/Date(1389571200000)/",
+    "Cnt": 4,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "61"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201401302014011300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201401302014011300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "-1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1389571200000)/",
+    "BLDAT": "/Date(1391040000000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "62"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201402022014011300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201402022014011300012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "-1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1389571200000)/",
+    "BLDAT": "/Date(1391299200000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "63"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.8.-.-.-.-.-.-._.201401312014021300012014EURWILZBACH._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.8.-.-.-.-.-.-._.201401312014021300012014EURWILZBACH._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "WILZBACH",
+    "Dmbtr": "1000.00",
+    "Hwaer": "EUR",
+    "Name1": "Wilzbach",
+    "BUDAT": "/Date(1392249600000)/",
+    "BLDAT": "/Date(1391126400000)/",
+    "Cnt": 1,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "64"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401182014011800012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401182014011800012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL",
+    "Dmbtr": "-14500.00",
+    "Hwaer": "EUR",
+    "Name1": "Oppert",
+    "BUDAT": "/Date(1390003200000)/",
+    "BLDAT": "/Date(1390003200000)/",
+    "Cnt": 5,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "65"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201404252014042500012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.5.-.-.-.-.-.-._.201404252014042500012014EURHEIKO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "HEIKO",
+    "Dmbtr": "-21000.00",
+    "Hwaer": "EUR",
+    "Name1": "Heiko",
+    "BUDAT": "/Date(1398384000000)/",
+    "BLDAT": "/Date(1398384000000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "66"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201403142014031400012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201403142014031400012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL",
+    "Dmbtr": "0.00",
+    "Hwaer": "EUR",
+    "Name1": "Oppert",
+    "BUDAT": "/Date(1394755200000)/",
+    "BLDAT": "/Date(1394755200000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "67"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401172014011700012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.4.-.-.-.-.-.-._.201401172014011700012014EURTILL._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "TILL",
+    "Dmbtr": "-4900.00",
+    "Hwaer": "EUR",
+    "Name1": "Oppert",
+    "BUDAT": "/Date(1389916800000)/",
+    "BLDAT": "/Date(1389916800000)/",
+    "Cnt": 2,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "68"
+  },
+  {
+    "__metadata": {
+      "id": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.8.-.-.-.-.-.-._.201401162014011600012014EURMG001_HO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "uri": "foo/LineItemsSet('-.-.-.-.-.-.8.8.4.-.4.-.-.3.-.8.-.-.-.-.-.-._.201401162014011600012014EURMG001_HO._.R%28%20GJAHR%20%3D%20''2014''%20AND%20BUKRS%20%3D%20''0001''%20%29')",
+      "type": "com.sap.GL.zrha.LineItems"
+    },
+    "Bukrs": "0001",
+    "Gjahr": "2014",
+    "Kunnr": "MG001_HO",
+    "Dmbtr": "10000.00",
+    "Hwaer": "EUR",
+    "Name1": "Grünewald Head Office",
+    "BUDAT": "/Date(1389830400000)/",
+    "BLDAT": "/Date(1389830400000)/",
+    "Cnt": 5,
+    "MyBoolean": true,
+    "YourBoolean": false,
+    "Id": "69"
+  }
+]

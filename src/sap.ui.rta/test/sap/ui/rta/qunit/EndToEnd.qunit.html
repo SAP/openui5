@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>QUnit page for testing End 2 End changes will reach LREP</title>
+
+<style>
+html, body, #qunit-tests {
+	height: 100%;
+}
+
+.sapUiView {
+	height: 100%;
+}
+
+#test-view {
+	border: 1px solid grey;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 50%;
+	height: 50%;
+}
+</style>
+
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_belize"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-resourceroots='{"sap.ui.rta.test": "../internal/testdata/rta/", "sap.ui.rta.qunit": "../qunit"}'
+	data-sap-ui-libs="sap.ui.rta,sap.m,sap.ui.layout,sap.ui.dt"
+	src="../../../../../resources/sap-ui-core.js">
+
+</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+	jQuery.sap.require("sap.ui.fl.FakeLrepConnector");
+	jQuery.sap.require("sap.ui.fl.FakeLrepConnectorLocalStorage");
+	jQuery.sap.require("sap.ui.fl.FakeLrepLocalStorage");
+	jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+	jQuery.sap.require("sap.ui.rta.qunit.RtaQunitUtils");
+
+	var oCompCont = renderTestAppAt("test-view");
+
+	QUnit.module("Given RTA is started...", {
+		beforeEach : function(assert) {
+			var that = this;
+			var done = assert.async();
+			sap.ui.fl.FakeLrepLocalStorage.deleteChanges();
+			assert.equal(sap.ui.fl.FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
+			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+			this.oRta = new sap.ui.rta.RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+			});
+
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(function () {
+						this.oFieldOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oField);
+						this.oGroupOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oGroup);
+						fnResolve();
+					}.bind(this));
+				}.bind(this)),
+				this.oRta.start()
+			]);
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sap.ui.fl.FakeLrepLocalStorage.deleteChanges();
+		}
+	});
+
+	QUnit.test("when removing a field,", function(assert) {
+		waitForChangesToReachedLrepAtTheEnd(1, assert);
+
+		var oFieldToHide = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
+		var oFieldToHideOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oFieldToHide);
+
+		oFieldToHideOverlay.focus();
+		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.ENTER, false, false, false);
+		oFieldToHideOverlay.focus();
+		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+
+		assert.strictEqual(oFieldToHide.getVisible(), false, " then field is not visible");
+		this.oRta.stop();
+	});
+
+	QUnit.test("when moving a field (via cut and paste),", function(assert) {
+		waitForChangesToReachedLrepAtTheEnd(1, assert);
+
+		sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+		sap.ui.test.qunit.triggerKeydown(this.oGroupOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+
+		var iIndex = this.oGroup.getGroupElements().length - 1;
+
+		assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oField.getId(), " then the field is moved");
+		this.oRta.stop();
+	});
+
+	QUnit.test("when renaming a group (via double click) and setting a new title to Test...", function(assert) {
+		waitForChangesToReachedLrepAtTheEnd(1, assert);
+		var that = this;
+
+		var done = assert.async();
+
+		this.oGroupOverlay.focus();
+		var $groupOverlay = this.oGroupOverlay.$();
+		$groupOverlay.click();
+		$groupOverlay.click();
+
+		sap.ui.getCore().applyChanges();
+
+		var $editableField = $groupOverlay.find(".sapUiRtaEditableField");
+
+		assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
+		assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+
+		document.activeElement.innerHTML = "Test";
+
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
+
+		// timeout is needed because of the timeout in rta.Rename plugin
+		setTimeout(function() {
+			assert.strictEqual(that.oGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+			$editableField = $groupOverlay.find(".sapUiRtaEditableField");
+			assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+			that.oRta.stop().then(done);
+		}, 500);
+	});
+
+	QUnit.test("when renaming a group element (via context menu) and setting a new label to Test...", function(assert) {
+		waitForChangesToReachedLrepAtTheEnd(1, assert);
+		var that = this;
+
+		var done = assert.async();
+
+		this.oFieldOverlay.focus();
+		var $fieldOverlay = this.oFieldOverlay.$();
+
+		sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+
+		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[0];
+		oContextMenuItem.getDomRef().click();
+		sap.ui.getCore().applyChanges();
+
+		var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+
+		assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
+		assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+
+		document.activeElement.innerHTML = "Test";
+
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
+
+		// timeout is needed because of the timeout in rta.Rename plugin
+		setTimeout(function() {
+			assert.strictEqual(document.activeElement, that.oFieldOverlay.getDomRef(), " and focus is on field overlay");
+			$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+			assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+			that.oRta.stop().then(done);
+		}, 500);
+	});
+
+	removeTestViewAfterTestsWhenCoverageIsRequested();
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for testing End 2 End changes
+		will reach LREP</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="test-view"></div>
+</body>
+</html>

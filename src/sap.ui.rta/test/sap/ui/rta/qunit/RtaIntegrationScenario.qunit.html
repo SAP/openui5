@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>QUnit page for RTA integration scenarios</title>
+
+<style>
+html, body, #qunit-tests {
+	height: 100%;
+}
+
+.sapUiView {
+	height: 100%;
+}
+
+#test-view {
+	border: 1px solid grey;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 50%;
+	height: 50%;
+}
+</style>
+
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_belize"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-resourceroots='{"sap.ui.rta.test": "../internal/testdata/rta/", "sap.ui.rta.qunit": "../qunit"}'
+	data-sap-ui-libs="sap.ui.rta,sap.m,sap.ui.layout,sap.ui.dt"
+	src="../../../../../resources/sap-ui-core.js">
+
+</script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+	jQuery.sap.require("sap.ui.rta.command.Stack");
+	jQuery.sap.require("sap.ui.fl.FakeLrepConnector");
+	jQuery.sap.require("sap.ui.fl.FakeLrepConnectorLocalStorage");
+	jQuery.sap.require("sap.ui.fl.FakeLrepLocalStorage");
+	jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+	jQuery.sap.require("sap.ui.rta.qunit.RtaQunitUtils");
+
+	var oCompCont = renderTestAppAt("test-view");
+
+	var sandbox = sinon.sandbox.create();
+
+	QUnit.module("Given RTA is started...", {
+		beforeEach : function(assert) {
+			sap.ui.fl.FakeLrepLocalStorage.deleteChanges();
+			assert.equal(sap.ui.fl.FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
+			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+
+			var that = this;
+
+			this.oCommandStack = new sap.ui.rta.command.Stack();
+
+			this.oRta = new sap.ui.rta.RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				commandStack : this.oCommandStack
+			});
+
+			return Promise.all([
+				new Promise(function (fnResolve) {
+					this.oRta.attachStart(function() {
+						this.oFieldOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oField);
+						this.oGroupOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oGroup);
+
+						fnResolve();
+					}.bind(this));
+				}.bind(this)),
+				this.oRta.start()
+			]);
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			this.oCommandStack.destroy();
+			sap.ui.fl.FakeLrepLocalStorage.deleteChanges();
+		}
+	});
+
+	QUnit.test("when removing a group using a command stack API", function(assert) {
+		var iFiredCounter = 0;
+		this.oRta.attachUndoRedoStackModified(function() {
+			iFiredCounter++;
+		});
+
+		assert.strictEqual(this.oRta.canUndo(), false, "initially no undo is possible");
+		assert.strictEqual(this.oRta.canRedo(), false, "initially no redo is possible");
+		assert.notOk(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "initially no Changes are existing");
+
+		// TODO: remove
+		var oCommand = new sap.ui.rta.command.CommandFactory().getCommandFor(this.oGroup, "Remove", {
+			removedElement : this.oGroup
+		}, this.oGroupOverlay.getDesignTimeMetadata());
+
+		this.oCommandStack.pushAndExecute(oCommand);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oGroup.getVisible(), false, "then group is hidden...");
+		assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
+		assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
+		assert.ok(this.oRta._oToolsMenu.getControl('undo').getEnabled(), "Undo button of RTA is enabled");
+		assert.ok(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is enabled");
+
+		this.oCommandStack.undo();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
+		assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
+		assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
+		assert.notOk(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is disabled");
+
+		this.oRta.redo();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
+		assert.ok(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
+
+		// pushAndExecute fires modified twice!
+		assert.strictEqual(iFiredCounter, 4, "undoRedoStackModified event of RTA is fired twice");
+	});
+
+	QUnit.test("when renaming a form title using a property change command", function(assert) {
+		sandbox.stub(sap.ui.fl.Utils, "getCurrentLayer").returns("VENDOR");
+
+		var oInitialTitle = this.oForm.getTitle();
+
+		var oCommand = new sap.ui.rta.command.CommandFactory({
+			flexSettings: {
+				layer: "VENDOR"
+			}
+		}).getCommandFor(this.oForm, "Property", {
+			propertyName : "title",
+			oldValue : oInitialTitle,
+			newValue : "Test Title"
+		});
+
+		this.oCommandStack.pushAndExecute(oCommand);
+		assert.strictEqual(this.oForm.getTitle(), "Test Title", "then title is changed...");
+
+		this.oCommandStack.undo();
+
+		assert.strictEqual(this.oForm.getTitle(), oInitialTitle, "when the undo is called, then the form's title is restored");
+
+		sandbox.restore();
+	});
+
+	removeTestViewAfterTestsWhenCoverageIsRequested();
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for testing End 2 End changes
+		will reach LREP</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="test-view"></div>
+</body>
+</html>

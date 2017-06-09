@@ -1,0 +1,365 @@
+{
+	"1.36.0": {
+		"date": "January 2016",
+		"notes": [
+			{
+				"id": "76aa841f4ce4a7a9ce801721c2d2b1cf643d402c",
+				"type": "FEATURE",
+				"text": "Added RTA library",
+				"references": []
+			},
+			{
+				"id": "28c9cdb87e435e0ea8faa9d9a26d2b99b32fdf9b",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - adds context sensitivity to ContextMenu",
+				"references": []
+			},
+			{
+				"id": "e84890605e66d20bdd4faa6975034929b0d8ea01",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - adds proper value help and tooltip in field repository",
+				"references": []
+			},
+			{
+				"id": "47a0bbd331baf7d9c6e8908a08b6071240a4dd64",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - adds qunit test for FieldRepository",
+				"references": []
+			},
+			{
+				"id": "de6a827a018d4dc6dfdc33e6d882641d3d60895e",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - adds resorting button to FieldRepository dialog",
+				"references": []
+			},
+			{
+				"id": "01171ba3c1df8143456f8768d85391299b665dde",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - enabling / disabling of CreateCustomField Button",
+				"references": []
+			},
+			{
+				"id": "072e1d11080e6ad44f21eb4af52557ed61435b92",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - new Demo App",
+				"references": []
+			},
+			{
+				"id": "58271edc2bd8bd397ac372bd911f2cd2a6e16f1c",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - new SamplePage for RuntimeAuthoring - one with adapt button enabled, one disabled",
+				"references": []
+			},
+			{
+				"id": "f49acc4df896c8bd9a94852781d442c3409520eb",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - rta now throws an error if running on a browser different than ie or chrome",
+				"references": []
+			},
+			{
+				"id": "29c2c7437d08fc3ddf2e677e54dd7c64fb5226b8",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - styling of fieldrepository / fixing context menu",
+				"references": []
+			},
+			{
+				"id": "01452ce20c92c8cd8547e68a653e3a8a077a1289",
+				"type": "FEATURE",
+				"text": "sap.ui.rta : added renaming",
+				"references": []
+			},
+			{
+				"id": "35cd762c7128c5b4d070c828d27538d960ebaf97",
+				"type": "FEATURE",
+				"text": "sap.ui.rta : adds adding and removing of groups",
+				"references": []
+			},
+			{
+				"id": "e692fcdec9917398c94a8db7d08f2a21526131cb",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: adds example rta page",
+				"references": []
+			},
+			{
+				"id": "f4fda15762d978f8fbb3623e274f21972d548cb4",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: enables fakeLrepConnector with localStorage",
+				"references": []
+			},
+			{
+				"id": "decc8b8858a7a5ceac18a8b2f28ee50579373600",
+				"type": "FEATURE",
+				"text": ": rta controls and controls amd-adaption, theming",
+				"references": []
+			},
+			{
+				"id": "127f4a8adaa412300a4ba293679d38f7ed1ea441",
+				"type": "FIX",
+				"text": "Delete duplicate text key for BTN_TRANSPORT",
+				"references": []
+			},
+			{
+				"id": "c535cda40fece269ad9decb62e6f95ce2a888a18",
+				"type": "FIX",
+				"text": "Fix check for Mutability of ObjectPageLayout",
+				"references": []
+			},
+			{
+				"id": "80a579ed7a85aca9288b8e3582200f4c18325fdf",
+				"type": "FIX",
+				"text": "Fix error with empty emtries in dialog for ObjectPage sections",
+				"references": []
+			},
+			{
+				"id": "9ab97cae5cde3d1d0bd8b22951eee1411d3d1b9d",
+				"type": "FIX",
+				"text": "Fixes issue that drag a field into an empty group is not possible",
+				"references": []
+			},
+			{
+				"id": "d9682a33c99d9716ad65cc1d2e26ec4b51fd0610",
+				"type": "FIX",
+				"text": "RTA: Set Popup code back to default after RTA close",
+				"references": []
+			},
+			{
+				"id": "2bad2d168448e75f8b786aec3f38e5b28247bc18",
+				"type": "FIX",
+				"text": "RTA: Suppress preventDefault for tabbing in popups",
+				"references": []
+			},
+			{
+				"id": "59497c256b3c345ec42f991ae4abc65b5d5b5dca",
+				"type": "FIX",
+				"text": "Runtime Authoring Toolbar Layouting",
+				"references": []
+			},
+			{
+				"id": "cb8c650a1a196ba863f1f30d300eedc286190267",
+				"type": "FIX",
+				"text": "fixes for incident 1580121464",
+				"references": []
+			},
+			{
+				"id": "72294d69bc1e603594622ec7f47520fc4165e3ef",
+				"type": "FIX",
+				"text": "fixes issues 1580152465 and 1580152318",
+				"references": []
+			},
+			{
+				"id": "782eb504de9166f24c0f741780c30e26d01f74aa",
+				"type": "FIX",
+				"text": "revision of i18n.properties file in RTA testdata folder",
+				"references": []
+			},
+			{
+				"id": "c3126ab02b43203ba7b1303c0702bea17b417bae",
+				"type": "FIX",
+				"text": "sap.ui.rta - \"add dialog\" takes ignored Fields into consideration",
+				"references": []
+			},
+			{
+				"id": "d74d3d191d40bed16df8f4e646810ed212b3ea3a",
+				"type": "FIX",
+				"text": "sap.ui.rta - fixes FieldRepository to filter out already shown or added fields - adds entity types to field repository",
+				"references": []
+			},
+			{
+				"id": "6f718e165f5a6cb6a926e2dc0ce6550357e76983",
+				"type": "FIX",
+				"text": "sap.ui.rta - fixes pom dependencies",
+				"references": []
+			},
+			{
+				"id": "096a41b493939165311cf6c9a0a009dba02fc080",
+				"type": "FIX",
+				"text": "sap.ui.rta - fixes styling of resort label in field repository",
+				"references": []
+			},
+			{
+				"id": "530b891941bc2759c5d574cd47145463fdbe59e7",
+				"type": "FIX",
+				"text": "sap.ui.rta : Fixes group renaming + refactoring of RTARenamePlugin.js",
+				"references": []
+			},
+			{
+				"id": "e15826488de690e35b7fd35ef443fa21de04152c",
+				"type": "FIX",
+				"text": "sap.ui.rta: Fixes removing of unbound fields, which should not be possible",
+				"references": []
+			},
+			{
+				"id": "dc523af591e63075a18cc1fa2685192eaae3a956",
+				"type": "FIX",
+				"text": "sap.ui.rta: fixes module path for FLP",
+				"references": []
+			},
+			{
+				"id": "7d224b9d5beec3bebf5c1a6639e2cafe53d9aed0",
+				"type": "FIX",
+				"text": "sap.ui.rta: fixes renamed complexType fields in repository dialog",
+				"references": []
+			},
+			{
+				"id": "f5ec2855047edf1ba682b27a5cb37a788c3b3188",
+				"type": "FIX",
+				"text": ": Api-fixes and JSDOC RTA ToolsMenu",
+				"references": []
+			},
+			{
+				"id": "a6e7234a6d83631a5cf83e432d183bdef767004c",
+				"type": "FIX",
+				"text": ": Bottom Toolbar in RTA",
+				"references": []
+			},
+			{
+				"id": "a84a9df1d81905e76470b392bd1a2ae8344b219b",
+				"type": "FIX",
+				"text": ": Changed Button texts in RTA",
+				"references": []
+			},
+			{
+				"id": "18bdfed818a79ffdf9a69979e0f431c82ec7ee74",
+				"type": "FIX",
+				"text": ": RTA - Layouting of Add-Field Dialog",
+				"references": []
+			},
+			{
+				"id": "019ef2b6e80edbd51579226d9452a930b1d0bc3a",
+				"type": "FIX",
+				"text": ": RTA - duplicate application Name",
+				"references": []
+			},
+			{
+				"id": "54a96d13e61d0ddda1e9c00062babfd8927bddcb",
+				"type": "FIX",
+				"text": ": RTA - removing unnecessary Controls",
+				"references": []
+			},
+			{
+				"id": "ed8b7c02def7cb63cf42ca273a491a18a2cba79d",
+				"type": "FIX",
+				"text": ": RTA - visible focus for Toolbar",
+				"references": []
+			},
+			{
+				"id": "f53fcd4a25c4e5929fd3e4ca2980eef185587f44",
+				"type": "FIX",
+				"text": ": RTA Add Elements Dialog fix",
+				"references": []
+			},
+			{
+				"id": "895b1f52038bbd0296103ecbf523b2d6f1400bc0",
+				"type": "FIX",
+				"text": ": RTA Context Menu behaviour",
+				"references": []
+			},
+			{
+				"id": "bd022d72b6c03aef6609b160d7e500cad6e3d57a",
+				"type": "FIX",
+				"text": ": RTA High Contrast Black Theme",
+				"references": []
+			},
+			{
+				"id": "490b378a11696aa7c68cb583e743289f961f4fc6",
+				"type": "FIX",
+				"text": ": RTA High contrast black theme fixes",
+				"references": []
+			},
+			{
+				"id": "2883e283e2610a70b2a7881b66c1844abfd176c2",
+				"type": "FIX",
+				"text": ": RTA Rename labels with attribute FOR",
+				"references": []
+			},
+			{
+				"id": "264e79c19e1b4dd5f7b6ec1b74190d7d063a1a31",
+				"type": "FIX",
+				"text": ": RTA Toolbars disappearing in IE11",
+				"references": []
+			},
+			{
+				"id": "2c41daa40d5b3e98fa1114fcf3a29417aa661c1f",
+				"type": "FIX",
+				"text": ": RTA bottom toolbar tabbing",
+				"references": []
+			},
+			{
+				"id": "9543fa82dd0af9aabf1884a6f14106bc2972b25a",
+				"type": "FIX",
+				"text": ": RTA onbeforeunload handler",
+				"references": []
+			},
+			{
+				"id": "2e7c1344b9f4e8c42e6593f8cece12988254cc34",
+				"type": "FIX",
+				"text": ": RTA rename label",
+				"references": []
+			},
+			{
+				"id": "52e321c8d711ba0acd02d082005a4f4925c9a3ea",
+				"type": "FIX",
+				"text": ": RTA wrong cursor in Toolbar",
+				"references": []
+			},
+			{
+				"id": "c9f3511b5abcc4f09e3ffc3eb4e88dad1e859e28",
+				"type": "FIX",
+				"text": ": Rta ToolsMenu Control API",
+				"references": []
+			},
+			{
+				"id": "8be22dbe1df2cb439130cdcce05d4dc7dc16ee0b",
+				"type": "FIX",
+				"text": ": Set Focus Error in IE11",
+				"references": []
+			},
+			{
+				"id": "f1116f91801c550b321492e3588003fc5c96ed08",
+				"type": "FIX",
+				"text": ": Using App-Descriptor in RTA Demo App",
+				"references": []
+			},
+			{
+				"id": "6a21b1d6c1f0f22d00ea693f7b68a9f39b0df63d",
+				"type": "FIX",
+				"text": "fixes i18n bindings (not to be considered in test)",
+				"references": []
+			},
+			{
+				"id": "056c79d0424ae77c5f3e07fe9755b36d819c3326",
+				"type": "FIX",
+				"text": "sap.ui.rta - fixes double creation of field repository dialog",
+				"references": []
+			}
+		]
+	},
+	"1.36.1": {
+		"date": "February 2016",
+		"notes": [
+			{
+				"id": "02501ec9b004dcc4f64aec82d6c79b358f8dea3c",
+				"type": "FIX",
+				"text": "Rename label by pressing DEL leads to possible field deletion",
+				"references": []
+			}
+		]
+	},
+	"1.36.2": {
+		"date": "February 2016",
+		"notes": [
+			{
+				"id": "3f5de58b863ce6bd4a2640df6747a7583fe7bbf8",
+				"type": "FIX",
+				"text": "Rename label with empty content does not work",
+				"references": []
+			},
+			{
+				"id": "d1c1b3139e5da1218ce3ba9140202b4dc5ed48ef",
+				"type": "FIX",
+				"text": "Stop Rename operation at Drag start",
+				"references": []
+			}
+		]
+	}
+}

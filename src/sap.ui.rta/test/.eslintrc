@@ -1,0 +1,7 @@
+{
+	"globals": {
+		"QUnit": false,
+		"opaTest": false,
+		"sinon": false
+	}
+}

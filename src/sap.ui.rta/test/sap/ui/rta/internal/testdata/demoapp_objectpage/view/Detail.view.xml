@@ -1,0 +1,120 @@
+<mvc:View
+	controllerName="sap.ui.rta.test.Demo.ObjectPage.controller.Detail"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:blockcolor="sap.ui.rta.test.Demo.ObjectPage.blockscolor"
+	xmlns:sample="sap.uxap.testblocks.objectpageblock"
+
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	xmlns:semantic="sap.m.semantic">
+
+	<ObjectPageLayout id="ObjectPageLayout" subSectionLayout="{ConfigModel>/subSectionLayout}" flexEnabled="true">
+		<headerTitle>
+			<ObjectPageHeader
+					objectTitle="ObjectPage BlockBase"
+					objectSubtitle=""
+					objectImageURI="">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://synchronize" press="toggleTitle" text="toggle title"/>
+					<m:Button text="{i18n>btnAdapt}" visible="{app>/showAdaptButton}" press="switchToAdaptionMode" />
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:ObjectStatus title="User ID" text="12345678"/>
+				<m:ObjectStatus title="Language" text="English"/>
+				<m:ObjectStatus title="Country" text="USA"/>
+				<m:ObjectStatus title="Phone Number" text="1-844-726-7733"/>
+			</layout:VerticalLayout>
+ 
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleS="false"/>
+				</layout:layoutData>
+				<m:ObjectStatus title="Functional Area" text="Developement"/>
+				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+				<m:ObjectStatus title="Email" text="email@address.com"/>
+				<m:Token text="Visible on M and L size"/>
+			</layout:VerticalLayout>
+ 
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleS="false" visibleM="false"/>
+				</layout:layoutData>
+				<m:ObjectStatus text="Senior UI Developer" state="Success"/>
+				<m:RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="5" tooltip="Rating Tooltip"/>
+				<m:Token text="Visible on L size"/>
+			</layout:VerticalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection id="ObjectPageSection1" title="ObjectPage Section 1">
+				<subSections>
+					<ObjectPageSubSection title="Blocks with columnLayout 1" mode="Collapsed">
+						<blocks>
+							<blockcolor:BlockBlue columnLayout="auto"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Blocks with columnLayout 2" mode="Collapsed">
+						<blocks>
+							<blockcolor:BlockBlueWithInfo showSubSectionMore="true" columnLayout="2"/>
+							<blockcolor:BlockBlue columnLayout="2"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection title="Blocks with columnLayout 3" mode="Collapsed">
+						<blocks>
+							<blockcolor:BlockBlue columnLayout="3"/>
+							<blockcolor:BlockBlue columnLayout="3"/>
+							<blockcolor:BlockBlue columnLayout="3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+
+			 <ObjectPageSection id="ObjectPageSection2" title="ObjectPage Section 2">
+				<subSections>
+					<ObjectPageSubSection title="Blocks with columnLayout 1" mode="Collapsed">
+						<blocks>
+							<blockcolor:BlockBlue columnLayout="auto"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Blocks with columnLayout 2" mode="Collapsed">
+						<blocks>
+							<blockcolor:BlockBlue columnLayout="auto"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+				   </subSections>
+			</ObjectPageSection>
+
+			 <ObjectPageSection id="ObjectPageSection3" title="ObjectPage Section 3" stashed="true">
+				<subSections>
+					<ObjectPageSubSection title="Blocks with columnLayout2" mode="Collapsed">
+						<blocks>
+							<blockcolor:BlockBlue columnLayout="auto"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+							<blockcolor:BlockBlue columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+		</sections>
+	</ObjectPageLayout>
+				
+</mvc:View>
+

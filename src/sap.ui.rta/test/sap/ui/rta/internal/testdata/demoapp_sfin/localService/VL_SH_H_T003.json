@@ -1,0 +1,373 @@
+[
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "AA",
+        "LTEXT": "Asset Posting"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "AB",
+        "LTEXT": "Accounting Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "AF",
+        "LTEXT": "Depreciation Pstngs"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "AN",
+        "LTEXT": "Net Asset Posting"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "CH",
+        "LTEXT": "Contract Settlement"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "CO",
+        "LTEXT": "CO Posting"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "DA",
+        "LTEXT": "Customer Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "DG",
+        "LTEXT": "Customer Credit Memo"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "DR",
+        "LTEXT": "Customer Invoice"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "DZ",
+        "LTEXT": "Customer Payment"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "EU",
+        "LTEXT": "Euro Rounding Diff."
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "EX",
+        "LTEXT": "External Number"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "HE",
+        "LTEXT": "Accounting Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "HT",
+        "LTEXT": "Asset Posting"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "KA",
+        "LTEXT": "Vendor Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "KG",
+        "LTEXT": "Vendor Credit Memo"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "KN",
+        "LTEXT": "Net Vendors"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "KP",
+        "LTEXT": "Account Maintenance"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "KR",
+        "LTEXT": "Vendor Invoice"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "KZ",
+        "LTEXT": "Vendor Payment"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M1",
+        "LTEXT": "MCA Journal"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M2",
+        "LTEXT": "FX Swap"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M3",
+        "LTEXT": "P&L Lock"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M4",
+        "LTEXT": "P&L Close"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M5",
+        "LTEXT": "P&L Transformation"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M6",
+        "LTEXT": "FX Valuation"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M7",
+        "LTEXT": "MAR & Restatement"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M8",
+        "LTEXT": "IFX Correction"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "M9",
+        "LTEXT": "Reversal"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "MD",
+        "LTEXT": "Data Load"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "ML",
+        "LTEXT": "ML Settlement"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "PR",
+        "LTEXT": "Price Change"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "RA",
+        "LTEXT": "Sub.Cred.Memo Stlmt"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "RB",
+        "LTEXT": "Reserve for Bad Debt"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "RE",
+        "LTEXT": "Invoice - Gross"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "RN",
+        "LTEXT": "Invoice - Net"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "RV",
+        "LTEXT": "Billing Doc.Transfer"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "SA",
+        "LTEXT": "G/L Account Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "SB",
+        "LTEXT": "G/L Account Posting"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "SK",
+        "LTEXT": "Cash Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "SU",
+        "LTEXT": "Adjustment Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "UE",
+        "LTEXT": "Data Transfer"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "WA",
+        "LTEXT": "Goods Issue"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "WE",
+        "LTEXT": "Goods Receipt"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "WI",
+        "LTEXT": "Inventory Document"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "WL",
+        "LTEXT": "Goods Issue/Delivery"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "WN",
+        "LTEXT": "Net Goods Receipt"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "Z3",
+        "LTEXT": "TEST"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "ZP",
+        "LTEXT": "Payment Posting"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "ZR",
+        "LTEXT": "Bank Reconciliation"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "ZS",
+        "LTEXT": "Payment by Check"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "ZV",
+        "LTEXT": "Payment Clearing"
+      },
+      {
+        "__metadata": {
+          "type": "FAC_FINANCIALS_POSTING_SRV.VL_SH_H_T003"
+        },
+        "BLART": "ZZ",
+        "LTEXT": "Dummy"
+      }
+    ]

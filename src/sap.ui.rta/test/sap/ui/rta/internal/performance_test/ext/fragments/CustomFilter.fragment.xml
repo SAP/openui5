@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+        xmlns="sap.m"
+        xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
+        xmlns:core="sap.ui.core">
+
+    <smartfilterbar:ControlConfiguration key="CustomPriceFilter" index="3" label="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xfld.Price}"
+                                         visibleInAdvancedArea="true" groupId="_BASIC">
+        <smartfilterbar:customControl>
+            <ComboBox id="CustomPriceFilter-combobox">
+                <core:Item key="0" text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xtit.Price_0-100}"/>
+                <core:Item key="1" text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xtit.Price_100-500}"/>
+                <core:Item key="2" text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xtit.Price_500-1000}"/>
+                <core:Item key="3" text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xtit.Price_GE1000}"/>
+            </ComboBox>
+        </smartfilterbar:customControl>
+    </smartfilterbar:ControlConfiguration>
+</core:FragmentDefinition>
