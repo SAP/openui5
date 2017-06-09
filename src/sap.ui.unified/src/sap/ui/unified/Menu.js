@@ -292,13 +292,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	 *
 	 * @param {boolean} bWithKeyboard Indicates whether or not the first item shall be highlighted when the menu is opened (keyboard case)
 	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed
-	 * @param {sap.ui.core.Dock} sMy The reference docking location of the menu for positioning the menu on the screen
-	 * @param {sap.ui.core.Dock} sAt The 'of' element's reference docking location for positioning the menu on the screen
-	 * @param {sap.ui.core.Element|DOMRef} oOf The menu is positioned relatively to this element based on the given dock locations
-	 * @param {string} [sOffset] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right)
-	 * @param {sap.ui.core.Collision} [sCollision] The collision defines how the position of the menu should be adjusted in case it overflows the window in some direction
+	 * @param {sap.ui.core.Dock} my The reference docking location of the menu for positioning the menu on the screen
+	 * @param {sap.ui.core.Dock} at The 'of' element's reference docking location for positioning the menu on the screen
+	 * @param {sap.ui.core.Element|DOMRef} of The menu is positioned relatively to this element based on the given dock locations
+	 * @param {string} [offset] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "0 10" to move the popup 10 pixels to the right)
+	 * @param {sap.ui.core.Collision} [collision] The collision defines how the position of the menu should be adjusted in case it overflows the window in some direction
 	 *
-	 * @type void
+	 * @type {void}
 	 * @public
 	 * @ui5-metamodel This method will also be described in the UI5 (legacy) design time meta model
 	 */
@@ -358,7 +358,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	/**
 	 * Closes the menu.
 	 *
-	 * @type void
+	 * @type {void}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -791,6 +791,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	/**
 	 * Opens the submenu of the given item (if any).
 	 *
+	 * @param {Object} oItem The item opener
 	 * @param {boolean} bWithKeyboard Whether the submenu is opened via keyboard
 	 * @param {boolean} bWithHover Whether the submenu is opened on hover or not (click)
 	 *
@@ -848,6 +849,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	/**
 	 * Scrolls an item into the visual viewport.
 	 *
+	 * @param {Object} oItem The item to be scrolled to
 	 * @private
 	 */
 	Menu.prototype.scrollToItem = function(oItem) {
@@ -967,6 +969,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 	 * Checks whether the Menu should run with cozy design.
 	 * This function must only be called on the root menu (getRootMenu) to get proper results.
 	 *
+	 * @returns {boolean} Whether the Menu should is run in cozy design mode
 	 * @private
 	 */
 	Menu.prototype.isCozy = function(){

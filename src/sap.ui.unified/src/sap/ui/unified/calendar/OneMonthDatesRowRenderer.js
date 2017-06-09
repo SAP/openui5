@@ -21,9 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 		};
 
 		/**
-		 * @param oRm
-		 * @param oDatesRow
-		 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.unified.DatesRow} oDatesRow The DatesRow to be rendered
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate The start date
 		 */
 		OneMonthDatesRowRenderer.renderDays = function(oRm, oDatesRow, oDate) {
 			if (oDatesRow.iMode < 2) {

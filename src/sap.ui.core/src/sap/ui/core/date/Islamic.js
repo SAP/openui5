@@ -48,9 +48,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	var oCustomizationMap = null;
 
 	/**
-	 * Calculate islamic date from gregorian
+	 * Calculate islamic date from gregorian.
 	 *
-	 * @param {object} oGregorian a JS object containing day, month and year in the gregorian calendar
+	 * @param {object} oGregorian A JS object containing day, month and year in the gregorian calendar
+	 * @returns {object} The islamic date object created
 	 * @private
 	 */
 	function toIslamic(oGregorian) {
@@ -115,9 +116,10 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	}
 
 	/**
-	 * Calculate gregorian date from islamic
+	 * Calculate gregorian date from islamic.
 	 *
-	 * @param {object} oIslamic a JS object containing day, month and year in the islamic calendar
+	 * @param {object} oIslamic A JS object containing day, month and year in the islamic calendar
+	 * @returns {object} The gregorian date object created
 	 * @private
 	 */
 	function toGregorian(oIslamic) {
@@ -270,7 +272,8 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	}
 
 	/**
-	 * Get the islamic date from the this.oDate
+	 * Get the islamic date from the this.oDate.
+	 * @returns {object} The islamic date object created
 	 */
 	Islamic.prototype._getIslamic = function() {
 		return toIslamic({
@@ -281,8 +284,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	};
 
 	/**
-	 * Set the islamic date to the current this.oDate object
-	 * @param {object} oIslamic a JS object containing day, month and year in the islamic calendar
+	 * Set the islamic date to the current this.oDate object.
+	 * @param {object} oIslamic A JS object containing day, month and year in the islamic calendar
+	 * @returns {number} <code>this</code> to allow method chaining
 	 */
 	Islamic.prototype._setIslamic = function(oIslamic) {
 		var oGregorian = toGregorian(oIslamic);
@@ -290,7 +294,8 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	};
 
 	/**
-	 * Get the islamic date from the this.oDate
+	 * Get the islamic date from the this.oDate.
+	 * @returns {object} The UTC date object created
 	 */
 	Islamic.prototype._getUTCIslamic = function() {
 		return toIslamic({
@@ -301,8 +306,9 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	};
 
 	/**
-	 * Set the islamic date to the current this.oDate object
-	 * @param {object} oIslamic a JS object containing day, month and year in the islamic calendar
+	 * Set the islamic date to the current this.oDate object.
+	 * @param {object} oIslamic A JS object containing day, month and year in the islamic calendar
+	 * @returns {number} <code>this</code> to allow method chaining
 	 */
 	Islamic.prototype._setUTCIslamic = function(oIslamic) {
 		var oGregorian = toGregorian(oIslamic);

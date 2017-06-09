@@ -199,10 +199,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		/**
 		 * Returns the target wrapping.
-		 * @param {object}
-		 *            [oRow] The corresponding row of possible controls
-		 * @param {int}
-		 *            [iWidth] The width of the row in pixels
+		 * @param {object} oRow The corresponding row of possible controls
+		 * @param {int} iWidth The width of the row in pixels
+		 * @returns {array} The target wrapping
 		 *
 		 */
 		var getTargetWrapping = function(oRow, iWidth) {
@@ -562,7 +561,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		/**
 		 * Handles the internal event onAfterRendering.
 		 * If the layout should be responsive, it is necessary to fix the width of the content
-                 * items to correspond to the width of the layout.
+		 * items to correspond to the width of the layout.
 		 */
 		ResponsiveFlowLayout.prototype.onAfterRendering = function(oEvent) {
 			this._oDomRef = this.getDomRef();
@@ -660,9 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * This function needs to be overridden to prevent any rendering while some
 		 * content is still being added.
 		 *
-		 * @param {int|string|sap.ui.core.Control}
-		 *            oContent The content that should be removed from the layout
-		 * @returns {sap.ui.core.Control} The <code>this</code> pointer for chaining
+		 * @param {int|string|sap.ui.core.Control} oContent The content that should be removed from the layout
 		 * @public
 		 */
 		ResponsiveFlowLayout.prototype.removeContent = function(oContent) {
@@ -703,8 +700,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 * Returns a rectangle describing the current visual positioning of 1st DOM in the collection.
 		 * The difference with the function rect() in jQuery.sap.dom.js is that the height and width are cut to the
 		 * 1st digit after the decimal separator and this is consistent across all browsers.
-		 * @param oElement the jQuery collection to check
-		 * @returns {{top, left, width, height}} or null if no such element
+		 * @param {object} oElement The jQuery collection to check
+		 * @returns {object} Object with properties top, left, width and height or null if no such element
 		 * @private
 		 */
 		ResponsiveFlowLayout.prototype._getElementRect = function (oElement) {

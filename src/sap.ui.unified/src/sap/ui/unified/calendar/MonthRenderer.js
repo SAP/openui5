@@ -73,8 +73,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	};
 
 	/**
-	 * @param oMonth
-	 * @returns {sap.ui.unified.calendar.CalendarDate|*}
+	 * @param {sap.ui.unified.calendar.Month} oMonth The month which start date will be returned
+	 * @returns {sap.ui.unified.calendar.CalendarDate|*} The start date of the month
 	 */
 	MonthRenderer.getStartDate = function(oMonth){
 
@@ -98,9 +98,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	};
 
 	/**
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.unified.calendar.Month} oMonth
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Month} oMonth The month to be rendered
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date which month and year will be set to the header
 	 */
 	MonthRenderer.renderMonth = function(oRm, oMonth, oDate){
 
@@ -117,9 +117,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	};
 
 	/**
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.unified.calendar.Month} oMonth
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Month} oMonth The month to be rendered
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date which month and year will be set to the header
 	 */
 	MonthRenderer.renderHeader = function(oRm, oMonth, oDate){
 
@@ -151,10 +151,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	};
 
 	/**
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.unified.calendar.Month} oMonth
-	 * @param {sap.ui.core.LocaleData} oLocaleData
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Month} oMonth The month to e rendered
+	 * @param {sap.ui.core.LocaleData} oLocaleData The local date which month and year will be set to the header
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date which month and year will be set to the header
 	 */
 	MonthRenderer.renderHeaderLine = function(oRm, oMonth, oLocaleData, oDate){
 		CalendarUtils._checkCalendarDate(oDate);
@@ -214,9 +214,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	/**
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm
-	 * @param {sap.ui.unified.calendar.Month} oMonth
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Month} oMonth The month to be rendered
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date which month and year will be set to the header
 	 */
 	MonthRenderer.renderDays = function(oRm, oMonth, oDate){
 		var bWeekNum,
@@ -299,15 +299,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	/**
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm
-	 * @param {sap.ui.unified.calendar.Month} oMonth
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDay
-	 * @param {object} oHelper helper object
-	 * @param {boolean} bOtherMonth
-	 * @param {boolean} bWeekNum
-	 * @param {int} iNumber
-	 * @param {string} sWidth
-	 * @param {boolean} bDayName
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.Month} oMonth The month to be rendered
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDay The date which month and year will be set to the header
+	 * @param {Object} oHelper A helper instance
+	 * @param {boolean} bOtherMonth Whether there is other month
+	 * @param {boolean} bWeekNum Whether the week numbers must be rendered
+	 * @param {int} iNumber The day numbers
+	 * @param {string} sWidth The width to be set to the month
+	 * @param {boolean} bDayName Whether the day names must be rendered
 	 */
 	MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWeekNum, iNumber, sWidth, bDayName){
 		CalendarUtils._checkCalendarDate(oDay);
