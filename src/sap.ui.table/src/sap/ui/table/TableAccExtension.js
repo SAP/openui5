@@ -305,6 +305,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			if (oCountChangeInfo.initial) {
 				var oTable = oExtension.getTable();
 				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount";
+				if (oTable.getSelectionMode() !== SelectionMode.None) {
+					sLabel = sLabel + " " + oTable.getId() + "-ariaselection";
+				}
 			}
 
 			if (aLabels && aLabels.length) {
