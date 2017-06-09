@@ -561,8 +561,6 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 	});
 
 	QUnit.test("_getChangesForComponentAfterInstantiation requests mapped changes for a component of the type 'application'", function (assert) {
-
-
 		var oConfig = {
 			name: "theComponentName"
 		};
@@ -586,6 +584,31 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		assert.ok(oGetChangesForComponentStub.calledOnce, "changes were requested once");
 		assert.equal(oPromise, oMappedChangesPromise, "a promise for the changes was returned");
+	});
+
+	QUnit.test("_findFlAsyncHint can find the one flex async hint which targets the current component", function (assert) {
+
+		var sComponentName = "thisIsTheComponentNameYouAreLookingFor";
+		var oFlAsyncHint1 = {
+			"reference": "another.component",
+			"name": "sap.ui.fl.changes"
+		};
+
+		var oFlAsyncHint2 = {
+			"reference": sComponentName,
+			"name": "sap.ui.fl.changes"
+
+		};
+
+		var oAnotherAsyncHint = {
+			"name": "something.different"
+		};
+
+		var aAsyncHints = [oFlAsyncHint1, oAnotherAsyncHint, oFlAsyncHint2];
+
+		var oDeterminedFlAsyncHint = ChangePersistenceFactory._findFlAsyncHint(aAsyncHints, sComponentName);
+
+		assert.equal(oDeterminedFlAsyncHint, oFlAsyncHint2, "the correct flexibility async hint was determined");
 	});
 
 }(sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Utils));
