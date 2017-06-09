@@ -112,6 +112,12 @@ html.sap-phone .sapMOHTitleDiv.sapMOHNumberWrap {
 	position: relative;
 }
 
+html.sap-phone .sapMOHTitle .sapMText,
+.sapUiMedia-Std-Phone .sapMOHTitle .sapMText,
+html .sapUiContainer-Narrow .sapMOHTitle .sapMText {
+	word-break: break-all;
+}
+
 .sapMText.sapMOHTitle {
 	position: relative;
 }
@@ -475,6 +481,12 @@ html[data-sap-ui-browser ^= "ie"] {
 
 .sapMOHRTitleTextWrappable {
 	white-space: normal;
+}
+
+html.sap-phone .sapMOHRTitleTextWrappable,
+.sapUiMedia-Std-Phone .sapMOHRTitleTextWrappable,
+html .sapUiContainer-Narrow .sapMOHRTitleTextWrappable {
+	word-break: break-all;
 }
 
 .sapMOHRTitleText {
