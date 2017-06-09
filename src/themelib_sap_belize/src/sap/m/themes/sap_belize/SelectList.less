@@ -28,7 +28,8 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before {
+	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected::before,
+	.sapMSelectListItemBase:focus::before {
 		border: 1px dashed @sapUiContentFocusColor;
 	}
 }
