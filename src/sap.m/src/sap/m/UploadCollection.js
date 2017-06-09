@@ -1340,7 +1340,6 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 					}
 				}
 			}
-			return;
 		}
 	};
 
@@ -1412,7 +1411,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 			//If the method is called after an item has been deleted from the list there is no need to create a new FU instance.
 			var iPendingUploadsNumber = this._aFileUploadersForPendingUpload.length;
 			for (i = iPendingUploadsNumber - 1; i >= 0; i--) {
-				if (this._aFileUploadersForPendingUpload[i].getId() == this._oFileUploader.getId()) {
+				if (this._aFileUploadersForPendingUpload[i].getId() === this._oFileUploader.getId()) {
 					oFileUploader = this._getFileUploader();
 					this._oHeaderToolbar.insertAggregation("content", oFileUploader, this._iFileUploaderPH, true);
 					break;
@@ -1580,7 +1579,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		var aButtons, iButtonCounter;
 
 		aButtons = this._getButtons(oItem, sStatus, sItemId, that);
-		if (!!aButtons) { // is necessary for IE9
+		if (aButtons) {
 			iButtonCounter = aButtons.length;
 		}
 		// render div container only if there is at least one button
@@ -2601,7 +2600,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		var sRequestId = this._getRequestId(oEvent);
 		var sFileName = oEvent.getParameter("fileName");
 		var cItems = this.aItems.length;
-		for (i = 0; i < cItems ; i++) {
+		for (i = 0; i < cItems; i++) {
 			if (this.aItems[i] && this.aItems[i].getFileName() === sFileName
 					&& this.aItems[i]._requestIdName === sRequestId
 					&& (this.aItems[i]._status === UploadCollection._uploadingStatus || this.aItems[i]._status === UploadCollection._toBeDeletedStatus)) {
@@ -2749,12 +2748,13 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 	UploadCollection.prototype._getFileUploader = function() {
 		var that = this, bUploadOnChange = this.getInstantUpload();
 		if (!bUploadOnChange || !this._oFileUploader) { // In case of instantUpload = false always create a new FU instance. In case of instantUpload = true only create a new FU instance if no FU instance exists yet
-			var bSendXHR = (Device.browser.msie && Device.browser.version <= 9) ? false : true;
+			var bSendXHR = Device.browser.msie && Device.browser.version <= 9 ? false : true,
+				sTooltip = this.getInstantUpload() ? this._oRb.getText("UPLOADCOLLECTION_UPLOAD") : this._oRb.getText("UPLOADCOLLECTION_ADD");
 			this._iFUCounter = this._iFUCounter + 1; // counter for FileUploader instances
 			this._oFileUploader = new sap.ui.unified.FileUploader(this.getId() + "-" + this._iFUCounter + "-uploader",{
 				buttonOnly : true,
-				buttonText: " ", // Suppresses title of the button in FileUploader
-				tooltip: this.getInstantUpload() ? this._oRb.getText("UPLOADCOLLECTION_UPLOAD") : this._oRb.getText("UPLOADCOLLECTION_ADD"),
+				buttonText: sTooltip,
+				tooltip: sTooltip,
 				iconOnly : true,
 				enabled : this.getUploadEnabled(),
 				fileType : this.getFileType(),
@@ -2806,7 +2806,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 	/**
 	 * @description Creates the unique key for a file by concatenating the fileName with its requestId and puts it into the requestHeaders parameter of the FileUploader.
 	 * It triggers the beforeUploadStarts event for applications to add the header parameters for each file.
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The jQuery Event object
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadStart = function(oEvent) {
@@ -2931,8 +2931,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 	 * @private
 	 */
 	UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-		var iLine = null;
-		var aId;
+		var iLine, aId;
 
 		if (oContext.editModeItem) {
 			//In case there is a list item in edit mode, the edit mode has to be finished first.
@@ -3207,7 +3206,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 	/**
 	 * @description Helper function for better Event API. This reference points to the oEvent comming from the FileUploader
 	 * @param {string} sHeaderParameterName Header parameter name (optional)
-	 * @returns {UploadCollectionParameter} || {UploadCollectionParameter[]}
+	 * @returns {UploadCollectionParameter[]} || {UploadCollectionParameter[]}
 	 * @private
 	 */
 	UploadCollection.prototype._getHeaderParameterWithinEvent = function (sHeaderParameterName) {
