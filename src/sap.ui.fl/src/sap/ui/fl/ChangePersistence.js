@@ -216,12 +216,12 @@ sap.ui.define([
 
 			this._addMapEntry(sSelectorId, oChange);
 
-			// add legacy change twice to ensure a different component ID on creation does not interfere
+			// add legacy change twice to ensure that a different component ID does not interfere when created
 			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") != -1) {
 				var sComponentPrefix = sSelectorId.split("---")[0];
 
-				// if the component prefix does not match the application component
-				// add the app component prefixed selector as well
+				// if the component prefix does not match the application component.
+				// add the prefixed selector as well
 				if (sComponentPrefix !== oComponent.getId()) {
 					sSelectorId = sSelectorId.split("---")[1];
 					sSelectorId = oComponent.createId(sSelectorId);
@@ -235,8 +235,8 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {string} sSelectorId key in the mapping for which the entry should be written
-	 * @param {sap.ui.fl.Change} change which should be added into the mapping
+	 * @param {string} sSelectorId <code>sSelectorId</code> key in the mapping for which the entry is written
+	 * @param {sap.ui.fl.Change} oChange change object which should be added into the mapping
 	 * @private
 	 */
 	ChangePersistence.prototype._addMapEntry = function (sSelectorId, oChange) {
