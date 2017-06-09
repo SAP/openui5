@@ -87,6 +87,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.ui.demokit.IndexLayout._Tile",
 		"sap.ui.layout.BlockLayoutRow",
 		"sap.ui.richtexteditor.RichTextEditor",
+		"sap.ui.richtexteditor.ToolbarWrapper",
 		"sap.ui.suite.TaskCircle",
 		"sap.ui.table.ColumnMenu",
 		"sap.ui.unified.Menu",
