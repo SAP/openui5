@@ -4,10 +4,10 @@ sap.ui.define([
 ], function ($, loggerInterceptor) {
 	"use strict";
 
-	$.sap.unloadResources("sap/ui/test/_timeoutCounter.js", false, true, true);
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test._timeoutCounter");
+	$.sap.unloadResources("sap/ui/test/autowaiter/_timeoutCounter.js", false, true, true);
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._timeoutCounter");
 	var oDebugSpy = sinon.spy(oLogger, "debug");
-	var timeoutCounter = sap.ui.test._timeoutCounter;
+	var timeoutCounter = sap.ui.test.autowaiter._timeoutCounter;
 
 	function assertLog (iNumberBlocking, iNumberNonBlocking) {
 		if (!iNumberNonBlocking) {
@@ -66,9 +66,21 @@ sap.ui.define([
 			var iID = setTimeout(function () {}, 1001);
 
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts");
-			sinon.assert.notCalled(oDebugSpy);
+			sinon.assert.alwaysCalledWithMatch(oDebugSpy, "Long-running timeout is ignored");
 			// do not interfere with other tests
 			clearTimeout(iID);
+		});
+
+		QUnit.test("Should have configurable max timeout delay", function (assert) {
+			timeoutCounter.extendConfig({maxDelay: 3000});
+			var iID = setTimeout(function () {}, 1001);
+			var iIDIgnored = setTimeout(function () {}, 3001);
+
+			assert.ok(timeoutCounter.hasPendingTimeouts(), "there is 1 pending timeout");
+			clearTimeout(iID);
+			clearTimeout(iIDIgnored);
+			// reset to default value
+			timeoutCounter.extendConfig({maxDelay: 1000});
 		});
 
 		QUnit.module("timeoutCounter - single " + sFunctionUnderTest);
@@ -94,7 +106,6 @@ sap.ui.define([
 
 			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
 		});
-
 
 		QUnit.module("timeoutCounter - multiple " + sFunctionUnderTest, {
 			afterEach: function () {
@@ -167,12 +178,12 @@ sap.ui.define([
 			assert.ok(timeoutCounter.hasPendingTimeouts(), "There was a timeout");
 			assertLog(1);
 		});
+	});
 
-		QUnit.module("timeoutCounter - infinite timeout loops", {
-			afterEach: function () {
-				oDebugSpy.reset();
-			}
-		});
+	QUnit.module("timeoutCounter - infinite timeout loops", {
+		afterEach: function () {
+			oDebugSpy.reset();
+		}
 	});
 
 	QUnit.test("Should detect a infinite timeout loop", function (assert) {
@@ -185,7 +196,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
-			sinon.assert.notCalled(oDebugSpy);
+			sinon.assert.alwaysCalledWithMatch(oDebugSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
 			});
@@ -205,7 +216,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
-			sinon.assert.notCalled(oDebugSpy);
+			sinon.assert.alwaysCalledWithMatch(oDebugSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
 			});
@@ -240,6 +251,7 @@ sap.ui.define([
 		sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
 		setTimeout(function () {
 			assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
+			sinon.assert.calledWithMatch(oDebugSpy, "Long-running timeout is ignored");
 		}, 1400);
 
 		return oPromiseAfter2Sec;
@@ -265,6 +277,7 @@ sap.ui.define([
 			sinon.assert.calledWith(oDebugSpy, sinon.match(/There are [1-9] pending microtasks/));
 			setTimeout(function () {
 				assert.ok(!timeoutCounter.hasPendingTimeouts(), "Has no pending microtask");
+				sinon.assert.calledWithMatch(oDebugSpy, "Long-running timeout is ignored");
 			}, 1400);
 
 			return oPromiseAfter2Sec;

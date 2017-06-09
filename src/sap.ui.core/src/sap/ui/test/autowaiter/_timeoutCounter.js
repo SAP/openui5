@@ -4,14 +4,20 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/test/_LogCollector"
-], function ($, _LogCollector) {
+	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_ParameterValidator"
+], function ($, _LogCollector, _ParameterValidator) {
 	"use strict";
 
-	var MAX_TIMEOUT_DEPTH = 3;
-	var MAX_TIMEOUT_DELAY = 1000;
-	var oLogger = $.sap.log.getLogger("sap.ui.test._timeoutCounter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._timeoutCounter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oConfigValidator = new _ParameterValidator({
+		errorPrefix: "sap.ui.test.autowaiter._timeoutCounter#extendConfig"
+	});
 	var mTimeouts = {};
+	var config = {
+		maxDepth: 3, // count
+		maxDelay: 1000 // milliseconds
+	};
 
 	var iCurrentDepth = 0;
 
@@ -27,7 +33,6 @@ sap.ui.define([
 		window[sSetName] = function (fnCallback, iDelay) {
 			var fnWrappedCallback = function () {
 				iCurrentDepth = mTimeouts[iID] + 1;
-
 				delete mTimeouts[iID];
 				try {
 					fnCallback();
@@ -37,14 +42,14 @@ sap.ui.define([
 			};
 
 			// do not track long runners and call the original directly
-			if (iDelay >= MAX_TIMEOUT_DELAY) {
+			if (iDelay >= config.maxDelay) {
+				oLogger.debug("Long-running timeout is ignored. Timeout delay " + iDelay + " exceeds the limit of " + config.maxDelay);
 				return fnOriginal.apply(this, arguments);
 			}
 
 			var iID = fnOriginal.call(this, fnWrappedCallback, iDelay);
 
 			mTimeouts[iID] = iCurrentDepth;
-
 			return iID;
 		};
 
@@ -69,7 +74,7 @@ sap.ui.define([
 			var iTimeout = setTimeout(function () {
 				bTooLate = true;
 				iPendingPromises--;
-			}, MAX_TIMEOUT_DELAY);
+			}, config.maxDelay);
 
 			var fnCountDownPromises = function () {
 				if (bTooLate) {
@@ -97,7 +102,12 @@ sap.ui.define([
 		hasPendingTimeouts: function () {
 			var aTotalTimeouts = Object.keys(mTimeouts);
 			var iNumberOfBlockingTimeouts = aTotalTimeouts.filter(function (iID) {
-				return mTimeouts[iID] < MAX_TIMEOUT_DEPTH;
+				var bIgnored = mTimeouts[iID] >= config.maxDepth;
+				if (bIgnored) {
+					oLogger.debug("Deep-nested timeout with ID " + iID + " is ignored. Timeout depth " + mTimeouts[iID] +
+						" exceeds the limit of " + config.maxDepth);
+				}
+				return !bIgnored;
 			}).length;
 			var bHasPendingTimeouts = iNumberOfBlockingTimeouts > 0;
 			// promise synchronization uses setTimeout so first check the Promise then the timeout
@@ -109,6 +119,16 @@ sap.ui.define([
 				oLogger.debug("There are '" + iNumberOfBlockingTimeouts + "' open blocking Timeouts. And " + (aTotalTimeouts.length - iNumberOfBlockingTimeouts) + " non blocking timeouts");
 			}
 			return bHasPendingTimeouts;
+		},
+		extendConfig: function (oConfig) {
+			oConfigValidator.validate({
+				inputToValidate: oConfig,
+				validationInfo: {
+					maxDepth: "numeric",
+					maxDelay: "numeric"
+				}
+			});
+			$.extend(config, oConfig);
 		}
 	};
 }, true);
