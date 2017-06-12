@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(Controller)
 {
 	"use strict";
-	return Controller.extend("sap.ui.core.internal.samples.composite.fragmentcontrol.ex1.Test",
+	return Controller.extend("sap.ui.core.internal.samples.composite.fragmentcontrol.exSimpleTemplating.Test",
 	{
 		handlePress: function(oEvent)
 		{
