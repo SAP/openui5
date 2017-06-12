@@ -315,6 +315,7 @@ QUnit.test("Download fails in pending upload mode", function(assert) {
 QUnit.test("Set tooltip of FileUploader", function(assert) {
 	var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ADD");
 	assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
+	assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct tooltip of FileUploader");
 });
 
 QUnit.test("File upload button is visible", function(assert) {
