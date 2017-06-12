@@ -1,8 +1,8 @@
 <mvc:View height="100%"
-				controllerName="sap.ui.core.internal.samples.composite.fragmentcontrol.ex1.Test"
+				controllerName="sap.ui.core.internal.samples.composite.fragmentcontrol.exSimpleTemplating.Test"
 				xmlns:m="sap.m"
 				xmlns:mvc="sap.ui.core.mvc"
-				xmlns:fc="sap.ui.core.internal.samples.composite.fragmentcontrol.ex1.comp">
+				xmlns:fc="sap.ui.core.internal.samples.composite.fragmentcontrol.exSimpleTemplating.comp">
 	<m:VBox>
 		<m:Button text="Toggle order of children"
 						press="handlePress" />

@@ -5,7 +5,7 @@ sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/FragmentControl'
 ], function(jQuery, FragmentControl) {
 	"use strict";
-	var Field = FragmentControl.extend("sap.ui.core.internal.samples.composite.fragmentcontrol.ex1.comp.field", {
+	var Field = FragmentControl.extend("sap.ui.core.internal.samples.composite.fragmentcontrol.exSimpleTemplating.comp.field", {
 		metadata: {
 			properties: {
 				text: {
@@ -23,7 +23,7 @@ sap.ui.define([
 				}
 			}
 		},
-		fragment: "sap.ui.core.internal.samples.composite.fragmentcontrol.ex1.comp.field"
+		fragment: "sap.ui.core.internal.samples.composite.fragmentcontrol.exSimpleTemplating.comp.field"
 	});
 	return Field;
 }, /* bExport= */ true);
