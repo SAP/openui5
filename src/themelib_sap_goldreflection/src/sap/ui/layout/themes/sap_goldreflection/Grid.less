@@ -11,7 +11,7 @@
 @_sap_ui_layout_Grid_RespGridMediaTabletSize: 600px;
 @_sap_ui_layout_Grid_RespGridMediaDesktopSize: 1024px;
 @_sap_ui_layout_Grid_RespGridMediaXLSize: 1440px;
-@_sap_ui_layout_Grid_RespGrid_PxInRem: 16;
+@_sap_ui_layout_Grid_RespGridPxInRem: 16;
 @_sap_ui_layout_Grid_RespGridVisible: sapUiRespGridVisible;
 @_sap_ui_layout_Grid_RespGridHidden: sapUiRespGridHidden;
 
@@ -85,13 +85,13 @@ div[class*="sapUiRespGrid"]:after {
 
 .sapUiRespGridWriteSpanClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Span) {
     @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
-    width: @a - 100% * @_sap_ui_layout_Grid_RespGrid_PxInRem * @hspace / @screenSize;
+    width: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
     .sapUiRespGrid-getCalcFuncSpan(@a, @hspace);
 }
 
 .sapUiRespGridWriteIndentClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Indent) {
     @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
-    margin-left: @a + (100% * @_sap_ui_layout_Grid_RespGrid_PxInRem * @hspace/2) / @screenSize ;
+    margin-left: @a + (100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace/2) / @screenSize ;
     .sapUiRespGrid-getCalcFuncIndent(@a, @hspace);
 }
 
