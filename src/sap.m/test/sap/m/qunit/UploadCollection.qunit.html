@@ -525,6 +525,7 @@
 	QUnit.test("Set tooltip of FileUploader", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_UPLOAD");
 		assert.strictEqual(this.oUploadCollection._oFileUploader.getTooltip(), sText, "Correct tooltip of FileUploader");
+		assert.strictEqual(this.oUploadCollection._oFileUploader.getButtonText(), sText, "Correct tooltip of FileUploader");
 	});
 
 	QUnit.test("Determine icon from filename", function(assert) {
