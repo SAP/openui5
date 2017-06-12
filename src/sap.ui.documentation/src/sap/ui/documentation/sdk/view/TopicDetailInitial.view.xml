@@ -56,15 +56,17 @@
 						class="largeCell"
 						backgroundColorSet="ColorSet6"
 						backgroundColorShade="ShadeB">
-					<custom:TitleLink
-							width="100%"
-							text="Get Started"
-							href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
-							class="demokitInitialPagesWhiteText"
-							titleStyle="H1"/>
-					<Text
-							text="Set up and tutorials"
-							class="demokitInitialPagesWhiteText"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Get Started"
+								href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
+								class="demokitInitialPagesWhiteText"
+								titleStyle="H1"/>
+						<Text
+								text="Set up and tutorials"
+								class="demokitInitialPagesWhiteText"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
@@ -88,24 +90,28 @@
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternC">
-					<custom:TitleLink
-							width="100%"
-							text="Extending Apps"
-							href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
-							titleStyle="H1"/>
-					<Text
-							text="Adapt apps to your specific requirements"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Extending Apps"
+								href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
+								titleStyle="H1"/>
+						<Text
+								text="Adapt apps to your specific requirements"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternB">
-					<custom:TitleLink
-							width="100%"
-							text="Developing Content"
-							href="#/topic/8dcab0011d274051808f959800cabf9f"
-							titleStyle="H1"/>
-					<Text
-							text="Create custom controls or contribute to UI5"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Developing Content"
+								href="#/topic/8dcab0011d274051808f959800cabf9f"
+								titleStyle="H1"/>
+						<Text
+								text="Create custom controls or contribute to UI5"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 			</l:BlockLayoutRow>
@@ -113,49 +119,57 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternA">
-					<custom:TitleLink
-							width="100%"
-							text="SAP Fiori Elements"
-							href="#/topic/03265b0408e2432c9571d6b3feb6b1fd"
-							titleStyle="H1"/>
-					<Text
-							text="UI patterns and templates for commonly used application patterns"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="SAP Fiori Elements"
+								href="#/topic/03265b0408e2432c9571d6b3feb6b1fd"
+								titleStyle="H1"/>
+						<Text
+								text="UI patterns and templates for commonly used application patterns"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternC">
-					<custom:TitleLink
-							width="100%"
-							text="Analysis Path Framework"
-							href="#/topic/1c457c53595a6655e10000000a423f68"
-							titleStyle="H1"/>
-					<Text
-							text="Build and enhance interactive analytical web applications"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Analysis Path Framework"
+								href="#/topic/1c457c53595a6655e10000000a423f68"
+								titleStyle="H1"/>
+						<Text
+								text="Build and enhance interactive analytical web applications"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 						class="largeCell"
 						backgroundColorSet="ColorSet6"
 						backgroundColorShade="ShadeD">
-					<custom:TitleLink
-							width="100%"
-							text="Essentials"
-							href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
-							class="demokitInitialPagesWhiteText"
-							titleStyle="H1"/>
-					<Text
-							text="Development concepts, such as MVC, data binding, and components"
-							class="demokitInitialPagesWhiteText"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Essentials"
+								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
+								class="demokitInitialPagesWhiteText"
+								titleStyle="H1"/>
+						<Text
+								text="Development concepts, such as MVC, data binding, and components"
+								class="demokitInitialPagesWhiteText"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternD">
-					<custom:TitleLink
-							width="100%"
-							text="More About Controls"
-							href="#/topic/3ec6808ff0f34a75a9f40748cf9989b9"
-							titleStyle="H1"/>
-					<Text
-							text="Addition to the API reference"/>
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="More About Controls"
+								href="#/topic/3ec6808ff0f34a75a9f40748cf9989b9"
+								titleStyle="H1"/>
+						<Text
+								text="Addition to the API reference"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
