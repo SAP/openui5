@@ -701,6 +701,12 @@
         "type": "FIX",
         "text": " sap.m.Carousel: Touch events inside the control are now propagated correctly",
         "references": []
+      },
+      {
+        "id": "f1648150a9d12959d07a8fd22d024288fc018e5b",
+        "type": "FIX",
+        "text": " ComponentContainer: Model propagation",
+        "references": []
       }
     ]
   }

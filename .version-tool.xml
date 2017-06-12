@@ -60,6 +60,37 @@
         }
       },
       "lastCommitId": "e76b61c805a356c02d342e3f92db7e8c72b964c9"
+    },
+    "rel-1.48.2": {
+      "changes": {
+        "default": {
+          "src/sap.ui.demokit/pom.xml": "1",
+          "src/sap.ui.unified/pom.xml": "1",
+          "src/sap.ui.ux3/pom.xml": "1",
+          "src/sap.ui.core/pom.xml": "1",
+          "src/sap.uxap/pom.xml": "1",
+          "src/sap.ui.documentation/pom.xml": "1",
+          "src/sap.m/pom.xml": "1",
+          "package.json": "1",
+          "src/sap.ui.table/pom.xml": "1",
+          "src/sap.ui.fl/pom.xml": "1",
+          "src/sap.ui.dt/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/sap.f/pom.xml": "1",
+          "src/sap.ui.layout/pom.xml": "1",
+          "src/themelib_sap_belize/pom.xml": "1",
+          "src/sap.tnt/pom.xml": "1",
+          "src/sap.ui.suite/pom.xml": "1",
+          "src/sap.ui.codeeditor/pom.xml": "1",
+          "pom.xml": "2",
+          "src/testsuite/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1",
+          "src/testsuite-utils/pom.xml": "1",
+          "src/sap.ui.support/pom.xml": "1"
+        }
+      },
+      "lastCommitId": "89527109c4cdabd5626e20a929e9cc55d7baf7a9"
     }
   }
 }

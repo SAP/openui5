@@ -428,5 +428,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.23": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "2670b051b82a622bffda782ae515b54ca17e105a",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Appointments are aggregated equally across time zones",
+        "references": []
+      },
+      {
+        "id": "140f79a3e4ceedec3052ea2e367c45ca07bb8711",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": []
+      }
+    ]
   }
 }

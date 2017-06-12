@@ -1697,6 +1697,12 @@
         "type": "FIX",
         "text": " sap.m.Wizard - _getNextStepreference() returns a wrong result if the sebsequentSteps have a length of 1",
         "references": []
+      },
+      {
+        "id": "6fe307c3ed771b6ab33ea7e1778ebee6f95c6d0d",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: Items are now cloned in the MessageView",
+        "references": []
       }
     ]
   }
