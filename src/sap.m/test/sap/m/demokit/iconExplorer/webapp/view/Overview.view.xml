@@ -285,6 +285,13 @@
 				tooltip="{i18n>overviewRandomIconButtonTooltip}"
 				icon="sap-icon://activate"
 				press="onSurpriseMe"/>
+			<Button
+				id="download"
+				visible="{= ${device>/system/phone} ? false : true}"
+				text="{i18n>overviewDownloadButtonTitle}"
+				tooltip="{i18n>overviewDownloadButtonTooltip}"
+				icon="sap-icon://download"
+				press="onDownload"/>
 		</semantic:customHeaderContent>
 
 	</semantic:FullscreenPage>

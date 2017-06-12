@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Label",
 	"sap/m/ToggleButton",
+	"sap/m/library",
 	"jquery.sap.global"
-], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, $) {
+], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, mobileLibrary, $) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -282,6 +283,14 @@ sap.ui.define([
 				oRandomItem = aIcons[Math.floor(Math.random() * aIcons.length)];
 
 			this._updateHash("icon", oRandomItem.name);
+		},
+
+		/**
+		 * Downloads the icon font relatively from the UI5 delivery
+		 * @public
+		 */
+		onDownload: function () {
+			mobileLibrary.URLHelper.redirect(jQuery.sap.getModulePath("sap.ui.core", "/themes/base/fonts/SAP-icons.ttf"));
 		},
 
 		/**
