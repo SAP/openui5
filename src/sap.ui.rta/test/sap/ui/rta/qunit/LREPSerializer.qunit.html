@@ -23,23 +23,29 @@
 			}
 		</style>
 
-		<script id="sap-ui-bootstrap"
-			type="text/javascript"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-resourceroots='{"sap.ui.rta.test.additionalElements": "../testdata/additionalElements/", "sap.ui.rta.qunit": "../qunit"}'
-			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp"
-			data-sap-ui-xx-bindingSyntax="complex"
-			src="../../../../../resources/sap-ui-core.js">
+		<script src="../shared-config.js"></script>
+		<script>
+			document.write('\
+				<script \
+					id="sap-ui-bootstrap" \
+					data-sap-ui-resourceroots=\'{"sap.ui.rta.test.additionalElements": "../testdata/additionalElements/", "sap.ui.rta.qunit": "../qunit"}\'\
+					data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp" \
+					data-sap-ui-xx-bindingSyntax="complex" \
+					src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+				><' + '/script>'
+			);
 		</script>
-
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-		<!-- QUnit test implementation -->
-		<script type="text/javascript" src="LREPSerializer.qunit.js"></script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			if (window.blanket){
+				window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+			}
+			jQuery.sap.includeScript('./LREPSerializer.qunit.js');
+		</script>
 
 	</head>
 	<body>

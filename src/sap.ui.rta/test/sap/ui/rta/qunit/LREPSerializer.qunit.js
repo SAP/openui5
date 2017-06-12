@@ -1,7 +1,8 @@
-/* global waitForChangesToReachedLrepAtTheEnd */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
-sap.ui.define([
+// QUnit to be started explicitly
+QUnit.config.autostart = false;
+sap.ui.require([
 	//internal:
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/dt/DesignTimeMetadata',
@@ -22,12 +23,14 @@ sap.ui.define([
 	CommandStack,
 	FakeLrepLocalStorage,
 	FakeLrepConnectorLocalStorage,
-	ChangeRegistry
+	ChangeRegistry,
+	RtaQunitUtils,
+	sinon
 ) {
 	"use strict";
 
-	// QUnit to be started explicitly
-    QUnit.config.autostart = false;
+	// Start QUnit tests
+	QUnit.start();
 
 	var oMockedAppComponent = {
 		getLocalId: function () {
@@ -106,7 +109,7 @@ sap.ui.define([
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory", function(assert) {
 		// then two changes are expected to be written in LREP
-		waitForChangesToReachedLrepAtTheEnd(2, assert);
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(2, assert);
 
 		// Create commands
 		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -128,7 +131,7 @@ sap.ui.define([
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 remove command for a destroyed control", function(assert) {
 		// then one are expected to be written in LREP
-		waitForChangesToReachedLrepAtTheEnd(1, assert);
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 
 		// Create commands
 		this.oRemoveCommand1 = CommandFactory.getCommandFor(this.oInput1, "Remove", {
@@ -150,6 +153,4 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	// Start QUnit tests
-	QUnit.start();
 });

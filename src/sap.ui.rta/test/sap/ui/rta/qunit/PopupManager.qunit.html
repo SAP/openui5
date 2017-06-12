@@ -22,19 +22,29 @@
 			}
 		</style>
 
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_belize"
-				type="text/javascript"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"sap.ui.rta.qunit": "../qunit"}'
-				data-sap-ui-libs="sap.ui.rta,sap.m,sap.ui.layout,sap.ui.dt"
-				src="../../../../../resources/sap-ui-core.js">
+		<script src="../shared-config.js"></script>
+		<script>
+			document.write('\
+				<script \
+					id="sap-ui-bootstrap" \
+					data-sap-ui-resourceroots=\'{"sap.ui.rta.qunit": "../qunit"}\'\
+					data-sap-ui-libs="sap.ui.rta, sap.m, sap.ui.layout, sap.ui.dt" \
+					src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+				><' + '/script>'
+			);
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript" src="./PopupManager.qunit.js"></script>
+
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			if (window.blanket){
+				window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+			}
+			jQuery.sap.includeScript('./PopupManager.qunit.js');
+		</script>
 	</head>
 	<body>
 		<h1 id="qunit-header">QUnit page for sap.ui.rta.util.PopupManager</h1>

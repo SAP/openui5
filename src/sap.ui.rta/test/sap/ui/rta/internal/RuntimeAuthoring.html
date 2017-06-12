@@ -6,13 +6,18 @@
 
 <title>RuntimeAuthoring - sap.ui.rta</title>
 
-<script id="sap-ui-bootstrap"
-	data-sap-ui-theme="sap_belize"
-	type="text/javascript"
-	data-sap-ui-noConflict="true"
-	data-sap-ui-resourceroots='{"sap.ui.rta.test": "testdata/rta/"}'
-	data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta"
-	src="../../../../../resources/sap-ui-core.js">
+
+<script>
+	document.write('\
+		<script \
+			id="sap-ui-bootstrap" \
+			data-sap-ui-theme="sap_belize" \
+			data-sap-ui-noConflict="true" \
+			data-sap-ui-resourceroots=\'{"sap.ui.rta.test": "testdata/rta/"}\'\
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta" \
+			src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+		><' + '/script>'
+	);
 </script>
 
 <script type="text/javascript">
