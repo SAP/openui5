@@ -257,6 +257,12 @@
         "type": "FIX",
         "text": " sap.ui.table.*: Screenreader Support Adaptations",
         "references": []
+      },
+      {
+        "id": "89527109c4cdabd5626e20a929e9cc55d7baf7a9",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
       }
     ]
   }

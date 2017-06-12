@@ -757,5 +757,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.23": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "f452fc94ecc651314059ea37b10e8b59de2a3a50",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      },
+      {
+        "id": "2a414513e366e338ba28c9a480f6b7796a677726",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
   }
 }
