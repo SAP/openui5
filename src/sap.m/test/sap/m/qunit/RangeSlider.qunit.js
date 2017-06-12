@@ -916,5 +916,58 @@
 		oModel.destroy();
 		oModel = null;
 	});
+
+	QUnit.test("Range can be changed with progress bar when the current range is 1 step lower that max number of steps", function (assert) {
+
+		var clock = sinon.useFakeTimers(),
+			oRangeSlider = new sap.m.RangeSlider({
+			enableTickmarks: true,
+			range: [0,9],
+			min: 0,
+			max: 10
+		});
+
+		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+
+		sap.ui.getCore().applyChanges();
+
+		var oEvent = {
+			target: oRangeSlider.getDomRef("progress"),
+			preventDefault: function () {
+			},
+			stopPropagation: function () {
+			},
+			setMarked: function () {
+			},
+			isMarked: function () {
+				return false;
+			},
+			originalEvent: {
+				type: "mousemove"
+			},
+			type: "mousemove",
+			targetTouches: [
+				{
+					clientX: 305,
+					pageX: 305
+				}
+			]
+		};
+
+		var oHandle1 = oRangeSlider.getDomRef("handle1"),
+			oHandle2 = oRangeSlider.getDomRef("handle2");
+
+		clock.tick(10);
+
+		oRangeSlider._ontouchmove(9, [0, 9], [oHandle1, oHandle2], oEvent);
+
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.deepEqual(oRangeSlider.getRange(), [1, 10], "Range should be equal to [1, 10]");
+
+		oRangeSlider.destroy();
+		oRangeSlider = null;
+	});
 }());
 
