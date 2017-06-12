@@ -1044,6 +1044,7 @@
 
 	var imageOH = new sap.m.ObjectHeader("imageOH", {
 		icon : "../images/action.png",
+		iconTooltip: "test tooltip",
 		intro : "On behalf of John Smith",
 		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 		number : "3.624",
@@ -1056,9 +1057,10 @@
 	QUnit.module("Exiting");
 
 	QUnit.test("TestIconExit", function(assert) {
-
+		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
 		assert.ok(sap.ui.getCore().byId("iconOH"), "Icon is found in UI5 Core");
+		assert.ok(!$sImg.attr("title"), "Icon has no tooltip");
 		assert.ok(sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
 		assert.ok(sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
@@ -1067,9 +1069,10 @@
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
-
+		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
 		assert.ok(sap.ui.getCore().byId("imageOH"), "Image is found in UI5 Core");
+		assert.equal($sImg.attr("title"), "test tooltip", "Image has tooltip");
 		imageOH.destroy();
 		assert.ok(!sap.ui.getCore().byId("imageOH"), "Image is removed from UI5 Core");
 	});
