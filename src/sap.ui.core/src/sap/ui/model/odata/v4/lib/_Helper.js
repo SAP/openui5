@@ -416,9 +416,13 @@ sap.ui.define([
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the cache value in the cache
 		 * @param {object} oCacheValue The object in the cache
-		 * @param {object} oPatchValue The value of the PATCH request/response
+		 * @param {object} [oPatchValue] The value of the PATCH request/response
 		 */
 		updateCache : function (mChangeListeners, sPath, oCacheValue, oPatchValue) {
+			// empty PATCH value from 204 response: Nothing to do
+			if (!oPatchValue) {
+				return;
+			}
 
 			// iterate over all properties in the cache
 			Object.keys(oCacheValue).forEach(function (sProperty) {
