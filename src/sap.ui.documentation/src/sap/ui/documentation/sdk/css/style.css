@@ -1490,3 +1490,46 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	src: url('../fonts/BusinessSuiteInAppSymbolsSmall.eot'),
 	url('../fonts/BusinessSuiteInAppSymbolsSmall.ttf') format('truetype');
 }
+
+
+/***************************** FEED LIST ITEM OVERRIDE STYLES **********************************/
+
+.sapMFeedListItem .sapMFeedListItemTextText span.pln { color: #000 }  /* plain text */
+
+@media screen {
+  .sapMFeedListItem .sapMFeedListItemTextText span.str { color: #080 }  /* string content */
+  .sapMFeedListItem .sapMFeedListItemTextText span.kwd { color: #008 }  /* a keyword */
+  .sapMFeedListItem .sapMFeedListItemTextText span.com { color: #800 }  /* a comment */
+  .sapMFeedListItem .sapMFeedListItemTextText span.typ { color: #606 }  /* a type name */
+  .sapMFeedListItem .sapMFeedListItemTextText span.lit { color: #066 }  /* a literal value */
+  .sapMFeedListItem .sapMFeedListItemTextText span.pun,
+  .sapMFeedListItem .sapMFeedListItemTextText span.opn,
+  .sapMFeedListItem .sapMFeedListItemTextText span.clo { color: #660 }
+  .sapMFeedListItem .sapMFeedListItemTextText span.tag { color: #008 }  /* a markup tag name */
+  .sapMFeedListItem .sapMFeedListItemTextText span.atn { color: #606 }  /* a markup attribute name */
+  .sapMFeedListItem .sapMFeedListItemTextText span.atv { color: #080 }  /* a markup attribute value */
+  .sapMFeedListItem .sapMFeedListItemTextText span.dec,
+  .sapMFeedListItem .sapMFeedListItemTextText span.var { color: #606 }  /* a declaration; a variable name */
+  .sapMFeedListItem .sapMFeedListItemTextText span.fun { color: red }  /* a function name */
+}
+
+@media print, projection {
+  .sapMFeedListItem .sapMFeedListItemTextText span.str { color: #060 }
+  .sapMFeedListItem .sapMFeedListItemTextText span.kwd { color: #006; font-weight: bold }
+  .sapMFeedListItem .sapMFeedListItemTextText span.com { color: #600; font-style: italic }
+  .sapMFeedListItem .sapMFeedListItemTextText span.typ { color: #404; font-weight: bold }
+  .sapMFeedListItem .sapMFeedListItemTextText span.lit { color: #044 }
+  .sapMFeedListItem .sapMFeedListItemTextText span.pun,
+  .sapMFeedListItem .sapMFeedListItemTextText span.opn,
+  .sapMFeedListItem .sapMFeedListItemTextText span.clo { color: #440 }
+  .sapMFeedListItem .sapMFeedListItemTextText span.tag { color: #006; font-weight: bold }
+  .sapMFeedListItem .sapMFeedListItemTextText span.atn { color: #404 }
+  .sapMFeedListItem .sapMFeedListItemTextText span.atv { color: #060 }
+}
+
+.sapMFeedListItem .sapMFeedListItemTextText .prettyprint span {
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+	font-weight: normal;
+}
+
+/***************************** FEED LIST ITEM OVERRIDE STYLES **********************************/
