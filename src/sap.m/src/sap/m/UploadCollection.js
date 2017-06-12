@@ -728,6 +728,16 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		return this;
 	};
 
+	/**
+	 * Provides access to the internally used request headers to allow adding them to the "Access-Control-Allow-Headers" header parameter if needed.
+	 * @returns {string[]} An array of request header strings
+	 * @since 1.50.0
+	 * @public
+	 */
+	UploadCollection.prototype.getInternalRequestHeaderNames = function () {
+		return [this._headerParamConst.fileNameRequestIdName, this._headerParamConst.requestIdName];
+	};
+
 	/* =========================================================== */
 	/* API methods                                           */
 	/* =========================================================== */
@@ -2826,7 +2836,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		};
 		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
 
-		for ( i = 0; i < this._aDeletedItemForPendingUpload.length; i++ ) {
+		for (i = 0; i < this._aDeletedItemForPendingUpload.length; i++ ) {
 			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId &&
 					this._aDeletedItemForPendingUpload[i].getFileName() === sFileName &&
 					this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){

@@ -451,16 +451,33 @@
 			assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 		});
 
-		/* --------------------------------------- */
-		/* Test methods                            */
-		/* --------------------------------------- */
-		QUnit.module("Internal Methods", {
+		QUnit.module("API Methods", {
 			beforeEach: function() {
+				this.oUploadCollection = new sap.m.UploadCollection();
+				this.oUploadCollection.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oUploadCollection.destroy();
+				this.oUploadCollection = null;
+			}
+		});
+
+		QUnit.test("getInternalRequestHeaderNames returns correct request headers", function(assert) {
+			//Act
+			var aResult = this.oUploadCollection.getInternalRequestHeaderNames();
+			//Assert
+			assert.deepEqual(aResult[0], this.oUploadCollection._headerParamConst.fileNameRequestIdName);
+			assert.deepEqual(aResult[1], this.oUploadCollection._headerParamConst.requestIdName);
+		});
+
+		QUnit.module("Internal Methods", {
+			beforeEach : function() {
 				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 					items: {
-						path: "/items",
-						template: createItemTemplate(),
-						templateShareable: false
+						path : "/items",
+						template : createItemTemplate(),
+						templateShareable : false
 					}
 				});
 				this.oUploadCollection.placeAt("qunit-fixture");
