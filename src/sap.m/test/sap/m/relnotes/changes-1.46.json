@@ -2283,5 +2283,136 @@
         "references": []
       }
     ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "251f38135bb27342e56a98a65787041f91b18cef",
+        "type": "FIX",
+        "text": " P13nColumnsPanel: Selected Row is not highlighted",
+        "references": []
+      },
+      {
+        "id": "5f7a71f6467f90667d4f0abb43f7f0a57d8c0010",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "62ad5b9c91c86813f1624f1fc7cde2b22429a690",
+        "type": "FIX",
+        "text": " sap.m.Column - explicitly detach media listener before removing the range set",
+        "references": []
+      },
+      {
+        "id": "7fbbbeb54323e8f79baa72d71bba80b2223d4364",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Focusout should not be triggered oninput",
+        "references": []
+      },
+      {
+        "id": "ab69a3bea7aa9af5c9fb722158c4106ac233838d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Input value is updated wrong if typing fast",
+        "references": []
+      },
+      {
+        "id": "ab72f7e98fd9ef35f51ad8afefa16129be21afe8",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Properly updating item\u0027s selection on model change.",
+        "references": []
+      },
+      {
+        "id": "f21d4bb756783f4232ba646c9abc5333428b58d5",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: setSelectedKey handles unbinded value improperly",
+        "references": []
+      },
+      {
+        "id": "fbd8234150168cde8e24bd616adf905e2666527b",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: items read only once",
+        "references": []
+      },
+      {
+        "id": "7045bb379428183f7f24a193baf78619049f137f",
+        "type": "FIX",
+        "text": " sap.m.Input: Marking event when arrow keys up/down are pressed is now fixed.",
+        "references": []
+      },
+      {
+        "id": "6418323963a52e9d8ea8be6d5fa20781e299e6ad",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestion items in Korean are now correctly selected in Chrome",
+        "references": []
+      },
+      {
+        "id": "81f86ab5721ff22883524ff0876409060b7a3668",
+        "type": "FIX",
+        "text": " sap.m.Label: Label is now correctly aligned with the sap.m.Link in a HorizontalLayout",
+        "references": []
+      },
+      {
+        "id": "26d956612b095d2244136a451b098505e4d17bdd",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Cut functionality now works correctly in IE",
+        "references": []
+      },
+      {
+        "id": "51d4bdab2d2b6aa9fbab15f77c298f22ebf9b636",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: renderer does not invalidate itself anymore.",
+        "references": []
+      },
+      {
+        "id": "dbb56100e82a7308cc0a3801ad6fcb15ed2c4811",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not use jQuery dimension methods on init.",
+        "references": []
+      },
+      {
+        "id": "29ef912643ef74f9412dd0cb8d81e8d5f578a0c9",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title is no longer truncated in IE",
+        "references": []
+      },
+      {
+        "id": "3512262ec99931599a856c38621b5caff452a1d0",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Properly fire liveChange event.",
+        "references": []
+      },
+      {
+        "id": "3872afb3498bae009fb763d5e21c46856ec1beec",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete button is now correctly visible in compact mode",
+        "references": []
+      },
+      {
+        "id": "dabdded5ba9136d4c7740e426fe5d70d48e276d3",
+        "type": "FIX",
+        "text": " sap.m.Token: Fire press event after triggering delete event fixed.",
+        "references": []
+      },
+      {
+        "id": "2d34a02ba2d1d432e3d7658d5d514f60d21438ca",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: \"Select all\" style fixed",
+        "references": []
+      },
+      {
+        "id": "f268a79e818e4c79f96fb871a91f22405cac7014",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Set correct content in Static area",
+        "references": []
+      },
+      {
+        "id": "3649572a01f79170ba467c9e3b3f870dedfa33fa",
+        "type": "FIX",
+        "text": " sap.m.Wizard - _getNextStepreference() returns a wrong result if the sebsequentSteps have a length of 1",
+        "references": []
+      }
+    ]
   }
 }

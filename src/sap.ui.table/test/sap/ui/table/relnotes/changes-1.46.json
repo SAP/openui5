@@ -507,5 +507,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "68e3d7140bf6e0b4b6a5a8aaf75a041d5949b466",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "580c721672b46867127f75be9f67fc9e723e686a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
+      },
+      {
+        "id": "bba5266978736a587080e819c6df39210ecc3d01",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
+      }
+    ]
   }
 }
