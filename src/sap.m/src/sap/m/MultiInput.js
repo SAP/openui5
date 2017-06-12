@@ -419,6 +419,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library'],
 	MultiInput.prototype.onmousedown = function (e) {
 		if (e.target == this.getDomRef('border')) {
 			e.preventDefault();
+			e.stopPropagation();
 		}
 	};
 
