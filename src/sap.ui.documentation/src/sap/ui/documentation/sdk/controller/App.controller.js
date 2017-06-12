@@ -476,7 +476,11 @@ sap.ui.define([
 			},
 
 			onSearch : function (oEvent) {
-				this.getRouter().navTo("search", {searchParam: oEvent.getParameter("query")}, false);
+				var sQuery = oEvent.getParameter("query");
+				if (!sQuery) {
+					return;
+				}
+				this.getRouter().navTo("search", {searchParam: sQuery}, false);
 			},
 
 			onHeaderResize: function (oEvent) {
