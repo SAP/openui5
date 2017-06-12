@@ -45,12 +45,14 @@
 
 							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
 								<m:Label text="Control Sample:"/>
-								<m:Link text="{entity>/sample}" enabled="{=${entity>/hasSample}}" href="#/entity/{topics>/name}"/>
+								<m:Link text="{entity>/sample}" visible="{=${entity>/hasSample}}" href="#/entity/{topics>/name}"/>
+								<m:Text text="{entity>/sample}" visible="{=!${entity>/hasSample}}"/>
 							</m:HBox>
 
 							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
 								<m:Label text="Inherited from:"/>
-								<m:Link text="{topics>/extendsText}" enabled="{=${topics>/isDerived}}" press="onTypeLinkPress"/>
+								<m:Link text="{topics>/extendsText}" visible="{=${topics>/isDerived}}" press="onTypeLinkPress"/>
+								<m:Text text="{topics>/extendsText}" visible="{=!${topics>/isDerived}}"/>
 							</m:HBox>
 
 							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
