@@ -6,7 +6,8 @@
 		xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 		<op:ObjectPageLayout id="searchPage"
 							useIconTabBar="true"
-							alwaysShowContentHeader="true">
+							alwaysShowContentHeader="true"
+							upperCaseAnchorBar="false">
 		<op:headerTitle>
 			<op:ObjectPageHeader objectTitle='Search Results for "{/searchTerm}"'>
 			</op:ObjectPageHeader>
@@ -116,13 +117,13 @@
 					</op:ObjectPageSubSection>
  				</op:subSections>
 			</op:ObjectPageSection>
-			<op:ObjectPageSection title="Explored ({/ExploredLength})" visible="{=!!${/ExploredLength}}">
+			<op:ObjectPageSection title="Samples ({/ExploredLength})" visible="{=!!${/ExploredLength}}">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Explored (0 - {/visibleExploredLength} of {/ExploredLength})"/>
+									<Title text="Samples (0 - {/visibleExploredLength} of {/ExploredLength})"/>
 								</OverflowToolbar>
 								<List
 									growing="true"

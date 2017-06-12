@@ -8,7 +8,8 @@
 	<ObjectPageLayout
 			id="ObjectPageLayout"
 			useIconTabBar="true"
-			selectedSection="samples">
+			selectedSection="samples"
+			upperCaseAnchorBar="false">
 		<headerTitle>
 			<ObjectPageHeader
 					id="entityHeader"
