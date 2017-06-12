@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 	 * @constructor
 	 * @public
 	 * @since 1.12
+	 * @deprecated As of version 1.50, use {@link sap.m.GenericTile} instead
 	 * @alias sap.m.StandardTile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
