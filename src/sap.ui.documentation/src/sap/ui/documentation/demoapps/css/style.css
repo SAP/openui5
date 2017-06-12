@@ -32,12 +32,10 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoA
 
 /* shrink image to 200px height on landscape phone mode */
 .phoneHeaderImageLandscape {
-	max-height: 12.5rem;
 	object-fit: cover;
 }
 
 .phoneHeaderImageDesktop {
-	max-height: 21.875rem;
 	object-fit: cover;
 }
 

@@ -269,6 +269,14 @@ sap.ui.define([
 		 */
 		_handleError: function (sError) {
 			MessageBox.error(sError);
+		},
+
+		/**
+		 * Handles landing image load event and makes landing image headline visible
+		 * when the image has loaded.
+		 */
+		handleLandingImageLoad: function () {
+			this.getView().byId("landingImageHeadline").setVisible(true);
 		}
 	});
 });

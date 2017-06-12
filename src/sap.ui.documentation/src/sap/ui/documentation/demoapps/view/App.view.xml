@@ -16,19 +16,27 @@
 					background="Light">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
-								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+								class="sapUiDemokitLandingImageCell sapUiNoContentPadding welcomeImageCell">
 							<Image
 									id="phoneImage"
 									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_S_cropped.jpg"
 									width="100%"
+									class="welcomeImage"
+									load="handleLandingImageLoad"
+									visible="{device>/system/phone}"
 									densityAware="false"/>
 							<Image
 									id="desktopImage"
-									class="desktopImage"
+									class="desktopImage welcomeImage"
 									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_M_and_L_cropped.jpg"
+									densityAware="false"
+									load="handleLandingImageLoad"
+									visible="{=!${device>/system/phone}}"
 									width="100%"/>
 							<l:Grid
+									id="landingImageHeadline"
 									width="100%"
+									visible="false"
 									class="headerGrid"
 									hSpacing="0"
 									defaultSpan="L6 M6 S12">
@@ -45,6 +53,8 @@
 								<Image
 										src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"
 										densityAware="false"
+										class="sapUiHideOnPhone"
+										visible="{=!${device>/system/phone}}"
 										width="100%"/>
 							</l:Grid>
 						</l:BlockLayoutCell>

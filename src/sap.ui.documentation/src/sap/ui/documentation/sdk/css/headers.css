@@ -34,7 +34,6 @@
 /*SMALL*/
 @media only screen and (max-width: 64rem) {
 	.sapUiDemokit .welcomeImage {
-		min-height: 150px;
 		object-fit: cover;
 	}
 
@@ -236,5 +235,41 @@
 		top: 6.875rem;
 		font-size: 2rem;
 		padding-left: 3rem;
+	}
+}
+
+/* Landing pages aspect ratio */
+html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .sapUiDemokitLandingImageCell:not(.welcomeImageCell) {
+	padding-bottom: 24.6%;
+}
+html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
+	position: absolute;
+	max-height: 50%;
+}
+
+/* Special case with initial page having different aspect ratio according to screen size */
+@media (max-width: 64rem) {
+	.sapUiDemokit .welcomeImageCell {
+		/* Aspect ratio on a smaller display differs */
+		padding-bottom: 34%;
+	}
+	.sapUiDemokit .welcomeImage {
+		position: absolute;
+		height: 100%;
+	}
+}
+@media (max-width: 64rem) and (orientation: portrait) {
+	.sapUiDemokit .welcomeImageCell {
+		/* Aspect ratio on a landscape mode differs */
+		padding-bottom: 40%;
+	}
+}
+@media (min-width: 64rem) {
+	.sapUiDemokit .welcomeImageCell {
+		/* Keeping aspect ratio according to the image set */
+		padding-bottom: 19.5%;
+	}
+	.sapUiDemokit .welcomeImage {
+		position: absolute;
 	}
 }
