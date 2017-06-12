@@ -115,7 +115,7 @@
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 			oReq.send();
 			// assertions
-			assert.strictEqual(spy.args[0][1].length, 608, "header length is compliant - 304 bytes when decoded");
+			assert.ok((spy.args[0][1].length === 608)||(spy.args[0][1].length === 460), "SAP PP header length "+ Math.floor(spy.args[0][1].length/2) +" is compliant");
 			jQuery.sap.passport.setActive(false);
 			spy.restore();
 		});
