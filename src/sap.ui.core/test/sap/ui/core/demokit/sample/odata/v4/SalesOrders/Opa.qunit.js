@@ -246,11 +246,11 @@ sap.ui.require([
 				controlType : "sap.m.Text",
 				// sales order IDs are in controls with ID "SalesOrders_ID"
 				id : /--SalesOrders_ID-/,
-				success : function (aControls) {
-					var aSalesOrderIds = aControls.map(function (oControl) {
-							return oControl.getText();
+				success : function () {
+					var aSalesOrderIds = sap.ui.getCore().byId(sViewName).byId("SalesOrders")
+							.getItems().map(function (oItem) {
+								return oItem.getCells()[0].getText();
 						});
-
 					Opa5.assert.deepEqual(aSalesOrderIds, aExpectedSalesOrderIds, sMessage);
 				}
 			});
