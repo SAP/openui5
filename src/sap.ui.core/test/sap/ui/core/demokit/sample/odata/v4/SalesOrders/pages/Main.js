@@ -441,12 +441,13 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 				},
 				selectFirstSalesOrder : function () {
 					return this.waitFor({
-						controlType : "sap.m.Text",
-						id : /--SalesOrders_ID-/,
-						success : function (aControls) {
-							aControls[0].$().tap();
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							var oControl = oTable.getItems()[0].getCells()[0];
+							oControl.$().tap();
 							Opa5.assert.ok(true, "First Sales Order selected: " +
-								aControls[0].getText());
+								oControl.getText());
 						},
 						viewName : sViewName
 					});
