@@ -97,6 +97,19 @@
 	white-space: pre-line;
 }
 
+.sapUiDemoIconExplorer .wrappingListItem.sapMLIB {
+	display: inline-block;
+	border-bottom: 0;
+}
+
+.sapUiDemoIconExplorer .wrappingListItem.sapMLIB:focus {
+	outline-offset: inherit;
+}
+
+.sapUiDemoIconExplorer .wrappingList.sapMList {
+	white-space: normal;
+}
+
 html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
 .sapUiDemoIconExplorer .gridLayoutCell,
 .sapUiDemoIconExplorer .visualLayoutCell {
