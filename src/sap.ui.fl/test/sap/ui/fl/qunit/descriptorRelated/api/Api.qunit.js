@@ -264,6 +264,28 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_app_removeAllInboundsExceptOne", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
+			"inboundId" : "a.id"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne");
+		});
+	});
+
+	QUnit.test("create_app_removeAllInboundsExceptOne failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
+				"inbounds" : "a.id"
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
+				"inboundId" : {}
+			});
+		});
+	});
+
 	QUnit.test("create_app_changeInbound", function(assert) {
 		return DescriptorInlineChangeFactory.create_app_changeInbound({
 			"inboundId": "a.id",
