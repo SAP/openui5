@@ -148,6 +148,12 @@ code {
 	margin-left: 0.25rem;
 }
 
+.sapUiDocumentationHeaderNavLinks .sapMText {
+	line-height: 1.5rem;
+	margin-left: 0.25rem;
+	color: #666666;
+}
+
 .sapUiDocumentationHeaderNavLinks .sapMLabel {
 	line-height: 1.5rem;
 }
