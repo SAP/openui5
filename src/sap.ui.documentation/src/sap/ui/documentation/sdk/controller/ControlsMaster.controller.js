@@ -109,13 +109,15 @@ sap.ui.define([
 				oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
 
 				this.LIST_SCROLL_DURATION = 0; // ms
-				this._getList().addEventDelegate({
-					onAfterRendering : function () {
-						var oSelectedItem = this._getList().getSelectedItem();
+				this._getPage().addEventDelegate({
+					onAfterRendering : function() {
+						jQuery.sap.delayedCall(0, this, function() {
+							var oSelectedItem = this._getList().getSelectedItem();
 
-						if (oSelectedItem) {
-							this._scrollToListItem(oSelectedItem);
-						}
+							if (oSelectedItem) {
+								this._scrollToListItem(oSelectedItem);
+							}
+						});
 					}.bind(this)
 				});
 
