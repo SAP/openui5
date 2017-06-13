@@ -354,8 +354,9 @@ sap.ui.define([
 		return this._oEditor;
 	};
 
-	CodeEditor.prototype.destroy = function () {
-		this._oEditor.destroy();
+	CodeEditor.prototype.destroy = function (bSuppressInvalidate) {
+		this._oEditor.destroy(bSuppressInvalidate);
+		Control.prototype.destroy.call(this, bSuppressInvalidate);
 	};
 
 	return CodeEditor;
