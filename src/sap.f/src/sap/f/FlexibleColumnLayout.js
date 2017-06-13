@@ -644,8 +644,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the content of a column by flushing its container div only
-	 * @param sColumn
-	 * @param oControl
+	 * @param {string} sColumn
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._flushColumnContent = function (sColumn) {
@@ -653,7 +652,7 @@ sap.ui.define([
 			oRm = sap.ui.getCore().createRenderManager();
 
 		oRm.renderControl(oControl);
-		oRm.flush(this._$columns[sColumn][0], undefined, true);
+		oRm.flush(this._$columns[sColumn].find(".sapFFCLColumnContent")[0], undefined, true);
 		oRm.destroy();
 	};
 
