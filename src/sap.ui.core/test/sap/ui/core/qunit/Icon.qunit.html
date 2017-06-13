@@ -118,6 +118,30 @@
 				oIcon.destroy();
 			});
 
+			QUnit.test("Set mark on the tap/click event", function(assert) {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("manager")
+				});
+
+				var fnClick = oIcon.ontap ? oIcon.ontap : oIcon.onclick;
+				var bMarked = false;
+
+				var oEvent = {
+					setMarked: function() {
+						bMarked = true;
+					}
+				};
+
+				fnClick.apply(oIcon, [oEvent]);
+				assert.ok(!bMarked, "The event should not be marked when no press handler is attached");
+
+				oIcon.attachPress(function() {});
+				fnClick.apply(oIcon, [oEvent]);
+				assert.ok(bMarked, "The event should be marked");
+
+				oIcon.destroy();
+			});
+
 			QUnit.test("Set color with values in sap.ui.core.IconColor enum", function(assert) {
 				var oIcon = new sap.ui.core.Icon({
 					src: sap.ui.core.IconPool.getIconURI("manager"),
