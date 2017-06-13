@@ -143,3 +143,12 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
 	font-size: 0.75rem;
 }
+
+html[data-sap-ui-browser*="sf"] {
+	.sapMTokenText {
+		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenSize);
+	}
+	.sapUiSizeCompact  .sapMTokenText {
+		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenCompactSize);
+	}
+}
