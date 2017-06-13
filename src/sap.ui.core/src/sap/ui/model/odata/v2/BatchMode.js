@@ -8,10 +8,9 @@ sap.ui.define(function() {
 
 
 	/**
-	* @class
 	* Different modes for retrieving the count of collections
 	*
-	* @static
+	* @enum {string}
 	* @public
 	* @alias sap.ui.model.odata.BatchMode
 	*/

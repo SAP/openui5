@@ -33,7 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 *
 	 * @param {object} oData either the URL where to load the JSON from or a JS object
 	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.json.JSONModel
 	 */

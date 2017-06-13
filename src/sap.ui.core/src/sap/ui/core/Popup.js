@@ -55,7 +55,6 @@ sap.ui.define([
 	 * @param {boolean} [bShadow=true] whether the popup should be have a visual shadow underneath (shadow appearance depends on active theme and browser support)
 	 * @param {boolean} [bAutoClose=false] whether the popup should automatically close when the focus moves out of the popup
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.Popup
 	 * @extends sap.ui.base.ManagedObject

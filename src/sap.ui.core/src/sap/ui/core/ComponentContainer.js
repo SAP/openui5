@@ -17,12 +17,11 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class
-	 * Component Container
+	 * @class Container that embeds a UIComponent in a control tree.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.ComponentContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -124,7 +123,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 					/**
 					 * Reference to the created component instance
 					 */
-					component : "sap.ui.core.Component"
+					component : { type: "sap.ui.core.UIComponent" }
 				}
 			}
 		},

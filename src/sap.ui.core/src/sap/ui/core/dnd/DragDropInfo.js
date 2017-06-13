@@ -20,7 +20,6 @@ sap.ui.define(["./DragDropBase", "../Element"],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.52
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

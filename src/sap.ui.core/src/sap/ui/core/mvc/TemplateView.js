@@ -24,7 +24,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.core.mvc.TemplateView

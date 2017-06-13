@@ -56,10 +56,12 @@ sap.ui.define(['jquery.sap.global', './WebSocket'],
 	 */
 
 	/**
-	 * @class Protocol versions.<br>
+	 * Protocol versions.
+	 *
 	 * One (or more) of these have to be selected to create an SapPcpWebSocket connection
 	 * (or no protocol at all).
 	 *
+	 * @enum {string}
 	 * @public
 	 * @static
 	 */

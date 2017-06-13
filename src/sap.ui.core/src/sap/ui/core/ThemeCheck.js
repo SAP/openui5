@@ -21,7 +21,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 	 * @extends sap.ui.base.Object
 	 * @since 1.10.0
 	 * @author SAP SE
-	 * @constructor
 	 * @private
 	 * @alias sap.ui.core.ThemeCheck
 	 */

@@ -1261,7 +1261,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Returns the number of currently selectable nodes (with respect to the current expand/collapse state).
-		 * @returns
+		 * @returns {int} Number of currently selectable nodes
 		 */
 		TreeBindingAdapter.prototype._getSelectableNodesCount = function (oNode) {
 			if (oNode) {

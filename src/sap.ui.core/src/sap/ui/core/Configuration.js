@@ -43,7 +43,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Frank Weigel (Martin Schaus)
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.Configuration
 	 */

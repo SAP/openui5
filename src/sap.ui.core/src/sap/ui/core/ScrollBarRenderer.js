@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 
 	/**
-	 * @class ScrollBar renderer.
-	 * @static
+	 * ScrollBar renderer.
+	 * @namespace
 	 * @alias sap.ui.core.ScrollBarRenderer
 	 */
 	var ScrollBarRenderer = {

@@ -28,44 +28,85 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @param {string|object} serviceUrl Base URI of the service to request data from;
-	 * additional URL parameters appended here will be appended to every request.
-	 * If you pass an object it will be interpreted as the parameter object (second parameter).
-	 * Then <code>mParameters.serviceUrl</code> is a required parameter.
-	 * @param {object} [mParameters] Map which contains the following parameter properties:
-	 * @param {boolean} [mParameters.json=true] If set true request payloads will be JSON, XML for <code>false</code>
+	 * @param {string|object} serviceUrl
+	 *            Base URI of the service to request data from; additional URL parameters appended here
+	 *            will be appended to every request. If you pass an object it will be interpreted as
+	 *            the parameter object (second parameter). Then <code>mParameters.serviceUrl</code>
+	 *            becomes a mandatory parameter.
+	 * @param {object} [mParameters]
+	 *            Map which contains the following parameter properties:
+	 * @param {object} [mParameters.serviceUrl]
+	 *            Base URI of the service to request data from; this property is mandatory when the
+	 *            first method parameter <code>serviceUrl</code> is omitted, but ignored otherwise
+	 * @param {boolean} [mParameters.json=true]
+	 *            If set to <code>true</code>, request payloads will be JSON, XML for <code>false</code>
 	 * @param {string} [mParameters.user] User for the service
 	 * @param {string} [mParameters.password] Password for service
-	 * @param {map} [mParameters.headers] Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
+	 * @param {map} [mParameters.headers]
+	 *            Map of custom headers (name/value pairs) like {"myHeader":"myHeaderValue",...}
 	 * @param {boolean} [mParameters.tokenHandling=true] Enable/disable XCSRF-Token handling
-	 * @param {boolean} [mParameters.withCredentials] Experimental - <code>true</code> when user credentials are to be included in a cross-origin request. Please note that this works only if all requests are asynchronous.
-	 * @param [mParameters.maxDataServiceVersion='2.0'] Please use the following string format e.g. '2.0' or '3.0'.
-	 * 									OData version supported by the ODataModel: '2.0',
-	 * @param {boolean} [mParameters.useBatch=true] Whether all requests should be sent in batch requests
-	 * @param {boolean} [mParameters.refreshAfterChange=true] Enable/disable automatic refresh after change operations
-	 * @param  {string|string[]} [mParameters.annotationURI] The URL (or an array of URLs) from which the annotation metadata should be loaded,
-	 * @param {boolean} [mParameters.loadAnnotationsJoined] Whether the <code>metadataLoaded</code> event will be fired only after all annotations have been loaded as well
-	 * @param {map} [mParameters.serviceUrlParams] Map of URL parameters (name/value pairs) - these parameters will be attached to all requests
-	 * @param {map} [mParameters.metadataUrlParams] Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
-	 * @param {string} [mParameters.defaultBindingMode=OneWay] Sets the default binding mode for the model
-	 * @param {string} [mParameters.defaultCountMode=sap.ui.model.odata.CountMode.Request] Sets the default count mode for the model
-	 * @param {string} [mParameters.defaultOperationMode=sap.ui.model.odata.OperationMode.Default] Sets the default operation mode for the model
-	 * @param {string} [mParameters.defaultUpdateMethod=sap.ui.model.odata.UpdateMethod.Merge] Default update method which is used for all update requests
-	 * @param {map} [mParameters.metadataNamespaces] Map of namespaces (name => URI) used for parsing the service metadata
-	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
-	 * @param {boolean} [mParameters.disableHeadRequestForToken=false] Set this flag to <code>true</code> if your service does not support <code>HEAD</code> requests for fetching the service document (and thus the CSRF-token) to avoid sending a <code>HEAD</code>-request before falling back to <code>GET</code>
-	 * @param {boolean} [mParameters.sequentializeRequests=false] Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
-	 * @param {boolean} [mParameters.disableSoftStateHeader=false] Set this flag to <code>true</code> if you don´t want to start a new soft state session with context ID (<code>SID</code>) through header mechanism. This is useful if you want to share an <code>SID</code> between different browser windows
-	 * @param {string[]} [mParameters.bindableResponseHeaders=null] Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
+	 * @param {boolean} [mParameters.withCredentials]
+	 *            Experimental - <code>true</code> when user credentials are to be included in a
+	 *            cross-origin reques; please note that this only works if all requests are asynchronous
+	 * @param [mParameters.maxDataServiceVersion='2.0']
+	 *            Please use the following string format e.g. '2.0' or '3.0'.
+	 *            OData version supported by the ODataModel: '2.0'
+	 * @param {boolean} [mParameters.useBatch=true]
+	 *            Whether all requests should be sent in batch requests
+	 * @param {boolean} [mParameters.refreshAfterChange=true]
+	 *            Enable/disable automatic refresh after change operations
+	 * @param {string|string[]} [mParameters.annotationURI]
+	 *            The URL (or an array of URLs) from which the annotation metadata should be loaded
+	 * @param {boolean} [mParameters.loadAnnotationsJoined]
+	 *            Whether the <code>metadataLoaded</code> event will be fired only after all annotations have
+	 *            been loaded as well
+	 * @param {map} [mParameters.serviceUrlParams]
+	 *            Map of URL parameters (name/value pairs) - these parameters will be attached to all requests
+	 * @param {map} [mParameters.metadataUrlParams]
+	 *            Map of URL parameters for metadata requests - only attached to a <code>$metadata</code> request
+	 * @param {sap.ui.model.BindingMode} [mParameters.defaultBindingMode=OneWay]
+	 *            Sets the default binding mode for the model
+	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
+	 *            Sets the default count mode for the model
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
+	 *            Sets the default operation mode for the model
+	 * @param {sap.ui.model.odata.UpdateMethod} [mParameters.defaultUpdateMethod=Merge]
+	 *            Default update method which is used for all update requests
+	 * @param {Object<string,string>} [mParameters.metadataNamespaces]
+	 *            Map of namespace aliases (alias => URI) that can be used in metadata binding paths;
+	 *            each alias is mapped to a corresponding namespace URI; when an alias is used
+	 *            in a metadata binding path, it addresses a metadata extension that belongs to
+	 *            the corresponding namespace URI; if <code>metadataNamespaces</code> is not given,
+	 *            the following default mappings will be used:
+	 *            <ul>
+	 *            <li><code>"sap": "sap:"http://www.sap.com/Protocols/SAPData"</code></li>
+	 *            <li><code>  "m": "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"</code></li>
+	 *            <li><code>   "": "http://schemas.microsoft.com/ado/2007/06/edmx</code></li>
+	 *            </ul>
+	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing]
+	 *            Whether to skip the automated loading of annotations from the metadata document.
+	 *            Loading annotations from metadata does not have any effects (except the lost performance
+	 *            by invoking the parser) if there are not annotations inside the metadata document
+	 * @param {boolean} [mParameters.disableHeadRequestForToken=false]
+	 *            Set this flag to <code>true</code> if your service does not support <code>HEAD</code>
+	 *            requests for fetching the service document (and thus the CSRF-token) to avoid sending
+	 *            a <code>HEAD</code>-request before falling back to <code>GET</code>
+	 * @param {boolean} [mParameters.sequentializeRequests=false]
+	 *            Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
+	 * @param {boolean} [mParameters.disableSoftStateHeader=false]
+	 *            Set this flag to <code>true</code> if you don´t want to start a new soft state session
+	 *            with context ID (<code>SID</code>) through header mechanism. This is useful if you want
+	 *            to share an <code>SID</code> between different browser windows
+	 * @param {string[]} [mParameters.bindableResponseHeaders=null]
+	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
 	 *
 	 * @class
-	 * Model implementation for oData format
+	 * Model implementation based on the OData protocol.
 	 *
 	 *
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel
 	 * @extends sap.ui.model.Model

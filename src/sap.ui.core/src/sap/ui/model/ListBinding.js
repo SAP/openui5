@@ -10,18 +10,21 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 
 
 	/**
-	 * Constructor for ListBinding
+	 * Constructor for ListBinding.
 	 *
 	 * @class
-	 * The ListBinding is a specific binding for lists in the model, which can be used
+	 * ListBinding is a specific binding for lists in the model, which can be used
 	 * to populate Tables or ItemLists.
 	 *
-	 * @param {sap.ui.model.Model} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {array} [aSorters] initial sort order (can be either a sorter or an array of sorters)
-	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
-	 * @param {object} [mParameters]
+	 * @param {sap.ui.model.Model} oModel Model instance that this binding belongs to
+	 * @param {string} sPath Binding path for this binding;
+	 *   a relative path will be resolved relative to a given context
+	 * @param {sap.ui.model.Context} oContext Context to be used to resolve a relative path
+	 * @param {array} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {array} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {object} [mParameters] Additional, implementation-specific parameters that should be used
+	 *   by the new list binding; this base class doesn't define any parameters, check the API reference
+	 *   for the concrete model implementations to learn about their supported parameters (if any)
 	 *
 	 * @public
 	 * @alias sap.ui.model.ListBinding
@@ -75,14 +78,35 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 */
 
 	/**
-	 * Filters the list according to the filter definitions
+	 * Applies a new set of filters to the list represented by this binding.
+	 *
+	 * Depending on the nature of the model (client or server), the operation might be
+	 * executed locally or on a server and it might execute asynchronously.
+	 *
+	 * <h3>Application and Control Filters</h3>
+	 * Each list binding maintains two separate lists of filters, one for filters defined by the
+	 * control that owns the binding and another list for filters that an application can define
+	 * in addition. When executing the filter operation, both sets of filters are combined.
+	 *
+	 * By using the second parameter <code>sFilterType</code> of method <code>filter</code>,
+	 * the caller can control which set of filters is modified. If no type is given, then the
+	 * behavior depends on the model implementation and should be documented in the API reference
+	 * for that model.
+	 *
+	 * <h3>Auto-Grouping of Filters<h3>
+	 * Filters are first grouped according to their binding path.
+	 * All filters belonging to the same group are ORed and after that the
+	 * results of all groups are ANDed.
+	 * Usually this means, all filters applied to a single table column
+	 * are ORed, while filters on different table columns are ANDed.
+	 *
+	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
+	 *  be adjusted; if no type is given, the behavior depends on the model implementation
+	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
 	 *
 	 * @function
 	 * @name sap.ui.model.ListBinding.prototype.filter
-	 * @param {object[]} aFilters Array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
-	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
-	 *
 	 * @public
 	 */
 

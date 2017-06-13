@@ -20,7 +20,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View', 'sap/ui/bas
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.mvc.JSView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
