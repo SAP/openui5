@@ -1,3 +1,5 @@
+/* global QUnit sinon */
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 sap.ui.define([
@@ -65,15 +67,15 @@ function(
 			});
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
+
+			this.fnApplyChangeSpy = sinon.spy();
+			this.fnCompleteChangeContentSpy = sinon.spy();
+
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
 					"combineStuff" : {
-						completeChangeContent: function() {
-							assert.ok(true, "completeChangeContent was executed");
-						},
-						applyChange: function() {
-							assert.ok(true, "applyChange was executed");
-						}
+						completeChangeContent: this.fnCompleteChangeContentSpy,
+						applyChange: this.fnApplyChangeSpy
 					}
 				}
 			});
@@ -85,8 +87,6 @@ function(
 	});
 
 	QUnit.test("when calling command factory for combine ...", function(assert) {
-		assert.expect(3);
-
 		var oOverlay = new ElementOverlay();
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getRelevantContainer", function() {
@@ -118,6 +118,9 @@ function(
 
 		assert.ok(oCombineCommand, "combine command exists for element");
 		oCombineCommand.execute();
+
+		assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 	});
 
 

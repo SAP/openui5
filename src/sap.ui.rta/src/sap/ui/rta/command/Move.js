@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 
 		this.getMovedElements().forEach(function(mMovedElement) {
 			mSpecificInfo.movedElements.push({
-				id : mMovedElement.id || mMovedElement.element.getId(),
+				id : mMovedElement.id || (mMovedElement.element && mMovedElement.element.getId()),
 				sourceIndex : bIsUndo ? mMovedElement.targetIndex : mMovedElement.sourceIndex,
 				targetIndex : bIsUndo ? mMovedElement.sourceIndex : mMovedElement.targetIndex
 			});

@@ -17,13 +17,17 @@
 
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AddElementsDialog.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AdditionalElementsPlugin.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/AddODataProperty.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Move.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Plugin.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/toolbar/Base.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/ControlTreeModifier.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/Command.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Remove.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Remove.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/EasyRemove.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/EasyAdd.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Rename.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Rename.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/CreateContainer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/CreateContainer.qunit.html");
@@ -38,12 +42,10 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/LREPSerializer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/PopupManager.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Selection.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/AddODataProperty.qunit.html");
 
 				// these qunit tests require comp library
 				try {
 					sap.ui.getCore().loadLibrary("sap.ui.comp");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/Command.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AdditionalElementsAnalyzer.qunit.html");
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RuntimeAuthoring.qunit.html?mockserver=true");
 					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/ContextMenu.qunit.html?mockserver=true");
