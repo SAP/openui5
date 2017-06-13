@@ -72,7 +72,6 @@
 												id="categorySelection"
 												items="{/groups}"
 												class=" sapUiTinyMarginEnd"
-												placeholder="{i18n>overviewSelectCategoryPlaceholder}"
 												tooltip="{i18n>overviewSelectCategoryTooltip}"
 												change="onSelectCategory"
 												visible="{= ${device>/system/phone} ? false : true}"
