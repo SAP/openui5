@@ -2,28 +2,35 @@
 
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
+// Restrict coverage to sap.ui.rta library
 if (window.blanket){
 	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
 }
 
-jQuery.sap.require("sap.ui.rta.ControlTreeModifier");
-jQuery.sap.require("sap.m.Button");
-jQuery.sap.require("sap.ui.layout.HorizontalLayout");
-jQuery.sap.require("sap.ui.core.TooltipBase");
-
-var RtaControlTreeModifier = sap.ui.rta.ControlTreeModifier;
-
-(function() {
+sap.ui.define([
+	'sap/ui/rta/ControlTreeModifier',
+	'sap/m/Button',
+	'sap/ui/layout/HorizontalLayout',
+	'sap/ui/core/TooltipBase',
+	'sap/ui/model/json/JSONModel'
+],
+function(
+	RtaControlTreeModifier,
+	Button,
+	HorizontalLayout,
+	TooltipBase,
+	JSONModel
+){
 	"use strict";
 
 	QUnit.module("Given a button is instantiated...", {
 
 		beforeEach : function(assert) {
-			this.oModel = new sap.ui.model.json.JSONModel({
+			this.oModel = new JSONModel({
 				text1 : "text1",
 				text2 : "text2"
 			});
-			this.oButton = new sap.m.Button();
+			this.oButton = new Button();
 		},
 		afterEach : function(assert) {
 			this.oButton.destroy();
@@ -108,7 +115,7 @@ var RtaControlTreeModifier = sap.ui.rta.ControlTreeModifier;
 	});
 
 	QUnit.test("when the button's property binding is set with an expression and an undo is executed...", function(assert){
-		this.oButton = new sap.m.Button({text : "{= ${/Items}.length > 0}"});
+		this.oButton = new Button({text : "{= ${/Items}.length > 0}"});
 		var mBindingInfo = this.oButton.getBindingInfo("text");
 		RtaControlTreeModifier.startRecordingUndo();
 		RtaControlTreeModifier.setPropertyBinding(this.oButton, "text", "/newBinding");
@@ -257,8 +264,8 @@ var RtaControlTreeModifier = sap.ui.rta.ControlTreeModifier;
 	QUnit.module("Given an HorizontalLayout with two buttons...", {
 
 		beforeEach : function(assert) {
-			this.oHorizontalLayout = new sap.ui.layout.HorizontalLayout(
-				{content : [new sap.m.Button("firstButton"), new sap.m.Button("secondButton")]}
+			this.oHorizontalLayout = new HorizontalLayout(
+				{content : [new Button("firstButton"), new Button("secondButton")]}
 			);
 		},
 		afterEach : function(assert) {
@@ -267,7 +274,7 @@ var RtaControlTreeModifier = sap.ui.rta.ControlTreeModifier;
 	});
 
 	QUnit.test("when insertAggregation is called to add a button in the middle of the layout...", function(assert){
-		var oButton = new sap.m.Button("AddedMiddle");
+		var oButton = new Button("AddedMiddle");
 		RtaControlTreeModifier.startRecordingUndo();
 		RtaControlTreeModifier.insertAggregation(this.oHorizontalLayout, "content", oButton, 1);
 		this.aUndoStack = RtaControlTreeModifier.stopRecordingUndo();
@@ -306,9 +313,9 @@ var RtaControlTreeModifier = sap.ui.rta.ControlTreeModifier;
 
 	QUnit.module("Given a button and a tooltip...", {
 		beforeEach : function(assert) {
-			this.oButton = new sap.m.Button("TooltipButton");
-			this.oToolTip = new sap.ui.core.TooltipBase("ToolTip", { text : "first text" });
-			this.oNewToolTip = new sap.ui.core.TooltipBase("NewToolTip", { text : "new text"});
+			this.oButton = new Button("TooltipButton");
+			this.oToolTip = new TooltipBase("ToolTip", { text : "first text" });
+			this.oNewToolTip = new TooltipBase("NewToolTip", { text : "new text"});
 		},
 		afterEach : function(assert) {
 			this.oButton.destroy();
@@ -346,4 +353,4 @@ var RtaControlTreeModifier = sap.ui.rta.ControlTreeModifier;
 		assert.strictEqual(this.oButton.getAggregation("tooltip").getText(), "first text", "then after the undo the tooltip is restored");
 	});
 
-})();
+});
