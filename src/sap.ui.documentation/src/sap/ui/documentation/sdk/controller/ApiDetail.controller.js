@@ -252,7 +252,7 @@ sap.ui.define([
 
 			_scrollContentToTop: function () {
 				if (this._objectPage && this._objectPage.$().length > 0   ) {
-					this._objectPage.getScrollDelegate().scrollTo(0, 1);
+					this._objectPage.getScrollDelegate().scrollTo(0, 0);
 				}
 			},
 
