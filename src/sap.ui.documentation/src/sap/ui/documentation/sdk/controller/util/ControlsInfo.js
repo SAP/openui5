@@ -7,24 +7,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 	function(jQuery, LibraryInfo, library) {
 		"use strict";
 
+		var oPromise;
+
 		var ControlsInfo = {
 
-			listeners: [],
+			loadData: function() {
+				if (!oPromise) {
 
-			init: function () {
-
-				var that = this;
-
-				library._loadAllLibInfo(
-					"", "_getDocuIndex",
-					function (aLibs, oDocIndicies) {
-						ControlsInfo._getIndices(aLibs, oDocIndicies);
-
-						var listeners = that.listeners;
-						for (var i = 0; i < listeners.length; i++) {
-							listeners[i]();
-						}
+					oPromise = new Promise(function(resolve, reject) {
+						library._loadAllLibInfo(
+							"", "_getDocuIndex",
+							function (aLibs, oDocIndicies) {
+								var oData = ControlsInfo._getIndices(aLibs, oDocIndicies);
+								resolve(oData);
+							});
 					});
+				}
+				return oPromise;
 			},
 
 			_getIndices: function (aLibs, oDocIndicies) {
@@ -307,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 				data.libComponentInfos = oLibComponents;
 
 				data.groups = this.getGroups(data.entities);
-				ControlsInfo.data = data;
+				return data;
 			},
 
 			findGroup: function (groups, name) {

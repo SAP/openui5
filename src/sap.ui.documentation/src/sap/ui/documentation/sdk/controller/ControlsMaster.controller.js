@@ -65,12 +65,12 @@ sap.ui.define([
 			onInit : function () {
 				var oRouter = this.getRouter(),
 					oEntityModel, oDeviceModel, oFilterModel,
-					fnOnDataReady = function () {
+					fnOnDataReady = function (oControlsData) {
 						this._oView.getModel().setData({
-							entityCount : ControlsInfo.data.entityCount,
-							entities : ControlsInfo.data.entities
+							entityCount : oControlsData.entityCount,
+							entities : oControlsData.entities
 						});
-						this.getModel("filter").setData(ControlsInfo.data.filter);
+						this.getModel("filter").setData(oControlsData.filter);
 						this._toggleListItem(this._getItemToSelect(), true);
 					}.bind(this);
 
@@ -80,8 +80,7 @@ sap.ui.define([
 				// Cache view reference
 				this._oView = this.getView();
 
-				ControlsInfo.listeners.push(fnOnDataReady);
-				ControlsInfo.init();
+				ControlsInfo.loadData().then(fnOnDataReady);
 
 				oEntityModel = new JSONModel();
 				oEntityModel.setSizeLimit(100000);
