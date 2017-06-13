@@ -129,6 +129,7 @@ function testDirectUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin)
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
+		var oErrorLogSpy = this.spy(jQuery.sap.log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -148,9 +149,11 @@ function testDirectUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin)
 
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, true);
+
+		sinon.assert.notCalled(oErrorLogSpy);
 	});
 }
-function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
+function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, aErrorMessageArgs) {
 	test(sName, function() {
 
 		// arrangements
@@ -158,6 +161,7 @@ function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
+		var oErrorLogSpy = this.spy(jQuery.sap.log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -180,9 +184,12 @@ function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 
 		ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
 		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
+
+		sinon.assert.calledOnce(oErrorLogSpy);
+		sinon.assert.calledWithExactly(oErrorLogSpy, aErrorMessageArgs[0], aErrorMessageArgs[1], aErrorMessageArgs[2]);
 	});
 }
-function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
+function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, aErrorMessageArgs) {
 	test(sName, function() {
 
 		// arrangements
@@ -190,6 +197,7 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
+		var oErrorLogSpy = this.spy(jQuery.sap.log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -220,6 +228,9 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 
 		ok(jQuery.contains(document.body, this.oFrameOptions._lockDiv), 'Block layer should be part of the DOM');
 		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
+
+		sinon.assert.calledOnce(oErrorLogSpy);
+		sinon.assert.calledWithExactly(oErrorLogSpy, aErrorMessageArgs[0], aErrorMessageArgs[1], aErrorMessageArgs[2]);
 	});
 }
 function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
@@ -230,6 +241,7 @@ function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
+		var oErrorLogSpy = this.spy(jQuery.sap.log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -258,9 +270,11 @@ function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, true);
+
+		sinon.assert.notCalled(oErrorLogSpy);
 	});
 }
-function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, bActive, bFraming, bAllow) {
+function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, bActive, bFraming, bAllow, aErrorMessageArgs) {
 	test(sName, function() {
 
 		// arrangements
@@ -268,6 +282,7 @@ function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOri
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
+		var oErrorLogSpy = this.spy(jQuery.sap.log, "error");
 
 		var oServer = this.sandbox.useFakeServer(),
 			oResponse = {
@@ -346,6 +361,13 @@ function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOri
 		sinon.assert.calledOnce(fnCallback);
 		sinon.assert.calledWith(fnCallback, bAllow);
 
+		if (aErrorMessageArgs) {
+			sinon.assert.calledOnce(oErrorLogSpy);
+			sinon.assert.calledWithExactly(oErrorLogSpy, aErrorMessageArgs[0], aErrorMessageArgs[1], aErrorMessageArgs[2]);
+		} else {
+			sinon.assert.notCalled(oErrorLogSpy);
+		}
+
 	});
 }
 
@@ -370,19 +392,19 @@ sap.ui.test.qunit.delayTestStart();
 // SAFE_DELAYED: has the postmessage script, but sends parent-unlocked with one second delay
 // NO_HANDLER: no postmessage handler is running in the parent
 
-//                    test name,                                  environment,     parent mode,    frame option
+//                    test name,                                  environment,     parent mode,    frame option,  same origin,  jQuery.sap.log.error message
 
 module("mode: deny", { teardown: teardown });
-testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'deny');
-testDirectLock(      "same origin",                               'SAME_ORIGIN',   'SAFE',         'deny');
-testDirectLock(      "different origin",                          'DIFF_ORIGIN',   'SAFE',         'deny');
+testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'deny',        true);
+testDirectLock(      "same origin",                               'SAME_ORIGIN',   'SAFE',         'deny',        true,         ["Embedding blocked because configuration mode is set to 'DENY'", "", "jQuery.sap.FrameOptions"]);
+testDirectLock(      "different origin",                          'DIFF_ORIGIN',   'SAFE',         'deny',        true,         ["Embedding blocked because configuration mode is set to 'DENY'", "", "jQuery.sap.FrameOptions"]);
 
 module("mode: allow", { teardown: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'allow');
 testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'allow');
 testDirectUnlock(    "different origin",                          'DIFF_ORIGIN',   'SAFE',         'allow');
 
-//                    test name,                                  environment,     parent mode,    frame option,  same origin,
+//                    test name,                                  environment,     parent mode,    frame option,  same origin,  jQuery.sap.log.error message
 
 module("mode: trusted", { teardown: teardown });
 testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'trusted');
@@ -390,35 +412,35 @@ testDirectUnlock(    "same origin",                               'SAME_ORIGIN',
 testDirectUnlock(    "same origin, unsafe",                       'SAME_ORIGIN',   'UNSAFE',       'trusted');
 testDirectUnlock(    "same origin, no response",                  'SAME_ORIGIN',   'NO_RESPONSE',  'trusted');
 
-testPostMessageLock( "same origin not allowed",                   'SAME_ORIGIN',   'SAFE',         'trusted',     false);
-testPostMessageLock( "different origin",                          'DIFF_ORIGIN',   'SAFE',         'trusted');
+testPostMessageLock( "same origin not allowed",                   'SAME_ORIGIN',   'SAFE',         'trusted',     false,        ["Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "jQuery.sap.FrameOptions"]);
+testPostMessageLock( "different origin",                          'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         ["Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "jQuery.sap.FrameOptions"]);
 
 module("mode: trusted, whitelist", { teardown: teardown });
 testWhitelistUnlock( "same origin not allowed, whitelist",        'SAME_ORIGIN',   'SAFE',         'trusted',     false);
 testWhitelistUnlock( "different origin, whitelist",               'DIFF_ORIGIN',   'SAFE',         'trusted');
 
-//                   test name,                                   environment,     parent mode,    frame option,  same origin,  active,   framing,  allow
+//                   test name,                                   environment,     parent mode,    frame option,  same origin,  active,   framing,  allow,  jQuery.sap.log.error message
 
-module("mode: trusted, witelist service, parent safe", { teardown: teardown });
+module("mode: trusted, whitelist service, parent safe", { teardown: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
-testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false);
+testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false,  ["Embedding blocked because the whitelist service does not allow framing", "", "jQuery.sap.FrameOptions"]);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true);
 
-module("mode: trusted, witelist service, parent safe delayed", { teardown: teardown });
+module("mode: trusted, whitelist service, parent safe delayed", { teardown: teardown });
 testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);
 testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     true,     true);
-testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false);
+testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false,  ["Embedding blocked because the whitelist service does not allow framing", "", "jQuery.sap.FrameOptions"]);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         false,    true,     true);
 
-module("mode: trusted, witelist service, parent unsafe", { teardown: teardown });
-testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false);
-testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false);
+module("mode: trusted, whitelist service, parent unsafe", { teardown: teardown });
+testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false,  ["Reached timeout of 200ms waiting for the parent to be unlocked", "", "jQuery.sap.FrameOptions"]);
+testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false,  ["Reached timeout of 200ms waiting for the parent to be unlocked", "", "jQuery.sap.FrameOptions"]);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         false,    true,     true);
 
-module("mode: trusted, witelist service, parent no response", { teardown: teardown });
-testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false);
-testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false);
+module("mode: trusted, whitelist service, parent no response", { teardown: teardown });
+testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false,  ["Reached timeout of 200ms waiting for a response from parent window", "", "jQuery.sap.FrameOptions"]);
+testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false,  ["Reached timeout of 200ms waiting for a response from parent window", "", "jQuery.sap.FrameOptions"]);
 testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         false,    true,     true);
 
 
