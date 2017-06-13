@@ -45,16 +45,51 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 				aNewElementIds = oChangeDefinition.content.newElementIds.slice();
 
 			aMenuItems.forEach(function (oMenuItem, index) {
-				var sId = aNewElementIds[index],
-				    oButton = oModifier.createControl("sap.m.Button", mPropertyBag.appComponent, oView, sId);
+				var aMenuItemCustomData = oModifier.getAggregation(oMenuItem, "customData"),
+					aMenuItemDependents = oModifier.getAggregation(oMenuItem, "dependents"),
+					sMenuItemId = oModifier.getId(oMenuItem),
+					oButton, sSavedId;
 
-				oModifier.setProperty(oButton, "text", oModifier.getProperty(oMenuItem, "text"));
-				oModifier.setProperty(oButton, "icon",  oModifier.getProperty(oMenuItem, "icon"));
+				// getting the id of the button before the combine action
+				if (aMenuItemCustomData && aMenuItemCustomData.length > 0) {
+					var sCheckForId = sMenuItemId + "-originalButtonId";
+					aMenuItemCustomData.some(function(oData) {
+						if (oModifier.getId(oData) === sCheckForId) {
+							sSavedId = oModifier.getProperty(oData, "value");
+							return true;
+						}
+					});
+				}
 
-				oButton.attachPress(function() {
-					return oMenuItem.firePress();
-				});
+				// If there is id which corresponds to control from before the combine action
+				// we need to simply extract the button with the right Id
+				// from the dependents aggregation of the MenuItem
+				if (sSavedId && aMenuItemDependents.length > 0) {
+					aMenuItemDependents.some(function(oControl) {
+						if (sSavedId === oModifier.getId(oControl)) {
+							oButton = oControl;
+							return true;
+						}
+					});
 
+					// if such button exists - remove it from the dependents aggregation
+					// as it will be no longer dependent of the MenuItem.
+					if (oButton) {
+						oModifier.removeAggregation(oMenuItem, "dependents", oButton);
+					}
+				} else {
+					// Else - create new button
+					var sId = aNewElementIds[index];
+
+					oButton = oModifier.createControl("sap.m.Button", mPropertyBag.appComponent, oView, sId);
+
+					oModifier.setProperty(oButton, "text", oModifier.getProperty(oMenuItem, "text"));
+					oModifier.setProperty(oButton, "icon",  oModifier.getProperty(oMenuItem, "icon"));
+
+					oButton.attachPress(function(oEvent) {
+						return oMenuItem.firePress(oEvent);
+					});
+				}
 				oModifier.insertAggregation(oControl, oBarAggregation, oButton, iAggregationIndex + index);
 			});
 
