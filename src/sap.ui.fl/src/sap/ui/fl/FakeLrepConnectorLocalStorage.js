@@ -133,6 +133,23 @@ sap.ui.define([
 
 	};
 
+
+	/**
+	 * Loads the settings.
+	 * The settings is actually an empty object and is required for mocking the customer/vendor based process.
+	 *
+	 * @returns {Promise} Returns a Promise with an empty object as current settings
+	 * @public
+	 */
+	FakeLrepConnectorLocalStorage.prototype.loadSettings = function() {
+
+		return new Promise(function(resolve, reject){
+			var oSettings = {};
+			resolve(oSettings);
+		});
+
+	};
+
 	/**
 	 * Enables fake LRep connector.
 	 *
