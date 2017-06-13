@@ -293,14 +293,6 @@ sap.ui.define([
 			mobileLibrary.URLHelper.redirect(jQuery.sap.getModulePath("sap.ui.core", "/themes/base/fonts/SAP-icons.ttf"));
 		},
 
-		/**
-		 * Closes the preview pane
-		 * @public
-		 */
-		onClosePreview: function () {
-			this._updateHash("icon");
-		},
-
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */

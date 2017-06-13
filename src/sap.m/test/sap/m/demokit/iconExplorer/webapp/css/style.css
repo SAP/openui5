@@ -90,7 +90,7 @@
 }
 
 /* Styles for icon preview area */
-.sapUiDemoIconExplorer .previewIcon {
+.sapUiDemoIconExplorer .sapUiIcon.previewIcon {
 	font-size: 100px;
 }
 .sapUiDemoIconExplorer .tagsArea {
@@ -104,7 +104,7 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw)
 }
 
 @media (max-width:599px) {
-	.sapUiDemoIconExplorer .previewIcon {
+	.sapUiDemoIconExplorer .sapUiIcon.previewIcon {
 		font-size: 50px;
 	}
 }
