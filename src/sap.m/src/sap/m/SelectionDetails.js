@@ -621,6 +621,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	/**
 	 * Overwrite a property's value on the control and its inner control if it has the same name.
 	 * @param {string} propertyName The name of the property.
+	 * @param {int} value Value to set for the given property name
 	 * @returns {sap.m.ResponsivePopover} this to allow method chaining
 	 * @private
 	 */

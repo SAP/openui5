@@ -158,7 +158,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 *
 	 * @returns {String} The Tooltip text
 	 */
-	FeedContent.prototype.getTooltip_AsString = function() {
+	FeedContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
 		if (typeof oTooltip === "string" || oTooltip instanceof String) {
