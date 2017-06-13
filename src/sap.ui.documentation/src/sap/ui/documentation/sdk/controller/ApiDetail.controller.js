@@ -271,7 +271,7 @@ sap.ui.define([
 					var oEntityData = this._getEntityData(sTopicId, oControlsData);
 
 					this.getModel("entity").setData(oEntityData, false);
-				});
+				}.bind(this));
 
 			},
 
