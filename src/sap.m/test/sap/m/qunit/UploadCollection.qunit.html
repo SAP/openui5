@@ -27,6 +27,7 @@
 			"items": [
 				{
 					"contributor": "Susan Baker",
+					"tooltip" : "Susan Baker",
 					"documentId": "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 					"fileName": "Screenshot.jpg",
 					"fileSize": 20,
@@ -87,6 +88,7 @@
 		function createItemTemplate() {
 			return new sap.m.UploadCollectionItem({
 				contributor: "{contributor}",
+				tooltip : "{tooltip}",
 				documentId: "{documentId}",
 				enableEdit: "{enableEdit}",
 				enableDelete: "{enableDelete}",
@@ -2271,8 +2273,9 @@
 			this.oUploadCollection._fillList.restore();
 		});
 
-		QUnit.module("Screen Reader Support", {
+		QUnit.module("Accessibility features", {
 			beforeEach: function() {
+				this.fnSpy = sinon.spy(sap.ui.core.Element.prototype, "setTooltip");
 				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
 					items: {
 						path: "/items",
@@ -2284,9 +2287,16 @@
 				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function() {
+				this.fnSpy.restore();
 				this.oUploadCollection.destroy();
 				this.oUploadCollection = null;
 			}
+		});
+
+		QUnit.test("Method setTooltip", function(assert) {
+			//Assert
+			assert.ok(this.fnSpy.called, "Method setTooltip called");
+			assert.ok(this.fnSpy.calledWith("Susan Baker"), "Method setTooltip called with the correct text");
 		});
 
 		QUnit.test("Icon", function(assert) {
