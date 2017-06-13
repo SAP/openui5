@@ -141,9 +141,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	FacetFilterList.prototype.setTitle = function(sTitle) {
 
 		this.setProperty("title", sTitle, true);
-		if (this.getParent() && this.getParent()._setButtonText) {
-			this.getParent()._setButtonText(this);
-		}
+		this._updateFacetFilterButtonText();
+
 		return this;
 	};
 
@@ -406,14 +405,14 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			//
 			// If the list is being filtered then items are already selected in updateItems.
 			var sUpdateReason = oEvent.getParameter("reason");
-			if (sUpdateReason) {
-				sUpdateReason = sUpdateReason.toLowerCase();
-				if (sUpdateReason !== sap.ui.model.ChangeReason.Filter.toLowerCase()) {
-					this._selectItemsByKeys();
-				}
-			} else {
+			sUpdateReason = sUpdateReason ? sUpdateReason.toLowerCase() : sUpdateReason;
+
+			if (sUpdateReason !== sap.ui.model.ChangeReason.Filter.toLowerCase()) {
 				this._selectItemsByKeys();
 			}
+
+			this._cleanSelectedKeys();
+			this._updateFacetFilterButtonText();
 		});
 
 		this._allowRemoveSelections = true;
@@ -668,6 +667,32 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 */
 	FacetFilterList.prototype._isItemSelected = function(oItem){
 		return !!(this._oSelectedKeys[oItem && (oItem.getKey() || oItem.getText())]);
+	};
+
+	FacetFilterList.prototype._itemKeyExists = function(sKey) {
+		var aItems = this.getItems(),
+			i;
+		for (i = 0; i < aItems.length; i++) {
+			if (aItems[i].getKey() === sKey) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	FacetFilterList.prototype._cleanSelectedKeys = function() {
+		for (var oKey in this._oSelectedKeys) {
+			if (!this._itemKeyExists(oKey)) {
+				delete this._oSelectedKeys[oKey];
+			}
+		}
+	};
+
+	FacetFilterList.prototype._updateFacetFilterButtonText = function() {
+		if (this.getParent() && this.getParent()._setButtonText) {
+			this.getParent()._setButtonText(this);
+		}
 	};
 
 	/**

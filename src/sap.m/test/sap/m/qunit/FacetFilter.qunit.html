@@ -4037,6 +4037,64 @@
 
 			this.testFacetFilterList(4);
 		});
+
+
+		QUnit.module("Other scenarios");
+
+		//BCP: 1770254364
+		QUnit.test("Updating list items binding updates the button text", function(assert) {
+			//arrange
+			var done = assert.async(),
+				data = [{
+					key : "key1",
+					text: "text1",
+					selected: false
+				},{
+					key : "key2",
+					text : "text2",
+					selected : true
+				}],
+				newData = [{
+					key : "key3",
+					text: "text3",
+					selected: false
+				},{
+					key : "key4",
+					text : "text4",
+					selected : false
+				}],
+				oFF = new sap.m.FacetFilter(),
+				oFFList = new sap.m.FacetFilterList({
+					title: "test",
+					key: "test"
+				}),
+				oModel= new sap.ui.model.json.JSONModel(data);
+
+			oFFList.bindItems("/", new sap.m.FacetFilterItem({
+				key : '{key}',
+				text : '{text}',
+				selected : '{selected}'
+			}));
+			oFF.addList(oFFList);
+			oFFList.setModel(oModel);
+
+			oFF.placeAt('content');
+			sap.ui.getCore().applyChanges();
+			assert.equal(oFF._getButtonForList(oFFList).getText(), "test (text2)", "button has the correct initial title");
+
+			//act
+			oModel.setData(newData);
+			oModel.updateBindings();
+
+			//this event handler is attached second, so it asserts after the original event handler has done the job (applied the fix)
+			oFFList.attachUpdateFinished(function() {
+				//assert
+				assert.equal(oFF._getButtonForList(oFFList).getText(), "test", "button has the correct title after update items binding");
+				oFF.destroy();
+				done();
+			});
+		});
+
 		// Helper functions
 
 		function getButtonCtrl(oFF, iIndex) {
