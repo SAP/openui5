@@ -298,6 +298,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype._highlightList = function(sValue) {
 			var aItems = this.getVisibleItems(),
+				sValue = sValue.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
 				oRegex = new RegExp("^" + sValue, "i");
 
 			aItems.forEach(function (oItem) {
