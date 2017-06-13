@@ -50,7 +50,7 @@
 							</m:HBox>
 
 							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
-								<m:Label text="Inherited from:"/>
+								<m:Label text="Extends:"/>
 								<m:Link text="{topics>/extendsText}" visible="{=${topics>/isDerived}}" press="onTypeLinkPress"/>
 								<m:Text text="{topics>/extendsText}" visible="{=!${topics>/isDerived}}"/>
 							</m:HBox>

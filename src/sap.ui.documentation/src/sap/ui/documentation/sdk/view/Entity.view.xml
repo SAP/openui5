@@ -36,7 +36,7 @@
 					</m:HBox>
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
-						<m:Label text="Inherited from:"/>
+						<m:Label text="Extends:"/>
 						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"/>
 					</m:HBox>
 
