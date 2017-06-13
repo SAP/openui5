@@ -18,10 +18,15 @@ sap.ui.define(['jquery.sap.global',
 	          InstanceManager,
 	          Popup,
 	          OverlayRegistry,
-	          Utils,
+	          flUtils,
 	          Component
 	) {
 		"use strict";
+
+		var FOCUS_EVENT_NAMES = {
+			"add": "_addFocusEventListeners",
+			"remove": "_removeFocusEventListeners"
+		};
 
 		/**
 		 * Constructor for a new sap.ui.rta.util.PopupManager
@@ -65,13 +70,13 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		PopupManager.prototype._overrideInstanceFunctions = function() {
 
-			//check open popups before starting RTA
+			//check open popups and create overlays while starting RTA
 			this._applyPopupMethods(this._createPopupOverlays);
 
-			//AddDialogInstance/AddPopoverInstance
+			//override InstanceManager.AddDialogInstance() and InstanceManager.AddPopoverInstance()
 			this._overrideAddPopupInstance();
 
-			//RemoveDialogInstance/RemovePopoverInstance
+			//override InstanceManager.RemoveDialogInstance()  and InstanceManager.RemovePopoverInstance()
 			this._overrideRemovePopupInstance();
 		};
 
@@ -83,7 +88,6 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		PopupManager.prototype.getRelevantPopups = function() {
 			var aOpenDialogs, aOpenPopovers;
-			aOpenDialogs = aOpenPopovers = [];
 
 			//check if dialogs are already open when RTA is started
 			aOpenDialogs = InstanceManager.getOpenDialogs();
@@ -106,19 +110,18 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._getValidatedPopups = function(aOpenPopups) {
-			if (aOpenPopups.length > 0) {
 				aOpenPopups.forEach(function(oPopup, iIndex) {
 					if (
-						!this._getSupportedPopup(oPopup)
+						!this._isSupportedPopup(oPopup)
 						|| (
 							this.oRtaRootAppComponent !== this._getAppComponentForControl(oPopup)
-							&& !this._getComponentInsidePopup(oPopup)
+							&& !this._isComponentInsidePopup(oPopup)
 						)
-						) {
-							aOpenPopups.splice(iIndex, 1);
-						}
+					) {
+						aOpenPopups.splice(iIndex, 1);
+					}
 				}.bind(this));
-			}
+
 			return (aOpenPopups.length > 0) ? aOpenPopups : false;
 		};
 
@@ -129,14 +132,14 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {boolean} indicating if component is inside a popup
 		 * @private
 		 */
-		PopupManager.prototype._getComponentInsidePopup = function(oPopup) {
-			//check if root RTA component is inside a popupElement
+		PopupManager.prototype._isComponentInsidePopup = function(oPopup) {
+			//check if root RTA component is directly inside a popupElement
 			return oPopup.getContent().some(
-					function(oContent) {
-						if (oContent.getMetadata().getName() === "sap.ui.core.ComponentContainer") {
-							return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
-						}
-					}.bind(this));
+				function(oContent) {
+					if (oContent instanceof sap.ui.core.ComponentContainer) {
+						return this.oRtaRootAppComponent === this._getAppComponentForControl(sap.ui.getCore().getComponent(oContent.getComponent()));
+					}
+				}.bind(this));
 		};
 
 		/**
@@ -146,12 +149,12 @@ sap.ui.define(['jquery.sap.global',
 		 * @returns {boolean} indicating if this type of popup element is supported
 		 * @private
 		 */
-		PopupManager.prototype._getSupportedPopup = function(oPopup) {
+		PopupManager.prototype._isSupportedPopup = function(oPopup) {
 			return (oPopup instanceof sap.m.Dialog || oPopup instanceof sap.m.Popover);
 		};
 
 		/**
-		 * Overrides the setter function of property rta for dynamic overlay creation.
+		 * Overrides the setter function of property rta for dynamic overlay creation
 		 *
 		 * @param {sap.ui.rta.RuntimeAuthoring} oRta RuntimeAuthoring object
 		 * @public
@@ -162,7 +165,61 @@ sap.ui.define(['jquery.sap.global',
 				var oRootControl = sap.ui.getCore().byId(oRta.getRootControl());
 				this.oRtaRootAppComponent = this._getAppComponentForControl(oRootControl);
 				this._overrideInstanceFunctions();
+
+				//listener for RTA mode change
+				var fnModeChange = this._onModeChange.bind(this);
+				oRta.attachModeChanged(fnModeChange);
 			}
+		};
+
+		/**
+		 * Attached to RTA mode change
+		 *
+		 * @private
+		 */
+		PopupManager.prototype._onModeChange = function(oEvent) {
+			var sFocusEvent, sNewMode = oEvent.getParameters().mode;
+
+			var fnApplyFocusEvent = function (oPopover) {
+				oPopover.oPopup[sFocusEvent]();
+			};
+
+			if (sNewMode === 'navigation') {
+				sFocusEvent = this._getFocusEventName("add");
+				this._applyFocusEventsToOpenPopups(fnApplyFocusEvent);
+			} else {
+				sFocusEvent = this._getFocusEventName("remove");
+				this._removeFocusEventsFromOpenPopups(fnApplyFocusEvent);
+			}
+		};
+
+		/**
+		 * Apply focus events to all open popups and give focus to the first
+		 *
+		 * @private
+		 */
+		PopupManager.prototype._applyFocusEventsToOpenPopups = function(fnFocusEvent) {
+			this._applyPopupMethods(fnFocusEvent, true);
+		};
+
+		/**
+		 * Remove focus events from all open popups
+		 *
+		 * @private
+		 */
+		PopupManager.prototype._removeFocusEventsFromOpenPopups = function(fnFocusEvent) {
+			this._applyPopupMethods(fnFocusEvent);
+		};
+
+		/**
+		 * Return the popup focus event name
+		 *
+		 * @param {string} operation name
+		 * @returns {string} focus event name
+		 * @private
+		 */
+		PopupManager.prototype._getFocusEventName = function(sOperation) {
+			return FOCUS_EVENT_NAMES[sOperation];
 		};
 
 		/**
@@ -189,20 +246,19 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._overrideAddFunctions = function(fnOriginalFunction) {
-			var that = this;
 			return function(oPopupElement) {
-				var vOriginalReturn = fnOriginalFunction.apply(this, arguments);
+				var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
 				if (
-					that.getRta()._oDesignTime
-					&&  that.oRtaRootAppComponent === that._getAppComponentForControl(oPopupElement)
-					&&  that._getSupportedPopup(oPopupElement)
+					this.getRta()._oDesignTime
+					&&  this.oRtaRootAppComponent === this._getAppComponentForControl(oPopupElement)
+					&&  this._isSupportedPopup(oPopupElement)
 				) {
-					oPopupElement.attachAfterOpen(that._createPopupOverlays, that);
+					oPopupElement.attachAfterOpen(this._createPopupOverlays, this);
 					//PopupManager internal method
-					that.fireOpen(oPopupElement);
+					this.fireOpen(oPopupElement);
 				}
 				return vOriginalReturn;
-			};
+			}.bind(this);
 		};
 
 		/**
@@ -211,13 +267,17 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} fnPopupMethod specifies function to be applied
 		 * @private
 		 */
-		PopupManager.prototype._applyPopupMethods = function(fnPopupMethod) {
-			//check if popups are open when closing RTA
+		PopupManager.prototype._applyPopupMethods = function(fnPopupMethod, bFocus) {
+			//check if popups are open
 			var oRelevantPopups = this.getRelevantPopups();
 
-			Object.keys(oRelevantPopups).forEach(function(key) {
-				if (oRelevantPopups[key]) {
-					oRelevantPopups[key].forEach(function(oPopupElement) {
+			//apply passed method to each open popup
+			Object.keys(oRelevantPopups).forEach(function(sKey) {
+				if (oRelevantPopups[sKey]) {
+					if (bFocus) {
+						jQuery.sap.focus(oRelevantPopups[sKey][0].oPopup.oContent);
+					}
+					oRelevantPopups[sKey].forEach(function(oPopupElement) {
 						fnPopupMethod.call(this, oPopupElement);
 					}.bind(this));
 				}
@@ -228,68 +288,28 @@ sap.ui.define(['jquery.sap.global',
 		 * Modifies browser events for passed popup element
 		 *
 		 * @param {sap.ui.core.Control} oPopupElement popup element for which browser events have to be modified
-		 * @public
-		 */
-		PopupManager.prototype.modifyBrowserEvents = function(oPopupElement) {
-				var oPopup = oPopupElement.oPopup;
-
-				this.fnPopupOriginalAfterRendering = oPopup.onAfterRendering;
-				var that = this;
-
-				//cases when onAfterRendering is called after this function - app inside popup
-				oPopup.onAfterRendering = function () {
-					var vOriginalReturn = that.fnPopupOriginalAfterRendering.apply(this, arguments);
-					that._removeDefaultBlurEvents.call(this);
-					return vOriginalReturn;
-				};
-
-				this._removeDefaultBlurEvents.call(oPopup);
-
-				//original autoClose
-				oPopup._bOriginalAutoClose = oPopup.getAutoClose();
-				this.fnBlurHandling = this._blurHandling.bind(oPopupElement, this.getRta());
-				//Handling for Popover Blur Event
-				if (oPopupElement instanceof sap.m.Popover) {
-					oPopup.oContent.getDomRef().addEventListener("blur", this.fnBlurHandling, true);
-				}
-		};
-
-		/**
-		 * Removes default blur event from the popup element called on
-		 *
 		 * @private
 		 */
-		PopupManager.prototype._removeDefaultBlurEvents = function() {
-			this.oContent.getDomRef().removeEventListener("blur", this.fEventHandler, true);
-			this.oLastBlurredElement = new sap.ui.core.Control();
-		};
+		PopupManager.prototype._applyPopupPatch = function(oPopupElement) {
+			var oPopup = oPopupElement.oPopup;
 
-		/**
-		 * Custom blur browser event
-		 *
-		 * @param {sap.ui.rta.RuntimeAuthoring} oRta RuntimeAuthoring object
-		 * @param {object} oEvent browser event
-		 * @private
-		 */
-		PopupManager.prototype._blurHandling = function(oRta, oEvent) {
-			//FIXME: Find a better way to override popover blur event
-			this.oPopup.setAutoClose(false);
-			//Adaptation Mode
-			if (oRta.getMode() === 'adaptation') {
-				return;
+			//If clicked from toolbar or popup - autoClose is disabled
+			oPopup.setAutoCloseAreas([this.getRta()._oToolsMenu.getDomRef(), oPopup.oContent.getDomRef()]);
+
+			//cases when onAfterRendering is called after this function - app inside popup
+			if (!this.fnOriginalPopupOnAfterRendering) {
+				this.fnOriginalPopupOnAfterRendering = oPopup.onAfterRendering;
 			}
-			jQuery.sap.delayedCall(0, this, function() {
-				//Clicked from Toolbar
-				if (document.activeElement && jQuery.sap.containsOrEquals(oRta._oToolsMenu.getDomRef(), document.activeElement)) {
-					jQuery.sap.focus(this.oPopup.oContent);
-					return;
-				}
-				//Clicked from inside popover
-				if (jQuery.sap.containsOrEquals(this.oPopup.oContent.getDomRef(), document.activeElement)) {
-					return;
-				}
-				this.oPopup.close(0, "autocloseBlur");
-			});
+			oPopup.onAfterRendering = function () {
+				var vOriginalReturn = this.fnOriginalPopupOnAfterRendering.apply(oPopup, arguments);
+				oPopup[this._getFocusEventName("remove")]();
+				return vOriginalReturn;
+			}.bind(this);
+
+			//only remove focus event when in adaptation mode
+			if (this.getRta().getMode() === 'adaptation') {
+				oPopup[this._getFocusEventName("remove")]();
+			}
 		};
 
 		/**
@@ -316,21 +336,20 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._overrideRemoveFunctions = function(fnOriginalFunction) {
-			var that = this;
 			return function(oPopupElement) {
-				var vOriginalReturn = fnOriginalFunction.apply(this, arguments);
+				var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, arguments);
 
 				if (
-					that.getRta()._oDesignTime
-					&& that.oRtaRootAppComponent === that._getAppComponentForControl(oPopupElement)
-					&& that._getSupportedPopup(oPopupElement)
+					this.getRta()._oDesignTime
+					&& this.oRtaRootAppComponent === this._getAppComponentForControl(oPopupElement)
+					&& this._isSupportedPopup(oPopupElement)
 				) {
-					that.getRta()._oDesignTime.removeRootElement(oPopupElement);
+					this.getRta()._oDesignTime.removeRootElement(oPopupElement);
 					//PopupManager internal method
-					that.fireClose(oPopupElement);
+					this.fireClose(oPopupElement);
 				}
 				return vOriginalReturn;
-			};
+			}.bind(this);
 		};
 
 		/**
@@ -350,7 +369,7 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			if (oComponent) {
-				oAppComponent = Utils.getAppComponentForControl(oComponent);
+				oAppComponent = flUtils.getAppComponentForControl(oComponent);
 			}
 			return oAppComponent;
 		};
@@ -363,25 +382,20 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._getComponentForControl = function(oControl) {
-			var oComponent, i = 0;
-			do {
-				i++;
+			var oComponent;
+
+			if (oControl) {
 				oComponent = Component.getOwnerComponentFor(oControl);
-				if (oComponent) {
-					return oComponent;
-				}
+
 				if (
-					oControl
+					!oComponent
 					&& typeof oControl.getParent === "function"
+					&& !(oControl.getParent() instanceof sap.ui.core.UIArea)
 				) {
 					oControl = oControl.getParent();
-				} else {
-					return;
+					oComponent = this._getComponentForControl(oControl);
 				}
-			} while (
-			oControl
-			&& i < 100
-			&& !(oControl instanceof sap.ui.core.UIArea));
+			}
 
 			return oComponent;
 		};
@@ -401,15 +415,15 @@ sap.ui.define(['jquery.sap.global',
 			//when application is opened in a popup, rootElement should not be added more than once
 			if (
 				this.getRta()._oDesignTime.getRootElements().indexOf(oPopupElement.getId()) === -1
-				&& !this._getComponentInsidePopup(oPopupElement)
+				&& !this._isComponentInsidePopup(oPopupElement)
 			) {
 				this.getRta()._oDesignTime.addRootElement(oPopupElement);
 			}
 
-			//detach for persistent popups
+			//detach for persistent popups with same id
 			oPopupElement.detachAfterOpen(this._createPopupOverlays, this);
 
-			this.modifyBrowserEvents(oPopupElement);
+			this._applyPopupPatch(oPopupElement);
 		};
 
 		/**
@@ -434,7 +448,7 @@ sap.ui.define(['jquery.sap.global',
 				InstanceManager.removePopoverInstance = this._fnOriginalRemovePopoverInstance;
 			}
 
-			this._applyPopupMethods(this._disablePopupSettings);
+			this._applyPopupMethods(this._removePopupPatch);
 		};
 
 		/**
@@ -443,26 +457,12 @@ sap.ui.define(['jquery.sap.global',
 		 *
 		 * @private
 		 */
-		PopupManager.prototype._disablePopupSettings = function(oPopupElement) {
+		PopupManager.prototype._removePopupPatch = function(oPopupElement) {
 			var oPopup = oPopupElement.oPopup;
-			var vPopupElement = oPopup.oContent.getDomRef();
-			if (this.fnPopupOriginalAfterRendering) {
-				oPopup.onAfterRendering = this.fnPopupOriginalAfterRendering;
+			oPopup[this._getFocusEventName("add")]();
+			if (this.fnOriginalPopupOnAfterRendering) {
+				oPopup.onAfterRendering = this.fnOriginalPopupOnAfterRendering;
 			}
-			vPopupElement.removeEventListener("blur", this.fnBlurHandling, true);
-
-			//autoClose set to default
-			if (typeof oPopup._bOriginalAutoClose === "boolean") {
-				oPopup.setAutoClose(oPopup._bOriginalAutoClose);
-				delete oPopup._bOriginalAutoClose;
-			}
-
-			//default blur event handler
-			vPopupElement.addEventListener("blur", oPopup.fEventHandler, true);
-			oPopup.oLastBlurredElement = undefined;
-
-			// /set focus back to popup
-			jQuery.sap.focus(oPopup.oContent);
 		};
 
 		/**

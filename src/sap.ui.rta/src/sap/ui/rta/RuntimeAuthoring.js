@@ -198,6 +198,8 @@ sap.ui.define([
 						selection : { type : "sap.ui.dt.Overlay[]" }
 					}
 				},
+				/**Event fired when the runtime authoring mode is changed */
+				"modeChanged" : {},
 
 				/**
 				 * Fired when the undo/redo stack has changed, undo/redo buttons can be updated
@@ -345,7 +347,7 @@ sap.ui.define([
 			developerMode: true
 		});
 
-		this.oPopupManage = new PopupManager({
+		this.oPopupManager = new PopupManager({
 			open: this.onPopupOpen.bind(this),
 			close: this.onPopupClose.bind(this)
 		});
@@ -484,9 +486,6 @@ sap.ui.define([
 					this.fnKeyDown = this._onKeyDown.bind(this);
 					this._$document.on("keydown", this.fnKeyDown);
 
-					//Popup Overlays
-					this.oPopupManage.setRta(this);
-
 					// Register function for checking unsaved before leaving RTA
 					this._oldUnloadHandler = window.onbeforeunload;
 					window.onbeforeunload = this._onUnload.bind(this);
@@ -509,11 +508,15 @@ sap.ui.define([
 						.then(function (bShowPublish) {
 							this._createToolsMenu(bShowPublish);
 							return this._oToolsMenu.show();
+						}.bind(this))
+						.then(function() {
+							//Popup Overlays
+							this.oPopupManager.setRta(this);
 						}.bind(this));
 				}
 			}.bind(this))
 			.then(function() {
-				var oRelevantPopups = this.oPopupManage.getRelevantPopups();
+				var oRelevantPopups = this.oPopupManager.getRelevantPopups();
 				if (oRelevantPopups.aDialogs || oRelevantPopups.aPopovers) {
 					return this._oToolsMenu.bringToFront();
 				}
@@ -798,8 +801,8 @@ sap.ui.define([
 			oUshellContainer.setDirtyFlag(false);
 		}
 
-		if (this.oPopupManage) {
-			this.oPopupManage.destroy();
+		if (this.oPopupManager) {
+			this.oPopupManager.destroy();
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
@@ -1635,13 +1638,7 @@ sap.ui.define([
 			this._oDesignTime.setEnabled(bOverlaysEnabled);
 			this.getPlugins()['tabHandling'][bOverlaysEnabled ? 'removeTabIndex' : 'restoreTabIndex']();
 			this.setProperty('mode', sNewMode);
-
-			//FIXME: Implement a better way of giving back focus to popups when RTA is closed
-			if (sNewMode === 'navigation' && this.oPopupManage.getRelevantPopups().aPopovers) {
-				jQuery.sap.focus(this.oPopupManage.getRelevantPopups().aPopovers[0].oPopup.oContent);
-			} else if (sNewMode === 'navigation' && this.oPopupManage.getRelevantPopups().aDialogs) {
-				jQuery.sap.focus(this.oPopupManage.getRelevantPopups().aDialogs[0].oPopup.oContent);
-			}
+			this.fireModeChanged({mode: sNewMode});
 		}
 	};
 
