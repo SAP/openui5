@@ -117,7 +117,7 @@ window.initMap = function () {
         mapTypeControl: true,
         scrollwheel: false,
         zoomControl: true
-
+	});
 
     new google.maps.Marker({
         position: {
