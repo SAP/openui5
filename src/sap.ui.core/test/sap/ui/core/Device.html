@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
 
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,232 +10,242 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	<!-- Needed for Windows Phone -->
-	<style>@-ms-viewport{width:device-width;}</style>
+	<style>
+		@-ms-viewport {
+			width: device-width;
+		}
+	</style>
 
 	<title>Device - sap.ui.core</title>
 
-	<script>
-
-	function uriParams() {
-		var mParams = {};
-		var sQueryString = window.location.href;
-		if ( sQueryString.indexOf('#') >= 0 ) {
-			sQueryString = sQueryString.slice(0, sQueryString.indexOf('#'));
-		}
-		if(sQueryString.indexOf("?") >= 0){
-			sQueryString = sQueryString.slice(sQueryString.indexOf("?") + 1);
-			var aParameters = sQueryString.split("&"),
-				mParameters = {},
-				aParameter,
-				sName,
-				sValue;
-			for(var i=0; i<aParameters.length; i++){
-				aParameter = aParameters[i].split("=");
-				sName = decodeURIComponent(aParameter[0]);
-				sValue = aParameter.length > 1 ? decodeURIComponent(aParameter[1].replace(/\+/g,' ')) : "";
-				if(sName){
-					if(!Object.prototype.hasOwnProperty.call(mParameters, sName)){
-						mParameters[sName] = [];
-					}
-					mParameters[sName].push(sValue);
-				}
-			}
-			mParams = mParameters;
-		}
-		return mParams;
-	};
-
-	function uriParam(sName){
-		var p = uriParams();
-		if(p[sName] && p[sName][0]){
-			return p[sName][0];
-		}
-		return null;
-	};
-
-	//Enable this to activate Fullscreen mode on iOS in combination with the "Add to home screen" feature
-	if (uriParam("ios-fullscreen") == "x" || uriParam("ios-fullscreen") == "X" || uriParam("ios-fullscreen") == "true") {
-		document.write('<meta name="apple-mobile-web-app-capable" content="yes">');
-	}
-
-	</script>
-
-	<script src="../../../../resources/sap/ui/Device.js"></script>
-
-	<script>
-
-		var d = sap.ui.Device;
-
-		/****/
-		var customUA = "";
-		if (customUA) {
-			d._setOS(customUA);
-			var br = d.browser.BROWSER;
-			d.browser = null;
-			d.browser = d._testUserAgent(customUA);
-			d.browser.BROWSER = br;
-			if (d.browser.name) {
-				for (var b in d.browser.BROWSER) {
-					if (d.browser.BROWSER[b] === d.browser.name) {
-						d.browser[b.toLowerCase()] = true;
-					}
-				}
-			}
-		}
-		/****/
-
-		function prop(html, sLabel, sVal, tooltip, sId){
-			if(!html){
-				html = [];
-			}
-
-			html.push("<div");
-			html.push(sId ? (" id='"+sId+"'") : "");
-			html.push(tooltip ? (" title='"+tooltip+"'") : "");
-			html.push(">", "<label class='label'>", sLabel, ":</label>", sVal, "</div>");
-
-			return html.join("");
-		};
-
-		function initMedia(sSetName, sPoints, sUnit){
-			function initPredefined(sName){
-				window.sSetId = d.media.RANGESETS[sName];
-				window.aPoints = d.media._predefinedRangeSets[window.sSetId].points; //TODO try to get rid of this internal access
-				window.sUnit = d.media._predefinedRangeSets[window.sSetId].unit; //TODO try to get rid of this internal access
-				window.bStandard = sName === "SAP_STANDARD";
-			}
-
-			if(sSetName && d.media.RANGESETS[sSetName]){
-				initPredefined(sSetName);
-			}else if(!sSetName && !sPoints){
-				initPredefined("SAP_STANDARD");
-			}else if(sPoints){
-				window.sSetId = sSetName || "TEST";
-				var p = sPoints.split(",");
-				window.aPoints = [];
-				for(var i=0; i<p.length; i++){
-					window.aPoints.push(parseInt(p[i], 10));
-				}
-				window.sUnit = sUnit || "px";
-				window.bStandard = false;
-			}else{
-				alert("Incorrect set definition. Default is used.");
-				initPredefined("SAP_STANDARD");
-			}
-
-			var s = window.getComputedStyle || function(e) {
-	  			return e.currentStyle;
-	  		};
-	  		var styles = s(document.documentElement);
-			window.sFontsize = styles && styles.fontSize ? styles.fontSize : null;
-	  		if(!window.sFontsize || window.sFontsize.indexOf("px") < 0){
-	  			window.sFontsize = "16px";
-	  		}
-		};
-
-		function reportMedia(mParams){
-			if(!mParams){
-				if(window.console){
-					console.log("No Params");
-				}
-				return;
-			}
-
-			var to = (!mParams.to) ? "INFINITY" : (mParams.to + mParams.unit);
-			var txt = "Media: Entered Range: " + mParams.from + mParams.unit + " - "+to+" (Name: "+mParams.name+")";
-			if(window.console){
-				console.log(txt);
-			}
-			if(window.jQuery){
-				jQuery("#mediareport").html(txt);
-			}
-		};
-
-
-		//******************************************
-
-		function _featuresHtml(){
-			var _html = [];
-			_html.push("<h3>sap.ui.Device.os</h3><hr>");
-			prop(_html, "name", d.os.name);
-			prop(_html, "versionStr", d.os.versionStr);
-			prop(_html, "version", d.os.version);
-			prop(_html, "windows", !!d.os.windows);
-			prop(_html, "macintosh", !!d.os.macintosh);
-			prop(_html, "linux", !!d.os.linux);
-			prop(_html, "ios", !!d.os.ios);
-			prop(_html, "android", !!d.os.android);
-			prop(_html, "blackberry", !!d.os.blackberry);
-			prop(_html, "windows_phone", !!d.os.windows_phone);
-			_html.push("<hr><h3>sap.ui.Device.browser</h3><hr>");
-			prop(_html, "name", d.browser.name);
-			prop(_html, "versionStr", d.browser.versionStr);
-			prop(_html, "version", d.browser.version);
-			prop(_html, "mobile", d.browser.mobile);
-			prop(_html, "internet_explorer", !!d.browser.internet_explorer);
-			prop(_html, "msie", !!d.browser.msie);
-			prop(_html, "edge", !!d.browser.edge);
-			prop(_html, "firefox", !!d.browser.firefox);
-			prop(_html, "chrome", !!d.browser.chrome);
-			prop(_html, "safari", !!d.browser.safari);
-			if (!!d.browser.safari) {
-				prop(_html, "fullscreen", !!d.browser.fullscreen);
-				prop(_html, "webview", !!d.browser.webview);
-			}
-			prop(_html, "android", !!d.browser.android);
-			prop(_html, "webkit", !!d.browser.webkit);
-			prop(_html, "mozilla", !!d.browser.mozilla);
-			_html.push("<hr><h3>sap.ui.Device.support</h3><hr>");
-			prop(_html, "touch", d.support.touch);
-			prop(_html, "pointer", d.support.pointer);
-			prop(_html, "matchmedia", d.support.matchmedia);
-			prop(_html, "matchmedialistener", d.support.matchmedialistener);
-			prop(_html, "orientation", d.support.orientation);
-			prop(_html, "retina", d.support.retina);
-			prop(_html, "websocket", d.support.websocket);
-			prop(_html, "input.placeholder", d.support.input.placeholder);
-			_html.push("<hr><h3>sap.ui.Device.orientation</h3><hr>");
-			prop(_html, "landscape", d.orientation.landscape, null, "landscape");
-			prop(_html, "portrait", d.orientation.portrait, null, "portrait");
-			_html.push("<hr><h3>sap.ui.Device.resize</h3><hr>");
-			prop(_html, "width", d.resize.width, null, "width");
-			prop(_html, "height", d.resize.height, null, "height");
-			_html.push("<hr><h3>sap.ui.Device.system</h3><hr>");
-			prop(_html, "tablet", d.system.tablet);
-			prop(_html, "phone", d.system.phone);
-			prop(_html, "desktop", d.system.desktop);
-			prop(_html, "combi", d.system.combi);
-			return _html.join("");
-		};
-
-		function refreshFeaturesHtml(sHtml){
-			jQuery("#output").html(sHtml || _featuresHtml());
-		};
-
-		var _fHtml = _featuresHtml();
-
-		d.orientation.attachHandler(function(mParams){
-			jQuery("#landscape").replaceWith(prop(null, "landscape", d.orientation.landscape, null, "landscape"));
-			jQuery("#portrait").replaceWith(prop(null, "portrait", d.orientation.portrait, null, "portrait"));
-		});
-
-		d.resize.attachHandler(function(mParams){
-			jQuery("#width").replaceWith(prop(null, "width", d.resize.width, null, "width"));
-			jQuery("#height").replaceWith(prop(null, "height", d.resize.height, null, "height"));
-		});
-
-		initMedia(uriParam("set"), uriParam("points"), uriParam("unit"));
-		d.media.initRangeSet(sSetId, aPoints, sUnit);
-
-		d.media.attachHandler(function(mParams){
-			reportMedia(mParams);
-		}, null, sSetId);
-	</script>
 
 	<script src="shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-			src="../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal">
+	<script id="sap-ui-bootstrap" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_belize">
+
+	</script>
+	<script>
+		sap.ui.require(['sap/ui/Device'], function(Device) {
+			
+			// Config
+			var customUA = "";
+			//Enable this to activate Fullscreen mode on iOS in combination with the "Add to home screen" feature
+			if (uriParam("ios-fullscreen") == "x" || uriParam("ios-fullscreen") == "X" || uriParam("ios-fullscreen") == "true") {
+				document.write('<meta name="apple-mobile-web-app-capable" content="yes">');
+			}
+
+			function uriParam(sName) {
+				var p = jQuery.sap.getUriParameters().mParams;
+				if (p[sName] && p[sName][0]) {
+					return p[sName][0];
+				}
+				return null;
+			};
+
+			if (customUA) {
+				Device._setOS(customUA);
+				var br = Device.browser.BROWSER;
+				Device.browser = null;
+				Device.browser = Device._testUserAgent(customUA);
+				Device.browser.BROWSER = br;
+				if (Device.browser.name) {
+					for (var b in Device.browser.BROWSER) {
+						if (Device.browser.BROWSER[b] === Device.browser.name) {
+							Device.browser[b.toLowerCase()] = true;
+						}
+					}
+				}
+			}
+
+			function prop(html, sLabel, sVal, tooltip, sId) {
+				if (!html) {
+					html = [];
+				}
+
+				html.push("<div");
+				html.push(sId ? (" id='" + sId + "'") : "");
+				html.push(tooltip ? (" title='" + tooltip + "'") : "");
+				html.push(">", "<label class='label'>", sLabel, ":</label>", sVal, "</div>");
+
+				return html.join("");
+			};
+
+			function initMedia(sSetName, sPoints, sUnit) {
+				function initPredefined(sName) {
+					window.sSetId = Device.media.RANGESETS[sName];
+					window.aPoints = Device.media._predefinedRangeSets[window.sSetId].points; //TODO try to get rid of this internal access
+					window.sUnit = Device.media._predefinedRangeSets[window.sSetId].unit; //TODO try to get rid of this internal access
+					window.bStandard = sName === "SAP_STANDARD";
+				}
+
+				if (sSetName && Device.media.RANGESETS[sSetName]) {
+					initPredefined(sSetName);
+				} else if (!sSetName && !sPoints) {
+					initPredefined("SAP_STANDARD");
+				} else if (sPoints) {
+					window.sSetId = sSetName || "TEST";
+					var p = sPoints.split(",");
+					window.aPoints = [];
+					for (var i = 0; i < p.length; i++) {
+						window.aPoints.push(parseInt(p[i], 10));
+					}
+					window.sUnit = sUnit || "px";
+					window.bStandard = false;
+				} else {
+					alert("Incorrect set definition. Default is used.");
+					initPredefined("SAP_STANDARD");
+				}
+
+				var s = window.getComputedStyle || function(e) {
+					return e.currentStyle;
+				};
+				var styles = s(document.documentElement);
+				window.sFontsize = styles && styles.fontSize ? styles.fontSize : null;
+				if (!window.sFontsize || window.sFontsize.indexOf("px") < 0) {
+					window.sFontsize = "16px";
+				}
+			};
+
+			function reportMedia(mParams) {
+				if (!mParams) {
+					if (window.console) {
+						console.log("No Params");
+					}
+					return;
+				}
+
+				var to = (!mParams.to) ? "INFINITY" : (mParams.to + mParams.unit);
+				var txt = "Media: Entered Range: " + mParams.from + mParams.unit + " - " + to + " (Name: " + mParams.name + ")";
+				if (window.console) {
+					console.log(txt);
+				}
+				if (window.jQuery) {
+					jQuery("#mediareport").html(txt);
+				}
+			};
+
+
+			//******************************************
+
+			function _featuresHtml() {
+				var _html = [];
+
+				var printProperties = function(printObject, sPrintHeader) {
+					for (var property in printObject) {
+						if (printObject.hasOwnProperty(property)) {
+							var value = printObject[property];
+							if (typeof value !== 'function') {
+								if (sPrintHeader) {
+									_html.push("<h3>" + sPrintHeader + "." + property + "</h3><hr>");
+									printProperties(printObject[property]);
+								}
+								else if (typeof value !== 'object') { //ignore enums
+									prop(_html, property, value);
+								}
+							}
+						}
+					}
+				}
+
+				printProperties(Device, "sap.ui.Device");
+				return _html.join("");
+
+			};
+
+			function refreshFeaturesHtml(sHtml) {
+				jQuery("#output").html(sHtml || _featuresHtml());
+			};
+
+			var _fHtml = _featuresHtml();
+
+			Device.orientation.attachHandler(function(mParams) {
+				jQuery("#landscape").replaceWith(prop(null, "landscape", Device.orientation.landscape, null, "landscape"));
+				jQuery("#portrait").replaceWith(prop(null, "portrait", Device.orientation.portrait, null, "portrait"));
+			});
+
+			Device.resize.attachHandler(function(mParams) {
+				jQuery("#width").replaceWith(prop(null, "width", Device.resize.width, null, "width"));
+				jQuery("#height").replaceWith(prop(null, "height", Device.resize.height, null, "height"));
+			});
+
+			initMedia(uriParam("set"), uriParam("points"), uriParam("unit"));
+			Device.media.initRangeSet(sSetId, aPoints, sUnit);
+
+			Device.media.attachHandler(function(mParams) {
+				reportMedia(mParams);
+			}, null, sSetId);
+
+
+			jQuery(function() {
+				refreshFeaturesHtml(_fHtml);
+
+				jQuery("#title").bind("click", function() {
+					refreshFeaturesHtml();
+				});
+
+				var media = "";
+				for (var i = 0; i < aPoints.length; i++) {
+					media = media + "<div style='font-size:" + sFontsize + "; width:" + (aPoints[i] - (i == 0 ? 0 : aPoints[i - 1])) + sUnit + ";'>" + aPoints[i] + sUnit + "</div>";
+				}
+				jQuery("#media").html(media);
+
+				reportMedia(Device.media.getCurrentRange(sSetId));
+
+				if (bStandard) {
+					jQuery("#mediareport").addClass("StandardMedia");
+				}
+			});
+
+			function fnObjectToString(oObject, iIndent, iMaxDepth) {
+				if (iMaxDepth === undefined) {
+					iMaxDepth = 5;
+				}
+
+				if (iIndent === undefined) {
+					iIndent = 0;
+				} else if (iIndent > iMaxDepth) {
+					return "[...]"
+				}
+				var sIndent = "";
+				for (var i = 0; i < iIndent; ++i) {
+					sIndent += "  ";
+				}
+
+				var aString = [];
+				for (var sKey in oObject) {
+					if (!sKey || typeof (sKey) == "number" || !oObject[sKey]) {
+						// Ignore entry
+						continue;
+					}
+
+					if (typeof (oObject[sKey]) == "object" || typeof (oObject[sKey]) == "function") {
+						// aString.push("<tr><td>" + sKey + "</td><td>" + fnObjectToString(oObject[sKey], iIndent + 1) + "</td></tr>"); // No endless recursion right now...
+					} else {
+						aString.push(
+							"<tr><td style='font-weight: bold; vertical-align: top;'>" + sKey +
+							"</td><td>" + oObject[sKey] + "</td></tr>"
+						);
+					}
+				}
+
+				return "<table>" + aString.join("") + "</table>";
+			}
+
+			function fnShowNavigatorValues() {
+				var sHtml = "<h3>window.navigator:</h3>" + fnObjectToString(window.navigator);
+				jQuery("#btnShowNavigatorValues").remove();
+				jQuery("#rawDataNavigator").html(sHtml);
+				jQuery("#rawDataNavigator").get(0).scrollIntoView(true);
+			}
+
+			jQuery(function() {
+				var $Button = jQuery(document.createElement("button"));
+				$Button.attr("id", "btnShowNavigatorValues");
+				$Button.html("Show window.navigator values...");
+				$Button.on("click", fnShowNavigatorValues);
+
+				jQuery("#rawData").append($Button);
+			});
+		});
 	</script>
 
 	<style>
@@ -256,7 +267,7 @@
 			overflow: hidden;
 		}
 
-		#media > div {
+		#media>div {
 			display: inline-block;
 			text-align: right;
 			border-right: 1px solid black;
@@ -277,85 +288,8 @@
 			color: blue;
 		}
 	</style>
-
-	<script>
-		jQuery(function(){
-			refreshFeaturesHtml(_fHtml);
-
-			jQuery("#title").bind("click", function(){
-				refreshFeaturesHtml();
-			});
-
-			var media = "";
-			for(var i=0; i<aPoints.length; i++){
-				media = media + "<div style='font-size:"+sFontsize+"; width:"+(aPoints[i] - (i==0 ? 0 : aPoints[i-1]))+sUnit+";'>"+aPoints[i]+sUnit+"</div>";
-			}
-			jQuery("#media").html(media);
-
-			reportMedia(d.media.getCurrentRange(sSetId));
-
-			if(bStandard){
-				jQuery("#mediareport").addClass("StandardMedia");
-			}
-		});
-	</script>
-
-	<script>
-		function fnObjectToString(oObject, iIndent, iMaxDepth) {
-			if (iMaxDepth === undefined) {
-				iMaxDepth = 5;
-			}
-
-			if (iIndent === undefined) {
-				iIndent = 0;
-			} else if (iIndent > iMaxDepth) {
-				return "[...]"
-			}
-			var sIndent = "";
-			for (var i = 0; i < iIndent; ++i) {
-				sIndent += "  ";
-			}
-
-			var aString = [];
-			for (var sKey in oObject) {
-				if (!sKey || typeof(sKey) == "number" || !oObject[sKey]) {
-					// Ignore entry
-					continue;
-				}
-
-				if (typeof(oObject[sKey]) == "object" || typeof(oObject[sKey]) == "function") {
-					// aString.push("<tr><td>" + sKey + "</td><td>" + fnObjectToString(oObject[sKey], iIndent + 1) + "</td></tr>"); // No endless recursion right now...
-				} else {
-					aString.push(
-						"<tr><td style='font-weight: bold; vertical-align: top;'>" + sKey +
-						"</td><td>" + oObject[sKey] + "</td></tr>"
-					);
-				}
-			}
-
-			return "<table>" + aString.join("") + "</table>";
-		}
-
-		function fnShowNavigatorValues() {
-			var sHtml = "<h3>window.navigator:</h3>" + fnObjectToString(window.navigator);
-			jQuery("#btnShowNavigatorValues").remove();
-			jQuery("#rawDataNavigator").html(sHtml);
-			jQuery("#rawDataNavigator").get(0).scrollIntoView(true);
-		}
-
-		jQuery(function(){
-			var $Button = jQuery(document.createElement("button"));
-			$Button.attr("id", "btnShowNavigatorValues");
-			$Button.html("Show window.navigator values...");
-			$Button.on("click", fnShowNavigatorValues);
-
-			jQuery("#rawData").append($Button);
-		});
-
-
-	</script>
-
 </head>
+
 <body class="sapUiBody" role="application">
 
 	<h1 id="title">Device - Test Page</h1>
@@ -370,4 +304,5 @@
 	<div id="rawDataNavigator"></div>
 
 </body>
+
 </html>
