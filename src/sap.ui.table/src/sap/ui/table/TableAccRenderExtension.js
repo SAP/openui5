@@ -3,9 +3,13 @@
  */
 
 // Provides helper sap.ui.table.TableAccRenderExtension.
-sap.ui.define(['jquery.sap.global', './TableExtension'],
-	function(jQuery, TableExtension) {
+sap.ui.define([
+	"jquery.sap.global", "./TableExtension", "./library"
+], function(jQuery, TableExtension, library) {
 	"use strict";
+
+	// Shortcuts
+	var SelectionMode = library.SelectionMode;
 
 	/*
 	 * Renders a hidden element with the given id, text and css classes.
@@ -102,6 +106,12 @@ sap.ui.define(['jquery.sap.global', './TableExtension'],
 			_writeAccText(oRm, sTableId, "ariacolsorteddes", oBundle.getText("TBL_COL_DESC_SORTED_DES"));
 			// aria description for invalid table (table with overlay)
 			_writeAccText(oRm, sTableId, "ariainvalid", oBundle.getText("TBL_TABLE_INVALID"));
+
+			var oSelectionMode = oTable.getSelectionMode();
+			if (oSelectionMode !== SelectionMode.None) {
+				// aria description for selection mode in table
+				_writeAccText(oRm, sTableId, "ariaselection", oBundle.getText(oSelectionMode == SelectionMode.MultiToggle ? "TBL_TABLE_SELECTION_MULTI" : "TBL_TABLE_SELECTION_SINGLE"));
+			}
 
 			if (oTable.getFixedColumnCount() > 0) {
 				// aria description for fixed columns
