@@ -5,12 +5,13 @@
 		xmlns:core="sap.ui.core">
 
 	<layout:VerticalLayout width="100%">
+
 		<m:Table items="{ path : 'methods>/methods'}"
 				 showSeparators="Inner"
-				 fixedLayout="true">
+				 fixedLayout="false">
 			<m:columns>
-				<m:Column vAlign="Top" width="30%"><m:Label text="Method"/></m:Column>
-				<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="70%"><m:Label text="Description"/></m:Column>
+				<m:Column vAlign="Top"><m:Label text="Method"/></m:Column>
+				<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 			</m:columns>
 			<m:items>
 				<m:ColumnListItem visible="{= !!${methods>name} }">
@@ -23,7 +24,6 @@
 									], formatter: '.formatEntityName'}" press="scrollToMethod" wrapping="false"/>
 							<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated" visible="{= ${methods>deprecated} !== undefined }"/>
 						</layout:VerticalLayout>
-
 						<core:HTML content="{parts: [{path: 'methods>description'}], formatter: '.formatDescription'}"/>
 					</m:cells>
 				</m:ColumnListItem>
