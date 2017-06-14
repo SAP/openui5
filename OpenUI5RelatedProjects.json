@@ -4,7 +4,7 @@
 			"decription": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
 			"githubLink": "https://github.com/SAP/ui5-inspector",
 			"documentationLink": "https://openui5.hana.ondemand.com/#docs/guide/b24e72443eb34d0fb7bf6940f2d697eb.html",
-			"owner": "SAP",
+			"owner": "nvankov",
 			"license": "Apache 2.0",
 			"type": "Add-on"
 		},
