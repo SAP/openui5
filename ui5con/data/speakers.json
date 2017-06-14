@@ -1,0 +1,214 @@
+[
+	{
+		"name": "Tom Van Doorslaer",
+		"bio": "I’m a slightly disturbed smartass know-it-all. I always loved building stuff! But I’m not very handy, so… I became a software engineer. Added benefit is that I get to sit on a chair, instead of doing physical exercise. Already at a young age, I was tinkering with web-applications, and envisioned a world where the OS would just be a webserver and a browser, So naturally in 2005 I started as an ABAP programmer in the backend. I’m not sure how I came to that decision, all I know is that it payed off, and 3 years later I was building webapplications again. For some reason -possibly alcohol- SAP decided several years back to make me an SAPMentor. This year, I passed that title on to a slightly less deranged, but equally annoying smartass. (or was it equally deranged, but less annoying…) That gave me more time to work on my hobby projects. Which does not mean my projects are going any faster, or are getting any better. It just means I have more unfinished projects.",
+		"picture": "TomVanDoorslaer.png",
+		"company": "Infrabel"
+	},
+	{
+		"name": "Maxim Naidenov",
+		"bio": "Being a passionate software engineer, I have contributed to a vast range of software topics for more than 15 years. I started with business software development, then I gained valuable experience with build and delivery tools and processes for large software projects. Later I moved to development support and witnessed first-hand how development processes and software quality influence the success of a product. Recently I am involved in the development of testing tools and technologies for SAP UI5 toolkit. Being able to contribute to state-of-the-art tools that redefine some of the basic limitations of quality engineering is a real driver for me. When not in office, I enjoy hacking IoT gadgets.",
+		"picture": "MaximNaidenov_small.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Manuel Blechschmidt",
+		"bio": "Manuel is the CEO of the Incentergy GmbH specialized in business software consultancy. He mainly helps teams building fantastic software with OpenUI5, OData and Java EE. He is an active member of the open source community who contributes to multiple apache projects and publishes his work on github.",
+		"picture": "manuel_blechschmidt.jpg",
+		"company": "Incentergy"
+	},
+	{
+		"name": "DJ Adams",
+		"bio": "DJ Adams is a Principal Consultant at Bluefin Solutions, and heads up their Mobility, User Experience and Development Centre of Excellence in the UK. He’s been hacking on SAP enterprise software since 1987 and has contributed to the SAP, Perl, XMPP and Google developer communities in various ways. He’s written books on Google and on Jabber / XMPP for O’Reilly, and more recently on SAP technologies for SAP Press. His latest book is on debugging SAP’s UI5 toolkit. He’s an SAP Mentor, a member of the SAP Mentor Advisory Board, and a board member of the SAP Developer Advisory Board. He studied Classics at University College London.",
+		"picture": "DJA-head.jpg",
+		"company": "Bluefin Solutions"
+	},
+	{
+		"name": "Thilo Seidel",
+		"bio": "I have been a web developer for several years now, turned into a product owner for FLP@SAP in 2016, have been a SAPUI5 fanboy at first sight and will now finally be at my first UI5con. Already overexcited!",
+		"picture": "ThiloSeidel2016.jpg",
+		"company": "SAP",
+		"session": "Add session title here"
+	},
+	{
+		"name": "Denny Schreber",
+		"bio": "Denny Schreber is a Senior Solution Architect with cbs Corporate Business Solutions and responsible for Enterprise Mobility and Fiori UX topics. He has a special focus on Mobile Web Apps, in particular SAP Fiori, Fiori-like apps and SAPUI5 development in general.",
+		"picture": "denny.schreber_square.jpg",
+		"company": "CBS"
+	},
+	{
+		"name": "Martin Schaus",
+		"bio": "Lead Architect, User Interface Core Services",
+		"company": "SAP",
+		"session": "Add session title here",
+		"picture": "MartinSchaus.png",
+		"meetMe": "15:40"
+	},
+	{
+		"name": "Stanislava Baltova",
+		"bio": "Stanislava is an Area Product Owner in UI5 organization based in Sofia. She is currently responsible for UI5 control development topics. In her previous role as Product Owner in UI5 she has gained extensive experience with Fiori 2.0, UI5 Support Tools, Demo Kit and many others.",
+		"company": "SAP",
+		"session": "Add session title here",
+		"picture": "StanislavaBaltova.jpg"
+	},
+	{
+		"name": "Alexander Flammer",
+		"bio": "My name is Alex and i finished my bachelors degree in business informatics in September 2016. Afterwards i started working for Kaufland Informationssysteme where i work as a Software Engineer in the SAP department. I'm passionate about IT and like to play with new technologies and trends.",
+		"picture": "AlexanderFlammer.jpg",
+		"company": "Kaufland Informationssysteme"
+	},
+	{
+		"name": "Mikhail Benderskiy",
+		"bio": "Mikhail is UI5 developer at SAP and product owner of UI Adaptation.",
+		"company": "SAP",
+		"session": "Add session title here",
+		"picture": "Benderskiy_rs.jpg"
+	},
+	{
+		"name": "Gergana Kremenska",
+		"bio": "I am developer in UI5 organization in Sofia. I am pasionate about JavaScript. The journey that I am taking now in the UI5 world, led me to particapate in Support Assistant developmant. My team and I are watching over Controls and all support tools that make UI5 use and development easy and efficient.",
+		"picture": "GerganaKremenska.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Petya Begovska",
+		"bio": "Working as Product Owner at SAP with 10 years of experience in the software industry. Member of the UI5 (HTML/JS UI library created by SAP) development team in Sofia. Strongly focused on UI technologies and OpenUI5.",
+		"picture": "PetyaBegovska.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Aparna Narayanaswamy",
+		"bio": "My job: I  am presently working as a developer of Fiori Launchpad services at SAP in Walldorf. (2016 -present). Apart from doing javascript development, I am also the Quality responsible for my team. My education background : I am an Electronics and Communication Engineer  from the University of Madras (India). I am Agile Scrum Master(EXIN) certified and Basic Project Management GPM - IPMA certiifed. My Past Work Experience : I worked as a  Product Technical Lead in Infosys (Finacle) between 2003-2009 in India. Others :In 2010 I moved to Germany and took a Career break (for Parenting) before joining SAP last year. My Motto: ‘Where there is a Will there is a way’ My Professional interests : openSAP courses, IOT topics, Scrum and Quality topics. My hobbies : Poetry writing and Spending quality time with my daughter.",
+		"picture": "Aparna.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Michael Graf",
+		"bio": "Michael is product owner at SAP and OpenUI5 enthusiast. His passion is developing desirable UIs and working with web technologies. He also loves getting in touch with the community and evangelizing technology. Follow him here or on @Twitter",
+		"picture": "MichaelGraf.png",
+		"company": "SAP",
+		"session": "Add session title here",
+		"meetMe": "16:30"
+	},
+	{
+		"name": "HP Seitz",
+		"bio": "HP Seitz works as independent consultant with focus on professional JavaScript Development. He is doing SAPUI5 Frontend Development for customers since 2012 and Full-stack JavaScript Development together with Node.js and SAP HANA XSA. His experience in the SAP eco system goes back more than 15 years.",
+		"picture": "hpseitzQua240.jpg",
+		"company": "MYPRO-Consulting"
+	},
+	{
+		"name": "Vered Constantin",
+		"bio": "I'm Vered, a developer at SAP for the last 6 years. For the last 2 years working on the Layout Editor and Rapid Application Development Perspective in SAP Web IDE.",
+		"picture": "ConstantinVered.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Volker Buzek",
+		"bio": "Development Architect with focus on web-based mobile architectures, in real life preferring 1 to n combinations of diving, sports, music and dining out. Entered the IT realm via C128 and Elite; after wanderlusting through web agencies at home and abroad, got in touch with the SAP universe in 2007. Never left ever since and in 2012, started using the SAP mobile stack (UI5, Fiori, OData/REST, Kapsel, SCP, GW).",
+		"picture": "volker_buzek.jpg",
+		"company": "j&s-soft GmbH"
+	},
+	{
+		"name": "Thomas Chadzelek",
+		"bio": "Dr. Thomas Chadzelek has been with SAP since the last millennium, first working on UIs in Java, then contributing to the Web Dynpro for Java framework and now to OpenUI5. He holds a PhD in Computer Science from University of Saarbrücken.",
+		"picture": "ThomasChadzelek.jpg",
+		"company": "SAP",
+		"meetMe": "14:00"
+	},
+	{
+		"name": "Andreas Kunz",
+		"bio": "Andreas is an area architect within SAPUI5 development, with a special passion for the open source variant OpenUI5. He has been with UI5 from day one, in changing roles, and spoken at the first UI5con 2016 as well as other conferences like OSCON, Fluent, and SAP TechEd.",
+		"picture": "Andreas-openSAP-small.jpg",
+		"company": "SAP",
+		"meetMe": "16:30"
+	},
+	{
+		"name": "Benedikt Schölch",
+		"bio": "JS Developer and Scrum Master @ UI5 Core Team",
+		"picture": "BenediktSchoelch.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Wouter Lemaire ",
+		"bio": "I'm Wouter Lemaire and I work as an SAP Developer Consultant in Belgium. At the moment I'm working on multiple Fiori projects and therefore doing a lot of SAPUI5 developments. For my SAPUI5 developments, I'm almost using the SAPWebIDE daily. I'm always following and trying the newest SAP technologies. Next to that I'm a very active on the SAP community and part of the SAP Mentors.",
+		"picture": "WouterLemaire.jpg",
+		"company": "Flexso"
+	},
+	{
+		"name": "Mateusz Skadorwa",
+		"bio": "My name is Mateusz Skadorwa. My duties at work are mainly focused around ABAP, but I’m a big fan of the newest technologies. I am spending my free time exploring new opportunities offered by new technologies (mainly related to SAP). Furthermore, I’m enthusiastic of car rallies. The knowledge about UI5, IoT and Automotive helps me to introduce something new in that sport. ",
+		"picture": "MateuszSkadorwa_pic_s.jpg",
+		"company": "Capgemini"
+	},
+	{
+		"name": "Tomas Krejci",
+		"bio": "About myself: I was starting as a developer in C and Java. I was focusing mainly on backend development. Next to that I did small projects related to Web. During the years I was slowly moving to frontend world. Over the Android native development to UI5. Now I’m doing a project manager for UI5 mobile client development.",
+		"picture": "tkrejci.PNG",
+		"company": "GK Software AG"
+	},
+	{
+		"name": "Matthias Oßwald",
+		"bio": "Matthias Oßwald is a web developer at SAP. He has been a member of the UI5 core team since 2013, responsible for various core features and tools around UI5.",
+		"picture": "MatthiasOsswald.jpg",
+		"company": "SAP",
+		"session": "Add session title here"
+	},
+	{
+		"name": "Michael Dell",
+		"bio": "Michael is a tech entrepreneur & CTO of PulseShift. He is doing UI5 since the days of project Phoenix and has built apps for start-ups as well as for some of the largest organizations in the world. Michael has over ten years of experience in full-stack web development and holds a Master Degree in business informatics with a focus on data science. In his free time, he equally enjoys attending and organizing hackathons.",
+		"picture": "MichaelDell.jpg",
+		"company": "PulseShift GmbH"
+	},
+	{
+		"name": "Stefan Beck",
+		"bio": "Chief Product Owner for SAPUI5 and OpenUI5.",
+		"picture": "StefanBeck.jpg",
+		"company": "SAP",
+		"session": "Add session title here",
+		"meetMe": "10:50"
+	},
+	{
+		"name": "Savio Dimatteo",
+		"bio": "Savio Dimatteo is a Senior Developer in the UI Integration Team at SAP, where he is involved in the development of SAP Fiori Launchpad service APIs that enable the product to be integrated across multiple platforms. He enjoys working with UI5 as well as other web development frameworks built around HTML, CSS and JavaScript.",
+		"picture": "savio_dimatteo.jpeg",
+		"company": "SAP",
+		"session": "Add session title here"
+	},
+	{
+		"name": "Holger Schäfer",
+		"bio": "Working as a business unit manager, I am focused on bringing new engaging technologies to our customers. In the meantime, i am engaged in the UI5 community as a developer.",
+		"picture": "HolgerSchaefer.jpg",
+		"company": "UNIORG GmbH"
+	},
+	{
+		"name": "Lorant Guth",
+		"bio": "Continuous Improvement and Continuous Integration driver.",
+		"picture": "lorant_guth.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Helmut Tammen",
+		"bio": "I'm a passionated SAP consultant / SAP developer / Web developer / Cloud developer. During the last 26 years I developed Software in several programming languages. A lot of my work was really interesting but the last 3-5 years were more than interesting. They were amazing. All this new stuff around cloud technology totally excited me. I have never been that productive as in these days. Thanks to Javascript, Node.js, CloudFoundry, Docker and of course SAP CP and SAPUI5. I'm looking forward to the future of SAP in the cloud and I want to be part of it in my customer projects.",
+		"picture": "HelmutTammen.jpg",
+		"company": "TAMMEN IT SOLUTIONS"
+	},
+	{
+		"name": "Meredith Hassett",
+		"bio": "Meredith Hassett is a Developer Evangelist on the Developer Relations team at SAP from the San Francisco Bay Area. She enjoys building (and writing about building) with UI5 and APIs, and dabbling in IoT. Her life goal is to show the world how easy it is to build a good looking integrated application, and to become a social media celebrity. When she’s not running off to events around the world, Meredith enjoys hiking, photography, and inspiring young minds through volunteer programs.",
+		"picture": "MeredithHsset.jpg",
+		"company": "SAP",
+		"meetMe": "14:50"
+	},
+	{
+		"name": "Ian Robert Taylor",
+		"bio": "Bin seit 20 Jahren bei der SAP – HR Entwicklung Landesversionen Südafrika und Großbritannien, Industry Public Services Entwicklung (Campus Management und Records Management). Seit 2015 bei Global Design, hauptsächlich mit UI5 in der „Reference Apps“. In der Reference Apps bauen wir, für sowohl für intern- als extern zweck, reference – artige App, die als Beispiel Implementierung diene.",
+		"picture": "IanRobertTaylor.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Elena Makarenko",
+		"bio": "I'm a SAPUI5 Developer, keen on User Centered Design, focused on creating a great user experience.",
+		"picture": "ElenaMakarenko.jpg",
+		"company": "SAP"
+	}
+]
