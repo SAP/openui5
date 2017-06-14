@@ -85,6 +85,7 @@ sap.ui.define([
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantMgmtRef The variant management Ref
 	 * @param {String} sNewVariantRef The newly selected variant Ref
+	 * @returns {promise} Returns promise that resolves after reverting of old variants and applying of new variants is completed
 	 * @public
 	 */
 	VariantModel.prototype.switchToVariant = function(sVariantMgmtRef, sNewVariantRef) {
@@ -93,10 +94,13 @@ sap.ui.define([
 
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
 
-		this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
-		this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent);
+		return Promise.resolve()
 
-		this._updateCurrentVariant(sVariantMgmtRef, sNewVariantRef);
+		.then(this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent))
+
+		.then(this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent))
+
+		.then(this._updateCurrentVariant(sVariantMgmtRef, sNewVariantRef));
 	};
 
 	return VariantModel;

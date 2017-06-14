@@ -345,6 +345,7 @@ sap.ui.require([
 				return oChange;
 		});
 
+		var oData, oModel, sCurrentVariant;
 		this.mPropertyBag = {viewId: "view1--view2"};
 
 		return this.oFlexController._oChangePersistence.loadChangesMapForComponent(oComponent, this.mPropertyBag)
@@ -352,14 +353,15 @@ sap.ui.require([
 			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aRevertedChanges[1].getKey()] instanceof Object);
 			fnGetChanges.call(this, aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-			var oData = this.oFlexController.getVariantModelData();
-			var oModel = new VariantModel(oData, this.oFlexController, oComponent);
+			oData = this.oFlexController.getVariantModelData();
+			oModel = new VariantModel(oData, this.oFlexController, oComponent);
 
-			var sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+			sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
 			assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
+			return oModel.switchToVariant("variantManagementOrdersTable", "variantManagementOrdersTable");
+		}.bind(this))
 
-			oModel.switchToVariant("variantManagementOrdersTable", "variantManagementOrdersTable");
-
+		.then(function() {
 			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
 			fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 

@@ -931,10 +931,10 @@ sap.ui.define([
 		/**
 		 * Execute the passed asynchronous functions serialized - one after the other
 		 *
-		 * @param {array.<function>} aPromiseStack - list of asynchronous functions returns promises
+		 * @param {array.<function>} aPromiseQueue - List of asynchronous functions that returns promises
 		 * @returns {Promise} Empty resolved promise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSerialized : function(aPromiseQueue) {
+		execPromiseQueueSequentially : function(aPromiseQueue) {
 			if (aPromiseQueue.length === 0) {
 				return Promise.resolve();
 			}
@@ -947,12 +947,12 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					return this.execPromiseQueueSerialized(aPromiseQueue);
+					return this.execPromiseQueueSequentially(aPromiseQueue);
 				}.bind(this));
 
 			} else {
 				this.log.error("Changes could not be applied, promise not wrapped inside function.");
-				return this.execPromiseQueueSerialized(aPromiseQueue);
+				return this.execPromiseQueueSequentially(aPromiseQueue);
 			}
 		}
 

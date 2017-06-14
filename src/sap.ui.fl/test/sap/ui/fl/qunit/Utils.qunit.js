@@ -1066,4 +1066,75 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(Utils.getAppVersionFromManifest(), "", "if nothing was passed, return empty string");
 	});
 
+	QUnit.module("Utils.execPromiseQueueSequentially", {
+		beforeEach: function (assert) {
+			var fnResolve = function() {
+				return Promise.resolve();
+			};
+			var fnReject = function() {
+				return Promise.reject();
+			};
+
+			//Resolved promises
+			this.fnPromise1 = sandbox.stub().returns(fnResolve());
+			this.fnPromise2 = sandbox.stub().returns(fnResolve());
+			this.fnPromise3 = sandbox.stub().returns(fnResolve());
+
+			//Rejected promise without return
+			this.fnPromise4 = sandbox.stub().returns(fnReject());
+
+			this.aPromisesWithoutReject = [this.fnPromise1, this.fnPromise2, this.fnPromise3];
+			this.aPromisesWithReject = [this.fnPromise1, this.fnPromise4];
+			this.aPromisesWithObj = [{}, this.fnPromise1];
+			this.aPromisesResolveAfterReject = [this.fnPromise4, this.fnPromise1];
+
+			this.fnExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
+			this.spyLog = sandbox.spy(jQuery.sap.log, "error");
+		},
+
+		afterEach: function () {
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when called with a resolved promises array as parameter", function(assert) {
+		var done = assert.async();
+		Utils.execPromiseQueueSequentially(this.aPromisesWithoutReject).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 4, "then execPromiseQueueSequentially called four times");
+			sinon.assert.callOrder(this.fnPromise1, this.fnPromise2, this.fnPromise3);
+			assert.strictEqual(this.spyLog.callCount, 0, "then error log not called");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing resolved, rejected and rejected without return promises", function(assert) {
+		var done = assert.async();
+		Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise1, this.fnPromise4);
+			assert.strictEqual(this.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing an object and a promise", function(assert) {
+		var done = assert.async();
+		Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise1);
+			assert.strictEqual(this.spyLog.callCount, 1, "then error log called once, as one element (object) was not a function");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing a rejected followed by a resolved promise", function(assert) {
+		var done = assert.async();
+		Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise4, this.fnPromise1);
+			assert.strictEqual(this.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+			done();
+		}.bind(this));
+	});
+
 }(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));

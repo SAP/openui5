@@ -244,6 +244,44 @@ sap.ui.require([
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
 		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
+		var oCommandStack = this.oRta.getCommandStack();
+		oCommandStack.attachEventOnce("commandExecuted", function() {
+			// remove field is executed, reveal should be available
+			var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+			this.oFieldOverlay.focus();
+			sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+
+			// open context menu dialog
+			var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
+			oContextMenuItem.getDomRef().click();
+			sap.ui.getCore().applyChanges();
+
+			oDialog.attachOpened(function() {
+				var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
+				oCommandStack.attachModified(function(oEvent) {
+					var aCommands = oCommandStack.getAllExecutedCommands();
+					if (aCommands &&
+						aCommands.length  === 3) {
+						sap.ui.getCore().applyChanges();
+
+						var oGroupElements = this.oGeneralGroup.getGroupElements();
+						var iIndex = oGroupElements.indexOf(this.oField) + 1;
+						assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
+						assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+						assert.equal(oFieldToRemove.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
+						assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
+
+						this.oRta.stop().then(done);
+					}
+				}.bind(this));
+
+				// select the field in the list and close the dialog with OK
+				oFieldToAdd.selected = true;
+				sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+				sap.ui.getCore().applyChanges();
+			}.bind(this));
+		}.bind(this));
+
 		// to reveal we have to remove the field first (otherwise it would be addODataProperty)
 		var oFieldToRemove = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
 		var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToRemove);
@@ -251,40 +289,6 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		oFieldToHideOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
-
-		var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
-		this.oFieldOverlay.focus();
-		sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
-
-		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
-		oContextMenuItem.getDomRef().click();
-		sap.ui.getCore().applyChanges();
-
-		oDialog.attachOpened(function() {
-			var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
-			var oCommandStack = this.oRta.getCommandStack();
-			oCommandStack.attachModified(function(oEvent) {
-				var aCommands = oCommandStack.getAllExecutedCommands();
-				if (aCommands &&
-					aCommands.length  === 3) {
-					sap.ui.getCore().applyChanges();
-
-					var oGroupElements = this.oGeneralGroup.getGroupElements();
-					var iIndex = oGroupElements.indexOf(this.oField) + 1;
-					assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
-					assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-					assert.equal(oFieldToRemove.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
-					assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
-
-					this.oRta.stop().then(done);
-				}
-			}.bind(this));
-
-			// select the field in the list and close the dialog with OK
-			oFieldToAdd.selected = true;
-			sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
-			sap.ui.getCore().applyChanges();
-		}.bind(this));
 	});
 
 	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested();

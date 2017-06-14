@@ -194,23 +194,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("After executing, undoing and redoing the command", function(assert) {
-		var done = assert.async();
-		this.oMoveCommand.execute().then( function() {
-			this.oMoveCommand.undo().then( function() {
-				var oChange = this.oMoveCommand.getPreparedChange();
-				if (this.oMoveCommand.getAppComponent) {
-					var oAppComponent = this.oMoveCommand.getAppComponent();
-					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
-				}
+		return Promise.resolve()
 
-				this.oMoveCommand.execute().then( function() {
-					assertObjectAttributeMoved.call(this, assert);
-					done();
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+		.then(this.oMoveCommand.execute())
+
+		.then(this.oMoveCommand.undo())
+
+		.then(function() {
+			var oChange = this.oMoveCommand.getPreparedChange();
+			if (this.oMoveCommand.getAppComponent) {
+				var oAppComponent = this.oMoveCommand.getAppComponent();
+				var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+				var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+				oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+			}
+			return this.oMoveCommand.execute();
+		}.bind(this))
+
+		.then(assertObjectAttributeMoved.bind(this, assert));
 	});
 
 	function assertObjectAttributeMoved(assert) {

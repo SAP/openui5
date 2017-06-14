@@ -319,7 +319,7 @@ function(
 					var oAppComponent = this.oCommand.getAppComponent();
 					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+					return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
 				}
 			}.bind(this))
 

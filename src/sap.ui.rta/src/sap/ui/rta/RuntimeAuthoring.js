@@ -876,26 +876,34 @@ sap.ui.define([
 	 * @returns {Promise} promise that resolves with no parameters
 	 */
 	RuntimeAuthoring.prototype._createAndApplyChanges = function(aChangeSpecificData) {
-		return Promise.resolve().then(function() {
+		var aPromises = [];
+		return Promise.resolve()
 
+		.then(function() {
 			function fnValidChanges(oChangeSpecificData) {
 				return oChangeSpecificData && oChangeSpecificData.selector && oChangeSpecificData.selector.id;
 			}
-
 			aChangeSpecificData.filter(fnValidChanges).forEach(function(oChangeSpecificData) {
 				var oControl = sap.ui.getCore().byId(oChangeSpecificData.selector.id);
-				this._getFlexController().createAndApplyChange(oChangeSpecificData, oControl);
-			});
-		})['catch'](function(oError) {
+				aPromises.push(this._getFlexController().createAndApplyChange.bind(this, oChangeSpecificData, oControl));
+			}.bind(this));
+			return FlexUtils.execPromiseQueueSequentially(aPromises);
+		}.bind(this))
+
+		.catch(function(oError) {
 			FlexUtils.log.error("Create and apply error: " + oError);
 			return oError;
-		}).then(function(oError) {
+		})
+
+		.then(function(oError) {
 			return this._getFlexController().saveAll().then(function() {
 				if (oError) {
 					throw oError;
 				}
 			});
-		}.bind(this))['catch'](function(oError) {
+		}.bind(this))
+
+		.catch(function(oError) {
 			FlexUtils.log.error("Create and apply and/or save error: " + oError);
 			return this._showMessage(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
 		}.bind(this));
@@ -1086,8 +1094,8 @@ sap.ui.define([
 	/**
 	 * Function to handle modification of an element
 	 *
-	 * @param {sap.ui.base.Event}
-	 *          oEvent event object
+	 * @param {sap.ui.base.Event} oEvent Event object
+	 * @returns {promise} Returns promise that resolves after command was executed sucessfully
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
@@ -1095,8 +1103,9 @@ sap.ui.define([
 
 		var oCommand = oEvent.getParameter("command");
 		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			this.getCommandStack().pushAndExecute(oCommand);
+			return this.getCommandStack().pushAndExecute(oCommand);
 		}
+		return Promise.resolve();
 	};
 
 	/**
