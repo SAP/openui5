@@ -2,7 +2,7 @@
 	{
 		"name": "Tom Van Doorslaer",
 		"bio": "I’m a slightly disturbed smartass know-it-all. I always loved building stuff! But I’m not very handy, so… I became a software engineer. Added benefit is that I get to sit on a chair, instead of doing physical exercise. Already at a young age, I was tinkering with web-applications, and envisioned a world where the OS would just be a webserver and a browser, So naturally in 2005 I started as an ABAP programmer in the backend. I’m not sure how I came to that decision, all I know is that it payed off, and 3 years later I was building webapplications again. For some reason -possibly alcohol- SAP decided several years back to make me an SAPMentor. This year, I passed that title on to a slightly less deranged, but equally annoying smartass. (or was it equally deranged, but less annoying…) That gave me more time to work on my hobby projects. Which does not mean my projects are going any faster, or are getting any better. It just means I have more unfinished projects.",
-		"picture": "TomVanDoorslaer.png",
+		"picture": "TomVanDoorslaer.jpg",
 		"company": "Infrabel"
 	},
 	{
@@ -41,7 +41,7 @@
 		"bio": "Lead Architect, User Interface Core Services",
 		"company": "SAP",
 		"session": "Add session title here",
-		"picture": "MartinSchaus.png",
+		"picture": "MartinSchaus.jpg",
 		"meetMe": "15:40"
 	},
 	{
@@ -85,7 +85,7 @@
 	{
 		"name": "Michael Graf",
 		"bio": "Michael is product owner at SAP and OpenUI5 enthusiast. His passion is developing desirable UIs and working with web technologies. He also loves getting in touch with the community and evangelizing technology. Follow him here or on @Twitter",
-		"picture": "MichaelGraf.png",
+		"picture": "MichaelGraf.jpg",
 		"company": "SAP",
 		"session": "Add session title here",
 		"meetMe": "16:30"
@@ -143,7 +143,7 @@
 	{
 		"name": "Tomas Krejci",
 		"bio": "About myself: I was starting as a developer in C and Java. I was focusing mainly on backend development. Next to that I did small projects related to Web. During the years I was slowly moving to frontend world. Over the Android native development to UI5. Now I’m doing a project manager for UI5 mobile client development.",
-		"picture": "tkrejci.PNG",
+		"picture": "tkrejci.jpg",
 		"company": "GK Software AG"
 	},
 	{
@@ -170,7 +170,7 @@
 	{
 		"name": "Savio Dimatteo",
 		"bio": "Savio Dimatteo is a Senior Developer in the UI Integration Team at SAP, where he is involved in the development of SAP Fiori Launchpad service APIs that enable the product to be integrated across multiple platforms. He enjoys working with UI5 as well as other web development frameworks built around HTML, CSS and JavaScript.",
-		"picture": "savio_dimatteo.jpeg",
+		"picture": "savio_dimatteo.jpg",
 		"company": "SAP",
 		"session": "Add session title here"
 	},
