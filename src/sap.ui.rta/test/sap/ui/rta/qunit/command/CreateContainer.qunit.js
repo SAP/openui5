@@ -84,15 +84,15 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 				this.NEW_CONTROL_LABEL = "New Label";
 
 				var oChangeRegistry = ChangeRegistry.getInstance();
+
+				this.fnApplyChangeSpy = sinon.spy();
+				this.fnCompleteChangeContentSpy = sinon.spy();
+
 				oChangeRegistry.registerControlsForChanges({
 					"sap.ui.layout.form.Form": {
 						"addGroup" : {
-							applyChange: function() {
-								assert.ok(true, "applyChange was executed");
-							},
-							completeChangeContent: function() {
-								assert.ok(true, "completeChangeContent was executed");
-							}
+							applyChange: this.fnApplyChangeSpy,
+							completeChangeContent: this.fnCompleteChangeContentSpy
 						}
 					}
 				});
@@ -129,14 +129,14 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 		});
 
 		QUnit.test("when getting a createContainer command for form", function(assert) {
-			assert.expect(5);
-
 			var sChangeType = this.oCreateContainerDesignTimeMetadata.getAggregationAction("createContainer", this.oForm)[0].changeType;
 			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
 			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 			assert.ok(this.oCreateContainerCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
 			this.oCreateContainerCommand.execute();
+			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 		});
 
 	});

@@ -72,15 +72,14 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 				});
 
 				var oChangeRegistry = ChangeRegistry.getInstance();
+				this.fnApplyChangeSpy = sinon.spy();
+				this.fnCompleteChangeContentSpy = sinon.spy();
+
 				oChangeRegistry.registerControlsForChanges({
 					"sap.m.Link": {
 						"hideControl" : {
-							applyChange: function() {
-								assert.ok(true, "applyChange was executed");
-							},
-							completeChangeContent: function() {
-								assert.ok(true, "completeChangeContent was executed");
-							}
+							applyChange: this.fnApplyChangeSpy,
+							completeChangeContent: this.fnCompleteChangeContentSpy
 						}
 					}
 				});
@@ -113,7 +112,6 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 		});
 
 		QUnit.test("when getting a remove command without removedElement parameter ...", function(assert) {
-			assert.expect(5);
 			var oCommand = CommandFactory.getCommandFor(this.oLink, "Remove", undefined,
 				this.oLinkDesignTimeMetadata);
 
@@ -124,10 +122,12 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			assert.ok(oCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
 			oCommand.execute();
+
+			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 		});
 
 		QUnit.test("when getting a remove command for a Link...", function(assert) {
-			assert.expect(5);
 			var oCommand = CommandFactory.getCommandFor(this.oLink, "Remove", {
 				removedElement : this.oLink
 			}, this.oLinkDesignTimeMetadata);
@@ -139,5 +139,7 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			assert.ok(oCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
 			oCommand.execute();
+			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 		});
 });

@@ -1,64 +1,82 @@
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+if (window.blanket){
+	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+}
 
-jQuery.sap.require("sap.m.Button");
-jQuery.sap.require("sap.m.Input");
-jQuery.sap.require("sap.m.ObjectHeader");
-jQuery.sap.require("sap.m.ObjectAttribute");
-
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.table.Column");
-
-jQuery.sap.require("sap.uxap.ObjectPageLayout");
-
-jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-jQuery.sap.require("sap.ui.dt.ElementOverlay");
-
-jQuery.sap.require("sap.ui.rta.command.CommandFactory");
-jQuery.sap.require("sap.ui.rta.command.FlexCommand");
-jQuery.sap.require("sap.ui.rta.command.Remove");
-jQuery.sap.require("sap.ui.rta.command.CompositeCommand");
-jQuery.sap.require("sap.ui.rta.command.Stack");
-jQuery.sap.require("sap.ui.rta.Utils");
-
-jQuery.sap.require("sap.ui.comp.library");
-jQuery.sap.require("sap.ui.comp.smartform.SmartForm");
-jQuery.sap.require("sap.ui.comp.smartform.GroupElement");
-jQuery.sap.require("sap.ui.comp.smartform.Group");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.MoveGroups");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.MoveFields");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.AddGroup");
-jQuery.sap.require("sap.ui.comp.smartform.flexibility.changes.AddFields");
-
-jQuery.sap.require("sap.ui.fl.changeHandler.Base");
-jQuery.sap.require("sap.ui.fl.changeHandler.MoveControls");
-jQuery.sap.require("sap.ui.fl.changeHandler.PropertyChange");
-jQuery.sap.require("sap.ui.fl.changeHandler.PropertyBindingChange");
-jQuery.sap.require("sap.ui.fl.changeHandler.HideControl");
-jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
-jQuery.sap.require("sap.ui.fl.registry.SimpleChanges");
-jQuery.sap.require("sap.ui.fl.Utils");
-
-
-(function() {
+sap.ui.define([
+	'sap/m/Button',
+	'sap/m/Input',
+	'sap/m/ObjectHeader',
+	'sap/m/ObjectAttribute',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/table/Column',
+	'sap/uxap/ObjectPageLayout',
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/ElementOverlay',
+	'sap/ui/rta/command/CommandFactory',
+	'sap/ui/rta/command/FlexCommand',
+	'sap/ui/rta/command/BaseCommand',
+	'sap/ui/rta/command/Remove',
+	'sap/ui/rta/command/CompositeCommand',
+	'sap/ui/rta/command/Stack',
+	'sap/ui/rta/Utils',
+	'sap/ui/fl/changeHandler/Base',
+	'sap/ui/fl/changeHandler/MoveControls',
+	'sap/ui/fl/changeHandler/PropertyChange',
+	'sap/ui/fl/changeHandler/PropertyBindingChange',
+	'sap/ui/fl/changeHandler/HideControl',
+	'sap/ui/fl/registry/ChangeRegistry',
+	'sap/ui/fl/registry/SimpleChanges',
+	'sap/ui/model/json/JSONModel',
+	'sap/ui/fl/Utils',
+	'sap/ui/thirdparty/sinon',
+	'sap/ui/thirdparty/sinon-ie',
+	'sap/ui/thirdparty/sinon-qunit'
+],
+function(
+	Button,
+	Input,
+	ObjectHeader,
+	ObjectAttribute,
+	VerticalLayout,
+	Column,
+	ObjectPageLayout,
+	ElementDesignTimeMetadata,
+	OverlayRegistry,
+	ElementOverlay,
+	CommandFactory,
+	FlexCommand,
+	BaseCommand,
+	Remove,
+	CompositeCommand,
+	Stack,
+	RTAUtils,
+	Base,
+	MoveControls,
+	PropertyChange,
+	PropertyBindingChange,
+	HideControl,
+	ChangeRegistry,
+	SimpleChanges,
+	JSONModel,
+	FLUtils
+) {
 	"use strict";
 
-	var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
+	var oChangeRegistry = ChangeRegistry.getInstance();
 
 	oChangeRegistry.registerControlsForChanges({
 		"sap.m.Button": [
-			sap.ui.fl.registry.SimpleChanges.hideControl,
-			sap.ui.fl.registry.SimpleChanges.unhideControl
+			SimpleChanges.hideControl,
+			SimpleChanges.unhideControl
 		],
-		"sap.m.ObjectHeader": [sap.ui.fl.registry.SimpleChanges.moveControls],
-		"sap.ui.layout.VerticalLayout": [sap.ui.fl.registry.SimpleChanges.moveControls]
+		"sap.m.ObjectHeader": [SimpleChanges.moveControls],
+		"sap.ui.layout.VerticalLayout": [SimpleChanges.moveControls]
 	});
 
-	var CommandFactory = new sap.ui.rta.command.CommandFactory({
+	var oCommandFactory = new CommandFactory({
 		flexSettings: {
 			layer: "VENDOR"
 		}
@@ -66,7 +84,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	var sandbox = sinon.sandbox.create();
 
-	var ERROR_INTENSIONALLY = new Error("this command intensionally failed");
+	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
 
 	var oComponent = sap.ui.getCore().createComponent({
 		name : "sap.ui.rta.test.additionalElements",
@@ -80,53 +98,45 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.module("Given a command factory", {
 		beforeEach : function(assert) {
-			sandbox.stub(sap.ui.fl.Utils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.oSmartGroup = new sap.ui.comp.smartform.Group(oComponent.createId("mySmartGroup"));
-			this.oSmartForm = new sap.ui.comp.smartform.SmartForm(oComponent.createId("mySmartForm"));
-			this.oObjectPageLayout = new sap.uxap.ObjectPageLayout(oComponent.createId("myObjectPageLayout"));
-			this.oObjectPageSection = new sap.uxap.ObjectPageSection(oComponent.createId("myObjectPageSection"));
+			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			this.oButton = new Button(oComponent.createId("myButton"));
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
-			this.oSmartGroup.destroy();
-			this.oSmartForm.destroy();
-			this.oObjectPageLayout.destroy();
-			this.oObjectPageSection.destroy();
+			this.oButton.destroy();
 		}
 	});
 
-	QUnit.test("when getting a property change command for smart form with settings,", function(assert) {
-		var oCommand = CommandFactory.getCommandFor(this.oSmartForm, "property", {
+	QUnit.test("when getting a property change command for button,", function(assert) {
+		var oCommand = oCommandFactory.getCommandFor(this.oButton, "property", {
 			propertyName : "visible",
-			oldValue : this.oSmartForm.getVisible(),
+			oldValue : this.oButton.getVisible(),
 			newValue : false
 		});
-		assert.ok(oCommand, "then command is available");
+		assert.ok(oCommand, "then command without flex settings is available");
 		assert.strictEqual(oCommand.getNewValue(), false, "and its settings are merged correctly");
 
-		var oCommandFactory2 = sap.ui.rta.command.CommandFactory;
 		var oFlexSettings = {
 			layer: "VENDOR",
 			developerMode: true
 		};
-		var oCommand2 = oCommandFactory2.getCommandFor(this.oSmartForm, "property", {
+		var oCommand2 = oCommandFactory.getCommandFor(this.oButton, "property", {
 			propertyName : "visible",
-			oldValue : this.oSmartForm.getVisible(),
+			oldValue : this.oButton.getVisible(),
 			newValue : false
 		}, undefined, oFlexSettings);
-		assert.ok(oCommand2, "then command is available");
+		assert.ok(oCommand2, "then command with flex settings is available");
 		assert.strictEqual(oCommand2.getNewValue(), false, "and its settings are merged correctly");
 	});
 
 	QUnit.module("Given a flex command", {
 		beforeEach : function(assert) {
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.oChangeHandler = sap.ui.fl.changeHandler.HideControl;
-			this.fnApplyChangeSpy = sandbox.spy(this.oChangeHandler, "applyChange");
-			this.oFlexCommand = new sap.ui.rta.command.FlexCommand({
-				element : new sap.m.Button(),
-				changeHandler : this.oChangeHandler,
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
+			this.oFlexCommand = new FlexCommand({
+				element : new Button(),
+				changeHandler : HideControl,
 				changeType : "hideControl"
 			});
 		},
@@ -144,14 +154,14 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.module("Given a command stack", {
 		beforeEach : function(assert) {
-			this.stack = new sap.ui.rta.command.Stack();
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.command = new sap.ui.rta.command.BaseCommand();
+			this.stack = new Stack();
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
 			this.failingCommand.execute = function(oElement) {
-				throw ERROR_INTENSIONALLY;
+				throw ERROR_INTENTIONALLY;
 			};
-			this.command2 = new sap.ui.rta.command.BaseCommand();
+			this.command2 = new BaseCommand();
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -213,7 +223,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		this.stack.attachModified(fnStackModified);
 		assert.throws(function() {
 			this.stack.pushAndExecute(this.failingCommand);
-		}, ERROR_INTENSIONALLY, " an error is thrown and catched");
+		}, ERROR_INTENTIONALLY, " an error is thrown and catched");
 		assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
 		assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
 	});
@@ -221,7 +231,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 	QUnit.test("when calling pushAndExecute with an failing command and afterwards with a succeeding command", function(assert) {
 		assert.throws(function() {
 			this.stack.pushAndExecute(this.failingCommand);
-		}, ERROR_INTENSIONALLY, " an error is thrown and catched");
+		}, ERROR_INTENTIONALLY, " an error is thrown and catched");
 
 		this.stack.pushAndExecute(this.command);
 		var oTopCommand = this.stack.pop();
@@ -259,12 +269,12 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.module("Given a property command", {
 		beforeEach : function(assert) {
-			sandbox.stub(sap.ui.fl.Utils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
 
 			this.OLD_VALUE = '2px';
 			this.NEW_VALUE = '5px';
-			this.oControl = new sap.ui.table.Column(oComponent.createId("control"), {
+			this.oControl = new Column(oComponent.createId("control"), {
 				width : this.OLD_VALUE
 			});
 			this.oPropertyCommand = CommandFactory.getCommandFor(this.oControl, "Property", {
@@ -304,8 +314,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.module("Given a bind property command", {
 		beforeEach : function(assert) {
-			sandbox.stub(sap.ui.fl.Utils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
 
 			this.OLD_BOOLEAN_VALUE = false;
 			this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS = "{= ( ${/field1} === 'critical' ) &&  ( ${/field2} > 100 ) }";
@@ -314,15 +324,15 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			this.OLD_VALUE_BINDING = "{path:'/field1'}";
 			this.NEW_VALUE_BINDING = "{path:'namedModel>/numberAsString', type:'sap.ui.model.type.Integer'}";
 			this.NEW_VALUE = "20";
-			this.oInput = new sap.m.Input(oComponent.createId("input"), {
+			this.oInput = new Input(oComponent.createId("input"), {
 				showValueHelp: this.OLD_BOOLEAN_VALUE,
 				value: this.OLD_VALUE_BINDING
 			});
-			var oModel = new sap.ui.model.json.JSONModel({
+			var oModel = new JSONModel({
 					field1 : this.OLD_VALUE,
 					field2 : 15000
 			});
-			var oNamedModel = new sap.ui.model.json.JSONModel({
+			var oNamedModel = new JSONModel({
 					numberAsString : this.NEW_VALUE
 			});
 			this.oInput.setModel(oModel);
@@ -390,15 +400,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.module("Given remove command", {
 		beforeEach : function(assert) {
-			//jQuery.sap.require("sap.ui.rta.command.Remove");
-			//var Command = jQuery.sap.getObject("sap.ui.rta.command.Remove");
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.oSmartGroup1 = new sap.ui.comp.smartform.Group(oComponent.createId("group"), {
-				label : "{/test}"
-			});
-			this.oCommand = CommandFactory.getCommandFor(this.oSmartGroup1, "Remove", {
-				removedElement: this.oSmartGroup1
-			}, new sap.ui.dt.ElementDesignTimeMetadata({
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			this.oButton = new Button(oComponent.createId("button"));
+			this.oCommand = CommandFactory.getCommandFor(this.oButton, "Remove", {
+				removedElement: this.oButton
+			}, new ElementDesignTimeMetadata({
 					data : {
 						actions : {
 							remove : {
@@ -413,7 +419,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		afterEach : function (assert) {
 			sandbox.restore();
 			this.oCommand.destroy();
-			this.oSmartGroup1.destroy();
+			this.oButton.destroy();
 		}
 	});
 
@@ -421,591 +427,20 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		this.oCommand.prepare();
 		assert.deepEqual(this.oCommand.getSelector(), {
 			appComponent: oComponent,
-			controlType: "sap.ui.comp.smartform.Group",
-			id: "testcomponent---group"
+			controlType: "sap.m.Button",
+			id: "testcomponent---button"
 		}, "then selector is properly set for remove command");
 		assert.ok(this.oCommand.getPreparedChange(), "then change is successfully prepared");
 	});
 
 
-	QUnit.module("Given a rename command", {
-		beforeEach : function(assert) {
-			// Test Setup:
-			// SmartForm
-			// -- groups
-			// -- -- SmartGroup1
-			// -- -- -- groupElements
-			// -- -- -- -- SmartElement
-			// -- -- SmartGroup2
-
-			this.oModel = new sap.ui.model.json.JSONModel({
-				test : "someLabel"
-			});
-
-			sandbox.stub(sap.ui.fl.Utils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.oSmartGroupElement = new sap.ui.comp.smartform.GroupElement(oComponent.createId("element"), {
-				label : "{/test}"
-			});
-			this.oSmartGroup1 = new sap.ui.comp.smartform.Group(oComponent.createId("group"), {
-				label : "{/test}",
-				groupElements : [this.oSmartGroupElement]
-			});
-			this.oSmartGroup2 = new sap.ui.comp.smartform.Group();
-			this.oSmartForm = new sap.ui.comp.smartform.SmartForm({
-				title : "Old Form Label",
-				groups : [this.oSmartGroup1, this.oSmartGroup2]
-			});
-			this.oSmartGroup1.setModel(this.oModel);
-
-			this.oGroupDTMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
-				data : {
-					actions: {
-						rename : {
-							changeType : "renameGroup",
-							domRef : function (oControl){
-								return oControl.getTitle().getDomRef();
-							}
-						}
-					}
-				}
-			});
-
-			this.oGroupElementDTMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
-				data : {
-					actions: {
-						rename : {
-							changeType : "renameField",
-							domRef : function (oControl){
-								return oControl.getLabel().getDomRef();
-							}
-						}
-					}
-				}
-			});
-
-			this.oRenameCommand = CommandFactory.getCommandFor(this.oSmartGroup1, "Rename", {
-				renamedElement : this.oSmartGroup1,
-				newValue : "New Group Label"
-			}, this.oGroupDTMetadata);
-//			this.oRenameCommand2 = CommandFactory.getCommandFor(this.oSmartForm, "Rename", {
-//				renamedElement : this.oSmartForm,
-//				newValue : "New Form Label"
-//			});
-			this.oRenameCommand1 = CommandFactory.getCommandFor(this.oSmartGroupElement, "Rename", {
-				renamedElement : this.oSmartGroupElement,
-				newValue : "New Group Element Label"
-			}, this.oGroupElementDTMetadata);
-		},
-
-		afterEach : function(assert) {
-			sandbox.restore();
-			this.oSmartForm.destroy();
-			this.oRenameCommand.destroy();
-//			this.oRenameCommand2.destroy();
-			this.oRenameCommand1.destroy();
-			this.oGroupDTMetadata.destroy();
-			this.oGroupElementDTMetadata.destroy();
-		}
-	});
-
-	QUnit.test("when executing the rename command for smartform group", function(assert) {
-		assert.ok(this.oRenameCommand.isEnabled(), "then the command is enabled for the given control");
-		assert.equal(this.oRenameCommand.getChangeType(), "renameGroup", "then the command with corresponding changeType is returned");
-		this.oRenameCommand.execute();
-		assert.equal(this.oSmartGroup1.getLabel(), "New Group Label", "then the groups text changed accordingly");
-		assert.equal(this.oSmartGroup1.getBinding("label"), undefined, "then the binding is removed");
-
-	});
-
-	QUnit.test("when undoing the rename command for a smartform group", function(assert) {
-		assert.ok(this.oRenameCommand.isEnabled(), "then the command is enabled for the given control");
-		this.oRenameCommand.execute();
-		this.oRenameCommand.undo();
-		assert.equal(this.oSmartGroup1.getBindingInfo("label").parts[0].path, "/test", "then the binding is restored");
-		assert.equal(this.oSmartGroup1.getLabel(), "someLabel", "then the groups label text is restored");
-		assert.ok(!this.oSmartGroup1.getBinding("label").isSuspended(), "then the binding is resumed");
-
-	});
-
-	QUnit.test("when executing the rename command for a smartform group element", function(assert) {
-		assert.ok(this.oRenameCommand1.isEnabled(), "then the command is enabled for the given control");
-
-		this.oRenameCommand1.execute();
-
-		assert.equal(this.oSmartGroupElement.getLabelText(), "New Group Element Label",
-				"then the group elements text changed accordingly");
-		assert.equal(this.oSmartGroupElement.getBinding("label"), undefined, "then the binding is removed");
-	});
-
-	QUnit.test("when undoing the rename command for a smartform group element", function(assert) {
-		assert.ok(this.oRenameCommand1.isEnabled(), "then the command is enabled for the given control");
-
-		this.oRenameCommand1.execute();
-
-		this.oRenameCommand1.undo();
-		assert.equal(this.oSmartGroupElement.getBindingInfo("label").parts[0].path, "/test", "then the binding is restored");
-		assert.equal(this.oSmartGroupElement.getLabelText(), "someLabel", "then the elements label text is restored");
-		assert.ok(!this.oSmartGroupElement.getBinding("label").isSuspended(), "then the binding is resumed");
-
-	});
-
-	// QUnit.module("Given a rename command for a SimpleForm control", {
-	// 	beforeEach : function(assert) {
-	// 		// Test Setup:
-	// 		// SimpleForm
-	// 		// -- Title
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Title
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Label
-	// 		// -- Input
-	// 		sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-	// 		this.oModel = new sap.ui.model.json.JSONModel({
-	// 			label : "someLabel",
-	// 			title : "someTitle"
-	// 		});
-
-	// 		this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
-	// 		this.oTitle1 = new sap.ui.core.Title({id : "Title1",  text : "{/title}"});
-	// 		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-	// 		this.oLabel1 = new sap.m.Label({id : "Label1",  text : "Label 1"});
-	// 		this.oLabel2 = new sap.m.Label({id : "Label2",  text : "{/label}"});
-	// 		this.oLabel3 = new sap.m.Label({id : "Label3",  text : "Label 3"});
-	// 		this.oInput0 = new sap.m.Input({id : "Input0"});
-	// 		this.oInput1 = new sap.m.Input({id : "Input1"});
-	// 		this.oInput2 = new sap.m.Input({id : "Input2"});
-	// 		this.oInput3 = new sap.m.Input({id : "Input3"});
-	// 		this.oSimpleForm = new sap.ui.layout.form.SimpleForm(oComponent.createId("form"), {
-	// 			id : "SimpleForm", maxContainerCols : 2, editable : true, layout : "ResponsiveGridLayout",
-	// 			title : "Simple Form",
-	// 			content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1,
-	// 			           this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
-	// 		});
-	// 		this.oSimpleForm.setModel(this.oModel);
-	// 		this.oSimpleForm.placeAt("test-view");
-	// 		sap.ui.getCore().applyChanges();
-
-	// 		this.oFormContainer1 = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
-	// 		this.oFormElement1 = this.oFormContainer1.getAggregation("formElements")[0];
-
-	// 		this.oSimpleFormDTMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
-	// 			data : {
-	// 				actions: {
-	// 					rename : function(oElement){
-	// 						var sType = oElement.getMetadata().getName();
-	// 						var oRenameMetadata;
-	// 						if (sType === "sap.ui.layout.form.FormContainer"){
-	// 							oRenameMetadata = {
-	// 								changeType : "renameTitle",
-	// 								domRef : function (oControl){
-	// 									return oControl.getTitle().getDomRef();
-	// 								},
-	// 								getState : function (oControl) {
-	// 									var oState = {
-	// 										oldValue : oControl.getTitle().getText()
-	// 									};
-	// 									return oState;
-	// 								},
-	// 								restoreState : function (oControl, oState) {
-	// 									oControl.getTitle().setText(oState.oldValue);
-	// 									var sBindingValue = "";
-	// 									var oBindingInfo = oControl.getTitle().getBindingInfo("text");
-	// 									if (oBindingInfo) {
-	// 										sBindingValue = oBindingInfo.binding.getValue();
-	// 										if (sBindingValue === oState.oldValue) {
-	// 											var oBinding = oControl.getTitle().getBinding("text");
-	// 											if (oBinding) {
-	// 												oBinding.resume();
-	// 											}
-	// 										}
-	// 									}
-	// 									return true;
-	// 								}
-	// 							};
-	// 						} else if (sType === "sap.ui.layout.form.FormElement"){
-	// 							oRenameMetadata = {
-	// 								changeType : "renameLabel",
-	// 								domRef : function (oControl){
-	// 									return oControl.getLabel().getDomRef();
-	// 								},
-	// 								getState : function (oControl) {
-	// 									var oState = {
-	// 										oldValue : oControl.getLabel().getText()
-	// 									};
-	// 									return oState;
-	// 								},
-	// 								restoreState : function (oControl, oState) {
-	// 									oControl.getLabel().setText(oState.oldValue);
-	// 									var sBindingValue = "";
-	// 									var oBindingInfo = oControl.getLabel().getBindingInfo("text");
-	// 									if (oBindingInfo) {
-	// 										sBindingValue = oBindingInfo.binding.getValue();
-	// 										if (sBindingValue === oState.oldValue) {
-	// 											var oBinding = oControl.getLabel().getBinding("text");
-	// 											if (oBinding) {
-	// 												oBinding.resume();
-	// 											}
-	// 										}
-	// 									}
-	// 									return true;
-	// 								}
-	// 							};
-	// 						}
-	// 						return oRenameMetadata;
-	// 					}
-	// 				}
-	// 			}
-	// 		});
-
-	// 		this.oRenameCommand1 = CommandFactory.getCommandFor(this.oSimpleForm, "Rename", {
-	// 			renamedElement : this.oFormContainer1,
-	// 			newValue : "New Title"
-	// 		}, this.oSimpleFormDTMetadata.getAction("rename", this.oFormContainer1));
-	// 		this.oRenameCommand2 = CommandFactory.getCommandFor(this.oSimpleForm, "Rename", {
-	// 			renamedElement : this.oFormElement1,
-	// 			newValue : "New Label"
-	// 		}, this.oSimpleFormDTMetadata.getAction("rename", this.oFormElement1));
-
-	// 		this.oFormContainer2 = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[1];
-	// 		this.oFormElement2 = this.oFormContainer2.getAggregation("formElements")[0];
-
-	// 		this.oRenameCommand3 = CommandFactory.getCommandFor(this.oSimpleForm, "Rename", {
-	// 			renamedElement : this.oFormContainer2,
-	// 			newValue : "New Title"
-	// 		}, this.oSimpleFormDTMetadata.getAction("rename", this.oFormContainer2));
-	// 		this.oRenameCommand4 = CommandFactory.getCommandFor(this.oSimpleForm, "Rename", {
-	// 			renamedElement : this.oFormElement2,
-	// 			newValue : "New Label"
-	// 		}, this.oSimpleFormDTMetadata.getAction("rename", this.oFormElement2));
-
-	// 	},
-
-	// 	afterEach : function(assert) {
-	// 		sandbox.restore();
-	// 		this.oSimpleForm.destroy();
-	// 		this.oFormContainer1.destroy();
-	// 		this.oFormContainer2.destroy();
-	// 		this.oFormElement1.destroy();
-	// 		this.oFormElement2.destroy();
-	// 		this.oRenameCommand1.destroy();
-	// 		this.oRenameCommand2.destroy();
-	// 		this.oRenameCommand3.destroy();
-	// 		this.oRenameCommand4.destroy();
-	// 	}
-	// });
-
-	// QUnit.test("when serializing the rename commands", function(assert) {
-	// 	assert.deepEqual(this.oRenameCommand1.serialize(), {
-	// 		changeType : "renameTitle",
-	// 		value: "New Title",
-	// 		renamedElement : {
-	// 			id : this.oFormContainer1.getId()
-	// 		},
-	// 		selector : {
-	// 			id : this.oSimpleForm.getId()
-	// 		}
-	// 	},  "then specific change format for title in SimpleForm is there");
-	// 	assert.deepEqual(this.oRenameCommand2.serialize(), {
-	// 		changeType : "renameLabel",
-	// 		value : "New Label",
-	// 		renamedElement : {
-	// 			id : this.oFormElement1.getId()
-	// 		},
-	// 		selector : {
-	// 			id : this.oSimpleForm.getId()
-	// 		}
-	// 	},  "then specific change format for label in SimpleForm is there");
-	// });
-
-	// QUnit.test("when executing the rename command for SimpleForm", function(assert) {
-	// 	assert.ok(this.oRenameCommand1.isEnabled(), "then the command is enabled for the SimpleForm control via FormContainer");
-	// 	assert.ok(this.oRenameCommand2.isEnabled(), "then the command is enabled for the SimpleForm control via FormElement");
-
-	// 	this.oRenameCommand1.execute();
-	// 	assert.equal(this.oFormContainer1.getTitle().getText(), "New Title", "then the title text changed accordingly");
-
-	// 	this.oRenameCommand2.execute();
-	// 	assert.equal(this.oFormElement1.getLabel().getText(), "New Label", "then the label text changed accordingly");
-
-	// });
-
-	// QUnit.test("when executing the rename command for SimpleForm with bound label and title", function(assert) {
-	// 	this.oRenameCommand3.execute();
-	// 	assert.equal(this.oFormContainer2.getTitle().getText(), "New Title", "then the title text changed accordingly");
-	// 	assert.ok(this.oFormContainer2.getTitle().getBinding("text").isSuspended(), "then the title binding is suspended");
-
-	// 	this.oRenameCommand4.execute();
-	// 	assert.equal(this.oFormElement2.getLabel().getText(), "New Label", "then the label text changed accordingly");
-	// 	assert.ok(this.oFormElement2.getLabel().getBinding("text").isSuspended(), "then the label binding is suspended");
-
-	// });
-
-	// QUnit.test("when undoing the rename command for a SimpleForm", function(assert) {
-	// 	assert.ok(this.oRenameCommand1.isEnabled(), "then the command is enabled for the SimpleForm control via FormContainer");
-	// 	assert.ok(this.oRenameCommand2.isEnabled(), "then the command is enabled for the SimpleForm control via FormElement");
-
-	// 	var sOldTitle = this.oTitle0.getText();
-	// 	this.oRenameCommand1.execute();
-	// 	this.oRenameCommand1.undo();
-	// 	assert.equal(this.oFormContainer1.getTitle().getText(), sOldTitle, "then the old value is restored");
-
-	// 	var sOldLabel = this.oLabel0.getText();
-	// 	this.oRenameCommand2.execute();
-	// 	this.oRenameCommand2.undo();
-	// 	assert.equal(this.oFormElement1.getLabel().getText(), sOldLabel, "then the old value is restored");
-
-	// });
-
-	// QUnit.test("when undoing the rename command for a SimpleForm with bound label and title", function(assert) {
-	// 	var sOldTitle = this.oTitle1.getText();
-	// 	this.oRenameCommand3.execute();
-	// 	this.oRenameCommand3.undo();
-	// 	assert.equal(this.oFormContainer2.getTitle().getText(), sOldTitle, "then the old value is restored");
-	// 	assert.equal(this.oFormContainer2.getTitle().getBindingInfo("text").parts[0].path, "/title", "then the title binding is restored");
-	// 	assert.equal(this.oFormContainer2.getTitle().getText(), "someTitle", "then the title text is restored");
-	// 	assert.ok(!this.oFormContainer2.getTitle().getBinding("text").isSuspended(), "then the title binding is resumed");
-
-	// 	var sOldLabel = this.oLabel2.getText();
-	// 	this.oRenameCommand2.execute();
-	// 	this.oRenameCommand2.undo();
-	// 	assert.equal(this.oFormElement2.getLabel().getText(), sOldLabel, "then the old value is restored");
-	// 	assert.equal(this.oFormElement2.getLabel().getBindingInfo("text").parts[0].path, "/label", "then the label binding is restored");
-	// 	assert.equal(this.oFormElement2.getLabel().getText(), "someLabel", "then the label text is restored");
-	// 	assert.ok(!this.oFormElement2.getLabel().getBinding("text").isSuspended(), "then the label binding is resumed");
-
-	// });
-
-	// QUnit.module("Given a hide/unhide command for a SimpleForm control", {
-	// 	beforeEach : function(assert) {
-	// 		// Test Setup:
-	// 		// SimpleForm
-	// 		// -- Title
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Title
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Label
-	// 		// -- Input
-	// 		sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-	// 		this.oModel = new sap.ui.model.json.JSONModel({
-	// 			label : "someLabel",
-	// 			title : "someTitle"
-	// 		});
-
-	// 		this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
-	// 		this.oTitle1 = new sap.ui.core.Title({id : "Title1",  text : "{/title}"});
-	// 		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-	// 		this.oLabel1 = new sap.m.Label({id : "Label1",  text : "Label 1"});
-	// 		this.oLabel2 = new sap.m.Label({id : "Label2",  text : "{/label}", visible : false});
-	// 		this.oLabel3 = new sap.m.Label({id : "Label3",  text : "Label 3"});
-	// 		this.oInput0 = new sap.m.Input({id : "Input0"});
-	// 		this.oInput1 = new sap.m.Input({id : "Input1"});
-	// 		this.oInput2 = new sap.m.Input({id : "Input2", visible : false});
-	// 		this.oInput3 = new sap.m.Input({id : "Input3"});
-	// 		this.oSimpleForm = new sap.ui.layout.form.SimpleForm(oComponent.createId("form"), {
-	// 			id : "SimpleForm", layout : "ResponsiveGridLayout",
-	// 			title : "Simple Form",
-	// 			content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1,
-	// 			           this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
-	// 		});
-	// 		this.oSimpleForm.setModel(this.oModel);
-	// 		this.oSimpleForm.placeAt("test-view");
-	// 		sap.ui.getCore().applyChanges();
-
-	// 		this.oFormContainer1 = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
-	// 		this.oFormContainer2 = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[1];
-	// 		this.oFormElement1 = this.oFormContainer1.getAggregation("formElements")[0];
-	// 		this.oFormElement2 = this.oFormContainer2.getAggregation("formElements")[0];
-	// 		this.oHideCommand1 = CommandFactory.getCommandFor(this.oFormElement1, "Hide");
-	// 		this.oHideCommand2 = CommandFactory.getCommandFor(this.oFormContainer1, "Hide");
-	// 		this.oUnhideCommand1 = CommandFactory.getCommandFor(this.oFormElement1, "Unhide");
-	// 		this.oUnhideCommand2 = CommandFactory.getCommandFor(this.oFormElement2, "Unhide");
-	// 	},
-
-	// 	afterEach : function(assert) {
-	// 		sandbox.restore();
-	// 		this.oSimpleForm.destroy();
-	// 		this.oFormContainer1.destroy();
-	// 		this.oFormContainer2.destroy();
-	// 		this.oFormElement1.destroy();
-	// 		this.oFormElement2.destroy();
-	// 		this.oHideCommand1.destroy();
-	// 		this.oHideCommand2.destroy();
-	// 		this.oUnhideCommand1.destroy();
-	// 		this.oUnhideCommand2.destroy();
-	// 	}
-	// });
-
-	// QUnit.test("when serializing the unhide command", function(assert) {
-	// 	assert.deepEqual(this.oUnhideCommand1.serialize(), {
-	// 	  "changeType": "unhideSimpleFormField",
-	// 	  "sUnhideId": this.oLabel0.getId(),
-	// 	  "selector": {
-	// 	    "id": this.oSimpleForm.getId()
-	// 	  }
-	// 	},  "then specific change format for unhiding a FormElement in SimpleForm is there");
-	// });
-
-	// QUnit.test("when executing the hide/unhide command for SimpleForm", function(assert) {
-	// 	assert.ok(this.oHideCommand1.isEnabled(), "then the hide command is enabled for the SimpleForm control via FormElement");
-	// 	assert.ok(this.oHideCommand2.isEnabled(), "then the hide command is enabled for the SimpleForm control via FormContainer");
-	// 	assert.ok(this.oUnhideCommand1.isEnabled(), "then the unhide command is enabled for the SimpleForm control via FormElement");
-
-	// 	var bVisible = this.oLabel0.getVisible();
-	// 	assert.ok(bVisible, "the FormElement is initially visible");
-	// 	this.oHideCommand1.execute();
-	// 	bVisible = this.oLabel0.getVisible();
-	// 	assert.notOk(bVisible, "the FormElement is invisible after execution of hide command");
-
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, this.oTitle0);
-	// 	assert.equal(oResult, this.oTitle0, "the FormContainer is initially visible");
-	// 	this.oHideCommand2.execute();
-	// 	oResult = undefined;
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, this.oTitle0);
-	// 	assert.equal(oResult, undefined, "the FormContainer is no more part of SimpleForm content");
-	// 	this.oTitle0.destroy();
-
-	// });
-
-	// QUnit.test("when undoing the hide command for a SimpleForm FormElement", function(assert) {
-	// 	var bVisible = this.oLabel0.getVisible();
-	// 	assert.ok(bVisible, "the FormElement is initially visible");
-	// 	this.oHideCommand1.execute();
-	// 	bVisible = this.oLabel0.getVisible();
-	// 	assert.notOk(bVisible, "the FormElement is invisible after execution of hide command");
-	// 	this.oHideCommand1.undo();
-	// 	bVisible = this.oLabel0.getVisible();
-	// 	assert.ok(bVisible, "the FormElement is visible after undoing the hide command");
-	// });
-
-	// QUnit.test("when undoing the hide command for a SimpleForm FormContainer", function(assert) {
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, this.oTitle0);
-	// 	assert.equal(oResult, this.oTitle0, "the FormContainer is initially in the SimpleForm");
-	// 	this.oHideCommand2.execute();
-	// 	oResult = undefined;
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, this.oTitle0);
-	// 	assert.equal(oResult, undefined, "the FormContainer is no more part of SimpleForm content");
-	// 	this.oHideCommand2.undo();
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, this.oTitle0);
-	// 	assert.equal(oResult, this.oTitle0, "the FormContainer is in the SimpleForm again");
-	// });
-
-	// QUnit.test("when undoing the unhide command for a SimpleForm FormElement", function(assert) {
-	// 	assert.ok(this.oUnhideCommand2.isEnabled(), "then the unhide command is enabled for the SimpleForm control via FormElement");
-	// 	var bVisible = this.oLabel2.getVisible();
-	// 	assert.notOk(bVisible, "the FormElement is initially invisible");
-	// 	this.oUnhideCommand2.execute();
-	// 	bVisible = this.oLabel2.getVisible();
-	// 	assert.ok(bVisible, "the FormElement is visible after execution of unhide command");
-	// 	this.oUnhideCommand2.undo();
-	// 	bVisible = this.oLabel0.getVisible();
-	// 	assert.ok(bVisible, "the FormElement is visible after undoing the unhide command");
-	// });
-
-	// QUnit.module("Given an add command for a SimpleForm FormContainer control", {
-	// 	beforeEach : function(assert) {
-	// 		// Test Setup:
-	// 		// SimpleForm
-	// 		// -- Title
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Title
-	// 		// -- Label
-	// 		// -- Input
-	// 		// -- Label
-	// 		// -- Input
-	// 		sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-	// 		this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
-	// 		this.oTitle1 = new sap.ui.core.Title({id : "Title1",  text : "Title 1"});
-	// 		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-	// 		this.oLabel1 = new sap.m.Label({id : "Label1",  text : "Label 1"});
-	// 		this.oLabel2 = new sap.m.Label({id : "Label2",  text : "Label 2"});
-	// 		this.oLabel3 = new sap.m.Label({id : "Label3",  text : "Label 3"});
-	// 		this.oInput0 = new sap.m.Input({id : "Input0"});
-	// 		this.oInput1 = new sap.m.Input({id : "Input1"});
-	// 		this.oInput2 = new sap.m.Input({id : "Input2"});
-	// 		this.oInput3 = new sap.m.Input({id : "Input3"});
-	// 		this.oSimpleForm = new sap.ui.layout.form.SimpleForm(oComponent.createId("form"), {
-	// 			id : "SimpleForm", layout : "ResponsiveGridLayout",
-	// 			title : "Simple Form",
-	// 			content : [this.oTitle0, this.oLabel0, this.oInput0, this.oLabel1, this.oInput1,
-	// 			           this.oTitle1, this.oLabel2, this.oInput2, this.oLabel3, this.oInput3]
-	// 		});
-	// 		this.oSimpleForm.placeAt("test-view");
-	// 		sap.ui.getCore().applyChanges();
-
-	// 		this.oFormContainer1 = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
-	// 		this.oFormContainer2 = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[1];
-	// 		this.oFormElement1 = this.oFormContainer1.getAggregation("formElements")[0];
-	// 		this.oFormElement2 = this.oFormContainer2.getAggregation("formElements")[0];
-	// 		this.oAddCommand = CommandFactory.getCommandFor(this.oSimpleForm, "Add", {
-	// 			newControlId : "Title2",
-	// 			index : 5,
-	// 			labels:  ["New Control"]
-	// 		});
-	// 	},
-
-	// 	afterEach : function(assert) {
-	// 		sandbox.restore();
-	// 		this.oSimpleForm.destroy();
-	// 		this.oFormContainer1.destroy();
-	// 		this.oFormContainer2.destroy();
-	// 		this.oFormElement1.destroy();
-	// 		this.oFormElement2.destroy();
-	// 		this.oAddCommand.destroy();
-	// 	}
-	// });
-
-	// QUnit.test("when serializing the add command", function(assert) {
-
-	// 	assert.deepEqual(this.oAddCommand.serialize(), {
-	// 	  "changeType": "addSimpleFormGroup",
-	// 	  "index": 5,
-	// 	  "groupLabel": "New Control",
-	// 	  "newControlId": "Title2",
-	// 	  "selector": {
-	// 	    "id": this.oSimpleForm.getId()
-	// 	  }
-	// 	},  "then specific change format for hiding a FormElement in SimpleForm is there");
-
-	// });
-
-	// QUnit.test("when executing the add command for SimpleForm", function(assert) {
-	// 	assert.ok(this.oAddCommand.isEnabled(), "then the add command is enabled for the SimpleForm FormContainer");
-
-	// 	this.oAddCommand.execute();
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, undefined, 5);
-	// 	assert.equal(oResult.getText(), "New Control", "the FormContainer is part of SimpleForm");
-	// });
-
-	// QUnit.test("when undoing the add command for SimpleForm", function(assert) {
-	// 	this.oAddCommand.execute();
-	// 	this.oAddCommand.undo();
-	// 	var oResult = findSimpleFormContentElement(this.oSimpleForm, undefined, 5);
-	// 	assert.equal(oResult.getText(), "Title 1", "the FormContainer is removed again from SimpleForm");
-
-	// });
-
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach : function(assert) {
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.renamedButton = new sap.m.Button();
-			this.stack = new sap.ui.rta.command.Stack();
-			this.command = new sap.ui.rta.command.BaseCommand();
-			this.command2 = new sap.ui.rta.command.BaseCommand();
+			this.renamedButton = new Button();
+			this.stack = new Stack();
+			this.command = new BaseCommand();
+			this.command2 = new BaseCommand();
 			this.stack.pushAndExecute(this.command);
 			this.stack.pushAndExecute(this.command2);
 		},
@@ -1103,11 +538,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 	QUnit.module("Given an empty command stack and commands", {
 		beforeEach : function(assert) {
-			this.stack = new sap.ui.rta.command.Stack();
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.command = new sap.ui.rta.command.BaseCommand();
-			this.command2 = new sap.ui.rta.command.BaseCommand();
-			this.compositeCommand = new sap.ui.rta.command.CompositeCommand();
+			this.stack = new Stack();
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			this.command = new BaseCommand();
+			this.command2 = new BaseCommand();
+			this.compositeCommand = new CompositeCommand();
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -1179,306 +614,20 @@ jQuery.sap.require("sap.ui.fl.Utils");
 				assert.ok(fnCommand2Undo.calledBefore(fnCommand1Undo), "commands are undone in the backward order");
 			});
 
-	QUnit.module("Given a regular move command ", {
-		beforeEach : function(assert) {
-			// Test Setup:
-			// VerticalLayout
-			// -- content
-			// -- -- ObjectHeader
-			// -- -- -- attributes
-			// -- -- -- -- ObjectAttribute
-			// -- -- Button
-			sandbox.stub(sap.ui.fl.Utils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-			this.oButton = new sap.m.Button(oComponent.createId("button"));
-			this.oObjectAttribute = new sap.m.ObjectAttribute(oComponent.createId("attribute"));
-			this.oObjectHeader = new sap.m.ObjectHeader(oComponent.createId("header"), {
-				attributes : [this.oObjectAttribute]
-			});
-			this.oLayout = new sap.ui.layout.VerticalLayout("someLayoutId", {
-				content : [this.oObjectHeader, this.oButton]
-			});
-
-			this.oMoveCommand = CommandFactory.getCommandFor(this.oLayout, "Move", {
-				source : {
-					parent : this.oObjectHeader,
-					aggregation : "attributes",
-					publicAggregation : "attributes"
-				},
-				movedElements : [{
-					element : this.oObjectAttribute,
-					sourceIndex : 0,
-					targetIndex : 2
-				}],
-				target : {
-					parent : this.oLayout,
-					aggregation : "content",
-					publicAggregation : "content"
-				}
-			}, new sap.ui.dt.ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : "moveControls"
-					}
-				}
-			}));
-
-			this.mSerializedObjectAttributeMove = {
-				changeType : "moveControls",
-				selector : {
-					id : this.oObjectHeader.getId()
-				},
-				source : {
-					id : this.oObjectHeader.getId(),
-					aggregation : "attributes"
-				},
-				movedElements : [{
-					id : this.oObjectAttribute.getId(),
-					sourceIndex : 0,
-					targetIndex : 2
-				}],
-				target : {
-					id : this.oLayout.getId(),
-					aggregation : "content"
-				}
-			};
-		},
-
-		afterEach : function(assert) {
-			sandbox.restore();
-			this.oLayout.destroy();
-			this.oMoveCommand.destroy();
-		}
-	});
-
-	QUnit.test("After executing the command", function(assert) {
-		this.oMoveCommand.execute();
-
-		assertObjectAttributeMoved.call(this, assert);
-	});
-
-	QUnit.test("After executing and undoing the command", function(assert) {
-		this.oMoveCommand.execute();
-
-		this.oMoveCommand.undo();
-		assertObjectAttributeNotMoved.call(this, assert);
-	});
-
-	QUnit.test("After executing, undoing and redoing the command", function(assert) {
-		this.oMoveCommand.execute();
-		this.oMoveCommand.undo();
-
-		this.oMoveCommand.execute();
-		assertObjectAttributeMoved.call(this, assert);
-	});
-
-	function assertObjectAttributeMoved(assert) {
-		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
-		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(),
-				"object header is still at 1. position");
-		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(),
-				"object attribute is inserted at the 3. position");
-	}
-
-	function assertObjectAttributeNotMoved(assert) {
-		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object header has still one attribute");
-		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute.getId(),
-				"object attribute is still at the 1. position");
-		assert.equal(this.oLayout.getContent().length, 2, "layout content has still 2 controls");
-		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(),
-				"object header is still at 1. position");
-		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-	}
-
-	QUnit.module("Given a smart form with two groups and one element in the first group and move commands ", {
-		beforeEach : function(assert) {
-			// Test Setup:
-			// SmartForm
-			// -- groups
-			// -- -- SmartGroup1
-			// -- -- -- groupElements
-			// -- -- -- -- SmartElement
-			// -- -- SmartGroup2
-
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-
-			this.oSmartGroupElement = new sap.ui.comp.smartform.GroupElement(oComponent.createId("element"));
-			this.oSmartGroup1 = new sap.ui.comp.smartform.Group(oComponent.createId("group1"), {
-				groupElements : [this.oSmartGroupElement]
-			});
-			this.oSmartGroup2 = new sap.ui.comp.smartform.Group(oComponent.createId("group2"));
-			this.oSmartForm = new sap.ui.comp.smartform.SmartForm(oComponent.createId("form"), {
-				groups : [this.oSmartGroup1, this.oSmartGroup2]
-			});
-
-			var fnGetSmartForm = function (oElement) {
-				if (oElement instanceof sap.ui.comp.smartform.SmartForm) {
-					return oElement;
-				} else if (oElement.getParent()) {
-					return fnGetSmartForm(oElement.getParent());
-				}
-			};
-
-			var oOverlay = new sap.ui.dt.ElementOverlay();
-			sandbox.stub(sap.ui.dt.OverlayRegistry, "getOverlay").returns(oOverlay);
-			sandbox.stub(oOverlay, "getRelevantContainer", function() {
-				return this.oSmartForm;
-			}.bind(this));
-
-			this.oMoveFieldCommand = CommandFactory.getCommandFor(this.oSmartForm, "Move", {
-				source : {
-					parent : this.oSmartGroup1,
-					aggregation : "formElements",
-					publicAggregation : "formElements"
-				},
-				target : {
-					parent : this.oSmartGroup2,
-					aggregation : "formElements",
-					publicAggregation : "formElements"
-				},
-				movedElements : [{
-					element : this.oSmartGroupElement,
-					sourceIndex : 0,
-					targetIndex : 0
-				}]
-			}, new sap.ui.dt.ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : {
-							changeType : "moveControls",
-							changeOnRelevantContainer : true
-						}
-					}
-				}
-			}));
-
-			this.mSerializedFieldMove = {
-				changeType : "moveControls",
-				selector : {
-					id : this.oSmartGroup1.getId()
-				},
-				targetId : this.oSmartGroup2.getId(),
-				moveFields : [{
-					id : this.oSmartGroupElement.getId(),
-					index : 0
-				}]
-			};
-
-			this.oMoveGroupCommand = CommandFactory.getCommandFor(this.oSmartForm, "Move", {
-				source : {
-					parent : this.oSmartForm,
-					aggregation : "groups",
-					publicAggregation : "groups"
-				},
-				target : {
-					parent : this.oSmartForm,
-					aggregation : "groups",
-					publicAggregation : "groups"
-				},
-				movedElements : [{
-					element : this.oSmartGroup2,
-					sourceIndex : 1,
-					targetIndex : 0
-				}]
-			}, new sap.ui.dt.ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : "moveGroups"
-					}
-				}
-			}));
-
-			this.mSerializedGroupMove = {
-				changeType : "moveGroups",
-				selector : {
-					id : this.oSmartForm.getId()
-				},
-				targetId : null,
-				moveGroups : [{
-					id : this.oSmartGroup2.getId(),
-					index : 0
-				}]
-			};
-		},
-
-		afterEach : function(assert) {
-			sandbox.restore();
-			this.oSmartForm.destroy();
-			this.oMoveFieldCommand.destroy();
-			this.oMoveGroupCommand.destroy();
-		}
-	});
-
-	QUnit.test("After executing the move field command", function(assert) {
-		this.oMoveFieldCommand.execute();
-
-		assertFieldMoved.call(this, assert);
-	});
-
-/*
-	UNRELATED TESTFAILURE!
-	REMOVED DUE TO A BUG REQUIRING THIS CHANGE TO BE FIXED
-
-	undo is with and without this change broken
-
-	signed by Christian Voshage
-
-	QUnit.test("After executing and undoing the move field command", function(assert) {
-		this.oMoveFieldCommand.execute();
-		this.oMoveFieldCommand.undo();
-
-		assertFieldNotMoved.call(this, assert);
-	});
-*/
-
-	function assertFieldMoved(assert) {
-		assert.equal(this.oSmartGroup1.getGroupElements().length, 0, "group element is removed from group1");
-		assert.equal(this.oSmartGroup2.getGroupElements().length, 1, "group element is added to group2");
-		assert.equal(this.oSmartGroup2.getGroupElements()[0].getId(), this.oSmartGroupElement.getId(),
-				"group element is at 1. position");
-	}
-
-	QUnit.test("After executing the move group command", function(assert) {
-		this.oMoveGroupCommand.execute();
-
-		assertGroupMoved.call(this, assert);
-	});
-
-	QUnit.test("After executing and undoing the move group command", function(assert) {
-		this.oMoveGroupCommand.execute();
-		this.oMoveGroupCommand.undo();
-
-		assertGroupNotMoved.call(this, assert);
-	});
-
-	function assertGroupMoved(assert) {
-		assert.equal(this.oSmartForm.getGroups().length, 2, "form has still both groups");
-		assert.equal(this.oSmartForm.getGroups()[0].getId(), this.oSmartGroup2.getId(), "group2 is at 1. position");
-		assert.equal(this.oSmartForm.getGroups()[1].getId(), this.oSmartGroup1.getId(), "group1 is at 2. position");
-	}
-
-	function assertGroupNotMoved(assert) {
-		assert.equal(this.oSmartForm.getGroups().length, 2, "form has still both groups");
-		assert.equal(this.oSmartForm.getGroups()[0].getId(), this.oSmartGroup1.getId(), "group1 is still at 1. position");
-		assert.equal(this.oSmartForm.getGroups()[1].getId(), this.oSmartGroup2.getId(), "group2 is still at 2. position");
-	}
-
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach : function(assert){
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
-			this.oMovable = new sap.m.ObjectAttribute(oComponent.createId("attribute"));
-			this.oSourceParent = new sap.m.ObjectHeader(oComponent.createId("header"), {
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			this.oMovable = new ObjectAttribute(oComponent.createId("attribute"));
+			this.oSourceParent = new ObjectHeader(oComponent.createId("header"), {
 				attributes : [this.oMovable]
 			});
-			this.oTargetParent = new sap.m.ObjectHeader(oComponent.createId("targetHeader"));
+			this.oTargetParent = new ObjectHeader(oComponent.createId("targetHeader"));
 
-			this.oRootElement = new sap.ui.layout.VerticalLayout({
+			this.oRootElement = new VerticalLayout({
 				content : [this.oSourceParent, this.oTargetParent]
 			});
 
-			this.oSourceParentDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+			this.oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data : {
 					actions : {
 						move : "moveControls"
@@ -1488,7 +637,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 					}
 				}
 			});
-			this.oOtherParentDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+			this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data : {
 					actions : {
 						move : undefined
@@ -1553,4 +702,4 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		}, this.oOtherParentDesignTimeMetadata);
 		assert.ok(!oMoveCmd2, "then no command is returned");
 	});
-})();
+});

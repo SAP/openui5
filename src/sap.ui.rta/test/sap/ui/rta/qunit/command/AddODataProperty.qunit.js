@@ -1,3 +1,5 @@
+/* global QUnit sinon */
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 sap.ui.define([
@@ -52,15 +54,15 @@ function(
 	QUnit.module("Given an AddODataProperty change with a valid entry in the change registry,", {
 		beforeEach : function(assert) {
 			var oChangeRegistry = ChangeRegistry.getInstance();
+
+			this.fnApplyChangeSpy = sinon.spy();
+			this.fnCompleteChangeContentSpy = sinon.spy();
+
 			oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button" : {
 					"addODataProperty" : {
-						completeChangeContent: function() {
-							assert.ok(true, "completeChangeContent was executed");
-						},
-						applyChange: function() {
-							assert.ok(true, "applyChange was executed");
-						}
+						completeChangeContent: this.fnCompleteChangeContentSpy,
+						applyChange: this.fnApplyChangeSpy
 					}
 				}
 			});
@@ -84,8 +86,6 @@ function(
 	});
 
 	QUnit.test("when getting a AddODataProperty command for the change ...", function(assert) {
-		assert.expect(3);
-
 		var oCommand = CommandFactory.getCommandFor(this.oButton, "addODataProperty", {
 				changeType : "addODataProperty",
 				index : 1,
@@ -94,6 +94,9 @@ function(
 
 		assert.ok(oCommand, "the addODataProperty command exists");
 		oCommand.execute();
+
+		assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 	});
 
 });
