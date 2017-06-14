@@ -51,8 +51,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Main Controls"
-								href="#/api/sap.m"
-								target="_blank"/>
+								href="#/api/sap.m"/>
 						<Text
 								text="Responsive controls for touch-enabled devices and desktop browsers"
 								class="sapUiSmallMarginBottom"/>
@@ -69,8 +68,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Layout"
-								href="#/api/sap.ui.layout.form.Form"
-								target="_blank"/>
+								href="#/api/sap.ui.layout.form.Form"/>
 						<Label
 								text="Namespace: sap.ui.layout"/>
 					</l:VerticalLayout>
@@ -84,8 +82,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Tables"
-								href="#/api/sap.ui.table"
-								target="_blank"/>
+								href="#/api/sap.ui.table"/>
 						<Text
 								text="Tables for desktop-type scenarios"
 								class="sapUiSmallMarginBottom"/>
@@ -104,8 +101,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="SAP Fiori"
-								href="#/api/sap.f"
-								target="_blank"/>
+								href="#/api/sap.f"/>
 						<Text
 								text="Controls specialized for SAP Fiori applications"
 								class="sapUiSmallMarginBottom"/>
@@ -122,8 +118,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="SAP Fiori for Tools"
-								href="#/api/sap.tnt"
-								target="_blank"/>
+								href="#/api/sap.tnt"/>
 						<Text
 								text="Controls specialized for administrative applications"
 								class="sapUiSmallMarginBottom"/>
@@ -141,8 +136,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="UI5 Core Runtime"
-								href="#/api/sap.ui.core"
-								target="_blank"/>
+								href="#/api/sap.ui.core"/>
 						<Text
 								text="Boots the core framework and makes it available for the application via method sap.ui.getCore()"
 								class="sapUiSmallMarginBottom"/>
@@ -162,8 +156,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Object Page"
-								href="#/api/sap.uxap"
-								target="_blank"/>
+								href="#/api/sap.uxap"/>
 						<Text
 								text="Controls for displaying, creating and editing objects"
 								class="sapUiSmallMarginBottom"/>
@@ -181,8 +174,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Models"
-								href="#/api/sap.ui.model"
-								target="_blank"/>
+								href="#/api/sap.ui.model"/>
 						<Text
 								text="Data binding utilities"
 								class="sapUiSmallMarginBottom"/>
@@ -202,8 +194,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Smart Controls"
-								href="#/api/sap.ui.comp"
-								target="_blank"/>
+								href="#/api/sap.ui.comp"/>
 						<Text
 								text="Metadata-driven controls"
 								class="sapUiSmallMarginBottom"/>
@@ -220,8 +211,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Micro Charts"
-								href="#/api/sap.suite.ui.microchart"
-								target="_blank"/>
+								href="#/api/sap.suite.ui.microchart"/>
 						<Text
 								text="Lightweight diagrams"
 								class="sapUiSmallMarginBottom"/>
@@ -238,8 +228,7 @@
 								level="H1"
 								titleStyle="H1"
 								text="Charts"
-								href="#/api/sap.viz"
-								target="_blank"/>
+								href="#/api/sap.viz"/>
 						<Text
 								text="Data visualization"
 								class="sapUiSmallMarginBottom"/>
