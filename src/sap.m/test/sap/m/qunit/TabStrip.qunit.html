@@ -89,7 +89,7 @@
 		QUnit.test("Control defaults", function (assert) {
 			//assert
 			assert.ok(!this.sut.getHasSelect(), "Correct default hasSelect property value");
-			assert.strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 0,
+			assert.strictEqual(this.sut.$("touchArea").children(".sapMTSOverflowSelect").length, 0,
 					"Select is not rendered in DOM");
 			assert.strictEqual(this.sut.getSelectedItem(), null, "Correct default selectedItem property value");
 
@@ -105,7 +105,7 @@
 					"Correctly set selectedItem property value");
 			this.clock.tick(1000);
 
-			assert.strictEqual(this.sut.$("touchArea").children("." + sap.m.TabStripSelect.CSS_CLASS).length, 1,
+			assert.strictEqual(this.sut.$("touchArea").children(".sapMTSOverflowSelect").length, 1,
 					"Toucharea is rendered in DOM");
 
 			assert.strictEqual(this.sut.getFocusDomRef(), this.sut.getItems()[1].getDomRef(),
@@ -224,7 +224,7 @@
 			this.sut.setHasSelect(true);
 			assert.strictEqual(this.sut.getHasSelect(), true, "Correct hasSelect property value");
 			this.sut.setHasSelect(true);
-			assert.strictEqual(this.sut.getAggregation('_select') instanceof sap.m.TabStripSelect, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
+			assert.strictEqual(this.sut.getAggregation('_select') instanceof sap.m.Select, true, "The select aggregation should not be destroyed when hasSelect is set to 'true'");
 		});
 
 
@@ -605,7 +605,7 @@
 			assert.strictEqual(this.oTS.$("tabsContainer").length, 0, "Tab container is not rendered");
 
 			assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltLabel').length, 1, 'Label is rendered');
-			assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltIcon').length, 1, 'Arrow is rendered');
+			assert.strictEqual(jQuery(this.oTS.$()).find('.sapMSltArrow').length, 1, 'Arrow is rendered');
 			jQuery('body').removeClass('sap-phone');
 			stubs.forEach(function(item){item.restore()}); // restore stubs
 		});

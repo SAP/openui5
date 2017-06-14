@@ -4,40 +4,11 @@
 /* =============================== */
 
 .sapMTabStrip {
-	border-bottom: 1px solid @sapUiPageHeaderBorderColor;
-	box-shadow: none;
-	/* This class can override the default border-top style */
-	&.sapMTabStripTopBorderVisible {
-		border-top: 1px solid @sapUiPageHeaderBorderColor;
-	}
 	.sapMTSTabsContainer {
 		.sapMTSTabs {
 			.sapMTabStripItem {
-				border-right: 1px solid @sapUiPageHeaderBorderColor;
 				&.sapMTabStripItemSelected {
-					background: @sapUiSegmentedButtonSelectedBackground;
-					border-right: 1px solid @sapUiPageHeaderBorderColor;
-					border-bottom: none;
-				}
-				&:hover {
-					background: @sapUiSegmentedButtonHoverBackground;
-					border-right: 1px solid @sapUiPageHeaderBorderColor;
-				}
-				&:active {
-					background: @sapUiSegmentedButtonActiveBackground;
-					border-right: 1px solid @sapUiPageHeaderBorderColor;
-				}
-				.sapMTSItemCloseBtnCnt {
-					.sapMBtn {
-						.sapMBtnInner  {
-							&:active {
-								background-color: @sapUiSegmentedButtonActiveBackground;	
-							}
-						}
-					}
-				}
-				&:first-child {
-					border-left: 1px solid @sapUiPageHeaderBorderColor;
+					border-bottom: solid 0.25rem @sapUiGroupTitleBorderColor;
 				}
 				&:focus::before {
 					pointer-events: none;

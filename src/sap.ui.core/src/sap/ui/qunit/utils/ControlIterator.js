@@ -70,7 +70,6 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.ui.core.mvc.View",
 		"sap.ui.core.tmpl.Template",
 		"sap.m.FacetFilterItem",
-		"sap.m.TabStripSelect",
 		"sap.m.LightBox",
 		"sap.m.Menu",
 		"sap.m.NotificationListItem",
