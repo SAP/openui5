@@ -714,6 +714,23 @@
 		oModel.destroy();
 	});
 
+	QUnit.test("Change whole range when a to-be-set is lower than min value", function (assert) {
+		var oRangeSlider = new sap.m.RangeSlider({min: -100, max: 100, range: [-50, 50]}),
+			aInitialRange = oRangeSlider.getRange(), aNormalizedRange,
+			aHandles = [oRangeSlider._mHandleTooltip.start.tooltip, oRangeSlider._mHandleTooltip.end.tooltip];
+
+		oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		aNormalizedRange = oRangeSlider._getNormalizedRange([-110, -10], aInitialRange, aHandles);
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual(aNormalizedRange, [-100, 0], "Ranges should be equal");
+
+		oRangeSlider.destroy();
+	});
+
 	QUnit.test("XML value", function (assert) {
 		var oRangeSlider,
 			sXMLText = '<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"><RangeSlider id="range" range="5,20" /></mvc:View>',

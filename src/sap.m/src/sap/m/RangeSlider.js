@@ -796,11 +796,16 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             for (i = 0; i < aRange.length; i++) {
                 aRangeNormalized[i] = (aRange[i] < fMin ? fMin : aRange[i]);
-                aRangeNormalized[i] = (aRange[i] > fMax ? fMax : aRange[i]);
+                aRangeNormalized[i] = (aRange[i] > fMax ? fMax : aRangeNormalized[i]);
                 if (aHandles.length === 2) {
-                    iOtherElementIndex = Math.abs(i - 1);
-                    aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] <= fMin ? aRangeNormalized[i] + iSelectedRange : aRangeNormalized[iOtherElementIndex]);
-                    aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] >= fMax ? aRangeNormalized[i] - iSelectedRange : aRangeNormalized[iOtherElementIndex]);
+                    if (aRangeNormalized[0] == fMin) {
+                        aRangeNormalized[1] = aRangeNormalized[0] + iSelectedRange;
+                    } else {
+                        iOtherElementIndex = Math.abs(i - 1);
+                        aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] <= fMin ? aRangeNormalized[i] + iSelectedRange : aRangeNormalized[iOtherElementIndex]);
+                        aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] >= fMax ? aRangeNormalized[i] - iSelectedRange : aRangeNormalized[iOtherElementIndex]);
+
+                    }
                 }
             }
             return aRangeNormalized;
