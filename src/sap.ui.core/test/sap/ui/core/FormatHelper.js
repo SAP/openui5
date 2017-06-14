@@ -145,6 +145,9 @@ sap.ui.model.CompositeType.extend("HashParams", {
 			} 
 			if (sName === "date" || sName === "todate") {
 				vValue = new Date(parseFloat(vValue));
+			}
+			if (sName === "number") {
+				vValue = parseFloat(vValue);
 			} 
 			oParams[sName] = vValue;
 		})
