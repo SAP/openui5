@@ -70,6 +70,7 @@
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+
 module.exports = __webpack_require__.p + "agenda.html";
 
 /***/ }),
@@ -80,11 +81,13 @@ module.exports = __webpack_require__.p + "index.html";
 
 /***/ }),
 /* 2 */
+
 /***/ (function(module, exports) {
 
 module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAACXBIWXMAAAsSAAALEgHS3X78AAADeElEQVR42u2cQXabMBRFX3Iyt7MC0hXEWYE9YG46Y1a6A3cFpSuou4KQGUM8Z+CuoGQHeAdmBe5AwiYEEiwkgT765zAAB4fcvCd9SR/dnE4n2BCP28n8pb4bWIDi8BYAthageGwBzOC7ngUoZt0lP5Nu4xvSnQiz7h7ArHL1HnF6tAoUgyddhbdE4YUA/jXAkw6QloVZJ7EF4Hzyk0+I00zGr7wjAG0FwOOH0/GuAMDGTICsbZrzszmARYe7HvhRjWWPp/BkAVRrYd99ALCqHM6ItPsVcZroVyCDUjbEEeI0r30+558HAB5HbH4PQKJXgSwpfa5cKQCszg1ye+ow1uidE16bxoS189mbtkRSz6ZZhVrzQKfDQyQGAdzoBrhruFYfpJsE8JG36doAJp9agfVsxVRUKAKwIGZjTx9A1mMlxGzs8NGMtskEijYO9AFsh/ONJ9Fm2vjtsytVYDcVmgVwJtoWqgM4ERuLAWyHszbYxkuRnLDPjDQ1GwulNGoBTiCpFgdI08YOn1HSokCqNt7oBBgRtLGnD2Cc7gEciNl4ds3QTsa6MEUb5zoBRh3akr1B8F7erfMoBcim8ZtsfJmsZLM4O0MAhjo7EWo2/nWN+mQCjDqML8cO8BVxGl57kxyA5tu4gObZGEo2Lte286EBmmjjVwCLPuvZcmtjfDdH89rxl/N/2HcTAOuBwR0AhIjTqO8Xya7OigD8bLHxtqLC9QDAcp6PZjKKinQDDGoAnyXZ71gZOZRt2BFAdr4u2LYNY2Fm0QzNVVlPlSKkj1RYqiXjMC5w2Nh7VKGiwDIC8LtFhZsGGx+4tRIAe5kV9KYCTFoAejWAHlh9oWkTDYot3NXGRELVaw5dckILsOeoxAL8YGyc8zSjHlcv2kxVgZOxsUqAk7CxOoDMxjvqNlb9smFC3cYW4KgBts9CK3n9nqICyXcmFuDoARK3sa5X/smq0AI0AiBhG+vctYOkCvUBZEuIhQUoX4VG23gMAI0e2unfeMd3j2jeU+HetBW5IRRIrjOxAI2zMDEbD7V7W5sKF9bC/QDmFmC3pDoB8FK5UgD4rrqSik4beGkL2U5uI6y6MgMggbgbWH0LvN8XMAMrjMysApvBBSj3df44DgCCsdt7iE4kRLft8RxI2mWSGsAVgD9oLj4q4y+AHyZMMthOxNBEmkz8B6u0R7LUg/lFAAAAAElFTkSuQmCC"
 
 /***/ }),
+
 /* 3 */,
 /* 4 */,
 /* 5 */,
@@ -114,7 +117,7 @@ window.initMap = function () {
         mapTypeControl: true,
         scrollwheel: false,
         zoomControl: true
-    });
+
 
     new google.maps.Marker({
         position: {
@@ -140,7 +143,6 @@ window.scrollToTop = function() {
 	document.body.scrollTop = 0;
 	document.documentElement.scrollTop = 0;
 };
-
 
 //Google Analytics
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
