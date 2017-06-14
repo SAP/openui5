@@ -382,7 +382,7 @@ sap.ui.define([
 				}).
 				done(
 					function () {
-						MessageBox.success("Your feedback has been sent", {title: "Thank you!"});
+						MessageBox.success("Your feedback has been sent.", {title: "Thank you!"});
 						this._oFeedbackDialog.reset();
 						this._oFeedbackDialog.close();
 						this._oFeedbackDialog.setBusy(false);
