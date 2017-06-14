@@ -1,7 +1,7 @@
-/* ==============================================*/
-/* CSS for control sap.m/SegmentedButton.control */
-/* BlueCrystal theme                             */
-/* ==============================================*/
+/* ====================================== */
+/* CSS for control sap.m/SegmentedButton  */
+/* BlueCrystal theme                      */
+/* ====================================== */
 
 .sapMSegB {
 	height: 2.5rem;
@@ -26,12 +26,12 @@
 			padding-right: 1rem;
 		}
 	}
-
 }
 // Adding margin to be displayed correct in sap.m.Bar
 .sapMBar .sapMSegB {
 	margin: 0.250rem 0;
 }
+
 html.sap-desktop .sapMSegBBtnFocusable:hover {
 	background: @sapUiSegmentedButtonHoverBackground;
 }
@@ -40,8 +40,12 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	border-right: 1px solid @sapUiSegmentedButtonBorderColor;
 }
 
-/* Custom focus outline: */
-html.sap-desktop {
+/* Custom focus outline : */
+// Have in mind that it's restricted only for browsers other than IE and EDGE because the focus there has it's
+//specifics and it's set in the base file
+html[data-sap-ui-browser^="cr"].sap-desktop,
+html[data-sap-ui-browser^="ff"].sap-desktop,
+html[data-sap-ui-browser^="sf"].sap-desktop, {
 	.sapMSegBBtnFocusable:focus {
 		outline: none;
 		border:  1px dotted @sapUiFocus;
