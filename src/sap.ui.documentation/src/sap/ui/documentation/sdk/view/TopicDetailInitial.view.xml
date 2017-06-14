@@ -12,23 +12,32 @@
 		  class="sapUiNoContentPadding">
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+				<l:BlockLayoutCell
+						class="sapUiNoContentPadding sapUiDemokitLandingImageCell sapUiNoContentPadding">
 					<Image
-							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped.jpg"
-							width="100%"
-							densityAware="false"
-							visible="{device>/system/phone}"/>
+						id="phoneImage"
+						src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="landingImage"
+						load="handleLandingImageLoad"
+						visible="{device>/system/phone}"/>
+
 					<Image
-							src="./resources/sap/ui/documentation/sdk/images/Docu_M_and_L_cropped.jpg"
-							width="100%"
-							densityAware="false"
-							visible="{=!${device>/system/phone}}"/>
+						src="./resources/sap/ui/documentation/sdk/images/Docu_M_and_L_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="landingImage"
+						load="handleLandingImageLoad"
+						visible="{=!${device>/system/phone}}"/>
+
 					<Text
-							class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderTitleText"
-							text="Documentation"
-							width="100%"
-							textAlign="Left"/>
+						id="landingImageHeadline"
+						visible="false"
+						class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderTitleText"
+						text="Documentation"
+						width="100%"
+						textAlign="Left"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 

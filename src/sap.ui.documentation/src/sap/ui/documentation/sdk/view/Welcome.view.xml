@@ -11,31 +11,35 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell class="sapUiNoContentPadding sapUiDemokitLandingImageCell welcomeImageCell">
 					<Image
-							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped.jpg"
-							width="100%"
-							class="welcomeImage"
-							densityAware="false"
-							visible="{device>/system/phone}"/>
+						id="phoneImage"
+						src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped.jpg"
+						width="100%"
+						class="welcomeImage"
+						densityAware="false"
+						load="handleLandingImageLoad"
+						visible="{device>/system/phone}"/>
 					<Image
-							src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
-							width="100%"
-							densityAware="false"
-							class="welcomeImage"
-							visible="{=!${device>/system/phone}}"/>
+						src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="welcomeImage"
+						load="handleLandingImageLoad"
+						visible="{=!${device>/system/phone}}"/>
 
 					<l:VerticalLayout
-							width="100%"
-							class="welcomeImageTextLayout">
+						id="landingImageHeadline"
+						visible="false"
+						width="100%"
+						class="welcomeImageTextLayout">
 						<Text class="welcomeImageTextHeadline"
-							  text="Discover New Enterprise-Grade Horizons"
-							  width="100%"
-							  textAlign="Center"/>
+							text="Discover New Enterprise-Grade Horizons"
+							width="100%"
+							textAlign="Center"/>
 						<Button
-								text="Get Started with UI5"
-								type="Emphasized"
-								press="onGetStarted"
-								class="actionButton"/>
+							text="Get Started with UI5"
+							type="Emphasized"
+							press="onGetStarted"
+							class="actionButton"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>

@@ -186,6 +186,14 @@ sap.ui.define([
 			 */
 			_deregisterOrientationChange: function () {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
+			},
+
+			/**
+			 * Handles landing image load event and makes landing image headline visible
+			 * when the image has loaded.
+			 */
+			handleLandingImageLoad: function () {
+				this.getView().byId("landingImageHeadline").setVisible(true);
 			}
 		});
 
