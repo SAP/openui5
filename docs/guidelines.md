@@ -322,10 +322,10 @@ Some of the target platforms of UI5 impose technical restrictions on the naming 
 # Git Guidelines
 --------------
 
-##Settings
+## Settings
 Set the Git `core.autocrlf` configuration property to "false" (and make sure to use Unix-style linebreaks (LF-only))
 
-##Commit Message
+## Commit Message
 The commit message consists of two or three parts, separated by empty lines.
 
 ### Commit Summary
@@ -342,7 +342,7 @@ Describe the effect that this change has from a user's point of view. App crashe
 
 After that, describe the technical details of what you changed. It is important to describe the change in a most understandable way so the reviewer is able to verify that the code is behaving as you intend it to.
 
-###Data Section
+### Data Section
 The data section consists of name-value pairs
 -   `Fixes: https://github.com/SAP/openui5/issues/(issueNumber)` if the change fixes a GitHub-reported bug
 -   `Closes: https://github.com/SAP/openui5/pull/(pullRequestNumber)` if the change comes from a pull request. This is usually added by the OpenUI5 committer handling the pull request
