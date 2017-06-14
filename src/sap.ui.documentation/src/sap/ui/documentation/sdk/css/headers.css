@@ -32,7 +32,7 @@
 }
 
 /*SMALL*/
-@media only screen and (max-width: 64rem) {
+@media (max-width: 64rem) {
 	.sapUiDemokit .welcomeImage {
 		object-fit: cover;
 	}
@@ -56,14 +56,14 @@
 }
 
 /*SMALL PHONE */
-@media only screen and (max-width: 32rem) {
+@media (max-width: 32rem) {
 	.sap-phone .sapUiDemokit .welcomeImageTextLayout {
 		margin-top: -6rem;
 	}
 }
 
 /*XTRA LARGE*/
-@media only screen and (min-width: 90rem) {
+@media (min-width: 90rem) {
 	.sapUiDemokit .sapMText.welcomeImageTextHeadline {
 		font-size: 4rem;
 		margin-bottom: 2rem;
@@ -99,7 +99,7 @@
 }
 
 /*SMALL*/
-@media only screen and (max-width: 64rem) {
+@media (max-width: 64rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
 		top: 1.25rem;
 		font-size: 1.625rem;
@@ -115,7 +115,7 @@
 }
 
 /*XTRA LARGE*/
-@media only screen and (min-width: 90rem) {
+@media (min-width: 90rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationDocumentationHeaderTitleText {
 		top: 2.5rem;
 		font-size: 4rem;
@@ -153,7 +153,7 @@
 }
 
 /*SMALL*/
-@media only screen and (max-width: 64rem) {
+@media (max-width: 64rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationExploredHeaderTitleText {
 		top: 1.25rem;
 		font-size: 1.625rem;
@@ -169,7 +169,7 @@
 }
 
 /*XTRA LARGE*/
-@media only screen and (min-width: 90rem) {
+@media (min-width: 90rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationExploredHeaderTitleText {
 		top: 2.5rem;
 		font-size: 4rem;
@@ -208,7 +208,7 @@
 }
 
 /*SMALL*/
-@media only screen and (max-width: 64rem) {
+@media (max-width: 64rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
 		top: 1.25rem;
 		font-size: 1.625rem;
@@ -224,7 +224,7 @@
 }
 
 /*XTRA LARGE*/
-@media only screen and (min-width: 90rem) {
+@media (min-width: 90rem) {
 	.sapUiDemokit .sapMText.sapUiDocumentationApiHeaderTitleText {
 		top: 2.5rem;
 		font-size: 4rem;
