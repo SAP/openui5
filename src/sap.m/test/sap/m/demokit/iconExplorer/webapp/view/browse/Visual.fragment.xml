@@ -28,7 +28,7 @@
 			<core:Icon size="2rem" src="sap-icon://{name}" color="Default"/>
 			<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
 			<core:Icon size="3rem" src="sap-icon://{name}" color="Default"/>
-			<Label design="Bold" text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
+			<Label text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
 			<ToggleButton
 				icon="sap-icon://favorite"
 				press="onToggleFavorite"
