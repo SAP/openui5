@@ -55,20 +55,25 @@ sap.ui.define([
 		},
 
 		init : function () {
+			// Note: Do not pass "this"! Template control vs. clone!
 			this.attachModelContextChange(this.onModelContextChange);
 		},
 
 		addAssociation : function() {
 			var oField = this.getAggregation("field");
 
-			oField.addAssociation.apply(oField, arguments);
+			if (oField) {
+				oField.addAssociation.apply(oField, arguments);
+			} // else: will be called again later
 			return this;
 		},
 
 		removeAssociation : function() {
 			var oField = this.getAggregation("field");
 
-			oField.removeAssociation.apply(oField, arguments);
+			if (oField) {
+				oField.removeAssociation.apply(oField, arguments);
+			}
 			return this;
 		},
 
@@ -81,10 +86,9 @@ sap.ui.define([
 					var oField = that.getAggregation("field");
 
 					if (oField) {
-						oField.destroy();
-						//TODO ARIA support, e.g. repeat previous addAssociation() calls!
-						throw new Error("Unsupported: onModelContextChange called twice");
+						return; // changes to sValueListType are not supported
 					}
+
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
