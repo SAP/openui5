@@ -1,0 +1,237 @@
+{
+	"booth1": [
+		{
+			"type": "break",
+			"duration": 50
+		},
+		{
+			"title": "Metadata-Driven Controls with Rest Services",
+			"speaker": "Martin Schaus",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "<p>Demo new upcoming features of UI5 regarding Metadata Driven Controls.</p><p>Allow to manipulate the artifacts live in an editor and see the immediate result.</p><p>Create custom control using a Fragment Control, add a Swagger service to the View and enhance the metadata.</p><p>Drive the new custom control and other UI controls from the metadata.</p>"
+
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "New Demo Kit - Your Way to UI5",
+			"speaker": "Petya Begovska",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "<p>The starting point for everyone working with UI5 is the Demo Kit Application. Here you can find all the needed information such as API Reference, Developer Guide, Samples and Demo apps.</p><p>Now, it is completely redesigned to showcase the innovative, responsive and multi theme capable UI5 framework!</p><p>Come and see the new Demo Kit app accessible on any device, with modern look and feel and easy to use. Provide your valuable feedback so we can make it even better!</p>"
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Adapting UI @ Runtime",
+			"speaker": "Mikhail Benderskiy, Christian Voshage",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "Your application users have various good reasons for adapting their UI: to support their own business cases more efficient, to simplify workflows or to improve usability. Join us in this session to learn, why SAPUI5s innovative solution - UI Adaptation at Runtime (RTA) makes at as simple and efficient as never before, discuss your use-cases with our experts and share your own experience about UI extensibility! Complicated was in the past, now comes Flexibility!"
+
+		},
+		{
+			"type": "break",
+			"duration": 50
+		},
+		{
+			"title": "SEO for OpenUI5 Apps",
+			"speaker": "Yavor Ivanov, Stanislava Baltova",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "You use openui5 to build your publicly facing home page and site content. There are few tricks you can use to make sure search engines can find and understand your content. You will learn about structuring your links, JS rendering of dynamic content and more advanced topics like pre-rendering."
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Components – More Performance!",
+			"speaker": "Peter Muessig, Matthias Osswal",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "Describes the components concepts and especially the concept of the descriptor with regards to performance improvements (manifest first, async loading, model preloading, …)"
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Create your own UI5 controls – what’s coming up",
+			"speaker": "Andreas Kunz",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "<p>Have you developed your own UI5 controls? Yes? It’s getting even easier now! We are working on new ways to bind data within composite controls and to even declare controls by combining others in so-called &quot;FragmentControls&quot;! (straight from the lab, never seen before)</p>"
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Time or Money? Time (DateFormat) and Money (NumberFormat)!",
+			"speaker": "Jiawei Cao, Malte Wedel",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "<p>With UI5, you don’t need to struggle with the dilemmas of happiness which oblige you to choose one from time and money. You can have both of them! Oh, here we mean that you can have both time and money perfectly formatted across different locales.</p><p>In this session, we will present the most exciting features of core.format.NumberFormat and core.format.DateFormat with interactive examples. We will demonstrate how we tackle the seemingly easy but actual complicated task to perfectly format date and number across different locales.</p>"
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Effortless OPA testing with Gherkin Reusable Specs",
+			"speaker": "Savio Dimatteo",
+			"type": "Session",
+			"duration": 40
+		},
+		{
+			"type": "break",
+			"duration": 20
+		}
+	],
+	"booth2": [
+		{
+			"type": "break",
+			"duration": 50
+		},
+		{
+			"title": "Behavior-Driven Development with OPA5 automated tests",
+			"speaker": "Andras Gabor Konya, Lorant Guth",
+			"type": "Session",
+			"duration": 40
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "The OpenUI5 Developer Blog - Behind the Scenes",
+			"speaker": "Holger Schäfer",
+			"type": "Session",
+			"duration": 40
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Advanced Charting Controls Coming to UI5",
+			"speaker": "Ondrej Bohaciak, Vaclav Vopenka",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "We will present newly released and upcoming controls which we have developed in Brno Suite Controls team. We will have prototypes and demos ready for the upcoming controls and demo apps for released controls. We’ll be happy to answer any questions regarding implementation of our controls in your apps."
+		},
+		{
+			"type": "break",
+			"duration": 50
+		},
+		{
+			"title": "Virtual Tour around a Company Site with UI5",
+			"speaker": "Helmut Tammen",
+			"type": "Session",
+			"duration": 40
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Teaser: Implementing Custom Tiles for SAP Fiori Launchpad as SAPUI5 Components",
+			"speaker": "Stephan Heyne",
+			"type": "Session",
+			"duration": 40
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Code-free Fiori Apps with SAP Web IDE RAD and Layout Editor",
+			"speaker": "Vered Constantin",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "<p>Did you know you can create beautiful SAP Fiori applications without any coding?</p><p>This is now possible with the innovative SAP Web IDE RAD perspective that allows you to view and modify your application using visual editors.</p><p>You don't have to deal with complex technologies no more, from now on you can use SAP Web IDE RAD perspective and layout editor to add pages to your app, edit the UI, drag &amp; drop controls, create event handlers, add bindings and much more.</p><p>All without a single line of code!</p>"
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "Drafts: Extending Two-Way Binding to Provide an Editing Concept",
+			"speaker": "Ian Robert Taylor, Dirk Teufel",
+			"type": "Session",
+			"duration": 40,
+			"abstract": "<p>In this Demo Booth session we will explain the concepts of Drafts, which enable a concept for editing entities.</p><p>Two way binding provides a mechanism to maintain entities, but does not offer the feature to lock an entity during editing nor the option to control the visibility of a changed entity.</p><p>In this session we examine the features needed from OData and from Function Imports that provide the mechanism to enable Drafts in a Freestyle Fiori App according to the SAP Fiori UX Guidelines.</p>"
+		},
+		{
+			"type": "break",
+			"duration": 10
+		},
+		{
+			"title": "A hitchhiker‘s guide to the UI5 demo apps & tutorials",
+			"speaker": "Elena Makarenko",
+			"type": "Session",
+			"abstract": "There are many hidden gems waiting to be discovered in our demo kit and we consistently update our demo apps and tutorials to reflect the latest recommendations of the UI5 framework. See how you can quickly get up to speed and where to find essential features that you can re-use in your application projects. Enjoy a free tour across our Demo Apps, Tools, Templates, and Tutorials to find out the true meaning of code, the UI5verse, and everything.",
+			"duration": 40
+		},
+		{
+			"type": "break",
+			"duration": 20
+		}
+	],
+	"booth3": [
+		{
+			"title": "UI5 Controls for Document Handling",
+			"speaker": "Pia Kinkel, Christoph Laux",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "Embedded Analytics with Charts",
+			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "Developer Clinic: UI5 Controls",
+			"speaker": "Pia Kinkel, Bohdan Pukalskyi, Dominic Holzwarth",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "How to Build an Ice Cream Machine with UI5 Controls",
+			"speaker": "Christoph Laux, Bohdan Pukalskyi",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "Tiles in UI5",
+			"speaker": "Christoph Laux, Bohdan Pukalskyi",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "Smart Micro Charts",
+			"speaker": " Bohdan Pukalskyi, Dominic Holzwarth",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "Embedded Analytics with Charts",
+			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
+			"type": "Session",
+			"duration": 60
+		},
+		{
+			"title": "Integrate Feed Capabilities Using UI5 Controls",
+			"speaker": "Christoph Laux",
+			"type": "Session",
+			"duration": 60
+		}
+	]
+}
