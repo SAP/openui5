@@ -104,7 +104,7 @@
 					vertical="false">
 				<SplitApp id="splitApp"
 						  mode="HideMode"
-						  defaultTransitionNameDetail="fade"
+						  defaultTransitionNameDetail="show"
 						  defaultTransitionNameMaster="fade">
 				</SplitApp>
 			</ScrollContainer>
