@@ -1,7 +1,7 @@
-/* ============================================= */
-/* CSS for controlsap.m/SegmentedButton.control */
-/* ============================================= */
-
+/* ====================================== */
+/* CSS for control sap.m/SegmentedButton  */
+/* Base theme                             */
+/* ====================================== */
 .sapMSegB {
 	margin: 0; /*To override the native browser margin*/
 	padding: 0;
@@ -63,11 +63,11 @@
 	opacity: 0.5;
 }
 .sapMSegBBtn:not(.sapMSegBBtnDis) .sapUiIcon {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 html[data-sap-ui-os^="mac"][data-sap-ui-browser^="sf"] .sapMBar .sapMSegB {
-  line-height: 2.5rem;
+	line-height: 2.5rem;
 }
 
 /* Fix for mobile segmented button in header, footer or bar element */
@@ -101,5 +101,61 @@ html[data-sap-ui-os^="iOS"] {
 html[data-sap-ui-os^="Android"] {
 	.sapUiSizeCompact .sapMSegBBtn .sapUiIcon {
 		line-height: 1.6rem;
+	}
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSegBBtn.sapMSegBBtnFocusable:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMSegBBtn.sapMSegBBtnFocusable:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		position: absolute;
+		top: 0;
+		left: 0;
+		margin-top: 1px;
+		margin-left: 1px;
+		width: calc(~'100% - 2px');
+		height: calc(~'100% - 2px');
+		pointer-events: none;
+	}
+
+	.sapMSegB {
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus {
+			outline: none;
+			position: relative;
+		}
+		.sapMSegBBtnFocusable.sapMSegBBtnSel:focus:before {
+			content: " ";
+			box-sizing: border-box;
+			position: absolute;
+			top: 0;
+			left: 0;
+			margin-top: 1px;
+			margin-left: 1px;
+			width: calc(~'100% - 2px');
+			height: calc(~'100% - 2px');
+			pointer-events: none;
+		}
+		.sapMSegBBtnFocusable {
+			&:focus:before {
+				border: 1px dashed @sapUiFocus;
+			}
+			&.sapMSegBBtnSel:focus:before {
+				border: 1px dashed @sapUiInvertedFocus;
+			}
+		}
+	}
+
+	.sapMFooter-CTX {
+		.sapMSegBBtnFocusable {
+			&:focus:before {
+				border: 1px dashed @sapUiInvertedFocus;
+			}
+		}
 	}
 }
