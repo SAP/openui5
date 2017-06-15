@@ -9,13 +9,11 @@ sap.ui.define([
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/fl/FakeLrepConnectorLocalStorage",
-		"sap/ui/fl/Utils",
 		"sap/m/Text",
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
 		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, FakeLrepConnectorLocalStorage, Utils, Text, HTML, Device, History) {
+	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
@@ -32,8 +30,11 @@ sap.ui.define([
 					showNewTab: false
 				});
 
-				this._initFakeLREP();
-				this._loadRuntimeAuthoring();
+				// Load runtime authoring asynchronously
+				Promise.all([
+					sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
+					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+				]).then(this._loadRTA.bind(this));
 
 				this.getView().setModel(this._viewModel);
 			},
@@ -220,32 +221,31 @@ sap.ui.define([
 			onToggleFullScreen : function (oEvt) {
 				ToggleFullScreenHandler.updateMode(oEvt, this.getView(), this);
 			},
+
 			_oRTA : null,
-			_initFakeLREP : function(){
-				// fake stable IDs
-				Utils.checkControlId = function() {
-					return true;
-				};
 
-				FakeLrepConnectorLocalStorage.enableFakeConnector({
-					"isKeyUser": true,
-					"isAtoAvailable": false,
-					"isProductiveSystem": true
-				});
-			},
+			_loadRTA: function () {
+				sap.ui.require(["sap/ui/fl/Utils", "sap/ui/fl/FakeLrepConnectorLocalStorage", "sap/ui/rta/RuntimeAuthoring"], function (Utils, FakeLrepConnectorLocalStorage, RuntimeAuthoring) {
 
-			/*
-			* Loades runtime authoring asynchronously (will fail if the rta library is not loaded)
-			*/
-			_loadRuntimeAuthoring : function() {
-				try {
-					sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
+					// fake stable IDs
+					Utils.checkControlId = function() {
+						return true;
+					};
+
+					try {
+						FakeLrepConnectorLocalStorage.enableFakeConnector({
+							"isKeyUser": true,
+							"isAtoAvailable": false,
+							"isProductiveSystem": true
+						});
+
 						this._oRTA = new RuntimeAuthoring();
 						this.getView().byId("toggleRTA").setVisible(true);
-					}.bind(this));
-				} catch (oException) {
-					jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
-				}
+					} catch (oException) {
+						jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
+					}
+
+				}.bind(this));
 			},
 
 			onToggleAdaptationMode : function (oEvt) {
