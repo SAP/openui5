@@ -27,8 +27,8 @@
 		</headerTitle>
 
 		<headerContent>
-			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
-				<l:VerticalLayout class="sapUiLargeMarginEnd" width="100%">
+			<l:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin" hSpacing="0">
+				<l:VerticalLayout class="sapUiLargeMarginEnd" width="98%">
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label text="API Reference:"/>
