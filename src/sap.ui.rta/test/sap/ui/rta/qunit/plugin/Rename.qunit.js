@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/* global QUnit*/
 
 QUnit.config.autostart = false;
 

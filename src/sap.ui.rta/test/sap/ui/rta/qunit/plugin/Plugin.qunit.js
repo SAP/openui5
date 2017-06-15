@@ -1,3 +1,5 @@
+/*global QUnit sinon*/
+
 (function(){
 	"use strict";
 	jQuery.sap.require("sap.ui.thirdparty.sinon");
