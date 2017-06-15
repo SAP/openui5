@@ -173,10 +173,21 @@
 			"name": "search",
 			"target": ["searchPage"]
 		  },
-			{
-				"pattern": "releasenotes.html",
-				"name": "releaseNotes",
-				"target": ["topicMaster", "releaseNotes"]
+		  {
+			"pattern": "releasenotes.html",
+			"name": "releaseNotes",
+			"target": [
+				"topicMaster",
+				"releaseNotes"
+			]
+		  },
+		  {
+			"pattern": "docs/guide/{id}",
+			"name": "topicIdLegacyRoute"
+		  },
+		  {
+			"pattern": "docs/api/symbols/{id}",
+			"name": "apiIdLegacyRoute"
 		  }
 		],
 
