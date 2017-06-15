@@ -79,7 +79,10 @@ sap.ui.define([
 		analyzedFinish: false,
 		selectedRules: true,
 		filteredIssues: null,
-		issuesCount: 0
+		issuesCount: 0,
+		visibleRowCountMode:"Auto",
+		visibleRowCount: 10,
+		heightDetailsArea: "inherit"
 	});
 
 	return model;

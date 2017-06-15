@@ -88,6 +88,7 @@ sap.ui.define([
 				if (data.issuesModel[0]) {
 					this._setSelectedRule(data.issuesModel[0][0]);
 					this.treeTable.setSelectedIndex(1);
+					this.issueTable.setSelectedIndex(0);
 				}
 			}, this);
 		},
@@ -135,7 +136,18 @@ sap.ui.define([
 		onRowSelectionChanged: function (event) {
 			if (event.getParameter("rowContext")) {
 				var selection = event.getParameter("rowContext").getObject();
-				this._setSelectedRule(selection);
+				if (selection.type === "rule") {
+					this._setSelectedRule(selection);
+				} else {
+					this.model.setProperty("/selectedIssue", "");
+				}
+				if (selection.issueCount < 4 ) {
+					this._setPropertiesOfResponsiveDetailsAndTable("Fixed", "inherit");
+					this.model.setProperty("/visibleRowCount", 4);
+
+				} else {
+					this._setPropertiesOfResponsiveDetailsAndTable("Auto", "5rem");
+				}
 			}
 
 		},
@@ -149,7 +161,6 @@ sap.ui.define([
 				var filteredIssues = this.data.issues.filter(this.filterIssueListItems, this);
 				CommunicationBus.publish(channelNames.REQUEST_ISSUES, filteredIssues);
 				this.model.setProperty("/visibleIssuesCount", filteredIssues.length);
-				this.issueTable.clearSelection();
 			}
 
 			this.setToolbarHeight();
@@ -199,27 +210,27 @@ sap.ui.define([
 			if (event.getParameter("rowContext")) {
 				var selection = event.getParameter("rowContext").getObject();
 				this.elementTree.setSelectedElement(selection.context.id, false);
+				this.model.setProperty("/selectedIssue/details", selection.details);
 			}
 		},
 		_setSelectedRule: function(selection){
 			var selectedIssues,
 				selectionCopy;
 			if (this.model.getProperty("/visibleIssuesCount") > 0) {
-				if (selection.ruleLibName) {
-					selectedIssues = this.structuredIssuesModel[selection.ruleLibName][selection.ruleId];
-					selectionCopy = jQuery.extend(true, {}, selection); // clone the model so that the TreeTable will not be affected
-
-					selectionCopy.issues = selectedIssues;
-					selectionCopy.resolutionUrls = selectedIssues[0].resolutionUrls;
-				} else {
-					selectionCopy = null;
-				}
-
+				selectedIssues = this.structuredIssuesModel[selection.ruleLibName][selection.ruleId];
+				selectionCopy = jQuery.extend(true, {}, selection); // clone the model so that the TreeTable will not be affected
+				selectionCopy.issues = selectedIssues;
+				selectionCopy.resolutionUrls = selectedIssues[0].resolutionUrls;
+				this.issueTable.setSelectedIndex(0);
+				this.model.setProperty("/selectedIssue/details", selectionCopy.details);
 				this.model.setProperty("/selectedIssue", selectionCopy);
 			} else {
 			this.model.setProperty("/selectedIssue", "");
 			}
-			this.issueTable.clearSelection();
+		},
+		_setPropertiesOfResponsiveDetailsAndTable: function(visibleRowCountMode, heightDetailsArea){
+			this.model.setProperty("/visibleRowCountMode", visibleRowCountMode);
+			this.model.setProperty("/heightDetailsArea", heightDetailsArea);
 		}
 	});
 });

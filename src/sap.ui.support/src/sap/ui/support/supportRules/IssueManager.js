@@ -250,7 +250,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 							resolution: issuesModel[libName][rule][0].resolution,
 							type: "rule",
 							ruleLibName: issuesModel[libName][rule][0].ruleLibName,
-							ruleId: issuesModel[libName][rule][0].ruleId
+							ruleId: issuesModel[libName][rule][0].ruleId,
+							selected: issuesModel[libName][rule][0].selected,
+							details: issuesModel[libName][rule][0].details,
+							severity: issuesModel[libName][rule][0].severity
 						};
 
 						issueCount += issuesModel[libName][rule].length;
