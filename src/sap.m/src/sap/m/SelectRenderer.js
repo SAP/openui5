@@ -41,6 +41,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				oRm.addClass(CSS_CLASS + "Disabled");
 			}
 
+			if (bAutoAdjustWidth || oSelect.getWidth() === "auto") {
+				oRm.addClass(CSS_CLASS + "MinWidth");
+			}
+
 			if (bAutoAdjustWidth) {
 				oRm.addClass(CSS_CLASS + "AutoAdjustedWidth");
 			} else {
