@@ -82,6 +82,41 @@
 							var sSelectedWidth = oEvent.getParameter('selectedItem').getKey();
 							sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
 						}
+					}),
+					new sap.m.MultiComboBox({
+						id : "MCB1",
+						width: "230px",
+						placeholder : "Choose built-in views",
+						items : [
+							oItem20 = new sap.ui.core.Item({
+								key : "Hour",
+								text : "Hour"
+							}),
+
+							oItem21 = new sap.ui.core.Item({
+								key : "Day",
+								text : "Day"
+							}),
+
+							oItem22 = new sap.ui.core.Item({
+								key : "Month",
+								text : "Month"
+							}),
+
+							oItem23 = new sap.ui.core.Item({
+								key : "Week",
+								text : "1 week"
+							}),
+
+							oItem24 = new sap.ui.core.Item({
+								key : "One Month",
+								text : "1 month"
+							})
+						],
+						selectionFinish : function(oEvent) {
+							var aSelectedKeys = this.getSelectedKeys();
+							oPC1.setBuiltInViews(aSelectedKeys);
+						}
 					})
 				]
 			});
@@ -363,6 +398,40 @@
 			type: sap.m.ButtonType.Transparent,
 			press: function (oEvent) {
 				oPC1.setShowDayNamesLine(!oPC1.getShowDayNamesLine());
+			}
+		});
+
+		var oButtonToggleCustomViews = new sap.m.ToggleButton({
+			icon: "sap-icon://chart-table-view",
+			tooltip: "Add custom views",
+			type: sap.m.ButtonType.Transparent,
+			press: function (oEvent) {
+				if (oEvent.getParameter("pressed")) {
+					oPC1.addView(
+						new sap.m.PlanningCalendarView({
+							key: "customView1",
+							intervalType: sap.ui.unified.CalendarIntervalType.Day,
+							description: "custom view 1",
+							intervalsS: 7,
+							intervalsM: 7,
+							intervalsL: 7
+						})
+					);
+					oPC1.addView(
+						new sap.m.PlanningCalendarView({
+							key: "customView2",
+							intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+							description: "custom view 2",
+							intervalsS: 5,
+							intervalsM: 5,
+							intervalsL: 5
+						})
+					);
+					oPC1.setViewKey(oPC1.getViews()[0].getKey());
+				} else {
+					oPC1.destroyViews();
+
+				}
 			}
 		});
 
@@ -931,6 +1000,7 @@
 							 oButtonToggleSpecNoWork,
 							 oButtonMinMax,
 							 oButtonToggleShowDayNamesLine,
+							 oButtonToggleCustomViews,
 							 oVisSelect,
 							 oGroupModeSelect],
 			legend: "Legend1",
