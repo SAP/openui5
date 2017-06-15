@@ -27,16 +27,18 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.render = function(oRm, oList) {
-			this.writeOpenListTag(oRm, oList);
+			this.writeOpenListTag(oRm, oList, { elementData: true });
 			this.renderItems(oRm, oList);
 			this.writeCloseListTag(oRm, oList);
 		};
 
-		SelectListRenderer.writeOpenListTag = function(oRm, oList) {
+		SelectListRenderer.writeOpenListTag = function(oRm, oList, mStates) {
 			var CSS_CLASS = SelectListRenderer.CSS_CLASS;
 
 			oRm.write("<ul");
-			oRm.writeControlData(oList);
+			if (mStates.elementData) {
+				oRm.writeControlData(oList);
+			}
 			oRm.addClass(CSS_CLASS);
 
 			if (oList.getShowSecondaryValues()) {
