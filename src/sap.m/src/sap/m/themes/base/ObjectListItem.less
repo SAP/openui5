@@ -42,6 +42,12 @@ html[data-sap-ui-browser="ie9"] .sapMText.sapMObjLTitle {
 	word-break: break-word;
 }
 
+html.sap-phone .sapMText.sapMObjLTitle,
+.sapUiMedia-Std-Phone .sapMText.sapMObjLTitle,
+html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
+	word-break: break-all;
+}
+
 /*Object header title must break words, otherwise it may be to wide if used within
   a layout control with fixed width. */
 .sapMOHTitle:not(.sapMOHRTitleNoWordBreak) > .sapMText {
