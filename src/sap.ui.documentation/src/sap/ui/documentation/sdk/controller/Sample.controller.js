@@ -166,6 +166,7 @@ sap.ui.define([
 										var bCompact = this.getRootView().hasStyleClass("sapUiSizeCompact");
 
 										oSampleFrame.sap.ui.getCore().applyTheme(this._oCore.getConfiguration().getTheme());
+										oSampleFrame.sap.ui.getCore().getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
 										oSampleFrame.jQuery('body')
 											.toggleClass("sapUiSizeCompact", bCompact)
 											.toggleClass("sapUiSizeCozy", bCompact);
