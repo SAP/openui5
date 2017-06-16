@@ -34,8 +34,7 @@
 						}
 					}">
 				<StandardTreeItem
-						title="{treeData>text}"
-						selected="{treeData>isSelected}">
+						title="{treeData>text}">
 					<customData>
 						<core:CustomData key="nodeId" value="{treeData>name}" />
 					</customData>
