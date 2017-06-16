@@ -682,6 +682,29 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		return this;
 	};
 
+	/**
+	 * Allows to hide the tree structure (tree icons, indentation) in tree mode (property <code>useGroupMode</code> is set to <code>false</code>).
+	 *
+	 * This option might be useful in some scenarios when actually a tree table must be used but under certain conditions the data
+	 * is not hierarchical, because it contains leafs only.
+	 *
+	 * <b>Note:</b> In flat mode the user of the table cannot expand or collapse certain nodes and the hierarchy is not
+	 * visible to the user. The caller of this function has to ensure to use this option only with non-hierarchical data.
+	 *
+	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @protected
+	 */
+	TreeTable.prototype.setUseFlatMode = function(bFlat) {
+		bFlat = !!bFlat;
+		if (bFlat != this._bFlatMode) {
+			this._bFlatMode = bFlat;
+			if (this.getDomRef() && TableUtils.Grouping.isTreeMode(this)) {
+				this.invalidate();
+			}
+		}
+		return this;
+	};
+
 	return TreeTable;
 
 });
