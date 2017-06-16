@@ -1,7 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand', "sap/ui/fl/Utils", "sap/ui/fl/changeHandler/BaseTreeModifier"], function(jQuery, FlexCommand, FlexUtils, BaseTreeModifier) {
+sap.ui.define([
+	'sap/ui/rta/command/FlexCommand'
+], function (FlexCommand) {
 	"use strict";
 
 	/**
@@ -28,8 +30,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand', "sap/ui/fl
 				newControlId : {
 					type : "string"
 				},
+				//the name "bindingPath" conflicts with getBindingPath() method from ManagedObject
 				bindingString : {
 					type : "string"
+				},
+				parentId : {
+					type : "string"
+				},
+				changeHandlerSettingsKey : {
+					type : "object"
 				}
 			}
 		}
@@ -41,7 +50,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand', "sap/ui/fl
 			changeType : this.getChangeType(),
 			index : this.getIndex(),
 			newControlId : this.getNewControlId(),
-			bindingPath : this.getBindingString()
+			bindingPath : this.getBindingString(),
+			parentId : this.getParentId(),
+			changeHandlerSettingsKey : this.getChangeHandlerSettingsKey()
 		};
 	};
 

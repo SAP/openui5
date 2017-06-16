@@ -2,8 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/rta/plugin/Plugin", 'sap/ui/dt/ElementUtil', 'sap/ui/dt/OverlayRegistry', 'sap/ui/rta/Utils', 'sap/ui/core/StashedControlSupport', 'sap/ui/dt/ElementDesignTimeMetadata'],
-function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupport, ElementDesignTimeMetadata){
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/rta/plugin/Plugin",
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/rta/Utils',
+	'sap/ui/core/StashedControlSupport',
+	'sap/ui/dt/ElementDesignTimeMetadata'
+], function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupport, ElementDesignTimeMetadata){
 	"use strict";
 
 	function _getParents(bSibling, oOverlay) {
@@ -260,21 +267,29 @@ function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupp
 			var oDesignTimeMetadata = mParents.parentOverlay.getDesignTimeMetadata();
 			var aActions = oDesignTimeMetadata.getAggregationAction("addODataProperty", mParents.parent);
 
+			var oCheckElement = mParents.parent;
+
 			var fnCallback = function(_mAddODataProperty, mAction){
-				if (mAction.changeType && this.hasChangeHandler(mAction.changeType, mParents.parent)) {
-					_mAddODataProperty[mAction.aggregation] = {
-						addODataProperty : {
-							designTimeMetadata : oDesignTimeMetadata,
-							action : mAction
-						}
-					};
+				if (mAction) {
+					if (mAction.changeOnRelevantContainer){
+						oCheckElement = mParents.relevantContainer;
+					}
+					if (mAction.changeType && this.hasChangeHandler(mAction.changeType, oCheckElement)) {
+						_mAddODataProperty[mAction.aggregation] = {
+							addODataProperty : {
+								designTimeMetadata : oDesignTimeMetadata,
+								action : mAction
+							}
+						};
+					}
+					return _mAddODataProperty;
 				}
-				return _mAddODataProperty;
 			};
 
-			var mAddODataProperty = aActions.reduce(fnCallback.bind(this), {});
+			if (aActions && aActions.length > 0){
+				return aActions.reduce(fnCallback.bind(this), {});
+			}
 
-			return mAddODataProperty;
 		},
 
 		_getActions: function(bSibling, oOverlay) {
@@ -396,7 +411,7 @@ function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupp
 			var aSelectedElements = this.getDialog().getSelectedElements();
 
 			if (aSelectedElements.length > 0) {
-				//at least on element selected
+				//at least one element selected
 				var oCompositeCommand = this.getCommandFactory().getCommandFor(mParents.parent, "composite");
 				aSelectedElements.forEach(function(oSelectedElement){
 					var oCmd;
@@ -413,6 +428,13 @@ function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupp
 							}
 							break;
 						case "odata":
+							var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
+							var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
+							var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
+							if (mODataPropertyActionDTMetadata.requiredLibraries){
+								var oCmdDesc = this._createCommandForAddLibrary(mParents, mActions);
+								oCompositeCommand.addCommand(oCmdDesc);
+							}
 							oCmd = this._createCommandsForOData(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
 							oCompositeCommand.addCommand(oCmd);
 							break;
@@ -429,11 +451,32 @@ function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupp
 		_createCommandsForOData: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
+			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
+			var oRefControlForId = mParents.parent; //e.g. SmartForm
+			if (mODataPropertyActionDTMetadata.changeOnRelevantContainer) {
+				oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
+			}
 			var iAddTargetIndex = Utils.getIndex(mParents.parent, oSiblingElement, mActions.aggregation, oParentAggregationDTMetadata.getData().getIndex);
 			return this.getCommandFactory().getCommandFor(mParents.parent, "addODataProperty", {
-				newControlId: Utils.createFieldLabelId(mParents.parent, oSelectedElement.entityType, oSelectedElement.bindingPath),
+				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
 				index : iIndex !== undefined ? iIndex : iAddTargetIndex,
-				bindingString : oSelectedElement.bindingPath
+				bindingString : oSelectedElement.bindingPath,
+				parentId : mParents.parent.getId(),
+				changeHandlerSettingsKey : mODataPropertyActionDTMetadata.changeHandlerSettingsKey
+			}, oParentAggregationDTMetadata);
+		},
+
+		_createCommandForAddLibrary: function(mParents, mActions){
+			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
+			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
+			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
+			var oComponent = sap.ui.core.Component.getOwnerComponentFor(mParents.relevantContainer);
+			var mManifest = oComponent.getMetadata().getManifest();
+			var sReference = mManifest["sap.app"].id;
+			var mRequiredLibraries = mODataPropertyActionDTMetadata.requiredLibraries;
+			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
+				reference : sReference,
+				requiredLibraries : mRequiredLibraries
 			}, oParentAggregationDTMetadata);
 		},
 
@@ -527,11 +570,8 @@ function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupp
 		}
 
 		if (!bEditable && !bOverlayIsSibling) {
-			bEditable = this._hasRevealActionsOnChildren(oOverlay);
-		}
-
-		if (!bEditable) {
-			bEditable = this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
+			bEditable = this._hasRevealActionsOnChildren(oOverlay) ||
+				this.checkAggregationsOnSelf(mParents.parentOverlay, "addODataProperty");
 		}
 
 		if (bEditable) {
