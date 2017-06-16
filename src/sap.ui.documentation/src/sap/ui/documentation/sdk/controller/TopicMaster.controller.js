@@ -110,6 +110,10 @@ sap.ui.define([
 				}
 
 				oRouter.navTo("topicId", {id : sTopicId}, false);
+			},
+
+			onTreeFilter: function (oEvent) {
+				MasterTreeBaseController.prototype.onTreeFilter.apply(this, [oEvent, "text"]);
 			}
 
 		});
