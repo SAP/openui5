@@ -168,7 +168,7 @@ sap.ui.define([
 			 * @param {boolean} bCompactOn compact mode
 			 * @private
 			 */
-			_applyAppConfiguration: function(sThemeActive, bCompactOn){
+			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
 				var oSampleFrameContent,
 					$SampleFrame;
 
@@ -178,12 +178,15 @@ sap.ui.define([
 				this._oRootView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
 					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
 
+				this._oCore.getConfiguration().setRTL(bRTL);
+
 				// Apply theme and compact mode also to iframe samples
 				$SampleFrame = jQuery("#sampleFrame");
 				if ($SampleFrame.length > 0) {
 					oSampleFrameContent = $SampleFrame[0].contentWindow;
 					if (oSampleFrameContent) {
 						oSampleFrameContent.sap.ui.getCore().applyTheme(sThemeActive);
+						oSampleFrameContent.sap.ui.getCore().getConfiguration().setRTL(bRTL);
 						oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
 							.toggleClass("sapUiSizeCozy", !bCompactOn);
 					}
@@ -576,12 +579,10 @@ sap.ui.define([
 				this._oViewSettings.rtl = bRTL;
 
 				// handle settings change
-				this._applyAppConfiguration(sTheme, bCompact);
+				this._applyAppConfiguration(sTheme, bCompact, bRTL);
 
 				// If we are navigating outside the Explored App section: view settings should be reset
 				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
-
-				sap.ui.getCore().getConfiguration().setRTL(bRTL);
 			}
 		});
 	}
