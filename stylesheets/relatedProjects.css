@@ -121,9 +121,6 @@ a.tutorial-link:hover {
 	justify-content: flex-start;
 	margin-left: 12.5%;
 }
-.inner-paragraph {
-	margin-left: 8%;
-}
 
 @media screen and (max-width: 600px) {
 
@@ -212,6 +209,9 @@ a.tutorial-link:hover {
 		height: 100px;
 		display: table-cell;
 		vertical-align: middle;
+	}
+	.inner-paragraph {
+		margin-left: 7%;
 	}
 }
 /* Meduim Secreens Size */
@@ -386,17 +386,6 @@ a.tutorial-link:hover {
 	}
 }
 
-@media only screen and (max-device-width : 568px) and (orientation:landscape ) {
-	.projects-table {
-		margin-left: 1%;
-	}
-	.projects-table {
-		width: 85%;
-	}
-	.inner-paragraph {
-		margin-left: 6%;
-	}
-}
 @media only screen and (max-device-width : 568px) and (orientation:landscape ) {
 	.part-container {
 		margin: 0 1% 0 -1%;
