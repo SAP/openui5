@@ -60,7 +60,7 @@
 			"speaker": "Meredith Hassett",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract": "<p>New to SAPUI5? Looking to learn more about integrations inside and out of SAP? In my session, we’ll take a look at how to integrate APIs, Business Services, and OData services with UI5. You’ll see how easy it is and be on your way to building an integrated application. We’ll use SAP technologies like Web IDE, Cloud Platform, and API Business Hub to show how easy it is to integrate your SAP world. You’ll come out with an understanding of Destinations, OData, AJAX, and REST APIs and be on your way to creating an application with UI5 using external data. 30 minutes is all you need to get started integrating with SAPUI5!</p>"
+			"abstract": "<p>New to SAPUI5? Looking to learn more about integrations inside and out of SAP? In my session, we’ll take a look at how to integrate APIs, Business Services, and OData services with UI5. You’ll see how easy it is and be on your way to building an integrated application. We’ll use SAP technologies like Web IDE, Cloud Platform, and API Business Hub to show how easy it is to integrate your SAP world. You’ll come out with an understanding of Destinations, OData, AJAX, and REST APIs and be on your way to creating an application with UI5 using external data. 20 minutes is all you need to get started integrating with SAPUI5!</p>"
 		},
 		{
 			"type": "break",
