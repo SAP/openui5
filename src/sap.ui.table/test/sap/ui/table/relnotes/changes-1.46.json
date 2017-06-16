@@ -530,5 +530,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "adf1e3fd9331dddb6a9815a39a227356524cfe84",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "37a47515a1cab5334e1a1d8a9375b494ed98d422",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      }
+    ]
   }
 }

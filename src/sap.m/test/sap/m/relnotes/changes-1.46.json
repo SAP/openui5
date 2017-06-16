@@ -2414,5 +2414,70 @@
         "references": []
       }
     ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "690d809f8b20cec201305d4211bef2b365043ee4",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset button focus is now corrected",
+        "references": []
+      },
+      {
+        "id": "ec3542ea6acf4c375d1660dec091c71261839382",
+        "type": "FIX",
+        "text": " sap.m.ListItemBase: Tooltip should be announced.",
+        "references": []
+      },
+      {
+        "id": "8db961b20251cb4d75a118cfcae3439135ac28c9",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Long tokens are now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "75d06e1c942560d80bfea5e30b5b3e2247f2154e",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokens scrolling is now correct when control is inside a list",
+        "references": []
+      },
+      {
+        "id": "f11f4465a0dd0c94a3ea903384eae3f7564941ab",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "49b50b407a4ae0467827357f1def76286f70d513",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "103c426fc73c20cea419cc5f19e8ecd4e2ef0f3e",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
+      },
+      {
+        "id": "5efa2f426807e1a32dc8bf03e02e3d4c4abe68c3",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete button is now correctly displayed on iPad",
+        "references": []
+      },
+      {
+        "id": "a7f15c8934fb70894a9c82f26137da950858a7ee",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Key chain navigation improved",
+        "references": []
+      },
+      {
+        "id": "4901edbe96f369b3c5df4f4564af4e129ee4f21f",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Tooltip rendering in IE11 corrected",
+        "references": []
+      }
+    ]
   }
 }

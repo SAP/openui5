@@ -906,5 +906,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "86fb4193ff90dd011689f644d56625438fec8def",
+        "type": "FIX",
+        "text": " core.Icon: mark the tap/click event when icon has a press handler",
+        "references": []
+      },
+      {
+        "id": "53bdce41504eeec02d62983d99d90be349eb5cd9",
+        "type": "FIX",
+        "text": " core.IconPool: Use local SAP-icons font as fallback only",
+        "references": []
+      },
+      {
+        "id": "cc10a7660f365d81762310a6e0fa8cc733b6a70a",
+        "type": "FIX",
+        "text": " jquery.sap.trace.js: remove TerminalID from SAP Passport",
+        "references": []
+      }
+    ]
   }
 }

@@ -692,5 +692,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "103c426fc73c20cea419cc5f19e8ecd4e2ef0f3e",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
+      }
+    ]
   }
 }
