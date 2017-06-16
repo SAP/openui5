@@ -124,7 +124,7 @@
 	font-size: 1.1rem;
 }
 
-@media only screen and (min-width: 64rem) {
+@media (min-width: 64rem) {
 	.sapUiDemokit .actionButton {
 		padding-top: 0;
 		height: 3.25rem;
