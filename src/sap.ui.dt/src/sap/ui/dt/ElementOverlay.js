@@ -198,12 +198,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @override
 	 */
 	ElementOverlay.prototype.applyStyles = function() {
-		Overlay.prototype.applyStyles.apply(this, arguments);
-
 		var oGeometry = this.getGeometry();
 		if (oGeometry && oGeometry.visible) {
 			this._sortAggregationOverlaysInDomOrder();
 		}
+
+		Overlay.prototype.applyStyles.apply(this, arguments);
 	};
 
 	/**

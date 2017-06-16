@@ -329,6 +329,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		var oGeometry = this.getGeometry();
 
 		if (oGeometry && oGeometry.visible) {
+			this._ensureDomOrder();
 			var $overlay = this.$();
 			var iScrollingWidth = DOMUtil.getScrollbarWidth();
 			var mSize = oGeometry.size;
@@ -538,13 +539,17 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @private
 	 */
 	Overlay.prototype._updateDom = function() {
+		var bApplyStyles;
+		if (!document.getElementById(this.getId()) && document.getElementById(this.getParent().getId())) {
+			bApplyStyles = true;
+		}
+
 		if (this.isRoot()) {
 			this._ensureIsInOverlayContainer();
-
 			// apply styles propagated from root overlays to all their children
 			this.applyStyles();
-		} else {
-			this._ensureDomOrder();
+		} else if (bApplyStyles) {
+			this.applyStyles();
 		}
 	};
 
@@ -555,6 +560,10 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		var $this = this.$();
 
 		var oParent = this.getParent();
+		if (!oParent || !oParent.$) {
+			return;
+		}
+
 		var $parentDomRef = oParent.$();
 		var $parentContainer = $parentDomRef.find(">.sapUiDtOverlayChildren");
 
@@ -586,7 +595,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			} else {
 				$parentContainer.prepend($this);
 			}
-			oParent.applyStyles();
 		}
 	};
 
