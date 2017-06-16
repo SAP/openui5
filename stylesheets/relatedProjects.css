@@ -121,6 +121,9 @@ a.tutorial-link:hover {
 	justify-content: flex-start;
 	margin-left: 12.5%;
 }
+.inner-paragraph {
+	margin-left: 8%;
+}
 
 @media screen and (max-width: 600px) {
 
@@ -153,11 +156,7 @@ a.tutorial-link:hover {
 	}
 
 	h4 {
-		font-size: 13px;
-	}
-
-	.project-image {
-		width: 80px;
+		font-size: 18px;
 	}
 
 	.h-centered-content {
@@ -166,18 +165,15 @@ a.tutorial-link:hover {
 
 	.description-container {
 		padding: 0 20px;
-		font-size: 13px;
+		font-size: 14px;
 	}
 
 	.projects-table td, tr, th {
-		font-size: 10px;
-	}
-	.projects-table {
-		margin-left: -4%;
+		font-size: 14px;
 	}
 	.flex-container {
 		display: -webkit-box;
-		margin-left: -4%;
+		margin-left: 4%;
 		width: 100%;
 	}
 
@@ -185,6 +181,10 @@ a.tutorial-link:hover {
 		display: -webkit-flex;
 		display: flex;
 		justify-content: center;
+		margin-right: 12%;
+	}
+	.scroll-table {
+		overflow-x: scroll;
 	}
 	.phone-cells {
 		display: none;
@@ -195,17 +195,18 @@ a.tutorial-link:hover {
 		marg-left: -3%;
 	}
 	.project-image {
-		width: 80px;
-		height: 80%;
+		width: 600px;
+		height: 120%;
 	}
 	.addProject-title {
 		justify-content: flex-start;
-		margin-left: 7%;
+		margin-left: 12%;
 	}
 	.paragraph {
 		width: 100%;
 		padding: 0 5px 0 5px;
 		font-size: 13px;
+		margin-left: 12%;
 	}
 	.image-link {
 		height: 100px;
@@ -219,7 +220,7 @@ a.tutorial-link:hover {
 		display: none;
 	}
 	.description-container {
-		font-size: 14px;
+		font-size: 16px;
 		padding: 0;
 	}
 	.flex-container {
@@ -230,7 +231,7 @@ a.tutorial-link:hover {
 		text-align: center;
 		margin-bottom: 1rem;
 		margin-top: 3rem;
-		width: 85%;
+		width: 86%;
 		background-color: white;
 		font-size: 14px;
 		border-collapse: collapse;
@@ -268,25 +269,34 @@ a.tutorial-link:hover {
 	.code-block {
 		width: 100%;
 	}
+	.inner-paragraph {
+		margin-left: 3%;
+	}
 }
-/*@media only screen and (max-device-width : 1024px) and (orientation:landscape ) {
-	.paragraph {
-		font-size: 22px;
-		margin-left: -7%;
+
+@media only screen and (max-device-width : 1366px) and (orientation:landscape) {
+	.projects-table {
+		width: 86%;
 	}
-	.inner {
-		margin: 0 5%;
+	.inner-paragraph {
+		margin-left: 3%;
 	}
-}*/
+	.add-project-content {
+		margin-left: -3%;
+	}
+	.addProject-title {
+		margin-left: 7%;
+	}
+}
 @media only screen and (min-device-width : 375px) and (max-device-width : 667px) and (orientation: portal) {
 	.projects-table {
 		margin-left: 3%;
 	}
 	.description-container h4 {
-		font-size: 16px;
+		font-size: 18px;
 	}
 	.description-container {
-		font-size: 14px;
+		font-size: 16px;
 	}
 	.paragraph {
 		width: 100%;
@@ -303,7 +313,7 @@ a.tutorial-link:hover {
 		margin: 0 7%;
 	}
 }
-@media only screen and (min-device-width : 375px) and (max-device-width : 667px) and (orientation:landscape ) {
+@media only screen and (min-device-width : 375px) and (max-device-width : 667px) and (orientation:landscape) {
 	.phone-cells {
 		display: none;
 	}
@@ -318,7 +328,13 @@ a.tutorial-link:hover {
 		margin-left: 7% !important;
 	}
 	.part-container {
-		margin: 0 -11%;
+		margin: 0 -9%;
+	}
+	.projects-table {
+		width: 73%;
+	}
+	.inner-paragraph {
+		margin-left: 4%;
 	}
 }
 @media only screen and (max-device-width : 600px) and (orientation:landscape ) {
@@ -337,6 +353,9 @@ a.tutorial-link:hover {
 	.flex-container {
 		margin: 4%;
 	}
+	.inner-paragraph {
+		margin-left: 8%;
+	}
 }
 @media only screen and (max-device-width : 736px) and (orientation:landscape ) {
 	.flex-container {
@@ -351,8 +370,11 @@ a.tutorial-link:hover {
 	.addProject-title {
 		margin-left: 5% !important;
 	}
-	.project-image {
-		width: 100px;
+	.projects-table {
+		width: 75%;
+	}
+	.inner-paragraph {
+		margin-left: 3%;
 	}
 }
 @media only screen and (max-device-width : 640px) and (orientation:landscape ) {
@@ -363,20 +385,7 @@ a.tutorial-link:hover {
 		margin: 0 -10%;
 	}
 }
-@media only screen and (max-device-width : 360px) {
-	.part-container {
-		margin: 0 9%;
-	}
-}
-@media only screen and (max-device-width : 320px) {
-	.part-container {
-		margin: 0 5%;
-	}
-	.projects-table {
-		margin-left: -4%;
-		width: 104%;
-	}
-}
+
 @media only screen and (max-device-width : 568px) and (orientation:landscape ) {
 	.projects-table {
 		margin-left: 1%;
@@ -384,16 +393,29 @@ a.tutorial-link:hover {
 	.projects-table {
 		width: 85%;
 	}
+	.inner-paragraph {
+		margin-left: 6%;
+	}
 }
 @media only screen and (max-device-width : 568px) and (orientation:landscape ) {
 	.part-container {
-		margin: 0 -3%;
+		margin: 0 1% 0 -1%;
 	}
 	.flex-container {
 		width: 100%;
 	}
 	.paragraph {
 		font-size: 13px;
+	}
+	.projects-table {
+		width: 85%;
+		margin-left: 1%;
+	}
+	.inner-paragraph {
+		margin-left: 5%;
+	}
+	.add-project-content {
+		margin-left: -12%;
 	}
 }
 @media only screen and (min-device-width : 1024px) and (max-device-width : 1366px) {
@@ -427,9 +449,6 @@ a.tutorial-link:hover {
 	}
 	.addProject-title {
 		margin-left: 10%;
-	}
-	.projects-table {
-		width: 80%;
 	}
 }
 
