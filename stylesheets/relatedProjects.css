@@ -114,9 +114,6 @@ a.tutorial-link:hover {
 	margin: 20px 0 10px 0;
 }
 
-.project-image {
-	width: 150px;
-}
 .addProject-title {
 	justify-content: flex-start;
 	margin-left: 12.5%;
@@ -156,13 +153,9 @@ a.tutorial-link:hover {
 		font-size: 18px;
 	}
 
-	.h-centered-content {
-		width: 80px;
-	}
-
 	.description-container {
 		padding: 0 20px;
-		font-size: 14px;
+		font-size: 18px;
 	}
 
 	.projects-table td, tr, th {
@@ -191,10 +184,6 @@ a.tutorial-link:hover {
 		width: 100%;
 		marg-left: -3%;
 	}
-	.project-image {
-		width: 600px;
-		height: 120%;
-	}
 	.addProject-title {
 		justify-content: flex-start;
 		margin-left: 12%;
@@ -202,7 +191,7 @@ a.tutorial-link:hover {
 	.paragraph {
 		width: 100%;
 		padding: 0 5px 0 5px;
-		font-size: 13px;
+		font-size: 16px;
 		margin-left: 12%;
 	}
 	.image-link {
@@ -345,7 +334,7 @@ a.tutorial-link:hover {
 		margin-left: 9%;
 	}
 	.h-centered-content {
-		width: 20%;
+		width: 25%;
 	}
 	.part-container {
 		margin: 0 -4%;
