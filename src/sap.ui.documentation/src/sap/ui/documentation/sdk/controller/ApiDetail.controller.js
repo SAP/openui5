@@ -65,10 +65,6 @@ sap.ui.define([
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
-				if ( !window.prettyPrint ) {
-					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
-				}
-
 				this.setModel(new JSONModel(), "topics");
 				this.setModel(new JSONModel(), "constructorParams");
 				this.setModel(new JSONModel(), 'methods');
@@ -130,17 +126,6 @@ sap.ui.define([
 			_onTopicMatched: function (oEvent) {
 				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
 
-				oApiDetailObjectPage.addEventDelegate({
-					onAfterRendering: function () {
-						var elementsWithPreTag = jQuery('pre');
-						for (var i = 0; i < elementsWithPreTag.length; i++) {
-							elementsWithPreTag[i].setAttribute('class', 'prettyprint');
-						}
-
-						window.prettyPrint();
-					}
-				});
-
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
@@ -161,10 +146,19 @@ sap.ui.define([
 						this._scrollContentToTop();
 					}
 
+					setTimeout(this._prettify, 0);
+
 					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
 
 				}.bind(this));
 
+			},
+
+			_prettify: function () {
+				// Google Prettify requires this class
+				jQuery('pre').addClass('prettyprint');
+
+				window.prettyPrint();
 			},
 
 			_createMethodsSummary: function () {
