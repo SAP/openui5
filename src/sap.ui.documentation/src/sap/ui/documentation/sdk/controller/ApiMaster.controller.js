@@ -53,8 +53,16 @@ sap.ui.define([
 			},
 
 			_onMatched: function () {
-				var splitApp = this.getView().getParent().getParent();
+				var splitApp = this.getView().getParent().getParent(),
+					masterTree = this.byId('tree'),
+					selectedItem;
+
 				splitApp.setMode(sap.m.SplitAppMode.ShowHideMode);
+
+				if (masterTree) {
+					selectedItem = masterTree.getSelectedItem();
+					selectedItem && selectedItem.setSelected(false);
+				}
 			},
 
 			onNodeSelect : function (oEvent) {
