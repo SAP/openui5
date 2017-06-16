@@ -91,7 +91,7 @@ sap.ui.define([
 			 * Handler for the SearchField
 			 * @param oEvent
 			 */
-			onTreeFilter: function (oEvent) {
+			onTreeFilter: function (oEvent, sFilterPath) {
 				var oTree = this.byId("tree");
 				var sFilterArgument = oEvent.getParameter("newValue").trim();
 				var oBinding = oTree.getBinding("items");
@@ -111,7 +111,7 @@ sap.ui.define([
 
 					var aFilters = [];
 					if (sFilterArgument) {
-						var oNameFilter = new Filter("name", FilterOperator.Contains, sFilterArgument);
+						var oNameFilter = new Filter(sFilterPath, FilterOperator.Contains, sFilterArgument);
 						aFilters.push(oNameFilter);
 					}
 
