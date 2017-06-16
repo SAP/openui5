@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 sap.ui.define([

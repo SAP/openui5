@@ -1,3 +1,5 @@
+/*global QUnit sinon*/
+
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 jQuery.sap.require("sap.ui.thirdparty.sinon");

@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/ui/qunit/qunit-coverage"], function(sinon) {

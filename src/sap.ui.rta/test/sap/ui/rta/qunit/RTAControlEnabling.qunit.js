@@ -1,3 +1,5 @@
+/*global QUnit*/
+
 // QUnit to be started explicitly
 QUnit.config.autostart = false;
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
