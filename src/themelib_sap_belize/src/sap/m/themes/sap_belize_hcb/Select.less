@@ -23,18 +23,6 @@ html.sap-desktop .sapMSlt:not(.sapMSltIconOnly):not(.sapMSltDisabled):focus,
 	border-color: @sapUiFieldHoverBorderColor;
 }
 
-.sapMSltPicker .sapMSelectListItemBaseSelected {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.188rem;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSltPicker .sapMSelectListItemBaseSelected::before {
-		border: 0.125rem dashed @sapUiContentFocusColor;
-	}
-}
-
 /* FIX: IE and Edge do not support css outline-offset */
 
 html[data-sap-ui-browser^="ie"].sap-desktop,

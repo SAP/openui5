@@ -16,6 +16,12 @@
 	background: @sapUiListSelectionBackgroundColor;
 }
 
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+	outline: 0.125rem dotted @sapUiContentFocusColor;
+	outline-offset: -0.188rem;
+}
+
 /* disabled */
 .sapMSelectListItemBaseDisabled {
 	background: @sapUiHcReducedBackground;
@@ -31,6 +37,12 @@ html.sap-desktop li.sapMSelectListItemBase:focus {
 /* FIX: IE and Edge do not support css outline-offset */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected::before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
 	.sapMSelectListItemBase:focus::before {
 		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
