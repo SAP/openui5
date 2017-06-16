@@ -32,6 +32,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	* </ul>
 	* <h4>When not to use:</h4>
 	* <ul>
+	* <li> Do not use multi-line inputs in tables and forms.</li>
 	* <li> When you need to select only one value.</li>
 	* <li> When you want the user to select from a predefined set of options. Use {@link sap.m.MultiComboBox} instead.</li>
 	* </ul>
@@ -76,6 +77,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				 * In multi-line display mode, all tokens can be fully viewed and easily edited in the MultiInput.
 				 * The default value is false.
 				 * <b>Note:</b> This property does not take effect on smartphones or when the editable property is set to false.
+				 * <b>Caution:</b> Do not enable multi-line mode in tables and forms.
 				 * @since 1.28
 				 */
 				enableMultiLineMode: {type: "boolean", group: "Behavior", defaultValue: false},
