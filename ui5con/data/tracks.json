@@ -228,11 +228,11 @@
 			"abstract":""
 		},
 		{
-			"title": " Working with PDFs in a (mobile) UI5 App",
-			"speaker": " Vincent Weiss",
+			"title": "tbd",
+			"speaker": "",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>Sometimes you still need to get a signature confirmation of a work order and generate a PDF including this signature to confirm the work done.</p><p>How can you do that on the client side and display the PDF as well, to show exactly what the client confirmed. Both on a mobile device as well as on the desktop, including IE11.</p>"
+			"abstract":""
 		},
 		{
 			"type": "break",
