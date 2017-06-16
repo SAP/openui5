@@ -132,9 +132,11 @@ sap.ui.define([
 
 				this._oViewSettings.compactOn = oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
 					this._oRootView.hasStyleClass("sapUiSizeCompact");
+				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
 
 				// Keep default settings for compact mode up to date
 				this._oDefaultSettings.compactOn = this._oViewSettings.compactOn;
+				this._oDefaultSettings.rtl = this._oViewSettings.rtl;
 
 				this._initListSettings();
 			},
@@ -144,7 +146,8 @@ sap.ui.define([
 				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster"].indexOf(sRouteName) === -1) {
 					// Reset view settings
 					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
-						this._oDefaultSettings.compactOn);
+						this._oDefaultSettings.compactOn,
+						this._oDefaultSettings.rtl);
 
 					// When we restore the default settings we don't need the event any more
 					this.getRouter().detachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
@@ -521,15 +524,13 @@ sap.ui.define([
 					var oAppSettings = this._oCore.getConfiguration(),
 						oThemeSelect = this._oCore.byId("ThemeSelect"),
 						sUriParamTheme = jQuery.sap.getUriParameters().get("sap-theme"),
-						bCompactMode = this._oViewSettings.compactOn,
-						bRTL = this._oViewSettings.rtl,
-						sUriParamRTL = jQuery.sap.getUriParameters().get("sap-ui-rtl");
+						bCompactMode = this._oViewSettings.compactOn;
 
 					// Theme select
 					oThemeSelect.setSelectedKey(sUriParamTheme ? sUriParamTheme : oAppSettings.getTheme());
 
 					// RTL
-					this._oCore.byId("RTLSwitch").setState(sUriParamRTL ? sUriParamRTL === "true" : bRTL);
+					this._oCore.byId("RTLSwitch").setState(oAppSettings.getRTL());
 
 					// Compact mode select
 					this._oCore.byId("CompactModeSwitch").setState(bCompactMode);
