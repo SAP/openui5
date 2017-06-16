@@ -109,17 +109,17 @@ sap.ui.define([
 				oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
 
 				this.LIST_SCROLL_DURATION = 0; // ms
-				this._getPage().addEventDelegate({
-					onAfterRendering : function() {
-						jQuery.sap.delayedCall(0, this, function() {
-							var oSelectedItem = this._getList().getSelectedItem();
 
-							if (oSelectedItem) {
-								this._scrollToListItem(oSelectedItem);
-							}
-						});
-					}.bind(this)
-				});
+				//DOM rendering delay is used before calling scroll, to ensure scroll is applied to the final DOM
+				//DOM rendering delay value is minimal by default, but some function may increase it if that function calls intensive DOM operation
+				// (e.g. RTL change, that leads to new CSS to be requested and applied on entire DOM)
+				this._iDomRenderingDelay = 0; // (ms)
+				this._getList().addEventDelegate({
+					onAfterRendering : function() {
+						jQuery.sap.delayedCall(this._iDomRenderingDelay, this, this._scrollToSelectedListItem);
+					}}, this);
+				this._oCore.attachThemeChanged(this._scrollToSelectedListItem, this); // theme change requires us to restore scroll position
+				this._oCore.attachLocalizationChanged(this._onLocalizationChange, this);
 
 				// Subscribe to view event to apply to it the current configuration
 				this._oView.addEventDelegate({
@@ -180,7 +180,6 @@ sap.ui.define([
 				// Switch content density
 				this._oRootView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
 					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
-
 				this._oCore.getConfiguration().setRTL(bRTL);
 
 				// Apply theme and compact mode also to iframe samples
@@ -237,6 +236,13 @@ sap.ui.define([
 			/* Event handlers                                              */
 			/* =========================================================== */
 
+			_onLocalizationChange: function(oEvent) {
+				this._iDomRenderingDelay = 3000; //RTL change requires longer DOM computations as new CSS is requested and applied on the entire DOM
+				jQuery.sap.delayedCall(this._iDomRenderingDelay, this, function() {
+					this._iDomRenderingDelay = 0;
+				});
+			},
+
 			onNavToEntity : function (oEvt) {
 				var oItemParam = oEvt.getParameter("listItem"),
 					oItem = (oItemParam) ? oItemParam : oEvt.getSource(),
@@ -273,7 +279,7 @@ sap.ui.define([
 				this._toggleListItem(oItemToSelect, true);
 
 				if (!this._bNavToEntityViaList) {
-					jQuery.sap.delayedCall(0, this, this._scrollToListItem, [oItemToSelect]);
+					jQuery.sap.delayedCall(0, this, this._scrollToSelectedListItem);
 				}
 				this._bNavToEntityViaList = false;
 			},
@@ -302,12 +308,14 @@ sap.ui.define([
 			},
 
 			/**
-			* Scrolls to the given <code>ListItemBase</code>.
+			* Scrolls to the currently selected <code>ListItemBase</code>
 			*
-			* @param {sap.m.ListItemBase} oItemToScroll
 			*/
-			_scrollToListItem : function(oItemToScroll) {
-				this._getPage().scrollToElement(oItemToScroll, this.LIST_SCROLL_DURATION);
+			_scrollToSelectedListItem : function() {
+				var oItemToScroll = this._getList().getSelectedItem();
+				if (oItemToScroll) {
+					this._getPage().scrollToElement(oItemToScroll, this.LIST_SCROLL_DURATION);
+				}
 			},
 
 			/**
@@ -379,6 +387,15 @@ sap.ui.define([
 			 */
 			onBeforeFirstShow: function () {
 				this._updateView();
+			},
+
+			/**
+			 * Called upon destruction of the view
+			 * @override
+			 */
+			onExit: function() {
+				this._oCore.detachThemeChanged(this._scrollToSelectedListItem, this);
+				this._oCore.detachLocalizationChanged(this._onLocalizationChange, this);
 			},
 
 			onConfirmViewSettings: function (oEvent) {
