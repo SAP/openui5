@@ -438,16 +438,17 @@
 										</m:MessageStrip>
 
 										<ce:CodeEditor height="auto" maxLines="20" width="100%" editable="false" lineNumbers="true"
-													   syntaxHints="false"
-													   value="{parts: [{path: 'methods>name' },
-													   			{path: 'methods>parameters'},
-													   			{path: 'methods>returnValue'}],
-																formatter: '.formatMethodCode'}"/>
+											syntaxHints="false"
+											value="{parts: [{path: 'methods>name' },
+														{path: 'methods>parameters'},
+														{path: 'methods>returnValue'}],
+													formatter: '.formatMethodCode'}"
+											class="sapUiSmallMarginBottom" />
 
 										<m:Table items="{ path : 'methods>parameters'}"
-												 showSeparators="Inner"
-												 fixedLayout="true"
-												 visible="{= ${methods>parameters}.length > 0}">
+												showSeparators="Inner"
+												fixedLayout="true"
+												visible="{= ${methods>parameters}.length > 0}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
