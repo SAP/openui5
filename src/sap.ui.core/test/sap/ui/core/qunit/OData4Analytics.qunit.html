@@ -462,7 +462,7 @@
 		oQueryResultRequest.setAggregationLevel([
 			"ControllingArea", "CostCenter"
 		]);
-		oQueryResultRequest.setMeasures();
+		oQueryResultRequest.setMeasures(/*all*/);
 
 		oSortExpression.addSorter("CostCenter", odata4analytics.SortOrder.Ascending);
 
@@ -493,10 +493,24 @@
 		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
 		strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed with 1 sorter.");
 
+		oSortExpression.addSorter("Currency", odata4analytics.SortOrder.Descending);
+		sSorterString = "&$orderby=CostCenter asc";
+		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
+		assert.strictEqual(sSetURI, sRefBaseURI + sSorterString, "Ignore dimension which is not selected.");
+
 		oSortExpression.clear();
 		sSorterString = "";
 		sSetURI = oQueryResultRequest.getURIToQueryResultEntries();
-		strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed without sorters.");
+		assert.strictEqual(sSetURI, sRefBaseURI + sSorterString, "QueryResultEntries URI correctly constructed without sorters.");
+
+		oQueryResultRequest.setMeasures(["ActualCosts"]);
+		oSortExpression.addSorter("CostCenter", odata4analytics.SortOrder.Ascending);
+		oSortExpression.addSorter("PlannedCosts", odata4analytics.SortOrder.Descending);
+		assert.strictEqual(oQueryResultRequest.getURIToQueryResultEntries(),
+			"/ActualPlannedCosts(P_ControllingArea=%27US01%27,P_CostCenter=%27%27,P_CostCenterTo=%27%27)/Results"
+			+ "?$select=ControllingArea,CostCenter,ActualCosts&$filter=" + sRefFilterOptionString
+			+ "&$orderby=CostCenter asc,PlannedCosts desc",
+			"Allow measure which is not selected.");
 	});
 
 	test("Fetch value help for some parameter with sorting", function() {
@@ -723,43 +737,8 @@
 
 		var sRefFilterOptionString = "(ControllingArea eq %27US01%27 or ControllingArea eq %27US02%27) and (CostCenter eq %27100-1100%27 or CostCenter eq %27100-1000%27) and (((Currency eq %27GBP%27) or (Currency eq %27USD%27) or (Currency eq %27EUR%27)))";
 		var sFilterOptionString = oFilterExpression.getURIFilterOptionValue();
-		strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
-	});
 
-	QUnit.module("getURIOrderByOptionValue");
-
-	QUnit.test("single sort sondition", function (assert) {
-		var oModel = getModelInstance(),
-			oSortExpression = new odata4analytics.SortExpression(oModel, {}, {});
-
-		oSortExpression._aSortCondition.push(
-			{property : {name : "GrossAmount"}, order : "desc"}
-		);
-
-		// code under test
-		assert.strictEqual(oSortExpression.getURIOrderByOptionValue(), "GrossAmount desc");
-	});
-
-	QUnit.test("multiple sort conditions", function (assert) {
-		var oModel = getModelInstance(),
-			oSortExpression = new odata4analytics.SortExpression(oModel);
-
-		oSortExpression._aSortCondition.push(
-			{property : {name : "GrossAmount"}, order : "desc"},
-			{property : {name : "NetValue"}, order : "asc"}
-		);
-
-		// code under test
-		assert.strictEqual(oSortExpression.getURIOrderByOptionValue(),
-			"GrossAmount desc,NetValue asc");
-	});
-
-	QUnit.test("without sort conditions", function (assert) {
-		var oModel = getModelInstance(),
-			oSortExpression = new odata4analytics.SortExpression(oModel);
-
-		// code under test
-		assert.strictEqual(oSortExpression.getURIOrderByOptionValue(), "");
+		assert.strictEqual(sFilterOptionString, sRefFilterOptionString, "FilterOptionString correctly constructed.");
 	});
 </script>
 </head>
