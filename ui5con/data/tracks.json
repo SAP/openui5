@@ -57,10 +57,10 @@
 		},
 		{
 			"title": "Easy integrations with UI5",
-			"speaker": "Maximilian Lenkeit",
+			"speaker": "Meredith Hassett",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract": "<p>Web server, reverse proxy, ESLint, test runner, code coverage, continuous integration, minification, automated deployment - you will have to deal with most of these tools when you do serious SAPUI5 development. While SAP Web IDE already covers lots of these tools, it sometimes doesn’t give you the necessary flexibility, so we usually resort to Grunt – The JavaScript Task Runner.</p><p>With Grunt's huge ecosystem, we can configure all of these tools and shape our workflow as we wish. But the configuration is cumbersome. Rather quickly, we end up with 20 or more Node.js modules that we need to make play together nicely so that we can eventually execute grunt serve or grunt build.</p><p>Wouldn't it be nice if there was a single Node.js module that would give us all these tools? Well, it’s your lucky day then, we’ve don’t exactly this for our SAP Custom Development projects and reduced our tool setup time from days or even weeks to minutes.</p><p>In this session, you will get a glimpse at the tool and understand the concept and the problem it solves. You will also learn how to use the tool for your own project, so that you can focus in development, and not on tools.</p>"
+			"abstract": "<p>New to SAPUI5? Looking to learn more about integrations inside and out of SAP? In my session, we’ll take a look at how to integrate APIs, Business Services, and OData services with UI5. You’ll see how easy it is and be on your way to building an integrated application. We’ll use SAP technologies like Web IDE, Cloud Platform, and API Business Hub to show how easy it is to integrate your SAP world. You’ll come out with an understanding of Destinations, OData, AJAX, and REST APIs and be on your way to creating an application with UI5 using external data. 20 minutes is all you need to get started integrating with SAPUI5!</p>"
 		},
 		{
 			"type": "break",
@@ -228,11 +228,11 @@
 			"abstract":""
 		},
 		{
-			"title": " Working with PDFs in a (mobile) UI5 App",
-			"speaker": " Vincent Weiss",
+			"title": "tbd",
+			"speaker": "",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>Sometimes you still need to get a signature confirmation of a work order and generate a PDF including this signature to confirm the work done.</p><p>How can you do that on the client side and display the PDF as well, to show exactly what the client confirmed. Both on a mobile device as well as on the desktop, including IE11.</p>"
+			"abstract":""
 		},
 		{
 			"type": "break",

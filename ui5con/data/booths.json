@@ -186,16 +186,20 @@
 	],
 	"booth3": [
 		{
+			"type": "break",
+			"duration": 40
+		},
+		{
 			"title": "UI5 Controls for Document Handling",
 			"speaker": "Pia Kinkel, Christoph Laux",
 			"type": "Session",
-			"duration": 60
+			"duration": 40
 		},
 		{
 			"title": "Embedded Analytics with Charts",
 			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
-			"duration": 60
+			"duration": 40
 		},
 		{
 			"title": "Developer Clinic: UI5 Controls",
