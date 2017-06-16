@@ -72,7 +72,7 @@
 			"speaker": "Michael Graf, Emanuele Ricci",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>This session will show the status of the community-driven “Custom UI5 Repo” project that we have just kicked of today.</p><p>We don’t know yet what exactly it will look like as we drive it together with the community. Therefore, we need to fine-tune the abstract later on but it would be a really good showcase for UI5con.</p><p>Depending on the status of the project in June we will</p><ul>  <li>Show the current plans and working mode</li>  <li>Highlight the community engagement and encourage participants to join in</li>  <li>Show the prototype or working repository and the content that we have aggregated so far</li></ul>"
+			"abstract":"<p>UI5 makes creation of custom controls and extensions of the framework very easy. With project "UI5Lab" - a community-driven initiative started in April - we created a concept for a public place to share, contribute, and consume these artifacts in your application projects. UI5Lab is an exceptional project where UI5 developers and the Community collaborate interactively on Slack, Trello, and GitHub to discuss best practices and drive the topic. We are jointly working on the project's mission and are actively looking for contributors in all areas of the project. Join @michadelic and @stermi to see the current status of the UI5Lab prototype and learn how to contribute to make it a success!</p>"
 		},
 		{
 			"type": "break",
