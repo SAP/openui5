@@ -16,15 +16,16 @@ function(
 
 			this.sAddFieldChangeHandler = "addField";
 			this.sAddColumnChangeHandler = "addColumn";
+			this.sModel = "ODataV2";
 
 			this.mAddFieldParameters = {
 				"requiredLibraries" : {
-	                "sap.ui.comp": {
-	                    "minVersion": "1.48",
-	                    "lazy": "false"
-	                }
-	            },
-				"context" : "AddFieldContext",
+					"sap.ui.comp": {
+						"minVersion": "1.48",
+						"lazy": "false"
+					}
+				},
+				"appContext" : "AddFieldContext",
 				"create" : function() {
 					return {
 						"label" : {},
@@ -59,22 +60,25 @@ function(
 		}
 	});
 
-	QUnit.test('when adding the change handlers to the mediator...', function(assert) {
+	QUnit.test('when adding change handlers to the mediator...', function(assert) {
 
-		ChangeHandlerMediator.addChangeHandler(this.sAddFieldChangeHandler, this.mAddFieldParameters);
-		ChangeHandlerMediator.addChangeHandler(this.sAddColumnChangeHandler, this.mAddColumnParameters);
+		assert.throws(function(){
+			ChangeHandlerMediator.addChangeHandler(this.sAddFieldChangeHandler, this.mAddFieldParameters);
+		}, /requires/, "then an incomplete change handler entry cannot be added");
+		ChangeHandlerMediator.addChangeHandler(this.sAddFieldChangeHandler, this.sModel, this.mAddFieldParameters);
+		ChangeHandlerMediator.addChangeHandler(this.sAddColumnChangeHandler, this.sModel, this.mAddColumnParameters);
 
-		assert.equal(ChangeHandlerMediator.getChangeHandler(this.sAddFieldChangeHandler).parameters.requiredLibraries["sap.ui.comp"].minVersion,
+		assert.equal(ChangeHandlerMediator.getChangeHandler(
+			this.sAddFieldChangeHandler, this.sModel).parameters.requiredLibraries["sap.ui.comp"].minVersion,
 			"1.48", "then the required library for addField is retrieved");
 
-		assert.equal(ChangeHandlerMediator.getChangeHandler(this.sAddColumnChangeHandler).parameters.create().label,
+		assert.equal(ChangeHandlerMediator.getChangeHandler(this.sAddColumnChangeHandler, this.sModel).parameters.create().label,
 			"testLabel", "then the 'create' method in addColumn is retrieved and can be executed");
 
-		ChangeHandlerMediator.addChangeHandler(this.sAddColumnChangeHandler, this.mUpdatedAddColumnParameters);
+		assert.throws(function(){
+			ChangeHandlerMediator.addChangeHandler(this.sAddColumnChangeHandler, this.sModel, this.mUpdatedAddColumnParameters);
+		}, /already exists/, "then a change handler cannot be registered twice");
 
-		assert.equal(ChangeHandlerMediator._aChangeHandlers.length, 2, "then an entry with the same name can't exist twice in the array");
-		assert.equal(ChangeHandlerMediator.getChangeHandler(this.sAddColumnChangeHandler).parameters.create().label,
-			"newTestLabel", "and the addColumn change handler value is updated when trying to insert it twice in the array");
 	});
 
 });
