@@ -13,13 +13,12 @@
  * TABLE PARAMETERS
  ******************************************************************************/
 
-@sapUiTableRowHeight: 23px;
-@sapUiTableColHdrHeight: 23px;
-@sapUiTableRowHdrWidth: 22px;
-@sapUiTableToolbarDesign: ~"Transparent"; /* should be one of the sap.m.ToolbarDesign enumeration */
-@sapUiTableCozyRowHdrWidth: 3rem;
-@sapUiTableCozyRowHdrHeight: 3rem;
-
+@_sap_ui_table_Table_RowHeight: 23px;
+@_sap_ui_table_Table_ColHdrHeight: 23px;
+@_sap_ui_table_Table_RowHdrWidth: 22px;
+@_sap_ui_table_Table_ToolbarDesign: ~"Transparent"; /* should be one of the sap.m.ToolbarDesign enumeration */
+@_sap_ui_table_Table_CozyRowHdrWidth: 3rem;
+@_sap_ui_table_Table_CozyRowHdrHeight: 3rem;
 @_sap_ui_table_Table_ToolbarDesign: ~"Transparent";
 
 /*
@@ -222,7 +221,7 @@
 }
 
 .sapUiTableCol, .sapUiTableHasNoColumns {
-	min-height: @sapUiTableColHdrHeight;
+	min-height: @_sap_ui_table_Table_ColHdrHeight;
 }
 
 .sapUiTableCHdr .sapUiTableColHdrCnt {
@@ -283,7 +282,7 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	top: 0;
 	bottom: 0;
 	left: 0;
-	width: @sapUiTableRowHdrWidth;
+	width: @_sap_ui_table_Table_RowHdrWidth;
 }
 
 .sapUiTableRSel .sapUiTableRowHdrScr .sapUiTableColRowHdr {
@@ -293,7 +292,7 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 .sapUiSizeCozy {
 	.sapUiTableColRowHdr.sapUiTableSelAllEnabled,
 	.sapUiTableRowHdr {
-		width: @sapUiTableCozyRowHdrWidth;
+		width: @_sap_ui_table_Table_CozyRowHdrWidth;
 	}
 }
 
@@ -315,7 +314,7 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	width: @sapUiTableRowHdrWidth;
+	width: @_sap_ui_table_Table_RowHdrWidth;
 }
 
 .sapUiTableRSel .sapUiTableRowHdrScr {
@@ -355,7 +354,7 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVScr .sapUiTableCtrlScr {
 }
 
 .sapUiTableCtrl tr {
-	height: @sapUiTableRowHeight;
+	height: @_sap_ui_table_Table_RowHeight;
 }
 
 .sapUiTableResizing .sapUiTableCtrlCnt tr {
@@ -845,8 +844,8 @@ html[data-sap-ui-browser^="ie"] .sapUiTableColHdrCnt {
  * TABLE PARAMETERS
  ******************************************************************************/
 
-@sapUiTableRowHeight: 28px;
-@sapUiTableColHdrHeight: 28px;
+@_sap_ui_table_Table_RowHeight: 28px;
+@_sap_ui_table_Table_ColHdrHeight: 28px;
 
 
 /*******************************************************************************
