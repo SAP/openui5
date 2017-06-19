@@ -3,8 +3,8 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/documentation/library'],
-	function(jQuery, LibraryInfo, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
+	function(jQuery, library) {
 		"use strict";
 
 		var oPromise;
@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 
 				// call LibraryInfo API method for collecting all component info from the .library files
 
-				var oLibInfo = new LibraryInfo();
+				var oLibInfo = library._getLibraryInfoSingleton();
 				var oLibComponents = {};
 				var oLibraryComponentInfo = function (oComponent) {
 					oLibComponents[oComponent.library] = oComponent.componentInfo;

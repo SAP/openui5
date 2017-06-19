@@ -4,13 +4,13 @@
 
 /*global history */
 sap.ui.define([
+		"sap/ui/documentation/library",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
-		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/ui/Device"
-	], function (Controller, History, LibraryInfo, ControlsInfo, JSDocUtil, Device) {
+	], function (library, Controller, History, ControlsInfo, JSDocUtil, Device) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
@@ -119,7 +119,7 @@ sap.ui.define([
 			 */
 			_getControlComponent: function (sControlName, oControlsData) {
 				var oLibComponentModel = oControlsData.libComponentInfos,
-					oLibInfo = new LibraryInfo();
+					oLibInfo = library._getLibraryInfoSingleton();
 				return oLibInfo._getActualComponent(oLibComponentModel, sControlName);
 			},
 

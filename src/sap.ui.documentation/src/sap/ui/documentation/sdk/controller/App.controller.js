@@ -10,11 +10,10 @@ sap.ui.define([
 		"sap/ui/core/Component",
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
-		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/core/IconPool",
 		"sap/m/SplitAppMode",
 		"sap/m/MessageBox"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool, SplitAppMode, MessageBox) {
+	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, IconPool, SplitAppMode, MessageBox) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
@@ -225,7 +224,7 @@ sap.ui.define([
 
 				library._loadAllLibInfo("", "_getLibraryInfo","", function(aLibs, oLibInfos) {
 					var data = {};
-					var oLibInfo = new LibraryInfo();
+					var oLibInfo = library._getLibraryInfoSingleton();
 
 					for (var i = 0, l = aLibs.length; i < l; i++) {
 						aLibs[i] = oLibInfos[aLibs[i]];
@@ -287,7 +286,7 @@ sap.ui.define([
 			},
 
 			onReleaseDialogOpen: function (oEvent) {
-				var oLibInfo = new LibraryInfo(),
+				var oLibInfo = library._getLibraryInfoSingleton(),
 					sVersion = oEvent.getSource().data("version"),
 					sLibrary = oEvent.getSource().data("library"),
 					oNotesModel = new JSONModel(),
