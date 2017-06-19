@@ -4,7 +4,7 @@
 
 // Provides control sap.m.MessageStrip.
 sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
-	"./Text", "./Link"], function (jQuery, library, Control, MSUtils, Text, Link) {
+	"./Link", "./FormattedText"], function (jQuery, library, Control, MSUtils, Link, FormattedText) {
 	"use strict";
 
 	/**
@@ -59,7 +59,23 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 				/**
 				 * Determines if the message has a close button in the upper right corner.
 				 */
-				showCloseButton: { type: "boolean", group: "Appearance", defaultValue: false }
+				showCloseButton: { type: "boolean", group: "Appearance", defaultValue: false },
+
+				/**
+				 * Determines if limited collection of HTML elements passed to the <code>text</code> property should be
+				 * evaluated.
+				 *
+				 * <b>Note:</b> If this property is set to true the string passed to <code>text</code> property
+				 * can evaluate the following list of limited HTML elements. All other HTML elements and their nested
+				 * content will not be rendered by the control:
+				 * <ul>
+				 *	<li><code>a</code></li>
+				 *	<li><code>em</code></li>
+				 *	<li><code>strong</code></li>
+				 *	<li><code>u</code></li>
+				 * </ul>
+				 */
+				enableFormattedText: { type: "boolean", group: "Appearance", defaultValue: false }
 			},
 			defaultAggregation: "link",
 			aggregations: {
@@ -71,8 +87,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 
 				/**
 				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
+				 * @private
 				 */
-				_text: { type: "sap.m.Text", multiple: false, visibility: "hidden" }
+				_formattedText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -86,7 +103,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 
 	MessageStrip.prototype.init = function () {
 		this.data("sap-ui-fastnavgroup", "true", true);
-		this.setAggregation("_text", new Text());
 	};
 
 	/**
@@ -97,8 +113,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * @returns {sap.m.MessageStrip} this to allow method chaining
 	 */
 	MessageStrip.prototype.setText = function (sText) {
-		this.getAggregation("_text").setText(sText);
-		return this.setProperty("text", sText, true);
+		var oFormattedText = this.getAggregation("_formattedText");
+		if (oFormattedText) {
+			oFormattedText.setHtmlText(sText);
+		}
+		return this.setProperty("text", sText);
 	};
 
 	/**
@@ -115,6 +134,22 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 		}
 
 		return this.setProperty("type", sType);
+	};
+
+	MessageStrip.prototype.setEnableFormattedText = function (bEnable) {
+		var oFormattedText  = this.getAggregation("_formattedText");
+
+		if (bEnable) {
+			if (!oFormattedText) {
+				oFormattedText = new FormattedText();
+				oFormattedText._setUseLimitedRenderingRules(true);
+				this.setAggregation("_formattedText", oFormattedText);
+			}
+			// Aways call setHtmlText - do not use a constructor property to avoid unwanted warnings for HTML elements
+			oFormattedText.setHtmlText(this.getText());
+		}
+
+		return this.setProperty("enableFormattedText", bEnable);
 	};
 
 	MessageStrip.prototype.setAggregation = function (sName, oControl, bSupressInvalidate) {

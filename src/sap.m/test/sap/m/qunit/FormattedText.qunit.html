@@ -99,6 +99,50 @@
 			assert.strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
 		});
 
+		QUnit.module("_setUseLimitedRenderingRules restricted method", {
+			beforeEach: function () {
+				this.oFT = new sap.m.FormattedText();
+			},
+			afterEach: function () {
+				this.oFT.destroy();
+			}
+		});
+
+		QUnit.test("Method exist", function (oAssert) {
+			// Assert
+			oAssert.ok(this.oFT._setUseLimitedRenderingRules,
+				"The control should have this SAP-restricted method - the sap.m.MessageStrip rely's on this method");
+		});
+
+		QUnit.test("Only limited subset of HTML elements should be rendered", function (oAssert) {
+			// Arrange
+			var sHTMLString = [
+				// If you change the order of elements here you should also change the order of the assertions below
+				"a", "abbr", "blockquote", "br", "cite",
+				"code", "em", "h1", "h2", "h3", "h4", "h5",
+				"h6", "p", "pre", "strong", "span", "u",
+				"dl", "dt", "dl", "ul", "ol", "li"
+			].map(function (sValue) {
+				return "<" + sValue + "></" + sValue + ">";
+			}).join(""),
+			$Result;
+
+			// Act
+			this.oFT._setUseLimitedRenderingRules(true);
+			this.oFT.setHtmlText(sHTMLString).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// Arrange - get all html elements rendered and evaluate them as jQuery object
+			$Result = jQuery(this.oFT.$().html());
+
+			// Assert
+			oAssert.strictEqual($Result.length, 4, "Only 4 HTML elements are rendered and evaluated");
+			oAssert.strictEqual($Result[0].localName, "a", "The element name should be 'a'");
+			oAssert.strictEqual($Result[1].localName, "em", "The element name should be 'em'");
+			oAssert.strictEqual($Result[2].localName, "strong", "The element name should be 'strong'");
+			oAssert.strictEqual($Result[3].localName, "u", "The element name should be 'u'");
+		});
+
 		QUnit.module("Clean up");
 		QUnit.test("cleanup", function(assert){
 			oFT.destroy();

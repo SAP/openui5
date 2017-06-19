@@ -15,39 +15,40 @@
 
 		var oMCInformation = new sap.m.MessageStrip("mcontainer1" , {
 			type: "Information",
-			text: "<b>Information:</b> You have configured Windows Internet Explorer to block unsigned ActiveX controls." +
-			"<a class='mmcLearnMore' href='#'>Learn more</a>"
+			text: "You have configured Windows Internet Explorer to block unsigned ActiveX controls.",
+			link: new sap.m.Link({text: "Learn more"})
 		});
 
 		var oMCSuccess = new sap.m.MessageStrip("mcontainer2",{
 			type: "Success",
 			showIcon : true,
-			text: "<b>Success:</b> We have received your enquiry and will respond to you within 24 hours." +
-			"For urgent enquiries please call us on one of the telephone numbers below." +
-			"<a class='mmcLearnMore' href='#'>Learn more</a>"
+			text: "We have received your enquiry and will respond to you within 24 hours." +
+				"For urgent enquiries please call us on one of the telephone numbers below.",
+			link: new sap.m.Link({text: "Learn more"})
 		});
 
 		var oMCWarningExpand = new sap.m.MessageStrip("mcontainer3",{
 			type: "Warning",
 			showIcon : true,
-			text: "<b>Warning:</b> This page might not behave as expected because Windows Internet Explorer" +
-			"isn't configured to load unsigned ActiveX controls. Allow this page to install an unsigned" +
-			"ActiveX Control? Doing so from untrusted sources may harm your computer." +
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas consequat sagittis tortor," +
-			"quis suscipit urna ornare ut. Donec semper auctor turpis"
+			text: "This page might not behave as expected because Windows Internet Explorer " +
+				"isn't configured to load unsigned ActiveX controls. Allow this page to install an unsigned " +
+				"ActiveX Control? Doing so from untrusted sources may harm your computer." +
+				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas consequat sagittis tortor," +
+				"quis suscipit urna ornare ut. Donec semper auctor turpis"
 		});
 
 		var oMCError = new sap.m.MessageStrip("mcontainer4",{
 			type: "Error",
 			showIcon : true,
-			text: "<b>Error:</b> This page cannot load an unsigned ActiveX control. <a class='mmcLearnMore' href='#'>Learn more</a>"
+			text: "This page cannot load an unsigned ActiveX control.",
+			link: new sap.m.Link({text: "Learn more"})
 		});
 
 		var oMCInformationIC = new sap.m.MessageStrip("mcontainer5",{
 			type: "Information",
 			showIcon: true,
 			showCloseButton: true,
-			text: "<b>Information:</b> You have configured Windows Internet Explorer to block unsigned ActiveX controls.",
+			text: "You have configured Windows Internet Explorer to block unsigned ActiveX controls.",
 			link: new sap.m.Link({
 				text: "SAP CE",
 				href: "http://www.sap.com/",
@@ -58,27 +59,27 @@
 		var oMCInformationLong = new sap.m.MessageStrip("mcontainer6",{
 			type: "Information",
 			showCloseButton: true,
-			text: "<b>Very long text:</b> Lorem ipsum dolor sit amet, consectetur adipisicing elit." +
+			text: "Very long text: Lorem ipsum dolor sit amet, consectetur adipisicing elit." +
 			"Ex libero maxime quasi qui veniam? Alias ducimus laborum porro quidem quo velit?" +
-			"Cumque est in iusto, magnam minus quis tempora tenetur? Adipisci aliquid atque doloribus" +
-			"error expedita hic necessitatibus nesciunt nobis non odit quas, quos ratione reiciendis repellendus" +
+			"Cumque est in iusto, magnam minus quis tempora tenetur? Adipisci aliquid atque doloribus " +
+			"error expedita hic necessitatibus nesciunt nobis non odit quas, quos ratione reiciendis repellendus " +
 			"sapiente suscipit tempore voluptas. Aut cupiditate, est iusto provident saepe voluptatum." +
 			"A autem excepturi fugit iure reprehenderit. Aut autem dolor eaque esse exercitationem, expedita facilis," +
-			"fugiat incidunt iure iusto magni minima mollitia odit perferendis possimus provident quaerat quo" +
-			"repellendus temporibus ullam unde velit, vero voluptates! A aliquam aspernatur dolorem dolorum fuga" +
-			"harum omnis quos sed totam voluptas. Accusamus alias atque commodi cumque dicta, dignissimos dolore error" +
-			"et facilis impedit in iste maiores nemo neque nobis, odit optio placeat provident quia totam voluptas" +
+			"fugiat incidunt iure iusto magni minima mollitia odit perferendis possimus provident quaerat quo " +
+			"repellendus temporibus ullam unde velit, vero voluptates! A aliquam aspernatur dolorem dolorum fuga " +
+			"harum omnis quos sed totam voluptas. Accusamus alias atque commodi cumque dicta, dignissimos dolore error " +
+			"et facilis impedit in iste maiores nemo neque nobis, odit optio placeat provident quia totam voluptas " +
 			"voluptate voluptates. Architecto blanditiis culpa eveniet expedita harum, iure molestias nam qui sint tenetur!" +
 			"Ab adipisci asperiores consequatur consequuntur eius esse, est eum impedit incidunt, labore laborum libero," +
-			"maiores minima molestiae numquam odio officiis pariatur provident quaerat quibusdam quod sapiente sed ullam" +
+			"maiores minima molestiae numquam odio officiis pariatur provident quaerat quibusdam quod sapiente sed ullam " +
 			"unde ut voluptatem voluptatum? Accusantium at consequuntur corporis deleniti deserunt dolores doloribus," +
 			"eligendi error impedit iusto laborum libero nemo nesciunt non officia officiis omnis optio perspiciatis," +
-			"quae quaerat quas, quis recusandae rem repellendus ullam voluptas voluptate voluptatem! Adipisci amet" +
+			"quae quaerat quas, quis recusandae rem repellendus ullam voluptas voluptate voluptatem! Adipisci amet " +
 			"asperiores assumenda aut blanditiis commodi consequuntur cumque cupiditate debitis deleniti ducimus eius," +
-			"eos exercitationem expedita facere fuga harum impedit itaque iure laudantium necessitatibus neque nobis" +
+			"eos exercitationem expedita facere fuga harum impedit itaque iure laudantium necessitatibus neque nobis " +
 			"officia placeat quam quas, qui quis, quisquam repellendus sint tempore totam voluptates voluptatum?" +
-			"A incidunt natus perferendis praesentium vitae. Commodi cumque cupiditate deleniti, eum exercitationem" +
-			"incidunt ipsum libero, molestias natus perferendis, placeat quae temporibus velit? Adipisci architecto" +
+			"A incidunt natus perferendis praesentium vitae. Commodi cumque cupiditate deleniti, eum exercitationem " +
+			"incidunt ipsum libero, molestias natus perferendis, placeat quae temporibus velit? Adipisci architecto " +
 			"atque culpa, cupiditate deserunt dolorem doloribus eum ex explicabo facere impedit incidunt inventore labore," +
 			"libero nisi nobis pariatur quas ullam ut vero?"
 		});
@@ -86,10 +87,20 @@
 		var oMCWarning = new sap.m.MessageStrip("mcontainer7", {
 			type: "Warning",
 			showIcon : true,
-			text: "<b>Warning:</b> This page might not behave as expected because Windows Internet Explorer" +
-			"isn't configured to load unsigned ActiveX controls.Allow this page to install an unsigned" +
-			"ActiveX Control? Doing so from untrusted sources may harm your computer." +
-			"<a class='mmcLearnMore' href='#'>Learn more</a>",
+			text: "This page might not behave as expected because Windows Internet Explorer " +
+				"isn't configured to load unsigned ActiveX controls.Allow this page to install an unsigned " +
+				"ActiveX Control? Doing so from untrusted sources may harm your computer.",
+			link: new sap.m.Link({text: "Learn more"})
+		});
+
+		var oMCWarningWithFormattedText = new sap.m.MessageStrip({
+			type: "Warning",
+			enableFormattedText: true,
+			showIcon: true,
+			text: "<strong>Warning:</strong> This page might not behave as expected because Windows Internet Explorer " +
+					"isn't <em><u>configured to load unsigned</u></em> <a href='#' target='_self'>ActiveX</a> controls.Allow this page to install an unsigned " +
+					"ActiveX Control? <em><strong>Doing so from untrusted sources</strong> may harm your computer.</em>" +
+					"<a href='#' target='_self'>Learn more</a>"
 		});
 
 		var oPageNoLayout = new sap.m.Page("no-layout", {
@@ -102,7 +113,8 @@
 				oMCError,
 				oMCInformationIC,
 				oMCInformationLong,
-				oMCWarning
+				oMCWarning,
+				oMCWarningWithFormattedText
 			],
 			footer: new sap.m.Bar({
 				contentMiddle: [
