@@ -38,8 +38,16 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				}
 			},
 
-			bindProperty: function (oControl, sPropertyName, mBindingInfos) {
-				oControl.bindProperty(sPropertyName, mBindingInfos);
+			getStashed: function (oControl) {
+				if (oControl.getStashed) {
+					return oControl.getStashed();
+				} else {
+					throw new Error("Provided control instance has no getStashed method");
+				}
+			},
+
+			bindProperty: function (oControl, sPropertyName, vBindingInfos) {
+				oControl.bindProperty(sPropertyName, vBindingInfos);
 			},
 
 			/**
@@ -73,9 +81,15 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			},
 
 			setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
+				this.unbindProperty(oControl, sPropertyName);
 				var mSettings = {};
 				mSettings[sPropertyName] = oPropertyBinding;
 				oControl.applySettings(mSettings);
+			},
+
+			getPropertyBinding: function (oControl, sPropertyName) {
+				return oControl.getBindingInfo(sPropertyName);
+
 			},
 
 			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
@@ -119,6 +133,10 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 
 			getControlType: function (oControl) {
 				return Utils.getControlType(oControl);
+			},
+
+			getAllAggregations: function (oParent) {
+				return oParent.getMetadata().getAllAggregations();
 			},
 
 			/**

@@ -1,9 +1,18 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
-	"sap/ui/base/EventProvider", "sap/ui/fl/Utils", "sap/ui/fl/registry/Settings"
-], function (EventProvider, Utils, Settings) {
+	"jquery.sap.global",
+	"sap/ui/base/EventProvider",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings"
+], function (
+	jQuery,
+	EventProvider,
+	Utils,
+	Settings
+) {
 
 	"use strict";
 
@@ -18,15 +27,17 @@ sap.ui.define([
 	 */
 	var Change = function (oFile) {
 		EventProvider.apply(this);
-		if (typeof (oFile) !== "object") {
+
+		if (!jQuery.isPlainObject(oFile)) {
 			Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
 		}
 
 		this._oDefinition = oFile;
-		this._oOriginDefinition = JSON.parse(JSON.stringify(oFile));
+		this._oOriginDefinition = jQuery.extend(true, {}, oFile);
 		this._sRequest = '';
 		this._bIsDeleted = false;
 		this._bUserDependent = (oFile.layer === "USER");
+		this._mRevertData = null;
 	};
 
 	Change.events = {
@@ -595,6 +606,34 @@ sap.ui.define([
 	 */
 	Change.prototype.getKey = function () {
 		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
+	};
+
+	/**
+	 * Returns the revert specific data
+	 *
+	 * @returns {*} revert specific data
+	 * @public
+	 */
+	Change.prototype.getRevertData = function() {
+		return this._vRevertData;
+	};
+
+	/**
+	 * Sets the revert specific data
+	 *
+	 * @param {*} vData revert specific data
+	 * @public
+	 */
+	Change.prototype.setRevertData = function(vData) {
+		this._vRevertData = vData;
+	};
+
+	/**
+	 * Reset the revert specific data
+	 * @public
+	 */
+	Change.prototype.resetRevertData = function() {
+		this.setRevertData(null);
 	};
 
 	/**

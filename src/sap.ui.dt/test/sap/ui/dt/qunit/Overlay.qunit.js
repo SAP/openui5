@@ -39,10 +39,10 @@ function(
 
 	QUnit.start();
 
-	var sandbox = sinon.sandbox.create();
-
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
 		beforeEach : function(assert) {
+			this.sandbox = sinon.sandbox.create();
+
 			var done = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
@@ -73,7 +73,7 @@ function(
 			}.bind(this));
 		},
 		afterEach : function() {
-			sandbox.restore();
+			this.sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -87,8 +87,8 @@ function(
 		var oInitialControlOffset = oContent1.$().offset();
 		var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-		var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
-		var oEnsureDomOrder = sandbox.spy(Overlay.prototype, "_ensureDomOrder");
+		var oApplyStylesSpy = this.sandbox.spy(Overlay.prototype, "applyStyles");
+		var oEnsureDomOrder = this.sandbox.spy(Overlay.prototype, "_ensureDomOrder");
 
 		this.oSimpleScrollControlOverlay._aScrollContainers[0].overlayDomRef.scroll(function() {
 			assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
@@ -109,8 +109,8 @@ function(
 		var oInitialControlOffset = oContent1.$().offset();
 		var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-		var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
-		var oEnsureDomOrder = sandbox.spy(Overlay.prototype, "_ensureDomOrder");
+		var oApplyStylesSpy = this.sandbox.spy(Overlay.prototype, "applyStyles");
+		var oEnsureDomOrder = this.sandbox.spy(Overlay.prototype, "_ensureDomOrder");
 
 		this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
 			assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
@@ -126,6 +126,7 @@ function(
 
 	QUnit.module("Given that a DesignTime is created for a control", {
 		beforeEach : function(assert) {
+			this.sandbox = sinon.sandbox.create();
 			var done = assert.async();
 			var done2 = assert.async();
 
@@ -173,7 +174,7 @@ function(
 			}.bind(this));
 		},
 		afterEach : function() {
-			sandbox.restore();
+			this.sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}

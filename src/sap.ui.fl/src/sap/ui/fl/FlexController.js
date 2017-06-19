@@ -390,6 +390,49 @@ sap.ui.define([
 		}
 	};
 
+	FlexController.prototype._revertChange = function(oChange, oControl, mPropertyBag) {
+		var oModifier = mPropertyBag.modifier;
+		var sControlType = oModifier.getControlType(oControl);
+		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
+
+		if (!oChangeHandler) {
+			if (oChange && oControl) {
+				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
+			}
+			return;
+		}
+
+		var aCustomData = oModifier.getAggregation(oControl, "customData") || [];
+		var sChangeId = oChange.getId();
+		var aAppliedChanges = [];
+		var oAppliedChangeCustomData;
+		var sAppliedChanges = "";
+		aCustomData.some(function (oCustomData) {
+			var sKey = oModifier.getProperty(oCustomData, "key");
+			if (sKey === FlexController.appliedChangesCustomDataKey) {
+				oAppliedChangeCustomData = oCustomData;
+				sAppliedChanges = oModifier.getProperty(oCustomData, "value");
+				aAppliedChanges = sAppliedChanges.split(",");
+				return true;
+			}
+		});
+
+		var iIndex = aAppliedChanges.indexOf(sChangeId);
+		if (iIndex > -1) {
+			try {
+				oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
+			} catch (ex) {
+				Utils.log.error("Change could not be reverted.");
+				return;
+			}
+
+			if (oAppliedChangeCustomData) {
+				aAppliedChanges.splice(iIndex, 1);
+				oModifier.setProperty(oAppliedChangeCustomData, "value", aAppliedChanges.join());
+			}
+		}
+	};
+
 	FlexController.prototype._handlePromiseChainError = function (oView, oError) {
 		Utils.log.error("Error processing view " + oError + ".");
 		return oView;
@@ -650,6 +693,20 @@ sap.ui.define([
 		}.bind(this));
 
 		this._processDependentQueue(mDependencies, mDependentChangesOnMe, oAppComponent);
+	};
+
+	/**
+	 * Revert changes for a control.
+	 *
+	 * @param {array} aChanges Array of to be reverted changes
+	 * @param {object} oAppComponent Component instance
+	 * @param {object} oControl Control instance
+	 * @public
+	 */
+	FlexController.prototype.revertChangesOnControl = function(aChanges, oAppComponent, oControl) {
+		aChanges.forEach(function(oChange) {
+			this._revertChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+		}.bind(this));
 	};
 
 	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {
