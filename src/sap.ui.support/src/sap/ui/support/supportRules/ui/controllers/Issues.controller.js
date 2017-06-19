@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
-	"sap/ui/support/supportRules/ElementTree",
+	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/support/supportRules/IssueManager",
 	"sap/ui/support/supportRules/WCBChannels"
 ], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames) {
