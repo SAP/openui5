@@ -145,5 +145,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "4b80ca567f0ade902e12b5e9d959c202d7626b4a",
+        "type": "FIX",
+        "text": " call aggregation overlay registration for plugins",
+        "references": []
+      }
+    ]
   }
 }

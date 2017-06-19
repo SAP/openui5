@@ -265,5 +265,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "b555ae28ca65c1e0763d50a21caf0ff359cd6bc2",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "708d06103a2255d14b952f03fe317e37620956d5",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      },
+      {
+        "id": "bd26605d69c9527b47f779c1430f279c34f51033",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC - Selection mode announcement",
+        "references": []
+      }
+    ]
   }
 }

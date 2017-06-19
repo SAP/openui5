@@ -841,5 +841,93 @@
         "references": []
       }
     ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "3dce0b26d1f5de673715757140b2bc51e369e343",
+        "type": "FIX",
+        "text": " AppCacheBuster: support for async Component preload",
+        "references": []
+      },
+      {
+        "id": "ea943f201d4c65512c7e7830923b44a54a2433e6",
+        "type": "FIX",
+        "text": " ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": []
+      },
+      {
+        "id": "cc38e0dc506d3f64fc3e5dd5d812a7ad5fd102ae",
+        "type": "FIX",
+        "text": " LocalBusyIndicator: Control still blocked when busy set to \"false\"",
+        "references": []
+      },
+      {
+        "id": "7ef2dc38d47141656fd01114eee9d466dea03054",
+        "type": "FIX",
+        "text": " Messaging: normalization of message targets",
+        "references": []
+      },
+      {
+        "id": "e1e2a77162ec4be4804a34debb2aa7f43cd0c989",
+        "type": "FIX",
+        "text": " ScrollEnablement: inform growing when scrollTo method is called.",
+        "references": []
+      },
+      {
+        "id": "ef54eaabdb093c2f0b4147c5c212eeb437602fa6",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "27022beb5c75d59702659d9ff6597a2e40f61d18",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      },
+      {
+        "id": "55b4a47b654c0573f506ea9e7eb1149ace9aa281",
+        "type": "FIX",
+        "text": " jQuery.sap.includeStyleSheet: ignore id\u003dnull parameter",
+        "references": []
+      },
+      {
+        "id": "955c9b14ff478c39d8a40af5b9be906500d6cc5e",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      },
+      {
+        "id": "dca9e002ca51aa00987f6c5f7a990a51d8212f9e",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Touch events inside the control are now propagated correctly",
+        "references": []
+      }
+    ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "86fb4193ff90dd011689f644d56625438fec8def",
+        "type": "FIX",
+        "text": " core.Icon: mark the tap/click event when icon has a press handler",
+        "references": []
+      },
+      {
+        "id": "53bdce41504eeec02d62983d99d90be349eb5cd9",
+        "type": "FIX",
+        "text": " core.IconPool: Use local SAP-icons font as fallback only",
+        "references": []
+      },
+      {
+        "id": "cc10a7660f365d81762310a6e0fa8cc733b6a70a",
+        "type": "FIX",
+        "text": " jquery.sap.trace.js: remove TerminalID from SAP Passport",
+        "references": []
+      }
+    ]
   }
 }

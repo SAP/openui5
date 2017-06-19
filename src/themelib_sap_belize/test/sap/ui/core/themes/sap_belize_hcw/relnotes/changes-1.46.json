@@ -657,5 +657,51 @@
         "references": []
       }
     ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "ef54eaabdb093c2f0b4147c5c212eeb437602fa6",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "27022beb5c75d59702659d9ff6597a2e40f61d18",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      },
+      {
+        "id": "8e98c4915ba989959859b2a78ab3676984683a32",
+        "type": "FIX",
+        "text": " sap.m.Menu: Items have borders in hcw and hcb themes on phone",
+        "references": []
+      },
+      {
+        "id": "2d34a02ba2d1d432e3d7658d5d514f60d21438ca",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: \"Select all\" style fixed",
+        "references": []
+      },
+      {
+        "id": "013b2950d55a43353ecd4d2c02e227027551ce0d",
+        "type": "FIX",
+        "text": " unified.Calendar: On IE selected days focus outline is dashed",
+        "references": []
+      }
+    ]
+  },
+  "1.46.10": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "103c426fc73c20cea419cc5f19e8ecd4e2ef0f3e",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
+      }
+    ]
   }
 }

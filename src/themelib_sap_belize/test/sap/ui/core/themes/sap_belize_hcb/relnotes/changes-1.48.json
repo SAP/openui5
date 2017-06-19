@@ -319,5 +319,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "fbba637d5207a158f3d51126821c60326798e8bd",
+        "type": "FIX",
+        "text": " sap.m.Input: HCB/W focus is now ok",
+        "references": []
+      },
+      {
+        "id": "058dc2e36684a5a61184e73ca70f90aa6e4b37eb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Value help icon is now rendered correctly in compact mode",
+        "references": []
+      },
+      {
+        "id": "a4606fb529d6a8498079b4572d902110f07e5765",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
+      }
+    ]
   }
 }

@@ -203,5 +203,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5f7a71f6467f90667d4f0abb43f7f0a57d8c0010",
+        "type": "FIX",
+        "text": " m.Menu: Header border and menu padding are fixed for phone",
+        "references": []
+      },
+      {
+        "id": "6772eb18dea9630bcf36a855cec1fc40ac5c5547",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: opening as a context menu improved for RTL",
+        "references": []
+      },
+      {
+        "id": "3931e85187432795a29c59851762cae3840c3621",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Header: Previous and next buttons have aria info",
+        "references": []
+      }
+    ]
   }
 }

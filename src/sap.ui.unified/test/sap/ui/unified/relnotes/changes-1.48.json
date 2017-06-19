@@ -157,5 +157,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "a22474d031a0c2140c6283afee865b5cb4031d15",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: FileUploader and Label issue",
+        "references": []
+      },
+      {
+        "id": "952eceddfc805962b21d73d5e904b6a721522ab7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: opening as a context menu improved for RTL",
+        "references": []
+      }
+    ]
   }
 }

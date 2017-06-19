@@ -100,5 +100,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.9": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5edc4c51c6dcb75050ad114e69027ee67551a507",
+        "type": "FIX",
+        "text": " simpleform getIndex",
+        "references": []
+      }
+    ]
   }
 }

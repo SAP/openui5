@@ -157,5 +157,28 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "9cad083d3726721833d74aeca5b4f1bfd39322e2",
+        "type": "FIX",
+        "text": " Form: Link in Toolbar is not aligned",
+        "references": []
+      },
+      {
+        "id": "ee1d5912e86f99a68899f22bfb52a10b8f09238e",
+        "type": "FIX",
+        "text": " sap.ui.BlockLayout: Endless switching between breakpoints is now fixed.",
+        "references": []
+      },
+      {
+        "id": "4c67fed51b0b680c226b04e01b7d7c6b61f2be13",
+        "type": "FIX",
+        "text": " sap.ui.layout.AssociaveSplitter: Fixes size calculations",
+        "references": []
+      }
+    ]
   }
 }

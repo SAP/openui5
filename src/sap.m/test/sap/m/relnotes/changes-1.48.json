@@ -1705,5 +1705,172 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "9cad083d3726721833d74aeca5b4f1bfd39322e2",
+        "type": "FIX",
+        "text": " Form: Link in Toolbar is not aligned",
+        "references": []
+      },
+      {
+        "id": "fcf65590de38fafd6d5ccca4eae11243fa00e435",
+        "type": "FIX",
+        "text": " I18N: Added texts for sap.m.TextArea from B0Y.",
+        "references": []
+      },
+      {
+        "id": "ec4b1d194aba4a0c114208b3f4bb137594909656",
+        "type": "FIX",
+        "text": " P13nColumnsPanel: Selected Row is not highlighted",
+        "references": []
+      },
+      {
+        "id": "586b62f31bb8c258f5a218d6aa6efaa17dff4355",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Bottom border is now correct",
+        "references": []
+      },
+      {
+        "id": "ffa4a8e4b25c4a1b34f40a608b2a7d1bc0b2e0a3",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Highlighting of values with special characters handled properly",
+        "references": []
+      },
+      {
+        "id": "dfef976686c5109b6b4800674aeba5f094889e70",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Input value is updated wrong if typing fast",
+        "references": []
+      },
+      {
+        "id": "51b9d6ad940ac8d5866b7148f376daf041d04c70",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Properly updating item\u0027s selection on model change.",
+        "references": []
+      },
+      {
+        "id": "18597fac5f927ab206c5fe9a4baf8bcb4ce7520b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: setSelectedKey handles unbinded value improperly",
+        "references": []
+      },
+      {
+        "id": "7dcc7f89f731f8799ccdc74e792967c6062fcfd7",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: valueStateText to be hidden when valueState is None",
+        "references": []
+      },
+      {
+        "id": "e199e497bcf31338b0ef873f7f01806b258ad0fe",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Reset button focus is now corrected",
+        "references": []
+      },
+      {
+        "id": "022346741028cf7d1529821bbb5e7c5ccb9b0dc0",
+        "type": "FIX",
+        "text": " sap.m.Input: Marking event when arrow keys up/down are pressed is now fixed.",
+        "references": []
+      },
+      {
+        "id": "6b5704dde820832c942a0761ca66102c2f0801c3",
+        "type": "FIX",
+        "text": " sap.m.ListItemBase: Tooltip should be announced.",
+        "references": []
+      },
+      {
+        "id": "4e95d7e4aa1b2aeee9184474614384f5e73dd9b7",
+        "type": "FIX",
+        "text": " sap.m.MessagePopover: items aggregation type updated",
+        "references": []
+      },
+      {
+        "id": "75e39f444adc360fdf3ba1b27c0a6e9c9c87c9bf",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Long tokens are now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "a9ba43b2af3e316f75fcc63f0b00d5d7e9b94f32",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokens scrolling is now correct when control is inside a list",
+        "references": []
+      },
+      {
+        "id": "6b311857da10a15417b7e53414eedc923be2b6fc",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "89f58baa3d6addedcccb46e5e969747cefc3efee",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Tooltip text can now be added for the ObjectHeader icon.",
+        "references": []
+      },
+      {
+        "id": "1b15224dc66d1867525579041bba6804610c1ec4",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "dd7472d88a086296ac423e60229ccd5969b1057d",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not use jQuery dimension methods on init.",
+        "references": []
+      },
+      {
+        "id": "939cf3b3393857fafcb44c7964f1b0172e605522",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title is no longer truncated in IE",
+        "references": []
+      },
+      {
+        "id": "547768c37f842ed2f4b1bc45f971e6026dd338d3",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Handle range change with progress bar correctly",
+        "references": []
+      },
+      {
+        "id": "c5b7413d95894a6745fabca357e2eaae901099b9",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Properly fire liveChange event.",
+        "references": []
+      },
+      {
+        "id": "a4606fb529d6a8498079b4572d902110f07e5765",
+        "type": "FIX",
+        "text": " sap.m.SelectList: Corrected SelectList focus",
+        "references": []
+      },
+      {
+        "id": "28592770c95f95978b64d65ff354cba03e033c34",
+        "type": "FIX",
+        "text": " sap.m.TextArea: fix rendering error",
+        "references": []
+      },
+      {
+        "id": "bbb8ffcbf3d55f4c10ac063df317a30bc66741b6",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete button is now correctly displayed on iPad",
+        "references": []
+      },
+      {
+        "id": "4449c850403e67f31b972f41cb1cab984e6b264d",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Key chain navigation improved",
+        "references": []
+      },
+      {
+        "id": "f91923a0ee55bb0bbbc27d82b683bd80fde43eb3",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Tooltip rendering in IE11 corrected",
+        "references": []
+      }
+    ]
   }
 }

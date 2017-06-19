@@ -709,5 +709,82 @@
         "references": []
       }
     ]
+  },
+  "1.48.3": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "28653edbea404189bfa1f37299482e08b429bd99",
+        "type": "FIX",
+        "text": " AppCacheBuster: support for async Component preload",
+        "references": []
+      },
+      {
+        "id": "e25878472c94b009974adbf26977105858e2e834",
+        "type": "FIX",
+        "text": " core.Icon: mark the tap/click event when icon has a press handler",
+        "references": []
+      },
+      {
+        "id": "3fafc9f163bd70d244d1f49bfbbc6bbd4c3bdf32",
+        "type": "FIX",
+        "text": " core.IconPool: Use local SAP-icons font as fallback only",
+        "references": []
+      },
+      {
+        "id": "62fef2e43cbd73f70366c3246f85cff28f97120a",
+        "type": "FIX",
+        "text": " jQuery.sap.includeStyleSheet: ignore id\u003dnull parameter",
+        "references": []
+      },
+      {
+        "id": "eaa4a3d45ba06b883480004bfc97644153d9934c",
+        "type": "FIX",
+        "text": " jquery.sap.trace.js: remove TerminalID from SAP Passport",
+        "references": []
+      },
+      {
+        "id": "e7440fc518b4341a836ffb6ad307979c4ebe19d3",
+        "type": "FIX",
+        "text": " odata.v4.SalesOrders sample: Fix errors on (relative) create",
+        "references": []
+      },
+      {
+        "id": "62a2e7ae7ade67738b02f5e644c1b2e840c63af9",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      },
+      {
+        "id": "3471ecbbfa7a0726ef18ff47c62a6147871c7346",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      },
+      {
+        "id": "c38c017b6c3e76cac6c650fb179210900096d272",
+        "type": "FIX",
+        "text": " sap.ui.core.demokit.sample.odata.v4.SalesOrdersTemplate: avoid more button in currency value help",
+        "references": []
+      },
+      {
+        "id": "77bad10117c649f62bc43d128f81cc1b403a4025",
+        "type": "FIX",
+        "text": " sap.ui.core.support.TechnicalInfo: Generating default bootstrap url problem fixed.",
+        "references": []
+      },
+      {
+        "id": "d01670b8efe6c0e234cbbbeb75ce1119170dc214",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Helper: Handle empty PATCH response (204: No Content)",
+        "references": []
+      },
+      {
+        "id": "a9b1b2ea365b0da52a5b39b80f77a595279506c4",
+        "type": "FIX",
+        "text": " test.sap.ui.core.demokit.sample.ViewTemplate.scenario.Main.view.xml: Provided labels for Entity Set and Entity selection",
+        "references": []
+      }
+    ]
   }
 }
