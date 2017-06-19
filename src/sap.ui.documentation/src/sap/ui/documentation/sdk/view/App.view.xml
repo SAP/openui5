@@ -22,6 +22,7 @@
 				</ToggleButton>
 				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_openui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
+					densityAware="false"
 					height="2rem"
 					class="sapLogo"
 					decorative="false"

@@ -81,6 +81,7 @@
 									alignItems="Center">
 								<Image
 										src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
+										densityAware="false"
 										height="2.5rem">
 								</Image>
 								<HBox

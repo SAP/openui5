@@ -480,49 +480,6 @@ code, kbd, pre, samp {
 
 /******************************************************* FONTS *******************************************************/
 
-@font-face {
-	font-family: Benton Sans;
-	src: url('./fonts/BentonSans-Regular.woff');
-	font-weight: 400;
-}
-
-@font-face {
-	font-family: Benton Sans;
-	src: url('./fonts/BentonSans-Light.woff');
-	font-weight: 300;
-}
-
-@font-face {
-	font-family: Open Sans;
-	src: url('./fonts/OpenSans-Regular.eot'); /* IE */
-	src: url('./fonts/OpenSans-Regular.woff'); /* Non-IE */
-	font-weight: 400;
-}
-
-@font-face {
-	font-family: Open Sans;
-	src: url('./fonts/OpenSans-Light.eot'); /* IE */
-	src: url('./fonts/OpenSans-Light.woff'); /* Non-IE */
-	font-weight: 300;
-}
-
-@font-face {
-	font-family: Open Sans;
-	src: url('./fonts/OpenSans-Semibold.eot'); /* IE */
-	src: url('./fonts/OpenSans-Semibold.ttf'); /* Non-IE */
-	font-weight: 600;
-}
-
-@font-face {
-	font-family: sap-icofonts;
-	src: url('./fonts/sap-icofonts.ttf');
-}
-
-@font-face {
-	font-family: sap-icons;
-	src: url('./fonts/sap-icons.ttf');
-}
-
 /* Replaces the search icon with a filter icon */
 .sapUiDocumentationFilterField .sapMSFS:after {
 	content: "\e076";
