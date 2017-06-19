@@ -24,6 +24,12 @@
 		"company": "Bluefin Solutions"
 	},
 	{
+		"name": "Gregor Brett",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "Bluefin Solutions Ltd"
+	},
+	{
 		"name": "Thilo Seidel",
 		"bio": "I have been a web developer for several years now, turned into a product owner for FLP@SAP in 2016, have been a SAPUI5 fanboy at first sight and will now finally be at my first UI5con. Already overexcited!",
 		"picture": "ThiloSeidel2016.jpg",
@@ -52,10 +58,28 @@
 		"picture": "StanislavaBaltova.jpg"
 	},
 	{
+		"name": "Ondrej Bohaciak",
+		"bio": "",
+		"picture": "ondrej.bohaciak.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Vaclav Vopenka",
+		"bio": "",
+		"picture": "vaclav.vopenka.jpg",
+		"company": "SAP"
+	},
+	{
 		"name": "Alexander Flammer",
 		"bio": "My name is Alex and i finished my bachelors degree in business informatics in September 2016. Afterwards i started working for Kaufland Informationssysteme where i work as a Software Engineer in the SAP department. I'm passionate about IT and like to play with new technologies and trends.",
 		"picture": "AlexanderFlammer.jpg",
 		"company": "Kaufland Informationssysteme"
+	},
+	{
+		"name": "Alexander Rauh",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP"
 	},
 	{
 		"name": "Mikhail Benderskiy",
@@ -63,6 +87,18 @@
 		"company": "SAP",
 		"session": "Add session title here",
 		"picture": "Benderskiy_rs.jpg"
+	},
+	{
+		"name": "Dmitriy Buslov",
+		"bio": "",
+		"picture": "DmitryBuslov.jpg",
+		"company": "BDO Unicon Group"
+	},
+	{
+		"name": "Yavor Ivanov",
+		"bio": "",
+		"picture": "yavor.ivanov.jpg",
+		"company": "SAP"
 	},
 	{
 		"name": "Gergana Kremenska",
@@ -109,6 +145,13 @@
 		"company": "j&s-soft GmbH"
 	},
 	{
+		"name": "Patric Ksinsik",
+		"bio": "Patric Ksinsik has been with SAP since 1999, first working on UIs in Java, then contributing to the Web Dynpro for Java framework and now to OpenUI5. He studied Computer Science at the University of Saarbrücken.",
+		"picture": "PatricKsinsik.jpg",
+		"company": "SAP",
+		"meetMe": "14:00"
+	},
+	{
 		"name": "Thomas Chadzelek",
 		"bio": "Dr. Thomas Chadzelek has been with SAP since the last millennium, first working on UIs in Java, then contributing to the Web Dynpro for Java framework and now to OpenUI5. He holds a PhD in Computer Science from University of Saarbrücken.",
 		"picture": "ThomasChadzelek.jpg",
@@ -129,7 +172,7 @@
 		"company": "SAP"
 	},
 	{
-		"name": "Wouter Lemaire ",
+		"name": "Wouter Lemaire",
 		"bio": "I'm Wouter Lemaire and I work as an SAP Developer Consultant in Belgium. At the moment I'm working on multiple Fiori projects and therefore doing a lot of SAPUI5 developments. For my SAPUI5 developments, I'm almost using the SAPWebIDE daily. I'm always following and trying the newest SAP technologies. Next to that I'm a very active on the SAP community and part of the SAP Mentors.",
 		"picture": "WouterLemaire.jpg",
 		"company": "Flexso"
@@ -141,10 +184,16 @@
 		"company": "Capgemini"
 	},
 	{
+		"name": "Tomasz Wilk",
+		"bio": "A senior SAP Consultant in Capgemini",
+		"picture": "Tomasz.Wilk.jpg",
+		"company": "Capgemini"
+	},
+	{
 		"name": "Tomas Krejci",
 		"bio": "About myself: I was starting as a developer in C and Java. I was focusing mainly on backend development. Next to that I did small projects related to Web. During the years I was slowly moving to frontend world. Over the Android native development to UI5. Now I’m doing a project manager for UI5 mobile client development.",
 		"picture": "tkrejci.jpg",
-		"company": "GK Software AG"
+		"company": "GK Software AG" 
 	},
 	{
 		"name": "Matthias Oßwald",
@@ -154,9 +203,27 @@
 		"session": "Add session title here"
 	},
 	{
+		"name": "Merlin Beutlberger",
+		"bio": "Developer at SAP. Member of the SAPUI5 Core Team. Responsible for some core features and tools.",
+		"picture": "MerlinBeutelberger.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Andreas Ecker",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP" 
+	},
+	{
 		"name": "Michael Dell",
 		"bio": "Michael is a tech entrepreneur & CTO of PulseShift. He is doing UI5 since the days of project Phoenix and has built apps for start-ups as well as for some of the largest organizations in the world. Michael has over ten years of experience in full-stack web development and holds a Master Degree in business informatics with a focus on data science. In his free time, he equally enjoys attending and organizing hackathons.",
 		"picture": "MichaelDell.jpg",
+		"company": "PulseShift GmbH"
+	},
+	{
+		"name": "Jascha Quintern",
+		"bio": "Jascha Quintern is co-founder of the growing Hacker-Community Hackerstolz. At Hackerstolz, hacking means the creative handling of technology. Aside from Hackerstolz Jascha have worked for several years as a UI5 developer and UX expert at SAP (AGS CoE Business Process Improvement) and now counts over 10 years of experience in web development. However, since June 2016 he co-founded the startup PulseShift GmbH, where he is one of the OpenUI5 lead developers.",
+		"picture": "JaschaQuintern.jpg",
 		"company": "PulseShift GmbH"
 	},
 	{
@@ -181,7 +248,13 @@
 		"company": "UNIORG GmbH"
 	},
 	{
-		"name": "Lorant Guth",
+		"name": "Bohdan Pukalskyi",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP"
+	},
+	{
+		"name": "Lóránt Guth",
 		"bio": "Continuous Improvement and Continuous Integration driver.",
 		"picture": "lorant_guth.jpg",
 		"company": "SAP"
@@ -209,6 +282,12 @@
 		"name": "Elena Makarenko",
 		"bio": "I'm a SAPUI5 Developer, keen on User Centered Design, focused on creating a great user experience.",
 		"picture": "ElenaMakarenko.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Dirk Teufel",
+		"bio": "",
+		"picture": "no_portrait.png",
 		"company": "SAP"
 	}
 ]
