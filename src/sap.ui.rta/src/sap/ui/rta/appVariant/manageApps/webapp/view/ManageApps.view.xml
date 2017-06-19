@@ -1,0 +1,65 @@
+<mvc:View
+	controllerName="sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:table="sap.ui.table"
+	displayBlock="true">
+	<App id="app">
+		<pages>
+			<Page id="pageTitle" enableScrolling="false" class="maaPageTitle" title="{i18n>title}">
+				<content>
+				    <table:Table
+				    	id="Table1"
+				    	rows="{/appVariants}"
+				    	selectionMode="None"
+				    	columnHeaderVisible="false"
+				    	visibleRowCountMode="Auto"
+				    	fixedRowCount="2"
+				    	rowHeight="48px">
+
+				        <table:columns>
+				        	<table:Column id="appVariantType" sortProperty="id" filterProperty="id">
+				                <Label text="{i18n>MAA_DIALOG_ID}"/>
+			                	<table:template>
+			                		<l:VerticalLayout>
+				                		<Text text="{type}" wrapping="false" class="maaType" />
+										<Text text="{currentStatus}" wrapping="false" class="maaCurrentStatus" />
+									</l:VerticalLayout>
+								</table:template>
+				            </table:Column>
+				        	<table:Column width="5rem" hAlign="Center">
+				                <Label text="{i18n>MAA_DIALOG_ICON}" />
+			                	<table:template>
+									<core:Icon src="{icon}" class="sapUiListTableIconSize" />
+								</table:template>
+				            </table:Column>
+				            <table:Column id="title">
+						        <Label text="{i18n>MAA_DIALOG_TITLE}" />
+					        	<table:template>
+					        		<l:VerticalLayout>
+										<Text text="{title}" wrapping="false" class="maaTitle" />
+										<Text text="{subTitle}" wrapping="false" class="maaSubTitle" />
+									</l:VerticalLayout>
+								</table:template>
+				            </table:Column>
+				            <table:Column>
+				                <Label text="{i18n>MAA_DIALOG_DESCRIPTION}"/>
+			                	<table:template>
+									<Text text="{description}" wrapping="true" class="maaDescription"/>
+								</table:template>
+				            </table:Column>
+				            <table:Column id="appVariantId" sortProperty="id" filterProperty="id">
+				                <Label text="{i18n>MAA_DIALOG_ID}"/>
+			                	<table:template>
+									<Text text="{id}" wrapping="true" />
+								</table:template>
+				            </table:Column>
+				        </table:columns>
+				    </table:Table>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
