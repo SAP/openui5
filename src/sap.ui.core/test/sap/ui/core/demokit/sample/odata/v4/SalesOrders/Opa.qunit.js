@@ -6,11 +6,10 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Opa5, opaTest, Press, BindingPath, Interactable, Properties, TestUtils) {
+], function (jQuery, Opa5, opaTest, Press, Interactable, Properties, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -214,9 +213,12 @@ sap.ui.require([
 
 		function verifyTypeDetermination() {
 			Then.waitFor({
-				controlType : "sap.m.Text",
-				matchers : new BindingPath({path: "/SalesOrderList/0"}),
-				success : function (oControl) {
+				controlType : "sap.m.Table",
+				id : "SalesOrders",
+				check : function (oSalesOrderTable) {
+					return  oSalesOrderTable.getItems().length > 0;
+				},
+				success : function (oSalesOrderTable) {
 					var sTypeName,
 					oView = sap.ui.getCore().byId(sViewName);
 
@@ -233,62 +235,49 @@ sap.ui.require([
 					});
 
 				},
-				errorMessage : "No data row found. Data from service could not be retrieved?"
+				errorMessage : "No data row found. Data from service could not be retrieved?",
+				viewName : sViewName
 			});
 		}
 
 		// verify visible sales order IDs
-		function verifyVisibleSalesOrderIds(aExpectedSalesOrderIds, sWaitForOrderIndex, sMessage){
+		function verifyVisibleSalesOrderIds(aExpectedSalesOrderIds, sMessage) {
 			Then.waitFor({
 				controlType : "sap.m.Text",
-				matchers : new BindingPath({path: "/SalesOrderList/" + (sWaitForOrderIndex | "0")}),
-				success : function (oControl) {
-					var oCore = sap.ui.getCore(),
-					aSalesOrderIds = [];
-
-					oCore.byId(sViewName).byId("SalesOrders")
-					.getItems().forEach(function (oItem, i) {
-						aSalesOrderIds.push(oItem.getCells()[0].getText());
-					});
+				// sales order IDs are in controls with ID "SalesOrders_ID"
+				id : /--SalesOrders_ID-/,
+				success : function () {
+					var aSalesOrderIds = sap.ui.getCore().byId(sViewName).byId("SalesOrders")
+							.getItems().map(function (oItem) {
+								return oItem.getCells()[0].getText();
+						});
 					Opa5.assert.deepEqual(aSalesOrderIds, aExpectedSalesOrderIds, sMessage);
 				}
 			});
 		}
 
 		// verify visible schedules
-		function verifyVisibleSchedules(aExpectedScheduleIds){
-			if (aExpectedScheduleIds.length) {
-				Then.waitFor({
-					controlType : "sap.m.Text",
-					matchers : new BindingPath({path: "/SalesOrderList/2/SO_2_SCHDL/"
-						+ (aExpectedScheduleIds.length - 1 | "0")}),
-					success : function (oControl) {
-						var oCore = sap.ui.getCore(),
-						aScheduleIds = [];
+		function verifyVisibleSchedules(aExpectedScheduleIds) {
+			Then.waitFor({
+				searchOpenDialogs : true,
+				id : "SalesOrdersSchedules",
+				viewName : sViewName,
+				controlType : "sap.m.Table",
+				check : function (oTable) {
+					return oTable[0].getItems().length === aExpectedScheduleIds.length;
+				},
+				success : function () {
+					var oCore = sap.ui.getCore(),
+					aScheduleIds = [];
 
-						oCore.byId(sViewName).byId("SalesOrderSchedules")
+					oCore.byId(sViewName).byId("SalesOrderSchedules")
 						.getItems().forEach(function (oItem, i) {
 							aScheduleIds.push(oItem.getCells()[0].getText());
 						});
-						Opa5.assert.deepEqual(aScheduleIds, aExpectedScheduleIds,
-							"Verify Schedules");
-					}
-				});
-			} else {
-				Then.waitFor({
-					searchOpenDialogs : true,
-					id : "/SalesOrdersSchedules-/",
-					viewName : sViewName,
-					controlType : "sap.m.Table",
-					check : function (oTable) {
-						return oTable[0].getItems().length === 0;
-					},
-					success : function (oTable) {
-						Opa5.assert.ok(oTable[0].getItems().length === 0, "Empty Schedules Table");
-					},
-					errorMessage: "Table still contains schedules"
-				});
-			}
+					Opa5.assert.deepEqual(aScheduleIds, aExpectedScheduleIds,
+						"Verify Schedules");
+				}
+			});
 		}
 
 		Given.iStartMyUIComponent({
@@ -309,9 +298,9 @@ sap.ui.require([
 			//*****************************************************************************
 			// Single Deletion Journey (within Sales Orders List, refetch on delete, more button)
 
-			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000002", "0500000003", "0500000004"], "4",
-				"Sales Orders before delete as expected");
+			verifyVisibleSalesOrderIds([
+				"0500000000", "0500000001", "0500000002", "0500000003", "0500000004"
+			], "Sales Orders before delete as expected");
 			verifyMoreButton(true);
 
 			// delete one SO
@@ -319,19 +308,19 @@ sap.ui.require([
 			deleteSelectedSalesOrder();
 
 			// check that one SO is re-fetched
-			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000003", "0500000004", "0500000005"], "4",
-				"Sales Orders after delete as expected");
+			verifyVisibleSalesOrderIds([
+				"0500000000", "0500000001", "0500000003", "0500000004", "0500000005"
+			], "Sales Orders after delete as expected");
 			verifyMoreButton(true);
 
 			// fetch more
 			moreSalesOrders();
 
 			// verify that we got 10 orders
-			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000003", "0500000004", "0500000005",
-				"0500000006", "0500000007", "0500000008", "0500000009"], "8",
-				"Further Sales Orders visible");
+			verifyVisibleSalesOrderIds([
+				"0500000000", "0500000001", "0500000003", "0500000004", "0500000005",
+				"0500000006", "0500000007", "0500000008", "0500000009"
+			], "Further Sales Orders visible");
 			// and the more button is gone
 			verifyMoreButton(false);
 
@@ -339,20 +328,20 @@ sap.ui.require([
 			deleteSelectedSalesOrder();
 
 			// verify that we got 9 orders
-			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000004", "0500000005",
-				"0500000006", "0500000007", "0500000008", "0500000009"], "7",
-				"No further Sales Orders");
+			verifyVisibleSalesOrderIds([
+				"0500000000", "0500000001", "0500000004", "0500000005",
+				"0500000006", "0500000007", "0500000008", "0500000009"
+			], "No further Sales Orders");
 			verifyMoreButton(false);
 
 			selectSalesOrderWithId("0500000004");
 			deleteSelectedSalesOrder();
 
 			// verify that 8 orders are left
-			verifyVisibleSalesOrderIds(
-				["0500000000", "0500000001", "0500000005",
-				"0500000006", "0500000007", "0500000008", "0500000009"], "6",
-				"Only 7 Sales Orders left");
+			verifyVisibleSalesOrderIds([
+				"0500000000", "0500000001", "0500000005",
+				"0500000006", "0500000007", "0500000008", "0500000009"
+			], "Only 7 Sales Orders left");
 
 			//*****************************************************************************
 			// Multiple Deletion Journey within Schedules
