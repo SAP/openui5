@@ -3,31 +3,10 @@
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 		<title>Test Page for sap.ui.fl.changeHandler.ChangeHandlerMediator</title>
+		<script src="../../shared-config.js"></script>
 		<script>
-			(function () {
-				var mParams = {
-					id: 'sap-ui-bootstrap',
-					src: document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js',
-					'data-sap-ui-libs': [
-						'sap.ui.fl'
-					]
-				};
-
-				var sParams = Object.keys(mParams).reduce(function (sResult, sKey) {
-					var value = mParams[sKey];
-
-					if (Array.isArray(value)) {
-						value = value.join(',');
-					} else if (Object.prototype.toString.call(value) === '[object Object]') {
-						value = JSON.stringify(value);
-					}
-
-					return sResult += " " + sKey + '=' + '"' + value + '"';
-				}, '');
-
-				document.write('<script '+ sParams +'><' + '/script>'
-				);
-			})();
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.m, sap.ui.dt';
+			document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
 			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');

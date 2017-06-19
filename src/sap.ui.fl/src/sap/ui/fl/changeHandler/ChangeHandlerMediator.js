@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-], function() {
+sap.ui.define(function() {
 	"use strict";
 
 	/**
@@ -28,24 +27,33 @@ sap.ui.define([
 
 	/**
 	 * Add a change handler to the mediated list
-	 * @param {String} sChangeHandlerName The change handler name
-	 * @param {map} mParameters The relevant parameters for the change handler
+	 * @param {string} sChangeHandlerName The change handler name
+	 * @param {string} sModel The model type ("ODataV2" or "ODataV4")
+	 * @param {Object} mParameters The relevant parameters for the change handler
 	 */
-	ChangeHandlerMediator.addChangeHandler = function(sChangeHandlerName, mParameters) {
+	ChangeHandlerMediator.addChangeHandler = function(sChangeHandlerName, sModel, mParameters) {
+
+		if (!(sChangeHandlerName && sModel && mParameters)){
+			throw new Error('New entry in ChangeHandlerMediator requires change handler name, data model type and parameters');
+		}
+
 		var mNewChangeHandler = {
 			name : sChangeHandlerName,
+			model : sModel,
 			parameters : mParameters
 		};
 
 		var bExisting = false;
 
-		// Entries with the same name are not allowed
-		this._aChangeHandlers.forEach(function(mChangeHandler, iIndex){
-			if (mChangeHandler.name === mNewChangeHandler.name){
-				this._aChangeHandlers[iIndex] = mNewChangeHandler;
+		// Entries with the same key (name + model) are not allowed
+		this._aChangeHandlers.forEach(function(mChangeHandler){
+			if (mChangeHandler.name === mNewChangeHandler.name
+			&& mChangeHandler.model === mNewChangeHandler.model){
 				bExisting = true;
+				throw new Error('Entry already exists in ChangeHandlerMediator:'
+					+ mNewChangeHandler.name + '/' + mNewChangeHandler.model);
 			}
-		}.bind(this));
+		});
 
 		if (!bExisting) {
 			this._aChangeHandlers.push(mNewChangeHandler);
@@ -54,12 +62,14 @@ sap.ui.define([
 
 	/**
 	 * Retrieves a change handler from the mediated list
-	 * @param  {String} sChangeHandlerName The change handler name
-	 * @return {map}                       The change handler with its parameters
+	 * @param  {string} sChangeHandlerName The change handler name
+	 * @param  {string} sModel The model type ("ODataV2" or "ODataV4")
+	 * @return {Object}        The change handler with its parameters
 	 */
-	ChangeHandlerMediator.getChangeHandler = function(sChangeHandlerName){
+	ChangeHandlerMediator.getChangeHandler = function(sChangeHandlerName, sModel){
 		return this._aChangeHandlers.filter(function(oChangeHandler){
-			return oChangeHandler.name === sChangeHandlerName;
+			return (oChangeHandler.name === sChangeHandlerName
+				&& oChangeHandler.model === sModel);
 		})[0];
 	};
 
