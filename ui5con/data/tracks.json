@@ -72,7 +72,7 @@
 			"speaker": "Michael Graf, Emanuele Ricci",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>UI5 makes creation of custom controls and extensions of the framework very easy. With project "UI5Lab" - a community-driven initiative started in April - we created a concept for a public place to share, contribute, and consume these artifacts in your application projects. UI5Lab is an exceptional project where UI5 developers and the Community collaborate interactively on Slack, Trello, and GitHub to discuss best practices and drive the topic. We are jointly working on the project's mission and are actively looking for contributors in all areas of the project. Join @michadelic and @stermi to see the current status of the UI5Lab prototype and learn how to contribute to make it a success!</p>"
+			"abstract":"<p>UI5 makes creation of custom controls and extensions of the framework very easy. With project \"UI5Lab\" - a community-driven initiative started in April - we created a concept for a public place to share, contribute, and consume these artifacts in your application projects. UI5Lab is an exceptional project where UI5 developers and the Community collaborate interactively on Slack, Trello, and GitHub to discuss best practices and drive the topic. We are jointly working on the project's mission and are actively looking for contributors in all areas of the project.<br/>Join @michadelic and @stermi to see the current status of the UI5Lab prototype and learn how to contribute to make it a success!</p>"
 		},
 		{
 			"type": "break",
