@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', "sap/ui/core/f
 				jContentRef.html("");
 				oPlugin._aLogEntries = [];
 			} else if (typeof (oEntry) === "string") {
-				jContentRef.html(oEntry);
+				jContentRef.html(jQuery.sap.encodeHTML(oEntry));
 				jContentRef[0].scrollTop = jContentRef[0].scrollHeight;
 			} else {
 				oEntry._levelInfo = getLevel(oEntry.level);
