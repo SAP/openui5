@@ -294,7 +294,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * ItemNavigation handles Tabindexes. But if TabStop is on now invisible item set it to last
 		 * visible one.
 		 *
-		 * @param iAllItemsBeforeBreak The number of currently visible toolbar items
+		 * @param {int} iAllItemsBeforeBreak The number of currently visible toolbar items
 		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */

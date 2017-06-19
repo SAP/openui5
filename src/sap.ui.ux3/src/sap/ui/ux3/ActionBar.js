@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @param {string} sKey resource bundle key
 	 * @param aArgs used to fill dynamic resource content
-	 * @return the resource if it was found in the bundle or 'sKey' if no matching
+	 * @return {string} the resource if it was found in the bundle or 'sKey' if no matching
 	 *		 resource was available.
 	 * @private
 	 */
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * a warning will be logged and 'undefined is returned'
 	 *
 	 * @param {string} sActionId
-	 * @return new or pooled instance of the specified action or 'undefined'
+	 * @return {object} new or pooled instance of the specified action or 'undefined'
 	 */
 	ActionBar.prototype._getSocialAction = function (sActionId) {
 
@@ -914,8 +914,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * to private method 'sap.ui.ux3.ActionBar.prototype._prepareSocialAction'. After that,
 	 * the action's 'fnInit' exit is called, if it is defined.
 	 *
-	 * @param oSocialAction social action to add to the actionbar
-	 * @param iIndex position at which new action shall be inserted. If not defined, new action will be appended
+	 * @param {object} oSocialAction social action to add to the actionbar
+	 * @param {int} iIndex position at which new action shall be inserted. If not defined, new action will be appended
 	 *		to the end od the aggregation.
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance if 'oSocialAction' was added successfully,
 	 * null otherwise.
@@ -950,8 +950,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * text of the action's button. Finally, adds 'oSocialAction' to the actionbar's
 	 * action map and its '_socialActions' aggregation.
 	 *
-	 * @param oSocialAction social action to add to the actionbar.
-	 * @param iIndex position at which new action shall be inserted. If not defined, new action will be appended
+	 * @param {object} oSocialAction social action to add to the actionbar.
+	 * @param {int} iIndex position at which new action shall be inserted. If not defined, new action will be appended
 	 *		to the end od the aggregation.
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
@@ -985,9 +985,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Calls '_addSocialAction' or '_removeSocialAction' depending on 'bFlag'.
 	 *
-	 * @param oSocialAction social action to deal with.
+	 * @param {object} oSocialAction social action to deal with.
 	 * @param {boolean} bFlag show the action or not.
-	 * @return the sap.ui.ux3.ActionBar instance
+	 * @return {sap.ui.ux3.ActionBar} the sap.ui.ux3.ActionBar instance
 	 * @see sap.ui.ux3.ActionBar._addSocialAction
 	 * @see sap.ui.ux3.ActionBar._removeSocialAction
 	 * @private
@@ -1017,8 +1017,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	/**
 	 * Implementation of API method insertBusinessAction.
 	 *
-	 * @param oBusinessAction business action to be added
-	 * @param iIndex position at which the business action is to be displayed amidst the
+	 * @param {object} oBusinessAction business action to be added
+	 * @param {int} iIndex position at which the business action is to be displayed amidst the
 	 *		other business actions
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 */
@@ -1042,7 +1042,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @param oBusinessAction business action to be removed
 	 * @param {boolean} bRerender if this flag is set, business actions are re-rendered.
-	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
+	 * @return {sap.ui.ux3.ActionBar] sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
 	 */
 	ActionBar.prototype._removeBusinessAction = function(oBusinessAction, bRerender) {
@@ -1163,8 +1163,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 * private aggregation '_businessActionButtons'. If an 'iIndex' is present, it is taken into
 	 * consideration in all of these cases.
 	 *
-	 * @param oBusinessAction business action to be added
-	 * @param iIndex position at which new action shall be inserted. If not defined, new action will be appended
+	 * @param {object} oBusinessAction business action to be added
+	 * @param {int} iIndex position at which new action shall be inserted. If not defined, new action will be appended
 	 *		to the end of the aggregation.
 	 * @return sap.ui.ux3.ActionBar the sap.ui.ux3.ActionBar instance
 	 * @private
@@ -1419,9 +1419,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	/**
 	 * Creates an action button for a specified action if
-	 * @param oBusinessAction the action for which the button should be found
-	 * @param oMenuItem menu item which corresponds to the button
-	 * @param iIndex position at which button shall be shown
+	 * @param {object} oBusinessAction the action for which the button should be found
+	 * @param {object} oMenuItem menu item which corresponds to the button
+	 * @param {int} iIndex position at which button shall be shown
 	 * @return new button for specified action
 	 * @private
 	 */

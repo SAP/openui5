@@ -1,55 +1,90 @@
 /* global QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-if (window.blanket) {
-	window.blanket.options("sap-ui-cover-only", "sap/ui/dt");
-}
+QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.dt.DesignTime");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+sap.ui.require([
+	'sap/ui/dt/DesignTime',
+	'sap/uxap/ObjectPageLayout',
+	'sap/uxap/ObjectPageSection',
+	'sap/uxap/ObjectPageSubSection',
+	'sap/uxap/ObjectPageHeader',
+	'sap/m/Button',
+	'sap/m/VBox'
+],
+function(
+	DesignTime,
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection,
+	ObjectPageHeader,
+	Button,
+	VBox
+) {
+	'use strict';
+	QUnit.start();
 
-(function(DesignTime, OverlayRegistry) {
-	"use strict";
+	QUnit.module('Basic functionality', {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
 
-	var oView;
-	var oDesignTime;
-
-	QUnit.module("Given a ObjectPage with an invisible Section", {
-		beforeEach : function(assert) {
-
-			var done = assert.async();
-
-			oView = sap.ui.xmlview("testView", "sap.ui.dt.demo.ObjectPageWithDesignTime");
-			oDesignTime = oView.getController().oDesignTime;
-
-			oDesignTime.attachEventOnce("synced", function() {
-				done();
+			this.oButton = new Button({text: "foo"});
+			this.oSubSection = new ObjectPageSubSection("subsection", {
+				blocks: [this.oButton]
 			});
-
-			oView.placeAt("content");
+			this.oSubSection2 = new ObjectPageSubSection("subsection2", {
+				blocks: [new Button({text: "bar"})]
+			});
+			this.oSection = new ObjectPageSection("section", {
+				visible: false,
+				subSections: [this.oSubSection]
+			});
+			this.oSection2 = new ObjectPageSection("section2", {
+				subSections: [this.oSubSection2]
+			});
+			this.oLayout = new ObjectPageLayout("layout", {
+				height: "600px",
+				sections : [this.oSection, this.oSection2],
+				headerTitle: new ObjectPageHeader({
+					objectTitle: "Title"
+				})
+			});
+			this.oVBox = new VBox({
+				items : [this.oLayout]
+			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVBox]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				sap.ui.getCore().applyChanges();
+				fnDone();
+			});
 		},
 
-		afterEach : function() {
-			oView.destroy();
-			oDesignTime.destroy();
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oVBox.destroy();
 		}
 	});
 
-	QUnit.test("When revealing the invisible Section", function(assert) {
-		var done = assert.async();
+	QUnit.test("invisible section", function(assert) {
+		var fnDone = assert.async();
 
-		var oInvisibleSection = sap.ui.getCore().byId("testView--invisibleSection");
-		oInvisibleSection.setVisible(true);
-
-		oDesignTime.attachEventOnce("synced", function() {
-			var oLabel = sap.ui.getCore().byId("testView--name5");
-			var oLabelOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oLabel.getId());
+		this.oDesignTime.attachEventOnce("synced", function() {
 			sap.ui.getCore().applyChanges();
-			assert.deepEqual(oLabelOverlay.$().offset(), oLabelOverlay.getElementInstance().$().offset(), "then the style is set and overlay position is correct");
-			done();
-		});
+
+			var oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
+			var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+
+			assert.deepEqual(oSectionOverlay.$().offset(), this.oSection.$().offset(), "position of the Section overlay is correct");
+			assert.deepEqual(oButtonOverlay.$().offset(), this.oButton.$().offset(), "position of the Button overlay is correct");
+
+			fnDone();
+		}, this);
+
+		this.oSection.setVisible(true); // starts test
 	});
 
-}());
+});

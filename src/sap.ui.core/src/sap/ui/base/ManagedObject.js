@@ -79,7 +79,8 @@ sap.ui.define([
 	 * New subclasses of ManagedObject are created with a call to {@link #.extend ManagedObject.extend} and can make use
 	 * of the following managed features:
 	 *
-	 * <b>Properties</b><br>
+	 *
+	 * <h3>Properties</h3>
 	 * Managed properties represent the state of a ManagedObject. They can store a single value of a simple data type
 	 * (like 'string' or 'int'). They have a <i>name</i> (e.g. 'size') and methods to get the current value (<code>getSize</code>)
 	 * or to set a new value (<code>setSize</code>). When a property is modified, the ManagedObject is marked as invalidated.
@@ -95,7 +96,7 @@ sap.ui.define([
 	 * generated to access it, can be found in the documentation of the {@link sap.ui.base.ManagedObject.extend extend } method.
 	 *
 	 *
-	 * <b>Aggregations</b><br>
+	 * <h3>Aggregations</h3>
 	 * Managed aggregations can store one or more references to other ManagedObjects. They are a mean to control the lifecycle
 	 * of the aggregated objects: one ManagedObject can be aggregated by at most one parent ManagedObject at any time.
 	 * When a ManagedObject is destroyed, all aggregated objects are destroyed as well and the object itself is removed from
@@ -123,7 +124,7 @@ sap.ui.define([
 	 * databinding. In that case, the aggregation in the clone will be bound to the same model collection.
 	 *
 	 *
-	 * <b>Associations</b><br>
+	 * <h3>Associations</h3>
 	 * Managed associations also form a relationship between objects, but they don't define a lifecycle for the
 	 * associated objects. They even can 'break' in the sense that an associated object might have been destroyed already
 	 * although it is still referenced in an association. For the same reason, the internal storage for associations
@@ -149,7 +150,7 @@ sap.ui.define([
 	 * When a ManagedObject is destroyed, other objects that are only associated, are not affected by the destroy operation.
 	 *
 	 *
-	 * <b>Events</b><br>
+	 * <h3>Events</h3>
 	 * Managed events provide a mean for communicating important state changes to an arbitrary number of 'interested' listeners.
 	 * Events have a <i>name</i> and (optionally) a set of <i>parameters</i>. For each event there will be methods to add or remove an event
 	 * listener as well as a method to fire the event. (e.g. <code>attachChange</code>, <code>detachChange</code>, <code>fireChange</code>
@@ -162,7 +163,7 @@ sap.ui.define([
 	 * clone. Later changes are not reflected in any direction (neither from source to clone nor vice versa).
 	 *
 	 *
-	 * <a name="lowlevelapi"><b>Low Level APIs:</b></a><br>
+	 * <a name="lowlevelapi"><h3>Low Level APIs:</h3></a>
 	 * The prototype of ManagedObject provides several generic, low level APIs to manage properties, aggregations, associations
 	 * and events. These generic methods are solely intended for implementing higher level, non-generic methods that manage
 	 * a single managed property etc. (e.g. a function <code>setSize(value)</code> that sets a new value for property 'size').
@@ -3102,7 +3103,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sName the name of the property to update
 	 * @param {any} oValue the new value to set for the property in the model
-	 * @param {any} oOldValue the old value of the property in the model
+	 * @param {any} oOldValue the previous value of the property
 	 * @private
 	 */
 	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue){

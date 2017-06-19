@@ -222,6 +222,8 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 			if (bKeepFocus) {
 				Select.prototype.onsapfocusleave.apply(this, arguments);
 			}
+
+			this._toggleListFocusIndication(true);
 		};
 
 		/**
@@ -233,6 +235,26 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		ActionSelect.prototype.onfocusinList = function(oEvent) {
 			if (document.activeElement !== this.getList().getDomRef()) {
 				this.focus();
+			}
+		};
+
+		ActionSelect.prototype.onfocusin = function() {
+			Select.prototype.onfocusin.apply(this, arguments);
+			this._toggleListFocusIndication(false);
+		};
+
+		/**
+		 * Handles toggling of focus indication from the list items.
+		 * If drop down is open and there is a selected item focus indication will be toggled.
+		 *
+		 * @param {boolean} bRemove - defines whether the focus indication should be removed or not.
+		 * @private
+		 */
+		ActionSelect.prototype._toggleListFocusIndication = function(bRemove) {
+			var oSelecteditem = this.getSelectedItem();
+
+			if (this.isOpen() && oSelecteditem) {
+				oSelecteditem.$().toggleClass("sapMActionSelectItemWithoutFocus", bRemove);
 			}
 		};
 

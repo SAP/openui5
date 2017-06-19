@@ -38,12 +38,20 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				oControl.setAttribute(sPropertyName, oPropertyBinding);
 			},
 
-			createControl: function (sClassName, oAppComponent, oView, oSelector) {
+			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
+				var sId;
 				if (!this.bySelector(oSelector, oAppComponent, oView)) {
 					var oNewElementNode = oView.createElement(sClassName);
-					var sId = this.getControlIdBySelector(oSelector, oAppComponent);
+					sId = this.getControlIdBySelector(oSelector, oAppComponent);
 					if (sId) {
 						oNewElementNode.setAttribute("id", sId);
+					}
+					if (mSettings){
+						var oValue;
+						Object.keys(mSettings).forEach(function(sKey) {
+						    oValue = mSettings[sKey];
+						    oNewElementNode.setAttribute(sKey, oValue);
+						});
 					}
 					return oNewElementNode;
 				} else {

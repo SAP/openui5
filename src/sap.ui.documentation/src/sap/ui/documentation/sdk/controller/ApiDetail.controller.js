@@ -20,6 +20,9 @@ sap.ui.define([
 			EVENT: 'event',
 			PARAM: 'param',
 			NOT_AVAILABLE: 'N/A',
+			ANNOTATIONS_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html',
+			ANNOTATIONS_NAMESPACE_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/',
+			ANNOTATION_DESCRIPTION_STRIP_REGEX: /<i>XML[\s\S].*Example/,
 
 			/**
 			 * Determines if the type can be navigated to
@@ -62,11 +65,6 @@ sap.ui.define([
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
-				ControlsInfo.listeners.push(function(){
-					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
-				}.bind(this));
-				ControlsInfo.init();
-
 				this.setModel(new JSONModel(), "topics");
 				this.setModel(new JSONModel(), "constructorParams");
 				this.setModel(new JSONModel(), 'methods');
@@ -85,6 +83,7 @@ sap.ui.define([
 			onAfterRendering: function() {
 				this._createMethodsSummary();
 				this._createEventsSummary();
+				this._createAnnotationsSummary();
 			},
 
 			onExit: function() {
@@ -138,6 +137,7 @@ sap.ui.define([
 					this._bindEntityData(this._sTopicid);
 					this._createMethodsSummary();
 					this._createEventsSummary();
+					this._createAnnotationsSummary();
 					oApiDetailObjectPage._resumeLayoutCalculations();
 
 					if (this._sEntityType) {
@@ -146,10 +146,19 @@ sap.ui.define([
 						this._scrollContentToTop();
 					}
 
+					setTimeout(this._prettify, 0);
+
 					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
 
 				}.bind(this));
 
+			},
+
+			_prettify: function () {
+				// Google Prettify requires this class
+				jQuery('pre').addClass('prettyprint');
+
+				window.prettyPrint();
 			},
 
 			_createMethodsSummary: function () {
@@ -186,6 +195,23 @@ sap.ui.define([
 				}), 0);
 			},
 
+			_createAnnotationsSummary: function () {
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-annotationsSummary", "sap.ui.documentation.sdk.view.ApiDetailAnnotationsSummary", this);
+				var oSection = this.getView().byId("annotations");
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
+					return;
+				}
+
+				oSection.insertSubSection(new ObjectPageSubSection({
+					title: "Summary",
+					blocks: [
+						oSummaryTable
+					]
+				}), 0);
+			},
+
 			scrollToMethod: function (oEvent) {
 				var oLink = oEvent.getSource();
 				this._scrollToEntity("methods", oLink.getText());
@@ -194,6 +220,11 @@ sap.ui.define([
 			scrollToEvent: function (oEvent) {
 				var oLink = oEvent.getSource();
 				this._scrollToEntity("events", oLink.getText());
+			},
+
+			scrollToAnnotation: function (oEvent) {
+				var oLink = oEvent.getSource();
+				this._scrollToEntity("annotations", oLink.getText());
 			},
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
@@ -215,15 +246,8 @@ sap.ui.define([
 
 			_scrollContentToTop: function () {
 				if (this._objectPage && this._objectPage.$().length > 0   ) {
-					this._objectPage.getScrollDelegate().scrollTo(0, 1);
+					this._objectPage.getScrollDelegate().scrollTo(0, 0);
 				}
-			},
-
-			/**
-			 * Callback function, executed once the <code>ControlsInfo</code> is loaded.
-			 */
-			_onControlsInfoLoaded : function () {
-				this._bindEntityData(this._sTopicid);
 			},
 
 			/**
@@ -236,13 +260,13 @@ sap.ui.define([
 			 * whenever a different topic has been selected.
 			 */
 			_bindEntityData : function (sTopicId) {
-				if (!ControlsInfo || !ControlsInfo.data) {
-					return;
-				}
 
-				var oEntityData = this._getEntityData(sTopicId);
+				ControlsInfo.loadData().then(function(oControlsData) {
+					var oEntityData = this._getEntityData(sTopicId, oControlsData);
 
-				this.getModel("entity").setData(oEntityData, false);
+					this.getModel("entity").setData(oEntityData, false);
+				}.bind(this));
+
 			},
 
 			_bindData : function (sTopicId) {
@@ -319,6 +343,7 @@ sap.ui.define([
 
 				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
 					oControlData.hasAnnotations = true;
+					oUi5Metadata.annotations.unshift({});
 				} else {
 					oControlData.hasAnnotations = false;
 				}
@@ -361,6 +386,7 @@ sap.ui.define([
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
+				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
@@ -396,13 +422,13 @@ sap.ui.define([
 			 * @param {Object} oLibData
 			 * @return {Object}
 			 */
-			_getEntityData: function (sEntityName) {
-				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+			_getEntityData: function (sEntityName, oControlsData) {
+				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
 					return entity.id === sEntityName;
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
 
-				var sAppComponent = this._getControlComponent(sEntityName);
+				var sAppComponent = this._getControlComponent(sEntityName, oControlsData);
 
 				return {
 					appComponent: sAppComponent || this.NOT_AVAILABLE,
@@ -496,7 +522,7 @@ sap.ui.define([
 					methods: [],
 					events: []
 				};
-				sBaseClass = aLibsData[sTopicId].extends;
+				sBaseClass = aLibsData[sTopicId] ? aLibsData[sTopicId].extends : "";
 
 				var fnVisibilityFilter = function (item) {
 					return item.visibility === "public";
@@ -655,7 +681,7 @@ sap.ui.define([
 			 * @returns string - The code needed to create an object of that class
 			 */
 			formatConstructor: function (name, params) {
-				var result = "new ";
+				var result = 'new ';
 
 				if (name) {
 					result += name + '(';
@@ -665,7 +691,7 @@ sap.ui.define([
 					params.forEach(function (element, index, array) {
 						result += element.name;
 
-						if (element.optional === "true") {
+						if (element.optional) {
 							result += '?';
 						}
 
@@ -777,28 +803,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Formats the description of events and methods in details
-			 * @param description - the description of the event/method
-			 * @param visibility - the visibility of the event/method
-			 * @param since - the since version information of the event/method
-			 * @returns string - the formatted description
-			 */
-			formatDescriptionDetails: function (description, visibility, since) {
-				var result = description || "";
-
-				if (visibility) {
-					result += '<br/><br/><i>Visibility: ' + visibility + '.</i>';
-				}
-
-				if (since) {
-					result += '<br/><br/><i>Since: ' + since + '.</i>';
-				}
-
-				result = this._wrapInSpanTag(result);
-				return result;
-			},
-
-			/**
 			 * Formats the description of control properties
 			 * @param description - the description of the property
 			 * @param since - the since version information of the property
@@ -809,6 +813,76 @@ sap.ui.define([
 
 				if (since) {
 					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of annotations
+			 * @param description - the description of the annotation
+			 * @param since - the since version information of the annotation
+			 * @returns string - the formatted description
+			 */
+			formatAnnotationDescription: function (description, since) {
+				var result = description || "";
+
+				result += '<br/>For more information, see ' + '<a target="_blank" href="' + this.ANNOTATIONS_LINK + '">OData v4 Annotations</a>';
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of annotations in summary table
+			 * @param description - the description of the annotation
+			 * @returns string - the formatted description
+			 */
+			formatAnnotationDescriptionSummary: function (description) {
+				var result = description || "";
+
+				result = result.split(this.ANNOTATION_DESCRIPTION_STRIP_REGEX)[0];
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the target and applies to texts of annotations
+			 * @param target - the array of texts to be formatted
+			 * @returns string - the formatted text
+			 */
+			formatAnnotationTarget: function (target) {
+				var result = "";
+
+				if (target) {
+					target.forEach(function (element) {
+						result += element + '<br/>';
+					});
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the namespace of annotations
+			 * @param namespace - the namespace to be formatted
+			 * @returns string - the formatted text
+			 */
+			formatAnnotationNamespace: function (namespace) {
+				var result,
+					aNamespaceParts = namespace.split(".");
+
+				if (aNamespaceParts[0] === "Org" && aNamespaceParts[1] === "OData") {
+					result = '<a target="_blank" href="' + this.ANNOTATIONS_NAMESPACE_LINK + namespace + '.xml">' + namespace + '</a>';
+				} else {
+					result = namespace;
 				}
 
 				result = this._wrapInSpanTag(result);
@@ -865,6 +939,39 @@ sap.ui.define([
 				} else {
 					return "";
 				}
+			},
+
+			formatMethodCode: function(sName, aParams, aReturnValue) {
+				var result = sName + '(';
+
+				if (aParams && aParams.length > 0) {
+					aParams.forEach(function (element, index, array) {
+						if (element.isSubProperty || element.isSubSubProperty) {
+							return;
+						}
+
+						result += element.name;
+
+						if (element.optional) {
+							result += '?';
+						}
+
+						if (index < array.length - 1) {
+							result += ', ';
+						}
+					});
+				}
+
+				result += ') : ';
+
+				if (aReturnValue) {
+					result += aReturnValue.type;
+				} else {
+					result += 'void';
+				}
+
+
+				return result;
 			},
 
 			/**
@@ -934,7 +1041,7 @@ sap.ui.define([
 			},
 
 			onAnnotationsLinkPress: function (oEvent) {
-				// scroll to Annotations section here
+				this._scrollToEntity("annotations", "Summary");
 			},
 
 			backToSearch: function () {

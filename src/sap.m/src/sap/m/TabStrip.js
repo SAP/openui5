@@ -3,8 +3,8 @@
  */
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', './TabStripSelect', 'sap/ui/Device'],
-	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, TabStripSelect, Device) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/InvisibleText', './AccButton', './TabStripItem', 'sap/m/Select', 'sap/m/SelectList', 'sap/ui/Device', 'sap/ui/core/Renderer'],
+	function(jQuery, Control, IconPool, ItemNavigation, ManagedObject, ScrollEnablement, InvisibleText, AccButton, TabStripItem, Select, SelectList, Device, Renderer) {
 		"use strict";
 
 		/**
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					/**
 					 * Holds the instance of the select when <code>hasSelect</code> is set to <code>true</code>.
 					 */
-					_select : {type: 'sap.m.TabStripSelect', multiple : false, visibility : "hidden"},
+					_select : {type: 'sap.m.Select', multiple : false, visibility : "hidden"},
 
 					/**
 					 * Holds the right arrow scrolling button.
@@ -574,7 +574,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * Create the instance of the <code>TabStripSelect</code>.
 		 *
 		 * @param { array<sap.m.TabStripItem> } aTabStripItems Array with the <code>TabStripItems</code>
-		 * @returns {sap.m.TabStripSelect} The created <code>TabStripSelect</code>
+		 * @returns {CustomSelect} The created <code>CustomSelect</code>
 		 * @private
 		 */
 		TabStrip.prototype._createSelect = function (aTabStripItems) {
@@ -582,8 +582,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				oSelectedSelectItem,
 				oSelectedTabStripItem,
 				oConstructorSettings = {
-					type: sap.m.SelectType.IconOnly,
+					type: Device.system.phone ? sap.m.SelectType.Default : sap.m.SelectType.IconOnly,
 					autoAdjustWidth : true,
+					maxWidth: Device.system.phone ? "100%" : "2.5rem",
 					icon: IconPool.getIconURI(TabStrip.ICON_BUTTONS.DownArrowButton),
 					tooltip: oRb.getText("TABSTRIP_OPENED_TABS"),
 					change: function (oEvent) {
@@ -593,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 					}.bind(this)
 				};
 
-			oSelect = new TabStripSelect(oConstructorSettings);
+			oSelect = new CustomSelect(oConstructorSettings).addStyleClass("sapMTSOverflowSelect");
 
 			this._addItemsToSelect(oSelect, aTabStripItems);
 
@@ -895,7 +896,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		TabStrip.prototype._removeItem = function(oItem, fnCallback) {
 			var oTabStripItem;
 			/* this method is handling the close pressed event on all item instances (TabStrip and the
-			 * TabStripSelect copy), so when it's handling the press on the TabStripSelect item, it needs to determine the TabStrip item out of the event and vice-versa */
+			 * CustomSelect copy), so when it's handling the press on the CustomSelect item, it needs to determine the TabStrip item out of the event and vice-versa */
 			if (!(oItem instanceof TabStripItem)) {
 				jQuery.sap.log.error('Expecting instance of a TabStripSelectItem, given: ', oItem);
 			}
@@ -924,7 +925,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 * @returns {sap.m.TabStrip} <code>this</code> instance for chaining
 		 */
 		TabStrip.prototype._handleItemsAggregation = function (aArgs, bIsAdding) {
-			var sAggregationName = 'items', // name of the aggregation in TabStripSelect
+			var sAggregationName = 'items', // name of the aggregation in CustomSelect
 				sFunctionName = aArgs[0],
 				oObject = aArgs[1],
 				aNewArgs = [sAggregationName];
@@ -965,7 +966,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._handleSelectItemsAggregation = function (aArgs, bIsAdding, sFunctionName, oObject) {
 			var oSelect = this.getAggregation('_select'),
-				// a new instance, holding a copy of the TabStripItem which is given to the TabStripSelect instance
+				// a new instance, holding a copy of the TabStripItem which is given to the CustomSelect instance
 				oDerivedObject;
 
 			if (sFunctionName === 'destroyAggregation' && !oSelect) {
@@ -1155,7 +1156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			if (oTargetItem instanceof TabStripItem ||
 				oTargetItem instanceof AccButton ||
 				oTargetItem instanceof sap.ui.core.Icon ||
-				oTargetItem instanceof TabStripSelect) {
+				oTargetItem instanceof CustomSelect) {
 				// Support only single touch
 				// Store the pageX coordinate for for later usage in touchend
 				this._oTouchStartX = oEvent.changedTouches[0].pageX;
@@ -1211,6 +1212,105 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			this.setAssociation("selectedItem", null);
 			return this.destroyAggregation("items");
 		};
+
+		/****************************************** CUSTOM SELECT CONTROL **********************************************/
+
+		var CustomSelectRenderer = Renderer.extend(sap.m.SelectRenderer);
+
+		var CustomSelect = Select.extend("CustomSelect", {
+			renderer: CustomSelectRenderer
+		});
+
+		CustomSelect.prototype.onAfterRendering = function (){
+			Select.prototype.onAfterRendering.apply(this, arguments);
+			this.$().attr("tabindex", "-1");
+		};
+
+		CustomSelect.prototype.onAfterRenderingPicker = function() {
+			var oPicker = this.getPicker();
+
+			Select.prototype.onAfterRenderingPicker.call(this);
+
+			// on phone the picker is a dialog and does not have an offset
+			if (Device.system.phone) {
+				return;
+			}
+
+
+			oPicker.setOffsetX(Math.round(
+				sap.ui.getCore().getConfiguration().getRTL() ?
+					this.getPicker().$().width() - this.$().width() :
+					this.$().width() - this.getPicker().$().width()
+			)); // LTR or RTL mode considered
+			oPicker.setOffsetY(this.$().parents().hasClass('sapUiSizeCompact') ? 2 : 3);
+			oPicker._calcPlacement(); // needed to apply the new offset after the popup is open
+
+		};
+
+		CustomSelect.prototype.createList = function() {
+			// list to use inside the picker
+			this._oList = new CustomSelectList({
+				width: "100%"
+			}).attachSelectionChange(this.onSelectionChange, this)
+				.addEventDelegate({
+					ontap: function(oEvent) {
+						this.close();
+					}
+				}, this);
+
+			return this._oList;
+		};
+
+		CustomSelect.prototype.setValue = function(sValue) {
+			Select.prototype.setValue.apply(this, arguments);
+
+			this.$("label").toggleClass("sapMTSOverflowSelectLabelModified",
+				this.getSelectedItem() && this.getSelectedItem().getProperty("modified"));
+
+			return this;
+		};
+
+		/****************************************** CUSTOM SELECT LIST CONTROL *****************************************/
+
+		var CustomSelectListRenderer = Renderer.extend(sap.m.SelectListRenderer);
+
+		CustomSelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
+			oRm.write("<li");
+			oRm.writeElementData(oItem);
+			oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "ItemBase");
+			oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "Item");
+			oRm.addClass("sapMTSOverflowSelectListItem");
+			if (oItem.getProperty("modified")) {
+				oRm.addClass("sapMTSOverflowSelectListItemModified");
+			}
+			if (Device.system.desktop) {
+				oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "ItemBaseHoverable");
+			}
+			if (oItem === oList.getSelectedItem()) {
+				oRm.addClass(sap.m.SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
+			}
+			oRm.writeClasses();
+			this.writeItemAccessibilityState.apply(this, arguments);
+			oRm.write(">");
+
+			oRm.write('<p class=\"sapMSelectListItemText\">');
+			// oRm.write('<p class=\"sapMSelectListItemText\">');
+			// always show the full text on phone
+			oRm.writeEscaped(oItem.getText().slice(0, (Device.system.phone ? oItem.getText().length : TabStripItem.DISPLAY_TEXT_MAX_LENGTH)));
+			// add three dots "..." at the end if not the whole text is shown
+			if (!Device.system.phone && oItem.getText().length > TabStripItem.DISPLAY_TEXT_MAX_LENGTH) {
+				oRm.write('...');
+			}
+			oRm.write('</p>');
+
+			oRm.renderControl(oItem.getAggregation('_closeButton'));
+
+			oRm.write("</li>");
+		};
+
+		var CustomSelectList = SelectList.extend("CustomSelectList", {
+			renderer: CustomSelectListRenderer
+		});
 
 		return TabStrip;
 

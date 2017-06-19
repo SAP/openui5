@@ -20,6 +20,7 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script>
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	QUnit.config.autostart = false;
 
 	sap.ui.define([	"sap/ui/dt/ManagedObjectObserver",
 					"sap/ui/core/Element"],
@@ -37,7 +38,15 @@
 					},
 					associations: {
 						"myAssociation": {
-							"type": "sap.ui.core.Control"
+							"type": "sap.ui.core.Control",
+							"multiple": true
+						},
+						"mySingleAssociation": {
+							"type": "sap.ui.core.Element",
+						},
+						"myOverwrittenAssociation": {
+							"type": "sap.ui.core.Element",
+							"multiple": true
 						}
 					},
 					aggregations: {
@@ -71,6 +80,18 @@
 			};
 
 			TestObject.prototype.destroyMyOverwrittenAggregation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.addMyOverwrittenAssociation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.removeMyOverwrittenAssociation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.removeAllMyOverwrittenAssociation = function () {
 				//don't call the generic method as we would do something special...
 			};
 
@@ -153,11 +174,51 @@
 
 			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is destroyed via destructor", function () {
 				this.oManagedObject.destroyMyOverwrittenAggregation();
-			})
+			});
 
 			whenThisHappensThenOneModifiedEventShouldBeFired("when the parent is set", function () {
 				this.oManagedObject.setParent(this.oOtherObject);
-			})
+			});
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the single association is set via mutator", function () {
+				this.oManagedObject.setMySingleAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the single association is set via setAssociation", function () {
+				this.oManagedObject.setAssociation("mySingleAssociation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is set via modifier", function () {
+				this.oManagedObject.addMyAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is set via addAssociation", function () {
+				this.oManagedObject.addAssociation("myAssociation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple association is removed via removeAssociation", function () {
+				this.oManagedObject.removeAssociation("myAssociation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple association is removed via removeAssociation", function () {
+				this.oManagedObject.removeMyAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is emptied via mutator", function () {
+				this.oManagedObject.removeAllMyAssociation();
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is accessed via add mutator", function () {
+				this.oManagedObject.addMyOverwrittenAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is accessed via remove mutator", function () {
+				this.oManagedObject.removeMyOverwrittenAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is emptied via removeAll mutator", function () {
+				this.oManagedObject.removeAllMyOverwrittenAssociation(this.oOtherObject);
+			});
+
 
 			function fnObserverModifiedCalled(oEvent) {
 				assert.ok(oEvent, 'then a "Modified" event is fired on modifying the target');

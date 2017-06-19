@@ -5,9 +5,7 @@
 		"_version": "1.3.0",
 		"id": "sap.ui.documentation.sdk",
 		"type": "application",
-		"title": "{{appTitle}}",
-		"description": "{{appDescription}}",
-
+		"title": "OpenUI5 SDK - Demo Kit v2.0",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -173,10 +171,21 @@
 			"name": "search",
 			"target": ["searchPage"]
 		  },
-			{
-				"pattern": "releasenotes.html",
-				"name": "releaseNotes",
-				"target": ["topicMaster", "releaseNotes"]
+		  {
+			"pattern": "releasenotes.html",
+			"name": "releaseNotes",
+			"target": [
+				"topicMaster",
+				"releaseNotes"
+			]
+		  },
+		  {
+			"pattern": "docs/guide/{id}",
+			"name": "topicIdLegacyRoute"
+		  },
+		  {
+			"pattern": "docs/api/symbols/{id}",
+			"name": "apiIdLegacyRoute"
 		  }
 		],
 

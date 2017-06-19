@@ -228,7 +228,8 @@ sap.ui.define([
 
 
 		/**
-		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects
+		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects.
+		 * Use {@link sap.ui.test.Opa5#hasUIComponentStarted} to ensure that a UIComponent has been started and teardown can be safely performed.
 		 *
 		 * @since 1.48 If appParams were applied to the current URL, they will be removed
 		 * after UIComponent is destroyed
@@ -260,9 +261,10 @@ sap.ui.define([
 
 		/**
 		 * Tears down the started application regardless of how it was started.
-		 * Removes the IFrame launched by @link{sap.ui.test.Opa5#iStartMyAppInAFrame}
-		 * or destroys the UIComponent launched by @link{sap.ui.test.Opa5#iStartMyUIComponent}.
+		 * Removes the IFrame launched by {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
+		 * or destroys the UIComponent launched by {@link sap.ui.test.Opa5#iStartMyUIComponent}.
 		 * This function is designed to make the test's teardown independent of the startup.
+		 * Use {@link sap.ui.test.Opa5#hasAppStarted} to ensure that the application has been started and teardown can be safely performed.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
 		 * If nothing has been started or an error occurs, the promise is rejected with the options object.
 		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
@@ -332,7 +334,8 @@ sap.ui.define([
 		}
 
 		/**
-		 * Removes the IFrame from the DOM and removes all the references to its objects
+		 * Removes the IFrame from the DOM and removes all the references to its objects.
+		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an IFrame has been started and teardown can be safely performed.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
 		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
 		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
@@ -343,6 +346,7 @@ sap.ui.define([
 
 		/**
 		 * Removes the IFrame from the DOM and removes all the references to its objects
+		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an IFrame has been started and teardown can be safely performed.
 		 * @returns {jQuery.promise} A promise that gets resolved on success.
 		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
 		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
@@ -350,6 +354,36 @@ sap.ui.define([
 		 * @function
 		 */
 		Opa5.prototype.iTeardownMyAppFrame = iTeardownMyAppFrame;
+
+		/**
+		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
+		 * @returns {boolean} A boolean indicating whether the application has been started in an iFrame
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.hasAppStartedInAFrame = function () {
+			return iFrameLauncher.hasLaunched();
+		};
+
+		/**
+		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyUIComponent}
+		 * @returns {boolean} A boolean indicating whether the application has been started as a UIComponent
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.hasUIComponentStarted = function () {
+			return componentLauncher.hasLaunched();
+		};
+
+		/**
+		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyAppInAFrame} or {@link sap.ui.test.Opa5#iStartMyUIComponent}
+		 * @returns {boolean} A boolean indicating whether the application has been started regardless of how it was started
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.hasAppStarted = function () {
+			return iFrameLauncher.hasLaunched() || componentLauncher.hasLaunched();
+		};
 
 		/**
 		 * Takes the same parameters as {@link sap.ui.test.Opa#waitFor}. Also allows you to specify additional parameters:

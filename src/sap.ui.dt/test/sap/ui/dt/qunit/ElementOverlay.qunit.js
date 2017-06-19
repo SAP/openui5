@@ -876,29 +876,39 @@ function(
 	});
 
 	QUnit.test("when a control is moved to another layout", function(assert) {
+		var done = assert.async();
 		ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 1);
 		sap.ui.getCore().applyChanges();
 
-		var oDomRefButton1 = this.oOverlayButton1.getDomRef();
-		var oDomRefButton2 = this.oOverlayButton2.getDomRef();
-		var oDomRefButton3 = this.oOverlayButton3.getDomRef();
-		var oDomRefButton4 = this.oOverlayButton4.getDomRef();
+		var animationFrame = window.requestAnimationFrame(function() {
+			var oDomRefButton1 = this.oOverlayButton1.getDomRef();
+			var oDomRefButton2 = this.oOverlayButton2.getDomRef();
+			var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+			var oDomRefButton4 = this.oOverlayButton4.getDomRef();
 
-		assert.strictEqual(oDomRefButton3, oDomRefButton2.previousElementSibling, "then Overlay DOM elements in target layout are in correct order - button3 before button2");
-		assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order - button4 after button2");
-		assert.strictEqual(null, oDomRefButton1.nextElementSibling, "and source layout contains only one control");
+			assert.strictEqual(oDomRefButton3, oDomRefButton2.previousElementSibling, "then Overlay DOM elements in target layout are in correct order - button3 before button2");
+			assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order - button4 after button2");
+			assert.strictEqual(null, oDomRefButton1.nextElementSibling, "and source layout contains only one control");
+			window.cancelAnimationFrame(animationFrame);
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when DomRef of Overlay Layout contains extra elements and the control is prepended to this layout", function(assert) {
+		var done = assert.async();
 		this.oOverlayLayout2.$().prepend("<div></div>");
 		ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 0);
 		sap.ui.getCore().applyChanges();
 
-		var oDomRefButton2 = this.oOverlayButton2.getDomRef();
-		var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+		var animationFrame = window.requestAnimationFrame(function() {
+			var oDomRefButton2 = this.oOverlayButton2.getDomRef();
+			var oDomRefButton3 = this.oOverlayButton3.getDomRef();
 
-		assert.strictEqual(oDomRefButton3, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
-		assert.strictEqual(null, oDomRefButton2.previousElementSibling, "and extra element is not taken into account");
+			assert.strictEqual(oDomRefButton3, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
+			assert.strictEqual(null, oDomRefButton2.previousElementSibling, "and extra element is not taken into account");
+			window.cancelAnimationFrame(animationFrame);
+			done();
+		}.bind(this));
 	});
 
 	QUnit.module("Given that an Overlay is created for a control in the content of a scrollable container", {

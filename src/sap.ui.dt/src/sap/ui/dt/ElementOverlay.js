@@ -198,12 +198,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 	 * @override
 	 */
 	ElementOverlay.prototype.applyStyles = function() {
-		Overlay.prototype.applyStyles.apply(this, arguments);
-
 		var oGeometry = this.getGeometry();
 		if (oGeometry && oGeometry.visible) {
 			this._sortAggregationOverlaysInDomOrder();
 		}
+
+		Overlay.prototype.applyStyles.apply(this, arguments);
 	};
 
 	/**
@@ -412,6 +412,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 		var oReturn = this.setAggregation("designTimeMetadata", oDesignTimeMetadata);
 
 		if (this.getElementInstance()) {
+			this._aScrollContainers = this.getDesignTimeMetadata().getScrollContainers();
 			this._renderAndCreateAggregation();
 		}
 
@@ -701,7 +702,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 			}
 		}.bind(this));
 
-		// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
+		// create aggregation overlays also for a hidden aggregations and aggregation-like associations which are not ignored in the DT Metadata
 		var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
 		if (mAggregationsMetadata) {
 			var aAggregationNames = Object.keys(mAggregationsMetadata);
@@ -773,13 +774,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 				}
 			}
 
-			var aAggregationElements = ElementUtil.getAggregation(this.getElementInstance(), sAggregationName);
-			aAggregationElements.forEach(function(oAggregationElement) {
+			OverlayUtil.iterateOverAggregationLikeChildren(this, sAggregationName, function(oAggregationElement) {
 				var oChildElementOverlay = OverlayRegistry.getOverlay(oAggregationElement);
 				if (oChildElementOverlay  && oChildElementOverlay.getParent() !== this) {
 					oAggregationOverlay.addChild(oChildElementOverlay);
 				}
-			}, this);
+			}.bind(this));
 		}
 	};
 

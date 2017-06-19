@@ -4818,7 +4818,7 @@
 		var oScript = window.document.createElement("script");
 		oScript.src = sUrl;
 		oScript.type = "text/javascript";
-		if (typeof mAttributes === "object") {
+		if (mAttributes && typeof mAttributes === "object") {
 			Object.keys(mAttributes).forEach(function(sKey) {
 				if (mAttributes[sKey] != null) {
 					oScript.setAttribute(sKey, mAttributes[sKey]);
@@ -4902,7 +4902,7 @@
 			oLink.type = "text/css";
 			oLink.rel = "stylesheet";
 			oLink.href = sUrl;
-			if (typeof mAttributes === "object") {
+			if (mAttributes && typeof mAttributes === "object") {
 				Object.keys(mAttributes).forEach(function(sKey) {
 					if (mAttributes[sKey] != null) {
 						oLink.setAttribute(sKey, mAttributes[sKey]);

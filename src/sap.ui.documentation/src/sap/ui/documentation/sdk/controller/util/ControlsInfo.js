@@ -3,28 +3,27 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/documentation/library'],
-	function(jQuery, LibraryInfo, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
+	function(jQuery, library) {
 		"use strict";
+
+		var oPromise;
 
 		var ControlsInfo = {
 
-			listeners: [],
+			loadData: function() {
+				if (!oPromise) {
 
-			init: function () {
-
-				var that = this;
-
-				library._loadAllLibInfo(
-					"", "_getDocuIndex",
-					function (aLibs, oDocIndicies) {
-						ControlsInfo._getIndices(aLibs, oDocIndicies);
-
-						var listeners = that.listeners;
-						for (var i = 0; i < listeners.length; i++) {
-							listeners[i]();
-						}
+					oPromise = new Promise(function(resolve, reject) {
+						library._loadAllLibInfo(
+							"", "_getDocuIndex",
+							function (aLibs, oDocIndicies) {
+								var oData = ControlsInfo._getIndices(aLibs, oDocIndicies);
+								resolve(oData);
+							});
 					});
+				}
+				return oPromise;
 			},
 
 			_getIndices: function (aLibs, oDocIndicies) {
@@ -295,7 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 
 				// call LibraryInfo API method for collecting all component info from the .library files
 
-				var oLibInfo = new LibraryInfo();
+				var oLibInfo = library._getLibraryInfoSingleton();
 				var oLibComponents = {};
 				var oLibraryComponentInfo = function (oComponent) {
 					oLibComponents[oComponent.library] = oComponent.componentInfo;
@@ -307,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 				data.libComponentInfos = oLibComponents;
 
 				data.groups = this.getGroups(data.entities);
-				ControlsInfo.data = data;
+				return data;
 			},
 
 			findGroup: function (groups, name) {

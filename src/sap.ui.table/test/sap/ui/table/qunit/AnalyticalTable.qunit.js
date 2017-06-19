@@ -270,12 +270,13 @@
 
 	QUnit.test("BindRows", function (assert) {
 		var spy = this.spy(sap.ui.table.AnalyticalTable.prototype, "bindRows");
-		new sap.ui.table.AnalyticalTable({
+		var oTable = new sap.ui.table.AnalyticalTable({
 			rows: {path: "/modelData"},
 			columns: [new sap.ui.table.AnalyticalColumn()]
 		});
 
 		assert.ok(spy.calledOnce, "bindRows was called");
+		assert.ok(!!oTable.getBindingInfo("rows"), "BindingInfo available");
 	});
 
 

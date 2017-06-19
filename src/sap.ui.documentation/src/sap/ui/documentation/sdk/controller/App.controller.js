@@ -10,11 +10,10 @@ sap.ui.define([
 		"sap/ui/core/Component",
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
-		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/core/IconPool",
 		"sap/m/SplitAppMode",
 		"sap/m/MessageBox"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool, SplitAppMode, MessageBox) {
+	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, IconPool, SplitAppMode, MessageBox) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
@@ -41,6 +40,7 @@ sap.ui.define([
 					"Disclaimer": "http://help-legacy.sap.com/disclaimer-full"
 				};
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
+				this.OLD_DOC_LINK_SUFFIX = ".html";
 
 				// Cache view reference
 				this._oView = this.getView();
@@ -53,6 +53,10 @@ sap.ui.define([
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
+
+
+				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
+				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
 
 				// apply content density mode to root view
 				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
@@ -73,7 +77,59 @@ sap.ui.define([
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
+			_onTopicOldRouteMatched: function(oEvent) {
+
+				var sId = oEvent.getParameter("arguments").id;
+				if (sId) {
+					sId = this._trimOldDocSuffix(sId);
+				}
+				this.getRouter().navTo("topicId", {id: sId});
+			},
+
+			_onApiOldRouteMatched: function(oEvent) {
+
+				var sId = oEvent.getParameter("arguments").id,
+					sEntityType,
+					sEntityId,
+					aSplit;
+
+				if (sId) {
+
+					aSplit = sId.split("#");
+					if (aSplit.length === 2) {
+						sId = aSplit[0];
+						sEntityType = aSplit[1];
+
+						aSplit = sEntityType.split(":");
+						if (aSplit.length === 2) {
+							sEntityType = aSplit[0];
+							sEntityId = aSplit[1];
+						}
+					}
+
+					sId = this._trimOldDocSuffix(sId);
+
+					if (sEntityType === 'event') { // legacy keyword is singular
+						sEntityType = "events";
+					}
+				}
+
+				this.getRouter().navTo("apiId", {id: sId, entityType: sEntityType, entityId: sEntityId});
+			},
+
+			_trimOldDocSuffix: function(sLink) {
+				if (sLink && sLink.endsWith(this.OLD_DOC_LINK_SUFFIX)) {
+					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
+				}
+				return sLink;
+			},
+
 			onRouteChange: function (oEvent) {
+
+				if (!this.oRouter.getRoute(oEvent.getParameter("name"))._oConfig.target) {
+					return;
+				}
+
 				var sRouteName = oEvent.getParameter("name"),
 					sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 					oTabToSelect = this._oView.byId(sTabId),
@@ -168,7 +224,7 @@ sap.ui.define([
 
 				library._loadAllLibInfo("", "_getLibraryInfo","", function(aLibs, oLibInfos) {
 					var data = {};
-					var oLibInfo = new LibraryInfo();
+					var oLibInfo = library._getLibraryInfoSingleton();
 
 					for (var i = 0, l = aLibs.length; i < l; i++) {
 						aLibs[i] = oLibInfos[aLibs[i]];
@@ -230,7 +286,7 @@ sap.ui.define([
 			},
 
 			onReleaseDialogOpen: function (oEvent) {
-				var oLibInfo = new LibraryInfo(),
+				var oLibInfo = library._getLibraryInfoSingleton(),
 					sVersion = oEvent.getSource().data("version"),
 					sLibrary = oEvent.getSource().data("library"),
 					oNotesModel = new JSONModel(),
@@ -382,7 +438,7 @@ sap.ui.define([
 				}).
 				done(
 					function () {
-						MessageBox.success("Your feedback has been sent", {title: "Thank you!"});
+						MessageBox.success("Your feedback has been sent.", {title: "Thank you!"});
 						this._oFeedbackDialog.reset();
 						this._oFeedbackDialog.close();
 						this._oFeedbackDialog.setBusy(false);
@@ -476,7 +532,11 @@ sap.ui.define([
 			},
 
 			onSearch : function (oEvent) {
-				this.getRouter().navTo("search", {searchParam: oEvent.getParameter("query")}, false);
+				var sQuery = oEvent.getParameter("query");
+				if (!sQuery) {
+					return;
+				}
+				this.getRouter().navTo("search", {searchParam: sQuery}, false);
 			},
 
 			onHeaderResize: function (oEvent) {

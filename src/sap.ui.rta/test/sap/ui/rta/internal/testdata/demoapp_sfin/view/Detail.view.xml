@@ -1,0 +1,159 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic" xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form" xmlns:smartform="sap.ui.comp.smartform"
+	xmlns:smartfield="sap.ui.comp.smartfield" xmlns:layout="sap.ui.layout" xmlns="sap.m"
+	controllerName="sap.ui.rta.test.Demo.controller.Detail"
+	class="sapARPostPayment">
+
+	<semantic:FullscreenPage id="fin.ar.payment.post.page" title="{i18n>FULLSCREEN_TITLE}" showNavButton="false" navButtonPress="onBackButtonPressed">
+		<semantic:subHeader>
+			<Toolbar design="Solid">
+				<ToolbarSpacer />
+				<ObjectNumber id="balanceObjectNr" class="balanceObjectNumber"
+					number="" unit="{DisplayCurrency}" />
+			</Toolbar>
+		</semantic:subHeader>
+
+				<!-- Adapt UI -->
+		<semantic:customHeaderContent>
+			<Button 
+				text="{i18n>btnAdapt}" 
+				visible="{app>/showAdaptButton}" 
+				press="switchToAdaptionMode" 
+				type="Emphasized" 
+				icon="sap-icon://wrench"/>
+		</semantic:customHeaderContent>
+
+		<semantic:content>
+			<smartform:SmartForm title="{i18nLib>PAYMENT_HEADER_PANEL}" editable="true" expandable="true" expanded="true" 
+				ignoredFields="AccountingDocument,AccountingDocumentCategory,DisplayCurrency,HasInvoiceReference,IsCollectionManagementActive,IsDisputeManagementActive,IsNetEntry,IsTransactionDisputable,TotalCreditAmountInDisplayCrcy,TotalDebitAmountInDisplayCrcy,TotalOpenAPARItmAmtInDspCrcy,TmpId,TmpIdType,ScreenVariant,UxAction,UxProcessTaxAlways,UxStatus,AcctgDocHdrPayment.CompanyCode,AcctgDocHdrPayment.TransactionCurrency,AcctgDocHdrPayment.CoCodeCurrency,AcctgDocHdrBankCharges.CompanyCode,AcctgDocHdrBankCharges.TransactionCurrency,AcctgDocHdrBankCharges.CoCodeCurrency,AcctgDocHdrBankCharges.TaxCode"
+				entityType="FinsPostingPaymentHeader" id="fin.ar.payment.post.header">
+				<smartform:customData>
+					<core:CustomData key="dateFormatSettings" value='\{"UTC":true,"style":"short"\}' />
+				</smartform:customData>
+				<smartform:Group label="{i18nLib>PAYMENT_HEADER_SECTION_HEADER}"
+					id="fin.ar.payment.post.section_header">
+					<smartform:GroupElement id="fin.ar.payment.post.companyInput_">
+						<smartfield:SmartField value="{CompanyCode}" change="onCompanyCodeChange" id="fin.ar.payment.post.companyInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.postDateInput_">
+						<smartfield:SmartField value="{PostingDate}" change="onInputValueChangeSF" id="fin.ar.payment.post.postDateInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.docDateInput_">
+						<smartfield:SmartField value="{DocumentDate}" change="onInputValueChangeSF" id="fin.ar.payment.post.docDateInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.valueDateInput_">
+						<smartfield:SmartField value="{Payment/ValueDate}" change="onInputValueChangeSF" id="fin.ar.payment.post.valueDateInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.referenceInput_">
+						<smartfield:SmartField value="{DocumentReferenceID}" change="onInputValueChangeUpperCase" id="fin.ar.payment.post.referenceInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.fiscalPeriod_">
+						<smartfield:SmartField value="{FiscalPeriod}" change="onInputValueChangeSF" id="fin.ar.payment.post.fiscalPeriod" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.acctgDocTypeInput_">
+						<smartfield:SmartField value="{AccountingDocumentType}"	change="onInputValueChangeSF" id="fin.ar.payment.post.acctgDocTypeInput">
+							<smartfield:configuration>
+								<smartfield:Configuration controlType="dropDownList" displayBehaviour="idAndDescription" />
+							</smartfield:configuration>
+						</smartfield:SmartField>
+					</smartform:GroupElement>
+				</smartform:Group>
+				<smartform:Group label="{i18nLib>PAYMENT_HEADER_SECTION_BANK_DATA}"
+					id="fin.ar.payment.post.section_bank_data">
+					<smartform:GroupElement id="fin.ar.payment.post.gLAccountInput_">
+						<smartfield:SmartField value="{Payment/GLAccount}" change="onInputValueChangeSF" valueListChanged="onValueListChanged" id="fin.ar.payment.post.gLAccountInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.houseBankInput_" label="{i18nLib>HB_ACCOUNT}" tooltip="{i18nLib>HB_ACCOUNT}">
+						<smartfield:SmartField value="{Payment/HouseBank}" change="onInputValueChangeUpperCase" valueListChanged="onValueListChanged" id="fin.ar.payment.post.houseBankInput" />
+						<smartfield:SmartField value="{Payment/HouseBankAccount}" change="onInputValueChangeUpperCase" valueListChanged="onValueListChanged" id="fin.ar.payment.post.hbAccountInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement	id="fin.ar.payment.post.amountInTransCrcyInput_" label="{i18nLib>AMOUNT_IN_TRANS_CURRENCY}" tooltip="{i18nLib>AMOUNT_IN_TRANS_CURRENCY}">
+						<smartfield:SmartField value="{Payment/AmountInTransCrcy}" change="onInputValueChangeSF" id="fin.ar.payment.post.amountInTransCrcyInput" maxLength="17" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.bankChargesInput_" label="{i18nLib>BANK_CHARGES}" tooltip="{i18nLib>BANK_CHARGES}">
+						<smartfield:SmartField value="{BankCharges/AmountInTransCrcy}" change="onInputValueChangeSF" id="fin.ar.payment.post.bankChargesInput" maxLength="17" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.assignmentInput_">
+						<smartfield:SmartField value="{Payment/AssignmentReference}" change="onInputValueChangeSF" id="fin.ar.payment.post.assignmentInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.exchangeRateInput_">
+						<smartfield:SmartField value="{ExchangeRate}" change="onInputValueChangeSF" id="fin.ar.payment.post.exchangeRateInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.amountInCoCodeCrcy_" label="{i18nLib>AMOUNT_IN_CCODE_CURRENCY}" tooltip="{i18nLib>TOOLTIP_AMOUNT_IN_CCODE_CUR}">
+						<smartfield:SmartField value="{Payment/AmountInCoCodeCrcy}"	change="onInputValueChangeSF" id="fin.ar.payment.post.amountInCoCodeCrcy" maxLength="17" />
+					</smartform:GroupElement>
+				</smartform:Group>
+				<smartform:Group label="{i18nLib>PAYMENT_HEADER_SECTION_OPEN_ITEM_SELECTION}" id="fin.ar.payment.post.section_open_item_selection">
+					<smartform:GroupElement id="fin.ar.payment.post.accountType_" label="{i18nLib>LABEL_ACCOUNT_TYPE}">
+						<smartform:elements>
+							<Select id="fin.ar.payment.post.accountType" selectedKey="C" change="onAccountTypeChange">
+								<core:Item id="fin.ar.payment.post.AccountType.Customer"
+										key="D" text="{i18nLib>LABEL_ACCOUNT_TYPE_CUSTOMER}"/>
+								<core:Item id="fin.ar.payment.post.AccountType.Supplier"
+										key="K" text="{i18nLib>LABEL_ACCOUNT_TYPE_SUPPLIER}"/>
+							</Select>
+							<HBox>
+								<smartfield:SmartField change="onAccountChange" valueListChanged="onValueListChanged" mandatory="false" id="fin.ar.payment.post.supplierAccountInput"/>
+								<smartfield:SmartField change="onAccountChange" valueListChanged="onValueListChanged" mandatory="false" id="fin.ar.payment.post.customerAccountInput"/>
+							</HBox>
+						</smartform:elements>
+					</smartform:GroupElement>
+					<smartform:GroupElement label="{i18nLib>PAYMENT_REFERENCE}" tooltip="{i18nLib>PAYMENT_REFERENCE}" id="fin.ar.payment.post.noteToPayee_">
+						<TextArea rows="6" maxLength="1000" placeholder="{i18nLib>PLACEHOLDER_PAYMENT_REFERENCE}" value="{NoteToPayee}" change="onInputValueChangeSF" id="fin.ar.payment.post.noteToPayee"/>
+					</smartform:GroupElement>
+					<smartform:GroupElement id="fin.ar.payment.post.group_propose_items">
+						<Toolbar class="customerPaymentToolbar" id="fin.ar.payment.post.toolbar_propose_items">
+							<ToolbarSpacer />
+							<Button text="{i18nLib>BUTTON_PROPOSE_ITEMS}" press="onProposeItems" type="Emphasized" id="fin.ar.payment.post.button_propose_items" />
+						</Toolbar>
+					</smartform:GroupElement>
+				</smartform:Group>
+				<smartform:Group visible="false" id="fin.ar.payment.post.invisible_fields">
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.invisibleF4helpFields">
+						<Input value="{Payment/CompanyCode}" id="fin.ar.payment.post.companyCode4gLAccountInput"/>
+						<Input id="fin.ar.payment.post.companyCode4customerAccountInput"/>  
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.invisibleCrrencyFields">
+						<Input value="{TransactionCurrency}" id="fin.ar.payment.post.transactionCurrencyInput"/>
+						<Input value="{CompanyCodeCurrency}" id="fin.ar.payment.post.companyCodeCurrencyInput"/>
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.taxReportingDateInput_">
+						<smartfield:SmartField value="{TaxReportingDate}" change="onInputValueChangeSF" id="fin.ar.payment.post.taxReportingDateInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.headerTextInput_">
+						<smartfield:SmartField value="{AccountingDocumentHeaderText}" change="onInputValueChangeSF" id="fin.ar.payment.post.headerTextInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.exchangeRateForTaxesInput_">
+						<smartfield:SmartField value="{ExchangeRateForTaxes}" change="onInputValueChangeSF" id="fin.ar.payment.post.exchangeRateForTaxesInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.intercompanyTransactionInput_">
+						<smartfield:SmartField value="{IntercompanyTransaction}" change="onInputValueChangeSF" id="fin.ar.payment.post.intercompanyTransactionInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.ledgerGroupInput_">
+						<smartfield:SmartField value="{LedgerGroup}" change="onInputValueChangeSF" id="fin.ar.payment.post.ledgerGroupInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.profitCenterInput_">
+						<smartfield:SmartField value="{Payment/ProfitCenter}" change="onInputValueChangeUpperCase" id="fin.ar.payment.post.profitCenterInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.businessAreaInput_">
+						<smartfield:SmartField value="{Payment/BusinessArea}" change="onInputValueChangeSF" id="fin.ar.payment.post.businessAreaInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.documentItemTextInput_">
+						<smartfield:SmartField value="{Payment/DocumentItemText}" change="onInputValueChangeSF" id="fin.ar.payment.post.documentItemTextInput" />
+					</smartform:GroupElement>
+					<smartform:GroupElement visible="false" id="fin.ar.payment.post.amountInCoCodeCrcyInput_">
+						<smartfield:SmartField value="{BankCharges/AmountInCoCodeCrcy}" change="onInputValueChangeSF" id="fin.ar.payment.post.amountInCoCodeCrcyInput" />
+					</smartform:GroupElement>					
+				</smartform:Group>
+				<!-- TODO Discuss this ExtensionPoints with nico ; Just a workaround for fiori voter -->
+				<core:ExtensionPoint name="fin.ar.payment.post.ExtensionPointHeaderEnd" />
+				<core:ExtensionPoint name="fin.ar.payment.post.ExtensionPointBankDataEnd" />
+			</smartform:SmartForm>
+
+		</semantic:content>
+		<semantic:customFooterContent>
+			<Button id="fin.ar.payment.post.buttonPost" type="Emphasized" text="{i18nLib>BUTTON_POST}" press="onPostPressed" />
+			<Button id="fin.ar.payment.post.buttonSimulate" text="{i18nLib>BUTTON_PREVIEW}" press="onSimulatePressed" />
+		</semantic:customFooterContent>
+	</semantic:FullscreenPage>
+</mvc:View>

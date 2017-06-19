@@ -24,16 +24,9 @@ sap.ui.define([
 				manifest : "json",
 				includes : [
 					"css/style.css",
-					"css/explored.css",
-					"css/titles.css",
-					"css/welcome.css",
-					"css/landingPage.css",
-					"css/apiReference.css",
-					"css/headers.css",
 					"thirdparty/google-code-prettify/prettify.css",
 					"thirdparty/google-code-prettify/prettify.js",
-					"thirdparty/google-code-prettify/lang-css.js",
-					"css/FeedbackRatingFaces.css"
+					"thirdparty/google-code-prettify/lang-css.js"
 				]
 			},
 

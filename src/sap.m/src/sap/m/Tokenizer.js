@@ -115,6 +115,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Fired when the tokens aggregation changed (add / remove token)
 			 */
 			tokenUpdate: {
+				allowPreventDefault : true,
 				parameters: {
 					/**
 					 * Type of tokenChange event.
@@ -406,6 +407,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			selectedTokens = self.getSelectedTokens(),
 			selectedText = "",
 			removedTokens = [],
+			eventResult,
 			token,
 			cutToClipboard = function(oEvent) {
 				if (oEvent.clipboardData) {
@@ -417,22 +419,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oEvent.preventDefault();
 			};
 
+		eventResult = self.fireTokenUpdate({
+			addedTokens : [],
+			removedTokens : removedTokens,
+			type : Tokenizer.TokenUpdateType.Removed
+		});
+
 		for (var i = 0; i < selectedTokens.length; i++) {
 			token = selectedTokens[i];
 			selectedText += (i > 0 ? "\r\n" : "") + token.getText();
-			if (token.getEditable()) {
+			if (eventResult && token.getEditable()) {
 				self.removeToken(token);
 				removedTokens.push(token);
 				token.destroy();
 			}
-		}
-
-		if (removedTokens.length > 0) {
-			self.fireTokenUpdate({
-				addedTokens : [],
-				removedTokens : removedTokens,
-				type : Tokenizer.TokenUpdateType.Removed
-			});
 		}
 
 		if (!selectedText) {
@@ -722,6 +722,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 															   oSuggestionObject, fValidateCallback) {
 		var that = this,
 			bAddTokenSuccess;
+
 		return function(oToken) {
 			if (oToken) { // continue validating
 				aValidators = aValidators.slice(iValidatorIndex + 1);
@@ -961,10 +962,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._removeSelectedTokens = function() {
 		var tokensToBeDeleted = this.getSelectedTokens();
-		var token, i, length;
+		var token,
+			i,
+			length,
+			eventResult;
+
 		length = tokensToBeDeleted.length;
 		if (length === 0) {
 			return this;
+		}
+
+		eventResult = this.fireTokenUpdate({
+			addedTokens : [],
+			removedTokens : tokensToBeDeleted,
+			type: Tokenizer.TokenUpdateType.Removed
+		});
+
+		if (!eventResult) {
+			return;
 		}
 
 		for (i = 0; i < length; i++) {
@@ -982,17 +997,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			type : Tokenizer.TokenChangeType.TokensChanged
 		});
 
-		this.fireTokenUpdate({
-			addedTokens : [],
-			removedTokens : tokensToBeDeleted,
-			type: Tokenizer.TokenUpdateType.Removed
-		});
+		var oParent = this.getParent(),
+			bIsParentMultiInput = oParent && oParent instanceof sap.m.MultiInput;
 
-		var oParent = this.getParent();
-
-		if (oParent && oParent instanceof sap.m.MultiInput && !oParent._bUseDialog) {
+		if (bIsParentMultiInput) {
 			// not set focus to MultiInput in phone mode
-			oParent.$('inner').focus();
+			if (!oParent._bUseDialog) {
+				oParent.$('inner').focus();
+			}
+		} else {
+			this.focus();
 		}
 
 		this._doSelect();
@@ -1080,17 +1094,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	Tokenizer.prototype._onTokenDelete = function(token) {
 		if (token && this.getEditable()) {
+
+			var eventResult = this.fireTokenUpdate({
+				addedTokens : [],
+				removedTokens : [token],
+				type : Tokenizer.TokenUpdateType.Removed
+			});
+
+			if (!eventResult) {
+				return;
+			}
+
 			token.destroy();
+
 			this.fireTokenChange({
 				addedTokens : [],
 				removedTokens : [token],
 				type : Tokenizer.TokenChangeType.TokensChanged
-			});
-
-			this.fireTokenUpdate({
-				addedTokens : [],
-				removedTokens : [token],
-				type : Tokenizer.TokenUpdateType.Removed
 			});
 		}
 	};

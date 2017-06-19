@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+		<script src="resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m, sap.ui.dt, sap.ui.rta"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-resourceroots='{"sap.ui.rta.test.Demo": "./"}'
+				data-sap-ui-theme="sap_belize">
+		</script>
+
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer",
+					"sap/ui/rta/test/Demo/Component"
+				], function (Shell, ComponentContainer, Component) {
+
+					// initialize the UI component
+					new Shell({
+						app: new ComponentContainer({
+							height : "100%",
+							component : new Component({
+								id: "RTADemoApp"
+							})
+						})
+					}).placeAt("content");
+				});
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

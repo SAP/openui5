@@ -484,6 +484,32 @@
 		}
 	}
 
+	// There should be no text ellipsis used in this control labels
+	// BCP: 1770146840
+	QUnit.test("No ellipsis", function (oAssert) {
+		// Arrange
+		var oSwitch = new sap.m.Switch().placeAt("content"),
+			aDomRefs;
+
+		sap.ui.getCore().applyChanges();
+		aDomRefs = oSwitch.$().find(".sapMSwtLabel");
+
+		// Assert
+		oAssert.strictEqual(aDomRefs.length, 2, "There should be 2 dom elements with class sapMSwtLabel");
+
+		// Act
+		aDomRefs.each(function (i, oDomRef) {
+			var oComputedStyle = window.getComputedStyle(oDomRef);
+
+			// Assert
+			oAssert.ok(oComputedStyle.textOverflow !== "ellipsis",
+				"There should be no ellipsis style applied to label " + (i + 1) + " HTML element");
+		});
+
+		// Cleanup
+		oSwitch.destroy();
+	});
+
 	QUnit.module("Updating");
 
 	// test switch disabled

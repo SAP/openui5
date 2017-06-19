@@ -798,7 +798,7 @@ sap.ui.define([
 	/**
 	 * Overrides the setter for the useIconTabBar property
 	 * @param {boolean} bValue
-	 * @returns this
+	 * @returns {sap.uxap.ObjectPageLayout} this
 	 */
 	ObjectPageLayout.prototype.setUseIconTabBar = function (bValue) {
 
@@ -1888,7 +1888,7 @@ sap.ui.define([
 	 * Restores the focus after moving the Navigation bar after moving it between containers
 	 * @private
 	 * @param {function} fnMoveNavBar a function that moves the navigation bar
-	 * @returns this
+	 * @returns {sap.uxap.ObjectPageLayout} this
 	 */
 	ObjectPageLayout.prototype._restoreFocusAfter = function (fnMoveNavBar) {
 		var oCore = sap.ui.getCore(),

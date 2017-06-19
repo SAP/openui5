@@ -1059,6 +1059,85 @@
 				})
 			]
 		});
+
+		var oTokensModel = new sap.ui.model.json.JSONModel({
+			tokens: [
+				{
+					key: 'key1',
+					text: 'Token 1'
+				},
+				{
+					key: 'key2',
+					text: 'Token 2'
+				},
+				{
+					key: 'key3',
+					text: 'Token 3'
+				}
+			]
+		});
+
+
+		var multiInputWithDataBinding = new sap.m.MultiInput({
+			tokenUpdate: function (oEvent) {
+
+				var eventType = oEvent.getParameter("type");
+				if (eventType != sap.m.Tokenizer.TokenUpdateType.Removed) {
+					return;
+				}
+
+				oEvent.preventDefault();
+
+				var token,
+					key,
+					removedTokens = oEvent.getParameter("removedTokens"),
+					model = oEvent.getSource().getModel(),
+					data = model.getData().tokens;
+
+				for (var i = 0; i < removedTokens.length; i++) {
+					token = removedTokens[i];
+					key = token.getKey();
+
+					data = data.filter(function(item) {
+						return item.key != key;
+					});
+				}
+
+				model.setData({
+					tokens: data
+				});
+			},
+			tokens: {
+				path: '/tokens',
+				template: new sap.m.Token({
+					key: '{key}',
+					text: '{text}'
+				})
+			}
+		});
+
+		multiInputWithDataBinding.setModel(oTokensModel);
+		multiInputWithDataBinding.addValidator(function(args) {
+			var text = args.text,
+				model = multiInputWithDataBinding.getModel(),
+				data = model.getData().tokens;
+
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].key == text) {
+					return;
+				}
+			}
+
+			data.push({
+				key: text,
+				text: text
+			});
+
+			model.setData({
+				tokens: data
+			});
+		});
+
 	   //******************************************
 		var app = new sap.m.App("myApp");
 
@@ -1111,7 +1190,9 @@
 					oMultiInput9,
 					readOnlyButton,
 					new sap.m.Label({labelFor: multiInputWithSelectDialog.getId(), text : "MultiInput with SelectDialog", width: "100%"}),
-					multiInputWithSelectDialog
+					multiInputWithSelectDialog,
+					new sap.m.Label({labelFor: multiInputWithDataBinding.getId(), text : "MultiInput with DataBinding", width: "100%"}),
+					multiInputWithDataBinding
 			],
 			showNavButton: true,
 			navButtonPress: function(){ app.to("page2"); }

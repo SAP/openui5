@@ -105,6 +105,14 @@ html.sap-desktop .sapMFFRefresh .sapMBtnTransparent > .sapMBtnIcon, html.sap-pho
 	color: @sapUiContentContrastIconColor;
 }
 
+html.sap-desktop .sapMFFRefresh.sapMBtn:focus > .sapMFocusable {
+	outline-color: @sapUiContentContrastFocusColor;
+}
+
+html.sap-desktop .sapMFF > .sapMTB-Info-CTX.sapMTB > .sapMFFRefresh.sapMBtn:focus .sapMBtnFocusDiv {
+	border-color: @sapUiContentContrastFocusColor;
+}
+
 .sapMFF .sapMTB-Info-CTX.sapMTB > .sapMBtn:active {
     background-color: @sapUiInfobarActiveBackground;
 }

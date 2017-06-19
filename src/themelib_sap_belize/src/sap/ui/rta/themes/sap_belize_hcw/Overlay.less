@@ -1,0 +1,26 @@
+/******************************************************************
+	Style of the RTA Overlays - HCW Theme
+*******************************************************************/
+@_sap_ui_rta_Overlay_HoverBG : fade(@sapUiAccent6, 40%);
+@_sap_ui_rta_Overlay_ActiveBG : fade(@sapUiAccent6, 40%);
+@_sap_ui_rta_Overlay_Border : @sapUiAccent6;
+
+@sapHCStandardFG: @sapUiPageHeaderTextColor;
+@sapHCStandardBG: @sapUiPageHeaderBackground;
+
+.sapUiDtOverlay {
+	&:focus {
+		outline: none;
+		&:before {
+			border-width: 2px;
+		}
+	}
+}
+
+.sapUiRta {
+	.sapUiRtaOverlayHover {
+		&:after {
+			border-width: 2px;
+		}
+	}
+}

@@ -30,8 +30,6 @@ sap.ui.define([
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
-				ControlsInfo.listeners.push(this._loadSample.bind(this));
-
 				this.getView().setModel(new JSONModel());
 			},
 
@@ -100,15 +98,11 @@ sap.ui.define([
 
 			_TAB_KEYS: ["samples", "about"],
 
-			_loadSample: function () {
-
-				if (!ControlsInfo.data) {
-					return;
-				}
+			_loadSample: function (oControlsData) {
 
 				var sNewId = this._sNewId;
 
-				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
 					return entity.id === sNewId;
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
@@ -127,7 +121,7 @@ sap.ui.define([
 					}
 
 					// get view data
-					oData = this._getViewData(sNewId, oDoc, oEntity);
+					oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
 
 					// set view model
 					this.getView().getModel().setData(oData, false /* no merge with previous data */);
@@ -161,7 +155,9 @@ sap.ui.define([
 				this._sNewId = oEvt.getParameter("arguments").id;
 				this._sNewTab = oEvt.getParameter("arguments").sectionTab;
 
-				this._loadSample();
+				ControlsInfo.loadData().then(function(oData) {
+					this._loadSample(oData);
+				}.bind(this));
 			},
 
 			onToggleFullScreen: function (oEvt) {
@@ -169,10 +165,10 @@ sap.ui.define([
 			},
 
 			// ========= internal ===========================================================================
-			_getViewData: function (sId, oDoc, oEntity) {
+			_getViewData: function (sId, oDoc, oEntity, oControlsData) {
 
 				// convert docu
-				var oData = this._convertEntityInfo(sId, oDoc),
+				var oData = this._convertEntityInfo(sId, oDoc, oControlsData),
 					bShouldShowSamplesSection = false,
 					iSamplesCount = 0;
 
@@ -202,7 +198,7 @@ sap.ui.define([
 				return oData;
 			},
 
-			_convertEntityInfo: function (sId, oDoc) {
+			_convertEntityInfo: function (sId, oDoc, oControlsData) {
 
 				// create skeleton data structure
 				var oData = {
@@ -225,7 +221,7 @@ sap.ui.define([
 					count: {
 						samples: 0
 					},
-					appComponent: this._getControlComponent(sId)
+					appComponent: this._getControlComponent(sId, oControlsData)
 				};
 
 				// no documentation !

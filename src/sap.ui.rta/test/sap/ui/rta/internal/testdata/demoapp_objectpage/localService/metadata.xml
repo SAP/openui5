@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="salesOrderDemoModel"
+			sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="SalesOrder" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SalesOrderId" />
+				</Key>
+				
+				<Property Name="SalesOrderId" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:label="Sales Order ID" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				
+				<Property Name="Type" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:label="Type" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				
+				<Property Name="SoldToParty" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Sold-To Party" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="Address" Type="salesOrderDemoModel.AddressBlock" Nullable="false"/>
+					
+				<Property Name="ContactName" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Contact" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="ResponsibleName" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Responsible" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="ExternalReferenceNumber" Type="Edm.String" Nullable="false"
+					MaxLength="256" sap:label="External Reference" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="MobileNumber" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Mobile" sap:creatable="false" sap:updatable="false" 
+					sap:sortable="false" />
+					
+				<Property Name="RequestDeliveryDate" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Req. Delivery Date"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="PostingDate" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="Posting Date"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="ShippingStatus" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:label="Status" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				
+				<Property Name="ModeOfTransport" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Mode of Transport" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="PhoneNumber" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Phone" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="ShippingConditions" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Shipping Conditions" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+					
+				<Property Name="ShipToParty" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:label="Ship-To Party" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+			</EntityType>
+			
+			<ComplexType Name="AddressBlock">
+        		<Property Name="Street" Type="Edm.String" Nullable="false" MaxLength="40" 
+        			sap:label="Street" sap:quickinfo="Accounting Document Number" 
+        			sap:creatable="false" sap:updatable="true" sap:sortable="false"
+					sap:filterable="false">
+        			<Documentation>
+	        			<Summary>The Street for the Sales Order</Summary>
+        			</Documentation>
+        		</Property>
+    			<Property Name="City" Type="Edm.String" Nullable="false" MaxLength="40" 
+    				sap:label="City" sap:creatable="false" sap:updatable="true" 
+    				sap:sortable="false" sap:filterable="false">
+		          <Documentation>
+		            <Summary>The City for the Sales Order</Summary>
+		            <LongDescription/>
+		          </Documentation>
+		        </Property>
+		        <Property Name="ZipCode" Type="Edm.String" Nullable="false" MaxLength="40" 
+		        	sap:label="Zip Code" sap:heading="Year" sap:creatable="false" 
+		        	sap:updatable="true" sap:sortable="false" sap:filterable="false">
+		          <Documentation>
+		            <Summary>The Zip Code for the Sales Order</Summary>
+		            <LongDescription/>
+		          </Documentation>
+		    	</Property>
+    	 </ComplexType>
+
+			<EntityContainer Name="salesOrderDemoModel_Entities"
+				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="SalesOrders" EntityType="salesOrderDemoModel.SalesOrder"
+					sap:creatable="false" sap:updatable="true" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1" />
+			</EntityContainer>
+
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

@@ -65,12 +65,12 @@ sap.ui.define([
 			onInit : function () {
 				var oRouter = this.getRouter(),
 					oEntityModel, oDeviceModel, oFilterModel,
-					fnOnDataReady = function () {
+					fnOnDataReady = function (oControlsData) {
 						this._oView.getModel().setData({
-							entityCount : ControlsInfo.data.entityCount,
-							entities : ControlsInfo.data.entities
+							entityCount : oControlsData.entityCount,
+							entities : oControlsData.entities
 						});
-						this.getModel("filter").setData(ControlsInfo.data.filter);
+						this.getModel("filter").setData(oControlsData.filter);
 						this._toggleListItem(this._getItemToSelect(), true);
 					}.bind(this);
 
@@ -80,8 +80,7 @@ sap.ui.define([
 				// Cache view reference
 				this._oView = this.getView();
 
-				ControlsInfo.listeners.push(fnOnDataReady);
-				ControlsInfo.init();
+				ControlsInfo.loadData().then(fnOnDataReady);
 
 				oEntityModel = new JSONModel();
 				oEntityModel.setSizeLimit(100000);
@@ -110,13 +109,15 @@ sap.ui.define([
 				oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
 
 				this.LIST_SCROLL_DURATION = 0; // ms
-				this._getList().addEventDelegate({
-					onAfterRendering : function () {
-						var oSelectedItem = this._getList().getSelectedItem();
+				this._getPage().addEventDelegate({
+					onAfterRendering : function() {
+						jQuery.sap.delayedCall(0, this, function() {
+							var oSelectedItem = this._getList().getSelectedItem();
 
-						if (oSelectedItem) {
-							this._scrollToListItem(oSelectedItem);
-						}
+							if (oSelectedItem) {
+								this._scrollToListItem(oSelectedItem);
+							}
+						});
 					}.bind(this)
 				});
 
@@ -131,9 +132,11 @@ sap.ui.define([
 
 				this._oViewSettings.compactOn = oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
 					this._oRootView.hasStyleClass("sapUiSizeCompact");
+				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
 
 				// Keep default settings for compact mode up to date
 				this._oDefaultSettings.compactOn = this._oViewSettings.compactOn;
+				this._oDefaultSettings.rtl = this._oViewSettings.rtl;
 
 				this._initListSettings();
 			},
@@ -143,7 +146,8 @@ sap.ui.define([
 				if (["group", "entity", "sample", "code", "code_file", "controls", "controlsMaster"].indexOf(sRouteName) === -1) {
 					// Reset view settings
 					this._applyAppConfiguration(this._oDefaultSettings.themeActive,
-						this._oDefaultSettings.compactOn);
+						this._oDefaultSettings.compactOn,
+						this._oDefaultSettings.rtl);
 
 					// When we restore the default settings we don't need the event any more
 					this.getRouter().detachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
@@ -167,7 +171,7 @@ sap.ui.define([
 			 * @param {boolean} bCompactOn compact mode
 			 * @private
 			 */
-			_applyAppConfiguration: function(sThemeActive, bCompactOn){
+			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
 				var oSampleFrameContent,
 					$SampleFrame;
 
@@ -177,12 +181,15 @@ sap.ui.define([
 				this._oRootView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
 					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
 
+				this._oCore.getConfiguration().setRTL(bRTL);
+
 				// Apply theme and compact mode also to iframe samples
 				$SampleFrame = jQuery("#sampleFrame");
 				if ($SampleFrame.length > 0) {
 					oSampleFrameContent = $SampleFrame[0].contentWindow;
 					if (oSampleFrameContent) {
 						oSampleFrameContent.sap.ui.getCore().applyTheme(sThemeActive);
+						oSampleFrameContent.sap.ui.getCore().getConfiguration().setRTL(bRTL);
 						oSampleFrameContent.jQuery('body').toggleClass("sapUiSizeCompact", bCompactOn)
 							.toggleClass("sapUiSizeCozy", !bCompactOn);
 					}
@@ -517,15 +524,13 @@ sap.ui.define([
 					var oAppSettings = this._oCore.getConfiguration(),
 						oThemeSelect = this._oCore.byId("ThemeSelect"),
 						sUriParamTheme = jQuery.sap.getUriParameters().get("sap-theme"),
-						bCompactMode = this._oViewSettings.compactOn,
-						bRTL = this._oViewSettings.rtl,
-						sUriParamRTL = jQuery.sap.getUriParameters().get("sap-ui-rtl");
+						bCompactMode = this._oViewSettings.compactOn;
 
 					// Theme select
 					oThemeSelect.setSelectedKey(sUriParamTheme ? sUriParamTheme : oAppSettings.getTheme());
 
 					// RTL
-					this._oCore.byId("RTLSwitch").setState(sUriParamRTL ? sUriParamRTL === "true" : bRTL);
+					this._oCore.byId("RTLSwitch").setState(oAppSettings.getRTL());
 
 					// Compact mode select
 					this._oCore.byId("CompactModeSwitch").setState(bCompactMode);
@@ -575,12 +580,10 @@ sap.ui.define([
 				this._oViewSettings.rtl = bRTL;
 
 				// handle settings change
-				this._applyAppConfiguration(sTheme, bCompact);
+				this._applyAppConfiguration(sTheme, bCompact, bRTL);
 
 				// If we are navigating outside the Explored App section: view settings should be reset
 				this.getRouter().attachBeforeRouteMatched(this._viewSettingsResetOnNavigation, this);
-
-				sap.ui.getCore().getConfiguration().setRTL(bRTL);
 			}
 		});
 	}

@@ -471,10 +471,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			/* This is the font used in sap.ui.core.Icon */
 			sFontFace = "@font-face {" +
 							"font-family: 'SAP-icons';" +
-							"src: local('SAP-icons')," + /* local installed font when untrusted font is disabled */
-							"url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+							"src: url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
 							"url('" + sFontPath + "SAP-icons.woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
-							"url('" + sFontPath + "SAP-icons.ttf') format('truetype');" + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+							"url('" + sFontPath + "SAP-icons.ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+							"local('SAP-icons');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
 							"font-weight: normal;" +
 							"font-style: normal;" +
 						"}";

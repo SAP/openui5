@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m">
+	<RatingIndicator value="{= ${Price} > 500 ? 1:5}" enabled="false"></RatingIndicator>
+	<Text text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xfld.BreakoutColumnContent}"></Text>
+</core:FragmentDefinition>

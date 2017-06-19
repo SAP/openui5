@@ -1,0 +1,4000 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="com.sap.GL.zrha"
+			sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="Company2" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Bukrs" />
+				</Key>
+				<Property Name="Bukrs" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:label="Company Code" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Butxt" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:label="Company Name" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Land1" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Country" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+			</EntityType>
+			<EntityType Name="Company" sap:label="Company"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Bukrs" />
+				</Key>
+				<Property Name="Bukrs" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:text="Butxt" sap:label="Company Code"
+					sap:creatable="false" sap:updatable="false" />
+				<Property Name="Butxt" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:label="Company Name" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="Ort01" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:label="City" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Waers" Type="Edm.String" Nullable="false"
+					MaxLength="5" sap:label="Currency" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:semantics="currency-code" />
+			</EntityType>
+			<EntityType Name="LineItems" sap:label="Line Item"
+				sap:semantics="aggregate" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Id" />
+				</Key>
+				<Property Name="Id" Type="Edm.String" Nullable="false"
+					sap:visible="false" sap:label="SADL Key Field" sap:creatable="false" />
+				<Property Name="Bukrs" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:aggregation-role="dimension"
+					sap:required-in-filter="true" sap:label="Company Code"
+					sap:creatable="false" />
+				<Property Name="Gjahr" Type="Edm.String" Nullable="false"
+          			MaxLength="4" sap:aggregation-role="dimension" sap:display-format="NonNegative"
+          			sap:required-in-filter="true" sap:label="Fiscal Year"
+          			sap:creatable="false" />					
+				<Property Name="Kunnr" Type="Edm.String" MaxLength="10"
+					sap:aggregation-role="dimension" sap:text="Name1" sap:label="Customer"
+					sap:creatable="false" />
+				<Property Name="Dmbtr" Type="Edm.Decimal" Precision="25"
+					Scale="2" sap:aggregation-role="measure" sap:unit="Hwaer"
+					sap:label="Amount in LC" sap:creatable="false" sap:updatable="false" />
+				<Property Name="Hwaer" Type="Edm.String" MaxLength="5"
+					sap:aggregation-role="dimension" sap:display-format="UpperCase"
+					sap:label="Currency" sap:creatable="false" sap:updatable="false"
+					sap:semantics="currency-code" />
+				<Property Name="Name1" Type="Edm.String" MaxLength="35"
+					sap:label="Name" sap:creatable="false" sap:updatable="false" />
+				<Property Name="BUDAT" Type="Edm.DateTime" Precision="0"
+					sap:aggregation-role="dimension" sap:display-format="Date"
+					sap:filter-restriction="interval" sap:label="Posting Date"
+					sap:creatable="false" sap:updatable="false" />
+				<Property Name="BLDAT" Type="Edm.DateTime" Precision="0"
+					sap:aggregation-role="dimension" sap:display-format="Date"
+					sap:label="Document Date" sap:creatable="false" sap:updatable="false" />
+				<Property Name="Cnt" Type="Edm.Int32" sap:aggregation-role="measure"
+					sap:label="Count" sap:creatable="false" sap:updatable="false"
+					sap:filterable="false" />
+				<Property Name="MyBoolean" Type="Edm.Boolean"
+					Nullable="false" sap:display-format="UpperCase" sap:label="My Boolean"
+					sap:creatable="false" sap:updatable="true" sap:sortable="true"
+					sap:filterable="true"/>
+				<Property Name="YourBoolean" Type="Edm.Boolean"
+					Nullable="false" sap:display-format="UpperCase" sap:label="Your Boolean"
+					sap:creatable="false" sap:updatable="true" sap:sortable="false"
+					sap:filterable="true"/>					
+			</EntityType>
+			<EntityType Name="VL_SH_H_T001" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:text="BUTXT"
+					sap:label="Company Code" />
+				<Property Name="BUTXT" Type="Edm.String" MaxLength="25"
+					sap:label="Company Name" />
+				<Property Name="ORT01" Type="Edm.String" MaxLength="25"
+					sap:label="City" />
+				<Property Name="WAERS" Type="Edm.String" MaxLength="5"
+					sap:display-format="UpperCase" sap:label="Currency" sap:semantics="currency-code" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIA" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="PSTLZ" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:text="MCOD1"
+					sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBID" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="PSTLZ" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIE" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="LAND1" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="LAND1" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIL" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="LAND1" />
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="LAND1" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="MCOD1" Type="Edm.String" MaxLength="25"
+					sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="MCOD3" Type="Edm.String" MaxLength="25"
+					sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIP" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="PERNR" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+				<Property Name="PERNR" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="NonNegative" sap:label="Personnel No." />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIT" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="STCD1" Type="Edm.String" MaxLength="16"
+					sap:display-format="UpperCase" sap:label="Tax Number 1" />
+				<Property Name="STCD2" Type="Edm.String" MaxLength="11"
+					sap:display-format="UpperCase" sap:label="Tax Number 2" />
+				<Property Name="STCD3" Type="Edm.String" MaxLength="18"
+					sap:display-format="UpperCase" sap:label="Tax Number 3" />
+				<Property Name="STCD4" Type="Edm.String" MaxLength="18"
+					sap:display-format="UpperCase" sap:label="Tax Number 4" />
+				<Property Name="STCD5" Type="Edm.String" MaxLength="60"
+					sap:display-format="UpperCase" sap:label="Tax Number 5" />
+				<Property Name="STCEG" Type="Edm.String" MaxLength="20"
+					sap:display-format="UpperCase" sap:label="VAT Registration No." />
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="MCOD1" Type="Edm.String" MaxLength="25"
+					sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIX" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="MC_CITY1" />
+					<PropertyRef Name="MC_FIRSTNAME" />
+					<PropertyRef Name="MC_NAME" />
+					<PropertyRef Name="MC_STREET" />
+					<PropertyRef Name="PARNR" />
+					<PropertyRef Name="POST_CODE2" />
+					<PropertyRef Name="PO_BOX" />
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="NAME" />
+					<PropertyRef Name="FIRSTNAME" />
+					<PropertyRef Name="SORT1" />
+					<PropertyRef Name="SORT2" />
+					<PropertyRef Name="STREET" />
+					<PropertyRef Name="HOUSE_NUM1" />
+					<PropertyRef Name="POST_CODE1" />
+					<PropertyRef Name="CITY1" />
+					<PropertyRef Name="COUNTRY" />
+					<PropertyRef Name="REGION" />
+				</Key>
+				<Property Name="MC_CITY1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City"
+					sap:filterable="false" />
+				<Property Name="MC_FIRSTNAME" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="First name"
+					sap:filterable="false" />
+				<Property Name="MC_NAME" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Name"
+					sap:filterable="false" />
+				<Property Name="MC_STREET" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Street"
+					sap:filterable="false" />
+				<Property Name="PARNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="NonNegative" sap:label="Contact Person"
+					sap:filterable="false" />
+				<Property Name="POST_CODE2" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="PO Box Post Cde"
+					sap:filterable="false" />
+				<Property Name="PO_BOX" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="PO Box"
+					sap:filterable="false" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+				<Property Name="NAME" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Name" />
+				<Property Name="FIRSTNAME" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="First name" />
+				<Property Name="SORT1" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:display-format="UpperCase" sap:label="Search Term 1" />
+				<Property Name="SORT2" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:display-format="UpperCase" sap:label="Search Term 2" />
+				<Property Name="STREET" Type="Edm.String" Nullable="false"
+					MaxLength="60" sap:label="Street" />
+				<Property Name="HOUSE_NUM1" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:label="House Number" />
+				<Property Name="POST_CODE1" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" />
+				<Property Name="CITY1" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="City" />
+				<Property Name="COUNTRY" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="REGION" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:display-format="UpperCase" sap:label="Region" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIY" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_FM_DEBI_FMPSOIS"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="PSOIS" />
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="PSOIS" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:display-format="UpperCase" sap:label="SLAPrepr.Proced" />
+				<Property Name="PSOEA" Type="Edm.String" MaxLength="8"
+					sap:display-format="UpperCase" sap:label="Revnue Type" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_JVH_VPTNR" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="PARTN" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="VNAME" />
+					<PropertyRef Name="EGRUP" />
+				</Key>
+				<Property Name="PARTN" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Partner" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="VNAME" Type="Edm.String" Nullable="false"
+					MaxLength="6" sap:display-format="UpperCase" sap:label="Joint Venture" />
+				<Property Name="EGRUP" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:display-format="UpperCase" sap:label="Equity Group" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIK" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KTOKD" />
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="PSTLZ" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="KTOKD" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Account Group" />
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIM" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ROLETYP" />
+				</Key>
+				<Property Name="NAME1" Type="Edm.String" MaxLength="40"
+					sap:label="Name" sap:filterable="false" />
+				<Property Name="NAME2" Type="Edm.String" MaxLength="40"
+					sap:label="Name 2" sap:filterable="false" />
+				<Property Name="ROLETYP" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Role Category"
+					sap:filterable="false" />
+				<Property Name="BUKRS" Type="Edm.String" MaxLength="4"
+					sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="SMIVE" Type="Edm.String" MaxLength="13"
+					sap:display-format="UpperCase" sap:label="Lease-Out" />
+				<Property Name="KONTOBV" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="Bank proc.acct." />
+				<Property Name="E_SMIVE" Type="Edm.String" MaxLength="13"
+					sap:display-format="UpperCase" sap:label="Collective LO" />
+				<Property Name="SWENR" Type="Edm.String" MaxLength="8"
+					sap:display-format="UpperCase" sap:label="Business Entity" />
+				<Property Name="SMENR" Type="Edm.String" MaxLength="8"
+					sap:display-format="UpperCase" sap:label="Rental Unit" />
+				<Property Name="SMVART" Type="Edm.String" MaxLength="4"
+					sap:display-format="UpperCase" sap:label="Contract type" />
+				<Property Name="DMIBEG" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Rental start" />
+				<Property Name="DMIEND" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Rental end" />
+				<Property Name="DKUEZU" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Notice per" />
+				<Property Name="KUNNR" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIS" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="VKORG" />
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="PSTLZ" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="VTWEG" />
+					<PropertyRef Name="SPART" />
+				</Key>
+				<Property Name="VKORG" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Sales Org." />
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+				<Property Name="VTWEG" Type="Edm.String" Nullable="false"
+					MaxLength="2" sap:display-format="UpperCase" sap:label="Distr. Channel" />
+				<Property Name="SPART" Type="Edm.String" Nullable="false"
+					MaxLength="2" sap:display-format="UpperCase" sap:label="Division" />
+				<Property Name="VKBUR" Type="Edm.String" MaxLength="4"
+					sap:display-format="UpperCase" sap:label="Sales Office" />
+				<Property Name="VKGRP" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Sales Group" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIW" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SORTL" />
+					<PropertyRef Name="PSTLZ" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="WERKS" />
+					<PropertyRef Name="KUNNR" />
+				</Key>
+				<Property Name="SORTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Search Term" />
+				<Property Name="LAND1" Type="Edm.String" MaxLength="3"
+					sap:display-format="UpperCase" sap:label="Country" />
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="WERKS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Plant" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIZ" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KNRZE" />
+					<PropertyRef Name="MCOD1" />
+					<PropertyRef Name="MCOD3" />
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="KNRZE" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Head Office" />
+				<Property Name="MCOD1" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Customer Name" />
+				<Property Name="MCOD3" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="City" />
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_DEBIC" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="OBTAB" />
+				</Key>
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer"
+					sap:filterable="false" />
+				<Property Name="OBTAB" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Table"
+					sap:filterable="false" />
+			</EntityType>
+			<EntityType Name="VL_SH_REKUNNRCN" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KUNNR" />
+					<PropertyRef Name="NAME_FIRST" />
+					<PropertyRef Name="NAME_LAST" />
+					<PropertyRef Name="NAME_ORG1" />
+					<PropertyRef Name="NAME_ORG2" />
+					<PropertyRef Name="ROLE" />
+					<PropertyRef Name="RECNNR" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="RECNTYPE" />
+					<PropertyRef Name="MC_NAME1" />
+					<PropertyRef Name="MC_NAME2" />
+					<PropertyRef Name="RECNBEG" />
+					<PropertyRef Name="RECNENDABS" />
+					<PropertyRef Name="RECNNOTPER" />
+					<PropertyRef Name="RECNTXTOLD" />
+					<PropertyRef Name="RECNNRCOLLECT" />
+					<PropertyRef Name="RECNTXT" />
+				</Key>
+				<Property Name="KUNNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer"
+					sap:filterable="false" />
+				<Property Name="NAME_FIRST" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="First name" sap:filterable="false" />
+				<Property Name="NAME_LAST" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Last name" sap:filterable="false" />
+				<Property Name="NAME_ORG1" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Name 1" sap:filterable="false" />
+				<Property Name="NAME_ORG2" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Name 2" sap:filterable="false" />
+				<Property Name="ROLE" Type="Edm.String" Nullable="false"
+					MaxLength="6" sap:display-format="UpperCase" sap:label="BP Role"
+					sap:filterable="false" />
+				<Property Name="RECNNR" Type="Edm.String" Nullable="false"
+					MaxLength="13" sap:display-format="UpperCase" sap:label="Contract" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="RECNTYPE" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Contract Type" />
+				<Property Name="MC_NAME1" Type="Edm.String" Nullable="false"
+					MaxLength="35" sap:display-format="UpperCase" sap:label="Name 1/last nm" />
+				<Property Name="MC_NAME2" Type="Edm.String" Nullable="false"
+					MaxLength="35" sap:display-format="UpperCase" sap:label="Name2/first nme" />
+				<Property Name="RECNBEG" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Contract Start" />
+				<Property Name="RECNENDABS" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="End of Term" />
+				<Property Name="RECNNOTPER" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Notice Per" />
+				<Property Name="RECNTXTOLD" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:display-format="UpperCase" sap:label="Old contract" />
+				<Property Name="RECNNRCOLLECT" Type="Edm.String" Nullable="false"
+					MaxLength="13" sap:display-format="UpperCase" sap:label="Main Contract" />
+				<Property Name="RECNTXT" Type="Edm.String" Nullable="false"
+					MaxLength="80" sap:label="Contract name" />
+			</EntityType>
+			<EntityType Name="VL_SH_REKUNNR_VIRAINV"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="CUSTOMER" />
+					<PropertyRef Name="NAME1" />
+					<PropertyRef Name="NAME2" />
+					<PropertyRef Name="ORT01" />
+					<PropertyRef Name="PARTNER" />
+					<PropertyRef Name="PSTLZ" />
+					<PropertyRef Name="INVNO" />
+					<PropertyRef Name="FISC_YEAR" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="CUSTOMER" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Customer"
+					sap:filterable="false" />
+				<Property Name="NAME1" Type="Edm.String" Nullable="false"
+					MaxLength="35" sap:label="Name" sap:filterable="false" />
+				<Property Name="NAME2" Type="Edm.String" Nullable="false"
+					MaxLength="35" sap:label="Name 2" sap:filterable="false" />
+				<Property Name="ORT01" Type="Edm.String" Nullable="false"
+					MaxLength="35" sap:label="City" sap:filterable="false" />
+				<Property Name="PARTNER" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="BusinessPartner"
+					sap:filterable="false" />
+				<Property Name="PSTLZ" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Postal Code"
+					sap:filterable="false" />
+				<Property Name="INVNO" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="NonNegative" sap:label="Invoice Number" />
+				<Property Name="FISC_YEAR" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="NonNegative" sap:label="Fiscal Year" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_H_T074U" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="KOART" />
+					<PropertyRef Name="UMSKZ" />
+				</Key>
+				<Property Name="KOART" Type="Edm.String" Nullable="false"
+					MaxLength="1" sap:display-format="UpperCase" sap:label="Account Type" />
+				<Property Name="UMSKZ" Type="Edm.String" Nullable="false"
+					MaxLength="1" sap:display-format="UpperCase" sap:label="Special G/L ind" />
+				<Property Name="LTEXT" Type="Edm.String" MaxLength="30"
+					sap:label="Description" />
+			</EntityType>
+			<EntityType Name="VL_SH_H_T003" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BLART" />
+				</Key>
+				<Property Name="BLART" Type="Edm.String" Nullable="false"
+					MaxLength="2" sap:display-format="UpperCase" sap:label="Document Type" />
+				<Property Name="LTEXT" Type="Edm.String" MaxLength="20"
+					sap:label="Document Type Name" />
+			</EntityType>
+			<EntityType Name="VL_CT_TCURC" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="WAERS" />
+				</Key>
+				<Property Name="WAERS" Type="Edm.String" Nullable="false"
+					MaxLength="5" sap:display-format="UpperCase" sap:label="Currency"
+					sap:semantics="currency-code" />
+				<Property Name="LTEXT" Type="Edm.String" MaxLength="40"
+					sap:label="Long Text" />
+			</EntityType>
+			<EntityType Name="VL_SH_FICEPC" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="PRCTR" />
+					<PropertyRef Name="DATBI" />
+					<PropertyRef Name="KOKRS" />
+				</Key>
+				<Property Name="PRCTR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Profit Center" />
+				<Property Name="DATBI" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Valid To" />
+				<Property Name="KOKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="CO Area" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CA_NO"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="KTOPL" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" MaxLength="50"
+					sap:label="Long Text" sap:filterable="false" />
+				<Property Name="SAKAN" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="G/L account" />
+				<Property Name="KTOPL" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Chart of Accts" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CA_TEXT"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="SPRAS" />
+					<PropertyRef Name="KTOPL" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" MaxLength="50"
+					sap:label="Long Text" sap:filterable="false" />
+				<Property Name="MCOD1" Type="Edm.String" MaxLength="25"
+					sap:display-format="UpperCase" sap:label="Long text" />
+				<Property Name="SPRAS" Type="Edm.String" Nullable="false"
+					MaxLength="2" sap:label="Language" />
+				<Property Name="KTOPL" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Chart of Accts" />
+				<Property Name="SAKAN" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="G/L account" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CA_FLAGS"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="KTOPL" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" MaxLength="50"
+					sap:label="Long Text" sap:filterable="false" />
+				<Property Name="SAKAN" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="G/L account" />
+				<Property Name="KTOPL" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Chart of Accts" />
+				<Property Name="XLOEV" Type="Edm.Boolean" sap:label="Deletion flag" />
+				<Property Name="XSPEB" Type="Edm.Boolean" sap:label="Posting Block" />
+				<Property Name="XSPEA" Type="Edm.Boolean" sap:label="Creation block" />
+				<Property Name="XSPEP" Type="Edm.Boolean" sap:label="Planning block" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CA_KEY"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="SCHLW" />
+					<PropertyRef Name="SPRAS" />
+					<PropertyRef Name="KTOPL" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" MaxLength="50"
+					sap:label="Long Text" sap:filterable="false" />
+				<Property Name="SCHLW" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Keyword" />
+				<Property Name="SPRAS" Type="Edm.String" Nullable="false"
+					MaxLength="2" sap:label="Language" />
+				<Property Name="KTOPL" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Chart of Accts" />
+				<Property Name="SAKAN" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="G/L account" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CC_NO"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="SAKAN" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" MaxLength="50"
+					sap:label="Long Text" sap:filterable="false" />
+				<Property Name="SAKAN" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L account" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CC_TEXT"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="TXT50" />
+					<PropertyRef Name="MCODF" />
+					<PropertyRef Name="SPRAS" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="SAKAN" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" Nullable="false"
+					MaxLength="50" sap:label="Long Text" sap:filterable="false" />
+				<Property Name="MCODF" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Long text" />
+				<Property Name="SPRAS" Type="Edm.String" Nullable="false"
+					MaxLength="2" sap:label="Language" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="SAKAN" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L account" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CC_FLAGS"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="TXT50" />
+					<PropertyRef Name="XLOEV_KTP" />
+					<PropertyRef Name="XSPEB_KTP" />
+					<PropertyRef Name="SAKAN" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="XLOEV" />
+					<PropertyRef Name="XSPEB" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" Nullable="false"
+					MaxLength="50" sap:label="Long Text" sap:filterable="false" />
+				<Property Name="XLOEV_KTP" Type="Edm.Boolean" Nullable="false"
+					sap:label="Del.flag for ch/acct" sap:filterable="false" />
+				<Property Name="XSPEB_KTP" Type="Edm.Boolean" Nullable="false"
+					sap:label="Ch/acct post.blk" sap:filterable="false" />
+				<Property Name="SAKAN" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L account" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="XLOEV" Type="Edm.Boolean" Nullable="false"
+					sap:label="Deletion flag" />
+				<Property Name="XSPEB" Type="Edm.Boolean" Nullable="false"
+					sap:label="Posting Block" />
+			</EntityType>
+			<EntityType Name="VL_SH_GL_ACCT_CC_ALTERNATIV_NO"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="SAKNR" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="SAKAN" />
+				</Key>
+				<Property Name="SAKNR" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L Account"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" MaxLength="50"
+					sap:label="Long Text" sap:filterable="false" />
+				<Property Name="ALTKT" Type="Edm.String" MaxLength="10"
+					sap:display-format="UpperCase" sap:label="Altern. Account" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="SAKAN" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="G/L account" />
+			</EntityType>
+			<EntityType Name="VL_SH_H_TGSB" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="GSBER" />
+				</Key>
+				<Property Name="GSBER" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Business Area" />
+				<Property Name="GTEXT" Type="Edm.String" MaxLength="30"
+					sap:label="BA Description" />
+			</EntityType>
+			<EntityType Name="VL_CH_AUFK" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="AUFNR" />
+				</Key>
+				<Property Name="AUFNR" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Order" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLA" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="MCOA1" />
+					<PropertyRef Name="KTOGR" />
+					<PropertyRef Name="AKTIV" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class" />
+				<Property Name="MCOA1" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Description" />
+				<Property Name="KTOGR" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Account determ." />
+				<Property Name="AKTIV" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Capitalized on" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLC" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS3" />
+					<PropertyRef Name="KOSTL" />
+					<PropertyRef Name="WERKS" />
+					<PropertyRef Name="GSBER" />
+					<PropertyRef Name="MCOA1" />
+					<PropertyRef Name="ADATU" />
+					<PropertyRef Name="BDATUZ" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+				</Key>
+				<Property Name="BUKRS3" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="KOSTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Cost Center" />
+				<Property Name="WERKS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Plant" />
+				<Property Name="GSBER" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Business Area" />
+				<Property Name="MCOA1" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Description" />
+				<Property Name="ADATU" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Valid from" />
+				<Property Name="BDATUZ" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Valid to" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLI" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="INVNR" />
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="MCOA1" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="INVNR" Type="Edm.String" Nullable="false"
+					MaxLength="25" sap:display-format="UpperCase" sap:label="Inventory no." />
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class" />
+				<Property Name="MCOA1" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Description" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLM" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="EAUFN" />
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="MCOA1" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="EAUFN" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Inv. order" />
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class" />
+				<Property Name="MCOA1" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Description" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLP" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="POSID" />
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="MCOA1" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+					<PropertyRef Name="BUKRS" />
+				</Key>
+				<Property Name="POSNR" Type="Edm.String" MaxLength="24"
+					sap:display-format="NonNegative" sap:label="WBS element"
+					sap:filterable="false" />
+				<Property Name="POSID" Type="Edm.String" Nullable="false"
+					MaxLength="24" sap:display-format="UpperCase" sap:label="WBS Element" />
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class" />
+				<Property Name="MCOA1" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Description" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLR" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="MCOA1" />
+					<PropertyRef Name="KTOGR" />
+					<PropertyRef Name="AKTIV" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class" />
+				<Property Name="MCOA1" Type="Edm.String" Nullable="false"
+					MaxLength="30" sap:display-format="UpperCase" sap:label="Description" />
+				<Property Name="KTOGR" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Account determ." />
+				<Property Name="AKTIV" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Capitalized on" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+			</EntityType>
+			<EntityType Name="VL_SH_AANLF" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+					<PropertyRef Name="GEBER" />
+					<PropertyRef Name="FKBER" />
+					<PropertyRef Name="GRANT_NBR" />
+				</Key>
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No." />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber" />
+				<Property Name="GEBER" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Fund" />
+				<Property Name="FKBER" Type="Edm.String" Nullable="false"
+					MaxLength="16" sap:display-format="UpperCase" sap:label="Functional Area" />
+				<Property Name="GRANT_NBR" Type="Edm.String" Nullable="false"
+					MaxLength="20" sap:display-format="UpperCase" sap:label="Grant" />
+			</EntityType>
+			<EntityType Name="VL_SH_FAA_SH_SES_QUICK"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="BUSINESS_OBJECT" />
+					<PropertyRef Name="OBJECT_TYPE" />
+					<PropertyRef Name="TXT50" />
+					<PropertyRef Name="SxRPxSEARCH_TERM" />
+					<PropertyRef Name="SxRPxMODE_FUZZY" />
+				</Key>
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class"
+					sap:filterable="false" />
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No."
+					sap:filterable="false" />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber"
+					sap:filterable="false" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"
+					sap:filterable="false" />
+				<Property Name="BUSINESS_OBJECT" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="Business Object" sap:filterable="false" />
+				<Property Name="OBJECT_TYPE" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Object Type"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" Nullable="false"
+					MaxLength="50" sap:label="Description" sap:filterable="false" />
+				<Property Name="SxRPxSEARCH_TERM" Type="Edm.String"
+					Nullable="false" MaxLength="45" sap:label="Full Txt Search" />
+				<Property Name="SxRPxMODE_FUZZY" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:label="Fuzzy Mode" />
+			</EntityType>
+			<EntityType Name="VL_SH_FAA_SH_SES_ADVANCED"
+				sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ANLN1" />
+					<PropertyRef Name="ANLN2" />
+					<PropertyRef Name="BUSINESS_OBJECT" />
+					<PropertyRef Name="ERDAT" />
+					<PropertyRef Name="OBJECT_TYPE" />
+					<PropertyRef Name="TXT50" />
+					<PropertyRef Name="SxRPxSEARCH_TERM" />
+					<PropertyRef Name="SxRPxMODE_FUZZY" />
+					<PropertyRef Name="BUKRS" />
+					<PropertyRef Name="ANLKL" />
+					<PropertyRef Name="KOSTL" />
+					<PropertyRef Name="GSBER" />
+					<PropertyRef Name="WERKS" />
+					<PropertyRef Name="ERNAM" />
+				</Key>
+				<Property Name="ANLN1" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Main Asset No."
+					sap:filterable="false" />
+				<Property Name="ANLN2" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Subnumber"
+					sap:filterable="false" />
+				<Property Name="BUSINESS_OBJECT" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="Business Object" sap:filterable="false" />
+				<Property Name="ERDAT" Type="Edm.DateTime" Nullable="false"
+					Precision="0" sap:display-format="Date" sap:label="Created on"
+					sap:filterable="false" />
+				<Property Name="OBJECT_TYPE" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Object Type"
+					sap:filterable="false" />
+				<Property Name="TXT50" Type="Edm.String" Nullable="false"
+					MaxLength="50" sap:label="Description" sap:filterable="false" />
+				<Property Name="SxRPxSEARCH_TERM" Type="Edm.String"
+					Nullable="false" MaxLength="45" sap:label="Full Txt Search" />
+				<Property Name="SxRPxMODE_FUZZY" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:label="Fuzzy Mode" />
+				<Property Name="BUKRS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code" />
+				<Property Name="ANLKL" Type="Edm.String" Nullable="false"
+					MaxLength="8" sap:display-format="UpperCase" sap:label="Asset Class" />
+				<Property Name="KOSTL" Type="Edm.String" Nullable="false"
+					MaxLength="10" sap:display-format="UpperCase" sap:label="Cost Center" />
+				<Property Name="GSBER" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Business Area" />
+				<Property Name="WERKS" Type="Edm.String" Nullable="false"
+					MaxLength="4" sap:display-format="UpperCase" sap:label="Plant" />
+				<Property Name="ERNAM" Type="Edm.String" Nullable="false"
+					MaxLength="12" sap:display-format="UpperCase" sap:label="Created by" />
+			</EntityType>
+			<EntityType Name="VL_FV_SHKZG" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Code" />
+				</Key>
+				<Property Name="Code" Type="Edm.String" Nullable="false"
+					MaxLength="1" sap:text="Text" sap:label="Value" />
+				<Property Name="Text" Type="Edm.String" MaxLength="60"
+					sap:label="Short Descript." />
+			</EntityType>
+			<EntityContainer Name="com.sap.GL.zrha_Entities"
+				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="Company2Set" EntityType="com.sap.GL.zrha.Company2"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1" />
+				<EntitySet Name="Companies" EntityType="com.sap.GL.zrha.Company"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1" />
+				<EntitySet Name="LineItemsSet" EntityType="com.sap.GL.zrha.LineItems"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1" />
+				<EntitySet Name="VL_SH_H_T001" EntityType="com.sap.GL.zrha.VL_SH_H_T001"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIA" EntityType="com.sap.GL.zrha.VL_SH_DEBIA"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBID" EntityType="com.sap.GL.zrha.VL_SH_DEBID"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIE" EntityType="com.sap.GL.zrha.VL_SH_DEBIE"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIL" EntityType="com.sap.GL.zrha.VL_SH_DEBIL"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIP" EntityType="com.sap.GL.zrha.VL_SH_DEBIP"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIT" EntityType="com.sap.GL.zrha.VL_SH_DEBIT"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIX" EntityType="com.sap.GL.zrha.VL_SH_DEBIX"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIY" EntityType="com.sap.GL.zrha.VL_SH_DEBIY"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_FM_DEBI_FMPSOIS" EntityType="com.sap.GL.zrha.VL_SH_FM_DEBI_FMPSOIS"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_JVH_VPTNR" EntityType="com.sap.GL.zrha.VL_SH_JVH_VPTNR"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIK" EntityType="com.sap.GL.zrha.VL_SH_DEBIK"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIM" EntityType="com.sap.GL.zrha.VL_SH_DEBIM"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIS" EntityType="com.sap.GL.zrha.VL_SH_DEBIS"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIW" EntityType="com.sap.GL.zrha.VL_SH_DEBIW"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIZ" EntityType="com.sap.GL.zrha.VL_SH_DEBIZ"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_DEBIC" EntityType="com.sap.GL.zrha.VL_SH_DEBIC"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_REKUNNRCN" EntityType="com.sap.GL.zrha.VL_SH_REKUNNRCN"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_REKUNNR_VIRAINV" EntityType="com.sap.GL.zrha.VL_SH_REKUNNR_VIRAINV"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_H_T074U" EntityType="com.sap.GL.zrha.VL_SH_H_T074U"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_H_T003" EntityType="com.sap.GL.zrha.VL_SH_H_T003"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_CT_TCURC" EntityType="com.sap.GL.zrha.VL_CT_TCURC"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" sap:semantics="aggregate" />
+				<EntitySet Name="VL_SH_FICEPC" EntityType="com.sap.GL.zrha.VL_SH_FICEPC"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CA_NO" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CA_NO"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CA_TEXT" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CA_TEXT"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CA_FLAGS" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CA_FLAGS"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CA_KEY" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CA_KEY"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CC_NO" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CC_NO"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CC_TEXT" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CC_TEXT"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CC_FLAGS" EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CC_FLAGS"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_GL_ACCT_CC_ALTERNATIV_NO"
+					EntityType="com.sap.GL.zrha.VL_SH_GL_ACCT_CC_ALTERNATIV_NO"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_H_TGSB" EntityType="com.sap.GL.zrha.VL_SH_H_TGSB"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_CH_AUFK" EntityType="com.sap.GL.zrha.VL_CH_AUFK"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" sap:semantics="aggregate" />
+				<EntitySet Name="VL_SH_AANLA" EntityType="com.sap.GL.zrha.VL_SH_AANLA"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_AANLC" EntityType="com.sap.GL.zrha.VL_SH_AANLC"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_AANLI" EntityType="com.sap.GL.zrha.VL_SH_AANLI"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_AANLM" EntityType="com.sap.GL.zrha.VL_SH_AANLM"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_AANLP" EntityType="com.sap.GL.zrha.VL_SH_AANLP"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_AANLR" EntityType="com.sap.GL.zrha.VL_SH_AANLR"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_AANLF" EntityType="com.sap.GL.zrha.VL_SH_AANLF"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_FAA_SH_SES_QUICK" EntityType="com.sap.GL.zrha.VL_SH_FAA_SH_SES_QUICK"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_SH_FAA_SH_SES_ADVANCED"
+					EntityType="com.sap.GL.zrha.VL_SH_FAA_SH_SES_ADVANCED"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:content-version="1" sap:countable="false" />
+				<EntitySet Name="VL_FV_SHKZG" EntityType="com.sap.GL.zrha.VL_FV_SHKZG"
+					sap:content-version="1" sap:semantics="fixed-values" />
+			</EntityContainer>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Bukrs"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Company Codes" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_T001" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUTXT" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ORT01" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="WAERS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers (general)" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIA" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSTLZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers (by company code)" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBID" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSTLZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIE" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers by country/company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIE" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIL" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers by country" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIL" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers by personnel number" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIP" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PERNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIT" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers by Tax Information" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIT" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STCD1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STCD2" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STCD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STCD4" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STCEG" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STCD5" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIX" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers by Address Attributes" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIX" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="FIRSTNAME" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="STREET" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="HOUSE_NUM1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="POST_CODE1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="CITY1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORT1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORT2" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="COUNTRY" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers by Address Attributes (Fuzzy Search)" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIY" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="FM_DEBI_FMPSOIS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Proceed Initially According to Customer Sub-Ledger Account" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FM_DEBI_FMPSOIS" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSOEA" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSOIS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="JVH_VPTNR" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="JV partner in coding block" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_JVH_VPTNR" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="PARTN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="VNAME" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="EGRUP" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIK" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers per account group" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIK" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOKD" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSTLZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers With Lease-Out" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIM" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SMIVE" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KONTOBV" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="E_SMIVE" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SWENR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SMENR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SMVART" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="DMIBEG" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="DMIEND" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="DKUEZU" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ROLETYP" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers per sales group" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIS" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="VKORG" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSTLZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="VTWEG" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SPART" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="VKBUR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="VKGRP" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIW" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customers with plant reference" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIW" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SORTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LAND1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSTLZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="WERKS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIZ" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers for Head Offices" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIZ" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KNRZE" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOD3" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="DEBIC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Customers (by class)" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_DEBIC" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="REKUNNRCN" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customer By Real Estate Contract" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_REKUNNRCN" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="KUNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="RECNNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="RECNTYPE" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="RECNBEG" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="RECNENDABS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="RECNNOTPER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MC_NAME1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="RECNTXT" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME_LAST" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME_FIRST" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME_ORG1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME_ORG2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				Qualifier="REKUNNR_VIRAINV" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Customer for Invoice Number (Real Estate)" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_REKUNNR_VIRAINV" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="INVNO" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="FISC_YEAR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Kunnr" />
+									<PropertyValue Property="ValueListProperty"
+										String="CUSTOMER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="NAME2" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PSTLZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ORT01" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="PARTNER" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Umskz"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Help_View for T074U" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_T074U" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KOART" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Umskz" />
+									<PropertyValue Property="ValueListProperty"
+										String="UMSKZ" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Blart"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Help View for Document Types" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_T003" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Blart" />
+									<PropertyValue Property="ValueListProperty"
+										String="BLART" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Hwaer"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="VL_CT_TCURC" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Hwaer" />
+									<PropertyValue Property="ValueListProperty"
+										String="WAERS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="LTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/PRCTR"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Select Profit Center (Partner)" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FICEPC" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="PRCTR" />
+									<PropertyValue Property="ValueListProperty"
+										String="PRCTR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="DATBI" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KOKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account no. in chart of accounts" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_NO" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CA_TEXT" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account description in chart of accounts" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_TEXT" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CA_FLAGS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account with delete/lock flag in chart of accounts" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_FLAGS" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XLOEV" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEB" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEA" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEP" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CA_KEY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Key words" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_KEY" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SCHLW" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SPRAS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CC_NO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account number in company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CC_NO" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CC_TEXT" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account description in company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CC_TEXT" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CC_FLAGS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account with delete/lock flag in company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CC_FLAGS" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XLOEV_KTP" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XLOEV" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEB_KTP" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEB" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				Qualifier="GL_ACCT_CC_ALTERNATIV_NO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Alternative account number" />
+						<PropertyValue Property="CollectionPath"
+							String="VL_SH_GL_ACCT_CC_ALTERNATIV_NO" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ALTKT" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="HKONT" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SHKZG"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Debit/Credit Indicator" />
+						<PropertyValue Property="CollectionPath" String="VL_FV_SHKZG" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SHKZG" />
+									<PropertyValue Property="ValueListProperty"
+										String="Code" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="Text" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/GSBER"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="Help View for Business Areas" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_H_TGSB" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="GSBER" />
+									<PropertyValue Property="ValueListProperty"
+										String="GSBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GTEXT" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/AUFNR"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="CollectionPath" String="VL_CH_AUFK" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="AUFNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="AUFNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Names and classes" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLA" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOGR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="AKTIV" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="AANLC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Cost center" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLC" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KOSTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="WERKS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GSBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ADATU" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BDATUZ" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="AANLI" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Inventory number" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLI" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="INVNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="AANLM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Investment Orders" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLM" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="EAUFN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="AANLP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Investment Projects" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLP" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="POSID" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="AANLR" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Group assets" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLR" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOGR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="AKTIV" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="AANLF" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Fund, Functional Area" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLF" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GEBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="FKBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GRANT_NBR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="FAA_SH_SES_QUICK" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Simple Search for Asset" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FAA_SH_SES_QUICK" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN1"
+				Qualifier="FAA_SH_SES_ADVANCED" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Advanced Search for Asset" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FAA_SH_SES_ADVANCED" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KOSTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GSBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="WERKS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ERNAM" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ERDAT" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Names and classes" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLA" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOGR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="AKTIV" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="AANLC" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Cost center" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLC" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS3" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KOSTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="WERKS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GSBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ADATU" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="BDATUZ" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="AANLI" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Inventory number" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLI" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="INVNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="AANLM" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Investment Orders" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLM" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="EAUFN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="AANLP" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Investment Projects" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLP" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="POSID" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="AANLR" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Group assets" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLR" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="MCOA1" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOGR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="AKTIV" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="AANLF" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Fund, Functional Area" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_AANLF" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GEBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="FKBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GRANT_NBR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="FAA_SH_SES_QUICK" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Simple Search for Asset" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FAA_SH_SES_QUICK" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/ANLN2"
+				Qualifier="FAA_SH_SES_ADVANCED" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Advanced Search for Asset" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_FAA_SH_SES_ADVANCED" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ANLKL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KOSTL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="GSBER" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="WERKS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ERNAM" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ERDAT" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN1" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="ANLN2" />
+									<PropertyValue Property="ValueListProperty"
+										String="ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account no. in chart of accounts" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_NO" />
+						<PropertyValue Property="SearchSupported" Bool="true" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CA_TEXT" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account description in chart of accounts" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_TEXT" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CA_FLAGS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account with delete/lock flag in chart of accounts" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_FLAGS" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XLOEV" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEB" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEA" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEP" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CA_KEY" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Key words" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CA_KEY" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SCHLW" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="SPRAS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="KTOPL" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CC_NO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account number in company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CC_NO" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CC_TEXT" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account description in company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CC_TEXT" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CC_FLAGS" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label"
+							String="G/L account with delete/lock flag in company code" />
+						<PropertyValue Property="CollectionPath" String="VL_SH_GL_ACCT_CC_FLAGS" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XLOEV_KTP" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XLOEV" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEB_KTP" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="XSPEB" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/SAKNR"
+				Qualifier="GL_ACCT_CC_ALTERNATIV_NO" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+					<Record>
+						<PropertyValue Property="Label" String="Alternative account number" />
+						<PropertyValue Property="CollectionPath"
+							String="VL_SH_GL_ACCT_CC_ALTERNATIV_NO" />
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterIn">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKAN" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="ALTKT" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="Bukrs" />
+									<PropertyValue Property="ValueListProperty"
+										String="BUKRS" />
+								</Record>
+								<Record
+									Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty"
+										String="TXT50" />
+								</Record>
+								<Record Type="com.sap.vocabularies.Common.v1.ValueListParameterOut">
+									<PropertyValue Property="LocalDataProperty"
+										PropertyPath="SAKNR" />
+									<PropertyValue Property="ValueListProperty"
+										String="SAKNR" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup"
+					Qualifier="FieldGroup1">
+					<Record>
+						<PropertyValue Property="Label" String="my Field Group 1" />
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="GSBER" />
+									<PropertyValue Property="Label" String="my GSBER" />
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="PRCTR" />
+									<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+										EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="com.sap.vocabularies.UI.v1.FieldGroup"
+					Qualifier="FieldGroup2">
+					<Record>
+						<PropertyValue Property="Label" String="my Field Group 2" />
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ANLN1" />
+									<PropertyValue Property="Label" String="my ANLN1" />
+								</Record>
+								<Record Type="com.sap.vocabularies.UI.v1.DataField">
+									<PropertyValue Property="Value" Path="ANLN2" />
+									<PropertyValue Property="Label" String="my ANLN2" />
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.UI.v1.LineItem">
+					<Collection>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Bukrs" />
+							<PropertyValue Property="Label" String="my Bukrs" />
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/High" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Gjahr" />
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/Medium" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Kunnr" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Name1" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Dmbtr" />
+						</Record>
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Hwaer" />
+						</Record>						
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">
+							<PropertyValue Property="Value" Path="Cnt" />
+							<Annotation Term="com.sap.vocabularies.UI.v1.Importance"
+								EnumMember="com.sap.vocabularies.UI.v1.ImportanceType/Low" />
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Kunnr"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+					String="Customer" />
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/KOSTL"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+					String="CostCenter" />
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Belnr"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+					String="AccountingDocument" />
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/Bukrs"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+					String="CompanyCode" />
+			</Annotations>
+			<Annotations Target="com.sap.GL.zrha.LineItems/HKONT"
+				xmlns="http://docs.oasis-open.org/odata/ns/edm">
+				<Annotation Term="com.sap.vocabularies.Common.v1.SemanticObject"
+					String="GLAccount" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

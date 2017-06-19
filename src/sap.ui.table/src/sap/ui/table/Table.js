@@ -6,13 +6,13 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
 		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter',
+		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter', "sap/ui/model/BindingMode",
 		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
 		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
 	function(jQuery, Device,
 		Control, Element, IconPool,
 		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
-		ChangeReason, Context, Filter, SelectionModel, Sorter,
+		ChangeReason, Context, Filter, SelectionModel, Sorter, BindingMode,
 		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
 		TablePointerExtension, TableScrollExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
 	"use strict";
@@ -1038,26 +1038,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var iFixedColumnCount = this.getProperty("fixedColumnCount");
 		var iFixedHeaderWidthSum = 0;
-		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th:not(.sapUiTableColSel)");
-		if (aHeaderElements) {
-			var aColumns = this.getColumns();
+		if (iFixedColumnCount) {
+			var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th");
 			for (var i = 0; i < aHeaderElements.length; i++) {
-				var iHeaderWidth = aHeaderElements[i].getBoundingClientRect().width;
-
-				if (i < aColumns.length && aColumns[i] && !aColumns[i].getVisible()) {
-					// the fixedColumnCount does not consider the visibility of the column, whereas the DOM only represents
-					// the visible columns. In order to match both, the fixedColumnCount (aggregation) and fixedColumnCount
-					// of the DOM, for each invisible column, 1 must be deducted from the fixedColumnCount (aggregation).
-					iFixedColumnCount--;
-				}
-
-				if (i < iFixedColumnCount) {
-					iFixedHeaderWidthSum += iHeaderWidth;
+				var iColIndex = parseInt(aHeaderElements[i].getAttribute("data-sap-ui-headcolindex"), 10);
+				if (!isNaN(iColIndex) && (iColIndex < iFixedColumnCount)) {
+					iFixedHeaderWidthSum += aHeaderElements[i].getBoundingClientRect().width;
 				}
 			}
 		}
 
-		if (iFixedColumnCount > 0) {
+		if (iFixedHeaderWidthSum > 0) {
 			var iUsedHorizontalTableSpace = oSizes.tableRowHdrScrWidth;
 
 			var oVsb = this.getDomRef("vsb");
@@ -1664,6 +1655,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				dataRequested: this._onBindingDataRequestedListener.bind(this),
 				dataReceived: this._onBindingDataReceivedListener.bind(this)
 			});
+
+			var oModel = oBinding.getModel();
+			if (oModel != null && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
+				jQuery.sap.log.error("The binding mode of the model is set to \"OneTime\"."
+									 + " This binding mode is not supported for the \"rows\" aggregation!"
+									 + " Scrolling can not be performed.", this);
+			}
 		}
 
 		// Re-initialize the selection model. Might be necessary in case the table gets "rebound".
@@ -2902,7 +2900,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 *
-	 * @param iRowIndex
+	 * @param {int} iRowIndex
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -3701,7 +3699,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Determines and sets the height of tableCtrlCnt based upon the VisibleRowCountMode and other conditions.
-	 * @param iHeight
+	 * @param {int} iHeight
 	 * @private
 	 */
 	Table.prototype._setRowContentHeight = function(iHeight) {

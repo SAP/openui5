@@ -265,7 +265,7 @@ sap.ui.define(['jquery.sap.global', './LRUPersistentCache', './CacheManagerNOP',
 			/**
 			 * Forwards method's call to the underlying implementation
 			 * @param {string} sMethodName the name of the method to forward
-			 * @param  {any[]} aArgs array of arguments
+			 * @param {any[]} aArgs array of arguments
 			 * @returns {Promise}
 			 * @private
 			 */

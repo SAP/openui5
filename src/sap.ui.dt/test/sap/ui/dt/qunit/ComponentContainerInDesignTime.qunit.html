@@ -79,7 +79,7 @@
 				},
 				afterEach : function() {
 					this.oLayout.destroy();
-					this.oComponentContainer.destroy();
+					this.oComponent.destroy();
 					this.oDesignTime.destroy();
 				}
 			});
@@ -93,6 +93,125 @@
 				assert.ok(oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is created");
 				assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
 			});
+
+			QUnit.test("When asking for the component container overlays...", function(assert) {
+				var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
+				var oComponentContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponentContainer);
+
+				assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
+				assert.equal(oComponentOverlay.getElement(), this.oComponent.getId(), "the UIComponent overlay points to the UI Component");
+				assert.ok(oComponentContainerOverlay, "an overlay for the ComponentContainer is created");
+				assert.equal(oComponentContainerOverlay.getElement(), this.oComponentContainer.getId(), "the ComponentContainer  overlay points to the ComponentContainer");
+			});
+
+			QUnit.test("When asking for the component container association....", function(assert) {
+				var sComponentId = sap.ui.dt.ElementUtil.getAssociation(this.oComponentContainer, "component");
+				var oComponent = sap.ui.dt.ElementUtil.getAssociationInstances(this.oComponentContainer, "component");
+				assert.equal(sComponentId, this.oComponent.getId(), "the UIComponent returned is the same as expected");
+				assert.equal(oComponent.getId(), this.oComponent.getId(), "the UIComponent returned is the same as expected");
+			});
+
+			QUnit.module("Given the ComponentContainer with late components is created..", {
+				beforeEach : function(assert) {
+					var done = assert.async();
+
+					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1");
+
+					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oComponentContainer, new sap.m.Button({text: "I give the layout a size"})]}).placeAt("content");
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oLayout]
+					});
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+						this.oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
+						done();
+					}.bind(this));
+				},
+				afterEach : function() {
+					this.oLayout.destroy();
+					this.oComponent.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("When the component is added later...", function(assert) {
+				var done = assert.async();
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
+					oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
+					assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
+					assert.ok(oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is created");
+					assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, this.oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
+					done();
+				}.bind(this));
+
+				//add the component later
+				this.oComponent = new CustomComponent();
+				var oInnerLayout = this.oComponent.getRootControl();
+
+				var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
+				var oInnerLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oInnerLayout);
+				assert.ok(!oComponentOverlay, "an overlay for the UIComponent is not yet created");
+				assert.ok(!oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is not yet created");
+
+				this.oComponentContainer.setComponent(this.oComponent);
+			});
+
+			QUnit.module("Given the ComponentContainer with component with late root control is created..", {
+				beforeEach : function(assert) {
+					var done = assert.async();
+
+					var LateComponent = sap.ui.core.UIComponent.extend("sap.ui.dt.test.LateComponent", {
+						createContent :function(){
+							return null; //do it like fiori elements and add it later
+						}
+					});
+					this.oComponent = new LateComponent();
+
+					this.oComponentContainer = new sap.ui.core.ComponentContainer("CompCont1",{
+						component: this.oComponent
+					});
+
+					this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oComponentContainer, new sap.m.Button({text: "I give the layout a size"})]}).placeAt("content");
+
+					this.oDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oLayout]
+					});
+
+					this.oDesignTime.attachEventOnce("synced", function() {
+						sap.ui.getCore().applyChanges();
+						this.oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
+						done();
+					}.bind(this));
+				},
+				afterEach : function() {
+					this.oLayout.destroy();
+					this.oComponent.destroy();
+					this.oDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("When the root control is added later...", function(assert) {
+				var done = assert.async();
+
+				var oNewRootControl = new sap.m.Button({id: "newRootControl", text:"New root control"});
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					var oComponentOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oComponent);
+					assert.ok(oComponentOverlay, "an overlay for the UIComponent is created");
+					oNewRootControlOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oNewRootControl);
+					assert.ok(oNewRootControlOverlay, "an overlay for the new root control of the UIComponent is created");
+					assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oNewRootControlOverlay, this.oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
+					done();
+				}.bind(this));
+
+				//add the root control later
+				this.oComponent.setAggregation("rootControl", oNewRootControl);
+			});
+
 		</script>
 	</head>
 	<body>

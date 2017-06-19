@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
-	"sap/ui/support/supportRules/Highlighter",
+	"sap/ui/support/supportRules/ui/external/Highlighter",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/RuleSet",

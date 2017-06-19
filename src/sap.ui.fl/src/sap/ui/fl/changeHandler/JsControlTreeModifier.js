@@ -78,7 +78,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				oControl.applySettings(mSettings);
 			},
 
-			createControl: function (sClassName, oAppComponent, oView, oSelector) {
+			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
 				if (this.bySelector(oSelector, oAppComponent)) {
 					throw new Error("Can't create a control with duplicated id " + oSelector);
 				}
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				jQuery.sap.require(sClassName); //ensure class is there
 				var ClassObject = jQuery.sap.getObject(sClassName);
 				var sId = this.getControlIdBySelector(oSelector, oAppComponent);
-				return new ClassObject(sId);
+				return new ClassObject(sId, mSettings);
 			},
 
 			/** SUBSTITUTION UNTIL SmartForm has adopted to the bySelector

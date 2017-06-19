@@ -1,0 +1,22 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core"
+	xmlns:table="sap.ui.table" xmlns="sap.m">
+	<table:Column>
+		<Text text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xfld.Rating}" />
+		<table:customData>
+			<core:CustomData key="p13nData"
+				value='\{"columnKey": "Rating", "leadingProperty":"Price", "columnIndex" : "100"}' />
+		</table:customData>
+		<table:template>
+			<RatingIndicator value="{= ${Price} > 500 ? 1:5}"></RatingIndicator>
+		</table:template>
+	</table:Column>
+	<table:Column>
+		<Text text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xfld.BreakoutColumn}" />
+		<table:customData>
+			<core:CustomData key="p13nData" value='\{"columnKey": "Test", "columnIndex" : "101"}' />
+		</table:customData>
+		<table:template>
+			<Text text="{i18n|sap.suite.ui.generic.template.ListReport|STTA_C_MP_Product>xfld.BreakoutColumnContent}"></Text>
+		</table:template>
+	</table:Column>
+</core:FragmentDefinition>

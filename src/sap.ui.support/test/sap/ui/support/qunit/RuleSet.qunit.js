@@ -39,7 +39,8 @@
 	});
 
 	QUnit.test("Creating rule set with no name", function (assert) {
-		new sap.ui.support.supportRules.RuleSet();
+		var ruleSet = new sap.ui.support.supportRules.RuleSet();
+		assert.strictEqual(ruleSet._oSettings.name, undefined, "There is no set name in the RuleSet !");
 		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error.");
 	});
 

@@ -301,10 +301,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 							mOptions.details = "<pre>" + JSON.stringify(mOptions.details, null, '\t')
 								.replace(/{/gi, "\\{") + "</pre>";
 						}
-
-						var oFT = new FormattedText({
-							htmlText: mOptions.details
-						}).setVisible(false);
+						// html text is set by purpose with setter. If is set in the constructor there are issues with binding
+						var oFT = new FormattedText().setVisible(false).setHtmlText(mOptions.details);
 
 						var oShowLink = new Link({
 							text: that._rb.getText("MSGBOX_LINK_TITLE"),

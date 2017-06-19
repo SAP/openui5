@@ -1,0 +1,1210 @@
+[{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0001')",
+		"uri": "foo/VL_SH_H_T001('0001')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0001",
+	"BUTXT": "SAP A.G.test",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0011')",
+		"uri": "foo/VL_SH_H_T001('0011')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0011",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0014')",
+		"uri": "foo/VL_SH_H_T001('0014')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0014",
+	"BUTXT": "test company",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0015')",
+		"uri": "foo/VL_SH_H_T001('0015')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0015",
+	"BUTXT": "test company",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0021')",
+		"uri": "foo/VL_SH_H_T001('0021')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0021",
+	"BUTXT": "",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0028')",
+		"uri": "foo/VL_SH_H_T001('0028')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0028",
+	"BUTXT": "test company",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0031')",
+		"uri": "foo/VL_SH_H_T001('0031')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0031",
+	"BUTXT": "SAP A.G.test",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0035')",
+		"uri": "foo/VL_SH_H_T001('0035')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0035",
+	"BUTXT": "",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0039')",
+		"uri": "foo/VL_SH_H_T001('0039')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0039",
+	"BUTXT": "test company",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0A01')",
+		"uri": "foo/VL_SH_H_T001('0A01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0A01",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('0MB1')",
+		"uri": "foo/VL_SH_H_T001('0MB1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "0MB1",
+	"BUTXT": "IS-B Musterbank Deutschl.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('4359')",
+		"uri": "foo/VL_SH_H_T001('4359')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "4359",
+	"BUTXT": "JP Test",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('6606')",
+		"uri": "foo/VL_SH_H_T001('6606')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "6606",
+	"BUTXT": "POC company",
+	"ORT01": "Shanghai",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('6630')",
+		"uri": "foo/VL_SH_H_T001('6630')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "6630",
+	"BUTXT": "SH Company",
+	"ORT01": "",
+	"WAERS": "CNY"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('AFU2')",
+		"uri": "foo/VL_SH_H_T001('AFU2')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "AFU2",
+	"BUTXT": "BuchgPerioden Auf-Zu",
+	"ORT01": "Leitlitz and der Weida",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('AFU3')",
+		"uri": "foo/VL_SH_H_T001('AFU3')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "AFU3",
+	"BUTXT": "BuchgPerioden Auf-Zu",
+	"ORT01": "Ebersgrün",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('AFU5')",
+		"uri": "foo/VL_SH_H_T001('AFU5')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "AFU5",
+	"BUTXT": "AFU ALE-FI",
+	"ORT01": "Pausa",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('ARG1')",
+		"uri": "foo/VL_SH_H_T001('ARG1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "ARG1",
+	"BUTXT": "Country Template AR",
+	"ORT01": "Argentinien",
+	"WAERS": "ARS"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('AT01')",
+		"uri": "foo/VL_SH_H_T001('AT01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "AT01",
+	"BUTXT": "Country Template AT",
+	"ORT01": "Austria",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('AU01')",
+		"uri": "foo/VL_SH_H_T001('AU01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "AU01",
+	"BUTXT": "Country Template AU",
+	"ORT01": "Australia",
+	"WAERS": "AUD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('AW01')",
+		"uri": "foo/VL_SH_H_T001('AW01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "AW01",
+	"BUTXT": "AW FIN Operations",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('BE01')",
+		"uri": "foo/VL_SH_H_T001('BE01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "BE01",
+	"BUTXT": "Country Template BE",
+	"ORT01": "Belgium",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('BR01')",
+		"uri": "foo/VL_SH_H_T001('BR01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "BR01",
+	"BUTXT": "Country Template BR",
+	"ORT01": "Brazil",
+	"WAERS": "BRL"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('C001')",
+		"uri": "foo/VL_SH_H_T001('C001')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "C001",
+	"BUTXT": "Tools Inc. Europe",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CB17')",
+		"uri": "foo/VL_SH_H_T001('CB17')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CB17",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CBAR')",
+		"uri": "foo/VL_SH_H_T001('CBAR')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CBAR",
+	"BUTXT": "Country Template AR",
+	"ORT01": "Argentinien",
+	"WAERS": "ARS"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CBCB')",
+		"uri": "foo/VL_SH_H_T001('CBCB')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CBCB",
+	"BUTXT": "Tools Inc. Europe",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CBWL')",
+		"uri": "foo/VL_SH_H_T001('CBWL')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CBWL",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CCTC')",
+		"uri": "foo/VL_SH_H_T001('CCTC')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CCTC",
+	"BUTXT": "Country Template DE",
+	"ORT01": "Germany",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CF01')",
+		"uri": "foo/VL_SH_H_T001('CF01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CF01",
+	"BUTXT": "Tools Inc. Europe",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CF10')",
+		"uri": "foo/VL_SH_H_T001('CF10')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CF10",
+	"BUTXT": "1234567890123456789212345",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CF20')",
+		"uri": "foo/VL_SH_H_T001('CF20')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CF20",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CK01')",
+		"uri": "foo/VL_SH_H_T001('CK01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CK01",
+	"BUTXT": "Tools Inc. Europe",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CL01')",
+		"uri": "foo/VL_SH_H_T001('CL01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CL01",
+	"BUTXT": "Country Template CL",
+	"ORT01": "Chile",
+	"WAERS": "CLP"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CN01')",
+		"uri": "foo/VL_SH_H_T001('CN01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CN01",
+	"BUTXT": "Country Template CN",
+	"ORT01": "China",
+	"WAERS": "CNY"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CN03')",
+		"uri": "foo/VL_SH_H_T001('CN03')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CN03",
+	"BUTXT": "SAP Labs Japan",
+	"ORT01": "Tokyo",
+	"WAERS": "JPY"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CN04')",
+		"uri": "foo/VL_SH_H_T001('CN04')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CN04",
+	"BUTXT": "SAP GDC China",
+	"ORT01": "Shanghai",
+	"WAERS": "CNY"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CN05')",
+		"uri": "foo/VL_SH_H_T001('CN05')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CN05",
+	"BUTXT": "SAP AGS China",
+	"ORT01": "Shanghai",
+	"WAERS": "CNY"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CO20')",
+		"uri": "foo/VL_SH_H_T001('CO20')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CO20",
+	"BUTXT": "abcxxd",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('COM4')",
+		"uri": "foo/VL_SH_H_T001('COM4')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "COM4",
+	"BUTXT": "com4",
+	"ORT01": "Walldorf",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('COPY')",
+		"uri": "foo/VL_SH_H_T001('COPY')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "COPY",
+	"BUTXT": "Copy from CC.0001",
+	"ORT01": "(Only G/L accounts B-seg)",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CP01')",
+		"uri": "foo/VL_SH_H_T001('CP01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CP01",
+	"BUTXT": "SAP Paris",
+	"ORT01": "Paris",
+	"WAERS": "ANG"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CP02')",
+		"uri": "foo/VL_SH_H_T001('CP02')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CP02",
+	"BUTXT": "SAP Paris",
+	"ORT01": "Paris",
+	"WAERS": "ANG"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('CZ01')",
+		"uri": "foo/VL_SH_H_T001('CZ01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "CZ01",
+	"BUTXT": "Country Template CZ",
+	"ORT01": "Czech Republic",
+	"WAERS": "CZK"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('DE01')",
+		"uri": "foo/VL_SH_H_T001('DE01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "DE01",
+	"BUTXT": "Country Template DE",
+	"ORT01": "Germany",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('DE02')",
+		"uri": "foo/VL_SH_H_T001('DE02')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "DE02",
+	"BUTXT": "Country Template DE",
+	"ORT01": "Germany",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('DSAG')",
+		"uri": "foo/VL_SH_H_T001('DSAG')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "DSAG",
+	"BUTXT": "SAP A.G.test",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('F010')",
+		"uri": "foo/VL_SH_H_T001('F010')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "F010",
+	"BUTXT": "Wind Turbine Inc. Europe",
+	"ORT01": "Mannheim",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('FI01')",
+		"uri": "foo/VL_SH_H_T001('FI01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "FI01",
+	"BUTXT": "Country Template FI",
+	"ORT01": "Finland",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('GB01')",
+		"uri": "foo/VL_SH_H_T001('GB01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "GB01",
+	"BUTXT": "Country Template GB",
+	"ORT01": "Great Britain",
+	"WAERS": "GBP"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('GR01')",
+		"uri": "foo/VL_SH_H_T001('GR01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "GR01",
+	"BUTXT": "Group AC MX",
+	"ORT01": "Shanghai",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('HEL2')",
+		"uri": "foo/VL_SH_H_T001('HEL2')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "HEL2",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('ID01')",
+		"uri": "foo/VL_SH_H_T001('ID01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "ID01",
+	"BUTXT": "Country Template ID",
+	"ORT01": "Jakarta",
+	"WAERS": "IDR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('IN47')",
+		"uri": "foo/VL_SH_H_T001('IN47')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "IN47",
+	"BUTXT": "India Model Company, IN",
+	"ORT01": "Bangalore",
+	"WAERS": "INR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('J002')",
+		"uri": "foo/VL_SH_H_T001('J002')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "J002",
+	"BUTXT": "Tools Inc. Europe",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('LN01')",
+		"uri": "foo/VL_SH_H_T001('LN01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "LN01",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Basel",
+	"WAERS": "CHF"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('MG01')",
+		"uri": "foo/VL_SH_H_T001('MG01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "MG01",
+	"BUTXT": "Copy 3 of 0001",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('MX03')",
+		"uri": "foo/VL_SH_H_T001('MX03')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "MX03",
+	"BUTXT": "Country Template MX",
+	"ORT01": "Mexico",
+	"WAERS": "MXN"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('NC01')",
+		"uri": "foo/VL_SH_H_T001('NC01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "NC01",
+	"BUTXT": "NC corporate group",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S002')",
+		"uri": "foo/VL_SH_H_T001('S002')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S002",
+	"BUTXT": "Test Company 555",
+	"ORT01": "shanghai",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S003')",
+		"uri": "foo/VL_SH_H_T001('S003')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S003",
+	"BUTXT": "Test Company1",
+	"ORT01": "shanghai",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S004')",
+		"uri": "foo/VL_SH_H_T001('S004')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S004",
+	"BUTXT": "Test Company",
+	"ORT01": "shanghai",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S005')",
+		"uri": "foo/VL_SH_H_T001('S005')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S005",
+	"BUTXT": "Test Company 000",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S006')",
+		"uri": "foo/VL_SH_H_T001('S006')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S006",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S007')",
+		"uri": "foo/VL_SH_H_T001('S007')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S007",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S008')",
+		"uri": "foo/VL_SH_H_T001('S008')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S008",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S009')",
+		"uri": "foo/VL_SH_H_T001('S009')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S009",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S010')",
+		"uri": "foo/VL_SH_H_T001('S010')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S010",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S011')",
+		"uri": "foo/VL_SH_H_T001('S011')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S011",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S014')",
+		"uri": "foo/VL_SH_H_T001('S014')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S014",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S015')",
+		"uri": "foo/VL_SH_H_T001('S015')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S015",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S016')",
+		"uri": "foo/VL_SH_H_T001('S016')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S016",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S017')",
+		"uri": "foo/VL_SH_H_T001('S017')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S017",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S021')",
+		"uri": "foo/VL_SH_H_T001('S021')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S021",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S023')",
+		"uri": "foo/VL_SH_H_T001('S023')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S023",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S024')",
+		"uri": "foo/VL_SH_H_T001('S024')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S024",
+	"BUTXT": "Test Company 024",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S026')",
+		"uri": "foo/VL_SH_H_T001('S026')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S026",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S027')",
+		"uri": "foo/VL_SH_H_T001('S027')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S027",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S028')",
+		"uri": "foo/VL_SH_H_T001('S028')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S028",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S029')",
+		"uri": "foo/VL_SH_H_T001('S029')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S029",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S030')",
+		"uri": "foo/VL_SH_H_T001('S030')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S030",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S032')",
+		"uri": "foo/VL_SH_H_T001('S032')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S032",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S036')",
+		"uri": "foo/VL_SH_H_T001('S036')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S036",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S037')",
+		"uri": "foo/VL_SH_H_T001('S037')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S037",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S039')",
+		"uri": "foo/VL_SH_H_T001('S039')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S039",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S041')",
+		"uri": "foo/VL_SH_H_T001('S041')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S041",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S042')",
+		"uri": "foo/VL_SH_H_T001('S042')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S042",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S044')",
+		"uri": "foo/VL_SH_H_T001('S044')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S044",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S045')",
+		"uri": "foo/VL_SH_H_T001('S045')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S045",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S048')",
+		"uri": "foo/VL_SH_H_T001('S048')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S048",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S050')",
+		"uri": "foo/VL_SH_H_T001('S050')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S050",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S064')",
+		"uri": "foo/VL_SH_H_T001('S064')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S064",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S071')",
+		"uri": "foo/VL_SH_H_T001('S071')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S071",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('S079')",
+		"uri": "foo/VL_SH_H_T001('S079')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "S079",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('SAP3')",
+		"uri": "foo/VL_SH_H_T001('SAP3')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "SAP3",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('SF01')",
+		"uri": "foo/VL_SH_H_T001('SF01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "SF01",
+	"BUTXT": "Scouting Forever",
+	"ORT01": "Oslo",
+	"WAERS": "NOK"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('SF20')",
+		"uri": "foo/VL_SH_H_T001('SF20')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "SF20",
+	"BUTXT": "UJE Team WDF05",
+	"ORT01": "Berlin",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('SUN1')",
+		"uri": "foo/VL_SH_H_T001('SUN1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "SUN1",
+	"BUTXT": "test company name",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('TEEE')",
+		"uri": "foo/VL_SH_H_T001('TEEE')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "TEEE",
+	"BUTXT": "test company",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('TEST')",
+		"uri": "foo/VL_SH_H_T001('TEST')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "TEST",
+	"BUTXT": "",
+	"ORT01": "",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('TOM1')",
+		"uri": "foo/VL_SH_H_T001('TOM1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "TOM1",
+	"BUTXT": "Thomas 1",
+	"ORT01": "Johannesburg",
+	"WAERS": "ZAR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('U001')",
+		"uri": "foo/VL_SH_H_T001('U001')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "U001",
+	"BUTXT": "Tools Inc. Europe",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('USIJ')",
+		"uri": "foo/VL_SH_H_T001('USIJ')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "USIJ",
+	"BUTXT": "SAP Palo Alto",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('USXX')",
+		"uri": "foo/VL_SH_H_T001('USXX')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "USXX",
+	"BUTXT": "SAP Palo Alto22",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('VS01')",
+		"uri": "foo/VL_SH_H_T001('VS01')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "VS01",
+	"BUTXT": "SAP A.G.",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('WMS1')",
+		"uri": "foo/VL_SH_H_T001('WMS1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "WMS1",
+	"BUTXT": "Wolfs Manufaktur",
+	"ORT01": "Bad Langolsheim",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('ZEB1')",
+		"uri": "foo/VL_SH_H_T001('ZEB1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "ZEB1",
+	"BUTXT": "Test Company",
+	"ORT01": "",
+	"WAERS": "USD"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('ZJH1')",
+		"uri": "foo/VL_SH_H_T001('ZJH1')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "ZJH1",
+	"BUTXT": "Jianhua Company",
+	"ORT01": "shanghai",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('ZJH2')",
+		"uri": "foo/VL_SH_H_T001('ZJH2')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "ZJH2",
+	"BUTXT": "Jianhua Company",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+},
+{
+	"__metadata": {
+		"id": "foo/VL_SH_H_T001('ZXV2')",
+		"uri": "foo/VL_SH_H_T001('ZXV2')",
+		"type": "com.sap.GL.zrha.VL_SH_H_T001"
+	},
+	"BUKRS": "ZXV2",
+	"BUTXT": "test company",
+	"ORT01": "Walldorf",
+	"WAERS": "EUR"
+}]

@@ -292,7 +292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Sets a new ShareMenu mode
-	 * @param {string} sMode - the new mode
+	 * @param {sap.m.semantic.ShareMenu._Mode} sMode - the new mode
 	 * @param {boolean} bSuppressInvalidate - flag to suppress control invalidation upon change
 	 * @param oBaseButton - when the new mode is ShareMenu._Mode.button, a reference to that button
 	 *

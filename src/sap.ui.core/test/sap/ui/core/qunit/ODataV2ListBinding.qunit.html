@@ -49,12 +49,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			useBatch: true
 		});
 	}
+	// Request security token to avoid later HEAD requests
+	initModel().refreshSecurityToken();
 
-	// FIXME: when using the GhostDriver we need to init the model once before!
-	if (sap.ui.Device.browser.phantomJS) {
-		// TODO: analyze why this is needed!
-		initModel(false);
-	}
 	QUnit.module("v2.ODataListBinding", {
 		beforeEach : function() {
 			oModel = initModel(false);
@@ -231,10 +228,6 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 		function changeHandler() {
 			if (iCount === 0) {
-				var aContexts = oBinding.getContexts();
-				assert.equal(aContexts.length, 5, "List contains entries");
-				assert.equal(aContexts[0].getProperty("ProductName"), undefined, "Product name is missing");
-			} else if (iCount === 1) {
 				var aContexts = oBinding.getContexts();
 				assert.equal(aContexts.length, 5, "List contains entries");
 				assert.equal(aContexts[0].getProperty("ProductName"), "Uncle Bob's Organic Dried Pears", "Product name is available now");
@@ -964,11 +957,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function() {
 			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
 			oSpy.reset();
-			oListBinding.initialize();
-			oBinding.detachChange(handler);
-			oListBinding.attachRefresh(function() {oListBinding.getContexts();});
-			oListBinding.attachChange(listhandler1);
-			oListBinding.setContext(oBinding.getBoundContext());
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler1);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
 		};
 		var listhandler1 = function() {
 			var aContexts = oListBinding.getContexts();
@@ -1023,11 +1019,14 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		var handler = function() {
 			assert.ok(oSpy.calledOnce, "Request sent for enttiy with expand");
 			oSpy.reset();
-			oListBinding.initialize();
-			oBinding.detachChange(handler);
-			oListBinding.attachRefresh(function() {oListBinding.getContexts();});
-			oListBinding.attachChange(listhandler1);
-			oListBinding.setContext(oBinding.getBoundContext());
+			//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+			setTimeout(function() {
+				oListBinding.initialize();
+				oBinding.detachChange(handler);
+				oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+				oListBinding.attachChange(listhandler1);
+				oListBinding.setContext(oBinding.getBoundContext());
+			}, 0);
 		};
 		var listhandler1 = function() {
 			var aContexts = oListBinding.getContexts();

@@ -1,0 +1,94 @@
+<core:View id="stable" xmlns:core="sap.ui.core" xmlns="sap.m"
+	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+	xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="sap.ui.comp.sample.smarttable.SmartTable" height="100%">
+	<Page id="page" title="SmartTable - Customer Line Items">
+		<!-- use this to make the table occupy the available screen height -->
+		<VBox fitContainer="true">
+		<Button
+				id="btnAdapt"
+				text="Adapt UI"
+				type="Emphasized"
+				press="switchToAdaptionMode" />
+			<smartFilterBar:SmartFilterBar id="smartFilterBar" entityType="LineItems" persistencyKey="SmartFilter_Explored" basicSearchFieldName="Bukrs" enableBasicSearch="true" >
+				<smartFilterBar:controlConfiguration>
+					<smartFilterBar:ControlConfiguration key="Bukrs">
+					<smartFilterBar:defaultFilterValues>
+							<smartFilterBar:SelectOption low="0001">
+							</smartFilterBar:SelectOption>
+						</smartFilterBar:defaultFilterValues>
+					</smartFilterBar:ControlConfiguration>
+					<smartFilterBar:ControlConfiguration key="Gjahr">
+						<smartFilterBar:defaultFilterValues>
+								<smartFilterBar:SelectOption low="2014">
+								</smartFilterBar:SelectOption>
+							</smartFilterBar:defaultFilterValues>
+						</smartFilterBar:ControlConfiguration>
+				</smartFilterBar:controlConfiguration>
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartFilterBar:layoutData>
+					<FlexItemData shrinkFactor="0"/>
+				</smartFilterBar:layoutData>
+			</smartFilterBar:SmartFilterBar>
+			<smartTable:SmartTable id="LineItemsSmartTable" entitySet="LineItemsSet" smartFilterId="smartFilterBar" tableType="Table" useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" header="Line Items" showRowCount="true" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" app:useSmartField="true">
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+				</smartTable:layoutData>
+<!--  				<smartTable:columns>
+							<smartTable:AnalyticalColumn grouped="false" summed="false"
+								autoResizable = "true"	width="150px" hAlign="Begin" id="fin.ar.lineitems.display.ColumnCustomer" inResult="true"
+								leadingProperty="Customer" sortProperty="Customer" filterProperty="Customer">
+								<Label text="{/#Item/Customer/@sap:label}"/>
+								<smartTable:template>
+									<Text text="{YourBoolean}" wrapping="false"></Text>
+								</smartTable:template>
+								<smartTable:customData>
+	                           		<core:CustomData  key="p13nData" value='\{"columnKey": "YourBoolean", "maxLength": "10", "type":"boolean"}'/>
+	                     		</smartTable:customData>
+							</smartTable:AnalyticalColumn>
+					</smartTable:columns> -->
+			</smartTable:SmartTable>
+				<smartTable:SmartTable id="AnalyticalLineItemsSmartTable" entitySet="LineItemsSet" smartFilterId="smartFilterBar" tableType="AnalyticalTable" useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" header="Line Items" showRowCount="true" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" app:useSmartField="true">
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+				</smartTable:layoutData>
+<!--  				<smartTable:columns>
+							<smartTable:AnalyticalColumn grouped="false" summed="false"
+								autoResizable = "true"	width="150px" hAlign="Begin" id="fin.ar.lineitems.display.ColumnCustomer" inResult="true"
+								leadingProperty="Customer" sortProperty="Customer" filterProperty="Customer">
+								<Label text="{/#Item/Customer/@sap:label}"/>
+								<smartTable:template>
+									<Text text="{YourBoolean}" wrapping="false"></Text>
+								</smartTable:template>
+								<smartTable:customData>
+	                           		<core:CustomData  key="p13nData" value='\{"columnKey": "YourBoolean", "maxLength": "10", "type":"boolean"}'/>
+	                     		</smartTable:customData>
+							</smartTable:AnalyticalColumn>
+					</smartTable:columns> -->
+			</smartTable:SmartTable>
+			<smartTable:SmartTable id="ResponsiveLineItemsSmartTable" entitySet="LineItemsSet" smartFilterId="smartFilterBar" tableType="ResponsiveTable" useExportToExcel="true" useVariantManagement="false" useTablePersonalisation="true" header="Line Items" showRowCount="true" persistencyKey="SmartTableAnalytical_Explored" enableAutoBinding="true" app:useSmartField="true">
+				<!-- layout data used to make the table growing but the filter bar fixed -->
+				<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%"/>
+				</smartTable:layoutData>
+<!--  				<smartTable:columns>
+							<smartTable:AnalyticalColumn grouped="false" summed="false"
+								autoResizable = "true"	width="150px" hAlign="Begin" id="fin.ar.lineitems.display.ColumnCustomer" inResult="true"
+								leadingProperty="Customer" sortProperty="Customer" filterProperty="Customer">
+								<Label text="{/#Item/Customer/@sap:label}"/>
+								<smartTable:template>
+									<Text text="{YourBoolean}" wrapping="false"></Text>
+								</smartTable:template>
+								<smartTable:customData>
+	                           		<core:CustomData  key="p13nData" value='\{"columnKey": "YourBoolean", "maxLength": "10", "type":"boolean"}'/>
+	                     		</smartTable:customData>
+							</smartTable:AnalyticalColumn>
+					</smartTable:columns> -->
+			</smartTable:SmartTable>
+		</VBox>
+	</Page>
+</core:View>

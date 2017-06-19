@@ -249,4 +249,21 @@
 			"The button is transparent");
 	});
 
+	QUnit.test("Setting visibility to action buttons", function (assert) {
+		var oButton = new sap.m.Button({
+			text : "Some button",
+			visible: false
+		});
+
+		this._oHeader.addAction(oButton);
+
+		sap.ui.getCore().applyChanges();
+
+		oButton.setVisible(true);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oButton._getInternalVisible(), true, "The button is visible");
+	});
+
 }(jQuery, QUnit));

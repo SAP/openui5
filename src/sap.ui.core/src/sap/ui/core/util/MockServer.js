@@ -283,7 +283,7 @@ sap.ui
 			/**
 			 * Sets the data of the given EntitySet name with the given array.
 			 * @param {string} sEntitySetName EntitySet name
-			 * @param aData
+			 * @param {array} aData
 			 * @public
 			 */
 			MockServer.prototype.setEntitySetData = function(sEntitySetName, aData) {

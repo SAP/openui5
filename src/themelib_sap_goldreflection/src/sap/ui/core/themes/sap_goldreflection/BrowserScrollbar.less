@@ -1,6 +1,6 @@
-@sapUiScrollbarBG: transparent;
-@sapUiScrollbarTrack: #B8C2CC;
-@sapUiScrollbarTrackHov: @sapUiHighlight;
+@_sap_ui_core_BrowserScrollbar_BG: transparent;
+@_sap_ui_core_BrowserScrollbar_Track: #B8C2CC;
+@_sap_ui_core_BrowserScrollbar_TrackHov: @sapUiHighlight;
 
 
 /****** IE ******/
@@ -8,11 +8,11 @@
 html[data-sap-ui-browser*="ie"] .sapUiBody {
 	scrollbar-3dlight-color: @sapUiExtraLightBG;
 	scrollbar-arrow-color: @sapUiText;
-	scrollbar-base-color: @sapUiScrollbarBG;
+	scrollbar-base-color: @_sap_ui_core_BrowserScrollbar_BG;
 	scrollbar-darkshadow-color: @sapUiExtraLightBG;
-	scrollbar-face-color: @sapUiScrollbarTrack;
+	scrollbar-face-color: @_sap_ui_core_BrowserScrollbar_Track;
 	scrollbar-highlight-color: @sapUiExtraLightBG;
-	scrollbar-shadow-color: @sapUiScrollbarTrack;
+	scrollbar-shadow-color: @_sap_ui_core_BrowserScrollbar_Track;
 	scrollbar-track-color: @sapUiExtraLightBG;
 }
 
@@ -25,13 +25,13 @@ html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar {
 	width: 16px;
 	height: 16px;
-	border: 1px solid @sapUiScrollbarBG;
-	background-color: @sapUiScrollbarBG;
+	border: 1px solid @_sap_ui_core_BrowserScrollbar_BG;
+	background-color: @_sap_ui_core_BrowserScrollbar_BG;
 }
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-thumb,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-thumb {
-	background-color: @sapUiScrollbarTrack;
+	background-color: @_sap_ui_core_BrowserScrollbar_Track;
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-clip: content-box;
@@ -42,15 +42,15 @@ html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-thumb:horizontal 
 	background-image: url('img/scrollbar_grip_horizontal.png');
 	min-width: 20px;
 	height: 8px;
-	border-top: 4px solid @sapUiScrollbarBG;
-	border-bottom: 4px solid @sapUiScrollbarBG;
+	border-top: 4px solid @_sap_ui_core_BrowserScrollbar_BG;
+	border-bottom: 4px solid @_sap_ui_core_BrowserScrollbar_BG;
 }
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-thumb:horizontal:hover,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-thumb:horizontal:hover {
-	border-top: 4px solid @sapUiScrollbarTrackHov;
-	border-bottom: 4px solid @sapUiScrollbarTrackHov;
-	background-color: @sapUiScrollbarTrackHov;
+	border-top: 4px solid @_sap_ui_core_BrowserScrollbar_TrackHov;
+	border-bottom: 4px solid @_sap_ui_core_BrowserScrollbar_TrackHov;
+	background-color: @_sap_ui_core_BrowserScrollbar_TrackHov;
 }
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-thumb:vertical,
@@ -58,29 +58,29 @@ html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-thumb:vertical {
 	background-image: url('img/scrollbar_grip_vertical.png');
 	min-height: 20px;
 	width: 8px;
-	border-left: 4px solid @sapUiScrollbarBG;
-	border-right: 4px solid @sapUiScrollbarBG;
+	border-left: 4px solid @_sap_ui_core_BrowserScrollbar_BG;
+	border-right: 4px solid @_sap_ui_core_BrowserScrollbar_BG;
 }
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-thumb:vertical:hover,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-thumb:vertical:hover {
-	border-left: 4px solid @sapUiScrollbarTrackHov;
-	border-right: 4px solid @sapUiScrollbarTrackHov;
-	background-color: @sapUiScrollbarTrackHov;
+	border-left: 4px solid @_sap_ui_core_BrowserScrollbar_TrackHov;
+	border-right: 4px solid @_sap_ui_core_BrowserScrollbar_TrackHov;
+	background-color: @_sap_ui_core_BrowserScrollbar_TrackHov;
 }
 
 /*Scrollbar corner*/
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-corner,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-corner {
-	background-color: @sapUiScrollbarBG;
+	background-color: @_sap_ui_core_BrowserScrollbar_BG;
 }
 
 /*Scrollbar buttons*/
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-button,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button {
-	background-color: @sapUiScrollbarBG;
+	background-color: @_sap_ui_core_BrowserScrollbar_BG;
 	background-position: center center;
 	background-repeat: no-repeat;
 	width: 16px;
@@ -94,7 +94,7 @@ html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:horizontal
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-button:horizontal:increment:hover,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:horizontal:increment:hover {
-	background-color: @sapUiScrollbarTrackHov;
+	background-color: @_sap_ui_core_BrowserScrollbar_TrackHov;
 	background-image: url('img/arrow_RIGHT_hover.png');
 }
 
@@ -105,7 +105,7 @@ html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:horizontal
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-button:horizontal:decrement:hover,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:horizontal:decrement:hover {
-	background-color: @sapUiScrollbarTrackHov;
+	background-color: @_sap_ui_core_BrowserScrollbar_TrackHov;
 	background-image: url('img/arrow_LEFT_hover.png');
 }
 
@@ -116,7 +116,7 @@ html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:vertical:i
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-button:vertical:increment:hover,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:vertical:increment:hover {
-	background-color: @sapUiScrollbarTrackHov;
+	background-color: @_sap_ui_core_BrowserScrollbar_TrackHov;
 	background-image: url('img/arrow_DOWN_hover.png');
 }
 
@@ -127,6 +127,6 @@ html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:vertical:d
 
 html[data-sap-ui-browser*="sf"] .sapUiBody ::-webkit-scrollbar-button:vertical:decrement:hover,
 html[data-sap-ui-browser*="cr"] .sapUiBody ::-webkit-scrollbar-button:vertical:decrement:hover {
-	background-color: @sapUiScrollbarTrackHov;
+	background-color: @_sap_ui_core_BrowserScrollbar_TrackHov;
 	background-image: url('img/arrow_UP_hover.png');
 }

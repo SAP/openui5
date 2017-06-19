@@ -1310,7 +1310,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the totalUnits state
 	 *
-	 * @param iTotalUnits Number of the units (tick-spaces)
+	 * @param {int} iTotalUnits Number of the units (tick-spaces)
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */

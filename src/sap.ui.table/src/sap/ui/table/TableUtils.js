@@ -513,14 +513,15 @@ sap.ui.define([
 		/**
 		 * Returns a combined info about the currently focused item (based on the item navigation)
 		 * @param {sap.ui.table.Table} oTable Instance of the table
-		 * @return {Object|null}
-		 * @type {Object}
-		 * @property {int} cell Index of focused cell in ItemNavigation
-		 * @property {int} columnCount Number of columns in ItemNavigation
-		 * @property {int} cellInRow Index of the cell in row
-		 * @property {int} row Index of row in ItemNavigation
-		 * @property {int} cellCount Number of cells in ItemNavigation
-		 * @property {Object|undefined} domRef Focused DOM reference of undefined
+		 * @returns {sap.ui.table.TableUtils.FocusedItemInfo|null} Returns the information about the focused item, or <code>null</code>, if the
+		 *                                                         item navigation is not yet initialized.
+		 * @typedef {Object} sap.ui.table.TableUtils.FocusedItemInfo
+		 * @property {int} cell Index of focused cell in the ItemNavigation.
+		 * @property {int} columnCount Number of columns in the ItemNavigation.
+		 * @property {int} cellInRow Index of the cell in the row.
+		 * @property {int} row Index of row in the ItemNavigation.
+		 * @property {int} cellCount Number of cells in the ItemNavigation.
+		 * @property {Object|undefined} domRef Reference to the focused DOM element.
 		 * @private
 		 */
 		getFocusedItemInfo : function(oTable) {

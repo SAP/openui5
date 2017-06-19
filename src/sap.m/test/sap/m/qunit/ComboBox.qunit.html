@@ -3603,6 +3603,25 @@
 			oErrorComboBox.destroy();
 		});
 
+		QUnit.test("in 'None' valueState don't showValueState message ", function(assert) {
+			var oComboBox = new sap.m.ComboBox("errorcombobox", {
+				valueState: "Error",
+				showValueStateMessage: true,
+				valueStateText: "Error Message"
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var fnShowValueStateTextSpy = this.spy(oComboBox, "_showValueStateText");
+			oComboBox.setValueState("None");
+			assert.ok(fnShowValueStateTextSpy.calledWith(false));
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 		// BCP 1570763824
 		QUnit.test("it should add the corresponding CSS classes", function(assert) {
 
@@ -10951,6 +10970,37 @@
 			// cleanup
 			oComboBox.destroy();
 		});
+
+		QUnit.test("_highlightList doesn't throw an error when combobox's value contains special characters", function(assert) {
+
+			// system under test
+			var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
+			var oComboBox = new sap.m.ComboBox({
+				showSecondaryValues: true,
+				items: [
+					new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					})
+				]
+			});
+
+			// arrange
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oComboBox._highlightList("(T");
+
+			// act
+			oComboBox.open();
+			this.clock.tick(1000);
+
+			// assert
+			assert.strictEqual(fnOnAfterOpenSpy.callCount, 1, "onAfterOpen() called exactly once");
+
+			// cleanup
+			oComboBox.destroy();
+		});
+
 
 		</script>
 	</head>

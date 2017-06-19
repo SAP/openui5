@@ -86,7 +86,8 @@ sap.ui.define([
 				/**
 				 * Preserves the current header state when scrolling.
 				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
-				 * <br><b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
+				 *
+				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
 				 * when the control is rendered on tablet or mobile and the control`s title and header
 				 * are with height larger than the given threshold.
 				 */
@@ -98,7 +99,7 @@ sap.ui.define([
 				 * The header can be also expanded/collapsed by user interaction,
 				 * which requires the property to be internally mutated by the control to reflect the changed state.
 				 *
-				 * <b>Note:</b> Please be aware that initially collapsed header state is not supported, so <code>headerExpanded</code> should not be set to <code>false</code> when initializing the control.
+				 * <b>Note:</b> As of version 1.48, you can initialize the control in collapsed header state by setting this property to <code>false</code>.
 				 */
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
@@ -150,7 +151,8 @@ sap.ui.define([
 				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
 				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
-			}
+			},
+			designTime : true
 		}
 	});
 
