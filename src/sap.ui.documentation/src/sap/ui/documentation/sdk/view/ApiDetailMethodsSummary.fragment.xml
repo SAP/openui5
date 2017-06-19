@@ -32,7 +32,7 @@
 
 		<m:Title visible="{= ${borrowedMethods>/}.length > 0 }" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle" text="Borrowed from:"></m:Title>
 		<layout:VerticalLayout visible="{= ${borrowedMethods>/}.length > 0 }" width="100%" content="{ path : 'borrowedMethods>/'}">
-			<m:Panel expandable="true" expanded="true" headerText="{borrowedMethods>name}" width="100%" content="{ path: 'borrowedMethods>methods'}">
+			<m:Panel expandable="true" expanded="true" headerText="{borrowedMethods>name}" width="100%" content="{ path: 'borrowedMethods>methods', templateShareable: 'false'}">
 				<m:Link class="sapUiTinyMargin" text="{borrowedMethods>name}" href="{borrowedMethods>link}" />
 			</m:Panel>
 		</layout:VerticalLayout>
