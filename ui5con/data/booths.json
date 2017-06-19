@@ -2,7 +2,7 @@
 	"booth1": [
 		{
 			"type": "break",
-			"duration": 50
+			"duration": 20
 		},
 		{
 			"title": "Metadata-Driven Controls with Rest Services",
@@ -97,7 +97,7 @@
 	"booth2": [
 		{
 			"type": "break",
-			"duration": 50
+			"duration": 20
 		},
 		{
 			"title": "Behavior-Driven Development with OPA5 automated tests",
@@ -187,7 +187,7 @@
 	"booth3": [
 		{
 			"type": "break",
-			"duration": 40
+			"duration": 10
 		},
 		{
 			"title": "UI5 Controls for Document Handling",
