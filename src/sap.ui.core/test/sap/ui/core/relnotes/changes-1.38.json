@@ -2003,5 +2003,34 @@
         "references": []
       }
     ]
+  },
+  "1.38.23": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "54265d95fb7f8ddefeaf77afc30f8fcf933a75ea",
+        "type": "FIX",
+        "text": " ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": []
+      },
+      {
+        "id": "f452fc94ecc651314059ea37b10e8b59de2a3a50",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      },
+      {
+        "id": "bb63c848295614bb18c6bed980e2f59ec93bb697",
+        "type": "FIX",
+        "text": " handlebars: ensure proper context stacking in compat mode",
+        "references": []
+      },
+      {
+        "id": "b749200f0bdd274545d67d883ef1211a3444d7e5",
+        "type": "FIX",
+        "text": " sap.m.Carousel: Touch events inside the control are now propagated correctly",
+        "references": []
+      }
+    ]
   }
 }

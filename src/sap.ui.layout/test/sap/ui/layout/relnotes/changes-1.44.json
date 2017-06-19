@@ -195,5 +195,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "b4b67b314f47b91154290853526de090d9c11042",
+        "type": "FIX",
+        "text": " sap.ui.BlockLayout: Endless switching between breakpoints is now fixed.",
+        "references": []
+      },
+      {
+        "id": "dc4010b7bcc8af5de514d586c381a4487c6e479f",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      },
+      {
+        "id": "e771305017ff7ac36a45cdb1cb1a3b330d25b915",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: IE fialing tests fixed.",
+        "references": []
+      }
+    ]
   }
 }

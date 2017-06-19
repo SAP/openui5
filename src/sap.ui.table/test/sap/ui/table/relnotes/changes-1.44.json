@@ -640,5 +640,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "d8b1ccadaa4e7b690127dd1c1c9ce65fa2b0053f",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "29722f0bebc74cbd0f5240305cc243987e29e90b",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "fe4c582f296d551457c6cd0d06521541e1abff81",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      },
+      {
+        "id": "74991ab9b855acef96615bc260ec95891a133397",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Suppress select all on empty table",
+        "references": []
+      }
+    ]
   }
 }
