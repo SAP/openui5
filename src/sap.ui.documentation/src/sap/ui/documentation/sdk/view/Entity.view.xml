@@ -37,7 +37,9 @@
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label text="Extends:"/>
-						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"/>
+						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"
+								visible="{=!!${/baseTypeNav}}"/>
+						<m:Text text="N/A" visible="{=!${/baseTypeNav}}"/>
 					</m:HBox>
 
 					<m:ObjectAttribute
