@@ -1334,6 +1334,38 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Modify a property, the server responds with 204 (No Content) on the PATCH request.
+	// Sample for this behavior: OData V4 TripPin service from odata.org
+	QUnit.test("Modify a property, server responds with 204 (No Content)", function (assert) {
+		var sView = '<FlexBox binding="{/EMPLOYEES(\'2\')}">\
+						<Text id="text" text="{Name}" />\
+					</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('2')", {"Name" : "Jonathan Smith"})
+			.expectChange("text", "Jonathan Smith");
+
+		return this.createView(assert, sView).then(function () {
+			that.expectRequest({
+					method : "PATCH",
+					url : "EMPLOYEES('2')",
+					headers : {
+						"If-Match" : undefined
+					},
+					payload : {
+						"Name" : "Jonathan Schmidt"
+					}
+				}, /*empty 204 response*/ undefined)
+				.expectChange("text", "Jonathan Schmidt");
+
+			// code under test
+			that.oView.byId("text").getBinding("text").setValue("Jonathan Schmidt");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a sales order w/o key properties, enter a note, then submit the batch
 	QUnit.test("Create with user input", function (assert) {
 		var sView = '\

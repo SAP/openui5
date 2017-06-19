@@ -450,6 +450,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateCache: empty value from PATCH response", function (assert) {
+		var oCacheData = {
+				SalesOrderItemID : "000100"
+			};
+
+		// code under test
+		_Helper.updateCache({/*mChangeListeners*/}, "SO_2_SOITEM", oCacheData,
+			/*empty PATCH response*/undefined);
+
+		assert.deepEqual(oCacheData, {
+			SalesOrderItemID : "000100"
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("toArray", function (assert) {
 		var oObject = {},
 			aObjects = [oObject];

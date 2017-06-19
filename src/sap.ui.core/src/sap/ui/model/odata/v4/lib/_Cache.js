@@ -121,7 +121,8 @@ sap.ui.define([
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
 		var iExpectedLength = iEnd - iStart,
 			oPromise,
-			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
+			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength,
+			bStartBeyondLength = iStart > oCache.aElements.length;
 
 		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 				fnDataRequested)
@@ -142,7 +143,11 @@ sap.ui.define([
 				}
 				if (iResultLength < iExpectedLength) {
 					iCount = Math.min(getCount(oCache.aElements), iStart + iResultLength);
-					setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
+					// If we started to read beyond the range that we read before and the result is
+					// empty, we cannot say anything about the length
+					if (!(bStartBeyondLength && iResultLength === 0)) {
+						setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
+					}
 					oCache.aElements.length = iCount;
 				}
 			})["catch"](function (oError) {

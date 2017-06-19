@@ -217,6 +217,7 @@ sap.ui.define([
 			});
 
 			this._setSalesOrderLineItemBindingContext(oContext);
+			oView.getModel("ui").setProperty("/bCreateItemPending", true);
 
 			// Note: this promise fails only if the transient entity is deleted
 			oContext.created().then(function () {
@@ -225,9 +226,11 @@ sap.ui.define([
 				// What we need would be a complete refresh for the selected sales order and all its
 				// dependents
 				// that._setSalesOrderLineItemBindingContext(oContext);
+				oView.getModel("ui").setProperty("/bCreateItemPending", false);
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
 			}, function (oError) {
-				// delete of transient entity, nothing to do
+				// delete of transient entity
+				oView.getModel("ui").setProperty("/bCreateItemPending", false);
 			});
 		},
 

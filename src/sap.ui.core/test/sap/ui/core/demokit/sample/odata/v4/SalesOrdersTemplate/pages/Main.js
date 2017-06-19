@@ -3,10 +3,9 @@
  */
 sap.ui.require([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath"
+	"sap/ui/test/actions/Press"
 ],
-function (Opa5, Press, BindingPath) {
+function (Opa5, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main";
 
@@ -19,7 +18,7 @@ function (Opa5, Press, BindingPath) {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
-						matchers : new BindingPath({path : "/BusinessPartnerList/0"}),
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 							return this.waitFor({
@@ -37,7 +36,7 @@ function (Opa5, Press, BindingPath) {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.ComboBox",
-						matchers : new BindingPath({path : "/BusinessPartnerList/0"}),
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Role pressed");
 						},
