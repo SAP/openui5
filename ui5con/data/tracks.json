@@ -256,7 +256,8 @@
 			"title": "Controlling UI5 Apps and FLP via Speech",
 			"speaker": "Aparna Narayanaswamy",
 			"type": "Lecture",
-			"duration": 20
+			"duration": 20,
+			"abstract": "<p>Modern browsers provide Web Speech API, enabling the application of speech recognition in web applications.</p><p>We have developed an application that demonstrates how this browser capability can be leveraged in the FLP as a control mechanism.</p>"
 		},
 		{
 			"type": "break",
