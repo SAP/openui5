@@ -105,8 +105,8 @@
 	});
 
 	QUnit.test("openContextMenu", function (assert) {
-		var mExpectedArguments;
-		var mActualArguments;
+		var mActualParameters;
+		var mExpectedParameters;
 
 		// Invalid parameters: No context menu will be opened.
 		TableUtils.Menu.openContextMenu();
@@ -144,17 +144,22 @@
 		var $ColumnB = oColumnB.$();
 		oColumnB.setSortProperty("dummy");
 
-		var oColumnSelectEvent = this.spy(oTable, "fireColumnSelect");
+		var oColumnSelectEventHandler = this.spy(function (oEvent) {
+			mActualParameters = oEvent.mParameters;
+		});
+		oTable.attachColumnSelect(oColumnSelectEventHandler);
 
 		// Open the context menu of column 1. Do not fire the column select event.
 		TableUtils.Menu.openContextMenu(oTable, $ColumnA[0], false, false);
 		this.assertColumnContextMenuOpen(assert, 0, true);
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
 		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, false);
-		assert.ok(oColumnSelectEvent.notCalled, "The ColumnSelect event has not been fired");
+		assert.ok(oColumnSelectEventHandler.notCalled, "The ColumnSelect event handler has not been called");
+		oColumnSelectEventHandler.reset();
+		mActualParameters = null;
 
 		// Open the context menu of column 2. Fire the column select event.
-		mExpectedArguments = {
+		mExpectedParameters = {
 			column: oColumnB,
 			id: oTable.getId()
 		};
@@ -164,55 +169,76 @@
 		this.assertColumnContextMenuOpen(assert, 1, true);
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
 		this.assertColumnHeaderCellMenuExists(assert, $ColumnB, false);
-		assert.ok(oColumnSelectEvent.calledOnce, "The ColumnSelect event has been fired");
-
-		mActualArguments = oColumnSelectEvent.args[0][0];
-		assert.deepEqual(mActualArguments, mExpectedArguments,
-			"The ColumnSelect event handler has been called with the correct arguments");
+		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has been called once");
+		assert.deepEqual(mActualParameters, mExpectedParameters,
+			"The ColumnSelect event object contains the correct parameters");
+		oColumnSelectEventHandler.reset();
+		mActualParameters = null;
 
 		// Open the context menu of column 1. Fire the column select event and and prevent the default action.
 		// The context menu should not be opened.
-		mExpectedArguments = {
+		mExpectedParameters = {
 			column: oColumnA,
 			id: oTable.getId()
 		};
 
-		oColumnSelectEvent.reset();
-		var fOnColumnSelect = function (oEvent) {
+		oTable.attachEventOnce("columnSelect", function (oEvent) {
 			oEvent.preventDefault();
-		};
-		oTable.attachColumnSelect(fOnColumnSelect);
-		TableUtils.Menu.openContextMenu(oTable, $ColumnA, false, true);
-		oTable.detachColumnSelect(fOnColumnSelect);
+		});
 
+		TableUtils.Menu.openContextMenu(oTable, $ColumnA, false, true);
 		this.assertColumnContextMenuOpen(assert, 0, false);
 		this.assertColumnContextMenuOpen(assert, 1, true);
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
 		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, false);
-		assert.ok(oColumnSelectEvent.calledOnce, "The ColumnSelect event has been fired");
+		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has been called once");
+		assert.deepEqual(mActualParameters, mExpectedParameters,
+			"The ColumnSelect event object contains the correct parameters");
+		oColumnSelectEventHandler.reset();
+		mActualParameters = null;
 
-		mActualArguments = oColumnSelectEvent.args[0][0];
-		assert.deepEqual(mActualArguments, mExpectedArguments,
-			"The ColumnSelect event handler has been called with the correct arguments");
+		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
+		oColumnA.setVisible(false);
+		sap.ui.getCore().applyChanges();
+		$ColumnB = oColumnB.$();
+		mExpectedParameters = {
+			column: oColumnB,
+			id: oTable.getId()
+		};
+
+		TableUtils.Menu.openContextMenu(oTable, $ColumnB, false, true);
+		this.assertColumnContextMenuOpen(assert, 0, false);
+		this.assertColumnContextMenuOpen(assert, 1, true);
+		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
+		this.assertColumnHeaderCellMenuExists(assert, $ColumnB, false);
+		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has been called once");
+		assert.deepEqual(mActualParameters, mExpectedParameters,
+			"The ColumnSelect event object contains the correct parameters");
+		oColumnSelectEventHandler.reset();
+		mActualParameters = null;
+
+		oColumnA.setVisible(true);
+		sap.ui.getCore().applyChanges();
+		$ColumnA = oColumnA.$();
 
 		// Open the context menu of column 1 on mobile.
 		sap.ui.Device.system.desktop = false;
 
 		// 1. The column header cell menu should be applied.
-		oColumnSelectEvent.reset();
 		TableUtils.Menu.openContextMenu(oTable, $ColumnA);
 		this.assertColumnContextMenuOpen(assert, 0, false);
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
 		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, true);
-		assert.ok(oColumnSelectEvent.notCalled, "The ColumnSelect event has not been fired");
+		assert.ok(oColumnSelectEventHandler.notCalled, "The ColumnSelect event handler has not been called");
+		oColumnSelectEventHandler.reset();
+		mActualParameters = null;
 
 		// 2. The column header cell menu should be closed and the context menu should be opened.
-		oColumnSelectEvent.reset();
 		TableUtils.Menu.openContextMenu(oTable, $ColumnA);
 		this.assertColumnContextMenuOpen(assert, 0, true);
 		assert.strictEqual(oTable._oCellContextMenu, undefined, "No data cell menu exists");
 		this.assertColumnHeaderCellMenuExists(assert, $ColumnA, false);
-		assert.ok(oColumnSelectEvent.calledOnce, "The ColumnSelect event has been fired");
+		assert.ok(oColumnSelectEventHandler.calledOnce, "The ColumnSelect event handler has not been called");
 
 		/* Cell Context Menu */
 
@@ -226,23 +252,21 @@
 		var oCellB = oTable.getRows()[0].getCells()[1];
 		var $CellB = oCellB.$();
 
-		var oCellContextMenuEvent = this.spy(oTable, "fireCellContextmenu");
+		var oCellContextMenuEventHandler = this.spy(function (oEvent) {
+			mActualParameters = oEvent.mParameters;
+		});
+		oTable.attachCellContextmenu(oCellContextMenuEventHandler);
 
 		// Open the cell menu on the cell in column 1 row 1. Do not fire the CellContextMenu event.
 		TableUtils.Menu.openContextMenu(oTable, $CellA[0], false, false);
 		this.assertColumnContextMenuOpen(assert, 0, false);
 		this.assertDataCellContextMenuOpen(assert, 0, 0, true);
-		assert.ok(oCellContextMenuEvent.notCalled, "The CellContextMenu event has not been fired");
+		assert.ok(oCellContextMenuEventHandler.notCalled, "The CellContextMenu event handler has not been called");
+		oCellContextMenuEventHandler.reset();
+		mActualParameters = null;
 
 		// Open the cell menu on the cell in column 2 row 1. Fire the CellContextMenu event.
-		oCellContextMenuEvent.reset();
-		TableUtils.Menu.openContextMenu(oTable, $CellB, false, true);
-		this.assertColumnContextMenuOpen(assert, 1, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
-		assert.ok(oCellContextMenuEvent.calledOnce, "The CellContextMenu event has been fired");
-
-		mExpectedArguments = {
+		mExpectedParameters = {
 			rowIndex: 0,
 			columnIndex: 1,
 			columnId: oColumnB.getId(),
@@ -251,25 +275,20 @@
 			cellDomRef: getCell(0, 1)[0],
 			id: oTable.getId()
 		};
-		mActualArguments = oCellContextMenuEvent.args[0][0];
-		assert.deepEqual(mActualArguments, mExpectedArguments,
-			"The CellContextMenu event handler has been called with the correct arguments");
+
+		TableUtils.Menu.openContextMenu(oTable, $CellB, false, true);
+		this.assertColumnContextMenuOpen(assert, 1, false);
+		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
+		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
+		assert.ok(oCellContextMenuEventHandler.calledOnce, "The CellContextMenu event handler has been called once");
+		assert.deepEqual(mActualParameters, mExpectedParameters,
+			"The CellContextMenu event object contains the correct parameters");
+		oCellContextMenuEventHandler.reset();
+		mActualParameters = null;
 
 		// Open the cell menu on the cell in column 1 row 1. Fire the CellContextMenu event and prevent execution of the default action.
 		// The cell menu on column 1 row 1 should not open, and the cell menu on column 2 row 1 should stay open.
-		var oCellContextmenuHandler = this.spy(function (oEvent) {
-			oEvent.preventDefault();
-		});
-		oTable.attachCellContextmenu(oCellContextmenuHandler);
-
-		oCellContextMenuEvent.reset();
-		TableUtils.Menu.openContextMenu(oTable, $CellA, false, true);
-		this.assertColumnContextMenuOpen(assert, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
-		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
-		assert.ok(oCellContextMenuEvent.calledOnce, "The CellContextMenu event has been fired");
-
-		mExpectedArguments = {
+		mExpectedParameters = {
 			rowIndex: 0,
 			columnIndex: 0,
 			columnId: oColumnA.getId(),
@@ -278,9 +297,18 @@
 			cellDomRef: getCell(0, 0)[0],
 			id: oTable.getId()
 		};
-		mActualArguments = oCellContextMenuEvent.args[0][0];
-		assert.deepEqual(mActualArguments, mExpectedArguments,
-			"The CellContextMenu event handler has been called with the correct arguments");
+
+		oTable.attachEventOnce("cellContextmenu", function(oEvent) {
+			oEvent.preventDefault();
+		});
+
+		TableUtils.Menu.openContextMenu(oTable, $CellA, false, true);
+		this.assertColumnContextMenuOpen(assert, 0, false);
+		this.assertDataCellContextMenuOpen(assert, 0, 0, false);
+		this.assertDataCellContextMenuOpen(assert, 1, 0, true);
+		assert.ok(oCellContextMenuEventHandler.calledOnce, "The CellContextMenu event handler has been called once");
+		assert.deepEqual(mActualParameters, mExpectedParameters,
+			"The CellContextMenu event object contains the correct parameters");
 	});
 
 	QUnit.test("openColumnContextMenu", function (assert) {
