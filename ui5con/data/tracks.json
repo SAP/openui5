@@ -12,7 +12,7 @@
 			"speaker": "Stefan Beck",
 			"type": "Key Note",
 			"duration": 40,
-			"abstract":"<p>like the &quot;news around UI5 that you absolutely have to know&quot;-session from dkom adapted to the current product status</p>"
+			"abstract":"<p>All the news around UI5.</p>"
 		},
 		{
 			"type": "break",
@@ -24,7 +24,7 @@
 			"speaker": "Peter Muessig, Andreas Ecker",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>This session will present the ideas, concept and current state of UI5 evolution. The evolution of the core framework, rendering layer and build tooling could be shown; eventually an outlook for a new programming model layer. Maybe, this topic would be worth to be part of the &quot;keynote&quot; of the UI5con as it is of a very fundamental interest.</p><p>Depending on the status of the project in June we will be able to present the status of the project and/or even hands-on to show-case the already achieved improvements with regards to self-contained builds of UI5 applications as well as a new build tooling.</p>"
+			"abstract":"<p>This session will provide an overview about the UI5 evolution topic. UI5 evolution is thought as the innovation project of OpenUI5/SAPUI5 which focuses on improving the performance, fixing architectural gaps and embracing Open Source technologies. Our challenge will be to do this innovation in a compatible way so that also existing applications will partially benefit.</p>"
 		},
 		{
 			"type": "break",
@@ -36,7 +36,7 @@
 			"speaker": "HP Seitz",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>Especially with the availability of SAP HANA Express Edition since September 2016 every developers has the possibility to do full-stack JavaScript development with SAP Backend. The session will demonstrate utilizing SAPUI5 on the SAP HANA Platform with HANA XSA (Node.js) using SAP Web IDE for SAP HANA and also an external IDE like WebStorm.</p><p>This is the logical successor of the session &quot;Full-stack JavaScript with OpenUI5&quot; about the NEMO stack from the first UI5Con in Frankfurt.</p>"
+			"abstract":"<p>Especially with the availability of SAP HANA Express Edition since September 2016 every developer has the possibility to do full-stack JavaScript development with SAP Backend. The session will demonstrate utilizing SAPUI5 on the SAP HANA Platform with HANA XSA (Node.js) using SAP Web IDE for SAP HANA and also an external IDE like WebStorm.</p><p>This is the logical successor of the session &quot;Full-stack JavaScript with OpenUI5&quot; about the NEMO stack from the first UI5Con in Frankfurt.</p>"
 		},
 		{
 			"type": "break",
@@ -172,7 +172,7 @@
 			"speaker": "Stefan Beck",
 			"type": "Key Note",
 			"duration": 40,
-			"abstract":"<p>like the &quot;news around UI5 that you absolutely have to know&quot;-session from dkom adapted to the current product status</p>"
+			"abstract":"<p>All the news around UI5.</p>"
 		},
 		{
 			"type": "break",
@@ -228,11 +228,11 @@
 			"abstract":""
 		},
 		{
-			"title": "tbd",
-			"speaker": "",
+			"title": "The UI5 app to create UI5 apps",
+			"speaker": "Christopher C. Bouveret",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":""
+			"abstract":"<p>Since its foundation iTiZZiMO deals with SAP and integrated business apps. As OpenUI5 was released we were perfectly happy to have found a library to fulfill our requirements in terms of optics, performance and robustness. Since the first release of OpenUI5 we use the technology for the frontend design of our platform Simplifier that in turn allows the creation of further UI5 apps.</p><p>The Simplifier itself consists of three parts, the UI designer, the process designer and the code designer. We use several established elements of UI5 library but also developed own UI5 controls, mainly presented within the process designer. Here, the business logic of the application is created via Visual Scripting.</p><p>As most of our customers are SAP customers using OpenUI5 and SAPUI5 they of course prefer the SAP technology due to the trouble-free visualization of SAP-data for mobile devices.</p><p>So to say, we created a huge UI5 app creation machine with its UI based on OpenUI5.</p><p>We want to present our technology and custom UI5 controls to show the great variety of the UI framework and our own custom framework for process designing.</p><p>To get a brief overview, please visit: https://www.youtube.com/watch?v=lcZCekNxPhk</p>"
 		},
 		{
 			"type": "break",
@@ -256,8 +256,7 @@
 			"title": "Controlling UI5 Apps and FLP via Speech",
 			"speaker": "Aparna Narayanaswamy",
 			"type": "Lecture",
-			"duration": 20,
-			"abstract":""
+			"duration": 20
 		},
 		{
 			"type": "break",

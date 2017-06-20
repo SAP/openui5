@@ -273,12 +273,6 @@
 		"meetMe": "14:50"
 	},
 	{
-		"name": "Ian Robert Taylor",
-		"bio": "Bin seit 20 Jahren bei der SAP – HR Entwicklung Landesversionen Südafrika und Großbritannien, Industry Public Services Entwicklung (Campus Management und Records Management). Seit 2015 bei Global Design, hauptsächlich mit UI5 in der „Reference Apps“. In der Reference Apps bauen wir, für sowohl für intern- als extern zweck, reference – artige App, die als Beispiel Implementierung diene.",
-		"picture": "IanRobertTaylor.jpg",
-		"company": "SAP"
-	},
-	{
 		"name": "Elena Makarenko",
 		"bio": "I'm a SAPUI5 Developer, keen on User Centered Design, focused on creating a great user experience.",
 		"picture": "ElenaMakarenko.jpg",
@@ -329,7 +323,7 @@
 	},
 	{
 		"name": "Ian Robert Taylor",
-		"bio": "I have been with SAP for 20 years in HR development, country versions for South Africa and Great Britain, Industry Public Services development (Campus Management and Records Management). Since 2015 I have been working at the Global Design department, mostly developing UI5 “reference apps” as sample implementations for internal as well as external usage.",
+		"bio": "I have been with SAP for 20 years in HR development, country versions for South Africa and Great Britain, Industry Public Services development (Campus Management and Records Management). Since 2015 I have been working at the Global Design department, mostly developing UI5 &quot;reference apps&quot; as sample implementations for internal as well as external usage.",
 		"picture": "IanRobertTaylor.jpg",
 		"company": "SAP"
 	},
@@ -403,6 +397,18 @@
 		"name": "Tobias Sorn",
 		"bio": "I am a 31-year old JavaScript Developer who recently joined the SAP UI5 core team. I grew up with jQuery and prototype and celebrate today the success of OpenUI5. Coming from a strong Java object oriented background made it easy to embrace the UI5 paradigms.",
 		"picture": "TobiasSorn-avatar.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Christopher C. Bouveret",
+		"bio": "With a diploma degree in business administration, Christopher C. Bouveret is Chief Innovation Officer at iTiZZiMO. As an expert for interactive technologies, wearable computing and augmented reality, he has several years of experience in innovative technologies and development as well as integration of digital solutions in the b2b sector. In his role as CIO, he is currently responsible for the strategic direction of our core product Simplifier a low-code platform for integrated business and IoT applications. Furthermore he has a strong focus on presales activities teaching customers and partners in using the full functionality of the plattform, testing the software and supervision of implementating industrial solutions.",
+		"picture": "christopher-bouveret.jpg",
+		"company": "iTiZZiMO"
+	},
+	{
+		"name": "Sebastian Wennemers",
+		"bio": "Sebastian is UI5 developer at SAP and architect of UI Adaptation.",
+		"picture": "no_portrait.png",
 		"company": "SAP"
 	}
 ]
