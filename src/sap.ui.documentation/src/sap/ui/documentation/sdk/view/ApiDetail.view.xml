@@ -120,6 +120,7 @@
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
+											enableFormattedText="true"
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
@@ -141,6 +142,7 @@
 											type="Warning"
 											showIcon="true"
 											showCloseButton="false"
+											enableFormattedText="true"
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 
@@ -311,6 +313,7 @@
 															type="Error"
 															showIcon="true"
 															showCloseButton="false"
+															enableFormattedText="true"
 															class="sapUiMediumMarginBottom">
 														</m:MessageStrip>
 														<m:MessageStrip  width="100%"
@@ -319,6 +322,7 @@
 															type="Warning"
 															showIcon="true"
 															showCloseButton="false"
+															enableFormattedText="true"
 															class="sapUiMediumMarginBottom">
 														</m:MessageStrip>
 													</m:VBox>
@@ -353,6 +357,7 @@
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
+											enableFormattedText="true"
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 										<m:MessageStrip
@@ -361,6 +366,7 @@
 											type="Warning"
 											showIcon="true"
 											showCloseButton="false"
+											enableFormattedText="true"
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 
@@ -426,6 +432,7 @@
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
+											enableFormattedText="true"
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 										<m:MessageStrip
@@ -434,6 +441,7 @@
 											type="Warning"
 											showIcon="true"
 											showCloseButton="false"
+											enableFormattedText="true"
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 
