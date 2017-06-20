@@ -103,9 +103,9 @@ sap.ui.define([
 			},this);
 		},
 		getParameterMetadata : function(fnCallback) {
-			jQuery.ajax("/testsuite/resources/sap/ui/core/themes/sap_belize/base.less",{
+			jQuery.ajax("../../../../../../resources/sap/ui/core/themes/sap_belize/base.less",{
 				success: function(data){
-					jQuery.ajax("/testsuite/resources/sap/ui/core/themes/sap_belize/global.less",{
+					jQuery.ajax("../../../../../../resources/sap/ui/core/themes/sap_belize/global.less",{
 						success: function(namedata){
 							var oFileThemeParameters = data.replace("\\",""),
 							oFileBelize = namedata.replace("\\",""),
@@ -655,9 +655,9 @@ sap.ui.define([
 				$temp.val(sString).select();
 				document.execCommand("copy");
 				$temp.remove();
-				MessageToast.show("UI5 Parameter " + sString + " copied to Clipboard");
+				MessageToast.show("UI5 Parameter " + sString + " copied to clipboard");
 			} catch (oException) {
-				MessageToast.show("UI5 Parameter " + sString + " not copied to Clipboard");
+				MessageToast.show("UI5 Parameter " + sString + " not copied to clipboard");
 			}
 		},
 
