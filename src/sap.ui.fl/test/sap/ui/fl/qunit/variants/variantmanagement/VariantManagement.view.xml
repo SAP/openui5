@@ -1,0 +1,27 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.ui.fl.sample.variantmanagement.VariantManagement"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+	xmlns:m="sap.m"
+	xmlns="sap.ui.fl.variants">
+	<l:VerticalLayout>
+	<m:HBox fitContainer="true">
+		<m:Button id="idMarkAsChangedBtn" text="Mark as Changed" press="onMarkAsChanged" />
+	</m:HBox>
+		<m:Label text="Variants"/>
+		<VariantManagement id="idVariantManagementCtrl" select="onSelect" save="onSave"  manage="onManage" showExecuteOnSelection="true" showShare="true">
+			<variantItems>
+				<VariantItem text="ONE" key="1" global="true" readOnly="true" />
+				<VariantItem text="TWO" key="2" global="true" readOnly="true" />
+				<VariantItem text="THREE" key="3" global="true" readOnly="true" />
+				<VariantItem text="FOUR" key="4" global="true" readOnly="true" />
+				<VariantItem text="FIVE" key="5" global="false"/>
+				<VariantItem text="SIX" key="6" global="false" />
+				<VariantItem text="SEVEN" key="7" global="fakse"/>
+				<VariantItem text="EIGHT" key="8" global="false"/>
+				<VariantItem text="NINE" key="9" global="false"/>
+			</variantItems>
+		</VariantManagement>
+	</l:VerticalLayout>
+</mvc:View>
