@@ -249,8 +249,8 @@
 	},
 	{
 		"name": "Bohdan Pukalskyi",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Bohdan develops controls for SAPUI5 with an emphasis on analytics and data visualization, including microcharts that are displayed in the tiles of Fiori Launchpad and interactive filtering charts used in Analytical List Page.",
+		"picture": "bpukalskyi.jpg",
 		"company": "SAP"
 	},
 	{
@@ -402,7 +402,7 @@
 	{
 		"name": "Christopher C. Bouveret",
 		"bio": "With a diploma degree in business administration, Christopher C. Bouveret is Chief Innovation Officer at iTiZZiMO. As an expert for interactive technologies, wearable computing and augmented reality, he has several years of experience in innovative technologies and development as well as integration of digital solutions in the b2b sector. In his role as CIO, he is currently responsible for the strategic direction of our core product Simplifier a low-code platform for integrated business and IoT applications. Furthermore he has a strong focus on presales activities teaching customers and partners in using the full functionality of the plattform, testing the software and supervision of implementating industrial solutions.",
-		"picture": "christopher-bouveret.jpg",
+		"picture": "christopherbouveret.jpg",
 		"company": "iTiZZiMO"
 	},
 	{
