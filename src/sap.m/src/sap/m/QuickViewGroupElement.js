@@ -133,7 +133,8 @@ sap.ui.define([
 
 					return new Link({
 						href : href,
-						text : this.getValue()
+						text : this.getValue(),
+						wrapping : true
 					});
 				case GroupElementType.phone:
 				case GroupElementType.mobile:
