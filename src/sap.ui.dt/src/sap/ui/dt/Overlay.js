@@ -196,12 +196,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			this._detachDomRefScrollHandler(oElementDomRef);
 		}
 
-		if (!window.requestAnimationFrame) {
-			window.cancelAnimationFrame = function(id) {
-				window.clearTimeout(id);
-			};
-		}
-
 		if (this._aScrollContainers) {
 			this._aScrollContainers.forEach(function(oScrollContainer, iIndex) {
 				if (this.getElementInstance()) {
@@ -535,18 +529,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			oScrollContainer = this._aScrollContainers[sScrollContainerIndex];
 		} else {
 			oScrollContainer = this;
-		}
-
-		if (!window.requestAnimationFrame) {
-			window.requestAnimationFrame = function(callback) {
-				oScrollContainer._iSyncScrollWithDomRef = window.setTimeout(callback, 0);
-			};
-		}
-
-		if (!window.requestAnimationFrame) {
-			window.cancelAnimationFrame = function(id) {
-				window.clearTimeout(id);
-			};
 		}
 
 		window.cancelAnimationFrame(oScrollContainer._iSyncScrollWithDomRef);
