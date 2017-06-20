@@ -26,6 +26,8 @@ sap.ui.define([
 
 				this.getRouter().getRoute("api").attachPatternMatched(this._onMatched, this);
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
 			},
 
 			/* =========================================================== */
@@ -47,7 +49,7 @@ sap.ui.define([
 					jQuery.sap.log.error(e);
 				}
 
-				this._topicId = event.getParameter("arguments").id;
+				this._topicId = event.getParameter("arguments").id || event.getParameter("name");
 
 				this._expandTreeToNode(this._topicId);
 			},
@@ -62,6 +64,36 @@ sap.ui.define([
 				if (masterTree) {
 					selectedItem = masterTree.getSelectedItem();
 					selectedItem && selectedItem.setSelected(false);
+				}
+			},
+
+			compareTreeNodes: function (sNode1, sNode2) {
+				if (sNode1 === "EXPERIMENTAL") {
+					return 1;
+				}
+
+				if (sNode2 === "EXPERIMENTAL") {
+					return -1;
+				}
+
+				if (sNode1 === "DEPRECATED") {
+					return 1;
+				}
+
+				if (sNode2 === "DEPRECATED") {
+					return -1;
+				}
+
+				if (sNode1 < sNode2) {
+					return -1;
+				}
+
+				if (sNode1 > sNode2) {
+					return 1;
+				}
+
+				if (sNode1 === sNode2) {
+					return 0;
 				}
 			},
 

@@ -117,6 +117,23 @@ sap.ui.define([
 				this._modelsPromise = new Promise(function (resolve) {
 					APIInfo.getAllLibrariesElementsJSONPromise().then(function(aLibsData) {
 						aLibsData.forEach(this._parseLibraryElements, this);
+
+						if (aTreeContent.length > 0) {
+							aTreeContent.push({
+								isSelected: false,
+								name : "experimental",
+								ref: "#/api/experimental",
+								text: "Experimental APIs"
+							}, {
+								isSelected: false,
+								name : "deprecated",
+								ref: "#/api/deprecated",
+								text: "Deprecated APIs"
+							});
+						}
+
+						this._addDeprecatedAndExperimentalData(oLibsData);
+
 						this._bindAllLibsModel(oLibsData);
 						this._bindTreeModel(aTreeContent);
 						resolve();
@@ -222,8 +239,87 @@ sap.ui.define([
 				var treeModel = this.getModel("treeData");
 				treeModel.setSizeLimit(iTreeModelLimit);
 				treeModel.setData(aTreeContent, false);
+			},
+
+			_addDeprecatedAndExperimentalData : function(oLibsData) {
+				var sWithoutVersion = "Without Version";
+
+				oLibsData.deprecated = {
+					noVersion : {
+						name : sWithoutVersion,
+						apis : []
+					}
+				};
+
+				oLibsData.experimental = {
+					noVersion : {
+						name : sWithoutVersion,
+						apis : []
+					}
+				};
+
+				/**
+				 * @param {String} oDataType - "deprecated" or "experimental"
+				 * @param {Object} oEntityObject - the object which contains the data
+				 * @param {String} sObjectType - "method" or "event"
+				 * @param {String} sSymbolName - the name of the class or namespace to which the data is relevant
+				 */
+				function addData(oDataType, oEntityObject, sObjectType, sSymbolName) {
+					var oData = {
+						control : sSymbolName,
+						entityName : oEntityObject.name,
+						text : oEntityObject[oDataType].text || oEntityObject.description,
+						type : sObjectType
+					};
+
+
+
+					if (oEntityObject[oDataType].since) {
+						var aSince = oEntityObject[oDataType].since.split(".");
+						var sVersion = aSince[0] + "." + aSince[1]; // take only major and minor versions
+
+						oData.since = oEntityObject[oDataType].since;
+
+						if (!oLibsData[oDataType][sVersion]) {
+							oLibsData[oDataType][sVersion] = {
+								name : sVersion,
+								apis : []
+							};
+						}
+
+						oLibsData[oDataType][sVersion].apis.push(oData);
+					} else {
+						oLibsData[oDataType].noVersion.apis.push(oData);
+					}
+				}
+
+				/* Iterate over the oLibsData object, gather information about all deprecated and experimental
+				entities and aggregate it in new properties in oLibsData.
+				 */
+				Object.keys(oLibsData).forEach(function(sLibName) {
+					var sLib = oLibsData[sLibName];
+
+					sLib.methods && sLib.methods.forEach(function(oMethod) {
+						if (oMethod.deprecated) {
+							addData("deprecated", oMethod, "method", sLib.name);
+						}
+
+						if (oMethod.experimental) {
+							addData("experimental", oMethod, "method", sLib.name);
+						}
+					});
+
+					sLib.events && sLib.events.forEach(function(oEvent) {
+						if (oEvent.deprecated) {
+							addData("deprecated", oEvent, "event", sLib.name);
+						}
+
+						if (oEvent.experimental) {
+							addData("experimental", oEvent, "event", sLib.name);
+						}
+					});
+				});
 			}
 		});
-
 	}
 );

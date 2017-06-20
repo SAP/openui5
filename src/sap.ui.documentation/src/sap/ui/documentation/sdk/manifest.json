@@ -147,6 +147,16 @@
 			"target": ["apiMaster", "apiDetailInitial"]
 		  },
 		  {
+		    "pattern": "api/deprecated",
+			"name": "deprecated",
+			"target": ["apiMaster", "apiDetailDeprecated"]
+		  },
+		  {
+		    "pattern": "api/experimental",
+			"name": "experimental",
+			"target": ["apiMaster", "apiDetailExperimental"]
+		  },
+		  {
 		    "pattern": "api/{id}/:entityType:/:entityId:",
 			"name": "apiId",
 			"target": ["apiMaster", "apiDetail"]
@@ -257,6 +267,16 @@
 		  "apiDetail": {
 			"viewName": "ApiDetail",
 			"viewId": "apiDetail",
+			"viewLevel": 2
+		  },
+		  "apiDetailDeprecated": {
+			"viewName": "ApiDetailDeprecated",
+			"viewId": "apiDetailDeprecated",
+			"viewLevel": 2
+		  },
+		  "apiDetailExperimental": {
+			"viewName": "ApiDetailExperimental",
+			"viewId": "apiDetailExperimental",
 			"viewLevel": 2
 		  },
 		  "topicMaster": {

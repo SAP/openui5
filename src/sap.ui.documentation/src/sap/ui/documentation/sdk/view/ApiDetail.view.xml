@@ -24,7 +24,8 @@
 							  visible="false">
 				<headerTitle>
 					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
-									  objectSubtitle="{ parts : [{path: 'topics>/deprecated'}], formatter: '.formatSubtitle'}">
+									  objectSubtitle="{parts : [{path: 'topics>/deprecated'}],
+									                   formatter: '.formatSubtitle'}">
 						<actions>
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 							<ObjectPageHeaderActionButton
@@ -224,15 +225,20 @@
 									<layout:VerticalLayout width="100%">
 										<core:HTML content="{parts: [{path: 'topics>/constructor/description'}],
 																	  formatter: '.formatDescription'}{}"/>
-										<ce:CodeEditor height="auto" maxLines="20" width="100%" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
-														syntaxHints="false" value="{parts: [{path: 'topics>/name' },
-																			{path: 'topics>/constructor/parameters' }],
-																			formatter: '.formatConstructor'}"
-																			class="sapUiSmallMarginBottom"/>
+										<ce:CodeEditor height="auto"
+													   maxLines="20"
+													   width="100%"
+													   visible="{topics>/hasConstructor}"
+													   editable="false" lineNumbers="true"
+													   syntaxHints="false"
+													   class="sapUiSmallMarginBottom"
+													   value="{parts: [{path: 'topics>/name'},
+																		{path: 'topics>/constructor/parameters'}],
+															   formatter: '.formatConstructor'}"/>
 
 										<m:Table items="{ path: 'constructorParams>/parameters'}"
 												showSeparators="Inner"
-												fixedLayout="true">
+		 										fixedLayout="true">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
@@ -384,7 +390,7 @@
 														<custom:ParamText customClass="{parts: [{path: 'events>isSubProperty'},
 																								{path: 'events>isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
-																						formatter: '.formatEventClassName'}" 
+																						formatter: '.formatEventClassName'}"
 																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${events>phoneName} ? ${events>phoneName} : ${events>name} }"
 																wrapping="false"/>
 														<m:Link text="{events>type}"
@@ -555,7 +561,7 @@
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
-																	  formatter: '.formatLinkEnabled'}"
+																      formatter: '.formatLinkEnabled'}"
 															press="onTypeLinkPress"/>
 
 													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
@@ -643,7 +649,7 @@
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																					 {path: 'topics>deprecated/text'},
 																					 {path: 'topics>deprecated/since'}],
-																				  formatter: '.formatDescription'}"/>
+																		formatter: '.formatDescription'}"/>
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
