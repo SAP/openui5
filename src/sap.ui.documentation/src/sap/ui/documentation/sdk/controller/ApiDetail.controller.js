@@ -400,6 +400,16 @@ sap.ui.define([
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
 				}
+
+				// TODO: This is a temporary solution
+				// It's executed here where we have all instances of the CodeEditor created
+				this.getView().findAggregatedObjects(true, function (oElement) {
+					if (oElement instanceof sap.ui.codeeditor.CodeEditor) {
+						// We are replacing the "focus" on the editor instance method as it is
+						// triggering the unwanted scroll
+						oElement._getEditorInstance().focus = function () {};
+					}
+				});
 			},
 
 			_getControlChildren : function (aTreeData, sTopicId) {
