@@ -217,7 +217,7 @@
 		},
 		{
 			"title": " UI5 Supportability Reloaded",
-			"speaker": " Gergana Kremenska",
+			"speaker": "Gergana Kremenska, Stanislava Baltova",
 			"type": "Lecture",
 			"duration": 40,
 			"abstract":"<p>In this session we will present the improvements we’ve added to SAPUI5 Supportability :</p><ul>  <li>Brand new Support Assistant tool enables application developers to check whether their applications follow the guidelines and are built according to the best practices.</li>  <li>With Support Rules supplied by SAP, that are also easy to be authored directly in the Support Assistant tool, developers and designers can benefit from best advices how to avoid well known common mistakes and improvement hints on-the-spot of running application.</li>  <li>Overview of other Support/Troubleshooting tools will be provided as well</li></ul>"

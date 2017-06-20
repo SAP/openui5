@@ -25,8 +25,8 @@
 	},
 	{
 		"name": "Gregor Brett",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Gregor is a developer at Bluefin Solutions in the UK. He has been working with SAP software for over ten years - from ABAP and Java backend stuff to Web and Mobile and everything in between!",
+		"picture": "gregor_brett.jpg",
 		"company": "Bluefin Solutions Ltd"
 	},
 	{
@@ -249,8 +249,8 @@
 	},
 	{
 		"name": "Bohdan Pukalskyi",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Bohdan develops controls for SAPUI5 with an emphasis on analytics and data visualization, including microcharts that are displayed in the tiles of Fiori Launchpad and interactive filtering charts used in Analytical List Page.",
+		"picture": "bpukalskyi.jpg",
 		"company": "SAP"
 	},
 	{
@@ -280,8 +280,8 @@
 	},
 	{
 		"name": "Dirk Teufel",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Dirk is a Development Architect on the Fiori Reference Apps team at SAP. His main work focus is on OData services and annotation models for the various UI5 reference apps.",
+		"picture": "dirk_teufel.jpg",
 		"company": "SAP"
 	},
 	{
@@ -316,8 +316,8 @@
 	},
 	{
 		"name": "Frederic Berg",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Frederic Berg is Vice President at SAP and SAPUI5 expert with more than 19 years of experience in the IT industry. He is also an active speaker at international conferences on the topic of OpenUI5.",
+		"picture": "FredericBerg.jpg",
 		"company": "SAP",
 		"meetMe": "10:50"
 	},
@@ -376,14 +376,14 @@
 	},
 	{
 		"name": "Pia Kinkel",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Pia is a senior developer in the SAPUI5/ OpenUI5 controls team. She enjoys developing great UI controls that enhance the spectrum and improve the usability of UI5 applications. Pia is working in the UI5 area for about 3 years and at SAP for more than 15 years.",
+		"picture": "Pia.jpg",
 		"company": "SAP"
 	},
 	{
 		"name": "Steffen Huester",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Steffen is working as development architect at SAP with main focus on SAP Fiori launchpad and UI integration.",
+		"picture": "Steffen_Huester.jpg",
 		"company": "SAP",
 		"meetMe": "11:40"
 	},
@@ -402,13 +402,13 @@
 	{
 		"name": "Christopher C. Bouveret",
 		"bio": "With a diploma degree in business administration, Christopher C. Bouveret is Chief Innovation Officer at iTiZZiMO. As an expert for interactive technologies, wearable computing and augmented reality, he has several years of experience in innovative technologies and development as well as integration of digital solutions in the b2b sector. In his role as CIO, he is currently responsible for the strategic direction of our core product Simplifier a low-code platform for integrated business and IoT applications. Furthermore he has a strong focus on presales activities teaching customers and partners in using the full functionality of the plattform, testing the software and supervision of implementating industrial solutions.",
-		"picture": "christopher-bouveret.jpg",
+		"picture": "christopherbouveret.jpg",
 		"company": "iTiZZiMO"
 	},
 	{
 		"name": "Sebastian Wennemers",
 		"bio": "Sebastian is UI5 developer at SAP and architect of UI Adaptation.",
-		"picture": "no_portrait.png",
+		"picture": "sebastian_wennemers.jpg",
 		"company": "SAP"
 	}
 ]
