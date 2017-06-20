@@ -59,7 +59,7 @@
 	},
 	{
 		"name": "Ondrej Bohaciak",
-		"bio": "",
+		"bio": "Development Manager and Product Owner in fXperience or Fiori Experience Unit (part of P&I S/4HANA). I lead teams working on next generation of S/4HANA User Experience based on Fiori and SAPUI5. We build freestyle and template-based apps in the financial domain as well as contribute controls upstream to SAPUI5 as part of our inner source development culture.",
 		"picture": "ondrej.bohaciak.jpg",
 		"company": "SAP"
 	},
@@ -96,7 +96,7 @@
 	},
 	{
 		"name": "Yavor Ivanov",
-		"bio": "",
+		"bio": "<p>I'm a software developer at SAP, working on OpenUI5.</p><p>My interests are on the latest web technologies, semantic web, algorithms and data structures. I have a strong focus on performance and code quality.</p><p>My past experience is related to building SEO friendly web sites and single page applications with high availability and scalability.</p><p>I like to spend my free time with my family. Though I often steal some of it for sports and reading.</p>",
 		"picture": "yavor.ivanov.jpg",
 		"company": "SAP"
 	},
@@ -114,7 +114,7 @@
 	},
 	{
 		"name": "Aparna Narayanaswamy",
-		"bio": "My job: I  am presently working as a developer of Fiori Launchpad services at SAP in Walldorf. (2016 -present). Apart from doing javascript development, I am also the Quality responsible for my team. My education background : I am an Electronics and Communication Engineer  from the University of Madras (India). I am Agile Scrum Master(EXIN) certified and Basic Project Management GPM - IPMA certiifed. My Past Work Experience : I worked as a  Product Technical Lead in Infosys (Finacle) between 2003-2009 in India. Others :In 2010 I moved to Germany and took a Career break (for Parenting) before joining SAP last year. My Motto: ‘Where there is a Will there is a way’ My Professional interests : openSAP courses, IOT topics, Scrum and Quality topics. My hobbies : Poetry writing and Spending quality time with my daughter.",
+		"bio": "<p>My job: I  am presently working as a developer of Fiori Launchpad services at SAP in Walldorf. (2016 -present). Apart from doing javascript development, I am also the Quality responsible for my team.</p><p>My education background : I am an Electronics and Communication Engineer  from the University of Madras (India). I am Agile Scrum Master(EXIN) certified and Basic Project Management GPM - IPMA certiifed.</p><p>My Past Work Experience : I worked as a  Product Technical Lead in Infosys (Finacle) between 2003-2009 in India.</p><p>Others :In 2010 I moved to Germany and took a Career break (for Parenting) before joining SAP last year. </p><p>My Motto: ‘Where there is a Will there is a way’</p><p>My Professional interests : openSAP courses, IOT topics, Scrum and Quality topics.</p><p>My hobbies : Poetry writing and Spending quality time with my daughter.</p>",
 		"picture": "Aparna.jpg",
 		"company": "SAP"
 	},
@@ -160,7 +160,7 @@
 	},
 	{
 		"name": "Andreas Kunz",
-		"bio": "Andreas is an area architect within SAPUI5 development, with a special passion for the open source variant OpenUI5. He has been with UI5 from day one, in changing roles, and spoken at the first UI5con 2016 as well as other conferences like OSCON, Fluent, and SAP TechEd.",
+		"bio": "Andreas is an area architect within SAPUI5 development, with a special passion for the open source variant OpenUI5. He has been with UI5 from day one, in changing roles, and enjoyed spreading the word at the first UI5con 2016 as well as other conferences like OSCON, Fluent, and SAP TechEd.",
 		"picture": "Andreas-openSAP-small.jpg",
 		"company": "SAP",
 		"meetMe": "16:30"
@@ -288,6 +288,121 @@
 		"name": "Dirk Teufel",
 		"bio": "",
 		"picture": "no_portrait.png",
+		"company": "SAP"
+	},
+	{
+		"name": "András Kónya",
+		"bio": "Andras Konya is a junior frontend developer who is interested in integration of new technologies.",
+		"picture": "andras_konya.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Christian Voshage",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP"
+	},
+	{
+		"name": "Christoph Laux",
+		"bio": "Christoph is an Area Product Owner for control development in SAPUI5 / OpenUI5.",
+		"picture": "Christoph_Laux.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Dominic Holzwarth",
+		"bio": "<p>I’m a developer in the Suite Controls Team of the S/4HANA Fiori Reuse & Extensibility org unit.</p><p>In this team, I help create and maintain complex SAPUI5 controls that are used throughout SAP’s portfolio, be it charts, specialized containers, smart controls, etc.</p><p>Some topics of special interest to me are:<ul><li>Code reviews and code quality</li><li>Language and documentation</li><li>JavaScript development in the Browser and in NodeJS</li><li>Everything about CSS</li></ul>",
+		"picture": "no_portrait.png",
+		"company": "SAP"
+	},
+	{
+		"name": "Emanuele Ricci",
+		"bio": "SAPUI5 Master Ninja, former Android and Full stack engineer, love everything about technology in general. And by that, I mean literally everything!",
+		"picture": "emanuele-ricci.jpg",
+		"company": "Techedge"
+	},
+	{
+		"name": "Frederic Berg",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP",
+		"meetMe": "10:50"
+	},
+	{
+		"name": "Ian Robert Taylor",
+		"bio": "I have been with SAP for 20 years in HR development, country versions for South Africa and Great Britain, Industry Public Services development (Campus Management and Records Management). Since 2015 I have been working at the Global Design department, mostly developing UI5 “reference apps” as sample implementations for internal as well as external usage.",
+		"picture": "IanRobertTaylor.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Jan Mummenthaler",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP",
+		"meetMe": "12:30"
+	},
+	{
+		"name": "Jan Zaruba",
+		"bio": "I started as Java server side developer but over time I moved over the Android developer to more frontend programming. Currently I work as lead developer of UI5 mobile client application.",
+		"picture": "jzaruba.jpg",
+		"company": "GK Software AG"
+	},
+	{
+		"name": "Jens Ittel",
+		"bio": "Jens is Area Product Owner UI5 Core at SAP SE responsible for development and delivery of the UI5 core framework including the model implementations and build tooling. In former roles, Jens contributed to other UI technologies like SAP Fiori launchpad and Web Dynpro.",
+		"picture": "no_portrait.png",
+		"company": "SAP",
+		"meetMe": "14:00"
+	},
+	{
+		"name": "Jiawei Cao",
+		"bio": "Jiawei is a JS Developer at SAP and has been working in UI5 area since 2012.",
+		"picture": "jiawei.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Malte Wedel",
+		"bio": "",
+		"picture": "malte.jpg",
+		"company": "SAP",
+		"meetMe": "12:30"
+	},
+	{
+		"name": "Marek Barwicki",
+		"bio": "Marek is an Area Product Owner at SAP leading development and product aspects of the Fiori launchapad on ABAP.",
+		"picture": "marek-barwicki.jpg",
+		"company": "SAP",
+		"meetMe": "11:40"
+	},
+	{
+		"name": "Peter Muessig",
+		"bio": "Peter was part of the team which started the Phoenix project (a.k.a. OpenUI5/SAPUI5). Today he is working as Lead Architect for OpenUI5/SAPUI5. His focus topics are the UI5 evolution project and the build and development tooling. Next to this Peter loves to run and especially instead of lunch, even if he doesn’t look like so sporty! ☺",
+		"picture": "petermuessig.jpg",
+		"company": "SAP",
+		"meetMe": "15:40"
+	},
+	{
+		"name": "Pia Kinkel",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP"
+	},
+	{
+		"name": "Steffen Huester",
+		"bio": "",
+		"picture": "no_portrait.png",
+		"company": "SAP",
+		"meetMe": "11:40"
+	},
+	{
+		"name": "Stephan Heyne",
+		"bio": "Stephan Heyne works since 6 years for SAP as a JavaScript developer. Since 2013 he contributes to SAP Fiori launchpad running on the ABAP Platform.",
+		"picture": "Stephan Heyne.jpg",
+		"company": "SAP"
+	},
+	{
+		"name": "Tobias Sorn",
+		"bio": "I am a 31-year old JavaScript Developer who recently joined the SAP UI5 core team. I grew up with jQuery and prototype and celebrate today the success of OpenUI5. Coming from a strong Java object oriented background made it easy to embrace the UI5 paradigms.",
+		"picture": "TobiasSorn-avatar.jpg",
 		"company": "SAP"
 	}
 ]
