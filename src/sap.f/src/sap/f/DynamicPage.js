@@ -213,6 +213,7 @@ sap.ui.define([
 		this._bExpandingWithAClick = false;
 		this._bSuppressToggleHeaderOnce = false;
 		this._headerBiggerThanAllowedHeight = false;
+		this._bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
 			vertical: true
@@ -729,14 +730,21 @@ sap.ui.define([
 
 	/**
 	 * Determines if it's possible for the header to collapse (snap) on scroll.
+	 * <code>Note:</code>
+	 * For IE and Edge we use 1px threshold,
+	 * because the clientHeight returns results in 1px difference compared to the scrollHeight,
+	 * the reason is not defined.
+	 *
 	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPage.prototype._canSnapHeaderOnScroll = function () {
-		var iMaxScrollPosition = this._getMaxScrollPosition();
+		var iMaxScrollPosition = this._getMaxScrollPosition(),
+			iThreshold = this._bMSBrowser ? 1 : 0;
 
 		if (this._bHeaderInTitleArea) { // when snapping with scroll, the header will be in the content area
 			iMaxScrollPosition += this._getHeaderHeight();
+			iMaxScrollPosition -= iThreshold;
 		}
 		return iMaxScrollPosition > this._getSnappingHeight();
 	};
@@ -768,7 +776,7 @@ sap.ui.define([
 	/**
 	 * Determines if the control would need a <code>ScrollBar</code>.
 	 * <code>Note:</code>
-	 * For IE and Edge we use 1px threshhold,
+	 * For IE and Edge we use 1px threshold,
 	 * because the clientHeight returns results in 1px difference compared to the scrollHeight,
 	 * the reason is not defined.
 	 *
@@ -776,8 +784,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		var bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false,
-			iThreshold = bMSBrowser ? 1 : 0;
+		var iThreshold = this._bMSBrowser ? 1 : 0;
 
 		return this._getMaxScrollPosition() > iThreshold;
 	};
