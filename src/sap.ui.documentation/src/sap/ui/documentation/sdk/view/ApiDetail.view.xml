@@ -114,7 +114,7 @@
 							<ObjectPageSubSection>
 								<blocks>
 									<layout:VerticalLayout width="100%">
-										<m:MessageStrip  width="100%"
+										<m:MessageStrip
 											visible="{=${topics>/deprecated} !== undefined}"
 											text="Deprecated since version {topics>/deprecated/since}. {topics>/deprecated/text}"
 											type="Error"
@@ -230,7 +230,7 @@
 																			formatter: '.formatConstructor'}"
 																			class="sapUiSmallMarginBottom"/>
 
-										<m:Table items="{ path : 'constructorParams>/parameters'}"
+										<m:Table items="{ path: 'constructorParams>/parameters'}"
 												showSeparators="Inner"
 												fixedLayout="true">
 											<m:columns>
@@ -247,7 +247,7 @@
 																								formatter: '.formatEventClassName'}"
 																		  text="{= ${constructorParams>name}}"/>
 
-														<layout:VerticalLayout content="{constructorParams>types}">
+														<layout:VerticalLayout content="{path: 'constructorParams>types', templateShareable: 'false'}">
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{constructorParams>value}"
@@ -307,7 +307,7 @@
 														<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
 																					  formatter: '.formatDescriptionSince'}"/>
 
-														<m:MessageStrip  width="100%"
+														<m:MessageStrip
 															visible="{=${topics>deprecated} !== undefined}"
 															text="Deprecated since version {topics>deprecated/since}. {topics>deprecated/text}"
 															type="Error"
@@ -316,7 +316,7 @@
 															enableFormattedText="true"
 															class="sapUiMediumMarginBottom">
 														</m:MessageStrip>
-														<m:MessageStrip  width="100%"
+														<m:MessageStrip
 															visible="{=${topics>experimental} !== undefined}"
 															text="Experimental API since {topics>experimental/since} {topics>experimental/text}"
 															type="Warning"
@@ -370,7 +370,7 @@
 											class="sapUiMediumMarginBottom">
 										</m:MessageStrip>
 
-										<m:Table items="{ path : 'events>parameters'}"
+										<m:Table items="{ path : 'events>parameters', templateShareable: 'false'}"
 												 showSeparators="Inner"
 												 fixedLayout="true">
 											<m:columns>
@@ -453,7 +453,7 @@
 													formatter: '.formatMethodCode'}"
 											class="sapUiSmallMarginBottom" />
 
-										<m:Table items="{ path : 'methods>parameters'}"
+										<m:Table items="{ path : 'methods>parameters', templateShareable: 'false'}"
 												showSeparators="Inner"
 												fixedLayout="true"
 												visible="{= ${methods>parameters}.length > 0}">
@@ -473,7 +473,7 @@
 																		  wrapping="false"/>
 
 
-														<layout:VerticalLayout content="{methods>types}">
+														<layout:VerticalLayout content="{path: 'methods>types', templateShareable: 'false'}">
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{methods>value}"
@@ -506,7 +506,7 @@
 												<m:ColumnListItem>
 													<m:cells>
 
-														<layout:VerticalLayout content="{methods>returnValue/types}">
+														<layout:VerticalLayout content="{path: 'methods>returnValue/types', templateShareable: 'false'}">
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{methods>value}"
