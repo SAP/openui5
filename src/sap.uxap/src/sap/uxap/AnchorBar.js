@@ -684,7 +684,7 @@ sap.ui.define([
 			var iDuration = duration || AnchorBar.SCROLL_DURATION,
 				iScrollTo;
 
-			if ((this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon)
+			if (!library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange())
 				&& this._oSectionInfo[sId]) {
 
 				if (this._bRtlScenario && Device.browser.firefox) {
@@ -966,8 +966,6 @@ sap.ui.define([
 		}
 
 		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
-
-		this._sHierarchicalSelectMode = AnchorBar._hierarchicalSelectModes.Text;
 
 		//save max for arrow show/hide management, the max position is the required scroll for the the item to be fully visible
 		this._iMaxPosition = -1;
