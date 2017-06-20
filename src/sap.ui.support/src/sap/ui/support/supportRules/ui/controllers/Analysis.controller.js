@@ -40,6 +40,7 @@ sap.ui.define([
 			this.getView().setModel(this.model);
 			this.treeTable = this.getView().byId("ruleList");
 			this.cookie = storage.readPersistenceCookie(constants.COOKIE_NAME);
+			this.persistingSettings = this.model.getProperty("/persistingSettings");
 		},
 
 		getTemporaryLib: function () {
@@ -57,13 +58,12 @@ sap.ui.define([
 			CommunicationBus.subscribe(channelNames.VERIFY_RULE_CREATE_RESULT, function (data) {
 				var result = data.result,
 					newRule = RuleSerializer.deserialize(data.newRule, true),
-					persistingSettings = this.model.getProperty("/persistingSettings"),
 					tempLib = this.getTemporaryLib(),
 					treeTable = this.model.getProperty('/treeViewModel');
 				if (result == "success") {
 					tempLib.rules.push(newRule);
 					this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
-					if (persistingSettings) {
+					if (this.persistingSettings) {
 						storage.setRules(tempLib.rules);
 						if (this.showRuleCreatedToast) {
 							MessageToast.show('Your temporary rule "' + newRule.id + '" was persisted in the local storage');
@@ -94,7 +94,9 @@ sap.ui.define([
 							lib.rules.forEach(function(rule, ruleIndex){
 								if (rule.id === ruleSource.id) {
 									lib.rules[ruleIndex] = updateRule;
-									storage.setRules(lib.rules);
+									if (that.persistingSettings) {
+										storage.setRules(lib.rules);
+									}
 								}
 							});
 							that._syncTreeTableVieModelTempRule(updateRule,treeTable);
@@ -457,16 +459,20 @@ sap.ui.define([
 				}
 			}
 		},
-		addLinkToNewRule: function () {
+		addLinkToRule: function (event) {
 			var tempLink = this.model.getProperty("/tempLink"),
-				copy = jQuery.extend(true, {}, tempLink);
-			this.model.getProperty("/newRule/resolutionurls").push(copy);
-			this.model.checkUpdate(true, true);
-		},
-		addLinkToEditRule: function () {
-			var tempLink = this.model.getProperty("/tempLink"),
-				copy = jQuery.extend(true, {}, tempLink);
-			this.model.getProperty("/editRule/resolutionurls").push(copy);
+				copy = jQuery.extend(true, {}, tempLink),
+				action = event.getSource().getProperty("text"),
+				rule = action === 'Add' ? "/newRule" : "/editRule",
+				urlProperty = this.model.getProperty(rule + "/resolutionurls");
+
+			if (urlProperty) {
+				urlProperty.push(copy);
+			} else {
+				this.model.setProperty(rule + "/resolutionurls", "");
+				urlProperty.push(copy);
+			}
+
 			this.model.checkUpdate(true, true);
 		},
 		goToCreateRule: function () {
@@ -555,17 +561,23 @@ sap.ui.define([
 	},
 
 	duplicateRule: function(event){
-		var sourceObject = this.getObjectOnTreeRow(event);
-		var selectedRuleCopy = jQuery.extend(true, {}, sourceObject);
+		var path =  event.getSource().getBindingContext().getPath(),
+			sourceObject = this.getView().getModel().getProperty(path),
+			selectedRule = this.getMainModelFromTreeViewModel(sourceObject),
+			selectedRuleCopy = jQuery.extend(true, {}, selectedRule);
+
 		this.model.setProperty("/newRule", selectedRuleCopy);
 		this.model.checkUpdate(true, false);
 		this.goToCreateRule();
 	},
 
 	editRule: function(event) {
-		var sourceObject = this.getObjectOnTreeRow(event);
-		this.model.setProperty("/editRuleSource", sourceObject);
-		this.model.setProperty("/editRule", jQuery.extend(true, {}, sourceObject));
+		var path =  event.getSource().getBindingContext().getPath(),
+			sourceObject = this.getView().getModel().getProperty(path),
+			selectedRule = this.getMainModelFromTreeViewModel(sourceObject);
+
+		this.model.setProperty("/editRuleSource", selectedRule);
+		this.model.setProperty("/editRule", jQuery.extend(true, {}, selectedRule));
 		this.model.checkUpdate(true, true);
 		var navCont = this.getView().byId("rulesNavContainer");
 		navCont.to(this.getView().byId("ruleUpdatePage"), "show");
