@@ -28,12 +28,12 @@
 			<f:formContainers>
 				<f:FormContainer>
 					<f:formElements>
-						<f:FormElement label="Name">
+						<f:FormElement label="Full name of the contact">
 							<f:fields>
 								<Input value="{SupplierName}" id="name"/>
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Street">
+						<f:FormElement label="Street and number where the contact is located">
 							<f:fields>
 								<Input value="{Street}" />
 								<Input value="{HouseNumber}">
@@ -43,7 +43,7 @@
 								</Input>
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="ZIP Code/City">
+						<f:FormElement label="ZIP Code and City">
 							<f:fields>
 								<Input value="{ZIPCode}">
 									<layoutData>
@@ -53,7 +53,7 @@
 								<Input value="{City}" />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Country">
+						<f:FormElement label="Country where the contact is located">
 							<f:fields>
 								<Select id="country" selectedKey="{Country}">
 									<items>

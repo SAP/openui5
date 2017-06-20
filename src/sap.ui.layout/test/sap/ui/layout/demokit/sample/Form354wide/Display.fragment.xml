@@ -28,22 +28,22 @@
 			<f:formContainers>
 				<f:FormContainer>
 					<f:formElements>
-						<f:FormElement label="Name">
+						<f:FormElement label="Full name of the contact">
 							<f:fields>
 								<Text text="{SupplierName}" id="nameText"  />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Street">
+						<f:FormElement label="Street and number where the contact is located">
 							<f:fields>
 								<Text text="{Street} {HouseNumber}" />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="ZIP Code/City">
+						<f:FormElement label="ZIP Code and City">
 							<f:fields>
 								<Text text="{ZIPCode} {City}" />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Country">
+						<f:FormElement label="Country where the contact is located">
 							<f:fields>
 								<Text text="{Country}" id="countryText" />
 							</f:fields>
