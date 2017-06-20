@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 					"Tutorial",
 					"Routing",
 					"Data Binding",
+					"Data Visualization",
 					"Map"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
