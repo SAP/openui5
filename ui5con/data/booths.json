@@ -55,7 +55,7 @@
 			"speaker": "Peter Muessig, Matthias Osswal",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "Describes the components concepts and especially the concept of the descriptor with regards to performance improvements (manifest first, async loading, model preloading, …)"
+			"abstract": "Describes the components concepts and especially the concept of the descriptor with regards to performance improvements (manifest first, async loading, model preloading, ...)"
 		},
 		{
 			"type": "break",
@@ -87,7 +87,8 @@
 			"title": "Effortless OPA testing with Gherkin Reusable Specs",
 			"speaker": "Savio Dimatteo",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "<p>One Page Acceptance Tests (OPA5) enable developers to test UI5 applications from the interaction point of view with relative ease. OPA5 can be further combined with Gherkin which provides a framework to describe test scenarios in natural language. With OPA5 and Gherkin in place, the developer must close a gap: translate sentences from natural language into code that runs the OPA tests.</p><p>In this talk I show how to bypass this time-consuming activity, and have the developer's focus shifted toward writing the actual test specification in natural language rather than code.</p>"
 		},
 		{
 			"type": "break",
@@ -103,7 +104,8 @@
 			"title": "Behavior-Driven Development with OPA5 automated tests",
 			"speaker": "András Kónya, Lóránt Guth",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "<p>Imagine a world where development and business can understand each other without using lengthy code lines. Applying human-readable language you will have the possibility to enable everyone in your team, even your customers, to create business driven automated tests.</p><p>Our solution will lead your agile workflow towards acceptance testing using OPA5 and Cucumber over Fiori stack which provide basis for behavior driven development.</p><p>We are going to present a Cucumber and OPA5-based test automation framework where users write test scenarios adopting human-readable Gherkin language. Additionally, we will talk about the key test concepts of healthy test automation pyramids, appropriate placement of test levels, and misconcepts about TDD and BDD.</p>"
 		},
 		{
 			"type": "break",
@@ -113,7 +115,8 @@
 			"title": "The OpenUI5 Developer Blog - Behind the Scenes",
 			"speaker": "Holger Schäfer",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "Showcasing the apps and controls behind the blog for further Q&A"
 		},
 		{
 			"type": "break",
@@ -134,7 +137,8 @@
 			"title": "Virtual Tour around a Company Site with UI5",
 			"speaker": "Helmut Tammen",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "<p>In this session you will see a virtual 3D tour around a company site. The employees of the customer wanted to have a graphical visualization of their huge factory site.</p><p>The users can now fly above their production areas. If they have found the production hall of interest they can walk inside and have a look at the production equipment. For further investigation they can dive deeper and deeper. There are two modes of visualization available. The Free Flight and the Egoshooter mode.</p><p>Furthermore the users can jump into SAP PM transactions, into OpenText documents and other systems to get more information related to the selected equipment.</p><p>All this is achieved by using SAPUI5 and the sap.ui.vk library. Cause the standard library did not completely fulfill the users requirements in respect to usability we enhanced the vk library using some technologies and ideas from WebGL and Three.js</p><p>Come to Booth 2 from 2:00 PM to 2:40 PM and I will show you whats possible with UI5 in the field of 3D visualization.</p>"
 		},
 		{
 			"type": "break",
@@ -144,7 +148,8 @@
 			"title": "Teaser: Implementing Custom Tiles for SAP Fiori Launchpad as SAPUI5 Components",
 			"speaker": "Stephan Heyne",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "Custom SAP Fiori launchpad tiles can now be developed similar like SAPUI5 apps are created. This session is marked as a teaser as this is a new approach which is not yet available on all Fiori technology stacks."
 		},
 		{
 			"type": "break",
@@ -193,49 +198,57 @@
 			"title": "UI5 Controls for Document Handling",
 			"speaker": "Pia Kinkel, Christoph Laux",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "Complex process flows and document flows are clear and understandable when you use the ProcessFlow control. The ProcessFlow control visualizes documents or other items and their dependencies. Attaching documents to an app is easy when you use the UploadCollection control that includes features such as Multiple Upload, Drag&Drop, Sorting, Filtering."
 		},
 		{
 			"title": "Embedded Analytics with Charts",
 			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
-			"duration": 40
+			"duration": 40,
+			"abstract": "Learn how to use various types of charts in different sizes and form factors to provide analytical insights in your application."
 		},
 		{
 			"title": "Developer Clinic: UI5 Controls",
 			"speaker": "Pia Kinkel, Bohdan Pukalskyi, Dominic Holzwarth",
 			"type": "Session",
-			"duration": 60
+			"duration": 60,
+			"abstract": "Get answers to your questions about UI5 Controls - such as GenericTile, MicroCharts, ProcessFlow, and many more."
 		},
 		{
 			"title": "How to Build an Ice Cream Machine with UI5 Controls",
 			"speaker": "Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
-			"duration": 60
+			"duration": 60,
+			"abstract": "In our UI5 demo app, you'll learn to build an ice cream machine. We will show the demo app and a tutorial with a step-by-step explanation of how to build this app using various UI5 Controls."
 		},
 		{
 			"title": "Tiles in UI5",
 			"speaker": "Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
-			"duration": 60
+			"duration": 60,
+			"abstract": "A tile is a container that represents an app on the SAP Fiori launchpad . The Generic Tile control and related content provide a toolbox in UI5 that allows the display of a variety of content, such as news, KPIs or images."
 		},
 		{
 			"title": "Smart Micro Charts",
 			"speaker": " Bohdan Pukalskyi, Dominic Holzwarth",
 			"type": "Session",
-			"duration": 60
+			"duration": 60,
+			"abstract": "Use OData annotation with the SmartMicroChart control to add analytics to your application with less javascript coding."
 		},
 		{
 			"title": "Embedded Analytics with Charts",
 			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
-			"duration": 60
+			"duration": 60,
+			"abstract": "Learn how to use various types of charts in different sizes and form factors to provide analytical insights in your application."
 		},
 		{
 			"title": "Integrate Feed Capabilities Using UI5 Controls",
 			"speaker": "Christoph Laux",
 			"type": "Session",
-			"duration": 60
+			"duration": 60,
+			"abstract": "Social media is ubiquitous, but a feed can also include system events or comments. UI5 provides a set of controls that support you in implementing feed capabilities for your application."
 		}
 	]
 }
