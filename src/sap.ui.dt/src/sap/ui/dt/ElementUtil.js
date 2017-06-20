@@ -378,7 +378,8 @@ sap.ui.define(['jquery.sap.global'],
 					var sTypeOrInterface = oAggregationMetadata.type;
 
 					// if aggregation is not multiple and already has element inside, then it is not valid for element
-					if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, sAggregationName)) {
+					if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, sAggregationName) &&
+							this.getAggregation(oParent, sAggregationName).length > 0) {
 						return false;
 					}
 					return this.isInstanceOf(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);

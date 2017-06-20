@@ -314,6 +314,13 @@
 					assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), false,
 						'then the static method "isValidForAggregation" returns false');
 				});
+
+				QUnit.test("when a control has non-multiple aggregations without an existing item", function(assert) {
+					var oFormElement = new sap.ui.layout.form.FormElement();
+					var oLabel = new sap.m.Label();
+					assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), true,
+						'then the static method "isValidForAggregation" returns true');
+				});
 			}());
 
 		</script>
