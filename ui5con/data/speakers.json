@@ -280,8 +280,8 @@
 	},
 	{
 		"name": "Dirk Teufel",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Dirk is a Development Architect on the Fiori Reference Apps team at SAP. His main work focus is on OData services and annotation models for the various UI5 reference apps.",
+		"picture": "dirk_teufel.jpg",
 		"company": "SAP"
 	},
 	{
@@ -316,8 +316,8 @@
 	},
 	{
 		"name": "Frederic Berg",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Frederic Berg is Vice President at SAP and SAPUI5 expert with more than 19 years of experience in the IT industry. He is also an active speaker at international conferences on the topic of OpenUI5.",
+		"picture": "FredericBerg.jpg",
 		"company": "SAP",
 		"meetMe": "10:50"
 	},
@@ -376,14 +376,14 @@
 	},
 	{
 		"name": "Pia Kinkel",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Pia is a senior developer in the SAPUI5/ OpenUI5 controls team. She enjoys developing great UI controls that enhance the spectrum and improve the usability of UI5 applications. Pia is working in the UI5 area for about 3 years and at SAP for more than 15 years.",
+		"picture": "Pia.jpg",
 		"company": "SAP"
 	},
 	{
 		"name": "Steffen Huester",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Steffen is working as development architect at SAP with main focus on SAP Fiori launchpad and UI integration.",
+		"picture": "Steffen_Huester.jpg",
 		"company": "SAP",
 		"meetMe": "11:40"
 	},
@@ -408,7 +408,7 @@
 	{
 		"name": "Sebastian Wennemers",
 		"bio": "Sebastian is UI5 developer at SAP and architect of UI Adaptation.",
-		"picture": "no_portrait.png",
+		"picture": "sebastian_wennemers.jpg",
 		"company": "SAP"
 	}
 ]
