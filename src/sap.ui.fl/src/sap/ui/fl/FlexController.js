@@ -362,7 +362,7 @@ sap.ui.define([
 			} catch (ex) {
 				this._setMergeError(true);
 				Utils.log.error("Change could not be applied. Merge error detected.");
-				throw ex;
+				return;
 			}
 
 			if (oAppliedChangeCustomData) {
