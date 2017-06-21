@@ -41,7 +41,7 @@
 		},
 		{
 			"title": "SEO for OpenUI5 Apps",
-			"speaker": "Yavor Ivanov, Stanislava Baltova",
+			"speaker": "Yavor Ivanov",
 			"type": "Session",
 			"duration": 40,
 			"abstract": "You use openui5 to build your publicly facing home page and site content. There are few tricks you can use to make sure search engines can find and understand your content. You will learn about structuring your links, JS rendering of dynamic content and more advanced topics like pre-rendering."
