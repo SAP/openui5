@@ -198,7 +198,9 @@ sap.ui.define([
 		}.bind(this));
 
 		function createChange(oChangeContent) {
-			return new Change(oChangeContent);
+			var change = new Change(oChangeContent);
+			change.setState(Change.states.PERSISTED);
+			return change;
 		}
 	};
 
