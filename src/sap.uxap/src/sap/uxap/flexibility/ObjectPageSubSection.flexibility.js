@@ -4,11 +4,18 @@
 
 sap.ui.define([
 	"sap/m/changeHandler/CombineButtons",
-	"sap/m/changeHandler/SplitMenuButton"
-], function (CombineButtonsHandler, SplitMenuButtonHandler) {
+	"sap/m/changeHandler/SplitMenuButton",
+	'sap/ui/fl/changeHandler/BaseRename'
+], function (CombineButtonsHandler, SplitMenuButtonHandler, BaseRename) {
 	"use strict";
 
 	return {
+		"hideControl": "default",
+		"unhideControl": "default",
+		"rename": BaseRename.createRenameChangeHandler({
+			propertyName: "title",
+			translationTextType: "XGRP"
+		}),
 		"combineButtons": {
 			"changeHandler": CombineButtonsHandler,
 			"layers": {

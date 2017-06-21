@@ -62,5 +62,113 @@
 			afterUndo : fnConfirmGroupelement1IsOn1stPosition,
 			afterRedo : fnConfirmGroupelement1IsOn2ndPosition
 		});
+
+		// Rename action
+		var fnConfirmSubSectionRenamedWithNewValue = function (oSubSection, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
+				"Title 2",
+				"then the control has been renamed to the new value (Title 2)");
+		};
+
+		var fnConfirmSubSectionIsRenamedWithOldValue = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("subSection").getTitle(),
+				"Title 1",
+				"then the control has been renamed to the old value (Title 1)");
+		};
+
+		rtaControlEnablingCheck("Checking the rename action for a SubSection", {
+			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			' xmlns:uxap="sap.uxap" >' +
+				'<uxap:ObjectPageLayout>' +
+					'<uxap:sections>' +
+						'<uxap:ObjectPageSection>' +
+							'<uxap:subSections>' +
+								'<uxap:ObjectPageSubSection id="subSection" title="Title 1">' +
+								'</uxap:ObjectPageSubSection>' +
+							'</uxap:subSections>' +
+						'</uxap:ObjectPageSection>' +
+					'</uxap:sections>' +
+				'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "rename",
+				controlId: "subSection",
+				parameter: function (oView) {
+					return {
+						newValue: 'Title 2',
+						renamedElement: oView.byId("subSection")
+					};
+				}
+			},
+			afterAction: fnConfirmSubSectionRenamedWithNewValue,
+			afterUndo: fnConfirmSubSectionIsRenamedWithOldValue,
+			afterRedo: fnConfirmSubSectionRenamedWithNewValue
+		});
+
+		// Remove and reveal actions
+		var fnConfirmSubSectionIsInvisible = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("subSection").getVisible(), false, "then the SubSection element is invisible");
+		};
+
+		var fnConfirmSubSectionIsVisible = function (oUiComponent, oViewAfterAction, assert) {
+			assert.strictEqual(oViewAfterAction.byId("subSection").getVisible(), true, "then the SubSection element is visible");
+		};
+
+		rtaControlEnablingCheck("Checking the remove action for SubSection", {
+			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			' xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout>' +
+			'<uxap:sections>' +
+			'<uxap:ObjectPageSection>' +
+			'<uxap:subSections>' +
+			'<uxap:ObjectPageSubSection id="subSection" title="Title 1">' +
+			'</uxap:ObjectPageSubSection>' +
+			'</uxap:subSections>' +
+			'</uxap:ObjectPageSection>' +
+			'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "remove",
+				controlId: "subSection",
+				parameter: function (oView) {
+					return {
+						removedElement: oView.byId("subSection")
+					};
+				}
+			},
+			afterAction: fnConfirmSubSectionIsInvisible,
+			afterUndo: fnConfirmSubSectionIsVisible,
+			afterRedo: fnConfirmSubSectionIsInvisible
+		});
+
+		rtaControlEnablingCheck("Checking the reveal action for a SubSection", {
+			xmlView:'<mvc:View xmlns:mvc="sap.ui.core.mvc" ' +
+			' xmlns:uxap="sap.uxap" >' +
+			'<uxap:ObjectPageLayout>' +
+			'<uxap:sections>' +
+			'<uxap:ObjectPageSection>' +
+			'<uxap:subSections>' +
+			'<uxap:ObjectPageSubSection id="subSection" title="Title 1" visible="false">' +
+			'</uxap:ObjectPageSubSection>' +
+			'</uxap:subSections>' +
+			'</uxap:ObjectPageSection>' +
+			'</uxap:sections>' +
+			'</uxap:ObjectPageLayout>' +
+			'</mvc:View>'
+			,
+			action: {
+				name: "reveal",
+				controlId: "subSection",
+				parameter: function(oView){
+					return {};
+				}
+			},
+			afterAction: fnConfirmSubSectionIsVisible,
+			afterUndo: fnConfirmSubSectionIsInvisible,
+			afterRedo: fnConfirmSubSectionIsVisible
+		});
 	});
 })();
