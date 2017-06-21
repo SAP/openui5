@@ -96,7 +96,13 @@ sap.ui.define([
 	XmlPreprocessorImpl.getCacheKey = function(mProperties) {
 		var oComponent = sap.ui.getCore().getComponent(mProperties.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
-		var sFlexReference = Utils.getComponentName(oAppComponent);
+
+		// no caching possible with startup parameter based variants
+		if (Utils.isVariantByStartupParameter(oAppComponent)) {
+			return Promise.resolve();
+		}
+
+		var sFlexReference = Utils.getComponentClassName(oAppComponent);
 		var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 		return oChangePersistence.getCacheKey();

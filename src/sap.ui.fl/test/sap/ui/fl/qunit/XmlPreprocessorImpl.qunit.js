@@ -60,9 +60,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			getManifest: function () {
 				return {};
 			},
-			getManifestEntry: function () {
-
-			}
+			getManifestEntry: function () {}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create").returns({
@@ -130,7 +128,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oMockedAppComponent = {
 			getManifest: function () {
 				return {};
-			}
+			},
+			getManifestEntry: function () {}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
 		this.stub(sap.ui.getCore(), "getComponent");
@@ -142,6 +141,33 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (sReturnedCacheKey) {
 			assert.equal(sReturnedCacheKey, sCacheKey);
+		});
+	});
+
+	QUnit.test("getCacheKey disallows view caching in case of an variant by startup parameters", function (assert) {
+		var sFlexReference = "theAppComponent";
+		var mProperties = {
+			componentId: sFlexReference
+		};
+		var oComponentData = {
+			startupParameters: {
+				"sap-app-id": ["someId"]
+			}
+		};
+		var oMockedAppComponent = {
+			getManifest: function () {
+				return {};
+			},
+			getComponentData: function () {
+				return oComponentData;
+			},
+			getManifestEntry: function () {}
+		};
+		this.stub(sap.ui.getCore(), "getComponent");
+		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+
+		return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (response) {
+			assert.ok(!response, "an 'undefined' was returned to prevent the view caching");
 		});
 	});
 
