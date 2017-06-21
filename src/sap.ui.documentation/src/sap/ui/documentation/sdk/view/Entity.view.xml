@@ -15,6 +15,7 @@
 					id="entityHeader"
 					objectTitle="{/name}">
 				<actions>
+					<ObjectPageHeaderActionButton id="entityBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 					<ObjectPageHeaderActionButton
 							id="toggleFullScreenBtn"
 							class="sapUiHideOnPhone"
