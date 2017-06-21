@@ -52,20 +52,6 @@ sap.ui.define([
 				this.getRouter().navTo("apiId", {id: sEntityName}, false);
 			},
 
-			onJSDocLinkClick: function (oEvt) {
-
-				// get target
-				var sType = oEvt.target.getAttribute("data-sap-ui-target");
-				if ( sType && sType.indexOf('#') >= 0 ) {
-					sType = sType.slice(0, sType.indexOf('#'));
-				}
-
-				if ( sType ) {
-					this.getRouter().navTo("entity", {id : sType}, false);
-					oEvt.preventDefault();
-				}
-			},
-
 			onIntroLinkPress: function (oEvt) {
 				// remove explored.html from URL
 				var aParts = document.location.pathname.split("/"),
@@ -94,6 +80,10 @@ sap.ui.define([
 				this.router.navTo("sample", {
 					id: oSample.id
 				});
+			},
+
+			onJSDocLinkClick: function(oEvt) {
+				BaseController.prototype.onJSDocLinkClick(oEvt, "entity");
 			},
 
 			_TAB_KEYS: ["samples", "about"],
