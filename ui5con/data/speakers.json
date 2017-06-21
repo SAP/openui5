@@ -292,8 +292,8 @@
 	},
 	{
 		"name": "Christian Voshage",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "My name is Christian Voshage.<br/>In my spare time, I am a geek with pen&paper, comics and other nerdy stuff while trying to blend in at work :). Therefore, let’s try the blending part by telling something about my five years’ history with SAP: On my studying at the university of Heidelberg I started in the HANA Quality assurance by improving test infrastructure and bringing analysis to its limits.<br/>After that I joined SAP as a full-time employee building a solution for modeling business workflows and monitoring them. The client part was done via sapUI5 while the server was native HANA and Java (incl. Eclipse Plugin).<br/>Later I switched to the UI5 development where I was part of the ui5 flexibility library development and the server part responding to the libraries requests. Nowadays am the Product Owner in this area.",
+		"picture": "christian_voshage.jpg",
 		"company": "SAP"
 	},
 	{
