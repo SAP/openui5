@@ -497,17 +497,13 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.selectAll = function () {
-		//select all is only allowed when SelectionMode is "Multi" or "MultiToggle"
-		var oSelMode = this.getSelectionMode();
-		if (!this.getEnableSelectAll() || (oSelMode != "Multi" && oSelMode != "MultiToggle") || !this._getSelectableRowCount()) {
+		if (!TableUtils.hasSelectAll(this)) {
 			return this;
 		}
 
 		//The OData TBA exposes a selectAll function
 		var oBinding = this.getBinding("rows");
-		if (oBinding.selectAll) {
-			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
-			this._getAccExtension().setSelectAllState(true);
+		if (oBinding && oBinding.selectAll) {
 			oBinding.selectAll();
 		} else {
 			//otherwise fallback on the tables own function
