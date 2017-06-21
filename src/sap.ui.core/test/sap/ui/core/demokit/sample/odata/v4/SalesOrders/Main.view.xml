@@ -253,10 +253,9 @@
 							</content>
 						</Toolbar>
 						<buttons>
-							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
-								text="Save" type="Accept"/>
 							<Button icon="sap-icon://sys-cancel-2"
-								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
+								press="onCloseSalesOrderSchedules" text="Close"
+								tooltip="Close dialog"/>
 						</buttons>
 						<content>
 							<Table id="SalesOrderSchedules" items="{SO_2_SCHDL}"
