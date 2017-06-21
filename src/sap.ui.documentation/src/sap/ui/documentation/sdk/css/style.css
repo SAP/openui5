@@ -1533,3 +1533,14 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 }
 
 /***************************** FEED LIST ITEM OVERRIDE STYLES **********************************/
+
+/* Make the iframe transparent so that the content in it will use the theme's background */
+.sapUiDocumentationTopicsIframe {
+	width: 100%;
+	height: 99%;
+}
+
+/* Only for hcb set another color as the one provided by the theme is not suitable */
+html.sapUiTheme-sap_belize_hcb .sapUiDocumentationTopicsIframe {
+	background: #fff;
+}
