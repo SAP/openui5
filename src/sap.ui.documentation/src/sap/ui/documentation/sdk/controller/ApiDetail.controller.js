@@ -388,6 +388,8 @@ sap.ui.define([
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
 				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
+
+				this.getModel("topics").setSizeLimit(1000);
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
