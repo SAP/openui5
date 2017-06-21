@@ -231,7 +231,6 @@
 	});
 
 	QUnit.test("Multi Selection", function(assert) {
-
 		var iFirstRow = oTable.getFirstVisibleRow();
 
 		function triggerSelectionOnRow(i, bKeyboard, bCtrlKey, bShiftKey) {
@@ -306,13 +305,41 @@
 		}
 	});
 
+	QUnit.test("SelectAll", function(assert) {
+		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+		sap.ui.getCore().applyChanges();
+
+		var $SelectAll = oTable.$("selall");
+		var sSelectAllTitleText = oTable._oResBundle.getText("TBL_SELECT_ALL");
+		var sDeselectAllTitleText = oTable._oResBundle.getText("TBL_DESELECT_ALL");
+
+		// Initially no rows are selected.
+		assert.ok($SelectAll.hasClass("sapUiTableSelAll"), "Initial: The SelectAll checkbox is not checked");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAllTitleText, "Initial: The SelectAll title text is correct");
+
+		// Select all rows. The SelectAll checkbox should be checked.
+		oTable.selectAll();
+		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Called selectAll: The SelectAll checkbox is checked");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Called selectAll: The SelectAll title text is correct");
+
+		// Deselect the first row. The SelectAll checkbox should not be checked.
+		oTable.removeSelectionInterval(0, 0);
+		assert.ok($SelectAll.hasClass("sapUiTableSelAll"), "Deselected the first row: The SelectAll checkbox is not checked");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAllTitleText, "Deselected the first row: The SelectAll title text is correct");
+
+		// Select the first row again. The SelectAll checkbox should be checked.
+		oTable.addSelectionInterval(0, 0);
+		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Selected the first row again: The SelectAll checkbox is checked");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Selected the first row again: The SelectAll title text is correct");
+	});
+
 	QUnit.test("VisibleRowCount", 6, function(assert) {
 		var fnError = sinon.spy(jQuery.sap.log, "error");
 		oTable.setVisibleRowCount(8);
 		assert.equal( oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
 		oTable.setVisibleRowCount(Infinity);
 		assert.ok(oTable.getVisibleRowCount() !== Infinity, "visibleRowCount cannot be Inifinity, this must have been ignored");
-		assert.equal(oTable.getVisibleRowCount(), 8, "Visisble Row Count is still 8")
+		assert.equal(oTable.getVisibleRowCount(), 8, "Visisble Row Count is still 8");
 		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.setVisibleRowCount(15);
