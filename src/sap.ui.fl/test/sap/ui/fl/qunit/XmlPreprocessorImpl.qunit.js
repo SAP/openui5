@@ -59,6 +59,9 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		var oMockedAppComponent = {
 			getManifest: function () {
 				return {};
+			},
+			getManifestEntry: function () {
+
 			}
 		};
 		var oChangePersistence = new ChangePersistence({name: sFlexReference});
@@ -139,6 +142,60 @@ jQuery.sap.require("sap.ui.fl.Utils");
 
 		return XmlPreprocessorImpl.getCacheKey(mProperties).then(function (sReturnedCacheKey) {
 			assert.equal(sReturnedCacheKey, sCacheKey);
+		});
+	});
+
+	QUnit.test("detects the app variant id and requests the changes for it", function (assert) {
+		var oView = {
+			sId: "testView"
+		};
+		var sComponentName = "someComponentName";
+		var sFlexReference = "someVariantName";
+		var sAppVersion = "1.0.0";
+		var sValidCacheKey = "someVeryValidKey";
+		var mProperties = {
+			sync: false
+		};
+
+		var oComponentData = {
+			startupParameters: {
+				"sap-app-id": [sFlexReference]
+			}
+		};
+
+		var oMockedComponent = {
+			getComponentClassName: function () {
+				return sComponentName;
+			}
+		};
+		var oMockedAppComponent = {
+			getManifest: function () {
+				return {};
+			},
+
+			getManifestEntry: function () {
+				return undefined;
+			},
+			getComponentData: function () {
+				return oComponentData;
+			}
+		};
+		var oChangePersistence = new ChangePersistence({name: sFlexReference});
+		var oFlexControllerCreationStub = this.stub(FlexControllerFactory, "create").returns({
+			processXmlView: function(oView, mProperties){
+				return Promise.resolve(oView);
+			}
+		});
+		this.stub(sap.ui.getCore(), "getComponent").returns(oMockedComponent);
+		this.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
+		this.stub(Utils, "getAppVersionFromManifest").returns(sAppVersion);
+		this.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns(oChangePersistence);
+		this.stub(oChangePersistence, "getCacheKey").returns(Promise.resolve(sValidCacheKey));
+
+		return XmlPreprocessorImpl.process(oView, mProperties).then(function (oProcessedView) {
+			assert.equal(oFlexControllerCreationStub.callCount, 1, "a flex controller creation was triggered for the xml processing");
+			assert.equal(oFlexControllerCreationStub.getCall(0).args[0], sFlexReference, "the controller for the variant was created");
+			assert.deepEqual(oProcessedView, oView, "the original view is returned");
 		});
 	});
 

@@ -57,7 +57,7 @@ sap.ui.define([
 			}
 
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-			var sFlexReference = Utils.getComponentName(oAppComponent);
+			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
 			return oChangePersistence.getCacheKey().then(function(sCacheKey){
