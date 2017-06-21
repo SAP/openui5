@@ -2983,18 +2983,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update internal property to reflect the correct index
 		this.setProperty("selectedIndex", this.getSelectedIndex(), true);
 
-		var $SelAll = this.$("selall");
-		if ((oSelMode == SelectionMode.Multi || oSelMode == SelectionMode.MultiToggle) && this.getEnableSelectAll()) {
-			var iSelectedIndicesCount = this._getSelectedIndicesCount();
-			var bClearSelectAll = iSelectedIndicesCount == 0;
-			if (!bClearSelectAll) {
-				var iSelectableRowCount = this._getSelectableRowCount();
-				bClearSelectAll = iSelectableRowCount == 0 || iSelectableRowCount !== iSelectedIndicesCount;
-			}
-			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
-			this._getAccExtension().setSelectAllState(!bClearSelectAll);
-			if (bClearSelectAll && this._getShowStandardTooltips()) {
-				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
+		if (TableUtils.hasSelectAll(this)) {
+			var $SelectAll = this.$("selall");
+			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
+
+			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
+			this._getAccExtension().setSelectAllState(bAllRowsSelected);
+
+			if (this._getShowStandardTooltips()) {
+				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+				$SelectAll.attr('title', this._oResBundle.getText(sSelectAllResourceTextID));
 			}
 		}
 	};
@@ -3106,20 +3104,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.selectAll = function() {
-		var oSelMode = this.getSelectionMode();
-		if (!this.getEnableSelectAll() || (oSelMode != "Multi" && oSelMode != "MultiToggle")) {
+		if (!TableUtils.hasSelectAll(this)) {
 			return this;
 		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var $SelAll = this.$("selall");
-			$SelAll.removeClass("sapUiTableSelAll");
-			if (this._getShowStandardTooltips()) {
-				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
-			}
-			this._getAccExtension().setSelectAllState(true);
 			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 		}
+
 		return this;
 	};
 
