@@ -130,6 +130,18 @@ sap.ui.define([
 			return Utils.getComponentName(oAppComponent);
 		},
 
+		isVariantByStartupParameter: function (oControl) {
+			// determine UI5 component out of given control
+			if (oControl) {
+				var oAppComponent = this.getAppComponentForControl(oControl);
+				if (oAppComponent) {
+					return !!this._getComponentStartUpParameter(oAppComponent, "sap-app-id");
+				}
+			}
+
+			return false;
+		},
+
 		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
 		 * this is already an application component.
