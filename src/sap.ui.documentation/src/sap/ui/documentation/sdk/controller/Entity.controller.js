@@ -158,6 +158,8 @@ sap.ui.define([
 				ControlsInfo.loadData().then(function(oData) {
 					this._loadSample(oData);
 				}.bind(this));
+
+				this.searchResultsButtonVisibilitySwitch(this.getView().byId("entityBackToSearch"));
 			},
 
 			onToggleFullScreen: function (oEvt) {
@@ -292,6 +294,10 @@ sap.ui.define([
 				if (this._oObjectPage) {
 					this._oObjectPage.setSelectedSection(oSection.getId());
 				}
+			},
+
+			backToSearch: function () {
+				this.onNavBack();
 			},
 
 			/**
