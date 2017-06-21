@@ -76,13 +76,6 @@
 	background: #f2f8fc;
 }
 
-.sapMListTblCell .sapMText,
-.sapMListTblCell .sapMLnk {
-	padding-top: 0.5rem;
-	padding-right: 1rem;
-}
-
-
 /************************************************* Custom control styles *********************************************/
 
 /* Search */
