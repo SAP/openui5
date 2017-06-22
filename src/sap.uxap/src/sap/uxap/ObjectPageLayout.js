@@ -367,6 +367,21 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Retrieves the list of sections to render initially
+	 * (the list includes the sections to be loaded lazily, as these are empty in the beginning, only their skeleton will be rendered)
+	 * @returns the sections list
+	 */
+	ObjectPageLayout.prototype._getSectionsToRender = function () {
+		var oSelectedSection = sap.ui.getCore().byId(this.getSelectedSection());
+
+		if (this.getUseIconTabBar() && oSelectedSection) {
+			return [oSelectedSection]; // only the content for the selected tab should be rendered
+		} else {
+			return this.getSections();
+		}
+	};
+
 	ObjectPageLayout.prototype._preloadSectionsOnBeforeFirstRendering = function () {
 		var aToLoad;
 		if (!this.getEnableLazyLoading()) {

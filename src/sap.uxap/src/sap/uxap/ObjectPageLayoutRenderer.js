@@ -112,7 +112,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			}
 			oRm.writeClasses();
 			oRm.write(">");
-			aSections = oControl.getAggregation("sections");
+			aSections = oControl._getSectionsToRender();
 			if (jQuery.isArray(aSections)) {
 				jQuery.each(aSections, function (iIndex, oSection) {
 					oRm.renderControl(oSection);
