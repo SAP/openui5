@@ -182,11 +182,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			maxDate : {type : "object", group : "Misc", defaultValue : null},
 
 			/**
-			 * If set the day names are shown in a separate line.
-			 * If not set the day names are shown inside the single days.
+			 * Determines whether the day names are displayed in a separate line or inside the single days.
 			 * @since 1.50
 			 */
-			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : false}
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Defines the list of predefined views as an array.
+			 * The views should be specified by their keys.
+			 *
+			 * The default predefined views and their keys are available at
+			 * {@link sap.m.PlanningCalendarBuiltInViews}.
+			 *
+			 * <b>Note:</b> If set, all specified views will be displayed along
+			 * with any custom views (if available). If not set and no custom
+			 * views are available, all default views will be displayed.
+			 * If not set and there are any custom views available, only the
+			 * custom views will be displayed.
+			 * @since 1.50
+			 */
+			builtInViews : {type : "string[]", group : "Appearance", defaultValue : []}
 		},
 		aggregations : {
 
@@ -362,6 +377,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	//Defines the minimum screen width for the appointments column (it is a popin column)
 	var APP_COLUMN_MIN_SCREEN_WIDTH = sap.m.ScreenSize.Desktop;
 
+	//All supported built-in views
+	var KEYS_FOR_ALL_BUILTIN_VIEWS = [
+		sap.m.PlanningCalendarBuiltInView.Hour,
+		sap.m.PlanningCalendarBuiltInView.Day,
+		sap.m.PlanningCalendarBuiltInView.Month,
+		sap.m.PlanningCalendarBuiltInView.Week,
+		sap.m.PlanningCalendarBuiltInView.OneMonth];
+
 	var CalendarHeader = Control.extend("CalendarHeader", {
 
 		metadata : {
@@ -504,9 +527,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}, this);
 
-		if (this._aViews) {
-			for (var i = 0; i < this._aViews.length; i++) {
-				this._aViews[i].destroy();
+		if (this._oViews) {
+			for (var sKey in this._oViews) {
+				this._oViews[sKey].destroy();
 			}
 		}
 
@@ -620,7 +643,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			CalendarUtils._checkJSDateObject(oStartDate);
 		}
 
-		if (this.getViewKey() ===  sap.ui.unified.CalendarIntervalType.Week) {
+		if (this.getViewKey() === sap.m.PlanningCalendarBuiltInView.Week) {
 			/* Calculate the first week date for the given oStartDate. Have in mind that the oStartDate is the date that
 			 * the user sees in the UI, thus - local one. As CalendarUtils.getFirstDateOfWeek works with UTC dates (this
 			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
@@ -631,7 +654,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate.setTime(CalendarUtils._createLocalDate(oFirstDateOfWeek, true).getTime());
 		}
 
-		if (this.getViewKey() ===  sap.ui.unified.CalendarIntervalType.OneMonth) {
+		if (this.getViewKey() === sap.m.PlanningCalendarBuiltInView.OneMonth) {
 			/*
 			 * Have in mind that the oStartDate is the date that the user sees in the UI, thus - local one. As
 			 * CalendarUtils.getFirstDateOfMonth works with UTC dates (this is because the dates are timezone irrelevant),
@@ -681,7 +704,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._setRowsStartDate(new Date(oStartDate.getTime()));
 
-		if (this.getViewKey() ===  sap.ui.unified.CalendarIntervalType.Week || this.getViewKey() === sap.ui.unified.CalendarIntervalType.OneMonth ) {
+		if (this.getViewKey() === sap.m.PlanningCalendarBuiltInView.Week || this.getViewKey() === sap.m.PlanningCalendarBuiltInView.OneMonth) {
 			this._updateTodayButtonState();
 		}
 
@@ -836,7 +859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._oInfoToolbar.removeContent(1);
 		}
 
-		if (sKey === sap.ui.unified.CalendarIntervalType.Week || sKey === sap.ui.unified.CalendarIntervalType.OneMonth) {
+		if (sKey === sap.m.PlanningCalendarBuiltInView.Week || sKey === sap.m.PlanningCalendarBuiltInView.OneMonth) {
 			oOldStartDate = this.getStartDate();
 			this.setStartDate(new Date(oOldStartDate.getTime())); //make sure the start date is aligned according to the week/month rules
 			if (oOldStartDate.getTime() !== this.getStartDate().getTime()) {
@@ -901,7 +924,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 					oInterval.attachEvent("startDateChange", this._handleStartDateChange, this);
 					oInterval.attachEvent("select", this._handleCalendarSelect, this);
-					if (sKey === sap.ui.unified.CalendarIntervalType.OneMonth) {
+					if (sKey === sap.m.PlanningCalendarBuiltInView.OneMonth) {
 						oInterval._setRowsStartDate = this._setRowsStartDate.bind(this);
 					}
 
@@ -967,14 +990,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
-		if (this._oOneMonthInterval && sKey === sap.ui.unified.CalendarIntervalType.OneMonth) {
+		if (this._oOneMonthInterval && sKey === sap.m.PlanningCalendarBuiltInView.OneMonth) {
 			this._oOneMonthInterval._setDisplayMode(this._iSize);
 			this._oOneMonthInterval._adjustSelectedDate(CalendarDate.fromLocalJSDate(oOldStartDate));
 			if (this._iSize < 2) {
 				this._setRowsStartDate(oOldStartDate);
 			}
 		} else if (this._oOneMonthInterval
-			&& sOldViewKey === sap.ui.unified.CalendarIntervalType.OneMonth
+			&& sOldViewKey === sap.m.PlanningCalendarBuiltInView.OneMonth
 			&& this._oOneMonthInterval.getSelectedDates().length) {
 			oSelectedDate = this._oOneMonthInterval.getSelectedDates()[0].getStartDate();
 			if (oSelectedDate) {
@@ -1503,7 +1526,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	PlanningCalendar.prototype.removeAllViews = function() {
 
 		this._bCheckView = true; // update view setting onbeforerendering
-		var aRemoved = this.removeAllAggregation("views");
+		var aRemoved = this.removeAllAggregation("views"),
+			aBuiltInViews = this.getBuiltInViews();
+		if (aBuiltInViews.length) {
+			this.setViewKey(aBuiltInViews[0]);
+		} else {
+			this.setViewKey(KEYS_FOR_ALL_BUILTIN_VIEWS[0]);
+		}
 		return aRemoved;
 
 	};
@@ -1511,7 +1540,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	PlanningCalendar.prototype.destroyViews = function() {
 
 		this._bCheckView = true; // update view setting onbeforerendering
-		var oDestroyed = this.destroyAggregation("views");
+		var oDestroyed = this.destroyAggregation("views"),
+			aBuiltInViews = this.getBuiltInViews();
+		if (aBuiltInViews.length) {
+			this.setViewKey(aBuiltInViews[0]);
+		} else {
+			this.setViewKey(KEYS_FOR_ALL_BUILTIN_VIEWS[0]);
+		}
 		return oDestroyed;
 
 	};
@@ -1595,6 +1630,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	PlanningCalendar.prototype.setBuiltInViews = function(aBuiltInViews) {
+		this.setProperty("builtInViews", aBuiltInViews);
+		this.setViewKey(this._getViews()[0].getKey());
+		return this;
+	};
+
+	PlanningCalendar.prototype.removeView = function(oView) {
+		var oResult = this.removeAggregation("views", oView);
+		if (!this.getViews().length) {
+			this.setViewKey(this._getViews()[0].getKey());
+		}
+		return oResult;
+	};
+
 	/**
 	 * Gets the correct <code>PlanningCalendarView</code> interval depending on the screen size.
 	 * @param {PlanningCalendarView} oView Target view
@@ -1631,7 +1680,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	PlanningCalendar.prototype._getView = function (sKey, bNoError) {
 
-		var aViews = _getViews.call(this);
+		var aViews = this._getViews();
 		var oView;
 
 		for (var i = 0; i < aViews.length; i++) {
@@ -1737,14 +1786,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		// if the OneMonth view is selected and Today btn is pressed,
 		// the calendar should start from the 1st date of the current month
-		if (sViewKey === sap.ui.unified.CalendarIntervalType.OneMonth) {
+		if (sViewKey === sap.m.PlanningCalendarBuiltInView.OneMonth) {
 			oStartDate = CalendarUtils.getFirstDateOfMonth(CalendarUtils._createUniversalUTCDate(oDate, undefined, true));
 			this._oOneMonthInterval._adjustSelectedDate(CalendarDate.fromLocalJSDate(oDate), false);
 
 			oDate = CalendarUtils._createLocalDate(oStartDate, true);
 		}
 
-		if (sViewKey ===  sap.ui.unified.CalendarIntervalType.Week) {
+		if (sViewKey === sap.m.PlanningCalendarBuiltInView.Week) {
 			//clicking of today in week view should not point to the current hour, but to the one defined by app. developer
 			oStartDate = this.getStartDate();
 			oDate.setHours(oStartDate.getHours());
@@ -2020,6 +2069,96 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		oAppointmentsCol.setMinScreenWidth(popinEnabled ? APP_COLUMN_MIN_SCREEN_WIDTH : "");
 	};
 
+	PlanningCalendar.prototype._getViews = function() {
+		var aCustomViews = this.getViews(),
+			aBuildInViews = this.getBuiltInViews(),
+			aResultViews,
+			aKeysForBuiltInViews = [],
+			oViewType = sap.m.PlanningCalendarBuiltInView,
+			oIntervalType = sap.ui.unified.CalendarIntervalType;
+
+		if (!this._oViews) {
+			this._oViews = {};
+		}
+
+		if (aBuildInViews.length) {
+			aKeysForBuiltInViews = aBuildInViews;
+		} else {
+			aKeysForBuiltInViews = aCustomViews.length ? [] : KEYS_FOR_ALL_BUILTIN_VIEWS;
+		}
+
+		aResultViews = aKeysForBuiltInViews.map(function (sViewKey) {
+			switch (sViewKey) {
+				case oViewType.Hour:
+					return this._oViews[oViewType.Hour] ||
+						(this._oViews[oViewType.Hour] = new sap.m.PlanningCalendarView(this.getId() + "-HourView", {
+							key: oViewType.Hour,
+							intervalType: oIntervalType.Hour,
+							description: this._oRB.getText("PLANNINGCALENDAR_HOURS"),
+							intervalsS: 6,
+							intervalsM: 6,
+							intervalsL: 12
+						}));
+				case oViewType.Day:
+					return this._oViews[oViewType.Day] ||
+						(this._oViews[oViewType.Day] = new sap.m.PlanningCalendarView(this.getId() + "-DayView", {
+							key: oViewType.Day,
+							intervalType: oIntervalType.Day,
+							description: this._oRB.getText("PLANNINGCALENDAR_DAYS"),
+							intervalsS: 7,
+							intervalsM: 7,
+							intervalsL: 14
+						}));
+				case oViewType.Month:
+					return  this._oViews[oViewType.Month] ||
+						(this._oViews[oViewType.Month] = new sap.m.PlanningCalendarView(this.getId() + "-MonthView", {
+							key: oViewType.Month,
+							intervalType: oIntervalType.Month,
+							description: this._oRB.getText("PLANNINGCALENDAR_MONTHS"),
+							intervalsS: 3,
+							intervalsM: 6,
+							intervalsL: 12
+						}));
+				case oViewType.Week:
+					return this._oViews[oViewType.Week] ||
+						(this._oViews[oViewType.Week] = new sap.m.PlanningCalendarView(this.getId() + "-WeekView", {
+							key: oViewType.Week,
+							intervalType: oIntervalType.Week,
+							description: this._oRB.getText("PLANNINGCALENDAR_WEEK"),
+							intervalsS: 7,
+							intervalsM: 7,
+							intervalsL: 7
+						}));
+				case oViewType.OneMonth:
+					return this._oViews[oViewType.OneMonth] ||
+						( this._oViews[oViewType.OneMonth] = new sap.m.PlanningCalendarView(this.getId() + "-OneMonthView", {
+							key: oViewType.OneMonth,
+							intervalType: oIntervalType.OneMonth,
+							description: this._oRB.getText("PLANNINGCALENDAR_ONE_MONTH"),
+							intervalsS: 1,
+							intervalsM: 1,
+							intervalsL: 31
+						}));
+				default:
+					jQuery.sap.log.error("Cannot get PlanningCalendar views. Invalid view key " + sViewKey);
+					break;
+			}
+		}, this);
+
+		for (var sKeyExistingViews in this._oViews) { //remove all redundant views
+			if (aKeysForBuiltInViews.indexOf(sKeyExistingViews) < 0) {
+				this._oViews[sKeyExistingViews].destroy();
+				delete this._oViews[sKeyExistingViews];
+			}
+		}
+
+		if (aCustomViews.length) {
+			aResultViews = aResultViews.concat(aCustomViews);
+		}
+
+		return aResultViews;
+	};
+
 	function _handleTableSelectionChange(oEvent) {
 
 		var aChangedRows = [];
@@ -2111,104 +2250,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 	}
 
-	function _getViews() {
-
-		var aViews = this.getViews();
-
-		if (aViews.length == 0) {
-			if (!this._aViews) {
-				this._aViews = [];
-
-				var oViewHour = new sap.m.PlanningCalendarView(this.getId() + "-HourView", {
-					key: sap.ui.unified.CalendarIntervalType.Hour,
-					intervalType: sap.ui.unified.CalendarIntervalType.Hour,
-					description: this._oRB.getText("PLANNINGCALENDAR_HOURS"),
-					intervalsS: 6,
-					intervalsM: 6,
-					intervalsL: 12
-				});
-				this._aViews.push(oViewHour);
-
-				var oViewDay = new sap.m.PlanningCalendarView(this.getId() + "-DayView", {
-					key: sap.ui.unified.CalendarIntervalType.Day,
-					intervalType: sap.ui.unified.CalendarIntervalType.Day,
-					description: this._oRB.getText("PLANNINGCALENDAR_DAYS"),
-					intervalsS: 7,
-					intervalsM: 7,
-					intervalsL: 14
-				});
-				this._aViews.push(oViewDay);
-
-				var oViewMonth = new sap.m.PlanningCalendarView(this.getId() + "-MonthView", {
-					key: sap.ui.unified.CalendarIntervalType.Month,
-					intervalType: sap.ui.unified.CalendarIntervalType.Month,
-					description: this._oRB.getText("PLANNINGCALENDAR_MONTHS"),
-					intervalsS: 3,
-					intervalsM: 6,
-					intervalsL: 12
-				});
-				this._aViews.push(oViewMonth);
-
-				var oViewWeek = new sap.m.PlanningCalendarView(this.getId() + "-WeekView", {
-					key: sap.ui.unified.CalendarIntervalType.Week,
-					intervalType: sap.ui.unified.CalendarIntervalType.Week,
-					description: this._oRB.getText("PLANNINGCALENDAR_WEEK"),
-					intervalsS: 7,
-					intervalsM: 7,
-					intervalsL: 7
-				});
-				this._aViews.push(oViewWeek);
-
-				var oViewOneMonth = new sap.m.PlanningCalendarView(this.getId() + "-OneMonthView", {
-					key: sap.ui.unified.CalendarIntervalType.OneMonth,
-					intervalType: sap.ui.unified.CalendarIntervalType.OneMonth,
-					description: this._oRB.getText("PLANNINGCALENDAR_ONE_MONTH"),
-					intervalsS: 1,
-					intervalsM: 1,
-					intervalsL: 31
-				});
-				this._aViews.push(oViewOneMonth);
-			}
-
-			aViews = this._aViews;
-		}
-
-		return aViews;
-
-	}
-
 	function _updateSelectItems() {
 
-		var aViews = _getViews.call(this);
-		var aItems = this._oIntervalTypeSelect.getItems();
-		var i = 0;
+		var aViews = this._getViews();
+		this._oIntervalTypeSelect.destroyItems();
+		var i;
 		var oItem;
-
-		if (aViews.length < aItems.length) {
-			for (i = aViews.length; i < aItems.length; i++) {
-				oItem = aItems[i];
-				this._oIntervalTypeSelect.removeItem(oItem);
-				oItem.destroy();
-			}
-		}
 
 		for (i = 0; i < aViews.length; i++) {
 			var oView = aViews[i];
-			oItem = aItems[i];
-			if (oItem) {
-				if (oItem.getKey() != oView.getKey() || oItem.getText() != oView.getDescription()) {
-					oItem.setKey(oView.getKey());
-					oItem.setText(oView.getDescription());
-					oItem.setTooltip(oView.getTooltip());
-				}
-			} else {
 				oItem = new sap.ui.core.Item(this.getId() + "-" + i, {
 					key: oView.getKey(),
 					text: oView.getDescription(),
 					tooltip: oView.getTooltip()
 				});
-				this._oIntervalTypeSelect.addItem(oItem);
-			}
+			this._oIntervalTypeSelect.addItem(oItem);
 		}
 
 		// Toggle interval select visibility if only one items is available there should be no select visible

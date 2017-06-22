@@ -560,6 +560,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * A list of the default built-in views in a {@link sap.m.PlanningCalendar}, described by their keys.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.50
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.PlanningCalendarBuiltInView = {
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one hour.
+		 */
+		Hour : "Hour",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day.
+		 */
+		Day : "Day",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one month.
+		 */
+		Month : "Month",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day
+		 * where 7 days are displayed, starting with the first day of the week.
+		 */
+		Week : "Week",
+
+		/**
+		 * Represents the key of the built-in view, in which the intervals have the size of one day
+		 * where 31 days are displayed, starting with the first day of the month.
+		 */
+		OneMonth : "One Month"
+
+	};
+
+	/**
 	 * A subset of DateTimeInput types that fit to a simple API returning one string.
 	 *
 	 * @enum {string}
