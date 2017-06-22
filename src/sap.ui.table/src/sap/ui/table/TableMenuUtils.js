@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 
 						if (bFireEvent) {
 							bExecuteDefault = oTable.fireColumnSelect({
-								column: oTable._getVisibleColumns()[iColumnIndex]
+								column: oTable.getColumns()[iColumnIndex]
 							});
 						}
 
@@ -275,6 +275,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						var bMenuOpenAtAnotherDataCell = oTable._oCellContextMenu.bOpen && oTable._oCellContextMenu.oOpenerRef !== oCell;
 						if (bMenuOpenAtAnotherDataCell) {
 							MenuUtils.closeDataCellContextMenu(oTable);
+						}
+
+						for (var i = 0; i < oColumns.length; i++) {
+							MenuUtils.closeColumnContextMenu(oTable, i);
 						}
 
 						oTable._oCellContextMenu.open(bHoverFirstMenuItem, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell, "none none");
