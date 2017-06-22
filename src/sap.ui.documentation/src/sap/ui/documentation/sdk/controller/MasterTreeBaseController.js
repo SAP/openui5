@@ -32,9 +32,9 @@ sap.ui.define([
 			 * Makes the tree open all nodes up to the node with "sTopicId" and then selects it
 			 * @private
 			 */
-			_expandTreeToNode: function (sTopicId) {
-				var oTree = this.byId("tree");
-				var oData = this.getOwnerComponent().getModel("treeData").getData();
+			_expandTreeToNode: function (sTopicId, oModel) {
+				var oTree = this.byId("tree"),
+					oData = oModel.getData();
 
 				// Find the path to the new node, traversing the model
 				var aTopicIds = this._oTreeUtil.getPathToNode(sTopicId, oData);
