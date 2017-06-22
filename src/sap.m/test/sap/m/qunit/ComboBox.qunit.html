@@ -10807,6 +10807,47 @@
 			oComboBox.destroy();
 		});
 
+
+		QUnit.test("Changing models reflects on bound selectedKey property", function (assert) {
+			//Setup
+			var oData = {
+				list: [{id: "1", text: "1"}, {id: "2", text: "2"}],
+				selectedKey: "2"
+			},
+					oModel = new sap.ui.model.json.JSONModel(oData),
+					oItemsTemplate = new sap.ui.core.Item({key: "{id}", text: "{text}"}),
+					oComboBox = new sap.m.ComboBox({
+						selectedKey: "{/selectedKey}",
+						items: {
+							path: "/list",
+							template: oItemsTemplate
+						}
+					});
+
+			//Act
+			oComboBox.setModel(oModel);
+			oComboBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.ok(oComboBox.getSelectedKey(), "Item is selected");
+			assert.strictEqual(oComboBox.getSelectedItem().getKey(), "2", "Item 2 is selected");
+
+			//Act
+			oComboBox.getModel().setProperty("/list", [{id: "2", text: "2"}, {id: "3", text: "3"}]);
+			oComboBox.getModel().setProperty("/selectedKey", "3");
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(100);
+
+			//Assert
+			assert.strictEqual(oComboBox.getSelectedItem().getKey(), "3", "Item 3 is selected");
+
+			//Cleanup
+			oComboBox.destroy();
+		});
+
 		QUnit.module("Tablet focus handling");
 
 		QUnit.test("it should not set the focus to the input", function(assert) {
