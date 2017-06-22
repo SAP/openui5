@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	/**
 	 * Function is called when ToggleButton is clicked.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The fired event
 	 * @private
 	 */
 	ToggleButton.prototype.ontap = function(oEvent) {
@@ -80,6 +80,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 
 	/**
 	 * Override the keyup event handler of Button.js.
+	 * @param {jQuery.Event} oEvent The fired event
 	 */
 	ToggleButton.prototype.onkeyup = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.SPACE || oEvent.which === jQuery.sap.KeyCodes.ENTER) {
@@ -89,6 +90,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} Current accessibility state of the control.
 	 * @protected
 	 */
 	ToggleButton.prototype.getAccessibilityInfo = function() {

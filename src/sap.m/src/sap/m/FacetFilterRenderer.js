@@ -167,8 +167,8 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Returns the inner aria describedby IDs for the accessibility.
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
-	 * @returns {String|undefined}
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String|undefined} The aria of the inner aria describedby IDs
 	 * @protected
 	 */
 	FacetFilterRenderer.getAriaDescribedBy = function(oControl) {
@@ -186,7 +186,8 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Returns the accessibility state of the control.
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {object} The accessibility state of the control
 	 * @protected
 	 */
 	FacetFilterRenderer.getAccessibilityState = function(oControl) {

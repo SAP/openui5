@@ -253,8 +253,8 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Renders tabindex with value of "-1" if required by  <code>_bExcludeFromTabChain</code> property.
-	 * @param oButton
-	 * @param oRm
+	 * @param {sap.m.Button} oButton The sap.m.Button to be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
 	 */
 	function renderTabIndex(oButton, oRm){
 		if (oButton._bExcludeFromTabChain) {

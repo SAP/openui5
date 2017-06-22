@@ -417,37 +417,50 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 			return false;
 		};
 
-		TimePicker.prototype.setMinutesStep = function(iStep) {
+		/**
+		 * Sets the minutes slider step.
+		 * @param {int} step The step used to generate values for the minutes slider
+		 * @returns {*} this
+		 * @public
+		 */
+		TimePicker.prototype.setMinutesStep = function(step) {
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders.setMinutesStep(iStep);
+				oSliders.setMinutesStep(step);
 			}
-			return this.setProperty("minutesStep", iStep, true);
+			return this.setProperty("minutesStep", step, true);
 		};
 
-		TimePicker.prototype.setSecondsStep = function(iStep) {
+		/**
+		 * Sets the seconds slider step.
+		 * @param {int} step The step used to generate values for the seconds slider
+		 * @returns {sap.m.TimePicker} <code>this</code> to allow method chaining
+		 * @public
+		 */
+		TimePicker.prototype.setSecondsStep = function(step) {
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders.setSecondsStep(iStep);
+				oSliders.setSecondsStep(step);
 			}
-			return this.setProperty("secondsStep", iStep, true);
+			return this.setProperty("secondsStep", step, true);
 		};
 
 		/**
 		 * Sets the title label inside the picker.
 		 *
-		 * @param {string} sTitle A title
+		 * @param {string} title A title
+		 * @returns {sap.m.TimePicker} <code>this</code> to allow method chaining
 		 */
-		TimePicker.prototype.setTitle = function(sTitle) {
+		TimePicker.prototype.setTitle = function(title) {
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders.setLabelText(sTitle);
+				oSliders.setLabelText(title);
 			}
 
-			this.setProperty("title", sTitle, true);
+			this.setProperty("title", title, true);
 
 			return this;
 		};
@@ -787,6 +800,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		 * Uses {@link sap.m.ResponsivePopover} control for a picker.
 		 *
 		 * @param {string} sFormat Time format used for creating the sliders inside the picker
+		 * @returns {sap.m.TimePicker} the sap.m.TimePicker
 		 * @private
 		 */
 		TimePicker.prototype._createPicker = function(sFormat) {
@@ -1279,9 +1293,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 		};
 
 		/**
-		 * Removes any whitespaces precedung the hours value (e.g. "<space>1:13:32" -> "1:13:32",
+		 * Removes any whitespaces preceding the hours value (e.g. "<space>1:13:32" -> "1:13:32",
 		 * "PM<space>1:13:32" -> "PM1:13:32").
-		 * @param value
+		 * @param {string} value the value to be stripped
 		 * @returns {*} the stripped value
 		 */
 		TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces = function(value) {
@@ -1340,6 +1354,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInp
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
+		 * @returns {Object} Current accessibility state of the control.
 		 * @protected
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {

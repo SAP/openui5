@@ -583,7 +583,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	TileContainer.prototype.updateTiles = function (sReason) {
+	TileContainer.prototype.updateTiles = function () {
 		this.destroyTiles();
 		this.updateAggregation('tiles');
 	};
@@ -1153,7 +1153,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Finds a Tile.
 	 * Convenience method, which returns $node if it has Css class sapMTile
 	 * or the first child with that class.
-	 *
+	 * @param {jQuery.object} $node The node to be examined
+	 * @returns {jQuery.object} The first node which has the class
 	 * @private
 	 */
 	TileContainer.prototype._findTile = function($node) {
@@ -1635,7 +1636,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handles the touchend and mouseup events on the TileContainer.
 	 *
-	 * @param {jQuery.Event} The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype._onend = function(oEvent) {
@@ -2032,6 +2033,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Calculates a common Tile dimension (width and height) applied for all the Tiles.
 	 * Function {@link getLastCalculatedDimension} does not do the calculation.
 	 * The caller must explicitly call the {@link calc} function before it, or when he/she wants up-to-date dimension.
+	 * @param {sap.m.TileContainer} oTileContainer The sap.m.TileContainer for which the dimensions will be calculated
 	 * @private
 	 */
 	var TileDimensionCalculator = function(oTileContainer) {

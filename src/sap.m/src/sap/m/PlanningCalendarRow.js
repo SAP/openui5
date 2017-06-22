@@ -431,8 +431,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 	/**
 	 * Clone from the passed DateRange and sets the foreign key to the source DateRange, that is used for cloning
-	 * @param {sap.ui.unified.DateRange} oSource
-	 * @returns {sap.ui.unified.DateRange}
+	 * @param {sap.ui.unified.DateRange} oSource The date range to be copied
+	 * @returns {sap.ui.unified.DateRange} The copied date range
 	 * @private
 	 */
 	PlanningCalendarRow.prototype._buildCalendarRowDateRange = function (oSource) {

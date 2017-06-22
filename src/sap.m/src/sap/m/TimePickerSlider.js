@@ -1263,6 +1263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Gets only the visible items.
+		 * @returns {sap.m.TimePickerSlider} the visible sap.m.TimePickerSlider items
 		 * @private
 		 */
 		TimePickerSlider.prototype._getVisibleItems = function() {

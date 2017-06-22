@@ -569,6 +569,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	Button.prototype.getAccessibilityInfo = function() {

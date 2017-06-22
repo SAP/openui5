@@ -561,9 +561,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * Verifies if the given date matches the range of currently visible intervals,
+	 * Verifies if the given date matches the range of given view,
 	 * based on the visibility of the current date.
-	 * @param {Date} oDateTime
+	 * @param {Date} oDateTime the given date
+	 * @param {string} sViewKey the key of a view
+	 * @returns {boolean} if the date is in the visible range
 	 * @private
 	 */
 	PlanningCalendar.prototype._dateMatchesVisibleRange = function(oDateTime, sViewKey) {
@@ -605,7 +607,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * of the same week as the given date).
 	 * @param {Date} oStartDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
 	 * property <code>startDate</code> is adjusted. See remark about week view above.
-	 * @returns {sap.m.PlanningCalendar}
+	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
 	*/
 	PlanningCalendar.prototype.setStartDate = function(oStartDate){
 		var oFirstDateOfWeek,
@@ -1595,7 +1597,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Gets the correct <code>PlanningCalendarView</code> interval depending on the screen size.
-	 * @param {PlanningCalendarView} oView - Target view
+	 * @param {PlanningCalendarView} oView Target view
 	 * @returns {number} Interval for the target view that corresponds to the screen size
 	 * @private
 	 */
@@ -1622,9 +1624,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Gets a <code>PlanningCalendarView</code> by a given view key.
-	 * @param {string} sKey - <code>PlanningCalendarView</code> key
-	 * @param {boolean} bNoError
-	 * @returns {*}
+	 * @param {string} sKey <code>PlanningCalendarView</code> key
+	 * @param {boolean} bNoError Determines if an error should be thrown (false) or not (true) when the given view is missing
+	 * @returns {sap.m.PlanningCalendarView} The view of the PlanningCalendar
 	 * @private
 	 */
 	PlanningCalendar.prototype._getView = function (sKey, bNoError) {
@@ -1660,7 +1662,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 *
-	 * @param {boolean} bUpdateRows
+	 * @param {boolean} bUpdateRows if there is need for updating the rows
 	 * @private
 	 */
 	PlanningCalendar.prototype._updateCurrentTimeVisualization = function (bUpdateRows) {
@@ -1725,7 +1727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>press</code> event of the <code>PlanningCalendar</code>'s today button
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent the triggered event
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleTodayPress = function (oEvent) {
@@ -1757,7 +1759,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Handles the <code>startDateChange</code> event of the <code>PlanningCalendar</code>
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent the triggered event
 	 * @private
 	 */
 	PlanningCalendar.prototype._handleStartDateChange = function(oEvent){
@@ -1823,8 +1825,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Clone from the passed DateRange and sets the foreign key to the source DateRange, that is used for cloning
-	 * @param {sap.ui.unified.DateRange} oSource
-	 * @returns {sap.ui.unified.DateRange}
+	 * @param {sap.ui.unified.DateRange} oSource the DateRange to be copied
+	 * @returns {sap.ui.unified.DateRange} the copied DateRange
 	 * @private
 	 */
 	PlanningCalendar.prototype._buildPCRowDateRange = function (oSource) {
@@ -1990,7 +1992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Sets the start dates of all calendar rows to a given date.
-	 * @param {Date} oDateTime
+	 * @param {Date} oDateTime the given start date
 	 * @private
 	 */
 	PlanningCalendar.prototype._setRowsStartDate = function(oDateTime) {
@@ -2007,7 +2009,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Enables/disables the popin nature of a the appointments column.
-	 * @param {boolean} popinEnabled
+	 * @param {boolean} popinEnabled the current popin state of the appointments column
 	 * @private
 	 */
 	PlanningCalendar.prototype._toggleAppointmentsColumnPopinState = function(popinEnabled) {
