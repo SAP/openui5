@@ -78,8 +78,10 @@ function(
 			var oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
 			var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
 
-			assert.deepEqual(oSectionOverlay.$().offset(), this.oSection.$().offset(), "position of the Section overlay is correct");
-			assert.deepEqual(oButtonOverlay.$().offset(), this.oButton.$().offset(), "position of the Button overlay is correct");
+			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().top), Math.ceil(oSectionOverlay.$().offset().top), "top position of the Section overlay is correct");
+			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().left), Math.ceil(oSectionOverlay.$().offset().left), "left position of the Section overlay is correct");
+			assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "top position of the Button overlay is correct");
+			assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "left position of the Button overlay is correct");
 
 			fnDone();
 		}, this);
