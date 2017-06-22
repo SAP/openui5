@@ -70,8 +70,12 @@
 .sapTntToolPageContentWrapper {
   .display-flex();
   .flex-grow(1);
-  max-height: calc(~'100% - @{sapTntToolPageHeaderHeight}');
+  max-height: 100%;
   position: relative;
+}
+
+.sapTntToolPageWithHeader .sapTntToolPageContentWrapper {
+  max-height: calc(~'100% - @{sapTntToolPageHeaderHeight}');
 }
 
 /* Aside container
