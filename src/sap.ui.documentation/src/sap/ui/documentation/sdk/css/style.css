@@ -1072,9 +1072,15 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 	text-align: center;
 }
 
-/* remove white shadow for API reference header bar */
-.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+/* remove white shadow for header bars */
+.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
+.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
 	box-shadow: inherit;
+}
+
+/* correct split container right border */
+.sapUiDemokit .sapMSplitContainerMaster:after {
+	border-right: 1px solid #4f667a;
 }
 
 /* control overflow for community links in horizontal layout */
