@@ -216,6 +216,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 				var oMetadata = oClass.getMetadata();
 				if (oMetadata.getLibraryName) {
 					sLibraryName = oMetadata.getLibraryName();
+				} else {
+					sLibraryName = "sap.ui.core";
 				}
 			} else {
 				sLibraryName = sEntityName.substr(0, sEntityName.lastIndexOf("."));
