@@ -19,7 +19,7 @@ sap.ui.define([
 			 */
 			onInit : function () {
 				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
-					this._expandTreeToNode(this._topicId);
+					this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
 				}.bind(this));
 
 				this._initTreeUtil("name", "nodes");
@@ -51,7 +51,7 @@ sap.ui.define([
 
 				this._topicId = event.getParameter("arguments").id || event.getParameter("name");
 
-				this._expandTreeToNode(this._topicId);
+				this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
 			},
 
 			_onMatched: function () {

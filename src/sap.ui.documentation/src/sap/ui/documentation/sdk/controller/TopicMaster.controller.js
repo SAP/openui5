@@ -38,7 +38,7 @@ sap.ui.define([
 
 				this._topicId = event.getParameter("arguments").id;
 
-				this._expandTreeToNode(this._topicId);
+				this._expandTreeToNode(this._topicId, this.getModel());
 			},
 
 			_onMatched: function () {
