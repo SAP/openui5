@@ -146,8 +146,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			constructor : function (vId, mSettings) {
 				Control.prototype.constructor.apply(this, arguments);
 				if (this.getEditable()) {
-					this._createDecrementButton();
-					this._createIncrementButton();
+					this._getOrCreateDecrementButton();
+					this._getOrCreateIncrementButton();
 				}
 
 				if (typeof vId !== "string"){
