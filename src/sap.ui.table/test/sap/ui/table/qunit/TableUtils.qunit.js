@@ -197,6 +197,26 @@ QUnit.test("hasRowHeader", function(assert) {
 	assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionBehavior 'RowOnly'");
 });
 
+QUnit.test("hasSelectAll", function(assert) {
+	function test(bEnableSelectAll, sSelectionMode, bShouldHaveSelectAll) {
+		oTable.setEnableSelectAll(bEnableSelectAll);
+		oTable.setSelectionMode(sSelectionMode);
+		assert.strictEqual(TableUtils.hasSelectAll(oTable), bShouldHaveSelectAll,
+			"The table should " + (bShouldHaveSelectAll ? "" : "not ") + "have a SelectAll checkbox"
+		);
+	}
+
+	assert.ok(!TableUtils.hasSelectAll(), "Returned false: No parameter passed");
+	test(false, sap.ui.table.SelectionMode.None, false);
+	test(false, sap.ui.table.SelectionMode.Single, false);
+	test(false, sap.ui.table.SelectionMode.Multi, false);
+	test(false, sap.ui.table.SelectionMode.MultiToggle, false);
+	test(true, sap.ui.table.SelectionMode.None, false);
+	test(true, sap.ui.table.SelectionMode.Single, false);
+	test(true, sap.ui.table.SelectionMode.Multi, true);
+	test(true, sap.ui.table.SelectionMode.MultiToggle, true);
+});
+
 QUnit.test("getVisibleColumnCount", function(assert) {
 	assert.equal(TableUtils.getVisibleColumnCount(oTable), iNumberOfCols, "All columns visible");
 

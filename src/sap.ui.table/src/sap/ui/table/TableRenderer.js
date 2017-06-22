@@ -337,16 +337,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
-		rm.write("<div");
-		rm.writeAttribute("id", oTable.getId() + "-selall");
-		var oSelMode = oTable.getSelectionMode();
 		var bEnabled = false;
 		var bSelAll = false;
-		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
+
+		rm.write("<div");
+		rm.writeAttribute("id", oTable.getId() + "-selall");
+
+		if (TableUtils.hasSelectAll(oTable)) {
+			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
+
 			if (oTable._getShowStandardTooltips()) {
-				rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
+				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+				rm.writeAttributeEscaped("title", oTable._oResBundle.getText(sSelectAllResourceTextID));
 			}
-			if (!TableUtils.areAllRowsSelected(oTable)) {
+			if (!bAllRowsSelected) {
 				rm.addClass("sapUiTableSelAll");
 			} else {
 				bSelAll = true;

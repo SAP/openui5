@@ -94,6 +94,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		},
 
 		/**
+		 * Returns whether the table has a SelectAll checkbox.
+		 *
+		 * @param {sap.ui.table.Table} oTable Instance of the table.
+		 * @return {boolean} Returns <code>true</code>, if the table has a SelectAll checkbox.
+		 * @private
+		 */
+		hasSelectAll: function(oTable) {
+			var sSelectionMode = oTable != null ? oTable.getSelectionMode() : SelectionMode.None;
+			return (sSelectionMode === SelectionMode.Multi || sSelectionMode === SelectionMode.MultiToggle)
+				   && oTable.getEnableSelectAll();
+		},
+
+		/**
 		 * Returns the number of row actions in case the tahe has a row action column, <code>0</code> otherwise
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @return {int}
