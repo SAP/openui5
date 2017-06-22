@@ -566,8 +566,9 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 			changeType: "hideControl"
 		};
 
-		this.stub(this.oFlexController, '_checkTargetAndApplyChange').throws(new Error());
-		this.stub(this.oFlexController, '_getChangeHandler').returns(HideControl);
+		this.stub(this.oFlexController, "_checkTargetAndApplyChange").throws(new Error());
+		this.stub(this.oFlexController, "_getChangeHandler").returns(HideControl);
+		this.stub(this.oFlexController, "createChange").returns(new Change(oChangeSpecificData));
 
 		assert.throws(function() {
 			this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl);
@@ -1140,6 +1141,17 @@ jQuery.sap.require('sap.ui.fl.context.ContextManager');
 		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
 		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
 		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
+	});
+
+	QUnit.test("does not add custom data if an exception was raised during applyChanges", function (assert) {
+
+		this.oChangeHandlerApplyChangeStub.throws();
+		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
+		assert.equal(this.oControl.getCustomData().length, 0, "no custom data was set");
+		assert.ok(mergeErrorStub.calledOnce, "set merge error was called");
 	});
 
 	QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
