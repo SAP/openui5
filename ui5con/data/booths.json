@@ -52,7 +52,7 @@
 		},
 		{
 			"title": "Components – More Performance!",
-			"speaker": "Peter Muessig, Matthias Osswal",
+			"speaker": "Peter Muessig, Matthias Oßwald",
 			"type": "Session",
 			"duration": 40,
 			"abstract": "Describes the components concepts and especially the concept of the descriptor with regards to performance improvements (manifest first, async loading, model preloading, ...)"
