@@ -841,6 +841,51 @@
 
 			});
 
+			QUnit.module("Other");
+
+			QUnit.test("interval selection feedback", function(assert) {
+				//arrange
+				var oCal = new sap.ui.unified.Calendar({
+						intervalSelection: true,
+						months: 2
+					}),
+					$HoveredDate,
+					$HoveredDateNextMonth,
+					oSelectedDate = new sap.ui.unified.DateRange({ startDate: new Date(2017, 6, 19) }),
+					aMonths;
+
+				oCal.displayDate(new Date(2017, 6, 19)); //2017, July 19
+				oCal.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				aMonths = oCal.getAggregation("month");
+
+				//act - hover a date, with nothing selected yet
+				$HoveredDate = jQuery("#" + aMonths[0].getId() + "-20170725");
+				aMonths[0].onmouseover({ target: $HoveredDate }); //2017, July 25
+
+				//assert
+				assert.equal(jQuery("#" + aMonths[0].getId() + ' .sapUiCalItemSelBetween').length, 0, 'no selection feedback yet');
+
+				//act - hover the same end date
+				oCal.addSelectedDate(oSelectedDate);
+				aMonths[0].onmouseover({ target: $HoveredDate }); //2017, July 25
+
+				//assert
+				assert.equal(jQuery("#" + aMonths[0].getId() + ' .sapUiCalItemSelBetween').length, 5, 'selection feedback is applied');
+
+				//act - hover a date in another month
+				$HoveredDateNextMonth = jQuery("#" + aMonths[1].getId() + "-20170806");
+				aMonths[1].onmouseover({ target: $HoveredDateNextMonth }); //2017, August 6
+
+				//assert
+				assert.equal(jQuery("#" + aMonths[0].getId() + ' .sapUiCalItemSelBetween').length, 17, 'selection feedback is applied on hovered dates from the first month');
+				assert.equal(jQuery("#" + aMonths[1].getId() + ' .sapUiCalItemSelBetween').length, 7, 'selection feedback is applied on hovered dates from the second month');
+
+				//clean
+				oCal.destroy();
+			});
+
 		</script>
 
 	</head>
