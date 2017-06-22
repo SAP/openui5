@@ -192,7 +192,7 @@
 					<div class="b-topic__image-column fix-item b-ui margin_right_20">
 						<div
 							class="b-topic__picture"
-							style="background-image:url('data/pictures/{{picture}}');">
+							style="background-image:url('src/data/pictures/{{picture}}');">
 						</div>
 						<div class="b-topic__meet_me b-font size_15 color_yellow {{show-meet-me}}">
 							MEET ME AT {{HH:MM}}
@@ -211,8 +211,8 @@
 					<div class="b-topic__title b-font size_15 b-ui margin_right_10 column_1">
 						{{title}}
 					</div>
-					<div class="b-topic__title b-font size_15 color_gray b-ui column_3 {{show-session}}">
-						<a href="agenda.html?view=speakers#{{speaker_id}}">{{speaker}}</a>
+					<div class="b-topic__title b-font size_15 color_gray b-ui column_3 ">
+						{{speakers}}
 					</div>
 				</div>
 				<div class="b-topic__abstract b-font size_14 color_gray">{{abstract}}</div>
