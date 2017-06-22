@@ -561,7 +561,7 @@ sap.ui.define([
 		onPressExpert: function(evt){
 			if (evt.getSource().getPressed()) {
 				sap.ui.getCore().byId("tbQuick").setPressed();
-				this._oTableFilterState.aTheming = [new Filter("theming", FilterOperator.EQ, "Base")];
+				this._oTableFilterState.aTheming = [new Filter("theming", FilterOperator.EQ, "Expert")];
 			} else {
 				this._oTableFilterState.aTheming = [];
 			}
