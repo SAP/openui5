@@ -242,6 +242,17 @@
 		assert.ok(spy.calledOnce, "bindRows was called");
 	});
 
+	QUnit.test("FlatMode", function(assert) {
+		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length > 0, "Tree Icons available in TreeMode");
+		assert.ok(!this.table._bFlatMode, "Flat Mode not set");
+		
+		this.table.setUseFlatMode(true);
+		sap.ui.getCore().applyChanges();
+		
+		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length == 0, "Tree Icons not available in FlatMode");
+		assert.ok(this.table._bFlatMode, "Flat Mode set");
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.table = createTable();
