@@ -206,6 +206,24 @@
 			equal(oSpyVerifyValue.callCount, 1, "setMax always calls _verifyValue so the valueState is addressed");
 		});
 
+		QUnit.test('Testing for duplicate id', function (assert) {
+			var oStepInput;
+
+			try {
+				oStepInput = new sap.m.StepInput({
+					editable: true
+				});
+				assert.equal(1, 1, "The control is created succesfully");
+			} catch (e) {
+				assert.equal(1, 0, "Throws an error " + e.stack);
+			}
+
+			// destroy
+			if (oStepInput) {
+				oStepInput.destroy();
+			}
+		});
+
 		QUnit.module("Operations", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
@@ -1181,5 +1199,6 @@
 <body id="body" class="sapUiBody">
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
+<div id="content"></div>
 </body>
 </html>
