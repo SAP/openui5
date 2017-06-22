@@ -14,7 +14,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * PaneContainer is an abstraction of Splitter
+	 * PaneContainer is an abstraction of Splitter.
+	 *
 	 * Could be used as an aggregation of ResponsiveSplitter or other PaneContainers.
 	 * @extends sap.ui.core.Element
 	 *
