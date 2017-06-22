@@ -9,7 +9,7 @@
 			"speaker": "Martin Schaus",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>Demo new upcoming features of UI5 regarding Metadata Driven Controls.</p><p>Allow to manipulate the artifacts live in an editor and see the immediate result.</p><p>Create custom control using a Fragment Control, add a Swagger service to the View and enhance the metadata.</p><p>Drive the new custom control and other UI controls from the metadata.</p>"
+			"abstract": "<p>Concepts of upcoming features of UI5 to ease creation of building blocks and connection of controls to Rest Service Metadata.</p>"
 
 		},
 		{
