@@ -903,7 +903,9 @@ sap.ui.define([
 
 		var aTaskArgs = arguments;
 		Array.prototype.splice.call(aTaskArgs, 0, 2); // the first two are not specific to the task execution, so remove them
-		return this._oLayoutTask.reSchedule(bImmediate, aTaskArgs); // returns promise
+		return this._oLayoutTask.reSchedule(bImmediate, aTaskArgs).catch(function(reason) {
+			// implement catch function to prevent uncaught errors message
+		}); // returns promise
 	};
 
 	/**
