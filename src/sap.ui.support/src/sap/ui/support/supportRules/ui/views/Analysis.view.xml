@@ -58,6 +58,12 @@
 										<m:Text text="{name}"></m:Text>
 									</t:template>
 								</t:Column>
+								<t:Column label="Categories"
+										  width="10rem">
+									<t:template>
+										<m:Text text="{categories}"></m:Text>
+									</t:template>
+								</t:Column>
 								<t:Column width="60px" label="Actions">
 								<t:template>
 									<t:RowAction>
