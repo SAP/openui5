@@ -25,25 +25,11 @@ sap.ui.define(function() {
 	 */
 	ChangeHandlerMediator._aChangeHandlerSettings = [];
 
-
-	// Compatibility method, remove after new SmartField.flexibility.js is merged
-	ChangeHandlerMediator.addChangeHandler = function(param, dummy, settings) {
-		var mNewChangeHandlerSettings;
-
-		mNewChangeHandlerSettings = {
-			key : { "scenario" : "addODataField" },
-			content : settings
-		};
-
-		this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
-	};
-
 	/**
 	 * Add change handler settings to the mediated list
 	 * @param {Object} mKey Collection of keys
 	 * @param {string} mKey.scenario The scenario name
 	 * @param {Object} mSettings The relevant settings for the change handler
-	 * @param {string} dummy -> Compatibility only; remove after new SmartField.flexibility.js is merged!
 	 */
 	ChangeHandlerMediator.addChangeHandlerSettings = function(mKey, mSettings) {
 		var mNewChangeHandlerSettings;
