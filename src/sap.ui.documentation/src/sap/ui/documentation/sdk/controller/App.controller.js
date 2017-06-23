@@ -144,6 +144,8 @@ sap.ui.define([
 
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
+				this._toggleTabHeaderClass();
+
 				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for mavigation)
 					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
 					sMasterViewId = oMasterView && oMasterView.getId();
@@ -544,10 +546,14 @@ sap.ui.define([
 					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 
 				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
+
+				this._toggleTabHeaderClass();
 			},
 
 			_onOrientationChange: function() {
 				this.getModel("appView").setProperty("/bLandscape", Device.orientation.landscape);
+
+				this._toggleTabHeaderClass();
 			},
 
 			onToggleSearchMode : function(oEvent) {
@@ -555,6 +561,8 @@ sap.ui.define([
 				oViewModel = this.getModel("appView");
 
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
+
+				this._toggleTabHeaderClass();
 			},
 
 			/**
@@ -601,6 +609,25 @@ sap.ui.define([
 			_getCurrentPageRelativeURL: function () {
 				var parser = window.location;
 				return parser.pathname + parser.hash + parser.search;
+			},
+
+			_isToggleButtonVisible: function() {
+				var oViewModel = this.getModel("appView"),
+					bHasMaster = oViewModel.getProperty("/bHasMaster"),
+					bPhoneSize = oViewModel.getProperty("/bPhoneSize"),
+					bLandscape = oViewModel.getProperty("/bLandscape"),
+					bSearchMode = oViewModel.getProperty("/bSearchMode");
+
+				return bHasMaster && (bPhoneSize || !bLandscape) && !bSearchMode;
+			},
+
+			_toggleTabHeaderClass: function() {
+				var th = this.getView().byId("tabHeader");
+				if (this._isToggleButtonVisible()) {
+					th.addStyleClass("tabHeaderNoLeftMargin");
+				} else {
+					th.removeStyleClass("tabHeaderNoLeftMargin");
+				}
 			}
 
 		});
