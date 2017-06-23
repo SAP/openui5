@@ -1500,3 +1500,8 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 html.sapUiTheme-sap_belize_hcb .sapUiDocumentationTopicsIframe {
 	background: #fff;
 }
+
+/* Prettified text looks bigger when viewed from mac, even if it has the same font size */
+html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
+	font-size: 0.8rem;
+}
