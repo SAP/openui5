@@ -69,6 +69,7 @@ sap.ui.define([
 		jQuery(window).on("resize", this._fnFireDomChanged);
 
 		window.addEventListener("scroll", this._onScroll, true);
+		this._aIgnoredMutations = [];
 	};
 
 	/**
@@ -85,6 +86,17 @@ sap.ui.define([
 		jQuery(window).off("resize", this._fnFireDomChanged);
 
 		window.removeEventListener("scroll", this._onScroll, true);
+	};
+
+	/**
+	 * Ignores a Mutation once
+	 *
+	 * @param {object} mParams
+	 * @param {object} mParams.target domNode of the target
+	 * @param {object} mParams.type type of the mutation
+	 */
+	MutationObserver.prototype.ignoreOnce = function(mParams) {
+		this._aIgnoredMutations.push(mParams);
 	};
 
 	/**
@@ -108,8 +120,15 @@ sap.ui.define([
 						oTarget = oMutation.target.parentNode;
 					}
 
+					var bIgnore = this._aIgnoredMutations.some(function(oIgnoredMutation, iIndex, aSource) {
+						if (oIgnoredMutation.target === oMutation.target && oIgnoredMutation.type === oMutation.type) {
+							aSource.splice(iIndex, 1);
+							return true;
+						}
+					});
+
 					// filter out all mutation in overlays
-					if (!OverlayUtil.isInOverlayContainer(oTarget)) {
+					if (!OverlayUtil.isInOverlayContainer(oTarget) && !bIgnore) {
 						aTargetNodes.push(oTarget);
 
 						// define closest element to notify it's overlay about the dom mutation
@@ -119,7 +138,7 @@ sap.ui.define([
 							aElementIds.push(sElementId);
 						}
 					}
-				});
+				}.bind(this));
 
 				if (aTargetNodes.length) {
 					this.fireDomChanged({
