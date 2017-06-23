@@ -49,13 +49,21 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/rta/command/Stack', 'sap/ui/
 		}
 		var oFlexController = FlexControllerFactory.createForControl(oRootControl);
 		var aCommands = oCommandStack.getAllExecutedCommands();
+		var aDescriptorSubmitPromises = [];
 		aCommands.forEach(function(oCommand) {
-			oFlexController.addPreparedChange(oCommand.getPreparedChange(), oCommand.getAppComponent());
+			if (oCommand instanceof sap.ui.rta.command.FlexCommand){
+				oFlexController.addPreparedChange(oCommand.getPreparedChange(), oCommand.getAppComponent());
+			} else if (oCommand instanceof sap.ui.rta.command.AppDescriptorCommand) {
+				aDescriptorSubmitPromises.push(oCommand.submit());
+			} else {
+				throw new Error("Unidentified command");
+			}
 		});
-		return oFlexController.saveAll().then(function() {
-			jQuery.sap.log.info("UI adaptation successfully transfered changes to layered repository");
-			this.getCommandStack().removeAllCommands();
-		}.bind(this));
+		return Promise.all(aDescriptorSubmitPromises)
+			.then(oFlexController.saveAll().then(function() {
+				jQuery.sap.log.info("UI adaptation successfully transfered changes to layered repository");
+				this.getCommandStack().removeAllCommands();
+			}.bind(this)));
 	};
 	return LREPSerializer;
 }, /* bExport= */true);

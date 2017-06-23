@@ -3,7 +3,7 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(ChangeHandlerMediator) {
 	"use strict";
 
 	var fnHasContent = function(oFormContainer) {
@@ -130,6 +130,23 @@ sap.ui.define([], function() {
 				actions : {
 					move : {
 						changeType : "moveSimpleFormField"
+					},
+					addODataProperty : function () {
+						var mChangeHandlerSettingsKey = {"scenario" : "addODataField"};
+
+						try {
+							// comp library must be loaded so SmartField can register itself on ChangeHandlerMediator
+							sap.ui.getCore().loadLibrary("sap.ui.comp");
+							var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings(mChangeHandlerSettingsKey);
+							return {
+								changeType: "addSimpleFormField",
+								changeOnRelevantContainer : true,
+								requiredLibraries : mChangeHandlerSettings.content.requiredLibraries,
+								changeHandlerSettingsKey : mChangeHandlerSettingsKey
+							};
+						} catch (e){
+							jQuery.sap.log.warning("sap.ui.comp not available", "addODataProperty action for SimpleForm is not possible");
+						}
 					}
 				}
 			}

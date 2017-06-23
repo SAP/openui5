@@ -21,56 +21,74 @@ sap.ui.define(function() {
 	var ChangeHandlerMediator = { };
 
 	/**
-	 * Array of relevant change handlers and their respective settings
+	 * Array of relevant change handlers settings
 	 */
-	ChangeHandlerMediator._aChangeHandlers = [];
+	ChangeHandlerMediator._aChangeHandlerSettings = [];
 
-	/**
-	 * Add a change handler to the mediated list
-	 * @param {string} sChangeHandlerName The change handler name
-	 * @param {string} sModel The model type ("ODataV2" or "ODataV4")
-	 * @param {Object} mParameters The relevant parameters for the change handler
-	 */
-	ChangeHandlerMediator.addChangeHandler = function(sChangeHandlerName, sModel, mParameters) {
 
-		if (!(sChangeHandlerName && sModel && mParameters)){
-			throw new Error('New entry in ChangeHandlerMediator requires change handler name, data model type and parameters');
-		}
+	// Compatibility method, remove after new SmartField.flexibility.js is merged
+	ChangeHandlerMediator.addChangeHandler = function(param, dummy, settings) {
+		var mNewChangeHandlerSettings;
 
-		var mNewChangeHandler = {
-			name : sChangeHandlerName,
-			model : sModel,
-			parameters : mParameters
+		mNewChangeHandlerSettings = {
+			key : { "scenario" : "addODataField" },
+			content : settings
 		};
 
-		var bExisting = false;
-
-		// Entries with the same key (name + model) are not allowed
-		this._aChangeHandlers.forEach(function(mChangeHandler){
-			if (mChangeHandler.name === mNewChangeHandler.name
-			&& mChangeHandler.model === mNewChangeHandler.model){
-				bExisting = true;
-				throw new Error('Entry already exists in ChangeHandlerMediator:'
-					+ mNewChangeHandler.name + '/' + mNewChangeHandler.model);
-			}
-		});
-
-		if (!bExisting) {
-			this._aChangeHandlers.push(mNewChangeHandler);
-		}
+		this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
 	};
 
 	/**
-	 * Retrieves a change handler from the mediated list
-	 * @param  {string} sChangeHandlerName The change handler name
-	 * @param  {string} sModel The model type ("ODataV2" or "ODataV4")
-	 * @return {Object}        The change handler with its parameters
+	 * Add change handler settings to the mediated list
+	 * @param {Object} mKey Collection of keys
+	 * @param {string} mKey.scenario The scenario name
+	 * @param {Object} mSettings The relevant settings for the change handler
+	 * @param {string} dummy -> Compatibility only; remove after new SmartField.flexibility.js is merged!
 	 */
-	ChangeHandlerMediator.getChangeHandler = function(sChangeHandlerName, sModel){
-		return this._aChangeHandlers.filter(function(oChangeHandler){
-			return (oChangeHandler.name === sChangeHandlerName
-				&& oChangeHandler.model === sModel);
-		})[0];
+	ChangeHandlerMediator.addChangeHandlerSettings = function(mKey, mSettings) {
+		var mNewChangeHandlerSettings;
+
+		if (!(mKey && mSettings)){
+			throw new Error('New entry in ChangeHandlerMediator requires a key and settings');
+		}
+
+		mNewChangeHandlerSettings = {
+			key : mKey,
+			content : mSettings
+		};
+
+		//TBD: Prevent duplicates?
+		this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
+	};
+
+	/**
+	 * Retrieves change handler settings from the mediated list
+	 * @param  {Object} mKey Collection of keys
+	 * @param  {Object} mKey.scenario The scenario name
+	 * @return {Object}        The change handler settings
+	 */
+	ChangeHandlerMediator.getChangeHandlerSettings = function(mKey){
+		var aKeys = Object.keys(mKey);
+		var mFoundChangeHandlerSettings = { "matchingKeys" : 0 };
+		var iMatchingKeys;
+		this._aChangeHandlerSettings.forEach(function(oEntry){
+			iMatchingKeys = 0;
+			aKeys.forEach(function(sKey){
+				if (oEntry.key[sKey] === mKey[sKey]){
+					iMatchingKeys++;
+				}
+			});
+			// Return the object with the most matching keys
+			if (iMatchingKeys > mFoundChangeHandlerSettings.matchingKeys){
+				mFoundChangeHandlerSettings.foundEntry = oEntry;
+				mFoundChangeHandlerSettings.matchingKeys = iMatchingKeys;
+				// If keys have different sizes, return the entry with exact key match
+				if (iMatchingKeys === aKeys.length){
+					return mFoundChangeHandlerSettings.foundEntry;
+				}
+			}
+		});
+		return mFoundChangeHandlerSettings.foundEntry;
 	};
 
 	return ChangeHandlerMediator;

@@ -486,7 +486,7 @@
 		}
 	});
 
-	QUnit.test("when context menu is opened (via keyboard) for a sap.ui.layout.form.FormElement,", function(assert) {
+	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm FormElement,", function(assert) {
 		var oLabel = this.oSimpleFormWithTitles.getContent()[3];
 		var oFormElement = oLabel.getParent();
 
@@ -496,14 +496,15 @@
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 4, " and 4 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 5, " and 5 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME_LABEL", "rename label is available");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_REMOVE", "remove field is available");
-		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_CUT", "cut field is available");
-		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_PASTE", "paste field is available");
+		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
+		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_REMOVE", "remove field is available");
+		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_CUT", "cut field is available");
+		assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_PASTE", "paste field is available");
 	});
 
-	QUnit.test("when context menu is opened (via keyboard) for a sap.ui.layout.form.Form with Title,", function(assert) {
+	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm with Title,", function(assert) {
 		var oForm = this.oSimpleFormWithTitles.getAggregation("form");
 
 		var oFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oForm);
@@ -516,7 +517,7 @@
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_CREATE_CHILD_CONTAINER", "create group is available");
 	});
 
-	QUnit.test("when context menu is opened (via keyboard) for a sap.ui.layout.form.FormContainer with Title,", function(assert) {
+	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm with Title,", function(assert) {
 		var oTitle = this.oSimpleFormWithTitles.getContent()[0];
 		var oFormContainer = oTitle.getParent();
 
@@ -526,16 +527,17 @@
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 5, " and 5 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 6, " and 6 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME_LABEL", "rename title is available");
 		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, "and rename title is enabled");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
-		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_REMOVE", "remove group is available");
-		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_CUT", "cut field is available");
-		assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_PASTE", "paste field is available");
+		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field is available");
+		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
+		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_REMOVE", "remove group is available");
+		assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_CUT", "cut field is available");
+		assert.equal(oContextMenu.getItems()[5].data("id"), "CTX_PASTE", "paste field is available");
 	});
 
-	QUnit.test("when context menu is opened (via keyboard) for a sap.ui.layout.form.FormContainer with Toolbar,", function(assert) {
+	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm FormContainer with Toolbar,", function(assert) {
 		var oToolbar = this.oSimpleFormWithToolbars.getContent()[0];
 		var oFormContainer = oToolbar.getParent();
 
@@ -545,14 +547,15 @@
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 5, " and 6 Menu Items are available");
+		assert.equal(oContextMenu.getItems().length, 6, " and 6 Menu Items are available");
 		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME_LABEL", "rename toolbar is available");
 		assert.equal(oContextMenu.getItems()[0].getEnabled(), false, "but rename toolbar is disabled");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
-		assert.equal(oContextMenu.getItems()[1].getEnabled(), false, "but creating group is disabled");
-		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_REMOVE", "remove group is available");
-		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_CUT", "cut field is available");
-		assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_PASTE", "paste field is available");
+		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_ADD_ELEMENTS_AS_CHILD", "add field is available");
+		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
+		assert.equal(oContextMenu.getItems()[2].getEnabled(), false, "but creating group is disabled");
+		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_REMOVE", "remove group is available");
+		assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_CUT", "cut field is available");
+		assert.equal(oContextMenu.getItems()[5].data("id"), "CTX_PASTE", "paste field is available");
 	});
 
 	QUnit.done(function( details ) {

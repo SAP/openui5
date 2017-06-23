@@ -66,6 +66,29 @@ sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 	};
 
 	/**
+	 * Execute the change (load the required libraries)
+	 *
+	 */
+	AddLibrary.prototype.execute = function(){
+		var sLibraryName;
+		if (this.getRequiredLibraries()){
+			try {
+				var aLibraries = Object.keys(this.getRequiredLibraries());
+				aLibraries.forEach(function(sLibrary){
+					sLibraryName = sLibrary;
+					sap.ui.getCore().loadLibrary(sLibrary);
+				});
+			} catch (e){
+				if (sLibraryName){
+					throw new Error("Required library not available: " + sLibraryName + " - AddLibrary command could not be executed");
+				} else {
+					throw new Error("Error occurred - AddLibrary command could not be executed");
+				}
+			}
+		}
+	};
+
+	/**
 	 * Create and submit the change for the app descriptor
 	 * @return {Promise} resolving after all changes have been submitted
 	 */
@@ -80,9 +103,6 @@ sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 			}.bind(this))
 			.then(function(oPreparedChange){
 				oPreparedChange.submit();
-			})
-			.catch(function(oError){
-				//TODO: Error handling
 			});
 	};
 
