@@ -6318,7 +6318,7 @@
 			// Navigating down on the last row switches the action mode off.
 			qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, bCtrlKey);
 			oElem = checkFocus(this.getElement(iVisibleRows - 1, iColumnIndex), assert);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 			// Navigate up to the first visible row.
 			for (i = iVisibleRows - 2; i >= 0; i--) {
@@ -6343,12 +6343,12 @@
 			// Navigating up on the first row switches the action mode off.
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, bCtrlKey);
 			checkFocus(this.getElement(0, iColumnIndex), assert);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 			// Ctrl+Up on the first row does not navigate to the column header.
 			qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
 			checkFocus(this.getElement(0, iColumnIndex), assert);
-			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 		}
 	});
 
@@ -6461,12 +6461,12 @@
 		getCell(1, 1).find("span").attr("tabindex", "-1"); // Prepare the cell in the second row to not have interactive elements.
 		oElem = getCell(0, 1, true, assert);
 		checkFocus(oElem, assert);
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
 		oElem = getCell(1, 1);
 		checkFocus(oElem, assert); // The cell without interactive elements should be focused.
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, true);
 		oElem = TableKeyboardDelegate2._getInteractiveElements(getCell(2, 1)).first();
@@ -6476,7 +6476,7 @@
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
 		oElem = getCell(1, 1);
 		checkFocus(oElem, assert); // The cell without interactive elements should be focused.
-		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is not in Action Mode");
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, true);
 		oElem = TableKeyboardDelegate2._getInteractiveElements(getCell(0, 1)).first();
