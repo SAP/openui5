@@ -12,7 +12,7 @@
 			"speaker": "Stefan Beck",
 			"type": "Key Note",
 			"duration": 40,
-			"abstract":"<p>All the news around UI5.</p>"
+			"abstract":"<p>SAPUI5 is evolving and thus best practices or recommended controls change over time. In this session, you'll get an update on the new supportability tool, the new DemoKit, new and updated controls, news in the framework like our plans towards OData V4 and improved Smart Controls. Finally we'll share some insights into more radical renovation activities that will come early in 2018.</p>"
 		},
 		{
 			"type": "break",
@@ -376,7 +376,7 @@
 		},
 		{
 			"type": "break",
-			"duration": 10,
+			"duration": 20,
 			"abstract":""
 		},
 		{

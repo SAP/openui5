@@ -46,6 +46,9 @@
 
 			<div class="b-section">
 				<div class="b-section-h">
+					<div id="app-download" class="b-section-app">
+						<div class="b-font size_13 color_yellow b-ui align_center">Get the<br>Event App</div>
+					</div>
 					<div class="b-section-download">
 						<div class="b-font size_13 color_yellow b-ui align_center">Download Agenda</div>
 						<div class="b-list mod_download">
@@ -218,6 +221,37 @@
 				<div class="b-topic__abstract b-font size_14 color_gray">{{abstract}}</div>
 				<div class="b-topic__time b-font size_13">{{time}}</div>
 				<div class="b-topic__format b-font size_13 color_gray">{{type}}</div>
+			</div>
+		</div>
+	</script>
+	<script id="eventapp-detail-popup" type="text/template">
+		<div class="b-popup__content">
+			<div class="b-topic mod_popup mod_app">
+				<div class="mod_app_scrollcontent">
+					<div class="b-topic__title_block  b-ui margin_10">
+						<div class="b-topic__title b-font size_15 b-ui margin_right_10 column_1">
+							The UI5con Event App
+						</div>
+					</div>
+					<div class="b-topic__abstract b-font size_14 color_gray">
+						<p>
+							Install the event app (<a href="https://itunes.apple.com/ng/app/sap-events/id1228573727">Apple</a> / <a href="https://play.google.com/store/apps/details?id=com.sap.eventapp.release">Android</a>, or see QR-codes below) to have all session details and a location map at hand, get the latest updates, give session and event feedback, share and comment photos, and create your personal agenda. Please use the provided direct links to the app, as the app stores have other apps with similar names and identical logo, which will not show the UI5con event.
+						</p>
+						<br>
+						<p>
+							For your event preparation on a regular computer you can also use the <a href="https://eventapp-eventapppreview.dispatcher.hana.ondemand.com/webapp/index_web.html">web UI of the app</a>.
+						</p>
+						<br>
+						<p>
+							An SAP ID is required for logging in on first startup; if you don’t have one, you can easily register <a href="https://accounts.sap.com/ui/public/showRegisterForm?spName=https%3A%2F%2Fproduction%2Fa1ed43347&targetUrl=&sourceUrl=">here</a>. (SAP employees should be able to use D-number and password.)<br>
+							Log in to the app with e-mail address and password, then authorize the event app to use your account for authentication. Finally select the UI5con event, press "Join" on the next screen, and all the conference data will be downloaded to be available offline.
+						</p>
+						<label class="label_apple">Apple:</label>
+						<div class="qr qr_apple" title="QR Code for Apple devices"/>
+						<label class="label_android">Android:</label>
+						<div class="qr qr_android" title="QR Code for Android devices" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</script>
