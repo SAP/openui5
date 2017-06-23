@@ -183,30 +183,22 @@ sap.ui.define([
                 var bJSDocLink = oEvt.target.classList.contains("jsdoclink"),
                     sType = oEvt.target.text,
                     sEntity,
-                    sMethod,
                     iDelitemeterIndex;
 
-                if (!bJSDocLink) {
+                if (!bJSDocLink || !sType) {
                     return;
                 }
 
-                if (sType) {
-                    if (sType.indexOf('#') >= 0) {
-                        iDelitemeterIndex = sType.indexOf('#');
-                    } else {
-                        iDelitemeterIndex = sType.lastIndexOf('.');
-                    }
-
-                    sEntity = sType.substring(0, iDelitemeterIndex);
-                    sMethod = sType.substring(iDelitemeterIndex + 1);
-
-                    this.getRouter().navTo("apiId", {
-                        id: sEntity,
-                        entityId: sMethod,
-                        entityType: "method"
-                    }, false);
-                    oEvt.preventDefault();
+                if (sType.indexOf('#') >= 0) {
+                    iDelitemeterIndex = sType.indexOf('#');
+                } else {
+                    iDelitemeterIndex = sType.lastIndexOf('.');
                 }
+
+                sEntity = sType.substring(0, iDelitemeterIndex);
+
+                this.getRouter().navTo("apiId", { id: sEntity }, false);
+                oEvt.preventDefault();
             },
 
             _resizeMessageStrip: function (oMedia) {

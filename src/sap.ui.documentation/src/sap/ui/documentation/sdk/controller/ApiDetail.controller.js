@@ -90,19 +90,6 @@ sap.ui.define([
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
-			onJSDocLinkClick: function (oEvt) {
-				// get target
-				var sType = oEvt.target.getAttribute("data-sap-ui-target");
-				if ( sType && sType.indexOf('#') >= 0 ) {
-					sType = sType.slice(0, sType.indexOf('#'));
-				}
-
-				if ( sType ) {
-					this.getRouter().navTo("apiId", {id : sType}, false);
-					oEvt.preventDefault();
-				}
-			},
-
 			onSampleLinkPress: function (oEvent) {
 				// Navigate to Control Sample section
 				var sEntityName = oEvent.getSource().data("name");
@@ -111,6 +98,10 @@ sap.ui.define([
 
 			onToggleFullScreen: function (oEvent) {
 				ToggleFullScreenHandler.updateMode(oEvent, this.getView(), this);
+			},
+
+			onJSDocLinkClick: function (oEvent) {
+				BaseController.prototype.onJSDocLinkClick(oEvent, "apiId");
 			},
 
 			/* =========================================================== */
@@ -784,6 +775,10 @@ sap.ui.define([
 			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
+				if (!description && !deprecatedText && !deprecatedSince) {
+					return "";
+				}
+
 				var result = description || "";
 
 				if (deprecatedSince || deprecatedText) {
