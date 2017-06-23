@@ -10,8 +10,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/util/DocumentationRouter",
 		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo"
-	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/m/ColumnListItem"
+	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo, ColumnListItem) {
 		"use strict";
 
 		var aTreeContent = [],
@@ -62,6 +63,10 @@ sap.ui.define([
 				if (Device.system.desktop) {
 					this.fetchAPIInfoAndBindModels();
 				}
+
+				// Prevents inappropriate focus change which causes ObjectPage to scroll,
+				// thus text can be selected and copied
+				sap.m.TablePopin.prototype.onfocusin = function () {};
 			},
 
 			/**
