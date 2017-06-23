@@ -6,7 +6,11 @@
 		xmlns:m="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core">
-	<DynamicPage id="topicDetailPage" preserveHeaderStateOnScroll="true" fitContent="true">
+	<DynamicPage
+			id="topicDetailPage"
+			preserveHeaderStateOnScroll="true"
+			toggleHeaderOnTitleClick="false"
+			fitContent="true">
 		<title>
 			<DynamicPageTitle class="sapUiDocumentationDynamicPageTitle">
 				<heading>
