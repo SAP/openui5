@@ -51,6 +51,11 @@
 			jQuery.sap.require('sap.ui.thirdparty.qunit');
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			// code coverage report only for sap.ui.rta namespace
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
+
 			jQuery.sap.includeScript('./Overlay.qunit.js');
 		</script>
 	</head>

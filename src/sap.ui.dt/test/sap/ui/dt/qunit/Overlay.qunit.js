@@ -1,5 +1,7 @@
 /*global QUnit*/
 
+QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
@@ -13,9 +15,8 @@ sap.ui.require([
 	"sap/m/Bar",
 	"sap/m/VBox",
 	"dt/control/SimpleScrollControl",
-	"sap/ui/thirdparty/sinon",
 	// should be last:
-	"sap/ui/qunit/qunit-coverage",
+	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-ie",
 	"sap/ui/thirdparty/sinon-qunit"
 ],
@@ -35,6 +36,8 @@ function(
 	sinon
 ) {
 	"use strict";
+
+	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -203,4 +206,17 @@ function(
 		assert.equal($AggregationOverlays.get(3).dataset["sapUiDtAggregation"], "footer", "then the overlay for headerTitle is fourth in DOM");
 	});
 
+	QUnit.test("when _cloneDomRef is called", function(assert) {
+		this.oLayoutOverlay._cloneDomRef(this.oLayout.$().find("header")[0]);
+
+		var oSrcDomElement = this.oLayout.$().find("header").get(0);
+		var oDestDomElement = this.oLayoutOverlay.$().find(">.sapUiDtClonedDom").get(0);
+
+		assert.equal(window.getComputedStyle(oSrcDomElement)["visibility"], "hidden", "then the original domRef is hidden");
+		assert.equal(window.getComputedStyle(oDestDomElement)["visibility"], "visible", "then the cloned domRef is visible");
+
+		this.oLayoutOverlay._restoreVisibility();
+		assert.equal(window.getComputedStyle(oSrcDomElement)["visibility"], "visible",
+			"then after restoring visibility the original domRef is visible again");
+	});
 });
