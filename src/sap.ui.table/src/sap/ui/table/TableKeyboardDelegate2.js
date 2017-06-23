@@ -747,7 +747,6 @@ sap.ui.define([
 		if ($Cell !== null) {
 			oKeyboardExtension._setSilentFocus($Cell);
 		} else {
-			oActiveElement.blur();
 			oKeyboardExtension._setSilentFocus(oActiveElement);
 		}
 	};
