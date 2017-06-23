@@ -361,6 +361,8 @@ sap.ui.define([
 				}
 			} else if (sSpecial === "id") {
 				return oNode.getId();
+			} else if (sSpecial === "metadataContexts") {
+				return oNode._oProviderData;
 			}
 		} else if (sSpecial === "binding" && oParentNode && sParentPart) {
 			return oParentNode.getBinding(sParentPart);
