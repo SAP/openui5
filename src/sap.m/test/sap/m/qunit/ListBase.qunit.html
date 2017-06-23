@@ -260,8 +260,16 @@
 			assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 
-			oList.setRememberSelections(false).removeSelections(true);
+			oList.setRememberSelections(false);
+			if (vSelectionMode == "MultiSelect") {
+				assert.strictEqual(oList.getRememberSelections(), false, 'rememberSelections is set to false on ' + oList);
+				assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'Empty array returned as bAll is undefined on ' + oList);
+				assert.strictEqual(oList.getSelectedContextPaths(true).length, 3, 'Selected context paths return via binding context paths as bAll=true on ' + oList);
+			}
+
+			oList.removeSelections(true);
 			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
+			assert.strictEqual(oList.getSelectedContextPaths(true).length, 0, 'Empty array returned via binding context on ' + oList);
 
 			// sort descending
 			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );
