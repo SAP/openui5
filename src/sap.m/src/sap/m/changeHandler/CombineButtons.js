@@ -57,21 +57,28 @@ sap.ui.define(["sap/ui/fl/Utils"],
 
 			aButtons.forEach(function (oButton, index) {
 				var sId = oView.createId(jQuery.sap.uid()),
-					sButtonText = oButton.getText();
+					sButtonText = oModifier.getProperty(oButton, "text");
 
 				var oMenuItem = oModifier.createControl("sap.m.MenuItem", mPropertyBag.appComponent, oView, sId);
 				oModifier.setProperty(oMenuItem, "text", oButton.mProperties.text);
 				oModifier.setProperty(oMenuItem, "icon", oButton.mProperties.icon);
-				oMenuItem.attachPress(function() {
-					return oButton.firePress();
+				oMenuItem.attachPress(function(oEvent) {
+					return oButton.firePress(oEvent);
 				});
 
 				if (sButtonText) {
 					bIsRtl ? aMenuButtonName.unshift(sButtonText) : aMenuButtonName.push(sButtonText);
 				}
 
+				var oIdToSave = oModifier.createControl("sap.ui.core.CustomData", mPropertyBag.appComponent, oView, sId + "-originalButtonId");
+				oModifier.setProperty(oIdToSave, "key", "originalButtonId");
+				oModifier.setProperty(oIdToSave, "value", oModifier.getId(oButton));
+
 				oModifier.removeAggregation(oControl, sBarAggregation, oButton);
-				oModifier.insertAggregation(oControl, "dependents", oSourceControl);
+				// adding each button control to the menuItem's dependents aggregation
+				// this way we can save all relevant information it my have
+				oModifier.insertAggregation(oMenuItem, "dependents", oButton);
+				oModifier.insertAggregation(oMenuItem, "customData", oIdToSave);
 				oModifier.insertAggregation(oMenu, "items", oMenuItem, index);
 			});
 
