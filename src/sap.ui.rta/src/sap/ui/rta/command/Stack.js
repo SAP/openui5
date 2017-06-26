@@ -96,14 +96,19 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	Stack.prototype.execute = function() {
 		var oCommand = this._getCommandToBeExecuted();
 		if (oCommand) {
-			try {
-				oCommand.execute();
-			} catch (oError) {
+			return oCommand.execute()
+
+			.then(function(){
+				this._toBeExecuted--;
+				this.fireModified();
+			}.bind(this))
+
+			.catch(function(oError) {
 				this.pop(); // remove failing command
-				throw (oError);
-			}
-			this._toBeExecuted--;
-			this.fireModified();
+				return Promise.reject(oError);
+			}.bind(this));
+		} else {
+			return Promise.resolve();
 		}
 	};
 
@@ -113,10 +118,16 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 			this._toBeExecuted++;
 			var oCommand = this._getCommandToBeExecuted();
 			if (oCommand) {
-				oCommand.undo();
+				return oCommand.undo()
 
-				this.fireModified();
+				.then(function() {
+					this.fireModified();
+				}.bind(this));
+			} else {
+				return Promise.resolve();
 			}
+		} else {
+			return Promise.resolve();
 		}
 	};
 
@@ -125,7 +136,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	};
 
 	Stack.prototype.undo = function() {
-		this._unExecute();
+		return this._unExecute();
 	};
 
 	Stack.prototype.canRedo = function() {
@@ -133,12 +144,12 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	};
 
 	Stack.prototype.redo = function() {
-		this.execute();
+		return this.execute();
 	};
 
 	Stack.prototype.pushAndExecute = function(oCommand) {
 		this.push(oCommand);
-		this.execute();
+		return this.execute();
 	};
 
 	/**

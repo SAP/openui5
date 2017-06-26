@@ -56,12 +56,14 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	 * @public Template Method to implement execute logic, with ensure precondition Element is available
 	 */
 	BaseCommand.prototype.execute = function() {
+		return Promise.resolve();
 	};
 
 	/**
 	 * @public Template Method to implement undo logic
 	 */
 	BaseCommand.prototype.undo = function() {
+		return Promise.resolve();
 	};
 
 	/**

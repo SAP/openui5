@@ -149,9 +149,12 @@ function(
 	});
 
 	QUnit.test("when executing the command,", function(assert) {
+		var done = assert.async();
 		assert.ok(this.oFlexCommand.isEnabled(), "then command is enabled");
-		this.oFlexCommand.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+		this.oFlexCommand.execute().then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.module("Given a command stack", {
@@ -161,7 +164,7 @@ function(
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
 			this.failingCommand.execute = function(oElement) {
-				throw ERROR_INTENTIONALLY;
+				return Promise.reject(ERROR_INTENTIONALLY);
 			};
 			this.command2 = new BaseCommand();
 		},
@@ -174,21 +177,28 @@ function(
 	});
 
 	QUnit.test("when un-doing the empty stack, ", function(assert) {
+		var done = assert.async();
 		assert.ok(!this.stack.canUndo(), "then stack cannot be undone");
+		this.stack.undo()
 
-		this.stack.undo();
-
-		assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-				" the to be executed index is in range");
+		.then(function() {
+			assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
+					" the to be executed index is in range");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when re-doing the empty stack, ", function(assert) {
+		var done = assert.async();
 		assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
 
-		this.stack.redo();
+		this.stack.redo()
 
-		assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-				" the to be executed index is in range");
+		.then(function() {
+			assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
+							" the to be executed index is in range");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when pushing a command, ", function(assert) {
@@ -208,59 +218,82 @@ function(
 	});
 
 	QUnit.test("when calling pop at the command stack with an already executed command at it's top, ", function(assert) {
+		var done = assert.async();
 		this.stack.push(this.command);
 		this.stack.push(this.command2);
-		this.stack.execute();
 
-		var oTopCommand = this.stack.pop();
+		this.stack.execute()
 
-		assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
-		assert.equal(this.stack.getCommands().length, 1, "  only first commmand is on the stack");
-		assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "  only first commmand is on the stack");
-		assert.equal(oTopCommand.getId(), this.command2.getId(), " the correct command is returned");
+		.then(function() {
+			var oTopCommand = this.stack.pop();
+			assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
+			assert.equal(this.stack.getCommands().length, 1, "  only first commmand is on the stack");
+			assert.equal(this.stack.getCommands()[0].getId(), this.command.getId(), "  only first commmand is on the stack");
+			assert.equal(oTopCommand.getId(), this.command2.getId(), " the correct command is returned");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when calling pushAndExecute with an failing command as the only command", function(assert) {
-		var fnStackModified = sinon.spy();
-		this.stack.attachModified(fnStackModified);
-		assert.throws(function() {
-			this.stack.pushAndExecute(this.failingCommand);
-		}, ERROR_INTENTIONALLY, " an error is thrown and catched");
-		assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
-		assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
+		var done = assert.async();
+		var fnStackModifiedSpy = sinon.spy();
+		this.stack.attachModified(fnStackModifiedSpy);
+		this.stack.pushAndExecute(this.failingCommand)
+
+		.catch(function(oError) {
+			assert.ok(this.stack.isEmpty(), "and the command stack is still empty");
+			assert.strictEqual(oError, ERROR_INTENTIONALLY, " an error is rejected and catched");
+			assert.equal(fnStackModifiedSpy.callCount, 2, " the modify stack listener is called twice, onence for push and once for pop");
+			setTimeout(function() {
+				done();
+			}, 0);
+		}.bind(this));
 	});
 
 	QUnit.test("when calling pushAndExecute with an failing command and afterwards with a succeeding command", function(assert) {
-		assert.throws(function() {
-			this.stack.pushAndExecute(this.failingCommand);
-		}, ERROR_INTENTIONALLY, " an error is thrown and catched");
+		var done = assert.async();
+		this.stack.pushAndExecute(this.failingCommand)
 
-		this.stack.pushAndExecute(this.command);
-		var oTopCommand = this.stack.pop();
-		assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
-		assert.ok(this.stack.isEmpty(), "and the command stack is empty");
-		assert.equal(oTopCommand.getId(), this.command.getId(), " the correct command is returned");
+		.catch(function(oError) {
+			assert.strictEqual(oError, ERROR_INTENTIONALLY, " an error is rejected and catched");
+		})
+
+		.then(this.stack.pushAndExecute.bind(this.stack, this.command))
+
+		.then(function() {
+			var oTopCommand = this.stack.pop();
+			assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
+			assert.ok(this.stack.isEmpty(), "and the command stack is empty");
+			assert.equal(oTopCommand.getId(), this.command.getId(), " the correct command is returned");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when calling pop at the command stack with an already executed and a not executed command at it's top, ",
-			function(assert) {
-				this.stack.pushAndExecute(this.command);
+	function(assert) {
+		var done = assert.async();
+		this.stack.pushAndExecute(this.command)
 
-				var oTopCommand = this.stack.pop();
-
-				assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
-				assert.ok(this.stack.isEmpty(), "and the command stack is empty");
-				assert.equal(oTopCommand.getId(), this.command.getId(), " the correct command is returned");
-			});
+		.then(function() {
+			var oTopCommand = this.stack.pop();
+			assert.equal(this.stack._toBeExecuted, -1, " the to be executed index is in range");
+			assert.ok(this.stack.isEmpty(), "and the command stack is empty");
+			assert.equal(oTopCommand.getId(), this.command.getId(), " the correct command is returned");
+			done();
+		}.bind(this));
+	});
 
 	QUnit.test("when pushing and executing a command, ", function(assert) {
-		this.stack.pushAndExecute(this.command);
+		var done = assert.async();
+		this.stack.pushAndExecute(this.command)
 
-		var oTopCommand = this.stack.top();
-		assert.equal(oTopCommand.getId(), this.command.getId(), "then it is on the top of stack");
-
-		assert.ok(this.stack.canUndo(), "then a command can be undone");
-		assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
+		.then(function() {
+			var oTopCommand = this.stack.top();
+			assert.equal(oTopCommand.getId(), this.command.getId(), "then it is on the top of stack");
+			assert.ok(this.stack.canUndo(), "then a command can be undone");
+			assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when undoing and redo an empty stack, then no exception should come", function(assert) {
@@ -300,17 +333,25 @@ function(
 	});
 
 	QUnit.test("when executing the property command for a property named 'width'", function(assert) {
-		this.oPropertyCommand.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
-		assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
+		var done = assert.async();
+		this.oPropertyCommand.execute()
 
-		this.oPropertyCommand.undo();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called, because undo is done via rta ControlTreeModifier!");
-		assert.equal(this.oControl.getWidth(), this.OLD_VALUE, "then the controls text changed accordingly");
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+			assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
 
-		this.oPropertyCommand.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
-		assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
+			this.oPropertyCommand.undo();
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called, because undo is done via rta ControlTreeModifier!");
+			assert.equal(this.oControl.getWidth(), this.OLD_VALUE, "then the controls text changed accordingly");
+
+			return this.oPropertyCommand.execute();
+		}.bind(this))
+
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
+			assert.equal(this.oControl.getWidth(), this.NEW_VALUE, "then the controls text changed accordingly");
+			done();
+		}.bind(this));
 
 	});
 
@@ -371,33 +412,47 @@ function(
 	});
 
 	QUnit.test("when executing the bind property command for a boolean property 'showValueHelp' with an old value and with a new binding containing special character  ", function(assert) {
-		this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
-		assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
+		var done = assert.async();
+		this.oBindShowValueHelpCommandWithoutOldValueSet.execute()
 
-		this.oBindShowValueHelpCommandWithoutOldValueSet.undo();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
-		assert.equal(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "then the controls property changed accordingly");
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+			assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
 
-		this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
-		assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
+			this.oBindShowValueHelpCommandWithoutOldValueSet.undo();
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
+			assert.equal(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "then the controls property changed accordingly");
 
+			this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
+		}.bind(this))
+
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
+			assert.equal(this.oInput.getShowValueHelp(), this.NEW_BOOLEAN_VALUE, "then the controls property changed accordingly");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when executing the bind property command for a property 'value' with an old binding and with a new binding", function(assert) {
-		this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
-		assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
+		var done = assert.async();
+		this.oBindValuePropertyCommandWithoutOldBindingSet.execute()
 
-		this.oBindValuePropertyCommandWithoutOldBindingSet.undo();
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
-		assert.equal(this.oInput.getValue(), this.OLD_VALUE, "then the controls property changed accordingly");
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should do the work.");
+			assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
 
-		this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
-		assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
-		assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
+			this.oBindValuePropertyCommandWithoutOldBindingSet.undo();
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
+			assert.equal(this.oInput.getValue(), this.OLD_VALUE, "then the controls property changed accordingly");
 
+			this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
+		}.bind(this))
+
+		.then(function() {
+			assert.equal(this.fnApplyChangeSpy.callCount, 2, "then the changehandler should do the work.");
+			assert.equal(this.oInput.getValue(), this.NEW_VALUE, "then the controls property changed accordingly");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.module("Given remove command", {
@@ -435,7 +490,6 @@ function(
 		assert.ok(this.oCommand.getPreparedChange(), "then change is successfully prepared");
 	});
 
-
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach : function(assert) {
 			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
@@ -443,8 +497,17 @@ function(
 			this.stack = new Stack();
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
-			this.stack.pushAndExecute(this.command);
-			this.stack.pushAndExecute(this.command2);
+			var done = assert.async();
+			var fnStackModifiedSpy = sinon.spy();
+
+			this.stack.attachModified(fnStackModifiedSpy);
+			this.stack.pushAndExecute(this.command)
+
+			.then(this.stack.pushAndExecute.bind(this.stack, this.command2))
+
+			.then(function() {
+				done();
+			});
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -460,71 +523,95 @@ function(
 	});
 
 	QUnit.test("when undo,", function(assert) {
+		var done = assert.async();
 		var fnLastCommandUndo = sinon.spy(this.command2, "undo");
 		var fnStackModified = sinon.spy();
 		this.stack.attachModified(fnStackModified);
 
-		this.stack.undo();
+		this.stack.undo()
 
-		assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-				" the to be executed index is in range");
-		assert.equal(fnLastCommandUndo.callCount, 1, " the last command was undone");
-		assert.equal(fnStackModified.callCount, 1, " the modify stack listener is called");
+		.then(function() {
+			assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
+					" the to be executed index is in range");
+			assert.equal(fnLastCommandUndo.callCount, 1, " the last command was undone");
+			assert.equal(fnStackModified.callCount, 1, " the modify stack listener is called");
 
-		assert.ok(this.stack.canRedo(), "then stack can be redone");
+			assert.ok(this.stack.canRedo(), "then stack can be redone");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when second time undo, then", function(assert) {
+		var done = assert.async();
 		var fnLastCommandUndo = sinon.spy(this.command2, "undo");
 		var fnFirstCommandUndo = sinon.spy(this.command, "undo");
 		var fnStackModified = sinon.spy();
 		this.stack.attachModified(fnStackModified);
 
-		this.stack.undo();
-		this.stack.undo();
+		Promise.resolve()
 
-		assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
-				" the to be executed index is in range");
-		assert.equal(fnLastCommandUndo.callCount, 1, " the last command was undone");
-		assert.equal(fnFirstCommandUndo.callCount, 1, " the first command was undone");
-		assert.ok(fnLastCommandUndo.calledBefore(fnFirstCommandUndo), " the last is called before the first");
-		assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called");
+		.then(this.stack.undo.bind(this.stack))
+
+		.then(this.stack.undo.bind(this.stack))
+
+		.then(function() {
+			assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
+					" the to be executed index is in range");
+			assert.equal(fnLastCommandUndo.callCount, 1, " the last command was undone");
+			assert.equal(fnFirstCommandUndo.callCount, 1, " the first command was undone");
+			assert.ok(fnLastCommandUndo.calledBefore(fnFirstCommandUndo), " the last is called before the first");
+			assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when undo and redo, then", function(assert) {
+		var done = assert.async();
 		var fnUndo = sinon.spy(this.command2, "undo");
 		var fnExecute = sinon.spy(this.command2, "execute");
 		var fnStackModified = sinon.spy();
 		this.stack.attachModified(fnStackModified);
 
-		this.stack.undo();
+		Promise.resolve()
 
-		assert.ok(this.stack.canUndo(), "then a command can be undone");
-		assert.ok(this.stack.canRedo(), "then stack can be redone");
+		.then(this.stack.undo.bind(this.stack))
 
-		this.stack.redo();
+		.then(function() {
+			assert.ok(this.stack.canUndo(), "then a command can be undone");
+			assert.ok(this.stack.canRedo(), "then stack can be redone");
+		}.bind(this))
 
-		assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
+		.then(this.stack.redo.bind(this.stack))
+
+		.then(function() {
+			assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length)) && (this.stack._toBeExecuted >= -1), 0,
 				" the to be executed index is in range");
-		assert.equal(fnUndo.callCount, 1, " the command was undone");
-		assert.equal(fnExecute.callCount, 1, " the command was redone");
-		assert.ok(fnUndo.calledBefore(fnExecute), " undo was called before execute");
+			assert.equal(fnUndo.callCount, 1, " the command was undone");
+			assert.equal(fnExecute.callCount, 1, " the command was redone");
+			assert.ok(fnUndo.calledBefore(fnExecute), " undo was called before execute");
 
-		assert.ok(this.stack.canUndo(), "then a command can be undone");
-		assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
-		assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called for undo and redo");
+			assert.ok(this.stack.canUndo(), "then a command can be undone");
+			assert.ok(!this.stack.canRedo(), "then stack cannot be redone");
+			assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called for undo and redo");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when having nothing to redo, redo shouldn't do anything, next command to execute will be still the top command, then",
-		function (assert) {
-			var fnRedo1 = sinon.spy(this.command, "execute");
-			var fnRedo2 = sinon.spy(this.command2, "execute");
-			this.stack.redo();
+	function (assert) {
+		var done = assert.async();
+		var fnRedo1 = sinon.spy(this.command, "execute");
+		var fnRedo2 = sinon.spy(this.command2, "execute");
+		this.stack.redo()
+
+		.then(function() {
 			assert.ok((this.stack._toBeExecuted < (this.stack.getCommands().length))
 				&& (this.stack._toBeExecuted >= -1), 0, " the to be executed index is in range");
 			assert.equal(fnRedo1.callCount, 0, " the command command was not called");
 			assert.equal(fnRedo2.callCount, 0, " the command command2 was not called");
-		});
+			done();
+		}.bind(this));
+	});
 
 	QUnit.test("when emptying the stack, then", function(assert) {
 		var fnModifiedSpy = sinon.spy();
@@ -565,29 +652,47 @@ function(
 	});
 
 	QUnit.test("After pushing one command and executing the top of stack", function(assert) {
-		var fnStackModified = sinon.spy();
-		this.stack.attachModified(fnStackModified);
-
+		var done = assert.async();
+		var fnStackModified = sinon.spy(this.stack, "fireModified");
 		this.stack.push(this.command);
 		assert.equal(fnStackModified.callCount, 1, " the modify stack listener called on push");
-		this.stack.execute();
-		assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called on execute");
-		assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
+
+		this.stack.execute()
+
+		.then(function() {
+			assert.equal(fnStackModified.callCount, 2, " the modify stack listener is called on execute");
+			assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("After pushing one command and calling pushAndExecute the top of stack, then", function(assert) {
+		var done = assert.async();
+		var fnStackModified = sinon.spy(function() {
+			if (fnStackModified.calledOnce) {
+				assert.equal(this.stack._toBeExecuted, 0, "command pushed but not executed");
+			} else if (fnStackModified.calledTwice) {
+				assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
+				done();
+			}
+		}.bind(this));
+		this.stack.attachModified(fnStackModified);
 		this.stack.pushAndExecute(this.command);
-		assert.equal(this.stack._toBeExecuted, -1, " nothing is to be executed");
 	});
 
 	QUnit.test("When pushing after undone, then", function(assert) {
-		this.stack.pushAndExecute(this.command);
-		this.stack.undo();
-		this.stack.push(this.command2);
+		var done = assert.async();
+		this.stack.pushAndExecute(this.command)
 
-		assert.equal(this.stack.getCommands().length, 1, " only second command on the stack");
-		assert.equal(this.stack._getCommandToBeExecuted().getId(), this.command2.getId(), " 2. command to be executed");
-		assert.equal(this.stack._toBeExecuted, 0, " one command to be executed");
+		.then(this.stack.undo.bind(this.stack))
+
+		.then(function() {
+			this.stack.push(this.command2);
+			assert.equal(this.stack.getCommands().length, 1, " only second command on the stack");
+			assert.equal(this.stack._getCommandToBeExecuted().getId(), this.command2.getId(), " 2. command to be executed");
+			assert.equal(this.stack._toBeExecuted, 0, " one command to be executed");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when pushing an executed command, ", function(assert) {
@@ -598,23 +703,31 @@ function(
 	});
 
 	QUnit.test("After adding commands to composite command, when executing the composite and undoing it",
-			function(assert) {
-				var fnCommand1Execute = sinon.spy(this.command, "execute");
-				var fnCommand2Execute = sinon.spy(this.command2, "execute");
-				var fnCommand1Undo = sinon.spy(this.command, "undo");
-				var fnCommand2Undo = sinon.spy(this.command2, "undo");
+	function(assert) {
+		var done = assert.async();
+		var fnCommand1Execute = sinon.spy(this.command, "execute");
+		var fnCommand2Execute = sinon.spy(this.command2, "execute");
+		var fnCommand1Undo = sinon.spy(this.command, "undo");
+		var fnCommand2Undo = sinon.spy(this.command2, "undo");
 
-				this.compositeCommand.addCommand(this.command);
-				this.compositeCommand.addCommand(this.command2);
+		this.compositeCommand.addCommand(this.command);
+		this.compositeCommand.addCommand(this.command2);
 
-				this.compositeCommand.execute();
+		Promise.resolve()
 
-				assert.ok(fnCommand1Execute.calledBefore(fnCommand2Execute), "commands are executed in the forward order");
+		.then(this.compositeCommand.execute.bind(this.compositeCommand))
 
-				this.compositeCommand.undo();
+		.then(function() {
+			assert.ok(fnCommand1Execute.calledBefore(fnCommand2Execute), "commands are executed in the forward order");
+		})
 
-				assert.ok(fnCommand2Undo.calledBefore(fnCommand1Undo), "commands are undone in the backward order");
-			});
+		.then(this.compositeCommand.undo.bind(this.compositeCommand))
+
+		.then(function() {
+			assert.ok(fnCommand2Undo.calledBefore(fnCommand1Undo), "commands are undone in the backward order");
+			done();
+		});
+	});
 
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach : function(assert){

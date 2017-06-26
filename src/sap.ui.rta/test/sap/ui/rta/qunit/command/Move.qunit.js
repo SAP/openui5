@@ -91,6 +91,7 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 		});
 
 		QUnit.test("when getting a move command for a Button...", function(assert) {
+			var done = assert.async();
 			var oCommand = CommandFactory.getCommandFor(this.oButton, "move", {
 				movedElements : [this.oButton],
 				source : this.oSourceLayout,
@@ -103,10 +104,11 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 			assert.ok(oCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
-			oCommand.execute();
-
-			assert.equal(this.fnCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (1x SF, 1x undo preparation)");
-			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			oCommand.execute().then( function() {
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (1x SF, 1x undo preparation)");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.module("Given a regular move command ", {
@@ -162,9 +164,11 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			});
 
 			QUnit.test("After executing the command", function(assert) {
-				this.oMoveCommand.execute();
-
-				assertObjectAttributeMoved.call(this, assert);
+				var done = assert.async();
+				this.oMoveCommand.execute().then( function() {
+					assertObjectAttributeMoved.call(this, assert);
+					done();
+				}.bind(this));
 			});
 
 			QUnit.test("After executing and undoing the command", function(assert) {
@@ -175,11 +179,15 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			});
 
 			QUnit.test("After executing, undoing and redoing the command", function(assert) {
-				this.oMoveCommand.execute();
-				this.oMoveCommand.undo();
-
-				this.oMoveCommand.execute();
-				assertObjectAttributeMoved.call(this, assert);
+				var done = assert.async();
+				this.oMoveCommand.execute().then( function() {
+					this.oMoveCommand.undo().then( function() {
+						this.oMoveCommand.execute().then( function() {
+							assertObjectAttributeMoved.call(this, assert);
+							done();
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
 			});
 
 			function assertObjectAttributeMoved(assert) {

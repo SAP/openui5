@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/BaseCommand'], function(BaseCommand) {
+sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
+				'sap/ui/fl/Utils'
+], function(BaseCommand,
+			flUtils) {
 	"use strict";
 
 	/**
@@ -34,16 +37,25 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand'], function(BaseCommand) {
 		}
 	});
 
+	/**
+	 * Execute this composite command
+	 *
+	 * @returns {promise} empty promise
+	 */
 	CompositeCommand.prototype.execute = function() {
+		var aPromises = [];
 		this._forEachCommand(function(oCommand){
-			oCommand.execute();
+			aPromises.push(oCommand.execute.bind(oCommand));
 		});
+		return flUtils.execPromiseQueueSerialized(aPromises);
 	};
 
 	CompositeCommand.prototype.undo = function() {
+		var aPromises = [];
 		this._forEachCommandInReverseOrder(function(oCommand){
-			oCommand.undo();
+			aPromises.push(oCommand.undo.bind(oCommand));
 		});
+		return flUtils.execPromiseQueueSerialized(aPromises);
 	};
 
 	CompositeCommand.prototype._forEachCommand = function(fnDo) {

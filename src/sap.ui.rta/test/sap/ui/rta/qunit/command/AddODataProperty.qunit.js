@@ -86,6 +86,7 @@ function(
 	});
 
 	QUnit.test("when getting a AddODataProperty command for the change ...", function(assert) {
+		var done = assert.async();
 		var oCommand = CommandFactory.getCommandFor(this.oButton, "addODataProperty", {
 				changeType : "addODataProperty",
 				index : 1,
@@ -93,10 +94,11 @@ function(
 				bindingPath : "{bindingPath}" }, this.oDesignTimeMetadata);
 
 		assert.ok(oCommand, "the addODataProperty command exists");
-		oCommand.execute();
-
-		assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+		oCommand.execute().then(function() {
+			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			done();
+		}.bind(this));
 	});
 
 });

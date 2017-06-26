@@ -115,10 +115,11 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 
 	/**
 	 * @override
+	 * @returns {promise} empty promise after finishing execution
 	 */
 	FlexCommand.prototype.execute = function() {
 		var vChange = this.getPreparedChange();
-		this._applyChange(vChange);
+		return this._applyChange(vChange);
 	};
 
 	/**
@@ -174,12 +175,13 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		} else {
 			jQuery.sap.log.warning("Undo is not available for " + this.getElement() || this.getSelector());
 		}
-
+		return Promise.resolve();
 	};
 
 	/**
 	 * @private
 	 * @param {void} vChange - change object
+	 * @returns {promise} empty promise
 	 */
 	FlexCommand.prototype._applyChange = function(vChange) {
 		//TODO: remove the following compatibility code when concept is implemented
@@ -188,6 +190,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		var oAppComponent = this.getAppComponent();
 		var oChangeDefinition = oChange.getDefinition();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+		var oChangeHandler = this.getChangeHandler();
 
 		// If the command has a "getState" implementation, use that instead of recording the undo
 		if (this.getFnGetState()){
@@ -199,14 +202,16 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 			RtaControlTreeModifier.startRecordingUndo();
 		}
 
-		this.getChangeHandler().applyChange(oChange, oSelectorElement, {
+		return Promise.resolve(oChangeHandler.applyChange(oChange, oSelectorElement, {
 			modifier: RtaControlTreeModifier,
 			appComponent : oAppComponent
-		});
+		}))
 
-		if (!this.getFnGetState()){
-			this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
-		}
+		.then(function() {
+			if (!this.getFnGetState()){
+				this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
+			}
+		}.bind(this));
 	};
 
 	return FlexCommand;
