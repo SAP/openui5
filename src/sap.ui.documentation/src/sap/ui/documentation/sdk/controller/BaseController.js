@@ -94,8 +94,8 @@ sap.ui.define([
 				}
 			},
 
-			onJSDocLinkClick: function (oEvt, sRoute) {
-				var aLibsData = this.getOwnerComponent().getModel("libsData").getData(),
+			onJSDocLinkClick: function (oEvt, sRoute, oComponent) {
+				var aLibsData = oComponent.getModel("libsData").getData(),
 					sType = oEvt.target.getAttribute("data-sap-ui-target");
 
 				if (!sType) {
@@ -110,7 +110,7 @@ sap.ui.define([
 					sType = sType.slice(0, sType.lastIndexOf("."));
 				}
 
-				this.getRouter().navTo(sRoute, {id : sType}, false);
+				oComponent.getRouter().navTo(sRoute, {id : sType}, false);
 				oEvt.preventDefault();
 			},
 
