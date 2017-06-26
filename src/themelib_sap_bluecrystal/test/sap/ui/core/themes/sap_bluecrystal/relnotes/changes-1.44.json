@@ -307,5 +307,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "7068fbaa912efa9d897c0f88df06865eb3e38f43",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "49ca2b57adc97f4834e564e952acf4b03ea5fe9b",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      }
+    ]
   }
 }

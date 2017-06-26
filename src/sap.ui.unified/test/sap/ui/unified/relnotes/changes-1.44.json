@@ -217,5 +217,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "71e7dc5cf7167559d039bf108b3a47c3c9a40a77",
+        "type": "FIX",
+        "text": " m.PlanningCalendar: Appointments are aggregated equally across time zones",
+        "references": []
+      }
+    ]
   }
 }
