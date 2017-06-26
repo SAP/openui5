@@ -18,6 +18,9 @@
 
 		<script>
 
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
 		if (jQuery.support.touch || !window.getComputedStyle) {
 			QUnit.test("Not relevant on touch devices and below IE9", function(assert) {
 				assert.ok(true, "Not relevant on touch devices and below IE9");
@@ -53,7 +56,6 @@
 				description: sDescription,
 				refresh: function(){
 					oP2R.setDescription(sRefresh);
-					assert.ok(true, "Refresh event has been fired.");
 				}
 			});
 
@@ -111,8 +113,11 @@
 
 			QUnit.test("Refresh", function(assert) {
 				var done = assert.async();
+				var oSpy = this.spy();
 				var $P2R = oP2R.$();
+				oP2R.attachRefresh(oSpy);
 				qutils.triggerEvent("click", oP2R.getId());
+				assert.strictEqual(oSpy.callCount, 1, "Refresh event has been fired.");
 				assert.strictEqual($P2R.children(".sapMPullDownText").text(), sLoading, "Pull down text is set correctly");
 				assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Pull down description is set correctly");
 				setTimeout(function() {
