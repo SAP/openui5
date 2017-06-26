@@ -2,26 +2,30 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core">
-	<l:VerticalLayout width="100%">
-		<Panel
-			id="results"
-			visible="{= ${view>/iconFilterCount} !== 0 }"
-			width="auto"
-			class="sapUiTinyMargin sapUiNoContentPadding"
-			content="{
-				path: '/groups/0/icons',
-				length: '200',
-				sorter: {
-					path: 'name',
-					descending: false
-				},
-				events: {
-					change: '.onUpdateFinished'
-				}
-			}">
+	<List
+		id="results"
+		width="auto"
+		class="sapUiTinyMargin sapUiNoContentPadding wrappingList"
+		items="{
+			path: '/groups/0/icons',
+			length: '200',
+			sorter: {
+				path: 'name',
+				descending: false
+			},
+			events: {
+				change: '.onUpdateFinished'
+			}
+		}"
+		noDataText="{view>/overviewNoDataText}"
+		growing="true"
+		growingScrollToLoad="true"
+		growingThreshold="{view>/growingThreshold}">
+
+		<CustomListItem class="wrappingListItem sapUiTinyMargin">
 			<l:VerticalLayout
 				width="130px"
-				class="sapThemeBaseBG-asBackgroundColor sapUiTinyMargin gridLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
+				class="sapThemeBaseBG-asBackgroundColor gridLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
 				<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
 				<Label text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
 				<ToggleButton
@@ -32,12 +36,7 @@
 						formatter: '.formatter.isFavorite'
 					}"/>
 			</l:VerticalLayout>
-		</Panel>
-		<Label
-			width="100%"
-			textAlign="Center"
-			class="sapUiSmallMarginTop"
-			text="{view>/overviewNoDataText}"
-			visible="{= ${view>/iconFilterCount} === 0 }"/>
-	</l:VerticalLayout>
+		</CustomListItem>
+
+	</List>
 </core:FragmentDefinition>
