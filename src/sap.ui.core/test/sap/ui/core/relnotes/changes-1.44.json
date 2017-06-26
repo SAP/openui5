@@ -949,5 +949,76 @@
         "references": []
       }
     ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "86a54d9f19f7ab91c903dc9e3c73f121834ccaee",
+        "type": "FIX",
+        "text": " AppCacheBuster: support for async Component preload",
+        "references": []
+      },
+      {
+        "id": "b960eb92d8343d05597f1c868eb195e796b7a7ce",
+        "type": "FIX",
+        "text": " ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": []
+      },
+      {
+        "id": "cbe60b832ffcbd0de13a41f53f76cb820ca42e2f",
+        "type": "FIX",
+        "text": " LocalBusyIndicator: Control still blocked when busy set to \"false\"",
+        "references": []
+      },
+      {
+        "id": "7068fbaa912efa9d897c0f88df06865eb3e38f43",
+        "type": "FIX",
+        "text": " core.Icon: make the focus outline stay within the DOM area",
+        "references": []
+      },
+      {
+        "id": "f7c1ab6be16735751fe8480b2ee65cdf059a2a85",
+        "type": "FIX",
+        "text": " core.Icon: mark the tap/click event when icon has a press handler",
+        "references": []
+      },
+      {
+        "id": "e6692c28a5009992072e236c3d386bdb1751d59d",
+        "type": "FIX",
+        "text": " core.IconPool: Use local SAP-icons font as fallback only",
+        "references": []
+      },
+      {
+        "id": "49ca2b57adc97f4834e564e952acf4b03ea5fe9b",
+        "type": "FIX",
+        "text": " core.Popup: BlockLayer should always use position:fixed",
+        "references": []
+      },
+      {
+        "id": "f775c1cef201a4321d7451065fd2f4be384f00ad",
+        "type": "FIX",
+        "text": " jquery.sap.events.js: adapt the event emulation condition regarding windows phone",
+        "references": []
+      },
+      {
+        "id": "47e3892a2ee8c844451830e51eff3424f95cec43",
+        "type": "FIX",
+        "text": " jquery.sap.trace.js: remove TerminalID from SAP Passport",
+        "references": []
+      },
+      {
+        "id": "06c4d633e2ccf23f528cad06e47792be60cda1ab",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      },
+      {
+        "id": "dfa61565f9106289aacfde3c8e45eebe4ea3ad04",
+        "type": "FIX",
+        "text": " odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": []
+      }
+    ]
   }
 }

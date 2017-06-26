@@ -2185,5 +2185,112 @@
         "references": []
       }
     ]
+  },
+  "1.44.15": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "eaf854acb96125db0ec898e273b53dce395249a1",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Input value is updated wrong if typing fast",
+        "references": []
+      },
+      {
+        "id": "44517a32ef5331db92fff6d2634e4d28b859bc8b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Properly updating item\u0027s selection on model change.",
+        "references": []
+      },
+      {
+        "id": "1247e01fe6697ac263941e98a6ac71bfe9b56051",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: setSelectedKey handles unbinded value improperly",
+        "references": []
+      },
+      {
+        "id": "b6b81fc570dd1d8ab58999f9dd28f71a49b033ac",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Data binding with sap.ui.model.odata.type.ODataType subtypes now works correctly",
+        "references": []
+      },
+      {
+        "id": "5fa83b0eac6cc3545b29ab3cb1f84deda9e62ca5",
+        "type": "FIX",
+        "text": " sap.m.Input: Marking event when arrow keys up/down are pressed is now fixed.",
+        "references": []
+      },
+      {
+        "id": "49c6d9224306c291d5076abcb6d90a594e672528",
+        "type": "FIX",
+        "text": " sap.m.Input: Suggestion items in Korean are now correctly selected in Chrome",
+        "references": []
+      },
+      {
+        "id": "d532764da1ab0845276ee6c417329894c96bba5d",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Long tokens are now correctly displayed",
+        "references": []
+      },
+      {
+        "id": "13186af81eead457b264bc4fd6fc6fe4fdeaaa48",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokens scrolling is now correct when control is inside a list",
+        "references": []
+      },
+      {
+        "id": "b5fc04bc60c0285b840f8333c7e224815a0324c5",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "f3b3eb429a9347f841608a827a1011471dc7ac22",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "75c32f564c4e2f202a1a93a6774490db78883590",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not use jQuery dimension methods on init.",
+        "references": []
+      },
+      {
+        "id": "ba27690d17b0e558f33ccd06e14dd4d0ce8741af",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title is no longer truncated in IE",
+        "references": []
+      },
+      {
+        "id": "f4a72903161f7004ad8dc2223d6c917611f80239",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Properly fire liveChange event.",
+        "references": []
+      },
+      {
+        "id": "0c22e1dc58f2f5ac3bfc379369a04f857cdfe524",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete button is now correctly displayed on iPad",
+        "references": []
+      },
+      {
+        "id": "d1955e68ad38a738eba72cb322f62b5a729cdd72",
+        "type": "FIX",
+        "text": " sap.m.Token: Delete button is now correctly visible in compact mode",
+        "references": []
+      },
+      {
+        "id": "479d7a679d17fbd245cd5ff2af28f9d0893b994b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Tooltip rendering in IE11 corrected",
+        "references": []
+      },
+      {
+        "id": "5d2177392691c48c75c0de71444ba96742318c84",
+        "type": "FIX",
+        "text": " sap.m.Wizard - _getNextStepreference() returns a wrong result if the sebsequentSteps have a length of 1",
+        "references": []
+      }
+    ]
   }
 }
