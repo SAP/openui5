@@ -130,7 +130,13 @@
 										<HBox
 											wrap="Wrap"
 											items="{/selectedIssue/resolutionUrls}">
-											<Link text="{= ${text} + ' \u00a0' }" press="openDocumentation" />
+											<Link text="{
+												parts: [
+													'/selectedIssue/resolutionUrls',
+													''
+												],
+												formatter: '.formatter.resolutionUrl'
+											}" press="openDocumentation" />
 										</HBox>
 									</f:content>
 									<f:layoutData>
