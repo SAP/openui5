@@ -293,6 +293,9 @@ sap.ui.define([
 	 * @private
 	 */
 	FragmentControl.prototype._getManagedObjectModel = function () {
+		if (!this._oManagedObjectModel) {
+			this._oManagedObjectModel = new ManagedObjectModel(this);
+		}
 		return this._oManagedObjectModel;
 	};
 
@@ -471,7 +474,7 @@ sap.ui.define([
 		var sCompositeName = this.getMetadata().getCompositeAggregationName();
 		this._destroyCompositeAggregation();
 		if (!this._oManagedObjectModel) {
-			this._oManagedObjectModel = new ManagedObjectModel(this);
+			this._getManagedObjectModel();
 		}
 		if (jQuery.isArray(oNewContent)) {
 			this.setAggregation(sCompositeName, null);
@@ -604,7 +607,7 @@ sap.ui.define([
 		if (!oFragment) {
 			throw new Error("Fragment " + oFragment.tagName + " not found");
 		}
-		var oManagedObjectModel = new ManagedObjectModel(this);
+		var oManagedObjectModel = this._getManagedObjectModel();
 		var that = this;
 		oManagedObjectModel.getContextName = function () {
 			return that.alias;
