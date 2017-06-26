@@ -685,7 +685,7 @@ code {
 }
 
 .sapUiDocumentationHeaderNavLinks .sapMFlexItem:nth-child(2) {
-	min-width: 2rem !important;
+	min-width: 1px !important;
 }
 
 .sapUiDocumentationAnnotationsText .sapMLnk {
