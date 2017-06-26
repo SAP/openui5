@@ -1192,25 +1192,28 @@
 			format: "yMd"
 		});
 
-		var oDate = new Date(2017, 3, 11);
-		var oDate1 = new Date(oDate.getTime() + 2 * 24 * 3600 * 1000);
+		var oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11), sap.ui.core.CalendarType.Gregorian);
+		var oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 2 * 24 * 3600 * 1000), sap.ui.core.CalendarType.Gregorian);
 
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Day", "correct diff field group returned");
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Day": true }, "correct diff returned");
 
 		// if two dates are identical on the fields which we compare, no diff field will be returned
-		oDate = new Date(2017, 3, 11);
-		oDate1 = new Date(oDate.getTime() + 12 * 3600 * 1000);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 12 * 3600 * 1000));
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
 
 		oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			interval: true,
 			format: "Md"
 		});
 
-		// if the diff field doesn't exist in the 'format' option, the default diff field is used.
-		oDate = new Date(2017, 3, 11);
-		oDate1 = new Date(2018, 4, 11);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), 'Year', "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2018, 4, 11));
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Year": true, "Month": true, "Week": true }, "correct diff returned");
+
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11), sap.ui.core.CalendarType.Gregorian);
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 6, 11), sap.ui.core.CalendarType.Gregorian);
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Quarter": true, "Month": true, "Week": true }, "correct diff returned");
 	});
 
 	QUnit.test("Greatest Diff Group: Time instance", function(assert) {
@@ -1218,44 +1221,44 @@
 			interval: true,
 			format: "Hms"
 		});
-		var oDate = new Date(2017, 3, 11);
-		var oDate1 = new Date(oDate.getTime() + 5400 * 1000);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Hour", "correct diff field group returned");
+		var oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		var oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 5400 * 1000));
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
 
 
 		// if two dates are identical on the fields which we compare, no diff field will be returned
-		oDate = new Date(2017, 3, 11);
-		oDate1 = new Date(2017, 4, 11);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 4, 11));
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
 
 		// if the diff field doesn't exist in the 'format' option, the default diff field is used.
 		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			interval: true,
 			format: "yMd"
 		});
-		oDate = new Date(2017, 3, 11);
-		oDate1 = new Date(oDate.getTime() + 1800 * 1000);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Minute", "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 1800 * 1000));
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "the correct diff returned.");
 
 		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			interval: true,
 			format: "h"
 		});
 
-		oDate = new Date(2017, 3, 11, 11);
-		oDate1 = new Date(2017, 4, 11, 12);
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 4, 11, 12));
 
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "a", "if the diff field is 'h' and the hour value from the two dates are in different time periods (am/pm), 'a' should be returned");
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "DayPeriod":true, "Hour": true }, "correct diff returned");
 
 		oIntervalFormat = sap.ui.core.format.DateFormat.getTimeInstance({
 			interval: true,
 			format: "K"
 		});
 
-		oDate = new Date(2017, 3, 11, 11);
-		oDate1 = new Date(2017, 4, 11, 12);
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 4, 11, 12));
 
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "a", "if the diff field is 'K' and the hour value from the two dates are in different time periods (am/pm), 'a' should be returned");
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "DayPeriod":true, "Hour": true }, "correct diff returned");
 	});
 
 	QUnit.test("Greatest Diff Group: DateTime instance", function(assert) {
@@ -1263,24 +1266,24 @@
 			interval: true,
 			format: "Hms"
 		});
-		var oDate = new Date(2017, 3, 11);
-		var oDate1 = new Date(oDate.getTime() + 5400 * 1000);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Hour", "correct diff field group returned");
+		var oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		var oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 5400 * 1000));
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Hour": true, "Minute": true }, "correct diff returned");
 
 
 		// if two dates are identical on the fields which we compare, no diff field will be returned
-		oDate = new Date(2017, 3, 11);
-		oDate1 = new Date(oDate.getTime() + 999);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "if two dates are identical on the fields which we compare, 'null' will be returned");
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 999));
+		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), null, "'null' will be returned");
 
 		// if the diff field doesn't exist in the 'format' option, the default diff field is used.
 		oIntervalFormat = sap.ui.core.format.DateFormat.getDateTimeInstance({
 			interval: true,
 			format: "yMd"
 		});
-		oDate = new Date(2017, 3, 11);
-		oDate1 = new Date(oDate.getTime() + 1800 * 1000);
-		assert.equal(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), "Minute", "if the diff field doesn't exist in the 'format' option, the correct field group is returned.");
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 11));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(oDate.getTime() + 1800 * 1000));
+		assert.deepEqual(oIntervalFormat._getGreatestDiffField([oDate, oDate1]), { "Minute": true }, "correct diff returned.");
 	});
 
 	QUnit.module("format & parse interval");
@@ -1299,6 +1302,37 @@
 
 		assert.equal(sResult, "11.–13. Apr. 2017");
 		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate1]);
+	});
+
+	QUnit.test("Interval format with Date instance regarding calendar week and quarter", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yw"
+		});
+
+		var oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 2, 31));
+		var oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 1));
+		var sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "week 13 of 2017", "Two dates correctly formatted");
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yMMMw"
+		});
+		sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "Mar 2017 (week: 13) – Apr 2017 (week: 13)", "Two dates correctly formatted");
+
+		oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yQ"
+		});
+		sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "Q1 2017 – Q2 2017", "Two dates correctly formatted");
+
+		oDate = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 1));
+		oDate1 = sap.ui.core.date.UniversalDate.getInstance(new Date(2017, 3, 13));
+		sResult = oIntervalFormat.format([oDate, oDate1]);
+		assert.equal(sResult, "Q2 2017", "Two dates correctly formatted");
 	});
 
 	QUnit.test("Interval format without 'format' option - fallback interval pattern is used", function(assert) {
@@ -1396,6 +1430,42 @@
 
 		assert.equal(sResult.toString(), oIntervalFormat._format(oDate).toString(), "if two dates are identical on the fields which we compare, a single date will be formatted.");
 		assert.deepEqual(oIntervalFormat.parse(sResult), [oDate, oDate]);
+	});
+
+	QUnit.test("Interval with year and quarter in skeleton", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yQQQ"
+		});
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		var oDate1 = new Date(2017, 2, 11);
+		var oDate2 = new Date(2017, 5, 11);
+		var oDate3 = new Date(2017, 1, 11);
+
+		var sResult1 = oIntervalFormat.format([oDate1, oDate2]);
+		var sResult2 = oIntervalFormat.format([oDate1, oDate3]);
+
+		assert.equal(sResult1, "Q1 2017 – Q2 2017");
+		assert.equal(sResult2, "Q1 2017");
+	});
+
+	QUnit.test("Interval with year and weekNumber in skeleton", function(assert) {
+		var oIntervalFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			interval: true,
+			format: "yw"
+		});
+
+		// if two dates are identical on the fields which we compare, no diff field will be returned
+		var oDate1 = new Date(2017, 2, 11);
+		var oDate2 = new Date(2017, 2, 21);
+		var oDate3 = new Date(2017, 2, 22);
+
+		var sResult1 = oIntervalFormat.format([oDate1, oDate2]);
+		var sResult2 = oIntervalFormat.format([oDate2, oDate3]);
+
+		assert.equal(sResult1, "week 10 of 2017 – week 12 of 2017");
+		assert.equal(sResult2, "week 12 of 2017");
 	});
 
 	QUnit.module("Interval parse in addition");

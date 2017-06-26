@@ -153,6 +153,26 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week);
 		this.setUTCFullYear(oDate.year, oDate.month, oDate.day);
 	};
+	UniversalDate.prototype.getQuarter = function() {
+		return Math.floor((this.getMonth() / 3));
+	};
+	UniversalDate.prototype.getUTCQuarter = function() {
+		return Math.floor((this.getUTCMonth() / 3));
+	};
+	UniversalDate.prototype.getDayPeriod = function() {
+		if (this.getHours() < 12) {
+			return 0;
+		} else {
+			return 1;
+		}
+	};
+	UniversalDate.prototype.getUTCDayPeriod = function() {
+		if (this.getUTCHours() < 12) {
+			return 0;
+		} else {
+			return 1;
+		}
+	};
 
 
 	// TODO: These are currently needed for the DateFormat test, as the date used in the test
