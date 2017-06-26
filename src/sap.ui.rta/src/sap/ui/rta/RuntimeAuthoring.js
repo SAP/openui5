@@ -466,6 +466,8 @@ sap.ui.define([
 						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
 					}
 
+					this._oRootControl.addStyleClass("sapUiRtaRoot");
+
 					this._oDesignTime.attachSelectionChange(function(oEvent) {
 						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
 					}, this);
@@ -790,6 +792,11 @@ sap.ui.define([
 			// plugins are set to defaultValue if parameter is null
 			this.setPlugins(null);
 		}
+
+		if (this._oRootControl) {
+			this._oRootControl.removeStyleClass("sapUiRtaRoot");
+		}
+
 		if (this._oToolsMenu) {
 			this._oToolsMenu.destroy();
 			this._oToolsMenu = null;
