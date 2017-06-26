@@ -101,7 +101,7 @@ sap.ui.define([
 			},
 
 			onJSDocLinkClick: function (oEvent) {
-				BaseController.prototype.onJSDocLinkClick(oEvent, "apiId");
+				BaseController.prototype.onJSDocLinkClick(oEvent, "apiId", this.getOwnerComponent());
 			},
 
 			/* =========================================================== */

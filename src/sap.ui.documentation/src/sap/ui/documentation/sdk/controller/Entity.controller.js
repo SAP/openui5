@@ -83,7 +83,7 @@ sap.ui.define([
 			},
 
 			onJSDocLinkClick: function(oEvt) {
-				BaseController.prototype.onJSDocLinkClick(oEvt, "entity");
+				BaseController.prototype.onJSDocLinkClick(oEvt, "entity", this.getOwnerComponent());
 			},
 
 			_TAB_KEYS: ["samples", "about"],
