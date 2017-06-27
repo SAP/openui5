@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings"
-], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings) {
+	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
+], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings, VariantController) {
 	"use strict";
 
 	/**
@@ -165,6 +165,13 @@ sap.ui.define([
 			}
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
+
+			if (oWrappedChangeFileContent.changes.variantSection && oWrappedChangeFileContent.changes.variantSection !== {}) {
+				this._oVariantController = new VariantController(this.getComponentName(), this._oComponent.appVersion, oWrappedChangeFileContent);
+				var aVariantChanges = this._oVariantController.loadDefaultChanges();
+				aChanges = aChanges.concat(aVariantChanges);
+			}
+
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
 				var aCurrentLayerChanges = [];
