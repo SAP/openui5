@@ -270,7 +270,7 @@ sap.ui.require([
 		{t : "Edm.Decimal", v : "-255.55", e : "-255.55"},
 		{t : "Edm.Double", v : 3.14, e : "3.14"},
 		{t : "Edm.Double", v : "INF", e : "INF"},
-		{t : "Edm.Duration", v : "P1DT0H0M0S",	e : "duration'P1DT0H0M0S'"},
+		{t : "Edm.Duration", v : "P1DT0H0M0S", e : "duration'P1DT0H0M0S'"},
 		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
 			e : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
 		{t : "Edm.Int16", v : -32768, e : "-32768"},
