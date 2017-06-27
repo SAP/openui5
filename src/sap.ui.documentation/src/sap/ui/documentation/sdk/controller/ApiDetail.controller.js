@@ -333,8 +333,10 @@ sap.ui.define([
 				}
 
 				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
+					if (!oControlData.hasAnnotations) {
+						oUi5Metadata.annotations.unshift({});
+					}
 					oControlData.hasAnnotations = true;
-					oUi5Metadata.annotations.unshift({});
 				} else {
 					oControlData.hasAnnotations = false;
 				}
@@ -616,18 +618,18 @@ sap.ui.define([
 			_getParameters: function (oParam) {
 				var result = [oParam];
 
+				var types = (oParam.type || "").split("|"),
+				paramTypes;
+
+				oParam.types = [];
+				for (var i = 0; i < types.length; i++) {
+					oParam.types.push({
+						value: types[i],
+						isLast: i === types.length - 1
+					});
+				}
+
 				if (oParam.parameterProperties) {
-					var types = (oParam.type || "").split("|"),
-						paramTypes;
-
-					oParam.types = [];
-					for (var i = 0; i < types.length; i++) {
-						oParam.types.push({
-							value: types[i],
-							isLast: i === types.length - 1
-						});
-					}
-
 					this.subParamLevel++;
 					for (var subParam in oParam.parameterProperties) {
 							var subPropertyString = 'is';
@@ -939,19 +941,6 @@ sap.ui.define([
 				}
 			},
 
-			/**
-			 * Helper function retrieving event parameter type
-			 * @param eventInfo - object containing information about the event or the event parameter
-			 * @returns {string} - Returns the type of the parameter or empty string
-			 */
-			formatEventsType: function (eventInfo) {
-				if (eventInfo && eventInfo.paramType) {
-					return eventInfo.paramType;
-				} else {
-					return "";
-				}
-			},
-
 			formatMethodCode: function(sName, aParams, aReturnValue) {
 				var result = sName + '(';
 
@@ -1005,18 +994,6 @@ sap.ui.define([
 			 */
 			formatLinkEnabled: function (linkText) {
 				return this._baseTypes.indexOf(linkText) === -1;
-			},
-
-			/**
-			 * Helper function that checks if a link from the events table
-			 * points to a base type (e.g. int, string, object etc)
-			 * @param eventInfo - object containing information about the event
-			 * @returns {boolean} - False if link points to a base type
-			 */
-			formatEventLinkEnabled: function (eventInfo) {
-				var sEventText = this.formatEventsType(eventInfo);
-
-				return this._baseTypes.indexOf(sEventText) === -1;
 			},
 
 			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
