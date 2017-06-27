@@ -20,7 +20,7 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_openui5.png"
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
 					densityAware="false"
 					height="2rem"
