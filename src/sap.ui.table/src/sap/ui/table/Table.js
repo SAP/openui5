@@ -1624,6 +1624,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype.bindAggregation = function(sName) {
 		if (sName === "rows") {
+			if (this.getEnableBusyIndicator()) {
+				this.setBusy(false);
+			}
 			return this.bindRows.apply(this, [].slice.call(arguments, 1));
 		}
 
@@ -3947,6 +3950,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.setEnableBusyIndicator = function (bValue) {
 		this.setProperty("enableBusyIndicator", bValue, true);
+		if (!bValue) {
+			this.setBusy(false);
+		}
 	};
 
 	/**
@@ -3985,7 +3991,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
 			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
 			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
-			// The same applied for updating the NoData area.
+			// The same applies to updating the NoData area.
 			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
