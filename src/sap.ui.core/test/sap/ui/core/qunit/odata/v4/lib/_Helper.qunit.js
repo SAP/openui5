@@ -117,6 +117,25 @@ sap.ui.require([
 			"status" : 404,
 			"statusText" : "Not Found"
 		}
+	}, {
+		// V2 error
+		body : {
+			error : {
+				code : "0050569259751EE4BA9710043F8A5115",
+				message : {
+					lang : "en",
+					value : "An unknown internal server error occurred"
+				}
+			}
+		},
+		message : "An unknown internal server error occurred",
+		"response" : {
+			"headers" : {
+				"Content-Type" : "application/json;charset=UTF-8"
+			},
+			"status" : 500,
+			"statusText" : "Internal Server Error"
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
 			var oError,
@@ -618,7 +637,7 @@ sap.ui.require([
 			$select : ["Param1", "Param2"]
 		},
 		sPath : "",
-		result: ["Param1", "Param2"]
+		result : ["Param1", "Param2"]
 	}, {
 		options : {},
 		sPath : "",
@@ -636,7 +655,7 @@ sap.ui.require([
 			$select : ["Param1", "Param2"]
 		},
 		sPath : "FooSet",
-		result: undefined
+		result : undefined
 	}, {
 		options : {
 			$expand : {

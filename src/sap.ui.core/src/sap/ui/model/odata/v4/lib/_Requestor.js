@@ -6,24 +6,13 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./_Batch",
-	"./_Helper"
-], function (jQuery, _Batch, _Helper) {
+	"./_Helper",
+	"./_V2Requestor"
+], function (jQuery, _Batch, _Helper, asV2Requestor) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
 			"Accept" : "multipart/mixed"
-		},
-		mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
-			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-		},
-		mPredefinedPartHeaders = { // predefined request headers in $batch parts
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
-		},
-		mPredefinedRequestHeaders = { // predefined request headers for all requests
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-			"OData-MaxVersion" : "4.0",
-			"OData-Version" : "4.0",
-			"X-CSRF-Token" : "Fetch"
 		},
 		_Requestor;
 
@@ -68,10 +57,10 @@ sap.ui.define([
 	 * @param {string} sServiceUrl
 	 *   URL of the service document to request the CSRF token from; also used to resolve
 	 *   relative resource paths (see {@link #request})
-	 * @param {object} mHeaders
+	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData V4 headers are added by default, but may be overridden
-	 * @param {object} mQueryParams
+	 * @param {object} [mQueryParams={}]
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
 	 * @param {function (string)} [fnOnCreateGroup]
@@ -88,6 +77,30 @@ sap.ui.define([
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.sServiceUrl = sServiceUrl;
 	}
+
+	/**
+	 * Final (cannot be overridden) request headers for OData V4.
+	 */
+	Requestor.prototype.mFinalHeaders = {
+		"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+	};
+
+	/**
+	 * Predefined request headers in $batch parts for OData V4.
+	 */
+	Requestor.prototype.mPredefinedPartHeaders = {
+		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
+	};
+
+	/**
+	 * Predefined request headers for all requests for OData V4.
+	 */
+	Requestor.prototype.mPredefinedRequestHeaders = {
+		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+		"OData-MaxVersion" : "4.0",
+		"OData-Version" : "4.0",
+		"X-CSRF-Token" : "Fetch"
+	};
 
 	/**
 	 * Called when a batch request has been sent to count the number of running change requests.
@@ -204,6 +217,20 @@ sap.ui.define([
 			}
 		}
 		return bCanceled;
+	};
+
+	/**
+	 * Converts an OData response payload if needed. For OData V4 payloads no conversion is done.
+	 * May be overwritten for other OData service versions. The resulting payload has to
+	 * be an OData V4 payload.
+	 *
+	 * @param {object} oResponsePayload
+	 *   The OData response payload
+	 * @returns {object}
+	 *   The OData V4 response payload
+	 */
+	Requestor.prototype.doConvertResponseToV4 = function (oResponsePayload) {
+		return oResponsePayload;
 	};
 
 	/**
@@ -354,12 +381,12 @@ sap.ui.define([
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
 			fnSubmit, fnCancel, bIsFreshToken) {
-		var that = this,
-			oBatchRequest,
+		var oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
 			sPayload,
 			oPromise,
-			oRequest;
+			oRequest,
+			that = this;
 
 		if (sGroupId === "$cached") {
 			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
@@ -383,8 +410,11 @@ sap.ui.define([
 					oRequest = {
 						method : sMethod,
 						url : sResourcePath,
-						headers : jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
-							mFinalHeaders),
+						headers : jQuery.extend({},
+							that.mPredefinedPartHeaders,
+							that.mHeaders,
+							mHeaders,
+							that.mFinalHeaders),
 						body : oPayload,
 						$cancel : fnCancel,
 						$reject : fnReject,
@@ -412,8 +442,11 @@ sap.ui.define([
 			// it here makes the $batch recognition easier.
 			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
 				data : sPayload,
-				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
-					bIsBatch ? oBatchRequest.headers : mFinalHeaders),
+				headers : jQuery.extend({},
+					that.mPredefinedRequestHeaders,
+					that.mHeaders,
+					mHeaders,
+					bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
 				method : sMethod
 			}).then(function (oPayload, sTextStatus, jqXHR) {
 				that.mHeaders["X-CSRF-Token"]
@@ -421,6 +454,8 @@ sap.ui.define([
 				if (bIsBatch) {
 					oPayload = _Batch.deserializeBatchResponse(
 						jqXHR.getResponseHeader("Content-Type"), oPayload);
+				} else {
+					oPayload = that.doConvertResponseToV4(oPayload);
 				}
 				fnResolve(oPayload);
 			}, function (jqXHR, sTextStatus, sErrorMessage) {
@@ -530,6 +565,7 @@ sap.ui.define([
 
 			aRequests.forEach(function (vRequest, index) {
 				var oError,
+					oResponse,
 					vResponse = aResponses[index];
 
 				if (Array.isArray(vResponse)) {
@@ -544,7 +580,9 @@ sap.ui.define([
 					oCause = _Helper.createError(vResponse);
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
-					vRequest.$resolve(JSON.parse(vResponse.responseText));
+					oResponse = JSON.parse(vResponse.responseText);
+					oResponse = that.doConvertResponseToV4(oResponse);
+					vRequest.$resolve(oResponse);
 				} else {
 					vRequest.$resolve();
 				}
@@ -710,19 +748,28 @@ sap.ui.define([
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
-		 *   <code>_Requestor</code> always sets the "Content-Type" header to
-		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" value.
+		 *   <code>_Requestor</code> always sets the "Content-Type" header value to
+		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
+		 *   "application/json;charset=UTF-8" for OData V2.
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
 		 * @param {function (string)} [fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
+		 * @param {string} [sODataVersion="4.0"]
+		 *   The version of the OData service. Supported values are "2.0" and "4.0".
 		 * @returns {object}
 		 *   A new <code>_Requestor</code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
-			return new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
+		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup, sODataVersion) {
+			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
+
+			if (sODataVersion === "2.0") {
+				asV2Requestor(oRequestor);
+			}
+
+			return oRequestor;
 		}
 	};
 
