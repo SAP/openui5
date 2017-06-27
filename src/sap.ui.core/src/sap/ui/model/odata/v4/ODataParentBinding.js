@@ -69,7 +69,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.changeParameters = function (mParameters) {
 		var mBindingParameters = jQuery.extend(true, {}, this.mParameters),
-			bChanged = false,
+			sChangeReason, // @see sap.ui.model.ChangeReason
 			sKey,
 			that = this;
 
@@ -78,6 +78,28 @@ sap.ui.define([
 				throw new Error("Cannot change $expand or $select parameter in "
 					+ "auto-$expand/$select mode: "
 					+ sName + "=" + JSON.stringify(mParameters[sName]));
+			}
+		}
+
+		/*
+		 * Updates <code>sChangeReason</code> depending on the given custom or system query option
+		 * name:
+		 * - "$filter" and "$search" cause <code>ChangeReason.Filter</code>,
+		 * - "$orderby" causes <code>ChangeReason.Sort</code>,
+		 * - default is <code>ChangeReason.Change</code>.
+		 *
+		 * The "strongest" change reason wins: Filter > Sort > Change.
+		 *
+		 * @param {string} sName
+		 *   The name of a custom or system query option
+		 */
+		function updateChangeReason(sName) {
+			if (sName === "$filter" || sName === "$search") {
+				sChangeReason = ChangeReason.Filter;
+			} else if (sName === "$orderby" && sChangeReason !== ChangeReason.Filter) {
+				sChangeReason = ChangeReason.Sort;
+			} else if (!sChangeReason) {
+				sChangeReason = ChangeReason.Change;
 			}
 		}
 
@@ -95,20 +117,20 @@ sap.ui.define([
 				throw new Error("Unsupported parameter: " + sKey);
 			}
 			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {
+				updateChangeReason(sKey);
 				delete mBindingParameters[sKey];
-				bChanged = true;
 			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
+				updateChangeReason(sKey);
 				if (typeof mParameters[sKey] === "object") {
 					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
 				} else {
 					mBindingParameters[sKey] = mParameters[sKey];
 				}
-				bChanged = true;
 			}
 		}
 
-		if (bChanged) {
-			this.applyParameters(mBindingParameters, ChangeReason.Change);
+		if (sChangeReason) {
+			this.applyParameters(mBindingParameters, sChangeReason);
 		}
 	};
 
