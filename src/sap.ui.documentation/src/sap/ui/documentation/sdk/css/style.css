@@ -1088,6 +1088,12 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 	max-width: 100%;
 }
 
+/* fixes "or" text misalignment in vertical layout used in table cell */
+.sapUiDemokit .sapMListTbl .sapUiVlt .sapMText.sapUiDocumentationOrText {
+	padding: 0;
+	margin: 0;
+}
+
 .sapUiDemokit .communityLinkCell .sapUiHLayoutChildWrapper:nth-child(2) {
 	width: calc(100% - 3.0rem);
 }

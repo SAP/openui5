@@ -260,7 +260,7 @@
 																			enabled="{parts: [{path: 'constructorParams>value'}],
 																				  formatter: '.formatLinkEnabled'}"
 																			press="onTypeLinkPress"/>
-																	<m:Text text="or" visible="{= ${constructorParams>isLast} === false}" wrapping="false"/>
+																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${constructorParams>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
@@ -394,8 +394,8 @@
 																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${events>phoneName} ? ${events>phoneName} : ${events>name} }"
 																wrapping="false"/>
 														<m:Link text="{events>type}"
-																enabled="{parts: [{path: 'events>'}],
-																		  formatter: '.formatEventLinkEnabled'}"
+																enabled="{parts: [{path: 'events>type'}],
+																		  formatter: '.formatLinkEnabled'}"
 																press="onTypeLinkPress"/>
 														<core:HTML content="{parts: [{path: 'events>description'},
 																					 {path: 'events>deprecated/text'},
@@ -486,7 +486,7 @@
 																			enabled="{parts: [{path: 'methods>value'}],
 																				  formatter: '.formatLinkEnabled'}"
 																			press="onTypeLinkPress"/>
-																	<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
@@ -519,7 +519,7 @@
 																			enabled="{parts: [{path: 'methods>value'}],
 																				  formatter: '.formatLinkEnabled'}"
 																			press="onTypeLinkPress"/>
-																	<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
