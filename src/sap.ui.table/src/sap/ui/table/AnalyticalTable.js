@@ -272,21 +272,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this.setProperty("firstVisibleRow", 0, true);
 
 			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
+
+			// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
+			// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table.
+			Table._addBindingListener(oBindingInfo, "selectionChanged", this._onSelectionChanged.bind(this));
 		}
 
 		// Create the binding.
 		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
-
-		var oBinding = this.getBinding("rows");
-
-		if (sName === "rows" && oBinding != null) {
-			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
-			oBinding.attachEvents({
-				// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
-				// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
-				selectionChanged: this._onSelectionChanged.bind(this)
-			});
-		}
 	};
 
 	/**
