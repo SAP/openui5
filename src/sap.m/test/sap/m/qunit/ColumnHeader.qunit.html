@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>QUnit Page for sap.m.ColumnHeader</title>
+
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
+
+		<link rel="stylesheet"
+			href="../../../../resources/sap/ui/thirdparty/qunit.css"
+			type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script>
+			function createSUT() {
+				var oData = {
+					items: [
+						{ id: Math.random(), name: "Michelle", color: "orange", number: 3.14 },
+						{ id: Math.random(), name: "Joseph", color: "blue", number: 1.618 },
+						{ id: Math.random(), name: "David", color: "green", number: 0 },
+					],
+					cols: ["Name", "Color", "Number"]
+				};
+				// sap.m.Table is the system under test
+				var sut = new sap.m.Table();
+
+				var aColumns = oData.cols.map(function (colname) {
+						if (colname === "Name") {
+							return new sap.m.Column({
+								header: new sap.m.ColumnHeader({
+									text: "Name",
+									viewSettingsPopover: new sap.m.ViewSettingsPopover({
+										sortItems: [
+											new sap.m.ViewSettingsItem({
+												text: "Name",
+												key: "name"
+											})
+										],
+										filterItems: [
+											new sap.m.ViewSettingsFilterItem({
+												text: "Name",
+												key: "name",
+												items: [
+													new sap.m.ViewSettingsItem({
+														text: "David",
+														key: "david"
+													})
+												]
+											})
+										],
+										groupItems: [
+											new sap.m.ViewSettingsItem({
+												text: "Name",
+												key: "name"
+											})
+										]
+									})
+								}),
+								demandPopin: true,
+								minScreenWidth: "Phone",
+								popinDisplay: "Inline"
+							})
+						}
+						return new sap.m.Column({ header: new sap.m.Label({ text: colname })})
+					}),
+					i = aColumns.length;
+				while(i--){
+					sut.addColumn(aColumns[aColumns.length - i - 1]);
+				}
+
+				sut.setModel(new sap.ui.model.json.JSONModel(oData));
+				sut.bindItems({
+					 path: "/items",
+					 template: new sap.m.ColumnListItem({
+						cells: oData.cols.map(function (colname) {
+							return new sap.m.Label({ text: "{" + colname.toLowerCase() + "}" });
+						})
+					}),
+					key: "id"
+				});
+
+				return sut;
+			}
+
+			QUnit.module("ColumnHeader DOM");
+
+			QUnit.test("Basic properties and DOM checks", function(assert) {
+				var sut = createSUT();
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oColumnHeader = sut.getColumns()[0].getHeader();
+
+				assert.ok(oColumnHeader instanceof sap.m.ColumnHeader, "ColumnHeader object created");
+				assert.ok(oColumnHeader.getDomRef(), "ColumnHeader is in DOM tree");
+				assert.ok(oColumnHeader.$().hasClass("sapMColumnHeader"), "ColumnHeader style class is set correctly");
+				assert.equal(oColumnHeader.getText(), "Name", "ColumnHeader text set correctly");
+				assert.ok(oColumnHeader.getTableAdapter().tabbable, "ColumnHeader is tabbable as parent control is sap.m.Table");
+				assert.ok(oColumnHeader.getViewSettingsPopover() instanceof sap.m.ViewSettingsPopover, "ViewSettingsPopover aggregration found");
+
+				sut.destroy();
+			});
+
+			QUnit.test("ColumnHeader behavior for sorting", function(assert) {
+				var sut = createSUT();
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oColumnHeader = sut.getColumns()[0].getHeader();
+				var oViewSettingsPopover = oColumnHeader.getViewSettingsPopover();
+				var oSortButton;
+
+				assert.ok(!oColumnHeader.getAggregation("_sortIcon"), "Sort icon not renderered");
+				assert.ok(!oColumnHeader.getSorted(), "Property sorted = false");
+				assert.equal(oColumnHeader.getSortOrder(), "", "Initial value of sortOrder");
+
+				qutils.triggerEvent("click", oColumnHeader);
+
+				oViewSettingsPopover._segmentedButton.getItems().forEach(function(button) {
+					if (button.getIcon() == "sap-icon://sort") {
+						oSortButton = button;
+					}
+				});
+
+				// check for Ascending
+				oSortButton.firePress();
+				assert.equal(oColumnHeader.getSortOrder(), "Ascending", "onSortSelected() executed and sortOrder = Ascending");
+				assert.equal(oColumnHeader.getAggregation("_sortIcon").getSrc(), "sap-icon://sort-ascending", "Ascending sort icon added correctly.");
+
+				// check for Descending
+				oSortButton.firePress();
+				assert.ok(oColumnHeader.getSorted(), "Property sorted = true");
+				assert.ok(oColumnHeader.getAggregation("_sortIcon") instanceof sap.ui.core.Icon, "Sort icon aggregation found");
+				assert.equal(oColumnHeader.getSortOrder(), "Descending", "onSortSelected() executed and sortOrder = Descending");
+				assert.equal(oColumnHeader.getAggregation("_sortIcon").getSrc(), "sap-icon://sort-descending", "Descending sort icon added correctly.");
+
+				sut.destroy();
+			});
+
+			QUnit.test("ColumnHeader behavior for filtering", function(assert) {
+				var sut = createSUT();
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oColumnHeader = sut.getColumns()[0].getHeader();
+				var oViewSettingsPopover = oColumnHeader.getViewSettingsPopover();
+				var oFilterButton, aFilterItems;
+
+				assert.ok(!oColumnHeader.getAggregation("_filterIcon"), "Filter icon not renderered");
+				assert.ok(!oColumnHeader.getFiltered(), "Initial value of filtered = false");
+
+				qutils.triggerEvent("click", oColumnHeader);
+
+				oViewSettingsPopover._segmentedButton.getItems().forEach(function(button) {
+					if (button.getIcon() == "sap-icon://filter") {
+						oFilterButton = button;
+					}
+				});
+
+				oFilterButton.firePress();
+				aFilterItems = oViewSettingsPopover.getFilterItems()[0].getItems();
+				aFilterItems.forEach(function(item) {
+					item.setSelected(true);
+				});
+
+				oViewSettingsPopover._confirmFilterDetail();
+
+				assert.ok(oColumnHeader.getFiltered(), "fitlered = true, onFilterSeleted() executed");
+				assert.ok(oColumnHeader.getAggregation("_filterIcon") instanceof sap.ui.core.Icon, "Filter icon aggregation found");
+				assert.equal(oColumnHeader.getAggregation("_filterIcon").getSrc(), "sap-icon://filter", "Filter icon is set correctly");
+
+				sut.destroy();
+			});
+
+			QUnit.test("ColumnHeader behavior in case of popin", function(assert) {
+				var oColumn = new sap.m.Column({
+					header: new sap.m.ColumnHeader({
+						text: "Test"
+					}),
+					demandPopin: true,
+					minScreenWidth : "48000px",
+					popinDisplay: "Inline"
+				});
+				var oItem = new sap.m.ColumnListItem({});
+				sut = new sap.m.Table({
+					columns: oColumn,
+					items: oItem
+				});
+
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var oColumnHeader = sut.getColumns()[0].getHeader();
+				var oClonedHeader = sut.getItems()[0]._aClonedHeaders[0];
+				assert.ok(sut.getColumns()[0].isPopin(), "Column rendered as popin");
+				assert.ok(oClonedHeader instanceof sap.m.Label, "ColumnHeader is rendered as sap.m.Label in popin");
+				assert.equal(oColumnHeader.getText(), oClonedHeader.getText(), "ColumnHeader text is correctly set to sap.m.Label");
+				sut.destroy();
+			});
+
+		</script>
+
+		<style>
+			#content {
+				height: 100%;
+			}
+		</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">QUnit Page for sap.m.ColumnHeader</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
