@@ -752,6 +752,7 @@ sap.ui.require([
 		{index : 1, length : 1, result : [{key : "b"}]},
 		{index : 0, length : 2, result : [{key : "a"}, {key : "b"}]},
 		{index : 4, length : 5, result : []}, // don't set count, it can be anything between 0 and 4
+		{index : 5, length : 6, serverCount : "2", result : [], count : 2},
 		{index : 1, length : 5, result : [{key : "b"}, {key : "c"}], count : 3}
 	].forEach(function (oFixture) {
 		QUnit.test("CollectionCache#read(" + oFixture.index + ", " + oFixture.length + ")",
@@ -767,11 +768,14 @@ sap.ui.require([
 					value : aData.slice(oFixture.index, oFixture.index + oFixture.length)
 				};
 
+			if (oFixture.serverCount) {
+				oMockResult["@odata.count"] = oFixture.serverCount;
+			}
 			this.mock(oRequestor).expects("request")
 				.withExactArgs("GET", sResourcePath + "?$skip=" + oFixture.index + "&$top="
 					+ oFixture.length, "group", undefined, undefined, undefined)
 				.returns(Promise.resolve().then(function () {
-						oCacheMock.expects("checkActive");
+						oCacheMock.expects("checkActive").twice();
 						return oMockResult;
 					}));
 			this.spy(_Helper, "updateCache");
@@ -794,6 +798,12 @@ sap.ui.require([
 				}
 				assert.deepEqual(oResult, oExpectedResult);
 				assert.strictEqual(oResult.value.$count, oFixture.count);
+
+				// ensure that the same read does not trigger another request
+				return oCache.read(oFixture.index, oFixture.length).then(function (oResult) {
+					assert.deepEqual(oResult, oExpectedResult);
+					assert.strictEqual(oResult.value.$count, oFixture.count);
+				});
 			});
 		});
 	});
@@ -966,8 +976,6 @@ sap.ui.require([
 			});
 		});
 	});
-	//TODO short read delivers information about exact server-side count only in certain cases:
-	// if iResultLength > 0 or if no result was found just after a "last known good"
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: parallel reads beyond length", function (assert) {
@@ -995,6 +1003,38 @@ sap.ui.require([
 				assert.strictEqual(oCache.aElements.$count, 26);
 			})
 		]);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bCount) {
+		var sTitle = "CollectionCache#read: collection cleared after successful read, $count="
+				+ bCount;
+		QUnit.test(sTitle, function (assert) {
+			var oRequestor = _Requestor.create("/~/"),
+				sResourcePath = "Employees",
+				oCache = _Cache.create(oRequestor, sResourcePath),
+				oRequestorMock = this.mock(oRequestor);
+
+			mockRequest(oRequestorMock, sResourcePath, 10, bCount ? 30 : 10);
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", sResourcePath + "?$skip=5&$top=3", undefined, undefined,
+					undefined, undefined)
+				.returns(Promise.resolve(createResult(5, 0)));
+
+			return oCache.read(10, bCount ? 30 : 10).then(function (oResult) {
+				var oExpectedResult = createResult(10, bCount ? 16 : 10);
+
+				assert.deepEqual(oResult, oExpectedResult);
+				assert.strictEqual(oCache.aElements.$count, bCount ? 26 : undefined);
+
+				return oCache.read(5, 3).then(function (oResult) {
+					var oExpectedResult = createResult(5, 0);
+
+					assert.deepEqual(oResult, oExpectedResult);
+					assert.strictEqual(oCache.aElements.$count, undefined);
+				});
+			});
+		});
 	});
 
 	//*********************************************************************************************

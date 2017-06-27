@@ -121,8 +121,7 @@ sap.ui.define([
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
 		var iExpectedLength = iEnd - iStart,
 			oPromise,
-			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength,
-			bStartBeyondLength = iStart > oCache.aElements.length;
+			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
 		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 				fnDataRequested)
@@ -136,19 +135,23 @@ sap.ui.define([
 				oCache.sContext = oResult["@odata.context"];
 				sCount = oResult["@odata.count"];
 				if (sCount) {
-					setCount(oCache.mChangeListeners, "", oCache.aElements, sCount);
+					oCache.iLimit = parseInt(sCount, 10);
+					setCount(oCache.mChangeListeners, "", oCache.aElements, oCache.iLimit);
 				}
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
-				if (iResultLength < iExpectedLength) {
+				if (iResultLength < iExpectedLength) { // a short read
 					iCount = Math.min(getCount(oCache.aElements), iStart + iResultLength);
-					// If we started to read beyond the range that we read before and the result is
-					// empty, we cannot say anything about the length
-					if (!(bStartBeyondLength && iResultLength === 0)) {
-						setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
-					}
 					oCache.aElements.length = iCount;
+					// If the server did not send a count, the calculated count is greater than 0
+					// and the element before has not been read yet, we do not know the count:
+					// The element might or might not exist.
+					if (!sCount && iCount > 0 && !oCache.aElements[iCount - 1]) {
+						iCount = undefined;
+					}
+					setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
+					oCache.iLimit = iCount;
 				}
 			})["catch"](function (oError) {
 				fill(oCache.aElements, undefined, iStart, iEnd);
@@ -267,6 +270,7 @@ sap.ui.define([
 							vCacheData.splice(vDeleteProperty, 1);
 						}
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
+						that.iLimit -= 1;
 						fnCallback(Number(vDeleteProperty));
 					} else {
 						if (vDeleteProperty) {
@@ -701,6 +705,8 @@ sap.ui.define([
 		this.sContext = undefined;         // the "@odata.context" from the responses
 		this.aElements = [];               // the available elements
 		this.aElements.$count = undefined; // see setCount
+		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
+									       // exact value is unknown)
 
 		this.sResourcePath += this.sResourcePath.indexOf("?") >= 0 ? "&" : "?";
 	}
@@ -792,7 +798,7 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		iEnd = Math.min(iEnd, getCount(this.aElements));
+		iEnd = Math.min(iEnd, this.iLimit);
 
 		for (i = iIndex; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
