@@ -94,6 +94,10 @@ sap.ui.define(['jquery.sap.global', 'sap/m/semantic/Segment', 'sap/ui/base/Metad
 		this.aSegments = null;
 	};
 
+	SegmentedContainer.prototype.getContainer = function () {
+		return this._oContainer;
+	};
+
 	return SegmentedContainer;
 
 }, /* bExport= */ false);
