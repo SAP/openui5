@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		var oBinding = this.getBinding("rows");
 
 		if (sName === "rows" && oBinding != null) {
-			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
+			// Table._addBindingListener can not be used here, as the selectionChanged event will be added by an adapter applied in #getBinding.
 			oBinding.attachEvents({
 				selectionChanged: this._onSelectionChanged.bind(this)
 			});

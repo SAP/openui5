@@ -1614,6 +1614,29 @@
 		assert.ok(spy.calledOnce, "bindRows was called");
 	});
 
+	QUnit.test("Binding events", function(assert) {
+		var oChangeSpy = this.spy();
+		var oDataRequestedSpy = this.spy();
+		var oDataReceivedSpy = this.spy();
+
+		oTable.bindRows({
+			path: "/modelData",
+			events: {
+				change: oChangeSpy,
+				dataRequested: oDataRequestedSpy,
+				dataReceived: oDataReceivedSpy
+			}
+		});
+
+		var oBinding = oTable.getBinding("rows");
+		oBinding.fireEvent("dataRequested");
+		oBinding.fireEvent("dataReceived");
+
+		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
+		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
+		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
+	});
+
 	QUnit.module("Callbacks", {
 		afterEach: destroyTable
 	});

@@ -1646,19 +1646,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @override {@link sap.ui.base.ManagedObject#_bindAggregation}
 	 */
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
+		if (sName === "rows") {
+			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequestedListener.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceivedListener.bind(this));
+		}
+
 		// Create the binding.
 		Element.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		var oBinding = this.getBinding("rows");
 
 		if (sName === "rows" && oBinding != null) {
-			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
-			oBinding.attachEvents({
-				change: this._onBindingChange.bind(this),
-				dataRequested: this._onBindingDataRequestedListener.bind(this),
-				dataReceived: this._onBindingDataReceivedListener.bind(this)
-			});
-
 			var oModel = oBinding.getModel();
 			if (oModel != null && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				jQuery.sap.log.error("The binding mode of the model is set to \"OneTime\"."
@@ -1712,6 +1711,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return oBindingInfo;
+	};
+
+	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
+		if (oBindingInfo.events == null) {
+			oBindingInfo.events = {};
+		}
+
+		if (oBindingInfo.events[sEventName] == null) {
+			oBindingInfo.events[sEventName] = fHandler;
+		} else {
+			// Wrap the event handler of the other party to add our handler.
+			var fOriginalHandler = oBindingInfo.events[sEventName];
+			oBindingInfo.events[sEventName] = function() {
+				fOriginalHandler.apply(this, arguments);
+				fHandler.apply(this, arguments);
+			};
+		}
 	};
 
 	/**
