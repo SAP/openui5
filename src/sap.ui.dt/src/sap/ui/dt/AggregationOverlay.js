@@ -127,6 +127,15 @@ function(jQuery, Overlay) {
 	};
 
 	/**
+	 * Returns if the AggregationOverlay is an association
+	 * @public
+	 * @return {boolean} if the AggregationOverlay is an association
+	 */
+	AggregationOverlay.prototype.isAssociation = function() {
+		return !!this.getDesignTimeMetadata().getData().aggregationLike;
+	};
+
+	/**
 	 * Returns an array with Overlays for the public children of the aggregation, associated with this AggregationOverlay
 	 * @return {sap.ui.dt.Overlay[]} children Overlays
 	 * @public

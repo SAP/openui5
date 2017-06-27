@@ -252,7 +252,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.getElementInstance = function() {
-		return sap.ui.getCore().byId(this.getElement());
+		return ElementUtil.getElementInstance(this.getElement());
 	};
 
 	/**
