@@ -172,7 +172,7 @@
 			"speaker": "Stefan Beck",
 			"type": "Key Note",
 			"duration": 40,
-			"abstract":"<p>All the news around UI5.</p>"
+			"abstract":"SAPUI5 is evolving and thus best practices or recommended controls change over time. In this session, you'll get an update on the new supportability tool, the new DemoKit, new and updated controls, news in the framework like our plans towards OData V4 and improved Smart Controls. Finally we'll share some insights into more radical renovation activities that will come early in 2018."
 		},
 		{
 			"type": "break",
@@ -336,7 +336,7 @@
 			"speaker": "Manuel Blechschmidt",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>Session Description: In this session we will write a custom component using OpenLayers v3 (http://www.openlayers.de) for showing a map. This map will be bound to a XMPPJsonPatchSyncModel (https://github.com/ManuelB/XMPPJSONPatchSyncModel) to make it possible to track other people in real time on the map.</p>"
+			"abstract":"<p>In this session we will use a custom component (https://github.com/ManuelB/openui5-ol/) that wraps the OpenLayers v3 API (http://www.openlayers.de) for showing a map. This map will be bound to a XMPPJsonPatchSyncModel (https://github.com/ManuelB/XMPPJSONPatchSyncModel) to make it possible to track other people in real time on the map.</p><p>You should pre-install the following software on your notebook:</p><ul>  <li>git</li>  <li>Your favorite IDE</li>  <li>ejabbered (a public server will be running on the speaker notebook)</li>  <li>A webserver e.g. (python -m SimpleHTTPServer 8000)</li></ul>"
 		},
 		{
 			"type": "break",
@@ -360,7 +360,7 @@
 			"speaker": "Thilo Seidel",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"Let`s build a simple FLP plugin (based on a UI5 Component) together. Once deployed to a FLP on Cloud Platform we will start to use the renderer extension api of FLP to place SAPUI5 controls into the FLP UI to improve the user experience of the Lauchpad AND learn that SAPUI5 and Fiori Launchpad are actually of the same kind."
+			"abstract":"<p>Let's build a simple FLP plugin (based on a UI5 Component) together. Once deployed to a FLP on Cloud Platform we will start to use the renderer extension api of FLP to place SAPUI5 controls into the FLP UI to improve the user experience of the Lauchpad AND learn that SAPUI5 and Fiori Launchpad are actually of the same kind.</p> <p>Prerequisites:</p> <ul>  <li>Laptop</li>  <li>an SAP CP trial account</li> </ul>"
 		},
 		{
 			"type": "break",
@@ -372,7 +372,7 @@
 			"speaker": "Stanislava Baltova, Yavor Ivanov",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>Find out everything you need to know about the new version of SAP Fiori. Learn what makes Fiori 2.0 different and which are the new UI5 features empowering Fiori 2.0 experience.</p><p>In this session we will show and tell how to develop your Fiori 2.0 app from scratch and even more - how to migrate your existing app to Fiori 2.0.</p>"
+			"abstract":"<p>Find out everything you need to know about the new version of SAP Fiori. Learn what makes Fiori 2.0 different and which are the new UI5 features empowering Fiori 2.0 experience.</p><p>In this session we will show and tell how to develop your Fiori 2.0 app from scratch and even more - how to migrate your existing app to Fiori 2.0.</p><p>Prerequisites:</p><p>You will work in SAP WebIDE, trial accounts are already created for you, so you do not need anything else than your laptop. In case of network issues, we would fall back to using nodejs, NPM and Git, so you should preferably have those installed.</p>"
 		},
 		{
 			"type": "break",
@@ -384,7 +384,7 @@
 			"speaker": "Frederic Berg",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>In this session, we will demonstrate how to get started on cloud foundry. We will see how to onboard onto the platform, install the necessary tools and deploy a UI5 application which makes use of platform services to persist its data.</p>"
+			"abstract":"<p>In this session, we will demonstrate how to get started on cloud foundry. We will see how to onboard onto the platform, install the necessary tools and deploy a UI5 application which makes use of platform services to persist its data.</p><p>Prerequisites:</p><p>Please have Node.js installed on your laptop and your own hanatrial account ready.</p>"
 		}
 	]
 }

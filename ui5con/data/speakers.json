@@ -13,7 +13,7 @@
 	},
 	{
 		"name": "Manuel Blechschmidt",
-		"bio": "Manuel is the CEO of the Incentergy GmbH specialized in business software consultancy. He mainly helps teams building fantastic software with OpenUI5, OData and Java EE. He is an active member of the open source community who contributes to multiple apache projects and publishes his work on github.",
+		"bio": "Manuel is the CEO of the Incentergy GmbH specialized in business software consultancy, currently working on NEXT Farming for the FarmFacts GmbH. He mainly helps teams building fantastic software with OpenUI5, OData and Java EE. He is an active member of the open source community who contributes to multiple apache projects and publishes his work on github.",
 		"picture": "manuel_blechschmidt.jpg",
 		"company": "Incentergy"
 	},
@@ -77,8 +77,8 @@
 	},
 	{
 		"name": "Alexander Rauh",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Alexander is an Area Product Owner in UI5 organization for Flexibility topics.",
+		"picture": "AxelRauh.jpg",
 		"company": "SAP"
 	},
 	{
@@ -330,7 +330,7 @@
 	{
 		"name": "Jan Mummenthaler",
 		"bio": "",
-		"picture": "no_portrait.png",
+		"picture": "janMummenthaler.jpg",
 		"company": "SAP",
 		"meetMe": "12:30"
 	},
