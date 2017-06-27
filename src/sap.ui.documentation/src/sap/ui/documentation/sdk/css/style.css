@@ -1466,6 +1466,10 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	position: absolute;
 	max-height: 50%;
 }
+/* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
+html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
+	position: relative;
+}
 
 /* Special case with initial page having different aspect ratio according to screen size */
 @media (max-width: 64rem) {
@@ -1492,6 +1496,11 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	.sapUiDemokit .welcomeImage {
 		position: absolute;
 	}
+}
+
+/* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
+html[data-sap-ui-browser^="ff"] .sapUiDemokit .welcomeImage {
+	position: relative;
 }
 
 @font-face {
