@@ -80,7 +80,8 @@ jQuery.sap.require("sap.ui.fl.Utils");
 						}
 					}
 				};
-			}
+			},
+			getManifestEntry: function () {}
 		};
 		sandbox.stub(Cache, "getChangesFillingCache").returns(oChangesFillingCachePromise);
 		sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
