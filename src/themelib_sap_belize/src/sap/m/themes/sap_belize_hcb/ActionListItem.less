@@ -52,6 +52,11 @@ html[data-sap-ui-browser^="ie"] .sapMList .sapMLIB.sapMALI:focus > .sapMLIBConte
 	border-radius: 0;
 }
 
+/* content has the focus outline not the item */
+.sapMLIBLegacyOutline.sapMALI:focus::before {
+	border: none;
+}
+
 /* ------------------------------ */
 /* Compact size                   */
 /* ------------------------------ */
