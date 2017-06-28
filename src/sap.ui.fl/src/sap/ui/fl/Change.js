@@ -37,7 +37,7 @@ sap.ui.define([
 		this._sRequest = '';
 		this._bIsDeleted = false;
 		this._bUserDependent = (oFile.layer === "USER");
-		this._mRevertData = null;
+		this._vRevertData = null;
 	};
 
 	Change.events = {
