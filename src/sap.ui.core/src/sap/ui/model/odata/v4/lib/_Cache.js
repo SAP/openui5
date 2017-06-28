@@ -25,43 +25,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Converts the known OData system query options from map or array notation to a string. All
-	 * other parameters are simply passed through.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {function(string,any)} fnResultHandler
-	 *   The function to process the converted options getting the name and the value
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions,
-			bSortExpandSelect) {
-		Object.keys(mQueryOptions).forEach(function (sKey) {
-			var vValue = mQueryOptions[sKey];
-
-			if (bDropSystemQueryOptions && sKey[0] === '$') {
-				return;
-			}
-
-			switch (sKey) {
-				case "$expand":
-					vValue = Cache.convertExpand(vValue, bSortExpandSelect);
-					break;
-				case "$select":
-					if (Array.isArray(vValue)) {
-						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
-					}
-					break;
-				default:
-					// nothing to do
-			}
-			fnResultHandler(sKey, vValue);
-		});
-	}
-
-	/**
 	 * Fills the given array range with the given value. If iEnd is greater than the array length,
 	 * elements are appended to the end, in contrast to Array.fill.
 	 *
@@ -205,7 +168,7 @@ sap.ui.define([
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath
-			+ Cache.buildQueryString(mQueryOptions, false, bSortExpandSelect);
+			+ oRequestor.buildQueryString(mQueryOptions, false, bSortExpandSelect);
 		this.bSortExpandSelect = bSortExpandSelect;
 	}
 
@@ -250,7 +213,7 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -361,7 +324,7 @@ sap.ui.define([
 		function request(sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
 			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += Cache.buildQueryString(that.mQueryOptions, true);
+				sPostPath += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 				that.addByPath(that.mPostRequests, sPath, oEntityData);
 				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 						setCreatePending, cleanUp)
@@ -679,7 +642,7 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 			return patch();
 		});
 	};
@@ -1045,125 +1008,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
-
-	/**
-	 * Builds a query string from the parameter map. Converts the known OData system query
-	 * options, all other OData system query options are rejected; with
-	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-	 *
-	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string}
-	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
-	 * @example
-	 * {
-	 *		$expand : {
-	 *			"SO_2_BP" : true,
-	 *			"SO_2_SOITEM" : {
-	 *				"$expand" : {
-	 *					"SOITEM_2_PRODUCT" : {
-	 *						"$apply" : "filter(Price gt 100)",
-	 *						"$expand" : {
-	 *							"PRODUCT_2_BP" : null,
-	 *						},
-	 *						"$select" : "CurrencyCode"
-	 *					},
-	 *					"SOITEM_2_SO" : null
-	 *				}
-	 *			}
-	 *		},
-	 *		"sap-client" : "003"
-	 *	}
-	 */
-	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect) {
-		return _Helper.buildQuery(
-			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect));
-	};
-
-	/**
-	 * Converts the value for a "$expand" in mQueryParams.
-	 *
-	 * @param {object} mExpandItems The expand items, a map from path to options
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string} The resulting value for the query string
-	 * @throws {Error} If the expand items are not an object
-	 */
-	Cache.convertExpand = function (mExpandItems, bSortExpandSelect) {
-		var aKeys,
-			aResult = [];
-
-		if (!mExpandItems || typeof mExpandItems !== "object") {
-			throw new Error("$expand must be a valid object");
-		}
-
-		aKeys = Object.keys(mExpandItems);
-		if (bSortExpandSelect) {
-			aKeys = aKeys.sort();
-		}
-		aKeys.forEach(function (sExpandPath) {
-			var vExpandOptions = mExpandItems[sExpandPath];
-
-			if (vExpandOptions && typeof vExpandOptions === "object") {
-				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions,
-					bSortExpandSelect));
-			} else {
-				aResult.push(sExpandPath);
-			}
-		});
-
-		return aResult.join(",");
-	};
-
-	/**
-	 * Converts the expand options.
-	 *
-	 * @param {string} sExpandPath The expand path
-	 * @param {boolean|object} vExpandOptions
-	 *   The options; either a map or simply <code>true</code>
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string} The resulting string for the OData query in the form "path" (if no
-	 *   options) or "path($option1=foo;$option2=bar)"
-	 */
-	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions, bSortExpandSelect) {
-		var aExpandOptions = [];
-
-		convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
-			aExpandOptions.push(sOptionName + '=' + vOptionValue);
-		}, undefined, bSortExpandSelect);
-		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
-			: sExpandPath;
-	};
-
-	/**
-	 * Converts the query options. All known OData system query options are converted to
-	 * strings, so that the result can be used for _Helper.buildQuery; with
-	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {object} The converted query options
-	 */
-	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions,
-			bSortExpandSelect) {
-		var mConvertedQueryOptions = {};
-
-		if (!mQueryOptions) {
-			return undefined;
-		}
-		convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
-			mConvertedQueryOptions[sKey] = vValue;
-		}, bDropSystemQueryOptions, bSortExpandSelect);
-		return mConvertedQueryOptions;
-	};
 
 	/**
 	 * Creates a cache for a collection of entities that performs requests using the given

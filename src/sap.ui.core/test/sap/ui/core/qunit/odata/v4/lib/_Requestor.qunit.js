@@ -1685,6 +1685,181 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertQueryOptions", function (assert) {
+		var oExpand = {},
+			oRequestor = _Requestor.create("/");
+
+		this.mock(oRequestor).expects("convertExpand")
+			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
+
+		assert.deepEqual(oRequestor.convertQueryOptions({
+			foo : "bar",
+			$apply : "filter(Price gt 100)",
+			$count : "true",
+			$expand : oExpand,
+			$filter : "BuyerName eq 'SAP'",
+			$foo : "bar", // to show that any system query option is accepted
+			$levels : "5",
+			$orderby : "GrossAmount asc",
+			$search : "EUR",
+			$select : ["select1", "select2"]
+		}), {
+			foo : "bar",
+			$apply : "filter(Price gt 100)",
+			$count : "true",
+			$expand : "expand",
+			$filter : "BuyerName eq 'SAP'",
+			$foo : "bar",
+			$levels : "5",
+			$orderby : "GrossAmount asc",
+			$search : "EUR",
+			$select : "select1,select2"
+		});
+
+		assert.deepEqual(oRequestor.convertQueryOptions({
+			foo : "bar",
+			"sap-client" : "111",
+			$apply : "filter(Price gt 100)",
+			$count : true,
+			$expand : oExpand,
+			$filter : "BuyerName eq 'SAP'",
+			$orderby : "GrossAmount asc",
+			$search : "EUR",
+			$select : ["select1", "select2"]
+		}, /*bDropSystemQueryOptions*/true), {
+			foo : "bar",
+			"sap-client" : "111"
+		});
+
+		assert.deepEqual(oRequestor.convertQueryOptions({
+			$select : "singleSelect"
+		}), {
+			$select : "singleSelect"
+		});
+
+		assert.strictEqual(oRequestor.convertQueryOptions(undefined), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertExpandOptions", function (assert) {
+		var oExpand = {},
+			oRequestor = _Requestor.create("/~/");
+
+		this.mock(oRequestor).expects("convertExpand")
+			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
+
+		assert.strictEqual(oRequestor.convertExpandOptions("foo", {
+			$expand : oExpand,
+			$select : ["select1", "select2"]
+		}), "foo($expand=expand;$select=select1,select2)");
+
+		assert.strictEqual(oRequestor.convertExpandOptions("foo", {}), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertExpand", function (assert) {
+		var oOptions = {},
+			oRequestor = _Requestor.create("/~/");
+
+		["Address", null].forEach(function (vValue) {
+			assert.throws(function () {
+				oRequestor.convertExpand(vValue);
+			}, new Error("$expand must be a valid object"));
+		});
+
+		this.mock(oRequestor).expects("convertExpandOptions")
+			.withExactArgs("baz", sinon.match.same(oOptions), false).returns("baz(options)");
+
+		assert.strictEqual(oRequestor.convertExpand({
+			foo : true,
+			bar : null,
+			baz : oOptions
+		}, false), "foo,bar,baz(options)");
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bSortExpandSelect, i) {
+		QUnit.test("buildQueryString, " + i, function (assert) {
+			var oConvertedQueryParams = {},
+				oQueryParams = {},
+				oRequestor = _Requestor.create("/~/"),
+				oRequestorMock = this.mock(oRequestor);
+
+			oRequestorMock.expects("convertQueryOptions")
+				.withExactArgs(undefined, undefined, undefined).returns(undefined);
+
+			assert.strictEqual(oRequestor.buildQueryString(), "");
+
+			oRequestorMock.expects("convertQueryOptions")
+				.withExactArgs(sinon.match.same(oQueryParams), true, bSortExpandSelect)
+				.returns(oConvertedQueryParams);
+			this.mock(_Helper).expects("buildQuery")
+				.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
+
+			assert.strictEqual(oRequestor.buildQueryString(oQueryParams, true, bSortExpandSelect),
+				"?query");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQueryString examples", function (assert) {
+		[{
+			o : {foo : ["bar", "€"], $select : "IDÖ"},
+			s : "foo=bar&foo=%E2%82%AC&$select=ID%C3%96"
+		}, {
+			o : {$select : ["ID"]},
+			s : "$select=ID"
+		}, {
+			o : {$select : ["Name", "ID"]},
+			s : "$select=ID,Name"
+		}, {
+			o : {$expand : {SO_2_SOITEM : true, SO_2_BP : true}},
+			s : "$expand=SO_2_BP,SO_2_SOITEM"
+		}, {
+			o : {$expand : {SO_2_BP : true, SO_2_SOITEM : {$select : "CurrencyCode"}}},
+			s : "$expand=SO_2_BP,SO_2_SOITEM($select=CurrencyCode)"
+		}, {
+			o : {
+				$expand : {
+					SO_2_BP : true,
+					SO_2_SOITEM : {
+						$select : ["Note", "ItemPosition"]
+					}
+				}
+			},
+			s : "$expand=SO_2_BP,SO_2_SOITEM($select=ItemPosition,Note)"
+		}, {
+			o : {
+				$expand : {
+					SO_2_SOITEM : {
+						$expand : {
+							SOITEM_2_SO : true,
+							SOITEM_2_PRODUCT : {
+								$expand : {
+									PRODUCT_2_BP : true
+								},
+								$filter : "CurrencyCode eq 'EUR'",
+								$select : "CurrencyCode"
+							}
+						}
+					},
+					SO_2_BP : true
+				},
+				"sap-client" : "003"
+			},
+			s : "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
+			+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
+			+ "&sap-client=003"
+		}].forEach(function (oFixture) {
+			var oRequestor = _Requestor.create("/~/");
+
+			assert.strictEqual(
+				oRequestor.buildQueryString(oFixture.o, undefined, true), "?" + oFixture.s,
+				oFixture.s);
+		});
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl)),
@@ -1794,3 +1969,4 @@ sap.ui.require([
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?
+// TODO: tests for convertSystemQueryOptions missing. Only tested indirectly
