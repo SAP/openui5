@@ -691,6 +691,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 * <b>Note:</b> In flat mode the user of the table cannot expand or collapse certain nodes and the hierarchy is not
 	 * visible to the user. The caller of this function has to ensure to use this option only with non-hierarchical data.
 	 *
+	 * @param {boolean} bFlat If set to <code>true</code>, the flat mode is enabled
+	 *
 	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
 	 * @protected
 	 */
