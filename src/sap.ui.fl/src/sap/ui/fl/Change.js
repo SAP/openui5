@@ -545,7 +545,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all dependent global IDs.
+	 * Returns all dependent global IDs, including the ID from selector of the changes.
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to translate the local ID into a global ID
 	 *
@@ -556,31 +556,27 @@ sap.ui.define([
 	Change.prototype.getDependentIdList = function (oAppComponent) {
 		var that = this;
 		var sId;
-		var aDependentSelectors = [];
+		var aDependentSelectors = [this.getSelector()];
 		var aDependentIds = [];
 
 		if (!this._aDependentIdList) {
-			if (!this._oDefinition.dependentSelector) {
-				this._aDependentIdList = [];
-			} else {
-				Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
-					aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
-				});
-
-				aDependentSelectors = [].concat.apply([], aDependentSelectors);
-
-				aDependentSelectors.forEach(function (oDependentSelector) {
-					sId = oDependentSelector.id;
-					if (oDependentSelector.idIsLocal) {
-						sId = oAppComponent.createId(oDependentSelector.id);
-					}
-					if (aDependentIds.indexOf(sId) === -1) {
-						aDependentIds.push(sId);
-					}
-				});
-
-				this._aDependentIdList = aDependentIds;
+			if (this._oDefinition.dependentSelector){
+				aDependentSelectors = Object.keys(this._oDefinition.dependentSelector).reduce(function(aDependentSelectors, sAlias){
+					return aDependentSelectors.concat(that._oDefinition.dependentSelector[sAlias]);
+				}, aDependentSelectors);
 			}
+
+			aDependentSelectors.forEach(function (oDependentSelector) {
+				sId = oDependentSelector.id;
+				if (oDependentSelector.idIsLocal) {
+					sId = oAppComponent.createId(oDependentSelector.id);
+				}
+				if (aDependentIds.indexOf(sId) === -1) {
+					aDependentIds.push(sId);
+				}
+			});
+
+			this._aDependentIdList = aDependentIds;
 		}
 
 		return this._aDependentIdList;
@@ -634,7 +630,7 @@ sap.ui.define([
 			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
-			namespace: Utils.createNamespace(oPropertyBag, "changes"),
+			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"),
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),
 			conditions: {},
