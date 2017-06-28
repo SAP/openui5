@@ -45,6 +45,7 @@
 				</PlanningCalendarRow>
 			</rows>
 		</PlanningCalendar>
+		<Label text="Add available built-in views to the example:"/>
 		<MultiComboBox
 				selectionFinish="handleSelectionFinish"
 				width="230px"
