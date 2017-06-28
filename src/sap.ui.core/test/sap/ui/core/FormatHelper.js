@@ -67,7 +67,6 @@ function formatValue(oValue, sResult) {
 	switch(typeof oValue) {
 		case "string":
 			return "\"" + oValue + "\"";
-			break;
 		default:
 			return oValue;
 	}
@@ -112,34 +111,80 @@ function formatObject(oObject, bFormatted, iDepth, sResult) {
 	return sResult;
 }
 
+function validateFormatOptions(oOptions, oSupportedOptions) {
+	var oOption, vValue, bError;
+	for (var sName in oOptions) {
+		oOption = oSupportedOptions[sName];
+		if (!oOption) {
+			return "Unknown format option \"" + sName + "\"";
+		}
+		vValue = oOptions[sName];
+		bError = false;
+		switch (oOption.type) {
+			case "enum": 
+				bError = (typeof vValue !== "string") || oOption.values.indexOf(vValue) === -1
+				break;
+			case "int": 
+				bError = (typeof vValue !== "number") || Math.floor(vValue) !== vValue || (oOption.min !== undefined && vValue < oOption.min);
+				break;
+			case "float": 
+				bError = (typeof vValue !== "number") || (oOption.hasOwnProperty("min") && vValue < oOption.min);
+				break;
+			case "string": 
+				bError = (typeof vValue !== "string") || (oOption.regex && !oOption.regex.test(vValue));
+				break;
+			case "boolean": 
+				bError = vValue !== true && vValue !== false;
+				break;
+		}
+		if (bError) {
+			return "Invalid value \"" + vValue + "\" for format option \"" + sName + "\". " + oOption.help;
+		}
+	}
+}
 
 sap.ui.model.SimpleType.extend("Options", {
+	constructor: function(oSupportedOptions) {
+		sap.ui.model.SimpleType.apply(this, arguments);
+		this.sName = "Options";
+		this.oSupportedOptions = oSupportedOptions;
+	},
 	parseValue: function(sValue) {
-		var oFormatOptions = jQuery.sap.parseJS(sValue);
+		var oFormatOptions;
+		try {
+			oFormatOptions = jQuery.sap.parseJS(sValue);
+		} catch(e) {
+			throw new sap.ui.model.ParseException("Could not parse format options: " + e.message);
+		}
 		return oFormatOptions;
 	},
 	formatValue: function(oValue) {
 		return formatObject(oValue, true);
 	},
-	validateValue: function() {
+	validateValue: function(oOptions) {
+		var sError = validateFormatOptions(oOptions, this.oSupportedOptions);
+		if (sError) {
+			throw new sap.ui.model.ValidateException(sError);
+		}
 		return true;
 	}
 })
 
 sap.ui.model.CompositeType.extend("HashParams", {
-	constructor : function(aParams) {
+	constructor: function(aParams, oSupportedOptions) {
 		sap.ui.model.CompositeType.apply(this, arguments);
 		this.sName = "HashParams";
 		this.aParams = aParams;
+		this.oSupportedOptions = oSupportedOptions;
 		this.bUseRawValues = true;
 	},
 	parseValue: function(sValue) {
-		var aParts = sValue.substr(1).split("&"),
+		var aParts = sValue.substr(1).split("&"), 
 			oParams = {}, aParams;
 		aParts.forEach(function(oParam) {
 			var aSplit = oParam.split("="),
 				sName = aSplit[0],
-				vValue = aSplit[1];
+				vValue = decodeURIComponent(aSplit[1]);
 			if (sName === "formatOptions") {
 				vValue = jQuery.sap.parseJS(vValue);
 			} 
@@ -159,33 +204,72 @@ sap.ui.model.CompositeType.extend("HashParams", {
 	formatValue: function(aValue) {
 		var aParams = [];
 		this.aParams.forEach(function(oParam, iIndex) {
-				var vValue = aValue[iIndex];
-				if (oParam.name === "formatOptions") {
-					vValue = formatObject(vValue);
-				}
-				if (oParam.name === "date" || oParam.name === "todate") {
-					vValue = vValue.valueOf();
-				} 
-				if (!jQuery.sap.equal(vValue, oParam.default)) aParams.push(oParam.name + "=" + vValue);
-			})
+			var vValue = aValue[iIndex];
+			if (oParam.name === "formatOptions") {
+				vValue = formatObject(vValue);
+			}
+			if (oParam.name === "date" || oParam.name === "todate") {
+				vValue = vValue.valueOf();
+			} 
+			if (!jQuery.sap.equal(vValue, oParam.default)) aParams.push(oParam.name + "=" + encodeURIComponent(vValue));
+		})
 		return "#" + aParams.join("&");
 	},
-	validateValue: function() {
+	validateValue: function(aValue) {
+		var sError;
+		this.aParams.forEach(function(oParam, iIndex) {
+			var vValue = aValue[iIndex];
+			if (oParam.name === "formatOptions") {
+				sError = validateFormatOptions(vValue, this.oSupportedOptions);
+			}
+		});
+		if (sError) {
+			throw new sap.ui.model.ValidateException(sError);
+		} 
 		return true;
 	}
 })
 
-function bindHash(oModel, aHashParams) {
+function bindHash(oModel, aHashParam, oSupportedOptions) {
 	aHashBindings = aHashParams.map(function(sParam) {
 		return oModel.bindProperty("/" + sParam.name);
 	})
 	oHashBinding = new sap.ui.model.CompositeBinding(aHashBindings, true);
-	oHashBinding.setType(new HashParams(aHashParams));
+	oHashBinding.setType(new HashParams(aHashParams, oSupportedOptions));
 	oHashBinding.attachChange(function() {
 		location.hash = oHashBinding.getExternalValue();
 	});
 	window.addEventListener("hashchange", function() {
-		oHashBinding.setExternalValue(location.hash);
+		try {
+			oHashBinding.setExternalValue(location.hash);
+		} catch(e) {
+			showError("Parse Error", "Could not parse hash: " + e.message);
+		}
 	});
-	oHashBinding.setExternalValue(location.hash);
+	try {
+		oHashBinding.setExternalValue(location.hash);
+	} catch (e) {
+		showError("Parse Error", "Could not parse hash: " + e.message);
+	}
+}
+
+function showError(sTitle, sMessage) {
+	var dialog = new sap.m.Dialog({
+		title: sTitle,
+		type: 'Message',
+		state: 'Error',
+		content: new sap.m.Text({
+			text: sMessage
+		}),
+		beginButton: new sap.m.Button({
+			text: 'OK',
+			press: function () {
+				dialog.close();
+			}
+		}),
+		afterClose: function() {
+			dialog.destroy();
+		}
+	});
+	dialog.open();
 }
