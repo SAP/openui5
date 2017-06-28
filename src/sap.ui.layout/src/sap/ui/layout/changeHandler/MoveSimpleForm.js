@@ -167,54 +167,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 
 			};
 
-			/**
-			 * Completes the change by adding change handler specific content
-			 *
-			 * @param {sap.ui.fl.Change}
-			 *          oChangeWrapper change object to be completed
-			 * @param {object}
-			 *          mSpecificChangeInfo as an empty object since no additional attributes are required for this operation
-			 * @param {object}
-			 *          mPropertyBag map containing the application component
-			 * @public
-			 */
-			MoveSimpleForm.completeChangeContent = function(oChangeWrapper, mSpecificChangeInfo, mPropertyBag) {
-				var mStableChangeInfo;
-
-				var oModifier = mPropertyBag.modifier;
-				var oView = mPropertyBag.view;
-				var oAppComponent = mPropertyBag.appComponent;
-
-				var oSimpleForm = oModifier.bySelector(mSpecificChangeInfo.selector, oAppComponent, oView);
-				var aMovedElements = mSpecificChangeInfo.movedElements;
-				if (aMovedElements.length > 1) {
-					jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
-				}
-				var mMovedElement = aMovedElements[0];
-				mMovedElement.element = sap.ui.getCore().byId(mMovedElement.id);
-				var oSource = jQuery.extend({}, mSpecificChangeInfo.source);
-				var oTarget = jQuery.extend({}, mSpecificChangeInfo.target);
-				if (!oTarget.parent) {
-					oTarget.parent = sap.ui.getCore().byId(oTarget.id);
-				}
-				if (!oSource.parent) {
-					oSource.parent = sap.ui.getCore().byId(oSource.id);
-				}
-				if (oSimpleForm && mMovedElement.element && oTarget.parent) {
-					if (mSpecificChangeInfo.changeType === "moveSimpleFormGroup") {
-						mStableChangeInfo = fnMoveFormContainer(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag);
-					} else if (mSpecificChangeInfo.changeType === "moveSimpleFormField") {
-						mStableChangeInfo = fnMoveFormElement(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag);
-					}
-				} else {
-					jQuery.sap.log.error("Element not found. This may caused by an instable id!");
-				}
-
-				var mChangeData = oChangeWrapper.getDefinition();
-				mChangeData.content.targetSelector = mStableChangeInfo.targetSelector;
-				mChangeData.content.movedElements = mStableChangeInfo.movedElements;
-			};
-
 			var fnMapGroupIndexToContentAggregationIndex = function(oModifier, aStopToken, aContent, iGroupIndex) {
 				var oResult;
 				var iCurrentGroupIndex = -1;
@@ -294,8 +246,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				return aResult;
 			};
 
-			var fnMoveFormContainer = function(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag) {
+			var fnGetGroupHeader = function(oHeader) {
+				var oResult = oHeader.getTitle();
+				if (!oResult) {
+					oResult = oHeader.getToolbar();
+				}
+				return oResult;
+			};
 
+			var fnMoveFormContainer = function(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag) {
 				var oMovedGroupTitle = fnGetGroupHeader(mMovedElement.element);
 				var oSimpleFormSelector = JsControlTreeModifier.getSelector(oSimpleForm, mPropertyBag.appComponent);
 				var mMovedSimpleFormElement = {
@@ -311,30 +270,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP,
 					targetSelector : oSimpleFormSelector,
+					movedControl : oMovedGroupTitle,
 					movedElements : [mMovedSimpleFormElement]
 				};
 
 			};
 
-			var fnGetGroupHeader = function(oHeader) {
-				var oResult = oHeader.getTitle();
-				if (!oResult) {
-					oResult = oHeader.getToolbar();
-				}
-				return oResult;
-			};
-
 			var fnMoveFormElement = function(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag) {
-
 				var oSimpleFormSelector = JsControlTreeModifier.getSelector(oSimpleForm, mPropertyBag.appComponent);
-				var oLabelSelector = JsControlTreeModifier.getSelector(mMovedElement.element.getLabel(), mPropertyBag.appComponent);
+				var oLabel = mMovedElement.element.getLabel();
+				var oLabelSelector = JsControlTreeModifier.getSelector(oLabel, mPropertyBag.appComponent);
 				var oTargetGroupHeader = fnGetGroupHeader(oTarget.parent);
 				var oSourceGroupHeader = fnGetGroupHeader(oSource.parent);
 				var oTargetGroupSelector = JsControlTreeModifier.getSelector(oTargetGroupHeader, mPropertyBag.appComponent);
 				var oSourceGroupSelector = JsControlTreeModifier.getSelector(oSourceGroupHeader, mPropertyBag.appComponent);
 
 				var oMovedElement = {
-					element : oLabelSelector,
+					elementSelector : oLabelSelector,
 					source : {
 						groupSelector : oSourceGroupSelector,
 						fieldIndex : mMovedElement.sourceIndex
@@ -348,9 +300,66 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD,
 					targetSelector : oSimpleFormSelector,
+					target : oTargetGroupHeader,
+					source : oSourceGroupHeader,
+					movedControl : oLabel,
 					movedElements : [oMovedElement]
 				};
+			};
 
+
+			/**
+			 * Completes the change by adding change handler specific content
+			 *
+			 * @param {sap.ui.fl.Change}
+			 *          oChangeWrapper change object to be completed
+			 * @param {object}
+			 *          mSpecificChangeInfo as an empty object since no additional attributes are required for this operation
+			 * @param {object}
+			 *          mPropertyBag map containing the application component
+			 * @public
+			 */
+			MoveSimpleForm.completeChangeContent = function(oChangeWrapper, mSpecificChangeInfo, mPropertyBag) {
+				var mStableChangeInfo;
+
+				var oModifier = mPropertyBag.modifier;
+				var oView = mPropertyBag.view;
+				var oAppComponent = mPropertyBag.appComponent;
+
+				var oSimpleForm = oModifier.bySelector(mSpecificChangeInfo.selector, oAppComponent, oView);
+				var aMovedElements = mSpecificChangeInfo.movedElements;
+				if (aMovedElements.length > 1) {
+					jQuery.sap.log.warning("Moving more than 1 Formelement is not yet supported.");
+				}
+				var mMovedElement = aMovedElements[0];
+				mMovedElement.element = sap.ui.getCore().byId(mMovedElement.id);
+				var oSource = jQuery.extend({}, mSpecificChangeInfo.source);
+				var oTarget = jQuery.extend({}, mSpecificChangeInfo.target);
+				if (!oTarget.parent) {
+					oTarget.parent = sap.ui.getCore().byId(oTarget.id);
+				}
+				if (!oSource.parent) {
+					oSource.parent = sap.ui.getCore().byId(oSource.id);
+				}
+				if (oSimpleForm && mMovedElement.element && oTarget.parent) {
+					if (mSpecificChangeInfo.changeType === "moveSimpleFormGroup") {
+						mStableChangeInfo = fnMoveFormContainer(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag);
+					} else if (mSpecificChangeInfo.changeType === "moveSimpleFormField") {
+						mStableChangeInfo = fnMoveFormElement(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag);
+					}
+				} else {
+					jQuery.sap.log.error("Element not found. This may caused by an instable id!");
+				}
+
+				var mChangeData = oChangeWrapper.getDefinition();
+				mChangeData.content.targetSelector = mStableChangeInfo.targetSelector;
+				mChangeData.content.movedElements = mStableChangeInfo.movedElements;
+
+				if (mStableChangeInfo.source && mStableChangeInfo.target){
+					oChangeWrapper.addDependentControl(mStableChangeInfo.source, "sourceParent", mPropertyBag);
+					oChangeWrapper.addDependentControl(mStableChangeInfo.target, "targetParent", mPropertyBag);
+				}
+				oChangeWrapper.addDependentControl([mStableChangeInfo.movedControl], "movedElements", mPropertyBag);
 			};
 
 			return MoveSimpleForm;
