@@ -200,20 +200,21 @@ QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 	// set properties with absolute path
 	assert.equal(oModel.setProperty("/value", "hello"), true, "Property set");
 	assert.equal(oModel.getProperty("/value"), "hello", "Property exists and has new value");
+	assert.notOk(oModel.setProperty("/value", "hello"), "Property not set, because it already has the same value");
 	assert.equal(oModel.setProperty("/abc", "hello"), false, "Property not set, because it does not exist");
 	assert.equal(oModel.getProperty("/abc"), null, "Property does not exist");
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable");
 
 	// Access property of hidden aggregation
-	assert.equal(oModel.setProperty("/_hiddenObjects/0/value", "hidden"), true, "Property of hidden element set");
+	assert.equal(oModel.setProperty("/_hiddenObjects/0/value", "hidden1"), true, "Property of hidden element set");
 
 	// context not given
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable without a context");
 
 	// context given
 	var oContext = oModel.getContext("/");
-	assert.equal(oModel.setProperty("value", "hello", oContext), true, "Property set, because context is resolvable");
-	assert.equal(oModel.getProperty("value", oContext), "hello", "Property has correct value, because context is resolvable");
+	assert.equal(oModel.setProperty("value", "hello1", oContext), true, "Property set, because context is resolvable");
+	assert.equal(oModel.getProperty("value", oContext), "hello1", "Property has correct value, because context is resolvable");
 });
 
 QUnit.test("ManagedObject Model  - Property Binding - Registration and Housekeeping", function(assert) {

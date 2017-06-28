@@ -104,7 +104,7 @@ sap.ui.define([
 				if (oProperty) {
 					var sSetter = oProperty._sMutator,
 						sGetter = oProperty._sGetter;
-					if (oObject[sGetter] !== oValue) {
+					if (oObject[sGetter]() !== oValue) {
 						oObject[sSetter](oValue);
 						this.checkUpdate(false, bAsyncUpdate);
 						return true;
