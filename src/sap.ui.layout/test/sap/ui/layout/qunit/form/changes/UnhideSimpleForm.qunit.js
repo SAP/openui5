@@ -253,6 +253,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
         assert.equal(oChange.content.elementSelector.id, "Label0", "sUnhideId has been added to the change");
         assert.ok(oChange.content.elementSelector.idIsLocal, "the id is a local id");
+		assert.equal(oChangeWrapper.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel0.getId(), "elementSelector is part of dependent selector");
 	});
 
 	QUnit.test('when calling completeChangeContent without sUnhideId', function (assert) {

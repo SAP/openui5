@@ -96,43 +96,30 @@ sap.ui.require([
 		 });
 	});
 
-	QUnit.test("when calling 'loadChangesMapForComponent' of the ChangePersistence", function(assert) {
+	QUnit.test("when calling 'getChangesForComponent' of the ChangePersistence", function(assert) {
 		var done = assert.async();
 		jQuery.getJSON( "./testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				var aExpectedChanges0 = oFakeVariantResponse.changes.changes;
-				var aExpectedChanges1 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
-				var aExpectedChanges2 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
-				var aExpectedChanges = aExpectedChanges0.concat(aExpectedChanges1).concat(aExpectedChanges2).map(function(oChangeContent){
-					var oChange = new Change(oChangeContent);
-					oChange._aDependentIdList = [];
-					return oChange;
-				});
-				var mExpectedChanges = {
-					mChanges: {
-						"RTADemoAppMD---detail--GroupElementDatesShippingStatus": aExpectedChanges
-					},
-					mDependencies: {
-					},
-					mDependentChangesOnMe: {
-					}
-				};
+			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
+			var aExpectedChanges0 = oFakeVariantResponse.changes.changes;
+			var aExpectedChanges1 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
+			var aExpectedChanges2 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
+			var aExpectedChanges = aExpectedChanges0.concat(aExpectedChanges1).concat(aExpectedChanges2).map(function(oChangeContent){
+				return new Change(oChangeContent);
+			});
 
-				var oComponent = {
-						name: "MyComponent",
-						appVersion: "1.2.3",
-					getId : function() {return "RTADemoAppMD";}
-				};
-				var oChangePersistence = new ChangePersistence(oComponent);
+			var oComponent = {
+					name: "MyComponent",
+					appVersion: "1.2.3",
+				getId : function() {return "RTADemoAppMD";}
+			};
+			var oChangePersistence = new ChangePersistence(oComponent);
 
-				var mPropertyBag = {viewId: "view1--view2"};
-				return oChangePersistence.loadChangesMapForComponent(oComponent, mPropertyBag).then(function(fnGetChangesMap) {
-					assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-					var mChanges = fnGetChangesMap();
-					assert.deepEqual(mChanges, mExpectedChanges, "the expected changes are in the map");
-					done();
-				});
+			var mPropertyBag = {viewId: "view1--view2"};
+			return oChangePersistence.getChangesForComponent(oComponent, mPropertyBag).then(function(aChanges) {
+				assert.deepEqual(aChanges, aExpectedChanges, "the variant changes are available together with the ");
+				done();
+			});
 		 });
 	});
 

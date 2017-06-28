@@ -156,6 +156,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_GROUP,
 					targetSelector : oSimpleFormSelector,
+					movedControl : oMovedGroupTitle,
 					movedElements : [mMovedSimpleFormElement]
 				};
 
@@ -163,14 +164,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 
 			var fnMoveFormElement = function(oSimpleForm, mMovedElement, oSource, oTarget, mPropertyBag) {
 				var oSimpleFormSelector = JsControlTreeModifier.getSelector(oSimpleForm, mPropertyBag.appComponent);
-				var oLabelSelector = JsControlTreeModifier.getSelector(mMovedElement.element.getLabel(), mPropertyBag.appComponent);
+				var oLabel = mMovedElement.element.getLabel();
+				var oLabelSelector = JsControlTreeModifier.getSelector(oLabel, mPropertyBag.appComponent);
 				var oTargetGroupHeader = fnGetGroupHeader(oTarget.parent);
 				var oSourceGroupHeader = fnGetGroupHeader(oSource.parent);
 				var oTargetGroupSelector = JsControlTreeModifier.getSelector(oTargetGroupHeader, mPropertyBag.appComponent);
 				var oSourceGroupSelector = JsControlTreeModifier.getSelector(oSourceGroupHeader, mPropertyBag.appComponent);
 
 				var oMovedElement = {
-					element : oLabelSelector,
+					elementSelector : oLabelSelector,
 					source : {
 						groupSelector : oSourceGroupSelector,
 						fieldIndex : mMovedElement.sourceIndex
@@ -184,6 +186,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				return {
 					changeType : MoveSimpleForm.CHANGE_TYPE_MOVE_FIELD,
 					targetSelector : oSimpleFormSelector,
+					target : oTargetGroupHeader,
+					source : oSourceGroupHeader,
+					movedControl : oLabel,
 					movedElements : [oMovedElement]
 				};
 			};
@@ -348,6 +353,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 				var mChangeData = oChangeWrapper.getDefinition();
 				mChangeData.content.targetSelector = mStableChangeInfo.targetSelector;
 				mChangeData.content.movedElements = mStableChangeInfo.movedElements;
+
+				if (mStableChangeInfo.source && mStableChangeInfo.target){
+					oChangeWrapper.addDependentControl(mStableChangeInfo.source, "sourceParent", mPropertyBag);
+					oChangeWrapper.addDependentControl(mStableChangeInfo.target, "targetParent", mPropertyBag);
+				}
+				oChangeWrapper.addDependentControl([mStableChangeInfo.movedControl], "movedElements", mPropertyBag);
 			};
 
 			return MoveSimpleForm;

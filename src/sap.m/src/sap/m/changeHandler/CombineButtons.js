@@ -110,6 +110,7 @@ sap.ui.define(["sap/ui/fl/Utils"],
 				aCombineButtonIds = oSpecificChangeInfo.combineFieldIds;
 
 			if (aCombineButtonIds && aCombineButtonIds.length >= 2) {
+				oChange.addDependentControl(aCombineButtonIds, "combinedButtons", mPropertyBag);
 				oChangeDefinition.content.combineButtonSelectors = aCombineButtonIds.map(function(sCombineButtonId) {
 					return oModifier.getSelector(sCombineButtonId, oAppComponent);
 				});

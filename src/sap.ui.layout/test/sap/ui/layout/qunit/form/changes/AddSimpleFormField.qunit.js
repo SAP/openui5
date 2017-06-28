@@ -104,6 +104,8 @@ function (
 		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 
 		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
+
 		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
@@ -127,6 +129,7 @@ function (
 		var oChange2 = new Change({"changeType" : "addSimpleFormField"});
 
 		this.oAddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
 		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange2, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
 			"the change adding a field to index 0 was applied");
