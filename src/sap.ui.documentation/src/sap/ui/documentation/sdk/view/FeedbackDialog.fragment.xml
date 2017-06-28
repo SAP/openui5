@@ -17,7 +17,7 @@
 		<VBox>
 			<HBox justifyContent="SpaceBetween">
 				<items>
-					<Label text="How is your overall experience?" design="Bold" class="sapMFontMediumSize"/>
+					<Label text="How is your overall experience?" design="Bold" class="sapMFontMediumSize" required="true"/>
 					<ObjectStatus id="ratingStatus" text="" state="None" class="sapMFontMediumSize"/>
 				</items>
 			</HBox>
@@ -54,7 +54,7 @@
 			<Label text="What would you like to tell us?" design="Bold" class="sapUiTinyMarginTop"/>
 
 			<TextArea id="feedbackInput" width="100%" placeholder="You can share your feedback for the overall Demo Kit experience or for the specific page you are currently viewing."
-						rows="7" class="sapMFontMediumSize sapUiFeedbackDialogTextArea" liveChange="onFeedbackInput" change="onFeedbackInput"/>
+						rows="7" class="sapMFontMediumSize sapUiFeedbackDialogTextArea"/>
 
 			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapMFontMediumSize contextCheckBoxAlign" select="onContextSelect"/>
 

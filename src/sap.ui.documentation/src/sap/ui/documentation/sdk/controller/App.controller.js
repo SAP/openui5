@@ -390,6 +390,7 @@ sap.ui.define([
 						}
 					];
 					this._oFeedbackDialog.reset = function () {
+						this.sendButton.setEnabled(false);
 						this.textInput.setValue("");
 						this.contextCheckBox.setSelected(true);
 						this.ratingStatus.setText("");
@@ -536,7 +537,7 @@ sap.ui.define([
 					that._oFeedbackDialog.ratingStatus.setState(sState);
 					that._oFeedbackDialog.ratingStatus.setText(sText);
 					that._oFeedbackDialog.ratingStatus.value = iValue;
-					if (iValue || that._oFeedbackDialog.textInput.getValue()) {
+					if (iValue) {
 						that._oFeedbackDialog.sendButton.setEnabled(true);
 					} else {
 						that._oFeedbackDialog.sendButton.setEnabled(false);
@@ -544,13 +545,13 @@ sap.ui.define([
 				}
 			},
 
-			onFeedbackInput : function() {
-				if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
-					this._oFeedbackDialog.sendButton.setEnabled(true);
-				} else {
-					this._oFeedbackDialog.sendButton.setEnabled(false);
-				}
-			},
+			//onFeedbackInput : function() {
+			//	if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
+			//		this._oFeedbackDialog.sendButton.setEnabled(true);
+			//	} else {
+			//		this._oFeedbackDialog.sendButton.setEnabled(false);
+			//	}
+			//},
 
 			onSearch : function (oEvent) {
 				var sQuery = oEvent.getParameter("query");
