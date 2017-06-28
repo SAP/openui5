@@ -174,7 +174,7 @@
 						"changes" : [
 							{
 								"variantMgmtRef":"variantManagementOrdersTable",
-								"variantRef":"variant1",
+								"variantRef":"variant0",
 								"fileName":"id_1445501120486_41",
 								"fileType":"change",
 								"changeType":"hideControl",
@@ -320,7 +320,7 @@
 						},
 						"changes" : [
 							{
-								"variantRef":"variant1",
+								"variantRef":"variant0",
 								"fileName":"id_1445501120486_51",
 								"fileType":"change",
 								"changeType":"hideControl",
