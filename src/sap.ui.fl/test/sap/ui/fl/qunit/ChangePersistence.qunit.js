@@ -96,7 +96,7 @@ jQuery.sap.require("sap.m.Button");
 		});
 	});
 
-	QUnit.test("loadChangesMapForComponent shall return the a map of changes for the component", function(assert) {
+	QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
@@ -138,39 +138,41 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test1", function(assert) {
-		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
-			},
-			getSelector: function () {
-				return { id: "field3-2" };
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group3", "group2"];
-			}
-		};
-		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
-			},
-			getSelector: function () {
-				return { id: "field3-2" };
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group2", "group1"];
-			}
-		};
-		var oChange3 = {
-			getKey: function () {
-				return "fileNameChange3" + "USER" + "namespace";
-			},
-			getSelector: function () {
-				return { id: "group1" };
-			},
-			getDependentIdList: function () {
-				return ["group1"];
-			}
-		};
+		var oChange1 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange1",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "field3-2" },
+				dependentSelector: {
+					"alias" : [{
+						id: "group3"
+					},{
+						id: "group2"
+					}]
+				}
+		}));
+		var oChange2 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange2",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "field3-2" },
+				dependentSelector: {
+					"alias" : [{
+						id: "group2"
+					},{
+						id: "group1"
+					}],
+					"alias2" :{
+						id: "field3-2"
+					}
+				}
+		}));
+		var oChange3 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange3",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "group1" }
+		}));
 
 		var mExpectedChanges = {
 			mChanges: {
@@ -191,7 +193,7 @@ jQuery.sap.require("sap.m.Button");
 			oChange1,
 			oChange2,
 			oChange3
-			]));
+		]));
 
 		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
 
@@ -203,39 +205,41 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function(assert) {
-		var oChange0 = {
-			getKey: function () {
-				return "fileNameChange0" + "USER" + "namespace";
-			},
-			getSelector: function () {
-				return { id: "group1" };
-			},
-			getDependentIdList: function () {
-				return ["group1"];
-			}
-		};
-		var oChange1 = {
-			getKey: function () {
-				return "fileNameChange1" + "USER" + "namespace"
-			},
-			getSelector: function () {
-				return { id: "field3-2" };
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group3", "group2"];
-			}
-		};
-		var oChange2 = {
-			getKey: function () {
-				return "fileNameChange2" + "USER" + "namespace";
-			},
-			getSelector: function () {
-				return { id: "field3-2" };
-			},
-			getDependentIdList: function () {
-				return ["field3-2", "group2", "group1"];
-			}
-		};
+		var oChange0 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange0",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "group1" }
+		}));
+		var oChange1 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange1",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "field3-2" },
+				dependentSelector: {
+					"alias" : [{
+						id: "group3"
+					},{
+						id: "group2"
+					}]
+				}
+		}));
+		var oChange2 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange2",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "field3-2" },
+				dependentSelector: {
+					"alias" : [{
+						id: "group2"
+					},{
+						id: "group1"
+					}],
+					"alias2" :{
+						id: "field3-2"
+					}
+				}
+		}));
 
 		var mExpectedChanges = {
 			mChanges: {
@@ -243,7 +247,7 @@ jQuery.sap.require("sap.m.Button");
 				"group1": [oChange0]
 			},
 			mDependencies: {
-				"fileNameChange2USERnamespace": [oChange1, oChange0],
+				"fileNameChange2USERnamespace": [oChange1, oChange0]
 			},
 			mDependentChangesOnMe: {
 				"fileNameChange0USERnamespace": [oChange2],
@@ -255,7 +259,144 @@ jQuery.sap.require("sap.m.Button");
 			oChange0,
 			oChange1,
 			oChange2
-			]));
+		]));
+
+		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
+
+			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+			var mChanges = fnGetChangesMap();
+
+			assert.deepEqual(mChanges, mExpectedChanges);
+		});
+	});
+
+	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test3", function(assert) {
+		var oChange1 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange1",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "field3-2" },
+				dependentSelector: {
+					"alias" : {
+						id: "group3"
+					},
+					"alias2" : {
+						id: "group2"
+					}
+				}
+		}));
+		var oChange2 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange2",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "group2" }
+		}));
+
+		var mExpectedChanges = {
+			mChanges: {
+				"field3-2": [oChange1],
+				"group2": [oChange2]
+			},
+			mDependencies: {
+				"fileNameChange2USERnamespace": [oChange1]
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange1USERnamespace": [oChange2]
+			}
+		};
+
+		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+			oChange1,
+			oChange2
+		]));
+
+		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
+
+			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+			var mChanges = fnGetChangesMap();
+
+			assert.deepEqual(mChanges, mExpectedChanges);
+		});
+	});
+
+	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test4", function(assert) {
+		var oChange1 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange1",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "group2" }
+		}));
+		var oChange2 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange2",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "field3-2" },
+				dependentSelector: {
+					"alias" : {
+						id: "group3"
+					},
+					"alias2" : {
+						id: "group2"
+					}
+				}
+		}));
+		var mExpectedChanges = {
+			mChanges: {
+				"group2": [oChange1],
+				"field3-2": [oChange2]
+			},
+			mDependencies: {
+				"fileNameChange2USERnamespace": [oChange1]
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange1USERnamespace": [oChange2]
+			}
+		};
+
+		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+			oChange1,
+			oChange2
+		]));
+
+		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
+
+			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
+			var mChanges = fnGetChangesMap();
+
+			assert.deepEqual(mChanges, mExpectedChanges);
+		});
+	});
+
+	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test5", function(assert) {
+		var oChange1 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange1",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "group2" }
+		}));
+		var oChange2 = new Change(Change.createInitialFileContent({
+				id : "fileNameChange2",
+				layer : "USER",
+				namespace: "namespace",
+				selector: { id: "group2" }
+		}));
+
+		var mExpectedChanges = {
+			mChanges: {
+				"group2": [oChange1, oChange2]
+			},
+			mDependencies: {
+				"fileNameChange2USERnamespace": [oChange1]
+			},
+			mDependentChangesOnMe: {
+				"fileNameChange1USERnamespace": [oChange2]
+			}
+		};
+
+		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
+			oChange1,
+			oChange2
+		]));
 
 		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
 
