@@ -237,17 +237,6 @@
 				assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second displayed month is focused");
 				assert.ok(jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Calendar2: Previous Button disabled");
 				assert.ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Calendar2: Next Button enabled");
-
-				qutils.triggerEvent("click", "Cal3--Head-B1");
-				$MonthPicker = sap.ui.getCore().byId("Cal3").getAggregation("monthPicker").$();
-				aMonths = $MonthPicker.find(".sapUiCalItem");
-				assert.equal(jQuery("#Cal3--MP").parent().attr("id"), "sap-ui-static", "Calendar3: month picker rendered in static area");
-				assert.equal(aMonths.length, 12, "Calendar3: 12 Months rendered");
-				assert.equal(jQuery(aMonths[0]).text(), "January", "Calendar3: first displayed month");
-				assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar3: second displayed month is focused");
-				assert.ok(jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button disabled");
-				assert.ok(jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button disabled");
-				qutils.triggerEvent("click", "Cal3--Head-B1");
 			});
 
 			QUnit.test("change block", function(assert) {
@@ -289,15 +278,6 @@
 				assert.equal(aYears.length, 7, "Calendar2: 7 years rendered");
 				assert.equal(jQuery(aYears[0]).text(), "2012", "Calendar2: first displayed year");
 				assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar2: 4. displayed year is focused");
-
-				qutils.triggerEvent("click", "Cal3--Head-B2");
-				$YearPicker = sap.ui.getCore().byId("Cal3").getAggregation("yearPicker").$();
-				aYears = $YearPicker.find(".sapUiCalItem");
-				assert.equal(jQuery("#Cal3--YP").parent().attr("id"), "sap-ui-static", "Calendar3: year picker rendered in static area");
-				assert.equal(aYears.length, 20, "Calendar3: 20 years rendered");
-				assert.equal(jQuery(aYears[0]).text(), "2005", "Calendar3: first displayed year");
-				assert.equal(jQuery(aYears[10]).attr("tabindex"), "0", "Calendar3: 11. displayed year is focused");
-				qutils.triggerEvent("click", "Cal3--Head-B2");
 			});
 
 			QUnit.test("change block", function(assert) {
@@ -360,6 +340,25 @@
 				oCal2.setStartDate(new Date(2015, 1, 2));
 			});
 
+			QUnit.module("Calendar Picker");
+			QUnit.test("displayed months", function(assert) {
+				var oCalP = new sap.ui.unified.CalendarDateInterval("CalP",{
+					startDate: new Date("2015", "1", "2"),
+					pickerPopup: true
+				}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
+				qutils.triggerEvent("click", "CalP--Head-B1");
+				assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
+				assert.equal(jQuery("#CalP--Cal").parent().attr("id"), "sap-ui-static", "Calendar picker rendered in static area");
+				assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
+
+				// clean
+				oCalP.destroy();
+			});
+
 			QUnit.module("Focus private API");
 			QUnit.test("_getFocusedDate()", function(assert) {
 				var oOldFocusedDate = oCal4._oFocusedDate;
@@ -398,6 +397,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture"></div>
 		<ol id="qunit-tests"></ol>
 		<br>
 		<div id="uiArea"></div>

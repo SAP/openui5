@@ -313,9 +313,11 @@
 				oLastDate = aDates[aDates.length - 1],
 				sExpectedDateRange = _formatDate.call(this, oFirstDate) + "-" + _formatDate.call(this, oLastDate),
 				oMonthDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "MMMM"}),
+				oYearDateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "YYYY"}),
 				oLocaleData = new sap.ui.core.LocaleData(sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()),
 				sIntervalPattern = oLocaleData.getIntervalPattern(),
-				sExpectedMonthName;
+				sExpectedMonthName,
+				sExpectedYear;
 
 			sMessagePrefix+= ": expected dates: " + sExpectedDateRange;
 
@@ -325,7 +327,10 @@
 			} else {
 				sExpectedMonthName = oMonthDateFormat.format(oFirstDate);
 			}
-			assert.equal(_getChangeMonthButtonText.call(this, oPC), sExpectedMonthName, sMessagePrefix + ": Change month button should have certain text of " +
+
+			sExpectedYear = oYearDateFormat.format(oLastDate);
+
+			assert.equal(_getChangeMonthButtonText.call(this, oPC), sExpectedMonthName + " " + sExpectedYear, sMessagePrefix + ": Change month button should have certain text of " +
 				sExpectedMonthName + ", current text: " + _getChangeMonthButtonText.call(this, oPC));
 
 			aDates.forEach(function (oDate) {

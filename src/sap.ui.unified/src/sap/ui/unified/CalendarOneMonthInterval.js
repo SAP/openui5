@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.CalendarOneMonthInterval.
 sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
-		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer', 'sap/ui/unified/calendar/OneMonthDatesRow'],
-	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer, OneMonthDatesRow) {
+		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer', 'sap/ui/unified/calendar/OneMonthDatesRow', 'sap/ui/core/Renderer'],
+	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer, OneMonthDatesRow, Renderer) {
 		"use strict";
 
 		/*
@@ -52,6 +52,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		CalendarOneMonthInterval.prototype.init = function() {
 			CalendarDateInterval.prototype.init.apply(this, arguments);
 			this._bShowOneMonth = true;
+		};
+
+		CalendarOneMonthInterval.prototype._getCalendar = function (){
+			var oCalendar = this.getAggregation("calendar");
+
+			if (!oCalendar) {
+				oCalendar = new CustomMonthPicker(this.getId() + "--Cal", {});
+				oCalendar.setPopupMode(true);
+				oCalendar.attachEvent("select", function () {
+					var oCalendar = this._getCalendar();
+					this._focusDateExtend.call(this, oCalendar._getFocusedDate(), true);
+					this.fireStartDateChange();
+
+					this._oPopup.close();
+				}, this);
+				oCalendar.attachEvent("cancel", function (oEvent) {
+					this._oPopup.close();
+				}, this);
+				this.setAggregation("calendar", oCalendar);
+			}
+			return oCalendar;
 		};
 
 		/**
@@ -256,6 +277,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		CalendarOneMonthInterval.prototype._dateMatchesVisibleRange = function (oDateTime) {
 			return CalendarUtils._isSameMonthAndYear(CalendarDate.fromLocalJSDate(this.getStartDate()),
 				CalendarDate.fromLocalJSDate(oDateTime));
+		};
+
+		/****************************************** CUSTOM MONTH PICKER CONTROL ****************************************/
+
+		var CustomMonthPicker = sap.ui.unified.Calendar.extend("CustomMonthPicker", {
+			renderer: Renderer.extend(sap.ui.unified.CalendarRenderer)
+		});
+
+		CustomMonthPicker.prototype.onAfterRendering = function () {
+			sap.ui.unified.Calendar.prototype.onAfterRendering.apply(this, arguments);
+
+			this.getAggregation("header").setVisibleButton1(false);
+			this._showMonthPicker();
+		};
+
+		CustomMonthPicker.prototype.onThemeChanged = function () {
+			sap.ui.unified.Calendar.prototype.onThemeChanged.apply(this, arguments);
+
+			this.getAggregation("header").setVisibleButton1(false);
+			this._showMonthPicker();
+		};
+
+		CustomMonthPicker.prototype._selectYear = function () {
+			var oYearPicker = this.getAggregation("yearPicker");
+
+			var oFocusedDate = this._getFocusedDate();
+			oFocusedDate.setYear(oYearPicker.getYear());
+
+			this._focusDate(oFocusedDate, true);
+
+			this._showMonthPicker();
+		};
+
+		CustomMonthPicker.prototype._selectMonth = function () {
+			var oMonthPicker = this.getAggregation("monthPicker");
+			var oDateRange = this.getSelectedDates()[0];
+
+			var oFocusedDate = this._getFocusedDate();
+			oFocusedDate.setMonth(oMonthPicker.getMonth());
+
+			if (!oDateRange) {
+				oDateRange = new sap.ui.unified.DateRange();
+			}
+
+			oDateRange.setStartDate(oFocusedDate.toLocalJSDate());
+			this.addSelectedDate(oDateRange);
+
+			this.fireSelect();
+		};
+
+		CustomMonthPicker.prototype.onsapescape = function(oEvent) {
+			this.fireCancel();
 		};
 
 		return CalendarOneMonthInterval;
