@@ -100,11 +100,13 @@ function(
 				items: [
 					new SegmentedButtonItem({
 						text: this.getTextResources().getText("BTN_ADAPTATION"),
+						tooltip: this.getTextResources().getText("BTN_ADAPTATION"),
 						width: "auto",
 						key: "adaptation"
 					}),
 					new SegmentedButtonItem({
 						text: this.getTextResources().getText("BTN_NAVIGATION"),
+						tooltip: this.getTextResources().getText("BTN_NAVIGATION"),
 						width: "auto",
 						key: "navigation"
 					})
