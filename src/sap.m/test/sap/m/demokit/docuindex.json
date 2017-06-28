@@ -55,8 +55,8 @@
 			},
 			{
 				"icon": "begin",
-				"text": "UI5 Basic Template",
-				"desc": "Empty app as jumping-off point for your app development",
+				"text": "Basic Template",
+				"desc": "Blank app as starting point for your app development",
 				"ref" : "test-resources/sap/m/demokit/basicTemplate/webapp/index.html",
 				"links": {
 					"Run Integration Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html",
