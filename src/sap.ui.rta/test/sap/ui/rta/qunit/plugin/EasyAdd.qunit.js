@@ -95,6 +95,9 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 		var oButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-AddButton-img");
 		assert.ok(!!oButton, "then the Add-Button is displayed on the Section");
 
+		oButton = sap.ui.getCore().byId(this.oLayoutOverlay.getId() + "-AddButton-img");
+		assert.ok(!!oButton, "then the Add-Button of the Layout is displayed");
+
 		this.oEasyAddPlugin.getDialog().attachOpened(function() {
 			assert.ok(true, "then dialog pops up,");
 			assert.equal(this.oEasyAddPlugin.getDialog().getTitle(), "Available Sections", "then the title is set");
@@ -122,7 +125,7 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 		sap.ui.getCore().applyChanges();
 
 		var oButton = sap.ui.getCore().byId(this.oLayoutOverlay.getId() + "-AddButton-img");
-		assert.notOk(!!oButton, "then the Add-Button is not displayed on the layout anymore");
+		assert.ok(!!oButton, "then the Add-Button on the layout is still there");
 
 		oButton = sap.ui.getCore().byId(this.oSectionOverlay.getId() + "-AddButton-img");
 		assert.ok(!!oButton, "then the Add-Button is displayed");
