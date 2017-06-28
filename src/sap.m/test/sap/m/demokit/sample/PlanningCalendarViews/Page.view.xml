@@ -95,6 +95,7 @@
 				</PlanningCalendarRow>
 			</rows>
 		</PlanningCalendar>
+		<Label text="Add available built-in views to the example:"/>
 		<MultiComboBox
 				selectionFinish="handleSelectionFinish"
 				width="230px"
@@ -107,6 +108,7 @@
 				<core:Item key="One Month" text="1 month" />
 			</items>
 		</MultiComboBox>
+		<Label text="Add or remove custom views:"/>
 		<ToggleButton text="Toggle custom views" press="onPress" />
 	</VBox>
 </mvc:View>

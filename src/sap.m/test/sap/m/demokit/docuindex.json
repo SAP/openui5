@@ -2737,7 +2737,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendar",
 		  "name": "simple Planning Calendar",
-		  "description": "PlanningCalendar with single row selection."
+		  "description": "PlanningCalendar with single row selection that illustrates the built-in views."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMulti",
@@ -2752,7 +2752,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendarViews",
 		  "name": "Planning Calendar - with custom views",
-		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
+		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. It illustrates both built-in and custom views. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarOneLine",
