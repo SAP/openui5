@@ -409,7 +409,7 @@ sap.ui.define([
 				return oValue;
 			},
 			validateValue: function (oValue) {
-				var oRegexpCoreURL = /^https?:\/\/(www\.)?[-a-zA-Z0-9@:.%_+~#=]{2,}(\.)?[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)\/sap\/ui\/support\/?$/;
+				var oRegexpCoreURL = /^https?:\/\/(www\.)?([-a-zA-Z0-9.%_+~#=]{2,})([-a-zA-Z0-9@:%_+.~#?&/=]*)\/sap\/ui\/support\/?$/;
 				if (oValue && !oValue.match(oRegexpCoreURL)) {
 					throw new ValidateException("'" + oValue + "' is not a valid URL");
 				}
