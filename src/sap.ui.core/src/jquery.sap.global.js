@@ -4749,9 +4749,9 @@
 							oScript.removeEventListener('load', onload);
 							oScript.removeEventListener('error', onerror);
 							if (bRetryOnFailure) {
-								jQuery.sap.log.warning("retry loading Javascript resource: " + sResource);
+								log.warning("retry loading Javascript resource: " + sResource);
 							} else {
-								jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
+								log.error("failed to load Javascript resource: " + sResource);
 								oModule.state = FAILED;
 							}
 
