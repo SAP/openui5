@@ -215,9 +215,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 			}
 
 			// replace the placeholders for major, minor and patch
-			sUrl = sUrl.replace("{major}", iMajor);
-			sUrl = sUrl.replace("{minor}", iMinor);
-			sUrl = sUrl.replace("{patch}", iPatch);
+			sUrl = sUrl.replace(/\{major\}/g, iMajor);
+			sUrl = sUrl.replace(/\{minor\}/g, iMinor);
+			sUrl = sUrl.replace(/\{patch\}/g, iPatch);
 
 			// load the changelog/releasenotes
 			jQuery.ajax({
