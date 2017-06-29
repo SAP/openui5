@@ -10,8 +10,8 @@
 				 showSeparators="Inner"
 				 fixedLayout="false">
 			<m:columns>
-				<m:Column vAlign="Top"><m:Label text="Method"/></m:Column>
-				<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+				<m:Column vAlign="Top" width="25%"><m:Label text="Method"/></m:Column>
+				<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="75%"><m:Label text="Description"/></m:Column>
 			</m:columns>
 			<m:items>
 				<m:ColumnListItem visible="{= !!${methods>name} }">
