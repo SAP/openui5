@@ -668,11 +668,11 @@ sap.ui.define([
 
 	// ---- backward compatibility API
 	RuntimeAuthoring.prototype.undo = function() {
-		this._onUndo();
+		return this._onUndo();
 	};
 
 	RuntimeAuthoring.prototype.redo = function() {
-		this._onRedo();
+		return this._onRedo();
 	};
 
 	RuntimeAuthoring.prototype.canUndo = function() {
@@ -689,12 +689,14 @@ sap.ui.define([
 		var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.Z) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+Z
-			this._onUndo();
-			oEvent.stopPropagation();
+			this._onUndo()
+
+			.then(oEvent.stopPropagation.bind(oEvent));
 		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.Y) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+Y
-			this._onRedo();
-			oEvent.stopPropagation();
+			this._onRedo()
+
+			.then(oEvent.stopPropagation.bind(oEvent));
 		}
 	};
 
@@ -721,14 +723,12 @@ sap.ui.define([
 
 	RuntimeAuthoring.prototype._onUndo = function() {
 		this._handleStopCutPaste();
-
-		this.getCommandStack().undo();
+		return this.getCommandStack().undo();
 	};
 
 	RuntimeAuthoring.prototype._onRedo = function() {
 		this._handleStopCutPaste();
-
-		this.getCommandStack().redo();
+		return this.getCommandStack().redo();
 	};
 
 	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable) {

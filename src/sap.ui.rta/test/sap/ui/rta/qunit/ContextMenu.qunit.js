@@ -487,21 +487,27 @@
 	});
 
 	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm FormElement,", function(assert) {
+		var done = assert.async();
 		var oLabel = this.oSimpleFormWithTitles.getContent()[3];
 		var oFormElement = oLabel.getParent();
-
 		var oFormElementOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oFormElement);
+		var oContextMenuPlugin = this.oRta.getPlugins()["contextMenu"];
+
+		oContextMenuPlugin.attachOpenedContextMenu(function(oEvent) {
+			var oContextMenu = oContextMenuPlugin._oContextMenuControl;
+			assert.ok(oContextMenu.bOpen, "then Menu gets opened");
+			assert.equal(oContextMenu.getItems().length, 5, " and 5 Menu Items are available");
+			assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME_LABEL", "rename label is available");
+			assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
+			assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_REMOVE", "remove field is available");
+			assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_CUT", "cut field is available");
+			assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_PASTE", "paste field is available");
+			done();
+		});
+
 		oFormElementOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(oFormElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
 
-		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
-		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 5, " and 5 Menu Items are available");
-		assert.equal(oContextMenu.getItems()[0].data("id"), "CTX_RENAME_LABEL", "rename label is available");
-		assert.equal(oContextMenu.getItems()[1].data("id"), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field is available");
-		assert.equal(oContextMenu.getItems()[2].data("id"), "CTX_REMOVE", "remove field is available");
-		assert.equal(oContextMenu.getItems()[3].data("id"), "CTX_CUT", "cut field is available");
-		assert.equal(oContextMenu.getItems()[4].data("id"), "CTX_PASTE", "paste field is available");
 	});
 
 	QUnit.test("when context menu is opened (via keyboard) for a SimpleForm with Title,", function(assert) {

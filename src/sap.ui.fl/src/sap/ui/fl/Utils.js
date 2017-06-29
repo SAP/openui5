@@ -920,12 +920,42 @@ sap.ui.define([
 		/**
 		 * Returns whether provided layer is a customer dependent layer
 		 *
+		 * @param {string} sLayerName - layer name
 		 * @returns {boolean} true if provided layer is customer dependent layer else false
 		 * @public
 		 */
 		isCustomerDependentLayer : function(sLayerName) {
 			return (["CUSTOMER", "CUSTOMER_BASE"].indexOf(sLayerName) > -1);
+		},
+
+		/**
+		 * Execute the passed asynchronous functions serialized - one after the other
+		 *
+		 * @param {array.<function>} aPromiseStack - list of asynchronous functions returns promises
+		 * @returns {Promise} Empty resolved promise when all passed promises inside functions have been executed
+		 */
+		execPromiseQueueSerialized : function(aPromiseQueue) {
+			if (aPromiseQueue.length === 0) {
+				return Promise.resolve();
+			}
+			var fnPromise = aPromiseQueue.shift();
+			if (typeof fnPromise === "function") {
+				return fnPromise()
+
+				.catch(function() {
+					this.log.error("Changes could not be applied. Merge error detected.");
+				}.bind(this))
+
+				.then(function() {
+					return this.execPromiseQueueSerialized(aPromiseQueue);
+				}.bind(this));
+
+			} else {
+				this.log.error("Changes could not be applied, promise not wrapped inside function.");
+				return this.execPromiseQueueSerialized(aPromiseQueue);
+			}
 		}
+
 	};
 	return Utils;
 }, true);
