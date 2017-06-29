@@ -191,6 +191,7 @@ sap.ui.require([
 			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
 			// Change filter via API (changeParameters)
 			When.onTheMainPage.sortByGrossAmount();
+			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
 			Then.onTheMainPage.checkSalesOrderItemInRow(0);
 			// Sort via changeParameters
@@ -220,6 +221,8 @@ sap.ui.require([
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			Then.onTheMainPage.checkSupplierPhoneNumber("0622734567");
+			// select the row that remains, so that it will be selected after the filtering
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000020");
 			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
 			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");

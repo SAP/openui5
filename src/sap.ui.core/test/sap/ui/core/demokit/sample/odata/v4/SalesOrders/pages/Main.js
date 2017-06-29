@@ -652,9 +652,10 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderLineItems",
-						success : function (oSalesOrderItemsTable) {
-							var oRow = oSalesOrderItemsTable.getItems()[iRow];
-
+						check : function (oSalesOrderItemsTable) {
+							var oRow = oSalesOrderItemsTable.getItems()[iRow],
+								sItem,
+								sSalesOrderId;
 							// if called without 2nd and 3rd parameter use previously stored values
 							// for comparison
 							sExpectedSalesOrderID = sExpectedSalesOrderID
@@ -662,10 +663,20 @@ function (Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactab
 							sExpectedItem = sExpectedItem
 								|| sap.ui.test.Opa.getContext().sExpectedItem;
 
-							Opa5.assert.strictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
-								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
-							Opa5.assert.strictEqual(oRow.getCells()[ITEM_COLUMN_INDEX].getText(),
-								sExpectedItem, "Item position in row " + iRow);
+							if (oRow) {
+								sSalesOrderId  = oRow.getCells()[ID_COLUMN_INDEX].getText();
+								sItem = oRow.getCells()[ITEM_COLUMN_INDEX].getText();
+								if (sSalesOrderId ===  sExpectedSalesOrderID &&
+										sItem === sExpectedItem) {
+									Opa5.assert.strictEqual(sSalesOrderId, sExpectedSalesOrderID,
+										"Expected Sales Order ID " + sSalesOrderId + " in row "
+											+ iRow);
+									Opa5.assert.strictEqual(sItem, sExpectedItem,
+										"Expected Item position " + sItem + " in row " + iRow);
+									return true;
+								}
+							}
+							return false;
 						},
 						viewName : sViewName
 					});

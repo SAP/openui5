@@ -105,30 +105,23 @@ sap.ui.require([
 				},
 				oBinding = new ODataParentBinding({
 					oCachePromise : _SyncPromise.resolve(oCache),
-					oContext : {},
-					oModel : {
-						resolve : function () {}
-					},
-					sPath : "binding/path",
-					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
 				}),
 				fnErrorCallback = function () {},
-				sPath = "SO_2_SOITEM/42",
-				sResolvedPath = "/resolved/binding/path",
+				sPathInCache = "SO_2_SOITEM/42",
+				sAbsolutePath = "/resolved/binding/path/" + sPathInCache,
 				oResult = {};
 
-			this.mock(oBinding.oModel).expects("resolve")
-				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-				.returns(sResolvedPath);
+			this.mock(oBinding).expects("getRelativePath")
+				.withExactArgs(sAbsolutePath).returns(sPathInCache);
 			this.mock(oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
-					sinon.match.same(fnErrorCallback), "edit('URL')", sPath)
+					sinon.match.same(fnErrorCallback), "edit('URL')", sPathInCache)
 				.returns(Promise.resolve(oResult));
 
 			// code under test
 			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback,"edit('URL')",
-					sResolvedPath + "/" + sPath)
+					sAbsolutePath)
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
@@ -142,9 +135,6 @@ sap.ui.require([
 			},
 			oBinding = new ODataParentBinding({
 				oCachePromise : _SyncPromise.resolve(oCache),
-				oModel : {
-					resolve : function () {}
-				},
 				sPath : "/absolute",
 				bRelative : false,
 				sUpdateGroupId : "myUpdateGroup"
@@ -152,9 +142,7 @@ sap.ui.require([
 			fnErrorCallback = function () {},
 			oResult = {};
 
-			this.mock(oBinding.oModel).expects("resolve")
-				.withExactArgs(oBinding.sPath, undefined)
-				.returns(oBinding.sPath);
+		this.mock(oBinding).expects("getRelativePath").withExactArgs(oBinding.sPath).returns("");
 		this.mock(oCache).expects("update")
 			.withExactArgs("group", "bar", Math.PI, sinon.match.same(fnErrorCallback),
 				"edit('URL')", "")
@@ -162,7 +150,7 @@ sap.ui.require([
 
 		// code under test
 		return oBinding.updateValue("group", "bar", Math.PI, fnErrorCallback, "edit('URL')",
-				"/absolute")
+				oBinding.sPath)
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
@@ -1815,5 +1803,59 @@ sap.ui.require([
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchType", function (assert) {
+		var oMetaModel = {
+				getMetaPath : function () {},
+				fetchObject : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {
+					getMetaModel : function () { return oMetaModel; }
+				}
+			}),
+			oPromise = {},
+			oResult;
+
+		this.mock(oMetaModel).expects("getMetaPath")
+			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/").returns("~");
+		this.mock(oMetaModel).expects("fetchObject").withExactArgs("~").returns(oPromise);
+
+		// code under test
+		oResult = oBinding.fetchType("EMPLOYEES('1')/EMPLOYEE_2_TEAM");
+
+		assert.strictEqual(oResult, oPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getRelativePath", function (assert) {
+		var oAbsoluteBinding = new ODataParentBinding({
+				oContext : {},
+				oModel : {resolve : function () {}},
+				sPath : "/foo"
+			}), oRelativeBinding = new ODataParentBinding({
+				oContext : {},
+				oModel : {resolve : function () {}},
+				sPath : "bar",
+				bRelative : true
+			});
+
+		this.mock(oRelativeBinding.oModel).expects("resolve").exactly(5)
+			.withExactArgs("bar", sinon.match.same(oRelativeBinding.oContext)).returns("/foo/bar");
+
+		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar/baz"), "baz");
+		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar('baz')"), "('baz')");
+		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
+		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
+		assert.strictEqual(oRelativeBinding.getRelativePath("/wrong"), undefined,
+			"no error, binding must pass on to the parent binding for a better error message");
+
+		this.mock(oAbsoluteBinding.oModel).expects("resolve")
+			.withExactArgs("/foo", sinon.match.same(oAbsoluteBinding.oContext)).returns("/foo");
+		assert.throws(function () {
+			oAbsoluteBinding.getRelativePath("/wrong");
+		}, new Error("/wrong: invalid path, must start with /foo"));
 	});
 });
