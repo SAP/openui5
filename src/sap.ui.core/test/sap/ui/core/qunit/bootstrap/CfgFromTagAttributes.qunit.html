@@ -19,6 +19,7 @@
 			data-sap-ui-noConflict="true"
 			data-sap-ui-trace="true"
 			data-sap-ui-libs="sap.ui.commons"
+			data-sap-ui-preload="async"
 			data-sap-ui-modules="sap.ui.commons.Button"
 			data-sap-ui-areas="area-51"
 			data-sap-ui-onInit="window['I was here'] = 'u.g.a.d.m.k.';"
@@ -34,38 +35,48 @@
 	<!-- Test functions -->
 	<script>
 
-		QUnit.module("Configuration From Config Attribute");
+		QUnit.config.autostart = false;
+		
+		sap.ui.getCore().attachInit(function() {
 
-		QUnit.test("Settings", function(assert) {
-			var oCfg = new sap.ui.core.Configuration();
+			QUnit.module("Configuration From Config Attribute");
 
-			// compare values where possible
-			assert.equal(oCfg.theme, "fantasy", "theme");
-			assert.equal(oCfg.language, "klingon", "language");
-			assert.equal(oCfg.accessibility, true, "accessibility");
-			assert.equal(oCfg.animation, false, "animation");
-			assert.equal(oCfg.rtl, true, "rtl");
-			assert.equal(oCfg.debug, true, "debug");
-			assert.equal(oCfg.noConflict, true, "noConflict");
-			assert.equal(oCfg.trace, true, "trace");
-			// Note: libs and modules can not be checked in that simple way, see below
-			assert.equal(oCfg.areas, "area-51", "areas");
-			assert.equal(typeof oCfg.onInit, "string", "onInit");
-			assert.equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
+			QUnit.test("Settings", function(assert) {
+				var oCfg = new sap.ui.core.Configuration();
 
-			// libs must have been converted and prepended to modules
-			assert.deepEqual(oCfg.modules, ["sap.ui.commons.library", "sap.ui.commons.Button"], "modules and libraries");
+				// compare values where possible
+				assert.equal(oCfg.theme, "fantasy", "theme");
+				assert.equal(oCfg.language, "klingon", "language");
+				assert.equal(oCfg.accessibility, true, "accessibility");
+				assert.equal(oCfg.animation, false, "animation");
+				assert.equal(oCfg.rtl, true, "rtl");
+				assert.equal(oCfg.debug, true, "debug");
+				assert.equal(oCfg.noConflict, true, "noConflict");
+				assert.equal(oCfg.trace, true, "trace");
+				// Note: libs and modules can not be checked in that simple way, see below
+				assert.equal(oCfg.areas, "area-51", "areas");
+				assert.equal(typeof oCfg.onInit, "string", "onInit");
+				assert.equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
 
-			// init function must have been called
-			assert.strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
+				// libs must have been converted and prepended to modules
+				assert.deepEqual(oCfg.modules, ["sap.ui.commons.library", "sap.ui.commons.Button"], "modules and libraries");
+
+				// init function must have been called
+				assert.strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
+				
+				assert.ok(sap.ui.require("sap/ui/commons/Button"), "configured module has been loaded");
+			});
+
+			QUnit.test("jQuery and $", function(assert) {
+				// we configured noConflict=true, so $ shouldn'T be the same as jQuery
+				assert.ok(window.jQuery, "window.jQuery is available");
+				assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
+			});
+
+			QUnit.start();
+
 		});
-
-		QUnit.test("jQuery and $", function(assert) {
-			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
-			assert.ok(window.jQuery, "window.jQuery is available");
-			assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
-		});
-
+		
 	</script>
 
 </head>
