@@ -2,8 +2,13 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/actions/Press',
 	'sap/ui/test/matchers/BindingPath',
-	'sap/ui/test/matchers/AggregationLengthEquals'
-], function (Opa5, Press, BindingPath, AggregationLengthEquals) {
+	'sap/ui/test/matchers/AggregationLengthEquals',
+	'sap/ui/test/matchers/Properties'
+], function (Opa5,
+			 Press,
+			 BindingPath,
+			 AggregationLengthEquals,
+			 Properties) {
 	"use strict";
 
 	var sViewName = "Welcome";
@@ -65,6 +70,18 @@ sap.ui.define([
 					});
 				},
 
+				iShouldSeeAnAvatarButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: new Properties({icon: "sap-icon://customer"}),
+						success: function () {
+							Opa5.assert.ok(true, "Avatar button is visible");
+						},
+						errorMessage: "There is no avatar button"
+					});
+				},
+
 				iShouldSeeTheProductInLightBox: function () {
 					return this.waitFor({
 						controlType: "sap.m.LightBox",
@@ -90,7 +107,7 @@ sap.ui.define([
 						errorMessage: "The welcome page did not show two promoted items"
 					});
 
-					this.waitFor({
+					 this.waitFor({
 						id: "viewedRow",
 						viewName: sViewName,
 						matchers: new AggregationLengthEquals({
@@ -103,7 +120,7 @@ sap.ui.define([
 						errorMessage: "The welcome page did not show four viewed items"
 					});
 
-					this.waitFor({
+					return this.waitFor({
 						id: "favoriteRow",
 						viewName: sViewName,
 						matchers: new AggregationLengthEquals({

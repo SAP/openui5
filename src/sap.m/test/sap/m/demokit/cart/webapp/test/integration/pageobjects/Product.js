@@ -1,8 +1,12 @@
 sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/matchers/PropertyStrictEquals',
-	'sap/ui/test/actions/Press'
-], function (Opa5, PropertyStrictEquals, Press) {
+	'sap/ui/test/actions/Press',
+	'sap/ui/test/matchers/Properties'
+], function (Opa5,
+			 PropertyStrictEquals,
+			 Press,
+			 Properties) {
 	"use strict";
 
 	var sViewName = "Product";
@@ -18,6 +22,7 @@ sap.ui.define([
 						errorMessage: "The press action could not be executed"
 					});
 				},
+
 				iPressOnTheProductPicture: function () {
 					return this.waitFor({
 						id : "productImage",
@@ -25,6 +30,7 @@ sap.ui.define([
 						actions : new Press()
 					});
 				},
+
 				iPressTheCloseButtonOfTheLightBox: function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
@@ -40,6 +46,18 @@ sap.ui.define([
 						],
 						actions : new Press(),
 						errorMessage : "Did not find the Close button"
+					});
+				},
+
+				iShouldSeeAnAvatarButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: new Properties({icon: "sap-icon://customer"}),
+						success: function () {
+							Opa5.assert.ok(true, "Avatar button is visible");
+						},
+						errorMessage: "There is no avatar button"
 					});
 				},
 
@@ -75,8 +93,6 @@ sap.ui.define([
 					});
 				}
 			}
-
 		}
 	});
-
 });

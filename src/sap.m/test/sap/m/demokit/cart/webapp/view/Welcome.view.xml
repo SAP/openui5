@@ -6,13 +6,16 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		showHeader="{device>/system/phone}"
+		showHeader="true"
 		class="customBackground">
 		<customHeader>
 			<Toolbar>
 				<Button
 					icon="sap-icon://menu2"
-					press="onShowCategories"/>
+					press="onShowCategories"
+					visible="{device>/system/phone}"/>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://customer"/>
 			</Toolbar>
 		</customHeader>
 		<content>
@@ -79,14 +82,14 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
-			<Title tooltip="{i18n>welcomeDescription}" text="{i18n>welcomeHeadline}" class="welcomeText"/>
-
+			<Title
+				tooltip="{i18n>welcomeDescription}"
+				text="{i18n>welcomeHeadline}"
+				class="welcomeText"/>
 			<Title
 				text="{i18n>promotedTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
-
 			<l:BlockLayout background="Dashboard">
 				<l:BlockLayoutRow
 					id="promotedRow"
@@ -138,7 +141,6 @@
 										<l:GridData span="XL4 L4 M4 S4" />
 									</layoutData>
 								</Button>
-
 								<ObjectListItem
 									class="welcomePrice"
 									number="{
@@ -159,12 +161,10 @@
 					</l:content>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
 			<Title
 				text="{i18n>viewedTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
-
 			<l:BlockLayout background="Dashboard">
 				<l:BlockLayoutRow
 					id="viewedRow"
