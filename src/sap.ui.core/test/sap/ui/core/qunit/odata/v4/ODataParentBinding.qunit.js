@@ -369,34 +369,67 @@ sap.ui.require([
 	//TODO handle encoding in getQueryOptionsForPath
 
 	//*********************************************************************************************
+	// Note: We decided not to analyze $expand for embedded $filter/$orderby and to treat $apply
+	// in the same way. We also decided to use the weakest change reason (Change) in these cases.
 	[{
-		sTestName : "Add parameters",
+		sTestName : "Add parameter $search",
+		sChangeReason : ChangeReason.Filter,
 		mParameters : {
 			$search : "Foo NOT Bar"
 		},
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
+			$filter : "OLD gt 1",
 			$search : "Foo NOT Bar",
 			$select : "ProductID"
 		}
 	}, {
-		sTestName : "Delete parameters",
+		sTestName : "Add parameter $orderby",
+		sChangeReason : ChangeReason.Sort,
+		mParameters : {
+			$orderby : "Category"
+		},
+		mExpectedParameters : {
+			$apply : "filter(OLD gt 0)",
+			$expand : "foo",
+			$filter : "OLD gt 1",
+			$orderby : "Category",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Delete parameter $expand",
 		mParameters : {
 			$expand : undefined
 		},
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
+			$filter : "OLD gt 1",
 			$select : "ProductID"
 		}
 	}, {
-		sTestName : "Change parameters",
+		sTestName : "Delete parameter $filter",
+		sChangeReason : ChangeReason.Filter,
 		mParameters : {
-			$apply : "filter(NEW gt 0)"
+			$filter : undefined
 		},
 		mExpectedParameters : {
-			$apply : "filter(NEW gt 0)",
+			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
+			$select : "ProductID"
+		}
+	}, {
+		sTestName : "Change parameters $filter and $orderby",
+		sChangeReason : ChangeReason.Filter,
+		mParameters : {
+			$filter : "NEW gt 1",
+			$orderby : "Category"
+		},
+		mExpectedParameters : {
+			$apply : "filter(OLD gt 0)",
+			$expand : "foo",
+			$filter : "NEW gt 1",
+			$orderby : "Category",
 			$select : "ProductID"
 		}
 	}, {
@@ -404,21 +437,23 @@ sap.ui.require([
 		mParameters : {
 			$apply : "filter(NEW gt 0)",
 			$expand : {$search : "Foo NOT Bar"},
-			$search : "Foo NOT Bar",
+			$count : true,
 			$select : undefined
 		},
 		mExpectedParameters : {
 			$apply : "filter(NEW gt 0)",
+			$count : true,
 			$expand : {$search : "Foo NOT Bar"},
-			$search : "Foo NOT Bar"
+			$filter : "OLD gt 1"
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("changeParameters: " + oFixture.sTestName, function (assert) {
 			var oBinding = new ODataParentBinding({
 					oModel : {},
 					mParameters : {
-						$apply: "filter(OLD gt 0)",
+						$apply : "filter(OLD gt 0)",
 						$expand : "foo",
+						$filter : "OLD gt 1",
 						$select : "ProductID"
 					},
 					sPath : "/ProductList",
@@ -428,7 +463,8 @@ sap.ui.require([
 
 			oBindingMock.expects("hasPendingChanges").returns(false);
 			oBindingMock.expects("applyParameters")
-				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
+				.withExactArgs(oFixture.mExpectedParameters,
+					oFixture.sChangeReason || ChangeReason.Change);
 
 			// code under test
 			oBinding.changeParameters(oFixture.mParameters);
@@ -523,7 +559,7 @@ sap.ui.require([
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 
 		// code under test
-		oBinding.changeParameters({$apply: undefined});
+		oBinding.changeParameters({$apply : undefined});
 
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged");
 	});
@@ -531,7 +567,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("changeParameters: try to change existing parameter", function (assert) {
 		var mParameters = {
-				$apply: "filter(Amount gt 3)"
+				$apply : "filter(Amount gt 3)"
 			},
 			oBinding = new ODataParentBinding({
 					oModel : {},

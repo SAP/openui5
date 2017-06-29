@@ -117,6 +117,25 @@ sap.ui.require([
 			"status" : 404,
 			"statusText" : "Not Found"
 		}
+	}, {
+		// V2 error
+		body : {
+			error : {
+				code : "0050569259751EE4BA9710043F8A5115",
+				message : {
+					lang : "en",
+					value : "An unknown internal server error occurred"
+				}
+			}
+		},
+		message : "An unknown internal server error occurred",
+		"response" : {
+			"headers" : {
+				"Content-Type" : "application/json;charset=UTF-8"
+			},
+			"status" : 500,
+			"statusText" : "Internal Server Error"
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
 			var oError,
@@ -251,7 +270,7 @@ sap.ui.require([
 		{t : "Edm.Decimal", v : "-255.55", e : "-255.55"},
 		{t : "Edm.Double", v : 3.14, e : "3.14"},
 		{t : "Edm.Double", v : "INF", e : "INF"},
-		{t : "Edm.Duration", v : "P1DT0H0M0S",	e : "duration'P1DT0H0M0S'"},
+		{t : "Edm.Duration", v : "P1DT0H0M0S", e : "duration'P1DT0H0M0S'"},
 		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
 			e : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
 		{t : "Edm.Int16", v : -32768, e : "-32768"},
@@ -618,7 +637,7 @@ sap.ui.require([
 			$select : ["Param1", "Param2"]
 		},
 		sPath : "",
-		result: ["Param1", "Param2"]
+		result : ["Param1", "Param2"]
 	}, {
 		options : {},
 		sPath : "",
@@ -636,7 +655,7 @@ sap.ui.require([
 			$select : ["Param1", "Param2"]
 		},
 		sPath : "FooSet",
-		result: undefined
+		result : undefined
 	}, {
 		options : {
 			$expand : {

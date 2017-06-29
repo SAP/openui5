@@ -147,6 +147,11 @@ sap.ui.define([
 					// single name/value pair named error. The value must be a JSON object."
 					oResult.error = JSON.parse(sBody).error;
 					oResult.message = oResult.error.message;
+					if (typeof oResult.message === "object") {
+						// oResult.message is in OData V2 an object containing the human readable
+						// error message in the property value
+						oResult.message = oResult.error.message.value;
+					}
 				} catch (e) {
 					jQuery.sap.log.warning(e.toString(), sBody,
 						"sap.ui.model.odata.v4.lib._Helper");

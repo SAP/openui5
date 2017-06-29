@@ -1,0 +1,58 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
+			items="{
+					path : '/EdmTypesCollection',
+					templateShareable : false
+				}">
+			<columns>
+				<Column>
+					<Text text="ID"/>
+				</Column>
+				<Column>
+					<Text text="Edm.String"/>
+				</Column>
+				<Column>
+					<Text text="Edm.Boolean"/>
+				</Column>
+				<Column>
+					<Text text="Edm.Int32"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{path : 'ID', type : 'sap.ui.model.odata.type.String'}"/>
+					</cells>
+					<cells>
+						<Text text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
+					</cells>
+					<cells>
+						<Text text="{path : 'Boolean', type : 'sap.ui.model.odata.type.Boolean'}"/>
+					</cells>
+					<cells>
+						<Text text="{path : 'Int32', type : 'sap.ui.model.odata.type.Int32'}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<form:SimpleForm binding="{/EdmTypesCollection('1')}" layout="ResponsiveGridLayout">
+			<form:title>
+				<core:Title text="Single Entity"/>
+			</form:title>
+			<Label labelFor="id" text="ID"/>
+			<Text id="id" text="{path : 'ID', type : 'sap.ui.model.odata.type.String'}"/>
+			<Label labelFor="string" text="Edm.String"/>
+			<Text id="string" text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
+			<Label labelFor="boolean" text="Edm.Boolean"/>
+			<Text id="boolean" text="{path : 'Boolean', type : 'sap.ui.model.odata.type.Boolean'}"/>
+			<Label labelFor="int32" text="Edm.Int32"/>
+			<Text id="int32" text="{path : 'Int32', type : 'sap.ui.model.odata.type.Int32'}"/>
+		</form:SimpleForm>
+	</VBox>
+</mvc:View>

@@ -1410,13 +1410,14 @@ sap.ui.require([
 		{start : 15, result : 3, isFinal : true, curr : 20, len : 18, text : "less than before"},
 		{start : 0, result : 30, isFinal : true, curr : 30, len : 35, text : "full read before"},
 		{start : 18, result : 30, isFinal : false, curr : 17, len : 58, text : "full read after"},
-		{start : 10, result : 0, isFinal : true, curr : 25, len : 10, text : "empty read before"}
+		{start : 10, result : 0, isFinal : false, curr : 25, len : 10, text : "empty read before"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
 			var oCacheMock = this.getCacheMock(), // this is used in bindList
 				oBinding = this.oModel.bindList("/EMPLOYEES"),
 				i, n,
-				oReadPromise = createResult(15);
+				oReadPromise = createResult(15),
+				that = this;
 
 			oCacheMock.expects("read")
 				.withExactArgs(20, 30, "$auto", sinon.match.func)
@@ -1437,7 +1438,11 @@ sap.ui.require([
 					.withExactArgs(oFixture.start, 30, "$auto", sinon.match.func)
 					.callsArg(3)
 					.returns(oReadPromise);
+				for (i = oFixture.start + oFixture.len; i < 35; i++) {
+					that.mock(oBinding.aContexts[i]).expects("destroy").withExactArgs();
+				}
 
+				// code under test
 				getContexts(assert, oBinding, oFixture.start, 30, oFixture.curr);
 
 				return oReadPromise;
@@ -2473,34 +2478,46 @@ sap.ui.require([
 		}
 
 		// code under test
-		assert.strictEqual(oBinding.createContexts(oRange, iResultLength), true);
+		assert.strictEqual(
+			oBinding.createContexts(oRange, iResultLength),
+			true);
 
 		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
 			assert.strictEqual(oBinding.aContexts[i], aContexts[i]);
 		}
 
 		// code under test : no second change event
-		assert.strictEqual(oBinding.createContexts(oRange, iResultLength), false);
+		assert.strictEqual(
+			oBinding.createContexts(oRange, iResultLength),
+			false);
 	});
 	//TODO change signature of createContexts() to pass just oResult.value as 2nd argument, no 3rd
 
 	//*********************************************************************************************
 	QUnit.test("createContexts, paging: less data than requested", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/);
+		var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/), i;
 
 		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.getLength(), 10, "Initial estimated length is 10");
 
 		// code under test: set length and length final flag
 		// Note: short reads are handled by _Cache and set $count!
-		oBinding.createContexts({start : 20, length : 30}, 29, 20 + 29);
+		assert.strictEqual(
+			oBinding.createContexts({start : 20, length : 30}, 29, 20 + 29),
+			true);
 
 		assert.strictEqual(oBinding.bLengthFinal, true,
 			"some controls use bLengthFinal instead of isLengthFinal()");
 		assert.strictEqual(oBinding.getLength(), 49);
+		assert.strictEqual(oBinding.aContexts.length, 49);
 
+		for (i = 37; i < 49; i++) {
+			this.mock(oBinding.aContexts[i]).expects("destroy").withExactArgs();
+		}
 		// code under test: delete obsolete contexts
-		oBinding.createContexts({start : 20, length : 30}, 17, 20 + 17);
+		assert.strictEqual(
+			oBinding.createContexts({start : 20, length : 30}, 17, 20 + 17),
+			true);
 
 		assert.strictEqual(oBinding.isLengthFinal(), true);
 		assert.strictEqual(oBinding.getLength(), 37);
@@ -2508,14 +2525,18 @@ sap.ui.require([
 
 		// code under test: reset upper boundary
 //TODO cannot happen with our _Cache; _Cache doesn't read more than final length elements
-		oBinding.createContexts({start : 20, length : 30}, 30);
+		assert.strictEqual(
+			oBinding.createContexts({start : 20, length : 30}, 30),
+			true);
 
 		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.getLength(), 60);
 		assert.strictEqual(oBinding.iMaxLength, Infinity);
 
 		// code under test: no data for some other page is not a change
-		assert.strictEqual(oBinding.createContexts({start : 10000, length : 30}, 0), false);
+		assert.strictEqual(
+			oBinding.createContexts({start : 10000, length : 30}, 0),
+			false);
 
 		assert.strictEqual(oBinding.isLengthFinal(), false);
 		assert.strictEqual(oBinding.getLength(), 60);
@@ -2525,7 +2546,9 @@ sap.ui.require([
 //TODO it can only shrink if iResultLength === 0
 
 		// code under test: no data for *next* page is a change (bLengthFinal changes)
-		assert.strictEqual(oBinding.createContexts({start : 50, length : 30}, 0), true);
+		assert.strictEqual(
+			oBinding.createContexts({start : 50, length : 30}, 0),
+			true);
 	});
 
 	//*********************************************************************************************
@@ -3880,6 +3903,155 @@ sap.ui.require([
 		assert.strictEqual(aContexts.length, 0);
 		assert.strictEqual(aContexts.dataRequested, true);
 		assert.deepEqual(aContexts.diff, []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("drop only trivial diff", function (assert) {
+		var done = assert.async(),
+			oBinding = this.oModel.bindList("/EMPLOYEES", null, null, null, {$count : true}),
+			bChangeFired = false,
+			aContexts,
+			oData0 = createData(50, 0),
+			oData1 = createData(0, 50),
+			oRequestorMock = sinon.mock(this.oModel.oRequestor),
+			that = this;
+
+		function onChange0(oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			assert.strictEqual(bChangeFired, false);
+			bChangeFired = true;
+
+			// no _fireChange() called here!
+			aContexts = oBinding.getContexts(0, 50);
+			assert.strictEqual(aContexts.length, 50);
+			assert.strictEqual(aContexts.dataRequested, false);
+			assert.strictEqual(aContexts.diff.length, 50);
+			oBinding.aContexts.forEach(function (oContext) {
+				if (oContext) {
+					that.oSandbox.mock(oContext).expects("destroy");
+				}
+			});
+
+			bChangeFired = false;
+			oBinding.detachEvent("change", onChange0);
+			oBinding.attachEvent("change", onChange1);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", "EMPLOYEES?sap-client=111&$count=true&$skip=50&$top=50",
+					"$auto", undefined, undefined, sinon.match.func)
+				.returns(Promise.resolve(oData1));
+
+			// code under test
+			aContexts = oBinding.getContexts(0, 100);
+			assert.strictEqual(aContexts.length, 50);
+			assert.strictEqual(aContexts.dataRequested, true);
+			assert.deepEqual(aContexts.diff, []);
+		}
+
+		function onChange1(oEvent) {
+			var i;
+
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			assert.strictEqual(bChangeFired, false);
+			bChangeFired = true;
+
+			// code under test
+			// no _fireChange() called here!
+			aContexts = oBinding.getContexts(0, 100);
+
+			assert.strictEqual(aContexts.length, 0);
+			assert.strictEqual(aContexts.dataRequested, false);
+			assert.strictEqual(aContexts.diff.length, 50);
+			for (i = 0; i < 50; i += 1) {
+				assert.deepEqual(aContexts.diff[i], {index : 0, type : "delete"});
+			}
+
+			done();
+		}
+
+		oData0["@odata.count"] = "100";
+		// on paging, all data will be gone (in fact, anything <50 leads to trouble)
+		oData1["@odata.count"] = "0";
+		this.oModel.oRequestor.request.restore();
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "EMPLOYEES?sap-client=111&$count=true&$skip=0&$top=50",
+				"$auto", undefined, undefined, sinon.match.func)
+			.returns(Promise.resolve(oData0));
+
+		oBinding.bUseExtendedChangeDetection = true;
+		oBinding.attachEvent("change", onChange0);
+
+		aContexts = oBinding.getContexts(0, 50);
+		assert.strictEqual(aContexts.length, 0);
+		assert.strictEqual(aContexts.dataRequested, true);
+		assert.deepEqual(aContexts.diff, []);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("drop only trivial diff, no $count", function (assert) {
+		var done = assert.async(),
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
+			bChangeFired = false,
+			oData0 = createData(50, 50),
+			oData1 = createData(0),
+			oRequestorMock = sinon.mock(this.oModel.oRequestor),
+			aResult,
+			that = this;
+
+		function onChange0(oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			assert.strictEqual(bChangeFired, false);
+			bChangeFired = true;
+
+			// no _fireChange() called here!
+			aResult = oBinding.getContexts(50, 50);
+			assert.strictEqual(aResult.length, 50);
+			assert.strictEqual(oBinding.getLength(), 110);
+			oBinding.aContexts.forEach(function (oContext) {
+				if (oContext) {
+					that.oSandbox.mock(oContext).expects("destroy");
+				}
+			});
+
+			bChangeFired = false;
+			oBinding.detachEvent("change", onChange0);
+			oBinding.attachEvent("change", onChange1);
+
+			oRequestorMock.expects("request")
+				.withExactArgs("GET", "EMPLOYEES?sap-client=111&$skip=30&$top=20",
+					"$auto", undefined, undefined, sinon.match.func)
+				.returns(Promise.resolve(oData1));
+
+			// code under test
+			aResult = oBinding.getContexts(30, 50);
+			assert.strictEqual(aResult.length, 50);
+		}
+
+		function onChange1(oEvent) {
+			assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
+			assert.strictEqual(bChangeFired, false);
+			bChangeFired = true;
+
+			// code under test
+			// no _fireChange() called here!
+			aResult = oBinding.getContexts(30, 50);
+
+			assert.strictEqual(aResult.length, 0);
+			assert.strictEqual(oBinding.isLengthFinal(), false);
+			assert.strictEqual(oBinding.getLength(), 10);
+			done();
+		}
+
+		this.oModel.oRequestor.request.restore();
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", "EMPLOYEES?sap-client=111&$skip=50&$top=50",
+				"$auto", undefined, undefined, sinon.match.func)
+			.returns(Promise.resolve(oData0));
+
+		oBinding.attachEvent("change", onChange0);
+
+		aResult = oBinding.getContexts(50, 50);
+		assert.strictEqual(aResult.length, 0);
 	});
 });
 
