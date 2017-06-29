@@ -17,6 +17,10 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
+
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
 	function addItems(list, nItems){
 		var n = list.getItems().length + 1;
 		for(var i = 0; i < nItems; i++){
@@ -45,7 +49,6 @@
 		description: sDescription,
 		refresh: function(){
 			oP2R.setDescription(sRefresh);
-			assert.ok(true, "Refresh event has been fired.");
 		}
 	});
 
@@ -96,12 +99,14 @@
 
 	QUnit.test("Pull Down", function(assert) {
 		var done = assert.async();
+		var oSpy = this.spy();
 		var iScroller = oPage1.getScrollDelegate()._scroller;
 
 		if (iScroller) { // this is executed when iScroll is used
 			assert.expect(14); // 13 + event
 			var iTop = oList.$().offset().top + 20;
 			var iLeft = 10;
+			oP2R.attachRefresh(oSpy);
 			iScroller._start({
 				type: "touchstart",
 				touches : [{ pageX: iLeft, pageY: iTop, length: 1 }],
@@ -135,6 +140,7 @@
 
 				//
 				setTimeout(function() {
+					assert.strictEqual(oSpy.callCount, 1, "Refresh event has been fired.");
 					assert.strictEqual(oP2R._iState, 2, "New state after release should be 2 - loading");
 					assert.ok($P2R.children(".sapMPullDownText").text() == sLoading, "Loading text is set");
 					assert.strictEqual($P2R.children(".sapMPullDownInfo").text(), sRefresh, "Description is set");

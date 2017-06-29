@@ -117,6 +117,34 @@
 			"target": ["controlsMaster", "group"]
 		  },
 		  {
+			"pattern": "entity/{id}/samples",
+			"name": "entitySamplesLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/about",
+			"name": "entityAboutLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/properties",
+			"name": "entityPropertiesLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/aggregations",
+			"name": "entityAggregationsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/associations",
+			"name": "entityAssociationsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/events",
+			"name": "entityEventsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/methods",
+			"name": "entityMethodsLegacyRoute"
+		  },
+		  {
 			"pattern": "entity/{id}/:sectionTab:",
 			"name": "entity",
 			"target": ["controlsMaster", "entity"]
@@ -145,6 +173,16 @@
 			"pattern": "api",
 			"name": "api",
 			"target": ["apiMaster", "apiDetailInitial"]
+		  },
+		  {
+		    "pattern": "api/deprecated",
+			"name": "deprecated",
+			"target": ["apiMaster", "apiDetailDeprecated"]
+		  },
+		  {
+		    "pattern": "api/experimental",
+			"name": "experimental",
+			"target": ["apiMaster", "apiDetailExperimental"]
 		  },
 		  {
 		    "pattern": "api/{id}/:entityType:/:entityId:",
@@ -257,6 +295,16 @@
 		  "apiDetail": {
 			"viewName": "ApiDetail",
 			"viewId": "apiDetail",
+			"viewLevel": 2
+		  },
+		  "apiDetailDeprecated": {
+			"viewName": "ApiDetailDeprecated",
+			"viewId": "apiDetailDeprecated",
+			"viewLevel": 2
+		  },
+		  "apiDetailExperimental": {
+			"viewName": "ApiDetailExperimental",
+			"viewId": "apiDetailExperimental",
 			"viewLevel": 2
 		  },
 		  "topicMaster": {

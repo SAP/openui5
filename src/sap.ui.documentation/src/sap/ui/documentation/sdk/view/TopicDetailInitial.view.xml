@@ -127,7 +127,8 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternA">
+						class="largeCell demokitInitialPagesColorPatternA"
+						visible="{=!${appView>/isOpenUI5}}">
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
@@ -140,7 +141,8 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternC">
+						class="largeCell demokitInitialPagesColorPatternC"
+						visible="{=!${appView>/isOpenUI5}}">
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"

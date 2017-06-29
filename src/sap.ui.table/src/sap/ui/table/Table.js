@@ -1624,6 +1624,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	Table.prototype.bindAggregation = function(sName) {
 		if (sName === "rows") {
+			if (this.getEnableBusyIndicator()) {
+				this.setBusy(false);
+			}
 			return this.bindRows.apply(this, [].slice.call(arguments, 1));
 		}
 
@@ -1643,19 +1646,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @override {@link sap.ui.base.ManagedObject#_bindAggregation}
 	 */
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
+		if (sName === "rows") {
+			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequestedListener.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceivedListener.bind(this));
+		}
+
 		// Create the binding.
 		Element.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		var oBinding = this.getBinding("rows");
 
 		if (sName === "rows" && oBinding != null) {
-			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
-			oBinding.attachEvents({
-				change: this._onBindingChange.bind(this),
-				dataRequested: this._onBindingDataRequestedListener.bind(this),
-				dataReceived: this._onBindingDataReceivedListener.bind(this)
-			});
-
 			var oModel = oBinding.getModel();
 			if (oModel != null && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				jQuery.sap.log.error("The binding mode of the model is set to \"OneTime\"."
@@ -1709,6 +1711,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		return oBindingInfo;
+	};
+
+	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
+		if (oBindingInfo.events == null) {
+			oBindingInfo.events = {};
+		}
+
+		if (oBindingInfo.events[sEventName] == null) {
+			oBindingInfo.events[sEventName] = fHandler;
+		} else {
+			// Wrap the event handler of the other party to add our handler.
+			var fOriginalHandler = oBindingInfo.events[sEventName];
+			oBindingInfo.events[sEventName] = function() {
+				fOriginalHandler.apply(this, arguments);
+				fHandler.apply(this, arguments);
+			};
+		}
 	};
 
 	/**
@@ -3032,18 +3051,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update internal property to reflect the correct index
 		this.setProperty("selectedIndex", this.getSelectedIndex(), true);
 
-		var $SelAll = this.$("selall");
-		if ((oSelMode == SelectionMode.Multi || oSelMode == SelectionMode.MultiToggle) && this.getEnableSelectAll()) {
-			var iSelectedIndicesCount = this._getSelectedIndicesCount();
-			var bClearSelectAll = iSelectedIndicesCount == 0;
-			if (!bClearSelectAll) {
-				var iSelectableRowCount = this._getSelectableRowCount();
-				bClearSelectAll = iSelectableRowCount == 0 || iSelectableRowCount !== iSelectedIndicesCount;
-			}
-			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
-			this._getAccExtension().setSelectAllState(!bClearSelectAll);
-			if (bClearSelectAll && this._getShowStandardTooltips()) {
-				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
+		if (TableUtils.hasSelectAll(this)) {
+			var $SelectAll = this.$("selall");
+			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
+
+			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
+			this._getAccExtension().setSelectAllState(bAllRowsSelected);
+
+			if (this._getShowStandardTooltips()) {
+				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
+				$SelectAll.attr('title', this._oResBundle.getText(sSelectAllResourceTextID));
 			}
 		}
 	};
@@ -3155,20 +3172,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.selectAll = function() {
-		var oSelMode = this.getSelectionMode();
-		if (!this.getEnableSelectAll() || (oSelMode != "Multi" && oSelMode != "MultiToggle")) {
+		if (!TableUtils.hasSelectAll(this)) {
 			return this;
 		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var $SelAll = this.$("selall");
-			$SelAll.removeClass("sapUiTableSelAll");
-			if (this._getShowStandardTooltips()) {
-				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
-			}
-			this._getAccExtension().setSelectAllState(true);
 			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
 		}
+
 		return this;
 	};
 
@@ -3954,6 +3966,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.setEnableBusyIndicator = function (bValue) {
 		this.setProperty("enableBusyIndicator", bValue, true);
+		if (!bValue) {
+			this.setBusy(false);
+		}
 	};
 
 	/**
@@ -3992,7 +4007,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
 			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
 			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
-			// The same applied for updating the NoData area.
+			// The same applies to updating the NoData area.
 			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);

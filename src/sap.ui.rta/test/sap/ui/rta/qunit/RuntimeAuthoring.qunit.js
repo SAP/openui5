@@ -378,30 +378,39 @@ sap.ui.require([
 			this.oRemoveCommand1 = oCommandFactory.getCommandFor(oElement1, "Remove", {
 				removedElement : oElement1
 			}, this.oGroupElementDesignTimeMetadata);
-			this.oRemoveCommand1.execute();
 
 			// Create command stack with the commands
-			this.oCommandStack = new Stack();
-			this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
+			this.oRemoveCommand1.execute().then(function() {
 
-			// Start RTA with command stack
-			var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oRootControl,
-				commandStack : this.oCommandStack,
-				showToolbars : true,
-				flexSettings: {
-					developerMode: false
-				}
-			});
+				//After command has been pushed
+				var fnStackModifiedSpy = sinon.spy(function() {
 
-			this.oRta.attachStart(function() {
-				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-				this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
-				done();
+				// Start RTA with command stack
+				var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+				this.oRta = new RuntimeAuthoring({
+					rootControl : oRootControl,
+					commandStack : this.oCommandStack,
+					showToolbars : true,
+					flexSettings: {
+						developerMode: false
+					}
+				});
+
+				this.oRta.attachStart(function() {
+					this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+					this.oElement2Overlay = OverlayRegistry.getOverlay(oElement2);
+					done();
+				}.bind(this));
+
+				this.oRta.start();
+
+				}.bind(this));
+
+				this.oCommandStack = new Stack();
+				this.oCommandStack.attachEventOnce("modified", fnStackModifiedSpy);
+				this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
+
 			}.bind(this));
-
-			this.oRta.start();
 		},
 
 		afterEach : function(assert) {
@@ -414,25 +423,46 @@ sap.ui.require([
 	});
 
 	QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with macintosh device and metaKey is pushed", function(assert) {
+		var done = assert.async();
+		var fnStackModifiedSpy = sinon.spy(function() {
+			if (fnStackModifiedSpy.calledOnce) {
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
+			} else if (fnStackModifiedSpy.calledTwice) {
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+				done();
+			}
+		}.bind(this));
+		this.oCommandStack.attachModified(fnStackModifiedSpy);
 		Device.os.macintosh = true;
 		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 commands is still in the stack");
 
+		//undo -> _unExecute -> fireModified
 		fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, false, true);
-		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
 
+		//redo -> execute -> fireModified (inside promise)
 		fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, false, true);
-		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+
 	});
 
 	QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with no macintosh device and ctrlKey is pushed", function(assert) {
+		var done = assert.async();
+		var fnStackModifiedSpy = sinon.spy(function() {
+			if (fnStackModifiedSpy.calledOnce) {
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
+			} else if (fnStackModifiedSpy.calledTwice) {
+				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+				done();
+			}
+		}.bind(this));
+		this.oCommandStack.attachModified(fnStackModifiedSpy);
 		Device.os.macintosh = false;
 		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 commands is still in the stack");
 
+		//undo -> _unExecute -> fireModified
 		fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, true, false);
-		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
 
+		//redo -> execute -> fireModified (inside promise)
 		fnTriggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, true, false);
-		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
 	});
 
 	QUnit.test("when a simple form has a title", function(assert) {

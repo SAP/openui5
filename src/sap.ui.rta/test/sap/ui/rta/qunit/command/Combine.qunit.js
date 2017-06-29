@@ -87,6 +87,8 @@ function(
 	});
 
 	QUnit.test("when calling command factory for combine ...", function(assert) {
+		var done = assert.async();
+
 		var oOverlay = new ElementOverlay();
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getRelevantContainer", function() {
@@ -117,10 +119,11 @@ function(
 		}, oDesignTimeMetadata);
 
 		assert.ok(oCombineCommand, "combine command exists for element");
-		oCombineCommand.execute();
-
-		assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+		oCombineCommand.execute().then( function() {
+			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			done();
+		}.bind(this));
 	});
 
 

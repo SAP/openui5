@@ -19,7 +19,7 @@
 				<Bar class="sapContrast" design="SubHeader">
 					<contentLeft>
 						<!--<c:Icon src="sap-icon://sap-ui5" />-->
-						<Image src="../ui/images/icon_white_19x15_blue.png"></Image>
+						<Image src="../ui/images/Logo_O_22x22.png"></Image>
 						<Text text="{/constants/SUPPORT_ASSISTANT_NAME}" class="STCustomHeaderInfo" />
 					</contentLeft>
 

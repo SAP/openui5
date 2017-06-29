@@ -99,48 +99,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 		});
 
 		/*
-		 * these are the rules for the FormattedText
+		 * These are the rules for the FormattedText
 		 */
-		var _renderingRules = {};
+		var _defaultRenderingRules = {
+			// rules for the allowed attributes
+			ATTRIBS: {
+				'style' : 1,
+				'class' : 1,
+				'a::href' : 1,
+				'a::target' : 1
+			},
+			// rules for the allowed tags
+			ELEMENTS: {
+				// Text Module Tags
+				'a' : {cssClass: 'sapMLnk'},
+				'abbr': 1,
+				'blockquote': 1,
+				'br': 1,
+				'cite': 1,
+				'code': 1,
+				'em': 1,
+				'h1': {cssClass: 'sapMTitle sapMTitleStyleH1'},
+				'h2': {cssClass: 'sapMTitle sapMTitleStyleH2'},
+				'h3': {cssClass: 'sapMTitle sapMTitleStyleH3'},
+				'h4': {cssClass: 'sapMTitle sapMTitleStyleH4'},
+				'h5': {cssClass: 'sapMTitle sapMTitleStyleH5'},
+				'h6': {cssClass: 'sapMTitle sapMTitleStyleH6'},
+				'p': 1,
+				'pre': 1,
+				'strong': 1,
+				'span': 1,
+				'u' : 1,
 
-		// rules for the allowed attributes
-		_renderingRules.ATTRIBS = {
-			'style' : 1,
-			'class' : 1,
-			'a::href' : 1,
-			'a::target' : 1
-		};
-
-		// rules for the allowed tags
-		_renderingRules.ELEMENTS = {
-			// Text Module Tags
-			'a' : {cssClass: 'sapMLnk'},
-			'abbr': 1,
-			'blockquote': 1,
-			'br': 1,
-			'cite': 1,
-			'code': 1,
-			'em': 1,
-			'h1': {cssClass: 'sapMTitle sapMTitleStyleH1'},
-			'h2': {cssClass: 'sapMTitle sapMTitleStyleH2'},
-			'h3': {cssClass: 'sapMTitle sapMTitleStyleH3'},
-			'h4': {cssClass: 'sapMTitle sapMTitleStyleH4'},
-			'h5': {cssClass: 'sapMTitle sapMTitleStyleH5'},
-			'h6': {cssClass: 'sapMTitle sapMTitleStyleH6'},
-			'p': 1,
-			'pre': 1,
-			'strong': 1,
-			'span': 1,
-			'u' : 1,
-
-			// List Module Tags
-			'dl': 1,
-			'dt': 1,
-			'dd': 1,
-			'ol': 1,
-			'ul': 1,
-			'li': 1
-		};
+				// List Module Tags
+				'dl': 1,
+				'dt': 1,
+				'dd': 1,
+				'ol': 1,
+				'ul': 1,
+				'li': 1
+			}
+		},
+		_limitedRenderingRules = {
+			ATTRIBS: {
+				'a::href' : 1,
+				'a::target' : 1
+			},
+			ELEMENTS: {
+				'a' : {cssClass: 'sapMLnk'},
+				'em': 1,
+				'strong': 1,
+				'u': 1
+			}
+		},
+		_renderingRules = _defaultRenderingRules;
 
 		/**
 		 * Initialization hook for the FormattedText, which creates a list of rules with allowed tags and attributes.
@@ -274,6 +286,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Forma
 		 */
 		FormattedText.prototype.setHtmlText = function (sText) {
 			return this.setProperty("htmlText", sanitizeHTML(sText));
+		};
+
+		/**
+		 * Sets should a limited list of rendering rules be used instead of the default one. This limited list
+		 * will evaluate only a small subset of the default HTML elements and attributes.
+		 * @param {boolean} bLimit Should the control use the limited list
+		 * @sap-restricted sap.m.MessageStrip
+		 * @private
+		 */
+		FormattedText.prototype._setUseLimitedRenderingRules = function (bLimit) {
+			_renderingRules = bLimit ? _limitedRenderingRules : _defaultRenderingRules;
 		};
 
 

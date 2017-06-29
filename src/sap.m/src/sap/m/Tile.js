@@ -120,8 +120,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Sets the px size of the Tile.
-	 * @param {int} iX left position
-	 * @param {int} iY top position
+	 * @param {int} iWidth left position
+	 * @param {int} iHeight top position
 	 * @private
 	 */
 	Tile.prototype.setSize = function(iWidth,iHeight){
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Returns and optionally sets whether the Tile is editable.
-	 * @param {boolean} optional The editable state of the tile
+	 * @param {boolean} bIsEditable The editable state of the tile
 	 * @returns {boolean} Whether the tile is editable
 	 * @see sap.m.TileContainer
 	 * @private
@@ -172,6 +172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Sets active state.
+	 * @param {Object} oEvent The fired event
 	 * @private
 	 */
 	Tile.prototype.ontouchstart = function(oEvent) {
@@ -212,6 +213,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Unsets active state on touch move.
+	 * @param {Object} oEvent The fired event
 	 * @private
 	 */
 	Tile.prototype.ontouchmove = function(oEvent) {
@@ -242,6 +244,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 	/**
 	 * Sets initial visibility of the Tile.
 	 * @param {boolean} bVisible visibility
+	 * @returns {sap.m.Tile} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Tile.prototype._setVisible = function(bVisible){
@@ -251,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Retrieves the label responsible for ARIA attribute for deletable tiles.
-	 * @returns {Object}
+	 * @returns {Object} The label responsible for ARIA attribute for deletable tiles
 	 * @private
 	 */
 	Tile.prototype._getAriaDescribedByDeleteLabel = function() {

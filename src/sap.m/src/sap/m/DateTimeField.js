@@ -130,7 +130,16 @@ sap.ui.define([
 		// set the property in any case but check validity on output
 		this.setProperty("value", sValue, true); // no rerendering
 
-		this.updateDomValue(this._formatValue(this.getDateValue()));
+		if (this.getDomRef()) {
+			// convert to output
+			var sOutputValue = this._formatValue(oDate);
+
+			if (this._$input.val() !== sOutputValue) {
+				this._$input.val(sOutputValue);
+				this._setLabelVisibility();
+				this._curpos = this._$input.cursorPos();
+			}
+		}
 
 		return this;
 	};

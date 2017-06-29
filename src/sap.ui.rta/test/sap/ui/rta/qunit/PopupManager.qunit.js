@@ -17,6 +17,7 @@ sap.ui.require([
 	"sap/m/Button",
 	"sap/ui/layout/form/Form",
 	"sap/ui/base/Event",
+	"sap/ui/dt/Overlay",
 	// should be last
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-ie",
@@ -38,6 +39,7 @@ function(
 	Button,
 	Form,
 	Event,
+	Overlay,
 	sinon
 ) {
 	"use strict";
@@ -341,6 +343,8 @@ function(
 	//_applyPopupPatch
 	QUnit.test("when _applyPopupPatch is called", function(assert) {
 		var done = assert.async();
+		var oPopoverOverlay = fnFindOverlay(this.oPopover, this.oRta._oDesignTime);
+		var oOverlayContainer = Overlay.getOverlayContainer(oPopoverOverlay);
 		sandbox.stub(this.oRta.oPopupManager, "getRta").returns(this.oRta);
 		sandbox.stub(this.oRta, "getMode").returns("adaptation");
 		var fnDefaultOnAfterRendering = this.oPopover.oPopup.onAfterRendering;
@@ -350,6 +354,7 @@ function(
 			assert.strictEqual(this.fnRemovePopupListeners.callCount, 1, "then popup event listeners removed");
 			assert.strictEqual(oPopup._aAutoCloseAreas[0].id, this.oRta._oToolsMenu.getId(), "Toolbar added as an autoClose area");
 			assert.strictEqual(oPopup._aAutoCloseAreas[1].id, this.oPopover.getId(), "Popover added as an autoClose area");
+			assert.strictEqual(oPopup._aAutoCloseAreas[2].id, oOverlayContainer.id, "OverlayContainer added as an autoClose area");
 			assert.notEqual(oPopup.onAfterRendering, fnDefaultOnAfterRendering, "then onAfterRendering was overwritten");
 			done();
 		}.bind(this));

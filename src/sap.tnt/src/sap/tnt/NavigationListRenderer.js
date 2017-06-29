@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			var group,
 				role,
 				groups = control.getItems(),
+				length = groups.length,
 				expanded = control.getExpanded();
 
 			rm.write("<ul");
@@ -51,9 +52,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 			rm.write(">");
 
-			for (var i = 0; i < groups.length; i++) {
+			for (var i = 0; i < length; i++) {
 				group = groups[i];
-				group.render(rm, control);
+				group.render(rm, control, i, length);
 			}
 
 			rm.write("</ul>");

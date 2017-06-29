@@ -90,19 +90,6 @@ sap.ui.define([
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
-			onJSDocLinkClick: function (oEvt) {
-				// get target
-				var sType = oEvt.target.getAttribute("data-sap-ui-target");
-				if ( sType && sType.indexOf('#') >= 0 ) {
-					sType = sType.slice(0, sType.indexOf('#'));
-				}
-
-				if ( sType ) {
-					this.getRouter().navTo("apiId", {id : sType}, false);
-					oEvt.preventDefault();
-				}
-			},
-
 			onSampleLinkPress: function (oEvent) {
 				// Navigate to Control Sample section
 				var sEntityName = oEvent.getSource().data("name");
@@ -111,6 +98,10 @@ sap.ui.define([
 
 			onToggleFullScreen: function (oEvent) {
 				ToggleFullScreenHandler.updateMode(oEvent, this.getView(), this);
+			},
+
+			onJSDocLinkClick: function (oEvent) {
+				BaseController.prototype.onJSDocLinkClick(oEvent, "apiId", this.getOwnerComponent());
 			},
 
 			/* =========================================================== */
@@ -342,8 +333,10 @@ sap.ui.define([
 				}
 
 				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
+					if (!oControlData.hasAnnotations) {
+						oUi5Metadata.annotations.unshift({});
+					}
 					oControlData.hasAnnotations = true;
-					oUi5Metadata.annotations.unshift({});
 				} else {
 					oControlData.hasAnnotations = false;
 				}
@@ -388,6 +381,8 @@ sap.ui.define([
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
 				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
+
+				this.getModel("topics").setSizeLimit(1000);
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
@@ -400,6 +395,16 @@ sap.ui.define([
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
 				}
+
+				// TODO: This is a temporary solution
+				// It's executed here where we have all instances of the CodeEditor created
+				this.getView().findAggregatedObjects(true, function (oElement) {
+					if (oElement instanceof sap.ui.codeeditor.CodeEditor) {
+						// We are replacing the "focus" on the editor instance method as it is
+						// triggering the unwanted scroll
+						oElement._getEditorInstance().focus = function () {};
+					}
+				});
 			},
 
 			_getControlChildren : function (aTreeData, sTopicId) {
@@ -467,7 +472,7 @@ sap.ui.define([
 							});
 						}
 
-						if (param.parameterProperties) {
+						if (param.parameterProperties && !method.subParametersInjected) {
 							paramProperties = param.parameterProperties;
 							for (var prop in paramProperties) {
 								paramTypes = (paramProperties[prop].type || "").split("|");
@@ -499,7 +504,10 @@ sap.ui.define([
 						}
 					}
 
-					method.parameters = method.parameters.concat(subParameters);
+					if (!method.subParametersInjected) {
+						method.parameters = method.parameters.concat(subParameters);
+						method.subParametersInjected = true;
+					}
 
 					return method;
 
@@ -583,7 +591,7 @@ sap.ui.define([
 
 				// Transform the key-value pairs of event parameters into an array
 				var result = events.map(function (event) {
-					if (event.parameters) {
+					if (event.parameters && !event.subParametersInjected) {
 						var aParameters = [];
 						event.parameters.map(function(oParam) {
 							this.subParamPhoneName = oParam.name;
@@ -592,6 +600,7 @@ sap.ui.define([
 						this.subParamPhoneName = '';
 
 						event.parameters = aParameters;
+						event.subParametersInjected = true;
 					}
 
 					return event;
@@ -609,18 +618,18 @@ sap.ui.define([
 			_getParameters: function (oParam) {
 				var result = [oParam];
 
+				var types = (oParam.type || "").split("|"),
+				paramTypes;
+
+				oParam.types = [];
+				for (var i = 0; i < types.length; i++) {
+					oParam.types.push({
+						value: types[i],
+						isLast: i === types.length - 1
+					});
+				}
+
 				if (oParam.parameterProperties) {
-					var types = (oParam.type || "").split("|"),
-						paramTypes;
-
-					oParam.types = [];
-					for (var i = 0; i < types.length; i++) {
-						oParam.types.push({
-							value: types[i],
-							isLast: i === types.length - 1
-						});
-					}
-
 					this.subParamLevel++;
 					for (var subParam in oParam.parameterProperties) {
 							var subPropertyString = 'is';
@@ -778,6 +787,10 @@ sap.ui.define([
 			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
+				if (!description && !deprecatedText && !deprecatedSince) {
+					return "";
+				}
+
 				var result = description || "";
 
 				if (deprecatedSince || deprecatedText) {
@@ -928,19 +941,6 @@ sap.ui.define([
 				}
 			},
 
-			/**
-			 * Helper function retrieving event parameter type
-			 * @param eventInfo - object containing information about the event or the event parameter
-			 * @returns {string} - Returns the type of the parameter or empty string
-			 */
-			formatEventsType: function (eventInfo) {
-				if (eventInfo && eventInfo.paramType) {
-					return eventInfo.paramType;
-				} else {
-					return "";
-				}
-			},
-
 			formatMethodCode: function(sName, aParams, aReturnValue) {
 				var result = sName + '(';
 
@@ -994,18 +994,6 @@ sap.ui.define([
 			 */
 			formatLinkEnabled: function (linkText) {
 				return this._baseTypes.indexOf(linkText) === -1;
-			},
-
-			/**
-			 * Helper function that checks if a link from the events table
-			 * points to a base type (e.g. int, string, object etc)
-			 * @param eventInfo - object containing information about the event
-			 * @returns {boolean} - False if link points to a base type
-			 */
-			formatEventLinkEnabled: function (eventInfo) {
-				var sEventText = this.formatEventsType(eventInfo);
-
-				return this._baseTypes.indexOf(sEventText) === -1;
 			},
 
 			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {

@@ -1,27 +1,166 @@
 {
-	"ColumnCollection":[
-		{"text" : "ProductId", "path" : "productId", "visible" : true},
-		{"text" : "Name", "path" : "name", "visible" : true},
-		{"text" : "Category", "path" : "category"},
-		{"text" : "SupplierName", "path" : "supplierName"},
-		{"text" : "Description", "path" : "description"},
-		{"text" : "WeightMeasure", "path" : "weightMeasure"},
-		{"text" : "WeightUnit", "path" : "weightUnit"},
-		{"text" : "Price", "path" : "price"},
-		{"text" : "CurrencyCode", "path" : "currencyCode"},
-		{"text" : "Status", "path" : "status"},
-		{"text" : "Quantity", "path" : "quantity"},
-		{"text" : "UoM", "path" : "uom"},
-		{"text" : "Width", "path" : "width"},
-		{"text" : "Depth", "path" : "depth"},
-		{"text" : "Height", "path" : "height"},
-		{"text" : "DimUnit", "path" : "dimUnit"},
-		{"text" : "ProductPicUrl", "path" : "productPicUrl"}
-	],
-	"SortItems":[
-		{"columnKeyModel" : "name", "operationModel" : "Descending"}
-	],
-	"FilterItems":[
-		{"columnKeyModel" : "name", "operationModel" : "Contains", "value1Model" : "a"}
-	]
+  "ColumnCollection": [
+    {
+      "text": "ProductId",
+      "columnKey": "productId"
+    },
+    {
+      "text": "Name",
+      "columnKey": "name"
+    },
+    {
+      "text": "Category",
+      "columnKey": "category"
+    },
+    {
+      "text": "SupplierName",
+      "columnKey": "supplierName"
+    },
+    {
+      "text": "Description",
+      "columnKey": "description"
+    },
+    {
+      "text": "WeightMeasure",
+      "columnKey": "weightMeasure"
+    },
+    {
+      "text": "WeightUnit",
+      "columnKey": "weightUnit"
+    },
+    {
+      "text": "Price",
+      "columnKey": "price"
+    },
+    {
+      "text": "CurrencyCode",
+      "columnKey": "currencyCode"
+    },
+    {
+      "text": "Status",
+      "columnKey": "status"
+    },
+    {
+      "text": "Quantity",
+      "columnKey": "quantity"
+    },
+    {
+      "text": "UoM",
+      "columnKey": "uom"
+    },
+    {
+      "text": "Width",
+      "columnKey": "width"
+    },
+    {
+      "text": "Depth",
+      "columnKey": "depth"
+    },
+    {
+      "text": "Height",
+      "columnKey": "height"
+    },
+    {
+      "text": "DimUnit",
+      "columnKey": "dimUnit"
+    },
+    {
+      "text": "ProductPicUrl",
+      "columnKey": "productPicUrl"
+    }
+  ],
+  "ColumnsItems": [
+    {
+      "columnKey": "name",
+      "visible": true,
+      "index": 0
+    },
+    {
+      "columnKey": "productId",
+      "visible": true,
+      "index": 1
+    },
+    {
+      "columnKey": "category",
+      "visible": false,
+      "index": 2
+    },
+    {
+      "columnKey": "supplierName",
+      "visible": false,
+      "index": 3
+    },
+    {
+      "columnKey": "description",
+      "visible": false,
+      "index": 4
+    },
+    {
+      "columnKey": "weightMeasure",
+      "visible": false,
+      "index": 5
+    },
+    {
+      "columnKey": "weightUnit",
+      "visible": false,
+      "index": 6
+    },
+    {
+      "columnKey": "price",
+      "visible": false,
+      "index": 7
+    },
+    {
+      "columnKey": "currencyCode",
+      "visible": false,
+      "index": 8
+    },
+    {
+      "columnKey": "status",
+      "visible": false,
+      "index": 9
+    },
+    {
+      "columnKey": "quantity",
+      "visible": false,
+      "index": 10
+    },
+    {
+      "columnKey": "uom",
+      "visible": false,
+      "index": 11
+    },
+    {
+      "columnKey": "width",
+      "visible": false,
+      "index": 12
+    },
+    {
+      "columnKey": "depth",
+      "visible": false,
+      "index": 13
+    },
+    {
+      "columnKey": "height",
+      "visible": false,
+      "index": 14
+    },
+    {
+      "columnKey": "dimUnit",
+      "visible": false,
+      "index": 15
+    },
+    {
+      "columnKey": "productPicUrl",
+      "visible": false,
+      "index": 16
+    }
+  ],
+  "SortItems": [
+    {
+      "columnKey": "name",
+      "operation": "Descending"
+    }
+  ],
+  "ShowResetEnabled": false
 }

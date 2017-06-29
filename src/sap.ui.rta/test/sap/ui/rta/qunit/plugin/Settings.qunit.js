@@ -263,33 +263,57 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 	});
 
 	QUnit.test("when two changes are on the command stack,", function(assert) {
-		var oSettingsCmd1 = new sap.ui.rta.command.Settings({
-			selector : {
+		var done = assert.async();
+
+		var oSettingsCmd1 = this.oSettingsPlugin.getCommandFactory().getCommandFor(
+			{
 				id : "stableNavPopoverId",
 				controlType : "sap.m.Button",
 				appComponent : oMockedAppComponent
 			},
+			"settings",
+			{
 			changeType : "changeSettings",
 			content : "testchange1"
-		});
+			},
+			new sap.ui.dt.ElementDesignTimeMetadata({
+			libraryName : "sap.m",
+			data : {
+				actions : {
+					settings : function() {}
+				}
+			}
+		}));
 
-		var oSettingsCmd2 = new sap.ui.rta.command.Settings({
-			selector : {
+		var oSettingsCmd2 = this.oSettingsPlugin.getCommandFactory().getCommandFor(
+			{
 				id : "stableNavPopoverId",
 				controlType : "sap.m.Button",
 				appComponent : oMockedAppComponent
 			},
-			changeType : "changeSettings",
-			content : "testchange2"
-		});
+			"settings",
+			{
+				changeType : "changeSettings",
+				content : "testchange2"
+			},
+			new sap.ui.dt.ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions : {
+						settings : function() {}
+					}
+				}
+			}));
 
 		oSettingsCmd1.prepare();
 		oSettingsCmd2.prepare();
-		this.oCommandStack.pushAndExecute(oSettingsCmd1);
-		this.oCommandStack.pushAndExecute(oSettingsCmd2);
-
-		var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
-		assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
+		this.oCommandStack.pushAndExecute(oSettingsCmd1).then(function(){
+			this.oCommandStack.pushAndExecute(oSettingsCmd2).then(function(){
+				var aUnsavedChanges = this.oSettingsPlugin._getUnsavedChanges("stableNavPopoverId", ["changeSettings"]);
+				assert.equal(aUnsavedChanges.length, 2, "these commands are returned by _getUnsavedChanges");
+				done();
+			}.bind(this));
+		}.bind(this));
 	});
 
 })();

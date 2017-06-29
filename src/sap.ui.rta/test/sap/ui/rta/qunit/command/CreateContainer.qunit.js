@@ -129,14 +129,17 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 		});
 
 		QUnit.test("when getting a createContainer command for form", function(assert) {
+			var done = assert.async();
 			var sChangeType = this.oCreateContainerDesignTimeMetadata.getAggregationAction("createContainer", this.oForm)[0].changeType;
 			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
 			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 			assert.ok(this.oCreateContainerCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
-			this.oCreateContainerCommand.execute();
-			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			this.oCreateContainerCommand.execute().then( function() {
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				done();
+			}.bind(this));
 		});
 
 	});

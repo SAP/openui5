@@ -82,6 +82,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
+		 * @param {string} sImgId The ID of the image
+		 * @param {string} sImgStyle The style of the image
+		 * @param {string} sSrc The source of the image
+		 * @param {boolean} bIconDensityAware If the icon is density aware
+		 * @returns {object} The image
 		 */
 		MenuListItem.prototype._getImage = function(sImgId, sImgStyle, sSrc, bIconDensityAware) {
 			var oImage = this._image;

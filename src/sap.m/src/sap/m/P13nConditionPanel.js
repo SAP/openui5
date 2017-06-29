@@ -1587,17 +1587,12 @@ sap.ui.define([
 				oControl = new sap.m.Input(params);
 				break;
 			case "date":
-				oConditionGrid.oFormatter = DateFormat.getDateInstance();
+				oConditionGrid.oFormatter = DateFormat.getDateInstance({strictParsing : true});
 				oControl = new sap.m.DatePicker(params);
 				break;
 			case "time":
-				oConditionGrid.oFormatter = DateFormat.getTimeInstance();
+				oConditionGrid.oFormatter = DateFormat.getTimeInstance({strictParsing : true});
 				oControl = new sap.m.TimePicker(params);
-
-				//				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-				//				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
-				//				oControl.setDisplayFormat( oLocaleData.getTimePattern("short"));
-
 				break;
 			default:
 				oConditionGrid.oFormatter = null;
@@ -1832,7 +1827,7 @@ sap.ui.define([
 			// we have to insert the control into the content with rerendering (bSuppressInvalidate=false) the UI,
 			// otherwise in some use cases the "between" value fields will not be rendered.
 			// This additional rerender might trigger some problems for screenreader.
-			oConditionGrid.insertContent(oCtrl, ctrlIndex);
+			oConditionGrid.insertContent(oCtrl, ctrlIndex === -1 ? 0 : ctrlIndex);
 			//oConditionGrid.insertAggregation("content", oCtrl, ctrlIndex, true);
 
 			var oValue, sValue;
@@ -2720,7 +2715,7 @@ sap.ui.define([
 		// }
 
 		var aGrids = this._oConditionsGrid.getContent();
-		var n = this._aConditionsFields.length;
+		var n = this._aConditionsFields.length - 1;
 		var newIndex = n;
 		if (oRangeInfo.name === "Tablet") {
 			newIndex = 5;

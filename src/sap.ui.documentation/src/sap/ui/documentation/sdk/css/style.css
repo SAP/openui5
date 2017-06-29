@@ -76,13 +76,6 @@
 	background: #f2f8fc;
 }
 
-.sapMListTblCell .sapMText,
-.sapMListTblCell .sapMLnk {
-	padding-top: 0.5rem;
-	padding-right: 1rem;
-}
-
-
 /************************************************* Custom control styles *********************************************/
 
 /* Search */
@@ -692,7 +685,7 @@ code {
 }
 
 .sapUiDocumentationHeaderNavLinks .sapMFlexItem:nth-child(2) {
-	min-width: 2rem !important;
+	min-width: 1px !important;
 }
 
 .sapUiDocumentationAnnotationsText .sapMLnk {
@@ -1079,14 +1072,26 @@ html[data-sap-ui-browser="ie9"] .titlesHeader p {
 	text-align: center;
 }
 
-/* remove white shadow for API reference header bar */
-.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX {
+/* remove white shadow for header bars */
+.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMSubHeader-CTX,
+.sapUiDemokit .sapMSplitContainerMaster .sapMIBar.sapMHeader-CTX {
 	box-shadow: inherit;
+}
+
+/* correct split container right border */
+.sapUiDemokit .sapMSplitContainerMaster:after {
+	border-right: 1px solid #4f667a;
 }
 
 /* control overflow for community links in horizontal layout */
 .sapUiDemokit .communityLinkCell .sapUiHLayout {
 	max-width: 100%;
+}
+
+/* fixes "or" text misalignment in vertical layout used in table cell */
+.sapUiDemokit .sapMListTbl .sapUiVlt .sapMText.sapUiDocumentationOrText {
+	padding: 0;
+	margin: 0;
 }
 
 .sapUiDemokit .communityLinkCell .sapUiHLayoutChildWrapper:nth-child(2) {
@@ -1162,6 +1167,10 @@ html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .demokitIni
 
 .sapUiDemokit .sapUiBlockLayout.sapUiBlockLayoutSizeS .largeCell {
 	min-height: 7rem;
+}
+
+html.sap-phone .sapMITHOverflowList.tabHeaderNoLeftMargin .sapMITBScrollContainer {
+	margin-left: 0;
 }
 
 /* shrink image to 200px height on landscape phone mode */
@@ -1457,6 +1466,10 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	position: absolute;
 	max-height: 50%;
 }
+/* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
+html[data-sap-ui-browser^="ff"] .sapUiDemokit .landingImage {
+	position: relative;
+}
 
 /* Special case with initial page having different aspect ratio according to screen size */
 @media (max-width: 64rem) {
@@ -1485,8 +1498,29 @@ html:not(.sapUiMedia-Std-Phone) .sapUiDemokit .landingImage {
 	}
 }
 
+/* FireFox does not handle aspect ratio optimization so this must be disabled for it only by resetting the element position */
+html[data-sap-ui-browser^="ff"] .sapUiDemokit .welcomeImage {
+	position: relative;
+}
+
 @font-face {
 	font-family: 'FeedbackRatingFaces';
 	src: url('../fonts/BusinessSuiteInAppSymbolsSmall.eot'),
 	url('../fonts/BusinessSuiteInAppSymbolsSmall.ttf') format('truetype');
+}
+
+/* Make the iframe transparent so that the content in it will use the theme's background */
+.sapUiDocumentationTopicsIframe {
+	width: 100%;
+	height: 99%;
+}
+
+/* Only for hcb set another color as the one provided by the theme is not suitable */
+html.sapUiTheme-sap_belize_hcb .sapUiDocumentationTopicsIframe {
+	background: #fff;
+}
+
+/* Prettified text looks bigger when viewed from mac, even if it has the same font size */
+html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
+	font-size: 0.8rem;
 }

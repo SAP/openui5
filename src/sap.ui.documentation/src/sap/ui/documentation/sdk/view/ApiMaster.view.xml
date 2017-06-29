@@ -30,7 +30,8 @@
 					items="{
 						path: 'treeData>/',
 						sorter : {
-							path : 'name'
+							path : 'name',
+							comparator : '.compareTreeNodes'
 						}
 					}">
 				<StandardTreeItem

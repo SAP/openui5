@@ -240,29 +240,47 @@ sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap
 			*/
 
 			QUnit.test("When executing the underlying command on the control at runtime", function(assert){
+				var done = assert.async();
 
 				// Execute the command
-				this.oCommand.execute();
-				sap.ui.getCore().applyChanges();
+				this.oCommand.execute()
 
-				// Verfify result
-				mOptions.afterAction(this.oUiComponent, this.oView, assert);
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+
+					// Verfify result
+					mOptions.afterAction(this.oUiComponent, this.oView, assert);
+					done();
+				}.bind(this));
+
 			});
 
 			QUnit.test("When executing and undoing the command", function(assert){
-				this.oCommand.execute();
-				this.oCommand.undo();
-				sap.ui.getCore().applyChanges();
-				mOptions.afterUndo(this.oUiComponent, this.oView, assert);
+				var done = assert.async();
+				this.oCommand.execute()
+
+				.then(this.oCommand.undo.bind(this.oCommand))
+
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					mOptions.afterUndo(this.oUiComponent, this.oView, assert);
+					done();
+				}.bind(this));
 			});
 
 			QUnit.test("When executing, undoing and redoing the command", function(assert){
-				this.oCommand.execute();
-				this.oCommand.undo();
-				sap.ui.getCore().applyChanges();
-				this.oCommand.execute();
-				mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+				var done = assert.async();
+				this.oCommand.execute()
 
+				.then(this.oCommand.undo.bind(this.oCommand))
+
+				.then(this.oCommand.execute.bind(this.oCommand))
+
+				.then(function() {
+					sap.ui.getCore().applyChanges();
+					mOptions.afterRedo(this.oUiComponent, this.oView, assert);
+					done();
+				}.bind(this));
 			});
 
 		 };

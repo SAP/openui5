@@ -2,8 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-], function() {
+sap.ui.define(function() {
 	"use strict";
 
 	/**
@@ -22,45 +21,60 @@ sap.ui.define([
 	var ChangeHandlerMediator = { };
 
 	/**
-	 * Array of relevant change handlers and their respective settings
+	 * Array of relevant change handlers settings
 	 */
-	ChangeHandlerMediator._aChangeHandlers = [];
+	ChangeHandlerMediator._aChangeHandlerSettings = [];
 
 	/**
-	 * Add a change handler to the mediated list
-	 * @param {String} sChangeHandlerName The change handler name
-	 * @param {map} mParameters The relevant parameters for the change handler
+	 * Add change handler settings to the mediated list
+	 * @param {Object} mKey Collection of keys
+	 * @param {string} mKey.scenario The scenario name
+	 * @param {Object} mSettings The relevant settings for the change handler
 	 */
-	ChangeHandlerMediator.addChangeHandler = function(sChangeHandlerName, mParameters) {
-		var mNewChangeHandler = {
-			name : sChangeHandlerName,
-			parameters : mParameters
+	ChangeHandlerMediator.addChangeHandlerSettings = function(mKey, mSettings) {
+		var mNewChangeHandlerSettings;
+
+		if (!(mKey && mSettings)){
+			throw new Error('New entry in ChangeHandlerMediator requires a key and settings');
+		}
+
+		mNewChangeHandlerSettings = {
+			key : mKey,
+			content : mSettings
 		};
 
-		var bExisting = false;
-
-		// Entries with the same name are not allowed
-		this._aChangeHandlers.forEach(function(mChangeHandler, iIndex){
-			if (mChangeHandler.name === mNewChangeHandler.name){
-				this._aChangeHandlers[iIndex] = mNewChangeHandler;
-				bExisting = true;
-			}
-		}.bind(this));
-
-		if (!bExisting) {
-			this._aChangeHandlers.push(mNewChangeHandler);
-		}
+		//TBD: Prevent duplicates?
+		this._aChangeHandlerSettings.push(mNewChangeHandlerSettings);
 	};
 
 	/**
-	 * Retrieves a change handler from the mediated list
-	 * @param  {String} sChangeHandlerName The change handler name
-	 * @return {map}                       The change handler with its parameters
+	 * Retrieves change handler settings from the mediated list
+	 * @param  {Object} mKey Collection of keys
+	 * @param  {Object} mKey.scenario The scenario name
+	 * @return {Object}        The change handler settings
 	 */
-	ChangeHandlerMediator.getChangeHandler = function(sChangeHandlerName){
-		return this._aChangeHandlers.filter(function(oChangeHandler){
-			return oChangeHandler.name === sChangeHandlerName;
-		})[0];
+	ChangeHandlerMediator.getChangeHandlerSettings = function(mKey){
+		var aKeys = Object.keys(mKey);
+		var mFoundChangeHandlerSettings = { "matchingKeys" : 0 };
+		var iMatchingKeys;
+		this._aChangeHandlerSettings.forEach(function(oEntry){
+			iMatchingKeys = 0;
+			aKeys.forEach(function(sKey){
+				if (oEntry.key[sKey] === mKey[sKey]){
+					iMatchingKeys++;
+				}
+			});
+			// Return the object with the most matching keys
+			if (iMatchingKeys > mFoundChangeHandlerSettings.matchingKeys){
+				mFoundChangeHandlerSettings.foundEntry = oEntry;
+				mFoundChangeHandlerSettings.matchingKeys = iMatchingKeys;
+				// If keys have different sizes, return the entry with exact key match
+				if (iMatchingKeys === aKeys.length){
+					return mFoundChangeHandlerSettings.foundEntry;
+				}
+			}
+		});
+		return mFoundChangeHandlerSettings.foundEntry;
 	};
 
 	return ChangeHandlerMediator;

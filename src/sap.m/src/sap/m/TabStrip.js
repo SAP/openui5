@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Returns an object representing the serialized focus information.
 		 *
-		 * @param oFocusInfo
+		 * @param {Object} oFocusInfo The focus information to be applied
 		 * @override
 		 * @public
 		 */
@@ -452,6 +452,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Lazily initializes the left or right arrows aggregation.
 		 * @private
+		 * @param {string} sButton The button to be initialized
+		 * @param {string} sTooltip The tooltip to be set
+		 * @param {string} sIcon The icon to be set
+		 * @param {int} iDelta The delta of the scroll
 		 * @returns {sap.m.AccButton} The newly created control
 		 */
 		TabStrip.prototype._getArrowButton = function (sButton, sTooltip, sIcon, iDelta) {
@@ -616,7 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/**
 		 * Handles the delete keyboard event.
-		 * @param oEvent
+		 * @param {jQuery.Event} oEvent The event object
 		 */
 		TabStrip.prototype.onsapdelete = function(oEvent) {
 			var oItem = jQuery("#" + oEvent.target.id).control(0),
@@ -706,6 +710,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 *
 		 * @param {string} sAggregationName The name of the aggregation
 		 * @param {any} oObject The value of the aggregation to be inserted
+		 * @param {int} iIndex The index to be inserted in
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
 		 * @override
@@ -829,7 +834,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				var aEvents = [
 						'itemClosePressed',
 						'itemPropertyChanged'
-				    ];
+					];
 				aEvents.forEach(function (sEventName) {
 					sEventName = sEventName.charAt(0).toUpperCase() + sEventName.slice(1); // Capitalize
 
@@ -998,8 +1003,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Creates <code>TabStripItem</code> in context of <code>TabStripSelect</code>.
 		 *
-		 * @param oSelect
-		 * @param aItems
+		 * @param {Object} oSelect The select object to which the items will be added
+		 * @param {array} aItems The items to be added
 		 */
 		TabStrip.prototype._addItemsToSelect = function (oSelect, aItems) {
 			aItems.forEach(function (oItem) {
@@ -1016,8 +1021,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Ensures proper <code>TabStripItem</code> inheritance in context of <code>TabStripSelect</code>.
 		 *
-		 * @param {sap.m.TabStripItem} oTabStripItem
-		 * @returns {sap.ui.core.Element}
+		 * @param {sap.m.TabStripItem} oTabStripItem The source item for which a TabStripSelect will be created
+		 * @returns {sap.ui.core.Element} The TabStripSelect item created
 		 */
 		TabStrip.prototype._createSelectItemFromTabStripItem = function (oTabStripItem) {
 			var oSelectItem;
@@ -1110,7 +1115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Handles the proper update of the <code>TabStripItem</code> selection class.
 		 *
-		 * @param {string} sSelectedItemId
+		 * @param {string} sSelectedItemId The ID of the selected item
 		 */
 		TabStrip.prototype._updateSelectedItemClasses = function(sSelectedItemId) {
 			if (this.$("tabs")) {
@@ -1125,8 +1130,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		/**
 		 * Changes the visibility of the item "state" symbol.
-		 * @param {any} vItemId
-		 * @param {boolean} bShowState
+		 * @param {any} vItemId The ID of the item
+		 * @param {boolean} bShowState If the state must be shown
 		 */
 		TabStrip.prototype.changeItemState = function(vItemId, bShowState) {
 			var $oItemState;
@@ -1149,7 +1154,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Handles the <code>onTouchStart</code> event.
 		 * @param {jQuery.Event} oEvent  Event object
-		 * @returns {boolean}
 		 */
 		TabStrip.prototype.ontouchstart = function (oEvent) {
 			var oTargetItem = jQuery(oEvent.target).control(0);
@@ -1166,7 +1170,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		/**
 		 * Handles the <code>onTouchEnd</code> event.
 		 * @param {jQuery.Event} oEvent  Event object
-		 * @returns {boolean}
 		 */
 		TabStrip.prototype.ontouchend = function (oEvent) {
 			var oTarget,

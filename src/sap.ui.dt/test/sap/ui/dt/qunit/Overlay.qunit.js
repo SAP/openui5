@@ -1,5 +1,7 @@
 /*global QUnit*/
 
+QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
@@ -13,9 +15,8 @@ sap.ui.require([
 	"sap/m/Bar",
 	"sap/m/VBox",
 	"dt/control/SimpleScrollControl",
-	"sap/ui/thirdparty/sinon",
 	// should be last:
-	"sap/ui/qunit/qunit-coverage",
+	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-ie",
 	"sap/ui/thirdparty/sinon-qunit"
 ],
@@ -36,10 +37,12 @@ function(
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
+	QUnit.start();
 
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
 		beforeEach : function(assert) {
+			this.sandbox = sinon.sandbox.create();
+
 			var done = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
@@ -70,7 +73,7 @@ function(
 			}.bind(this));
 		},
 		afterEach : function() {
-			sandbox.restore();
+			this.sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -84,8 +87,8 @@ function(
 		var oInitialControlOffset = oContent1.$().offset();
 		var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-		var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
-		var oEnsureDomOrder = sandbox.spy(Overlay.prototype, "_ensureDomOrder");
+		var oApplyStylesSpy = this.sandbox.spy(Overlay.prototype, "applyStyles");
+		var oEnsureDomOrder = this.sandbox.spy(Overlay.prototype, "_ensureDomOrder");
 
 		this.oSimpleScrollControlOverlay._aScrollContainers[0].overlayDomRef.scroll(function() {
 			assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
@@ -106,8 +109,8 @@ function(
 		var oInitialControlOffset = oContent1.$().offset();
 		var oInitialOverlayOffset = oContent1Overlay.$().offset();
 
-		var oApplyStylesSpy = sandbox.spy(Overlay.prototype, "applyStyles");
-		var oEnsureDomOrder = sandbox.spy(Overlay.prototype, "_ensureDomOrder");
+		var oApplyStylesSpy = this.sandbox.spy(Overlay.prototype, "applyStyles");
+		var oEnsureDomOrder = this.sandbox.spy(Overlay.prototype, "_ensureDomOrder");
 
 		this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scroll(function() {
 			assert.equal(oApplyStylesSpy.callCount, 0,  "then the applyStyles Method is not called");
@@ -123,6 +126,7 @@ function(
 
 	QUnit.module("Given that a DesignTime is created for a control", {
 		beforeEach : function(assert) {
+			this.sandbox = sinon.sandbox.create();
 			var done = assert.async();
 			var done2 = assert.async();
 
@@ -170,7 +174,7 @@ function(
 			}.bind(this));
 		},
 		afterEach : function() {
-			sandbox.restore();
+			this.sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}
@@ -203,4 +207,17 @@ function(
 		assert.equal($AggregationOverlays.get(3).dataset["sapUiDtAggregation"], "footer", "then the overlay for headerTitle is fourth in DOM");
 	});
 
+	QUnit.test("when _cloneDomRef is called", function(assert) {
+		this.oLayoutOverlay._cloneDomRef(this.oLayout.$().find("header")[0]);
+
+		var oSrcDomElement = this.oLayout.$().find("header").get(0);
+		var oDestDomElement = this.oLayoutOverlay.$().find(">.sapUiDtClonedDom").get(0);
+
+		assert.equal(window.getComputedStyle(oSrcDomElement)["visibility"], "hidden", "then the original domRef is hidden");
+		assert.equal(window.getComputedStyle(oDestDomElement)["visibility"], "visible", "then the cloned domRef is visible");
+
+		this.oLayoutOverlay._restoreVisibility();
+		assert.equal(window.getComputedStyle(oSrcDomElement)["visibility"], "visible",
+			"then after restoring visibility the original domRef is visible again");
+	});
 });

@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Lazy loads attachments icon.
-	 *
+	 * @returns {object} The attachments icon
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getAttachmentsIcon = function() {
@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Lazy loads people icon.
-	 *
+	 * @returns {object} The people icon
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getPeopleIcon = function() {
@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Lazy loads notes icon.
-	 *
+	 * @returns {object} The notes icon
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getNotesIcon = function() {
@@ -207,7 +207,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Creates icon image.
-	 *
+	 * @param {string} sURI The URL of the icon image
+	 * @param {string} sImageId The ID of the icon image
+	 * @returns {object} The icon image
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getIcon = function(sURI, sImageId) {
@@ -229,7 +231,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Gets the proper control for the title.
-	 *
+	 * @returns {sap.m.Control} The control for the title
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getTitleControl = function() {
@@ -283,7 +285,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Lazy loads _textControl aggregation.
-	 *
+	 * @returns {sap.m.Control} The control for the text
 	 * @private
 	 */
 	ObjectIdentifier.prototype._getTextControl = function() {
@@ -383,7 +385,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Function is called when ObjectIdentifier's title is triggered.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The fired event
 	 * @private
 	 */
 	ObjectIdentifier.prototype._handlePress = function(oEvent) {
@@ -401,7 +403,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Event handler called when the enter key is pressed.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The fired event
 	 * @private
 	 */
 	ObjectIdentifier.prototype.onsapenter = function(oEvent) {
@@ -411,7 +413,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Event handler called when the space key is pressed.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The fired event
 	 * @private
 	 */
 	ObjectIdentifier.prototype.onsapspace = function(oEvent) {
@@ -421,7 +423,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Event handler called when the title is clicked/taped.
 	 *
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The fired event
 	 * @private
 	 */
 	ObjectIdentifier.prototype.ontap = function(oEvent) {
@@ -430,7 +432,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Creates additional aria hidden text with the role of the control.
-	 * @returns {sap.ui.core.InvisibleText}
+	 * @returns {sap.ui.core.InvisibleText} The additional aria hidden text with the role of the control
 	 * @private
 	 */
 	ObjectIdentifier.prototype._createAriaInfoTextControl = function () {

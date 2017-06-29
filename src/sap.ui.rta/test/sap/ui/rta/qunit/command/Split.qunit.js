@@ -89,6 +89,7 @@ function(
 	});
 
 	QUnit.test("when calling command factory for split ...", function(assert) {
+		var done = assert.async();
 		var oOverlay = new ElementOverlay();
 		sinon.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 		sinon.stub(oOverlay, "getRelevantContainer", function() {
@@ -117,10 +118,13 @@ function(
 		}, oDesignTimeMetadata);
 
 		assert.ok(oSplitCommand, "split command exists for element");
-		oSplitCommand.execute();
+		oSplitCommand.execute()
 
-		assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-		assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+		.then(function() {
+			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			done();
+		}.bind(this));
 	});
 
 

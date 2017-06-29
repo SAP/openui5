@@ -10,8 +10,8 @@
 				 showSeparators="Inner"
 				 fixedLayout="false">
 			<m:columns>
-				<m:Column vAlign="Top"><m:Label text="Method"/></m:Column>
-				<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+				<m:Column vAlign="Top" width="25%"><m:Label text="Method"/></m:Column>
+				<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="75%"><m:Label text="Description"/></m:Column>
 			</m:columns>
 			<m:items>
 				<m:ColumnListItem visible="{= !!${methods>name} }">
@@ -32,7 +32,7 @@
 
 		<m:Title visible="{= ${borrowedMethods>/}.length > 0 }" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle" text="Borrowed from:"></m:Title>
 		<layout:VerticalLayout visible="{= ${borrowedMethods>/}.length > 0 }" width="100%" content="{ path : 'borrowedMethods>/'}">
-			<m:Panel expandable="true" expanded="true" headerText="{borrowedMethods>name}" width="100%" content="{ path: 'borrowedMethods>methods'}">
+			<m:Panel expandable="true" expanded="true" headerText="{borrowedMethods>name}" width="100%" content="{ path: 'borrowedMethods>methods', templateShareable: 'false'}">
 				<m:Link class="sapUiTinyMargin" text="{borrowedMethods>name}" href="{borrowedMethods>link}" />
 			</m:Panel>
 		</layout:VerticalLayout>

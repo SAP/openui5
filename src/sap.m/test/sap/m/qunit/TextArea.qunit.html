@@ -529,7 +529,10 @@
 					value: sInitValue,
 					maxLength: 6,
 					showExceededText: true
-				});
+				}),
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				sMessageBundleKey = "TEXTAREA_CHARACTERS_EXCEEDED";
+
 
 		// arrange
 		oTA.placeAt("content");
@@ -540,7 +543,7 @@
 		oTA.onfocusin();
 
 		// assertions
-		assert.strictEqual(oCounter.text(), "13 Characters Exceeded", "the counter content is correct");
+		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 13), "the counter content is correct");
 
 		sap.ui.test.qunit.triggerEvent("paste", oTA.getFocusDomRef(), {
 			originalEvent: {
@@ -565,7 +568,7 @@
 		assert.strictEqual(oTA.getValue(), sInitValue + sPasteText, "The Textarea value is correct");
 
 		assert.strictEqual(oCounterStyle.visibility, "visible", "The counter is visible");
-		assert.strictEqual(oCounter.text(), "37 Characters Exceeded", "The counter content is correct");
+		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 37), "The counter content is correct");
 
 		// cleanup
 		oTA.destroy();
@@ -581,7 +584,9 @@
 					value: "",
 					maxLength: iMaxLength,
 					showExceededText: false
-				});
+				}),
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				sMessageBundleKey = "TEXTAREA_CHARACTERS";
 
 		// arrange
 		oTA.setValue(sInitValue);
@@ -606,12 +611,12 @@
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
 		assert.strictEqual(oTA.getMaxLength(), 6, "The TextArea maxLength property is correctly set to 0");
-		assert.strictEqual(oCounter[0].innerText, "0 Characters Left", "The counter is empty");
+		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_LEFT", "0"), "The counter is empty");
 
 		//arrange
 		oTA.setValue(sInitValue);
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
-		assert.strictEqual(oCounter[0].innerText, "12 Characters Exceeded", "The counter is empty");
+		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", 12), "The counter is empty");
 		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");
 		assert.strictEqual(oTA.$("inner").attr("aria-labelledby"), oCounter[0].id, "The TextArea aria-labelledby attribute is set to counter id correctly");
 

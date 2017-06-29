@@ -313,6 +313,13 @@ function(
 			'then the static method "isValidForAggregation" returns false');
 	});
 
+	QUnit.test("when a control has non-multiple aggregations without an existing item", function(assert) {
+		var oFormElement = new FormElement();
+		var oLabel = new Label();
+		assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), true,
+			'then the static method "isValidForAggregation" returns true');
+	});
+
 	QUnit.test("when insertAggregation method is called to insert existing button into horizontalLayout", function(assert) {
 		var oRemoveSpy = sinon.spy(this.oHorizontalLayoutChild, "removeContent");
 		var oInsertSpy = sinon.spy(this.oHorizontalLayoutChild, "insertContent");

@@ -112,6 +112,8 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 		});
 
 		QUnit.test("when getting a remove command without removedElement parameter ...", function(assert) {
+			var done = assert.async();
+
 			var oCommand = CommandFactory.getCommandFor(this.oLink, "Remove", undefined,
 				this.oLinkDesignTimeMetadata);
 
@@ -121,13 +123,16 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 			assert.ok(oCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
-			oCommand.execute();
-
-			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			oCommand.execute().then( function() {
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				done();
+			}.bind(this));
 		});
 
 		QUnit.test("when getting a remove command for a Link...", function(assert) {
+			var done = assert.async();
+
 			var oCommand = CommandFactory.getCommandFor(this.oLink, "Remove", {
 				removedElement : this.oLink
 			}, this.oLinkDesignTimeMetadata);
@@ -138,8 +143,10 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
 			assert.ok(oCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
-			oCommand.execute();
-			assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+			oCommand.execute().then( function() {
+				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+				done();
+			}.bind(this));
 		});
 });

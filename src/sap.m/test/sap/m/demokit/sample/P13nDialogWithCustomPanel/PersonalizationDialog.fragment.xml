@@ -1,30 +1,16 @@
-<core:FragmentDefinition
-	xmlns="sap.m"
-	xmlns:custom="sap.m.sample.P13nDialogWithCustomPanel"
-	xmlns:core="sap.ui.core">
-	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
-		reset="handleReset" initialVisiblePanelType="custom1">
-		<panels>
-			<custom:CustomPanel title="Columns Setting (Custom Panel)"
-				visible="true" type="custom1">
-				<custom:content>
-					<RadioButtonGroup columns="2">
-						<buttons>
-							<RadioButton text="All Data" select="handleSelect" />
-							<RadioButton text="Evaluated Data" select="handleSelect" />
-						</buttons>
-					</RadioButtonGroup>
-				</custom:content>
-			</custom:CustomPanel>
-			<P13nColumnsPanel visible="true" addColumnsItem="onAddColumnsItem"
-				changeColumnsItems="onChangeColumnsItem" type="columns"
-				items="{
-					path: '/ColumnCollection'
-				}">
-				<items>
-					<P13nItem columnKey="{path}" text="{text}" visible="{visible}" />
-				</items>
-			</P13nColumnsPanel>
-		</panels>
-	</P13nDialog>
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:custom="sap.m.sample.P13nDialogWithCustomPanel">
+    <P13nDialog showReset="false" ok="onOK" cancel="onCancel" class="sapUiSizeCompact">
+        <panels>
+            <custom:CustomPanel title="Columns Setting (Custom Panel)" type="custom1">
+                <custom:content>
+                    <RadioButtonGroup columns="2">
+                        <buttons>
+                            <RadioButton text="All Data"/>
+                            <RadioButton text="Evaluated Data"/>
+                        </buttons>
+                    </RadioButtonGroup>
+                </custom:content>
+            </custom:CustomPanel>
+        </panels>
+    </P13nDialog>
 </core:FragmentDefinition>

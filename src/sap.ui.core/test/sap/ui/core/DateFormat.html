@@ -51,7 +51,57 @@
 			{name: "type", default: "Date"},
 			{name: "date", default: new Date()},
 			{name: "todate", default: new Date()}
-		];
+		],
+		oSupportedOptions = {
+			format: {
+				type: "string",
+				regex: /^G*(y*|Y*)(q*|Q*)(M*|L*)(w*|W*)(E*|e*|c*)(d*|D*)(h*|H*|k*|K*|j*|J*)m*s*(z*|Z*|v*|V*|O*|X*|x*)$/,
+				help: "A skeleton pattern which may only contain symbols of this list in canonical order: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)"
+			},
+			pattern: {
+				type: "string"
+			},
+			style: {
+				type: "string",
+				regex: /^(short|medium|long|full)$|^((short|medium|long|full)\/(short|medium|long|full))$/,
+				help: "Allowed values are \"short\", \"medium\", \"long\" and \"full\", as well as combined styles for DateTime, separated with a slash, like \"medium/short\"."
+			},
+			strictParsing: {
+				type: "boolean",
+				help: "To enable strict parsing, set to \"true\""
+			},
+			relative: {
+				type: "boolean",
+				help: "To enable relative formatting set to \"true\""
+			},
+			relativeRange: {
+				type: "array",
+				help: "The range where relative formatting should be used as an array from start to end, e.g. [-6, 6]"
+			},
+			relativeScale: {
+				type: "enum",
+				values: ["auto", "year", "quarter", "month", "week", "day", "hour", "minute", "second"],
+				help: "Allowed values are \"auto\", \"year\", \"quarter\", \"month\", \"week\", \"day\", \"hour\", \"minute\" and \"second\", where \"auto\" automatically choses the best matching scale"
+			},
+			relativeStyle: {
+				type: "enum",
+				values: ["wide", "short", "narrow"],
+				help: "Allowed values are \"wide\", \"short\" and \"narrow\""
+			},
+			interval: {
+				type: "boolean",
+				help: "To enable interval formatting set to \"true\""
+			},
+			UTC: {
+				type: "boolean",
+				help: "To format as UTC time instead of local time, set to \"true\""
+			},
+			calendarType: {
+				type: "enum",
+				values: ["Gregorian", "Japanese", "Islamic", "Persian"],
+				help: "Allowed values are \"Gregprian\", \"Japanese\", \"Islamic\" and \"Persian\""
+			}
+		};
 	
 	var oModel = new sap.ui.model.json.JSONModel({
 		date: new Date(),
@@ -59,14 +109,18 @@
 		formatOptions: {},
 		type: "Date",
 		locales: aLocales,
-		samples: aSamples
+		samples: aSamples,
+		sample: "custom"
 	});
 
-	bindHash(oModel, aHashParams);
+	sap.ui.getCore().attachInit(function() {
+		bindHash(oModel, aHashParams, oSupportedOptions);
+	});
 
 	sap.ui.getCore().setModel(oModel);
 
-	new sap.m.App({
+	var oApp = new sap.m.App({
+		autoFocus: false,
 		pages: [
 			new sap.m.Page({
 				title: "DateFormat",
@@ -120,14 +174,23 @@
 												rows: 6,
 												value: {
 													path: "/formatOptions",
-													type: new Options()
+													type: new Options(oSupportedOptions)
+												},
+												liveChange: function(oEvent) {
+													var sValue = this.getValue(),
+														oValue;
+													oModel.setProperty("/sample", "custom");
+													try {
+														oValue = jQuery.sap.parseJS(sValue);
+													} catch(e) {
+														this.onChange(oEvent);
+														return;
+													}
+													if (this.getValueState() === "Error" || !jQuery.sap.equal(oValue, this.getBinding("value").getValue())) {
+														this.onChange(oEvent);
+													}
 												}
-											}).addStyleClass("large").attachBrowserEvent("keypress", function(oEvent) {
-												if (oEvent.keyCode === 13 && !oEvent.shiftKey) {
-													oEvent.preventDefault();
-													this.onChange(oEvent);
-												}
-											}),
+											}).addStyleClass("large"),
 											new sap.m.Label({
 												text: "Type"
 											}),
@@ -137,13 +200,16 @@
 													new sap.ui.core.Item({key: "Date", text: "Date"}),
 													new sap.ui.core.Item({key: "Time", text: "Time"}),
 													new sap.ui.core.Item({key: "DateTime", text: "DateTime"})
-												]
+												],
+												change: function() {
+													oModel.setProperty("/sample", "custom");
+												}
 											}),
 											new sap.m.Label({
 												text: "Sample"
 											}),
 											new sap.m.Select({
-												selectedKey: "",		
+												selectedKey: "{/sample}",		
 												items: {
 													path: "/samples",
 													template: new sap.ui.core.Item({key: "{key}", text: "{text}"})
@@ -232,7 +298,7 @@
 		]
 	}).placeAt("content");
 	
-	
+	sap.ui.getCore().getMessageManager().registerObject(oApp, true);
 	</script>
 
 </head>

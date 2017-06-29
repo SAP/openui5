@@ -22,8 +22,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				this.setProperty(oControl, "stashed", oPropertyValue);
 			},
 
-			bindProperty: function (oControl, sPropertyName, sBindingPath) {
-				oControl.setAttribute(sPropertyName, "{" + sBindingPath + "}");
+			getStashed: function (oControl) {
+				return this.getProperty(oControl, "stashed");
+			},
+
+			bindProperty: function (oControl, sPropertyName, vBindingInfos) {
+				oControl.setAttribute(sPropertyName, "{" + vBindingInfos + "}");
 			},
 
 			setProperty: function (oControl, sPropertyName, oPropertyValue) {
@@ -36,6 +40,10 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 
 			setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
 				oControl.setAttribute(sPropertyName, oPropertyBinding);
+			},
+
+			getPropertyBinding: function (oControl, sPropertyName) {
+				return oControl.getAttribute(sPropertyName);
 			},
 
 			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
@@ -122,6 +130,11 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				sControlType += this._getLocalName(oControl);
 
 				return sControlType;
+			},
+
+			// TODO implement when getAggregation works
+			getAllAggregations: function (oParent) {
+				return {};
 			},
 
 			getAggregation: function (oParent, sName) {

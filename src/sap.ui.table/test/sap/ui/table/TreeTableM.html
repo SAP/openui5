@@ -74,6 +74,17 @@ oTable.placeAt("content");
 
 TABLESETTINGS.init(oTable, function(oButton) {
 	oTable.getToolbar().addContent(oButton);
+}, {
+	FLATMODE: {
+		text: "Flat Mode (protected)",
+		value: function(oTable) {
+			return !!oTable._bFlatMode;
+		},
+		input: "boolean",
+		action: function(oTable, bValue) {
+			oTable.setUseFlatMode(!!bValue);
+		}
+	}
 });
 
 </script>

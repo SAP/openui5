@@ -15,10 +15,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Check if the object exists. In case object has _isEmpty() method then this method is called. If there is no such method then object is not empty.
 	 *
-	 * @param {sap.ui.core.Control}
-	 *            oObject to be checked
+	 * @param {sap.ui.core.Control} oObject to be checked
 	 *
-	 * @returns true is the object is not empty, false - otherwise.
+	 * @returns {boolean} true is the object is not empty, false - otherwise
 	 * @private
 	 */
 	ObjectHeaderRenderer._isEmptyObject = function(oObject) {
@@ -36,10 +35,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Array is considered empty if it is null or undefined or has no controls or all the controls are empty.
 	 *
-	 * @param {sap.ui.core.Control[]}
-	 *            aArray array of controls to be checked
+	 * @param {sap.ui.core.Control[]} aArray array of controls to be checked
 	 *
-	 * @returns true if array is empty, false - otherwise.
+	 * @returns {boolean} true if array is empty, false - otherwise
 	 * @private
 	 */
 	ObjectHeaderRenderer._isEmptyArray = function(aArray) {
@@ -57,13 +55,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * A row is considered empty if both input parameters are empty.
 	 *
-	 * @param {sap.ui.core.Control}
-	 *            aLeft control to be checked
+	 * @param {sap.ui.core.Control} oLeft control to be checked
 	 *
-	 * @param {sap.ui.core.Control[]}
-	 *            aRight array of controls to be checked
+	 * @param {sap.ui.core.Control[]} aRight array of controls to be checked
 	 *
-	 * @returns true if array is empty, false - otherwise.
+	 * @returns {boolean} true if array is empty, false - otherwise
 	 * @private
 	 */
 	ObjectHeaderRenderer._isEmptyRow = function(oLeft, aRight) {
@@ -74,11 +70,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Render an array of controls.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 *
-	 * @param {sap.ui.core.Control[]}
-	 *            aObjects array of controls to be rendered
+	 * @param {sap.ui.core.Control[]} aObjects array of controls to be renderer
+	 *
+	 * @param {sap.m.ObjectHeader} oOH the ObjectHeader
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderObjects = function(oRM, aObjects, oOH) {
@@ -93,8 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Gather all controls that should be rendered inside Object Header.
 	 *
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH the ObjectHeader
+	 * @param {sap.m.ObjectHeader} oOH the ObjectHeader
 	 * @private
 	 */
 	ObjectHeaderRenderer._computeChildControlsToBeRendered = function(oOH){
@@ -124,11 +119,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Delete all controls that were empty and were not rendered inside Object Header.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
 	 *
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH the ObjectHeader
+	 * @param {sap.m.ObjectHeader} oOH the ObjectHeader
 	 * @private
 	 */
 	ObjectHeaderRenderer._cleanupNotRenderedChildControls = function(oRM, oOH){
@@ -142,10 +135,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Returns the array of markers from ObjectHeader.
 	 *
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH the ObjectHeader that contains markers
+	 * @param {sap.m.ObjectHeader} oOH the ObjectHeader that contains markers
 	 *
-	 * @returns array of {sap.m.ObjectMarker} controls
+	 * @returns {Array} array of {sap.m.ObjectMarker} controls
 	 *
 	 * @private
 	 */
@@ -157,14 +149,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * Render intro as sap.m.Text or sap.m.Link depending if it's active or not.
 	 * used in both ObjectHeader and ObjectHeaderResponsive
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH the ObjectHeader that contains icons
-	 * @param {string}
-	 *            sIntroClass the css class of the intro container
-	 * @param {string}
-	 *            sIntroActiveClass the css class of the intro container if the intro is active
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader} oOH the ObjectHeader that contains icons
+	 * @param {string} sIntroClass the css class of the intro container
+	 * @param {string} sIntroActiveClass the css class of the intro container if the intro is active
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderIntro = function(oRM, oOH, sIntroClass, sIntroActiveClass) {
@@ -221,8 +209,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * Validate the statuses control list to only display sap.m.ObjectStatus and
 	 * sap.m.ProgressIndicator and returns only the visible once that should be rendered
 	 *
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object to be rendered
+	 * @param {sap.m.ObjectHeader} oOH an object to be rendered
+	 * @returns {array} The visible statuses
 	 * @private
 	 */
 	ObjectHeaderRenderer._getVisibleStatuses = function(oOH) {
@@ -255,8 +243,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Returns only the visible statuses and attributes that should be rendered
 	 *
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectHeader} oOH an object representation of the control that should be rendered
+	 * @returns {array} The visible statuses and attributes
 	 * @private
 	 */
 	ObjectHeaderRenderer._getVisibleAttribsAndStatuses = function(oOH) {
@@ -1005,18 +993,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Renders the HTML for the columns containing the states.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object representation of the control that should be rendered
-	 * @param {iRenderCols}
-	 *            number of columns that should be rendered
-	 * @param {aVisibleAttrAndStat}
-	 *            array of attributes and statuses that should be rendered
-	 * @param {iCountVisibleAttr}
-	 *            number of attributes that should be rendered, since they should be rendered before the states
-	 * @param {sClassColCount}
-	 *            the name of the appropriate css class that should be set
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader} oOH An object representation of the control that should be rendered
+	 * @param {int} iRenderCols The number of columns that should be rendered
+	 * @param {array} aVisibleAttrAndStat The array of attributes and statuses that should be rendered
+	 * @param {int} iCountVisibleAttr The number of attributes that should be rendered, since they should be rendered before the states
+	 * @param {string} sClassColCount The name of the appropriate css class that should be set
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveStatesColumn = function(oRM, oOH, iRenderCols, aVisibleAttrAndStat, iCountVisibleAttr, sClassColCount) {
@@ -1050,12 +1032,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Renders the HTML for Attribute.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object representation of the control that should be rendered
-	 * @param {sap.m.ObjectAtribute}
-	 *            oAttr an object representation of the sap.m.ObjectAtribute that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader} oOH An object representation of the control that should be rendered
+	 * @param {sap.m.ObjectAttribute} oAttr An object representation of the sap.m.ObjectAtribute that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveAttribute = function(oRM, oOH, oAttr) {
@@ -1070,12 +1049,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Renders the HTML for Status.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object representation of the control that should be rendered
-	 * @param {sap.m.ObjectStatus}
-	 *            oStatus an object representation of the sap.m.ObjectStatus that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader} oOH an object representation of the control that should be rendered
+	 * @param {sap.m.ObjectStatus} oStatus an object representation of the sap.m.ObjectStatus that should be rendered
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveStatus = function(oRM, oOH, oStatus) {
@@ -1140,10 +1116,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	};
 
 	/**
-	 * helper function to determine whether states need to be rendered or not
+	 * Helper function to determine whether states need to be rendered or not
 	 *
-	 * @param {sap.m.ObjectHeader} oControl
-	 *
+	 * @param {sap.m.ObjectHeader} oControl The sap.m.ObjectHeader
+	 * @returns {boolean} If there is need for rerendering
 	 * @private
 	 */
 	ObjectHeaderRenderer._hasResponsiveStates = function (oControl) {
@@ -1171,7 +1147,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 	/**
 	 * helper function to determine whether tabs need to be rendered or not
-	 * @param {sap.m.ObjectHeader} oControl
+	 * @param {sap.m.ObjectHeader} oControl The sap.m.ObjectHeader
+     * @returns {boolean} If there is need for rerendering
 	 *
 	 * @private
 	 */
@@ -1282,12 +1259,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Rerenders the HTML for the title of the Object Header, also called on rerender Title.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object representation of the control that should be rendered
-	 * @param {nCutLen}
-	 *            number of chars to which the title should be cutted
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader} oOH an object representation of the control that should be rendered
+	 * @param {int} nCutLen number of chars to which the title should be cut
 	 * @private
 	 */
 	ObjectHeaderRenderer._rerenderTitle = function(oRM, oOH, nCutLen) {
@@ -1300,12 +1274,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	/**
 	 * Renders the HTML for the title and arrow.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRM the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.m.ObjectHeader}
-	 *            oOH an object representation of the control that should be rendered
-	 * @param {nCutLen}
-	 *            number of chars to which the title should be cutted
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.ObjectHeader} oOH an object representation of the control that should be rendered
+	 * @param {int} nCutLen number of chars to which the title should be cut
 	 * @private
 	 */
 	ObjectHeaderRenderer._renderResponsiveTitleAndArrow = function(oRM, oOH, nCutLen) {

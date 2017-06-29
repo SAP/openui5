@@ -8,6 +8,7 @@ sap.ui.define(['jquery.sap.global',
 		'sap/m/InstanceManager',
 		'sap/ui/core/Popup',
 		'sap/ui/dt/OverlayRegistry',
+		'sap/ui/dt/Overlay',
 		'sap/ui/fl/Utils',
 		'sap/ui/core/Component'
 	],
@@ -18,6 +19,7 @@ sap.ui.define(['jquery.sap.global',
 	          InstanceManager,
 	          Popup,
 	          OverlayRegistry,
+	          Overlay,
 	          flUtils,
 	          Component
 	) {
@@ -291,10 +293,16 @@ sap.ui.define(['jquery.sap.global',
 		 * @private
 		 */
 		PopupManager.prototype._applyPopupPatch = function(oPopupElement) {
+			var oPopupOverlay = OverlayRegistry.getOverlay(oPopupElement);
+			var oOverlayContainer = Overlay.getOverlayContainer(oPopupOverlay);
 			var oPopup = oPopupElement.oPopup;
 
 			//If clicked from toolbar or popup - autoClose is disabled
-			oPopup.setAutoCloseAreas([this.getRta()._oToolsMenu.getDomRef(), oPopup.oContent.getDomRef()]);
+			oPopup.setAutoCloseAreas([
+				this.getRta()._oToolsMenu.getDomRef(),
+				oPopup.oContent.getDomRef(),
+				oOverlayContainer
+			]);
 
 			//cases when onAfterRendering is called after this function - app inside popup
 			if (!this.fnOriginalPopupOnAfterRendering) {

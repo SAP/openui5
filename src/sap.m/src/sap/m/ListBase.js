@@ -838,14 +838,23 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 	};
 
 	/*
-	 * Returns internal remembered selected context paths as a copy
+	 * Returns internal remembered selected context paths as a copy if rememberSelections is set to true,
+	 * else returns the binding context path for the current selected items.
 	 *
 	 * @return {String[]} selected items binding context path
 	 * @since 1.26
 	 * @protected
 	 */
-	ListBase.prototype.getSelectedContextPaths = function() {
-		return this._aSelectedPaths.slice(0);
+	ListBase.prototype.getSelectedContextPaths = function(bAll) {
+		// return this selectedPaths if rememberSelections is true
+		if (!bAll || (bAll && this.getRememberSelections())) {
+			return this._aSelectedPaths.slice(0);
+		}
+
+		// return the binding context path of current selected items
+		return this.getSelectedItems().map(function(oItem) {
+			return oItem.getBindingContextPath();
+		});
 	};
 
 	/* Determines whether all selectable items are selected or not

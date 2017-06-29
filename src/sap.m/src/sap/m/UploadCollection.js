@@ -1501,6 +1501,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		oListItem._oUploadCollectionItem = oItem;
 		oListItem._status = sStatus;
 		oListItem.addStyleClass("sapMUCItem");
+		oListItem.setTooltip(oItem.getTooltip_Text());
 		return oListItem;
 	};
 

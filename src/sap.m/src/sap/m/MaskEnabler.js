@@ -298,6 +298,7 @@ sap.ui.define([
 		 * Verifies whether a character at a given position is allowed according to its mask rule.
 		 * @param {String} sChar The character
 		 * @param {int} iIndex The position of the character
+		 * @returns {boolean} Whether a character at a given position is allowed
 		 * @protected
 		 */
 		this._isCharAllowed = function (sChar, iIndex) {
@@ -392,7 +393,7 @@ sap.ui.define([
 
 		/**
 		 * Encapsulates the work with test rules.
-		 * @param aRules The test rules
+		 * @param {array} aRules The test rules
 		 * @constructor
 		 * @private
 		 */
@@ -571,6 +572,7 @@ sap.ui.define([
 		/**
 		 * Places the cursor on a given position (zero based).
 		 * @param {int} iPos The position the cursor to be placed on
+		 * @returns {sap.ui.MaskEnabler} <code>this</code> to allow method chaining
 		 * @private
 		 */
 		this._setCursorPosition = function (iPos) {
@@ -617,7 +619,7 @@ sap.ui.define([
 		 * @private
 		 * @param {string} sMask Mask value
 		 * @param {Array} aSkipIndexes List of character indexes to skip
-		 * @returns {Array}
+		 * @returns {Array} The array with the values from the mask
 		 */
 		this._getMaskArray = function (sMask, aSkipIndexes) {
 			var iLength = Array.isArray(aSkipIndexes) ? aSkipIndexes.length : 0,
@@ -635,7 +637,7 @@ sap.ui.define([
 		 * @since 1.38
 		 * @private
 		 * @param {string} sMask Mask value
-		 * @returns {Array}
+		 * @returns {Array} The array with the positions of the mask characters
 		 */
 		this._getSkipIndexes = function (sMask) {
 			var iLength = (sMask) ? sMask.length : 0,
@@ -841,6 +843,7 @@ sap.ui.define([
 		/**
 		 * Handles <code>onKeyDown</code> event.
 		 * @param {jQuery.Event} oEvent The jQuery event object
+		 * @param {object} oKey The Key pressed
 		 * @private
 		 */
 		this._keyDownHandler = function (oEvent, oKey) {
@@ -1010,6 +1013,9 @@ sap.ui.define([
 		};
 
 		/**
+		 * @param {Array} aMask The mask from which the mask value array will be built
+		 * @param {String} sPlaceholderSymbol The symbol marker of the mask
+		 * @param {Array} aRules The rules from which the mask value array is built
 		 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
 		 * @private
 		 */
@@ -1023,7 +1029,10 @@ sap.ui.define([
 
 		/**
 		 * Builds the test rules according to the mask input rule's regex string.
+		 * @param {Array} aMask The mask from which the test rules will be built
+		 * @param {Array} aRules The rules which will be built
 		 * @param {Array} aSkipIndexes @since 1.38 List of indexes to skip
+		 * @returns {Array} The build test rules
 		 * @private
 		 */
 		this._buildRules = function (aMask, aRules, aSkipIndexes) {
@@ -1045,7 +1054,7 @@ sap.ui.define([
 
 		/**
 		 * Parses the keyboard events.
-		 * @param {object} oEvent
+		 * @param {object} oEvent The fired event
 		 * @private
 		 * @returns {object} Summary object with information about the pressed keys, for example: {{iCode: (*|oEvent.keyCode), sChar: (string|*), bCtrlKey: boolean, bAltKey: boolean, bMetaKey: boolean,
 		 * bShift: boolean, bBackspace: boolean, bDelete: boolean, bEscape: boolean, bEnter: boolean, bIphoneEscape: boolean,
@@ -1155,8 +1164,8 @@ sap.ui.define([
 		/**
 		 * Checks if a given character belongs to an RTL language
 		 * @private
-		 * @param sString
-		 * @returns {boolean}
+		 * @param {String} sString The checked character
+		 * @returns {boolean} Whether a given character belongs to an RTL language
 		 */
 		this._isRtlChar = function (sString) {
 			var ltrChars    = 'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF' + '\u2C00-\uFB1C\uFDFE-\uFE6F\uFEFD-\uFFFF',
@@ -1170,9 +1179,9 @@ sap.ui.define([
 		/**
 		 * Fix an issue with Chrome where first and last positions are switched
 		 * @private
-		 * @param {int} iCurrentPosition
-		 * @param {string} sDirection
-		 * @returns {*}
+		 * @param {int} iCurrentPosition The current position
+		 * @param {string} sDirection The direction used
+		 * @returns {*} The current position
 		 */
 		this._fixWebkitBorderPositions = function (iCurrentPosition, sDirection) {
 			var iTempLength = this._oTempValue.toString().length;
@@ -1202,7 +1211,7 @@ sap.ui.define([
 		/**
 		 * Check if the current value contains any RTL characters
 		 * @private
-		 * @returns {boolean}
+		 * @returns {boolean} Whether the current value contains any RTL characters
 		 */
 		this._containsRtlChars = function () {
 			var sTempValue = this._oTempValue.toString(),
@@ -1217,7 +1226,7 @@ sap.ui.define([
 		/**
 		 * Check if the current control is in RTL mode.
 		 * @private
-		 * @returns {boolean}
+		 * @returns {boolean} Whether the current control is in RTL mode
 		 */
 		this._isRtlMode = function () {
 			return sap.ui.getCore().getConfiguration().getRTL() || (this.getTextDirection() === sap.ui.core.TextDirection.RTL);
@@ -1226,7 +1235,7 @@ sap.ui.define([
 		/**
 		 * Check if the current environment and interaction lead to a bug in Webkit
 		 * @private
-		 * @returns {boolean|*}
+		 * @returns {boolean|*} Whether the current environment and interaction lead to a bug in Webkit
 		 */
 		this._isWebkitProblematicCase = function () {
 			return (sap.ui.Device.browser.webkit && this._isRtlMode() && !this._containsRtlChars());
@@ -1235,8 +1244,8 @@ sap.ui.define([
 		/**
 		 * Determine the correct direction based on RTL mode, current input characters and selection state
 		 * @private
-		 * @param oKey
-		 * @param {object} oSelection
+		 * @param {object} oKey The arrow key
+		 * @param {object} oSelection The selection state
 		 * @returns {string} sDirection
 		 */
 		this._determineArrowKeyDirection = function (oKey, oSelection) {
@@ -1262,7 +1271,8 @@ sap.ui.define([
 		/**
 		 * Determine the right caret position based on the current selection state
 		 * @private
-		 * @param sDirection
+		 * @param {string} sDirection
+		 * @param {boolean} bWithChromeFix Whether there is Chrome fix
 		 * @returns {int} iNewCaretPos
 		 */
 		this._determineRtlCaretPositionFromSelection = function (sDirection, bWithChromeFix) {

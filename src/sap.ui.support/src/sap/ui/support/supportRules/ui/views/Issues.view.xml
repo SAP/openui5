@@ -77,9 +77,12 @@
 							</Toolbar>
 						</customHeader>
 						<subHeader>
-							<Toolbar id="messegeStrip" height="{/messegeStripHeight}">
-								<FlexBox alignItems="Center"
-										 justifyContent="Start">
+							<Toolbar
+								id="messegeStrip"
+								height="{/messegeStripHeight}">
+								<FlexBox
+									alignItems="Center"
+									justifyContent="Start">
 									<items>
 										<l:VerticalLayout>
 											<Text  text="{= 'Displaying: ' + ${/visibleIssuesCount} + ' out of ' + ${/issuesCount} + ' (scope: ' + ${/analyzeContext/displayName} + ')' }"/>
@@ -107,60 +110,83 @@
 							</t:columns>
 						</t:TreeTable>
 					</Page>
-					<Page showHeader="false">
-						<f:SimpleForm editable="true"
-									  visible="{= ${/selectedIssue} !== null}"
-									  layout="ResponsiveGridLayout"
-									  title="{/selectedIssue/name}">
-							<f:content>
-								<Label text="Description" />
-								<Text text="{/selectedIssue/description}" />
-								<Label text="Resolution" />
-								<Text text="{/selectedIssue/resolution}" />
-								<Label text="URLs" />
-								<l:VerticalLayout>
-									<l:VerticalLayout
-										content="{/selectedIssue/resolutionUrls}">
-										<Link text="{text}" press="openDocumentation" />
-									</l:VerticalLayout>
-								</l:VerticalLayout>
-							</f:content>
-						</f:SimpleForm>
-						<t:Table
-							visible="{= ${/selectedIssue} !== null}"
-							rows="{path: '/selectedIssue/issues'}"
-							rowHeight="24"
-							selectionMode="Single"
-							selectionBehavior="RowOnly"
-							enableColumnReordering="false"
-							visibleRowCountMode="Auto"
-							rowSelectionChange="onRowSelection"
-							id="issueTable">
-							<t:columns>
-								<t:Column label="Index" width="50px">
-									<t:template>
-										<Text text="{= ${/selectedIssue/issues}.indexOf(${}) + 1 }"></Text>
-									</t:template>
-								</t:Column>
-								<t:Column
+					<Page showHeader="false"
+						  enableScrolling="true">
+						<VBox
+							height="100%"
+							fitContainer="true">
+							<items>
+								<f:SimpleForm
+									editable="true"
+									visible="{= ${/selectedIssue} !== null}"
+									layout="ResponsiveGridLayout"
+									title="{/selectedIssue/name}">
+									<f:content>
+										<Label text="Description" />
+										<Text text="{/selectedIssue/description}" />
+										<Label text="Resolution" />
+										<Text text="{/selectedIssue/resolution}" />
+										<Label text="URLs" />
+										<HBox
+											wrap="Wrap"
+											items="{/selectedIssue/resolutionUrls}">
+											<Link text="{= ${text} + ' \u00a0' }" press="openDocumentation" />
+										</HBox>
+									</f:content>
+									<f:layoutData>
+										<FlexItemData growFactor="0"/>
+									</f:layoutData>
+									</f:SimpleForm>
+							<t:Table
+								visible="{= ${/selectedIssue} !== null}"
+								rows="{path: '/selectedIssue/issues'}"
+								rowHeight="24"
+								selectionMode="Single"
+								selectionBehavior="RowOnly"
+								enableColumnReordering="false"
+								visibleRowCountMode="{/visibleRowCountMode}"
+								visibleRowCount = "{/visibleRowCount}"
+								rowSelectionChange="onRowSelection"
+								id="issueTable">
+								<t:columns>
+									<t:Column label="Index" width="50px">
+										<t:template>
+											<Text text="{= ${/selectedIssue/issues}.indexOf(${}) + 1 }"></Text>
+										</t:template>
+									</t:Column>
+									<t:Column
 										sortProperty="context/id"
 										filterProperty="context/id"
 										label="Control Id">
-									<t:template>
-										<Text text="{context/id}"></Text>
-									</t:template>
-								</t:Column>
-								<t:Column
+										<t:template>
+											<Text text="{context/id}"></Text>
+										</t:template>
+									</t:Column>
+									<t:Column
 										sortProperty="context/className"
 										filterProperty="context/className"
 										label="Class name">
-									<t:template>
-										<Text text="{context/className}"></Text>
-									</t:template>
-								</t:Column>
-							</t:columns>
-
-						</t:Table>
+										<t:template>
+											<Text text="{context/className}"></Text>
+										</t:template>
+									</t:Column>
+								</t:columns>
+								<t:layoutData>
+									<FlexItemData growFactor="3"/>
+								</t:layoutData>
+							</t:Table>
+							<ScrollContainer
+								vertical="true"
+								visible="{= ${/visibleIssuesCount} > 0 &amp;&amp; ${/selectedIssue/details} !== ''}"
+								horizontal="false"
+								heght="100%">
+								<Text text="{/selectedIssue/details}" width="100%"/>
+								<layoutData>
+									<FlexItemData growFactor="4" maxHeight="{/heightDetailsArea}"/>
+								</layoutData>
+							</ScrollContainer>
+							</items>
+						</VBox>
 					</Page>
 					<c:HTML id="elementTreeContainer" content='&lt;control-tree&gt;  &lt;/control-tree&gt;'>
 					</c:HTML>

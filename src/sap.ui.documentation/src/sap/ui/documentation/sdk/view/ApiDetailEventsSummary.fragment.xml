@@ -28,7 +28,7 @@
 
 		<m:Title visible="{= ${borrowedEvents>/}.length > 0 }" class="sapUiSmallMarginTop sapUiDocumentationBorrowedTitle" text="Borrowed from:"></m:Title>
 		<layout:VerticalLayout visible="{= ${borrowedEvents>/}.length > 0 }" width="100%" content="{ path : 'borrowedEvents>/'}">
-			<m:Panel expandable="true" expanded="true" headerText="{borrowedEvents>name}" width="100%" content="{ path: 'borrowedEvents>events'}">
+			<m:Panel expandable="true" expanded="true" headerText="{borrowedEvents>name}" width="100%" content="{ path: 'borrowedEvents>events', templateShareable: 'false'}">
 				<m:Link class="sapUiTinyMargin" text="{borrowedEvents>name}" href="{borrowedEvents>link}" />
 			</m:Panel>
 		</layout:VerticalLayout>

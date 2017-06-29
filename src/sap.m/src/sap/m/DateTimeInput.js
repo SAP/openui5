@@ -509,6 +509,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	DateTimeInput.prototype.getAccessibilityInfo = function() {
@@ -521,7 +522,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 * instantiate the picker that corresponds to the pattern.
 	 *
 	 * @param {sap.m.DateTimeInputType} type the <code>DateTimeInput</code>'s type
-	 * @param {sap.ui.core.Control} the current picker implementation, that may be one of <code>sap.m.DatePicker</code>,
+	 * @param {sap.ui.core.Control} picker the current picker implementation, that may be one of <code>sap.m.DatePicker</code>,
 	 * <code>sap.m.TimePicker</code>, <code>sap.m.DateTimePicker</code>
 	 * @returns {sap.ui.core.Control} picker implementation, that may be one of <code>sap.m.DatePicker</code>,
 	 * <code>sap.m.TimePicker</code> or <code>sap.m.DateTimePicker</code>. Example type=DateTime and pattern "DD MM YYY".

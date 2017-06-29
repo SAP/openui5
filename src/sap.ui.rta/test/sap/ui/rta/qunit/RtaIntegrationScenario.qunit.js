@@ -65,10 +65,12 @@ sap.ui.require([
 			this.oRta.destroy();
 			this.oCommandStack.destroy();
 			FakeLrepLocalStorage.deleteChanges();
+			sandbox.restore();
 		}
 	});
 
 	QUnit.test("when removing a group using a command stack API", function(assert) {
+		var done = assert.async();
 		var iFiredCounter = 0;
 		this.oRta.attachUndoRedoStackModified(function() {
 			iFiredCounter++;
@@ -78,39 +80,45 @@ sap.ui.require([
 		assert.strictEqual(this.oRta.canRedo(), false, "initially no redo is possible");
 		assert.notOk(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "initially no Changes are existing");
 
-		// TODO: remove
 		var oCommand = new CommandFactory().getCommandFor(this.oGroup, "Remove", {
 			removedElement : this.oGroup
 		}, this.oGroupOverlay.getDesignTimeMetadata());
 
-		this.oCommandStack.pushAndExecute(oCommand);
-		sap.ui.getCore().applyChanges();
+		this.oCommandStack.pushAndExecute(oCommand)
 
-		assert.strictEqual(this.oGroup.getVisible(), false, "then group is hidden...");
-		assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
-		assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
-		assert.ok(this.oRta._oToolsMenu.getControl('undo').getEnabled(), "Undo button of RTA is enabled");
-		assert.ok(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is enabled");
+		.then(function() {
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.oGroup.getVisible(), false, "then group is hidden...");
+			assert.strictEqual(this.oRta.canUndo(), true, "after any change undo is possible");
+			assert.strictEqual(this.oRta.canRedo(), false, "after any change no redo is possible");
+			assert.ok(this.oRta._oToolsMenu.getControl('undo').getEnabled(), "Undo button of RTA is enabled");
+			assert.ok(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is enabled");
+		}.bind(this))
 
-		this.oCommandStack.undo();
-		sap.ui.getCore().applyChanges();
+		.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-		assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
-		assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
-		assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
-		assert.notOk(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is disabled");
+		.then(function() {
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.oGroup.getVisible(), true, "when the undo is called, then the group is visible again");
+			assert.strictEqual(this.oRta.canUndo(), false, "after reverting a change undo is not possible");
+			assert.strictEqual(this.oRta.canRedo(), true, "after reverting a change redo is possible");
+			assert.notOk(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is disabled");
+		}.bind(this))
 
-		this.oRta.redo();
-		sap.ui.getCore().applyChanges();
+		.then(this.oRta.redo.bind(this.oRta))
 
-		assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
-		assert.ok(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
-
-		// pushAndExecute fires modified twice!
-		assert.strictEqual(iFiredCounter, 4, "undoRedoStackModified event of RTA is fired twice");
+		.then(function() {
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.oGroup.getVisible(), false, "when the redo is called, then the group is not visible again");
+			assert.ok(this.oRta._oToolsMenu.getControl('publish').getEnabled(), "Transport button of RTA is enabled again");
+			// pushAndExecute fires modified twice!
+			assert.strictEqual(iFiredCounter, 4, "undoRedoStackModified event of RTA is fired twice");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when renaming a form title using a property change command", function(assert) {
+		var done = assert.async();
 		sandbox.stub(Utils, "getCurrentLayer").returns("VENDOR");
 
 		var oInitialTitle = this.oForm.getTitle();
@@ -125,14 +133,18 @@ sap.ui.require([
 			newValue : "Test Title"
 		});
 
-		this.oCommandStack.pushAndExecute(oCommand);
-		assert.strictEqual(this.oForm.getTitle(), "Test Title", "then title is changed...");
+		this.oCommandStack.pushAndExecute(oCommand)
 
-		this.oCommandStack.undo();
+		.then(function() {
+			assert.strictEqual(this.oForm.getTitle(), "Test Title", "then title is changed...");
+		}.bind(this))
 
-		assert.strictEqual(this.oForm.getTitle(), oInitialTitle, "when the undo is called, then the form's title is restored");
+		.then(this.oCommandStack.undo.bind(this.oCommandStack))
 
-		sandbox.restore();
+		.then(function() {
+			assert.strictEqual(this.oForm.getTitle(), oInitialTitle, "when the undo is called, then the form's title is restored");
+			done();
+		}.bind(this));
 	});
 
 	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested();

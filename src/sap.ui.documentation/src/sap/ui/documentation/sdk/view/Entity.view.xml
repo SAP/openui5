@@ -15,6 +15,7 @@
 					id="entityHeader"
 					objectTitle="{/name}">
 				<actions>
+					<ObjectPageHeaderActionButton id="entityBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 					<ObjectPageHeaderActionButton
 							id="toggleFullScreenBtn"
 							class="sapUiHideOnPhone"
@@ -37,7 +38,9 @@
 
 					<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom">
 						<m:Label text="Extends:"/>
-						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"/>
+						<m:Link text="{/baseTypeText}" enabled="true" href="#/entity/{/baseType}"
+								visible="{=!!${/baseTypeNav}}"/>
+						<m:Text text="N/A" visible="{=!${/baseTypeNav}}"/>
 					</m:HBox>
 
 					<m:ObjectAttribute
@@ -113,7 +116,7 @@
 								<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
 									<m:cells>
 										<m:Text text="{name}" class="entitySampleName" wrapping="false" />
-										<m:Text text="{description}" />
+										<m:FormattedText htmlText="{description}" />
 									</m:cells>
 								</m:ColumnListItem>
 							</m:items>

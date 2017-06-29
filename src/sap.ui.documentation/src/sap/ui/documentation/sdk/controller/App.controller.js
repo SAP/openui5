@@ -54,9 +54,16 @@ sap.ui.define([
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
 
-
 				this.getRouter().getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
 				this.getRouter().getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
+
+				this.oRouter.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+				this.oRouter.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+				this.oRouter.getRoute("entityPropertiesLegacyRoute").attachPatternMatched({entityType: "properties"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityAggregationsLegacyRoute").attachPatternMatched({entityType: "aggregations"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityAssociationsLegacyRoute").attachPatternMatched({entityType: "associations"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
 				// apply content density mode to root view
 				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
@@ -124,6 +131,18 @@ sap.ui.define([
 				return sLink;
 			},
 
+			_forwardToAPIRef: function(oEvent, oData) {
+				oData || (oData = {});
+				oData['id'] = oEvent.getParameter("arguments").id;
+				this.oRouter.navTo("apiId", oData);
+			},
+
+			_onEntityOldRouteMatched: function(oEvent) {
+				this.oRouter.navTo("entity", {
+					id: oEvent.getParameter("arguments").id
+				});
+			},
+
 			onRouteChange: function (oEvent) {
 
 				if (!this.oRouter.getRoute(oEvent.getParameter("name"))._oConfig.target) {
@@ -143,6 +162,8 @@ sap.ui.define([
 				this.oTabNavigation.setSelectedKey(sKey);
 
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
+
+				this._toggleTabHeaderClass();
 
 				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for mavigation)
 					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
@@ -369,6 +390,7 @@ sap.ui.define([
 						}
 					];
 					this._oFeedbackDialog.reset = function () {
+						this.sendButton.setEnabled(false);
 						this.textInput.setValue("");
 						this.contextCheckBox.setSelected(true);
 						this.ratingStatus.setText("");
@@ -515,7 +537,7 @@ sap.ui.define([
 					that._oFeedbackDialog.ratingStatus.setState(sState);
 					that._oFeedbackDialog.ratingStatus.setText(sText);
 					that._oFeedbackDialog.ratingStatus.value = iValue;
-					if (iValue || that._oFeedbackDialog.textInput.getValue()) {
+					if (iValue) {
 						that._oFeedbackDialog.sendButton.setEnabled(true);
 					} else {
 						that._oFeedbackDialog.sendButton.setEnabled(false);
@@ -523,13 +545,13 @@ sap.ui.define([
 				}
 			},
 
-			onFeedbackInput : function() {
-				if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
-					this._oFeedbackDialog.sendButton.setEnabled(true);
-				} else {
-					this._oFeedbackDialog.sendButton.setEnabled(false);
-				}
-			},
+			//onFeedbackInput : function() {
+			//	if (this._oFeedbackDialog.textInput.getValue() || this._oFeedbackDialog.ratingStatus.value) {
+			//		this._oFeedbackDialog.sendButton.setEnabled(true);
+			//	} else {
+			//		this._oFeedbackDialog.sendButton.setEnabled(false);
+			//	}
+			//},
 
 			onSearch : function (oEvent) {
 				var sQuery = oEvent.getParameter("query");
@@ -544,10 +566,14 @@ sap.ui.define([
 					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 
 				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
+
+				this._toggleTabHeaderClass();
 			},
 
 			_onOrientationChange: function() {
 				this.getModel("appView").setProperty("/bLandscape", Device.orientation.landscape);
+
+				this._toggleTabHeaderClass();
 			},
 
 			onToggleSearchMode : function(oEvent) {
@@ -555,6 +581,8 @@ sap.ui.define([
 				oViewModel = this.getModel("appView");
 
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
+
+				this._toggleTabHeaderClass();
 			},
 
 			/**
@@ -601,6 +629,25 @@ sap.ui.define([
 			_getCurrentPageRelativeURL: function () {
 				var parser = window.location;
 				return parser.pathname + parser.hash + parser.search;
+			},
+
+			_isToggleButtonVisible: function() {
+				var oViewModel = this.getModel("appView"),
+					bHasMaster = oViewModel.getProperty("/bHasMaster"),
+					bPhoneSize = oViewModel.getProperty("/bPhoneSize"),
+					bLandscape = oViewModel.getProperty("/bLandscape"),
+					bSearchMode = oViewModel.getProperty("/bSearchMode");
+
+				return bHasMaster && (bPhoneSize || !bLandscape) && !bSearchMode;
+			},
+
+			_toggleTabHeaderClass: function() {
+				var th = this.getView().byId("tabHeader");
+				if (this._isToggleButtonVisible()) {
+					th.addStyleClass("tabHeaderNoLeftMargin");
+				} else {
+					th.removeStyleClass("tabHeaderNoLeftMargin");
+				}
 			}
 
 		});

@@ -58,13 +58,19 @@
 										<m:Text text="{name}"></m:Text>
 									</t:template>
 								</t:Column>
+								<t:Column label="Categories"
+										  width="10rem">
+									<t:template>
+										<m:Text text="{categories}"></m:Text>
+									</t:template>
+								</t:Column>
 								<t:Column width="60px" label="Actions">
 								<t:template>
 									<t:RowAction>
 										<t:items>
-										<t:RowActionItem icon="sap-icon://edit" press="editRule"  visible="{= ${libName} === 'temporary' &amp;&amp; ${name} !== ${library}}"></t:RowActionItem>
+										<t:RowActionItem icon="sap-icon://edit" press="editRule"  visible="{= ${libName} === 'temporary'}"></t:RowActionItem>
 										<t:RowActionItem icon="sap-icon://delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}"></t:RowActionItem>
-										<t:RowActionItem icon="sap-icon://copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${name} !== 'temporary' &amp;&amp; ${type} === undefined}"></t:RowActionItem>
+										<t:RowActionItem icon="sap-icon://copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}"></t:RowActionItem>
 										</t:items>
 									</t:RowAction>
 								</t:template>
@@ -122,7 +128,9 @@
 							<m:Label text="Resolution URLs" />
 							<l:VerticalLayout
 									content="{/selectedRule/resolutionurls}">
-								<m:Link text="{text}" />
+								<m:Link target="_blank"
+										text="{text}"
+										href="{href}"/>
 							</l:VerticalLayout>
 						</f:content>
 						<f:layoutData><l:SplitterLayoutData size="40%" /></f:layoutData>
@@ -208,11 +216,11 @@
 							<l:HorizontalLayout>
 								<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
 								<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
-								<m:Button text="Add" press="addLinkToEditRule" icon="sap-icon://add" />
+								<m:Button text="Add Link" press="addLinkToRule" icon="sap-icon://add" />
 							</l:HorizontalLayout>
 							<l:VerticalLayout
 									content="{/editRule/resolutionurls}">
-								<m:Link text="{text}" />
+								<m:Link text="{text}" href="{href}" target="_blank"/>
 							</l:VerticalLayout>
 						</l:VerticalLayout>
 					</f:content>
@@ -303,7 +311,7 @@
 							<l:HorizontalLayout>
 								<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
 								<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
-								<m:Button text="Add" press="addLinkToNewRule" icon="sap-icon://add" />
+								<m:Button text="Add" press="addLinkToRule" icon="sap-icon://add" />
 							</l:HorizontalLayout>
 							<l:VerticalLayout
 									content="{/newRule/resolutionurls}">

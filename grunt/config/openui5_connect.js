@@ -13,6 +13,9 @@ module.exports = function(grunt, config) {
 
 			contextpath: config.testsuite.name,
 			proxypath: 'proxy',
+			proxyOptions: {
+				secure: false
+			},
 			cors: {
 				origin: "*"
 			}

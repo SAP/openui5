@@ -121,13 +121,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	});
 
 	/**
-	 * Returns children of this overlay
-	 * @return {sap.ui.dt.Overlay[]} overlays that are logical children of this overlay
-	 * @protected
-	 */
-	//Overlay.prototype.getChildren = function() {};
-
-	/**
 	 * Creates and/or returns an overlay container element, where all Overlays should be rendered (initially)
 	 * @return {Element} overlay container
 	 * @static
@@ -196,12 +189,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			this._detachDomRefScrollHandler(oElementDomRef);
 		}
 
-		if (!window.requestAnimationFrame) {
-			window.cancelAnimationFrame = function(id) {
-				window.clearTimeout(id);
-			};
-		}
-
 		if (this._aScrollContainers) {
 			this._aScrollContainers.forEach(function(oScrollContainer, iIndex) {
 				if (this.getElementInstance()) {
@@ -215,11 +202,28 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			}.bind(this));
 		}
 
+		this._restoreVisibility();
+
 		delete this._oDomRef;
 		delete this._bVisible;
 		window.clearTimeout(this._iCloneDomTimeout);
 		window.cancelAnimationFrame(this._iSyncScrollWithDomRef);
 		this.fireDestroyed();
+	};
+
+	/**
+	 * Restore the visibility of the element which was set to "hidden" before DomRef cloning
+	 * @private
+	 */
+	Overlay.prototype._restoreVisibility = function(){
+		if (this._oCloneDomRefVisibility){
+			sap.ui.dt.Overlay.getMutationObserver().ignoreOnce({
+				target: jQuery(this._oCloneDomRefVisibility.domRef).get(0),
+				type: "attributes"
+			});
+			jQuery(this._oCloneDomRefVisibility.domRef).css("visibility", this._oCloneDomRefVisibility.visibility);
+			delete this._oCloneDomRefVisibility;
+		}
 	};
 
 	/**
@@ -537,18 +541,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			oScrollContainer = this;
 		}
 
-		if (!window.requestAnimationFrame) {
-			window.requestAnimationFrame = function(callback) {
-				oScrollContainer._iSyncScrollWithDomRef = window.setTimeout(callback, 0);
-			};
-		}
-
-		if (!window.requestAnimationFrame) {
-			window.cancelAnimationFrame = function(id) {
-				window.clearTimeout(id);
-			};
-		}
-
 		window.cancelAnimationFrame(oScrollContainer._iSyncScrollWithDomRef);
 		// timeout needed so that scroll wheel in chrome windows works fast
 		oScrollContainer._iSyncScrollWithDomRef = window.requestAnimationFrame(function() {
@@ -645,9 +637,21 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 						$clonedDom.empty();
 					}
 
+					this._restoreVisibility();
+
 					//TODO: disable update
 					DOMUtil.cloneDOMAndStyles(oDomRef, $clonedDom);
-				};
+
+					this._oCloneDomRefVisibility = {
+						domRef: jQuery(oDomRef),
+						visibility: jQuery(oDomRef).css("visibility")
+					};
+					sap.ui.dt.Overlay.getMutationObserver().ignoreOnce({
+						target: jQuery(oDomRef).get(0),
+						type: "attributes"
+					});
+					jQuery(oDomRef).css("visibility", "hidden");
+				}.bind(this);
 
 				if (!this._bClonedDom) {
 					this._bClonedDom = true;
@@ -655,7 +659,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 				} else {
 					window.clearTimeout(this._iCloneDomTimeout);
 					// cloneDom is expensive, therefore the call is delayed
-					this._iCloneDomTimeout = window.setTimeout(fnCloneDom, 250);
+					this._iCloneDomTimeout = window.setTimeout(fnCloneDom, 0);
 				}
 			}
 		} else {
@@ -773,6 +777,7 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @public
 	 */
 	Overlay.prototype.setVisible = function(bVisible) {
+		bVisible = !!bVisible;
 		if (this.getVisible() !== bVisible) {
 			this.setProperty("visible", bVisible);
 			this._bVisible = bVisible;
@@ -799,7 +804,6 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 			return this.getProperty("visible");
 		}
 	};
-
 
 	/**
 	 * Returns if the Overlay is visible

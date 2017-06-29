@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings"
-], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings) {
+	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
+], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings, VariantController) {
 	"use strict";
 
 	/**
@@ -165,6 +165,13 @@ sap.ui.define([
 			}
 
 			var aChanges = oWrappedChangeFileContent.changes.changes;
+
+			if (oWrappedChangeFileContent.changes.variantSection && oWrappedChangeFileContent.changes.variantSection !== {}) {
+				this._oVariantController = new VariantController(this.getComponentName(), this._oComponent.appVersion, oWrappedChangeFileContent);
+				var aVariantChanges = this._oVariantController.loadDefaultChanges();
+				aChanges = aChanges.concat(aVariantChanges);
+			}
+
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
 				var aCurrentLayerChanges = [];
@@ -218,12 +225,12 @@ sap.ui.define([
 
 			this._addMapEntry(sSelectorId, oChange);
 
-			// add legacy change twice to ensure that a different component ID does not interfere when created
+			// if the localId flag is missing and the selector has a component prefix that is not matching the
+			// application component, adds the change for a second time replacing the component ID prefix with
+			// the application component ID prefix
 			if (oSelector.idIsLocal === undefined && sSelectorId.indexOf("---") != -1) {
 				var sComponentPrefix = sSelectorId.split("---")[0];
 
-				// if the component prefix does not match the application component.
-				// add the prefixed selector as well
 				if (sComponentPrefix !== oComponent.getId()) {
 					sSelectorId = sSelectorId.split("---")[1];
 					sSelectorId = oComponent.createId(sSelectorId);
@@ -237,8 +244,8 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {string} sSelectorId <code>sSelectorId</code> key in the mapping for which the entry is written
-	 * @param {sap.ui.fl.Change} oChange change object which should be added into the mapping
+	 * @param {string} sSelectorId Key in the mapping for which the entry is written
+	 * @param {sap.ui.fl.Change} oChange Change object to be added to the mapping
 	 * @private
 	 */
 	ChangePersistence.prototype._addMapEntry = function (sSelectorId, oChange) {
