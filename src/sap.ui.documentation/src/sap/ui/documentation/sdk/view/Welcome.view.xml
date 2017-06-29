@@ -182,7 +182,8 @@
 									href="https://experience.sap.com/fiori-design/"
 									text="Award-Winning SAP Fiori Design in Action"
 									class="sapUiSmallMarginBottom"
-									titleStyle="H2"/>
+									titleStyle="H2"
+									target="_blank"/>
 							<Text
 									text="UI5 applications benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or try our online theming tool to create a custom theme."
 									class="sapUiSmallMarginBottom"/>
