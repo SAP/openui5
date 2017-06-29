@@ -58,7 +58,8 @@ sap.ui.define([
 				bMandatoryContentPresent = oChangeDefinition.content.newFieldSelector
 					&& (oChangeDefinition.content.newFieldIndex !== undefined)
 					&& oChangeDefinition.content.bindingPath
-					&& oChangeDefinition.content.changeHandlerSettingsKey;
+					&& oChangeDefinition.content.changeHandlerSettingsKey
+					&& fnChangeHandlerCreateFunction;
 			}
 
 			return  bContentPresent && bMandatoryContentPresent;
@@ -129,7 +130,7 @@ sap.ui.define([
 
 			return true;
 		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]"
+			Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
 				+ oChangeDefinition.namespace + "/"
 				+ oChangeDefinition.fileName + "."
 				+ oChangeDefinition.fileType);

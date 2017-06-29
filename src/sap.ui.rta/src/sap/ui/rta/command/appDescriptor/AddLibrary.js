@@ -29,22 +29,7 @@ sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				/**
-				 * The libraries to be added to the app descriptor
-				 * @type object
-				 *
-				 * "libraries": {
-				 *	    "my.new.library": {
-				 *	        "minVersion": "1.44",
-				 *	        "lazy": "false"
-				 *	    },
-				 *	    "my.2nd.new.library": {
-				 *	        "minVersion": "1.44",
-				 *	        "lazy": "true"
-				 *	    }
-				 *	}
-				 *
-				 */
+				// The libraries to be added to the app descriptor
 				requiredLibraries : {
 					type : "object"
 				},
@@ -67,25 +52,19 @@ sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 
 	/**
 	 * Execute the change (load the required libraries)
-	 *
+	 * @return {promise} resolved if libraries could be loaded; rejected if not
 	 */
 	AddLibrary.prototype.execute = function(){
-		var sLibraryName;
+		var aPromises = [];
+
 		if (this.getRequiredLibraries()){
-			try {
-				var aLibraries = Object.keys(this.getRequiredLibraries());
-				aLibraries.forEach(function(sLibrary){
-					sLibraryName = sLibrary;
-					sap.ui.getCore().loadLibrary(sLibrary);
-				});
-			} catch (e){
-				if (sLibraryName){
-					throw new Error("Required library not available: " + sLibraryName + " - AddLibrary command could not be executed");
-				} else {
-					throw new Error("Error occurred - AddLibrary command could not be executed");
-				}
-			}
+			var aLibraries = Object.keys(this.getRequiredLibraries());
+			aLibraries.forEach(function(sLibrary){
+				aPromises.push(sap.ui.getCore().loadLibrary(sLibrary, true));
+			});
 		}
+
+		return Promise.all(aPromises);
 	};
 
 	/**
