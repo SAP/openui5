@@ -271,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			CalendarRow._oStaticSelectedText.toStatic(); //Put to Static UiArea
 		}
 
-		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/short"});
+		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"});
 
 		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
 		this._iDaysMinDelta = 30; // minutes
