@@ -33,7 +33,8 @@ sap.ui.define([
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * Allow displaying of pdf files and provides useful API.
+		 * This control enables you to display PDF documents within your app.
+		 * It can be embedded in your user interface layout, or you can set it to open in a popup dialog.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -67,9 +68,9 @@ sap.ui.define([
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
 						 * A custom error message that is displayed when the PDF file cannot be loaded.
-						 * @deprecated since version 1.50.0
+						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getErrorPlaceholderMessage()}.
 						 */
-						errorMessage: {type: "string", group: "Misc", defaultValue: null},
+						errorMessage: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 						/**
 						 * A custom text that is displayed instead of the PDF file content when the PDF
 						 * file cannot be loaded.
@@ -78,15 +79,19 @@ sap.ui.define([
 						/**
 						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
 						 * is set to open in a popup dialog.
-						 * @deprecated since version 1.50.0
+						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getTitle()}.
 						 */
-						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null},
+						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 
 						/**
-						 * A custom title for the PDF viewer. Works only if the PDF viewer is embedded in
-						 * the layout.
+						 * A custom title for the PDF viewer.
 						 */
-						title: {type: "string", group: "Misc", defaultValue: null}
+						title: {type: "string", group: "Misc", defaultValue: null},
+
+						/**
+						* Shows or hides the download button.
+						*/
+						showDownloadButton: {type: "boolean", group: "Misc", defaultValue: true}
 					},
 					aggregations: {
 						/**
@@ -139,6 +144,7 @@ sap.ui.define([
 			if (Device.browser.internet_explorer) {
 				// hacky code how to recognize that pdf plugin is installed and enabled
 				try {
+					// eslint-disable-next-line no-new
 					new ActiveXObject("AcroPDF.PDF");
 				} catch (e) {
 					bIsEnabled = false;
@@ -170,7 +176,6 @@ sap.ui.define([
 
 			this._initPopupControl();
 			this._initPopupDownloadButtonControl();
-			this._initPlaceholderLinkControl();
 			this._initPlaceholderMessagePageControl();
 			this._initToolbarDownloadButtonControl();
 			this._initOverflowToolbarControl();
@@ -191,12 +196,6 @@ sap.ui.define([
 			this._bOnBeforeUnloadFired = false;
 		};
 
-		/**
-		 * Sets the width of the PDFViewer.
-		 * @param {sap.ui.core.CSSSize} sWidth The width of the PDFViewer as CSS size.
-		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
-		 * @public
-		 */
 		PDFViewer.prototype.setWidth = function (sWidth) {
 			this.setProperty("width", sWidth, true);
 			var oDomRef = this.$();
@@ -208,12 +207,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/**
-		 * Sets the height of the PDFViewer.
-		 * @param {sap.ui.core.CSSSize} sHeight The height of the PDFViewer as CSS size.
-		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
-		 * @public
-		 */
 		PDFViewer.prototype.setHeight = function (sHeight) {
 			this.setProperty("height", sHeight, true);
 			var oDomRef = this.$();
@@ -316,7 +309,12 @@ sap.ui.define([
 		PDFViewer.prototype._fireLoadedEvent = function () {
 			this._bRenderPdfContent = true;
 			this.setBusy(false);
-			this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
+			try {
+				this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
+			} catch (err) {
+				jQuery.log.fatal("Iframe not founded in loaded event");
+				jQuery.log.fatal(err);
+			}
 			this.fireEvent("loaded");
 		};
 
@@ -337,7 +335,7 @@ sap.ui.define([
 				try {
 					// browsers render pdf in iframe as html page with embed tag
 					var aEmbeds = oTarget[0].contentWindow.document.embeds;
-					bContinue = aEmbeds.length === 1;
+					bContinue = !!aEmbeds && aEmbeds.length === 1;
 					if (bContinue) {
 						sCurrentContentType = aEmbeds[0].attributes.getNamedItem("type").value;
 					}
@@ -422,11 +420,12 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param oEvent
-		 * @private
+		 * Downloads the PDF file.
+		 *
+		 * @public
 		 */
-		PDFViewer.prototype._onDownloadButtonClickListener = function (oEvent) {
-			var oWindow = window.open(this.getSource());
+		PDFViewer.prototype.downloadPDF = function () {
+			var oWindow = window.open(this._getRenderSource());
 			oWindow.focus();
 		};
 
@@ -472,7 +471,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param oOrigin
+		 * Triggers rerendering of this element and its children.
+		 *
+		 * @param {sap.ui.base.ManagedObject} [oOrigin] Child control for which the method was called
+		 *
+		 * @public
 		 */
 		PDFViewer.prototype.invalidate = function (oOrigin) {
 			this._initControlState();
@@ -480,13 +483,13 @@ sap.ui.define([
 		};
 
 		/**
-		 * Opens up the dialog with pdf viewer inside it
+		 * Opens the PDF viewer in a popup dialog.
 		 *
 		 * @public
 		 */
 		PDFViewer.prototype.open = function () {
 			if (!this._isSourceValidToDisplay()) {
-				jQuery.sap.assert(false, "The pdf can not be opened with given source. Given source: " + this.getSource());
+				jQuery.sap.assert(false, "The PDF file cannot be opened with the given source. Given source: " + this.getSource());
 				return;
 			}
 

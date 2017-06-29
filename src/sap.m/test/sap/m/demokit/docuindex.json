@@ -848,7 +848,8 @@
 		  "since": "1.48",
 		  "samples": [
 			  "sap.m.sample.PDFViewerEmbedded",
-			  "sap.m.sample.PDFViewerPopup"
+			  "sap.m.sample.PDFViewerPopup",
+			  "sap.m.sample.PDFViewerMultiple"
 		  ]
 		},
 		{
@@ -1569,6 +1570,11 @@
 		  "id": "sap.m.sample.PDFViewerPopup",
 		  "name": "PDF Viewer - Popup",
 		  "description": "A PDF viewer opening as a popup dialog."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerMultiple",
+		  "name": "PDF Viewer - Two PDF Documents",
+		  "description": "Two PDF viewer frames displayed side by side."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",

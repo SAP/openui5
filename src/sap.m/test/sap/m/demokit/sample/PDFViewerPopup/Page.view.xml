@@ -3,5 +3,10 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	height="100%">
-	<Button text="Open PDF in a popup" press="onPress"/>
+	<Carousel class="sapUiContentPadding" loop="true">
+		<pages>
+			<Image id="image1" src="{/Preview}" alt="Example Picture 1" press="onPress" />
+			<Image id="image2" src="{/Preview}" alt="Example Picture 2" press="onPress" />
+		</pages>
+	</Carousel>
 </mvc:View>
