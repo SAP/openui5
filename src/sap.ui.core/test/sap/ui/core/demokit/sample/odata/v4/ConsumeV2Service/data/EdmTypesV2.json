@@ -1,0 +1,63 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection('1')",
+						"uri" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection('1')",
+						"type" : "com.sap.ui5.OData.EdmTypes"
+					},
+					"ID" : "1",
+					"Binary" : "iVBORw0KGgoAAAANSUhEUgAAAEIAAAAhCAYAAABtNH0cAAAEdklEQVR42uWYy28bVRSH5y9AXoOE/B/gZYWE5B0sWFhCqFtvaKGI4qJSHq3KVAkuKgg3RDSthGKoWrWLkBEkaRI38TR2HnUc4jhJHafGdpp342cbaicm6HDPhBnNeO7YY2PHlvyTPiWxzz33zuc7ntsyTG8GWp5fs8cZ8st+a0vI/MQI6Un/Q4CWRJKAub1VIEDLcWdHJgHT/aRAgJbCuVokAdMVKRCgZbgepUjAXA0VCCBi6AqDzbMNgcQe0IKvOwJpsPSvgXycHGcoC/z6CxXmnhVVrdW1Sa2Vw0V3gfUlwHQ7pjmnLjrCGhIwV4I5AiDWe6uQ2TsAvcFam3sDxPGI8UZIs965kFbUIuzENlSS+LN9sHBxVZ+yfBssIYHklc75Xcb+B1j7VqCaWHqigONFWO9mSXHyWqHes1nVvLje4l7azJaWgDnWvZQ2dgYhkz+oeDH8ynNg2vwK4tn90hfwe0xRz45tQLUx3wyr5lfR7i8vAfPWrXDKNkTfDfHMHrD8mgS3lFYIM12fB4Z9KGH+OVR28dhDPoZ9sE6XHH8moXmrzSUUvVRc8umTgHnnbjjFLaWoExns08BcnFRh7Y0A615Tve4M7Oj6JOV9UTAt8r6ma7hj/6Z+ULT1CXw1pV8C5l0igo9l6cZnn4KhnZi9MF4WrKMtlhbbQEwax46u0kUU9ddbd8hkZRIwb/+ymHSMr2t/wZGLc0xsgKlzFpgvPJpYe5bpt8KjpPoRvPmXNI4deUK/wKL+euuY897KJWDe6AomzTfm9D260nlAacZvyC75bEwBH81QLngXLDcXqb1MHTPCOPY+/ftJ3tvAjgtzl6sjVCcB86p9Msl8yoPTv1XRNzbrIs9yMg4x2qfot8BvETBc9FLfc3jXhLHYR6s/4pzZgkyOfstxiwlpDcw5vnoJQs6O5gmAOP2VPdOxHsexwzHq+8avJ4T3uYUd6u4qNVbXWeJuCA7X7v6fEjCfjOQJIGL+cQb4P9P6F3PnEcRT6m0bWH8u9cQa6mGsm5wsh6JVScA1/te/BhIwH7vyjM0FxRgvecHWGxYuqOQxW2PbsoNRRS/qjvJtCHWVhpsnT7PPye1wxlUjCZjTw3kClMLIeoTJK008lQM+Unp3OR7oO9qjcC74FMw/TIvrqqEEzEdDeQIg1lsLYDg3AuLfxdQjKIt6fO6YllCtpeYSSF7+0n3AfDgI5qs+yTw7EAHTZXIwIa8jhrP3weFegaOMOLeKU4O1l4B5zT6eZU7dA/5xCpopuCY1A/WRgHn9ykTC/P3D2m31ZA4co3Hgl1MKuLlt4aduEe8PKPmgjhIwb3b4Eo7RWM1EYC/mZD8VU7tHvwj52HpLwLx0ejjDnOgH83dTwAXK/29R5kUB2L7HwidPPTq3kfM+6aeF1jiVCHHMyf76SxByoi9HABGDbYhIIf887ltWYbnml+qwhoa8Fw1T25jmWFWf945KwqGIvXKLbwhHKqFZRRy5hGYU0RAJzSaiYRKaSURDJRyKaIbdcJlpcP4Fuicj4RNJZUgAAAAASUVORK5CYII=",
+					"Boolean" : true,
+					"Byte" : 255,
+					"Date" : "\/Date(1395705600000)\/",
+					"DateTime" : "\/Date(1395752399000)\/",
+					"DateTimeOffset" : "\/Date(1420529121547+0000)\/",
+					"Decimal" : "1234567890.12345678901234",
+					"DigitSequence" : "0012345",
+					"Double" : "1.0000000000000001E63",
+					"Float" : "-1.234567E-03",
+					"GlobalUID" : "0050568d-393c-1ee4-a5ae-9aae85248ff2",
+					"Int16" : 32767,
+					"Int32" : 2147483647,
+					"Int64" : "-9223372036854775808",
+					"SByte" : -128,
+					"Single" : "1.234567E3",
+					"String" : "String Expression",
+					"String40" : "String Maxlength 40",
+					"Time" : "PT11H33M55S",
+					"TimeStampLong" : "\/Date(1395747235112)\/",
+					"TimeStampShort" : "\/Date(1395747235000)\/"
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection('2')",
+						"uri" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection('2')",
+						"type" : "com.sap.ui5.OData.EdmTypes"
+					},
+					"ID" : "2",
+					"Binary" : "iVBORw0KGgoAAAANSUhEUgAAAEIAAAAhCAYAAABtNH0cAAAEdklEQVR42uWYy28bVRSH5y9AXoOE/B/gZYWE5B0sWFhCqFtvaKGI4qJSHq3KVAkuKgg3RDSthGKoWrWLkBEkaRI38TR2HnUc4jhJHafGdpp342cbaicm6HDPhBnNeO7YY2PHlvyTPiWxzz33zuc7ntsyTG8GWp5fs8cZ8st+a0vI/MQI6Un/Q4CWRJKAub1VIEDLcWdHJgHT/aRAgJbCuVokAdMVKRCgZbgepUjAXA0VCCBi6AqDzbMNgcQe0IKvOwJpsPSvgXycHGcoC/z6CxXmnhVVrdW1Sa2Vw0V3gfUlwHQ7pjmnLjrCGhIwV4I5AiDWe6uQ2TsAvcFam3sDxPGI8UZIs965kFbUIuzENlSS+LN9sHBxVZ+yfBssIYHklc75Xcb+B1j7VqCaWHqigONFWO9mSXHyWqHes1nVvLje4l7azJaWgDnWvZQ2dgYhkz+oeDH8ynNg2vwK4tn90hfwe0xRz45tQLUx3wyr5lfR7i8vAfPWrXDKNkTfDfHMHrD8mgS3lFYIM12fB4Z9KGH+OVR28dhDPoZ9sE6XHH8moXmrzSUUvVRc8umTgHnnbjjFLaWoExns08BcnFRh7Y0A615Tve4M7Oj6JOV9UTAt8r6ma7hj/6Z+ULT1CXw1pV8C5l0igo9l6cZnn4KhnZi9MF4WrKMtlhbbQEwax46u0kUU9ddbd8hkZRIwb/+ymHSMr2t/wZGLc0xsgKlzFpgvPJpYe5bpt8KjpPoRvPmXNI4deUK/wKL+euuY897KJWDe6AomzTfm9D260nlAacZvyC75bEwBH81QLngXLDcXqb1MHTPCOPY+/ftJ3tvAjgtzl6sjVCcB86p9Msl8yoPTv1XRNzbrIs9yMg4x2qfot8BvETBc9FLfc3jXhLHYR6s/4pzZgkyOfstxiwlpDcw5vnoJQs6O5gmAOP2VPdOxHsexwzHq+8avJ4T3uYUd6u4qNVbXWeJuCA7X7v6fEjCfjOQJIGL+cQb4P9P6F3PnEcRT6m0bWH8u9cQa6mGsm5wsh6JVScA1/te/BhIwH7vyjM0FxRgvecHWGxYuqOQxW2PbsoNRRS/qjvJtCHWVhpsnT7PPye1wxlUjCZjTw3kClMLIeoTJK008lQM+Unp3OR7oO9qjcC74FMw/TIvrqqEEzEdDeQIg1lsLYDg3AuLfxdQjKIt6fO6YllCtpeYSSF7+0n3AfDgI5qs+yTw7EAHTZXIwIa8jhrP3weFegaOMOLeKU4O1l4B5zT6eZU7dA/5xCpopuCY1A/WRgHn9ykTC/P3D2m31ZA4co3Hgl1MKuLlt4aduEe8PKPmgjhIwb3b4Eo7RWM1EYC/mZD8VU7tHvwj52HpLwLx0ejjDnOgH83dTwAXK/29R5kUB2L7HwidPPTq3kfM+6aeF1jiVCHHMyf76SxByoi9HABGDbYhIIf887ltWYbnml+qwhoa8Fw1T25jmWFWf945KwqGIvXKLbwhHKqFZRRy5hGYU0RAJzSaiYRKaSURDJRyKaIbdcJlpcP4Fuicj4RNJZUgAAAAASUVORK5CYII=",
+					"Boolean" : false,
+					"Byte" : 255,
+					"Date" : "\/Date(1395705600000)\/",
+					"DateTime" : "\/Date(1395752399000)\/",
+					"DateTimeOffset" : "\/Date(1420529121547+0000)\/",
+					"Decimal" : "1234567890.12345678901234",
+					"DigitSequence" : "0012345",
+					"Double" : "1.0000000000000001E63",
+					"Float" : "-1.234567E-03",
+					"GlobalUID" : "0050568d-393c-1ee4-a5ae-9aae85248ff2",
+					"Int16" : 32767,
+					"Int32" : 111222333,
+					"Int64" : "-9223372036854775808",
+					"SByte" : -128,
+					"Single" : "1.234567E3",
+					"String" : "Another String Expression",
+					"String40" : "String Maxlength 40",
+					"Time" : "PT11H33M55S",
+					"TimeStampLong" : "\/Date(1395747235112)\/",
+					"TimeStampShort" : "\/Date(1395747235000)\/"
+				}]
+	}
+}

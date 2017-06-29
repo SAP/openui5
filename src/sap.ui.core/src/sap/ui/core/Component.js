@@ -1191,6 +1191,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 						}
 					}
 
+					// pass OData service version (e.g. "2.0"), if specified, to the OData V4 model
+					if (oModelConfig.type === 'sap.ui.model.odata.v4.ODataModel'
+							&& oDataSource.settings
+							&& oDataSource.settings.odataVersion) {
+						oModelConfig.settings = oModelConfig.settings || {};
+						oModelConfig.settings.odataVersion = oDataSource.settings.odataVersion;
+					}
+
 					// use dataSource uri if it isn't already defined in model config
 					if (!oModelConfig.uri) {
 						oModelConfig.uri = oDataSource.uri;

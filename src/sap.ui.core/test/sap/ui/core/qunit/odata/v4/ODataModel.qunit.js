@@ -166,6 +166,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("unsupported OData version", function (assert) {
+		assert.throws(function () {
+			createModel("", {odataVersion : "foo"});
+		}, new Error("Unsupported value for parameter odataVersion: foo"));
+	});
+
+	//*********************************************************************************************
+	["2.0", "4.0"].forEach(function (sODataVersion) {
+		QUnit.test("create _Requestor for odataVersion: " + sODataVersion, function (assert) {
+			this.mock(_Requestor).expects("create")
+				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
+					sinon.match.func, sODataVersion)
+				.returns({});
+
+			// code under test
+			createModel("", {odataVersion : sODataVersion});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("with serviceUrl params", function (assert) {
 		var oModel,
 			mModelOptions = {};
@@ -251,7 +271,7 @@ sap.ui.require([
 
 		oExpectedCreate
 			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
-					sinon.match.func)
+				sinon.match.func, "4.0")
 			.returns(oRequestor);
 
 		// code under test

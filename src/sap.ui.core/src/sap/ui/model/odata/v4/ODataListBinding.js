@@ -333,7 +333,8 @@ sap.ui.define([
 
 	/**
 	 * Creates contexts for this list binding in the given range for the given result length of
-	 * the OData response. Fires change and dataReceived events.
+	 * the OData response. Fires change and dataReceived events. Destroys contexts that became
+	 * obsolete and shrinks the array by removing trailing <code>undefined</code>.
 	 *
 	 * @param {object} oRange
 	 *   The range as returned by {@link #getReadRange}
@@ -342,7 +343,8 @@ sap.ui.define([
 	 * @param {number} [iCount]
 	 *   The $count as reported from the cache: A number representing the server-side element count.
 	 * @returns {boolean}
-	 *   <code>true</code>, if contexts have been created or <code>isLengthFinal</code> has changed
+	 *   <code>true</code>, if contexts have been created or dropped or <code>isLengthFinal</code>
+	 *   has changed
 	 *
 	 * @private
 	 */
@@ -350,11 +352,30 @@ sap.ui.define([
 		var bChanged = false,
 			oContext = this.oContext,
 			i,
+			iInitialLength = this.aContexts.length,
 			bLengthFinal = this.bLengthFinal,
 			oModel = this.oModel,
 			sPath = oModel.resolve(this.sPath, oContext),
 			sPathWithIndex,
 			that = this;
+
+		/*
+		 * Shrinks contexts to the new length, destroys unneeded contexts
+		 */
+		function shrinkContexts(iNewLength) {
+			var i;
+
+			for (i = iNewLength; i < that.aContexts.length; i += 1) {
+				if (that.aContexts[i]) {
+					that.aContexts[i].destroy();
+				}
+			}
+			while (iNewLength > 0 && !that.aContexts[iNewLength - 1]) {
+				iNewLength -= 1;
+			}
+			that.aContexts.length = iNewLength;
+			bChanged = true;
+		}
 
 		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
 			if (this.aContexts[i] === undefined) {
@@ -380,7 +401,7 @@ sap.ui.define([
 		}
 		if (iCount !== undefined) {
 			if (this.aContexts.length > iCount) {
-				this.aContexts.length = iCount;
+				shrinkContexts(iCount);
 			}
 			this.iMaxLength = iCount;
 			this.bLengthFinal = true;
@@ -391,10 +412,14 @@ sap.ui.define([
 			if (iResultLength < oRange.length) {
 				this.iMaxLength = oRange.start + iResultLength;
 				if (this.aContexts.length > this.iMaxLength) {
-					this.aContexts.length = this.iMaxLength;
+					shrinkContexts(this.iMaxLength);
 				}
 			}
-			this.bLengthFinal = this.aContexts.length === this.iMaxLength;
+			// If we started to read beyond the range that we read before and the result is
+			// empty, we cannot say anything about the length
+			if (!(oRange.start > iInitialLength && iResultLength === 0)) {
+				this.bLengthFinal = this.aContexts.length === this.iMaxLength;
+			}
 		}
 		if (this.bLengthFinal !== bLengthFinal) {
 			// bLengthFinal changed --> send change event even if no new data is available
@@ -966,22 +991,22 @@ sap.ui.define([
 				oPromise = Promise.resolve(oPromise);
 			}
 			oPromise.then(function (oResult) {
-				var bContextsCreated;
+				var bChanged;
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
-					bContextsCreated = that.createContexts(oRange, oResult.value.length,
+					bChanged = that.createContexts(oRange, oResult.value.length,
 						oResult.value.$count);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
 							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
-							aDiff: that.getDiff(oResult.value, iStartInModel),
+							aDiff : that.getDiff(oResult.value, iStartInModel),
 							iLength : iLength
 						};
 					}
 					if (bFireChange) {
-						if (bContextsCreated) {
-							that._fireChange({reason: sChangeReason});
+						if (bChanged) {
+							that._fireChange({reason : sChangeReason});
 						} else { // we cannot keep a diff if we do not tell the control to fetch it!
 							that.oDiff = undefined;
 						}

@@ -25,43 +25,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Converts the known OData system query options from map or array notation to a string. All
-	 * other parameters are simply passed through.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {function(string,any)} fnResultHandler
-	 *   The function to process the converted options getting the name and the value
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions,
-			bSortExpandSelect) {
-		Object.keys(mQueryOptions).forEach(function (sKey) {
-			var vValue = mQueryOptions[sKey];
-
-			if (bDropSystemQueryOptions && sKey[0] === '$') {
-				return;
-			}
-
-			switch (sKey) {
-				case "$expand":
-					vValue = Cache.convertExpand(vValue, bSortExpandSelect);
-					break;
-				case "$select":
-					if (Array.isArray(vValue)) {
-						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
-					}
-					break;
-				default:
-					// nothing to do
-			}
-			fnResultHandler(sKey, vValue);
-		});
-	}
-
-	/**
 	 * Fills the given array range with the given value. If iEnd is greater than the array length,
 	 * elements are appended to the end, in contrast to Array.fill.
 	 *
@@ -121,8 +84,7 @@ sap.ui.define([
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
 		var iExpectedLength = iEnd - iStart,
 			oPromise,
-			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength,
-			bStartBeyondLength = iStart > oCache.aElements.length;
+			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
 
 		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
 				fnDataRequested)
@@ -136,19 +98,23 @@ sap.ui.define([
 				oCache.sContext = oResult["@odata.context"];
 				sCount = oResult["@odata.count"];
 				if (sCount) {
-					setCount(oCache.mChangeListeners, "", oCache.aElements, sCount);
+					oCache.iLimit = parseInt(sCount, 10);
+					setCount(oCache.mChangeListeners, "", oCache.aElements, oCache.iLimit);
 				}
 				for (i = 0; i < iResultLength; i++) {
 					oCache.aElements[iStart + i] = oResult.value[i];
 				}
-				if (iResultLength < iExpectedLength) {
+				if (iResultLength < iExpectedLength) { // a short read
 					iCount = Math.min(getCount(oCache.aElements), iStart + iResultLength);
-					// If we started to read beyond the range that we read before and the result is
-					// empty, we cannot say anything about the length
-					if (!(bStartBeyondLength && iResultLength === 0)) {
-						setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
-					}
 					oCache.aElements.length = iCount;
+					// If the server did not send a count, the calculated count is greater than 0
+					// and the element before has not been read yet, we do not know the count:
+					// The element might or might not exist.
+					if (!sCount && iCount > 0 && !oCache.aElements[iCount - 1]) {
+						iCount = undefined;
+					}
+					setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
+					oCache.iLimit = iCount;
 				}
 			})["catch"](function (oError) {
 				fill(oCache.aElements, undefined, iStart, iEnd);
@@ -202,7 +168,7 @@ sap.ui.define([
 		this.mQueryOptions = mQueryOptions;
 		this.oRequestor = oRequestor;
 		this.sResourcePath = sResourcePath
-			+ Cache.buildQueryString(mQueryOptions, false, bSortExpandSelect);
+			+ oRequestor.buildQueryString(mQueryOptions, false, bSortExpandSelect);
 		this.bSortExpandSelect = bSortExpandSelect;
 	}
 
@@ -247,7 +213,7 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -267,6 +233,7 @@ sap.ui.define([
 							vCacheData.splice(vDeleteProperty, 1);
 						}
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
+						that.iLimit -= 1;
 						fnCallback(Number(vDeleteProperty));
 					} else {
 						if (vDeleteProperty) {
@@ -357,7 +324,7 @@ sap.ui.define([
 		function request(sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
 			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += Cache.buildQueryString(that.mQueryOptions, true);
+				sPostPath += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 				that.addByPath(that.mPostRequests, sPath, oEntityData);
 				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 						setCreatePending, cleanUp)
@@ -675,7 +642,7 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 			return patch();
 		});
 	};
@@ -701,6 +668,8 @@ sap.ui.define([
 		this.sContext = undefined;         // the "@odata.context" from the responses
 		this.aElements = [];               // the available elements
 		this.aElements.$count = undefined; // see setCount
+		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
+									       // exact value is unknown)
 
 		this.sResourcePath += this.sResourcePath.indexOf("?") >= 0 ? "&" : "?";
 	}
@@ -792,7 +761,7 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		iEnd = Math.min(iEnd, getCount(this.aElements));
+		iEnd = Math.min(iEnd, this.iLimit);
 
 		for (i = iIndex; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
@@ -1039,125 +1008,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
-
-	/**
-	 * Builds a query string from the parameter map. Converts the known OData system query
-	 * options, all other OData system query options are rejected; with
-	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-	 *
-	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string}
-	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
-	 * @example
-	 * {
-	 *		$expand : {
-	 *			"SO_2_BP" : true,
-	 *			"SO_2_SOITEM" : {
-	 *				"$expand" : {
-	 *					"SOITEM_2_PRODUCT" : {
-	 *						"$apply" : "filter(Price gt 100)",
-	 *						"$expand" : {
-	 *							"PRODUCT_2_BP" : null,
-	 *						},
-	 *						"$select" : "CurrencyCode"
-	 *					},
-	 *					"SOITEM_2_SO" : null
-	 *				}
-	 *			}
-	 *		},
-	 *		"sap-client" : "003"
-	 *	}
-	 */
-	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect) {
-		return _Helper.buildQuery(
-			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect));
-	};
-
-	/**
-	 * Converts the value for a "$expand" in mQueryParams.
-	 *
-	 * @param {object} mExpandItems The expand items, a map from path to options
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string} The resulting value for the query string
-	 * @throws {Error} If the expand items are not an object
-	 */
-	Cache.convertExpand = function (mExpandItems, bSortExpandSelect) {
-		var aKeys,
-			aResult = [];
-
-		if (!mExpandItems || typeof mExpandItems !== "object") {
-			throw new Error("$expand must be a valid object");
-		}
-
-		aKeys = Object.keys(mExpandItems);
-		if (bSortExpandSelect) {
-			aKeys = aKeys.sort();
-		}
-		aKeys.forEach(function (sExpandPath) {
-			var vExpandOptions = mExpandItems[sExpandPath];
-
-			if (vExpandOptions && typeof vExpandOptions === "object") {
-				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions,
-					bSortExpandSelect));
-			} else {
-				aResult.push(sExpandPath);
-			}
-		});
-
-		return aResult.join(",");
-	};
-
-	/**
-	 * Converts the expand options.
-	 *
-	 * @param {string} sExpandPath The expand path
-	 * @param {boolean|object} vExpandOptions
-	 *   The options; either a map or simply <code>true</code>
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string} The resulting string for the OData query in the form "path" (if no
-	 *   options) or "path($option1=foo;$option2=bar)"
-	 */
-	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions, bSortExpandSelect) {
-		var aExpandOptions = [];
-
-		convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
-			aExpandOptions.push(sOptionName + '=' + vOptionValue);
-		}, undefined, bSortExpandSelect);
-		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
-			: sExpandPath;
-	};
-
-	/**
-	 * Converts the query options. All known OData system query options are converted to
-	 * strings, so that the result can be used for _Helper.buildQuery; with
-	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {object} The converted query options
-	 */
-	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions,
-			bSortExpandSelect) {
-		var mConvertedQueryOptions = {};
-
-		if (!mQueryOptions) {
-			return undefined;
-		}
-		convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
-			mConvertedQueryOptions[sKey] = vValue;
-		}, bDropSystemQueryOptions, bSortExpandSelect);
-		return mConvertedQueryOptions;
-	};
 
 	/**
 	 * Creates a cache for a collection of entities that performs requests using the given

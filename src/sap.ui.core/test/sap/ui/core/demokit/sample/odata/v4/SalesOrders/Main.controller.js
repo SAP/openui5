@@ -108,7 +108,7 @@ sap.ui.define([
 			this.getView().getModel().resetChanges();
 		},
 
-		onCancelSalesOrderSchedules : function (oEvent) {
+		onCloseSalesOrderSchedules : function (oEvent) {
 			this.getView().byId("SalesOrderSchedulesDialog").close();
 		},
 
@@ -459,11 +459,6 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			this.submitBatch("SalesOrderUpdateGroup");
-		},
-
-		onSaveSalesOrderSchedules : function () {
-			this.getView().byId("SalesOrderSchedulesDialog").close();
 			this.submitBatch("SalesOrderUpdateGroup");
 		},
 
