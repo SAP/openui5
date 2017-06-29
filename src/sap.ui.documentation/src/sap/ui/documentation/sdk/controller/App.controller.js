@@ -33,8 +33,8 @@ sap.ui.define([
 					});
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-					"Privacy": "https://help.hana.ondemand.com/privacy.htm",
-					"Terms of Use": "https://help.hana.ondemand.com/terms_of_use.html",
+					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
+					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"Trademark": "https://www.sap.com/corporate/en/legal/copyright.html#trademark",
 					"Disclaimer": "http://help-legacy.sap.com/disclaimer-full"
