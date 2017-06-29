@@ -10,13 +10,32 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	/**
 	 * Constructor for a new MessageStrip.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * MessageStrip is a control that enables the embedding of application-related messages in the application.
-	 * There are 4 types of messages: Information, Success, Warning and Error.
+	 * <h3>Overview</h3>
+	 * The message strip displays 4 types of messages, each with a corresponding semantic color and icon: Information, Success, Warning and Error.
+	 *
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
+	 *
+	 * With version 1.50 you can use a limited set of formatting tags for the message text by setting <code>enableFormattedText</code>. The allowed tags are:
+	 * <ul>
+	 * <li>&lt;a&gt;</li>
+	 * <li>&lt;em&gt;</li>
+	 * <li>&lt;strong&gt;</li>
+	 * <li>&lt;u&gt;</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You want to provide information or status update within the detail area of an object</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>You want to display information within the object page header, within a control, in the master list, or above the page header.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
