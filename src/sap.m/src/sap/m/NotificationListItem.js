@@ -14,7 +14,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Notif
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItem control is suitable for showing notifications to the user.
+	 * The NotificationListItem control shows notifications to the user.
+	 * <h4>Structure</h4>
+	 * The notification item holds properties for the following elements:
+	 * <ul>
+	 * <li><code>description</code> - additional detail text.</li>
+	 * <li><code>hideShowMoreButton</code> - visibility of the "Show More" button.</li>
+	 * <li><code>truncate</code> - determines if title and description are truncated to the first two lines (usually needed on mobile devices).</li>
+	 * </ul>
+	 * For each item you can set some additional status information about the item processing by adding a {@link sap.m.MessageStrip} to the <code>processingMessage</code> aggregation.
 	 * @extends sap.m.NotificationListBase
 	 *
 	 * @author SAP SE
