@@ -16,6 +16,14 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 
 		&.sapMSltIconOnly.sapMSlt:focus  {
 			outline: none;
+			> .sapMSltIcon {
+					outline: 1px dotted @sapUiContentFocusColor;
+					outline-offset: -1px;
+				}
+		}
+
+		&.sapMSltIconOnly.sapMSltPressed.sapMSlt:focus > .sapMSltIcon {
+			outline: none;
 		}
 
 		&:not(.sapMSltPressed):hover > .sapMSltIcon {
@@ -41,7 +49,6 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 	.sapMSltArrow {
 		font-size: @sapMFontHeader6Size;
 		color: @sapUiGroupTitleTextColor;
-		background-color: @sapUiObjectHeaderBackground;
 	}
 
 	.sapMSltIcon {
