@@ -132,3 +132,12 @@ html[data-sap-ui-browser^="cr4"].sap-phone {
 		box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 	}
 }
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt:not(.sapMSltPressed):focus {
+		> .sapMSltIcon:after {
+			border: 0.125rem dashed @sapUiContentFocusColor;
+		}
+	}
+}
