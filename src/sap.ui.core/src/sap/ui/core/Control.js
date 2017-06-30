@@ -16,9 +16,41 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * @public
 	 *
 	 * @class Base Class for Controls.
+	 *
+	 * Controls provide the following features:
+	 * <ul>
+	 * <li><b>Rendering</b>: the <code>RenderManager</code> only expects instances of class <code>Control</code>
+	 *     in its {@link sap.ui.core.RenderManager#renderControl renderControl} method.
+	 *     By convention, each control class has an associated static class that takes care of rendering
+	 *     the control (its 'Renderer').</li>
+	 * <li><b>show / hide</b>: a control can be hidden, although it is still part of the control tree,
+	 *     see property {@link #getVisible visible}</li>
+	 * <li><b>local busy indicator</b>: marks a control visually as 'busy', see properties {@link #getBusy busy}
+	 *     and {@link #getBusyIndicatorDelay busyIndicatorDelay}</li>
+	 * <li><b>field groups</b>: by assigning the same group ID to a set of editable controls, they form a
+	 *     group which can be validated together. See property {@link #getFieldGroupIds fieldGroupIds}
+	 *     and event {@link #event:validateFieldGroup validateFieldGroup}.
+	 *     The term <i>field</i> was chosen as most often this feature will be used to group editable
+	 *     fields in a form.</li>
+	 * <li><b>custom style classes</b>: all controls allow to add custom CSS classes to their rendered DOM
+	 *     without modifying their renderer code. See methods {@link #addStyleClass addStyleClass},
+	 *     {@link #removeStyleClass removeStyleClass}, {@link #toggleStyleClass toggleStyleClass}
+	 *     and {@link #hasStyleClass hasStyleClass}.</br>
+	 *     The necessary implementation is encapsulated in {@link sap.ui.core.CustomStyleClassSupport
+	 *     CustomStyleClassSupport} and can be applied to selected element classes as well.</li>
+	 * <li><b>browser events</b>: by calling the methods {@link #attachBrowserEvent attachBrowserEvent} and
+	 *     {@link #detachBrowserEvent detachBrowserEvent}, consumers can let the control class take care of
+	 *     registering / de-registering a given set of event listeners to the control's root DOM node.
+	 *     The framework will adapt the registration whenever the DOM node changes (e.g. before or after
+	 *     rendering or when the control is destroyed).</li>
+	 * </ul>
+	 *
+	 * See section "Developing OpenUI5/SAPUI5 Controls" in the documentation for an introduction
+	 * to control development.
+	 *
 	 * @extends sap.ui.core.Element
 	 * @abstract
-	 * @author Martin Schaus, Daniel Brinkmann
+	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -43,13 +75,21 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				"busyIndicatorDelay" : {type: "int", defaultValue: 1000},
 
 				/**
-				 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control
+				 * Whether the control should be visible on the screen.
+				 *
+				 * If set to false, a placeholder will be rendered to mark the location of the invisible
+				 * control in the DOM of the current page. The placeholder will be hidden and have
+				 * zero dimensions (<code>display: none</code>).
+				 *
+				 * See {@link sap.ui.core.RenderManager#writeInvisiblePlaceholderData RenderManager#writeInvisiblePlaceholderData} for details.
 				 */
 				"visible" : { type: "boolean", group : "Appearance", defaultValue: true },
 
 				/**
-				 * The IDs of a logical field group that this control belongs to. All fields in a logical field group should share the same <code>fieldGroupId</code>.
-				 * Once a logical field group is left, the validateFieldGroup event is raised.
+				 * The IDs of a logical field group that this control belongs to.
+				 *
+				 * All fields in a logical field group should share the same <code>fieldGroupId</code>.
+				 * Once a logical field group is left, the <code>validateFieldGroup</code> event is raised.
 				 *
 				 * See {@link sap.ui.core.Control#attachValidateFieldGroup}.
 				 * @since 1.31
@@ -59,8 +99,10 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 			},
 			events : {
 				/**
-				 * Event is fired if a logical field group defined by <code>fieldGroupIds</code> of a control was left or the user explicitly pressed a validation key combination.
-				 * Use this event to validate data of the controls belonging to a field group.
+				 * Event is fired if a logical field group defined by <code>fieldGroupIds</code> of a control was left
+				 * or the user explicitly pressed a key combination that triggers validation.
+				 *
+				 * Listen to this event to validate data of the controls belonging to a field group.
 				 * See {@link sap.ui.core.Control#setFieldGroupIds}.
 				 */
 				validateFieldGroup : {
