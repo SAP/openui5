@@ -1298,7 +1298,7 @@ sap.ui.define([
 		oItem.deleted = true;
 
 		if ((sKey === this.getDefaultVariantKey())) {
-			this.setDefaultVariantKey(this.getStandrdVariantKey());
+			this.setDefaultVariantKey(this.getStandardVariantKey());
 		}
 
 		if (oItem.global) {
