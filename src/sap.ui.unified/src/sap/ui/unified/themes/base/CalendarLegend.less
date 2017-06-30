@@ -9,10 +9,13 @@
 	font-size: @sapUiFontSmallSize;
 	font-weight: normal;
 	padding: 12px;
+  	background-color: @sapUiListBackground;
+}
+
+.sapUiUnifiedLegendItems {
 	column-gap: 8px;
 	-moz-column-gap: 8px; /* Firefox */
 	-webkit-column-gap: 8px; /* Safari and Chrome */
-	background-color: @sapUiListBackground;
 }
 
 .sapUiUnifiedLegendDescription {
@@ -40,6 +43,8 @@
 	width: 14px;
 	margin: 1px;
 	background: lighten(@sapUiContentForegroundColor, 5);
+	border: 1px solid @sapUiContentForegroundBorderColor;
+	box-sizing: border-box;
 }
 
 .sapUiUnifiedLegendSquareSelected {
@@ -55,9 +60,13 @@
 .sapUiSizeCompact .sapUiUnifiedLegend,
 .sapUiSizeCompact.sapUiUnifiedLegend {
 	padding: 8px;
-	column-gap: 6px;
-	-moz-column-gap: 6px; /* Firefox */
-	-webkit-column-gap: 6px; /* Safari and Chrome */
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendItems,
+.sapUiSizeCompact.sapUiUnifiedLegendItems {
+  column-gap: 6px;
+  -moz-column-gap: 6px; /* Firefox */
+  -webkit-column-gap: 6px; /* Safari and Chrome */
 }
 
 .sapUiSizeCompact .sapUiUnifiedLegendSquare {
@@ -75,16 +84,31 @@
 	width: 10px;
 	background-color: @sapUiListBackground;
 	border: 2px solid @sapUiCalendarColorToday;
+  	box-sizing: content-box;
 }
 
 .sapUiUnifiedLegendSelected > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 	background: @sapUiSelected;
 }
 
-.sapUiUnifiedLegendNormalDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+.sapUiUnifiedLegendWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 	background: lighten(@sapUiContentForegroundColor, 5);
 }
 
 .sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 	background: @sapUiContentForegroundColor;
+}
+
+.sapUiUfdCalLegendHeader {
+  	padding-top: 0.5rem;
+}
+
+.sapUiUnifiedLegendSquareColor.Circle {
+  border-radius: 1rem;
+}
+
+.sapUiUnifiedLegend hr {
+  margin-left: -0.5rem;
+  margin-right:  -0.5rem;
+  border-width: 0 0 1px 0;
 }
