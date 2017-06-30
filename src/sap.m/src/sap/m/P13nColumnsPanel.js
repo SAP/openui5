@@ -78,7 +78,7 @@ sap.ui.define([
 
 				/**
 				 * Event raised when a <code>columnsItem</code> is added.
-				 * @deprecated As of version 1.50.0 The event <code>addColumnsItem</code> is obsolete. Instead use the extended event <code>changeColumnsItems</code>.
+				 * @deprecated As of version 1.50, replaced by extended event {@link sap.m.P13nColumnsPanel.html#changeColumnsItems}
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
@@ -100,14 +100,14 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * Contains <code>columnsItems</code> that needs to be created in the model.
-						 * @deprecated As of version 1.50.0 The parameter <code>newItems</code> is obsolete. Instead use the new parameter <code>items</code>.
+						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						newItems: {
 							type: "sap.m.P13nColumnsItem[]"
 						},
 						/**
 						 * Contains <code>columnsItems</code> that needs to be changed in the model.
-						 * @deprecated As of version 1.50.0 The parameter <code>existingItems</code> is obsolete. Instead use the new parameter <code>items</code>.
+						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						existingItems: {
 							type: "sap.m.P13nColumnsItem[]"
@@ -120,7 +120,7 @@ sap.ui.define([
 						// first newItems and then existingItems with result:
 						// columnsItems: ^B3, A, C, D. Due to aggregation update the order of table items in P13nColumnsPanel changes to ^B, A, C, D instead of keeping the order as it is A, ^B, C, D.
 						/**
-						 * Contains an entry of each item in <code>items</code> aggregation. The implicit item order reflects the current order of columns in the panel.
+						 * Contains an entry of each item in <code>items</code> aggregation. The item order reflects the current order of columns in the panel.
 						 * @since 1.50.0
 						 */
 						items: {
@@ -131,7 +131,7 @@ sap.ui.define([
 				/**
 				 * Event raised if <code>setData</code> is called in model. The event serves the purpose of minimizing such calls since they can
 				 * take up a lot of performance.
-				 * @deprecated As of version 1.50.0 The event <code>setData</code> is obsolete.
+				 * @deprecated As of version 1.50, the event <code>setData</code> is obsolete.
 				 * @since 1.26.7
 				 */
 				setData: {}
