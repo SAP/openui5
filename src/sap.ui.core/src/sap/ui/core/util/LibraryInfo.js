@@ -169,11 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				return;
 			}
 
-			var bIsNeoAppJsonPresent;
-
-			if (sVersion.split(".").length === 3) {
-				bIsNeoAppJsonPresent = true;
-			}
+			var bIsNeoAppJsonPresent = (sVersion.split(".").length === 3) && !(/-SNAPSHOT/.test(sVersion));
 
 			var oVersion = jQuery.sap.Version(sVersion);
 
