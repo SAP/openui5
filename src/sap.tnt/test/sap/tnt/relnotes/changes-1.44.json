@@ -66,5 +66,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.16": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "b691bd5d559e4e3a84f3437d2860016368d9ad6f",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Item navigation is now correct",
+        "references": []
+      },
+      {
+        "id": "f761adc2f6199527c3cb264c88b086f650432908",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
+        "references": []
+      }
+    ]
   }
 }
