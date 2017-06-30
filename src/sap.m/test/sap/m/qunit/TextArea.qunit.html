@@ -201,7 +201,7 @@
 		}
 
 		var spy = this.spy(sut, "_onTouchStart");
-		$textarea.trigger(tsEvent);
+		sap.ui.test.qunit.triggerTouchEvent("touchstart", sut.getDomRef());
 		assert.strictEqual(spy.called, false, "TouchStart event never called as expected");
 
 		//Cleanup
