@@ -785,7 +785,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if ( m ) {
 				aLibs.push( m[1] );
 			} else {
-				aModules.push( jQuery.sap.getResourceName( sModule ) );
+				aModules.push( jQuery.sap.getResourceName( sModule, "" ) );
 			}
 		});
 
