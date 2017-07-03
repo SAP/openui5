@@ -2,12 +2,22 @@
  * ${copyright}
  */
 
+/**
+ * @typedef {Object} EventListener
+ */
 sap.ui.define([
 	"jquery.sap.global"
 ],
 function (jQuery) {
 	"use strict";
 
+	/**
+	 * @class
+	 * @constructor
+	 * @name sap.ui.support.WindowCommunicationBus
+	 * <h3>Overview</h3>
+	 * The CommunicationBus is responsible for core communication between the SupportAssistant the views and SupportAssistant in iFrame mode.
+	 */
 	var CommunicationBus = {
 		channels: {},
 		onMessageChecks: []
@@ -31,25 +41,42 @@ function (jQuery) {
 
 	CommunicationBus.origin = origin;
 
-	CommunicationBus.subscribe = function (channelName, callback, context) {
-		if (!this.channels[channelName]) {
-			this.channels[channelName] = [{
-				callback: callback,
-				context: context
+	/**
+	 * @public
+	 * @static
+	 * @name sap.ui.support.WindowCommunicationBus.subscribe
+	 * Subscribes to a channel with callback and given context
+	 * @param {String} sChannelName Name of the channel to subscribe
+	 * @param {function} fnCallback Callback for the SupportAssistant
+	 * @param {Object} oContext Context for the subscribed channel
+	 */
+	CommunicationBus.subscribe = function (sChannelName, fnCallback, oContext) {
+		if (!this.channels[sChannelName]) {
+			this.channels[sChannelName] = [{
+				callback: fnCallback,
+				context: oContext
 			}];
 			return;
 		}
 
-		this.channels[channelName].push({
-			callback: callback,
-			context: context
+		this.channels[sChannelName].push({
+			callback: fnCallback,
+			context: oContext
 		});
 	};
 
-	CommunicationBus.publish = function (channelName, aParams) {
+	/**
+	 * @public
+	 * @static
+	 * @name sap.ui.support.WindowCommunicationBus.publish
+	 * Publishes given channel by name and settings
+	 * @param {String} sChannelName Name of the channel to publish
+	 * @param {Array} aParams Settings passed to the SupportAssistant
+	 */
+	CommunicationBus.publish = function (sChannelName, aParams) {
 		var receivingWindow = this._getReceivingWindow(),
 			dataObject = {
-				channelName: channelName,
+				channelName: sChannelName,
 				params: aParams,
 				_frameIdentifier: frameIdentifier,
 				_origin: window.location.href
@@ -61,10 +88,23 @@ function (jQuery) {
 		receivingWindow.postMessage(dataObject, this.origin);
 	};
 
+	/**
+	 * @public
+	 * @static
+	 * @name sap.ui.support.WindowCommunicationBus.destroyChanels
+	 * Clears all subscribed channels from the CommunicationBus
+	 */
 	CommunicationBus.destroyChanels = function () {
 		CommunicationBus.channels = {};
 	};
 
+	/**
+	 * @private
+	 * @static
+	 * @name sap.ui.support.WindowCommunicationBus._getReceivingWindow
+	 * Retrieves the window hosting the SupportAssistant
+	 * @returns {object} Window containing the SupportAssistant
+	 */
 	CommunicationBus._getReceivingWindow = function () {
 
 		if (window.communicationWindows && window.communicationWindows.hasOwnProperty("supportTool")) {
@@ -76,6 +116,13 @@ function (jQuery) {
 		return window.opener || window.parent;
 	};
 
+	/**
+	 * @private
+	 * @static
+	 * @name sap.ui.support.WindowCommunicationBus._onmessage
+	 * This is the message handler used for communication between the CommunicationBus and {@link sap.ui.support.WCBChannels}
+	 * @param {EventListener} evt Event fired by the channels attached to the CommunicationBus
+	 */
 	CommunicationBus._onmessage = function (evt) {
 		// Validate received message
 		var checkResults = CommunicationBus.onMessageChecks.every(function (fnMsgCheck) {
