@@ -24,12 +24,6 @@
 		"company": "Bluefin Solutions"
 	},
 	{
-		"name": "Gregor Brett",
-		"bio": "Gregor is a developer at Bluefin Solutions in the UK. He has been working with SAP software for over ten years - from ABAP and Java backend stuff to Web and Mobile and everything in between!",
-		"picture": "gregor_brett.jpg",
-		"company": "Bluefin Solutions Ltd"
-	},
-	{
 		"name": "Thilo Seidel",
 		"bio": "I have been a web developer for several years now, turned into a product owner for FLP@SAP in 2016, have been a SAPUI5 fanboy at first sight and will now finally be at my first UI5con. Already overexcited!",
 		"picture": "ThiloSeidel2016.jpg",
@@ -329,7 +323,7 @@
 	},
 	{
 		"name": "Jan Mummenthaler",
-		"bio": "",
+		"bio": "Jan is an UI5 expert, musician and passionate about designing and building audio equipment.",
 		"picture": "janMummenthaler.jpg",
 		"company": "SAP",
 		"meetMe": "12:30"
