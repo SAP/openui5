@@ -16,6 +16,11 @@
 <script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 <!-- Test functions -->
 <script charset="utf-8"> // IE needs this :-/
 
@@ -44,6 +49,21 @@ MyCompositeType.extend("MyRawValueType", {
 		this.bUseRawValues = true;
 	}
 });
+
+MyCompositeType.extend("MyInternalValueType", {
+	constructor: function() {
+		MyCompositeType.constructor.apply(this);
+		this.sName = "MyInternalValueType";
+		this.bUseInternalValues = true;
+	},
+	parseValue: function(oValue) {
+		if (Array.isArray(oValue)) {
+			return oValue;
+		}
+		return oValue.split(" ");
+	}
+});
+
 
 function myFormatter(a, b, c) {
 	return a + "-" + b + "-" + c;
@@ -253,6 +273,130 @@ QUnit.test("isResolved", function(assert) {
 	assert.equal(this.composite.isResolved(), true, "Resolved after binding context has been set");
 });
 
+QUnit.module("Use internal values", {
+	beforeEach: function() {
+		this.type = new sap.ui.model.type.String();
+
+		this.model = new sap.ui.model.json.JSONModel({
+			a: 1,
+			b: 2,
+			c: 3
+		});
+		this.binding1 = this.model.bindProperty("/a");
+		this.model.addBinding(this.binding1);
+
+		this.binding2 = this.model.bindProperty("/b");
+		this.binding2.setType(this.type);
+		this.model.addBinding(this.binding2);
+
+		this.binding3 = this.model.bindProperty("/c");
+		this.model.addBinding(this.binding3);
+
+		this.compositeUseInternalValue = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3]);
+		this.compositeUseInternalValue.setType(new MyInternalValueType());
+	},
+	afterEach: function() {
+		this.type = null;
+		this.model = null;
+		this.binding1 = null;
+		this.binding2 = null;
+		this.binding3 = null;
+		this.compositeUseInternalValue = null;
+	}
+});
+
+QUnit.test("Call getInternalValue()", function(assert) {
+	var oSpy1 = this.spy(this.binding1, "getInternalValue");
+	var oSpy2 = this.spy(this.binding2, "getInternalValue");
+	var oSpy3 = this.spy(this.binding3, "getInternalValue");
+
+	var oTypeSpy = this.spy(this.type, "getModelFormat");
+
+	this.compositeUseInternalValue.getExternalValue();
+
+	assert.equal(oSpy1.callCount, 1, "getInternalValue() function should be called");
+	assert.equal(oSpy2.callCount, 1, "getInternalValue() function should be called");
+	assert.equal(oSpy3.callCount, 1, "getInternalValue() function should be called");
+	assert.equal(oTypeSpy.callCount, 1, "getModelFormat() function should be called");
+});
+
+QUnit.test("Call setInternalValue()", function(assert) {
+	var oSpy1 = this.spy(this.binding1, "setInternalValue");
+	var oSpy2 = this.spy(this.binding2, "setInternalValue");
+	var oSpy3 = this.spy(this.binding3, "setInternalValue");
+
+	var oTypeSpy = this.spy(this.type, "getModelFormat");
+
+	this.compositeUseInternalValue.setExternalValue("1 2 3");
+
+	assert.equal(oSpy1.callCount, 1, "setInternalValue() function should be called");
+	assert.equal(oSpy2.callCount, 1, "setInternalValue() function should be called");
+	assert.equal(oSpy3.callCount, 1, "setInternalValue() function should be called");
+	assert.equal(oTypeSpy.callCount, 1, "getModelFormat() function should be called");
+});
+
+QUnit.test("Call getInternalValue() with null values", function(assert) {
+	this.type = new sap.ui.model.type.String();
+	var oModelFormat = this.type.getModelFormat();
+
+	this.model.setData({
+		a: null,
+		b: null,
+		c: null
+	});
+
+	var oSpy1 = this.spy(this.binding1, "getInternalValue");
+	var oSpy2 = this.spy(this.binding2, "getInternalValue");
+	var oSpy3 = this.spy(this.binding3, "getInternalValue");
+
+	var oParseSpy = this.spy(oModelFormat, "parse");
+
+	this.compositeUseInternalValue.getExternalValue();
+
+	assert.equal(oSpy1.callCount, 1, "getInternalValue() function should be called");
+	assert.ok(oSpy1.returned(null), "getInternalValue() should return null");
+
+	assert.equal(oSpy2.callCount, 1, "getInternalValue() function should be called");
+	assert.ok(oSpy2.returned(null), "getInternalValue() should return null");
+	assert.ok(oParseSpy.notCalled, "The model format is not used");
+
+	assert.equal(oSpy3.callCount, 1, "getInternalValue() function should be called");
+	assert.ok(oSpy3.returned(null), "getInternalValue() should return null");
+});
+
+QUnit.test("Call setInternalValue() with null values", function(assert) {
+	this.type = new sap.ui.model.type.String();
+	var oModelFormat = this.type.getModelFormat();
+
+	var oSpy1 = this.spy(this.binding1, "setValue");
+	var oSpy2 = this.spy(this.binding2, "setValue");
+
+	var oFormatSpy = this.spy(oModelFormat, "format");
+
+	this.compositeUseInternalValue.setExternalValue([null, null]);
+
+	assert.equal(oSpy1.callCount, 1, "setValue() should be called");
+	assert.ok(oSpy1.calledWith(null), "setValue() should be called with null");
+	assert.equal(oSpy2.callCount, 1, "setValue() should be called");
+	assert.ok(oSpy2.calledWith(null), "setValue() should be called with null");
+	assert.ok(oFormatSpy.notCalled, "The model format is not used");
+});
+
+QUnit.test("Throw Error if bUseRawValues & bUseInternalValues are true", function(assert) {
+	MyCompositeType.extend("EvilType", {
+		constructor: function() {
+			MyCompositeType.constructor.apply(this);
+			this.sName = "EvilType";
+			this.bUseRawValues = true;
+			this.bUseInternalValues = true;
+		}
+	});
+
+	var oCompositeBinding = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3], true);
+	assert.throws(function() {oCompositeBinding.setType(new EvilType())}, function(e) {
+		return e.message === "Type EvilType has both 'bUseRawValues' & 'bUseInternalValues' set to true. Only one of them is allowed to be true"
+	});
+});
 
 </script>
 

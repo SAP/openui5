@@ -219,6 +219,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getModelFormat()", function (assert) {
+		var oModelTime = createTime(13, 54, 49, 567),
+			oType = new Time(),
+			oFormat = oType.getModelFormat(),
+			oParsedTime = oFormat.parse(oModelTime);
+
+		assert.ok(oParsedTime instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedTime.getTime(), oModelTime.ms, "parse value");
+		assert.deepEqual(oFormat.format(oParsedTime), oModelTime, "format");
+	});
+
+	//*********************************************************************************************
 	[
 		{value : 1},
 		{value : {__edmType : "Edm.Time"}},
