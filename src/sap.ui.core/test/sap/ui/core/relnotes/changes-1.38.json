@@ -2032,5 +2032,28 @@
         "references": []
       }
     ]
+  },
+  "1.38.24": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "c4d9e59d4dab14542fdce12e9e4e75d546902c6a",
+        "type": "FIX",
+        "text": " AppCacheBuster: support for async Component preload",
+        "references": []
+      },
+      {
+        "id": "6959b9276cafaeb93f56f23aa249a97eddaa8c98",
+        "type": "FIX",
+        "text": " core.IconPool: Use local SAP-icons font as fallback only",
+        "references": []
+      },
+      {
+        "id": "0cbec51d565c214781babee014b5716dd6b28fd8",
+        "type": "FIX",
+        "text": " jquery.sap.trace.js: remove TerminalID from SAP Passport",
+        "references": []
+      }
+    ]
   }
 }

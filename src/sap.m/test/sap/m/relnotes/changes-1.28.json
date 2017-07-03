@@ -4405,5 +4405,16 @@
         "references": []
       }
     ]
+  },
+  "1.28.46": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "7da08c0dd9ee2dfdc347b8cebddd4a48bb15003c",
+        "type": "FIX",
+        "text": " sap.m.Input: Method for hiding the arrow of the Popover moved to the Popover control",
+        "references": []
+      }
+    ]
   }
 }
