@@ -92,11 +92,11 @@
 			"abstract":""
 		},
 		{
-			"title": "Building a companion conversational UI for a Fiori App",
-			"speaker": "Gregor Brett",
+			"title": "From native Android to UI5",
+			"speaker": "Jan Zaruba, Tomas Krejci",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>Building a Conversational UI for the Fiori My Inbox app using API.AI. I will run through the code needed and do a live demo.</p>"
+			"abstract":"Movement from native Android to UI5 in order to show the way over hybrid application with Cordova using native business logic. Problems, learnings and outlook to move it to JS."
 		},
 		{
 			"type": "break",
@@ -131,24 +131,12 @@
 			"title": "Real-time Image Processing & Augmented Reality",
 			"speaker": "Volker Buzek",
 			"type": "Lecture",
-			"duration": 20,
+			"duration": 40,
 			"abstract":"<p>It all started with a Proof-of-Concept of a UI5 hybrid application for discrete object recognition on mobile devices. In the course of the PoC, research led to several experiments around the key words in the session title: from real-time Image manipulation via visual object recognition up to Augmented Reality flavors, all of that within the UI5 framework. I'd like to show the results of the experiments and evaluate their sustainability and production readiness.</p>"
 		},
 		{
 			"type": "break",
-			"duration": 10,
-			"abstract":""
-		},
-		{
-			"title": "From native Android to UI5",
-			"speaker": "Jan Zaruba, Tomas Krejci",
-			"type": "Lecture",
 			"duration": 20,
-			"abstract":"Movement from native Android to UI5 in order to show the way over hybrid application with Cordova using native business logic. Problems, learnings and outlook to move it to JS."
-		},
-		{
-			"type": "break",
-			"duration": 10,
 			"abstract":""
 		},
 		{
