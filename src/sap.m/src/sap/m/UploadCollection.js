@@ -2177,23 +2177,26 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 	};
 
 	/**
-	 * @description Handling of 'click' of the list (items + header)
+	 * Handling of 'click' of the list (items + header)
 	 * @param {object} oEvent Event of the 'click'
 	 * @param {object} oContext Context of the list item where 'click' was triggered
-	 * @param {string} sSourceId List item id/identifier were the click was triggered
+	 * @param {string} sSourceId List item id/identifier where the click was triggered
 	 * @private
 	 */
 	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {
-		// if the target of the click event is an editButton, than this case has already been processed
+		// If the target of the click event is an editButton, then this case has already been processed
 		// in the _handleEdit (in particular, by executing the _handleOk function).
-		// Therefore only the remaining cases of click event targets are handled.
-		if (oEvent.target.id.lastIndexOf("editButton") < 0) {
-			if (oEvent.target.id.lastIndexOf("cancelButton") > 0) {
+		// Therefore, only the remaining cases of click event targets are handled.
+		var $Button = jQuery(oEvent.target).closest("button");
+		var sId = "";
+		if ($Button.length) {
+			sId = $Button.prop("id");
+		}
+		if (sId.lastIndexOf("editButton") === -1) {
+			if (sId.lastIndexOf("cancelButton") !== -1) {
 				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, sSourceId);
-			} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 &&
-								 oEvent.target.id.lastIndexOf("ia_iconHL") < 0 &&
-								 oEvent.target.id.lastIndexOf("deleteButton") < 0 &&
-								 oEvent.target.id.lastIndexOf("ta_editFileName-inner") < 0) {
+			} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 && oEvent.target.id.lastIndexOf("ia_iconHL") < 0 &&
+				oEvent.target.id.lastIndexOf("deleteButton") < 0 && oEvent.target.id.lastIndexOf("ta_editFileName-inner") < 0) {
 				if (oEvent.target.id.lastIndexOf("cli") > 0) {
 					oContext.sFocusId = oEvent.target.id;
 				}
