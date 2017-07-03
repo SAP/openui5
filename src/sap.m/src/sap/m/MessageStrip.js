@@ -81,7 +81,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 				showCloseButton: { type: "boolean", group: "Appearance", defaultValue: false },
 
 				/**
-				 * Determines if limited collection of HTML elements passed to the <code>text</code> property should be
+				 * Determines the limited collection of HTML elements passed to the <code>text</code> property should be
 				 * evaluated.
 				 *
 				 * <b>Note:</b> If this property is set to true the string passed to <code>text</code> property
