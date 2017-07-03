@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 		constructor : function () {
 			CompositeType.apply(this, arguments);
 			this.sName = "DateInterval";
+			this.bUseInternalValues = true;
 		}
 
 	});

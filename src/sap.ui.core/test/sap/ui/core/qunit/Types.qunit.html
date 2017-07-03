@@ -604,6 +604,42 @@
 
 		});
 
+		QUnit.test("date getModelFormat() without source option", function(assert) {
+			var dateType = new sap.ui.model.type.Date();
+
+			var oFormat = dateType.getModelFormat();
+			var oDate =  new Date(2001, 1, 1);
+			var sDate = "01.01.2000";
+
+			assert.ok(oFormat, "InputFormat exists");
+			assert.equal(oFormat.format(oDate), oDate, "InputFormat should have the default implementation of SimpleType");
+			assert.equal(oFormat.parse(sDate), sDate, "InputFormat should have the default implementation of SimpleType");
+		});
+
+		QUnit.test("date getModelFormat() with timestamp", function(assert) {
+			var dateType = new sap.ui.model.type.Date({source: {pattern: "timestamp"}});
+			var dateValue = new Date(2000, 1, 1);
+
+			var oFormat = dateType.getModelFormat();
+
+			assert.ok(oFormat, "InputFormat is created");
+			assert.ok(oFormat.parse(dateValue.getTime()) instanceof Date, "InputFormat parses Timestamp correctly");
+		});
+
+		QUnit.test("date getModelFormat() with default source option", function(assert) {
+			var dateType = new sap.ui.model.type.Date({source: {}});
+			var sValue = "2002-01-02";
+
+			var oFormat = dateType.getModelFormat();
+
+			assert.ok(oFormat, "InputFormat is created");
+			var oDate = oFormat.parse(sValue);
+			assert.ok(oDate instanceof Date, "InputFormat parses date string correctly");
+			assert.equal(oDate.getFullYear(), 2002);
+			assert.equal(oDate.getMonth(), 0);
+			assert.equal(oDate.getDate(), 2);
+		});
+
 		// time type tests
 		QUnit.module("time type");
 

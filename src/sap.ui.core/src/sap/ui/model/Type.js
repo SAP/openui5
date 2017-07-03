@@ -52,6 +52,17 @@ sap.ui.define(['sap/ui/base/Object'],
 		return this.sName;
 	};
 
+	/**
+	 * Returns a simple string representation of this type.
+	 *
+	 * Mainly useful for tracing purposes.
+	 * @public
+	 * @return {string} a string description of this type
+	 */
+	Type.prototype.toString = function() {
+		return "Type " + this.getMetadata().getName();
+	};
+
 	return Type;
 
 });

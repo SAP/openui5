@@ -288,6 +288,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getModelFormat()", function (assert) {
+		var oType = new TimeOfDay(undefined, {precision : 3}),
+			oFormat = oType.getModelFormat(),
+			sModelValue = "13:53:49.123",
+			oParsedTimeOfDay = oFormat.parse(sModelValue);
+
+		assert.ok(oParsedTimeOfDay instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedTimeOfDay.getTime(), Date.UTC(1970, 0, 1, 13, 53, 49, 123),
+			"parse value");
+		assert.strictEqual(oFormat.format(oParsedTimeOfDay), sModelValue, "format");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
 		var oControl = new Control(),
 			oType = new TimeOfDay(),
