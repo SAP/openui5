@@ -8,8 +8,8 @@ sap.ui.require([
 	"jquery.sap.xml" // needed to have jQuery.sap.parseXML
 ], function (jQuery, _MetadataConverter, TestUtils/*, jQuerySapXml*/) {
 	/*global QUnit, sinon */
-	"use strict";
 	/*eslint no-warning-comments: 0 */
+	"use strict";
 
 	/**
 	 * Creates a DOM document from the given string.

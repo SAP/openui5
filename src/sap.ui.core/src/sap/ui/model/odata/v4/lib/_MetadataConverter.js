@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib._MetadataConverter
 sap.ui.define([
 	"./_Helper"
 ], function (_Helper) {
@@ -11,6 +10,126 @@ sap.ui.define([
 	var MetadataConverter;
 
 	MetadataConverter = {
+		/**
+		 * A pattern for "Collection(QualifiedType)"
+		 */
+		rCollection : /^Collection\((.*)\)$/,
+
+		/**
+		 * This function is called by each annotatable entity to define a place for the
+		 * annotations.
+		 * @param {object} oAggregate
+		 *   The aggregate
+		 * @param {object|string} vTarget
+		 *   The target to which the annotations shall be added, may be directly an object or a
+		 *   target name to place it into $Annotations of the current Schema. The path in
+		 *   $Annotations is constructed from the given name and the current annotatable's path (if
+		 *   there is one and it has a path)
+		 * @param {string} [sPrefix=""]
+		 *   The prefix to put before the "@" and the term
+		 * @param {string} [sQualifier]
+		 *   The qualifier for all annotations
+		 */
+		annotatable : function (oAggregate, vTarget, sPrefix, sQualifier) {
+			var oAnnotatable,
+				oAnnotations,
+				sPath;
+
+			if (typeof vTarget === "string") {
+				oAnnotatable = oAggregate.annotatable;
+				vTarget = _Helper.buildPath(oAnnotatable.path, vTarget);
+				sPath = vTarget;
+				// try to find the target (otherwise processAnnotation will recreate it)
+				oAnnotations = oAggregate.schema.$Annotations;
+				if (oAnnotations && oAnnotations[vTarget]) {
+					vTarget = oAnnotations[vTarget];
+				}
+			}
+			oAggregate.annotatable = {
+				parent : oAggregate.annotatable,
+				path : sPath,
+				prefix : sPrefix || "",
+				qualifier : sQualifier,
+				target : vTarget
+			};
+		},
+
+		/**
+		 * Fetches the array at the given property. Ensures that there is at least an empty array.
+		 * @param {object} oParent The parent object
+		 * @param {string} sProperty The property name
+		 * @returns {any[]} The array at the given property
+		 */
+		getOrCreateArray : function (oParent, sProperty) {
+			var oResult = oParent[sProperty];
+
+			if (!oResult) {
+				oResult = oParent[sProperty] = [];
+			}
+			return oResult;
+		},
+
+		/**
+		 * Fetches the object at the given property. Ensures that there is at least an empty object.
+		 * @param {object} oParent The parent object
+		 * @param {string} sProperty The property name
+		 * @returns {object} The object at the given property
+		 */
+		getOrCreateObject : function (oParent, sProperty) {
+			var oResult = oParent[sProperty];
+
+			if (!oResult) {
+				oResult = oParent[sProperty] = {};
+			}
+			return oResult;
+		},
+
+		/**
+		 * Extracts the Aliases from the Include and Schema elements.
+		 * @param {Element} oElement The element
+		 * @param {object} oAggregate The aggregate
+		 */
+		processAlias : function (oElement, oAggregate) {
+			var sAlias = oElement.getAttribute("Alias");
+
+			if (sAlias) {
+				oAggregate.aliases[sAlias] = oElement.getAttribute("Namespace") + ".";
+			}
+		},
+
+		/**
+		 * Copies all attributes from oAttributes to oTarget according to oConfig.
+		 * @param {Element} oElement The element
+		 * @param {object} oTarget The target object
+		 * @param {object} oConfig
+		 *   The configuration: each property describes a property of oAttributes to copy; the
+		 *     value is a conversion function, if this function returns undefined, the property is
+		 *     not set
+		 */
+		processAttributes : function (oElement, oTarget, oConfig) {
+			var sProperty;
+
+			for (sProperty in oConfig) {
+				var sValue = oConfig[sProperty](oElement.getAttribute(sProperty));
+
+				if (sValue !== undefined && sValue !== null) {
+					oTarget["$" + sProperty] = sValue;
+				}
+			}
+		},
+
+		/**
+		 * Processes a Schema element.
+		 * @param {Element} oElement The element
+		 * @param {object} oAggregate The aggregate
+		 */
+		processSchema : function (oElement, oAggregate) {
+			oAggregate.namespace = oElement.getAttribute("Namespace") + ".";
+			oAggregate.result[oAggregate.namespace] = oAggregate.schema = {
+				"$kind" : "Schema"
+			};
+			MetadataConverter.annotatable(oAggregate, oAggregate.schema);
+		},
 
 		/**
 		 * Resolves an alias in the given qualified name or full name.
@@ -53,6 +172,44 @@ sap.ui.define([
 				aSegments[i] = MetadataConverter.resolveAlias(aSegments[i], oAggregate);
 			}
 			return aSegments.join("/") + sTerm;
+		},
+
+		/**
+		 * Helper for processAttributes, returns false if sValue is "false", returns undefined
+		 * otherwise.
+		 * @param {string} sValue The attribute value in the element
+		 * @returns {boolean} false or undefined
+		 */
+		setIfFalse : function (sValue) {
+			return sValue === "false" ? false : undefined;
+		},
+
+		/**
+		 * Helper for processAttributes, returns true if sValue is "true", returns undefined
+		 * otherwise.
+		 * @param {string} sValue The attribute value in the element
+		 * @returns {boolean} true or undefined
+		 */
+		setIfTrue : function (sValue) {
+			return sValue === "true" ? true : undefined;
+		},
+
+		/**
+		 * Helper for processAttributes, returns sValue converted to a number.
+		 * @param {string} sValue The attribute value in the element
+		 * @returns {number} The value as number or undefined
+		 */
+		setNumber : function (sValue) {
+			return sValue ? parseInt(sValue, 10) : undefined;
+		},
+
+		/**
+		 * Helper for processAttributes, returns sValue.
+		 * @param {string} sValue The attribute value in the element
+		 * @returns {string} sValue
+		 */
+		setValue : function (sValue) {
+			return sValue;
 		},
 
 		/**

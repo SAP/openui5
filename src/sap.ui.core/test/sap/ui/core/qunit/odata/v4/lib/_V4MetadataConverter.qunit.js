@@ -315,14 +315,14 @@ sap.ui.require([
 	QUnit.test("convertXMLMetadata: EntityType attributes, key alias", function (assert) {
 		testConversion(assert, '\
 				<DataServices>\
-					<Schema Namespace="foo">\
+					<Schema Namespace="foo" Alias="f">\
 						<EntityType Name="Worker" OpenType="true" HasStream="true">\
 							<Key>\
 								<PropertyRef Name="Bar/Baz" Alias="qux"/>\
 							</Key>\
 						</EntityType>\
 						<EntityType Name="Base" Abstract="true"/>\
-						<EntityType Name="Derived" BaseType="foo.Base"/>\
+						<EntityType Name="Derived" BaseType="f.Base"/>\
 					</Schema>\
 				</DataServices>',
 			{
