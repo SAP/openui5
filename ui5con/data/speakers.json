@@ -13,7 +13,7 @@
 	},
 	{
 		"name": "Manuel Blechschmidt",
-		"bio": "Manuel is the CEO of the Incentergy GmbH specialized in business software consultancy. He mainly helps teams building fantastic software with OpenUI5, OData and Java EE. He is an active member of the open source community who contributes to multiple apache projects and publishes his work on github.",
+		"bio": "Manuel is the CEO of the Incentergy GmbH specialized in business software consultancy, currently working on NEXT Farming for the FarmFacts GmbH. He mainly helps teams building fantastic software with OpenUI5, OData and Java EE. He is an active member of the open source community who contributes to multiple apache projects and publishes his work on github.",
 		"picture": "manuel_blechschmidt.jpg",
 		"company": "Incentergy"
 	},
@@ -22,12 +22,6 @@
 		"bio": "DJ Adams is a Principal Consultant at Bluefin Solutions, and heads up their Mobility, User Experience and Development Centre of Excellence in the UK. He’s been hacking on SAP enterprise software since 1987 and has contributed to the SAP, Perl, XMPP and Google developer communities in various ways. He’s written books on Google and on Jabber / XMPP for O’Reilly, and more recently on SAP technologies for SAP Press. His latest book is on debugging SAP’s UI5 toolkit. He’s an SAP Mentor, a member of the SAP Mentor Advisory Board, and a board member of the SAP Developer Advisory Board. He studied Classics at University College London.",
 		"picture": "DJA-head.jpg",
 		"company": "Bluefin Solutions"
-	},
-	{
-		"name": "Gregor Brett",
-		"bio": "Gregor is a developer at Bluefin Solutions in the UK. He has been working with SAP software for over ten years - from ABAP and Java backend stuff to Web and Mobile and everything in between!",
-		"picture": "gregor_brett.jpg",
-		"company": "Bluefin Solutions Ltd"
 	},
 	{
 		"name": "Thilo Seidel",
@@ -77,8 +71,8 @@
 	},
 	{
 		"name": "Alexander Rauh",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Alexander is an Area Product Owner in UI5 organization for Flexibility topics.",
+		"picture": "AxelRauh.jpg",
 		"company": "SAP"
 	},
 	{
@@ -329,8 +323,8 @@
 	},
 	{
 		"name": "Jan Mummenthaler",
-		"bio": "",
-		"picture": "no_portrait.png",
+		"bio": "Jan is an UI5 expert, musician and passionate about designing and building audio equipment.",
+		"picture": "janMummenthaler.jpg",
 		"company": "SAP",
 		"meetMe": "12:30"
 	},
