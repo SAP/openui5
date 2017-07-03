@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/base/ManagedObject'
-], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, Control, ChangeReason, JSONModel, ManagedObject) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel'
+], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, Control, ChangeReason, JSONModel) {
 	"use strict";
 
 	/**
@@ -100,6 +100,7 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * Contains <code>columnsItems</code> that needs to be created in the model.
+                         * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
 						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						newItems: {
@@ -107,6 +108,7 @@ sap.ui.define([
 						},
 						/**
 						 * Contains <code>columnsItems</code> that needs to be changed in the model.
+                         * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
 						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						existingItems: {
@@ -119,8 +121,11 @@ sap.ui.define([
 						// -> changeColumnsItems contains {A false}, {C false}, {D false} as newItems and {B true index=0} as existingItems. So the ColumnsController processes
 						// first newItems and then existingItems with result:
 						// columnsItems: ^B3, A, C, D. Due to aggregation update the order of table items in P13nColumnsPanel changes to ^B, A, C, D instead of keeping the order as it is A, ^B, C, D.
+						//
+						// 'index': {undefined, 0, 1,...}. Undefined means that initially consumer does not have defined via aggregation and later on the position of the 'column' has not been changed.
+						// 'visible': {undefined, false, true}. Undefined means that initially consumer does not have defined via aggregations and later on the visibility of the 'column' has not been changed.
 						/**
-						 * Contains an entry of each item in <code>items</code> aggregation. The item order reflects the current order of columns in the panel.
+						 * Array contains an object for each item in <code>items</code> aggregation enriched with index and visibility information. The item order reflects the current order of columns in the panel.
 						 * @since 1.50.0
 						 */
 						items: {
@@ -219,7 +224,6 @@ sap.ui.define([
 		this.addAggregation("content", oScrollContainer);
 
 		// Call-back for handling of resizing
-		// TODO: make sure we optimize calculation and respect margins and borders, use e.g.
 		// jQuery.outerHeight(true)
 		var that = this;
 		this._fnHandleResize = function() {
@@ -374,8 +378,7 @@ sap.ui.define([
 		if (!this._bIgnoreUpdateInternalModel) {
 			this._bUpdateInternalModel = true;
 		}
-		var aItems = this.removeAllAggregation("items");
-		return aItems;
+		return this.removeAllAggregation("items");
 	};
 
 	P13nColumnsPanel.prototype.destroyItems = function() {
@@ -414,16 +417,14 @@ sap.ui.define([
 		if (!this._bIgnoreUpdateInternalModel) {
 			this._bUpdateInternalModel = true;
 		}
-		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
-		return oColumnsItem;
+		return this.removeAggregation("columnsItems", oColumnsItem);
 	};
 
 	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
 		if (!this._bIgnoreUpdateInternalModel) {
 			this._bUpdateInternalModel = true;
 		}
-		var aColumnsItems = this.removeAllAggregation("columnsItems");
-		return aColumnsItems;
+		return this.removeAllAggregation("columnsItems");
 	};
 
 	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
@@ -502,12 +503,7 @@ sap.ui.define([
 					visible: "{visible}",
 					selected: "{persistentSelected}",
 					tooltip: "{tooltip}",
-					type: sap.m.ListType.Active,
-					// TODO: this customData should be deleted after the unittest ColumnsController.qunit.html is changed in the way that the customData is not used there
-					customData: new sap.ui.core.CustomData({
-						key: "P13nColumnKey",
-						value: "{columnKey}"
-					})
+					type: sap.m.ListType.Active
 				})
 			}
 		});
@@ -661,16 +657,16 @@ sap.ui.define([
 		this._updateControlLogic();
 	};
 	P13nColumnsPanel.prototype._switchVisibilityOfUnselectedModelItems = function() {
-		var oModel = this._getInternalModel();
 		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
-		oModel.getData().items.forEach(function(oMItem) {
+		var aMItems = this._getInternalModel().getProperty("/items");
+		aMItems.forEach(function(oMItem) {
 			if (oMItem.persistentSelected) {
 				oMItem.visible = true;
 				return;
 			}
 			oMItem.visible = !bShowOnlySelectedItems;
 		});
-		oModel.refresh();
+		this._getInternalModel().setProperty("/items", aMItems);
 	};
 
 	P13nColumnsPanel.prototype._getVisibleModelItems = function() {
@@ -781,7 +777,7 @@ sap.ui.define([
 	};
 
 	P13nColumnsPanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {
-		var iIndex;
+		var iIndex = -1;
 		this._getInternalModel().getProperty("/items").some(function(oMItem, iIndex_) {
 			if (oMItem.columnKey === sColumnKey) {
 				iIndex = iIndex_;
@@ -936,10 +932,10 @@ sap.ui.define([
 		if (!oEvent.getParameter("selectAll") && oEvent.getParameter("listItems").length === 1) {
 			this._switchMarkedTableItemTo(oEvent.getParameter("listItem"));
 		}
-		this._selectTableItem(oEvent.getParameter("listItem"));
+		this._selectTableItem();
 	};
 
-	P13nColumnsPanel.prototype._selectTableItem = function(oTableItem) {
+	P13nColumnsPanel.prototype._selectTableItem = function() {
 		this._updateControlLogic();
 
 		// No update of model items is needed as it is already up-to-date due to binding
@@ -996,9 +992,7 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nColumnsPanel.prototype._filterModelItemsBySearchText = function() {
-		var oModel = this._getInternalModel();
 		var sSearchText = this._getSearchText();
-
 		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
 		sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
 		// Escape special characters entered by user
@@ -1020,7 +1014,7 @@ sap.ui.define([
 				oMItem.visible = true;
 			}
 		});
-		oModel.refresh();
+		this._getInternalModel().refresh();
 	};
 
 	/**
@@ -1053,25 +1047,28 @@ sap.ui.define([
 		}, this));
 
 		this.getColumnsItems().forEach(function(oColumnsItem) {
-			var oMColumnsItem = this._getModelItemByColumnKey(oColumnsItem.getColumnKey());
-			if (!oMColumnsItem) {
+			var oMItem = this._getModelItemByColumnKey(oColumnsItem.getColumnKey());
+			if (!oMItem) {
 				return;
 			}
 			if (oColumnsItem.getIndex() !== undefined) {
-				oMColumnsItem.persistentIndex = oColumnsItem.getIndex();
+				oMItem.persistentIndex = oColumnsItem.getIndex();
 			}
 			if (oColumnsItem.getVisible() !== undefined) {
-				oMColumnsItem.persistentSelected = oColumnsItem.getVisible();
+				oMItem.persistentSelected = oColumnsItem.getVisible();
 			}
 			if (oColumnsItem.getWidth() !== undefined) {
-				oMColumnsItem.width = oColumnsItem.getWidth();
+				oMItem.width = oColumnsItem.getWidth();
 			}
 			if (oColumnsItem.getTotal() !== undefined) {
-				oMColumnsItem.total = oColumnsItem.getTotal();
+				oMItem.total = oColumnsItem.getTotal();
 			}
 		}, this);
 
-		var aMItems = this._getInternalModel().getProperty("/items");
+        this._switchVisibilityOfUnselectedModelItems();
+        this._filterModelItemsBySearchText();
+
+        var aMItems = this._getInternalModel().getProperty("/items");
 		// Sort the table items only by persistentIndex
 		this._sortModelItemsByPersistentIndex(aMItems);
 		this._updateCounts(aMItems);
