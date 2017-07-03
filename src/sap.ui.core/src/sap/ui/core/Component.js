@@ -1933,12 +1933,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// check the type of the name
 			jQuery.sap.assert(typeof sName === 'string', "sName must be a string");
 
-			// if a component name and a URL is given, we register this URL for the name of the component:
-			// the name is the package in which the component is located (dot separated)
-			if (sName && sUrl) {
-				jQuery.sap.registerModulePath(sName, sUrl);
-			}
+		}
 
+		// if a component name and a URL is given, we register this URL for the name of the component:
+		// the name is the package in which the component is located (dot separated)
+		if (sName && sUrl) {
+			jQuery.sap.registerModulePath(sName, sUrl);
 		}
 
 		// in case of loading the manifest first by configuration we need to
