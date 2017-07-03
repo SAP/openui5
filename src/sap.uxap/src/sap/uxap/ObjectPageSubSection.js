@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
 	"./ObjectPageSectionBase",
-	"./ObjectPageSubSectionLayout",
-	"./ObjectPageSubSectionMode",
 	"./ObjectPageLazyLoader",
 	"./BlockBase",
 	"sap/m/Button",
@@ -22,8 +20,6 @@ sap.ui.define([
 			 Grid,
 			 GridData,
 			 ObjectPageSectionBase,
-			 ObjectPageSubSectionLayout,
-			 ObjectPageSubSectionMode,
 			 ObjectPageLazyLoader,
 			 BlockBase,
 			 Button,
@@ -31,6 +27,12 @@ sap.ui.define([
 			 StashedControlSupport,
 			 library) {
 	"use strict";
+
+	// shortcut for sap.uxap.ObjectPageSubSectionMode
+	var ObjectPageSubSectionMode = library.ObjectPageSubSectionMode;
+
+	// shortcut for sap.uxap.ObjectPageSubSectionLayout
+	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
 	/**
 	 * Constructor for a new ObjectPageSubSection.

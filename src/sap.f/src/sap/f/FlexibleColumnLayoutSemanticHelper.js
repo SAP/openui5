@@ -5,10 +5,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
-	"./LayoutType",
 	"./FlexibleColumnLayout"
-], function (jQuery, library, LT, FlexibleColumnLayout) {
+], function (jQuery, library, FlexibleColumnLayout) {
 	"use strict";
+
+	// shortcut for sap.f.LayoutType
+	var LT = library.LayoutType;
 
 	/**
 	 * Constructor for an sap.f.FlexibleColumnLayoutSemanticHelper.

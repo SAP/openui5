@@ -3,12 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/uxap/ObjectPageConfigurationMode",
+	"sap/uxap/library",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Component"
-], function (ObjectPageConfigurationMode, UIComponent, JSONModel /*, Component*/) {
+], function (library, UIComponent, JSONModel /*, Component*/) {
 	"use strict";
+
+	// shortcut for sap.uxap.ObjectPageConfigurationMode
+	var ObjectPageConfigurationMode = library.ObjectPageConfigurationMode;
 
 	var Component = UIComponent.extend("sap.uxap.component.Component", {
 		metadata: {

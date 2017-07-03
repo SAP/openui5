@@ -4,20 +4,25 @@
 
 sap.ui.define("sap/m/PDFViewerRenderManager", [
 	"jquery.sap.global",
+	"sap/m/library",
 	"sap/m/Dialog",
 	"sap/m/Button",
-	"sap/m/ButtonType",
 	"sap/m/Link",
 	"sap/m/MessagePage",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/OverflowToolbarPriority"
-], function ($, Dialog, Button, ButtonType, Link, MessagePage, OverflowToolbar, OverflowToolbarButton, Title,
-             ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarPriority) {
+	"sap/m/OverflowToolbarLayoutData"
+], function ($, library, Dialog, Button, Link, MessagePage, OverflowToolbar, OverflowToolbarButton, Title,
+             ToolbarSpacer, OverflowToolbarLayoutData) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	var oPDFViewerRenderManager = {
 		extendPdfViewer: function (PDFViewer) {

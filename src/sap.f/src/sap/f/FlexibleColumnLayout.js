@@ -6,15 +6,18 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
-	"./LayoutType",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
 	"sap/m/NavContainer"
-], function (jQuery, library, LT, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
+], function (jQuery, library, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
 	"use strict";
+
+
+	// shortcut for sap.f.LayoutType
+	var LT = library.LayoutType;
 
 
 	/**

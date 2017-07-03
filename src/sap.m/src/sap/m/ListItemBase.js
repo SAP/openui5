@@ -3,10 +3,14 @@
  */
 
 // Provides control sap.m.ListItemBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button', 'sap/m/ButtonType'],
-	function(jQuery, library, Control, IconPool, Icon, Button, ButtonType) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button'],
+	function(jQuery, library, Control, IconPool, Icon, Button) {
 	"use strict";
 
+
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 
 	/**

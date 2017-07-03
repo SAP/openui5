@@ -9,16 +9,20 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/Metadata",
 	"sap/ui/core/IconPool",
-	"sap/m/ButtonType",
-	"sap/m/OverflowToolbarLayoutData",
-	"sap/m/OverflowToolbarPriority"
+	"sap/m/library",
+	"sap/m/OverflowToolbarLayoutData"
 ], function(jQuery,
 			Metadata,
 			IconPool,
-			ButtonType,
-			OverflowToolbarLayoutData,
-			OverflowToolbarPriority) {
+			mobileLibrary,
+			OverflowToolbarLayoutData) {
 		"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	* Constructor for a <code>sap.f.semantic.SemanticConfiguration</code>.

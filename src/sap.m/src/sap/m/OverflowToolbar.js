@@ -13,13 +13,16 @@ sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
-	"sap/m/OverflowToolbarPriority",
 	"sap/ui/core/IconPool",
 	"sap/m/SearchField"
 ], function (jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData,
-			 OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls, OverflowToolbarPriority,
+			 OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls,
 			 IconPool, SearchField) {
 	"use strict";
+
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 
 	/**

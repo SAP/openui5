@@ -3,8 +3,11 @@
  */
 
 // Provides control sap.uxap.ObjectPageSectionBase.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLevel", "./library"], function (jQuery, Control, TitleLevel, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library", "./library"], function (jQuery, Control, coreLibrary, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new ObjectPageSectionBase.
