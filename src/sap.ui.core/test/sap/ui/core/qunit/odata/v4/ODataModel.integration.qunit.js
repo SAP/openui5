@@ -1387,7 +1387,7 @@ sap.ui.require([
 		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 				"value" : [{
 					"Note" : "foo",
-					"SalesOrderID" : 42
+					"SalesOrderID" : "42"
 				}]
 			})
 			.expectChange("note", ["foo"]);
@@ -2550,6 +2550,55 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Check that the context paths use key predicates if the key properties are delivered
+	// in the response. Check that an expand spanning a complex type does not lead to failures.
+	QUnit.test("Context Paths Using Key Predicates", function (assert) {
+		var sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\',\
+		parameters : {$expand : {\'LOCATION/City/EmployeesInCity\' : {$select : [\'Name\']}}, \
+		$select : [\'ID\', \'Name\']}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+			this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
+						"&$select=ID,Name&$skip=0&$top=100", {
+					"value" : [{
+						"ID" : "1",
+						"Name" : "Frederic Fall",
+						"LOCATION" : {
+							"City" : {
+								"EmployeesInCity" :
+									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
+							}
+						}
+					}, {
+						"ID" : "2",
+						"Name" : "Jonathan Smith",
+						"LOCATION" : {
+							"City" : {
+								"EmployeesInCity" :
+									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
+							}
+						}
+					}]
+				}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+
+			return this.createView(assert, sView).then(function () {
+				assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
+					return oItem.getBindingContext().getPath();
+				}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
+			});
+		}
+	);
 });
 //TODO test bound action
 //TODO test delete

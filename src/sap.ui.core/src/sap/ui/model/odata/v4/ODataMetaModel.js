@@ -1283,7 +1283,7 @@ sap.ui.define([
 					return vSegment;
 				}
 				// calculate the key predicate asynchronously and append it to the prefix
-				return oContext.fetchAbsoluteValue(vSegment.path).then(function (oEntity) {
+				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
 					if (oEntity && ("@$ui5.transient" in oEntity)) {
 						bTransient = true;
 						return undefined;

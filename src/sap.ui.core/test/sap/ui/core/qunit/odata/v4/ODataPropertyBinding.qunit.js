@@ -127,11 +127,11 @@ sap.ui.require([
 				oContextBindingMock = that.oSandbox.mock(oControl.getObjectBinding());
 				fnFetchValue = oContextBindingMock.expects("fetchValue");
 				fnFetchValue.exactly(iNoOfRequests || 1)
-					.withExactArgs("property", sinon.match.object, /*iIndex*/undefined)
+					.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
 					.returns(Promise.resolve("value"));
 				if (oError) {
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs("property", sinon.match.object, /*iIndex*/undefined)
+						.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
 						.returns(Promise.reject(oError));
 				}
 				oControl.bindProperty("text", {
@@ -510,7 +510,8 @@ sap.ui.require([
 			done();
 		});
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"}, false)
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", sinon.match.func,
+				{"sap-client" : "111"}, false)
 			.returns({
 				fetchValue : function (sGroupId, sPath) {
 					assert.strictEqual(sPath, "property");
@@ -569,7 +570,7 @@ sap.ui.require([
 				// (don't) create parent cache, it won't be used
 				oCacheMock.expects("createSingle")
 					.withExactArgs(sinon.match.same(that.oModel.oRequestor), sContextPath.slice(1),
-						{"sap-client" : "111"}, false);
+						sinon.match.func, {"sap-client" : "111"}, false);
 				oControl.bindObject(sContextPath);
 
 				oContextBindingMock = that.oSandbox.mock(oControl.getObjectBinding());
@@ -583,7 +584,7 @@ sap.ui.require([
 				} else {
 					sResolvedPath = sContextPath + "/" + sPath;
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs(sPath, sinon.match.object, /*iIndex*/undefined)
+						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object)
 						.returns(Promise.resolve(oValue));
 				}
 				that.oSandbox.mock(that.oModel.getMetaModel()).expects("fetchUI5Type")
@@ -918,7 +919,7 @@ sap.ui.require([
 			});
 
 		oCacheMock.expects("createSingle")
-			.withExactArgs(sinon.match.object, "EntitySet('foo')", {}, false)
+			.withExactArgs(sinon.match.object, "EntitySet('foo')", sinon.match.func, {}, false)
 			.returns({
 				fetchValue : function (sGroupId, sPath) {
 					return oPromise;
@@ -1555,16 +1556,14 @@ sap.ui.require([
 					objectBindings : "/BusinessPartnerList('0100000000')",
 					text : "{path : 'PhoneNumber', type : 'sap.ui.model.odata.type.String'}"
 				}),
-				oBinding = oControl.getBinding("text"),
-				oSandbox = this.oSandbox;
+				oBinding = oControl.getBinding("text");
 
 			return new Promise(function (resolve) {
 				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
 				oBinding.attachEventOnce("change", function () {
 					var sPhoneNumber = oControl.getText().indexOf("/") < 0
 							? "06227/34567"
-							: "0622734567",
-						fnSpy = oSandbox.spy(oBinding.getContext().getBinding(), "updateValue");
+							: "0622734567";
 
 					// code under test
 					oControl.setText(sPhoneNumber);
