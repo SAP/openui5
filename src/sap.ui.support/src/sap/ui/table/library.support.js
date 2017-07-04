@@ -27,6 +27,35 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 
 
 	//**********************************************************
+	// Helpers related to sap.ui.table Controls
+	//**********************************************************
+
+	/**
+	 * Loops over all columns of all visible tables and calls the given callback with the following parameters:
+	 * table instance, column instance, column template instance.
+	 *
+	 * If the column does not have a template or a type is given and the template is not of this type the callback is not called.
+	 *
+	 * @param {function} fnDoCheck Callback
+	 * @param {object} oScope The scope as given in the rule check function.
+	 * @param {string} [sType] If given an additional type check is performed. Module syntax required!
+	 */
+	function checkColumnTemplate(fnDoCheck, oScope, sType) {
+		var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+		var aColumns, oTemplate;
+		for (var i = 0; i < aTables.length; i++) {
+			aColumns = aTables[i].getColumns();
+			for (var k = 0; k < aColumns.length; k++) {
+				oTemplate = aColumns[k].getTemplate();
+				if (oTemplate && (!sType || SupportHelper.isInstanceOf(oTemplate, sType))) {
+					fnDoCheck(aTables[i], aColumns[k], oTemplate);
+				}
+			}
+		}
+	}
+
+
+	//**********************************************************
 	// Rule Definitions
 	//**********************************************************
 
@@ -73,6 +102,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 		}
 	});
 
+
 	/*
 	 * Validates whether title or aria-labelledby is correctly set
 	 */
@@ -91,6 +121,89 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 			}
 		}
 	});
+
+
+	/*
+	 * Validates sap.ui.core.Icon column templates.
+	 */
+	createRule({
+		id : "VALIDATE_COLUMN_TEMPLATE_ICON",
+		categories: [Categories.Accessibility],
+		title : "Column template validation - 'sap.ui.core.Icon'",
+		description : "The 'decorative' property of control 'sap.ui.core.Icon' is set to 'true' although the control is used as column template.",
+		resolution : "Set the 'decorative' property of control 'sap.ui.core.Icon' to 'false' if the control is used as column template.",
+		check : function(oIssueManager, oCoreFacade, oScope) {
+			checkColumnTemplate(function(oTable, oColumn, oIconTemplate) {
+				if (!oIconTemplate.isBound("decorative") && oIconTemplate.getDecorative()) {
+					var sId = oColumn.getId();
+					SupportHelper.reportIssue(oIssueManager, "Column '" + sId + "' of table '" + oTable.getId() + "' uses decorative 'sap.ui.core.Icon' control.", Severity.High, sId);
+				}
+			}, oScope, "sap/ui/core/Icon");
+		}
+	});
+
+
+	/*
+	 * Validates sap.m.Text column templates.
+	 */
+	createRule({
+		id : "VALIDATE_COLUMN_TEMPLATE_M_TEXT",
+		title : "Column template validation - 'sap.m.Text'",
+		description : "The 'wrapping' property of the control 'sap.m.Text' is set to 'true' although the control is used as a column template.",
+		resolution : "Set the 'wrapping' property of the control 'sap.m.Text' to 'false' if the control is used as a column template.",
+		check : function(oIssueManager, oCoreFacade, oScope) {
+			checkColumnTemplate(function(oTable, oColumn, oMTextTemplate) {
+				if (!oMTextTemplate.isBound("wrapping") && oMTextTemplate.getWrapping()) {
+					var sColumnId = oColumn.getId();
+					SupportHelper.reportIssue(oIssueManager, "Column '" + sColumnId + "' of table '" + oTable.getId() + "' uses an 'sap.m.Text' control with wrapping enabled.", Severity.High, sColumnId);
+				}
+			}, oScope, "sap/m/Text");
+		}
+	});
+
+
+	/*
+	 * Checks for No Deviating units issue in AnalyticalBinding
+	 */
+	createRule({
+		id : "ANALYTICS_NO_DEVIATING_UNITS",
+		categories: [Categories.Bindings],
+		title : "Analytical Binding reports 'No deviating units found...'",
+		description : "The analytical service returns duplicate IDs. This could also lead to many requests because the analytical binding " +
+						"will request the measures without deviating units again and expects to receive just one record, but again gets several ones ...",
+		resolution : "Adjust the service implementation.",
+		check : function(oIssueManager, oCoreFacade, oScope) {
+			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/AnalyticalTable");
+			var sAnalyticalErrorId = "NO_DEVIATING_UNITS";
+			var oIssues = {};
+
+			SupportHelper.checkLogEntries(function(oLogEntry) {
+				// Filter out totally irrelevant issues
+				if (oLogEntry.level != jQuery.sap.log.Level.ERROR && oLogEntry.level != jQuery.sap.log.Level.FATAL) {
+					return false;
+				}
+				var oInfo = oLogEntry.supportInfo;
+				if (oInfo && oInfo.type === "sap.ui.model.analytics.AnalyticalBinding" && oInfo.analyticalError === sAnalyticalErrorId) {
+					return true;
+				}
+				return false;
+			}, function(oLogEntry){
+				// Check the remaining Issues
+				var sBindingId = oLogEntry.supportInfo.analyticalBindingId;
+				if (sBindingId && !oIssues[sAnalyticalErrorId + "-" + sBindingId]) {
+					var oBinding;
+					for (var i = 0; i < aTables.length; i++) {
+						oBinding = aTables[i].getBinding("rows");
+						if (oBinding && oBinding.__supportUID === sBindingId) {
+							oIssues[sAnalyticalErrorId + "-" + sBindingId] = true; // Ensure is only reported once
+							SupportHelper.reportIssue(oIssueManager, "Analytical Binding reports 'No deviating units found...'", Severity.High, aTables[i].getId());
+						}
+					}
+				}
+			});
+		}
+	});
+
 
 	return {lib: oLib, ruleset: oRuleset};
 
