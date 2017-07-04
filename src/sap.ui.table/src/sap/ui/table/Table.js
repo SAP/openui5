@@ -1919,6 +1919,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	Table.prototype._onBindingLengthChange = function(sReason) {
+		this._bBindingLengthChanged = true;
+
 		if (sReason === ChangeReason.Refresh) {
 			return;
 		}
@@ -1927,7 +1929,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._updateFixedBottomRows();
 		this._toggleVSb();
 		this._updateVSbRange();
-		this._bBindingLengthChanged = true;
+
 		// show or hide the no data container
 		if (sReason != "skipNoDataUpdate") {
 			// in order to have less UI updates, the NoData text should not be updated when the reason is refresh. When
