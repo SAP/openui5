@@ -288,6 +288,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 */
 	MultiComboBox.prototype.onsapfocusleave = function(oEvent) {
 		var oPicker = this.getAggregation("picker");
+		var bTablet = this.isPlatformTablet();
 		var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 		var oFocusDomRef = oControl && oControl.getFocusDomRef();
 
@@ -301,7 +302,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		}
 
 		if (oPicker && oFocusDomRef) {
-			if (jQuery.sap.equal(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			if (jQuery.sap.equal(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet ) {
 				// force the focus to stay in the MultiComboBox field when scrollbar
 				// is moving
 				this.focus();
@@ -317,11 +318,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
+
+		var bDropdownPickerType = this.getPickerType() === "Dropdown";
+
 		if (oEvent.target === this.getFocusDomRef()) {
 			this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
 		}
 
-		if (oEvent.target === this.getOpenArea()) {
+		if (oEvent.target === this.getOpenArea() && bDropdownPickerType && !this.isPlatformTablet()) {
+			// avoid the text-editing mode popup to be open on mobile,
+			// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
+
 			// force the focus to stay in the input field
 			this.focus();
 		}
@@ -330,6 +337,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 		if (!this.isOpen() && this.shouldValueStateMessageBeOpened()) {
 			this.openValueStateMessage();
 		}
+
 	};
 
 	/**
