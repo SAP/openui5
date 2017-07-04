@@ -97,12 +97,12 @@
 									<Link
 											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
 											text="Privacy"
-											href="https://help.hana.ondemand.com/privacy.htm"
+											href="https://www.sap.com/corporate/en/legal/privacy.html"
 											target="_blank"/>
 									<Link
 											class="demokitInitialPagesBrightLink"
-											text="Terms of use"
-											href="https://help.hana.ondemand.com/terms_of_use.html"
+											text="Terms of Use"
+											href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
 											target="_blank"/>
 								</HBox>
 							</HBox>
