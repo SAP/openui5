@@ -40,20 +40,135 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts an OData V4 value of type Edm.Double, Edm.Float or Edm.Single to the corresponding
+	 * OData V4 value.
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {any}
+	 *   The corresponding OData V4 value
+	 */
+	_V2Requestor.prototype.convertDoubleFloatSingle = function (sV2Value) {
+		switch (sV2Value) {
+			case "NaN":
+			case "INF":
+			case "-INF":
+				return sV2Value;
+			default:
+				return parseFloat(sV2Value);
+		}
+	};
+
+	/**
+	 * Converts a complex value or a collection of complex values from an OData V2 response payload
+	 * to an object in OData V4 JSON format.
+	 *
+	 * @param {object} vObject
+	 *   The object to be converted
+	 * @param {object} mTypeByName
+	 *   A map of type metadata by qualified name
+	 * @throws {Error}
+	 *   If oObject does not contain inline metadata with type information
+	 */
+	_V2Requestor.prototype.convertNonPrimitive = function (vObject, mTypeByName) {
+		var sPropertyName,
+			sPropertyType,
+			oType,
+			sTypeName,
+			vValue,
+			that = this;
+
+		// collection of complex values, coll. of primitive values only supported since OData V3
+		if (Array.isArray(vObject)) {
+			vObject.forEach(function (vItem) {
+				that.convertNonPrimitive(vItem, mTypeByName);
+			});
+			return;
+		}
+
+		// complex value
+		if (!vObject.__metadata || !vObject.__metadata.type) {
+			throw new Error("Cannot convert complex value without type information in "
+					+ "__metadata.type: " + JSON.stringify(vObject));
+		}
+
+		sTypeName = vObject.__metadata.type;
+		oType = mTypeByName[sTypeName]; // can be entity type or complex type
+		delete vObject.__metadata;
+		for (sPropertyName in vObject) {
+			vValue = vObject[sPropertyName];
+			if (vValue === null) {
+				continue;
+			}
+			if (typeof vValue === "object") { // non-primitive property value
+				this.convertNonPrimitive(vValue, mTypeByName);
+				continue;
+			}
+			sPropertyType = oType[sPropertyName] && oType[sPropertyName].$Type;
+			// primitive property value
+			vObject[sPropertyName] = this.convertPrimitive(vValue, sPropertyType,
+				sTypeName, sPropertyName);
+		}
+	};
+
+	/**
+	 * Computes the OData V4 primitive value for the given OData V2 primitive value and type.
+	 *
+	 * @param {any} vValue
+	 *   The value to be converted
+	 * @param {string} sPropertyType
+	 *   The name of the OData V4 primitive type for conversion such as "Edm.String"
+	 * @param {string} sTypeName
+	 *   The qualified name of the entity or complex type containing the property with the value to
+	 *   be converted
+	 * @param {string} sPropertyName
+	 *   The name of the property in the entity or complex type
+	 * @returns {any}
+	 *   The converted value
+	 * @throws {Error}
+	 *   If the property type is unknown
+	 */
+	_V2Requestor.prototype.convertPrimitive = function (vValue, sPropertyType, sTypeName,
+			sPropertyName) {
+		switch (sPropertyType) {
+			case "Edm.Binary": // no conversion
+			case "Edm.Boolean":
+			case "Edm.Byte":
+			case "Edm.Guid":
+			case "Edm.Int16":
+			case "Edm.Int32":
+			case "Edm.SByte":
+			case "Edm.String":
+				return vValue;
+			case "Edm.Double":
+			case "Edm.Single":
+				return this.convertDoubleFloatSingle(vValue);
+			default:
+				throw new Error("Type '" + sPropertyType + "' of property '" + sPropertyName
+					+ "' in type '" + sTypeName + "' is unknown; cannot convert value: " + vValue);
+		}
+	};
+
+	/**
 	 * Converts an OData V2 response payload to an OData V4 response payload.
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData V2 response payload
-	 * @returns {object}
-	 *   The OData V4 response payload
+	 * @returns {_SyncPromise}
+	 *   A promise which resolves with the OData V4 response payload or rejects with an error if
+	 *   the V2 response cannot be converted
 	 */
-	_V2Requestor.prototype.doConvertResponseToV4 = function (oResponsePayload) {
-		if (oResponsePayload.d.results) {
-			return {
-				value : oResponsePayload.d.results
-			};
-		}
-		return oResponsePayload.d;
+	_V2Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
+		var bIsCollection = oResponsePayload.d.results && !oResponsePayload.d.__metadata,
+			oPayload = bIsCollection
+				? {value : oResponsePayload.d.results}
+				: oResponsePayload.d,
+			that = this;
+
+		return this.fnFetchEntityContainer().then(function (mTypeByName) {
+			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mTypeByName);
+			return oPayload;
+		});
 	};
 
 	/**
