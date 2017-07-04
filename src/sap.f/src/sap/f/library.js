@@ -12,7 +12,7 @@ sap.ui.define(["jquery.sap.global",
 	"use strict";
 
 	/**
-	 * SAPUI5 library with controls specialized for Fiori applications.
+	 * SAPUI5 library with controls specialized for SAP Fiori apps.
 	 *
 	 * @namespace
 	 * @name sap.f
@@ -81,7 +81,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 100/-/-  only the Begin column is displayed
+		 *
 		 * Tablet:  100/-/-  only the Begin column is displayed
+		 *
 		 * Phone:   100/-/-  only the Begin column is displayed
 		 *
 		 * Use to start with a master page.
@@ -92,7 +94,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 67/33/-  Begin (expanded) and Mid columns are displayed
+		 *
 		 * Tablet:  67/33/-  Begin (expanded) and Mid columns are displayed
+		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
 		 * Use to display both a master and a detail page when the user should focus on the master page.
@@ -103,7 +107,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 33/67/-  Begin and Mid (expanded) columns are displayed
+		 *
 		 * Tablet:  33/67/-  Begin and Mid (expanded) columns are displayed
+		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
 		 * Use to display both a master and a detail page when the user should focus on the detail page.
@@ -114,7 +120,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: -/100/-  only the Mid column is displayed
+		 *
 		 * Tablet:  -/100/-  only the Mid column is displayed
+		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
 		 * Use to display a detail page only, when the user should focus entirely on it.
@@ -125,7 +133,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 25/50/25 Begin, Mid (expanded) and End columns are displayed
+		 *
 		 * Tablet:  0/67/33  Mid (expanded) and End columns are displayed, Begin is accessible by a layout arrow
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail.
@@ -136,7 +146,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 25/25/50 Begin, Mid and End (expanded) columns are displayed
+		 *
 		 * Tablet:  0/33/67  Mid and End (expanded) columns are displayed, Begin is accessible by layout arrows
+		 *
 		 * Phone:   -/-/100  (only the End column is displayed)
 		 *
 		 * Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail-detail.
@@ -147,7 +159,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 *
 		 * Tablet:  33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the detail.
@@ -159,7 +173,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 *
 		 * Tablet:  67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the master.
@@ -171,7 +187,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: -/-/100  only the End column is displayed
+		 *
 		 * Tablet:  -/-/100  only the End column is displayed
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display a detail-detail page only, when the user should focus entirely on it.
