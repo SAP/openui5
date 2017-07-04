@@ -8,6 +8,20 @@ sap.ui.define([],
 		"use strict";
 
 		return {
+			actions: {
+				remove: {
+					changeType: "hideControl"
+				},
+				reveal: {
+					changeType: "unhideControl"
+				},
+				rename: function () {
+					return {
+						changeType: "rename",
+						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle"
+					};
+				}
+			},
 			aggregations: {
 				actions: {
 					domRef : ":sap-domref .sapUxAPObjectPageSubSectionHeaderActions",

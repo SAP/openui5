@@ -22,6 +22,22 @@ sap.ui.define([],
 			},
 			reveal : {
 				changeType : "unstashControl"
+			},
+			rename: function () {
+				return {
+					changeType: "rename",
+					domRef: ".sapUxAPObjectPageSectionTitle"
+				};
+			}
+		},
+		aggregations: {
+			subSections: {
+				domRef : ":sap-domref .sapUxAPObjectPageSectionContainer",
+				actions : {
+					move: {
+						changeType: "moveControls"
+					}
+				}
 			}
 		}
 	};
