@@ -50,7 +50,11 @@ sap.ui.define([
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
-						"EdmTypesCollection?$skip=0&$top=100" : {
+						"$metadata" : {
+							//TODO workaround for not yet implemented metadata conversion
+							source : "metadataV4.xml"
+						},
+						"EdmTypesCollection?$select=ID,Boolean,Byte,Guid,Int16,Int32,SByte,String&$skip=0&$top=100" : {
 							source : "EdmTypesV2.json"
 						},
 						"EdmTypesCollection('1')" : {

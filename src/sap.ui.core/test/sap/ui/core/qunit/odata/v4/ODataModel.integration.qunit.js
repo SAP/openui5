@@ -42,6 +42,19 @@ sap.ui.require([
 	}
 
 	/**
+	 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createModelForV2SalesOrderService(mModelParameters) {
+		mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+		return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
+	}
+
+	/**
 	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -108,6 +121,8 @@ sap.ui.require([
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.setupODataV4Server(this.oSandbox, {
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
+					: {source : "GWSAMPLE_BASIC_toBeReplaced.xml"}, // TODO replace with V2 metadata
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
@@ -2599,6 +2614,47 @@ sap.ui.require([
 			});
 		}
 	);
+
+	//*********************************************************************************************
+	// Scenario: test conversion of $select and $expand for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: select in expand", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{path :\'/SalesOrderSet(\\\'0500000001\\\')\', \
+		parameters : {\
+			$expand : {ToLineItems : {$select : \'ItemPosition\'}}, \
+			$select : \'SalesOrderID\'\
+		}}">\
+	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="item" text="{path : \'ItemPosition\',\
+						type : \'sap.ui.model.odata.type.String\'}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
+				"&$select=ToLineItems/ItemPosition,SalesOrderID",
+			{
+				"SalesOrderID" : "0500000001",
+				"ToLineItems" : [
+					{"ItemPosition" : "0000000010"},
+					{"ItemPosition" : "0000000020"},
+					{"ItemPosition" : "0000000030"}
+				]
+			})
+			.expectChange("id", "0500000001")
+			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
+
+		// code under test
+		return this.createView(assert, sView, createModelForV2SalesOrderService());
+	});
 });
 //TODO test bound action
 //TODO test delete

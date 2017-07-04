@@ -309,7 +309,7 @@ sap.ui.define([
 			bSortExpandSelect) {
 		var aExpandOptions = [];
 
-		this.convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
+		this.doConvertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
 			aExpandOptions.push(sOptionName + '=' + vOptionValue);
 		}, undefined, bSortExpandSelect);
 		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
@@ -335,7 +335,7 @@ sap.ui.define([
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		this.convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
+		this.doConvertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
 			mConvertedQueryOptions[sKey] = vValue;
 		}, bDropSystemQueryOptions, bSortExpandSelect);
 		return mConvertedQueryOptions;
@@ -344,6 +344,7 @@ sap.ui.define([
 	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
+	 * May be overwritten for other OData service versions.
 	 *
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
@@ -353,7 +354,7 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 */
-	Requestor.prototype.convertSystemQueryOptions = function (mQueryOptions, fnResultHandler,
+	Requestor.prototype.doConvertSystemQueryOptions = function (mQueryOptions, fnResultHandler,
 			bDropSystemQueryOptions, bSortExpandSelect) {
 		var that = this;
 

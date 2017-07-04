@@ -1969,4 +1969,4 @@ sap.ui.require([
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?
-// TODO: tests for convertSystemQueryOptions missing. Only tested indirectly
+// TODO: tests for doConvertSystemQueryOptions missing. Only tested indirectly

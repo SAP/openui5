@@ -8,6 +8,9 @@
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
 			items="{
 					path : '/EdmTypesCollection',
+					parameters : {
+						$select : ['ID','Boolean','Byte','Guid','Int16','Int32','SByte','String']
+					},
 					templateShareable : false
 				}">
 			<columns>
