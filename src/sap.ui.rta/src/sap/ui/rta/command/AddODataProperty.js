@@ -36,9 +36,6 @@ sap.ui.define([
 				},
 				parentId : {
 					type : "string"
-				},
-				changeHandlerSettingsKey : {
-					type : "object"
 				}
 			}
 		}
@@ -51,8 +48,7 @@ sap.ui.define([
 			index : this.getIndex(),
 			newControlId : this.getNewControlId(),
 			bindingPath : this.getBindingString(),
-			parentId : this.getParentId(),
-			changeHandlerSettingsKey : this.getChangeHandlerSettingsKey()
+			parentId : this.getParentId()
 		};
 	};
 

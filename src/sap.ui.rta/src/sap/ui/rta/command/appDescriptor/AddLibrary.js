@@ -80,8 +80,8 @@ sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 				return new DescriptorChangeFactory().createNew(this.getReference(),
 					oAddLibraryInlineChange, this.getLayer());
 			}.bind(this))
-			.then(function(oPreparedChange){
-				oPreparedChange.submit();
+			.then(function(oCreatedChange){
+				oCreatedChange.submit();
 			});
 	};
 

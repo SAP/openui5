@@ -461,8 +461,7 @@ sap.ui.define([
 				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
 				index : iIndex !== undefined ? iIndex : iAddTargetIndex,
 				bindingString : oSelectedElement.bindingPath,
-				parentId : mParents.parent.getId(),
-				changeHandlerSettingsKey : mODataPropertyActionDTMetadata.changeHandlerSettingsKey
+				parentId : mParents.parent.getId()
 			}, oParentAggregationDTMetadata);
 		},
 
@@ -471,8 +470,7 @@ sap.ui.define([
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
 			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
 			var oComponent = sap.ui.core.Component.getOwnerComponentFor(mParents.relevantContainer);
-			var mManifest = oComponent.getMetadata().getManifest();
-			var sReference = mManifest["sap.app"].id;
+			var sReference = oComponent.getMetadata().getName();
 			var mRequiredLibraries = mODataPropertyActionDTMetadata.requiredLibraries;
 			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
 				reference : sReference,
