@@ -140,7 +140,10 @@
 			"speaker": "Ondrej Bohaciak, Vaclav Vopenka",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "We will present newly released and upcoming controls which we have developed in Brno Suite Controls team. We will have prototypes and demos ready for the upcoming controls and demo apps for released controls. We’ll be happy to answer any questions regarding implementation of our controls in your apps."
+			"abstract": "We will present newly released and upcoming controls which we have developed in Brno Suite Controls team. We will have prototypes and demos ready for the upcoming controls and demo apps for released controls. We’ll be happy to answer any questions regarding implementation of our controls in your apps.",
+			"material": {
+				"Slides":"https://www.slideshare.net/OndrejBohaiak/advanced-charting-controls-coming-to-ui5"
+			}
 		},
 		{
 			"type": "break",
