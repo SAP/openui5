@@ -455,7 +455,7 @@ sap.ui.define([
 				}
 
 				var result = methods.filter(function (method) {
-					return true; //method.visibility === "public";
+					return method.visibility !== "restricted";
 				}).map(function (method) {
 					var subParameters = [];
 					method.parameters = method.parameters || [];
