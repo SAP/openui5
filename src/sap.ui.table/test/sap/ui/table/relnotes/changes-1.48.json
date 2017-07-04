@@ -288,5 +288,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "5ede7ee7d73a77a611aaa57964d97062c2c7827a",
+        "type": "FIX",
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
+      },
+      {
+        "id": "f3d62e97a634537237624340cc7f7f25cef50a5a",
+        "type": "FIX",
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
+      }
+    ]
   }
 }

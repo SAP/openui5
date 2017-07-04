@@ -2479,5 +2479,34 @@
         "references": []
       }
     ]
+  },
+  "1.46.11": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "54604a1bc18899227ec84d610e172460c0f7844f",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Fix failing qUnit tests.",
+        "references": []
+      },
+      {
+        "id": "b0b11fe32eddd78a1dba4234a7c3c2d4cc0584cd",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Styling of span tags corrected for the text area",
+        "references": []
+      },
+      {
+        "id": "8abbb08fbfce157055697c29be19246349c73fa7",
+        "type": "FIX",
+        "text": " sap.m.Popover: Fix failing qUnit tests.",
+        "references": []
+      },
+      {
+        "id": "ddee16d04a43611e538b62da32c829fa0e5cc372",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now checks if the increase and decrease buttons are created in constructor",
+        "references": []
+      }
+    ]
   }
 }

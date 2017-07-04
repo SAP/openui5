@@ -342,5 +342,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "1295cecb31d9fd3c183bcb473f52617c8581ae28",
+        "type": "FIX",
+        "text": " sap.m.ActionListItem: Fix double focus issue in IE.",
+        "references": []
+      },
+      {
+        "id": "bb8ec83dbb70d6638852071e9b58d773866fe5c5",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Focus outline handled correctly for empty text value",
+        "references": []
+      }
+    ]
   }
 }

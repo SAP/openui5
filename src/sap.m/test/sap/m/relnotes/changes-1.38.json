@@ -3347,5 +3347,82 @@
         "references": []
       }
     ]
+  },
+  "1.38.24": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "4cee828dfc666d8a69fdef0dfff212e6704087ac",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Input value is updated wrong if typing fast",
+        "references": []
+      },
+      {
+        "id": "730404b27fa9d151df6b3476033cc8bdf715061b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: setSelectedKey handles unbinded value improperly",
+        "references": []
+      },
+      {
+        "id": "d3c64da740915be7d2067f495632e5d7642c9702",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Tokens scrolling is now correct when control is inside a list",
+        "references": []
+      },
+      {
+        "id": "eb8cef98ccc6545c0aeb867053abba596a3b74bc",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "effe43a041edf7da73a4437a8a302519d64ebf1b",
+        "type": "FIX",
+        "text": " sap.m.ObjectListItem: Title wraps on phone",
+        "references": []
+      },
+      {
+        "id": "4d4ff21acac5237a8d850255d41c5093f3ef33f1",
+        "type": "FIX",
+        "text": " sap.m.Panel: Flickering in IE when panel has scrollable content",
+        "references": []
+      },
+      {
+        "id": "e926ff0dfe7c964d99d44cf4afb3f2ac88cf8fe3",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not use jQuery dimension methods on init.",
+        "references": []
+      },
+      {
+        "id": "9aeb05966416834eaa163e36ae21de2b48b96da2",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Title is no longer truncated in IE",
+        "references": []
+      },
+      {
+        "id": "87825a3c48cec882e91f9afe12572838be6ebb2c",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Properly fire liveChange event.",
+        "references": []
+      },
+      {
+        "id": "69ede8c89595f7c4736e6f61044c0ebcdad28188",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Remove not needed qunit test",
+        "references": []
+      },
+      {
+        "id": "329a67f7f1fe9ce39a28c244fe8cafeee03d3353",
+        "type": "FIX",
+        "text": " sap.m.TextArea: fix rendering error",
+        "references": []
+      },
+      {
+        "id": "84b60fbb64d4edb4e0851f6925bfc857a140dee7",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Tooltip rendering in IE11 corrected",
+        "references": []
+      }
+    ]
   }
 }

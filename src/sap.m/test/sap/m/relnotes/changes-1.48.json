@@ -1872,5 +1872,52 @@
         "references": []
       }
     ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "85fef0fe8b186ae1c99a1a805ebf9d4def39a17d",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Styling of span tags corrected for the text area",
+        "references": []
+      },
+      {
+        "id": "8f7fb09b9c3dbeacaa92d7c422b360fe79f8c131",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Left padding for MSIE corrected",
+        "references": []
+      },
+      {
+        "id": "39e4dd945b8d430a5b74601a85d433ab8c42394c",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Overflow button placement in compact mode corrected",
+        "references": []
+      },
+      {
+        "id": "2167449cf6e8c5857f9c04a083fa0ce02994aadc",
+        "type": "FIX",
+        "text": " sap.m.Panel: Flickering in IE when panel has scrollable content",
+        "references": []
+      },
+      {
+        "id": "1ddf5634c4c9db5ac4067ea1e56fec878dcb5e89",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Header image/icon now has correct ARIA reading",
+        "references": []
+      },
+      {
+        "id": "bb8ec83dbb70d6638852071e9b58d773866fe5c5",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Focus outline handled correctly for empty text value",
+        "references": []
+      },
+      {
+        "id": "50aafc9d39239f4b96f2cd7c2003a4d35b1454ae",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now checks if the increase and decrease buttons are created in constructor",
+        "references": []
+      }
+    ]
   }
 }

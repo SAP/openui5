@@ -2292,5 +2292,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.16": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "85cacfb605b0be2ea10c0bd1b2dde8404b566f84",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Styling of span tags corrected for the text area",
+        "references": []
+      },
+      {
+        "id": "d78f8d7759f9b08fefbf067e39ce99312c5e40a1",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Overflow button placement in compact mode corrected",
+        "references": []
+      },
+      {
+        "id": "f8d6bebfbb4120839e3ca887cf033b36ef10a757",
+        "type": "FIX",
+        "text": " sap.m.Panel: Flickering in IE when panel has scrollable content",
+        "references": []
+      },
+      {
+        "id": "951e12960b5f9179d17da50d5788e3749fbe90cd",
+        "type": "FIX",
+        "text": " sap.m.Popover: Fix failing qUnit tests.",
+        "references": []
+      }
+    ]
   }
 }

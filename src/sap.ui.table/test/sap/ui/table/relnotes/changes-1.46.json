@@ -547,5 +547,22 @@
         "references": []
       }
     ]
+  },
+  "1.46.11": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "5afd154c78f02e20939697c78fd7fd16a2211a36",
+        "type": "FIX",
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
+      },
+      {
+        "id": "a0baff0c2eeae5aa9b08ee99943a924c6d317014",
+        "type": "FIX",
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
+      }
+    ]
   }
 }

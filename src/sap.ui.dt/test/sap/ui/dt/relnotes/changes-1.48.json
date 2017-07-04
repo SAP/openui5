@@ -156,5 +156,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.4": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "ef73c6ad7c9f2dbd823a3c812eb5838ee8758c16",
+        "type": "FIX",
+        "text": " Revise ElementUtil.isValidForAggregation",
+        "references": []
+      }
+    ]
   }
 }
