@@ -69,14 +69,28 @@ sap.ui.require([
 	QUnit.test("URL Validation", function(assert) {
 		var aValidValues = [
 				"https://sapui5.hana.ondemand.com/resources/sap/ui/support/",
-				"http://my.server:12345/some/deep/path/sap/ui/support/"
+				"http://my.server:12345/some/deep/path/sap/ui/support/",
+				"https://www.sap.com:8080/sap/ui/support/",
+				"http://www.sap.com:8080/sap/ui/support/",
+				"http://120.128.20.5:8080/sap/ui/support/",
+				"http://localhost:8080/testsuite/resources/sap/ui/support/"
 			],
 			aInvalidValues = [
-				"ohSnapThisWontWork/sap/ui/support/",
+				"ohSnapThisWontWork/sap/ui/support/,",
 				"http://ohSnapThisWontWork",
 				"http:///ohSn@pThisWontWork/ !/§&/($ __/sap/ui/support/",
 				"/sap/ui/support/",
-				"john:doe@ftp://sap/ui/support/"
+				"john:doe@ftp://sap/ui/support/",
+				"http://:8080/sap/ui/support/",
+				"http://./..:8080///sap/ui/support/",
+				"localhost:80808/",
+				"http://sap.com",
+				"htt://www.sap.com",
+				"://www.sap.com",
+				"http://www.124.532.324.5",
+				"120.128.20.5:8080/sap/ui/support/",
+				"120.128.20.5/sap/ui/support/",
+				"localhost:80808/sap/ui/support/"
 			];
 
 		aValidValues.forEach(function (sValue) {
