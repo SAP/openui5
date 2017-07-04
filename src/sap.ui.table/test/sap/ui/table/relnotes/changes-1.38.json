@@ -993,5 +993,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.24": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "15162362f5f53b2c35abd87b15f3ab3b30eac12e",
+        "type": "FIX",
+        "text": " Table: Check the SelectAll CheckBox if all rows are selected",
+        "references": []
+      }
+    ]
   }
 }
