@@ -1266,6 +1266,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype._scrollTo = function (y, time) {
 		if (this._oScroller) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
+
+			if ((time === 0) && (y >= this._getSnapPosition())) {
+				this._toggleHeader(true);
+			}
+
 			this._oScroller.scrollTo(0, y, time);
 		}
 		return this;
