@@ -5011,6 +5011,34 @@
 		oMultiComboBox.destroy();
 		oModel.destroy();
 	});
+
+	QUnit.module("Tablet focus handling");
+
+	QUnit.test("it should not set the focus to the input", function(assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			tablet: true,
+			phone: false
+		});
+
+		var oMultiComboBox = new sap.m.MultiComboBox(),
+				oMultiComboBoxPicker = oMultiComboBox.getPicker(),
+				oFakeEvent = null,
+				oFocusinStub = this.stub(oMultiComboBox, "focus");
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oFakeEvent = { target: oMultiComboBox.getDomRef("arrow") };
+
+		oMultiComboBox.onfocusin(oFakeEvent);
+
+		assert.strictEqual(oFocusinStub.callCount, 0, "Focus should not be called");
+
+		oMultiComboBox.destroy();
+	});
+
+
 </script>
 </head>
 <body id="body" class="sapUiBody">
