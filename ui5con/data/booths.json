@@ -9,8 +9,10 @@
 			"speaker": "Martin Schaus",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>Concepts of upcoming features of UI5 to ease creation of building blocks and connection of controls to Rest Service Metadata.</p>"
-
+			"abstract": "<p>Concepts of upcoming features of UI5 to ease creation of building blocks and connection of controls to Rest Service Metadata.</p>",
+			"material": {
+				"Slides":"https://www.slideshare.net/secret/wMTHxj7t7qk9tU"
+			}
 		},
 		{
 			"type": "break",
@@ -55,7 +57,10 @@
 			"speaker": "Peter Muessig, Matthias Oßwald",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "Describes the components concepts and especially the concept of the descriptor with regards to performance improvements (manifest first, async loading, model preloading, ...)"
+			"abstract": "Describes the components concepts and especially the concept of the descriptor with regards to performance improvements (manifest first, async loading, model preloading, ...)",
+			"material": {
+				"Slides":"https://de.slideshare.net/PeterMuessig1/ui5con-2017-ui5-components-more-performance"
+			}
 		},
 		{
 			"type": "break",
@@ -66,7 +71,12 @@
 			"speaker": "Andreas Kunz",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>Have you developed your own UI5 controls? Yes? It’s getting even easier now! We are working on new ways to bind data within composite controls and to even declare controls by combining others in so-called &quot;FragmentControls&quot;! (straight from the lab, never seen before)</p>"
+			"abstract": "<p>Have you developed your own UI5 controls? Yes? It’s getting even easier now! We are working on new ways to bind data within composite controls and to even declare controls by combining others in so-called &quot;FragmentControls&quot;! (straight from the lab, never seen before)</p>",
+			"material": {
+				"Slides":"https://www.slideshare.net/andreaskunz/ui5con-2017-create-your-own-ui5-controls-whats-coming-up",
+				"GitHub":"https://github.com/akudev/UI5con2017-ControlDevNews",
+				"Demo":"https://rawgit.com/akudev/UI5con2017-ControlDevNews/master/www/index.html"
+			}
 		},
 		{
 			"type": "break",
@@ -77,7 +87,10 @@
 			"speaker": "Jiawei Cao, Malte Wedel",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>With UI5, you don’t need to struggle with the dilemmas of happiness which oblige you to choose one from time and money. You can have both of them! Oh, here we mean that you can have both time and money perfectly formatted across different locales.</p><p>In this session, we will present the most exciting features of core.format.NumberFormat and core.format.DateFormat with interactive examples. We will demonstrate how we tackle the seemingly easy but actual complicated task to perfectly format date and number across different locales.</p>"
+			"abstract": "<p>With UI5, you don’t need to struggle with the dilemmas of happiness which oblige you to choose one from time and money. You can have both of them! Oh, here we mean that you can have both time and money perfectly formatted across different locales.</p><p>In this session, we will present the most exciting features of core.format.NumberFormat and core.format.DateFormat with interactive examples. We will demonstrate how we tackle the seemingly easy but actual complicated task to perfectly format date and number across different locales.</p>",
+			"material": {
+				"Slides":"https://stopcoder.github.io/ui5con2017-formatters"
+			}
 		},
 		{
 			"type": "break",
@@ -138,7 +151,10 @@
 			"speaker": "Helmut Tammen",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>In this session you will see a virtual 3D tour around a company site. The employees of the customer wanted to have a graphical visualization of their huge factory site.</p><p>The users can now fly above their production areas. If they have found the production hall of interest they can walk inside and have a look at the production equipment. For further investigation they can dive deeper and deeper. There are two modes of visualization available. The Free Flight and the Egoshooter mode.</p><p>Furthermore the users can jump into SAP PM transactions, into OpenText documents and other systems to get more information related to the selected equipment.</p><p>All this is achieved by using SAPUI5 and the sap.ui.vk library. Cause the standard library did not completely fulfill the users requirements in respect to usability we enhanced the vk library using some technologies and ideas from WebGL and Three.js</p><p>Come to Booth 2 from 2:00 PM to 2:40 PM and I will show you whats possible with UI5 in the field of 3D visualization.</p>"
+			"abstract": "<p>In this session you will see a virtual 3D tour around a company site. The employees of the customer wanted to have a graphical visualization of their huge factory site.</p><p>The users can now fly above their production areas. If they have found the production hall of interest they can walk inside and have a look at the production equipment. For further investigation they can dive deeper and deeper. There are two modes of visualization available. The Free Flight and the Egoshooter mode.</p><p>Furthermore the users can jump into SAP PM transactions, into OpenText documents and other systems to get more information related to the selected equipment.</p><p>All this is achieved by using SAPUI5 and the sap.ui.vk library. Cause the standard library did not completely fulfill the users requirements in respect to usability we enhanced the vk library using some technologies and ideas from WebGL and Three.js</p><p>Come to Booth 2 from 2:00 PM to 2:40 PM and I will show you whats possible with UI5 in the field of 3D visualization.</p>",
+			"material": {
+				"Slides":"https://www.slideshare.net/HelmutTammen/ui5con-virtual-touraroundacompanysitewithui5"
+			}
 		},
 		{
 			"type": "break",

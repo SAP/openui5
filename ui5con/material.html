@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>UI5con@SAP 2017 Material</title>
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<script
+		src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+		crossorigin="anonymous"></script>
+</head>
+<body>
+<script type="text/javascript">
+</script>
+<button onclick="scrollToTop()" id="navTopButton" class="b-floatButton" title="Go to top"></button>
+<div class="b-page">
+	<div class="b-header mod_agenda mod_material">
+		<div class="b-bar"></div>
+		<div class="b-section">
+			<div class="b-list mod_mainmenu">
+				<div class="b-list__item">
+					<div class="b-font size_18">
+						<a href="index.html#section-info">INFO</a>
+					</div>
+				</div>
+				<div class="b-list__item">
+					<div class="b-font size_18">
+						<a href="index.html#section-what-where">WHAT &amp; WHERE</a>
+					</div>
+				</div>
+				<div class="b-list__item">
+					<div class="b-font size_18">
+						<a href="agenda.html?view=tracks">AGENDA</a>
+					</div>
+				</div>
+				<div class="b-list__item">
+					<div class="b-font size_18 color_yellow"><a href="material.html" class="active">SLIDES</a></div>
+				</div>
+			</div>
+		</div>
+		<div class="b-header__logo" onclick="location.href='index.html'">
+		</div>
+		<div class="b-ui align_center">
+			<div class="b-font size_36 color_yellow weight_light">SLIDES</div>
+		</div>
+	</div>
+	<script id="material-item-template" type="text/template">
+		<div class="b-list__item" id="{{id}}">
+			<div class="b-topic mod_speaker">
+				<div class="b-topic__title_block  b-ui margin_15">
+					<div class="b-topic__title b-font size_15 color_white b-ui margin_right_10 column_1">
+						{{title}}
+					</div>
+					<div class="b-topic__title_splitter b-font size_15 color_gray b-ui margin_right_10 {{show-company}}">
+						|
+					</div>
+
+					<div class="b-topic__title b-font size_15 color_gray b-ui column_2 {{show-company}}">
+						{{speaker}}
+					</div>
+					<div class="b-topic__title b-font size_15 color_gray b-ui column_3 {{show-session}}">
+						{{type}}
+					</div>
+				</div>
+				<div class="flex-container b-topic__content b-font color_gray">
+					{{material}}
+				</div>
+			</div>
+		</div>
+	</script>
+	<div class="b-section mod_agenda">
+		<div class="b-section-h">
+			<div class="b-list mod_material" id="material">
+			</div>
+		</div>
+	</div>
+	<div class="b-section mod_footer">
+		<div class="b-section-h">
+			<div class="b-ui align_center">
+				<div class="b-ui margin_10">&copy; SAP SE, made available under Apache License 2.0</div>
+				<a class="b-footerlink" href="http://openui5.org/impressum.html">Legal Disclosure/Impressum</a>
+				<a class="b-footerlink" href="http://global.sap.com/corporate-en/legal/privacy.epx">Privacy</a>
+				<a class="b-footerlink" href="http://www.sap.com/germany/about/legal/privacy.html">Datenschutz</a>
+				<a class="b-footerlink" href="http://openui5.org/ga_disclaimer.html">Google Analytics Disclaimer</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="popup" class="b-popup b-popup__hidden"></div>
+<div id="popupBlocklayer" class="b-popup b-popup__overlay"></div>
+
+<script src="core.js"></script>
+<script src="material.js"></script>
+</body>
+</html>
+
+
+
+
+

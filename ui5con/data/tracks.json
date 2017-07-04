@@ -24,7 +24,10 @@
 			"speaker": "Peter Muessig, Andreas Ecker",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>This session will provide an overview about the UI5 evolution topic. UI5 evolution is thought as the innovation project of OpenUI5/SAPUI5 which focuses on improving the performance, fixing architectural gaps and embracing Open Source technologies. Our challenge will be to do this innovation in a compatible way so that also existing applications will partially benefit.</p>"
+			"abstract":"<p>This session will provide an overview about the UI5 evolution topic. UI5 evolution is thought as the innovation project of OpenUI5/SAPUI5 which focuses on improving the performance, fixing architectural gaps and embracing Open Source technologies. Our challenge will be to do this innovation in a compatible way so that also existing applications will partially benefit.</p>",
+			"material": {
+				"Slides":"https://de.slideshare.net/PeterMuessig1/ui5-evolution-77465160"
+			}
 		},
 		{
 			"type": "break",
@@ -36,7 +39,10 @@
 			"speaker": "HP Seitz",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>Especially with the availability of SAP HANA Express Edition since September 2016 every developer has the possibility to do full-stack JavaScript development with SAP Backend. The session will demonstrate utilizing SAPUI5 on the SAP HANA Platform with HANA XSA (Node.js) using SAP Web IDE for SAP HANA and also an external IDE like WebStorm.</p><p>This is the logical successor of the session &quot;Full-stack JavaScript with OpenUI5&quot; about the NEMO stack from the first UI5Con in Frankfurt.</p>"
+			"abstract":"<p>Especially with the availability of SAP HANA Express Edition since September 2016 every developer has the possibility to do full-stack JavaScript development with SAP Backend. The session will demonstrate utilizing SAPUI5 on the SAP HANA Platform with HANA XSA (Node.js) using SAP Web IDE for SAP HANA and also an external IDE like WebStorm.</p><p>This is the logical successor of the session &quot;Full-stack JavaScript with OpenUI5&quot; about the NEMO stack from the first UI5Con in Frankfurt.</p>",
+			"material": {
+				"Slides":"https://www.slideshare.net/hpseitz/sapui5-in-sap-hana-xsa-sap-fullstack-javascript-development"
+			}
 		},
 		{
 			"type": "break",
@@ -48,7 +54,10 @@
 			"speaker": "Patric Ksinsik, Thomas Chadzelek",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>Why is there the new OData Version 4.0 and how does UI5 support for it differ from OData V2 support? Learn about the architecture principles of the UI5 OData V4 model, its feature set and the current implementation status.</p>"
+			"abstract":"<p>Why is there the new OData Version 4.0 and how does UI5 support for it differ from OData V2 support? Learn about the architecture principles of the UI5 OData V4 model, its feature set and the current implementation status.</p>",
+			"material": {
+				"Slides":"https://www.slideshare.net/PatricKsinsik/ui5con-presentation-on-ui5-odata-v4-model"
+			}
 		},
 		{
 			"type": "break",
@@ -72,7 +81,13 @@
 			"speaker": "Michael Graf, Emanuele Ricci",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>UI5 makes creation of custom controls and extensions of the framework very easy. With project \"UI5Lab\" - a community-driven initiative started in April - we created a concept for a public place to share, contribute, and consume these artifacts in your application projects. UI5Lab is an exceptional project where UI5 developers and the Community collaborate interactively on Slack, Trello, and GitHub to discuss best practices and drive the topic. We are jointly working on the project's mission and are actively looking for contributors in all areas of the project.<br/>Join @michadelic and @stermi to see the current status of the UI5Lab prototype and learn how to contribute to make it a success!</p>"
+			"abstract":"<p>UI5 makes creation of custom controls and extensions of the framework very easy. With project \"UI5Lab\" - a community-driven initiative started in April - we created a concept for a public place to share, contribute, and consume these artifacts in your application projects. UI5Lab is an exceptional project where UI5 developers and the Community collaborate interactively on Slack, Trello, and GitHub to discuss best practices and drive the topic. We are jointly working on the project's mission and are actively looking for contributors in all areas of the project.<br/>Join @michadelic and @stermi to see the current status of the UI5Lab prototype and learn how to contribute to make it a success!</p>",
+			"material": {
+				"Slides": "https://de.slideshare.net/michadelic/ui5consap-2017-slides-for-session-collaborators-wanted-for-ui5lab-a-custom-ui5-repo",
+				"GitHub": "https://github.com/UI5Lab/UI5Lab-central",
+				"Blog": "https://medium.com/@stermi/custom-control-101-sapui5-openui5-tipoftheday-customcontrol-fd51a85bbed3",
+				"Demo": "https://github.com/michadelic/ui5lab-ui5con-demo"
+			}
 		},
 		{
 			"type": "break",
@@ -132,7 +147,10 @@
 			"speaker": "Volker Buzek",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>It all started with a Proof-of-Concept of a UI5 hybrid application for discrete object recognition on mobile devices. In the course of the PoC, research led to several experiments around the key words in the session title: from real-time Image manipulation via visual object recognition up to Augmented Reality flavors, all of that within the UI5 framework. I'd like to show the results of the experiments and evaluate their sustainability and production readiness.</p>"
+			"abstract":"<p>It all started with a Proof-of-Concept of a UI5 hybrid application for discrete object recognition on mobile devices. In the course of the PoC, research led to several experiments around the key words in the session title: from real-time Image manipulation via visual object recognition up to Augmented Reality flavors, all of that within the UI5 framework. I'd like to show the results of the experiments and evaluate their sustainability and production readiness.</p>",
+			"material": {
+				"Slides":"https://www.metalodge.com/ui5con2017_SAP/"
+			}
 		},
 		{
 			"type": "break",
@@ -172,7 +190,12 @@
 			"speaker": " Tom Van Doorslaer",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>I admit, offline UI5 apps are not exactly &quot;Wow!&quot;. It's been done before, many many times.Except that,… well I've done it many times according to the SAP Standards and using the SMP SDK. It’s tedious, and comes at a cost.So I figured: I can improve this.</p><ul>  <li>First of all, if you're developing in openUI5, you don't always have an oData service in the backend. More often than not, you'll be limited to a JSON service. So the offline oData Plugin is not an option. More so since you need an SMP license and you might not be in an SAP environment.</li>  <li>Secondly, the SAP ERP data model is very ill-suited for data synchronizations. If you're not working on an SAP backend and you can still influence the data model, better do it right.</li>  <li>Thirdly, executing operations on UI5 models is cumbersome, since you need to access the entity using a path, pull the data out, call some function with the data, catch the result and move it back into the model-entity… Cumbersome…</li></ul><p>Bit by bit, we'll tackle each of these issues and introduce:</p><ul>  <li>Timesliced database</li>  <li>BusinessObjects (no, not businessObjects-analytics, but software represenations of a business object, as in OO)</li>  <li>BusinessObjectModel</li>  <li>Local DB</li>  <li>Synch-model</li></ul>"
+			"abstract":"<p>I admit, offline UI5 apps are not exactly &quot;Wow!&quot;. It's been done before, many many times.Except that,… well I've done it many times according to the SAP Standards and using the SMP SDK. It’s tedious, and comes at a cost.So I figured: I can improve this.</p><ul>  <li>First of all, if you're developing in openUI5, you don't always have an oData service in the backend. More often than not, you'll be limited to a JSON service. So the offline oData Plugin is not an option. More so since you need an SMP license and you might not be in an SAP environment.</li>  <li>Secondly, the SAP ERP data model is very ill-suited for data synchronizations. If you're not working on an SAP backend and you can still influence the data model, better do it right.</li>  <li>Thirdly, executing operations on UI5 models is cumbersome, since you need to access the entity using a path, pull the data out, call some function with the data, catch the result and move it back into the model-entity… Cumbersome…</li></ul><p>Bit by bit, we'll tackle each of these issues and introduce:</p><ul>  <li>Timesliced database</li>  <li>BusinessObjects (no, not businessObjects-analytics, but software represenations of a business object, as in OO)</li>  <li>BusinessObjectModel</li>  <li>Local DB</li>  <li>Synch-model</li></ul>",
+			"material": {
+				"Demo":"https://businesobjectmodel.fiddle.be/",
+				"GitHub":"https://github.com/FiddleBe/UI5-BusinessObjectModel",
+				"Slides":"https://github.com/FiddleBe/UI5-BusinessObjectModel/raw/master/UI5Con%20-%20How%20to%20tame%20a%20dragon.pdf"
+			}
 		},
 		{
 			"type": "break",
@@ -324,7 +347,10 @@
 			"speaker": "Manuel Blechschmidt",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>In this session we will use a custom component (https://github.com/ManuelB/openui5-ol/) that wraps the OpenLayers v3 API (http://www.openlayers.de) for showing a map. This map will be bound to a XMPPJsonPatchSyncModel (https://github.com/ManuelB/XMPPJSONPatchSyncModel) to make it possible to track other people in real time on the map.</p><p>You should pre-install the following software on your notebook:</p><ul>  <li>git</li>  <li>Your favorite IDE</li>  <li>ejabbered (a public server will be running on the speaker notebook)</li>  <li>A webserver e.g. (python -m SimpleHTTPServer 8000)</li></ul>"
+			"abstract":"<p>In this session we will use a custom component (https://github.com/ManuelB/openui5-ol/) that wraps the OpenLayers v3 API (http://www.openlayers.de) for showing a map. This map will be bound to a XMPPJsonPatchSyncModel (https://github.com/ManuelB/XMPPJSONPatchSyncModel) to make it possible to track other people in real time on the map.</p><p>You should pre-install the following software on your notebook:</p><ul>  <li>git</li>  <li>Your favorite IDE</li>  <li>ejabbered (a public server will be running on the speaker notebook)</li>  <li>A webserver e.g. (python -m SimpleHTTPServer 8000)</li></ul>",
+			"material": {
+				"Slides":"https://www.slideshare.net/ManuelB86/writing-a-real-time-geolocation-map-using-xmppjsonpatchsyncmodel-and-openlayers"
+			}
 		},
 		{
 			"type": "break",
@@ -336,7 +362,10 @@
 			"speaker": "DJ Adams",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>Functional programming techniques allow you to write solid-state code, more stable and easier to reason about. In this session you'll get the chance to learn what it's like to use functional programming techniques in your code. Rather than look at code on slides, you'll write it yourself, guided by the session lead, to get a feel for the code under your fingertips and how it works. We'll take some standard UI5 demo apps and replace sections by introducing mechanisms such as currying, partial application and point-free coding, with a healthy dose of list-orientation and immutability.</p>"
+			"abstract":"<p>Functional programming techniques allow you to write solid-state code, more stable and easier to reason about. In this session you'll get the chance to learn what it's like to use functional programming techniques in your code. Rather than look at code on slides, you'll write it yourself, guided by the session lead, to get a feel for the code under your fingertips and how it works. We'll take some standard UI5 demo apps and replace sections by introducing mechanisms such as currying, partial application and point-free coding, with a healthy dose of list-orientation and immutability.</p>",
+			"material": {
+				"Worksheet":"https://docs.google.com/document/d/1Nx2PFqObMtir0rSzjU804PAAVkC3j4lZTtfRRoLSocQ/edit"
+			}
 		},
 		{
 			"type": "break",
@@ -344,11 +373,14 @@
 			"abstract":""
 		},
 		{
-			"title": "FLP meets SAPUI5 – extending the Fiori Launchpad",
+			"title": "FLP Meets SAPUI5 – Extending the Fiori Launchpad",
 			"speaker": "Thilo Seidel",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>Let's build a simple FLP plugin (based on a UI5 Component) together. Once deployed to a FLP on Cloud Platform we will start to use the renderer extension api of FLP to place SAPUI5 controls into the FLP UI to improve the user experience of the Lauchpad AND learn that SAPUI5 and Fiori Launchpad are actually of the same kind.</p> <p>Prerequisites:</p> <ul>  <li>Laptop</li>  <li>an SAP CP trial account</li> </ul>"
+			"abstract":"<p>Let's build a simple FLP plugin (based on a UI5 Component) together. Once deployed to a FLP on Cloud Platform we will start to use the renderer extension api of FLP to place SAPUI5 controls into the FLP UI to improve the user experience of the Lauchpad AND learn that SAPUI5 and Fiori Launchpad are actually of the same kind.</p> <p>Prerequisites:</p> <ul>  <li>Laptop</li>  <li>an SAP CP trial account</li> </ul>",
+			"material": {
+				"GitHub":"https://github.com/thilo-dev/ui5con-flp-plugin"
+			}
 		},
 		{
 			"type": "break",
@@ -376,3 +408,5 @@
 		}
 	]
 }
+
+
