@@ -168,6 +168,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				return;
 			}
 
+			var bIsNeoAppJsonPresent = (sVersion.split(".").length === 3) && !(/-SNAPSHOT/.test(sVersion));
+
 			var oVersion = jQuery.sap.Version(sVersion);
 
 			var iMajor = oVersion.getMajor();
@@ -193,16 +195,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.script'],
 				sVersion = iMajor + "." + iMinor + "." + iPatch;
 			}
 
-			// replace the placeholders for major, minor and patch
-			sUrl = sUrl.replace("{major}", iMajor);
-			sUrl = sUrl.replace("{minor}", iMinor);
-			sUrl = sUrl.replace("{patch}", iPatch);
-
 			// if the URL should be resolved against the library the URL
 			// is relative to the library root path
+
+			var sBaseUrl = window.location.href,
+				regexBaseUrl = /\/\d.\d{1,2}.\d{1,2}\//;
+
 			if ($Doc.attr("resolve") == "lib") {
-				sUrl = oData.url + sUrl;
+				if (regexBaseUrl.test(sBaseUrl) || bIsNeoAppJsonPresent === false) {
+					sUrl = oData.url + sUrl;
+				} else {
+					sUrl = "{major}.{minor}.{patch}/" + oData.url + sUrl;
+				}
 			}
+
+			// replace the placeholders for major, minor and patch
+			sUrl = sUrl.replace(/\{major\}/g, iMajor);
+			sUrl = sUrl.replace(/\{minor\}/g, iMinor);
+			sUrl = sUrl.replace(/\{patch\}/g, iPatch);
 
 			// load the changelog/releasenotes
 			jQuery.ajax({
