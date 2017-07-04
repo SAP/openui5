@@ -192,9 +192,9 @@
 			"duration": 40,
 			"abstract":"<p>I admit, offline UI5 apps are not exactly &quot;Wow!&quot;. It's been done before, many many times.Except that,… well I've done it many times according to the SAP Standards and using the SMP SDK. It’s tedious, and comes at a cost.So I figured: I can improve this.</p><ul>  <li>First of all, if you're developing in openUI5, you don't always have an oData service in the backend. More often than not, you'll be limited to a JSON service. So the offline oData Plugin is not an option. More so since you need an SMP license and you might not be in an SAP environment.</li>  <li>Secondly, the SAP ERP data model is very ill-suited for data synchronizations. If you're not working on an SAP backend and you can still influence the data model, better do it right.</li>  <li>Thirdly, executing operations on UI5 models is cumbersome, since you need to access the entity using a path, pull the data out, call some function with the data, catch the result and move it back into the model-entity… Cumbersome…</li></ul><p>Bit by bit, we'll tackle each of these issues and introduce:</p><ul>  <li>Timesliced database</li>  <li>BusinessObjects (no, not businessObjects-analytics, but software represenations of a business object, as in OO)</li>  <li>BusinessObjectModel</li>  <li>Local DB</li>  <li>Synch-model</li></ul>",
 			"material": {
-				"Demo":"https://businesobjectmodel.fiddle.be/",
+				"Slides":"https://github.com/FiddleBe/UI5-BusinessObjectModel/raw/master/UI5Con%20-%20How%20to%20tame%20a%20dragon.pdf",
 				"GitHub":"https://github.com/FiddleBe/UI5-BusinessObjectModel",
-				"Slides":"https://github.com/FiddleBe/UI5-BusinessObjectModel/raw/master/UI5Con%20-%20How%20to%20tame%20a%20dragon.pdf"
+				"Demo":"https://businesobjectmodel.fiddle.be/"
 			}
 		},
 		{
@@ -280,7 +280,11 @@
 			"speaker": "Michael Dell, Jascha Quintern",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"Based on a public OpenUI5 boilerplate project (not published, yet) we want to share our experience and knowledge on how to setup and use a modern OpenUI5 app structure and build process by using Babel, Flow and Gulp (especially addressing non-SAP developers). Furthermore an overview of very useful best practices, does & don'ts and quick enhancements (like new useful methods in the app Component and BaseController) that should speed up your development workflow and that keep the app maintainable and scalable."
+			"abstract":"Based on a public OpenUI5 boilerplate project (not published, yet) we want to share our experience and knowledge on how to setup and use a modern OpenUI5 app structure and build process by using Babel, Flow and Gulp (especially addressing non-SAP developers). Furthermore an overview of very useful best practices, does & don'ts and quick enhancements (like new useful methods in the app Component and BaseController) that should speed up your development workflow and that keep the app maintainable and scalable.",
+			"material": {
+				"Slides":"https://www.slideshare.net/MichaelDell3/ui5consap-2017-a-modern-openui5-app-project-boilerplate",
+				"GitHub":"https://github.com/pulseshift/openui5-gulp-starter-kit"
+			}
 		},
 		{
 			"type": "break",
@@ -316,7 +320,10 @@
 			"speaker": "Matthias Oßwald",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>Get a deep dive into how theming in UI5 works and how to easily build your own themes.</p><p>This includes</p><ul>  <li>Introduction into Less.js</li>  <li>Theme structure and extension</li>  <li>Usage of Node.js based build tools to compile custom themes</li></ul>"
+			"abstract":"<p>Get a deep dive into how theming in UI5 works and how to easily build your own themes.</p><p>This includes</p><ul>  <li>Introduction into Less.js</li>  <li>Theme structure and extension</li>  <li>Usage of Node.js based build tools to compile custom themes</li></ul>",
+			"material": {
+				"Slides":"https://www.slideshare.net/MatthiasOwald1/ui5consap-2017-ui5-theming-explained"
+			}
 		},
 		{
 			"type": "break",
@@ -349,7 +356,8 @@
 			"duration": 60,
 			"abstract":"<p>In this session we will use a custom component (https://github.com/ManuelB/openui5-ol/) that wraps the OpenLayers v3 API (http://www.openlayers.de) for showing a map. This map will be bound to a XMPPJsonPatchSyncModel (https://github.com/ManuelB/XMPPJSONPatchSyncModel) to make it possible to track other people in real time on the map.</p><p>You should pre-install the following software on your notebook:</p><ul>  <li>git</li>  <li>Your favorite IDE</li>  <li>ejabbered (a public server will be running on the speaker notebook)</li>  <li>A webserver e.g. (python -m SimpleHTTPServer 8000)</li></ul>",
 			"material": {
-				"Slides":"https://www.slideshare.net/ManuelB86/writing-a-real-time-geolocation-map-using-xmppjsonpatchsyncmodel-and-openlayers"
+				"Slides":"https://www.slideshare.net/ManuelB86/writing-a-real-time-geolocation-map-using-xmppjsonpatchsyncmodel-and-openlayers",
+				"GitHub":"https://github.com/ManuelB/openui5-realtime-map"
 			}
 		},
 		{
