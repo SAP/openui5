@@ -19,6 +19,11 @@ sap.ui.define([
 
 		MoveControls.CHANGE_TYPE = "moveControls";
 
+		// Defines object which contains constants used in the handler
+		MoveControls.SOURCE_ALIAS = "source";
+		MoveControls.TARGET_ALIAS = "target";
+		MoveControls.MOVED_ELEMENTS_ALIAS = "movedElements";
+
 		MoveControls._checkConditions = function (oChange, oModifier, oView, oAppComponent) {
 			if (!oChange) {
 				throw new Error("No change instance");
@@ -205,6 +210,12 @@ sap.ui.define([
 					targetIndex : mElement.targetIndex
 				});
 			});
+
+			oChange.addDependentControl(mSpecificChangeInfo.source.id, MoveControls.SOURCE_ALIAS, mPropertyBag);
+			oChange.addDependentControl(mSpecificChangeInfo.target.id, MoveControls.TARGET_ALIAS, mPropertyBag);
+			oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function (element) {
+				return element.id;
+			}), MoveControls.MOVED_ELEMENTS_ALIAS, mPropertyBag);
 		};
 
 		return MoveControls;
