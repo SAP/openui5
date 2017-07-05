@@ -1626,7 +1626,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 
 			oFileName = oItem._getFileNameLink ? oItem._getFileNameLink() : oItem._getControl("sap.m.Link", {
 				id: sItemId + "-ta_filenameHL",
-				press: [oThat, this._triggerLink, this]
+				press: this._onFilenamePress.bind(this, oItem, oThat)
 			}, "FileNameLink");
 			oFileName.setEnabled(bEnabled);
 			oFileName.addStyleClass("sapMUCFileName");
@@ -1668,6 +1668,21 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 				oFileNameEditBox.setProperty("maxLength", iMaxLength - oFile.extension.length, true);
 			}
 			return oFileNameEditBox;
+		}
+	};
+
+	/**
+	 * Selects press handler depending on listener
+	 * @param {sap.m.UploadCollectionItem} item The item being processed
+	 * @param {sap.m.UploadCollection} context Context of the link
+	 * @param {sap.ui.base.Event} event The event object of the press event
+	 * @private
+	 */
+	UploadCollection.prototype._onFilenamePress = function(item, context, event) {
+		if (item.hasListeners("press")) {
+			item.firePress();
+		} else {
+			this._triggerLink(event, context);
 		}
 	};
 
