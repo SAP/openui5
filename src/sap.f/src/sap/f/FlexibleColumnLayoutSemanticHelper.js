@@ -69,6 +69,13 @@ sap.ui.define([
 			oSettings.defaultThreeColumnLayoutType : LT.ThreeColumnsMidExpanded;
 		this._mode = ["Normal", "MasterDetail", "SingleColumn"].indexOf(oSettings.mode) !== -1 ?
 			oSettings.mode : "Normal";
+
+		// Initial number of columns (1 by default, can be set to 2 for MasterDetail or Normal modes only)
+		var iInitial = oSettings.initialColumnsCount ? parseInt(oSettings.initialColumnsCount, 10) : 1;
+		if (iInitial < 1 || iInitial > 2 || this._mode === "SingleColumn") {
+			iInitial = 1;
+		}
+		this._initialColumnsCount = iInitial;
 	};
 
 	/**
@@ -174,12 +181,17 @@ sap.ui.define([
 	FlexibleColumnLayoutSemanticHelper.prototype.getNextUIState = function (iNextLevel) {
 
 		var sCurrentLayout = this._oFCL.getLayout(),
+			iInitial = this._initialColumnsCount,
 			sNextLayout;
 
 		// Level 0 - the first page
 		if (iNextLevel === 0) {
-			// From any layout, going to level 0 is always showing the begin column only
-			sNextLayout = LT.OneColumn;
+			// From any layout, going to level 0 is always showing the begin column only, unless initialColumnsCount=2. Then a 2-column layout is suggested even for level 0
+			if (iInitial === 2) {
+				sNextLayout = this._defaultTwoColumnLayoutType;
+			} else {
+				sNextLayout = LT.OneColumn;
+			}
 		}
 
 		// Level 1 - the second page
