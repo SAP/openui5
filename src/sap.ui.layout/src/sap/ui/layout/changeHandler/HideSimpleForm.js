@@ -105,6 +105,7 @@ sap.ui.define([
 		if (oSpecificChangeInfo.removedElement && oSpecificChangeInfo.removedElement.id) {
 			var oStableElement = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id));
 			oChange.content.elementSelector = JsControlTreeModifier.getSelector(oStableElement, mPropertyBag.appComponent);
+			oChangeWrapper.addDependentControl(oStableElement, "elementSelector", mPropertyBag);
 		} else {
 			throw new Error("oSpecificChangeInfo.removedElement.id attribute required");
 		}

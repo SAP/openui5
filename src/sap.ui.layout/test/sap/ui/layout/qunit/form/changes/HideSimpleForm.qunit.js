@@ -118,7 +118,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			};
 
 			this.mPropertyBag = {
-				appComponent: this.oMockedComponent
+				appComponent: this.oMockedComponent,
+				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
 			};
 
 			var oChange = {
@@ -250,6 +251,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		assert.equal(oChange.content.elementSelector.id, "Label1", "elementSelector.id has been added to the change");
 		assert.ok(oChange.content.elementSelector.idIsLocal, "elementSelector.idIsLocal has been added to the change");
+		assert.equal(oChangeWrapper.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel1.getId(), "elementSelector is part of dependent selector");
 	});
 
 	QUnit.test('when calling completeChangeContent without removedElement.id', function (assert) {
