@@ -22,6 +22,8 @@
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	ShellRenderer.render = function(rm, oControl) {
+		var sTitleLevel = (oControl.getTitleLevel() === sap.ui.core.TitleLevel.Auto) ? sap.ui.core.TitleLevel.H1 : oControl.getTitleLevel();
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapMShell");
@@ -64,9 +66,10 @@
 
 		// header title
 		if (oControl.getTitle()) {
-			rm.write("<h1 id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
+			rm.write("<" + sTitleLevel);
+			rm.write(" id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
 			rm.writeEscaped(oControl.getTitle());
-			rm.write("</h1>");
+			rm.write("</" + sTitleLevel + ">");
 		}
 
 		// header right area
@@ -91,11 +94,11 @@
 
 
 		// content
-		rm.write("<section class='sapMShellContent sapMShellGlobalInnerBackground' id='" + oControl.getId() + "-content' data-sap-ui-root-content='true'>");
+		rm.write("<div class='sapMShellContent sapMShellGlobalInnerBackground' id='" + oControl.getId() + "-content' data-sap-ui-root-content='true'>");
 
 		rm.renderControl(oControl.getApp());
 
-		rm.write("</section></div></div>");
+		rm.write("</div></div></div>");
 	};
 
 	ShellRenderer.getLogoImageHtml = function(oControl) {
