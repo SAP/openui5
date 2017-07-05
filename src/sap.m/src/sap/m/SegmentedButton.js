@@ -451,11 +451,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	})();
 
 	/**
-	 * Gets the selectedKey and is usable only when the control is initiated with the items aggregation.
+	 * Gets the <code>selectedKey</code> and is usable only when the control is initiated with the <code>items</code> aggregation.
 	 *
 	 * @return {string} Current selected key
+	 * @public
 	 * @override
-	 * @since 1.28.0
+	 * @since 1.28
 	 */
 	SegmentedButton.prototype.getSelectedKey = function() {
 		var aButtons = this.getButtons(),
@@ -475,12 +476,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the selectedKey and is usable only when the control is initiated with the items aggregation.
+	 * Sets the <code>selectedKey</code> and is usable only when the control is initiated with the <code>items</code> aggregation.
 	 *
 	 * @param {string} sKey The key of the button to be selected
-	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
+	 * @returns {sap.m.SegmentedButton} <code>this</code> pointer for chaining
+	 * @public
 	 * @override
-	 * @since 1.28.0
+	 * @since 1.28
 	 */
 	SegmentedButton.prototype.setSelectedKey = function(sKey) {
 		var aButtons = this.getButtons(),
