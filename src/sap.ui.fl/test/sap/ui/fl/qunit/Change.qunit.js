@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
-				selector: {"persistenceKey": "control1"},
+				selector: {"id": "control1"},
 				conditions: {},
 				context: [],
 				content: {something: "createNewVariant"},
@@ -210,7 +210,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			isVariant: true,
 			packageName: "/UIF/LREP",
 			namespace: "apps/smartFilterBar/adapt/oil/changes/",
-			selector: {"persistenceKey": "control1"},
+			selector: {"id": "control1"},
 			id: "0815_1",
 			dependentSelector: {
 				source: {
@@ -239,7 +239,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oCreatedFile.packageName, "/UIF/LREP");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
-		assert.deepEqual(oCreatedFile.selector, {"persistenceKey": "control1"});
+		assert.deepEqual(oCreatedFile.selector, {"id": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
 		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
 	});
@@ -263,7 +263,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			changeType: "filterVariant",
 			component: "smartFilterBar",
 			content: {something: "createNewVariant"},
-			selector: {"persistenceKey": "control1"},
+			selector: {"id": "control1"},
 			layer: "VENDOR",
 			texts: {
 				variantName: {
@@ -486,7 +486,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			createId: function (sId) {return sId + "---local";}
 		};
 		var aDependentIdList = oInstance.getDependentIdList(oAppComponent);
-		assert.equal(aDependentIdList.length, 9);
+		assert.equal(aDependentIdList.length, 10);
 	});
 
 	QUnit.test("Operations add and get dependent control do not break when working with old changes (without dependentSelector)", function(assert) {
@@ -549,7 +549,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oDependentControl, undefined);
 
 		var aDependentIdList = oInstance.getDependentIdList({});
-		assert.equal(aDependentIdList.length, 0);
+		assert.equal(aDependentIdList.length, 1);
 
 		oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
 		oInstance.addDependentControl(oControl, "anotherSource", {modifier: JsControlTreeModifier});
@@ -567,7 +567,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			createId: function (sId) {return sId + "---local";}
 		};
 		aDependentIdList = oInstance.getDependentIdList(oAppComponent);
-		assert.equal(aDependentIdList.length, 7);
+		assert.equal(aDependentIdList.length, 8);
 	});
 
 }(sap.ui.fl.Change, sap.ui.fl.Utils, sap.ui.base.EventProvider, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.JsControlTreeModifier));

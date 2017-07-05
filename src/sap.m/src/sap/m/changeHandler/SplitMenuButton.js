@@ -15,6 +15,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 		 */
 		var SplitMenuButton = { };
 
+		var SOURCE_CONTROL = "sourceControl";
+
 		/**
 		 * Split a MenuButton into separate Buttons
 		 *
@@ -34,9 +36,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 
 			var oChangeDefinition = oChange.getDefinition(),
 				oModifier = mPropertyBag.modifier,
-				oAppComponent = mPropertyBag.appComponent,
 				oView = FlexUtils.getViewForControl(oControl),
-				oSourceControl = oModifier.bySelector(oChangeDefinition.content.sourceSelector, oAppComponent),
+				oSourceControl = oChange.getDependentControl(SOURCE_CONTROL, mPropertyBag),
 				oMenu = oModifier.getAggregation(oSourceControl, "menu"),
 				aMenuItems = oModifier.getAggregation(oMenu, "items"),
 				oBarAggregation = oSourceControl.sParentAggregationName,
@@ -124,6 +125,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 			}
 
 			oChangeDefinition.content.newElementIds = oSpecificChangeInfo.newElementIds;
+			oChange.addDependentControl(oSpecificChangeInfo.sourceControlId, SOURCE_CONTROL, mPropertyBag);
 			oChangeDefinition.content.sourceSelector = oModifier.getSelector(oSpecificChangeInfo.sourceControlId, oAppComponent);
 		};
 
