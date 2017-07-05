@@ -450,10 +450,11 @@
 
 	test("Background is transparent", function() {
 
-		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge ? "transparent" : "rgba(0, 0, 0, 0)";
-
 		equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
-		equal(jQuery.sap.byId("ohc1").css("background-color"), transparentCssString, "Background color is transparent");
+
+		// in some browsers css("background-color") instead of "transparent" returns "rgba(0, 0, 0, 0)"
+		var bBackgroundTransparent = (jQuery.sap.byId("ohc1").css("background-color") == "transparent") || (jQuery.sap.byId("ohc1").css("background-color") == "rgba(0, 0, 0, 0)");
+		assert.ok(bBackgroundTransparent, "Background color is transparent");
 	});
 
 	test("Background is solid", function() {
