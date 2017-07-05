@@ -45,10 +45,10 @@
 					iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
 					break;
 				case "UxAP-objectPageContentScrolling--thirdSection":
-					iExpectedPosition = oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection3-1"].positionTop - 2;
+					iExpectedPosition = oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection3-1"].positionTop;
 					break;
 				case "UxAP-objectPageContentScrolling--subsection3-1":
-					iExpectedPosition = oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection3-1"].positionTop - 2;
+					iExpectedPosition = oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection3-1"].positionTop;
 					break;
 				default:
 					iExpectedPosition = oObjectPage._oSectionInfo[section].positionTop;
@@ -59,6 +59,90 @@
 		}
 		clock.restore();
 		oObjectPageContentScrollingView.destroy();
+	});
+
+	QUnit.test("Rerendering the page preserves the scroll position", function (assert) {
+
+		var done = assert.async();
+		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSecondSection = ObjectPageContentScrollingView.byId("secondSection"),
+			iScrollPositionBeforeRerender,
+			iScrollPositionAfterRerender;
+
+		oObjectPage.setSelectedSection(oSecondSection.getId());
+
+		ObjectPageContentScrollingView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function() {
+			iScrollPositionBeforeRerender = oObjectPage._$opWrapper[0].scrollTop;
+			oObjectPage.rerender();
+			setTimeout(function() {
+				iScrollPositionAfterRerender = oObjectPage._$opWrapper[0].scrollTop;
+				assert.strictEqual(iScrollPositionAfterRerender, iScrollPositionBeforeRerender, "scrollPosition is preserved");
+				ObjectPageContentScrollingView.destroy();
+				done();
+			}, 1000); // throttling delay
+		}, 1000); //dom calc delay
+	});
+
+	QUnit.test("ScrollToSection in 0 time scrolls to correct the scroll position", function (assert) {
+
+		var done = assert.async();
+		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			iScrollPosition,
+			iExpectedPosition;
+
+		ObjectPageContentScrollingView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		setTimeout(function() {
+			oObjectPage.scrollToSection("UxAP-objectPageContentScrolling--secondSection", 0);
+			setTimeout(function() {
+				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
+				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
+				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
+				ObjectPageContentScrollingView.destroy();
+				done();
+			}, 1000); // throttling delay
+		}, 1000); //dom calc delay
+	});
+
+	QUnit.test("Deleting the bellow section preserves the scroll position", function (assert) {
+
+		var done = assert.async();
+		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSecondSection = ObjectPageContentScrollingView.byId("secondSection"),
+			oThirdSection = ObjectPageContentScrollingView.byId("thirdSection"),
+			iScrollPositionBeforeRemove,
+			iScrollPositionAfterRemove;
+
+		oObjectPage.setSelectedSection(oSecondSection.getId());
+
+		ObjectPageContentScrollingView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function() {
+			oObjectPage.removeSection(oThirdSection);
+			iScrollPositionBeforeRemove = oObjectPage._$opWrapper[0].scrollTop;
+			setTimeout(function() {
+				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
+				assert.strictEqual(iScrollPositionAfterRemove, iScrollPositionBeforeRemove, "scrollPosition is preserved");
+				ObjectPageContentScrollingView.destroy();
+				oThirdSection.destroy();
+				done();
+			}, 1000); // throttling delay
+		}, 1000); //dom calc delay
 	});
 
 	QUnit.test("Should keep ObjectPageHeader in \"Expanded\" mode on initial load", function (assert) {
