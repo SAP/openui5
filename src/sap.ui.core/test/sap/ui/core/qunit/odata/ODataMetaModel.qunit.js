@@ -379,8 +379,7 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
-		',
-		sFARMetadataInvalid = '\
+		', sFARMetadataInvalid = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <!--\
 	fictitious empty response for \
@@ -407,8 +406,7 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
-		',
-		sMultipleValueListAnnotations = '\
+		', sMultipleValueListAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0"\
 	xmlns="http://docs.oasis-open.org/odata/ns/edm"\
@@ -432,8 +430,7 @@ sap.ui.require([
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
-		',
-		sValueListMetadata = '\
+		', sValueListMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
@@ -484,7 +481,8 @@ sap.ui.require([
 			"/fake/emptyAnnotations" : {headers : mHeaders, message : sEmptyAnnotations},
 			"/fake/multipleValueLists" :
 				{headers : mHeaders, message : sMultipleValueListAnnotations},
-			"/fake/valueListMetadata/$metadata" : {headers : mHeaders, message : sValueListMetadata},
+			"/fake/valueListMetadata/$metadata" :
+				{headers : mHeaders, message : sValueListMetadata},
 			"/FAR_CUSTOMER_LINE_ITEMS/annotations" :
 				{headers : mHeaders, message : sCustomerAnnotations},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" :
@@ -1910,20 +1908,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getODataEntityContainer", function (assert) {
+	QUnit.test("getODataEntityContainer (as object or as path)", function (assert) {
 		return withMetaModel(assert, function (oMetaModel) {
-			assert.strictEqual(oMetaModel.getODataEntityContainer(),
-				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0"));
+			var sPath = "/dataServices/schema/0/entityContainer/0",
+				oEntityContainer = oMetaModel.getObject(sPath);
+
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), oEntityContainer);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), sPath);
+
+			// find the single container even if it is not marked as default
+			delete oEntityContainer.isDefaultEntityContainer;
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), oEntityContainer);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), sPath);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getODataEntityContainer as path", function (assert) {
+	QUnit.test("getODataEntityContainer (multiple containers)", function (assert) {
 		return withMetaModel(assert, function (oMetaModel) {
-			assert.strictEqual(oMetaModel.getODataEntityContainer(true),
-				"/dataServices/schema/0/entityContainer/0");
+
+			// multiple entity containers within single schema
+			oMetaModel.getObject("/dataServices").schema = [{
+				entityContainer : [{name : "A"}, {name : "B"}],
+				namespace : "ignored"
+			}];
+
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), null);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), undefined);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getODataEntityContainer (multiple schemas)", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+
+			// single entity container, but multiple schemas
+			oMetaModel.getObject("/dataServices").schema = [{
+				entityContainer : [{name : "ignored"}],
+				namespace : "A"
+			}, {
+				namespace : "B"
+			}];
+
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), null);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), undefined);
+		});
+	});
+	// Note: see sEmptyDataServices and sEmptySchema for cases w/o schemas or w/o entity containers
 
 	//*********************************************************************************************
 	QUnit.test("getODataEntitySet", function (assert) {
