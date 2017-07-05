@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/SharedModel",
 	"sap/ui/support/supportRules/ui/external/ElementTree",
 	"sap/ui/support/supportRules/IssueManager",
-	"sap/ui/support/supportRules/WCBChannels"
-], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames) {
+	"sap/ui/support/supportRules/WCBChannels",
+	"sap/ui/support/supportRules/ui/models/formatter"
+], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter) {
 	"use strict";
 
 	var mIssueSettings = {
@@ -37,6 +38,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.support.supportRules.ui.controllers.Issues", {
 		ISSUES_LIMIT : 1000,
+		formatter: formatter,
 		onInit: function () {
 
 			this.model = SharedModel;
