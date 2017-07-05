@@ -89,17 +89,6 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
-	QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes having no selector", function(assert) {
-
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [{
-			fileType: "change"
-		}]}}));
-
-		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
-			assert.strictEqual(changes.length, 0, "No changes shall be returned");
-		});
-	});
-
 	QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
@@ -226,21 +215,26 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			},
 			{
 				fileType: "change",
-				changeType: "renameGroup",
+				changeType: "defaultVariant",
 				layer: "CUSTOMER",
-				selector: { id: "controlId1" }
+				selector: {}
 			},
 			{
 				fileType: "change",
-				changeType: "removeField",
+				changeType: "renameGroup",
 				layer: "CUSTOMER",
-				selector: {}
+				selector: { id: "controlId1" }
 			},
 			{
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER",
 				selector: { persistencyKey: "SmartFilter_Explored" }
+			},
+			{
+				fileType: "variant",
+				changeType: "filterBar",
+				layer: "CUSTOMER"
 			},
 			{
 				fileType: "variant",
@@ -255,20 +249,27 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			},
 			{
 				fileType: "somethingelse"
+			},
+			{
+				fileType: "change",
+				changeType: "appdescr_changes",
+				layer: "CUSTOMER"
 			}
 		]}}));
 
 
 		return this.oChangePersistence.getChangesForComponent({includeVariants : true}).then(function(changes) {
-			assert.strictEqual(changes.length, 4, "both standard UI changes and smart variants were returned");
+			assert.strictEqual(changes.length, 5, "both standard UI changes and smart variants were returned");
 			assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
 			assert.ok(changes[0].getChangeType() === "defaultVariant", "and change type defaultVariant");
 			assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
 			assert.ok(changes[1].getChangeType() === "renameGroup", "and change type renameGroup");
 			assert.ok(changes[2]._oDefinition.fileType === "variant", "third change has file type variant");
 			assert.ok(changes[2].getChangeType() === "filterBar", "and change type filterBar");
-			assert.ok(changes[3]._oDefinition.fileType === "change", "second change has file type change");
+			assert.ok(changes[3]._oDefinition.fileType === "change", "forth change has file type change");
 			assert.ok(changes[3].getChangeType() === "codeExt", "and change type codeExt");
+			assert.ok(changes[4]._oDefinition.fileType === "change", "fifth change has file type change");
+			assert.notOk(changes[4].getSelector() , "and does not have selector");
 		});
 	});
 

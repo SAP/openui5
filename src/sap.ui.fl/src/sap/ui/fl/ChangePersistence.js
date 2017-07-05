@@ -92,8 +92,8 @@ sap.ui.define([
 	 *
 	 * All changes need to be matched with current active contexts;
 	 * only changes whose <code>fileType</code> is 'change' and whose <code>changeType</code> is different from 'defaultVariant' are valid;
-	 * if <code>bIncludeVariants</code> parameter is true, the changes with 'variant' <code>fileType</code> or 'defaultVariant' <code>changeType</code> are also valid;
-	 * standard UI changes must have a selector <code>id</code>, smart variants must have a selector <code>persistencyKey</code>.
+	 * if <code>bIncludeVariants</code> parameter is true, the changes with 'variant' <code>fileType</code> or 'defaultVariant' <code>changeType</code> are also valid
+	 * if it has a selector <code>persistencyKey</code>.
 	 *
 	 * @param {sap.ui.fl.context.Context[]} aActiveContexts - Array of current active contexts
 	 * @param {boolean} [bIncludeVariants] - Indicates that smart variants shall be included
@@ -105,23 +105,16 @@ sap.ui.define([
 	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeContent) {
 
 		function _isValidFileType () {
-			return (oChangeContent.fileType === "change") || (oChangeContent.fileType === "variant" && bIncludeVariants);
+			if (bIncludeVariants) {
+				return (oChangeContent.fileType === "change") || (oChangeContent.fileType === "variant");
+			}
+			return (oChangeContent.fileType === "change") && (oChangeContent.changeType !== "defaultVariant");
 		}
 
 		function _isValidSelector () {
-			if (!oChangeContent.selector) {
-				return false;
-			}
-			if (!bIncludeVariants) {
-				if (!oChangeContent.selector.id) {
-					return false;
-				}
-			} else {
+			if (bIncludeVariants) {
 				if ((oChangeContent.fileType === "variant") || (oChangeContent.changeType === "defaultVariant")){
-					return !!oChangeContent.selector.persistencyKey;
-				}
-				if ((oChangeContent.fileType === "change") && (oChangeContent.changeType !== "defaultVariant")) {
-					return !!oChangeContent.selector.id;
+					return oChangeContent.selector && oChangeContent.selector.persistencyKey;
 				}
 			}
 			return true;
@@ -359,7 +352,11 @@ sap.ui.define([
 		});
 
 		function changesHavingCorrectViewPrefix(oChange) {
-			var sSelectorId = oChange.getSelector().id;
+			var oSelector = oChange.getSelector();
+			if (!oSelector){
+				return false;
+			}
+			var sSelectorId = oSelector.id;
 			if (!sSelectorId || !mPropertyBag) {
 				return false;
 			}
