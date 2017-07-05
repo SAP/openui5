@@ -241,8 +241,10 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			oAggregationDesignTimeMetadata = oParentElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName);
 		}
 
-		var oSourceAggregationOverlay = oMovedOverlay.getParent();
-		if (oTargetAggregationOverlay !== oSourceAggregationOverlay) {
+		var aTargetAggregationItems = ElementUtil.getAggregation(oTargetAggregationOverlay.getElementInstance(), oTargetAggregationOverlay.getAggregationName());
+		var iIndex = aTargetAggregationItems.indexOf(oMovedElement);
+		// Don't do anything when the element is already in the aggregation and is the last element
+		if (!(iIndex > -1 && iIndex === aTargetAggregationItems.length - 1)) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}
