@@ -25,7 +25,7 @@
                 <headerContent>
                     <layout:VerticalLayout id="experimentalAPIStripContainer">
                         <m:MessageStrip
-                                text="Experimental features are not part of the officially delivered scope that SAP is going to guarantee for future releases – means experimental Features may be changed by SAP at any time for any reason without notice. The Experimental features are NOT FOR PRODUCTION USE.\n\nYou may not demonstrate, test, examine, evaluate or otherwise use the Experimental Features in a live operating environment or with data that has not been sufficiently backed up.\n\nThe purpose of Experimental features is to get feedback at an early point of time allowing customers/partners to influence the future product accordingly. Please use the SDN Developer Center http://scn.sap.com/community/developer-center/front-end to provide feedback accepting that Intellectual Property rights of the contributions or derivative works shall remain the exclusive property of SAP.\n\nFor general information about Experimental features, please check the Compatibility Rules"
+                                text="Experimental features are not part of the officially delivered scope that SAP is going to guarantee for future releases – means experimental Features may be changed by SAP at any time for any reason without notice. The Experimental features are NOT FOR PRODUCTION USE. You may not demonstrate, test, examine, evaluate or otherwise use the Experimental Features in a live operating environment or with data that has not been sufficiently backed up. The purpose of Experimental features is to get feedback at an early point of time allowing customers/partners to influence the future product accordingly. Please use the SDN Developer Center http://scn.sap.com/community/developer-center/front-end to provide feedback accepting that Intellectual Property rights of the contributions or derivative works shall remain the exclusive property of SAP. For general information about Experimental features, please check the Compatibility Rules"
                                 type="Warning"
                                 showIcon="true"/>
                     </layout:VerticalLayout>
@@ -38,7 +38,7 @@
                         <subSections>
                             <ObjectPageSubSection>
                                 <blocks>
-                                    <m:List items="{experimentalAPIs>apis}"
+                                    <m:List items="{ path: 'experimentalAPIs>apis', templateShareable: 'false'}"
                                             showSeparators="Inner">
                                         <m:items>
                                             <m:FeedListItem
@@ -50,7 +50,8 @@
                                                     senderPress="onApiPress"
                                                     app:control="{experimentalAPIs>control}"
                                                     app:entity="{experimentalAPIs>entityName}"
-                                                    app:type="{experimentalAPIs>type}"/>
+                                                    app:type="{experimentalAPIs>type}"
+                                                    app:static="{experimentalAPIs>static}"/>
                                         </m:items>
                                     </m:List>
                                 </blocks>

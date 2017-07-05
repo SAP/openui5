@@ -94,26 +94,6 @@ sap.ui.define([
 				}
 			},
 
-			onJSDocLinkClick: function (oEvt, sRoute, oComponent) {
-				var aLibsData = oComponent.getModel("libsData").getData(),
-					sType = oEvt.target.getAttribute("data-sap-ui-target");
-
-				if (!sType) {
-					return;
-				}
-
-				if (sType.indexOf('#') >= 0 ) {
-					sType = sType.slice(0, sType.indexOf('#'));
-				}
-
-				if (!aLibsData[sType]) {
-					sType = sType.slice(0, sType.lastIndexOf("."));
-				}
-
-				oComponent.getRouter().navTo(sRoute, {id : sType}, false);
-				oEvt.preventDefault();
-			},
-
 			searchResultsButtonVisibilitySwitch : function(oButton) {
 				var sPreviousHash = History.getInstance().getPreviousHash();
 				if (sPreviousHash && sPreviousHash.indexOf("search/") === 0) {
