@@ -14,7 +14,7 @@ sap.ui.define([
 	"./Bar",
 	"./List",
 	"./StandardListItem",
-	"./ListType",
+	"./library",
 	"./Text",
 	"./SegmentedButton",
 	"./Page",
@@ -24,8 +24,11 @@ sap.ui.define([
 	"./MessageItem",
 	"./GroupHeaderListItem"
 ], function (jQuery, Control, IconPool, HTML, Icon, Button, Toolbar, ToolbarSpacer, Bar, List, StandardListItem,
-			 ListType, Text, SegmentedButton, Page, NavContainer, Link, Popover, MessageItem, GroupHeaderListItem) {
+			 library, Text, SegmentedButton, Page, NavContainer, Link, Popover, MessageItem, GroupHeaderListItem) {
 	"use strict";
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
 
 	/**
 	 * Constructor for a new MessageView

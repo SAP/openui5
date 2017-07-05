@@ -3,9 +3,12 @@
  */
 
 // Provides control sap.f.DynamicPageHeader.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/InvisibleText", "sap/m/ButtonType", "sap/m/ToggleButton"],
-	function (jQuery, library, Control, InvisibleText, ButtonType, ToggleButton) {
+sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/core/InvisibleText", "sap/m/library", "sap/m/ToggleButton"],
+	function (jQuery, library, Control, InvisibleText, mobileLibrary, ToggleButton) {
 		"use strict";
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = mobileLibrary.ButtonType;
 
 		/**
 		 * Constructor for a new <code>DynamicPageHeader</code>.
@@ -220,5 +223,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		return DynamicPageHeader;
-
 	}, /* bExport= */ false);

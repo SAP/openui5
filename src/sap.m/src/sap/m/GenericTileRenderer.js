@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
-	function(LoadState, GenericTileScope) {
+sap.ui.define([ "sap/m/library" ],
+	function(library) {
 	"use strict";
+
+	// shortcut for sap.m.GenericTileScope
+	var GenericTileScope = library.GenericTileScope;
+
+	// shortcut for sap.m.LoadState
+	var LoadState = library.LoadState;
 
 	/**
 	 * GenericTile renderer.

@@ -8,15 +8,18 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/ToolbarSpacer",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	"./SemanticConfiguration",
 	"./SemanticContainer"
 ], function(jQuery,
 			ToolBarSpacer,
-			ButtonType,
+			mobileLibrary,
 			SemanticConfiguration,
 			SemanticContainer) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	* Constructor for a <code>sap.f.semantic.SemanticFooter</code>.
