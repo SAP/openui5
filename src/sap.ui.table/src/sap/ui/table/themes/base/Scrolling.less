@@ -29,6 +29,7 @@
 .sapUiTableVSb {
 	overflow-x: hidden;
 	overflow-y: scroll;
+	-webkit-overflow-scrolling: auto;
 	background-color: @sapUiListBackground;
 	z-index: 4; /* Ensure Scrollbar before Resize/Reorder bars*/
 }
@@ -196,6 +197,7 @@ html[data-sap-ui-browser^="ed"] {
 	position: relative;
 	overflow-x: scroll;
 	overflow-y: hidden;
+	-webkit-overflow-scrolling: auto;
 	border-right: 1px solid transparent; /* Simulates the right border of the table cells in the content area */
 	background-color: @sapUiListBackground;
 }
@@ -291,7 +293,7 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 	.sapUiTableHSb {
 
 		&::-webkit-scrollbar {
-			-webkit-appearence: none;
+			-webkit-appearance: none;
 			width: @_sap_ui_table_Scrolling_ScrollBarSizeMOBILE;
 			height: @_sap_ui_table_Scrolling_ScrollBarSizeMOBILE;
 			background-color: @sapUiScrollBarTrackColor;
