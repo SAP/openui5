@@ -138,7 +138,12 @@
 			"speaker": "Matthias Oßwald, Merlin Beutlberger",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>Learn how to continuously develop, build and test UI5 Apps using Open Source Node.js based tools.</p><p>You will see how to apply dependency loading, bundling, minification und automated testing in your UI5</p>"
+			"abstract":"<p>Learn how to continuously develop, build and test UI5 Apps using Open Source Node.js based tools.</p><p>You will see how to apply dependency loading, bundling, minification und automated testing in your UI5</p>",
+			"material": {
+				"Slides": "https://github.com/RandomByte/talks/blob/master/UI5con_at_SAP_2017/UI5con_CI_Lecture.pdf",
+				"GitHub": "https://github.com/SAP/openui5-sample-app"
+
+			}
 		},
 		{
 			"type": "break",
@@ -277,7 +282,10 @@
 			"speaker": "Aparna Narayanaswamy",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract": "<p>Modern browsers provide Web Speech API, enabling the application of speech recognition in web applications.</p><p>We have developed an application that demonstrates how this browser capability can be leveraged in the FLP as a control mechanism.</p>"
+			"abstract": "<p>Modern browsers provide Web Speech API, enabling the application of speech recognition in web applications.</p><p>We have developed an application that demonstrates how this browser capability can be leveraged in the FLP as a control mechanism.</p>",
+			"material": {
+				"Slides": "https://www.slideshare.net/AparnaN13/ui5con-controlling-ui5-app-and-flp-via-speech"
+			}
 		},
 		{
 			"type": "break",
@@ -317,7 +325,10 @@
 			"speaker": "Benedikt Schölch, Tobias Sorn",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"Make your app future proof by taking the advantage of Service Workers in combination with UI5. In this talk you should learn about the new opportunities you have with Service Workers when applied to a UI5 application."
+			"abstract":"Make your app future proof by taking the advantage of Service Workers in combination with UI5. In this talk you should learn about the new opportunities you have with Service Workers when applied to a UI5 application.",
+			"material": {
+				"Slides": "https://github.com/bendkt/slides/raw/master/UI5con_2017/UI5con_service_worker_mini_lecture.pdf"
+			}
 		},
 		{
 			"type": "break",
@@ -415,6 +426,7 @@
 			"duration": 60,
 			"abstract":"<p>Find out everything you need to know about the new version of SAP Fiori. Learn what makes Fiori 2.0 different and which are the new UI5 features empowering Fiori 2.0 experience.</p><p>In this session we will show and tell how to develop your Fiori 2.0 app from scratch and even more - how to migrate your existing app to Fiori 2.0.</p><p>Prerequisites:</p><p>You will work in SAP WebIDE, trial accounts are already created for you, so you do not need anything else than your laptop. In case of network issues, we would fall back to using nodejs, NPM and Git, so you should preferably have those installed.</p>",
 			"material": {
+				"Slides": "https://www.slideshare.net/StanislavaBaltova/ui5con-fiori20-for-your-application",
 				"Worksheet":"https://github.com/d3xter666/2017-ui5con-fiori/raw/master/fiori-2.0-script.pdf",
 				"GitHub":"https://github.com/d3xter666/2017-ui5con-fiori"
 			}
