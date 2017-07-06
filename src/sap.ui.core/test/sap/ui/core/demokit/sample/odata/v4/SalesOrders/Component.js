@@ -103,7 +103,7 @@ sap.ui.define([
 						source : "SalesOrderItemsList_0.json"
 					},
 					"SalesOrderList('0500000000')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,ProductID,SupplierName,TypeCode)&$filter=Product/ProductID%20eq%20'HT-1001'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,Product/ProductID,Product/ProductName,Quantity,SalesOrderID&$skip=0&$top=100" : {
-						source : "SalesOrderItemsList_0_changedFilter.opa.json"
+						source : "SalesOrderItemsList_0_Filter.opa.json"
 					},
 					"SalesOrderList('0500000001')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 						source : "SalesOrderList_1.json"
@@ -134,6 +134,9 @@ sap.ui.define([
 					},
 					"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,ProductID,SupplierName,TypeCode)&$filter=ItemPosition%20gt%20'0000000000'&$select=DeliveryDate,GrossAmount,ItemPosition,Note,Product/ProductID,Product/ProductName,Quantity,SalesOrderID&$skip=0&$top=100" : {
 						source : "SalesOrderItemsList_5.json"
+					},
+					"SalesOrderList('0500000005')/SO_2_SOITEM?custom-option=value&$count=true&$expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT($select=ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber);$select=BusinessPartnerID,CompanyName,LegalForm,PhoneNumber);$select=Category,ProductID,SupplierName,TypeCode)&$filter=(ItemPosition%20gt%20'0000000000')%20and%20(Product/ProductID%20eq%20'HT-1061')&$select=DeliveryDate,GrossAmount,ItemPosition,Note,Product/ProductID,Product/ProductName,Quantity,SalesOrderID&$skip=0&$top=100" : {
+						source : "SalesOrderItemsList_5_Filter_via_changeParameter.opa.json"
 					},
 					"SalesOrderList('0500000006')?custom-option=value&$select=ChangedAt,CreatedAt,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=Address/City,Address/PostalCode,BusinessPartnerID,CompanyName,PhoneNumber),SO_2_SCHDL($select=DeliveryDate,ScheduleKey)" : {
 						source : "SalesOrderList_6.json"
@@ -188,6 +191,21 @@ sap.ui.define([
 					},
 					"SalesOrderList('0500000000')/SO_2_SOITEM(SalesOrderID='0500000000',ItemPosition='0000000020')/SOITEM_2_PRODUCT/PRODUCT_2_BP?custom-option=value&$select=CompanyName,LegalForm,PhoneNumber" : {
 						source : "BusinessPartner_SalesOrder_0_Item_1.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(GrossAmount%20gt%201000)%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5" : {
+						source : "SalesOrderList_filtered_by_GrossAmount.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(GrossAmount%20gt%201000)%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=GrossAmount&$skip=0&$top=5" : {
+						source : "SalesOrderList_sorted_by_GrossAmount.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(GrossAmount%20gt%201000)%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=GrossAmount%20desc&$skip=0&$top=5" : {
+						source : "SalesOrderList_sorted_by_GrossAmount_desc.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(GrossAmount%20gt%201000)%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=SalesOrderID&$skip=0&$top=5" : {
+						source : "SalesOrderList_sorted_by_SalesOrderID.json"
+					},
+					"SalesOrderList?custom-option=value&$count=true&$filter=(GrossAmount%20gt%201000)%20and%20(BuyerName%20ge%20'M')&$select=BuyerID,BuyerName,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$orderby=SalesOrderID%20desc&$skip=0&$top=5" : {
+						source : "SalesOrderList_sorted_by_SalesOrderID_desc.json"
 					}
 				}, "sap/ui/core/sample/odata/v4/SalesOrders/data",
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/");
