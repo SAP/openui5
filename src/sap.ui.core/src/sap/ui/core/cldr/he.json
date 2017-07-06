@@ -3478,6 +3478,11 @@
 		"ZMK": 0,
 		"ZWD": 0
 	},
+	"plurals": {
+		"one": "i = 1 and v = 0",
+		"two": "i = 2 and v = 0",
+		"many": "v = 0 and n != 0..10 and n % 10 = 0"
+	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 5,

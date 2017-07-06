@@ -422,19 +422,19 @@
 		assert.equal(oFormat.format(99999), "100 Tausend", "99999 formatted");
 		assert.equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
 		assert.equal(oFormat.format(999999), "1 Million", "999999 formatted");
-		assert.equal(oFormat.format(1234567), "1,2 Million", "1234567 formatted");
+		assert.equal(oFormat.format(1234567), "1,2 Millionen", "1234567 formatted");
 		assert.equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
 		assert.equal(oFormat.format(12345678), "12 Millionen", "12345678 formatted");
 		assert.equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
 		assert.equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
 		assert.equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
-		assert.equal(oFormat.format(1234567890), "1,2 Milliarde", "1234567890 formatted");
+		assert.equal(oFormat.format(1234567890), "1,2 Milliarden", "1234567890 formatted");
 		assert.equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
 		assert.equal(oFormat.format(12345678901), "12 Milliarden", "12345678901 formatted");
 		assert.equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
 		assert.equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
 		assert.equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
-		assert.equal(oFormat.format(1234567890123), "1,2 Billion", "1234567890123 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,2 Billionen", "1234567890123 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long", precision: 3, shortLimit: 100000}, oLocale);
 
@@ -472,6 +472,16 @@
 		assert.equal(oFormat.format(-123456), "-123 Tausend", "-123456 formatted");
 		assert.equal(oFormat.format(-999999), "-1 Million", "-999999 formatted");
 		assert.equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
+
+		var oLocale = new sap.ui.core.Locale("ar-SA");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long", shortRefNumber: 1000000}, oLocale);
+		assert.equal(oFormat.format(0), "0 مليون", "0 formatted");
+		assert.equal(oFormat.format(1000000), "1 مليون", "1000000 formatted");
+		assert.equal(oFormat.format(2000000), "2 مليون", "2000000 formatted");
+		assert.equal(oFormat.format(3000000), "3 ملايين", "3000000 formatted");
+		assert.equal(oFormat.format(11000000), "11 مليون", "11000000 formatted");
+		assert.equal(oFormat.format(50000000), "50 مليون", "50000000 formatted");
+
 	});
 
 	QUnit.test("getScale", function(assert) {
