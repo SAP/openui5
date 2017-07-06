@@ -438,7 +438,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		oSplitter.getRootPaneContainer().insertPane(oPane);
+		oSplitter.getRootPaneContainer().insertPane(oPane, 0);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
