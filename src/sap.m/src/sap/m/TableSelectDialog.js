@@ -1026,7 +1026,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @private
 	 */
 	TableSelectDialog.prototype._updateSelectionIndicator = function () {
-		var iSelectedContexts = this._oTable.getSelectedContexts(true).length,
+		var iSelectedContexts = this._oTable.getSelectedContextPaths(true).length,
 			oInfoBar = this._oTable.getInfoToolbar();
 
 		// update the selection label
@@ -1041,11 +1041,16 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 */
 	TableSelectDialog.prototype._fireConfirmAndUpdateSelection = function () {
 		// fire confirm event with current selection
-		this.fireConfirm({
+		var mParams = {
 			selectedItem: this._oSelectedItem,
-			selectedItems: this._aSelectedItems,
-			selectedContexts: this._oTable.getSelectedContexts(true)
+			selectedItems: this._aSelectedItems
+		};
+		// retrieve the value for 'selectedContexts' only lazily as it might fail for some models
+		Object.defineProperty(mParams, "selectedContexts", {
+			get: this._oTable.getSelectedContexts.bind(this._oTable, true)
 		});
+
+		this.fireConfirm(mParams);
 		this._updateSelection();
 	};
 
