@@ -5,14 +5,20 @@
 			"speaker": "Frederic Berg",
 			"type": "",
 			"duration": 20,
-			"abstract":""
+			"abstract":"",
+			"material": {
+				"Slides": "https://de.slideshare.net/frdrcbrg/ui5con-opening"
+			}
 		},
 		{
 			"title": "News around UI5 that you absolutely have to know",
 			"speaker": "Stefan Beck",
 			"type": "Key Note",
 			"duration": 40,
-			"abstract":"<p>SAPUI5 is evolving and thus best practices or recommended controls change over time. In this session, you'll get an update on the new supportability tool, the new DemoKit, new and updated controls, news in the framework like our plans towards OData V4 and improved Smart Controls. Finally we'll share some insights into more radical renovation activities that will come early in 2018.</p>"
+			"abstract":"<p>SAPUI5 is evolving and thus best practices or recommended controls change over time. In this session, you'll get an update on the new supportability tool, the new DemoKit, new and updated controls, news in the framework like our plans towards OData V4 and improved Smart Controls. Finally we'll share some insights into more radical renovation activities that will come early in 2018.</p>",
+			"material": {
+				"Slides": "https://www.slideshare.net/StefanBeck13/news-about-ui5-that-you-absolutely-have-to-know-ui5con-2017"
+			}
 		},
 		{
 			"type": "break",
@@ -215,7 +221,10 @@
 			"speaker": " Wouter Lemaire, Vered Constantin",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"SAP Web IDE is THE development environment for SAPUI5, mobile and other applications. Wouldn't it be great if you could extend it by adding new development capabilities and features? This is now possible. SAP Web IDE allows you to create extensions through which you can add new functionality to the SAP Web IDE and improve the development experience. In this session, we will present how you can develop, test and share with the development community your own SAP Web IDE features. We will show a real use case, that already leverages this capability, written by Flexso, an SAP partner."
+			"abstract":"SAP Web IDE is THE development environment for SAPUI5, mobile and other applications. Wouldn't it be great if you could extend it by adding new development capabilities and features? This is now possible. SAP Web IDE allows you to create extensions through which you can add new functionality to the SAP Web IDE and improve the development experience. In this session, we will present how you can develop, test and share with the development community your own SAP Web IDE features. We will show a real use case, that already leverages this capability, written by Flexso, an SAP partner.",
+			"material": {
+				"Slides": "https://www.slideshare.net/secret/GjDF0cn12TWHz7"
+			}
 		},
 		{
 			"type": "break",
@@ -342,7 +351,8 @@
 			"duration": 20,
 			"abstract":"<p>Get a deep dive into how theming in UI5 works and how to easily build your own themes.</p><p>This includes</p><ul>  <li>Introduction into Less.js</li>  <li>Theme structure and extension</li>  <li>Usage of Node.js based build tools to compile custom themes</li></ul>",
 			"material": {
-				"Slides":"https://www.slideshare.net/MatthiasOwald1/ui5consap-2017-ui5-theming-explained"
+				"Slides":"https://www.slideshare.net/MatthiasOwald1/ui5consap-2017-ui5-theming-explained",
+				"GitHub": "https://github.com/matz3/ui5con17-custom-theme"
 			}
 		},
 		{
