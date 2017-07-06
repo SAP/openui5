@@ -178,7 +178,7 @@ function(
 			var mAllAggregations = oModifier.getAllAggregations(oSourceParent);
 			Object.keys(mAllAggregations).some(function(sKey) {
 				var aAggregation = oModifier.getAggregation(oSourceParent, sKey);
-				if (aAggregation) {
+				if (Array.isArray(aAggregation)) {
 					iIndex = aAggregation.indexOf(oMovedElement);
 					if (iIndex > -1) {
 						sSourceAggregation = sKey;
