@@ -210,6 +210,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Prepares a change to be deleted with the next call to
+	 * @see {ChangePersistence#saveDirtyChanges};
+	 *
+	 * If the given change is already in the dirty changes and
+	 * has pending action 'NEW' it will be removed, assuming,
+	 * it has just been created in the current session;
+	 *
+	 * Otherwise it will be marked for deletion.
+	 *
+	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
+	 */
+	FlexController.prototype.deleteChange = function (oChange) {
+		this._oChangePersistence.deleteChange(oChange);
+	};
+
+	/**
 	 * Creates a new change and applies it immediately
 	 *
 	 * @param {object} oChangeSpecificData The data specific to the change, e.g. the new label for a RenameField change
@@ -223,7 +239,7 @@ sap.ui.define([
 				modifier: JsControlTreeModifier,
 				appComponent: Utils.getAppComponentForControl(oControl)
 			};
-			this._checkTargetAndApplyChange(oChange, oControl, mPropertyBag);
+			this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag);
 		} catch (oException) {
 			this._oChangePersistence.deleteChange(oChange);
 			throw oException;
@@ -319,7 +335,7 @@ sap.ui.define([
 					throw new Error("A flexibility change tries to change a nonexistent control.");
 				}
 
-				this._checkTargetAndApplyChange(oChange, oControl, mPropertyBag);
+				this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag);
 			} catch (oException) {
 				this._logApplyChangeError(oException, oChange);
 			}
@@ -358,7 +374,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.appComponent - component instance that is currently loading
 	 * @private
 	 */
-	FlexController.prototype._checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
+	FlexController.prototype.checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
 		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
@@ -388,12 +404,12 @@ sap.ui.define([
 		}
 	};
 
-	FlexController.prototype._revertChange = function(oChange, oControl, mPropertyBag) {
+	FlexController.prototype._removeFromAppliedChanges = function(oChange, oControl, mPropertyBag, bRevert) {
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
 		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
 
-		if (!oChangeHandler) {
+		if (bRevert && !oChangeHandler) {
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
 			return;
 		}
@@ -405,11 +421,13 @@ sap.ui.define([
 		var sChangeId = oChange.getId();
 		var iIndex = aAppliedChanges.indexOf(sChangeId);
 		if (iIndex > -1) {
-			try {
-				oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
-			} catch (ex) {
-				Utils.log.error("Change could not be reverted.");
-				return;
+			if (bRevert) {
+				try {
+					oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
+				} catch (ex) {
+					Utils.log.error("Change could not be reverted.");
+					return;
+				}
 			}
 
 			if (oAppliedChangeCustomData) {
@@ -702,12 +720,12 @@ sap.ui.define([
 		var aChangesForControl = mChanges[oControl.getId()] || [];
 		aChangesForControl.forEach(function (oChange) {
 			if (!mDependencies[oChange.getKey()]) {
-				this._checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+				this.checkTargetAndApplyChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
 				this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getKey());
 			} else {
 				//saves the information whether a change was already processed but not applied.
 				mDependencies[oChange.getKey()][FlexController.PENDING] =
-					this._checkTargetAndApplyChange.bind(this, oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+					this.checkTargetAndApplyChange.bind(this, oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
 			}
 		}.bind(this));
 
@@ -715,7 +733,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Revert changes for a control.
+	 * Revert changes for a control and removes the change from the applied Changes stored in the Controls Custom Data.
 	 *
 	 * @param {array} aChanges Array of to be reverted changes
 	 * @param {object} oAppComponent Component instance
@@ -730,7 +748,7 @@ sap.ui.define([
 			};
 			var oSelector = this._getSelectorOfChange(oChange);
 			var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
-			this._revertChange(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+			this._removeFromAppliedChanges(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, true);
 			this._oChangePersistence._deleteChangeInMap(oChange);
 		}.bind(this));
 	};
@@ -756,6 +774,18 @@ sap.ui.define([
 			}
 			this.applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
 		}.bind(this));
+	};
+
+	/**
+	 * Remove the change from the applied Changes stored in the Controls Custom Data without reverting the change.
+	 *
+	 * @param {object} oChange Change
+	 * @param {object} oAppComponent Component instance
+	 * @param {object} oControl Control instance
+	 * @public
+	 */
+	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
+		this._removeFromAppliedChanges(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
 	};
 
 	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {

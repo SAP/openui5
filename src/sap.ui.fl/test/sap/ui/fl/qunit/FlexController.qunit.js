@@ -642,7 +642,7 @@ function (
 			changeType: "hideControl"
 		};
 
-		this.stub(this.oFlexController, "_checkTargetAndApplyChange").throws(new Error());
+		this.stub(this.oFlexController, "checkTargetAndApplyChange").throws(new Error());
 		this.stub(this.oFlexController, "_getChangeHandler").returns(HideControl);
 		this.stub(this.oFlexController, "createChange").returns(new Change(oChangeSpecificData));
 
@@ -782,7 +782,7 @@ function (
 	});
 
 	QUnit.test("applyChangesOnControl does not call anything of there is no change for the control", function (assert) {
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange");
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange");
 
 		var oSomeOtherChange = {};
 
@@ -804,7 +804,7 @@ function (
 	});
 
 	QUnit.test("applyChangesOnControl processes only those changes that belong to the control", function (assert) {
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange");
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange");
 
 		var oChange0 = {
 			getKey: function () {
@@ -854,7 +854,7 @@ function (
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 1", function (assert) {
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange");
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange");
 
 		var oControlForm1 = new sap.ui.core.Control("form1-1");
 		var oControlGroup1 = new sap.ui.core.Control("group1-1");
@@ -920,7 +920,7 @@ function (
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 2", function (assert) {
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange");
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange");
 
 		var oControlForm1 = new sap.ui.core.Control("form2-1");
 		var oControlGroup1 = new sap.ui.core.Control("group2-1");
@@ -985,7 +985,7 @@ function (
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 3", function (assert) {
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange");
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange");
 
 		var oControlForm1 = new sap.ui.core.Control("mainform");
 		var oControlField1 = new sap.ui.core.Control("ReversalReasonName");
@@ -1081,7 +1081,7 @@ function (
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 4", function (assert) {
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange");
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange");
 
 		var oControlForm1 = new sap.ui.core.Control("form4");
 
@@ -1193,7 +1193,7 @@ function (
 
 		var oAppComponent = {};
 
-		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "_checkTargetAndApplyChange", function(oChange, oControl, mPropertyBag) {
+		var oCheckTargetAndApplyChangeStub = this.stub(this.oFlexController, "checkTargetAndApplyChange", function(oChange, oControl, mPropertyBag) {
 			if (oControl === oControlForm1 && iStubCalls === 1) {
 				this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
 			}
@@ -1208,7 +1208,7 @@ function (
 		assert.equal(oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange3, "the third change was processed third");
 	});
 
-	QUnit.module("[JS] _checkTargetAndApplyChange / _revertChange with one change for a label", {
+	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with one change for a label", {
 		beforeEach: function (assert) {
 			this.sLabelId = labelChangeContent.selector.id;
 			this.oControl = new sap.m.Label(this.sLabelId);
@@ -1325,7 +1325,7 @@ function (
 		assert.equal(this.oControl.getCustomData().length, 0, "the customData was not created yet");
 	});
 
-	QUnit.module("[JS] _checkTargetAndApplyChange / _revertChange with two changes for a label", {
+	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with two changes for a label", {
 		beforeEach: function (assert) {
 			this.sLabelId = labelChangeContent.selector.id;
 			this.oControl = new sap.m.Label(this.sLabelId);
@@ -1484,7 +1484,7 @@ function (
 		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "then the custom data is still the same");
 	});
 
-	QUnit.module("[XML] _checkTargetAndApplyChange with one change for a label", {
+	QUnit.module("[XML] checkTargetAndApplyChange with one change for a label", {
 		beforeEach: function (assert) {
 			this.sLabelId = labelChangeContent.selector.id;
 			this.oDOMParser = new DOMParser();
@@ -1511,7 +1511,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController._checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
@@ -1531,7 +1531,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController._revertChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oFlexController._removeFromAppliedChanges(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
 
 		assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
 		var oCustomData = this.oControl.getElementsByTagName("customData")[0].childNodes[0];
@@ -1552,7 +1552,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController._checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
 		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
@@ -1573,7 +1573,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController._checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
 
 		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
 		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
@@ -1592,7 +1592,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		this.oFlexController._revertChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		this.oFlexController._removeFromAppliedChanges(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");
 		assert.equal(this.oControl.getElementsByTagName("customData").length, 0, "no customData is available");

@@ -13,6 +13,8 @@ sap.ui.define(["sap/ui/core/UIComponent",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/model/Model",
+	'sap/ui/fl/FlexControllerFactory',
+	'sap/ui/rta/ControlTreeModifier',
 	"sap/ui/fl/library" //we have to ensure to load fl, so that change handler gets registered
 ],
 function(
@@ -25,7 +27,9 @@ function(
 	ElementDesignTimeMetadata,
 	ChangePersistenceFactory,
 	ChangePersistence,
-	Model
+	Model,
+	FlexControllerFactory,
+	ControlTreeModifier
 ){
 
 	"use strict";
@@ -282,6 +286,18 @@ function(
 
 			.then(this.oCommand.undo.bind(this.oCommand))
 
+			// Since we don't use the CommandStack here, we have to take care of the applied Changes,
+			// which are stored in the custom data of the control, ourselves.
+			.then(function() {
+				var oChange = this.oCommand.getPreparedChange();
+				if (this.oCommand.getAppComponent) {
+					var oAppComponent = this.oCommand.getAppComponent();
+					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+				}
+			}.bind(this))
+
 			.then(function() {
 				sap.ui.getCore().applyChanges();
 				mOptions.afterUndo(this.oUiComponent, this.oView, assert);
@@ -294,6 +310,18 @@ function(
 			this.oCommand.execute()
 
 			.then(this.oCommand.undo.bind(this.oCommand))
+
+			// Since we don't use the CommandStack here, we have to take care of the applied Changes,
+			// which are stored in the custom data of the control, ourselves.
+			.then(function() {
+				var oChange = this.oCommand.getPreparedChange();
+				if (this.oCommand.getAppComponent) {
+					var oAppComponent = this.oCommand.getAppComponent();
+					var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+				}
+			}.bind(this))
 
 			.then(this.oCommand.execute.bind(this.oCommand))
 

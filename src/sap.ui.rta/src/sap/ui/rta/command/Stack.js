@@ -1,7 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject'
+], function(
+	ManagedObject
+) {
 	"use strict";
 
 	/**
@@ -29,7 +33,14 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 				}
 			},
 			events : {
-				modified : {}
+				modified : {},
+				commandExecuted : {
+					parameters: {
+						command : {type: "object"},
+						undo: {type: "boolean"}
+					}
+				}
+
 			}
 		}
 	});
@@ -100,6 +111,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 
 			.then(function(){
 				this._toBeExecuted--;
+				this.fireCommandExecuted({
+					command: oCommand,
+					undo: false
+				});
 				this.fireModified();
 			}.bind(this))
 
@@ -121,6 +136,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 				return oCommand.undo()
 
 				.then(function() {
+					this.fireCommandExecuted({
+						command: oCommand,
+						undo: true
+					});
 					this.fireModified();
 				}.bind(this));
 			} else {

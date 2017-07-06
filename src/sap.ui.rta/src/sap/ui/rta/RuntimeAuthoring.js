@@ -449,6 +449,8 @@ sap.ui.define([
 
 					this._buildContextMenu();
 
+					this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
+
 					// Create design time
 					var aKeys = Object.keys(this.getPlugins());
 					var aPlugins = aKeys.map(function(sKey) {
@@ -717,8 +719,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		var oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
-		return oSerializer.saveCommands();
+		return this._oSerializer.saveCommands();
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {

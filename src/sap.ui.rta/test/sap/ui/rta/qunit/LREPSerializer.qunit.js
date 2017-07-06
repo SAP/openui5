@@ -14,6 +14,7 @@ sap.ui.require([
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
 	'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory',
+	'sap/ui/fl/FlexControllerFactory',
 	//should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -29,6 +30,7 @@ sap.ui.require([
 	RtaQunitUtils,
 	DescriptorInlineChangeFactory,
 	DescriptorChangeFactory,
+	FlexControllerFactory,
 	sinon
 ) {
 	"use strict";
@@ -126,6 +128,11 @@ sap.ui.require([
 		this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
 		this.oCommandStack.pushExecutedCommand(this.oRemoveCommand2);
 
+		var oComponent = this.oRemoveCommand1.getAppComponent();
+		var oFlexController = FlexControllerFactory.createForControl(oComponent);
+		oFlexController.addPreparedChange(this.oRemoveCommand1.getPreparedChange(), oComponent);
+		oFlexController.addPreparedChange(this.oRemoveCommand2.getPreparedChange(), oComponent);
+
 		// Save the commands
 		return this.oSerializer.saveCommands().then(function() {
 			assert.ok( true, "then the promise for LREPSerializer.saveCommands() gets resolved");
@@ -143,6 +150,9 @@ sap.ui.require([
 		}, this.oInputDesignTimeMetadata);
 
 		this.oCommandStack.pushExecutedCommand(this.oRemoveCommand1);
+		var oComponent = this.oRemoveCommand1.getAppComponent();
+		var oFlexController = FlexControllerFactory.createForControl(oComponent);
+		oFlexController.addPreparedChange(this.oRemoveCommand1.getPreparedChange(), oComponent);
 
 		this.oInput1.destroy();
 
@@ -167,11 +177,21 @@ sap.ui.require([
 		}, this.oInputDesignTimeMetadata);
 		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 			reference : "dummyReference",
-			requiredLibraries : "{{sap.ui.dummy}}"
+			requiredLibraries : {
+				"sap.ui.dummy" : {
+					lazy:false,
+					minVersion:"1.48"
+				}
+			}
 		}, {}, {"layer" : "dummyLayer"});
 		this.oAddLibraryCommand2 = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
 			reference : "dummyReference2",
-			requiredLibraries : "{{sap.ui.dummy2}}"
+			requiredLibraries : {
+				"sap.ui.dummy2" : {
+					lazy:false,
+					minVersion:"1.48"
+				}
+			}
 		}, {}, {"layer" : "dummyLayer"});
 
 
@@ -179,15 +199,22 @@ sap.ui.require([
 		this.oCommandStack.pushExecutedCommand(this.oAddLibraryCommand);
 		this.oCommandStack.pushExecutedCommand(this.oAddLibraryCommand2);
 
+		var oComponent = this.oRemoveCommand1.getAppComponent();
+		var oFlexController = FlexControllerFactory.createForControl(oComponent);
+		var aDescriptorSubmitPromises = [];
+		oFlexController.addPreparedChange(this.oRemoveCommand1.getPreparedChange(), oComponent);
+		aDescriptorSubmitPromises.push(this.oAddLibraryCommand.createAndStore());
+		aDescriptorSubmitPromises.push(this.oAddLibraryCommand2.createAndStore());
+
 		var done = assert.async();
 
 		var iCalled = 0;
 
 		var oMockDescriptorChange = {
-			submit : function() {
+			store : function() {
 				iCalled++;
 				if (iCalled === 2){
-					assert.ok(true, "then the two add library commands are submitted");
+					assert.ok(true, "then the two add library commands are stored");
 					done();
 				}
 			}
@@ -199,7 +226,9 @@ sap.ui.require([
 		sinon.stub(DescriptorChangeFactory.prototype, "createNew").returns(Promise.resolve(oMockDescriptorChange));
 
 		//Save the commands
-		return this.oSerializer.saveCommands().then(function() {
+		return Promise.all(aDescriptorSubmitPromises)
+		.then(this.oSerializer.saveCommands())
+		.then(function() {
 			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
 			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
 		}.bind(this));

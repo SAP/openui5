@@ -9,14 +9,16 @@ sap.ui.require([
 	'sap/ui/fl/FakeLrepConnectorLocalStorage',
 	'sap/ui/fl/FakeLrepLocalStorage',
 	'sap/ui/dt/OverlayRegistry',
-	'sap/ui/rta/qunit/RtaQunitUtils'
+	'sap/ui/rta/qunit/RtaQunitUtils',
+	"sap/ui/fl/ChangePersistenceFactory"
 ], function(
 	RuntimeAuthoring,
 	FakeLrepConnector,
 	FakeLrepConnectorLocalStorage,
 	FakeLrepLocalStorage,
 	OverlayRegistry,
-	RtaQunitUtils
+	RtaQunitUtils,
+	ChangePersistenceFactory
 ) {
 	"use strict";
 
@@ -62,11 +64,16 @@ sap.ui.require([
 		var oFieldToHide = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
 		var oFieldToHideOverlay = OverlayRegistry.getOverlay(oFieldToHide);
 		var oCommandStack = this.oRta.getCommandStack();
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oFieldToHide);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+
 		oCommandStack.attachModified(function() {
 			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 			if (oFirstExecutedCommand &&
 				oFirstExecutedCommand.getName() === 'remove') {
 				assert.strictEqual(oFieldToHide.getVisible(), false, " then field is not visible");
+				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 				this.oRta.stop();
 			}
 		}.bind(this));
@@ -81,12 +88,17 @@ sap.ui.require([
 	QUnit.test("when moving a field (via cut and paste),", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 		var oCommandStack = this.oRta.getCommandStack();
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+
 		oCommandStack.attachModified(function(oEvent) {
 			var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 			if (oFirstExecutedCommand &&
 				oFirstExecutedCommand.getName() === "move") {
 				var iIndex = this.oGroup.getGroupElements().length - 1;
 				assert.equal(this.oGroup.getGroupElements()[iIndex].getId(), this.oField.getId(), " then the field is moved");
+				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 				this.oRta.stop();
 			}
 		}.bind(this));
@@ -99,6 +111,9 @@ sap.ui.require([
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 
 		var done = assert.async();
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oGroup);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		this.oGroupOverlay.focus();
 		var $groupOverlay = this.oGroupOverlay.$();
@@ -119,6 +134,7 @@ sap.ui.require([
 				oFirstExecutedCommand.getName() === "rename") {
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oGroup.getLabel(), "Test", "then title of the group is Test");
+				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
 				// timeout is needed because of the timeout in rta.Rename plugin
 				setTimeout(function() {
@@ -138,6 +154,9 @@ sap.ui.require([
 	QUnit.test("when renaming a group element (via context menu) and setting a new label to Test...", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 		var done = assert.async();
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		this.oFieldOverlay.focus();
 		var $fieldOverlay = this.oFieldOverlay.$();
@@ -160,6 +179,7 @@ sap.ui.require([
 				oFirstExecutedCommand.getName() === "rename") {
 				sap.ui.getCore().applyChanges();
 				assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
+				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
 				// timeout is needed because of the timeout in rta.Rename plugin
 				setTimeout(function() {
@@ -176,8 +196,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when adding a group element (via context menu) - addODataProperty", function(assert) {
-		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(2, assert);
 		var done = assert.async();
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 		this.oFieldOverlay.focus();
@@ -197,6 +220,7 @@ sap.ui.require([
 				var iIndex = oGroupElements.indexOf(this.oField) + 1;
 				assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.getContent()[0].getItems()[0].getText(), "the added element is at the correct position");
 				assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+				assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
 
 				oObserver.disconnect();
 				this.oRta.stop().then(done);
@@ -214,8 +238,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when adding a group element (via context menu) - reveal", function(assert) {
-		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 		var done = assert.async();
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		// to reveal we have to remove the field first (otherwise it would be addODataProperty)
 		var oFieldToRemove = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.ExpirationDate");
@@ -234,21 +261,24 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 
 		oDialog.attachOpened(function() {
-			var oFieldToAdd = oDialog.getElements().filter(function(oFoo) {return oFoo.type === "invisible";})[0];
+			var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
+			var oCommandStack = this.oRta.getCommandStack();
+			oCommandStack.attachModified(function(oEvent) {
+				var aCommands = oCommandStack.getAllExecutedCommands();
+				if (aCommands &&
+					aCommands.length  === 3) {
+					sap.ui.getCore().applyChanges();
 
-			// observer gets called when the Group changes. Then the new field is on the UI.
-			var oObserver = new MutationObserver(function(mutations) {
-				var oGroupElements = this.oGeneralGroup.getGroupElements();
-				var iIndex = oGroupElements.indexOf(this.oField) + 1;
-				assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
-				assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-				assert.equal(oFieldToRemove.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
+					var oGroupElements = this.oGeneralGroup.getGroupElements();
+					var iIndex = oGroupElements.indexOf(this.oField) + 1;
+					assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
+					assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+					assert.equal(oFieldToRemove.fieldLabel, oFieldToAdd.label, "the new field is the one that got deleted");
+					assert.equal(oChangePersistence.getDirtyChanges().length, 3, "then there are 3 dirty change in the FL ChangePersistence");
 
-				oObserver.disconnect();
-				this.oRta.stop().then(done);
+					this.oRta.stop().then(done);
+				}
 			}.bind(this));
-			var oConfig = { attributes: false, childList: true, characterData: false, subtree : true};
-			oObserver.observe(this.oForm.getDomRef(), oConfig);
 
 			// select the field in the list and close the dialog with OK
 			oFieldToAdd.selected = true;
