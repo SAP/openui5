@@ -430,8 +430,11 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 	// this gets called only with oData Model when first load or filter/sort
 	ListBase.prototype.refreshItems = function(sReason) {
-		// show loading mask first
-		this._showBusyIndicator();
+		// show loading mask only if items exist
+		// avoid busy indicator when sorting an empty list
+		if (sReason != "sort" || this.getBinding("items").getLength() != 0) {
+			this._showBusyIndicator();
+		}
 
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
