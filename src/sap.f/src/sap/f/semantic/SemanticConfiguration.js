@@ -177,13 +177,13 @@ sap.ui.define([
 			}
 		};
 
-		oTypeConfigs["sap.f.semantic.AddAction"] = {
+		oTypeConfigs["sap.f.semantic.EditAction"] = {
 			placement: SemanticConfiguration._Placement.titleText,
 			order: 1,
 			getSettings: function() {
 				return {
-					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD"),
+					text: oBundle.getText("SEMANTIC_CONTROL_EDIT"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_EDIT"),
 					type: ButtonType.Transparent
 				};
 			}
@@ -206,6 +206,18 @@ sap.ui.define([
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_COPY"),
+					type: ButtonType.Transparent
+				};
+			}
+		};
+
+		oTypeConfigs["sap.f.semantic.AddAction"] = {
+			placement: SemanticConfiguration._Placement.titleText,
+			order: 4,
+			getSettings: function() {
+				return {
+					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD"),
 					type: ButtonType.Transparent
 				};
 			}

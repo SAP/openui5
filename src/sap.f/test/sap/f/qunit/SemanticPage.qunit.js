@@ -626,7 +626,7 @@
 
 	QUnit.test("test getOrder method", function (assert) {
 		var sSemanticAddType = "sap.f.semantic.AddAction",
-			iSemanticAddTypeOrder = 1,
+			iSemanticAddTypeOrder = 4,
 			sSemanticDeleteType = "sap.f.semantic.DeleteAction",
 			iSemanticDeleteTypeOrder = 2;
 
