@@ -13,13 +13,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		"use strict";
 
 		/**
+		 * @constructor
+		 * @class
+		 * <h3>Overview</h3>
 		 * Analyzer class that runs tasks. A Task runs a function for every entry in its object array.
 		 * The Analyzer counts the task objects and calculates the percentages.
+		 * <h3>Usage</h3>
 		 * With the start, restart, stop and pause methods the analyzer can be controlled.
-		 * While started it walks async through the list of object for each task and completes them.
-		 *
-		 *
+		 * While running it asynchronously, it selects objects from the list of each task and completes them.
 		 * @private
+		 * @name sap.ui.support.Analyzer
 		 */
 		var Analyzer = function () {
 			this.reset();
@@ -27,10 +30,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Returns the total progress for all tasks with all their objects.
-		 * @returns {int} total progress for all tasks with all their objects.
-		 *
 		 * @private
-		 * @experimental
+		 * @memberof sap.ui.support.Analyzer
+		 * @returns {int} Total progress for all tasks with all their objects
 		 */
 		Analyzer.prototype.getProgress = function () {
 			return this._iTotalProgress;
@@ -38,11 +40,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Adds a task to with a name to the analyzer.
-		 * The fnTaskProcessor function is called if the task is run for every object in aObjects.
-		 *
-		 * @param {string} sTaskName
-		 * @param {function} fnTaskProcessor
-		 * @param aObjects
+		 * The <code>fnTaskProcessor</code> function is called if the task is run for every object in aObjects.
+		 * @private
+		 * @memberof sap.ui.support.Analyzer
+		 * @param {string} sTaskName The name of the task to be executed
+		 * @param {function} fnTaskProcessor Custom function from the user
+		 * @param {Object[]} aObjects All rules for a given task
 		 */
 		Analyzer.prototype.addTask = function (sTaskName, fnTaskProcessor, aObjects) {
 			var oTask = {
@@ -58,6 +61,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Resets the analyzer and clears all tasks
 		 * @private
+		 * @memberof sap.ui.support.Analyzer
+		 * @returns {void}
 		 */
 		Analyzer.prototype.reset = function () {
 			this._iTotalProgress = 0;
@@ -74,7 +79,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Returns whether the Analyzer is currently running
-		 * @returns
+		 * @private
+		 * @memberof sap.ui.support.Analyzer
+		 * @returns {boolean} Check if the Analyzer is still running
 		 */
 		Analyzer.prototype.running = function () {
 			return this._bRunning;
@@ -83,12 +90,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Starts the analyzer to run all tasks
 		 * @private
+		 * @memberof sap.ui.support.Analyzer
+		 * @param {function} fnResolve The function is called when the analyzer finishes all tasks
+		 * @returns {Promise} progressPromise
 		 */
-		Analyzer.prototype.start = function (resolveFn) {
+		Analyzer.prototype.start = function (fnResolve) {
 			var that = this;
 			// resolve() is called when the analyzer finishes all tasks.
 			// It is called inside _done function.
-			that.resolve = resolveFn;
+			that.resolve = fnResolve;
 			that.startedAt = new Date();
 			var progressPromise = new Promise(
 				function (resolve, reject) {
@@ -102,11 +112,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Internal method to start the next run on the next object.
-		 * @param {boolean} bContinue true if called via timer
-		 * @param {function} fnResolve resolve function
-		 *
+		 * @memberof sap.ui.support.Analyzer
 		 * @private
-		 * @experimental
+		 * @protected
+		 * @param {boolean} bContinue True if called via timer, false if the Analyzer is started manually
+		 * @param {function} fnResolve Resolve function
 		 */
 		Analyzer.prototype._start = function (bContinue, fnResolve) {
 			if (this._bRunning && !bContinue) {
@@ -139,8 +149,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Processes the next object in the current task
-		 *
-		 * @param {function} fnResolve resolves promise to notify of finished state
+		 * @private
+		 * @memberof sap.ui.support.Analyzer
+		 * @param {function} fnResolve Resolves promise to notify of finished state
 		 */
 		Analyzer.prototype._next = function (fnResolve) {
 			if (!this._bRunning) {
@@ -179,6 +190,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			}
 		};
 
+		/**
+		 * Get the elapsed time in the form of a string.
+		 * @private
+		 * @memberof sap.ui.support.Analyzer
+		 * @returns {string} Returns the total elapsed time since the Analyzer has started
+		 */
 		Analyzer.prototype.getElapsedTimeString = function () {
 			if (!this.elapsedTime) {
 				return;
@@ -195,6 +212,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			];
 
 			return oBuffer.join(":");
+
 		};
 
 		return Analyzer;
