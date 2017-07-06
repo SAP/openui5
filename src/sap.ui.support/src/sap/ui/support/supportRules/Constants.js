@@ -6,13 +6,14 @@ sap.ui.define([],
 		"use strict";
 
 		/**
-		 * Constants variables used in the Support Assistant
+		 * Constants used in the Support Assistant
 		 * @enum
-		 *
+		 * @private
 		 * @author SAP SE
 		 * @namespace
-		 *
+		 * @name sap.ui.support.Constants
 		 * @alias sap.ui.support.AssistantConstants
+		 * @returns {Object} Object that contains all the constants.
 		 */
 		return {
 			TEMP_RULESETS_NAME: "temporary",
