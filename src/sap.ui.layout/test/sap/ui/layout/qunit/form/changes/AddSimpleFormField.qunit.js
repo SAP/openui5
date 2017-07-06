@@ -35,7 +35,7 @@ function (
 	QUnit.start();
 
 	// Register an entry on the Change Handler Mediator (e.g. from SmartField)
-	ChangeHandlerMediator.addChangeHandlerSettings({"changeType" : "addSimpleFormField"}, {
+	ChangeHandlerMediator.addChangeHandlerSettings({"scenario" : "addODataField"}, {
 		"requiredLibraries" : {
 			"sap.ui.comp": {
 				"minVersion": "1.48",
@@ -95,8 +95,7 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath1"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -122,8 +121,7 @@ function (
 				"newControlId": "addedFieldId2",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath2",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath2"
 		};
 
 		var oChange2 = new Change({"changeType" : "addSimpleFormField"});
@@ -152,8 +150,7 @@ function (
 				"newControlId": "addedFieldId3",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 1,
-				"bindingPath" : "BindingPath3",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath3"
 		};
 
 		var oChange3 = new Change({"changeType" : "addSimpleFormField"});
@@ -204,8 +201,7 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oFormContainer.getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath1"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -241,8 +237,7 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oFormContainer.getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath1"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -285,8 +280,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -338,8 +332,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -391,8 +384,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -449,8 +441,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			}
 		};
 

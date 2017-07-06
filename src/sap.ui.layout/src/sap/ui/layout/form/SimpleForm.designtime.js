@@ -133,19 +133,14 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 					},
 					addODataProperty : function () {
 						var mChangeHandlerSettingsKey = {"scenario" : "addODataField"};
+						var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings(mChangeHandlerSettingsKey);
 
-						try {
-							// comp library must be loaded so SmartField can register itself on ChangeHandlerMediator
-							sap.ui.getCore().loadLibrary("sap.ui.comp");
-							var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings(mChangeHandlerSettingsKey);
+						if (mChangeHandlerSettings && mChangeHandlerSettings.scenarioInitialized === true){
 							return {
 								changeType: "addSimpleFormField",
 								changeOnRelevantContainer : true,
-								requiredLibraries : mChangeHandlerSettings.content.requiredLibraries,
-								changeHandlerSettingsKey : mChangeHandlerSettingsKey
+								requiredLibraries : mChangeHandlerSettings.content.requiredLibraries
 							};
-						} catch (e){
-							jQuery.sap.log.warning("sap.ui.comp not available", "addODataProperty action for SimpleForm is not possible");
 						}
 					}
 				}
