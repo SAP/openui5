@@ -46,7 +46,10 @@
 			"speaker": "Yavor Ivanov",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "You use openui5 to build your publicly facing home page and site content. There are few tricks you can use to make sure search engines can find and understand your content. You will learn about structuring your links, JS rendering of dynamic content and more advanced topics like pre-rendering."
+			"abstract": "You use openui5 to build your publicly facing home page and site content. There are few tricks you can use to make sure search engines can find and understand your content. You will learn about structuring your links, JS rendering of dynamic content and more advanced topics like pre-rendering.",
+			"material": {
+				"Slides":"https://www.slideshare.net/YavorIvanov6/ui5con-seo-for-openui5-apps"
+			}
 		},
 		{
 			"type": "break",
@@ -218,6 +221,12 @@
 			"speaker": "Pia Kinkel, Christoph Laux",
 			"type": "Session",
 			"duration": 40,
+			"material": {
+				"ProcessFlow Sample":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.suite.ui.commons.ProcessFlow/samples",
+				"ProcessFlow UX Guideline":" https://experience.sap.com/fiori-design-web/process-flow/",
+				"UploadCollection Sample":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.m.UploadCollection/samples",
+				"UploadCollection UX Guideline":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.m.UploadCollection/samples"
+			},
 			"abstract": "Complex process flows and document flows are clear and understandable when you use the ProcessFlow control. The ProcessFlow control visualizes documents or other items and their dependencies. Attaching documents to an app is easy when you use the UploadCollection control that includes features such as Multiple Upload, Drag&Drop, Sorting, Filtering."
 		},
 		{
@@ -225,6 +234,13 @@
 			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
 			"duration": 40,
+			"material": {
+				"Microcharts in Table Sample":"https://sapui5.hana.ondemand.com/explored.html#/sample/sap.suite.ui.microchart.sample.MicroChartsInTable/preview",
+				"Microcharts UX Guideline":"https://experience.sap.com/fiori-design-web/micro-chart/",
+				"InteractiveBarChart Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.suite.ui.microchart. InteractiveBarChart/samples",
+				"InteractiveLineChart Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.suite.ui.microchart. InteractiveLineChart/samples",
+				"InteractiveDonutChart Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.suite.ui.microchart.InteractiveDonutChart/samples"
+			},
 			"abstract": "Learn how to use various types of charts in different sizes and form factors to provide analytical insights in your application."
 		},
 		{
@@ -246,6 +262,11 @@
 			"speaker": "Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
 			"duration": 60,
+			"material": {
+				"GenericTile Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.m.GenericTile/samples",
+				"SlideTile Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.m.SlideTile /samples",
+				"Tiles UX Guideline":"https://experience.sap.com/fiori-design-web/tile/"
+			},
 			"abstract": "A tile is a container that represents an app on the SAP Fiori launchpad . The Generic Tile control and related content provide a toolbox in UI5 that allows the display of a variety of content, such as news, KPIs or images."
 		},
 		{
@@ -260,6 +281,10 @@
 			"speaker": "Pia Kinkel, Christoph Laux, Bohdan Pukalskyi",
 			"type": "Session",
 			"duration": 60,
+			"material": {
+				"SmartMicroChart Samples":" https://sapui5.hana.ondemand.com/explored.html#/entity/sap.ui.comp.smartmicrochart.SmartMicroChart/samples",
+				"Microchart UX Guideline":"https://experience.sap.com/fiori-design-web/micro-chart/"
+			},
 			"abstract": "Learn how to use various types of charts in different sizes and form factors to provide analytical insights in your application."
 		},
 		{
@@ -267,6 +292,11 @@
 			"speaker": "Christoph Laux",
 			"type": "Session",
 			"duration": 60,
+			"material": {
+				"FeedInput Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.m.FeedInput/samples",
+				"FeedListItem Samples":"https://sapui5.hana.ondemand.com/explored.html#/entity/sap.m.FeedListItem/samples",
+				"Feed UX Guideline":"https://experience.sap.com/fiori-design-web/feedinput/"
+			},
 			"abstract": "Social media is ubiquitous, but a feed can also include system events or comments. UI5 provides a set of controls that support you in implementing feed capabilities for your application."
 		}
 	]
