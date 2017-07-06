@@ -99,7 +99,10 @@
 			"speaker": "Dmitriy Buslov",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>WebVR is an open standard that makes it possible to experience Virtual Reality in the browser.</p><p>In this session I will show an example of OpenUI5 component for VR and a little extension with Mixed Reality.</p>"
+			"abstract":"<p>WebVR is an open standard that makes it possible to experience Virtual Reality in the browser.</p><p>In this session I will show an example of OpenUI5 component for VR and a little extension with Mixed Reality.</p>",
+			"material": {
+				"Slides":"https://www.slideshare.net/DmitriyBuslov/mixed-reality-with-openui5"
+			}
 		},
 		{
 			"type": "break",
@@ -243,7 +246,10 @@
 			"speaker": "Christopher C. Bouveret",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"<p>Since its foundation iTiZZiMO deals with SAP and integrated business apps. As OpenUI5 was released we were perfectly happy to have found a library to fulfill our requirements in terms of optics, performance and robustness. Since the first release of OpenUI5 we use the technology for the frontend design of our platform Simplifier that in turn allows the creation of further UI5 apps.</p><p>The Simplifier itself consists of three parts, the UI designer, the process designer and the code designer. We use several established elements of UI5 library but also developed own UI5 controls, mainly presented within the process designer. Here, the business logic of the application is created via Visual Scripting.</p><p>As most of our customers are SAP customers using OpenUI5 and SAPUI5 they of course prefer the SAP technology due to the trouble-free visualization of SAP-data for mobile devices.</p><p>So to say, we created a huge UI5 app creation machine with its UI based on OpenUI5.</p><p>We want to present our technology and custom UI5 controls to show the great variety of the UI framework and our own custom framework for process designing.</p><p>To get a brief overview, please visit: https://www.youtube.com/watch?v=lcZCekNxPhk</p>"
+			"abstract":"<p>Since its foundation iTiZZiMO deals with SAP and integrated business apps. As OpenUI5 was released we were perfectly happy to have found a library to fulfill our requirements in terms of optics, performance and robustness. Since the first release of OpenUI5 we use the technology for the frontend design of our platform Simplifier that in turn allows the creation of further UI5 apps.</p><p>The Simplifier itself consists of three parts, the UI designer, the process designer and the code designer. We use several established elements of UI5 library but also developed own UI5 controls, mainly presented within the process designer. Here, the business logic of the application is created via Visual Scripting.</p><p>As most of our customers are SAP customers using OpenUI5 and SAPUI5 they of course prefer the SAP technology due to the trouble-free visualization of SAP-data for mobile devices.</p><p>So to say, we created a huge UI5 app creation machine with its UI based on OpenUI5.</p><p>We want to present our technology and custom UI5 controls to show the great variety of the UI framework and our own custom framework for process designing.</p><p>To get a brief overview, please visit: https://www.youtube.com/watch?v=lcZCekNxPhk</p>",
+			"material": {
+				"Recording":"https://www.youtube.com/watch?v=JqlldLNU_Uc&feature=youtu.be"
+			}
 		},
 		{
 			"type": "break",
@@ -255,7 +261,10 @@
 			"speaker": "Denny Schreber",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"Session Description: In this session I will discuss options how UI5 web apps can be used as a basis for apps beyond your typical office requirements. While SAP Fiori apps and Fiori LaunchPad are the basis for SAPs Digital Workplace of the future, there exist much more possibilities how the web can be the basis for your digitalization efforts. We are looking into WebAPIs, standards such as WebRTC and 3rd party extensions and how this can be applied in enterprise settings. Adding Cloud APIs into the mix, lots of demand for feature-rich apps can already be fulfilled leveraging the web."
+			"abstract":"Session Description: In this session I will discuss options how UI5 web apps can be used as a basis for apps beyond your typical office requirements. While SAP Fiori apps and Fiori LaunchPad are the basis for SAPs Digital Workplace of the future, there exist much more possibilities how the web can be the basis for your digitalization efforts. We are looking into WebAPIs, standards such as WebRTC and 3rd party extensions and how this can be applied in enterprise settings. Adding Cloud APIs into the mix, lots of demand for feature-rich apps can already be fulfilled leveraging the web.",
+			"material": {
+				"Slides": "https://de.slideshare.net/DennySchreber/ui5-apps-beyond-the-office-ui5con"
+			}
 
 		},
 		{
@@ -342,7 +351,11 @@
 			"speaker": "Maxim Naidenov",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>Writing reliable application tests for web applications has never been easy. Modern JavaScript-centric frameworks like UI5 have made this even more complicated as the application UI is generated completely asynchronously by JavaScript code. The main challenge for an application test creator is to write a test that does not suffer from sporadic failures that dismiss its value as a testing tool. Together with all its enterprise qualities, OpenUI5 provides a state-of-the-art application testing framework called OPA. Using it, everyone can write application tests that synchronize with the state of the UI5 framework and provide inherent reliability without any explicit efforts from the test. Together with support for backend mocking provided from the MockServer one could build extensive, self-contained test suites that cover most UI interactions supported by the application.</p><p>In this session we will start from an existing UI5 application and build an OPA test for some of its UI interaction scenarios. We will cover all aspects of test setup, selecting and interacting with UI5 controls, execution and debugging. We will also touch some advanced topics like structuring the tests in page objects and journeys, custom matchers and interaction with composite controls.</p><p>As this session involves live coding, please make sure you have a local <i>or</i> remote development setup. For local development you will need: browser, Git client, nodejs (preferred v6.11.0 LTS). Or you can use SAP WebIDE by registering a SAP Cloud trial account at: https://cloudplatform.sap.com/try.html</p>"
+			"abstract":"<p>Writing reliable application tests for web applications has never been easy. Modern JavaScript-centric frameworks like UI5 have made this even more complicated as the application UI is generated completely asynchronously by JavaScript code. The main challenge for an application test creator is to write a test that does not suffer from sporadic failures that dismiss its value as a testing tool. Together with all its enterprise qualities, OpenUI5 provides a state-of-the-art application testing framework called OPA. Using it, everyone can write application tests that synchronize with the state of the UI5 framework and provide inherent reliability without any explicit efforts from the test. Together with support for backend mocking provided from the MockServer one could build extensive, self-contained test suites that cover most UI interactions supported by the application.</p><p>In this session we will start from an existing UI5 application and build an OPA test for some of its UI interaction scenarios. We will cover all aspects of test setup, selecting and interacting with UI5 controls, execution and debugging. We will also touch some advanced topics like structuring the tests in page objects and journeys, custom matchers and interaction with composite controls.</p><p>As this session involves live coding, please make sure you have a local <i>or</i> remote development setup. For local development you will need: browser, Git client, nodejs (preferred v6.11.0 LTS). Or you can use SAP WebIDE by registering a SAP Cloud trial account at: https://cloudplatform.sap.com/try.html</p>",
+			"material": {
+				"Slides": "https://github.com/UI5con2017/opaintro/raw/master/UI5con%202017.pptx",
+				"GitHub": "https://github.com/UI5con2017/opaintro"
+			}
 		},
 		{
 			"type": "break",
@@ -400,7 +413,11 @@
 			"speaker": "Stanislava Baltova, Yavor Ivanov",
 			"type": "Hands-On",
 			"duration": 60,
-			"abstract":"<p>Find out everything you need to know about the new version of SAP Fiori. Learn what makes Fiori 2.0 different and which are the new UI5 features empowering Fiori 2.0 experience.</p><p>In this session we will show and tell how to develop your Fiori 2.0 app from scratch and even more - how to migrate your existing app to Fiori 2.0.</p><p>Prerequisites:</p><p>You will work in SAP WebIDE, trial accounts are already created for you, so you do not need anything else than your laptop. In case of network issues, we would fall back to using nodejs, NPM and Git, so you should preferably have those installed.</p>"
+			"abstract":"<p>Find out everything you need to know about the new version of SAP Fiori. Learn what makes Fiori 2.0 different and which are the new UI5 features empowering Fiori 2.0 experience.</p><p>In this session we will show and tell how to develop your Fiori 2.0 app from scratch and even more - how to migrate your existing app to Fiori 2.0.</p><p>Prerequisites:</p><p>You will work in SAP WebIDE, trial accounts are already created for you, so you do not need anything else than your laptop. In case of network issues, we would fall back to using nodejs, NPM and Git, so you should preferably have those installed.</p>",
+			"material": {
+				"Worksheet":"https://github.com/d3xter666/2017-ui5con-fiori/raw/master/fiori-2.0-script.pdf",
+				"GitHub":"https://github.com/d3xter666/2017-ui5con-fiori"
+			}
 		},
 		{
 			"type": "break",
