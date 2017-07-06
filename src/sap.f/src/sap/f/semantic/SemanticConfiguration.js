@@ -129,6 +129,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the <code>SemanticControl</code> should be preprocessed.
+	 *
+	 * @returns {Boolean}
+	 */
+	SemanticConfiguration.shouldBePreprocessed = function (sType) {
+		if (SemanticConfiguration.isKnownSemanticType(sType)) {
+			return SemanticConfiguration._oTypeConfigs[sType].needPreprocesing || false;
+		}
+
+		return false;
+	};
+
+	/**
 	* Determines if the <code>SemanticControl</code> is a <code>MainAction</code>.
 	*
 	* @returns {Boolean}
@@ -331,9 +344,11 @@ sap.ui.define([
 			}
 		};
 
+		// FOOTER Semantic RIGHT Actions
 		oTypeConfigs["sap.m.DraftIndicator"] = {
-			placement: SemanticConfiguration._Placement.footerLeft,
-			order: 1,
+			placement: SemanticConfiguration._Placement.footerRight,
+			order: 0,
+			needPreprocesing: true,
 			mainAction : false,
 			getSettings: function() {
 				return {
@@ -342,10 +357,9 @@ sap.ui.define([
 			}
 		};
 
-		// FOOTER Semantic RIGHT Actions
 		oTypeConfigs["sap.f.semantic.FooterMainAction"] = {
 			placement: SemanticConfiguration._Placement.footerRight,
-			order: 0,
+			order: 1,
 			mainAction : true,
 			getSettings: function() {
 				return {
@@ -359,7 +373,7 @@ sap.ui.define([
 
 		oTypeConfigs["sap.f.semantic.PositiveAction"] = {
 			placement: SemanticConfiguration._Placement.footerRight,
-			order: 1,
+			order: 2,
 			mainAction : false,
 			getSettings: function() {
 				return {
@@ -373,7 +387,7 @@ sap.ui.define([
 
 		oTypeConfigs["sap.f.semantic.NegativeAction"] = {
 			placement: SemanticConfiguration._Placement.footerRight,
-			order: 2,
+			order: 3,
 			mainAction : false,
 			getSettings: function() {
 				return {
