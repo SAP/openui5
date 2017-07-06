@@ -186,7 +186,7 @@ sap.ui.require([
 								<Property Name="p4" Type="' + sNamespace + 'Time"/>\
 								<Property Name="p5" Type="' + sNamespace + 'DateTime"/>\
 								<Property Name="p6" Type="' + sNamespace + 'DateTime"\
-									sap:display-format="Date"/>\
+									Precision="0" sap:display-format="Date"/>\
 								<Property Name="p7" Type="' + sNamespace + 'Float"/>\
 							</' + sType + '>\
 						</Schema>',
@@ -239,7 +239,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("testNavigationPropertyConversion", function (assert) {
+	QUnit.test("convertXMLMetadata: NavigationProperty & Assocation", function (assert) {
 		var sXML = '\
 				<Schema Namespace="GWSAMPLE_BASIC.0001" Alias="GWSAMPLE_BASIC">\
 					<EntityType Name="BusinessPartner">\
@@ -295,6 +295,110 @@ sap.ui.require([
 			};
 
 		testConversion(assert, sXML, oExpectedResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: multiple EntityContainer", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="Schema1">\
+					<EntityContainer Name="Container" m:IsDefaultEntityContainer="true"/>\
+				</Schema>\
+				<Schema Namespace="Schema2">\
+					<EntityContainer Name="Container"/>\
+				</Schema>',
+			{
+				"$EntityContainer" : "Schema1.Container",
+				"Schema1." : {
+					"$kind" : "Schema"
+				},
+				"Schema1.Container" : {
+					"$kind" : "EntityContainer"
+				},
+				"Schema2." : {
+					"$kind" : "Schema"
+				},
+				"Schema2.Container" : {
+					"$kind" : "EntityContainer"
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertXMLMetadata: AssociationSets", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="GWSAMPLE_BASIC.0001" Alias="GWSAMPLE_BASIC">\
+					<EntityType Name="BusinessPartner">\
+						<NavigationProperty Name="Foo"\
+							Relationship="GWSAMPLE_BASIC.Foo"\
+							FromRole="Foo1"\
+							ToRole="Foo2"/>\
+						<NavigationProperty Name="ToProducts"\
+							Relationship="GWSAMPLE_BASIC.Assoc_BusinessPartner_Products"\
+							FromRole="FromRole_Assoc_BusinessPartner_Products"\
+							ToRole="ToRole_Assoc_BusinessPartner_Products"/>\
+					</EntityType>\
+					<EntityType Name="Product"/>\
+					<Association Name="Assoc_BusinessPartner_Products">\
+						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1"\
+								Role="FromRole_Assoc_BusinessPartner_Products"/>\
+						<End Type="GWSAMPLE_BASIC.Product" Multiplicity="*"\
+								Role="ToRole_Assoc_BusinessPartner_Products"/>\
+					</Association>\
+					<Association Name="Foo">\
+						<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1"\
+								Role="Foo1"/>\
+						<End Type="GWSAMPLE_BASIC.Product" Multiplicity="*"\
+								Role="Foo2"/>\
+					</Association>\
+					<EntityContainer Name="Container">\
+						<EntitySet Name="BusinessPartnerSet"\
+								EntityType="GWSAMPLE_BASIC.BusinessPartner"/>\
+						<EntitySet Name="ProductSet"\ EntityType="GWSAMPLE_BASIC.Product"/>\
+						<AssociationSet Name="Assoc_BusinessPartner_Products_AssocSet"\
+								Association="GWSAMPLE_BASIC.Assoc_BusinessPartner_Products">\
+							<End EntitySet="BusinessPartnerSet"\
+								Role="FromRole_Assoc_BusinessPartner_Products"/>\
+							<End EntitySet="ProductSet"\
+								Role="ToRole_Assoc_BusinessPartner_Products"/>\
+						</AssociationSet>\
+					</EntityContainer>\
+				</Schema>',
+			{
+				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
+				"GWSAMPLE_BASIC.0001." : {
+					"$kind" : "Schema"
+				},
+				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
+					"$kind" : "EntityType",
+					"Foo" : {
+						"$kind" : "NavigationProperty",
+						"$isCollection" : true,
+						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					},
+					"ToProducts" : {
+						"$kind" : "NavigationProperty",
+						"$isCollection" : true,
+						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					}
+				},
+				"GWSAMPLE_BASIC.0001.Product" : {
+					"$kind" : "EntityType"
+				},
+				"GWSAMPLE_BASIC.0001.Container" : {
+					"$kind" : "EntityContainer",
+					"BusinessPartnerSet" : {
+						"$kind" : "EntitySet",
+						"$Type" : "GWSAMPLE_BASIC.0001.BusinessPartner",
+						"$NavigationPropertyBinding" : {
+							"ToProducts" : "ProductSet"
+						}
+					},
+					"ProductSet" : {
+						"$kind" : "EntitySet",
+						"$Type" : "GWSAMPLE_BASIC.0001.Product"
+					}
+				}
+			});
 	});
 
 	//*********************************************************************************************

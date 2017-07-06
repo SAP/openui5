@@ -1,4 +1,5 @@
 {
+	"$EntityContainer": "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities",
 	"$Version": "4.0",
 	"GWSAMPLE_BASIC.": {
 		"$kind": "Schema"
@@ -213,6 +214,93 @@
 			},
 			"$Type": "GWSAMPLE_BASIC.BusinessPartner",
 			"$kind": "NavigationProperty"
+		}
+	},
+	"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities": {
+		"$kind": "EntityContainer",
+		"BusinessPartnerSet": {
+			"$NavigationPropertyBinding": {
+				"ToContacts": "ContactSet",
+				"ToProducts": "ProductSet",
+				"ToSalesOrders": "SalesOrderSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.BusinessPartner",
+			"$kind": "EntitySet"
+		},
+		"ContactSet": {
+			"$NavigationPropertyBinding": {
+				"ToBusinessPartner": "BusinessPartnerSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.Contact",
+			"$kind": "EntitySet"
+		},
+		"ProductSet": {
+			"$NavigationPropertyBinding": {
+				"ToSalesOrderLineItems": "SalesOrderLineItemSet",
+				"ToSupplier": "BusinessPartnerSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.Product",
+			"$kind": "EntitySet"
+		},
+		"SalesOrderLineItemSet": {
+			"$NavigationPropertyBinding": {
+				"ToHeader": "SalesOrderSet",
+				"ToProduct": "ProductSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$kind": "EntitySet"
+		},
+		"SalesOrderSet": {
+			"$NavigationPropertyBinding": {
+				"ToBusinessPartner": "BusinessPartnerSet",
+				"ToLineItems": "SalesOrderLineItemSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.SalesOrder",
+			"$kind": "EntitySet"
+		},
+		"VH_AddressTypeSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_AddressType",
+			"$kind": "EntitySet"
+		},
+		"VH_BPRoleSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_BPRole",
+			"$kind": "EntitySet"
+		},
+		"VH_CategorySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Category",
+			"$kind": "EntitySet"
+		},
+		"VH_CountrySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Country",
+			"$kind": "EntitySet"
+		},
+		"VH_CurrencySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Currency",
+			"$kind": "EntitySet"
+		},
+		"VH_LanguageSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Language",
+			"$kind": "EntitySet"
+		},
+		"VH_ProductTypeCodeSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_ProductTypeCode",
+			"$kind": "EntitySet"
+		},
+		"VH_SexSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Sex",
+			"$kind": "EntitySet"
+		},
+		"VH_UnitLengthSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_UnitLength",
+			"$kind": "EntitySet"
+		},
+		"VH_UnitQuantitySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_UnitQuantity",
+			"$kind": "EntitySet"
+		},
+		"VH_UnitWeightSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_UnitWeight",
+			"$kind": "EntitySet"
 		}
 	},
 	"GWSAMPLE_BASIC.Product": {
@@ -464,7 +552,6 @@
 			"$kind": "Property"
 		},
 		"DeliveryDate": {
-			"$Precision": 7,
 			"$Type": "Edm.Date",
 			"$kind": "Property"
 		},

@@ -10,6 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	var V2MetadataConverter,
+		sMicrosoftNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
 		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
 		// the configurations for traverse
 		oAliasConfig = {
@@ -56,6 +57,18 @@ sap.ui.define([
 						__processor : processComplexType,
 						__include : [oStructuredTypeConfig]
 					},
+					"EntityContainer" : {
+						__processor : processEntityContainer,
+						"AssociationSet" : {
+							__processor : processAssociationSet,
+							"End" : {
+								__processor : processAssociationSetEnd
+							}
+						},
+						"EntitySet" : {
+							__processor : processEntitySet
+						}
+					},
 					"EntityType" : {
 						__processor : processEntityType,
 						__include : [oStructuredTypeConfig],
@@ -92,9 +105,38 @@ sap.ui.define([
 		var sName = oElement.getAttribute("Role");
 
 		oAggregate.association.roles[sName] = {
-			typeName : V2MetadataConverter.resolveAlias(oElement.getAttribute("Type"), oAggregate),
-			multiplicity : oElement.getAttribute("Multiplicity")
+			multiplicity : oElement.getAttribute("Multiplicity"),
+			propertyName : undefined, // will poss. be set in updateNavigationProperties...
+			typeName : V2MetadataConverter.resolveAlias(oElement.getAttribute("Type"), oAggregate)
 		};
+	}
+
+	/**
+	 * Processes an AssociationSet element.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processAssociationSet(oElement, oAggregate) {
+		var oAssociationSet = {
+				associationName : V2MetadataConverter.resolveAlias(
+					oElement.getAttribute("Association"), oAggregate),
+				ends : []
+			};
+
+		oAggregate.associationSet = oAssociationSet;
+		oAggregate.associationSets.push(oAssociationSet);
+	}
+
+	/**
+	 * Processes an End element below an Association or AssociationSet element.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processAssociationSetEnd(oElement, oAggregate) {
+		oAggregate.associationSet.ends.push({
+			entitySetName : oElement.getAttribute("EntitySet"),
+			roleName : oElement.getAttribute("Role")
+		});
 	}
 
 	/**
@@ -117,6 +159,39 @@ sap.ui.define([
 		oAggregate.constraintRole = oConstraint.dependent = {
 			roleName : oElement.getAttribute("Role")
 		};
+	}
+
+	/**
+	 * Processes an EntityContainer.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processEntityContainer(oElement, oAggregate) {
+		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
+
+		oAggregate.result[sQualifiedName] = oAggregate.entityContainer = {
+			"$kind" : "EntityContainer"
+		};
+		if (oElement.getAttributeNS(sMicrosoftNamespace, "IsDefaultEntityContainer") === "true") {
+			oAggregate.defaultEntityContainer = sQualifiedName;
+		}
+		V2MetadataConverter.annotatable(oAggregate, sQualifiedName);
+	}
+
+	/**
+	 * Processes an EntitySet element at the EntityContainer.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processEntitySet(oElement, oAggregate) {
+		var sName = oElement.getAttribute("Name");
+
+		oAggregate.entityContainer[sName] = oAggregate.entitySet = {
+			$kind : "EntitySet",
+			$Type :
+				V2MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
+		};
+		V2MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -202,8 +277,7 @@ sap.ui.define([
 	 * @param {Element} oElement The element using the type
 	 */
 	function processTypedCollection(sType, oProperty, oAggregate, oElement) {
-		var sDisplayFormat,
-			aMatches = V2MetadataConverter.rCollection.exec(sType);
+		var aMatches = V2MetadataConverter.rCollection.exec(sType);
 
 		if (aMatches) {
 			oProperty.$isCollection = true;
@@ -215,8 +289,12 @@ sap.ui.define([
 		}
 		switch (sType) {
 			case "Edm.DateTime":
-				sDisplayFormat = oElement.getAttributeNS(sSapNamespace, "display-format");
-				sType = sDisplayFormat === "Date" ? "Edm.Date" : "Edm.DateTimeOffset";
+				if (oElement.getAttributeNS(sSapNamespace, "display-format") === "Date") {
+					sType = "Edm.Date";
+					delete oProperty.$Precision;
+				} else {
+					sType = "Edm.DateTimeOffset";
+				}
 				break;
 			case "Edm.Float":
 				sType = "Edm.Single";
@@ -243,10 +321,11 @@ sap.ui.define([
 
 		oAggregate.type[sName] = oProperty;
 		oAggregate.navigationProperties.push({
-			property : oProperty,
 			associationName :
 				V2MetadataConverter.resolveAlias(oElement.getAttribute("Relationship"), oAggregate),
 			fromRoleName : oElement.getAttribute("FromRole"),
+			property : oProperty,
+			propertyName : sName,
 			toRoleName : oElement.getAttribute("ToRole")
 		});
 	}
@@ -262,20 +341,43 @@ sap.ui.define([
 				"$kind" : "Property"
 			};
 
-		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate, oElement);
 		V2MetadataConverter.processFacetAttributes(oElement, oProperty);
+		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate, oElement);
 
 		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
-	 * Iterates over the aggregated navigation properties list and updates the corresponding
-	 * navigation properties from the associations.
+	 * Sets $EntityContainer to the default entity container (or the only one).
+	 * @param {object} oAggregate The aggregate
+	 */
+	function setDefaultEntityContainer(oAggregate) {
+		var sDefaultEntityContainer = oAggregate.defaultEntityContainer,
+			aEntityContainers;
+
+		if (sDefaultEntityContainer) {
+			oAggregate.result.$EntityContainer = sDefaultEntityContainer;
+		} else {
+			aEntityContainers = Object.keys(oAggregate.result).filter(function (sQualifiedName) {
+				return oAggregate.result[sQualifiedName].$kind === "EntityContainer";
+			});
+			if (aEntityContainers.length === 1) {
+				oAggregate.result.$EntityContainer = aEntityContainers[0];
+			}
+		}
+	}
+
+	/**
+	 * Updates navigation properties and creates navigation property bindings. Iterates over the
+	 * aggregated navigation properties list and updates the corresponding navigation properties
+	 * from the associations. Iterates over the aggregated association set and tries to create
+	 * navigation property bindings for both directions.
 	 *
 	 * @param {object} oAggregate The aggregate
 	 */
-	function updateNavigationProperties(oAggregate) {
+	function updateNavigationPropertiesAndCreateBindings(oAggregate) {
+
 		oAggregate.navigationProperties.forEach(function (oNavigationPropertyData) {
 			var oAssociation = oAggregate.associations[oNavigationPropertyData.associationName],
 				oConstraint = oAssociation.referentialConstraint,
@@ -283,6 +385,7 @@ sap.ui.define([
 				oToRole = oAssociation.roles[oNavigationPropertyData.toRoleName];
 
 			oNavigationProperty.$Type = oToRole.typeName;
+			oToRole.propertyName = oNavigationPropertyData.propertyName;
 			if (oToRole.multiplicity === "1") {
 				oNavigationProperty.$Nullable = false;
 			}
@@ -295,6 +398,31 @@ sap.ui.define([
 				oNavigationProperty.$ReferentialConstraint[oConstraint.dependent.propertyRef]
 					= oConstraint.principal.propertyRef;
 			}
+		});
+
+		oAggregate.associationSets.forEach(function (oAssociationSet) {
+			var oAssociation = oAggregate.associations[oAssociationSet.associationName],
+				oEntityContainer = oAggregate.entityContainer;
+
+			/*
+			 * Creates a navigation property binding for the navigation property of the "from" set's
+			 * type that has the "to" type as target, using the sets pointing to these types.
+			 */
+			function createNavigationPropertyBinding(oAssociationSetFrom, oAssociationSetTo) {
+				var oEntitySet = oEntityContainer[oAssociationSetFrom.entitySetName],
+					oToRole = oAssociation.roles[oAssociationSetTo.roleName];
+
+				if (oToRole.propertyName) {
+					oEntitySet.$NavigationPropertyBinding
+						= oEntitySet.$NavigationPropertyBinding || {};
+					oEntitySet.$NavigationPropertyBinding[oToRole.propertyName]
+						= oAssociationSetTo.entitySetName;
+				}
+			}
+
+			// Try to create navigation property bindings for the two directions
+			createNavigationPropertyBinding(oAssociationSet.ends[0], oAssociationSet.ends[1]);
+			createNavigationPropertyBinding(oAssociationSet.ends[1], oAssociationSet.ends[0]);
 		});
 	}
 
@@ -314,10 +442,15 @@ sap.ui.define([
 				"sap.ui.model.odata.v4.lib._V2MetadataConverter");
 			oAggregate = {
 				"aliases" : {}, // maps alias -> namespace
+				"annotatable" : null, // the current annotatable, see function annotatable
 				"association" : null, // the current association
 				"associations" : {}, // maps qualified name -> association
+				"associationSet" : null, // the current associationSet
 				"associationSets" : [], // list of associationSets
 				"constraintRole" : null, // the current Principal/Dependent
+				"defaultEntityContainer" : null, // the name of the default EntityContainer
+				"entityContainer" : null, // the current EntityContainer
+				"entitySet" : null, // the current EntitySet
 				"namespace" : null, // the namespace of the current Schema
 				"navigationProperties" : [], // a list of navigation property data
 				"schema" : null, // the current Schema
@@ -333,7 +466,8 @@ sap.ui.define([
 			// pass 2: full conversion
 			V2MetadataConverter.traverse(oElement, oAggregate, oFullConfig);
 			// pass 3
-			updateNavigationProperties(oAggregate);
+			setDefaultEntityContainer(oAggregate);
+			updateNavigationPropertiesAndCreateBindings(oAggregate);
 
 			jQuery.sap.measure.end("convertXMLMetadata");
 			return oAggregate.result;

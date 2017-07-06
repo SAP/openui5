@@ -103,8 +103,8 @@ sap.ui.define([
 		 * @param {object} oTarget The target object
 		 * @param {object} oConfig
 		 *   The configuration: each property describes a property of oAttributes to copy; the
-		 *     value is a conversion function, if this function returns undefined, the property is
-		 *     not set
+		 *   value is a conversion function, if this function returns undefined, the property is
+		 *   not set
 		 */
 		processAttributes : function (oElement, oTarget, oConfig) {
 			var sProperty;
