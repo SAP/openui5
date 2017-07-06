@@ -146,6 +146,7 @@
 		assert.strictEqual(oRating0.getIconUnselected(), "", "By default the unselected icom is empty on " + oRating0);
 		assert.strictEqual(oRating0.getIconHovered(), "", "By default the hovered icon is empty on " + oRating0);
 		assert.strictEqual(oRating0.getVisualMode(), "Half", "By default the visual mode is \"Half\" on " + oRating0);
+		assert.strictEqual(oRating0.getDisplayOnly(), false, "By default the displayOnly is false " + oRating0);
 	});
 
 	QUnit.module("HTML");
@@ -206,6 +207,21 @@
 
 		// check visibility false = no rendering
 		assert.strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
+	});
+
+	QUnit.test("displayOnly add class", function(assert) {
+
+		// initial assertion
+		assert.strictEqual(oRating1.$().hasClass("sapMRIDisplayOnly"), false, 'Initially the control does not have class "sapMRIDisplayOnly" on ' + oRating);
+
+		// act
+		oRating1.setDisplayOnly(true);
+
+		// assertion
+		assert.strictEqual(oRating1.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
+
+		//set to default
+		oRating1.setDisplayOnly(false);
 	});
 
 
@@ -566,6 +582,17 @@
 		assert.strictEqual(oInfo.description, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_RATING", [0, 10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
+
+		oControl.setEnabled(true);
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+
+		oControl.setDisplayOnly(true);
+		oInfo = oControl.getAccessibilityInfo();
+		assert.strictEqual(oInfo.focusable, false, "Not focusable");
+		assert.strictEqual(oInfo.enabled, true, "Enabled");
+
 		oControl.destroy();
 	});
 </script>
