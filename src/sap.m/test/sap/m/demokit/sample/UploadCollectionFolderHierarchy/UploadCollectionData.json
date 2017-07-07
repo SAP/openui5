@@ -1,6 +1,139 @@
 {
+  	"currentLocationText" : "Attachments",
+	"history": [],
 	"items": [
 		{
+			"type": "folder",
+			"documentId": "",
+			"visibleEdit": false,
+			"visibleDelete": false,
+			"fileName": "My Documents",
+			"mimeType": "",
+			"thumbnailUrl": "sap-icon://folder-blank",
+			"url": "",
+			"attributes": [
+				{
+					"title": "Created on",
+					"text": "2014-09-03"
+				},
+				{
+					"title": "File Size",
+					"text": "5"
+				}
+			],
+			"statuses": [],
+			"markers": [
+				{
+					"type": "Flagged"
+				}
+			],
+			"items": [
+				{
+				  	"type": "folder",
+					"documentId": "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
+					"visibleEdit": true,
+					"visibleDelete": true,
+					"fileName": "Images",
+					"mimeType": "image/jpg",
+					"thumbnailUrl": "sap-icon://folder-blank",
+					"url": "",
+					"attributes": [
+						{
+							"title": "Uploaded By",
+							"text": "Susan Baker",
+							"active": true
+						},
+						{
+							"title": "Uploaded On",
+							"text": "2014-09-03"
+						},
+						{
+							"title": "File Size",
+							"text": "5"
+						}
+					],
+					"statuses": [
+						{
+							"title": "First status' title",
+							"text": "First status' text"
+						}
+					],
+					"markers": [
+						{
+							"type": "Flagged"
+						}
+					],
+					"items": [
+						{
+							"documentId": "b68a7065-cc2a-2140-922d-e7528cd32172",
+							"visibleEdit": true,
+							"visibleDelete": true,
+							"fileName": "Picture of a woman.png",
+							"mimeType": "image/png",
+							"thumbnailUrl": "test-resources/sap/m/images/Woman_04.png",
+							"url": "test-resources/sap/m/images/Woman_04.png",
+							"attributes": [
+								{
+									"title": "Uploaded By",
+									"text": "Kate Brown"
+								},
+								{
+									"title": "Uploaded On",
+									"text": "2014-07-25"
+								},
+								{
+									"title": "File Size",
+									"text": "40000000"
+								}
+						  ]
+						}
+					]
+				}, {
+					"documentId": "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
+					"visibleEdit": true,
+					"visibleDelete": true,
+					"fileName": "Notes.txt",
+					"mimeType": "text/plain",
+					"thumbnailUrl": "",
+					"url": "test-resources/sap/m/demokit/sample/UploadCollection/LinkedDocuments/Notes.txt",
+					"attributes": [
+						{
+							"title": "Uploaded By",
+							"text": "John Smith"
+						},
+						{
+							"title": "Uploaded On",
+							"text": "2014-09-02",
+							"active": true
+						},
+						{
+							"title": "File Size",
+							"text": "226600",
+							"active": true
+						},
+						{
+							"title": "Attribute with a long text",
+							"text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+						}
+					],
+					"statuses": [
+						{
+							"title": "Status",
+							"text": "None",
+							"state": "None"
+						}
+					],
+					"markers": [
+						{
+							"type": "Flagged"
+						},
+						{
+							"type": "Favorite"
+						}
+					]
+				}
+			]
+		}, {
 			"documentId": "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 			"visibleEdit": true,
 			"visibleDelete": true,
