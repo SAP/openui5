@@ -3,12 +3,14 @@ sap.ui.define([
 	'sap/ui/demo/cart/model/formatter',
 	'sap/ui/Device',
 	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator'
+	'sap/ui/model/FilterOperator',
+	'sap/m/MessageToast'
 ], function (BaseController,
 			 formatter,
 			 Device,
 			 Filter,
-			 FilterOperator) {
+			 FilterOperator,
+			 MessageToast) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Category", {
@@ -98,20 +100,96 @@ sap.ui.define([
 			this._router.navTo("cart");
 		},
 
-		/**
-		 * Event handler to determine if the sap.m.ToggleButton is pressed or not
-		 * @param {sap.ui.base.Event} oEvent sap.m.ToggleButton press event
+		/** Apply selected filters to the category list and update text and visibility of the info toolbar
+		 * @param oEvent {sap.ui.base.Event} the press event of the sap.m.Button
+		 * @private
 		 */
-		onAvailabilityFilterToggle : function (oEvent) {
-			var oList = this.getView().byId("productList");
-			var oBinding = oList.getBinding("items");
-			var oStatusFilter = new Filter("Status", FilterOperator.EQ, "A");
+		_applyFilter : function (oEvent) {
+			var oList = this.getView().byId("productList"),
+				oBinding = oList.getBinding("items"),
+				aSelectedFilterItems = oEvent.getParameter("filterItems"),
+				sFilterString = oEvent.getParameters().filterString,
+				oFilter,
+				aFilters = [],
+				aAvailableFilters = [],
+				aPriceFilters = [];
 
-			if (oEvent.getParameter("pressed")) {
-				oBinding.filter([oStatusFilter]);
+			aSelectedFilterItems.forEach(function (oItem) {
+				var sFilterKey = oItem.getProperty("key");
+				switch (sFilterKey) {
+					case "Available":
+						oFilter = new Filter("Status", FilterOperator.EQ, "A");
+						aAvailableFilters.push(oFilter);
+						break;
+
+					case "OutOfStock":
+						oFilter = new Filter("Status", FilterOperator.EQ, "O");
+						aAvailableFilters.push(oFilter);
+						break;
+
+					case "More":
+						oFilter = new Filter("Price", FilterOperator.GE, 500);
+						aPriceFilters.push(oFilter);
+						break;
+
+					case "Less":
+						oFilter = new Filter("Price", FilterOperator.LT, 500);
+						aPriceFilters.push(oFilter);
+						break;
+				}
+			});
+			if (aAvailableFilters.length > 0) {
+				aFilters.push(new Filter({filters: aAvailableFilters}));
+			}
+			if (aPriceFilters.length > 0) {
+				aFilters.push(new Filter({filters: aPriceFilters}));
+			}
+			oFilter = new Filter({filters: aFilters, and: true});
+			if (aFilters.length > 0) {
+				oBinding.filter(oFilter);
+				MessageToast.show(sFilterString);
+				this.byId("categoryInfoToolbar").setVisible(true);
+				var sText = this.getResourceBundle().getText("filterByText") + " ";
+				var sSeparator = "";
+				var oKeys = oEvent.getParameter("filterCompoundKeys");
+				for (var key in oKeys) {
+					if (oKeys.hasOwnProperty(key)) {
+						sText = sText + sSeparator  + this.getResourceBundle().getText(key);
+						sSeparator = ", ";
+					}
+				}
+				this.byId("categoryInfoToolbarTitle").setText(sText);
 			} else {
 				oBinding.filter(null);
+				this.byId("categoryInfoToolbar").setVisible(false);
+				this.byId("categoryInfoToolbarTitle").setText("");
 			}
+		},
+		/**
+		 * Open the filter dialog
+		 */
+		onMasterListFilterPressed: function () {
+			this._getDialog().open();
+		},
+
+		/**
+		 * Define and return {sap.ui.xmlfragment}
+		 * @private
+		 */
+		_getDialog: function () {
+			if (!this._oDialog) {
+				this._oDialog = sap.ui.xmlfragment("sap.ui.demo.cart.view.MasterListFilterDialog", this);
+				this.getView().addDependent(this._oDialog);
+			}
+			return this._oDialog;
+		},
+
+		/**
+		 * Call the apply filter private function
+		 * @param {sap.ui.base.Event} oEvent the press event of the sap.m.Button
+		 */
+		handleConfirm: function (oEvent) {
+			this._applyFilter(oEvent);
 		}
 	});
 });
