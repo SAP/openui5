@@ -527,9 +527,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 *
 		 */
 		StepInput.prototype.onfocusout = function () {
+			// when the value is set programaticaly (e.g. with setValue())
+			// and the user pass through the field and then leave it
+			// we have to verify the value inside since the Input does not fire change event
 			this._verifyValue();
-
-			this.setValue(this._getDefaultValue(this._getInput().getValue(), this.getMax(), this.getMin()));
 		};
 
 		/**
@@ -570,6 +571,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			this._getInput().setValue(this._getFormatedValue(oValue));
 
 			this._disableButtons(oValue, this.getMax(), this.getMin());
+
 			return this.setProperty("value", parseFloat(oValue), true);
 
 		};
@@ -756,7 +758,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 		 */
 		StepInput.prototype._change = function (oEvent) {
 			this._sOldValue = this.getValue();
-			this.setValue(this._getInput().getValue());
+
+			this._verifyValue();
+			this.setValue(this._getDefaultValue(this._getInput().getValue(), this.getMax(), this.getMin()));
 
 			if (this._iChangeEventTimer) {
 				jQuery.sap.clearDelayedCall(this._iChangeEventTimer);
