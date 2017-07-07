@@ -196,7 +196,7 @@ sap.ui.define([
 					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
 
 					this.oMetaModel = new ODataMetaModel(
-						_MetadataRequestor.create(mHeaders, this.mUriParameters),
+						_MetadataRequestor.create(mHeaders, sODataVersion, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,

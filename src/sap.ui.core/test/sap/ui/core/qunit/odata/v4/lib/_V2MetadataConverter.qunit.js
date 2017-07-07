@@ -401,6 +401,41 @@ sap.ui.require([
 			});
 	});
 
+
+	//*********************************************************************************************
+	QUnit.test("try to read some random XML as V2", function (assert) {
+		var sUrl = "/some/random/xml",
+			oXML = xml(assert, '<foo xmlns="http://schemas.microsoft.com/ado/2007/06/edmx"/>');
+
+		assert.throws(function () {
+			_V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl + " is not a valid OData V2 metadata document"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("try to read V3 as V2", function (assert) {
+		var sUrl = "/some/v3/service/$metadata",
+			oXML = xml(assert, '\
+					<Edmx xmlns="http://schemas.microsoft.com/ado/2007/06/edmx"\
+						xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">\
+						<DataServices m:DataServiceVersion="3.0"/>\
+					</Edmx>');
+
+		assert.throws(function () {
+			_V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl + " is not a valid OData V2 metadata document"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("try to read V4 as V2", function (assert) {
+		var sUrl = "/some/v4/service/$metadata",
+			oXML = xml(assert, '<Edmx xmlns="http://docs.oasis-open.org/odata/ns/edmx"/>');
+
+		assert.throws(function () {
+			_V2MetadataConverter.convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl + " is not a valid OData V2 metadata document"));
+	});
+
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([

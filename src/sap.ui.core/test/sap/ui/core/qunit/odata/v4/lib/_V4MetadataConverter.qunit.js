@@ -1337,6 +1337,37 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("try to read some random XML as V4", function (assert) {
+		var sUrl = "/some/random/xml",
+			oXML = xml(assert, '<foo xmlns="http://docs.oasis-open.org/odata/ns/edmx"/>');
+
+		assert.throws(function () {
+			_V4MetadataConverter.convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl + " is not a valid OData V4 metadata document"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("try to read V2 as V4", function (assert) {
+		var sUrl = "/some/v2/service/$metadata",
+			oXML = xml(assert, '<Edmx xmlns="http://schemas.microsoft.com/ado/2007/06/edmx"/>');
+
+		assert.throws(function () {
+			_V4MetadataConverter.convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl + " is not a valid OData V4 metadata document"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("try to read V4.01 as V4", function (assert) {
+		var sUrl = "/some/v2/service/$metadata",
+			oXML = xml(assert,
+				'<Edmx Version="4.01" xmlns="http://docs.oasis-open.org/odata/ns/edmx"/>');
+
+		assert.throws(function () {
+			_V4MetadataConverter.convertXMLMetadata(oXML, sUrl);
+		}, new Error(sUrl + ": Unsupported OData version 4.01"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
 		return Promise.all([
 			Promise.resolve(

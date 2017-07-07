@@ -9,7 +9,8 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var V4MetadataConverter,
+	var sEdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx",
+		V4MetadataConverter,
 		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
 		oAnnotationLeafConfig = {
 			"AnnotationPath" : {__postProcessor : postProcessLeaf},
@@ -609,7 +610,7 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processEdmx(oElement, oAggregate) {
-		 V4MetadataConverter.processAttributes(oElement, oAggregate.result, {
+		V4MetadataConverter.processAttributes(oElement, oAggregate.result, {
 			"Version" : V4MetadataConverter.setValue
 		});
 	}
@@ -1050,14 +1051,21 @@ sap.ui.define([
 		 *
 		 * @param {Document} oDocument
 		 *   The XML DOM document
+		 * @param {string} sUrl
+		 *   The URL by which this document has been loaded (for error messages)
 		 * @returns {object}
 		 *   The metadata JSON
 		 */
-		convertXMLMetadata : function (oDocument) {
+		convertXMLMetadata : function (oDocument, sUrl) {
 			var oAggregate, oElement;
 
 			jQuery.sap.measure.average("convertXMLMetadata", "",
 				"sap.ui.model.odata.v4.lib._V4MetadataConverter");
+
+			oElement = oDocument.documentElement;
+			if (oElement.localName !== "Edmx" || oElement.namespaceURI !== sEdmxNamespace) {
+				throw new Error(sUrl + " is not a valid OData V4 metadata document");
+			}
 			oAggregate = {
 				"actionOrFunction" : null, // the current action or function
 				"aliases" : {}, // maps alias -> namespace
@@ -1073,12 +1081,16 @@ sap.ui.define([
 				"type" : null, // the current EntityType/ComplexType
 				"result" : {}
 			};
-			oElement = oDocument.documentElement;
 
 			// first round: find aliases
 			V4MetadataConverter.traverse(oElement, oAggregate, oAliasConfig);
 			// second round, full conversion
 			V4MetadataConverter.traverse(oElement, oAggregate, oFullConfig);
+
+			if (oAggregate.result.$Version !== "4.0") {
+				throw new Error(sUrl + ": Unsupported OData version " + oAggregate.result.$Version);
+			}
+
 			jQuery.sap.measure.end("convertXMLMetadata");
 			return oAggregate.result;
 		},

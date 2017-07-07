@@ -9,7 +9,8 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var V2MetadataConverter,
+	var sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
+		V2MetadataConverter,
 		sMicrosoftNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
 		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
 		// the configurations for traverse
@@ -30,6 +31,7 @@ sap.ui.define([
 		},
 		oFullConfig = {
 			"DataServices" : {
+				__processor : processDataServices,
 				"Schema" : {
 					__postProcessor : postProcessSchema,
 					__processor : _MetadataConverter.processSchema,
@@ -236,6 +238,17 @@ sap.ui.define([
 	 */
 	function processComplexType(oElement, oAggregate) {
 		processType(oElement, oAggregate, {"$kind" : "ComplexType"});
+	}
+
+	/**
+	 * Processes a DataServices element.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processDataServices(oElement, oAggregate) {
+		if (oElement.getAttributeNS(sMicrosoftNamespace, "DataServiceVersion") !== "2.0") {
+			throw new Error(oAggregate.url + " is not a valid OData V2 metadata document");
+		}
 	}
 
 	/**
@@ -524,14 +537,21 @@ sap.ui.define([
 		 *
 		 * @param {Document} oDocument
 		 *   The XML DOM document
+		 * @param {string} sUrl
+		 *   The URL by which this document has been loaded (for error messages)
 		 * @returns {object}
 		 *   The metadata JSON
 		 */
-		convertXMLMetadata : function (oDocument) {
+		convertXMLMetadata : function (oDocument, sUrl) {
 			var oAggregate, oElement;
 
 			jQuery.sap.measure.average("convertXMLMetadata", "",
 				"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+
+			oElement = oDocument.documentElement;
+			if (oElement.localName !== "Edmx" || oElement.namespaceURI !== sEdmxNamespace) {
+				throw new Error(sUrl + " is not a valid OData V2 metadata document");
+			}
 			oAggregate = {
 				"aliases" : {}, // maps alias -> namespace
 				"annotatable" : null, // the current annotatable, see function annotatable
@@ -551,9 +571,9 @@ sap.ui.define([
 				"type" : null, // the current EntityType/ComplexType
 				"result" : {
 					"$Version" : "4.0" // The result of the conversion is a V4 streamlined JSON
-				}
+				},
+				"url" : sUrl // the document URL (for error messages)
 			};
-			oElement = oDocument.documentElement;
 
 			// pass 1: find aliases
 			V2MetadataConverter.traverse(oElement, oAggregate, oAliasConfig);

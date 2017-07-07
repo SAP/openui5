@@ -122,7 +122,7 @@ sap.ui.require([
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.setupODataV4Server(this.oSandbox, {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
-					: {source : "GWSAMPLE_BASIC_toBeReplaced.xml"}, // TODO replace with V2 metadata
+					: {source : "../../../model/GWSAMPLE_BASIC.metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
@@ -2615,12 +2615,11 @@ sap.ui.require([
 		}
 	);
 
-	if (!TestUtils.isRealOData()) { // TODO remove when V2 metadata can be converted
-		//*********************************************************************************************
-		// Scenario: test conversion of $select and $expand for V2 Adapter
-		// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
-		QUnit.test("V2 Adapter: select in expand", function (assert) {
-			var sView = '\
+	//*********************************************************************************************
+	// Scenario: test conversion of $select and $expand for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: select in expand", function (assert) {
+		var sView = '\
 <FlexBox id="form" binding="{path :\'/SalesOrderSet(\\\'0500000001\\\')\', \
 		parameters : {\
 			$expand : {ToLineItems : {$select : \'ItemPosition\'}}, \
@@ -2639,23 +2638,22 @@ sap.ui.require([
 	</Table>\
 </FlexBox>';
 
-			this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
-					"&$select=ToLineItems/ItemPosition,SalesOrderID",
-				{
-					"SalesOrderID" : "0500000001",
-					"ToLineItems" : [
-						{"ItemPosition" : "0000000010"},
-						{"ItemPosition" : "0000000020"},
-						{"ItemPosition" : "0000000030"}
-					]
-				})
-				.expectChange("id", "0500000001")
-				.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
+		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
+				"&$select=ToLineItems/ItemPosition,SalesOrderID",
+			{
+				"SalesOrderID" : "0500000001",
+				"ToLineItems" : [
+					{"ItemPosition" : "0000000010"},
+					{"ItemPosition" : "0000000020"},
+					{"ItemPosition" : "0000000030"}
+				]
+			})
+			.expectChange("id", "0500000001")
+			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
-			// code under test
-			return this.createView(assert, sView, createModelForV2SalesOrderService());
-		});
-	}
+		// code under test
+		return this.createView(assert, sView, createModelForV2SalesOrderService());
+	});
 });
 //TODO test bound action
 //TODO test delete

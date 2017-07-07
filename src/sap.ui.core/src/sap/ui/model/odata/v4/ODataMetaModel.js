@@ -2081,9 +2081,6 @@ sap.ui.define([
 			return mScope;
 		}
 
-		if (mScope.$Version !== "4.0") {
-			logAndThrowError("Unsupported OData version: " + mScope.$Version, sUrl);
-		}
 		for (sReferenceUri in mScope.$Reference) {
 			oReference = mScope.$Reference[sReferenceUri];
 			// interpret reference URI relative to metadata URL

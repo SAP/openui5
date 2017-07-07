@@ -1,14 +1,14 @@
 <mvc:View
-	class="sapUiSizeCompact"
-	xmlns="sap.m"
-	xmlns:core="sap.ui.core"
-	xmlns:form="sap.ui.layout.form"
-	xmlns:mvc="sap.ui.core.mvc">
+		class="sapUiSizeCompact"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
 		<form:SimpleForm binding="{
 				path : '/EdmTypesCollection(\'1\')',
 				parameters : {
-					$select : 'ID,Binary,Boolean,Byte,Decimal,Double,Float,Guid,Int16,Int32,Int64,SByte,Single,String'
+					$select : 'ID,Binary,Boolean,Byte,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String'
 				}
 			}" layout="ResponsiveGridLayout">
 			<form:title>
@@ -45,10 +45,11 @@
 			<Text id="string" text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
 		</form:SimpleForm>
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
-			items="{
+			   items="{
 					path : '/EdmTypesCollection',
 					parameters : {
-						$select : ['ID','Boolean','Byte','Guid','Int16','Int32','SByte','String']
+						$select :
+							['ID','Boolean','Byte','GlobalUID','Int16','Int32','SByte','String']
 					},
 					templateShareable : false
 				}">
@@ -81,28 +82,28 @@
 			<items>
 				<ColumnListItem>
 					<cells>
-						<Text text="{path : 'ID', type : 'sap.ui.model.odata.type.String'}"/>
+						<Text text="{ID}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'Boolean', type : 'sap.ui.model.odata.type.Boolean'}"/>
+						<Text text="{Boolean}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'Byte', type : 'sap.ui.model.odata.type.Byte'}"/>
+						<Text text="{Byte}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'GlobalUID', type : 'sap.ui.model.odata.type.Guid'}"/>
+						<Text text="{GlobalUID}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'Int16', type : 'sap.ui.model.odata.type.Int16'}"/>
+						<Text text="{Int16}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'Int32', type : 'sap.ui.model.odata.type.Int32'}"/>
+						<Text text="{Int32}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'SByte', type : 'sap.ui.model.odata.type.SByte'}"/>
+						<Text text="{SByte}"/>
 					</cells>
 					<cells>
-						<Text text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
+						<Text text="{String}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
