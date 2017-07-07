@@ -215,7 +215,7 @@ sap.ui.define([
 			},
 
 			categoryExploredFormatter : function (sCategory) {
-				return sCategory === "Explored";
+				return sCategory === "Samples";
 			},
 
 			onAllLoadMore : function (oEvent) {
