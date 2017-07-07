@@ -481,7 +481,7 @@
 			sMessagesIndicatorType = "sap.f.semantic.MessagesIndicator",
 			sDraftIndicatorType = "sap.m.DraftIndicator",
 			iMessagesIndicatorExpectedOrder = 0,
-			iDraftIndicatorExpectedOrder = 1,
+			iDraftIndicatorExpectedOrder = 2,
 			iFooterActions = 2;
 
 		// Act
@@ -586,7 +586,7 @@
 			sPositiveActionType = "sap.f.semantic.PositiveAction",
 			sNegativeActionType = "sap.f.semantic.NegativeAction",
 			iMessagesIndicatorExpectedOrder = 0,
-			iDraftIndicatorExpectedOrder = 1,
+			iDraftIndicatorExpectedOrder = 2,
 			iMainActionExpectedOrder = 3,
 			iPositiveActionExpectedOrder = 4,
 			iNegativeActionExpectedOrder = 5,

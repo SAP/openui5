@@ -164,7 +164,6 @@ sap.ui.define([
 		this._callContainerAggregationMethod("insertContent", oControl, iIndexToInsert);
 		this._iSemanticLeftContentCount ++;
 		this._aSemanticLeftContent.push(oSemanticControl);
-		this._preProcessControl(oControl);
 
 		return this;
 	};
@@ -180,6 +179,9 @@ sap.ui.define([
 
 		this._aSemanticRightContent.push(oSemanticControl);
 		this._callContainerAggregationMethod("insertContent",  oControl, this._getSemanticRightContentInsertIndex(oSemanticControl));
+		if (this._shouldBePreprocessed(oSemanticControl)) {
+			this._preProcessControl(oControl);
+		}
 
 		return this;
 	};
@@ -196,7 +198,6 @@ sap.ui.define([
 		this._callContainerAggregationMethod("removeContent", oControl);
 		this._iSemanticLeftContentCount --;
 		this._aSemanticLeftContent.splice(this._aSemanticLeftContent.indexOf(oControl), 1);
-		this._postProcessControl(oControl);
 		return oSemanticControl;
 	};
 
@@ -211,6 +212,7 @@ sap.ui.define([
 
 		this._callContainerAggregationMethod("removeContent", oControl);
 		this._aSemanticRightContent.splice(this._aSemanticRightContent.indexOf(oSemanticControl), 1);
+		this._postProcessControl(oControl);
 
 		return oSemanticControl;
 	};

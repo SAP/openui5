@@ -55,6 +55,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the shouldBePreprocessed state of a <code>SemanticControl</code>,
+	 * defined in <code>sap.f.semantic.SemanticConfiguration</code>.
+	 *
+	 * @param {sap.f.semantic.SemanticControl} oControl
+	 * @returns {Boolean}
+	 */
+	SemanticContainer.prototype._shouldBePreprocessed = function(oControl) {
+		var sType = (oControl._getType && oControl._getType()) || oControl.getMetadata().getName();
+
+		return SemanticConfiguration.shouldBePreprocessed(sType);
+	};
+
+	/**
 	* Returns the order of a <code>SemanticControl</code> instance,
 	* defined in <code>sap.f.semantic.SemanticConfiguration</code>.
 	*
