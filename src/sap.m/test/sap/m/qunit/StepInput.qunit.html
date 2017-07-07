@@ -231,7 +231,6 @@
 
 			//act
 			this.stepInput.setMin(3);
-			this.stepInput.onfocusout();
 			//assert
 			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), true,
 					"The decrement button is disabled because there's min and min = value");
@@ -244,7 +243,6 @@
 
 			//act
 			this.stepInput.setValue(4);
-			this.stepInput.onfocusout();
 			//assert
 			strictEqual(this.stepInput._getDecrementButton().$().hasClass("sapMStepInputIconDisabled"), false,
 					"The decrement button is enabled because the value > min");
@@ -266,21 +264,23 @@
 					"The decrement button is enabled because setEnabled is set to true");
 		});
 
-		QUnit.test("Increment button enabled/disabled state", function (assert) {
-			//act
-			this.stepInput._getInput().setValue(11);
-			this.stepInput.onfocusout();
-			//assert
-			strictEqual(this.stepInput._getIncrementButton().$().hasClass("sapMStepInputIconDisabled"),
-					true,
-					"The increment button is disabled because value > max");
-		});
-
 		QUnit.test("Error state when setting values out of the limit", function (assert) {
+			var helperControl = new sap.m.Input();
+			helperControl.placeAt('qunit-fixture');
+			oCore.applyChanges();
+
+			var oInput = this.stepInput._getInput();
+
 			//act
 			this.stepInput.setMin(3);
 			this.stepInput.setValue(2);
-			this.stepInput.onfocusout();
+
+			//act
+			strictEqual(this.stepInput.getValue(), 2, "The value is 2");
+
+			oInput.focus();
+			// move focus to some other control
+			helperControl.focus();
 
 			//assert
 			strictEqual(this.stepInput._getInput().getValueState(), "Error",
@@ -289,7 +289,6 @@
 			//act
 			//value becomes 3
 			this.stepInput._getIncrementButton().firePress();
-			this.stepInput.onfocusout();
 
 			//assert
 			strictEqual(this.stepInput._getInput().getValueState(), "None",
@@ -608,10 +607,13 @@
 			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
 
 			//act
+			oInput.focus();
 			oInput.$("inner").val(7);
+
 			//No way to simulate real click on the “+” button, so make sure the same event handlers are called in the same order
-			this.stepInput.onfocusout();
-			oInput.onChange();
+			// we can't focus on the IncrementButton since it doesn't have tab index therefore we call blur on the Input
+			oInput.$("inner").blur();
+			this.clock.tick(0);
 			oIncrementBtn.firePress();
 
 			//assert
@@ -639,6 +641,45 @@
 			//assert
 			equal(this.stepInput.getValue(), 4, "Value should be changed 4 due to decrement button pressed");
 			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		QUnit.test("Change event is fired only once on focus out, when writing inside the input and then leaving the field", function(assert) {
+			//prepare
+			var oInput = this.stepInput._getInput();
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed"); //value not changed
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+
+			//act
+			oInput.focus();
+			oInput.$("inner").val(7);
+			oInput.$("inner").blur();
+
+			this.clock.tick(1000);
+
+			//assert
+			equal(this.stepInput.getValue(), 7, "Value should be changed from 4 to 7 due to typing inside the input");
+			equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
+		});
+
+		QUnit.test("Change event is not fired on focus out, when nothing is changed inside the input", function(assert) {
+			//prepare
+			var oInput = this.stepInput._getInput();
+
+			// focus the field
+			jQuery(this.stepInput).focus();
+
+			//assert
+			strictEqual(this.stepInput.getValue(), 4, "Value should not be changed"); //value not changed
+			equal(this.oChangeSpy.callCount, 0, "Change Event should not be called");
+
+			//act
+			oInput.$("inner").blur();
+
+			//assert
+			equal(this.stepInput.getValue(), 4, "After focus out value should not be changed");
+			equal(this.oChangeSpy.callCount, 0, "After focus out Change Event should not be called");
 		});
 
 		QUnit.test("up/down increases/decreases the value", function (assert) {
@@ -1004,7 +1045,7 @@
 			strictEqual(this.stepInput._padZeroesRight("0", 5), "00000", "returns '00000'");
 		});
 
-		module("onfocusout() and onsapescape()", {
+		module("onsapescape()", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
 				});
@@ -1015,33 +1056,6 @@
 			afterEach: function () {
 				this.stepInput.destroy();
 			}
-		});
-
-		QUnit.test("onfocusout()", function () {
-			//act
-			this.stepInput.getDomRef().focus();
-			this.stepInput._getInput().setValue("");
-			this.stepInput.onfocusout();
-
-			//assert
-			strictEqual(this.stepInput.getValue(), 0, "The value is set to 0 because there's no min or max set");
-
-			//act
-			this.stepInput._getInput().setValue("");
-			this.stepInput.getDomRef().focus();
-			this.stepInput.setMax(-2);
-			this.stepInput.onfocusout();
-			//assert
-			strictEqual(this.stepInput.getValue(), -2, "The value is set to the max because it's smaller than 0 and there's no min");
-
-			//act
-			this.stepInput._getInput().setValue("");
-			this.stepInput.getDomRef().focus();
-			this.stepInput.setMin(5);
-			this.stepInput.onfocusout();
-			//assert
-			strictEqual(this.stepInput.getValue(), 5, "The value is set to the min because it's bigger than 0");
-
 		});
 
 		QUnit.test("onsapescape()", function () {
