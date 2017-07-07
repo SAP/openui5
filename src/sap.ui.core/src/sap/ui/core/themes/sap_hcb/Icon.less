@@ -1,5 +1,10 @@
-.sapUiIcon:focus {
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
 	outline-color: @sapHCStandardFG;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+	border-color: @sapHCStandardFG;
 }
 
 .sapUiIconColorNeutral {
