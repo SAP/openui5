@@ -52,7 +52,9 @@ sap.ui.define([
 			},
 
 			_loadSample: function(oData) {
-				var oSample = oData.samples[this._sId];
+				var oSample = oData.samples[this._sId],
+					oContent;
+
 				if (!oSample) {
 					return;
 				}
@@ -70,12 +72,15 @@ sap.ui.define([
 				oPage.setTitle("Sample: " + oSample.name);
 
 				try {
-					var oContent = this._createComponent();
+					oContent = this._createComponent();
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
 					return;
 				}
+
+				// Store a reference to the currently opened sample on the application component
+				this.getOwnerComponent()._oCurrentOpenedSample = oContent ? oContent : undefined;
 
 				//get config
 				var oConfig = (this._oComp.getMetadata()) ? this._oComp.getMetadata().getConfig() : null;
