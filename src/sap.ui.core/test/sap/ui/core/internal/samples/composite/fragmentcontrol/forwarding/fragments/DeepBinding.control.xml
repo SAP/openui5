@@ -1,0 +1,7 @@
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core">
+	<VBox items="{$this>fcItems}">
+		<core:FragmentProxy></core:FragmentProxy>
+	</VBox>
+</core:FragmentDefinition>
