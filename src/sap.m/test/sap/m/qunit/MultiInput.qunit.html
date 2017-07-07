@@ -606,6 +606,7 @@
 
 		this.multiInput1.ontap();
 		this.clock.tick(1);
+
 		assert.equal(token1.getSelected(), false, "Token1 is unselected");
 		assert.equal(token2.getSelected(), false, "Token2 is unselected");
 		assert.equal(token3.getSelected(), false, "Token3 is unselected");
@@ -1008,6 +1009,24 @@
 		assert.equal(aTokens.length, 1, "MultiInput contains 1 token");
 		assert.equal(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
 	});
+
+	QUnit.test("click on delete icon should not trigger Input.prototype.ontap", function(assert) {
+		var spy = sinon.spy(sap.m.Input.prototype, "ontap"),
+			token1 = new sap.m.Token();
+
+		this.multiInput1.addToken(token1);
+		this.multiInput1.attachTokenUpdate(function(evt){
+			evt.preventDefault();
+		});
+
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerEvent("tap", this.multiInput1.getTokens()[0]._deleteIcon.getDomRef());
+
+		// assert
+		assert.notOk(spy.called, "Input's ontap method is not called");
+	});
+
 
 	QUnit.module("Mobile", {});
 
