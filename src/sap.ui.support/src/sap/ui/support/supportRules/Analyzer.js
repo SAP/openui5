@@ -13,8 +13,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		"use strict";
 
 		/**
-		 * @constructor
 		 * @class
+		 * @constructor
 		 * <h3>Overview</h3>
 		 * Analyzer class that runs tasks. A Task runs a function for every entry in its object array.
 		 * The Analyzer counts the task objects and calculates the percentages.
@@ -31,6 +31,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Returns the total progress for all tasks with all their objects.
 		 * @private
+		 * @method
 		 * @memberof sap.ui.support.Analyzer
 		 * @returns {int} Total progress for all tasks with all their objects
 		 */
@@ -42,10 +43,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		 * Adds a task to with a name to the analyzer.
 		 * The <code>fnTaskProcessor</code> function is called if the task is run for every object in aObjects.
 		 * @private
+		 * @method
 		 * @memberof sap.ui.support.Analyzer
 		 * @param {string} sTaskName The name of the task to be executed
 		 * @param {function} fnTaskProcessor Custom function from the user
-		 * @param {Object[]} aObjects All rules for a given task
+		 * @param {object[]} aObjects All rules for a given task
 		 */
 		Analyzer.prototype.addTask = function (sTaskName, fnTaskProcessor, aObjects) {
 			var oTask = {
@@ -61,6 +63,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Resets the analyzer and clears all tasks
 		 * @private
+		 * @method
 		 * @memberof sap.ui.support.Analyzer
 		 * @returns {void}
 		 */
@@ -80,6 +83,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Returns whether the Analyzer is currently running
 		 * @private
+		 * @method
+		 * @name sap.ui.support.Analyzer.running
 		 * @memberof sap.ui.support.Analyzer
 		 * @returns {boolean} Check if the Analyzer is still running
 		 */
@@ -90,6 +95,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Starts the analyzer to run all tasks
 		 * @private
+		 * @method
+		 * @name sap.ui.support.Analyzer.start
 		 * @memberof sap.ui.support.Analyzer
 		 * @param {function} fnResolve The function is called when the analyzer finishes all tasks
 		 * @returns {Promise} progressPromise
@@ -112,9 +119,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 
 		/**
 		 * Internal method to start the next run on the next object.
-		 * @memberof sap.ui.support.Analyzer
 		 * @private
-		 * @protected
+		 * @method
+		 * @name sap.ui.support.Analyzer._start
+		 * @memberof sap.ui.support.Analyzer
 		 * @param {boolean} bContinue True if called via timer, false if the Analyzer is started manually
 		 * @param {function} fnResolve Resolve function
 		 */
@@ -150,6 +158,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Processes the next object in the current task
 		 * @private
+		 * @method
+		 * @name sap.ui.support.Analyzer._next
 		 * @memberof sap.ui.support.Analyzer
 		 * @param {function} fnResolve Resolves promise to notify of finished state
 		 */
@@ -193,6 +203,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		/**
 		 * Get the elapsed time in the form of a string.
 		 * @private
+		 * @method
+		 * @name sap.ui.support.Analyzer.getElapsedTimeString
 		 * @memberof sap.ui.support.Analyzer
 		 * @returns {string} Returns the total elapsed time since the Analyzer has started
 		 */
