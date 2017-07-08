@@ -1587,6 +1587,7 @@
 				this.oTP = new sap.m.TimePicker({});
 				this.sandbox = sinon.sandbox;
 				this.oTP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 			},
 			afterEach: function () {
 				this.oTP.destroy();
@@ -1661,6 +1662,101 @@
 					//assert
 					strictEqual($Target.text(), sExpectedSelectionValue, "Timepicker " + iNonZeroIndex + " live-region updates and its value is as expected (" + sExpectedSelectionValue + ")");
 				}
+			},
+			fnTestReferencing: function (oSut, fnAssert, oResourceManager, aScenarios) {
+				//prepare
+				var sCustomRoleHiddenLblIdSuffix = "descr",
+					sPlaceholderHiddenLblIdSuffix = "labelledby",
+					sTooltipHiddenLblIdSuffix = "describedby",
+					sInnerInputSuffix = oSut.getRenderer().getInnerSuffix(),
+					fnTestCustomRole = function () {
+						//prepare
+						var $CustomRoleHiddenLabel = oSut.$(sCustomRoleHiddenLblIdSuffix),
+							sCustomRoleId = $CustomRoleHiddenLabel.attr('id'),
+							sCustomRoleRealText = $CustomRoleHiddenLabel.text(),
+							sCustomRoleExpectedText = oResourceManager.getText("TIMEPICKER_SCREENREADER_TAG");
+
+						assert.strictEqual($CustomRoleHiddenLabel.length, 1, "The custom role invisible label is rendered");
+						assert.strictEqual(sCustomRoleRealText, sCustomRoleExpectedText, "The text of custom role invisible label is as expected");
+						assert.ok(oSut.$(sInnerInputSuffix).attr("aria-describedby").indexOf(sCustomRoleId) > -1, "'aria-labelledby' contains the custom role invisible label id");
+					},
+					fnTestExternalLabelReference = function (bReferencedWithExternalLabel) {
+						var sLabelId = "timepicker-aria-label";
+						if (bReferencedWithExternalLabel) {
+							//prepare
+							var oLabel = new sap.m.Label(sLabelId, {
+								labelFor: oSut
+							}).placeAt('qunit-fixture');
+							sap.ui.getCore().applyChanges();
+							//assert
+							fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, true, "External label reference is applied");
+							//clear
+							oLabel.destroy();
+						} else {
+							//assert
+							fnAssert.strictEqual(oSut.$(sInnerInputSuffix).attr("aria-labelledby").indexOf(sLabelId) > -1, false, "External label reference is not applied");
+						}
+					},
+					fnTestPlaceholderReference = function (bReferencedWithPlaceholder) {
+						var sDefaultPlaceholder = oSut._getPlaceholder();
+						if (bReferencedWithPlaceholder) {
+							//prepare
+							oSut.setPlaceholder("Placeholder");
+							sap.ui.getCore().applyChanges();
+							//assert
+							fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
+							fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), "Placeholder", "placeholder invisible label text is as expected");
+							//clear
+							oSut.setPlaceholder(null);
+							sap.ui.getCore().applyChanges();
+						} else {
+							//assert
+							fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).length, 1, "placeholder invisible label is rendered");
+							fnAssert.strictEqual(oSut.$(sPlaceholderHiddenLblIdSuffix).text(), sDefaultPlaceholder, "placeholder invisible label text is as expected");
+						}
+					},
+					fnTestTooltipReference = function (bReferencedWithTooltip) {
+						if (bReferencedWithTooltip) {
+							//prepare
+							oSut.setTooltip("Tooltip");
+							sap.ui.getCore().applyChanges();
+							//assert
+							fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).length, 1, "tooltip invisible label is rendered");
+							fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).text(), oSut.getTooltip_AsString(), "tooltip invisible label text is as expected");
+							//clear
+							oSut.setTooltip(null);
+							sap.ui.getCore().applyChanges();
+						} else {
+							//assert
+							fnAssert.strictEqual(oSut.$(sTooltipHiddenLblIdSuffix).length, 0, "tooltip invisible label is not rendered");
+						}
+					};
+
+				//Test execution check
+				if (!Array.isArray(aScenarios)) {
+					fnAssert.ok(false, "First argument of 'fnTestLabelReferencing' test function is not of a correct type");
+				} else if (aScenarios.length !== 3) {
+					fnAssert.ok(false, "First argument of 'fnTestLabelReferencing' test function do not have sufficient number of items. For more information please read the test comment");
+				}
+
+				aScenarios.forEach(function (bExpectation, iIndex) {
+					switch(iIndex) {
+						case 0:
+							fnTestCustomRole();
+							fnTestExternalLabelReference(bExpectation);
+							break;
+						case 1:
+							fnTestCustomRole();
+							fnTestPlaceholderReference(bExpectation);
+							break;
+						case 2:
+							fnTestCustomRole();
+							fnTestTooltipReference(bExpectation);
+							break;
+						default:
+							break;
+					}
+				});
 			}
 		});
 
@@ -1725,131 +1821,59 @@
 			}
 		});
 
-		test("_hasLabelReferencing", function() {
-			//prepare
-			var oRenderer = this.oTP.getRenderer(), oLabel;
-			//act & assert
-			ok(!oRenderer._hasLabelReferencing(this.oTP), "No Label refers time picker");
+		/*
+		TimePicker inherits two artifacts that hold useful information which can be used as a WAI-ARIA label or description - placeholder and tooltip.
+		To do this, we need to render a hidden span element with a value that is the same with the value of the corresponding artifact (if present) and associate it
+		by adding its ID to one of its "aria-labelledby" or "aria-describedby" DOM attributes. We also have into consideration that its "displayFormat" pattern is
+		assigned as a default placeholder if no placeholder value is set by the application developer.
 
-			//prepare
-			oLabel = new sap.m.Label({labelFor: this.oTP});
-			sap.ui.getCore().applyChanges();
-			//act & assert
-			ok(oRenderer._hasLabelReferencing(this.oTP), "Label refers time picker");
+		In addition, it can also be referenced with external label like any other Input control either by using the "labelFor" association of the given label or
+		by using its own "ariaLabelledBy" association. By design, it has an ARIA custom string role which is also rendered as a hidden child span element
+		with particular ID and added to its "aria-describedby" DOM attribute.
+
+		So here are all possible reference combinations.
+		|===============================================================================================================================================================|
+		|	TP is labelled by other label(X)		|		Placeholder		|	 Tooltip 	|	ariaDescribedBy			|			ariaLabelledBy 						|
+		|===============================================================================================================================================================|
+		1						no					|		yes (default)	|		no		|	"TimePicker"			|		default placeholder						|
+		2						no					|			yes			|		no		|	"TimePicker"			|		custom placeholder						|
+		3						no					|		yes (default)	|		yes		|	"TimePicker" tooltip	|		default placeholder						|
+		4						no					|			yes			|		yes		|	"TimePicker" tooltip	|		custom placeholder						|
+		5						yes					|			yes			|		yes		|	"TimePicker" tooltip	|		X + custom placeholder					|
+		6						yes					|			yes			|		no		|	"TimePicker"			|		X + custom placeholder					|
+		7						yes					|		yes (default)	|		yes		|	"TimePicker" tooltip	|		X + default placeholder					|
+		8						yes					|		yes (default)	|		no		|	"TimePicker"			|		X + default placeholder					|
+		*/
+		test("Time picker aria references: Scenario 1: 'aria-labelledby' is correctly referenced with its default placeholder", function() {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [false, false, false]);
 		});
 
-		/* Scenarios
-		 Time Picker can be references by label by use of "labelFor" property for given label, that points to the Time Picker.
-		 Also we differentiate the case of the default placeholder (i.e. time format) than the one with placeholder
-		 set by the application developer (custom placeholder).
-		 |===========================================================================================================|
-		 |#	TP is labelled 		Custom Placeholder	| ariaDescribedBy						ariaLabelledBy 			|
-		 |	by other label(X) 						|																|
-		 |===========================================================================================================|
-		 1	yes					yes					| "TimePicker"							X + custom placeholder
-		 2	yes					no					| "TimePicker in format <format>"		X
-		 3	no					yes					| "TimePicker"							no
-		 4	no					no					| "TimePicker"							no
-		 */
-		test("Placeholder with labelFor combination", function() {
-			var fnCheckAriaAttribute,
-					sTPDefaultDescribedBy = this.oRB.getText("TIMEPICKER_SCREENREADER_TAG"),
-					sTPAriaDescribedBy = this.oRB.getText("TIMEPICKER_WITH_PH_SCREENREADER_TAG", this.oTP._getFormat());
+		QUnit.test("Time picker aria references: Scenario 2: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its custom placeholder", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [false, true, false]);
+		});
 
-			/**
-			 * Verifies given attribute value
-			 * @param oTimePicker
-			 * @param aExpectedStrings expected value(s) as array of strings
-			 * @param sAriaAttributeName the name of the attribute
-			 * @param sScenario (optional string used to prefix assert messages
-			 */
-			fnCheckAriaAttribute = function (oTimePicker, aExpectedStrings, sAriaAttributeName, sScenario) {
-				var $innerInput, sAriaAttributeValue, aAriaAttributes, aRealStrings = [];
+		QUnit.test("Time picker aria references: Scenario 3: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its tooltip", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [false, false, true]);
+		});
 
-				$innerInput = oTimePicker.$().children("input");
-				sAriaAttributeValue = $innerInput.attr(sAriaAttributeName);
+		QUnit.test("Time picker aria references: Scenario 4: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its custom placeholder & tooltip", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [false, true, true]);
+		});
 
-				if (aExpectedStrings.length == 0) {
-					equal(sAriaAttributeValue, undefined, sScenario + ": " + sAriaAttributeName + " attribute for DOM element " +
-							$innerInput.get(0).id + " should be empty");
-					return;
-				}
-				ok(sAriaAttributeValue.length, sScenario + ": Expected " + sAriaAttributeName + " attribute for DOM element " +
-						$innerInput.get(0).id);
+		QUnit.test("Time picker aria references: Scenario 5: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label, custom placeholder & tooltip", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [true, true, true]);
+		});
 
-				aAriaAttributes = sAriaAttributeValue.split(" ");
-				aAriaAttributes.forEach(function(id) {
-					aRealStrings.push(jQuery("#" + id).text());
-				});
-				deepEqual(aRealStrings, aExpectedStrings, sScenario + ": " + sAriaAttributeName + " check.");
-			};
+		QUnit.test("Time picker aria references: Scenario 6: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label & custom placeholder", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [true, true, false]);
+		});
 
-			//SC1: Prepare
-			this.oTP.setPlaceholder("CustomPlaceholder");
-			var oLabel = new sap.m.Label({text: "Meeting at:", labelFor: this.oTP.getId()});
-			//Act
-			oLabel.placeAt("content");
-			sap.ui.getCore().applyChanges();
+		QUnit.test("Time picker aria references: Scenario 7: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label & tooltip", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [true, false, true]);
+		});
 
-			//assert
-			fnCheckAriaAttribute(this.oTP, [sTPDefaultDescribedBy], "aria-describedby", "Labelled TimePicker with custom placeholder");
-			fnCheckAriaAttribute(this.oTP, [oLabel.getText(), "CustomPlaceholder"], "aria-labelledby", "Labelled TimePicker with custom placeholder");
-
-			//Cleanup
-			oLabel.destroy();
-			this.oTP.destroy();
-
-
-			//SC2: Prepare
-			this.oTP = new sap.m.TimePicker();
-			oLabel = new sap.m.Label({text: "Meeting at:", labelFor: this.oTP.getId()});
-			//Act
-			this.oTP.placeAt("content");
-			oLabel.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			//assert
-			fnCheckAriaAttribute(this.oTP, [sTPAriaDescribedBy], "aria-describedby", "Labelled TimePicker with default placeholder");
-			fnCheckAriaAttribute(this.oTP, [oLabel.getText()], "aria-labelledby", "Labelled TimePicker with default placeholder");
-
-			//Cleanup
-			oLabel.destroy();
-			this.oTP.destroy();
-
-
-			//SC3: Prepare
-			this.oTP = new sap.m.TimePicker({placeholder: "CustomPlaceholder"});
-			oLabel = new sap.m.Label({text: "Meeting at:"});
-
-			//Act
-			this.oTP.placeAt("content");
-			oLabel.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			//assert
-			fnCheckAriaAttribute(this.oTP, [sTPDefaultDescribedBy], "aria-describedby", "Non-labelled TimePicker with custom placeholder");
-			fnCheckAriaAttribute(this.oTP, [], "aria-labelledby", "Non-labelled TimePicker with custom placeholder");
-
-			//Cleanup
-			oLabel.destroy();
-			this.oTP.destroy();
-
-
-			//SC4: Prepare
-			this.oTP = new sap.m.TimePicker();
-			oLabel = new sap.m.Label({text: "Meeting at:"});
-			//Act
-			this.oTP.placeAt("content");
-			oLabel.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			//assert
-			fnCheckAriaAttribute(this.oTP, [sTPDefaultDescribedBy], "aria-describedby", "Non-labelled TimePicker with default placeholder");
-			fnCheckAriaAttribute(this.oTP, [], "aria-labelledby", "Non-labelled TimePicker with default placeholder");
-
-			//Cleanup
-			oLabel.destroy();
-			this.oTP.destroy();
+		QUnit.test("Time picker aria references: Scenario 8: 'aria-labelledby' & 'aria-describedby' are correctly referenced with its external label", function (assert) {
+			this.fnTestReferencing(this.oTP, assert, this.oRB, [true, false, false]);
 		});
 
 		module("MaskInput integration", {
