@@ -274,10 +274,9 @@ sap.ui.define([
 						control : sSymbolName,
 						entityName : oEntityObject.name,
 						text : oEntityObject[oDataType].text || oEntityObject.description,
-						type : sObjectType
+						type : sObjectType,
+						"static" : !!oEntityObject.static
 					};
-
-
 
 					if (oEntityObject[oDataType].since) {
 						var aSince = oEntityObject[oDataType].since.split(".");
@@ -306,21 +305,21 @@ sap.ui.define([
 
 					sLib.methods && sLib.methods.forEach(function(oMethod) {
 						if (oMethod.deprecated) {
-							addData("deprecated", oMethod, "method", sLib.name);
+							addData("deprecated", oMethod, "methods", sLib.name);
 						}
 
 						if (oMethod.experimental) {
-							addData("experimental", oMethod, "method", sLib.name);
+							addData("experimental", oMethod, "methods", sLib.name);
 						}
 					});
 
 					sLib.events && sLib.events.forEach(function(oEvent) {
 						if (oEvent.deprecated) {
-							addData("deprecated", oEvent, "event", sLib.name);
+							addData("deprecated", oEvent, "events", sLib.name);
 						}
 
 						if (oEvent.experimental) {
-							addData("experimental", oEvent, "event", sLib.name);
+							addData("experimental", oEvent, "events", sLib.name);
 						}
 					});
 				});
