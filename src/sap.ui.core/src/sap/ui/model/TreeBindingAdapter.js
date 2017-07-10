@@ -795,8 +795,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Expand the tree node sitting at the given index.
 		 * @param {int} iIndex the absolute row index
+		 * @param {boolean} bSuppressChange if set to true, no change event will be fired
 		 */
-		TreeBindingAdapter.prototype.expand = function(iIndex) {
+		TreeBindingAdapter.prototype.expand = function(iIndex, bSuppressChange) {
 			var oNode = this.findNode(iIndex);
 
 			if (!oNode) {
@@ -805,7 +806,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			}
 
 			this._updateTreeState({groupID: oNode.nodeState.groupID, fallbackNodeState: oNode.nodeState, expanded: true});
-			this._fireChange({reason: ChangeReason.Expand});
+
+			if (!bSuppressChange) {
+				this._fireChange({reason: ChangeReason.Expand});
+			}
 		};
 
 		/**
@@ -831,6 +835,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Collapses the given node, identified via an absolute row index.
 		 * @param {int} vParam the row index of the tree node
+		 * @param {boolean} bSuppressChange if set to true, no change event will be fired
 		 */
 		TreeBindingAdapter.prototype.collapse = function(vParam, bSuppressChange) {
 			var oNodeStateForCollapsingNode;

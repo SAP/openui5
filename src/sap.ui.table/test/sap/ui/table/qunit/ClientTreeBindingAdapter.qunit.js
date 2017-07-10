@@ -971,6 +971,32 @@ sap.ui.require([
 		assert.ok(true, "No exceptions thrown");
 	});
 
+	QUnit.test("Expand with bSuppressChange flag should suppress the change event", function(assert) {
+		createTreeBindingAdapter("/bing/root", null, [], {
+			displayRootNode: false
+		});
+
+		oBinding.getContexts(0, 5);
+		assert.ok(oBinding.findNode(1), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+
+		var oSpy = window.sinon.spy(oBinding, "_fireChange");
+		oBinding.expand(1, true);
+		assert.ok(oSpy.notCalled, "No change event fired");
+	});
+
+	QUnit.test("Collapse with bSuppressChange flag should suppress the change event", function(assert) {
+		createTreeBindingAdapter("/bing/root", null, [], {
+			displayRootNode: false
+		});
+
+		oBinding.getContexts(0, 5);
+		assert.ok(oBinding.findNode(0), "Node can be found"); // If the binding does not find a node, it also does not fire a change event
+
+		var oSpy = window.sinon.spy(oBinding, "_fireChange");
+		oBinding.collapse(0, true);
+		assert.ok(oSpy.notCalled, "No change event fired");
+	});
+
 	var oData2 = {
 		root: [
 			{
