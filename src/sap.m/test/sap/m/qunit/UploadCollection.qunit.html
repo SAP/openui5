@@ -2631,6 +2631,22 @@
 			assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 		});
 
+		QUnit.test("Pressing keyboard DEL button while focused on list item", function(assert) {
+			//Arrange
+			var sUCItemId = this.oUploadCollection.getItems()[0].getId(),
+				oPressEvent = {
+					target: {
+						id: sUCItemId + "-cli"
+					}
+				},
+				oDeleteButton = sap.ui.getCore().byId(sUCItemId + "-deleteButton"),
+				oFirePressStub = sinon.stub(oDeleteButton, "firePress");
+			//Act
+			this.oUploadCollection._handleDEL(oPressEvent);
+			//Assert
+			assert.strictEqual(oFirePressStub.callCount, 1, "The press event has been triggered on the delete button");
+		});
+
 		QUnit.module("Managing event delegates when entering and exiting edit mode", {
 			beforeEach: function() {
 				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
