@@ -127,7 +127,7 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test('Header is hidden when the title is not filled', function (assert) {
+	QUnit.test('Header is shown when the title is not filled', function (assert) {
 		assert.expect(2);
 		var done = assert.async();
 
@@ -146,13 +146,17 @@ sap.ui.define([
 
 		TestUtils.wait(2000)()
 			.then(function () {
-				var oTitleNode = $('.sapMDialogTitle.sapMTitle');
-				assert.ok(oTitleNode.length === 0, 'Header has to be hidden');
+				var oHeaderNode = oPdfViewer.$('popup-header');
+				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
+				done();
+			})
+			.catch(function (err) {
+				assert.ok(false, err);
 				done();
 			});
 	});
 
-	QUnit.test('Header is hidden when the title is empty string', function (assert) {
+	QUnit.test('Header is shown when the title is empty string', function (assert) {
 		assert.expect(2);
 		var done = assert.async();
 
@@ -172,8 +176,57 @@ sap.ui.define([
 
 		TestUtils.wait(2000)()
 			.then(function () {
-				var oTitleNode = $('.sapMDialogTitle.sapMTitle');
-				assert.ok(oTitleNode.length === 0, 'Header has to be hidden');
+				var oHeaderNode = oPdfViewer.$('popup-header');
+				assert.ok(oHeaderNode.length === 1, 'Header has to be shown');
+				done();
+			});
+	});
+
+	QUnit.test('Download button is shown', function (assert) {
+		var done = assert.async();
+		assert.expect(2);
+
+		var oOptions = {
+			"source": "./pdfviewer/sample-file.pdf",
+			"loaded": function () {
+				assert.ok(true, "'Load' event fired but should not.");
+			},
+			"error": function () {
+				assert.ok(false, "'Error' event fired");
+			}
+		};
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		oPdfViewer.open();
+		TestUtils.wait(2000)()
+			.then(function () {
+				var oButtonNode = oPdfViewer.$('popupDownloadButton');
+				assert.ok(oButtonNode.length === 1, 'Button should be shown');
+				done();
+			});
+	});
+
+	QUnit.test('Download button is hidden', function (assert) {
+		var done = assert.async();
+		assert.expect(2);
+
+		var oOptions = {
+			"source": "./pdfviewer/sample-file.pdf",
+			"showDownloadButton": false,
+			"loaded": function () {
+				assert.ok(true, "'Load' event fired but should not.");
+			},
+			"error": function () {
+				assert.ok(false, "'Error' event fired");
+			}
+		};
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+
+		oPdfViewer.open();
+		TestUtils.wait(2000)()
+			.then(function () {
+				var oButtonNode = oPdfViewer.$('popupDownloadButton');
+				assert.ok(oButtonNode.length === 0, 'Button should be hidden');
 				done();
 			});
 	});
