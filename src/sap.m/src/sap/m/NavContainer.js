@@ -373,7 +373,7 @@ sap.ui.define([
 		if (this._pageStack.length === 0) {
 			var page = this._getActualInitialPage(); // TODO: with bookmarking / deep linking this is the initial, but not the "home"/root page
 			if (page) {
-				this._pageStack.push({id: page.getId(), mode: "initial", data: data || {}});
+				this._pageStack.push({id: page.getId(), isInitial: true, data: data || {}});
 			}
 		}
 		return this._pageStack;
@@ -462,10 +462,10 @@ sap.ui.define([
 		var stack = this._ensurePageStackInitialized();
 		if (this._pageStack.length > 0) {
 			var index = stack.length - 1;
-			var pageInfo = {id: pageId, mode: transitionName, data: data};
+			var pageInfo = {id: pageId, transition: transitionName, data: data};
 			if (index === 0) {
-				pageInfo.mode = "initial";
-				delete stack[stack.length - 1].mode;
+				pageInfo.isInitial = true;
+				delete stack[stack.length - 1].isInitial;
 			}
 			stack.splice(index, 0, pageInfo);
 		} else {
@@ -638,6 +638,7 @@ sap.ui.define([
 		transitionName = transitionName || this.getDefaultTransitionName();
 		oTransitionParameters = oTransitionParameters || {};
 		data = data || {};
+		var oFromPageInfo = {id: pageId, transition: transitionName, data: data};
 
 		// make sure the initial page is on the stack
 		this._ensurePageStackInitialized(data);
@@ -664,6 +665,12 @@ sap.ui.define([
 			if (bFromQueue) {
 				this._dequeueNavigation();
 			}
+
+			// In an application when the first page is loaded its transition is not set and we set it here.
+			if (this._pageStack.length === 1) {
+				this._pageStack[0].transition = oFromPageInfo.transition;
+			}
+
 			return this;
 		}
 
@@ -720,7 +727,7 @@ sap.ui.define([
 				oToPage._handleEvent(oEvent);
 
 
-				this._pageStack.push({id: pageId, mode: transitionName, data: data}); // this actually causes/is the navigation
+				this._pageStack.push(oFromPageInfo); // this actually causes/is the navigation
 				jQuery.sap.log.info(this.toString() + ": navigating to page '" + pageId + "': " + oToPage.toString());
 				this._mVisitedPages[pageId] = true;
 
@@ -877,7 +884,7 @@ sap.ui.define([
 			// there is no place to go back
 
 			// but then the assumption is that the only page on the stack is the initial one and has not been navigated to. Check this:
-			if (this._pageStack.length === 1 && this._pageStack[0].mode != "initial") {
+			if (this._pageStack.length === 1 && !this._pageStack[0].isInitial) {
 				throw new Error("Initial page not found on the stack. How did this happen?");
 			}
 			return this;
@@ -889,7 +896,7 @@ sap.ui.define([
 			}
 
 			var oFromPageInfo = this._pageStack[this._pageStack.length - 1];
-			var mode = oFromPageInfo.mode;
+			var transition = oFromPageInfo.transition;
 			var oFromPage = this.getPage(oFromPageInfo.id);
 			var oToPage;
 			var oToPageData;
@@ -986,14 +993,14 @@ sap.ui.define([
 					return this;
 				}
 
-				var oTransition = NavContainer.transitions[mode] || NavContainer.transitions["slide"];
+				var oTransition = NavContainer.transitions[transition] || NavContainer.transitions["slide"];
 
 				// Track proper invocation of the callback  TODO: only do this during development?
 				var iCompleted = this._iTransitionsCompleted;
 				var that = this;
 				window.setTimeout(function () {
 					if (that && (that._iTransitionsCompleted < iCompleted + 1)) {
-						jQuery.sap.log.warning("Transition '" + mode + "' 'back' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
+						jQuery.sap.log.warning("Transition '" + transition + "' 'back' was triggered five seconds ago, but has not yet invoked the end-of-transition callback.");
 					}
 				}, fnGetDelay(5000));
 
