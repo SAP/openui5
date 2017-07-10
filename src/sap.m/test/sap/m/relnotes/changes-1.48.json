@@ -1917,6 +1917,12 @@
         "type": "FIX",
         "text": " sap.m.StepInput: Now checks if the increase and decrease buttons are created in constructor",
         "references": []
+      },
+      {
+        "id": "7dd05cf57020fe114c876cc962c10eff0851812c",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
       }
     ]
   }
