@@ -4,7 +4,7 @@
 
 // Provides control sap.m.MessageStrip.
 sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
-	"./Link", "./FormattedText"], function (jQuery, library, Control, MSUtils, Link, FormattedText) {
+	"./Text", "./Link", "./FormattedText"], function (jQuery, library, Control, MSUtils, Text, Link, FormattedText) {
 	"use strict";
 
 	/**
@@ -108,7 +108,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
 				 * @private
 				 */
-				_formattedText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden" }
+				_formattedText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden" },
+
+				/**
+				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
+				 */
+				_text: { type: "sap.m.Text", multiple: false, visibility: "hidden" }
 			},
 			events: {
 
@@ -122,6 +127,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 
 	MessageStrip.prototype.init = function () {
 		this.data("sap-ui-fastnavgroup", "true", true);
+		this.setAggregation("_text", new Text());
 	};
 
 	/**
@@ -132,10 +138,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * @returns {sap.m.MessageStrip} this to allow method chaining
 	 */
 	MessageStrip.prototype.setText = function (sText) {
+		// Update the internal FormattedText control if needed
 		var oFormattedText = this.getAggregation("_formattedText");
 		if (oFormattedText) {
 			oFormattedText.setHtmlText(sText);
 		}
+
+		// Update the internal text control
+		this.getAggregation("_text").setText(sText);
+
 		return this.setProperty("text", sText);
 	};
 
