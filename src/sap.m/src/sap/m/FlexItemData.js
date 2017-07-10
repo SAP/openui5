@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	 * @param {object} [mSettings] initial settings for the new element
 	 *
 	 * @class
-	 * Holds layout data for a FlexBox|HBox|VBox
+	 * Holds layout data for a FlexBox / HBox / VBox.
 	 * @extends sap.ui.core.LayoutData
 	 * @version ${version}
 	 *
