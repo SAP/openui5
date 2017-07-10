@@ -5,26 +5,9 @@
 
 	jQuery.sap.require("sap.ui.fl.variants.VariantManagement");
 	jQuery.sap.require("sap.ui.layout.Grid");
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
 
-	var fCreateItem = function(oPartItem, sKey, sText) {
-		var oItem = {
-			key: sKey,
-			text: sText,
-			readOnly: false,
-			executeOnSelection: false,
-			global: false,
-			lifecyclePackage: "",
-			lifecycleTransportId: "",
-			namespace: "",
-			accessOptions: "",
-			labelReadOnly: false,
-			author: "TEST"
-		};
-
-		jQuery.extend(oItem, oPartItem);
-
-		return oItem;
-	};
+	var oModel;
 
 	var fGetGrid = function(oDialog) {
 		var oGrid = null, aContent = oDialog.getContent();
@@ -42,6 +25,53 @@
 	QUnit.module("sap.ui.fl.variants.VariantManagement", {
 		beforeEach: function() {
 			this.oVariantManagement = new sap.ui.fl.variants.VariantManagement();
+
+			oModel = new sap.ui.model.json.JSONModel([
+				{
+					defaultVariant: "Standard",
+					initialDefaultVariant: "Standard",
+					standardVariant: "Standard",
+					modified: false,
+					variants: [
+						{
+							key: "Standard",
+							title: "Standard",
+							author: "A",
+							originalTitle: "Standard",
+							toBeDeleted: false,
+							readOnly: true
+						}, {
+							key: "1",
+							title: "One",
+							author: "A",
+							originalTitle: "One",
+							toBeDeleted: false,
+							readOnly: true
+						}, {
+							key: "2",
+							title: "Two",
+							author: "V",
+							originalTitle: "Two",
+							toBeDeleted: false,
+							readOnly: true
+						}, {
+							key: "3",
+							title: "Three",
+							author: "U",
+							originalTitle: "Three",
+							toBeDeleted: false,
+							readOnly: true
+						}, {
+							key: "4",
+							title: "Four",
+							author: "Z",
+							originalTitle: "Four",
+							toBeDeleted: false,
+							readOnly: true
+						}
+					]
+				}
+			]);
 		},
 		afterEach: function() {
 		}
@@ -49,7 +79,6 @@
 
 	QUnit.test("Shall be instantiable", function(assert) {
 		assert.ok(this.oVariantManagement);
-		assert.equal(this.oVariantManagement.getSelectedVariantKey(), this.oVariantManagement.getStandardVariantKey());
 	});
 
 	QUnit.test("Shall be destroyable", function(assert) {
@@ -62,55 +91,30 @@
 		assert.ok(!this.oVariantManagement.oModel);
 	});
 
-	QUnit.test("Check addItem", function(assert) {
+	QUnit.test("Check _getItems", function(assert) {
 
 		var aItems = this.oVariantManagement._getItems();
 		assert.ok(aItems);
-		assert.equal(aItems.length, 1);
+		assert.equal(aItems.length, 0);
 
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
-
-		aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 2);
-		assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
-		assert.equal(aItems[1].key, "k1");
-		assert.equal(aItems[1].deleted, false);
-		assert.equal(aItems[1].initialText, aItems[1].text);
-		assert.equal(aItems[1].initialExecuteOnSelection, aItems[1].executeOnSelection);
-
-	});
-
-	QUnit.test("Check replaceKey", function(assert) {
-
-		var aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 1);
-
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
 
 		aItems = this.oVariantManagement._getItems();
 		assert.ok(aItems);
-		assert.equal(aItems.length, 2);
+		assert.equal(aItems.length, 5);
 		assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
-		assert.equal(aItems[1].key, "k1");
-
-		this.oVariantManagement.replaceKey("k1", "newK1");
-
-		aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 2);
-		assert.equal(aItems[0].key, this.oVariantManagement.getStandardVariantKey());
-		assert.equal(aItems[1].key, "newK1");
+		assert.equal(aItems[1].key, "1");
+		assert.equal(aItems[1].toBeDeleted, false);
+		assert.equal(aItems[1].originalTitle, aItems[1].title);
+		assert.equal(aItems[2].key, "2");
 
 	});
 
 	QUnit.test("Create Variants List", function(assert) {
 
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
 
 		assert.ok(!this.oVariantManagement.oVariantPopOver);
 		this.oVariantManagement._createVariantList();
@@ -125,7 +129,6 @@
 		assert.ok(!this.oVariantManagement.oVariantSaveBtn.getEnabled());
 		assert.ok(this.oVariantManagement.oVariantSaveAsBtn.setEnabled());
 
-		this.oVariantManagement.setStandardVariantKey("k1");
 		this.oVariantManagement._openVariantList();
 
 		assert.ok(!this.oVariantManagement.getModified());
@@ -180,6 +183,9 @@
 
 	QUnit.test("Checking _handleVariantSaveAs", function(assert) {
 
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
+
 		var bCalled = false;
 		this.oVariantManagement.attachSave(function(oEvent) {
 			bCalled = true;
@@ -194,18 +200,17 @@
 
 		var aItems = this.oVariantManagement._getItems();
 		assert.ok(aItems);
-		assert.equal(aItems.length, 1);
+		assert.equal(aItems.length, 5);
 
-		this.oVariantManagement._handleVariantSaveAs("k1");
+		this.oVariantManagement._handleVariantSaveAs("1");
 		assert.ok(bCalled);
-
-		aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 2);
 	});
 
 	QUnit.test("Checking _handleVariantSave", function(assert) {
 
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
+
 		var bCalled = false;
 		this.oVariantManagement.attachSave(function(oEvent) {
 			bCalled = true;
@@ -216,28 +221,22 @@
 		assert.ok(this.oVariantManagement.oSaveAsDialog);
 		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
-		this.oVariantManagement.setSelectedVariantKey("k1");
+		this.oVariantManagement.setSelectedVariantKey("1");
 
 		this.oVariantManagement._openSaveAsDialog();
 
 		var aItems = this.oVariantManagement._getItems();
 		assert.ok(aItems);
-		assert.equal(aItems.length, 2);
+		assert.equal(aItems.length, 5);
 
-		this.oVariantManagement._handleVariantSave("k1");
+		this.oVariantManagement._handleVariantSave("1");
 		assert.ok(bCalled);
-
-		aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 2);
 	});
 
 	QUnit.test("Create Management Dialog", function(assert) {
 
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
@@ -247,7 +246,7 @@
 		assert.ok(this.oVariantManagement.oManagementTable);
 		var aRows = this.oVariantManagement.oManagementTable.getItems();
 		assert.ok(aRows);
-		assert.equal(aRows.length, 2);
+		assert.equal(aRows.length, 5);
 
 	});
 
@@ -276,16 +275,16 @@
 
 	QUnit.test("Checking _handleManageCancelPressed", function(assert) {
 
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
+		var oItem = oModel.getData()[0].variants[1];
 
-		oItem = fCreateItem({}, "k2", "text2");
-		oItem.deleted = true;
-		this.oVariantManagement.addItem(oItem);
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
 
 		var aItems = this.oVariantManagement._getItems();
 		assert.ok(aItems);
-		assert.equal(aItems.length, 3);
+		assert.equal(aItems.length, 5);
+
+		oItem.toBeDeleted = true;
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
@@ -294,14 +293,14 @@
 		this.oVariantManagement._openManagementDialog();
 		var aRows = this.oVariantManagement.oManagementTable.getItems();
 		assert.ok(aRows);
-		assert.equal(aRows.length, 2);
+		assert.equal(aRows.length, 4);
 
 		this.oVariantManagement._handleManageCancelPressed();
 
 		this.oVariantManagement._openManagementDialog();
 		var aRows = this.oVariantManagement.oManagementTable.getItems();
 		assert.ok(aRows);
-		assert.equal(aRows.length, 3);
+		assert.equal(aRows.length, 5);
 
 	});
 
@@ -335,51 +334,42 @@
 
 	QUnit.test("Checking _handleManageSavePressed; deleted item is NOT selected", function(assert) {
 
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
+
 		this.oVariantManagement.attachManage(function(oEvent) {
 			var aDelItems = oEvent.getParameters().deleted;
 			assert.ok(aDelItems);
 			assert.equal(aDelItems.length, 2);
-			assert.equal(aDelItems[0], "k1");
-			assert.equal(aDelItems[1], "k4");
+			assert.equal(aDelItems[0], "1");
+			assert.equal(aDelItems[1], "4");
 
 			var aRenamedItems = oEvent.getParameters().renamed;
 			assert.ok(aRenamedItems);
 			assert.equal(aRenamedItems.length, 1);
-			assert.equal(aRenamedItems[0].key, "k2");
-			assert.equal(aRenamedItems[0].name, "New k2");
+			assert.equal(aRenamedItems[0].key, "3");
+			assert.equal(aRenamedItems[0].name, "New 3");
 		});
-
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
-
-		oItem = fCreateItem({}, "k2", "text2");
-		this.oVariantManagement.addItem(oItem);
-
-		oItem = fCreateItem({}, "k3", "text3");
-		this.oVariantManagement.addItem(oItem);
-
-		oItem = fCreateItem({}, "k4", "text4");
-		this.oVariantManagement.addItem(oItem);
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
 		sinon.stub(this.oVariantManagement.oManagementDialog, "open");
 
-		var oItemRen = this.oVariantManagement._getItemByKey("k2");
+		var oItemRen = this.oVariantManagement._getItemByKey("3");
 		assert.ok(oItemRen);
-		oItemRen.text = "New k2";
+		oItemRen.title = "New 3";
 		this.oVariantManagement._handleManageItemNameChange(oItemRen);
 
-		var oItemDel = this.oVariantManagement._getItemByKey("k1");
+		var oItemDel = this.oVariantManagement._getItemByKey("1");
 		assert.ok(oItemDel);
 
-		oItemDel.text = "New k1";
+		oItemDel.title = "New 1";
 		this.oVariantManagement._handleManageItemNameChange(oItemDel);
 
 		this.oVariantManagement._handleManageDeletePressed(oItemDel);
-		this.oVariantManagement._handleManageDeletePressed(this.oVariantManagement._getItemByKey("k4"));
+		this.oVariantManagement._handleManageDeletePressed(this.oVariantManagement._getItemByKey("4"));
 
-		this.oVariantManagement._handleManageSavePressed(oItem);
+		this.oVariantManagement._handleManageSavePressed();
 
 		assert.ok(!this.oVariantManagement.bFireSelect);
 
@@ -387,53 +377,44 @@
 
 	QUnit.test("Checking _handleManageSavePressed; deleted item is selected", function(assert) {
 
+		this.oVariantManagement.setModel(oModel, "$SapUiFlVariants");
+		this.oVariantManagement.setBindingContext(oModel.getContext("/0"), "$SapUiFlVariants");
+
 		this.oVariantManagement.attachManage(function(oEvent) {
 			var aDelItems = oEvent.getParameters().deleted;
 			assert.ok(aDelItems);
 			assert.equal(aDelItems.length, 2);
-			assert.equal(aDelItems[0], "k1");
-			assert.equal(aDelItems[1], "k4");
+			assert.equal(aDelItems[0], "1");
+			assert.equal(aDelItems[1], "2");
 
 			var aRenamedItems = oEvent.getParameters().renamed;
 			assert.ok(aRenamedItems);
 			assert.equal(aRenamedItems.length, 1);
-			assert.equal(aRenamedItems[0].key, "k2");
-			assert.equal(aRenamedItems[0].name, "New k2");
+			assert.equal(aRenamedItems[0].key, "3");
+			assert.equal(aRenamedItems[0].name, "New 3");
 		});
-
-		var oItem = fCreateItem({}, "k1", "text1");
-		this.oVariantManagement.addItem(oItem);
-
-		oItem = fCreateItem({}, "k2", "text2");
-		this.oVariantManagement.addItem(oItem);
-
-		oItem = fCreateItem({}, "k3", "text3");
-		this.oVariantManagement.addItem(oItem);
-
-		oItem = fCreateItem({}, "k4", "text4");
-		this.oVariantManagement.addItem(oItem);
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
 		sinon.stub(this.oVariantManagement.oManagementDialog, "open");
 
-		var oItemRen = this.oVariantManagement._getItemByKey("k2");
+		var oItemRen = this.oVariantManagement._getItemByKey("3");
 		assert.ok(oItemRen);
-		oItemRen.text = "New k2";
+		oItemRen.title = "New 3";
 		this.oVariantManagement._handleManageItemNameChange(oItemRen);
 
-		var oItemDel = this.oVariantManagement._getItemByKey("k1");
+		var oItemDel = this.oVariantManagement._getItemByKey("1");
 		assert.ok(oItemDel);
 
-		oItemDel.text = "New k1";
+		oItemDel.title = "New 1";
 		this.oVariantManagement._handleManageItemNameChange(oItemDel);
 
 		this.oVariantManagement._handleManageDeletePressed(oItemDel);
-		this.oVariantManagement._handleManageDeletePressed(this.oVariantManagement._getItemByKey("k4"));
+		this.oVariantManagement._handleManageDeletePressed(this.oVariantManagement._getItemByKey("2"));
 
-		this.oVariantManagement.setSelectedVariantKey("k1");
+		this.oVariantManagement.setSelectedVariantKey("1");
 
-		this.oVariantManagement._handleManageSavePressed(oItem);
+		this.oVariantManagement._handleManageSavePressed();
 
 		assert.ok(this.oVariantManagement.bFireSelect);
 
