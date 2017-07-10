@@ -72,7 +72,8 @@
 					}"/>
 				</l:BlockLayout>
 				<l:BlockLayout
-					id="demoAppsFooter">
+					id="demoAppsFooter"
+					visible="{/bFooterVisible}">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
 								class="demokitInitialPagesColorPatternFContrast">
