@@ -6,7 +6,7 @@ sap.ui.define([
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
 		'sap/ui/test/_LogCollector',
-		'sap/ui/test/_autoWaiter'
+		'sap/ui/test/autowaiter/_autoWaiter'
 	], function (jQuery, URI, Device, _LogCollector, _autoWaiter) {
 	"use strict";
 
@@ -233,7 +233,7 @@ sap.ui.define([
 	function loadFrameModules() {
 		oFrameWindow.sap.ui.require([
 			"sap/ui/test/OpaPlugin",
-			"sap/ui/test/_autoWaiter",
+			"sap/ui/test/autowaiter/_autoWaiter",
 			"sap/ui/qunit/QUnitUtils",
 			"sap/ui/thirdparty/hasher",
 			"sap/ui/core/routing/History",
