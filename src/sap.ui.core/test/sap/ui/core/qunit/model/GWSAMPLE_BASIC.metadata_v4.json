@@ -1,0 +1,742 @@
+{
+	"$Version": "4.0",
+	"GWSAMPLE_BASIC.": {
+		"$kind": "Schema"
+	},
+	"GWSAMPLE_BASIC.BusinessPartner": {
+		"$Key": [
+			"BusinessPartnerID"
+		],
+		"$kind": "EntityType",
+		"Address": {
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.CT_Address",
+			"$kind": "Property"
+		},
+		"BusinessPartnerID": {
+			"$MaxLength": 10,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"BusinessPartnerRole": {
+			"$MaxLength": 3,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ChangedAt": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"CompanyName": {
+			"$MaxLength": 80,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"CreatedAt": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"CurrencyCode": {
+			"$MaxLength": 5,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"EmailAddress": {
+			"$MaxLength": 255,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"FaxNumber": {
+			"$MaxLength": 30,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"LegalForm": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"PhoneNumber": {
+			"$MaxLength": 30,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ToContacts": {
+			"$Type": "GWSAMPLE_BASIC.Contact",
+			"$isCollection": true,
+			"$kind": "NavigationProperty"
+		},
+		"ToProducts": {
+			"$Type": "GWSAMPLE_BASIC.Product",
+			"$isCollection": true,
+			"$kind": "NavigationProperty"
+		},
+		"ToSalesOrders": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder",
+			"$isCollection": true,
+			"$kind": "NavigationProperty"
+		},
+		"WebAddress": {
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.CT_Address": {
+		"$kind": "ComplexType",
+		"AddressType": {
+			"$MaxLength": 2,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Building": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"City": {
+			"$MaxLength": 40,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Country": {
+			"$MaxLength": 3,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"PostalCode": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Street": {
+			"$MaxLength": 60,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.CT_String": {
+		"$kind": "ComplexType",
+		"String": {
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.Contact": {
+		"$Key": [
+			"ContactGuid"
+		],
+		"$kind": "EntityType",
+		"Address": {
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.CT_Address",
+			"$kind": "Property"
+		},
+		"BusinessPartnerID": {
+			"$MaxLength": 10,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ContactGuid": {
+			"$Nullable": false,
+			"$Type": "Edm.Guid",
+			"$kind": "Property"
+		},
+		"DateOfBirth": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"EmailAddress": {
+			"$MaxLength": 255,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"FaxNumber": {
+			"$MaxLength": 30,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"FirstName": {
+			"$MaxLength": 40,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Initials": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Language": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"LastName": {
+			"$MaxLength": 40,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"MiddleName": {
+			"$MaxLength": 40,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Nickname": {
+			"$MaxLength": 40,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"PhoneNumber": {
+			"$MaxLength": 30,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Sex": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Title": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ToBusinessPartner": {
+			"$Nullable": false,
+			"$ReferentialConstraint": {
+				"BusinessPartnerID": "BusinessPartnerID"
+			},
+			"$Type": "GWSAMPLE_BASIC.BusinessPartner",
+			"$kind": "NavigationProperty"
+		}
+	},
+	"GWSAMPLE_BASIC.Product": {
+		"$Key": [
+			"ProductID"
+		],
+		"$kind": "EntityType",
+		"Category": {
+			"$MaxLength": 40,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ChangedAt": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"CreatedAt": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"CurrencyCode": {
+			"$MaxLength": 5,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Depth": {
+			"$Precision": 13,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"Description": {
+			"$MaxLength": 255,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"DescriptionLanguage": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"DimUnit": {
+			"$MaxLength": 3,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Height": {
+			"$Precision": 13,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"MeasureUnit": {
+			"$MaxLength": 3,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Name": {
+			"$MaxLength": 255,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"NameLanguage": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Price": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"ProductID": {
+			"$MaxLength": 10,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"SupplierID": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"SupplierName": {
+			"$MaxLength": 80,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"TaxTarifCode": {
+			"$Type": "Edm.Byte",
+			"$kind": "Property"
+		},
+		"ToSalesOrderLineItems": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$isCollection": true,
+			"$kind": "NavigationProperty"
+		},
+		"ToSupplier": {
+			"$Nullable": false,
+			"$ReferentialConstraint": {
+				"SupplierID": "BusinessPartnerID"
+			},
+			"$Type": "GWSAMPLE_BASIC.BusinessPartner",
+			"$kind": "NavigationProperty"
+		},
+		"TypeCode": {
+			"$MaxLength": 2,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"WeightMeasure": {
+			"$Precision": 13,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"WeightUnit": {
+			"$MaxLength": 3,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Width": {
+			"$Precision": 13,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.SalesOrder": {
+		"$Key": [
+			"SalesOrderID"
+		],
+		"$kind": "EntityType",
+		"BillingStatus": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"BillingStatusDescription": {
+			"$MaxLength": 60,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ChangedAt": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"CreatedAt": {
+			"$Precision": 7,
+			"$Type": "Edm.DateTimeOffset",
+			"$kind": "Property"
+		},
+		"CurrencyCode": {
+			"$MaxLength": 5,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"CustomerID": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"CustomerName": {
+			"$MaxLength": 80,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"DeliveryStatus": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"DeliveryStatusDescription": {
+			"$MaxLength": 60,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"GrossAmount": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"LifecycleStatus": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"LifecycleStatusDescription": {
+			"$MaxLength": 60,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"NetAmount": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"Note": {
+			"$MaxLength": 255,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"NoteLanguage": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"SalesOrderID": {
+			"$MaxLength": 10,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"TaxAmount": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"ToBusinessPartner": {
+			"$Nullable": false,
+			"$ReferentialConstraint": {
+				"CustomerID": "BusinessPartnerID"
+			},
+			"$Type": "GWSAMPLE_BASIC.BusinessPartner",
+			"$kind": "NavigationProperty"
+		},
+		"ToLineItems": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$isCollection": true,
+			"$kind": "NavigationProperty"
+		}
+	},
+	"GWSAMPLE_BASIC.SalesOrderLineItem": {
+		"$Key": [
+			"SalesOrderID",
+			"ItemPosition"
+		],
+		"$kind": "EntityType",
+		"CurrencyCode": {
+			"$MaxLength": 5,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"DeliveryDate": {
+			"$Precision": 7,
+			"$Type": "Edm.Date",
+			"$kind": "Property"
+		},
+		"GrossAmount": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"ItemPosition": {
+			"$MaxLength": 10,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"NetAmount": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"Note": {
+			"$MaxLength": 255,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"NoteLanguage": {
+			"$MaxLength": 1,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"ProductID": {
+			"$MaxLength": 10,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Quantity": {
+			"$Precision": 13,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"QuantityUnit": {
+			"$MaxLength": 3,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"SalesOrderID": {
+			"$MaxLength": 10,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"TaxAmount": {
+			"$Precision": 16,
+			"$Scale": 3,
+			"$Type": "Edm.Decimal",
+			"$kind": "Property"
+		},
+		"ToHeader": {
+			"$Nullable": false,
+			"$ReferentialConstraint": {
+				"SalesOrderID": "SalesOrderID"
+			},
+			"$Type": "GWSAMPLE_BASIC.SalesOrder",
+			"$kind": "NavigationProperty"
+		},
+		"ToProduct": {
+			"$Nullable": false,
+			"$ReferentialConstraint": {
+				"ProductID": "ProductID"
+			},
+			"$Type": "GWSAMPLE_BASIC.Product",
+			"$kind": "NavigationProperty"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_AddressType": {
+		"$Key": [
+			"AddressType"
+		],
+		"$kind": "EntityType",
+		"AddressType": {
+			"$MaxLength": 2,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Shorttext": {
+			"$MaxLength": 60,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_BPRole": {
+		"$Key": [
+			"BpRole"
+		],
+		"$kind": "EntityType",
+		"BpRole": {
+			"$MaxLength": 3,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Shorttext": {
+			"$MaxLength": 60,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Category": {
+		"$Key": [
+			"Category"
+		],
+		"$kind": "EntityType",
+		"Category": {
+			"$MaxLength": 40,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Country": {
+		"$Key": [
+			"Land1"
+		],
+		"$kind": "EntityType",
+		"Land1": {
+			"$MaxLength": 3,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Landx": {
+			"$MaxLength": 15,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Natio": {
+			"$MaxLength": 15,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Currency": {
+		"$Key": [
+			"Waers"
+		],
+		"$kind": "EntityType",
+		"Ltext": {
+			"$MaxLength": 40,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Waers": {
+			"$MaxLength": 5,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Language": {
+		"$Key": [
+			"Spras"
+		],
+		"$kind": "EntityType",
+		"Spras": {
+			"$MaxLength": 1,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Sptxt": {
+			"$MaxLength": 16,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_ProductTypeCode": {
+		"$Key": [
+			"TypeCode"
+		],
+		"$kind": "EntityType",
+		"Shorttext": {
+			"$MaxLength": 60,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"TypeCode": {
+			"$MaxLength": 2,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Sex": {
+		"$Key": [
+			"Sex"
+		],
+		"$kind": "EntityType",
+		"Sex": {
+			"$MaxLength": 1,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Shorttext": {
+			"$MaxLength": 60,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_UnitLength": {
+		"$Key": [
+			"Msehi"
+		],
+		"$kind": "EntityType",
+		"Msehi": {
+			"$MaxLength": 3,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Msehl": {
+			"$MaxLength": 30,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_UnitQuantity": {
+		"$Key": [
+			"Msehi"
+		],
+		"$kind": "EntityType",
+		"Msehi": {
+			"$MaxLength": 3,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Msehl": {
+			"$MaxLength": 30,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_UnitWeight": {
+		"$Key": [
+			"Msehi"
+		],
+		"$kind": "EntityType",
+		"Msehi": {
+			"$MaxLength": 3,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		},
+		"Msehl": {
+			"$MaxLength": 30,
+			"$Nullable": false,
+			"$Type": "Edm.String",
+			"$kind": "Property"
+		}
+	}
+}
