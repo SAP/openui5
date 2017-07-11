@@ -364,7 +364,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 
 	var i;
 
-	// In case of a function import the location header may point to the corrrect entry in the service.
+	// In case of a function import the location header may point to the correct entry in the service.
 	// This should be the case for writing/changing operations using POST
 	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
 		sTarget = mRequestInfo.response.headers["location"];
@@ -448,7 +448,24 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
 
-		var mUrlData = this._parseUrl(mRequestInfo.url);
+		// special case for 201 POST requests which create a resource
+		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
+		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
+		var bRequestCreatePost = (sMethod === "POST"
+			&& mRequestInfo.response
+			&& (mRequestInfo.response.statusCode === "201" || mRequestInfo.response.statusCode === 201)
+			&& mRequestInfo.response.headers
+			&& mRequestInfo.response.headers["location"]);
+
+		var sUrlForTargetCalculation;
+		if (bRequestCreatePost) {
+			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
+		} else {
+			sUrlForTargetCalculation = mRequestInfo.url;
+		}
+
+		//parsing
+		var mUrlData = this._parseUrl(sUrlForTargetCalculation);
 		var sUrl = mUrlData.url;
 
 		var iPos = sUrl.lastIndexOf(this._serviceUrl);
@@ -458,33 +475,35 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			sRequestTarget = sUrl;
 		}
 
-		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
-		var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
+		// function import case
+		if (!bRequestCreatePost) {
+			var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
 
-		if (mFunctionInfo) {
-			sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
+			if (mFunctionInfo) {
+				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
 
-			if (sTarget) {
-				sTarget = sRequestTarget + "/" + sTarget;
-			} else {
-				sTarget = sRequestTarget;
+				if (sTarget) {
+					sTarget = sRequestTarget + "/" + sTarget;
+				} else {
+					sTarget = sRequestTarget;
+				}
+				return sTarget;
 			}
+		}
 
+		sRequestTarget = "/" + sRequestTarget;
+
+		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
+		// a target would start with the specific product (like "(23)"), but the request itself
+		// would not have the brackets
+		var iSlashPos = sRequestTarget.lastIndexOf("/");
+		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
+		if (sRequestTargetName.indexOf("(") > -1) {
+			// It is an entity
+			sTarget = sRequestTarget + "/" + sTarget;
 		} else {
-			sRequestTarget = "/" + sRequestTarget;
-
-			// If sRequestTarget is a collection, we have to add the target without a "/". In this case
-			// a target would start with the specific product (like "(23)"), but the request itself
-			// would not have the brackets
-			var iSlashPos = sRequestTarget.lastIndexOf("/");
-			var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
-			if (sRequestTargetName.indexOf("(") > -1) {
-				// It is an entity
-				sTarget = sRequestTarget + "/" + sTarget;
-			} else {
-				// It's a collection
-				sTarget = sRequestTarget + sTarget;
-			}
+			// It's a collection
+			sTarget = sRequestTarget + sTarget;
 		}
 
 
