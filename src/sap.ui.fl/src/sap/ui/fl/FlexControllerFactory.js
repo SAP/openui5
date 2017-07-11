@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils", "sap/ui/fl/ChangePersistenceFactory"
-], function(jQuery, FlexController, Utils, ChangePersistenceFactory) {
+	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils", "sap/ui/fl/ChangePersistenceFactory", "sap/ui/fl/variants/VariantModel"
+], function(jQuery, FlexController, Utils, ChangePersistenceFactory, VariantModel) {
 	"use strict";
 
 	/**
@@ -75,31 +75,11 @@ sap.ui.define([
 			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
 				.then(function (fnGetChangesMap) {
 						oComponent.addPropagationListener(oFlexController.applyChangesOnControl.bind(oFlexController, fnGetChangesMap, oComponent));
-					}
-				);
-		}
-	};
-
-	/**
-	 * TODO!!!
-	 * Gets the changes and in case of existing changes, prepare the applyChanges function already with the changes.
-	 *
-	 * @param {object} oComponent Component instance that is currently loading
-	 * @param {object} vConfig configuration of loaded component
-	 * @public
-	 */
-	FlexControllerFactory.switchChangesAndPropagate = function (oComponent, sVariantManagementId, sCurrentVariant, sNewVariant) {
-		var oManifest = oComponent.getManifestObject();
-
-		if (Utils.isApplication(oManifest)) {
-			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-
-			var mChangesToBeSwitched = oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantManagementId, sCurrentVariant, sNewVariant);
-
-			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-
-			oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
-			oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, oComponent);
+						var oData = oFlexController.getVariantModelData();
+						if (oData) {
+							oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), "$FlexVariants");
+						}
+				});
 		}
 	};
 

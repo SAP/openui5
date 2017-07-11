@@ -10,10 +10,11 @@ sap.ui.require([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/variants/VariantController",
+	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory"
-], function(LrepConnector, FakeLrepConnector, Cache, Change, ChangePersistence, VariantController, FlexControllerFactory, Utils, ChangePersistenceFactory) {
+], function(LrepConnector, FakeLrepConnector, Cache, Change, ChangePersistence, VariantController, VariantModel, FlexControllerFactory, Utils, ChangePersistenceFactory) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 	QUnit.start();
@@ -50,7 +51,7 @@ sap.ui.require([
 
 	QUnit.test("when create change which is variant and send it to LrepConnector", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 				return oFakeLrepConnector.create(oFakeVariantResponse, "testChangeList", true).then(function(result){
 					assert.deepEqual(result.response, oFakeVariantResponse , "then an exact payload was returned.");
@@ -62,20 +63,21 @@ sap.ui.require([
 
 	QUnit.test("when calling 'getVariants' of the VariantController", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 				var aExpectedVariants = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants;
 				var aVariants = oVariantController.getVariants("variantManagementOrdersTable");
 				assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
+				assert.equal(aVariants[0].content.fileName, "variantManagementOrdersTable", "and ordered with standard variant first");
 				done();
 		 });
 	});
 
 	QUnit.test("when calling 'getVariants' of the VariantController with an invalid variantManagementId", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
@@ -87,14 +89,14 @@ sap.ui.require([
 
 	QUnit.test("when calling 'getVariantChanges' of the VariantController", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 				var aExpectedDefChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
-				var aExpectedChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes;
+				var aExpectedChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[2].changes;
 				var aDefChanges = oVariantController.getVariantChanges("variantManagementOrdersTable");
-				var aChanges = oVariantController.getVariantChanges("variantManagementOrdersTable", "variant1");
+				var aChanges = oVariantController.getVariantChanges("variantManagementOrdersTable", "variant2");
 				assert.deepEqual(aExpectedDefChanges, aDefChanges, "then the changes of the default variant are returned");
 				assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
 				done();
@@ -103,7 +105,7 @@ sap.ui.require([
 
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
@@ -118,7 +120,7 @@ sap.ui.require([
 
 	QUnit.test("when calling 'getChangesForComponent' of the ChangePersistence", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 			var aExpectedChanges0 = oFakeVariantResponse.changes.changes;
@@ -155,11 +157,15 @@ sap.ui.require([
 				"variantSection" : {
 					"variantManagementId" : {
 						"variants" : [{
-							"fileName": "variant0",
+							"content" : {
+								"fileName": "variant0"
+							},
 							"changes" : [oChangeContent0, oChangeContent1, oChangeContent2]
 						},
 						{
-							"fileName": "variant1",
+							"content" : {
+								"fileName": "variant1"
+							},
 							"changes" : [oChangeContent0, oChangeContent3, oChangeContent4]
 						}]
 					}
@@ -178,7 +184,7 @@ sap.ui.require([
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 		 .done(function(oFakeVariantResponse) {
 				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 				var oRevertedChange = new Change(oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes[1]);
@@ -199,18 +205,128 @@ sap.ui.require([
 				this.oChangePersistence._oVariantController._mVariantManagement = oFakeVariantResponse.changes.variantSection;
 
 				this.mPropertyBag = {viewId: "view1--view2"};
-				var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("variantManagementOrdersTable", "variant0", "variant1");
+				var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("variantManagementOrdersTable", "variant0", "variantManagementOrdersTable");
 				assert.deepEqual(mSwitches, mExpectedSwitches, "the expected changes are in the switches map");
 				done();
 		 });
 	});
 
+	QUnit.test("when calling '_fillVariantModel'", function(assert) {
+		var done = assert.async();
+		var oFakeVariantResponse = {
+			"changes" : {
+				"changes" : [
+					{
+						"fileName":"change1"
+					}
+				],
+				"variantSection" : {
+					"variantMgmtId1" : {
+						"defaultVariant" : "variant1",
+						"variants" : [
+							{
+								"content": {
+									"fileName":"variant0",
+									"title":"variant A",
+									"layer":"CUSTOMER",
+									"support":{
+										"user":"Me"
+									}
+								},
+								"changes" : [
+									{
+										"fileName":"change44"
+									},
+									{
+										"fileName":"change45"
+									}
+								]
+							},
+							{
+								"content": {
+									"fileName":"variant1",
+									"title":"variant B",
+									"layer":"CUSTOMER",
+									"support":{
+										"user":"Me"
+									}
+								},
+								"changes" : [
+									{
+										"fileName":"change46"
+									},
+									{
+										"fileName":"change47"
+									}
+								]
+							},
+							{
+								"content": {
+									"fileName":"variantMgmtId1",
+									"title":"Standard",
+									"layer":"VENDOR",
+									"support":{
+										"user":"SAP"
+									}
+								},
+								"changes" : [
+									{
+										"fileName":"change42"
+									},
+									{
+										"fileName":"change43"
+									}
+								]
+							}
+						]
+					}
+				}
+			}
+		};
+		var oExpectedData = {
+			"variantMgmtId1": {
+				"defaultVariant": "variant1",
+				"variants": [{
+					"author": "SAP",
+					"key": "variantMgmtId1",
+					"layer": "VENDOR",
+					"originalTitle": "Standard",
+					"readOnly": true,
+					"title": "Standard",
+					"toBeDeleted": false
+				},
+				{
+					"author": "Me",
+					"key": "variant0",
+					"layer": "CUSTOMER",
+					"originalTitle": "variant A",
+					"readOnly": false,
+					"title": "variant A",
+					"toBeDeleted": false
+				},
+				{
+					"author": "Me",
+					"key": "variant1",
+					"layer": "CUSTOMER",
+					"originalTitle": "variant B",
+					"readOnly": false,
+					"title": "variant B",
+					"toBeDeleted": false
+				}]
+			}
+		};
+		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
+		var oData = oVariantController._fillVariantModel();
+		assert.propEqual(oData, oExpectedData, "then correct variant model data is returned");
+		done();
+	});
+
 	//Integration test
 	QUnit.test("when calling 'switchChangesAndPropagate'", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("./testResources/FakeVariantLrepResponse.json")
+		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
 			.done(function(oFakeVariantResponse) {
-				assert.expect(16);
+				assert.expect(18);
 				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
 				sandbox.stub(Utils, "isApplication").returns(true);
 				sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
@@ -254,10 +370,19 @@ sap.ui.require([
 					assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aRevertedChanges[1].getKey()] instanceof Object);
 					fnGetChanges.call(this, aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-					FlexControllerFactory.switchChangesAndPropagate(oComponent, "variantManagementOrdersTable", "variant0", "variant1");
+					var oData = this.oFlexController.getVariantModelData();
+					var oModel = new VariantModel(oData, this.oFlexController, oComponent);
+
+					var sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+					assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
+
+					oModel.switchToVariant("variantManagementOrdersTable", "variantManagementOrdersTable");
 
 					assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
 					fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+
+					sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+					assert.equal(sCurrentVariant, "variantManagementOrdersTable", "the current variant key after switch is correct");
 
 					done();
 				}.bind(this));
