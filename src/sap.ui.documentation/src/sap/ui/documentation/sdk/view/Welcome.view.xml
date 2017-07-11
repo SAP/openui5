@@ -11,31 +11,35 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell class="sapUiNoContentPadding sapUiDemokitLandingImageCell welcomeImageCell">
 					<Image
-							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped.jpg"
-							width="100%"
-							class="welcomeImage"
-							densityAware="false"
-							visible="{device>/system/phone}"/>
+						id="phoneImage"
+						src="./resources/sap/ui/documentation/sdk/images/Home_S_cropped.jpg"
+						width="100%"
+						class="welcomeImage"
+						densityAware="false"
+						load="handleLandingImageLoad"
+						visible="{device>/system/phone}"/>
 					<Image
-							src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
-							width="100%"
-							densityAware="false"
-							class="welcomeImage"
-							visible="{=!${device>/system/phone}}"/>
+						src="./resources/sap/ui/documentation/sdk/images/Home_M_and_L_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="welcomeImage"
+						load="handleLandingImageLoad"
+						visible="{=!${device>/system/phone}}"/>
 
 					<l:VerticalLayout
-							width="100%"
-							class="welcomeImageTextLayout">
+						id="landingImageHeadline"
+						visible="false"
+						width="100%"
+						class="welcomeImageTextLayout">
 						<Text class="welcomeImageTextHeadline"
-							  text="Discover New Enterprise-Grade Horizons"
-							  width="100%"
-							  textAlign="Center"/>
+							text="Discover New Enterprise-Grade Horizons"
+							width="100%"
+							textAlign="Center"/>
 						<Button
-								text="Get Started with UI5"
-								type="Emphasized"
-								press="onGetStarted"
-								class="actionButton"/>
+							text="Get Started with UI5"
+							type="Emphasized"
+							press="onGetStarted"
+							class="actionButton"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
@@ -49,7 +53,8 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternBContrast">
+					backgroundColorSet="ColorSet5"
+					backgroundColorShade="ShadeD">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
@@ -76,7 +81,7 @@
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternE">
+						class="demokitInitialPagesColorPatternC">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
@@ -87,38 +92,38 @@
 						<Text
 								text="The UI5 core offers a solid foundation that simplifies your work by managing many aspects of modern development behind the scenes. It comes with built-in support for architectural concepts like MVC, two-way data binding, and routing."
 								class="sapUiSmallMarginBottom"/>
-						<l:HorizontalLayout>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Includes standards like MVC and various data-binding types"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout>
+						</HBox>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Choose between different view formats (XML, HTML, JavaScript, JSON)"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout>
+						</HBox>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Binding with OData, JSON, XML and other data formats"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout>
+						</HBox>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Built-in support tool for exploring the object tree and binding status"/>
-						</l:HorizontalLayout>
+						</HBox>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -126,47 +131,47 @@
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternC">
+						class="demokitInitialPagesColorPatternB">
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
-								href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
+								href="#/topic/23cfd955f58142389fa7c9097e11559c"
 								text="Enterprise-Ready Web Toolkit"
 								class="sapUiSmallMarginBottom"
 								titleStyle="H2"/>
 						<Text
 								text="Created by professionals, for modern developers building state of the art web applications. It comes with all features needed to cover most current application requirements, with standards high enough to be delivered in standard SAP solutions."
 								class="sapUiSmallMarginBottom"/>
-							<l:HorizontalLayout>
+							<HBox>
 								<core:Icon
 										src="sap-icon://accept"
 										size="0.875rem"
 										color="Default"
 										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 								<Text text="Translation and internationalization support"/>
-							</l:HorizontalLayout>
-							<l:HorizontalLayout>
+							</HBox>
+							<HBox>
 								<core:Icon
 										src="sap-icon://accept"
 										size="0.875rem"
 										color="Default"
 										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 								<Text text="Extensibility concepts at code and application level"/>
-							</l:HorizontalLayout>
-							<l:HorizontalLayout>
+							</HBox>
+							<HBox>
 								<core:Icon
 										src="sap-icon://accept"
 										size="0.875rem"
 										color="Default"
 										class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 								<Text text="High Contrast theme to aid visually impaired users"/>
-							</l:HorizontalLayout>
+							</HBox>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 
 				<l:BlockLayoutCell
-						class="demokitInitialPagesColorPatternB">
+						class="demokitInitialPagesColorPatternE">
 					<l:Grid
 							defaultSpan="L6 M12 S12"
 							hSpacing="0"
@@ -177,7 +182,8 @@
 									href="https://experience.sap.com/fiori-design/"
 									text="Award-Winning SAP Fiori Design in Action"
 									class="sapUiSmallMarginBottom"
-									titleStyle="H2"/>
+									titleStyle="H2"
+									target="_blank"/>
 							<Text
 									text="UI5 applications benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or try our online theming tool to create a custom theme."
 									class="sapUiSmallMarginBottom"/>
@@ -217,22 +223,22 @@
 						<Text
 								text="Sign up for the free SAP Cloud Platform developer edition to test the platform and build cloud-based UI5 apps."
 								class="sapUiSmallMarginBottom"/>
-						<l:HorizontalLayout>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Easy-to-use development environment with SAP Web IDE"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout class="sapUiSmallMarginBottom">
+						</HBox>
+						<HBox class="sapUiSmallMarginBottom">
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Free trial for development use"/>
-						</l:HorizontalLayout>
+						</HBox>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
@@ -241,31 +247,30 @@
 					<l:VerticalLayout
 							width="100%">
 						<custom:TitleLink
-								href="http://TODO"
+								href="#/topic/91f346786f4d1014b6dd926db0e91070"
 								text="SAPUI5 On-Premise"
-								target="_blank"
 								titleStyle="H2"
 								class="sapUiSmallMarginBottom"/>
 						<Text
 								text="SAPUI5 is part of the user interface technologies in SAP HANA, NetWeaver ABAP or Java systems."
 								class="sapUiSmallMarginBottom"/>
 
-						<l:HorizontalLayout>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="ready to use for SAP Customers"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout class="sapUiSmallMarginBottom">
+						</HBox>
+						<HBox class="sapUiSmallMarginBottom">
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Integrates with existing system landscapes"/>
-						</l:HorizontalLayout>
+						</HBox>
 
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -284,22 +289,22 @@
 								text="Try the open source variant of UI5. It contains all core UI5 features and is available on GitHub under the Apache 2.0 license."
 								class="sapUiSmallMarginBottom"/>
 
-						<l:HorizontalLayout>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Supported by the open source community"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout class="sapUiSmallMarginBottom">
+						</HBox>
+						<HBox class="sapUiSmallMarginBottom">
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Managed on GitHub - contributions welcome!"/>
-						</l:HorizontalLayout>
+						</HBox>
 
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
@@ -317,22 +322,22 @@
 								text="Develop and run UI5 apps with the flexibility of a robust CDN. Files are loaded from the location closest to the user for optimal performance."
 								class="sapUiSmallMarginBottom"/>
 
-						<l:HorizontalLayout>
+						<HBox>
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="Multi-version CDN to maintain a custom lifecycle"/>
-						</l:HorizontalLayout>
-						<l:HorizontalLayout class="sapUiSmallMarginBottom">
+						</HBox>
+						<HBox class="sapUiSmallMarginBottom">
 							<core:Icon
 									src="sap-icon://accept"
 									size="0.875rem"
 									color="Default"
 									class="sapUiTinyMarginBegin sapUiSmallMarginEnd"/>
 							<Text text="For any on-premise and cloud development scenario"/>
-						</l:HorizontalLayout>
+						</HBox>
 
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>

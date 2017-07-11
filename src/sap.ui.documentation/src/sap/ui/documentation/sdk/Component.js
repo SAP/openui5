@@ -10,8 +10,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/util/DocumentationRouter",
 		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
-		"sap/ui/documentation/sdk/controller/util/APIInfo"
-	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo) {
+		"sap/ui/documentation/sdk/controller/util/APIInfo",
+		"sap/m/ColumnListItem"
+	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo, ColumnListItem) {
 		"use strict";
 
 		var aTreeContent = [],
@@ -24,15 +25,9 @@ sap.ui.define([
 				manifest : "json",
 				includes : [
 					"css/style.css",
-					"css/explored.css",
-					"css/titles.css",
-					"css/welcome.css",
-					"css/landingPage.css",
-					"css/headers.css",
 					"thirdparty/google-code-prettify/prettify.css",
 					"thirdparty/google-code-prettify/prettify.js",
-					"thirdparty/google-code-prettify/lang-css.js",
-					"css/FeedbackRatingFaces.css"
+					"thirdparty/google-code-prettify/lang-css.js"
 				]
 			},
 
@@ -68,6 +63,10 @@ sap.ui.define([
 				if (Device.system.desktop) {
 					this.fetchAPIInfoAndBindModels();
 				}
+
+				// Prevents inappropriate focus change which causes ObjectPage to scroll,
+				// thus text can be selected and copied
+				sap.m.TablePopin.prototype.onfocusin = function () {};
 			},
 
 			/**
@@ -123,6 +122,23 @@ sap.ui.define([
 				this._modelsPromise = new Promise(function (resolve) {
 					APIInfo.getAllLibrariesElementsJSONPromise().then(function(aLibsData) {
 						aLibsData.forEach(this._parseLibraryElements, this);
+
+						if (aTreeContent.length > 0) {
+							aTreeContent.push({
+								isSelected: false,
+								name : "experimental",
+								ref: "#/api/experimental",
+								text: "Experimental APIs"
+							}, {
+								isSelected: false,
+								name : "deprecated",
+								ref: "#/api/deprecated",
+								text: "Deprecated APIs"
+							});
+						}
+
+						this._addDeprecatedAndExperimentalData(oLibsData);
+
 						this._bindAllLibsModel(oLibsData);
 						this._bindTreeModel(aTreeContent);
 						resolve();
@@ -228,8 +244,86 @@ sap.ui.define([
 				var treeModel = this.getModel("treeData");
 				treeModel.setSizeLimit(iTreeModelLimit);
 				treeModel.setData(aTreeContent, false);
+			},
+
+			_addDeprecatedAndExperimentalData : function(oLibsData) {
+				var sWithoutVersion = "Without Version";
+
+				oLibsData.deprecated = {
+					noVersion : {
+						name : sWithoutVersion,
+						apis : []
+					}
+				};
+
+				oLibsData.experimental = {
+					noVersion : {
+						name : sWithoutVersion,
+						apis : []
+					}
+				};
+
+				/**
+				 * @param {String} oDataType - "deprecated" or "experimental"
+				 * @param {Object} oEntityObject - the object which contains the data
+				 * @param {String} sObjectType - "method" or "event"
+				 * @param {String} sSymbolName - the name of the class or namespace to which the data is relevant
+				 */
+				function addData(oDataType, oEntityObject, sObjectType, sSymbolName) {
+					var oData = {
+						control : sSymbolName,
+						entityName : oEntityObject.name,
+						text : oEntityObject[oDataType].text || oEntityObject.description,
+						type : sObjectType,
+						"static" : !!oEntityObject.static
+					};
+
+					if (oEntityObject[oDataType].since) {
+						var aSince = oEntityObject[oDataType].since.split(".");
+						var sVersion = aSince[0] + "." + aSince[1]; // take only major and minor versions
+
+						oData.since = oEntityObject[oDataType].since;
+
+						if (!oLibsData[oDataType][sVersion]) {
+							oLibsData[oDataType][sVersion] = {
+								name : sVersion,
+								apis : []
+							};
+						}
+
+						oLibsData[oDataType][sVersion].apis.push(oData);
+					} else {
+						oLibsData[oDataType].noVersion.apis.push(oData);
+					}
+				}
+
+				/* Iterate over the oLibsData object, gather information about all deprecated and experimental
+				entities and aggregate it in new properties in oLibsData.
+				 */
+				Object.keys(oLibsData).forEach(function(sLibName) {
+					var sLib = oLibsData[sLibName];
+
+					sLib.methods && sLib.methods.forEach(function(oMethod) {
+						if (oMethod.deprecated) {
+							addData("deprecated", oMethod, "methods", sLib.name);
+						}
+
+						if (oMethod.experimental) {
+							addData("experimental", oMethod, "methods", sLib.name);
+						}
+					});
+
+					sLib.events && sLib.events.forEach(function(oEvent) {
+						if (oEvent.deprecated) {
+							addData("deprecated", oEvent, "events", sLib.name);
+						}
+
+						if (oEvent.experimental) {
+							addData("experimental", oEvent, "events", sLib.name);
+						}
+					});
+				});
 			}
 		});
-
 	}
 );
