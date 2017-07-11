@@ -2,8 +2,9 @@
 <!-- TODO: Replace with the V2 $metadata document as soon as metadata converter is available -->
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
 	<edmx:DataServices>
-		<Schema Namespace="com.sap.gateway.default.zui5_edm_types_v4.v0001"
-			Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+		<!-- Changed original namespace com.sap.gateway.default.zui5_edm_types_v4.v0001 to match V2 data response namespace -->
+		<Schema Namespace="com.sap.ui5.OData"
+				Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 			<EntityType Name="EdmTypes">
 				<Key>
 					<PropertyRef Name="ID" />
@@ -31,10 +32,7 @@
 			</EntityType>
 			<EntityContainer Name="Container">
 				<EntitySet Name="EdmTypesCollection"
-					EntityType="com.sap.gateway.default.zui5_edm_types_v4.v0001.EdmTypes" />
-				<ActionImport Name="ResetEdmTypes"
-					Action="com.sap.gateway.default.zui5_edm_types_v4.v0001.ResetEdmTypes"
-					EntitySet="com.sap.gateway.default.zui5_edm_types_v4.v0001.Container/EdmTypesCollection" />
+					EntityType="com.sap.ui5.OData.EdmTypes" />
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>
