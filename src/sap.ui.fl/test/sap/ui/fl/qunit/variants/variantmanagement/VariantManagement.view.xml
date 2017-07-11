@@ -10,7 +10,6 @@
 		<m:Button id="idMarkAsChangedBtn" text="Mark as Changed" press="onMarkAsChanged" />
 	</m:HBox>
 		<m:Label text="Variants"/>
-		<VariantManagement id="idVariantManagementCtrl" select="onSelect" save="onSave"  manage="onManage" showExecuteOnSelection="true" showShare="true">
-		</VariantManagement>
+		<VariantManagement id="idVariantManagementCtrl" select="onSelect" save="onSave"  manage="onManage" showExecuteOnSelection="true" showShare="true" showFavorites="true" />
 	</l:VerticalLayout>
 </mvc:View>
