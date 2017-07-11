@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The ToggleButton Control is a Button that can be toggled between pressed and normal state
+	 * The ToggleButton Control is a Button that can be toggled between pressed and normal state.
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
