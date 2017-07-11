@@ -336,10 +336,14 @@ sap.ui.define([
 				var sGetter = oAggregation._sGetter;
 				var aContainers = oParentElement[sGetter]();
 
-				if (oChildElement) {
-					iIndex = aContainers.indexOf(oChildElement) + 1;
+				if (Array.isArray(aContainers)) {
+					if (oChildElement) {
+						iIndex = aContainers.indexOf(oChildElement) + 1;
+					} else {
+						iIndex = aContainers.length;
+					}
 				} else {
-					iIndex = aContainers.length;
+					iIndex = 0;
 				}
 			}
 			return iIndex;
