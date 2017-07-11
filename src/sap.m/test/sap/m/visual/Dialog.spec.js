@@ -52,4 +52,15 @@ describe('sap.m.Dialog', function() {
 		expect(takeScreenshot(dialogWithFixedSizeContent)).toLookAs('dialog-with-fixed-size-content');
 		element(by.id('dialogWithFixedSizeContentCloseButton')).click();
 	});
+
+	it('custom headers should be aligned vertically', function() {
+		element(by.id('dialogWithCustomHeadersButton')).click();
+		var dialog = element(by.id('dialogWithCustomHeadersDialog'));
+		expect(takeScreenshot(dialog)).toLookAs('dialog-with-3-custom-headers');
+
+		element(by.id('dialogWithCustomHeadersDialogToggleButton')).click();
+		expect(takeScreenshot(dialog)).toLookAs('dialog-with-3-custom-headers-toggle');
+
+		element(by.id('dialogWithCustomHeadersDialogCloseButton')).click();
+	});
 });
