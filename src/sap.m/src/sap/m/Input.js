@@ -1705,9 +1705,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			oInput._oSuggestionPopup = !oInput._bUseDialog ?
 				(new Popover(oInput.getId() + "-popup", {
 					showArrow: false,
-					showHeader : false,
-					placement : sap.m.PlacementType.Vertical,
-					initialFocus : oInput
+					showHeader: false,
+					placement: sap.m.PlacementType.Vertical,
+					initialFocus: oInput,
+					horizontalScrolling: true
 				}).attachAfterClose(function() {
 					if (oInput._iPopupListSelectedIndex  >= 0) {
 						oInput._fireSuggestionItemSelectedEvent();
