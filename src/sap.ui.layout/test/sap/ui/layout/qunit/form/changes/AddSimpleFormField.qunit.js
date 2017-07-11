@@ -35,7 +35,9 @@ function (
 	QUnit.start();
 
 	// Register an entry on the Change Handler Mediator (e.g. from SmartField)
-	ChangeHandlerMediator.addChangeHandlerSettings({"scenario" : "addODataField"}, {
+	ChangeHandlerMediator.addChangeHandlerSettings({
+		"scenario" : "addODataField",
+		"oDataServiceVersion" : "2.0"}, {
 		"requiredLibraries" : {
 			"sap.ui.comp": {
 				"minVersion": "1.48",
@@ -95,7 +97,8 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1"
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -121,7 +124,8 @@ function (
 				"newControlId": "addedFieldId2",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath2"
+				"bindingPath" : "BindingPath2",
+				"oDataServiceVersion" : "2.0"
 		};
 
 		var oChange2 = new Change({"changeType" : "addSimpleFormField"});
@@ -150,7 +154,8 @@ function (
 				"newControlId": "addedFieldId3",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 1,
-				"bindingPath" : "BindingPath3"
+				"bindingPath" : "BindingPath3",
+				"oDataServiceVersion" : "2.0"
 		};
 
 		var oChange3 = new Change({"changeType" : "addSimpleFormField"});
@@ -201,7 +206,8 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oFormContainer.getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1"
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -216,7 +222,85 @@ function (
 		var oSmartFieldLabel = oFormElement.getLabel();
 		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the first form element");
 		var oSmartField = oFormElement.getFields()[0];
-		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty form");
+		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted as first form element");
+	});
+
+	QUnit.test('Add smart field to second group of SimpleForm', function (assert) {
+		this.oToolbar = new Toolbar("NewGroup");
+		this.oTitle = new Title("AnotherGroup");
+		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new sap.m.Input({id : "Input0"});
+
+		this.oSimpleForm = new SimpleForm({content : [
+			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+		]});
+
+		var oView = new View({content : [
+			this.oSimpleForm
+		]});
+
+		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[1];
+
+		var mSpecificChangeInfo = {
+				"newControlId": "addedFieldId",
+				"parentId": oFormContainer.getId(),
+				"index" : 0,
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
+		};
+		var oChange = new Change({"changeType" : "addSimpleFormField"});
+
+		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
+			"the change to add a field was applied");
+
+		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[1];
+		var oFormElement = oFormContainer.getAggregation("formElements")[0];
+		assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
+		var oSmartFieldLabel = oFormElement.getLabel();
+		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the field of the new group");
+		var oSmartField = oFormElement.getFields()[0];
+		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the empty group");
+	});
+
+	QUnit.test('Add smart field to first group of SimpleForm with two groups', function (assert) {
+		this.oToolbar = new Toolbar("NewGroup");
+		this.oTitle = new Title("AnotherGroup");
+		this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
+		this.oInput0 = new sap.m.Input({id : "Input0"});
+
+		this.oSimpleForm = new SimpleForm({content : [
+			this.oToolbar, this.oLabel0, this.oInput0, this.oTitle
+		]});
+
+		var oView = new View({content : [
+			this.oSimpleForm
+		]});
+
+		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+
+		var mSpecificChangeInfo = {
+				"newControlId": "addedFieldId",
+				"parentId": oFormContainer.getId(),
+				"index" : 2,
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
+		};
+		var oChange = new Change({"changeType" : "addSimpleFormField"});
+
+		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
+			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
+			"the change to add a field was applied");
+
+		oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
+		var oFormElement = oFormContainer.getAggregation("formElements")[1];
+		assert.equal(this.oSimpleForm.getContent().length, 6, "the form has 6 content items after field was added");
+		var oSmartFieldLabel = oFormElement.getLabel();
+		assert.equal(oSmartFieldLabel.getId(), "addedFieldId-label", "the new label was inserted for the new field");
+		var oSmartField = oFormElement.getFields()[0];
+		assert.equal(oSmartField.getBindingPath("value"),"BindingPath1", "the field was inserted in the right place");
 	});
 
 	QUnit.test('Add smart field to SimpleForm without title/toolbar', function (assert) {
@@ -237,7 +321,8 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oFormContainer.getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1"
+				"bindingPath" : "BindingPath1",
+				"oDataServiceVersion" : "2.0"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -280,7 +365,8 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				}
+				},
+				"oDataServiceVersion" : "2.0"
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -332,7 +418,8 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				}
+				},
+				"oDataServiceVersion" : "2.0"
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -384,7 +471,8 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				}
+				},
+				"oDataServiceVersion" : "2.0"
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -441,7 +529,8 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				}
+				},
+				"oDataServiceVersion" : "2.0"
 			}
 		};
 

@@ -93,14 +93,18 @@ function(
 			"mockName" : "mocked"
 		};
 
-		sinon.stub(DescriptorInlineChangeFactory, "create_ui5_addLibraries", function(mParameters){
+		this.createAddLibrariesStub = sinon.stub(DescriptorInlineChangeFactory, "create_ui5_addLibraries", function(mParameters){
 			assert.equal(mParameters.libraries, this.mLibraries, "libraries are properly passed to the 'create_ui5_addLibraries' function");
+			this.createAddLibrariesStub.restore();
 			return Promise.resolve(oMockAddLibraryInlineChange);
 		}.bind(this));
-		sinon.stub(DescriptorChangeFactory.prototype, "createNew", function(sReference, oAddLibraryInlineChange, sLayer){
+
+		this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew", function(sReference, oAddLibraryInlineChange, sLayer){
 			assert.equal(sReference, this.sReference, "reference is properly passed to createNew function");
 			assert.equal(oAddLibraryInlineChange.mockName, oMockAddLibraryInlineChange.mockName, "oAddLibraryInlineChange is properly passed to createNew function");
 			assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew function");
+
+			this.createNewChangeStub.restore();
 
 			return Promise.resolve(oMockDescriptorChange);
 		}.bind(this));

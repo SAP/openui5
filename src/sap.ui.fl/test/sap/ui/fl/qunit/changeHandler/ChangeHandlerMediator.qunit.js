@@ -143,31 +143,142 @@ function(
 			false, "then updating an entry resets the scenario initialization to false");
 	});
 
-	QUnit.test('when getting settings for a scenario which cannot be initialized...', function(assert) {
+	QUnit.test('when getting settings for a scenario with missing library...', function(assert) {
 
 		this.sDummyLibraryScenario = "dummyLibraryScenario";
 
-			this.mDummyLibrarySettings = {
-				"requiredLibraries" : {
-					"dummy" : {}
-				},
-				"create" : function() {
+		this.mDummyLibrarySettings = {
+			"requiredLibraries" : {
+				"dummy" : {}
+			},
+			"create" : function() {
+				return {
+					"label" : "testLabel",
+					"control" : {}
+				};
+			}
+		};
+
+		var sSpyArg = "Required library not available: " + "dummy" + " - "
+						+ this.sDummyLibraryScenario + " could not be initialized";
+
+		ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }, this.mDummyLibrarySettings);
+
+		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+
+		assert.notOk(ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }), "then no settings are returned");
+
+		assert.equal(spyLog.withArgs(sSpyArg).callCount, 1, "then there is a warning in the log saying the library is not available");
+
+		spyLog.restore();
+	});
+
+	QUnit.module('Given the AddODataField scenario is registered with a create function...', {
+
+		beforeEach : function(assert){
+			this.mAddODataFieldSettings = {
+				"createFunction" : function() {
 					return {
-						"label" : "testLabel",
+						"label" : {},
 						"control" : {}
 					};
 				}
 			};
 
-		ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario }, this.mDummyLibrarySettings);
-
-		var spyLog = sinon.spy(jQuery.sap.log, "info");
-
-		ChangeHandlerMediator.getChangeHandlerSettings({ "scenario" : this.sDummyLibraryScenario });
-
-		assert.equal(spyLog.callCount, 1, "then there is an info in the log saying the scenario could not be initialized");
-
-		spyLog.restore();
+			ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : "addODataField", "oDataServiceVersion" : "2.0" }, this.mAddODataFieldSettings);
+		}
 	});
 
+	QUnit.test('when getting settings for AddODataField in an ODataV2 control...', function(assert) {
+
+		var oMockControl = {
+			getModel : function() {
+				return {
+					getMetaModel : function() {
+						return {
+							getProperty : function(sProperty){
+								if (sProperty === "/dataServices/dataServiceVersion"){
+									return "2.0";
+								}
+							}
+						};
+					}
+				};
+			}
+		};
+
+		assert.equal(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl).content.requiredLibraries["sap.ui.comp"].minVersion,
+			"1.48", "then the settings for data service version 2.0 are found");
+	});
+
+	QUnit.test('when getting settings for AddODataField for a control that did not register a createFunction...', function(assert) {
+
+		var oMockControl = {
+			getModel : function() {
+				return {
+					getMetaModel : function() {
+						return {
+							getProperty : function(sProperty){
+								if (sProperty === "/dataServices/dataServiceVersion"){
+									return "123.0";
+								}
+							}
+						};
+					}
+				};
+			}
+		};
+
+		this.mDummySettings = {
+			"requiredLibraries" : {
+				"sap.ui.layout": {
+					"minVersion": "1.48",
+					"lazy": false
+				}
+			}
+		};
+
+		ChangeHandlerMediator.addChangeHandlerSettings({ "scenario" : "addODataField" , "oDataServiceVersion" : "123.0" }, this.mDummySettings);
+
+		assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
+			"then no settings are returned");
+	});
+
+	QUnit.test('when getting settings for AddODataField in a control with inexistent data service version...', function(assert) {
+
+		var oMockControl = {
+			getModel : function() {
+				return {
+					getMetaModel : function() {
+						return {
+							getProperty : function(sProperty){
+								if (sProperty === "/dataServices/dataServiceVersion"){
+									return "666.0";
+								}
+							}
+						};
+					}
+				};
+			}
+		};
+
+		assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
+			"then no settings for the inexistent data service version are found");
+
+	});
+
+	QUnit.test('when getting settings for AddODataField in a control where the data service version cannot be retrieved...', function(assert) {
+
+		var oMockControl = { };
+
+		var spyLog = sinon.spy(jQuery.sap.log, "warning");
+
+		assert.notOk(ChangeHandlerMediator.getAddODataFieldSettings(oMockControl),
+			"then no settings are found");
+
+		assert.equal(spyLog.callCount, 1, "then there is a warning in the log saying the version could not be retrieved");
+
+		spyLog.restore();
+
+	});
 });

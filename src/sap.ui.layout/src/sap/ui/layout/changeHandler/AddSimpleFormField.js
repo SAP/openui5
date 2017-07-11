@@ -45,7 +45,10 @@ sap.ui.define([
 	AddSimpleFormField.applyChange = function(oChange, oSimpleForm, mPropertyBag) {
 		var oChangeDefinition = oChange.getDefinition();
 		var oTargetContainerHeader = oChange.getDependentControl("targetContainerHeader", mPropertyBag);
-		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({"scenario" : "addODataField"});
+		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
+			"scenario" : "addODataField",
+			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
+		});
 
 		var fnChangeHandlerCreateFunction = mChangeHandlerSettings
 			&& mChangeHandlerSettings.content
@@ -59,6 +62,7 @@ sap.ui.define([
 				bMandatoryContentPresent = oChangeDefinition.content.newFieldSelector
 					&& (oChangeDefinition.content.newFieldIndex !== undefined)
 					&& oChangeDefinition.content.bindingPath
+					&& oChangeDefinition.content.oDataServiceVersion
 					&& fnChangeHandlerCreateFunction;
 			}
 
@@ -84,8 +88,8 @@ sap.ui.define([
 			// This logic is for insertIndex being a desired index of a form element inside a container
 			// However we cannot allow that new fields are added inside other FormElements, therefore
 			// we must find the end of the FormElement to add the new FormElement there
-			if (aContent.length === 1){
-				// Empty group (only header or toolbar)
+			if (aContent.length === 1 || aContent.length === iIndexOfHeader + 1){
+				// Empty container (only header or toolbar)
 				iNewIndex = aContent.length;
 			} else {
 				var j = 0;
@@ -146,7 +150,8 @@ sap.ui.define([
 	 * @param {string} oSpecificChangeInfo.newControlId - the control ID for the control to be added,
 	 * @param {string} oSpecificChangeInfo.bindingPath - the binding path for the new control,
 	 * @param {string} oSpecificChangeInfo.parentId - FormContainer where the new control will be added,
-	 * @param {number} oSpecificChangeInfo.index - the index where the field will be added.
+	 * @param {number} oSpecificChangeInfo.index - the index where the field will be added,
+	 * @param {string} oSpecificChangeInfo.oDataServiceVersion - the OData service version.
 	 * @param {Object} mPropertyBag The property bag containing the App Component
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
 	 * @param {object} mPropertyBag.appComponent - application component
@@ -184,6 +189,11 @@ sap.ui.define([
 			throw new Error("oSpecificChangeInfo.targetIndex attribute required");
 		} else {
 			oChangeDefinition.content.newFieldIndex = oSpecificChangeInfo.index;
+		}
+		if (oSpecificChangeInfo.oDataServiceVersion === undefined) {
+			throw new Error("oSpecificChangeInfo.oDataServiceVersion attribute required");
+		} else {
+			oChangeDefinition.content.oDataServiceVersion = oSpecificChangeInfo.oDataServiceVersion;
 		}
 	};
 

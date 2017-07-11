@@ -131,15 +131,14 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 					move : {
 						changeType : "moveSimpleFormField"
 					},
-					addODataProperty : function () {
-						var mChangeHandlerSettingsKey = {"scenario" : "addODataField"};
-						var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings(mChangeHandlerSettingsKey);
+					addODataProperty : function (oFormContainer) {
+						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldSettings(oFormContainer);
 
-						if (mChangeHandlerSettings && mChangeHandlerSettings.scenarioInitialized === true){
+						if (mChangeHandlerSettings){
 							return {
 								changeType: "addSimpleFormField",
 								changeOnRelevantContainer : true,
-								requiredLibraries : mChangeHandlerSettings.content.requiredLibraries
+								changeHandlerSettings : mChangeHandlerSettings
 							};
 						}
 					}

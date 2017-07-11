@@ -22,10 +22,25 @@ sap.ui.define(function() {
 
 	/**
 	 * Array of relevant change handlers settings
-	 * Initialize with the required entry for AddODataField
+	 * Initialize with the required entries for AddODataField
 	 */
-	ChangeHandlerMediator._aChangeHandlerSettings = [{
-		key : { "scenario" : "addODataField" },
+	ChangeHandlerMediator._aChangeHandlerSettings = [
+	{
+		key : { "scenario"   : "addODataField",
+				"oDataServiceVersion" : "2.0" },
+		content : {
+			"requiredLibraries" : {
+				"sap.ui.comp" : {
+					"minVersion" : "1.48",
+					"lazy" : false
+				}
+			}
+		},
+		scenarioInitialized : false
+	},
+	{
+		key : { "scenario"   : "addODataField",
+				"oDataServiceVersion" : "1.0" },
 		content : {
 			"requiredLibraries" : {
 				"sap.ui.comp" : {
@@ -103,7 +118,10 @@ sap.ui.define(function() {
 			}
 		}
 
-		return mFoundChangeHandlerSettings;
+		if (bSkipInitialization ||
+			(mFoundChangeHandlerSettings && mFoundChangeHandlerSettings.scenarioInitialized)){
+			return mFoundChangeHandlerSettings;
+		}
 	};
 
 	/**
@@ -126,15 +144,42 @@ sap.ui.define(function() {
 				this._aChangeHandlerSettings[iIndex].scenarioInitialized = true;
 				return true;
 			} catch (e){
-				if (sLibraryName){
-					jQuery.sap.log.info("Required library not available: " + sLibraryName + " - "
-						+ mFoundChangeHandlerSettings.key.scenario + " could not be initialized");
-				} else {
-					jQuery.sap.log.info(mFoundChangeHandlerSettings.key.scenario + " could not be initialized");
-				}
+				jQuery.sap.log.warning("Required library not available: " + sLibraryName + " - "
+					+ mFoundChangeHandlerSettings.key.scenario + " could not be initialized");
 				return false;
 			}
 		}
+	};
+
+	/**
+	 * Retrieves the settings for the AddODataField scenario getting the oData
+	 * service version from the control and ensures that a create function is
+	 * available for the change handler
+	 * @param  {sap.ui.core.Control} oControl The control for the scenario
+	 * @return {Object} The Change Handler Settings for the scenario
+	 */
+	ChangeHandlerMediator.getAddODataFieldSettings = function(oControl){
+		var sODataServiceVersion;
+		var mFoundChangeHandlerSettings;
+
+		try {
+			sODataServiceVersion = oControl.getModel().getMetaModel().getProperty("/dataServices/dataServiceVersion");
+		} catch (e) {
+			jQuery.sap.log.warning("Data service version could not be retrieved");
+		}
+
+		mFoundChangeHandlerSettings = this.getChangeHandlerSettings({
+			"scenario" : "addODataField",
+			"oDataServiceVersion" : sODataServiceVersion
+		});
+
+		// Without a create function, the settings should not be returned
+		if (mFoundChangeHandlerSettings &&
+			mFoundChangeHandlerSettings.content &&
+			mFoundChangeHandlerSettings.content.createFunction){
+			return mFoundChangeHandlerSettings;
+		}
+
 	};
 
 	return ChangeHandlerMediator;
