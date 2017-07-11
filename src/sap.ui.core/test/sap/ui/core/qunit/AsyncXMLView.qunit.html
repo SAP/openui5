@@ -318,6 +318,22 @@ sap.ui.require(["jquery.sap.global",
 				});
 			});
 		});
+
+		QUnit.test("should not call the cache", function(assert) {
+			var sKey = "key",
+				oGetSpy = sinon.spy(Cache, "get"),
+				oSetSpy = sinon.spy(Cache, "set");
+			assert.expect(2);
+			return viewFactory({
+				keys: [sKey]
+			}).loaded().then(function(oView1) {
+				sinon.assert.notCalled(oGetSpy);
+				sinon.assert.notCalled(oSetSpy);
+				oGetSpy.restore();
+				oSetSpy.restore();
+			});
+		});
+
 		QUnit.start();
 	}
 });
