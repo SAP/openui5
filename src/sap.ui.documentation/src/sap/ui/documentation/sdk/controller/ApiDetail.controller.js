@@ -1085,8 +1085,8 @@ sap.ui.define([
 			 */
 			_wrapInSpanTag: function (sText) {
 				var topicsData = this.getModel('topics').oData,
-					topicName = topicsData.name,
-					topicMethods = topicsData.methods;
+					topicName = topicsData.name || "",
+					topicMethods = topicsData.methods || [];
 
 				var sFormattedTextBlock = JSDocUtil.formatTextBlock(sText, {
 					linkFormatter: function (target, text) {
