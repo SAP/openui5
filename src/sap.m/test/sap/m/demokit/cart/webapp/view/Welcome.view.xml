@@ -6,7 +6,7 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		showHeader="{device>/isPhone}"
+		showHeader="{device>/system/phone}"
 		class="customBackground">
 		<customHeader>
 			<Toolbar>
@@ -24,7 +24,7 @@
 							showPageIndicator="false"
 							loop="true"
 							pageChanged="onCarouselPageChanged"
-							visible="{=!${device>/isPhone}}">
+							visible="{=!${device>/system/phone}}">
 							<pages>
 								<VBox renderType="Bare">
 									<Image

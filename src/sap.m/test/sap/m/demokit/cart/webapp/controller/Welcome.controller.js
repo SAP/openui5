@@ -10,15 +10,15 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.cart.controller.Welcome", {
 
 		_iCarouselTimeout: 0, // a pointer to the current timeout
-		_iCarouselLoopTime : 8000, // loop to next picture after 8 seconds
+		_iCarouselLoopTime: 8000, // loop to next picture after 8 seconds
 
-		formatter : formatter,
+		formatter: formatter,
 
 		_mFilters: {
-				Promoted: [new Filter("Type", "EQ", "Promoted")],
-				Viewed: [new Filter("Type", "EQ", "Viewed")],
-				Favorite: [new Filter("Type", "EQ", "Favorite")]
-			},
+			Promoted: [new Filter("Type", "EQ", "Promoted")],
+			Viewed: [new Filter("Type", "EQ", "Viewed")],
+			Favorite: [new Filter("Type", "EQ", "Favorite")]
+		},
 
 		onInit: function () {
 			var oViewModel = new JSONModel({
@@ -44,7 +44,7 @@ sap.ui.define([
 		/**
 		 * lifecycle hook that will initialize the welcome carousel
 		 */
-		onAfterRendering: function() {
+		onAfterRendering: function () {
 			this.onCarouselPageChanged();
 		},
 
@@ -75,7 +75,7 @@ sap.ui.define([
 		/**
 		 * clear previous animation and initialize the loop animation of the welcome carousel
 		 */
-		onCarouselPageChanged: function() {
+		onCarouselPageChanged: function () {
 			clearTimeout(this._iCarouselTimeout);
 			this._iCarouselTimeout = setTimeout(function () {
 				var oWelcomeCarousel = this.byId("welcomeCarousel");
@@ -87,9 +87,9 @@ sap.ui.define([
 		},
 
 		/**
-		* Event handler to determine which link the user has clicked
-		* @param {sap.ui.base.Event} oEvent the press event of the link
-		*/
+		 * Event handler to determine which link the user has clicked
+		 * @param {sap.ui.base.Event} oEvent the press event of the link
+		 */
 		onSelectProduct: function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext("view");
 			var sCategoryId = oContext.getProperty("Product/Category");
@@ -118,9 +118,9 @@ sap.ui.define([
 		},
 
 		/**
-		* Event handler to determine which button was clicked
-		* @param {sap.ui.base.Event} oEvent the button press event
-		*/
+		 * Event handler to determine which button was clicked
+		 * @param {sap.ui.base.Event} oEvent the button press event
+		 */
 		onAddButtonPress: function (oEvent) {
 			var oResourceBundle = this.getModel("i18n").getResourceBundle();
 			var oProduct = oEvent.getSource().getBindingContext("view").getObject();
