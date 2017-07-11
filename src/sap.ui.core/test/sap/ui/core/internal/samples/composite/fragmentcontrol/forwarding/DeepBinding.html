@@ -13,40 +13,42 @@
 	</script>
 
 	<script>
-		//jQuery.sap.require("sap.ui.model.json.JSONModel");
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
 		jQuery.sap.require("fragments.DeepBinding");
 
 		// create some dummy JSON data
 		var data = {
 			names: [
-				{ firstName: "Peter", lastName: "Mueller" },
-				{ firstName: "Petra", lastName: "Maier" },
+				{ firstName: "Christian", lastName: "Mueller" },
+				{ firstName: "Petra", lastName: "Maier" } /*,
 				{ firstName: "Thomas", lastName: "Smith" },
 				{ firstName: "John", lastName: "Williams" },
-				{ firstName: "Maria", lastName: "Jones" }
+				{ firstName: "Maria", lastName: "Jones" } */
 			]
 		};
 		var model = new sap.ui.model.json.JSONModel();
 		model.setData(data);
 		sap.ui.getCore().setModel(model);
 
-		oDeepBinding = new fragments.DeepBinding();
+		oDeepBinding = new fragments.DeepBinding({ id: "deepBinding" });
 		oDeepBinding.bindAggregation("fcItems", {
 			path: "/names",
 			template: new sap.m.Panel({
 				headerText: "{firstName}",
-				content: new sap.m.Button({ text: "{firstName}" })
+				content: new sap.m.Button({ text: "{lastName}" })
 			})
 		});
-		oDeepBinding.placeAt("content");
 
-		/*
-		var oSingleContainer = new control.SingleContainer({});
-		oSingleContainer.setAggregation("content", new sap.m.Panel({
-			content: [new sap.m.Button({text: "{/names/1/firstName}"})]
-		}));
-		oSingleContainer.placeAt("content");
-		*/
+		// oDeepBinding.bindAggregation("fcItems", {
+		// 	path: "/names",
+		// 	template: new sap.m.Panel({
+		// 		headerText: "{$this>/text}",   <----- SHOULD NOT WORK !!! THIS IS WHY WE OVERWRITE _getPropertiesToPropagate. 
+		// TODO: .... However: it does work although when we check in the web tools the panel knows no model "$this" and no bindingContext with this key (since we have removed them in _getPropertiesToPropagate)
+		// ent: new sap.m.Button({ text: "{firstName}" })
+		// 	})
+		// });
+
+		oDeepBinding.placeAt("content");
 	</script>
 </head>
 
