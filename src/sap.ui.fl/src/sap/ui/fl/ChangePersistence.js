@@ -49,6 +49,7 @@ sap.ui.define([
 			throw new Error("Missing component name.");
 		}
 
+		this._oVariantController = new VariantController(this._oComponent.name, this._oComponent.appVersion, {});
 		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
 	};
@@ -167,7 +168,7 @@ sap.ui.define([
 			var aChanges = oWrappedChangeFileContent.changes.changes;
 
 			if (oWrappedChangeFileContent.changes.variantSection && oWrappedChangeFileContent.changes.variantSection !== {}) {
-				this._oVariantController = new VariantController(this.getComponentName(), this._oComponent.appVersion, oWrappedChangeFileContent);
+				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent);
 				var aVariantChanges = this._oVariantController.loadDefaultChanges();
 				aChanges = aChanges.concat(aVariantChanges);
 			}
@@ -282,44 +283,47 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.loadChangesMapForComponent = function (oComponent, mPropertyBag) {
-		var that = this;
-		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 
-		return this.getChangesForComponent(mPropertyBag).then(createChangeMap);
+		return this.getChangesForComponent(mPropertyBag).then(createChangeMap.bind(this));
 
 		function createChangeMap(aChanges) {
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
-			that._mChanges = {
+			this._mChanges = {
 				mChanges: {},
 				mDependencies: {},
 				mDependentChangesOnMe: {}
 			};
-			aChanges.forEach(function (oChange, iIndex, aCopy) {
-				that._addChangeIntoMap(oComponent, oChange);
+			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
-				//create dependencies map
-				var aDependentIdList = oChange.getDependentIdList(oAppComponent);
-				var oPreviousChange;
-				var aPreviousDependentIdList;
-				var iDependentIndex;
-				var bFound;
-
-				for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
-					oPreviousChange = aCopy[i];
-					aPreviousDependentIdList = aCopy[i].getDependentIdList(oAppComponent);
-					bFound = false;
-					for (var j = 0; j < aDependentIdList.length && !bFound; j++) {
-						iDependentIndex = aPreviousDependentIdList.indexOf(aDependentIdList[j]);
-						if (iDependentIndex > -1) {
-							that._addDependency(oChange, oPreviousChange);
-							bFound = true;
-						}
-					}
-				}
-			});
-
-			return that.getChangesMapForComponent.bind(that);
+			return this.getChangesMapForComponent.bind(this);
 		}
+	};
+
+	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChangesCopy) {
+		this._addChangeIntoMap(oComponent, oChange);
+
+		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+
+		//create dependencies map
+		var aDependentIdList = oChange.getDependentIdList(oAppComponent);
+		var oPreviousChange;
+		var aPreviousDependentIdList;
+		var iDependentIndex;
+		var bFound;
+
+		for (var i = iIndex - 1; i >= 0; i--) {//loop over the changes
+			oPreviousChange = aChangesCopy[i];
+			aPreviousDependentIdList = aChangesCopy[i].getDependentIdList(oAppComponent);
+			bFound = false;
+			for (var j = 0; j < aDependentIdList.length && !bFound; j++) {
+				iDependentIndex = aPreviousDependentIdList.indexOf(aDependentIdList[j]);
+				if (iDependentIndex > -1) {
+					this._addDependency(oChange, oPreviousChange);
+					bFound = true;
+				}
+			}
+		}
+
 	};
 
 	/**
@@ -547,16 +551,59 @@ sap.ui.define([
 	 * @private
 	 */
 	ChangePersistence.prototype._deleteChangeInMap = function (oChange) {
-		var that = this;
+		var sChangeKey = oChange.getKey();
+		var mChanges = this._mChanges.mChanges;
+		var mDependencies = this._mChanges.mDependencies;
+		var mDependentChangesOnMe = this._mChanges.mDependentChangesOnMe;
 
-		Object.keys(this._mChanges.mChanges).some(function (key) {
-			var aChanges = that._mChanges.mChanges[key];
-			var nIndexInMapElement = aChanges.indexOf(oChange);
+		//mChanges
+		Object.keys(mChanges).some(function (key) {
+			var aChanges = mChanges[key];
+			var nIndexInMapElement = aChanges
+				.map(function(oExistingChange){
+					return oExistingChange.getKey();
+				}).indexOf(oChange.getKey());
 			if (nIndexInMapElement !== -1) {
 				aChanges.splice(nIndexInMapElement, 1);
 				return true;
 			}
 		});
+
+		//mDependencies
+		Object.keys(mDependencies).forEach( function(key) {
+			if (key === sChangeKey) {
+				delete mDependencies[key];
+			} else if ( mDependencies[key].dependencies
+				&& jQuery.isArray(mDependencies[key].dependencies)
+				&& mDependencies[key].dependencies.indexOf(sChangeKey) !== -1 ) {
+				mDependencies[key].dependencies.splice(mDependencies[key].dependencies.indexOf(sChangeKey), 1);
+				if (mDependencies[key].dependencies.length === 0) {
+					delete mDependencies[key];
+				}
+			}
+		});
+
+		//mDependentChangesOnMe
+		Object.keys(mDependentChangesOnMe).forEach( function(key) {
+			if (key === sChangeKey) {
+				delete mDependentChangesOnMe[key];
+			} else if ( jQuery.isArray(mDependentChangesOnMe[key])
+				&& mDependentChangesOnMe[key].indexOf(sChangeKey) !== -1 ) {
+				mDependentChangesOnMe[key].splice(mDependentChangesOnMe[key].indexOf(sChangeKey), 1);
+				if (mDependentChangesOnMe[key].length === 0) {
+					delete mDependentChangesOnMe[key];
+				}
+			}
+		});
+	};
+
+	/**
+	 * TODO!!!
+	 *
+	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
+	 */
+	ChangePersistence.prototype.loadSwitchChangesMapForComponent = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
+		return this._oVariantController.getChangesForVariantSwitch(sVariantManagementId, sCurrentVariant, sNewVariant);
 	};
 
 	return ChangePersistence;

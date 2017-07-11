@@ -1220,4 +1220,89 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		}.bind(this));
 	});
 
+	QUnit.module("Given map dependencies need to be updated", {
+		beforeEach: function (assert) {
+			this._oComponent = {
+				name: "MyComponent",
+				appVersion: "1.2.3"
+			};
+			this.oChangePersistence = new ChangePersistence(this._oComponent);
+			Utils.setMaxLayerParameter("USER");
+
+			var oChangeContent1 = {
+				fileName: "Gizorillus1",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: {"id": "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			var oChangeContent2 = {
+				fileName: "Gizorillus2",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: {"id": "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			var oChangeContent3 = {
+				fileName: "Gizorillus3",
+				layer: "VENDOR",
+				fileType: "change",
+				changeType: "addField",
+				selector: {"id": "control1"},
+				content: {},
+				originalLanguage: "DE"
+			};
+
+			this.oChange1 = new Change(oChangeContent1);
+			this.oChange2 = new Change(oChangeContent2);
+			this.oChange3 = new Change(oChangeContent3);
+			this.oChange1Key = this.oChange1.getKey();
+			this.oChange2Key = this.oChange2.getKey();
+			this.oChange3Key = this.oChange3.getKey();
+
+			this.mChanges = {
+				"mChanges": {
+					"control1": [this.oChange1, this.oChange2]
+				},
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
+			this.mChanges["mDependencies"][this.oChange1Key] = {"dependencies": [this.oChange2Key]};
+			this.mChanges["mDependentChangesOnMe"][this.oChange2Key] = [this.oChange1Key, this.oChange3Key];
+
+			this.oChangePersistence._mChanges = this.mChanges;
+		},
+		afterEach: function (assert) {
+			this.oChange1.destroy();
+			this.oChange2.destroy();
+			this.oChange3.destroy();
+			delete this.oChange1Key;
+			delete this.oChange2Key;
+			delete this.oChange3Key;
+			delete this.mChanges;
+			sandbox.restore();
+			controls.forEach(function(control){
+				control.destroy();
+			});
+		}
+	});
+
+
+	QUnit.test("when '_deleteChangeInMap' is called", function (assert) {
+
+		this.oChangePersistence._deleteChangeInMap(this.oChange1);
+		assert.equal(this.oChangePersistence._mChanges.mChanges["control1"].length, 1, "then one change deleted from map");
+		assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getKey(), this.oChange2.getKey(), "then only second change present");
+		assert.deepEqual(this.oChangePersistence._mChanges.mDependencies, {}, "then dependencies are cleared for change1");
+		assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key].length, 1, "then mDependentChangesOnMe for change2 only has one change");
+		assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key][0], this.oChange3Key, "then mDependentChangesOnMe for change2 still has change3");
+
+	});
+
 }(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.fl.registry.Settings));
