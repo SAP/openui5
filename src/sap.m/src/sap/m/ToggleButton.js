@@ -10,13 +10,17 @@ sap.ui.define(['jquery.sap.global', './Button', './library', 'sap/ui/core/Enable
 
 
 	/**
-	 * Constructor for a new ToggleButton.
+	 * Constructor for a new <code>ToggleButton</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The ToggleButton Control is a Button that can be toggled between pressed and normal state.
+	 * An enhanced {@link sap.m.Button} that can be toggled between pressed and normal state.
+	 *
+	 * Clicking or tapping a <code>ToggleButton</code> changes its state to <code>pressed</code>. The button returns to
+	 * its initial state when the user clicks or taps it again.
+	 *
 	 * @extends sap.m.Button
 	 *
 	 * @author SAP SE
