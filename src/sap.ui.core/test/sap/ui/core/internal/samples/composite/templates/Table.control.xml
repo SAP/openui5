@@ -1,6 +1,6 @@
 <core:FragmentDefinition
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
-	xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:mdcc="sap.ui.mdc"
+	xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:mdcc="sap.ui.mdc" xmlns:mdcexp="sap.ui.mdc.experimental"
 	xmlns:mdct="sap.ui.mdc.sample.templates">
 	<template:if test="{= ${path:'controlroot>list', formatter:'sap.ui.core.FragmentControl.helper.runtimeListBinding'}}">
 		<template:then>
@@ -39,9 +39,9 @@
 									<m:ColumnListItem>
 										<m:cells>
 											<template:repeat list="{lineitems>}" var="dataField">
-												<mdcc:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
+												<mdcexp:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
 													value="{path:'dataField>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
-												</mdcc:Field>
+												</mdcexp:Field>
 											</template:repeat>
 										</m:cells>
 									</m:ColumnListItem>
@@ -80,9 +80,9 @@
 													</template:if>
 												</table:label>
 												<table:template>
-													<mdcc:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
+													<mdcexp:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
 														value="{path:'dataField>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
-													</mdcc:Field>
+													</mdcexp:Field>
 												</table:template>
 											</table:Column>
 										</template:repeat>
