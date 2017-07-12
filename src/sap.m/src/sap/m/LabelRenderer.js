@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 *
 	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the renderer output buffer
 	 * @param {sap.ui.core.Control} oLabel An object representation of the control that should be rendered
 	 */
@@ -24,9 +25,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		// convenience variable
 		var r = LabelRenderer,
 			sTextDir = oLabel.getTextDirection(),
-			bRenderBDI = sTextDir === sap.ui.core.TextDirection.Inherit;
+			sTextAlign = oLabel.getTextAlign(),
+			sWidth = oLabel.getWidth(),
+			sLabelText = oLabel.getText(),
+			sTooltip = oLabel.getTooltip_AsString(),
+			// render bdi tag only if the browser is different from IE and Edge since it is not supported there
+			bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge,
+			bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge;
 
-		// write the HTML into the render manager
+		// write the HTML into the render managerr
 		rm.write("<label");
 		rm.writeControlData(oLabel);
 
@@ -54,7 +61,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		// style for width
-		var sWidth = oLabel.getWidth();
 		if (sWidth) {
 			rm.addStyle("width", sWidth);
 		} else {
@@ -62,15 +68,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		// style for text alignment
-		var sTextAlign = oLabel.getTextAlign();
 		if (sTextAlign) {
-			var sTextAlign = r.getTextAlign(sTextAlign, sTextDir);
+			sTextAlign = r.getTextAlign(sTextAlign, sTextDir);
 			if (sTextAlign) {
 				rm.addStyle("text-align", sTextAlign);
 			}
 		}
 
-		var sLabelText = oLabel.getText();
 		if (sLabelText == "") {
 			rm.addClass("sapMLabelNoText");
 		}
@@ -78,7 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.writeStyles();
 		rm.writeClasses();
 
-		var sTooltip = oLabel.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
