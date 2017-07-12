@@ -1095,9 +1095,11 @@ sap.ui.define([
 							iHashDotIndex, // indexOf('#.')
 							iHashEventIndex; // indexOf('#event:')
 
+						text = text || target; // keep the full target in the fallback text
+
 						// If the link has a protocol, do not modify, but open in a new window
 						if (target.match("://")) {
-							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
+							return '<a target="_blank" href="' + target + '">' + text + '</a>';
 						}
 
 						target = target.trim().replace(/\.prototype\./g, "#");
@@ -1116,8 +1118,6 @@ sap.ui.define([
 								})[0];
 
 							if (targetMethod) {
-								text = text || target;
-
 								if (targetMethod.static === true) {
 									target = topicName + '/methods/' + target;
 								} else {
@@ -1130,34 +1130,24 @@ sap.ui.define([
 							// clear '#.' from target string
 							target = target.slice(2);
 
-							// if no text is defined for the link, display the method name only
-							text = text || target;
-
 							target = topicName + '/methods/' + topicName + '.' + target;
 						} else if (iHashEventIndex === 0) {
 							// clear '#event:' from target string
 							target = target.slice('#event:'.length);
-
-							// if no text is defined for the link, display the method name only
-							text = text || target;
 
 							target = topicName + '/events/' + target;
 						} else if (iHashIndex === 0) {
 							// clear '#' from target string
 							target = target.slice(1);
 
-							// if no text is defined for the link, display the method name only
-							text = text || target;
-
 							target = topicName + '/methods/' + target;
 						}
 
 						if (iHashIndex > 0) {
-							text = text || target; // keep the full target in the fallback text
-							target = target.slice(0, iHashIndex);
+							target = target.replace('#', '/methods/');
 						}
 
-						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
+						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + text + "</a>";
 
 					}
 				});
