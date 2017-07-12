@@ -6,7 +6,5 @@
 		<VBox items="{$this>fcItems}">
 			<core:FragmentProxy></core:FragmentProxy>
 		</VBox>
-	
-		
 	</VBox>
 </core:FragmentDefinition>
