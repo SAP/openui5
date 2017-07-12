@@ -120,7 +120,10 @@
 			"speaker": "Jan Zaruba, Tomas Krejci",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract":"Movement from native Android to UI5 in order to show the way over hybrid application with Cordova using native business logic. Problems, learnings and outlook to move it to JS."
+			"abstract":"Movement from native Android to UI5 in order to show the way over hybrid application with Cordova using native business logic. Problems, learnings and outlook to move it to JS.",
+			"material": {
+				"Slides": "https://owncloud.gk-software.com/owncloud/index.php/s/seZrruVRFrUbRkG"
+			}
 		},
 		{
 			"type": "break",
