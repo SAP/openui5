@@ -24,10 +24,6 @@ sap.ui.define([
             MessageToast.show(sMessage);
         },
 
-        onSelect: function (oEvent) {
-            MessageToast.show(this.getResourceBundle().getText("selectEventMessage", [oEvent.getId()]));
-        },
-
         getResourceBundle: function () {
             if (!this.oBundle) {
                 this.oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
