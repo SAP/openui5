@@ -8,9 +8,10 @@ sap.ui.define([
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/rta/Utils',
+	'sap/ui/fl/Utils',
 	'sap/ui/core/StashedControlSupport',
 	'sap/ui/dt/ElementDesignTimeMetadata'
-], function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, StashedControlSupport, ElementDesignTimeMetadata){
+], function(jQuery, Plugin, ElementUtil, OverlayRegistry, Utils, FlUtils, StashedControlSupport, ElementDesignTimeMetadata){
 	"use strict";
 
 	function _getParents(bSibling, oOverlay) {
@@ -469,8 +470,9 @@ sap.ui.define([
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
 			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
-			var oComponent = sap.ui.core.Component.getOwnerComponentFor(mParents.relevantContainer);
-			var sReference = oComponent.getMetadata().getName();
+			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
+			var mManifest = oComponent.getManifest();
+			var sReference = mManifest["sap.app"].id;
 			var mRequiredLibraries = mODataPropertyActionDTMetadata.requiredLibraries;
 			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
 				reference : sReference,
