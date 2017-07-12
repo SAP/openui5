@@ -15,6 +15,10 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	// Mapping between controls and labels
 	var CONTROL_TO_LABELS_MAPPING = {};
 
+	// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
+	// Extend when needed.
+	var NON_LABELABLE_CONTROLS = ["sap.m.Link", "sap.m.Select", "sap.m.Label", "sap.m.Text"];
+
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {
 		if (!sId) {
@@ -104,6 +108,18 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		//Add more detailed checks here ?
 	}
 
+	// Checks if the control is labelable according to the HTML standard
+	// The labelable HTML elements are: button, input, keygen, meter, output, progress, select, textarea
+	// Related incident 1770049251
+	function isLabelableControl(oControl) {
+		if (!oControl) {
+			return true;
+		}
+
+		var sName = oControl.getMetadata().getName();
+		return NON_LABELABLE_CONTROLS.indexOf(sName) < 0;
+	}
+
 	/**
 	 * Helper functionality for enhancement of a Label with common label functionality.
 	 *
@@ -142,7 +158,8 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 			sControlId = oControl.getIdForLabel();
 		}
 
-		if (sControlId) {
+		// The "for" attribute should only reference labelable HTML elements.
+		if (sControlId && isLabelableControl(oControl)) {
 			oRenderManager.writeAttributeEscaped("for", sControlId);
 		}
 	};
