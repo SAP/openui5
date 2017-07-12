@@ -1713,6 +1713,50 @@
 				assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
 			});
 
+			QUnit.test("Registration of components: duplicate IDs", function (assert) {
+				assert.expect(3);
+				new sap.ui.core.Element("myId");
+				assert.ok(sap.ui.getCore().byId("myId"), "object should be initially registered");
+
+				try {
+					new sap.ui.core.Element("myId");
+				} catch (ex) {
+					assert.equal(ex.message, "Error: adding element with duplicate id 'myId'");
+				}
+
+				assert.ok(sap.ui.getCore().byId("myId"), "object should still be registered");
+			});
+
+			QUnit.test("Registration of components: do not call unregister if register fails", function (assert) {
+
+				assert.expect(4);
+
+				var fnEmpty = function() {
+
+				};
+				var registrationObj = {
+					register: fnEmpty,
+					deregister: fnEmpty,
+					init: fnEmpty
+				};
+				var register = sinon.stub(registrationObj, 'register').throws();
+				var deregister = sinon.stub(registrationObj, 'deregister');
+				var init = sinon.stub(registrationObj, 'init');
+
+				var FailingManagedObject = sap.ui.base.ManagedObject.extend("sap.ui.namespace.for.unitTests.FailingManagedObject", registrationObj);
+
+
+				try {
+					new FailingManagedObject("myid");
+				} catch (ex) {
+					assert.ok(ex, "registration failed");
+				}
+
+				assert.equal(register.callCount, 1, "register was called");
+				assert.equal(deregister.callCount, 0, "deregister should not be called as register fails");
+				assert.equal(init.callCount, 0, "init should not be called as register fails");
+			});
+
 			QUnit.module("Contextual settings", {
 				beforeEach: function() {
 					this.obj1 = new sap.ui.core.TestManagedObject();

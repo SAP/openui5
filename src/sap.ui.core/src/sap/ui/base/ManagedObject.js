@@ -424,11 +424,14 @@ sap.ui.define([
 			(function() {
 				var bCreated = false;
 
+				// registers the object in the Core
+				// If registration fails (e.g. due to a duplicate ID), the finally block must not be executed.
+				// Otherwise, the already existing object would be deregistered mistakenly
+				if (that.register) {
+					that.register();
+				}
+
 				try {
-					// registers the object in the Core
-					if (that.register) {
-						that.register();
-					}
 					// TODO: generic concept for init hooks?
 					if ( that._initCompositeSupport ) {
 						that._initCompositeSupport(mSettings);
@@ -448,6 +451,7 @@ sap.ui.define([
 				} finally {
 
 					// unregisters the object in the Core
+					// the assumption is that the object was successfully registered
 					if (!bCreated && that.deregister) {
 						that.deregister();
 					}
