@@ -789,6 +789,20 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Updates the cache with the given data. Notifies the listeners about new values.
+	 *
+	 * @param {object} oUpdateData
+	 *   The update data (relative to the cache root)
+	 */
+	Cache.prototype.updateCache = function (oUpdateData) {
+		var that = this;
+
+		this.fetchValue().then(function (oData) {
+			_Helper.updateCache(that.mChangeListeners, "", oData, oUpdateData);
+		});
+	};
+
 	//*********************************************************************************************
 	// CollectionCache
 	//*********************************************************************************************
