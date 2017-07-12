@@ -129,17 +129,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Select two random elements from the promoted array
+		 * Select two random elements from the promoted products array
 		 * @private
 		 */
 		_selectPromotedItems: function () {
 			var aPromotedItems = this.getView().getModel("view").getProperty("/Promoted");
-			var aSelectedPromoted = [];
-			for (var i = 0; i < 2; i++) {
-				var oSelectedPromoted = aPromotedItems[Math.floor(Math.random() * aPromotedItems.length)];
-				aSelectedPromoted.push(oSelectedPromoted);
-			}
-			this.getModel("view").setProperty("/Promoted", aSelectedPromoted);
+			var iRandom1, iRandom2 = Math.floor(Math.random() * aPromotedItems.length);
+			do {
+				iRandom1 = Math.floor(Math.random() * aPromotedItems.length);
+			} while (iRandom1 === iRandom2);
+			this.getModel("view").setProperty("/Promoted", [aPromotedItems[iRandom1], aPromotedItems[iRandom2]]);
 		}
 	});
 });
