@@ -14,6 +14,8 @@
 				visible="{device>/system/phone}"
 				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress" />
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://customer"/>
 		</headerContent>
 		<footer>
 			<Toolbar>

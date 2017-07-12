@@ -8,11 +8,12 @@
 
 		QUnit.module("Welcome Journey");
 
-		opaTest("Should start the app and see the right number of featured products", function (Given, When, Then) {
+		opaTest("Should start the app and see the right number of featured products and an avatar button", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartMyApp();
 			// Assertions
-			Then.onTheWelcomePage.iShouldSeeTheRightAmountOfProducts();
+			Then.onTheWelcomePage.iShouldSeeTheRightAmountOfProducts().
+				and.iShouldSeeAnAvatarButton();
 		});
 
 		opaTest("Should press the product link and navigate to product view", function (Given, When, Then) {
