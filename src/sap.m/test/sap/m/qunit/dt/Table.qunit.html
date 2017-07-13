@@ -5,8 +5,11 @@
 	<title>QUnit Page for sap.m.Table design time and rta enabling</title>
 
 	<script src="../../shared-config.js"></script>
-	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m,sap.ui.rta">
+	<script>
+		window['sap-ui-config'].libs = 'sap.m,sap.ui.rta';
+		window['sap-ui-config'].bindingSyntax = 'complex';
+
+		document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 	</script>
 
 	<script>
