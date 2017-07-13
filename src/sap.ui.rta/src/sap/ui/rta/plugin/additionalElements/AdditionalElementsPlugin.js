@@ -431,9 +431,14 @@ sap.ui.define([
 						case "odata":
 							var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 							var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-							var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
-							if (mODataPropertyActionDTMetadata.requiredLibraries){
-								var oCmdDesc = this._createCommandForAddLibrary(mParents, mActions);
+							var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
+							var mChangeHandlerSettings = mODataPropertyActionDTMetadata.changeHandlerSettings;
+							var mRequiredLibraries;
+							if (mChangeHandlerSettings && mChangeHandlerSettings.content){
+								mRequiredLibraries = mChangeHandlerSettings.content.requiredLibraries;
+							}
+							if (mRequiredLibraries){
+								var oCmdDesc = this._createCommandForAddLibrary(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata);
 								oCompositeCommand.addCommand(oCmdDesc);
 							}
 							oCmd = this._createCommandsForOData(oSelectedElement, mActions, mParents, oSiblingElement, iIndex);
@@ -452,7 +457,12 @@ sap.ui.define([
 		_createCommandsForOData: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
 			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
+			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty", mParents.parent);
+			var mChangeHandlerSettings = mODataPropertyActionDTMetadata.changeHandlerSettings;
+			var sODataServiceVersion;
+			if (mChangeHandlerSettings && mChangeHandlerSettings.key){
+				sODataServiceVersion = mChangeHandlerSettings.key.oDataServiceVersion;
+			}
 			var oRefControlForId = mParents.parent; //e.g. SmartForm
 			if (mODataPropertyActionDTMetadata.changeOnRelevantContainer) {
 				oRefControlForId = mParents.relevantContainer; //e.g. SimpleForm
@@ -462,18 +472,15 @@ sap.ui.define([
 				newControlId: Utils.createFieldLabelId(oRefControlForId, oSelectedElement.entityType, oSelectedElement.bindingPath),
 				index : iIndex !== undefined ? iIndex : iAddTargetIndex,
 				bindingString : oSelectedElement.bindingPath,
-				parentId : mParents.parent.getId()
+				parentId : mParents.parent.getId(),
+				oDataServiceVersion : sODataServiceVersion
 			}, oParentAggregationDTMetadata);
 		},
 
-		_createCommandForAddLibrary: function(mParents, mActions){
-			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
-			var oParentAggregationDTMetadata = oParentAggregationOverlay.getDesignTimeMetadata();
-			var mODataPropertyActionDTMetadata = oParentAggregationDTMetadata.getAction("addODataProperty");
+		_createCommandForAddLibrary: function(mParents, mActions, mRequiredLibraries, oParentAggregationDTMetadata){
 			var oComponent = FlUtils.getAppComponentForControl(mParents.relevantContainer);
 			var mManifest = oComponent.getManifest();
 			var sReference = mManifest["sap.app"].id;
-			var mRequiredLibraries = mODataPropertyActionDTMetadata.requiredLibraries;
 			return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
 				reference : sReference,
 				requiredLibraries : mRequiredLibraries

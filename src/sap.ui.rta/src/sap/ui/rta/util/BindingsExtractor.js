@@ -47,7 +47,7 @@ function(
 	 * Fetches all bindings for a specified binding model
 	 *
 	 * @param {sap.ui.model.PropertyBinding} oBinding - Binding model to get paths from
-	 * @param {sap.ui.model.odata.ODataModel|sap.ui.model.odata.v2.ODataModel} oParentDefaultModel - Data model
+	 * @param {sap.ui.model.odata.XX.ODataModel} oParentDefaultModel - Data model (XX = '', v2, v4...)
 	 *
 	 * @returns {Array} - Returns a flattened array of found bindings
 	 *
@@ -64,6 +64,7 @@ function(
 		} else if (
 			(
 				sModelName === "sap.ui.model.odata.ODataPropertyBinding"
+				|| sModelName === "sap.ui.model.odata.v2.ODataPropertyBinding"
 				|| sModelName === "sap.ui.model.odata.v4.ODataPropertyBinding"
 				|| sModelName === "sap.ui.model.json.JSONPropertyBinding"
 				|| sModelName === "sap.ui.model.json.XMLPropertyBinding"

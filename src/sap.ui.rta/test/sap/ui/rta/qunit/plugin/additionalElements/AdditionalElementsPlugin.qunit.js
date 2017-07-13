@@ -547,10 +547,17 @@ sap.ui.require([
 				"addODataProperty" : {
 					changeType : "addFields",
 					changeOnRelevantContainer : true,
-					requiredLibraries : {
-						"sap.uxap": {
-							"minVersion": "1.44",
-							"lazy": "false"
+					changeHandlerSettings : {
+						key : {
+							oDataServiceVersion : "2.0"
+						},
+						content : {
+							requiredLibraries : {
+								"sap.uxap": {
+									"minVersion": "1.44",
+									"lazy": "false"
+								}
+							}
 						}
 					}
 				}
