@@ -11,21 +11,21 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		"use strict";
 
 		/**
-		 * @type {Array} _aIssues Issues stored in the IssueManager
+		 * @type {object[]} _aIssues Issues stored in the IssueManager
 		 * @private
 		 */
 		var _aIssues = [];
 
 		/**
-		 * @type {Array} _aHistory Array of history objects which contain issues key that has an array of issues.
+		 * @type {object[]} _aHistory Array of history objects which contain issues key that has an array of issues.
 		 * @private
 		 */
 		var _aHistory = [];
 
 		/**
 		 * Converts Issue Object to a ViewModel that can be used by the IssueManager.
-		 * @param {Object} oIssue Issue Object that is to be converted
-		 * @returns {Object} Converted Issue Object
+		 * @param {object} oIssue Issue Object that is to be converted
+		 * @returns {object} Converted Issue Object
 		 */
 		var _convertIssueToViewModel = function (oIssue) {
 			var element = sap.ui.getCore().byId(oIssue.context.id),
@@ -121,7 +121,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @public
 			 * @method
 			 * @name sap.ui.support.IssueManager.getHistory
-			 * @returns {Array} Current history in the IssueManager.
+			 * @returns {object[]} Current history in the IssueManager.
 			 */
 			getHistory: function () {
 				this.clearIssues();
@@ -134,7 +134,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @public
 			 * @method
 			 * @name sap.ui.support.IssueManager.getConvertedHistory
-			 * @returns {array} convertedHistory Grouped issue history object containing converted issues to ViewModel format.
+			 * @returns {object[]} convertedHistory Grouped issue history object containing converted issues to ViewModel format.
 			 */
 			getConvertedHistory: function () {
 				var that = this,
@@ -157,14 +157,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @public
 			 * @method
 			 * @name sap.ui.support.IssueManager.getIssuesModel
-			 * @returns {array} viewModel Issues in ViewModel format
+			 * @returns {object[]} viewModel Issues in ViewModel format
 			 */
 			getIssuesModel: function () {
-				var viewModel = [];
+				var aViewModel = [];
+
 				this.walkIssues(function (issue) {
-					viewModel.push(_convertIssueToViewModel(issue));
+					aViewModel.push(_convertIssueToViewModel(issue));
 				});
-				return viewModel;
+
+				return aViewModel;
 			},
 
 			/**
@@ -248,8 +250,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @public
 			 * @method
 			 * @name sap.ui.support.IssueManager.getTreeTableViewModel
-			 * @param {Object} oRules Deserialized rules found within the current state
-			 * @returns {Object} TreeTableModel Rules in treeTable usable format
+			 * @param {object} oRules Deserialized rules found within the current state
+			 * @returns {object} TreeTableModel Rules in treeTable usable format
 			 * The rules are in a TreeTable format.
 			 */
 			getTreeTableViewModel: function(oRules) {
@@ -401,8 +403,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @public
 			 * @method
 			 * @name sap.ui.support.IssueManager.createIssueManagerFacade
-			 * @param {Object} oRule Given rule
-			 * @returns {Object} New IssueManagerFacade
+			 * @param {object} oRule Given rule
+			 * @returns {object} New IssueManagerFacade
 			 */
 			createIssueManagerFacade: function (oRule) {
 				return new IssueManagerFacade(oRule);
@@ -416,7 +418,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		 * @method
 		 * @namespace
 		 * @name sap.ui.support.IssueManagerFacade
-		 * @param {Object} oRule Rule for the IssueManagerFacade
+		 * @param {object} oRule Rule for the IssueManagerFacade
 		 * @returns {void}
 		 */
 		var IssueManagerFacade = function (oRule) {
@@ -428,7 +430,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 		 * @public
 		 * @method
 		 * @memberof IssueManagerFacade
-		 * @param {Object} oIssue Issue object to be added in the IssueManager
+		 * @param {object} oIssue Issue object to be added in the IssueManager
 		 * @returns {void}
 		 */
 		IssueManagerFacade.prototype.addIssue = function (oIssue) {

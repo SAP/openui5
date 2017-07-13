@@ -15,28 +15,33 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Contains all rulesets inside the RuleSet.
+	 *
 	 * @readonly
-	 * @protected
 	 * @name sap.ui.support.RuleSet.mRuleSets
 	 * @memberof sap.ui.support.RuleSet
 	 */
 	var mRuleSets = {};
 
 	/**
-	 * @class
-	 * The RuleSet is an interface used to create, update and delete rulesets.
-	 * <h3>Overview</h3>
 	 * Creates a RuleSet.
 	 * The RuleSet can store multiple rules concerning namespaces.
+	 * <h3>Usage</h3>
+	 * The RuleSet is an interface used to create, update and delete rulesets.
+	 *
+	 * @class
+	 * @public
 	 * @constructor
-	 * @protected
-	 * @readonly
+	 * @namespace
 	 * @name sap.ui.support.RuleSet
-	 * @param {Object} oSettings Name of the initiated library
+	 * @memberof sap.ui.support
+	 * @author SAP SE
+	 * @version ${version}
+	 * @param {object} oSettings Name of the initiated
 	 * @returns {void}
 	 */
 	var RuleSet = function (oSettings) {
 		oSettings = oSettings || {};
+
 		if (!oSettings.name) {
 			jQuery.sap.log.error("Please provide a name for the RuleSet.");
 		}
@@ -44,6 +49,7 @@ function (jQuery, storage, constants) {
 		if (mRuleSets[oSettings.name]) {
 			return mRuleSets[oSettings.name];
 		}
+
 		this._oSettings = oSettings;
 		this._mRules = {};
 		mRuleSets[oSettings.name] = this;
@@ -51,9 +57,11 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Clears all rulesets inside the RuleSet.
-	 * @protected
-	 * @readonly
+	 * @public
+	 * @static
+	 * @method
 	 * @name sap.ui.support.RuleSet.clearAllRuleSets
+	 * @memberof sap.ui.support.RuleSet
 	 * @returns {void}
 	 */
 	RuleSet.clearAllRuleSets = function () {
@@ -62,11 +70,11 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Gets all rules from the RuleSet.
-	 * @protected
-	 * @readonly
-	 * @memberof sap.ui.support.RuleSet
+	 * @public
+	 * @method
 	 * @name sap.ui.support.RuleSet.getRules
-	 * @returns {Object} All rules within the current RuleSet
+	 * @memberof sap.ui.support.RuleSet
+	 * @returns {object} All rules within the current RuleSet
 	 */
 	RuleSet.prototype.getRules = function () {
 		return this._mRules;
@@ -74,13 +82,13 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Updates rules from the RuleSet.
-	 * @protected
-	 * @readonly
+	 * @public
+	 * @method
 	 * @name sap.ui.support.RuleSet.updateRule
 	 * @memberof sap.ui.support.RuleSet
 	 * @param {string} sRuleId Rule ID
-	 * @param {Object} ORuleSettings Rule settings
-	 * @returns {string|Error} sRuleVerification Rule Verification status
+	 * @param {object} ORuleSettings Rule settings
+	 * @returns {string} sRuleVerification Rule Verification status
 	 */
 	RuleSet.prototype.updateRule = function (sRuleId, ORuleSettings) {
 		var sRuleVerification = this._verifySettingsObject(ORuleSettings, true);
@@ -91,15 +99,15 @@ function (jQuery, storage, constants) {
 		}
 
 		return sRuleVerification;
-
 	};
 
 	/**
 	 * Verifies the settings object of the current RuleSet.
 	 * @private
+	 * @method
 	 * @name sap.ui.support.RuleSet._verifySettingsObject
 	 * @memberof sap.ui.support.RuleSet
-	 * @param {Object} oSettings Settings object to be verified
+	 * @param {object} oSettings Settings object to be verified
 	 * @param {boolean} bUpdate Triggers update of passed settings object
 	 * @returns {string} Rule Verification status
 	 */
@@ -141,18 +149,18 @@ function (jQuery, storage, constants) {
 		}
 
 		if (oSettings.audiences && oSettings.audiences.forEach) {
-			var wrongAudience = false,
-				audName = "";
+			var bIsWrongAudience = false,
+				sAudienceName = "";
 			oSettings.audiences.forEach(function (aud) {
 				if (!sap.ui.support.Audiences[aud]) {
-					wrongAudience = true;
-					audName = aud;
+					bIsWrongAudience = true;
+					sAudienceName = aud;
 				}
 			});
 
-			if (wrongAudience) {
-				jQuery.sap.log.error("Audience " + audName + " does not exist. Please use the audiences from sap.ui.support.Audiences");
-				return "Audience " + audName + " does not exist. Please use the audiences from sap.ui.support.Audiences";
+			if (bIsWrongAudience) {
+				jQuery.sap.log.error("Audience " + sAudienceName + " does not exist. Please use the audiences from sap.ui.support.Audiences");
+				return "Audience " + sAudienceName + " does not exist. Please use the audiences from sap.ui.support.Audiences";
 			}
 		}
 
@@ -162,18 +170,18 @@ function (jQuery, storage, constants) {
 		}
 
 		if (oSettings.categories && oSettings.categories.forEach) {
-			var wrongCategory = false,
-				catName = "";
+			var bIsWrongCategory = false,
+				sCategoryName = "";
 			oSettings.categories.forEach(function (cat) {
 				if (!sap.ui.support.Categories[cat]) {
-					wrongCategory = true;
-					catName = cat;
+					bIsWrongCategory = true;
+					sCategoryName = cat;
 				}
 			});
 
-			if (wrongCategory) {
-				jQuery.sap.log.error("Category " + catName + " does not exist. Please use the categories from sap.ui.support.Categories");
-				return "Category " + catName + " does not exist. Please use the categories from sap.ui.support.Categories";
+			if (bIsWrongCategory) {
+				jQuery.sap.log.error("Category " + sCategoryName + " does not exist. Please use the categories from sap.ui.support.Categories");
+				return "Category " + sCategoryName + " does not exist. Please use the categories from sap.ui.support.Categories";
 			}
 		}
 
@@ -182,11 +190,11 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Adds rules to RuleSet.
-	 * @readonly
-	 * @protected
+	 * @public
+	 * @method
 	 * @name sap.ui.support.RuleSet.addRule
 	 * @memberof sap.ui.support.RuleSet
-	 * @param {Object} oSettings Settings object with rule information
+	 * @param {object} oSettings Settings object with rule information
 	 * @returns {string} sRuleVerificationStatus Verification status
 	 */
 	RuleSet.prototype.addRule = function (oSettings) {
@@ -218,11 +226,13 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Adds all previously created temporary rules to the current library rules.
-	 * @readonly
+	 * @public
 	 * @static
-	 * @protected
-	 * @param {Object} oLibraries The loaded libraries and their rules
-	 * @param {Array} aTempRules The temporary rules previously created by the user
+	 * @method
+	 * @name sap.ui.support.RuleSet.addToTempRules
+	 * @memberof sap.ui.support.RuleSet
+	 * @param {object} oLibraries The loaded libraries and their rules
+	 * @param {string[]} aTempRules The temporary rules previously created by the user
 	 */
 	RuleSet.addToTempRules = function (oLibraries, aTempRules) {
 		if (aTempRules) {
@@ -235,10 +245,12 @@ function (jQuery, storage, constants) {
 
 	/**
 	 * Stores which rules are selected to be run by the analyzer on the next check
-	 * @readonly
+	 * @public
 	 * @static
-	 * @protected
-	 * @param {Array} aLibraries The data for the libraries and their rules
+	 * @method
+	 * @name sap.ui.support.RuleSet.storeSelectionOfRules
+	 * @memberof sap.ui.support.RuleSet
+	 * @param {Object[]} aLibraries The data for the libraries and their rules
 	 */
 	RuleSet.storeSelectionOfRules = function (aLibraries) {
 		var selectedRules = RuleSet._extractRulesSettingsToSave(aLibraries);
@@ -248,10 +260,12 @@ function (jQuery, storage, constants) {
 	/**
 	 * Loads the previous selection of the user - which rules are selected to be run by the Rule Analyzer.
 	 * The method applies the settings to the currently loaded rules.
-	 * @readonly
+	 * @public
 	 * @static
-	 * @protected
-	 * @param {Array} aLibraries The current loaded libraries and their rules
+	 * @method
+	 * @name sap.ui.support.RuleSet.loadSelectionOfRules
+	 * @memberof sap.ui.support.RuleSet
+	 * @param {Object[]} aLibraries The current loaded libraries and their rules
 	 */
 	RuleSet.loadSelectionOfRules = function (aLibraries) {
 		var savedPreferences = storage.getSelectedRules();
@@ -276,8 +290,11 @@ function (jQuery, storage, constants) {
 	/**
 	 * Extracts all the settings needed to be saved from the libraries rules.
 	 * @private
-	 * @param {Array} aLibraries The libraries and rules loaded from the model
-	 * @returns {Object} oLibrarySettings The extracted settings that should be persisted
+	 * @method
+	 * @static
+	 * @name sap.ui.support.RuleSet._extractRulesSettingsToSave
+	 * @memberof sap.ui.support.RuleSet
+	 * @param {Object[]} aLibraries The libraries and rules loaded from the model
 	 */
 	RuleSet._extractRulesSettingsToSave = function (aLibraries) {
 		var oLibrarySettings = {};

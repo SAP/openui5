@@ -24,10 +24,10 @@ sap.ui.define([
  *
  * @private
  *
- * @param {Object} RuleSerializer Instance of the {@link sap.ui.support.RuleSerializer}
- * @param {Object} constants Constants written in the {@link sap.ui.support.Constants}
+ * @param {object} RuleSerializer Instance of the {@link sap.ui.support.RuleSerializer}
+ * @param {object} constants Constants written in the {@link sap.ui.support.Constants}
  *
- * @returns {Object} Methods that enable the user to work with the LocalStorage.
+ * @returns {object} Methods that enable the user to work with the LocalStorage.
  * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
  */
 function (RuleSerializer, constants) {
@@ -64,7 +64,7 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @name sap.ui.support.Storage.getRules
 		 * @method
-		 * @returns {Array} An array containing all the temporary rules.
+		 * @returns {object[]} An array containing all the temporary rules.
 		 */
 		getRules: function () {
 			var rawLSData = localStorage.getItem(constants.LOCAL_STORAGE_TEMP_RULES_KEY);
@@ -87,7 +87,7 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @name sap.ui.support.Storage.setRules
 		 * @method
-		 * @param {Array} rules The temporary rules from the shared model.
+		 * @param {object[]} rules The temporary rules from the shared model.
 		 */
 		setRules: function (rules) {
 			var stringifyRules = encode(JSON.stringify(rules));
@@ -99,7 +99,7 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @method
 		 * @name sap.ui.support.Storage.getSelectedRules
-		 * @returns {Array} All selected rules that are stored in the LocalStorage persistence layer.
+		 * @returns {object[]} All selected rules that are stored in the LocalStorage persistence layer.
 		 */
 		getSelectedRules: function () {
 			var rawLSData = localStorage.getItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY);
@@ -116,10 +116,10 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @method
 		 * @name sap.ui.support.Storage.setSelectedRules
-		 * @param {Array} selectedRules The data for the libraries and their rules.
+		 * @param {object[]} aSelectedRules The data for the libraries and their rules.
 		 */
-		setSelectedRules: function (selectedRules) {
-			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY, JSON.stringify(selectedRules));
+		setSelectedRules: function (aSelectedRules) {
+			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_RULES_KEY, JSON.stringify(aSelectedRules));
 		},
 
 		/**
@@ -127,7 +127,7 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @method
 		 * @name sap.ui.support.Storage.setSelectedContext
-		 * @param {Object} selectedContext Object containing the <code>analyzeContext</code> and <code>subtreeExecutionContextId</code>.
+		 * @param {object} selectedContext Object containing the <code>analyzeContext</code> and <code>subtreeExecutionContextId</code>.
 		 */
 		setSelectedContext: function(selectedContext) {
 			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_KEY, JSON.stringify(selectedContext));
@@ -149,7 +149,7 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @method
 		 * @name sap.ui.support.Storage.setSelectedScopeComponents
-		 * @param {Object} contextComponent Component that's stored in the LocalStorage.
+		 * @param {object} contextComponent Component that's stored in the LocalStorage.
 		 */
 		setSelectedScopeComponents: function(contextComponent)  {
 			localStorage.setItem(constants.LOCAL_STORAGE_SELECTED_CONTEXT_COMPONENT_KEY, JSON.stringify(contextComponent));
@@ -172,10 +172,10 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @method
 		 * @name sap.ui.support.Storage.removeSelectedRules
-		 * @param {Array} selectedRules The temporary rules from the shared model.
+		 * @param {object[]} aSelectedRules The temporary rules from the shared model.
 		 */
-		removeSelectedRules: function(selectedRules) {
-			this.setRules(selectedRules);
+		removeSelectedRules: function(aSelectedRules) {
+			this.setRules(aSelectedRules);
 		},
 
 		/**
@@ -195,7 +195,7 @@ function (RuleSerializer, constants) {
 		 * @private
 		 * @method
 		 * @name sap.ui.support.Storage.createPersistenceCookie
-		 * @param {String} sCookieName Name of the cookie.
+		 * @param {string} sCookieName Name of the cookie.
 		 * @param {boolean} sCookieValue Contents of the cookie.
 		 * @returns {void}
 		 */
@@ -237,7 +237,7 @@ function (RuleSerializer, constants) {
 		 * Removes the cookie with persistence information in the LocalStorage.
 		 * @private
 		 * @method
-		 * @name deletePersistenceCookie
+		 * @name sap.ui.support.Storage.deletePersistenceCookie
 		 * @param {string} sCookieName Name of the cookie
 		 * @returns {void}
 		 */
