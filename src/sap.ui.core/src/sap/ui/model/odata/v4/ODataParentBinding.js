@@ -7,10 +7,9 @@
 sap.ui.define([
 	"sap/ui/model/ChangeReason",
 	"./ODataBinding",
-	"./lib/_Cache",
 	"./lib/_Helper",
 	"./lib/_SyncPromise"
-], function (ChangeReason, asODataBinding, _Cache, _Helper, _SyncPromise) {
+], function (ChangeReason, asODataBinding, _Helper, _SyncPromise) {
 	"use strict";
 
 	/**
@@ -721,27 +720,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
 		fnErrorCallback, sEditUrl, sEntityPath) {
-		var oCache,
-			sCachePathRelativeToEntity,
-			vOldValue,
-			sRelativeEntityPath,
-			sResolvedPath,
-			that = this;
-
-		/*
-		 * Unwraps the data so it becomes relative to the cache and updates the cache.
-		 * @param {object} oUpdateData The update data relative to the entity
-		 * @returns {object} oUpdateData
-		 */
-		function unwrapAndUpdateCache(oUpdateData) {
-			var oUnwrappedUpdateData = sCachePathRelativeToEntity.split("/")
-					.reduce(function (oData, sSegment) {
-						return oData[sSegment];
-					}, oUpdateData);
-
-			oCache.updateCache(oUnwrappedUpdateData);
-			return oUpdateData;
-		}
+		var oCache;
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("PATCH request not allowed");
@@ -750,32 +729,8 @@ sap.ui.define([
 		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			sRelativeEntityPath = this.getRelativePath(sEntityPath);
-			if (sRelativeEntityPath !== undefined) {
-				// the entity resides in this cache
-				return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-					sRelativeEntityPath);
-			}
-			// the entity resides in a parent cache (otherwise an exception would have been thrown)
-			sResolvedPath = that.oModel.resolve(that.sPath, that.oContext);
-			sCachePathRelativeToEntity = sResolvedPath.slice(sEntityPath.length + 1);
-			// fetch the old value
-			vOldValue = this.fetchValue(sEntityPath + "/" + sPropertyPath).getResult();
-			// update this cache with the changed property value
-			unwrapAndUpdateCache(_Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
-			return this.oContext.getBinding()
-				// patch in the parent cache
-				.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-					sEntityPath)
-				// then update this cache with the patch result
-				.then(unwrapAndUpdateCache, function (oError) {
-					if (oError.canceled) {
-						// update this cache with the old property value
-						unwrapAndUpdateCache(_Cache.makeUpdateData(sPropertyPath.split("/"),
-							vOldValue));
-					}
-					throw oError;
-				});
+			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
+				this.getRelativePath(sEntityPath));
 		}
 
 		return this.oContext.getBinding()

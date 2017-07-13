@@ -5,12 +5,11 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
-	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
-], function (jQuery, ChangeReason, Context, _Cache, _Helper, _SyncPromise, ODataModel,
+], function (jQuery, ChangeReason, Context, _Helper, _SyncPromise, ODataModel,
 		asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
@@ -201,85 +200,6 @@ sap.ui.require([
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: relative binding w/ cache, entity in parent cache", function (assert) {
-		var oParentBinding = new ODataParentBinding(),
-			oCache = {
-				updateCache : function () {}
-			},
-			oCacheMock = this.mock(oCache),
-			o_CacheMock = this.mock(_Cache),
-			oBinding = new ODataParentBinding({
-				oCachePromise : _SyncPromise.resolve(oCache),
-				oContext : {
-					getBinding : function () { return oParentBinding; }
-				},
-				fetchValue : function () {},
-				oModel : {
-					resolve: function () {}
-				},
-				sPath : "Address",
-				bRelative : true
-			}),
-			oError = new Error(),
-			fnErrorCallback = function () {},
-			oParentBindingMock = this.mock(oParentBinding),
-			sPath = "/BusinessPartnerList('42')",
-			oResult = {Address : {City : "Heidelberg"}},
-			that = this;
-
-		oError.canceled = true;
-
-		// same expectations for both "code under test"
-		this.mock(oBinding).expects("getRelativePath").twice()
-			.withExactArgs(sPath).returns(undefined);
-		this.mock(oBinding.oModel).expects("resolve").twice()
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns("/BusinessPartnerList('42')/Address");
-		this.mock(oBinding).expects("fetchValue").twice()
-			.withExactArgs(sPath + "/" + oBinding.sPath + "/City" )
-			.returns(_SyncPromise.resolve("Walldorf"));
-
-		o_CacheMock.expects("makeUpdateData")
-			.withExactArgs(["Address", "City"], "heidelberg")
-			.returns({Address : {City : "heidelberg"}});
-		oCacheMock.expects("updateCache").withExactArgs({City : "heidelberg"});
-		oParentBindingMock.expects("updateValue")
-			.withExactArgs("up", "Address/City", "heidelberg", sinon.match.same(fnErrorCallback),
-				"edit('URL')", sPath)
-			.returns(_SyncPromise.reject(oError));
-		o_CacheMock.expects("makeUpdateData")
-			.withExactArgs(["Address", "City"], "Walldorf")
-			.returns({Address : {City : "Walldorf"}});
-		oCacheMock.expects("updateCache").withExactArgs({City : "Walldorf"})
-
-		// code under test (canceled update)
-		return oBinding.updateValue("up", "Address/City", "heidelberg", fnErrorCallback,
-				"edit('URL')", sPath)
-			.then(function () {
-				assert.notOk(true);
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-
-				oParentBindingMock.expects("updateValue")
-					.withExactArgs("up", "Address/City", "Heidelberg",
-						sinon.match.same(fnErrorCallback), "edit('URL')", sPath)
-					.returns(_SyncPromise.resolve(oResult));
-				o_CacheMock.expects("makeUpdateData")
-					.withExactArgs(["Address", "City"], "Heidelberg")
-					.returns({Address : {City : "Heidelberg"}});
-				oCacheMock.expects("updateCache").withExactArgs({City : "Heidelberg"}).twice();
-
-				// code under test (successful update)
-				return oBinding.updateValue("up", "Address/City", "Heidelberg", fnErrorCallback,
-						"edit('URL')", sPath)
-					.then(function (oResult0) {
-						assert.strictEqual(oResult0, oResult, "correct result returned");
-				});
-			}
-		);
 	});
 
 	//*********************************************************************************************
