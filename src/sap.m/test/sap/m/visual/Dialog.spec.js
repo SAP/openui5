@@ -38,8 +38,19 @@ describe('sap.m.Dialog', function() {
 
     it('should open resizable dialog', function() {
         element(by.id('resizeDialogButton')).click();
-        var resizableDialog = element(by.id('resizableDialog'))
+        var resizableDialog = element(by.id('resizableDialog'));
         expect(takeScreenshot(resizableDialog)).toLookAs('dialog-with-resize');
         element(by.id('resizeDialogCloseButton')).click();
-    })
+    });
+
+    it('custom headers should be aligned vertically', function() {
+        element(by.id('dialogWithCustomHeadersButton')).click();
+        var dialog = element(by.id('dialogWithCustomHeadersDialog'));
+        expect(takeScreenshot(dialog)).toLookAs('dialog-with-3-custom-headers');
+
+        element(by.id('dialogWithCustomHeadersDialogToggleButton')).click();
+        expect(takeScreenshot(dialog)).toLookAs('dialog-with-3-custom-headers-toggle');
+
+        element(by.id('dialogWithCustomHeadersDialogCloseButton')).click();
+    });
 });
