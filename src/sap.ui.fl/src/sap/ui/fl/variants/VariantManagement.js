@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.fl.variants.VariantManagement.
 sap.ui.define([
-	'jquery.sap.global', '../transport/TransportSelection', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Sorter', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/TextAlign', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/ValueState', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ScreenSize', 'sap/m/PopinDisplay', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/PlacementType', 'sap/m/ButtonType', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarPriority', 'sap/m/OverflowToolbarLayoutData'
-], function(jQuery, TransportSelection, JSONModel, Sorter, Filter, Device, TextAlign, InvisibleText, Control, ValueState, HorizontalLayout, Grid, SearchField, RadioButton, ScreenSize, PopinDisplay, ColumnListItem, Column, Text, Bar, Table, Page, PlacementType, ButtonType, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarPriority, OverflowToolbarLayoutData) {
+	'jquery.sap.global', '../transport/TransportSelection', 'sap/ui/model/Context', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Sorter', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/TextAlign', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/ValueState', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ScreenSize', 'sap/m/PopinDisplay', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/PlacementType', 'sap/m/ButtonType', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarPriority', 'sap/m/OverflowToolbarLayoutData'
+], function(jQuery, TransportSelection, Context, JSONModel, Sorter, Filter, Device, TextAlign, InvisibleText, Control, ValueState, HorizontalLayout, Grid, SearchField, RadioButton, ScreenSize, PopinDisplay, ColumnListItem, Column, Text, Bar, Table, Page, PlacementType, ButtonType, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarPriority, OverflowToolbarLayoutData) {
 	"use strict";
 
 	/**
@@ -62,6 +62,15 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+
+				/**
+				 * Sets the logical id of the variant management.
+				 */
+				variantMgmtId: {
+					type: "string",
+					group: "Misc",
+					defaultValue: null
 				},
 
 				/**
@@ -234,7 +243,7 @@ sap.ui.define([
 		}
 	});
 
-	VariantManagement.MODEL_NAME = "$SapUiFlVariants";
+	VariantManagement.MODEL_NAME = "$FlexVariants";
 	VariantManagement.MAX_NAME_LEN = 100;
 	VariantManagement.STANDARDVARIANTKEY = "Standard";
 
@@ -330,14 +339,14 @@ sap.ui.define([
 
 	VariantManagement.prototype.setInitialDefaultVariantKey = function(sKey) {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			oModel.setProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/initialDefaultVariant", sKey);
+		if (oModel && this.oContext) {
+			oModel.setProperty(this.oContext + "/initialDefaultVariant", sKey);
 		}
 	};
 	VariantManagement.prototype.getInitialDefaultVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			return oModel.getProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/initialDefaultVariant");
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/initialDefaultVariant");
 		}
 
 		return null;
@@ -345,14 +354,14 @@ sap.ui.define([
 
 	VariantManagement.prototype.setDefaultVariantKey = function(sKey) {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			oModel.setProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/defaultVariant", sKey);
+		if (oModel && this.oContext) {
+			oModel.setProperty(this.oContext + "/defaultVariant", sKey);
 		}
 	};
 	VariantManagement.prototype.getDefaultVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			return oModel.getProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/defaultVariant");
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/defaultVariant");
 		}
 
 		return null;
@@ -367,8 +376,8 @@ sap.ui.define([
 
 	VariantManagement.prototype.getStandardVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			return oModel.getProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/standardVariant");
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/standardVariant");
 		}
 
 		return null;
@@ -376,14 +385,14 @@ sap.ui.define([
 
 	VariantManagement.prototype.setModified = function(bFlag) {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			oModel.setProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/modified", bFlag);
+		if (oModel && this.oContext) {
+			oModel.setProperty(this.oContext + "/modified", bFlag);
 		}
 	};
 	VariantManagement.prototype.getModified = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel) {
-			return oModel.getProperty(this.getBindingContext(VariantManagement.MODEL_NAME) + "/modified");
+		if (oModel && this.oContext) {
+			return oModel.getProperty(this.oContext + "/modified");
 		}
 
 		return false;
@@ -408,9 +417,9 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._getItems = function() {
-		var aItems = [], oModel = this.getModel(VariantManagement.MODEL_NAME);
-		if (oModel && this.getBindingContext(VariantManagement.MODEL_NAME) && this.getBindingContext(VariantManagement.MODEL_NAME).getObject()) {
-			aItems = this.getBindingContext(VariantManagement.MODEL_NAME).getObject().variants;
+		var aItems = [];
+		if (this.oContext && this.oContext.getObject()) {
+			aItems = this.oContext.getObject().variants;
 		}
 
 		return aItems;
@@ -429,10 +438,33 @@ sap.ui.define([
 		return oItem;
 	};
 
-	VariantManagement.prototype.setBindingContext = function() {
-		Control.prototype.setBindingContext.apply(this, arguments);
-		var oData = this.getBindingContext(VariantManagement.MODEL_NAME).getObject();
-		this.setSelectedVariantKey(oData.defaultVariant);
+	VariantManagement.prototype._setBindingContext = function(oModel, sVariantKey) {
+
+		if (!this.oContext) {
+			this.oContext = new Context(oModel, "/" + sVariantKey);
+
+			this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+
+			var oData = this.oContext.getObject();
+			this.setSelectedVariantKey(oData.defaultVariant);
+		}
+	};
+
+	VariantManagement.prototype.setModel = function(oModel, sName) {
+		if ((VariantManagement.MODEL_NAME === sName) && this.getVariantMgmtId()) {
+			this._setBindingContext(oModel, this.getVariantMgmtId());
+		}
+
+		Control.prototype.setModel.apply(this, arguments);
+	};
+
+	VariantManagement.prototype.setVariantMgmtId = function(sValue) {
+		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+
+		this.setProperty("variantMgmtId", sValue);
+		if (oModel && this.getVariantMgmtId()) {
+			this._setBindingContext(oModel, this.getVariantMgmtId());
+		}
 	};
 
 // VARIANT LIST
@@ -471,7 +503,7 @@ sap.ui.define([
 		});
 		// this.oVariantSaveBtn.setModel(this.oModel);
 		this.oVariantSaveBtn.setModel(this.getModel(VariantManagement.MODEL_NAME));
-		this.oVariantSaveBtn.setBindingContext(this.getBindingContext(VariantManagement.MODEL_NAME));
+		this.oVariantSaveBtn.setBindingContext(this.oContext);
 
 		this.oVariantSaveAsBtn = new Button(this.getId() + "-saveas", {
 			text: this._oRb.getText("VARIANT_MANAGEMENT_SAVEAS"),
@@ -513,7 +545,7 @@ sap.ui.define([
 			path: "variants",
 			template: oItemTemplate
 		});
-		oVariantList.setBindingContext(this.getBindingContext(VariantManagement.MODEL_NAME));
+		oVariantList.setBindingContext(this.oContext);
 		oVariantList.bindProperty("selectedKey", "$variants>/selectedVariantKey");
 
 		if (this.getModified()) {
@@ -1041,7 +1073,7 @@ sap.ui.define([
 				path: "variants",
 				factory: this._templateFactoryManagementDialog.bind(this)
 			});
-			this.oManagementTable.setBindingContext(this.getBindingContext(VariantManagement.MODEL_NAME));
+			this.oManagementTable.setBindingContext(this.oContext);
 
 			// this.oManagementTable.getBinding("items").sort(this._getSorter());
 			this.oManagementTable.getBinding("items").filter(this._getFilterNotDeleted());
@@ -1063,7 +1095,7 @@ sap.ui.define([
 		}.bind(this);
 
 		var fChange = function(oEvent) {
-			this._handleManageItemNameChange(oEvent.oSource.getParent().getBindingContext().getObject());
+			this._handleManageTitleChanged(oEvent.oSource.getParent().getBindingContext().getObject());
 		}.bind(this);
 
 		var fSelectRB = function(oEvent) {
@@ -1081,7 +1113,7 @@ sap.ui.define([
 		}.bind(this);
 
 		var fSelectFav = function(oEvent) {
-			this._handleManageFavoritesChange(oEvent.oSource.getParent().getBindingContext().getObject());
+			this._handleManageFavoriteChanged(oEvent.oSource.getParent().getBindingContext().getObject());
 		}.bind(this);
 
 		if (oItem.key !== this.getStandardVariantKey()) {
@@ -1122,7 +1154,7 @@ sap.ui.define([
 		// sDefaultVariantKey = this.getDefaultVariantKey();
 		bExeEnabled = (oItem.readOnly === false);
 
-		sBindingPath = this.getBindingContext(VariantManagement.MODEL_NAME).getPath();
+		sBindingPath = this.oContext.getPath();
 
 		var oTemplate = new ColumnListItem({
 			cells: [
@@ -1186,7 +1218,7 @@ sap.ui.define([
 				path: "variants",
 				factory: this._templateFactoryManagementDialog.bind(this)
 			});
-			this.oManagementTable.setBindingContext(this.getBindingContext(VariantManagement.MODEL_NAME));
+			this.oManagementTable.setBindingContext(this.oContext);
 
 			// this.oManagementTable.getBinding("items").sort(this._getSorter());
 			this.oManagementTable.getBinding("items").filter(this._getFilterNotDeleted());
@@ -1239,7 +1271,7 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._handleManageFavoritesChange = function(oItem) {
+	VariantManagement.prototype._handleManageFavoriteChanged = function(oItem) {
 
 		// var sKey = oItem.key;
 
@@ -1301,7 +1333,7 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._handleManageItemNameChange = function(oItem) {
+	VariantManagement.prototype._handleManageTitleChanged = function(oItem) {
 
 		if (!this._anyInErrorState(this.oManagementTable)) {
 			this.oManagementSave.setEnabled(true);
@@ -1591,6 +1623,8 @@ sap.ui.define([
 
 		this.oVariantPopoverTrigger = undefined;
 		this._oRb = undefined;
+
+		this.oContext = undefined;
 	};
 
 	return VariantManagement;
