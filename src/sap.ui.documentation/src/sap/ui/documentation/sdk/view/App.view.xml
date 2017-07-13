@@ -15,13 +15,14 @@
 		class="sapUiDemokit">
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
-				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; ( ${appView>/bPhoneSize} || !${appView>/bLandscape} ) }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; ( ${appView>/bPhoneSize} || !${appView>/bLandscape} ) &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_openui5.png"
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
+					densityAware="false"
 					height="2rem"
 					class="sapLogo"
 					decorative="false"
@@ -42,9 +43,9 @@
 						</IconTabFilter>
 						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
 						</IconTabFilter>
-						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
-						</IconTabFilter>
 						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
+						</IconTabFilter>
+						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
 						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
 						</IconTabFilter>
@@ -57,7 +58,7 @@
 					</layoutData>
 				</ToolbarSpacer>
 
-				<ObjectStatus text="Version {appView>/version} - development in progress!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
+				<ObjectStatus text="Version {appView>/version} {= ${appView>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${appView>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
@@ -104,7 +105,7 @@
 					vertical="false">
 				<SplitApp id="splitApp"
 						  mode="HideMode"
-						  defaultTransitionNameDetail="fade"
+						  defaultTransitionNameDetail="show"
 						  defaultTransitionNameMaster="fade">
 				</SplitApp>
 			</ScrollContainer>

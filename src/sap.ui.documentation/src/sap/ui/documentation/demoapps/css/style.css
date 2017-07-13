@@ -1,5 +1,5 @@
 /* override header cell background color for non-accessibility themes */
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineCell {
+html:not(.sapUiTheme-sap_belize_hcb):not(.sapUiTheme-sap_belize_hcw) .sapUiDemoApps .headlineCell {
 	background-color: white !important;
 }
 
@@ -32,12 +32,10 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 
 /* shrink image to 200px height on landscape phone mode */
 .phoneHeaderImageLandscape {
-	max-height: 12.5rem;
 	object-fit: cover;
 }
 
 .phoneHeaderImageDesktop {
-	max-height: 21.875rem;
 	object-fit: cover;
 }
 
@@ -65,7 +63,7 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 
 /*SMALL*/
 
-@media only screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
 	.headerButton {
 		margin-top: 1rem;
 	}
@@ -86,7 +84,7 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 
 /*XTRA LARGE*/
 
-@media only screen and (min-width: 1440px) {
+@media (min-width: 1440px) {
 	.headerGrid {
 		padding-left: 3rem;
 		width: calc(100% - 6rem);

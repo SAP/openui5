@@ -5,8 +5,8 @@
 
 	<MessagePage
 			id="page"
-			title="{i18n>notFoundTitle}"
-			text="{i18n>notFoundText}"
+			title="Not Found"
+			text="The requested resource was not found"
 			icon="{sap-icon://document}"
 			description=""
 			showNavButton="{device>/system/phone}"

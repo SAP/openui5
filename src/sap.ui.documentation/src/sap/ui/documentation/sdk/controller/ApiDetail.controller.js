@@ -10,8 +10,9 @@ sap.ui.define([
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/uxap/ObjectPageSubSection"
-	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection) {
+		"sap/uxap/ObjectPageSubSection",
+		"sap/ui/documentation/sdk/controller/util/JSDocUtil"
+	], function (jQuery, Device, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, ObjectPageSubSection, JSDocUtil) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetail", {
@@ -20,6 +21,9 @@ sap.ui.define([
 			EVENT: 'event',
 			PARAM: 'param',
 			NOT_AVAILABLE: 'N/A',
+			ANNOTATIONS_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part3-csdl.html',
+			ANNOTATIONS_NAMESPACE_LINK: 'http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/vocabularies/',
+			ANNOTATION_DESCRIPTION_STRIP_REGEX: /<i>XML[\s\S].*Example/,
 
 			/**
 			 * Determines if the type can be navigated to
@@ -41,6 +45,7 @@ sap.ui.define([
 				"any",
 				"object",
 				"object[]",
+				"object|object[]",
 				"function",
 				"float",
 				"int",
@@ -61,12 +66,8 @@ sap.ui.define([
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
 
-				ControlsInfo.listeners.push(function(){
-					jQuery.sap.delayedCall(0, this, this._onControlsInfoLoaded);
-				}.bind(this));
-				ControlsInfo.init();
-
 				this.setModel(new JSONModel(), "topics");
+				this.setModel(new JSONModel(), "constructorParams");
 				this.setModel(new JSONModel(), 'methods');
 				this.setModel(new JSONModel(), 'events');
 				this.setModel(new JSONModel(), "entity");
@@ -80,26 +81,14 @@ sap.ui.define([
 				}, this);
 			},
 
-			onAfterRendering: function() {
+			onAfterRendering: function () {
 				this._createMethodsSummary();
 				this._createEventsSummary();
+				this._createAnnotationsSummary();
 			},
 
-			onExit: function() {
+			onExit: function () {
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
-			},
-
-			onJSDocLinkClick: function (oEvt) {
-				// get target
-				var sType = oEvt.target.getAttribute("data-sap-ui-target");
-				if ( sType && sType.indexOf('#') >= 0 ) {
-					sType = sType.slice(0, sType.indexOf('#'));
-				}
-
-				if ( sType ) {
-					this.getRouter().navTo("apiId", {id : sType}, false);
-					oEvt.preventDefault();
-				}
 			},
 
 			onSampleLinkPress: function (oEvent) {
@@ -110,6 +99,49 @@ sap.ui.define([
 
 			onToggleFullScreen: function (oEvent) {
 				ToggleFullScreenHandler.updateMode(oEvent, this.getView(), this);
+			},
+
+			onJSDocLinkClick: function (oEvent) {
+				var sRoute = "apiId",
+					oComponent = this.getOwnerComponent(),
+					aLibsData = oComponent.getModel("libsData").getData(),
+					sTarget = oEvent.target.getAttribute("data-sap-ui-target"),
+					sMethodName = "",
+					aNavInfo;
+
+				if (!sTarget) {
+					return;
+				}
+
+				if (sTarget.indexOf('/') >= 0) {
+					// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
+					// data-sap-ui-target="<class name>/events/<event name>
+					aNavInfo = sTarget.split('/');
+
+					if (aNavInfo[0] === this._sTopicid && aNavInfo[1] === this._sEntityType && aNavInfo[2] === this._sEntityId) {
+						this._scrollToEntity(aNavInfo[1], aNavInfo[2]);
+					} else {
+						oComponent.getRouter().navTo(sRoute, {
+							id: aNavInfo[0],
+							entityType: aNavInfo[1],
+							entityId: aNavInfo[2]
+						}, false);
+					}
+				} else if (!aLibsData[sTarget]) {
+					// link refers to a method
+					sMethodName = sTarget.slice(sTarget.lastIndexOf('.') + 1);
+					sTarget = sTarget.slice(0, sTarget.lastIndexOf("."));
+
+					oComponent.getRouter().navTo(sRoute, {
+						id: sTarget,
+						entityType: "methods",
+						entityId: sMethodName
+					}, false);
+				} else {
+					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
+				}
+
+				oEvent.preventDefault();
 			},
 
 			/* =========================================================== */
@@ -123,16 +155,21 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
+				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
+
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
 				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
 
+					oApiDetailObjectPage._suppressLayoutCalculations();
 					this._bindData(this._sTopicid);
 					this._bindEntityData(this._sTopicid);
 					this._createMethodsSummary();
 					this._createEventsSummary();
+					this._createAnnotationsSummary();
+					oApiDetailObjectPage._resumeLayoutCalculations();
 
 					if (this._sEntityType) {
 						this._scrollToEntity(this._sEntityType, this._sEntityId);
@@ -140,10 +177,19 @@ sap.ui.define([
 						this._scrollContentToTop();
 					}
 
+					setTimeout(this._prettify, 0);
+
 					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
 
 				}.bind(this));
 
+			},
+
+			_prettify: function () {
+				// Google Prettify requires this class
+				jQuery('pre').addClass('prettyprint');
+
+				window.prettyPrint();
 			},
 
 			_createMethodsSummary: function () {
@@ -180,6 +226,23 @@ sap.ui.define([
 				}), 0);
 			},
 
+			_createAnnotationsSummary: function () {
+				var oSummaryTable = sap.ui.xmlfragment(this.getView().getId() + "-annotationsSummary", "sap.ui.documentation.sdk.view.ApiDetailAnnotationsSummary", this);
+				var oSection = this.getView().byId("annotations");
+
+				var aSubSections = oSection.getSubSections();
+				if (aSubSections.length > 0 && aSubSections[0].getTitle() === "Summary") {
+					return;
+				}
+
+				oSection.insertSubSection(new ObjectPageSubSection({
+					title: "Summary",
+					blocks: [
+						oSummaryTable
+					]
+				}), 0);
+			},
+
 			scrollToMethod: function (oEvent) {
 				var oLink = oEvent.getSource();
 				this._scrollToEntity("methods", oLink.getText());
@@ -188,6 +251,11 @@ sap.ui.define([
 			scrollToEvent: function (oEvent) {
 				var oLink = oEvent.getSource();
 				this._scrollToEntity("events", oLink.getText());
+			},
+
+			scrollToAnnotation: function (oEvent) {
+				var oLink = oEvent.getSource();
+				this._scrollToEntity("annotations", oLink.getText());
 			},
 
 			_scrollToEntity: function (sSectionId, sSubSectionTitle) {
@@ -208,16 +276,9 @@ sap.ui.define([
 			},
 
 			_scrollContentToTop: function () {
-				if (this._objectPage && this._objectPage.$().length > 0   ) {
-					this._objectPage.getScrollDelegate().scrollTo(0, 1);
+				if (this._objectPage && this._objectPage.$().length > 0) {
+					this._objectPage.getScrollDelegate().scrollTo(0, 0);
 				}
-			},
-
-			/**
-			 * Callback function, executed once the <code>ControlsInfo</code> is loaded.
-			 */
-			_onControlsInfoLoaded : function () {
-				this._bindEntityData(this._sTopicid);
 			},
 
 			/**
@@ -229,22 +290,23 @@ sap.ui.define([
 			 * After that, the method is called in <code>_onTopicMatched</code>,
 			 * whenever a different topic has been selected.
 			 */
-			_bindEntityData : function (sTopicId) {
-				if (!ControlsInfo || !ControlsInfo.data) {
-					return;
-				}
+			_bindEntityData: function (sTopicId) {
 
-				var oEntityData = this._getEntityData(sTopicId);
+				ControlsInfo.loadData().then(function (oControlsData) {
+					var oEntityData = this._getEntityData(sTopicId, oControlsData);
 
-				this.getModel("entity").setData(oEntityData, false);
+					this.getModel("entity").setData(oEntityData, false);
+				}.bind(this));
+
 			},
 
-			_bindData : function (sTopicId) {
+			_bindData: function (sTopicId) {
 				var aLibsData = this.getOwnerComponent().getModel("libsData").getData(),
 					oControlData = aLibsData[sTopicId],
 					aTreeData = this.getOwnerComponent().getModel("treeData").getData(),
 					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
+					oConstructorParamsModel = {parameters: []},
 					oMethodsModel = {methods: []},
 					oEventsModel = {events: []},
 					oUi5Metadata;
@@ -310,6 +372,24 @@ sap.ui.define([
 					oControlData.hasSpecialSettings = false;
 				}
 
+				if (oUi5Metadata && oUi5Metadata.annotations && Object.keys(oUi5Metadata.annotations).length > 0) {
+					if (!oControlData.hasAnnotations) {
+						oUi5Metadata.annotations.unshift({});
+					}
+					oControlData.hasAnnotations = true;
+				} else {
+					oControlData.hasAnnotations = false;
+				}
+
+				if (oControlData.hasConstructor && oControlData.constructor.parameters) {
+					for (var i = 0; i < oControlData.constructor.parameters.length; i++) {
+						this.subParamPhoneName = oControlData.constructor.parameters[i].name;
+						oConstructorParamsModel.parameters =
+							oConstructorParamsModel.parameters.concat(this._getParameters(oControlData.constructor.parameters[i]));
+					}
+					this.subParamPhoneName = '';
+				}
+
 				if (oControlData.hasMethods) {
 					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
 				}
@@ -339,8 +419,12 @@ sap.ui.define([
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;
+				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
+
+				this.getModel("topics").setSizeLimit(1000);
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
+				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
 				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
 				this.getModel('methods').setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
@@ -351,9 +435,20 @@ sap.ui.define([
 				if (this.extHookbindData) {
 					this.extHookbindData(sTopicId, oModel);
 				}
+
+				// TODO: This is a temporary solution
+				// It's executed here where we have all instances of the CodeEditor created
+				this.getView().findAggregatedObjects(true, function (oElement) {
+					if (oElement instanceof sap.ui.codeeditor.CodeEditor) {
+						// We are replacing the "focus" on the editor instance method as it is
+						// triggering the unwanted scroll
+						oElement._getEditorInstance().focus = function () {
+						};
+					}
+				});
 			},
 
-			_getControlChildren : function (aTreeData, sTopicId) {
+			_getControlChildren: function (aTreeData, sTopicId) {
 				for (var i = 0; i < aTreeData.length; i++) {
 					if (aTreeData[i].name === sTopicId) {
 						return aTreeData[i].nodes;
@@ -361,7 +456,7 @@ sap.ui.define([
 				}
 			},
 
-			_addChildrenDescription : function (aLibsData, aControlChildren) {
+			_addChildrenDescription: function (aLibsData, aControlChildren) {
 				for (var i = 0; i < aControlChildren.length; i++) {
 					aControlChildren[i].description = aLibsData[aControlChildren[i].name].description;
 					aControlChildren[i].link = "{@link " + aControlChildren[i].name + "}";
@@ -373,13 +468,13 @@ sap.ui.define([
 			 * @param {Object} oLibData
 			 * @return {Object}
 			 */
-			_getEntityData: function (sEntityName) {
-				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
+			_getEntityData: function (sEntityName, oControlsData) {
+				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
 					return entity.id === sEntityName;
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
 
-				var sAppComponent = this._getControlComponent(sEntityName);
+				var sAppComponent = this._getControlComponent(sEntityName, oControlsData);
 
 				return {
 					appComponent: sAppComponent || this.NOT_AVAILABLE,
@@ -401,7 +496,7 @@ sap.ui.define([
 				}
 
 				var result = methods.filter(function (method) {
-					return true; //method.visibility === "public";
+					return method.visibility !== "restricted";
 				}).map(function (method) {
 					var subParameters = [];
 					method.parameters = method.parameters || [];
@@ -418,7 +513,7 @@ sap.ui.define([
 							});
 						}
 
-						if (param.parameterProperties) {
+						if (param.parameterProperties && !method.subParametersInjected) {
 							paramProperties = param.parameterProperties;
 							for (var prop in paramProperties) {
 								paramTypes = (paramProperties[prop].type || "").split("|");
@@ -450,7 +545,10 @@ sap.ui.define([
 						}
 					}
 
-					method.parameters = method.parameters.concat(subParameters);
+					if (!method.subParametersInjected) {
+						method.parameters = method.parameters.concat(subParameters);
+						method.subParametersInjected = true;
+					}
 
 					return method;
 
@@ -462,7 +560,7 @@ sap.ui.define([
 				return result;
 			},
 
-			buildBorrowedModel: function(sTopicId, aLibsData) {
+			buildBorrowedModel: function (sTopicId, aLibsData) {
 				var aBaseClassMethods,
 					aBaseClassEvents,
 					sBaseClass,
@@ -473,7 +571,7 @@ sap.ui.define([
 					methods: [],
 					events: []
 				};
-				sBaseClass = aLibsData[sTopicId].extends;
+				sBaseClass = aLibsData[sTopicId] ? aLibsData[sTopicId].extends : "";
 
 				var fnVisibilityFilter = function (item) {
 					return item.visibility === "public";
@@ -527,7 +625,6 @@ sap.ui.define([
 			 * @returns {Array} - the adjusted array
 			 */
 			buildEventsModel: function (events) {
-
 				// No events, do nothing
 				if (events.length === 0) {
 					return events;
@@ -535,38 +632,79 @@ sap.ui.define([
 
 				// Transform the key-value pairs of event parameters into an array
 				var result = events.map(function (event) {
-					if (event.parameters) {
-						var aParameters = [], currentParam, subParam, subSubParam;
-						for (var i in event.parameters) {
-							if (event.parameters.hasOwnProperty(i)) {
-								currentParam = event.parameters[i];
-								aParameters.push(currentParam);
-								if (currentParam.parameterProperties) {
-									for (var j in currentParam.parameterProperties) {
-										subParam = currentParam.parameterProperties[j];
-										subParam.isSubProperty = true;
-										subParam.phoneName = currentParam.name + '.' + subParam.name;
-										aParameters.push(subParam);
-										if (subParam.parameterProperties) {
-											for (var k in subParam.parameterProperties) {
-												subSubParam = subParam.parameterProperties[k];
-												subSubParam.isSubSubProperty = true;
-												subSubParam.phoneName = currentParam.name + '.' + subParam.name + '.' + subSubParam.name;
-												aParameters.push(subSubParam);
-											}
-										}
-									}
-								}
-							}
-						}
+					if (event.parameters && !event.subParametersInjected) {
+						var aParameters = [];
+						event.parameters.map(function (oParam) {
+							this.subParamPhoneName = oParam.name;
+							aParameters = aParameters.concat(this._getParameters(oParam));
+						}, this);
+						this.subParamPhoneName = '';
+
 						event.parameters = aParameters;
+						event.subParametersInjected = true;
 					}
 
 					return event;
-				});
+				}, this);
 
 				// Prepend an empty item so that it is replaced by the summary subsection
 				result.unshift({});
+
+				return result;
+			},
+
+			subParamLevel: 0,
+			subParamPhoneName: '',
+
+			_getParameters: function (oParam) {
+				var result = [oParam];
+
+				var types = (oParam.type || "").split("|"),
+					paramTypes;
+
+				oParam.types = [];
+				for (var i = 0; i < types.length; i++) {
+					oParam.types.push({
+						value: types[i],
+						isLast: i === types.length - 1
+					});
+				}
+
+				if (oParam.parameterProperties) {
+					this.subParamLevel++;
+					for (var subParam in oParam.parameterProperties) {
+						var subPropertyString = 'is';
+
+						for (var i = 0; i < this.subParamLevel; i++) {
+							subPropertyString += 'Sub';
+						}
+
+						subPropertyString += 'Property';
+
+						this.subParamPhoneName += '.' + subParam;
+
+						oParam.parameterProperties[subParam][subPropertyString] = true;
+						oParam.parameterProperties[subParam].phoneName = this.subParamPhoneName;
+
+						paramTypes = (oParam.parameterProperties[subParam].type || "").split("|");
+						oParam.parameterProperties[subParam].types = [];
+						oParam.parameterProperties[subParam].types = paramTypes.map(function (currentType, idx, array) {
+							return {
+								value: currentType,
+								isLast: idx === array.length - 1
+							};
+						});
+
+						result = result.concat(this._getParameters(oParam.parameterProperties[subParam]));
+
+						if (this.subParamPhoneName.indexOf('.') > -1) {
+							this.subParamPhoneName = this.subParamPhoneName.substring(0, this.subParamPhoneName.lastIndexOf('.'));
+						} else {
+							this.subParamPhoneName = '';
+						}
+					}
+					this.subParamLevel--;
+				}
 
 				return result;
 			},
@@ -593,7 +731,7 @@ sap.ui.define([
 			 * @returns string - The code needed to create an object of that class
 			 */
 			formatConstructor: function (name, params) {
-				var result = "new ";
+				var result = 'new ';
 
 				if (name) {
 					result += name + '(';
@@ -603,7 +741,7 @@ sap.ui.define([
 					params.forEach(function (element, index, array) {
 						result += element.name;
 
-						if (element.optional === "true") {
+						if (element.optional) {
 							result += '?';
 						}
 
@@ -672,14 +810,29 @@ sap.ui.define([
 			},
 
 			/**
+			 * Formats the name of a property or a method depending on if it's static or not
+			 * @param sName {string} - Name
+			 * @param sClassName {string} - Name of the class
+			 * @param bStatic {boolean} - If it's static
+			 * @returns {string} - Formatted name
+			 */
+			formatEntityName: function (sName, sClassName, bStatic) {
+				return (bStatic === true) ? sClassName + "." + sName : sName;
+			},
+
+			/**
 			 * Formats the description of the property
 			 * @param description - the description of the property
 			 * @param deprecatedText - the text explaining this property is deprecated
 			 * @param deprecatedSince - the verstion when this property was deprecated
-			 * @remturns string - the formatted description
+			 * @returns string - the formatted description
 			 */
 			formatDescription: function (description, deprecatedText, deprecatedSince) {
-				var result = description;
+				if (!description && !deprecatedText && !deprecatedSince) {
+					return "";
+				}
+
+				var result = description || "";
 
 				if (deprecatedSince || deprecatedText) {
 					result += "<span class=\"sapUiDocumentationDeprecated\">";
@@ -697,6 +850,93 @@ sap.ui.define([
 					}
 
 					result += "</span>";
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of control properties
+			 * @param description - the description of the property
+			 * @param since - the since version information of the property
+			 * @returns string - the formatted description
+			 */
+			formatDescriptionSince: function (description, since) {
+				var result = description || "";
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of annotations
+			 * @param description - the description of the annotation
+			 * @param since - the since version information of the annotation
+			 * @returns string - the formatted description
+			 */
+			formatAnnotationDescription: function (description, since) {
+				var result = description || "";
+
+				result += '<br/>For more information, see ' + '<a target="_blank" href="' + this.ANNOTATIONS_LINK + '">OData v4 Annotations</a>';
+
+				if (since) {
+					result += '<br/><br/><i>Since: ' + since + '.</i>';
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the description of annotations in summary table
+			 * @param description - the description of the annotation
+			 * @returns string - the formatted description
+			 */
+			formatAnnotationDescriptionSummary: function (description) {
+				var result = description || "";
+
+				result = result.split(this.ANNOTATION_DESCRIPTION_STRIP_REGEX)[0];
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the target and applies to texts of annotations
+			 * @param target - the array of texts to be formatted
+			 * @returns string - the formatted text
+			 */
+			formatAnnotationTarget: function (target) {
+				var result = "";
+
+				if (target) {
+					target.forEach(function (element) {
+						result += element + '<br/>';
+					});
+				}
+
+				result = this._wrapInSpanTag(result);
+				return result;
+			},
+
+			/**
+			 * Formats the namespace of annotations
+			 * @param namespace - the namespace to be formatted
+			 * @returns string - the formatted text
+			 */
+			formatAnnotationNamespace: function (namespace) {
+				var result,
+					aNamespaceParts = namespace.split(".");
+
+				if (aNamespaceParts[0] === "Org" && aNamespaceParts[1] === "OData") {
+					result = '<a target="_blank" href="' + this.ANNOTATIONS_NAMESPACE_LINK + namespace + '.xml">' + namespace + '</a>';
+				} else {
+					result = namespace;
 				}
 
 				result = this._wrapInSpanTag(result);
@@ -742,30 +982,37 @@ sap.ui.define([
 				}
 			},
 
-			/**
-			 * Helper function retrieving event parameter type
-			 * @param eventInfo - object containing information about the event or the event parameter
-			 * @returns {string} - Returns the type of the parameter or empty string
-			 */
-			formatEventsType: function (eventInfo) {
-				if (eventInfo && eventInfo.paramType) {
-					return eventInfo.paramType;
-				} else {
-					return "";
+			formatMethodCode: function (sName, aParams, aReturnValue) {
+				var result = sName + '(';
+
+				if (aParams && aParams.length > 0) {
+					aParams.forEach(function (element, index, array) {
+						if (element.isSubProperty || element.isSubSubProperty) {
+							return;
+						}
+
+						result += element.name;
+
+						if (element.optional) {
+							result += '?';
+						}
+
+						if (index < array.length - 1) {
+							result += ', ';
+						}
+					});
 				}
-			},
 
-			/**
-			 * Helper function retrieving method name
-			 * @param methodInfo - object containing information about the method or the method parameter
-			 * @returns {string} - the name of the method or empty string
-			 */
-			formatMethodsName: function (methodInfo) {
+				result += ') : ';
 
-					return methodInfo ? methodInfo.name : "";
+				if (aReturnValue) {
+					result += aReturnValue.type;
+				} else {
+					result += 'void';
+				}
 
 
-
+				return result;
 			},
 
 			/**
@@ -788,18 +1035,6 @@ sap.ui.define([
 			 */
 			formatLinkEnabled: function (linkText) {
 				return this._baseTypes.indexOf(linkText) === -1;
-			},
-
-			/**
-			 * Helper function that checks if a link from the events table
-			 * points to a base type (e.g. int, string, object etc)
-			 * @param eventInfo - object containing information about the event
-			 * @returns {boolean} - False if link points to a base type
-			 */
-			formatEventLinkEnabled: function (eventInfo) {
-				var sEventText = this.formatEventsType(eventInfo);
-
-				return this._baseTypes.indexOf(sEventText) === -1;
 			},
 
 			formatEventClassName: function (isSubProperty, isSubSubProperty, bPhoneSize) {
@@ -834,11 +1069,101 @@ sap.ui.define([
 				this.getRouter().navTo("apiId", {id: type}, true);
 			},
 
+			onAnnotationsLinkPress: function (oEvent) {
+				this._scrollToEntity("annotations", "Summary");
+			},
+
 			backToSearch: function () {
 				this.onNavBack();
+			},
+
+			/**
+			 * This function wraps a text in a span tag so that it can be represented in an HTML control.
+			 * @param {string} sText
+			 * @returns {string}
+			 * @private
+			 */
+			_wrapInSpanTag: function (sText) {
+				var topicsData = this.getModel('topics').oData,
+					topicName = topicsData.name || "",
+					topicMethods = topicsData.methods || [];
+
+				var sFormattedTextBlock = JSDocUtil.formatTextBlock(sText, {
+					linkFormatter: function (target, text) {
+
+						var iHashIndex, // indexOf('#')
+							iHashDotIndex, // indexOf('#.')
+							iHashEventIndex; // indexOf('#event:')
+
+						// If the link has a protocol, do not modify, but open in a new window
+						if (target.match("://")) {
+							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
+						}
+
+						target = target.trim().replace(/\.prototype\./g, "#");
+
+						iHashIndex = target.indexOf('#');
+						iHashDotIndex = target.indexOf('#.');
+						iHashEventIndex = target.indexOf('#event:');
+
+						if (iHashIndex === -1) {
+							var lastDotIndex = target.lastIndexOf('.'),
+								entityName = target.substring(lastDotIndex + 1),
+								targetMethod = topicMethods.filter(function (method) {
+									if (method.name === entityName) {
+										return method;
+									}
+								})[0];
+
+							if (targetMethod) {
+								text = text || target;
+
+								if (targetMethod.static === true) {
+									target = topicName + '/methods/' + target;
+								} else {
+									target = topicName + '/methods/' + entityName;
+								}
+							}
+						}
+
+						if (iHashDotIndex === 0) {
+							// clear '#.' from target string
+							target = target.slice(2);
+
+							// if no text is defined for the link, display the method name only
+							text = text || target;
+
+							target = topicName + '/methods/' + topicName + '.' + target;
+						} else if (iHashEventIndex === 0) {
+							// clear '#event:' from target string
+							target = target.slice('#event:'.length);
+
+							// if no text is defined for the link, display the method name only
+							text = text || target;
+
+							target = topicName + '/events/' + target;
+						} else if (iHashIndex === 0) {
+							// clear '#' from target string
+							target = target.slice(1);
+
+							// if no text is defined for the link, display the method name only
+							text = text || target;
+
+							target = topicName + '/methods/' + target;
+						}
+
+						if (iHashIndex > 0) {
+							text = text || target; // keep the full target in the fallback text
+							target = target.slice(0, iHashIndex);
+						}
+
+						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
+
+					}
+				});
+
+				return '<span class="sapUiDocumentationJsDoc">' + sFormattedTextBlock + '</span>';
 			}
-
-
 		});
 
 	}

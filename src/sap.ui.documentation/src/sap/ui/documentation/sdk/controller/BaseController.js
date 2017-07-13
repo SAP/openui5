@@ -4,13 +4,13 @@
 
 /*global history */
 sap.ui.define([
+		"sap/ui/documentation/library",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
-		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/JSDocUtil",
 		"sap/ui/Device"
-	], function (Controller, History, LibraryInfo, ControlsInfo, JSDocUtil, Device) {
+	], function (library, Controller, History, ControlsInfo, JSDocUtil, Device) {
 		"use strict";
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
@@ -60,15 +60,6 @@ sap.ui.define([
 			 */
 			setModel : function (oModel, sName) {
 				return this.getView().setModel(oModel, sName);
-			},
-
-			/**
-			 * Convenience method for getting the resource bundle.
-			 * @public
-			 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
-			 */
-			getResourceBundle : function () {
-				return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			},
 
 			/**
@@ -126,9 +117,9 @@ sap.ui.define([
 			 * @param {string} sControlName
 			 * @return {string} the actual component
 			 */
-			_getControlComponent: function (sControlName) {
-				var oLibComponentModel = ControlsInfo.data.libComponentInfos,
-					oLibInfo = new LibraryInfo();
+			_getControlComponent: function (sControlName, oControlsData) {
+				var oLibComponentModel = oControlsData.libComponentInfos,
+					oLibInfo = library._getLibraryInfoSingleton();
 				return oLibInfo._getActualComponent(oLibComponentModel, sControlName);
 			},
 
@@ -195,6 +186,14 @@ sap.ui.define([
 			 */
 			_deregisterOrientationChange: function () {
 				Device.orientation.detachHandler(this._onOrientationChange, this);
+			},
+
+			/**
+			 * Handles landing image load event and makes landing image headline visible
+			 * when the image has loaded.
+			 */
+			handleLandingImageLoad: function () {
+				this.getView().byId("landingImageHeadline").setVisible(true);
 			}
 		});
 
