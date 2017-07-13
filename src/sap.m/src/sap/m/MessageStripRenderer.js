@@ -62,16 +62,15 @@ sap.ui.define(["./MessageStripUtilities"],
 	};
 
 	MessageStripRenderer.renderTextAndLink = function (oRm, oControl) {
-		var sText = oControl.getText(),
-			oFormattedText = oControl.getAggregation("_formattedText");
+		var oFormattedText = oControl.getAggregation("_formattedText");
 
 		oRm.write("<div class='" + MSUtils.CLASSES.MESSAGE + "'>");
 
-		// Determine if control should be rendered or plain text based on "enableFormattedText" property
+		// Determine if Formatted text control should be rendered or plain text control on "enableFormattedText" property
 		if (oControl.getEnableFormattedText() && oFormattedText) {
 			oRm.renderControl(oFormattedText);
 		} else {
-			oRm.writeEscaped(sText, false);
+			oRm.renderControl(oControl.getAggregation("_text"));
 		}
 
 		oRm.renderControl(oControl.getLink());

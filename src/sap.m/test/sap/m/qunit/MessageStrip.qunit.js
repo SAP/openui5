@@ -16,6 +16,7 @@
 	var CLASS_TEXT_MESSAGE = ".sapMMsgStripMessage";
 	var CLASS_ICON = ".sapMMsgStripIcon";
 	var CLASS_FORMATTED_TEXT = ".sapMFT";
+	var CLASS_TEXT = ".sapMText";
 
 	QUnit.module("API", {
 		beforeEach: function() {
@@ -104,12 +105,16 @@
 	});
 
 	QUnit.test("Setting the text", function(assert) {
+		// arrange
+		var oText = this.oMessageStrip.getAggregation("_text");
+
 		// act
 		this.oMessageStrip.setText("Test example");
 		sap.ui.getCore().applyChanges();
 
 		//assert
-		assert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT_MESSAGE).text(), "Test example", "Rendered text should match");
+		assert.strictEqual(oText.getText(), "Test example", "should set the text of the hiddent aggregation");
+		assert.strictEqual(oText.getText(), this.oMessageStrip.getText(), "should set the same text on the MS and it's internal aggregation text");
 	});
 
 	QUnit.test("setText", 2, function (oAssert) {
@@ -166,7 +171,7 @@
 		// Assert
 		oAssert.notOk(oFormattedText.getDomRef(),
 			"Internal sap.m.FormattedText is not rendered in the DOM");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT_MESSAGE).html(), sTestString,
+		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT).html(), sTestString,
 			"Rendered HTML should match passed test string");
 
 		// Cleanup
@@ -263,6 +268,7 @@
 
 		// assert
 		assert.strictEqual(this.oMessageStrip.getText(), sData, "should work");
+		assert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT).text(), sData, "should set the text to the internal aggregation");
 	});
 
 
