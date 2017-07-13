@@ -1128,6 +1128,35 @@
 				content : [ tbl ]
 			}).addStyleClass("sapUiSizeCompact");
 
+			var dialogWithCustomHeaders = new sap.m.Dialog('dialogWithCustomHeadersDialog', {
+				customHeader: new sap.m.Bar({
+					contentLeft: new sap.m.Title({
+						text: "Content Left"
+					}),
+					contentMiddle: new sap.m.Title({
+						text: "Content Middle"
+					}),
+					contentRight: new sap.m.Title({
+						text: "Content Right"
+					})
+				}),
+				content: [
+					new sap.m.ToggleButton('dialogWithCustomHeadersDialogToggleButton', {
+						width: "100%",
+						text: "Toggle Density",
+						press: function() {
+							dialogWithCustomHeaders.toggleStyleClass("sapUiSizeCompact");
+						}
+					})
+				],
+				endButton: new sap.m.Button('dialogWithCustomHeadersDialogCloseButton', {
+					text: "Close",
+					press: function () {
+						dialogWithCustomHeaders.close();
+					}
+				})
+			}).addStyleClass("sapUiSizeCompact");
+
 			//Added as result of Internal Incident 1570901570
 			var oDialogWithOUTSettedWidthInRTL = new sap.m.Dialog({
 				title: "Title",
@@ -1590,6 +1619,14 @@
 						width: _buttonWidth,
 						press : function() {
 							dialogWithTable.open();
+						}
+					}),
+
+					new sap.m.Button('dialogWithCustomHeadersButton', {
+						text : "Dialog with 3 custom headers",
+						width: _buttonWidth,
+						press: function() {
+							dialogWithCustomHeaders.open();
 						}
 					})
 				]
