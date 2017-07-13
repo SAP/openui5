@@ -530,7 +530,6 @@
 		QUnit.module("Navigate", {
 			beforeEach: function () {
 				this.oQuickView = getQuickView();
-
 				this.oQuickView.setModel(oModel);
 				var that = this;
 				this.oButton = new sap.m.Button({
@@ -553,22 +552,9 @@
 		});
 
 		QUnit.test("Test navOrigin parameter", function (assert) {
-			// arrange
-			var fnNavigate = this.spy();
+			this.oQuickView._setNavOrigin(this.oQuickView);
 
-			this.oQuickView.attachNavigate(fnNavigate);
-
-			// act
-			this.oButton.firePress();
-
-			this.clock.tick(500);
-
-			var navigateLinkId = jQuery("a:contains('SAP AG')").click();
-
-			this.clock.tick(500);
-
-			// assert
-			assert.ok(this.oQuickView._navOrigin, "navigate event is fired with navOrigin parameter");
+			assert.ok(this.oQuickView._navOrigin, "Setting the navOrigin parameter for QuickView.");
 		});
 
 	</script>
