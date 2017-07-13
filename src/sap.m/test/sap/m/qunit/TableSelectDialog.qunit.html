@@ -350,6 +350,19 @@
 			assert.strictEqual(oTableSelectDialog.getBusy(), false, 'The Dialog should not be in busy state');
 		});
 
+		QUnit.test("setBusy should disable the SearchField", function(assert) {
+			oTableSelectDialog.open();
+			oTableSelectDialog.setBusy(true);
+			sap.ui.getCore().applyChanges();
+
+			var searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
+			assert.strictEqual(searchFieldEnabled, false, 'The SearchField should be disabled');
+
+			oTableSelectDialog.setBusy(false);
+			searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
+			assert.strictEqual(searchFieldEnabled, true, 'The SearchField should be enabled');
+		});
+
 		QUnit.module("Bindings Check");
 
 		QUnit.test("Bindings", function(assert) {
