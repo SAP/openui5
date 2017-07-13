@@ -195,8 +195,7 @@ sap.ui.define([
 			});
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM.setModel(oModel, "$SapUiFlVariants");
-			this.oVM.setBindingContext(oModel.getContext("/M0"), "$SapUiFlVariants");
+			this.oVM.setModel(oModel, "$FlexVariants");
 
 		},
 
