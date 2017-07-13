@@ -8,9 +8,8 @@ sap.ui.define([
 		onInit: function() {
 			var oModel = new JSONModel({
 				M0: {
+					currentVariant: "2",
 					defaultVariant: "2",
-					initialDefaultVariant: "1",
-					standardVariant: "Standard",
 					modified: false,
 					variants: [
 						{
@@ -103,8 +102,7 @@ sap.ui.define([
 
 				M1: {
 					defaultVariant: "3",
-					initialDefaultVariant: "3",
-					standardVariant: "Standard",
+					currentVariant: "3",
 					modified: false,
 					variants: [
 						{
@@ -197,6 +195,11 @@ sap.ui.define([
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
 			this.oVM.setModel(oModel, "$FlexVariants");
 
+			var oCurrentVariantChangeBinding = oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));
+			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
+				MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
+			});
+
 		},
 
 		onMarkAsChanged: function(oEvent) {
@@ -217,8 +220,8 @@ sap.ui.define([
 // var deleted = params.deleted;
 // var exe = params.exe;
 
-			var oModel = this.oVM.getModel("$SapUiFlVariants");
-			var oData = this.oVM.getBindingContext("$SapUiFlVariants").getObject();
+			var oModel = this.oVM.getModel("$FlexVariants");
+			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"] = oData["variants"].filter(function(oItem) {
 				return oItem.toBeDeleted === false;

@@ -31,8 +31,7 @@
 			oModel = new sap.ui.model.json.JSONModel([
 				{
 					defaultVariant: "Standard",
-					initialDefaultVariant: "Standard",
-					standardVariant: "Standard",
+					currentVariant: "Standard",
 					modified: false,
 					variants: [
 						{
@@ -95,12 +94,9 @@
 
 	QUnit.test("Shall be destroyable", function(assert) {
 		assert.ok(this.oVariantManagement._oRb);
-		assert.ok(this.oVariantManagement.oModel);
-
 		this.oVariantManagement.destroy();
 
 		assert.ok(!this.oVariantManagement._oRb);
-		assert.ok(!this.oVariantManagement.oModel);
 	});
 
 	QUnit.test("Check _getItems", function(assert) {
@@ -304,7 +300,7 @@
 		this.oVariantManagement._handleManageCancelPressed();
 
 		this.oVariantManagement._openManagementDialog();
-		var aRows = this.oVariantManagement.oManagementTable.getItems();
+		aRows = this.oVariantManagement.oManagementTable.getItems();
 		assert.ok(aRows);
 		assert.equal(aRows.length, 5);
 
@@ -430,8 +426,6 @@
 		this.oVariantManagement.setSelectedVariantKey("1");
 
 		this.oVariantManagement._handleManageSavePressed();
-
-		assert.ok(this.oVariantManagement.bFireSelect);
 
 		assert.equal(this.oVariantManagement.getSelectedVariantKey(), this.oVariantManagement.getStandardVariantKey());
 
