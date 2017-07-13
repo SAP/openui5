@@ -161,7 +161,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	IconTabHeader.prototype.isTouchScrollingDisabled = function () {
 		return this.getShowOverflowSelectList() &&
-			!sap.ui.Device.system.desktop &&
 			this.getParent().getMetadata().getName() == 'sap.tnt.ToolHeader';
 	};
 
@@ -1242,8 +1241,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.oSelectedItem && this._bCheckIfIntoView) {
 			this._scrollIntoView(this.oSelectedItem, 0);
-			this._bCheckIfIntoView = false;
+
+			if (!this._isTouchScrollingDisabled) {
+				this._bCheckIfIntoView = false;
+			}
 		}
+
+		this._setTabsVisibility();
 	};
 
 	/**
@@ -1316,8 +1320,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iContainerWidth = this.$("scrollContainer").width(),
 			$head = this.$('head'),
 			iHeadPaddingWidth = $head.innerWidth() - $head.width(),
-			iItemWidth = $tab.outerWidth(),
-			iItemPosLeft = $tab.position().left - iHeadPaddingWidth / 2;
+			leftMargin = $tab.css('margin-left'),
+			iItemWidth = $tab.outerWidth() + parseFloat(leftMargin),
+			iItemPosLeft = Math.ceil($tab.position().left - iHeadPaddingWidth / 2);
 
 		if (iItemPosLeft - iScrollLeft < 0 ||
 			(!skipRightSide && (iItemPosLeft + iItemWidth - iScrollLeft > iContainerWidth))) {
