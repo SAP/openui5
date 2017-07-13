@@ -151,11 +151,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>themelib_sap_goldreflection</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>themelib_sap_belize</artifactId>
 			<version>${project.version}</version>
 		</dependency>

@@ -151,11 +151,6 @@ module.exports = function(grunt) {
 					type: 'theme'
 			},
 			{
-					name: 'themelib_sap_goldreflection',
-					path: 'src/themelib_sap_goldreflection',
-					type: 'theme'
-			},
-			{
 					name: 'themelib_sap_belize',
 					path: 'src/themelib_sap_belize',
 					type: 'theme'

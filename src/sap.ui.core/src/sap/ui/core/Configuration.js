@@ -522,7 +522,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		_normalizeTheme : function (sTheme, sThemeBaseUrl) {
 			if ( sTheme && sThemeBaseUrl == null && sTheme.match(/^sap_corbu$/i) ) {
-				return "sap_goldreflection";
+				return "sap_goldreflection"; // TODO: re-check normalization
 			}
 			return sTheme;
 		},
