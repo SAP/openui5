@@ -786,7 +786,7 @@ sap.ui.define([
 		 *         // this statement will time out after 20 seconds and poll every 100 ms
 		 *         oOpa.waitFor({
 		 *             timeout: 20;
-		*         });
+		 *         });
 		 *     </code>
 		 * </pre>
 		 *
@@ -822,6 +822,23 @@ sap.ui.define([
 		 * @since 1.48 Application config parameters could be overwritten from URL.
 		 * Every parameter that is not prefixed with 'opa' and is not blacklisted as QUnit
 		 * parameter is parsed and overwrites respective 'appParams' value.
+		 *
+		 * @since 1.49 Declarative configuration of test libraries is supported
+		 * <pre>
+		 *     <code>
+		 *         // in your app
+		 *         Opa5.extendConfig({
+		 *             testLibs: {
+		 *                 someAwesomeTestLib: {
+		 *                     key: 'value'
+		 *                 }
+		 *             }
+		 *         });
+		 *
+		 *         // so the test library could do
+		 *         var key = Opa5.getTestLibConfig('someAwesomeTestLib').key;         *
+		 *     </code>
+		 * </pre>
 		 *
 		 * @param {object} options The values to be added to the existing config
 		 * @public
@@ -867,6 +884,23 @@ sap.ui.define([
 			Opa.extendConfig({
 				appParams: appParams
 			});
+		};
+
+		/**
+		 * Return particular test lib config object.
+		 * This method is intended to be used by test libraries to
+		 * access their configuration provided by the test in
+		 * the testLibs section in {@link sap.ui.test.Opa5#extendConfig}
+		 * @param {string} sTestLibName test library name
+		 * @returns {object} this test library config object or empty object if
+		 * configuration is not provided
+		 * @public
+		 * @since 1.49
+		 * @function
+		 */
+		Opa5.getTestLibConfig = function(sTestLibName) {
+			return Opa.config.testLibs && Opa.config.testLibs[sTestLibName] ?
+				Opa.config.testLibs[sTestLibName] : {};
 		};
 
 		/**
