@@ -12,7 +12,7 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="">
+			data-sap-ui-libs="sap.m">
 		</script>
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -264,6 +264,55 @@
 			this.oLabel.setLabelFor(null);
 			sap.ui.getCore().applyChanges();
 			assert.ok(!this.oControl.$().attr("aria-required"), "Control not required (own property not set and no label assigned)");
+		});
+
+		QUnit.module("Label For", {
+			beforeEach : function () {
+				// Labels referencing controls with labelable HTML elements
+				this.oLabel1 = new sap.m.Label("testLabel1");
+				this.oControl1 = new sap.m.Input("testInput");
+				this.oLabel2 = new sap.m.Label("testLabel2");
+				this.oControl2 = new sap.m.Button("testButton");
+
+				// Label referencing control with non-labelable HTML elements
+				this.oLabel3 = new sap.m.Label("testLabel3");
+				this.oControl3 = new sap.m.Link("testLink");
+
+				this.oLabel1.placeAt("content");
+				this.oControl1.placeAt("content");
+				this.oLabel2.placeAt("content");
+				this.oControl2.placeAt("content");
+				this.oLabel3.placeAt("content");
+				this.oControl3.placeAt("content");
+
+				this.oLabel1.setLabelFor(this.oControl1);
+				this.oLabel2.setLabelFor(this.oControl2);
+				this.oLabel3.setLabelFor(this.oControl3);
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.oLabel1.destroy();
+				this.oControl1.destroy();
+				this.oLabel2.destroy();
+				this.oControl2.destroy();
+				this.oLabel3.destroy();
+				this.oControl3.destroy();
+
+				this.oLabel1 = null;
+				this.oControl1 = null;
+				this.oLabel2 = null;
+				this.oControl2 = null;
+				this.oLabel3 = null;
+				this.oControl3 = null;
+			}
+		});
+
+		// Labelable HTML elements are specified in the HTML standard.
+		QUnit.test("label 'for' attribute should only reference labelable HTML elements ", function(assert) {
+			assert.strictEqual(this.oLabel1.$().attr("for"), "testInput-inner", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oLabel2.$().attr("for"), "testButton", "Labels for attribute points to correct control");
+			assert.strictEqual(this.oLabel3.$().attr("for"), undefined, "No for attribute for non-labelable elements");
 		});
 
 		</script>
