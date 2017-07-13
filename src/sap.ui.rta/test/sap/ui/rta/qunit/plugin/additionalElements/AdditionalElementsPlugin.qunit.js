@@ -86,6 +86,7 @@ sap.ui.require([
 		getManifest: function () {
 			return {
 				"sap.app" : {
+					id : "applicationId",
 					applicationVersion : {
 						version : "1.2.3"
 					}
@@ -537,6 +538,46 @@ sap.ui.require([
 		return oPlugin.showAvailableElements(false, [this.oOverlay]).then(function() {
 			assertDialogModelLength(assert, 2, "then the two visible elements are part of the dialog model");
 		});
+	});
+
+	QUnit.test("when the control's dt metadata has an addODataProperty on relevant container with required libraries", function(assert) {
+		var done = assert.async();
+
+		this.oOverlay = createOverlayWithAggregationActions({
+				"addODataProperty" : {
+					changeType : "addFields",
+					changeOnRelevantContainer : true,
+					requiredLibraries : {
+						"sap.uxap": {
+							"minVersion": "1.44",
+							"lazy": "false"
+						}
+					}
+				}
+			},
+			ON_CHILD
+		);
+
+		oPlugin.attachEventOnce("elementModified", function(oEvent){
+			var oCompositeCommand = oEvent.getParameter("command");
+			assert.equal(oCompositeCommand.getCommands().length, 2, "then two commands are created");
+			assert.equal(oCompositeCommand.getCommands()[0].getName(), "addLibrary",
+				"then the addLibrary command is created first");
+			assert.equal(oCompositeCommand.getCommands()[1].getName(), "addODataProperty",
+				"then the addODataProperty command is created second");
+			assert.ok(oCompositeCommand.getCommands()[1].getNewControlId().indexOf("pseudo") > -1,
+				"then the pseudo parent (relevant container) is used to create the new control ID");
+			assert.equal(oCompositeCommand.getCommands()[0].getReference(), "applicationId",
+				"then the addLibrary command is created with the proper reference");
+			assert.equal(oCompositeCommand.getCommands()[0].getRequiredLibraries()["sap.uxap"].minVersion, "1.44",
+				"then the addLibrary command is created with the proper required libraries");
+			done();
+		});
+
+		return oPlugin.showAvailableElements(false, [this.oOverlay]).then(function() {
+			assert.ok(true, "then the plugin should not complain about it");
+		});
+
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {

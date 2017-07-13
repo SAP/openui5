@@ -96,6 +96,11 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMFocusable {
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 	outline-color:    @sapUiContentFocusColor;
 }
+
+.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
+	border-color: @sapUiButtonLiteBorderColor;
+}
+
 /* ---------------------------------------------------------------------*/
 /* Custom focus outline for IE and Edge:                                */
 /* ---------------------------------------------------------------------*/

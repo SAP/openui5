@@ -14,7 +14,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/library'],
 	 *
 	 * @namespace
 	 * @name sap.ui.rta
-	 * @public
+	 * @author SAP SE
+	 * @version ${version}
+	 * @private
+	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 

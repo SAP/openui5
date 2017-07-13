@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Row in the @link sap.m.PlanningCalendar}.
+	 * Row in the {@link sap.m.PlanningCalendar}.
 	 *
 	 * This element holds the data of one row in the @link sap.m.PlanningCalendar}. Once the header information (e.g. person information)
 	 * is assigned, the appointments are assigned.

@@ -127,28 +127,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- exclude **/*.support.js and other 3rd-party libraries from minification -->
-		<profile>
-			<id>nightly.build</id>
-			<activation>
-				<property>
-					<name>ldi.releaseBuild</name>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.sap.ui5.tools.build</groupId>
-						<artifactId>maven-coldwater-plugin</artifactId>
-						<configuration>
-							<excludes combine.children="append">
-								<exclude>**/*.support.js</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 

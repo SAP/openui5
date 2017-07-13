@@ -1252,7 +1252,7 @@ function (
 			value: this.oChange.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		this.oFlexController.revertChangesOnControl([this.oChange], {}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
 		assert.equal(this.oControl.getCustomData().length, 1, "the CustomData is still there");
@@ -1295,7 +1295,7 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		this.oFlexController.revertChangesOnControl([this.oChange],{}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
 		assert.equal(this.oControl.getCustomData()[0].getValue(),
@@ -1319,7 +1319,7 @@ function (
 	});
 
 	QUnit.test("does not call the change handler if the change wasn't applied", function(assert) {
-		this.oFlexController.revertChangesOnControl([this.oChange], {}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
 		assert.equal(this.oControl.getCustomData().length, 0, "the customData was not created yet");
@@ -1344,10 +1344,29 @@ function (
 
 			this.oChangeHandlerApplyChangeStub = sandbox.stub();
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
+			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
+			this.oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
+
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				applyChange: this.oChangeHandlerApplyChangeStub,
 				revertChange: this.oChangeHandlerRevertChangeStub
 			});
+
+			var oManifestObj = {
+				"sap.app": {
+					id: "MyComponent",
+					"applicationVersion": {
+						"version" : "1.2.3"
+					}
+				}
+			};
+			var oManifest = new sap.ui.core.Manifest(oManifestObj);
+			this.oComponent = {
+				name: "testScenarioComponent",
+				appVersion: "1.2.3",
+				getId : function() {return "RTADemoAppMD";},
+				getManifestObject : function() {return oManifest;}
+			};
 		},
 		afterEach: function (assert) {
 			this.oControl.destroy();
@@ -1364,13 +1383,22 @@ function (
 		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
 	});
 
+	QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function (assert) {
+		this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent);
+
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
+		assert.ok(this.oAddChangeAndUpdateDependenciesSpy.calledTwice, "both changes were added to the map and dependencies were updated");
+	});
+
 	QUnit.test("calls the change handler twice and delete the ids from the custom data", function (assert) {
 		var oFlexCustomData = new sap.ui.core.CustomData({
 			key: FlexController.appliedChangesCustomDataKey,
 			value: this.oChange.getId() + "," + this.oChange2.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2], {}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2], this.oControl);
+
+		assert.ok(this.oDeleteChangeInMapSpy.calledTwice, "both changes were deleted from the map");
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
 		assert.equal(this.oControl.getCustomData()[0].getValue(), "", "then both changeIds got deleted");
@@ -1382,12 +1410,12 @@ function (
 			value: this.oChange.getId() + "," + this.oChange2.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		this.oFlexController.revertChangesOnControl([this.oChange], {}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "first change was reverted");
 		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange2.getId(), "then only the first changeId got deleted");
 
-		this.oFlexController.revertChangesOnControl([this.oChange2], {}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
 		assert.equal(this.oControl.getCustomData()[0].getValue(), "", "then both changeIds got deleted");
@@ -1450,7 +1478,7 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		this.oFlexController.revertChangesOnControl([this.oChange2], {}, this.oControl);
+		this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl);
 
 		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
 		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "then the custom data is still the same");

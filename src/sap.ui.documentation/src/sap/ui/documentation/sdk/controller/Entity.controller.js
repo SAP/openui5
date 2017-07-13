@@ -33,7 +33,7 @@ sap.ui.define([
 				this.getView().setModel(new JSONModel());
 			},
 
-			onExit: function() {
+			onExit: function () {
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
@@ -82,8 +82,34 @@ sap.ui.define([
 				});
 			},
 
-			onJSDocLinkClick: function(oEvt) {
-				BaseController.prototype.onJSDocLinkClick(oEvt, "entity", this.getOwnerComponent());
+			onJSDocLinkClick: function (oEvent) {
+				var sRoute = "entity",
+					oComponent = this.getOwnerComponent(),
+					aLibsData = oComponent.getModel("libsData").getData(),
+					sTarget = oEvent.target.getAttribute("data-sap-ui-target"),
+					aNavInfo;
+
+				if (!sTarget) {
+					return;
+				}
+
+				if (sTarget.indexOf('/') >= 0) {
+					// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
+					// data-sap-ui-target="<class name>/events/<event name>
+					aNavInfo = sTarget.split('/');
+
+					if (aNavInfo[0] !== this._sTopicid) {
+						oComponent.getRouter().navTo(sRoute, {id: aNavInfo[0]}, false);
+					}
+				} else if (!aLibsData[sTarget]) {
+					sTarget = sTarget.slice(0, sTarget.lastIndexOf("."));
+
+					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
+				} else {
+					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
+				}
+
+				oEvent.preventDefault();
 			},
 
 			_TAB_KEYS: ["samples", "about"],
@@ -145,7 +171,7 @@ sap.ui.define([
 				this._sNewId = oEvt.getParameter("arguments").id;
 				this._sNewTab = oEvt.getParameter("arguments").sectionTab;
 
-				ControlsInfo.loadData().then(function(oData) {
+				ControlsInfo.loadData().then(function (oData) {
 					this._loadSample(oData);
 				}.bind(this));
 

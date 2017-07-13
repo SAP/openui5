@@ -1,32 +1,51 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global',
-			   'sap/ui/rta/library',
-			   'sap/ui/rta/Utils',
-			   'sap/ui/dt/OverlayRegistry',
-			   'sap/ui/base/ManagedObject',
-			   'sap/ui/commons/Label',
-			   'sap/ui/commons/LabelDesign',
-			   'sap/m/Dialog',
-			   'sap/ui/model/json/JSONModel',
-			   'sap/m/SearchField',
-			   'sap/m/Button',
-			   'sap/m/Toolbar',
-			   'sap/m/ToolbarSpacer',
-			   'sap/ui/model/Filter',
-			   'sap/ui/model/FilterOperator',
-			   'sap/ui/rta/command/CommandFactory',
-			   'sap/ui/rta/command/CompositeCommand',
-			   'sap/m/List',
-			   'sap/m/CustomListItem',
-			   'sap/m/ListType',
-			   'sap/m/ScrollContainer',
-			   'sap/ui/model/Sorter',
-			   'sap/ui/dt/ElementUtil',
-			   'sap/m/VBox'
-			   ],
-			   function (jQuery,library,Utils,OverlayRegistry,ManagedObject,Label,LabelDesign,Dialog,JSONModel,SearchField,Button,Toolbar,ToolbarSpacer,Filter,FilterOperator,CommandFactory,CompositeCommand,List,ListItem,ListType,ScrollContainer,Sorter,ElementUtil, VBox) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/commons/Label',
+	'sap/ui/commons/LabelDesign',
+	'sap/m/Dialog',
+	'sap/ui/model/json/JSONModel',
+	'sap/m/SearchField',
+	'sap/m/Button',
+	'sap/m/Toolbar',
+	'sap/m/ToolbarSpacer',
+	'sap/ui/model/Filter',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/rta/command/CommandFactory',
+	'sap/ui/rta/command/CompositeCommand',
+	'sap/m/List',
+	'sap/m/CustomListItem',
+	'sap/m/ListType',
+	'sap/m/ScrollContainer',
+	'sap/ui/model/Sorter',
+	'sap/ui/dt/ElementUtil',
+	'sap/m/VBox'
+], function (
+	jQuery,
+	ManagedObject,
+	Label,
+	LabelDesign,
+	Dialog,
+	JSONModel,
+	SearchField,
+	Button,
+	Toolbar,
+	ToolbarSpacer,
+	Filter,
+	FilterOperator,
+	CommandFactory,
+	CompositeCommand,
+	List,
+	ListItem,
+	ListType,
+	ScrollContainer,
+	Sorter,
+	ElementUtil,
+	VBox
+) {
 	"use strict";
 
 	/**
@@ -202,7 +221,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @private
 	 */
 	AddElementsDialog.prototype._createButtons = function() {
-		var oOKButton = new Button({
+		this._oOKButton = new Button({
 			text : this._oTextResources.getText("BTN_FREP_OK"),
 			press : [this._submitDialog, this]
 		});
@@ -210,7 +229,7 @@ sap.ui.define(['jquery.sap.global',
 			text : this._oTextResources.getText("BTN_FREP_CANCEL"),
 			press : [this._cancelDialog, this]
 		});
-		return [oOKButton, oCancelButton];
+		return [this._oOKButton, oCancelButton];
 	};
 
 	/**

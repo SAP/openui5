@@ -355,7 +355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		 */
 		TabStrip.prototype._checkScrolling = function() {
 			var oTabsDomRef = this.getDomRef("tabs"),
-				bScrollNeeded = oTabsDomRef && (oTabsDomRef.scrollWidth > this.getDomRef("tabsContainer").clientWidth);
+				bScrollNeeded = oTabsDomRef && (oTabsDomRef.scrollWidth > this.getDomRef("tabsContainer").offsetWidth);
 
 			this.$().toggleClass("sapMTSScrollable", bScrollNeeded);
 

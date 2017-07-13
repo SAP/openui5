@@ -8,6 +8,12 @@
 	background: @sapUiListSelectionBackgroundColor;
 }
 
+.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -2px;
+}
+
 /* pressed */
 html.sap-desktop .sapMSelectListItemBase.sapMSelectListItemBasePressed:focus {
 	outline: 1px dotted @sapUiContentContrastFocusColor;
@@ -26,7 +32,13 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected::before {
+		border: 1px dotted @sapUiContentFocusColor;
+	}
+	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected::before {
+		border: 1px dotted @sapUiContentFocusColor;
+	}
 	.sapMSelectListItemBase:focus::before {
-		border: 1px dashed @sapUiContentFocusColor;
+		border: 1px dotted @sapUiContentFocusColor;
 	}
 }

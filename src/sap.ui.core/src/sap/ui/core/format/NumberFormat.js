@@ -572,7 +572,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			oOrigOptions = this.oOriginalFormatOptions,
 			aPatternParts,
 			oShortFormat,
-			nShortRefNumber;
+			nShortRefNumber,
+			sPluralCategory;
 
 		if (oValue === oOptions.emptyString || (isNaN(oValue) && isNaN(oOptions.emptyString))) {
 			// if the value equals the 'emptyString' format option, return empty string.
@@ -704,19 +705,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				iPosition += iGroupSize;
 			}
 			sGroupedIntegerPart += sIntegerPart.substr(iPosition);
-			sIntegerPart = sGroupedIntegerPart;
+		} else {
+			sGroupedIntegerPart = sIntegerPart;
 		}
 
 		// combine
 		if (bNegative) {
 			sResult = oOptions.minusSign;
 		}
-		sResult += sIntegerPart;
+		sResult += sGroupedIntegerPart;
 		if (sFractionPart) {
 			sResult += oOptions.decimalSeparator + sFractionPart;
 		}
 
 		if (oShortFormat && oShortFormat.formatString && oOptions.showScale) {
+			// Get correct format string based on actual decimal/fraction digits
+			sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
+			oShortFormat.formatString = this.oLocaleData.getDecimalFormat(oOptions.style, oShortFormat.key, sPluralCategory);
 			//inject formatted shortValue in the formatString
 			sResult = oShortFormat.formatString.replace(oShortFormat.valueSubString, sResult);
 			//formatString may contain '.' (quoted to differentiate them decimal separator)
@@ -1098,19 +1103,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	};
 
 	function getShortenedFormat(fValue, oOptions, oLocaleData) {
-		var oShortFormat, iKey,
+		var oShortFormat, iKey, sKey,
 			sStyle = oOptions.style,
-			iPrecision = oOptions.precision,
-			iDecimals = oOptions.shortDecimals || oOptions.maxFractionDigits,
-			bPrecisionDefined = iPrecision !== undefined;
-
-		// In case precision is not defined
-		if (!bPrecisionDefined) {
-			iPrecision = 2;
-		}
+			iPrecision = oOptions.precision !== undefined ? oOptions.precision : 2;
 
 		if (sStyle != "short" && sStyle != "long") {
-			return oShortFormat;
+			return undefined;
 		}
 
 		for (var i = 0; i < 14; i++) {
@@ -1119,32 +1117,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				break;
 			}
 		}
+		sKey = iKey.toString();
 
-		// determine plural version of format, number has to be rounded to find right zero/one/two patterns
-		var fShortNumber = fValue / iKey,
-			iDecimals = bPrecisionDefined ? getDecimals(fShortNumber, iPrecision) : iDecimals,
-			fRoundedNumber = rounding(Math.abs(fShortNumber), iDecimals);
-
-		var sPlural = "other";
-		if (fRoundedNumber == 0) {
-			sPlural = "zero";
-		} else if (fRoundedNumber == 1) {
-			sPlural = "one";
-		} else if (fRoundedNumber == 2) {
-			sPlural = "two";
-		} else if (fRoundedNumber > 2 && fRoundedNumber <= 5) {
-			sPlural = "few";
-		} else if (fRoundedNumber > 5 && fRoundedNumber <= 10) {
-			sPlural = "many";
-		}
-
-		var sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
+		// Use "other" format to find the right magnitude, the actual format will be retrieved later
+		// after the value has been calculated
+		var sCldrFormat = oLocaleData.getDecimalFormat(sStyle, sKey, "other");
 
 		if (!sCldrFormat || sCldrFormat == "0") {
 			//no format or special "0" format => number doesn't need to be shortified
-			return oShortFormat;
+			return undefined;
 		} else {
 			oShortFormat = {};
+			oShortFormat.key = sKey;
 			oShortFormat.formatString = sCldrFormat;
 			var match = sCldrFormat.match(rNumPlaceHolder);
 			if (match) {
@@ -1165,7 +1149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			} else {
 				//value pattern has not be recognized
 				//we cannot shortify
-				oShortFormat.magnitude = 1;
+				return undefined;
 			}
 		}
 
@@ -1174,16 +1158,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	}
 
 	function getNumberFromShortened(sValue, sStyle, oLocaleData) {
-
-
-
 		if (sStyle != "short" && sStyle != "long") {
 			return;
 		}
 		var sNumber,
 			iFactor = 1,
 			iKey = 10,
-			aPlurals = ["zero", "one", "two", "few", "many", "other"],
+			aPluralCategories = oLocaleData.getPluralCategories(),
 			sCldrFormat,
 			fnGetFactor = function(sPlural) {
 				sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
@@ -1214,7 +1195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				}
 			};
 		while (iKey < 1e14) {
-			if (aPlurals.some(fnGetFactor)) {
+			if (aPluralCategories.some(fnGetFactor)) {
 				break;
 			}
 

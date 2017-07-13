@@ -25,12 +25,8 @@ sap.ui.define([
 	var VariantController = function (sComponentName, sAppVersion, oChangeFileContent) {
 		this._sComponentName = sComponentName || "";
 		this._sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
+		this._setChangeFileContent(oChangeFileContent);
 
-		if (!oChangeFileContent || !oChangeFileContent.changes || !oChangeFileContent.changes.variantSection) {
-			this._mVariantManagement = {};
-		} else {
-			this._mVariantManagement = oChangeFileContent.changes.variantSection;
-		}
 	};
 
 	/**
@@ -51,6 +47,14 @@ sap.ui.define([
 	 */
 	VariantController.prototype.getAppVersion = function () {
 		return this._sAppVersion;
+	};
+
+	VariantController.prototype._setChangeFileContent = function (oChangeFileContent) {
+		if (!oChangeFileContent || !oChangeFileContent.changes || !oChangeFileContent.changes.variantSection) {
+			this._mVariantManagement = {};
+		} else {
+			this._mVariantManagement = oChangeFileContent.changes.variantSection;
+		}
 	};
 
 	/**
@@ -83,22 +87,15 @@ sap.ui.define([
 		if (aVariants.length === 0) {
 			return aVariants;
 		} else {
-			var aFiltered = [];
-			aFiltered = aVariants.filter(function(oVariant) {
+			var aFiltered = aVariants.filter(function(oVariant) {
 				if (oVariant.fileName === sVarId) {
 					return true;
 				}
 			});
 
-			if (aFiltered.length > 0) {
-			 return aFiltered.map(function(oVariant) {
-				return oVariant.changes;
-			 }).reduce(function(aResult, aChanges) {
-				return aResult.concat(aChanges);
-			 });
-			} else {
-				return aFiltered;
-			}
+		 return aFiltered.reduce(function(aResult, oVariant) {
+			return aResult.concat(oVariant.changes);
+		 },[]);
 		}
 	};
 
@@ -117,6 +114,40 @@ sap.ui.define([
 		}
 
 		return aDefaultChanges;
+	};
+
+	/**
+	 * Returns the map with all changes to be reverted and applied when switching variants
+	 *
+	 * @param {String} sVariantManagementId The variant management id
+	 * @param {String} sCurrentVariant The id of the currently used variant
+	 * @param {String} sNewVariant The id of the newly selected variant
+	 * @returns {Object} The map containing all changes to be reverted and all new changes
+	 * @public
+	 */
+	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
+		var aCurrentChanges = this.getVariantChanges(sVariantManagementId, sCurrentVariant).map(function(oChangeContent) {
+			return new Change(oChangeContent);
+		});
+		var aNewChanges = this.getVariantChanges(sVariantManagementId, sNewVariant).map(function(oChangeContent) {
+			return new Change(oChangeContent);
+		});
+		var aRevertChanges = aCurrentChanges.slice();
+		aCurrentChanges.some(function(oChange) {
+			if (oChange.getKey() === aNewChanges[0].getKey()) {
+				aNewChanges.shift();
+				aRevertChanges.shift();
+			} else {
+				return true;
+			}
+		});
+
+		var mSwitches = {
+			aRevert : aRevertChanges.reverse(),
+			aNew : aNewChanges
+		};
+
+		return mSwitches;
 	};
 
 	return VariantController;

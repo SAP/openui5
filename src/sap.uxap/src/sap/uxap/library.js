@@ -58,32 +58,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 						}
 					}
 				},
-				"sap.uxap.ObjectPageSection": {
-					"hideControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					},
-					"unhideControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					},
-					"stashControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					},
-					"unstashControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					}
-				},
+				"sap.uxap.ObjectPageSection": "sap/uxap/flexibility/ObjectPageSection",
 				"sap.uxap.ObjectPageSubSection" : "sap/uxap/flexibility/ObjectPageSubSection",
 				"sap.ui.core._StashedControl" : {
 					"unstashControl": {

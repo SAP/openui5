@@ -15,7 +15,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 *
-	 * @alias sap.ui.layout.changeHandler.AddFieldSimpleForm
+	 * @alias sap.ui.layout.changeHandler.AddSimpleFormField
 	 *
 	 * @author SAP SE
 	 *
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @experimental Since 1.49.0 This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
-	var AddFieldSimpleForm = {};
+	var AddSimpleFormField = {};
 
 	var sTypeTitle = "sap.ui.core.Title";
 	var sTypeToolBar = "sap.m.Toolbar";
@@ -42,10 +42,11 @@ sap.ui.define([
 	 * @return {boolean} True if successful
 	 * @public
 	 */
-	AddFieldSimpleForm.applyChange = function(oChange, oSimpleForm, mPropertyBag) {
+	AddSimpleFormField.applyChange = function(oChange, oSimpleForm, mPropertyBag) {
 		var oChangeDefinition = oChange.getDefinition();
 		var oTargetContainerHeader = oChange.getDependentControl("targetContainerHeader", mPropertyBag);
-		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings(oChangeDefinition.content.changeHandlerSettingsKey);
+		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({"scenario" : "addODataField"});
+
 		var fnChangeHandlerCreateFunction = mChangeHandlerSettings
 			&& mChangeHandlerSettings.content
 			&& mChangeHandlerSettings.content.createFunction;
@@ -58,7 +59,7 @@ sap.ui.define([
 				bMandatoryContentPresent = oChangeDefinition.content.newFieldSelector
 					&& (oChangeDefinition.content.newFieldIndex !== undefined)
 					&& oChangeDefinition.content.bindingPath
-					&& oChangeDefinition.content.changeHandlerSettingsKey;
+					&& fnChangeHandlerCreateFunction;
 			}
 
 			return  bContentPresent && bMandatoryContentPresent;
@@ -129,7 +130,7 @@ sap.ui.define([
 
 			return true;
 		} else {
-			Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]"
+			Utils.log.error("Change does not contain sufficient information to be applied or ChangeHandlerMediator could not be retrieved: [" + oChangeDefinition.layer + "]"
 				+ oChangeDefinition.namespace + "/"
 				+ oChangeDefinition.fileName + "."
 				+ oChangeDefinition.fileType);
@@ -145,15 +146,14 @@ sap.ui.define([
 	 * @param {string} oSpecificChangeInfo.newControlId - the control ID for the control to be added,
 	 * @param {string} oSpecificChangeInfo.bindingPath - the binding path for the new control,
 	 * @param {string} oSpecificChangeInfo.parentId - FormContainer where the new control will be added,
-	 * @param {number} oSpecificChangeInfo.index - the index where the field will be added,
-	 * @param {object} oSpecificChangeInfo.changeHandlerSettingsKey - required to retrieve the change handler settings.
+	 * @param {number} oSpecificChangeInfo.index - the index where the field will be added.
 	 * @param {Object} mPropertyBag The property bag containing the App Component
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
 	 * @param {object} mPropertyBag.appComponent - application component
 	 * @param {object} mPropertyBag.view - application view
 	 * @public
 	 */
-	AddFieldSimpleForm.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
+	AddSimpleFormField.completeChangeContent = function(oChange, oSpecificChangeInfo, mPropertyBag) {
 		var oAppComponent = mPropertyBag.appComponent;
 		var oView = mPropertyBag.view;
 		var oChangeDefinition = oChange.getDefinition();
@@ -185,13 +185,8 @@ sap.ui.define([
 		} else {
 			oChangeDefinition.content.newFieldIndex = oSpecificChangeInfo.index;
 		}
-		if (oSpecificChangeInfo.changeHandlerSettingsKey === undefined) {
-			throw new Error("oSpecificChangeInfo.changeHandlerSettingsKey attribute required");
-		} else {
-			oChangeDefinition.content.changeHandlerSettingsKey = oSpecificChangeInfo.changeHandlerSettingsKey;
-		}
 	};
 
-	return AddFieldSimpleForm;
+	return AddSimpleFormField;
 },
 /* bExport= */true);

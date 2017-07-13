@@ -61,14 +61,10 @@ function(
 			this.sLayer = "CUSTOMER";
 
 			this.mLibraries = {
-			    "my.new.library": {
-			        "minVersion": "1.44",
-			        "lazy": "false"
-			    },
-			    "my.2nd.new.library": {
-			        "minVersion": "1.44",
-			        "lazy": "true"
-			    }
+				"sap.uxap": {
+					"minVersion": "1.44",
+					"lazy": "false"
+				}
 			};
 
 			this.oButton = new Button("myButton");
@@ -81,11 +77,15 @@ function(
 
 	QUnit.test("when calling command factory for AddLibrary ...", function(assert) {
 		var done = assert.async();
+		var oAddLibraryCommand;
 
 		var oMockDescriptorChange = {
 			submit : function() {
 				assert.ok(true, "the descriptor change was submitted");
-				done();
+				oAddLibraryCommand.execute().then(function() {
+					assert.ok(sap.uxap, "upon execution, 'sap.uxap' library is loaded");
+					done();
+				});
 			}
 		};
 
@@ -105,13 +105,40 @@ function(
 			return Promise.resolve(oMockDescriptorChange);
 		}.bind(this));
 
-		var oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
+		oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
 			reference : this.sReference,
 			requiredLibraries : this.mLibraries
 		}, {}, {"layer" : this.sLayer});
 
 		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
 		oAddLibraryCommand.submit();
+	});
+
+	QUnit.test("when calling execute for AddLibrary ...", function(assert) {
+		var done = assert.async();
+
+		this.mLibraries = {
+			"sap.uxap": {
+				"minVersion": "1.44",
+				"lazy": "false"
+				},
+			"i.dont.exist": {
+				"minVersion": "1.44",
+				"lazy": "true"
+				}
+		};
+
+		var oAddLibraryCommand = CommandFactory.getCommandFor(this.oButton, "addLibrary", {
+			reference : this.sReference,
+			requiredLibraries : this.mLibraries
+		}, {}, {"layer" : this.sLayer});
+
+		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
+
+		oAddLibraryCommand.execute().catch(function(e){
+			assert.ok(e, "then trying to load the non-existing library causes the error " + e);
+			done();
+		});
 	});
 
 });

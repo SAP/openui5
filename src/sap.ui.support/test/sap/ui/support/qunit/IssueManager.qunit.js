@@ -69,72 +69,67 @@ sap.ui.require([
 		});
 
 		QUnit.test('IssueManager walkIssue', function (assert) {
-			var issueCount = 10,
-				walkCounter = 0;
+			var iIssues = 10,
+				iCounter = 0;
 
-			for (var i = 0; i < issueCount; i++) {
+			for (var i = 0; i < iIssues; i++) {
 				this.IssueManagerFacade.addIssue(createValidIssue());
 			}
 
 			this.IssueManager.walkIssues(function () {
-				walkCounter++;
+				iCounter++;
 			});
 
-			assert.equal(issueCount, walkCounter, 'Should walk exactly as many issues as were added');
+			assert.equal(iIssues, iCounter, 'Should walk exactly as many issues as were added');
 		});
 
 		QUnit.test('IssueManager clearIssues', function (assert) {
-			var issueCount = 10,
-				walkCounter = 0;
-			for (var i = 0; i < issueCount; i++) {
-				this.IssueManagerFacade.addIssue(createValidIssue());
+			var iIssues = 10,
+				iIssuesCount = 0;
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManager.addIssue(createValidIssue());
 			}
 
 			this.IssueManager.clearIssues();
 
 			this.IssueManager.walkIssues(function () {
-				walkCounter++;
+				iIssuesCount++;
 			});
 
-			assert.equal(walkCounter, 0, 'No issues should be visited');
+			assert.equal(iIssuesCount, 0, 'No issues should be visited');
 		});
 
-		QUnit.test('IssueManager clearIssues', function (assert) {
-			var issueCount = 10;
-			for (var i = 0; i < issueCount; i++) {
-				this.IssueManagerFacade.addIssue(createValidIssue());
+		QUnit.test('IssueManager clearHistory', function (assert) {
+			var iIssues = 10;
+
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManager.addIssue(createValidIssue());
 			}
 
-			this.IssueManager.clearIssues();
+			assert.equal(this.IssueManager.getHistory()[0] instanceof Object, true, 'There should be some issues in the history');
 
-			assert.equal(this.IssueManager.getHistory()[0].issues.length, issueCount, 'Should dump them to history');
+			this.IssueManager.clearHistory();
+
+			assert.equal(typeof this.IssueManager.getHistory()[0], 'undefined', 'Should dump them to history');
 		});
 
 		QUnit.test('IssueManager getHistory', function (assert) {
-			var issueCount = 10,
-				secondIssueCount = 5;
+			var iIssues = 10,
+				iIssuesCount;
 
-			for (var i = 0; i < issueCount; i++) {
+			for (var i = 0; i < iIssues; i++) {
 				this.IssueManagerFacade.addIssue(createValidIssue());
 			}
 
-			var firstHistoryLength = this.IssueManager.getHistory()[0].issues.length;
+			iIssuesCount = this.IssueManager.getHistory()[0].issues.length;
 
-			for (var j = 0; j < secondIssueCount; j++) {
-				this.IssueManagerFacade.addIssue(createValidIssue());
-			}
-
-			var secondHistoryLength = this.IssueManager.getHistory()[1].issues.length;
-
-			assert.equal(firstHistoryLength, issueCount, 'Should have the same amount of elements as added with addIssue()');
-			assert.equal(secondHistoryLength, secondIssueCount, 'Should have the same amount of elements as added with addIssue()');
-			assert.equal(firstHistoryLength + secondHistoryLength, issueCount + secondIssueCount, 'Sum of 2 history gets should be equal to total added issues');
+			assert.equal(iIssuesCount, iIssues, 'Should have the same amount of elements as added with addIssue()');
 		});
 
 		QUnit.test('IssueManager getConvertedHistory & convertToViewModel', function (assert) {
-			var issueCount = 10;
+			var iIssues = 10;
 
-			for (var i = 0; i < issueCount; i++) {
+			for (var i = 0; i < iIssues; i++) {
 				this.IssueManagerFacade.addIssue(createValidIssue());
 			}
 
@@ -152,15 +147,15 @@ sap.ui.require([
 		});
 
 		QUnit.test('IssueManager getIssuesViewModel', function (assert) {
-			var issueCount = 10;
+			var iIssues = 10;
 
-			for (var i = 0; i < issueCount; i++) {
+			for (var i = 0; i < iIssues; i++) {
 				this.IssueManagerFacade.addIssue(this.issue);
 			}
 
 			var issuesViewModel = this.IssueManager.getIssuesModel();
 
-			assert.ok(issuesViewModel[0] instanceof Object, 'The retrieved model contains Issues !');
+			assert.equal(typeof issuesViewModel[0], 'object', 'The retrieved model contains Issues !');
 
 			assert.equal(issuesViewModel[0].ruleId, 'id1', 'The retrieved model has an id !');
 
@@ -168,37 +163,34 @@ sap.ui.require([
 		});
 
 		QUnit.test('IssueManager getRulesViewModel', function (assert) {
-
-			var ruleIds = {
-				placeholderNoDots:true,
-				preloadAsyncCheck :true,
-				segmentedButtonMixedItems:true,
-				selectUsage:true,
-				selectionDetailsNumberOfActionGroups:true,
-				stableId:true,
-				texttooltip:true,
-				tokenparent:true,
-				unresolvedPropertyBindings:true,
-				wizardBranchingAssociations:true,
-				wizardStepParent:true
-			};
-			var ruleSets = {
-				temporary: {
-					lib: {
-						name: 'temporary'
-					},
-					ruleset: {
-						_mRules: {},
-						_oSettings: {
+			var oIssues = this.IssueManager.groupIssues(this.IssueManager.getIssuesViewModel()),
+				oRuleIds = {
+					placeholderNoDots:true,
+					preloadAsyncCheck :true,
+					segmentedButtonMixedItems:true,
+					selectUsage:true,
+					selectionDetailsNumberOfActionGroups:true,
+					stableId:true,
+					texttooltip:true,
+					tokenparent:true,
+					unresolvedPropertyBindings:true,
+					wizardBranchingAssociations:true,
+					wizardStepParent:true
+				},
+				oRuleSets = {
+					temporary: {
+						lib: {
 							name: 'temporary'
+						},
+						ruleset: {
+							_mRules: {},
+							_oSettings: {
+								name: 'temporary'
+							}
 						}
 					}
-				}
-			};
-
-			var issues = this.IssueManager.groupIssues(this.IssueManager.getIssuesViewModel());
-
-			var rulesViewModel = this.IssueManager.getRulesViewModel(ruleSets, ruleIds, issues);
+				},
+				rulesViewModel = this.IssueManager.getRulesViewModel(oRuleSets, oRuleIds, oIssues);
 
 			assert.strictEqual((rulesViewModel instanceof Object), true, 'The rulesViewModel is returned successfully !');
 
@@ -206,37 +198,37 @@ sap.ui.require([
 		});
 
 		QUnit.test('IssueManager groupIssues', function(assert) {
-			var issues,
-				issue = createValidIssue();
+			var aIssues,
+				oIssue = createValidIssue();
 
-			issue.context.id = 'testId - 1';
-			issue.ruleId = '1';
-			this.IssueManagerFacade.addIssue(issue);
-			issues = this.IssueManager.getIssuesModel();
+			oIssue.context.id = 'testId - 1';
+			oIssue.ruleId = '1';
 
-			assert.strictEqual(issues[0] instanceof Object, true, 'The retrieved issues are of type Object !');
-			assert.ok(issues[0].ruleId, 'The retrieved issues has a ruleId !');
-			assert.ok(issues[0].ruleId === 'id1', 'The retrieved issues have the correct id set !');
-			assert.ok(issues[0].details === 'detailsStr', 'The issue contains the correct details !');
-			assert.ok(issues[0].context, 'The retrieved issues have a context !');
-			assert.ok(issues[0].context.id === 'testId - 1', 'The context within the issues has the correct id !');
-			assert.ok(issues[0].audiences, 'The retrieved issues have audiences !');
-			assert.ok(issues[0].categories, 'The retrieved issues have categories !');
-			assert.ok(issues[0].audiences[0], 'The audiences aren\'t empthy !');
-			assert.ok(issues[0].categories[0], 'The categories aren\'t empthy !');
+			this.IssueManagerFacade.addIssue(oIssue);
 
-			issues = this.IssueManager.groupIssues(issues);
+			aIssues = this.IssueManager.getIssuesModel();
 
-			assert.strictEqual(issues.testRuleSet instanceof Object, true, 'The retrieved issues have been grouped in a single rule set !');
-			assert.strictEqual(issues.testRuleSet.id1 instanceof Array, true, 'The rule within the rule set has issues !');
-			assert.strictEqual(issues.testRuleSet.id1[0].ruleId === 'id1', true, 'The rule has the correct ruleId set to it !');
-			assert.strictEqual(issues.testRuleSet.id1[0].ruleLibName === 'testRuleSet', true, 'The grouped issues have the correct ruleLibName set !');
-			assert.ok(issues.testRuleSet.id1[0].context, 'The grouped issues have a context !');
-			assert.ok(issues.testRuleSet.id1[0].context.id, 'The context within the grouped issues has a id !');
-			assert.ok(issues.testRuleSet.id1[0].context.id === 'testId - 1', 'The context has a correct id !');
-			assert.ok(issues.testRuleSet.id1[0].audiences, 'The grouped issues have audiences !');
-			assert.ok(issues.testRuleSet.id1[0].categories, 'The grouped issues have categories !');
-			assert.ok(issues.testRuleSet.id1[0].audiences[0], 'The audiences aren\'t empthy !');
-			assert.ok(issues.testRuleSet.id1[0].categories[0], 'The categories aren\'t empthy !');
+			assert.strictEqual(aIssues[0] instanceof Object, true, 'The retrieved issues are of type Object !');
+			assert.ok(aIssues[0].ruleId, 'The retrieved issues has a ruleId !');
+			assert.strictEqual(aIssues[0].ruleId, 'id1', 'The retrieved issues have the correct id set !');
+
+			assert.ok(aIssues[0].context, 'The retrieved issues have a context !');
+			assert.ok(aIssues[0].context.id === 'testId - 1', 'The context within the issues has the correct id !');
+
+			assert.ok(aIssues[0].audiences, 'The retrieved issues have audiences !');
+			assert.ok(aIssues[0].categories, 'The retrieved issues have categories !');
+
+			aIssues = this.IssueManager.groupIssues(aIssues);
+
+			assert.strictEqual(aIssues.testRuleSet instanceof Object, true, 'The retrieved issues have been grouped in a single rule set !');
+			assert.strictEqual(aIssues.testRuleSet.id1 instanceof Array, true, 'The rule within the rule set has issues !');
+			assert.strictEqual(aIssues.testRuleSet.id1[0].ruleId, 'id1', 'The rule has the correct ruleId set to it !');
+			assert.strictEqual(aIssues.testRuleSet.id1[0].ruleLibName, 'testRuleSet', 'The grouped issues have the correct ruleLibName set !');
+
+			assert.ok(aIssues.testRuleSet.id1[0].context, 'The grouped issues have a context !');
+			assert.strictEqual(aIssues.testRuleSet.id1[0].context.id, 'testId - 1', 'The context has a correct id !');
+
+			assert.ok(aIssues.testRuleSet.id1[0].audiences, 'The grouped issues have audiences !');
+			assert.ok(aIssues.testRuleSet.id1[0].categories, 'The grouped issues have categories !');
 		});
 	});

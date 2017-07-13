@@ -19,6 +19,7 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
 				var oVersionInfo = sap.ui.getVersionInfo(),
+					sVersion = oVersionInfo.version,
 					oViewModel = new JSONModel({
 						busy : false,
 						delay : 0,
@@ -29,12 +30,13 @@ sap.ui.define([
 						version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
 						fullVersion: sap.ui.version,
 						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
-						isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav)
+						isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav),
+						isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1)
 					});
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-					"Privacy": "https://help.hana.ondemand.com/privacy.htm",
-					"Terms of Use": "https://help.hana.ondemand.com/terms_of_use.html",
+					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
+					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
 					"Trademark": "https://www.sap.com/corporate/en/legal/copyright.html#trademark",
 					"Disclaimer": "http://help-legacy.sap.com/disclaimer-full"

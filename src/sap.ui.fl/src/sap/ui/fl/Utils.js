@@ -942,8 +942,8 @@ sap.ui.define([
 			if (typeof fnPromise === "function") {
 				return fnPromise()
 
-				.catch(function() {
-					this.log.error("Changes could not be applied. Merge error detected.");
+				.catch(function(e) {
+					this.log.error("Changes could not be applied. Merge error detected. " + e);
 				}.bind(this))
 
 				.then(function() {

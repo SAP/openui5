@@ -26,6 +26,12 @@ function(
 
 	MoveControls.CHANGE_TYPE = "moveControls";
 
+	// Defines object which contains constants used in the handler
+	MoveControls.SOURCE_ALIAS = "source";
+	MoveControls.TARGET_ALIAS = "target";
+	MoveControls.MOVED_ELEMENTS_ALIAS = "movedElements";
+
+
 	MoveControls._checkConditions = function (oChange, oModifier, oView, oAppComponent) {
 		if (!oChange) {
 			throw new Error("No change instance");
@@ -172,7 +178,7 @@ function(
 			var mAllAggregations = oModifier.getAllAggregations(oSourceParent);
 			Object.keys(mAllAggregations).some(function(sKey) {
 				var aAggregation = oModifier.getAggregation(oSourceParent, sKey);
-				if (aAggregation) {
+				if (Array.isArray(aAggregation)) {
 					iIndex = aAggregation.indexOf(oMovedElement);
 					if (iIndex > -1) {
 						sSourceAggregation = sKey;
@@ -298,6 +304,12 @@ function(
 				targetIndex : mElement.targetIndex
 			});
 		});
+
+		oChange.addDependentControl(mSpecificChangeInfo.source.id, MoveControls.SOURCE_ALIAS, mPropertyBag);
+		oChange.addDependentControl(mSpecificChangeInfo.target.id, MoveControls.TARGET_ALIAS, mPropertyBag);
+		oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function (element) {
+			return element.id;
+		}), MoveControls.MOVED_ELEMENTS_ALIAS, mPropertyBag);
 	};
 
 	return MoveControls;

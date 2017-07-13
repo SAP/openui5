@@ -6,14 +6,16 @@
 	<Page
 		id="page"
 		title="{Name}"
-		showNavButton="{device>/isPhone}"
+		showNavButton="{device>/system/phone}"
 		navButtonPress="onNavButtonPress" >
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"
-				visible="{device>/isPhone}"
+				visible="{device>/system/phone}"
 				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress" />
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://customer"/>
 		</headerContent>
 		<footer>
 			<Toolbar>

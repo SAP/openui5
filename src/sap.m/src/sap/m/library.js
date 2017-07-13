@@ -444,7 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * Types of the Bar design
+	 * Types of the Bar design.
 	 *
 	 * @enum {string}
 	 * @public
@@ -480,7 +480,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Different types for a button (predefined types)
+	 * Different types for a button (predefined types).
 	 *
 	 * @enum {string}
 	 * @public
@@ -539,7 +539,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Carousel arrows align
+	 * Carousel arrows align.
 	 *
 	 * @enum {string}
 	 * @public
@@ -633,7 +633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * Enum for the type of sap.m.Dialog control.
+	 * Enum for the type of {@link sap.m.Dialog} control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -688,7 +688,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * Enum for the state of sap.m.DraftIndicator control.
+	 * Enum for the state of {@link sap.m.DraftIndicator} control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1260,7 +1260,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Different levels for headers
+	 * Different levels for headers.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1968,7 +1968,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Different mode for a MenuButton (predefined types)
+	 * Different modes for a MenuButton (predefined types).
 	 *
 	 * @enum {string}
 	 * @since 1.38.0
@@ -1992,7 +1992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Defines the priorities of the controls within sap.m.OverflowToolbar
+	 * Defines the priorities of the controls within {@link sap.m.OverflowToolbar}.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2172,8 +2172,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Region: "Region"
 	};
 
-		/**
-	 * Types for the placement of popover control.
+	/**
+	 * Types for the placement of Popover control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2322,7 +2322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * QuickViewGroupElement is a combination of one label and another control (Link or Text) associated to this label
+	 * QuickViewGroupElement is a combination of one label and another control (Link or Text) associated to this label.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2369,7 +2369,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	* Types for the placement of message popover control.
+	* Types for the placement of message Popover control.
 	*
 	* @enum {string}
 	* @public
@@ -2397,7 +2397,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
-	 * Defines the display of table pop-ins
+	 * Defines the display of table pop-ins.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2429,7 +2429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * Possible values for the visualization of float values in the RatingIndicator Control.
+	 * Possible values for the visualization of float values in the RatingIndicator control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2614,7 +2614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 
 	/**
-	 * Types for StandardTile
+	 * Types for StandardTile.
 	 *
 	 * @enum {string}
 	 * @public
@@ -2882,7 +2882,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	/*global Element: true */
 
 	/**
-	 * Types of LightBox loading stages
+	 * Types of LightBox loading stages.
 	 *
 	 * @enum {string}
 	 * @public
@@ -3095,7 +3095,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		};
 
 		/**
-		 * Base font-size
+		 * Base font-size.
 		 * @private
 		 * @since 1.12
 		 * @name sap.m#BaseFontSize

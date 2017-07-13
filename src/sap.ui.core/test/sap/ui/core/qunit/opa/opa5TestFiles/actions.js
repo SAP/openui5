@@ -1,10 +1,10 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/_timeoutCounter",
+	"sap/ui/test/autowaiter/_timeoutCounter",
 	"sap/ui/Device",
 	"sap/m/Button",
-	"sap/ui/test/_autoWaiter"
+	"sap/ui/test/autowaiter/_autoWaiter"
 ], function (Opa5, opaTest, _timeoutCounter, Device, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
 		beforeEach: function () {

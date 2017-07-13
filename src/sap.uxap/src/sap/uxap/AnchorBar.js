@@ -5,7 +5,7 @@
 // Provides control sap.uxap.AnchorBar.
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/PlacementType",
+	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/Toolbar",
 	"sap/ui/core/IconPool",
@@ -17,9 +17,12 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"./HierarchicalSelect",
 	"./library"
-], function (Button, PlacementType, Popover, Toolbar, IconPool, Item, ResizeHandler,
+], function (Button, mobileLibrary, Popover, Toolbar, IconPool, Item, ResizeHandler,
 			 ScrollEnablement, HorizontalLayout, Device, CustomData, HierarchicalSelect, library) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new AnchorBar.

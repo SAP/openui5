@@ -848,7 +848,8 @@
 		  "since": "1.48",
 		  "samples": [
 			  "sap.m.sample.PDFViewerEmbedded",
-			  "sap.m.sample.PDFViewerPopup"
+			  "sap.m.sample.PDFViewerPopup",
+			  "sap.m.sample.PDFViewerMultiple"
 		  ]
 		},
 		{
@@ -1569,6 +1570,11 @@
 		  "id": "sap.m.sample.PDFViewerPopup",
 		  "name": "PDF Viewer - Popup",
 		  "description": "A PDF viewer opening as a popup dialog."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerMultiple",
+		  "name": "PDF Viewer - Two PDF Documents",
+		  "description": "Two PDF viewer frames displayed side by side."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",
@@ -2427,7 +2433,7 @@
 		{
 			"id": "sap.m.sample.MessageStripWithEnableFormattedText",
 			"name": "Message Strip with enableFormattedText",
-			"description": "Using the MessageStrip in Formatted Text mode for showing status messages with additional formatting."
+			"description": "A sample MessageStrip that shows status messages with additional formatting."
 		},
 		{
 		  "id": "sap.m.sample.DynamicMessageStripGenerator",

@@ -10,7 +10,7 @@ sap.ui.define([
 ], function ($, sinon, _LogCollector) {
 	"use strict";
 
-	var oLogger = $.sap.log.getLogger("sap.ui.test._XHRCounter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._XHRCounter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
 	var aXHRs = [];
 	var aFakeXHRs = [];
 	var fnUseFakeOriginal = sinon.useFakeXMLHttpRequest;

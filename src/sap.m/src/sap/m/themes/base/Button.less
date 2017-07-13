@@ -302,7 +302,7 @@ span.sapMBtnInner.sapMBtnAccept {
 	color:            @sapUiButtonAcceptTextColor;
 }
 
-span.sapMBtnInner.sapMBtnAccept > .sapMBtnIcon {
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnAccept > .sapMBtnIcon {
 	color:            @sapUiButtonAcceptTextColor;
 }
 
@@ -326,7 +326,7 @@ span.sapMBtnInner.sapMBtnReject {
 	color:            @sapUiButtonRejectTextColor;
 }
 
-span.sapMBtnInner.sapMBtnReject > .sapMBtnIcon {
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnReject > .sapMBtnIcon {
 	color:            @sapUiButtonRejectTextColor;
 }
 
@@ -351,7 +351,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	text-shadow:      0 0 0.125rem @sapUiButtonEmphasizedTextShadow;
 }
 
-span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
 	color:            @sapUiButtonEmphasizedTextColor;
 }
 
@@ -484,10 +484,9 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 /* ------------------------------------------------ */
 
 /* transparent Toolbar Context */
-.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
+.sapMTB-Transparent-CTX :not(.sapMBtnDisabled) .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive) {
 	background-image: none;
 	background: @sapUiButtonLiteBackground;
-	border-color: @sapUiButtonLiteBorderColor;
 }
 
 .sapMTB-Transparent-CTX :not(.sapMBtnDisabled) .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):hover {

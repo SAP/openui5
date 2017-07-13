@@ -22,7 +22,7 @@
 					<op:blocks>
 						<VBox>
 							<OverflowToolbar design="Transparent" height="3rem">
-								<Title text="ALL (0 - {/visibleAllLength} of {/AllLength})"/>
+								<Title text="ALL (1 - {/visibleAllLength} of {/AllLength})"/>
 							</OverflowToolbar>
 							<List
 								width="100%"
@@ -57,7 +57,7 @@
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="API Reference (0 - {/visibleAPILength} of {/APILength})"/>
+									<Title text="API Reference (1 - {/visibleAPILength} of {/APILength})"/>
 								</OverflowToolbar>
 								<List
 									growing="true"
@@ -90,7 +90,7 @@
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Documentation (0 - {/visibleDocLength} of {/DocLength})"/>
+									<Title text="Documentation (1 - {/visibleDocLength} of {/DocLength})"/>
 								</OverflowToolbar>
 								<List
 									growing="true"
@@ -123,7 +123,7 @@
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Samples (0 - {/visibleExploredLength} of {/ExploredLength})"/>
+									<Title text="Samples (1 - {/visibleExploredLength} of {/ExploredLength})"/>
 								</OverflowToolbar>
 								<List
 									growing="true"

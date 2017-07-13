@@ -60,15 +60,15 @@ sap.ui.define([
 					return this.waitFor({
 						id: "billingAddressAddress",
 						actions: new EnterText({text: "My Name"}),
-						success: function (oSelect) {
+						success: function () {
 							this.waitFor({
 								id: "billingAddressCity",
 								actions: new EnterText({text: "My City"}),
-								success: function (oSelect) {
+								success: function () {
 									this.waitFor({
 										id: "billingAddressZip",
 										actions: new EnterText({text: "My Zip"}),
-										success: function (oSelect) {
+										success: function () {
 											this.waitFor({
 												id: "billingAddressCountry",
 												actions: new EnterText({text: "My Country"}),

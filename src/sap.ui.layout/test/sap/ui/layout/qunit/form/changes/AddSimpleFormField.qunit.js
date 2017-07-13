@@ -35,7 +35,7 @@ function (
 	QUnit.start();
 
 	// Register an entry on the Change Handler Mediator (e.g. from SmartField)
-	ChangeHandlerMediator.addChangeHandlerSettings({"changeType" : "addSimpleFormField"}, {
+	ChangeHandlerMediator.addChangeHandlerSettings({"scenario" : "addODataField"}, {
 		"requiredLibraries" : {
 			"sap.ui.comp": {
 				"minVersion": "1.48",
@@ -95,8 +95,7 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath1"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -104,6 +103,8 @@ function (
 		var oFormContainer = this.oSimpleForm.getAggregation("form").getFormContainers()[0];
 
 		this.oAddFieldChangeHandler.completeChangeContent(oChange, mSpecificChangeInfo,{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
+
 		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent : this.oMockedAppComponent}),
 			"the change to add a field was applied");
@@ -120,13 +121,13 @@ function (
 				"newControlId": "addedFieldId2",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath2",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath2"
 		};
 
 		var oChange2 = new Change({"changeType" : "addSimpleFormField"});
 
 		this.oAddFieldChangeHandler.completeChangeContent(oChange2, mSpecificChangeInfo2, {modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent});
+		assert.equal(oChange.getDependentControl("targetContainerHeader", {modifier: JsControlTreeModifier, appComponent: this.oMockedAppComponent}).getId(), oTitle.getId(), "parent is part of dependentSelector");
 		assert.ok(this.oAddFieldChangeHandler.applyChange(oChange2, this.oSimpleForm,
 			{modifier: JsControlTreeModifier, view : oView, appComponent: this.oMockedAppComponent}),
 			"the change adding a field to index 0 was applied");
@@ -149,8 +150,7 @@ function (
 				"newControlId": "addedFieldId3",
 				"parentId": oTitle.getParent().getId(),
 				"index" : 1,
-				"bindingPath" : "BindingPath3",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath3"
 		};
 
 		var oChange3 = new Change({"changeType" : "addSimpleFormField"});
@@ -201,8 +201,7 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oFormContainer.getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath1"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -238,8 +237,7 @@ function (
 				"newControlId": "addedFieldId",
 				"parentId": oFormContainer.getId(),
 				"index" : 0,
-				"bindingPath" : "BindingPath1",
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				"bindingPath" : "BindingPath1"
 		};
 		var oChange = new Change({"changeType" : "addSimpleFormField"});
 
@@ -282,8 +280,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -335,8 +332,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -388,8 +384,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			},
 			"dependentSelector" : {
 				"targetContainerHeader" : sTitleId,
@@ -446,8 +441,7 @@ function (
 				"newFieldSelector" : {
 					"id" : sAddedFieldId,
 					"idIsLocal" : false
-				},
-				"changeHandlerSettingsKey" : {"scenario" : "addODataField"}
+				}
 			}
 		};
 

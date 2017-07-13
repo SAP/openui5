@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function (loggerInterceptor, MockServer, Device) {
 
-	jQuery.sap.unloadResources("sap/ui/test/_XHRCounter.js", false, true, true);
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test._XHRCounter");
-	var XHRCounter = sap.ui.test._XHRCounter;
+	jQuery.sap.unloadResources("sap/ui/test/autowaiter/_XHRCounter.js", false, true, true);
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._XHRCounter");
+	var XHRCounter = sap.ui.test.autowaiter._XHRCounter;
 
 	function whenRequestDone(oXHR) {
 		return new Promise(function (fnResolve) {
@@ -272,7 +272,7 @@ sap.ui.define([
 				autoRespondAfter: 30
 			});
 
-			oMockServer.simulate("../../testdata/annotations/metadata.xml", {
+			oMockServer.simulate("../../../testdata/annotations/metadata.xml", {
 				bGenerateMissingMockData : true
 			});
 

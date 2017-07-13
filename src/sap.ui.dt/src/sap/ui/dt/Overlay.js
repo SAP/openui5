@@ -828,5 +828,20 @@ function(jQuery, Control, MutationObserver, ElementUtil, OverlayUtil, DOMUtil) {
 		}
 	};
 
+	/**
+	 * Custom setter for property 'enabled'
+	 *
+	 * @param {boolean} bEnabled value to be set
+	 */
+	Overlay.prototype.setEnabled = function(bEnabled) {
+		bEnabled = !!bEnabled;
+
+		if (!bEnabled) {
+			this._restoreVisibility();
+		}
+
+		this.setProperty('enabled', bEnabled);
+	};
+
 	return Overlay;
 }, /* bExport= */ true);

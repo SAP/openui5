@@ -87,10 +87,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 *
 	 * @public
 	 * @param oObject
+	 * @param iIndex
 	 * @returns {sap.ui.base.ManagedObject}
 	 */
-	PaneContainer.prototype.insertPane = function (oObject) {
-		var vResult =  this.insertAggregation("panes", oObject),
+	PaneContainer.prototype.insertPane = function (oObject, iIndex) {
+		var vResult =  this.insertAggregation("panes", oObject, iIndex),
 			oEventDelegate = {
 				onAfterRendering: function () {
 					this.triggerResize();

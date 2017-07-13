@@ -36,7 +36,7 @@
                             <ObjectPageSubSection>
                                 <blocks>
                                     <m:List
-                                            items="{deprecatedAPIs>apis}"
+                                            items="{ path : 'deprecatedAPIs>apis', templateShareable: 'false'}"
                                             showSeparators="Inner">
                                         <m:items>
                                             <m:FeedListItem
@@ -48,7 +48,8 @@
                                                     senderPress="onApiPress"
                                                     app:control="{deprecatedAPIs>control}"
                                                     app:entity="{deprecatedAPIs>entityName}"
-                                                    app:type="{deprecatedAPIs>type}"/>
+                                                    app:type="{deprecatedAPIs>type}"
+                                                    app:static="{deprecatedAPIs>static}"/>
                                         </m:items>
                                     </m:List>
                                 </blocks>

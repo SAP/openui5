@@ -333,15 +333,17 @@
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 4, " and 4 Menu Items are available");
-		assert.equal(oContextMenu.getItems()[0].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
-		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, "add section is enabled");
-		assert.equal(oContextMenu.getItems()[1].data("id") , "CTX_REMOVE", "remove section is available");
-		assert.equal(oContextMenu.getItems()[1].getEnabled(), true, "we can remove a section");
-		assert.equal(oContextMenu.getItems()[2].data("id") , "CTX_CUT", "cut sections available");
-		assert.equal(oContextMenu.getItems()[2].getEnabled(), false, "cut is not enabled");
-		assert.equal(oContextMenu.getItems()[3].data("id") , "CTX_PASTE", "paste is available");
-		assert.equal(oContextMenu.getItems()[3].getEnabled(), false, "we cannot paste a section");
+		assert.equal(oContextMenu.getItems().length, 5, " and 5 Menu Items are available");
+		assert.equal(oContextMenu.getItems()[0].data("id") , "CTX_RENAME_LABEL", "rename section is available");
+		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, "rename section is enabled");
+		assert.equal(oContextMenu.getItems()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
+		assert.equal(oContextMenu.getItems()[1].getEnabled(), true, "add section is enabled");
+		assert.equal(oContextMenu.getItems()[2].data("id") , "CTX_REMOVE", "remove section is available");
+		assert.equal(oContextMenu.getItems()[2].getEnabled(), true, "we can remove a section");
+		assert.equal(oContextMenu.getItems()[3].data("id") , "CTX_CUT", "cut sections available");
+		assert.equal(oContextMenu.getItems()[3].getEnabled(), false, "cut is not enabled");
+		assert.equal(oContextMenu.getItems()[4].data("id") , "CTX_PASTE", "paste is available");
+		assert.equal(oContextMenu.getItems()[4].getEnabled(), false, "we cannot paste a section");
 	});
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
@@ -405,10 +407,12 @@
 
 		var oContextMenu = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl;
 		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
-		assert.equal(oContextMenu.getItems().length, 2, " and 4 Menu Items are available");
-		assert.equal(oContextMenu.getItems()[0].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
-		assert.equal(oContextMenu.getItems()[0].getEnabled(), false, "add section is disabled");
-		assert.equal(oContextMenu.getItems()[1].data("id") , "CTX_REMOVE", "remove section is available");
+		assert.equal(oContextMenu.getItems().length, 3, " and 3 Menu Items are available");
+		assert.equal(oContextMenu.getItems()[0].data("id") , "CTX_RENAME_LABEL", "rename section is available");
+		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, "add section is enabled");
+		assert.equal(oContextMenu.getItems()[1].data("id") , "CTX_ADD_ELEMENTS_AS_SIBLING", "add section is available");
+		assert.equal(oContextMenu.getItems()[1].getEnabled(), false, "add section is disabled");
+		assert.equal(oContextMenu.getItems()[2].data("id") , "CTX_REMOVE", "remove section is available");
 		// TODO: reactivate after Add action will be implemented
 		// assert.equal(oContextMenu.getItems()[1].getEnabled(), false, "we cannot remove a section");
 	});

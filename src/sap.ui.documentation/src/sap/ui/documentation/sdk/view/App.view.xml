@@ -58,7 +58,7 @@
 					</layoutData>
 				</ToolbarSpacer>
 
-				<ObjectStatus text="Version {appView>/version} - development in progress!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
+				<ObjectStatus text="Version {appView>/version} {= ${appView>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${appView>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 

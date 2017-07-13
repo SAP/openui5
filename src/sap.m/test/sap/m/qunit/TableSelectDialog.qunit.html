@@ -697,6 +697,25 @@
 			oTableSelectDialog1._oCancelButton.firePress()
 		});
 
+		/********************************************************************************/
+		QUnit.module("oData v4 support");
+		/********************************************************************************/
+
+		QUnit.test("GetSelectedContexts", function(assert) {
+			oTableSelectDialog1.open();
+			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+
+			var fnTableGetSelectedContexts = sinon.spy(oTable, "getSelectedContexts");
+
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
+			assert.ok(!fnTableGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
+
+			oTableSelectDialog1._oDialog.close();
+
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
+			assert.ok(!fnTableGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
+		});
+
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -12,15 +12,20 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./ObjectPageSection",
 	"./ObjectPageSubSection",
-	"./ObjectPageSubSectionLayout",
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./ThrottledTaskHelper",
 	"sap/ui/core/ScrollBar",
-	"sap/ui/core/TitleLevel",
+	"sap/ui/core/library",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ThrottledTask, ScrollBar, TitleLevel, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
+	// shortcut for sap.uxap.ObjectPageSubSectionLayout
+	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
 	/**
 	 * Constructor for a new ObjectPageLayout.
@@ -368,6 +373,21 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 		if (oHeaderTitle && oHeaderTitle.getAggregation("_expandButton")) {
 			oHeaderTitle.getAggregation("_expandButton").attachPress(this._handleExpandButtonPress, this);
+		}
+	};
+
+	/**
+	 * Retrieves the list of sections to render initially
+	 * (the list includes the sections to be loaded lazily, as these are empty in the beginning, only their skeleton will be rendered)
+	 * @returns the sections list
+	 */
+	ObjectPageLayout.prototype._getSectionsToRender = function () {
+		var oSelectedSection = sap.ui.getCore().byId(this.getSelectedSection());
+
+		if (this.getUseIconTabBar() && oSelectedSection) {
+			return [oSelectedSection]; // only the content for the selected tab should be rendered
+		} else {
+			return this.getSections();
 		}
 	};
 
@@ -1266,6 +1286,11 @@ sap.ui.define([
 	ObjectPageLayout.prototype._scrollTo = function (y, time) {
 		if (this._oScroller) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
+
+			if ((time === 0) && (y >= this._getSnapPosition())) {
+				this._toggleHeader(true);
+			}
+
 			this._oScroller.scrollTo(0, y, time);
 		}
 		return this;

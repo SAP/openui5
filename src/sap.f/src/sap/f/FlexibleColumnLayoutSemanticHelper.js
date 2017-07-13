@@ -5,10 +5,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
-	"./LayoutType",
 	"./FlexibleColumnLayout"
-], function (jQuery, library, LT, FlexibleColumnLayout) {
+], function (jQuery, library, FlexibleColumnLayout) {
 	"use strict";
+
+	// shortcut for sap.f.LayoutType
+	var LT = library.LayoutType;
 
 	/**
 	 * Constructor for an sap.f.FlexibleColumnLayoutSemanticHelper.
@@ -46,27 +48,89 @@ sap.ui.define([
 	 * For more information, see {@link sap.f.FlexibleColumnLayoutSemanticHelper#getCurrentUIState} and {@link sap.f.FlexibleColumnLayoutSemanticHelper#getNextUIState}
 	 *
 	 * @version ${version}
-	 * @param {sap.f.FlexibleColumnLayout} oFlexibleColumnLayout The <code>sap.f.FlexibleColumnLayout</code> object whose state will be manipulated
-	 * @param {object} oSettings Determines the rules that will be used by the helper
-	 * @param {sap.f.LayoutType} oSettings.defaultTwoColumnLayoutType Determines what two-column layout type will be suggested by default: <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> (default) or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>
-	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType Determines what three-column layout type will be suggested by default: <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>
-	 * @param {string} oSettings.mode Determines the suggested layout types: <code>Normal</code> (3-column layouts), <code>MasterDetail</code> (2-column layouts for the first two pages, all other pages will open in fullscreen), and <code>SingleColumn</code> (one page at a time only)
+	 * @param {sap.f.FlexibleColumnLayout} oFlexibleColumnLayout
+	 * The <code>sap.f.FlexibleColumnLayout</code> object whose state will be manipulated.
+	 *
+	 * @param {object} oSettings Determines the rules that will be used by the helper.
+	 *
+	 * @param {sap.f.LayoutType} oSettings.defaultTwoColumnLayoutType
+	 * Determines what two-column layout type will be suggested by default:
+	 * <code>sap.f.LayoutType.TwoColumnsBeginExpanded</code> (default) or <code>sap.f.LayoutType.TwoColumnsMidExpanded</code>.
+	 *
+	 * @param {sap.f.LayoutType} oSettings.defaultThreeColumnLayoutType
+	 * Determines what three-column layout type will be suggested by default:
+	 * <code>sap.f.LayoutType.ThreeColumnsMidExpanded</code> (default) or <code>sap.f.LayoutType.ThreeColumnsEndExpanded</code>.
+	 *
+	 * @param {int} oSettings.maxColumnsCount
+	 * Determines the maximum number of columns that will be displayed side by side.
+	 *
+	 * <ul>Possible values:
+	 *
+	 * <li>Value of <code>1</code> only single-column layouts will be suggested.</li>
+	 *
+	 * <li>Value of <code>2</code> Up to 2-column layouts will be suggested.</li>
+	 *
+	 * <li>Value of <code>3</code> (default) - Up to 3-column layouts will be suggested.</li></ul>
+	 *
+	 * @param {int} oSettings.initialColumnsCount
+	 * Determines whether a single-column or a 2-column layout will be suggested
+	 * for logical level 0.
+	 *
+	 * <ul>Possible values:
+	 *
+	 * <li>Value of <code>1</code> (default) - A single-column layout will be suggested
+	 * for logical level 0.</li>
+	 *
+	 * <li>Value of <code>2</code> - A 2-column layout will be suggested for logical level 0.</li></ul>
+	 *
+	 * @param {string} oSettings.mode
+	 * <b>Deprecated as of version 1.50</b>, use <code>maxColumnsCount</code> param
+	 * instead.
+	 *
+	 * Determines the suggested layout types: <code>Normal</code> (3-column layouts),
+	 * <code>MasterDetail</code> (2-column layouts for the first two pages, all other
+	 * pages will open in fullscreen), and <code>SingleColumn</code> (one page at a
+	 * time only).
+	 *
 	 * @public
 	 * @since 1.46.0
 	 * @alias sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
 	var FlexibleColumnLayoutSemanticHelper = function (oFlexibleColumnLayout, oSettings) {
-		this._oFCL = oFlexibleColumnLayout;
-		this._mode = "Normal";
+		var oModeToMaxColumnsCountMapping = {
+				Normal: 3,
+				MasterDetail: 2,
+				SingleColumn: 1
+			},
+			iInitial,
+			iMax;
 
-		// Currently only the default 3-column type is configurable
+		this._oFCL = oFlexibleColumnLayout;
+
+		// Layout types
 		this._defaultLayoutType = LT.OneColumn;
 		this._defaultTwoColumnLayoutType = [LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(oSettings.defaultTwoColumnLayoutType) !== -1 ?
 			oSettings.defaultTwoColumnLayoutType : LT.TwoColumnsBeginExpanded;
 		this._defaultThreeColumnLayoutType = [LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded].indexOf(oSettings.defaultThreeColumnLayoutType) !== -1 ?
 			oSettings.defaultThreeColumnLayoutType : LT.ThreeColumnsMidExpanded;
-		this._mode = ["Normal", "MasterDetail", "SingleColumn"].indexOf(oSettings.mode) !== -1 ?
-			oSettings.mode : "Normal";
+
+		// Maximum number of columns and mode (deprecated)
+		if (["Normal", "MasterDetail", "SingleColumn"].indexOf(oSettings.mode) !== -1 && !oSettings.maxColumnsCount) {
+			iMax = oModeToMaxColumnsCountMapping[oSettings.mode];
+		} else {
+			iMax = oSettings.maxColumnsCount ? parseInt(oSettings.maxColumnsCount, 10) : 3;
+			if (iMax < 1 || iMax > 3) {
+				iMax = 3;
+			}
+		}
+		this._maxColumnsCount = iMax;
+
+		// Initial number of columns (1 by default, can be set to 2 for MasterDetail or Normal modes only)
+		iInitial = oSettings.initialColumnsCount ? parseInt(oSettings.initialColumnsCount, 10) : 1;
+		if (iInitial < 1 || iInitial > 2 || this._maxColumnsCount === 1) {
+			iInitial = 1;
+		}
+		this._initialColumnsCount = iInitial;
 	};
 
 	/**
@@ -172,18 +236,23 @@ sap.ui.define([
 	FlexibleColumnLayoutSemanticHelper.prototype.getNextUIState = function (iNextLevel) {
 
 		var sCurrentLayout = this._oFCL.getLayout(),
+			iInitial = this._initialColumnsCount,
 			sNextLayout;
 
 		// Level 0 - the first page
 		if (iNextLevel === 0) {
-			// From any layout, going to level 0 is always showing the begin column only
-			sNextLayout = LT.OneColumn;
+			// From any layout, going to level 0 is always showing the begin column only, unless initialColumnsCount=2. Then a 2-column layout is suggested even for level 0
+			if (iInitial === 2) {
+				sNextLayout = this._defaultTwoColumnLayoutType;
+			} else {
+				sNextLayout = LT.OneColumn;
+			}
 		}
 
 		// Level 1 - the second page
 		if (iNextLevel === 1) {
 
-			if (this._mode === "SingleColumn") {
+			if (this._maxColumnsCount === 1) {
 
 				sNextLayout = LT.MidColumnFullScreen;
 
@@ -205,7 +274,7 @@ sap.ui.define([
 		// Level 2 - the third page
 		if (iNextLevel === 2) {
 
-			if (this._mode === "SingleColumn" || this._mode === "MasterDetail") {
+			if (this._maxColumnsCount < 3) {
 
 				// Clicking the mid column when in 2-column layout should open the third column in fullscreen mode
 				sNextLayout = LT.EndColumnFullScreen;
@@ -304,7 +373,7 @@ sap.ui.define([
 			aEligibleLayouts,
 			sExitFullScreen;
 
-		if (this._mode === "SingleColumn") {
+		if (this._maxColumnsCount === 1) {
 			return {
 				midColumn: oMidColumn,
 				endColumn: oEndColumn
@@ -344,7 +413,7 @@ sap.ui.define([
 
 			if (sColumnWidthDistribution === "0/0/100") {
 
-				if (this._mode !== "MasterDetail") {
+				if (this._maxColumnsCount !== 2) {
 					aEligibleLayouts = [LT.ThreeColumnsMidExpanded, LT.ThreeColumnsEndExpanded];
 					sExitFullScreen = this._oFCL._getLayoutHistory().getClosestEntryThatMatches(aEligibleLayouts) || this._defaultThreeColumnLayoutType;
 

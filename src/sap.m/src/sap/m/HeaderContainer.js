@@ -1,9 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon'],
-	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/library', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon'],
+	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, coreLibrary, ManagedObject, Icon) {
 	"use strict";
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 	var HeaderContainerItemContainer = Control.extend("sap.m.HeaderContainerItemContainer", {
 		metadata : {
@@ -390,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this._bRtl) {
 			iScrollLeft = oDomRef.scrollLeft;
 			iScrollWidth = oDomRef.scrollWidth;
-			iClientWidth = oDomRef.clientWidth + Device.browser.msie ? 1 : 0;
+			iClientWidth = oDomRef.clientWidth + (Device.browser.msie ? 1 : 0);
 			iScrollTarget = iScrollLeft + delta;
 			iPaddingWidth = parseFloat(this.$("scroll-area").css("padding-left"));
 

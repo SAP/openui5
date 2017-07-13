@@ -94,26 +94,6 @@ sap.ui.define([
 				}
 			},
 
-			onJSDocLinkClick: function (oEvt, sRoute, oComponent) {
-				var aLibsData = oComponent.getModel("libsData").getData(),
-					sType = oEvt.target.getAttribute("data-sap-ui-target");
-
-				if (!sType) {
-					return;
-				}
-
-				if (sType.indexOf('#') >= 0 ) {
-					sType = sType.slice(0, sType.indexOf('#'));
-				}
-
-				if (!aLibsData[sType]) {
-					sType = sType.slice(0, sType.lastIndexOf("."));
-				}
-
-				oComponent.getRouter().navTo(sRoute, {id : sType}, false);
-				oEvt.preventDefault();
-			},
-
 			searchResultsButtonVisibilitySwitch : function(oButton) {
 				var sPreviousHash = History.getInstance().getPreviousHash();
 				if (sPreviousHash && sPreviousHash.indexOf("search/") === 0) {
@@ -156,9 +136,11 @@ sap.ui.define([
 
 						var p;
 
+						text = text || target; // keep the full target in the fallback text
+
 						// If the link has a protocol, do not modify, but open in a new window
 						if (target.match("://")) {
-							return '<a target="_blank" href="' + target + '">' + (text || target) + '</a>';
+							return '<a target="_blank" href="' + target + '">' + text + '</a>';
 						}
 
 						target = target.trim().replace(/\.prototype\./g, "#");
@@ -169,11 +151,10 @@ sap.ui.define([
 						}
 
 						if ( p > 0 ) {
-							text = text || target; // keep the full target in the fallback text
 							target = target.slice(0, p);
 						}
 
-						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + (text || target) + "</a>";
+						return "<a class=\"jsdoclink\" href=\"javascript:void(0);\" data-sap-ui-target=\"" + target + "\">" + text + "</a>";
 
 					}
 				});

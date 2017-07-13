@@ -63,7 +63,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 		 * @param {sap.ui.support.supportRules.RuleSet} The ruleset
 		 */
 		addRuleToRuleset : function(oRuleDef, oRuleset) {
-			oRuleDef = jQuery.extend({}, TableSupportHelper.DEFAULT_RULE_DEF, oRuleDef);
+			oRuleDef = TableSupportHelper.normalizeRule(oRuleDef);
 			var sResult = oRuleset.addRule(oRuleDef);
 			if (sResult != "success") {
 				jQuery.sap.log.warning("Support Rule '" + oRuleDef.id + "' for library sap.m not applied: " + sResult);

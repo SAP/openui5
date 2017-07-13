@@ -46,18 +46,15 @@ sap.ui.define([
 			_onSampleMatched: function (event) {
 				this._sId = event.getParameter("arguments").id;
 
-				if (this._oRTA && jQuery.sap.byId("RTA-Toolbar")[0]) {
-					this._oRTA.stop(true);
-				}
-
 				ControlsInfo.loadData().then(function (oData) {
-						this._loadSample(oData);
-					}.bind(this));
-
+					this._loadSample(oData);
+				}.bind(this));
 			},
 
 			_loadSample: function(oData) {
-				var oSample = oData.samples[this._sId];
+				var oSample = oData.samples[this._sId],
+					oContent;
+
 				if (!oSample) {
 					return;
 				}
@@ -75,12 +72,15 @@ sap.ui.define([
 				oPage.setTitle("Sample: " + oSample.name);
 
 				try {
-					var oContent = this._createComponent();
+					oContent = this._createComponent();
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
 					return;
 				}
+
+				// Store a reference to the currently opened sample on the application component
+				this.getOwnerComponent()._oCurrentOpenedSample = oContent ? oContent : undefined;
 
 				//get config
 				var oConfig = (this._oComp.getMetadata()) ? this._oComp.getMetadata().getConfig() : null;
@@ -226,38 +226,45 @@ sap.ui.define([
 			_oRTA : null,
 
 			_loadRTA: function () {
-				sap.ui.require(["sap/ui/fl/Utils", "sap/ui/fl/FakeLrepConnectorLocalStorage", "sap/ui/rta/RuntimeAuthoring"], function (Utils, FakeLrepConnectorLocalStorage, RuntimeAuthoring) {
+				sap.ui.require([
+					"sap/ui/fl/Utils",
+					"sap/ui/fl/FakeLrepConnectorLocalStorage"
+				], function (
+					Utils,
+					FakeLrepConnectorLocalStorage
+				) {
 
 					// fake stable IDs
 					Utils.checkControlId = function() {
 						return true;
 					};
 
-					try {
-						FakeLrepConnectorLocalStorage.enableFakeConnector({
-							"isKeyUser": true,
-							"isAtoAvailable": false,
-							"isProductiveSystem": true
-						});
+					FakeLrepConnectorLocalStorage.enableFakeConnector({
+						"isProductiveSystem": true
+					});
+					this.getView().byId("toggleRTA").setVisible(true);
 
-						this._oRTA = new RuntimeAuthoring();
-						this.getView().byId("toggleRTA").setVisible(true);
-					} catch (oException) {
-						jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
-					}
-
+					this.getRouter().attachRouteMatched(function () {
+						if (this._oRTA) {
+							this._oRTA.destroy();
+							this._oRTA = null;
+						}
+					}, this);
 				}.bind(this));
 			},
 
 			onToggleAdaptationMode : function (oEvt) {
-				var oRTA = this._oRTA;
-				if (oRTA) {
-					oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
-					oRTA.start();
-					setTimeout(function() {
-						oRTA._oToolsMenu._oButtonPublish.setVisible(false);
-					}, 0);
-				}
+				sap.ui.require([
+					"sap/ui/rta/RuntimeAuthoring"
+				], function (
+					RuntimeAuthoring
+				) {
+					if (!this._oRTA) {
+						this._oRTA = new RuntimeAuthoring();
+						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+						this._oRTA.start();
+					}
+				}.bind(this));
 			}
 		});
 	}

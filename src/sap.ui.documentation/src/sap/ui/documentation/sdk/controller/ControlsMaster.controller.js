@@ -63,8 +63,7 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
-				var oRouter = this.getRouter(),
-					oEntityModel, oDeviceModel, oFilterModel,
+				var oEntityModel, oDeviceModel, oFilterModel,
 					fnOnDataReady = function (oControlsData) {
 						this._oView.getModel().setData({
 							entityCount : oControlsData.entityCount,
@@ -73,6 +72,8 @@ sap.ui.define([
 						this.getModel("filter").setData(oControlsData.filter);
 						this._toggleListItem(this._getItemToSelect(), true);
 					}.bind(this);
+
+				this._oRouter = this.getRouter();
 
 				// Keep track if navigation happens via selecting items manually within the List
 				this._bNavToEntityViaList = false;
@@ -101,12 +102,12 @@ sap.ui.define([
 				this._vsFilterBar = this._oView.byId("vsFilterBar");
 				this._vsFilterLabel = this._oView.byId("vsFilterLabel");
 
-				oRouter.getRoute("group").attachPatternMatched(this._onGroupMatched, this);
-				oRouter.getRoute("entity").attachPatternMatched(this._onEntityMatched, this);
-				oRouter.getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
-				oRouter.getRoute("code").attachPatternMatched(this._onSampleMatched, this);
-				oRouter.getRoute("controls").attachPatternMatched(this._onControlsMatched, this);
-				oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
+				this._oRouter.getRoute("group").attachPatternMatched(this._onGroupMatched, this);
+				this._oRouter.getRoute("entity").attachPatternMatched(this._onEntityMatched, this);
+				this._oRouter.getRoute("sample").attachPatternMatched(this._onSampleMatched, this);
+				this._oRouter.getRoute("code").attachPatternMatched(this._onSampleMatched, this);
+				this._oRouter.getRoute("controls").attachPatternMatched(this._onControlsMatched, this);
+				this._oRouter.getRoute("controlsMaster").attachPatternMatched(this._onControlsMasterMatched, this);
 
 				this.LIST_SCROLL_DURATION = 0; // ms
 
@@ -127,10 +128,10 @@ sap.ui.define([
 				});
 
 				// subscribe to app events
-				var oComponent = this.getOwnerComponent();
+				this._oComponent = this.getOwnerComponent();
 				this._oRootView = this.getRootView();
 
-				this._oViewSettings.compactOn = oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
+				this._oViewSettings.compactOn = this._oComponent.getContentDensityClass() === "sapUiSizeCompact" &&
 					this._oRootView.hasStyleClass("sapUiSizeCompact");
 				this._oViewSettings.rtl = this._oCore.getConfiguration().getRTL();
 
@@ -173,7 +174,9 @@ sap.ui.define([
 			 */
 			_applyAppConfiguration: function(sThemeActive, bCompactOn, bRTL){
 				var oSampleFrameContent,
-					$SampleFrame;
+					$SampleFrame,
+					oSampleRootControl,
+					oSamplePage;
 
 				// Switch theme if necessary
 				this._oCore.applyTheme(sThemeActive);
@@ -181,6 +184,19 @@ sap.ui.define([
 				this._oRootView.toggleStyleClass("sapUiSizeCompact", bCompactOn)
 					.toggleStyleClass("sapUiSizeCozy", !bCompactOn);
 				this._oCore.getConfiguration().setRTL(bRTL);
+
+				// If there is a sample page loaded try to find it's root container and invalidate it to let controls
+				// adapt to compact mode changes
+				if (this._oComponent._oCurrentOpenedSample) {
+					oSampleRootControl = this._oComponent._oCurrentOpenedSample.getComponentInstance().getRootControl();
+					// Keep in mind that getRootControl might return 'null'
+					if (oSampleRootControl) {
+						oSamplePage = oSampleRootControl.getContent()[0];
+						if (oSamplePage) {
+							oSamplePage.invalidate();
+						}
+					}
+				}
 
 				// Apply theme and compact mode also to iframe samples
 				$SampleFrame = jQuery("#sampleFrame");

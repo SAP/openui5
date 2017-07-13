@@ -18,10 +18,8 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *          oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control}
-	 *          oRating an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oContainer An object representation of the control that should be rendered
 	 */
 	ResponsiveContainerRenderer.render = function(oRenderManager, oContainer) {
 		var oRM = oRenderManager,
