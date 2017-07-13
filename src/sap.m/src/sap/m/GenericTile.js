@@ -69,13 +69,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * Description of a header image that is used in the tooltip.
 				 */
-				"imageDescription" : {type : "string", group : "Misc", defaultValue : null},
-
+				"imageDescription" : {type : "string", group : "Accessibility", defaultValue : null},
 				/**
 				 * Changes the visualization in order to enable additional actions with the Generic Tile.
 				 * @since 1.46.0
 				 */
-				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
+				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display },
+				/**
+				 * Additional description for aria-label.
+				 * @since 1.50.0
+				 */
+				"ariaLabel": { type: "string", group: "Accessibility", defaultValue: null }
 			},
 			defaultAggregation : "tileContent",
 			aggregations : {
@@ -935,11 +939,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 */
 	GenericTile.prototype._getAriaText = function() {
 		var sAriaText = this.getTooltip_Text();
+		var sAriaLabel = this.getAriaLabel();
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
 		if (this.getScope() === library.GenericTileScope.Actions) {
 			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
+		}
+		if (sAriaLabel) {
+			sAriaText += " " + sAriaLabel;
 		}
 		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};
