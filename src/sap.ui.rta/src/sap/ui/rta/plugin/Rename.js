@@ -388,7 +388,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/plugin/Plugin', 'sap/ui/dt/Eleme
 				oRenameCommand = this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
 					renamedElement : oRenamedElement,
 					newValue : sText
-				}, oDesignTimeMetadata);
+				}, oDesignTimeMetadata/*, this._oEditedOverlay.getVariantMangement()*/);
 				this.fireElementModified({
 					"command" : oRenameCommand
 				});

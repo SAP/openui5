@@ -68,7 +68,9 @@ sap.ui.define([
 	 * @private
 	 */
 	VariantModel.prototype._updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
-		this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+		return this.switchToVariant(sVariantMgmtRef, sNewVariantRef).then(function() {
+			this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+		}.bind(this));
 	};
 
 	/**
@@ -98,9 +100,7 @@ sap.ui.define([
 
 		.then(this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent))
 
-		.then(this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent))
-
-		.then(this._updateCurrentVariant(sVariantMgmtRef, sNewVariantRef));
+		.then(this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent));
 	};
 
 	return VariantModel;

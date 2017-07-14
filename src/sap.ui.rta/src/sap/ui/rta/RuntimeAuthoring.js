@@ -302,7 +302,7 @@ sap.ui.define([
 				styleClass: Utils.getRtaStyleClass()
 			});
 
-			// TabHandling
+			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
 		}
 

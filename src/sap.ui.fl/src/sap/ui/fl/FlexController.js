@@ -166,6 +166,9 @@ sap.ui.define([
 		}
 		ChangeHandler = this._getChangeHandler(oChange, sControlType);
 		if (ChangeHandler) {
+			if (/*ChangeHandler.revertChange && */oChangeSpecificData["variantManagementKey"] && oChangeSpecificData["variantKey"]) {
+				jQuery.sap.log.error("VariantChange" + "-" + oChangeSpecificData["variantManagementKey"] + "-" + oChangeSpecificData["variantKey"]); /*Only temporary*/
+			}
 			ChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 				modifier: JsControlTreeModifier,
 				appComponent: oAppComponent
@@ -818,13 +821,14 @@ sap.ui.define([
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 		var aPromiseStack = [];
 		aChanges.forEach(function(oChange) {
-			aPromiseStack.push(function() {
-				var mChangesMap = this._oChangePersistence.getChangesMapForComponent().mChanges;
-				var aAllChanges = Object.keys(mChangesMap).reduce(function(aChanges, sControlId) {
-					return aChanges.concat(mChangesMap[sControlId]);
-				}, []);
-				this._oChangePersistence._addChangeAndUpdateDependencies(oComponent, oChange, aAllChanges.length, aAllChanges);
 
+			var mChangesMap = this._oChangePersistence.getChangesMapForComponent().mChanges;
+			var aAllChanges = Object.keys(mChangesMap).reduce(function(aChanges, sControlId) {
+				return aChanges.concat(mChangesMap[sControlId]);
+			}, []);
+			this._oChangePersistence._addChangeAndUpdateDependencies(oComponent, oChange, aAllChanges.length, aAllChanges);
+
+			aPromiseStack.push(function() {
 				var mPropertyBag = {
 					modifier: JsControlTreeModifier,
 					appComponent: oAppComponent

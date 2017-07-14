@@ -54,7 +54,8 @@ sap.ui.define([ "sap/ui/fl/Utils",
 						}
 					}
 				};
-			}
+			},
+			getModel: function () {}
 		};
 
 

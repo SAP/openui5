@@ -1,4 +1,0 @@
-var done = assert.async();
-.then( function() {
-	done();
-}.bind(this));

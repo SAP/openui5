@@ -41,7 +41,8 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 						}
 					}
 				};
-			}
+			},
+			getModel: function () {}
 		};
 		sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
