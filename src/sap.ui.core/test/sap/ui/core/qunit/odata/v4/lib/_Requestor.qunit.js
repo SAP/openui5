@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Batch, _Helper, _Requestor, TestUtils) {
+], function (jQuery, _Batch, _Helper, _Requestor, _SyncPromise, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -119,6 +120,7 @@ sap.ui.require([
 
 		QUnit.test(sTest, function (assert) {
 			var sBuildQueryResult = "foo",
+				fnFetchEntityContainer = function () {},
 				mHeaders = {},
 				fnOnCreateGroup = function () {},
 				mQueryParams = {},
@@ -129,13 +131,14 @@ sap.ui.require([
 				.returns(sBuildQueryResult);
 
 			// code under test
-			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup,
-				oFixture.sODataVersion);
+			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams,
+				fnFetchEntityContainer, fnOnCreateGroup, oFixture.sODataVersion);
 
 			assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
 			assert.strictEqual(oRequestor.mHeaders, mHeaders, "parameter mHeaders");
 			assert.strictEqual(oRequestor.sQueryParams, sBuildQueryResult,
 				"parameter mQueryParams");
+			assert.strictEqual(oRequestor.fnFetchEntityContainer, fnFetchEntityContainer);
 			assert.strictEqual(oRequestor.fnOnCreateGroup, fnOnCreateGroup,
 				"parameter fnOnCreateGroup");
 			// OData version specific header maps
@@ -235,7 +238,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oConvertedResponse = {},
-				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined,
+				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
 					undefined, oFixture.sODataVersion),
 				oResponsePayload = {};
 
@@ -245,9 +248,9 @@ sap.ui.require([
 					headers : sinon.match(oFixture.mExpectedRequestHeaders),
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
-			this.mock(oRequestor).expects("doConvertResponseToV4")
+			this.mock(oRequestor).expects("doFetchV4Response")
 				.withExactArgs(oResponsePayload)
-				.returns(oConvertedResponse);
+				.returns(_SyncPromise.resolve(oConvertedResponse));
 
 			// code under test
 			return oRequestor.request("GET", "Employees", "$direct")
@@ -255,6 +258,29 @@ sap.ui.require([
 					assert.strictEqual(result, oConvertedResponse);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: fail to convert payload, $direct", function (assert) {
+		var oError = {},
+			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
+				undefined, "2.0"),
+			oResponsePayload = {};
+
+		this.mock(jQuery).expects("ajax")
+			.withArgs(sServiceUrl + "Employees")
+			.returns(createMock(assert, oResponsePayload, "OK"));
+		this.mock(oRequestor).expects("doFetchV4Response")
+			.withExactArgs(oResponsePayload)
+			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+
+		// code under test
+		return oRequestor.request("GET", "Employees", "$direct")
+			.then(function (result) {
+				assert.notOk("Unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
 	});
 
 	//*********************************************************************************************
@@ -270,7 +296,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					oFixture.sODataVersion),
+					undefined, oFixture.sODataVersion),
 				oAjaxResponse = {},
 				oDeserializeBatchResponse = {};
 
@@ -289,7 +315,7 @@ sap.ui.require([
 			this.mock(_Batch).expects("deserializeBatchResponse")
 				.withExactArgs("application/json", oAjaxResponse)
 				.returns(oDeserializeBatchResponse);
-			this.mock(oRequestor).expects("doConvertResponseToV4").never();
+			this.mock(oRequestor).expects("doFetchV4Response").never();
 
 			// code under test
 			return oRequestor
@@ -334,12 +360,12 @@ sap.ui.require([
 				}],
 				oGetProductsPromise,
 				oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					oFixture.sODataVersion),
+					undefined, oFixture.sODataVersion),
 				oRequestorMock = this.mock(oRequestor);
 
-			oRequestorMock.expects("doConvertResponseToV4")
+			oRequestorMock.expects("doFetchV4Response")
 				.withExactArgs(oFixture.mProductsResponse) // not same; it is stringified and parsed
-				.returns(oConvertedPayload);
+				.returns(_SyncPromise.resolve(Promise.resolve(oConvertedPayload)));
 			oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
 				.then(function (oResponse) {
 					assert.strictEqual(oResponse, oConvertedPayload);
@@ -354,6 +380,31 @@ sap.ui.require([
 
 			return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitBatch: fail to convert payload", function (assert) {
+		var oError = {},
+			oGetProductsPromise,
+			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
+					undefined, "2.0"),
+			oRequestorMock = this.mock(oRequestor),
+			oResponse = {d : {foo : "bar"}};
+
+		oRequestorMock.expects("doFetchV4Response")
+			.withExactArgs(oResponse)
+			.returns(_SyncPromise.resolve(Promise.reject(oError)));
+		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
+			.then(function () {
+				assert.notOk("Unexpected success");
+			}, function (oError0) {
+				assert.strictEqual(oError0, oError);
+			});
+		oRequestorMock.expects("request")
+			.withArgs("POST", "$batch")
+			.returns(Promise.resolve([{ responseText : JSON.stringify(oResponse)}]));
+
+		return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
 	});
 
 	//*********************************************************************************************
@@ -425,7 +476,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), fnOnCreateGroup", function (assert) {
 		var fnOnCreateGroup = sinon.spy(),
-			oRequestor = _Requestor.create("/", {}, {}, fnOnCreateGroup);
+			oRequestor = _Requestor.create("/", {}, {}, undefined, fnOnCreateGroup);
 
 		oRequestor.request("GET", "SalesOrders", "groupId");
 		oRequestor.request("GET", "SalesOrders", "groupId");
@@ -1676,12 +1727,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doConvertResponseToV4 (V4)", function (assert) {
+	QUnit.test("doFetchV4Response (V4)", function (assert) {
 		var oPayload = {},
 			oRequestor = _Requestor.create("/");
 
 		// code under test
-		assert.strictEqual(oRequestor.doConvertResponseToV4(oPayload), oPayload);
+		return oRequestor.doFetchV4Response(oPayload).then(function (oConvertedPayload) {
+			assert.strictEqual(oConvertedPayload, oPayload);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1969,4 +2022,4 @@ sap.ui.require([
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?
-// TODO: tests for convertSystemQueryOptions missing. Only tested indirectly
+// TODO: tests for doConvertSystemQueryOptions missing. Only tested indirectly

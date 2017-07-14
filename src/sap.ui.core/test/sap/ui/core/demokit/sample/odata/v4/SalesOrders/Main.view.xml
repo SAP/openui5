@@ -141,8 +141,7 @@
 						<ToolbarSpacer />
 						<SearchField id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"
-							value="{path : 'ui>/filterValue',
-								type:'sap.ui.model.odata.type.Decimal'}"
+							value="{path : 'ui>/filterValue'}"
 							visible="{ui>/bRealOData}" width="50%" search="onFilter">
 							<layoutData>
 								<ToolbarLayoutData shrinkable="false" />

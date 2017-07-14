@@ -200,7 +200,9 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters, function (sGroupId) {
+						this.mUriParameters,
+						this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
+						function (sGroupId) {
 							if (sGroupId === "$auto") {
 								sap.ui.getCore().addPrerenderingTask(
 									that._submitBatch.bind(that, sGroupId));
