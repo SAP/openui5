@@ -5,14 +5,15 @@ sap.ui.define([
 ], function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.PDFViewerEmbedded.Page", {
+	var PageController = Controller.extend("sap.m.sample.PDFViewerMultiple.Page", {
 
 		onInit : function () {
-			this._sValidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerEmbedded", "/sample.pdf");
-			this._sInvalidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerEmbedded", "/sample_nonexisting.pdf");
+			this._sValidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerMultiple", "/sample.pdf");
+			this._sInvalidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerMultiple", "/sample_nonexisting.pdf");
 			this._oModel = new JSONModel({
 				Source: this._sValidPath,
-				Title: "My Custom Title",
+				Title1: "My Title 1",
+				Title2: "My Title 2",
 				Height: "600px"
 			});
 			this.getView().setModel(this._oModel);
