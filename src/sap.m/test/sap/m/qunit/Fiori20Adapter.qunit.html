@@ -821,7 +821,7 @@
                         oSpy = sinon.spy(fnTitleListener);
 
                 //setup
-                sap.ui.getCore().byId("detailPage1").setShowNavButton(false); //only master page has back button
+                sap.ui.getCore().byId("detailPage1-navButton").setVisible(false); //only master page has back button
                 Fiori20Adapter.attachViewChange(oSpy);
 
                 //act
@@ -846,7 +846,7 @@
                         oSpy = sinon.spy(fnTitleListener);
 
                 //setup
-                sap.ui.getCore().byId("masterPage1").setShowNavButton(false); //only detail page has back button
+                sap.ui.getCore().byId("masterPage1-navButton").setVisible(false); //only detail page has back button
                 Fiori20Adapter.attachViewChange(oSpy);
 
                 //act
