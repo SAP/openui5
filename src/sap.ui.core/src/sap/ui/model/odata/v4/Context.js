@@ -80,7 +80,7 @@ sap.ui.define([
 	 *   that the values are not available yet ({@link #getProperty} and {@link #getObject}) or
 	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
 	 *
-	 *   Context instances are immutable.
+	 *   Context instances are immutable except for their indexes.
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @since 1.39.0
@@ -201,22 +201,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Delegates to the <code>fetchAbsoluteValue</code> method of this context's binding which
-	 * requests the value for the given absolute path including the query string as maintained by
-	 * that binding.
-	 *
-	 * @param {string} sPath
-	 *   An absolute path including a query string
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the binding's <code>fetchAbsoluteValue</code> call
-	 *
-	 * @private
-	 */
-	Context.prototype.fetchAbsoluteValue = function (sPath) {
-		return this.oBinding.fetchAbsoluteValue(sPath);
-	};
-
-	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {SyncPromise}
@@ -232,10 +216,10 @@ sap.ui.define([
 
 	/**
 	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
-	 * the value for the given path, relative to this context, as maintained by that binding.
+	 * the value for the given path. A relative path is assumed to be relative to this context.
 	 *
 	 * @param {string} [sPath]
-	 *   A relative path within the JSON structure
+	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
@@ -244,9 +228,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener) {
-		return this.iIndex === -2
-			? _SyncPromise.resolve()
-			: this.oBinding.fetchValue(sPath, oListener, this.iIndex);
+		if (this.iIndex === -2) {
+			return _SyncPromise.resolve(); // no cache access for virtual contexts
+		}
+		// Create an absolute path based on the context's path to ensure that fetchValue uses key
+		// predicates if the context does. Then the path to register the listener in the cache is
+		// the same that is used for an update and the update notifies the listener.
+		return this.oBinding.fetchValue(
+			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
+			oListener);
 	};
 
 	/**
@@ -517,6 +507,18 @@ sap.ui.define([
 	Context.prototype.resetChangesForPath = function (sPath) {
 		// Note: iIndex === -2 is OK here, no changes will be found...
 		this.oBinding.resetChangesForPath(_Helper.buildPath(this.iIndex, sPath));
+	};
+
+	/**
+	 * Sets the context's index.
+	 *
+	 * @param {number} iIndex
+	 *   The new index
+	 *
+	 * @private
+	 */
+	Context.prototype.setIndex = function (iIndex) {
+		this.iIndex = iIndex;
 	};
 
 	/**

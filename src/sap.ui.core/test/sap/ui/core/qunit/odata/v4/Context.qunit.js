@@ -123,17 +123,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue", function (assert) {
+	[undefined, "bar"].forEach(function (sPath) {
+		QUnit.test("fetchValue, relative", function (assert) {
+			var oBinding = {
+					fetchValue : function () {}
+				},
+				oContext = Context.create(null, oBinding, "/foo", 42),
+				oListener = {},
+				oResult = {};
+
+			this.mock(_Helper).expects("buildPath").withExactArgs("/foo", sPath).returns("/~");
+			this.mock(oBinding).expects("fetchValue")
+				.withExactArgs("/~", sinon.match.same(oListener))
+				.returns(oResult);
+
+			assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: /bar", function (assert) {
 		var oBinding = {
 				fetchValue : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			oListener = {},
 			oResult = {},
-			sPath = "bar";
+			sPath = "/bar";
 
 		this.mock(oBinding).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener), 42)
+			.withExactArgs(sPath, sinon.match.same(oListener))
 			.returns(oResult);
 
 		assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
@@ -149,20 +168,6 @@ sap.ui.require([
 
 		assert.strictEqual(oResult.isFulfilled(), true);
 		assert.strictEqual(oResult.getResult(), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchAbsoluteValue", function (assert) {
-		var oBinding = {
-				fetchAbsoluteValue : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			oResult = {},
-			sPath = "bar";
-
-		this.mock(oBinding).expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
-
-		assert.strictEqual(oContext.fetchAbsoluteValue(sPath), oResult);
 	});
 
 	//*********************************************************************************************
@@ -699,5 +704,13 @@ sap.ui.require([
 
 		// code under test
 		oContext.checkUpdate();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setIndex", function (assert) {
+		var oContext = Context.create(this.oModel, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+
+		oContext.setIndex(23);
+		assert.strictEqual(oContext.getIndex(), 23);
 	});
 });
