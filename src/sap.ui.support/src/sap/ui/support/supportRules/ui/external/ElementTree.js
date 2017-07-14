@@ -403,7 +403,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"],
 				return;
 			}
 
-			this._scrollToElement(target);
+			this._scrollToElement(target, window);
 
 			if (bNotify) {
 				this.onSelectionChanged(id);
@@ -420,9 +420,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject"],
 
 		/**
 		 * Scroll to element in the ElementTree.
-		 * @param {Element} target - DOM element to which need to be scrolled
+		 * @param {Element} target DOM element to which need to be scrolled
+		 * @param {document.window} window The window element. Passed as a parameter to enable parameter mockup and function testing
 		 */
-		ElementTree.prototype._scrollToElement = function (target) {
+		ElementTree.prototype._scrollToElement = function (target, window) {
 			var desiredViewBottomPosition = this._treeContainer.offsetHeight - this._treeContainer.offsetTop + this._treeContainer.scrollTop;
 
 			if (target.offsetTop > desiredViewBottomPosition || target.offsetTop < this._treeContainer.scrollTop) {
