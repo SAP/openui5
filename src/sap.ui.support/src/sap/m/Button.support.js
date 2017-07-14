@@ -46,7 +46,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 				.forEach(function(oElement) {
 					if (!jQuery.isEmptyObject(oElement.getProperty("icon"))
 						&& jQuery.isEmptyObject(oElement.getProperty("text"))
-						&& jQuery.isEmptyObject(oElement.getProperty("tooltip"))) {
+						&& jQuery.isEmptyObject(oElement.getAggregation("tooltip"))) {
 
 						var sElementId = oElement.getId(),
 							sElementName = oElement.getMetadata().getElementName();

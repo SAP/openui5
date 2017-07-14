@@ -102,6 +102,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			clearIssues: function () {
 				// Return if no issues
 				if (!_aIssues.length) {
+					// If the analysis has no issues we still want to preserve the history
+					_aHistory.push({ issues: [] });
 					return;
 				}
 
@@ -124,7 +126,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @returns {object[]} Current history in the IssueManager.
 			 */
 			getHistory: function () {
-				this.clearIssues();
 				// Copy and return history
 				return _aHistory.slice();
 			},
