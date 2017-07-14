@@ -29,6 +29,78 @@
 			var Table = sap.ui.table.Table;
 			var Column = sap.ui.table.Column;
 
+			QUnit.module("API", {
+				beforeEach: function() {
+					this._oColumn = new Column();
+				},
+				afterEach: function() {
+					this._oColumn.destroy();
+				}
+			});
+
+			QUnit.test("shouldRender", function(assert) {
+				var that = this;
+				function test(bShouldRender, bVisible, bGrouped, vTemplate) {
+					that._oColumn.setVisible(bVisible);
+					that._oColumn.setGrouped(bGrouped);
+					that._oColumn.setTemplate(vTemplate);
+
+					assert.strictEqual(that._oColumn.shouldRender(), bShouldRender,
+							"Returned " + bShouldRender + ": "
+							+ (bVisible ? "Visible" : "Not visible")
+							+ ", " + (bGrouped ? "grouped" : "not grouped")
+							+ ", " + (vTemplate != null ? ",has template" : "has no template"));
+				}
+
+				test(true, true, false, "dummy");
+				test(false, true, true, "dummy");
+				test(false, false, false, "dummy");
+				test(false, false, true, "dummy");
+				test(false, true, true, null);
+				test(false, true, false, null);
+				test(false, false, false, null);
+				test(false, false, true, null);
+			});
+
+			QUnit.module("Aggregations", {
+				beforeEach: function() {
+					this._oColumn = new Column();
+				},
+				afterEach: function() {
+					this._oColumn.destroy();
+				}
+			});
+
+			QUnit.test("Label", function(assert) {
+				assert.equal(this._oColumn.getLabel(), null, "The column has no label defined");
+
+				this._oColumn.setLabel("labelstring");
+				var oLabel = this._oColumn.getLabel();
+				assert.notEqual(oLabel, null, "Added label by passing a string");
+				assert.strictEqual(oLabel.getText(), "labelstring", "The text of the label is correct");
+
+				var oNewLabel = new sap.m.Label({text: "labelinstance"});
+				this._oColumn.setLabel(oNewLabel);
+				assert.notEqual(oNewLabel, null, "Added label by passing a sap.m.Label instance");
+				assert.notEqual(oLabel, oNewLabel, "The column has a new label");
+				assert.strictEqual(oNewLabel.getText(), "labelinstance", "The text of the label is correct");
+			});
+
+			QUnit.test("setTemplate", function(assert) {
+				assert.equal(this._oColumn.getTemplate(), null, "The column has no template defined");
+
+				this._oColumn.setTemplate("bindingpath");
+				var oTemplate = this._oColumn.getTemplate();
+				assert.notEqual(oTemplate, null, "Added template by passing a string");
+				assert.strictEqual(oTemplate.getBindingPath("text"), "bindingpath", "The binding path of the template is correct");
+
+				var oNewTemplate = new sap.m.Text({text: "{anotherbindingpath}"});
+				this._oColumn.setTemplate(oNewTemplate);
+				assert.notEqual(oNewTemplate, null, "Added template by passing a sap.m.Text instance");
+				assert.notEqual(oTemplate, oNewTemplate, "The column has a new template");
+				assert.strictEqual(oNewTemplate.getBindingPath("text"), "anotherbindingpath", "The binding path of the template is correct");
+			});
+
 			QUnit.module("Column Menu Items", {
 				beforeEach: function() {
 					this._oTable = new Table();
