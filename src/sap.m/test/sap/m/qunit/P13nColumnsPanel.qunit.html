@@ -26,6 +26,11 @@
     <script
             src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
+    <!-- use the sinon faketimers for this test -->
+    <script>
+        sinon.config.useFakeTimers = true;
+    </script>
+
     <script>
         (function () {
             jQuery.sap.require("sap.m.P13nColumnsPanel");
@@ -594,7 +599,7 @@
             test("1. Model: ^D, ^B, C", function (assert) {
                 var oTableItem = jQuery(this.oPanel.$().find("td").find("span")[2].parentNode.parentNode).control()[0];
                 oTableItem.setVisible(true);
-                this.oPanel._selectTableItem(oTableItem);
+                this.oPanel._selectTableItem();
 
                 assert.equal(this.oPanel._getColumnKeyByTableItem(oTableItem), "C");
 //                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "D");
@@ -697,6 +702,161 @@
                 assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), false, "navigation validation shall be influenced as threshold is reached");
             });
         }());
+
+        module("sap.m.P13nColumnsPanel: FIX", {
+            beforeEach: function () {
+                this.oPanel = new sap.m.P13nColumnsPanel({
+                    items: {
+                        path: "/items",
+                        template: new sap.m.P13nItem({
+                            columnKey: "{columnKey}",
+                            text: "{text}"
+                        })
+                    },
+                    columnsItems: {
+                        path: "/columnsItems",
+                        template: new sap.m.P13nColumnsItem({
+                            columnKey: "{columnKey}",
+                            index: "{index}",
+                            visible: "{visible}"
+                        })
+                    },
+                    changeColumnsItems: function (oEvent) {
+                        // At least enough for this test!
+                        this.getModel().setProperty("/columnsItems", oEvent.getParameter("items"));
+                    }
+                });
+                this.oDataInitial = {
+                    items: [{
+                        columnKey: "keyC",
+                        text: "C"
+                    }, {
+                        columnKey: "keyB",
+                        text: "B foo"
+                    }, {
+                        columnKey: "keyA",
+                        text: "A foo"
+                    }],
+                    columnsItems: [{
+                        columnKey: "keyA",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "keyB",
+                        index: 1,
+                        visible: true
+                    }]
+                };
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+            },
+            afterEach: function () {
+                this.oPanel.destroy();
+            }
+        });
+
+        QUnit.test("Reset after entered search text", function (assert) {
+            // arrange: deselect first item "A", move it down, enter search text and click 'search'
+            sap.ui.test.qunit.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
+                srcControl: this.oPanel
+            });
+            this.oPanel.onPressButtonMoveDown();
+            this.oPanel._getSearchField().setValue("foo");
+            sap.ui.test.qunit.triggerTouchEvent("touchend", this.oPanel._getSearchField().$().find(".sapMSFS")[0], {
+                srcControl: this.oPanel._getSearchField()
+            });
+            this.clock.tick(500);
+
+            // asserts before act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, false);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 3); // 1 header cell + 1 cell * 2 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "B foo");
+            assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "A foo");
+
+            // act: Reset
+            this.oPanel.getModel().setProperty("/", this.oDataInitial);
+            this.clock.tick(500);
+
+            // asserts after act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 3); // 1 header cell + 1 cell * 2 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "A foo");
+            assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "B foo");
+        });
+
+        QUnit.test("Reset after 'Show Selected' clicked", function (assert) {
+            // arrange: deselect first item "A", move it down and click 'Show Selected'
+            sap.ui.test.qunit.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
+                srcControl: this.oPanel
+            });
+            this.oPanel.onPressButtonMoveDown();
+            // As the toolbar can be overflowed, no 'Show Selected' button can not have a dom reference
+            var oEvent = jQuery.Event("ontap");
+            var oButton = this.oPanel._getToolbar().getContent()[2];
+            oButton.ontap.apply(oButton, [oEvent]);
+            this.clock.tick(500);
+
+            // asserts before act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 (visible and invisible) items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "none");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 2); // visible checkboxes - header + 1 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 2); // 1 header cell + 1 cell * 1 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "B foo");
+
+            // act: Reset
+            this.oPanel.getModel().setProperty("/", this.oDataInitial);
+            this.clock.tick(500);
+
+            // asserts after act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 (visible and invisible) items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 3); // 1 header cell + 1 cell * 2 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "A foo");
+            assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "B foo");
+        });
+
     </script>
 
 

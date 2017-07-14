@@ -1,7 +1,7 @@
 {
   "ColumnCollection": [
     {
-      "text": "ProductId",
+      "text": "Product ID",
       "columnKey": "productId"
     },
     {
@@ -13,7 +13,7 @@
       "columnKey": "category"
     },
     {
-      "text": "SupplierName",
+      "text": "Supplier Name",
       "columnKey": "supplierName"
     },
     {
@@ -21,11 +21,11 @@
       "columnKey": "description"
     },
     {
-      "text": "WeightMeasure",
+      "text": "Weight Measure",
       "columnKey": "weightMeasure"
     },
     {
-      "text": "WeightUnit",
+      "text": "Weight Unit",
       "columnKey": "weightUnit"
     },
     {
@@ -33,7 +33,7 @@
       "columnKey": "price"
     },
     {
-      "text": "CurrencyCode",
+      "text": "Currency Code",
       "columnKey": "currencyCode"
     },
     {
@@ -63,10 +63,6 @@
     {
       "text": "DimUnit",
       "columnKey": "dimUnit"
-    },
-    {
-      "text": "ProductPicUrl",
-      "columnKey": "productPicUrl"
     }
   ],
   "ColumnsItems": [
@@ -77,83 +73,7 @@
     },
     {
       "columnKey": "productId",
-      "visible": true,
-      "index": 1
-    },
-    {
-      "columnKey": "category",
-      "visible": false,
-      "index": 2
-    },
-    {
-      "columnKey": "supplierName",
-      "visible": false,
-      "index": 3
-    },
-    {
-      "columnKey": "description",
-      "visible": false,
-      "index": 4
-    },
-    {
-      "columnKey": "weightMeasure",
-      "visible": false,
-      "index": 5
-    },
-    {
-      "columnKey": "weightUnit",
-      "visible": false,
-      "index": 6
-    },
-    {
-      "columnKey": "price",
-      "visible": false,
-      "index": 7
-    },
-    {
-      "columnKey": "currencyCode",
-      "visible": false,
-      "index": 8
-    },
-    {
-      "columnKey": "status",
-      "visible": false,
-      "index": 9
-    },
-    {
-      "columnKey": "quantity",
-      "visible": false,
-      "index": 10
-    },
-    {
-      "columnKey": "uom",
-      "visible": false,
-      "index": 11
-    },
-    {
-      "columnKey": "width",
-      "visible": false,
-      "index": 12
-    },
-    {
-      "columnKey": "depth",
-      "visible": false,
-      "index": 13
-    },
-    {
-      "columnKey": "height",
-      "visible": false,
-      "index": 14
-    },
-    {
-      "columnKey": "dimUnit",
-      "visible": false,
-      "index": 15
-    },
-    {
-      "columnKey": "productPicUrl",
-      "visible": false,
-      "index": 16
+      "visible": true
     }
   ],
   "SortItems": [

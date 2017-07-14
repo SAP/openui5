@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
-], function(jQuery, MessageToast, Fragment, Controller, JSONModel) {
+	'jquery.sap.global', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
+], function(jQuery, Fragment, Controller, JSONModel) {
 	"use strict";
 
 	/**
@@ -23,9 +23,6 @@ sap.ui.define([
 		},
 
 		onOK: function(oEvent) {
-			var aMChangedColumnsItems = oEvent.getParameter("payload").columns.tableItems;
-			this._updateColumnsItemsOfJSONModel(aMChangedColumnsItems);
-
 			this.oDataBeforeOpen = {};
 			oEvent.getSource().close();
 		},
@@ -52,17 +49,11 @@ sap.ui.define([
 			oPersonalizationDialog.open();
 		},
 
-        onChangeColumnsItems: function(oEvent) {
-			var aColumnsItems = oEvent.getParameter("existingItems").concat(oEvent.getParameter("newItems"));
-			var aMChangedColumnsItems = aColumnsItems.map(function(oColumnsItem) {
-				return {
-					columnKey: oColumnsItem.getColumnKey(),
-					index: oColumnsItem.getIndex(),
-					visible: oColumnsItem.getVisible(),
-					width: oColumnsItem.getWidth()
-				};
+		onChangeColumnsItems: function(oEvent) {
+			var aMColumnsItems = oEvent.getParameter("items").map(function(oMChangedColumnsItem) {
+				return oMChangedColumnsItem;
 			});
-			this._updateColumnsItemsOfJSONModel(aMChangedColumnsItems);
+			this.oJSONModel.setProperty("/ColumnsItems", aMColumnsItems);
 		},
 
 		onAddSortItem: function(oEvent) {
@@ -85,28 +76,6 @@ sap.ui.define([
 				aSortItems.splice(oParameters.index, 1);
 				this.oJSONModel.setProperty("/SortItems", aSortItems);
 			}
-		},
-
-		_updateColumnsItemsOfJSONModel: function(aMChangedColumnsItems) {
-			var aMColumnsItems = this.oJSONModel.getProperty("/ColumnsItems");
-			aMChangedColumnsItems.forEach(function(oMChangedColumnsItem) {
-				var oMColumnsItem = aMColumnsItems.find(function(oMColumnsItem) {
-					return oMColumnsItem.columnKey === oMChangedColumnsItem.columnKey;
-				});
-				if (oMColumnsItem) {
-					oMColumnsItem.index = oMChangedColumnsItem.index;
-					oMColumnsItem.visible = oMChangedColumnsItem.visible;
-					oMColumnsItem.width = oMChangedColumnsItem.width;
-				} else {
-					aMColumnsItems.push({
-						columnKey: oMChangedColumnsItem.columnKey,
-						index: oMChangedColumnsItem.index,
-						visible: oMChangedColumnsItem.visible,
-						width: oMChangedColumnsItem.width
-					});
-				}
-			});
-			this.oJSONModel.setProperty("/ColumnsItems", aMColumnsItems);
 		},
 
 		_isChangedSortItems: function() {

@@ -1,81 +1,114 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/model/resource/ResourceModel'
-], function(jQuery, MessageToast, Fragment, Controller, JSONModel, ResourceModel) {
+	'jquery.sap.global', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
+], function(jQuery, Fragment, Controller, JSONModel) {
 	"use strict";
 
+	/**
+	 * Please keep in mind that this is only an example in order to give an impression how you can use P13nXXXPanel's demonstrated on
+	 * <code>P13nDimMeasurePanel</code>. The logic of controller in productive code would be much complex depending on requirements
+	 * like: support of "Restore", persisting of settings using the Variant Management.
+	 */
 	var PageController = Controller.extend("sap.m.sample.P13nDialogWithDimMeasurePanel.Page", {
 
-		oPersonalizationDialog: null,
-		bShowResetEnabled: false,
-		bIsReseted: false,
+		oJSONModel: new JSONModel("test-resources/sap/m/demokit/sample/P13nDialogWithDimMeasurePanel/products.json"),
+		oDataInitial: {},
+		oDataBeforeOpen: {},
 
-		handleOK: function(oEvent) {
-			this._storeShowResetEnabled();
-			this.oPersonalizationDialog.close();
-		},
-
-		handleCancel: function(oEvent) {
-			this.oPersonalizationDialog.close();
-		},
-
-		handleReset: function() {
-			this.bIsReseted = true;
-			MessageToast.show("Reset button has been clicked", {
-				width: "auto"
+		onInit: function() {
+			var that = this;
+			this.oJSONModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			this.oJSONModel.attachRequestCompleted(function() {
+				that.oDataInitial = jQuery.extend(true, {}, this.getProperty("/"));
 			});
+		},
+
+		onOK: function(oEvent) {
+			this.oDataBeforeOpen = {};
+			oEvent.getSource().close();
+		},
+
+		onCancel: function(oEvent) {
+			this.oJSONModel.setProperty("/", jQuery.extend(true, [], this.oDataBeforeOpen));
+
+			this.oDataBeforeOpen = {};
+			oEvent.getSource().close();
+		},
+
+		onReset: function() {
+			this.oJSONModel.setProperty("/", jQuery.extend(true, [], this.oDataInitial));
 		},
 
 		onPersonalizationDialogPress: function() {
-			this._getDialog();
+			var oPersonalizationDialog = sap.ui.xmlfragment("sap.m.sample.P13nDialogWithDimMeasurePanel.PersonalizationDialog", this);
+			this.oJSONModel.setProperty("/ShowResetEnabled", this._isChangedDimMeasureItems());
+			oPersonalizationDialog.setModel(this.oJSONModel);
 
-			this.oPersonalizationDialog.setShowResetEnabled(this.bShowResetEnabled);
-			this.bIsReseted = false;
+			this.getView().addDependent(oPersonalizationDialog);
 
-			this.oPersonalizationDialog.open();
+			this.oDataBeforeOpen = jQuery.extend(true, {}, this.oJSONModel.getProperty("/"));
+			oPersonalizationDialog.open();
 		},
 
-		onAddColumnsItem: function() {
-			MessageToast.show("Event 'addColumnsItem' fired in order to move the selected column item", {
-				width: "auto"
+		onChangeChartType: function(oEvent) {
+			this.oJSONModel.setProperty("/SelectedChartType", oEvent.getParameter("chartTypeKey"));
+		},
+
+		onChangeDimMeasureItems: function(oEvent) {
+			var aMDimMeasureItems = oEvent.getParameter("items").map(function(oMChangedDimMeasureItem) {
+				return oMChangedDimMeasureItem;
 			});
+			this.oJSONModel.setProperty("/DimMeasureItems", aMDimMeasureItems);
 		},
 
-		onChangeColumnsItem: function() {
-			MessageToast.show("Event 'changeColumnsItem' fired in order to move the selected column item", {
-				width: "auto"
-			});
-		},
-
-		_storeShowResetEnabled: function() {
-			if (this.bIsReseted) {
-				this.bShowResetEnabled = false;
-			} else {
-				this.bShowResetEnabled = this.oPersonalizationDialog.getShowResetEnabled();
+		_isChangedDimMeasureItems: function() {
+			var fnGetUnion = function(aDataBase, aData) {
+				if (!aData) {
+					return jQuery.extend(true, [], aDataBase);
+				}
+				return jQuery.extend(true, [], aData);
+			};
+			var fnIsEqual = function(aDataBase, aData) {
+				if (!aData) {
+					return true;
+				}
+				if (aDataBase.length !== aData.length) {
+					return false;
+				}
+				var fnSort = function(a, b) {
+					if (a.visible === true && (b.visible === false || b.visible === undefined)) {
+						return -1;
+					} else if ((a.visible === false || a.visible === undefined) && b.visible === true) {
+						return 1;
+					} else if (a.visible === true && b.visible === true) {
+						if (a.index < b.index) {
+							return -1;
+						} else if (a.index > b.index) {
+							return 1;
+						} else {
+							return 0;
+						}
+					} else if ((a.visible === false || a.visible === undefined) && (b.visible === false || b.visible === undefined)) {
+						if (a.columnKey < b.columnKey) {
+							return -1;
+						} else if (a.columnKey > b.columnKey) {
+							return 1;
+						} else {
+							return 0;
+						}
+					}
+				};
+				aDataBase.sort(fnSort);
+				aData.sort(fnSort);
+				return JSON.stringify(aDataBase) === JSON.stringify(aData);
+			};
+			if (this.oDataInitial.SelectedChartType !== this.oJSONModel.getProperty("/SelectedChartType")) {
+				return true;
 			}
-		},
-
-		_getDialog: function() {
-			if (this.oPersonalizationDialog) {
-				return this.oPersonalizationDialog;
-			}
-
-			this.oPersonalizationDialog = sap.ui.xmlfragment("sap.m.sample.P13nDialogWithDimMeasurePanel.PersonalizationDialog", this);
-			this.getView().addDependent(this.oPersonalizationDialog);
-
-			// set explored app's demo model on this sample
-			this.getView().setModel(new JSONModel("test-resources/sap/m/demokit/sample/P13nDialogWithDimMeasurePanel/products.json"));
-			this.getView().setModel(new ResourceModel({
-				bundleName: "sap.m.sample.P13nDialogWithDimMeasurePanel.i18n.i18n"
-			}), "i18n");
-
-			// toggle compact style
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this.oPersonalizationDialog);
-
-			return this.oPersonalizationDialog;
+			var aDataTotal = fnGetUnion(this.oDataInitial.DimMeasureItems, this.oJSONModel.getProperty("/DimMeasureItems"));
+			var aDataInitialTotal = jQuery.extend(true, [], this.oDataInitial.DimMeasureItems);
+			return !fnIsEqual(aDataTotal, aDataInitialTotal);
 		}
-
 	});
 
 	return PageController;
-
 });
