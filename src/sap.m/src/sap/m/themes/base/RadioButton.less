@@ -39,6 +39,10 @@
 	background-color: @sapUiFieldBackground;
 	margin: 0.825rem;
 	padding: 1px; /* using padding here so that margin won't collide */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
 .sapMRbBLabel {
@@ -75,11 +79,9 @@
 }
 
 .sapMRbB .sapMRbBInn {
-	height: 0.5rem;
-	width: 0.5rem;
-	padding: 1px;
+	height: 0.625rem;
+	width: 0.625rem;
 	border-radius: 1rem;
-	margin: 0.1875rem;
 }
 
 .sapMRbHasLabel.sapMRb:focus:before {
@@ -154,9 +156,8 @@ html[data-sap-ui-browser^="ie"] .sapMRbB .sapMRbBInn {
 	}
 
 	.sapMRbB .sapMRbBInn {
-		height: 0.25rem;
-		width: 0.25rem;
-		margin: 0.15rem;
+		height: 0.375rem;
+		width: 0.375rem;
 	}
 
 	.sapMRbBLabel {
