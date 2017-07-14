@@ -154,7 +154,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * If the panel will expand, this is true.
 					 * If the panel will collapse, this is false.
 					 */
-					expand: {type : "boolean"}
+					expand: {type : "boolean"},
+
+					/**
+					 * Identifies whether the event is triggered by an user interaction or by calling setExpanded.
+					 * @since 1.50
+					 */
+					triggeredByInteraction: {type: "boolean"}
 				}
 			}
 		},
@@ -162,6 +168,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 	Panel.prototype.init = function () {
+
+		// identifies whether the last expand action is triggered by a user interaction or by calling setExpanded setter
+		this._bInteractiveExpand = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -230,6 +239,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Panel.prototype.setExpanded = function (bExpanded) {
+
 		if (bExpanded === this.getExpanded()) {
 			return this;
 		}
@@ -245,7 +255,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._toggleExpandCollapse();
 		this._toggleCssClasses();
-		this.fireExpand({ expand : bExpanded });
+		this.fireExpand({ expand: bExpanded, triggeredByInteraction: this._bInteractiveExpand });
+		this._bInteractiveExpand = false;
 
 		return this;
 	};
@@ -311,6 +322,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			decorative: false,
 			useIconTooltip: false,
 			press: function () {
+				that._bInteractiveExpand = true;
 				that.setExpanded(!that.getExpanded());
 			}
 		}).addStyleClass("sapMPanelExpandableIcon");
