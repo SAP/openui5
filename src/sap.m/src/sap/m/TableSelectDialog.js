@@ -459,7 +459,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @param {boolean} flag for enabling busy indicator
 	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
 	 */
-	TableSelectDialog.prototype.setBusy = function () {
+	TableSelectDialog.prototype.setBusy = function (bBusy) {
+		this._oSearchField.setEnabled(!bBusy);
+
 		// Overwrite setBusy as it should be handled in the "real" dialog
 		this._oDialog.setBusy.apply(this._oDialog, arguments);
 
@@ -861,22 +863,18 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Shows/hides a local busy indicator and hides/shows the list based on the parameter flag. For the first request, the search field is also hidden.
+	 * Shows/hides a local busy indicator, hides/shows the list based on the parameter flag and enables/disables the search field.
 	 * @private
 	 * @param {boolean} bBusy flag (true = show, false = hide)
 	 */
 	TableSelectDialog.prototype._setBusy = function (bBusy) {
 		if (this._iTableUpdateRequested) { // check if the event was caused by our control
 			if (bBusy) {
-				if (this._bFirstRequest) { // also hide the header bar for the first request
-					this._oSubHeader.$().css('display', 'none');
-				}
+				this._oSearchField.setEnabled(false);
 				this._oTable.addStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'inline-block');
 			} else {
-				if (this._bFirstRequest) { // also show the header bar again for the first request
-					this._oSubHeader.$().css('display', 'block');
-				}
+				this._oSearchField.setEnabled(true);
 				this._oTable.removeStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'none');
 			}
