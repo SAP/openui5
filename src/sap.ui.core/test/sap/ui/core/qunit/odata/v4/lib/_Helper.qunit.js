@@ -612,6 +612,10 @@ sap.ui.require([
 			assert.throws(function () {
 				_Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
 			}, new Error("Missing value for key property 'ID'"));
+
+			assert.strictEqual(
+				_Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance, true),
+				undefined);
 		});
 	});
 

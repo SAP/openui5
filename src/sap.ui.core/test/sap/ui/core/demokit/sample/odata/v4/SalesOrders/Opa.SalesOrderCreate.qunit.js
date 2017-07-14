@@ -178,30 +178,38 @@ sap.ui.require([
 		When.onTheMainPage.pressSetBindingContextButton();
 		Then.onTheMainPage.checkFavoriteProductID();
 
-		if (bRealOData) {
+		if (!bRealOData) {
+			// Some special/detailed filter and sorter tasks
+			// Tests made with mockdata to have stable data, -> this can not be tested manually
+			// because sort buttons/searchfield are not enabled for !oRealOData
+			// therefore the test are directly tiggered either with controller code or via
+			// ODLB.changeParameter API
+
 			// Filter and then sort: filter is not lost on sort
-			When.onTheMainPage.filterGrossAmount("1000");
+			When.onTheMainPage.filterGrossAmountViaAPI("1000");
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
-			When.onTheMainPage.sortByGrossAmount();
+			When.onTheMainPage.sortByGrossAmountViaController();
 			Then.onTheMainPage.checkFirstGrossAmountGreater("1000");
-			// Proper update of details on second sort (selection is kept)
 			When.onTheMainPage.selectFirstSalesOrder();
 			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
-			When.onTheMainPage.sortByGrossAmount();
-			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
+			When.onTheMainPage.sortByGrossAmountViaController(); //sort by sales order ID descending
+			Then.onTheMainPage.checkSalesOrderIdInDetails(false); // selection is kept
 			// Change filter via API (changeParameters)
-			When.onTheMainPage.sortByGrossAmount();
+			When.onTheMainPage.sortByGrossAmountViaController();
 			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(1);
 			Then.onTheMainPage.checkSalesOrderItemInRow(0);
-			// Sort via changeParameters
-			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID ascending
-			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
-			When.onTheMainPage.sortBySalesOrderID(); // sort by sales order ID descending
-			Then.onTheMainPage.checkSalesOrderIdInDetailsChanged();
-		}
+			// reset filter again (Note: resets also filter ItemPosition gt '0000000000')
+			When.onTheMainPage.filterSOItemsByProductIdWithChangeParameters(undefined);
 
-		if (!bRealOData) {
+
+			// Sort
+			When.onTheMainPage.sortBySalesOrderIDviaController(); // sort by sales order ID asc.
+			When.onTheMainPage.firstSalesOrderIsVisible(); // stores sales order ID in Opa context
+			When.onTheMainPage.sortBySalesOrderIDviaController(); // sort by sales order ID desc.
+			Then.onTheMainPage.checkSalesOrderIdInDetails(true); // selection lost
+
 			// Relative list bindings show correct data when switching to a different context
+			When.onTheMainPage.sortBySalesOrderIDviaController(); // sort to the initial order
 			When.onTheMainPage.selectSalesOrderWithId("0500000000");
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
@@ -220,9 +228,28 @@ sap.ui.require([
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000010");
 			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000010");
 			Then.onTheMainPage.checkSupplierPhoneNumber("0622734567");
+			// select the row that remains, so that it will be selected after the filtering
+			When.onTheMainPage.selectSalesOrderItemWithPosition("0000000020");
 			When.onTheMainPage.filterSalesOrderItemsByProductID("HT-1001");
 			Then.onTheMainPage.checkSalesOrderItemInRow(0, "0500000000", "0000000020");
 			Then.onTheMainPage.checkSupplierPhoneNumber("3088530");
+		}
+
+		if (bRealOData) {
+			// primitive sorter and filter tasks,
+			// -> probably not dependent on current sales orders in back end
+			When.onTheMainPage.sortBySalesOrderID(); // sort via ID ascending (initial order)
+			When.onTheMainPage.firstSalesOrderIsVisible(); //-> we expect first order on POS 0
+			When.onTheMainPage.sortBySalesOrderID(); // sort via ID descending
+			Then.onTheMainPage.checkSalesOrderIdInDetails(true); //selection lost
+			When.onTheMainPage.sortBySalesOrderID(); // no sort
+			When.onTheMainPage.sortByGrossAmount(); // sort by GrossAmount ascending
+			Then.onTheMainPage.checkSalesOrderIdInDetails(true);
+			When.onTheMainPage.sortByGrossAmount(); // sort by GrossAmount descending
+			Then.onTheMainPage.checkSalesOrderIdInDetails(true);
+			When.onTheMainPage.selectFirstSalesOrder(true); // remember GrossAmount of first item
+			When.onTheMainPage.filterGrossAmount(undefined); // filter by remembered GrossAmount
+			Then.onTheMainPage.checkSalesOrdersCount(0); // -> no items left because operator is GT
 		}
 
 		// delete the last created SalesOrder again

@@ -177,7 +177,7 @@ sap.ui.require([
 		QUnit.test("create _Requestor for odataVersion: " + sODataVersion, function (assert) {
 			this.mock(_Requestor).expects("create")
 				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
-					sinon.match.func, sODataVersion)
+					sinon.match.func, sinon.match.func, sODataVersion)
 				.returns({});
 
 			// code under test
@@ -264,21 +264,26 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("Model creates _Requestor", function (assert) {
-		var oExpectedCreate = this.mock(_Requestor).expects("create"),
+		var oExpectedBind,
+			oExpectedCreate = this.mock(_Requestor).expects("create"),
+			fnFetchEntityContainer = function () {},
 			oModel,
 			oRequestor = {},
 			fnSubmitAuto = function () {};
 
 		oExpectedCreate
 			.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, {"sap-client" : "123"},
-				sinon.match.func, "4.0")
+				sinon.match.same(fnFetchEntityContainer), sinon.match.func, "4.0")
 			.returns(oRequestor);
+		oExpectedBind = this.mock(ODataMetaModel.prototype.fetchEntityContainer).expects("bind")
+			.returns(fnFetchEntityContainer);
 
 		// code under test
 		oModel = createModel("?sap-client=123");
 
 		assert.ok(oModel instanceof Model);
 		assert.strictEqual(oModel.oRequestor, oRequestor);
+		assert.strictEqual(oExpectedBind.firstCall.args[0], oModel.oMetaModel);
 
 		this.mock(oModel._submitBatch).expects("bind")
 			.withExactArgs(sinon.match.same(oModel), "$auto")
@@ -287,8 +292,8 @@ sap.ui.require([
 			.withExactArgs(fnSubmitAuto);
 
 		// code under test - call fnOnCreateGroup
-		oExpectedCreate.args[0][3]("$auto");
-		oExpectedCreate.args[0][3]("foo");
+		oExpectedCreate.args[0][4]("$auto");
+		oExpectedCreate.args[0][4]("foo");
 	});
 
 	//*********************************************************************************************

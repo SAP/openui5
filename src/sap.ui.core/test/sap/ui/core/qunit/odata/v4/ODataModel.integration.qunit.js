@@ -42,6 +42,19 @@ sap.ui.require([
 	}
 
 	/**
+	 * Creates a V4 OData model for V2 service <code>GWSAMPLE_BASIC</code>.
+	 *
+	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
+	 *   potentially overwrite the parameters groupId, operationMode, serviceUrl,
+	 *   synchronizationMode which are set by default
+	 * @returns {ODataModel} The model
+	 */
+	function createModelForV2SalesOrderService(mModelParameters) {
+		mModelParameters = jQuery.extend({}, {odataVersion : "2.0"}, mModelParameters);
+		return createModel("/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", mModelParameters);
+	}
+
+	/**
 	 * Creates a V4 OData model for <code>TEA_BUSI</code>.
 	 *
 	 * @param {object} [mModelParameters] Map of parameters for model construction to enhance and
@@ -108,6 +121,8 @@ sap.ui.require([
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
 			TestUtils.setupODataV4Server(this.oSandbox, {
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
+					: {source : "GWSAMPLE_BASIC_toBeReplaced.xml"}, // TODO replace with V2 metadata
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 					: {source : "metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
@@ -1387,7 +1402,7 @@ sap.ui.require([
 		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
 				"value" : [{
 					"Note" : "foo",
-					"SalesOrderID" : 42
+					"SalesOrderID" : "42"
 				}]
 			})
 			.expectChange("note", ["foo"]);
@@ -2549,6 +2564,96 @@ sap.ui.require([
 				return that.waitForChanges(assert);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Check that the context paths use key predicates if the key properties are delivered
+	// in the response. Check that an expand spanning a complex type does not lead to failures.
+	QUnit.test("Context Paths Using Key Predicates", function (assert) {
+		var sView = '\
+<Table id="table" items="{path : \'/EMPLOYEES\',\
+		parameters : {$expand : {\'LOCATION/City/EmployeesInCity\' : {$select : [\'Name\']}}, \
+		$select : [\'ID\', \'Name\']}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="text" text="{Name}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+			this.expectRequest("EMPLOYEES?$expand=LOCATION/City/EmployeesInCity($select=Name)" +
+						"&$select=ID,Name&$skip=0&$top=100", {
+					"value" : [{
+						"ID" : "1",
+						"Name" : "Frederic Fall",
+						"LOCATION" : {
+							"City" : {
+								"EmployeesInCity" :
+									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
+							}
+						}
+					}, {
+						"ID" : "2",
+						"Name" : "Jonathan Smith",
+						"LOCATION" : {
+							"City" : {
+								"EmployeesInCity" :
+									[{"Name" : "Frederic Fall"}, {"Name" : "Jonathan Smith"}]
+							}
+						}
+					}]
+				}).expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+
+			return this.createView(assert, sView).then(function () {
+				assert.deepEqual(that.oView.byId("table").getItems().map(function (oItem) {
+					return oItem.getBindingContext().getPath();
+				}), ["/EMPLOYEES('1')", "/EMPLOYEES('2')"]);
+			});
+		}
+	);
+
+	//*********************************************************************************************
+	// Scenario: test conversion of $select and $expand for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: select in expand", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{path :\'/SalesOrderSet(\\\'0500000001\\\')\', \
+		parameters : {\
+			$expand : {ToLineItems : {$select : \'ItemPosition\'}}, \
+			$select : \'SalesOrderID\'\
+		}}">\
+	<Text id="id" text="{path : \'SalesOrderID\', type : \'sap.ui.model.odata.type.String\'}" />\
+	<Table id="table" items="{ToLineItems}">\
+		<items>\
+			<ColumnListItem>\
+				<cells>\
+					<Text id="item" text="{path : \'ItemPosition\',\
+						type : \'sap.ui.model.odata.type.String\'}" />\
+				</cells>\
+			</ColumnListItem>\
+		</items>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
+				"&$select=ToLineItems/ItemPosition,SalesOrderID",
+			{
+				"SalesOrderID" : "0500000001",
+				"ToLineItems" : [
+					{"ItemPosition" : "0000000010"},
+					{"ItemPosition" : "0000000020"},
+					{"ItemPosition" : "0000000030"}
+				]
+			})
+			.expectChange("id", "0500000001")
+			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
+
+		// code under test
+		return this.createView(assert, sView, createModelForV2SalesOrderService());
 	});
 });
 //TODO test bound action

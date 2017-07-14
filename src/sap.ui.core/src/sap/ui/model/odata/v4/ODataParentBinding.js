@@ -432,6 +432,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches the type of the given model path from the metadata.
+	 *
+	 * @param {string} sPath
+	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with the type of the object at the given path.
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.fetchType = function (sPath) {
+		var oMetaModel = this.oModel.getMetaModel();
+
+		return oMetaModel.fetchObject(oMetaModel.getMetaPath("/" + sPath + "/"));
+	};
+
+	/**
 	 * Returns the query options for the given path relative to this binding. Uses the options
 	 * resulting from the binding parameters or the options inherited from the parent binding by
 	 * using {@link Context#getQueryOptionsForPath}.
@@ -473,6 +489,44 @@ sap.ui.define([
 			return {};
 		}
 		return oContext.getQueryOptionsForPath(_Helper.buildPath(this.sPath, sPath));
+	};
+
+	/**
+	 * Returns the relative path for a given absolute path by stripping off the binding's resolved
+	 * path. Note that the resulting path may start with a key predicate.
+	 *
+	 * Example: (The binding's resolved path is "/foo/bar"):
+	 * /foo/bar/baz -> baz
+	 * /foo/bar('baz') -> ('baz')
+	 * /foo -> undefined if the binding is relative, an Error is thrown otherwise
+	 *
+	 * @param {string} sPath
+	 *   An absolute path
+	 * @returns {string}
+	 *   The path relative to the binding's path or <code>undefined</code> if the path is not a sub
+	 *   path and the binding is relative
+	 * @throws {Error}
+	 *   If the binding is absolute and the path does not start with the binding's path
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getRelativePath = function (sPath) {
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+
+		if (sPath.indexOf(sResolvedPath) < 0) {
+			if (this.bRelative) {
+				// this path doesn't match, but some parent binding might possibly fulfill it
+				return undefined;
+			}
+			// this path definitely does not match
+			throw new Error(sPath + ": invalid path, must start with " + this.sPath);
+		}
+		sPath = sPath.slice(sResolvedPath.length);
+
+		if (sPath[0] === "/") {
+			sPath = sPath.slice(1);
+		}
+		return sPath;
 	};
 
 	/**
@@ -666,7 +720,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
 		fnErrorCallback, sEditUrl, sEntityPath) {
-		var oCache, sResolvedPath;
+		var oCache;
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("PATCH request not allowed");
@@ -675,9 +729,8 @@ sap.ui.define([
 		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-				sEntityPath.slice(sResolvedPath.length + 1));
+				this.getRelativePath(sEntityPath));
 		}
 
 		return this.oContext.getBinding()

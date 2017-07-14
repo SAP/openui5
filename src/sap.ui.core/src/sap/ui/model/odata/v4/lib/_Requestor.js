@@ -7,8 +7,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"./_Batch",
 	"./_Helper",
+	"./_SyncPromise",
 	"./_V2Requestor"
-], function (jQuery, _Batch, _Helper, asV2Requestor) {
+], function (jQuery, _Batch, _Helper, _SyncPromise, asV2Requestor) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -63,13 +64,18 @@ sap.ui.define([
 	 * @param {object} [mQueryParams={}]
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
+	 * @param {function} fnFetchEntityContainer
+	 *   A function that returns a _SyncPromise which resolves with the metadata entity
+	 *   container
 	 * @param {function (string)} [fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer,
+			fnOnCreateGroup) {
 		this.mBatchQueue = {};
+		this.fnFetchEntityContainer = fnFetchEntityContainer;
 		this.mHeaders = mHeaders || {};
 		this.fnOnCreateGroup = fnOnCreateGroup;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
@@ -309,7 +315,7 @@ sap.ui.define([
 			bSortExpandSelect) {
 		var aExpandOptions = [];
 
-		this.convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
+		this.doConvertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
 			aExpandOptions.push(sOptionName + '=' + vOptionValue);
 		}, undefined, bSortExpandSelect);
 		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
@@ -335,7 +341,7 @@ sap.ui.define([
 		if (!mQueryOptions) {
 			return undefined;
 		}
-		this.convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
+		this.doConvertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
 			mConvertedQueryOptions[sKey] = vValue;
 		}, bDropSystemQueryOptions, bSortExpandSelect);
 		return mConvertedQueryOptions;
@@ -344,6 +350,7 @@ sap.ui.define([
 	/**
 	 * Converts the known OData system query options from map or array notation to a string. All
 	 * other parameters are simply passed through.
+	 * May be overwritten for other OData service versions.
 	 *
 	 * @param {object} mQueryOptions The query options
 	 * @param {function(string,any)} fnResultHandler
@@ -353,7 +360,7 @@ sap.ui.define([
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
 	 */
-	Requestor.prototype.convertSystemQueryOptions = function (mQueryOptions, fnResultHandler,
+	Requestor.prototype.doConvertSystemQueryOptions = function (mQueryOptions, fnResultHandler,
 			bDropSystemQueryOptions, bSortExpandSelect) {
 		var that = this;
 
@@ -387,11 +394,11 @@ sap.ui.define([
 	 *
 	 * @param {object} oResponsePayload
 	 *   The OData response payload
-	 * @returns {object}
-	 *   The OData V4 response payload
+	 * @returns {_SyncPromise}
+	 *   A promise resolving with the OData V4 response payload
 	 */
-	Requestor.prototype.doConvertResponseToV4 = function (oResponsePayload) {
-		return oResponsePayload;
+	Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
+		return _SyncPromise.resolve(oResponsePayload);
 	};
 
 	/**
@@ -613,12 +620,11 @@ sap.ui.define([
 				that.mHeaders["X-CSRF-Token"]
 					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
 				if (bIsBatch) {
-					oPayload = _Batch.deserializeBatchResponse(
-						jqXHR.getResponseHeader("Content-Type"), oPayload);
+					fnResolve(_Batch.deserializeBatchResponse(
+						jqXHR.getResponseHeader("Content-Type"), oPayload));
 				} else {
-					oPayload = that.doConvertResponseToV4(oPayload);
+					that.doFetchV4Response(oPayload).then(fnResolve, fnReject);
 				}
-				fnResolve(oPayload);
 			}, function (jqXHR, sTextStatus, sErrorMessage) {
 				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
 				if (!bIsFreshToken && jqXHR.status === 403
@@ -742,8 +748,7 @@ sap.ui.define([
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
 					oResponse = JSON.parse(vResponse.responseText);
-					oResponse = that.doConvertResponseToV4(oResponse);
-					vRequest.$resolve(oResponse);
+					that.doFetchV4Response(oResponse).then(vRequest.$resolve, vRequest.$reject);
 				} else {
 					vRequest.$resolve();
 				}
@@ -915,6 +920,9 @@ sap.ui.define([
 		 * @param {object} mQueryParams
 		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 		 *   request the CSRF token
+		 * @param {function} fnFetchEntityContainer
+		 *   A function that returns a _SyncPromise which resolves with the metadata entity
+		 *   container
 		 * @param {function (string)} [fnOnCreateGroup]
 		 *   A callback function that is called with the group name as parameter when the first
 		 *   request is added to a group
@@ -923,8 +931,10 @@ sap.ui.define([
 		 * @returns {object}
 		 *   A new <code>_Requestor</code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup, sODataVersion) {
-			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
+		create : function (sServiceUrl, mHeaders, mQueryParams, fnFetchEntityContainer,
+				fnOnCreateGroup, sODataVersion) {
+			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams,
+					fnFetchEntityContainer, fnOnCreateGroup);
 
 			if (sODataVersion === "2.0") {
 				asV2Requestor(oRequestor);

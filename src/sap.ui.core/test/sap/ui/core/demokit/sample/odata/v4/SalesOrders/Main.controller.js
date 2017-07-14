@@ -354,7 +354,6 @@ sap.ui.define([
 			oBinding.filter(sQuery
 				? new Filter("GrossAmount", FilterOperator.GT, sQuery)
 				: null);
-			this._setSalesOrderBindingContext();
 		},
 
 		onFilterItems : function (oEvent) {

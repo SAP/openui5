@@ -2089,7 +2089,7 @@ sap.ui.require([
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
-				oContextMock.expects("fetchAbsoluteValue")
+				oContextMock.expects("fetchValue")
 					.withExactArgs(oRequest.path || oFixture.dataPath)
 					.returns(_SyncPromise.resolve(oEntityInstance));
 				oHelperMock.expects("getKeyPredicate")
@@ -2217,7 +2217,7 @@ sap.ui.require([
 							oEntityTypeName = oFixture.fetchPredicates[sPath];
 
 						// Note: the entity instance is delivered asynchronously
-						oContextMock.expects("fetchAbsoluteValue")
+						oContextMock.expects("fetchValue")
 							.withExactArgs(sPath)
 							.returns(_SyncPromise.resolve(Promise.resolve(oEntityInstance)));
 						oHelperMock.expects("getKeyPredicate")
@@ -2250,7 +2250,7 @@ sap.ui.require([
 
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(_SyncPromise.resolve(mScope));
-		this.mock(oContext).expects("fetchAbsoluteValue").withExactArgs("/TEAMS/-1")
+		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS/-1")
 			.returns(_SyncPromise.resolve({"@$ui5.transient" : "update"}));
 
 		// code under test
@@ -2309,7 +2309,7 @@ sap.ui.require([
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(_SyncPromise.resolve(mScope));
 			if ("instance" in oFixture) {
-				this.mock(oContext).expects("fetchAbsoluteValue")
+				this.mock(oContext).expects("fetchValue")
 					.returns(_SyncPromise.resolve(oFixture.instance));
 			}
 			if (oFixture.warning) {

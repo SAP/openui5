@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TODO: Replace with the V2 $metadata document as soon as metadata converter is available -->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:DataServices>
+		<!-- Changed original namespace com.sap.gateway.default.zui5_edm_types_v4.v0001 to match V2 data response namespace -->
+		<Schema Namespace="com.sap.ui5.OData"
+				Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="EdmTypes">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="1" />
+				<Property Name="Binary" Type="Edm.Binary" />
+				<Property Name="Boolean" Type="Edm.Boolean" />
+				<Property Name="Byte" Type="Edm.Byte" />
+				<Property Name="Date" Type="Edm.Date" />
+				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset" />
+				<Property Name="Decimal" Type="Edm.Decimal" Precision="31" Scale="14" />
+				<Property Name="DigitSequence" Type="Edm.String" MaxLength="7" />
+				<Property Name="Double" Type="Edm.Double" />
+				<Property Name="Duration" Type="Edm.Duration" />
+				<Property Name="GlobalUID" Type="Edm.Guid" />
+				<Property Name="Int16" Type="Edm.Int16" />
+				<Property Name="Int32" Type="Edm.Int32" />
+				<Property Name="Int64" Type="Edm.Int64" />
+				<Property Name="SByte" Type="Edm.SByte" />
+				<Property Name="Float" Type="Edm.Single" />
+				<Property Name="Single" Type="Edm.Single" />
+				<Property Name="String" Type="Edm.String" />
+				<Property Name="String40" Type="Edm.String" MaxLength="40" />
+				<Property Name="TimeOfDay" Type="Edm.TimeOfDay" />
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="EdmTypesCollection"
+					EntityType="com.sap.ui5.OData.EdmTypes" />
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
