@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
-		oAdaptationResult,
+		oInfoToMerge,
 		aCurrentViewPath;
 
 
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		this._oBackButtonInfo = this._detectBackButton();
 
 		if (this._oBackButtonInfo) {
-			bHideBackButton = (this._oBackButtonInfo.visible === true);
+			bHideBackButton = this._oBackButtonInfo.oControl.getVisible();
 			this._oBackButtonInfo.oControl.toggleStyleClass("sapF2AdaptedNavigation", bHideBackButton);
 			bBackButtonHidden = true;
 		}
@@ -173,7 +173,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 				oBackButton = aBeginContent[0];
 				return {
 					id: oBackButton.getId(),
-					visible: oBackButton.getVisible(),
 					oControl: oBackButton,
 					sChangeEventId: "_change"
 				};
@@ -235,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		/* cache of intermediate adaptation results
 		 of the current component
 		 used in case user re-visits an already adapted view */
-		oAdaptationResult = {
+		oInfoToMerge = {
 			aViewTitles: {},
 			aViewSubTitles: {},
 			aViewBackButtons: {},
@@ -319,7 +318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			return this._adaptHeader(oControl, oAdaptOptions);
 		}
 		if (oControl.getParent() && isInstanceOf(oControl.getParent(), "sap/m/NavContainer")) {
-			return this._getCachedAdaptationResult(oControl.getId()); //if already adapted in earlier navigation
+			return this._getCachedInfoToMerge(oControl.getId()); //if already adapted in earlier navigation
 		}
 	};
 
@@ -360,11 +359,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 	Fiori20Adapter._checkHasListener = function(sKey) {
-		return oAdaptationResult.aChangeListeners[sKey];
+		return oInfoToMerge.aChangeListeners[sKey];
 	};
 
 	Fiori20Adapter._setHasListener = function(sKey, oValue) {
-		oAdaptationResult.aChangeListeners[sKey] = oValue;
+		oInfoToMerge.aChangeListeners[sKey] = oValue;
 	};
 
 	// attaches listener for changes in the adaptable content
@@ -498,14 +497,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	};
 
 
-	Fiori20Adapter._getCachedAdaptationResult = function(sViewId) {
+	Fiori20Adapter._getCachedInfoToMerge = function(sViewId) {
 
-		var oBackButton = (oAdaptationResult.aViewBackButtons[sViewId] && oAdaptationResult.aViewBackButtons[sViewId].visible) //skip currently invisible buttons as the app has currently excluded them from the app logic
-			? oAdaptationResult.aViewBackButtons[sViewId].oControl
+		var oBackButton = (oInfoToMerge.aViewBackButtons[sViewId]) //skip currently invisible buttons as the app has currently excluded them from the app logic
+			? oInfoToMerge.aViewBackButtons[sViewId].oControl
 			: undefined;
 		return {
-			oTitleInfo: oAdaptationResult.aViewTitles[sViewId],
-			oSubTitleInfo: oAdaptationResult.aViewSubTitles[sViewId],
+			oTitleInfo: oInfoToMerge.aViewTitles[sViewId],
+			oSubTitleInfo: oInfoToMerge.aViewSubTitles[sViewId],
 			oBackButton: oBackButton
 		};
 	};
@@ -585,20 +584,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 		/* cache the identified title */
 		if (oAdaptedContent.oTitleInfo) {
-			oAdaptationResult.aViewTitles[sTopViewId] = oAdaptedContent.oTitleInfo;
-			this._registerTextChangeListener(oAdaptationResult.aViewTitles, sTopViewId, oAdaptOptions);
+			oInfoToMerge.aViewTitles[sTopViewId] = oAdaptedContent.oTitleInfo;
+			this._registerTextChangeListener(oInfoToMerge.aViewTitles, sTopViewId, oAdaptOptions);
 		}
 
 		/* cache the identified subTitle */
 		if (oAdaptedContent.oSubTitleInfo) {
-			oAdaptationResult.aViewSubTitles[sTopViewId] = oAdaptedContent.oSubTitleInfo;
-			this._registerTextChangeListener(oAdaptationResult.aViewSubTitles, sTopViewId, oAdaptOptions);
+			oInfoToMerge.aViewSubTitles[sTopViewId] = oAdaptedContent.oSubTitleInfo;
+			this._registerTextChangeListener(oInfoToMerge.aViewSubTitles, sTopViewId, oAdaptOptions);
 		}
 
 		/* cache the identified backButton */
 		if (oAdaptedContent.oBackButtonInfo) {
-			oAdaptationResult.aViewBackButtons[sTopViewId] = oAdaptedContent.oBackButtonInfo;
-			this._registerVisibilityChangeListener(oAdaptationResult.aViewBackButtons, sTopViewId, oAdaptOptions);
+			if (oAdaptedContent.oBackButtonInfo.oControl.getVisible()) {
+				oInfoToMerge.aViewBackButtons[sTopViewId] = oAdaptedContent.oBackButtonInfo;
+			}
+			this._registerVisibilityChangeListener(oAdaptedContent.oBackButtonInfo, oInfoToMerge.aViewBackButtons, sTopViewId, oAdaptOptions);
 		}
 
 		return oAdaptedContent;
@@ -608,7 +609,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 		var oTitleInfo = aTitleInfoCache[sViewId]; //get the cached titleInfo for the given view
 
-		if (oTitleInfo && oTitleInfo.oControl && oTitleInfo.sChangeEventId && !oAdaptationResult.aChangeListeners[oTitleInfo.id]) {
+		if (oTitleInfo && oTitleInfo.oControl && oTitleInfo.sChangeEventId && !oInfoToMerge.aChangeListeners[oTitleInfo.id]) {
 
 			var fnChangeListener = function (oEvent) {
 				var oTitleInfo = aTitleInfoCache[sViewId];
@@ -617,37 +618,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			}.bind(this);
 
 			oTitleInfo.oControl.attachEvent(oTitleInfo.sChangeEventId, fnChangeListener);
-			oAdaptationResult.aChangeListeners[oTitleInfo.id] = fnChangeListener;
+			oInfoToMerge.aChangeListeners[oTitleInfo.id] = fnChangeListener;
 		}
 	};
 
-	Fiori20Adapter._registerVisibilityChangeListener = function(aControlInfoCache, sViewId, oAdaptOptions) {
+	Fiori20Adapter._registerVisibilityChangeListener = function(oControlInfo, aControlInfoCache, sViewId, oAdaptOptions) {
 
-		var oControlInfo = aControlInfoCache[sViewId]; //get the cached control info for the given view
+		var bVisible;
 
-		if (oControlInfo && oControlInfo.oControl && oControlInfo.sChangeEventId && !oAdaptationResult.aChangeListeners[oControlInfo.id]) {
+		if (oControlInfo && oControlInfo.oControl && oControlInfo.sChangeEventId && !oInfoToMerge.aChangeListeners[oControlInfo.id]) {
 
 			var fnChangeListener = function (oEvent) {
-				var oControlInfo = aControlInfoCache[sViewId];
-				oControlInfo.visible = oEvent.getParameter("newValue"); //actualize the value
+
+				bVisible = oEvent.getParameter("newValue"); //actualize the value
+				if (!bVisible) {
+					jQuery.each(aControlInfoCache, function(iIndex, oCachedControlInfo) {
+						if (oCachedControlInfo.oControl.getId() === oControlInfo.oControl.getId()) {
+							delete aControlInfoCache[iIndex];
+						}
+					});
+				}
 
 				var oParentControl = oControlInfo.oControl.getParent();
 				if (HeaderAdapter._isAdaptableHeader(oParentControl)) { // the parent is still an adaptable header
-					new HeaderAdapter(oParentControl, oAdaptOptions).adapt(); // re-adapt as visibility of inner content changed
+					Fiori20Adapter._adaptHeader(oParentControl, oAdaptOptions); // re-adapt as visibility of inner content changed
 					this._fireViewChange(sViewId, oAdaptOptions);
 				}
 			}.bind(this);
 
 			oControlInfo.oControl.attachEvent(oControlInfo.sChangeEventId, fnChangeListener);
-			oAdaptationResult.aChangeListeners[oControlInfo.id] = fnChangeListener;
+			oInfoToMerge.aChangeListeners[oControlInfo.id] = fnChangeListener;
 		}
 	};
 
 	Fiori20Adapter._fireViewChange = function(sViewId, oAdaptOptions) {
-		var oAdaptationResult = this._getCachedAdaptationResult(sViewId);
-		oAdaptationResult.sViewId = sViewId;
-		oAdaptationResult.oAdaptOptions = oAdaptOptions;
-		oEventProvider.fireEvent("adaptedViewChange", oAdaptationResult);
+		var oToMerge = this._getCachedInfoToMerge(sViewId);
+		oToMerge.sViewId = sViewId;
+		oToMerge.oAdaptOptions = oAdaptOptions;
+		oEventProvider.fireEvent("adaptedViewChange", oToMerge);
 	};
 
 
