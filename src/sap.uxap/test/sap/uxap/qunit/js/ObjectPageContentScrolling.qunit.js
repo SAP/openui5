@@ -114,6 +114,37 @@
 		}, 1000); //dom calc delay
 	});
 
+	QUnit.test("Deleting the above section preserves the selected section position", function (assert) {
+
+		var done = assert.async();
+		var ObjectPageContentScrollingView = sap.ui.xmlview("UxAP-objectPageContentScrolling", {
+			viewName: "view.UxAP-ObjectPageContentScrolling"
+		});
+		var oObjectPage = ObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oFirstSection = ObjectPageContentScrollingView.byId("firstSection"),
+			oThirdSection = ObjectPageContentScrollingView.byId("thirdSection"),
+			iScrollPositionAfterRemove,
+			iExpectedPositionAfterRemove;
+
+		oObjectPage.setSelectedSection(oThirdSection.getId());
+
+		ObjectPageContentScrollingView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+
+		setTimeout(function() {
+			oObjectPage.removeSection(oFirstSection);
+			setTimeout(function() {
+				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
+				iExpectedPositionAfterRemove = jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top; // top of third section content
+				assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
+				ObjectPageContentScrollingView.destroy();
+				oFirstSection.destroy();
+				done();
+			}, 1000); // throttling delay
+		}, 1000); //dom calc delay
+	});
+
 	QUnit.test("Deleting the bellow section preserves the scroll position", function (assert) {
 
 		var done = assert.async();
