@@ -48,34 +48,33 @@
 								expandFirstLevel="true"
 								rows="{path: '/treeViewModel'}"
 								cellClick="onCellClick"
-								rowHeight="24"
+								class="sapUiSizeCondensed"
 								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
 								visibleRowCountMode="Auto"
-								selectionBehavior="RowSelector">
+								selectionBehavior="RowSelector"
+								rowActionCount="1">
 							<t:columns>
 								<t:Column label="Rules">
 									<t:template>
-										<m:Text text="{name}"></m:Text>
+										<m:Text text="{name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column label="Categories"
 										  width="10rem">
 									<t:template>
-										<m:Text text="{categories}"></m:Text>
+										<m:Text text="{categories}" wrapping="false"/>
 									</t:template>
 								</t:Column>
-								<t:Column width="60px" label="Actions">
-								<t:template>
+							</t:columns>
+							<t:rowActionTemplate>
 									<t:RowAction>
 										<t:items>
-										<t:RowActionItem icon="sap-icon://edit" press="editRule"  visible="{= ${libName} === 'temporary'}"></t:RowActionItem>
-										<t:RowActionItem icon="sap-icon://delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}"></t:RowActionItem>
-										<t:RowActionItem icon="sap-icon://copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}"></t:RowActionItem>
+											<t:RowActionItem icon="sap-icon://edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
-								</t:template>
-								</t:Column>
-							</t:columns>
+							</t:rowActionTemplate>
 						</t:TreeTable>
 					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'availableLibraries' }">
 						<m:List
