@@ -2715,7 +2715,7 @@ sap.ui.define([
 		// }
 
 		var aGrids = this._oConditionsGrid.getContent();
-		var n = this._aConditionsFields.length - 1;
+		var n = this._aConditionsFields.length;
 		var newIndex = n;
 		if (oRangeInfo.name === "Tablet") {
 			newIndex = 5;
