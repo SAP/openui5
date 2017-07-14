@@ -19,8 +19,10 @@ sap.ui.define([
 							originalTitle: "Standard",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: true
+							originalFavorite: true,
+							readOnly: true,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "1",
 							title: "One",
@@ -28,8 +30,10 @@ sap.ui.define([
 							originalTitle: "One",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "2",
 							title: "Two",
@@ -37,8 +41,10 @@ sap.ui.define([
 							author: "B",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "3",
 							title: "Three",
@@ -46,56 +52,70 @@ sap.ui.define([
 							global: true,
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: true
+							originalFavorite: true,
+							readOnly: true,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "4",
 							title: "Four",
 							originalTitle: "Four",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "5",
 							title: "Five",
 							originalTitle: "Five",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "6",
 							title: "Six",
 							originalTitle: "Six",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "7",
 							title: "Seven",
 							originalTitle: "Seven",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "8",
 							title: "Eight",
 							originalTitle: "Eight",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: true
+							originalFavorite: true,
+							readOnly: true,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "9",
 							title: "Nine",
 							originalTitle: "Nine",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}
 					]
 				},
@@ -112,81 +132,100 @@ sap.ui.define([
 							originalTitle: "Standard",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: true
+							originalFavorite: true,
+							readOnly: true,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "1",
 							title: "ONE",
 							originalTitle: "ONE",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: true
+							originalFavorite: true,
+							readOnly: true,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "2",
 							title: "TWO",
 							originalTitle: "TWO",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: true
+							originalFavorite: true,
+							readOnly: true,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "3",
 							title: "THREE",
 							originalTitle: "THREE",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "4",
 							title: "FOUR",
 							originalTitle: "FOUR",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "5",
 							title: "FIVE",
 							originalTitle: "FIVE",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "6",
 							title: "SIX",
 							originalTitle: "SIX",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "7",
 							title: "SEVEN",
 							originalTitle: "SEVEN",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "8",
 							title: "EIGHT",
 							originalTitle: "EIGHT",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
-						// initialExecuteOnSelection:
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}, {
 							key: "9",
 							title: "NINE",
 							originalTitle: "NINE",
 							toBeDeleted: false,
 							favorite: true,
-							toBeFavorite: true,
-							readOnly: false
+							originalFavorite: true,
+							readOnly: false,
+							executeOnSelect: false,
+							originalExecuteOnSelect: false
 						}
 					]
 				}
@@ -215,16 +254,30 @@ sap.ui.define([
 			jQuery.sap.log.error("\n" + sMessage);
 		},
 		onManage: function(oEvent) {
-// var params = oEvent.getParameters();
-// var renamed = params.renamed;
-// var deleted = params.deleted;
-// var exe = params.exe;
 
 			var oModel = this.oVM.getModel("$FlexVariants");
 			var oData = this.oVM.getBindingContext("$FlexVariants").getObject();
 
 			oData["variants"] = oData["variants"].filter(function(oItem) {
 				return oItem.toBeDeleted === false;
+			});
+
+			oData["variants"].forEach(function(oItem) {
+				if (oItem.title !== oItem.originalTitle) {
+					oItem.originalTitle = oItem.title;
+				}
+
+				if (oItem.executeOnSelect !== oItem.originalExecuteOnSelect) {
+					oItem.originalExecuteOnSelect = oItem.executeOnSelect;
+				}
+
+				if (oItem.executeOnSelect !== oItem.originalExecuteOnSelect) {
+					oItem.originalExecuteOnSelect = oItem.executeOnSelect;
+				}
+
+				if (oItem.favorite !== oItem.originalFavorite) {
+					oItem.originalFavorite = oItem.favorite;
+				}
 			});
 
 			oModel.checkUpdate(true);

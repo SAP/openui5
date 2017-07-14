@@ -42,7 +42,7 @@
 							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
-							toBeFavorite: true
+							originalFavorite: true
 						}, {
 							key: "1",
 							title: "One",
@@ -51,7 +51,7 @@
 							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
-							toBeFavorite: true
+							originalFavorite: true
 						}, {
 							key: "2",
 							title: "Two",
@@ -60,7 +60,7 @@
 							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
-							toBeFavorite: true
+							originalFavorite: true
 						}, {
 							key: "3",
 							title: "Three",
@@ -69,7 +69,7 @@
 							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
-							toBeFavorite: true
+							originalFavorite: true
 						}, {
 							key: "4",
 							title: "Four",
@@ -78,7 +78,7 @@
 							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
-							toBeFavorite: true
+							originalFavorite: true
 						}
 					]
 				}
@@ -339,18 +339,27 @@
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
 		this.oVariantManagement.attachManage(function(oEvent) {
-			var aDelItems = oEvent.getParameters().deleted;
+			var aDelItems = [], aRenamedItems = [];
+			var oData = this.oVariantManagement.getBindingContext("$FlexVariants").getObject();
+
+			oData["variants"].forEach(function(oItem) {
+				if (oItem.toBeDeleted) {
+					aDelItems.push(oItem.key);
+				} else if (oItem.title !== oItem.originalTitle) {
+					aRenamedItems.push(oItem.key);
+				}
+			});
+
 			assert.ok(aDelItems);
 			assert.equal(aDelItems.length, 2);
 			assert.equal(aDelItems[0], "1");
 			assert.equal(aDelItems[1], "4");
 
-			var aRenamedItems = oEvent.getParameters().renamed;
 			assert.ok(aRenamedItems);
 			assert.equal(aRenamedItems.length, 1);
-			assert.equal(aRenamedItems[0].key, "3");
-			assert.equal(aRenamedItems[0].name, "New 3");
-		});
+			assert.equal(aRenamedItems[0], "3");
+			assert.equal(oData["variants"][aRenamedItems[0]].title, "New 3");
+		}.bind(this));
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
@@ -381,24 +390,39 @@
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 
 		this.oVariantManagement.attachManage(function(oEvent) {
-			var aDelItems = oEvent.getParameters().deleted;
+
+			var aDelItems = [], aRenamedItems = [], aFavItems = [];
+
+			var oData = this.oVariantManagement.getBindingContext("$FlexVariants").getObject();
+
+			oData["variants"].forEach(function(oItem) {
+				if (oItem.toBeDeleted) {
+					aDelItems.push(oItem.key);
+				} else {
+					if (oItem.title !== oItem.originalTitle) {
+						aRenamedItems.push(oItem.key);
+					}
+					if (oItem.favorite !== oItem.originalFavorite) {
+						aFavItems.push(oItem.key);
+					}
+				}
+			});
+
 			assert.ok(aDelItems);
 			assert.equal(aDelItems.length, 2);
 			assert.equal(aDelItems[0], "1");
 			assert.equal(aDelItems[1], "2");
 
-			var aRenamedItems = oEvent.getParameters().renamed;
 			assert.ok(aRenamedItems);
 			assert.equal(aRenamedItems.length, 1);
-			assert.equal(aRenamedItems[0].key, "3");
-			assert.equal(aRenamedItems[0].name, "New 3");
+			assert.equal(aRenamedItems[0], "3");
+			assert.equal(oData["variants"][aRenamedItems[0]].title, "New 3");
 
-			var aFavItems = oEvent.getParameters().fav;
 			assert.ok(aFavItems);
 			assert.equal(aFavItems.length, 1);
-			assert.equal(aFavItems[0].key, "4");
-			assert.ok(!aFavItems[0].visible);
-		});
+			assert.equal(aFavItems[0], "4");
+			assert.ok(!oData["variants"][aFavItems[0]].favorite);
+		}.bind(this));
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);

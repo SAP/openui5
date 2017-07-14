@@ -1,5 +1,5 @@
-/*!
- * ${copyright}
+/*
+ * ! ${copyright}
  */
 
 // Provides control sap.ui.fl.variants.VariantManagement.
@@ -17,6 +17,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.50
+	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @alias sap.ui.fl.variants.VariantManagement
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -171,45 +172,7 @@ sap.ui.define([
 				/**
 				 * This event is fired when users apply changes to variants in the Manage Variants dialog.
 				 */
-				manage: {
-					parameters: {
-						/**
-						 * List of changed variant keys and new names
-						 */
-						renamed: {
-							type: "object[]"
-						},
-
-						/**
-						 * List of deleted variant keys
-						 */
-						deleted: {
-							type: "string[]"
-						},
-
-						/**
-						 * List of variant keys and the associated execute on selection value
-						 */
-						exe: {
-							type: "object[]"
-						},
-
-						/**
-						 * The default variant key
-						 */
-						def: {
-							type: "boolean"
-						},
-
-						/**
-						 * List of variant keys and the associated favorites value
-						 */
-						fav: {
-							type: "object[]"
-
-						}
-					}
-				}
+				manage: {}
 			}
 		},
 
@@ -231,8 +194,6 @@ sap.ui.define([
 
 	VariantManagement.MODEL_NAME = "$FlexVariants";
 	VariantManagement.MAX_NAME_LEN = 100;
-	VariantManagement.STANDARDVARIANTKEY = "Standard";
-
 	VariantManagement.COLUMN_NAME_IDX = 1;
 
 	/*
@@ -598,7 +559,7 @@ sap.ui.define([
 		this.oVariantSaveBtn.setEnabled(false);
 		this.oVariantSaveAsBtn.setEnabled(true);
 
-		if (this._isIndustrySolutionModeAndVendorLayer() && this.getManualVariantKey() && (this.getStandardVariantKey() === this.STANDARDVARIANTKEY)) {
+		if (this._isIndustrySolutionModeAndVendorLayer() && this.getManualVariantKey() && (this.getStandardVariantKey() === this.getCurrentVariantKey())) {
 			this.oVariantSaveBtn.setEnabled(false);
 			this.oVariantSaveAsBtn.setEnabled(true);
 		}
@@ -1056,7 +1017,7 @@ sap.ui.define([
 
 		var fSelectRB = function(oEvent) {
 			if (oEvent.getParameters().selected === true) {
-				this._handleManageDefaultVariantChange(oEvent.oSource.getParent().getBindingContext().getObject().key);
+				this._handleManageDefaultVariantChange(oEvent.oSource.getParent().getBindingContext().getObject());
 			}
 		}.bind(this);
 
@@ -1115,7 +1076,20 @@ sap.ui.define([
 		var oTemplate = new ColumnListItem({
 			cells: [
 				new CheckBox({
-					enabled: bExeEnabled,
+					enabled: {
+						path: sBindingPath + '/defaultVariant',
+						formatter: function(sDefaultKey) {
+							var bState = (oItem.readOnly === false);
+							if (oItem.key === sDefaultKey) {
+								bState = false;
+								if (!oItem.favorite) {
+									this.setSelected(true);
+								}
+							}
+
+							return bState;
+						}
+					},
 					select: fSelectFav,
 					selected: "{favorite}"
 				}), oNameControl, new Text({
@@ -1134,7 +1108,7 @@ sap.ui.define([
 				}), new CheckBox({
 					enabled: bExeEnabled,
 					select: fSelectCB,
-					selected: "{executeOnSelection}"
+					selected: "{executeOnSelect}"
 				}), new Text({
 					text: "{author}",
 					textAlign: "Begin"
@@ -1197,22 +1171,28 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype._handleManageDefaultVariantChange = function(sKey) {
+	VariantManagement.prototype._handleManageDefaultVariantChange = function(oItem) {
+
+		var sKey = oItem.key;
+
 		if (!this._anyInErrorState(this.oManagementTable)) {
 			this.oManagementSave.setEnabled(true);
 		}
 
 		this.setDefaultVariantKey(sKey);
+
+		// TODO: transport assignement ??
+
 	};
 
 	VariantManagement.prototype._handleManageCancelPressed = function() {
 		var sDefaultVariantKey, aItems = this._getItems(), oModel;
 		aItems.forEach(function(oItem) {
 			oItem.toBeDeleted = false;
-			oItem.deletedTransport = null;
+			// oItem.deletedTransport = null;
 			oItem.title = oItem.originalTitle;
-			oItem.favorite = oItem.toBeFavorite;
-			oItem.executeOnSelection = oItem.initialExecuteOnSelection;
+			oItem.favorite = oItem.originalFavorite;
+			oItem.executeOnSelection = oItem.originalExecuteOnSelection;
 		});
 
 		sDefaultVariantKey = this.getInitialDefaultVariantKey();
@@ -1228,10 +1208,20 @@ sap.ui.define([
 
 	VariantManagement.prototype._handleManageFavoriteChanged = function(oItem) {
 
-		// var sKey = oItem.key;
-
 		if (!this._anyInErrorState(this.oManagementTable)) {
 			this.oManagementSave.setEnabled(true);
+		}
+
+		if (oItem.global) {
+			var fOkay = function(sPackage, sTransport) {
+				oItem.lifecyclePackage = sPackage;
+				oItem.lifecycleTransportId = sTransport;
+			};
+			var fError = function(oResult) {
+				oItem.favorite = oItem.originalFavorite;
+			};
+
+			this._assignTransport(oItem, fOkay, fError);
 		}
 	};
 
@@ -1251,7 +1241,8 @@ sap.ui.define([
 
 		if (oItem.global) {
 			var fOkay = function(sPackage, sTransport) {
-				oItem.deletedTransport = sTransport;
+				oItem.lifecyclePackage = sPackage;
+				oItem.lifecycleTransportId = sTransport;
 			};
 
 			var fError = function(oResult) {
@@ -1281,7 +1272,7 @@ sap.ui.define([
 				oItem.lifecycleTransportId = sTransport;
 			};
 			var fError = function(oResult) {
-				oItem.executeOnSelection = oItem.initialExecuteOnSelection;
+				oItem.executeOnSelection = oItem.originalExecuteOnSelection;
 			};
 
 			this._assignTransport(oItem, fOkay, fError);
@@ -1313,58 +1304,24 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype._handleManageSavePressed = function() {
-		var aRemovedKeys = [], aExeOnSelectKeys = [], aRenamedKeys = [], aChangedFavoriteKeys = [], aItems = this._getItems();
+		var aItems = this._getItems();
 
-		aItems.forEach(function(oItem) {
-			if (oItem.toBeDeleted) {
-				aRemovedKeys.push(oItem.key);
-			} else {
-
-				if (oItem.title !== oItem.originalTitle) {
-					aRenamedKeys.push({
-						key: oItem.key,
-						name: oItem.title
-					});
-				}
-
-				if (oItem.favorite !== oItem.toBeFavorite) {
-					aChangedFavoriteKeys.push({
-						key: oItem.key,
-						visible: oItem.favorite
-					});
-				}
-
-				if (oItem.executeOnSelection !== oItem.initialExecuteOnSelection) {
-					aExeOnSelectKeys.push({
-						key: oItem.key,
-						execute: oItem.executeOnSelection
-					});
-				}
-			}
-		});
-
-		var oObj = {
-			renamed: aRenamedKeys,
-			deleted: aRemovedKeys,
-			exe: aExeOnSelectKeys,
-			fav: aChangedFavoriteKeys
-		};
-
-		if (this.getDefaultVariantKey() !== this.getInitialDefaultVariantKey()) {
-			oObj.def = this.getDefaultVariantKey();
-		}
-
-		this.fireManage(oObj);
+		this.fireManage();
 
 		this.oManagementDialog.close();
 
-		if (aRemovedKeys.length > 0) {
-			this._bDeleteOccured = true;
-			if (aRemovedKeys.indexOf(this.getSelectedVariantKey()) > -1) {
-				this.setModified(false);
-				this.setSelectedVariantKey(this.getStandardVariantKey());
+		aItems.some(function(oItem) {
+			if (oItem.toBeDeleted) {
+				this._bDeleteOccured = true;
+				if (oItem.key === this.getSelectedVariantKey()) {
+					this.setModified(false);
+					this.setSelectedVariantKey(this.getStandardVariantKey());
+					return true;
+				}
 			}
-		}
+
+			return false;
+		}.bind(this));
 
 	};
 
