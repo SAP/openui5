@@ -7,6 +7,7 @@
 	<Page
 		id="page"
 		showHeader="true"
+		title="{i18n>welcomeHeadline}"
 		class="customBackground">
 		<customHeader>
 			<Toolbar>
@@ -237,7 +238,7 @@
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
 			<Title
-				text="{i18n>favoritTitle}"
+				text="{i18n>favoriteTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
 			<l:BlockLayout background="Dashboard">
