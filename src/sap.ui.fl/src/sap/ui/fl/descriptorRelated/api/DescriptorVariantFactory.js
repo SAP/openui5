@@ -251,7 +251,7 @@ sap.ui.define([
 	/**
 	 * Creates a new descriptor variant
 	 *
-	 * @param {object} mParameters
+	 * @param {object} mParameters the parameters
 	 * @param {string} mParameters.reference the referenced descriptor or descriptor variant id
 	 * @param {string} mParameters.id the id for the descriptor variant id
 	 * @param {string} [mParameters.layer='CUSTOMER'] the layer for the descriptor variant
