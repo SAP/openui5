@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	};
 
 	/**
-	 * Get the the use-batch extension value if any
+	 * Get the use-batch extension value if any
 	 * @return {boolean} true/false
 	 * @public
 	 */

@@ -483,7 +483,7 @@ sap.ui.define([
 			 * Helper function used to navigate to another Fiori application (intent based navigation) or
 			 * to an external link.
 			 * This will be applicable only for the header link.
-			 * @param {sap.m.QuickViewPage} The page from which the navigation starts
+			 * @param {sap.m.QuickViewPage} that - The page from which the navigation starts
 			 * @returns {Function} A function that executes the navigation
 			 * @private
 			 */

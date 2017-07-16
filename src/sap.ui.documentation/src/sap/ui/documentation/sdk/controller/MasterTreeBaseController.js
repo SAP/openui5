@@ -93,16 +93,34 @@ sap.ui.define([
 			 */
 			onTreeFilter: function (oEvent) {
 				var oTree = this.byId("tree");
-				var sFilterArgument = oEvent.getParameter("newValue");
-
-				var aFilters = [];
-				if (sFilterArgument) {
-					var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
-					aFilters.push(oNameFilter);
-				}
+				var sFilterArgument = oEvent.getParameter("newValue").trim();
 				var oBinding = oTree.getBinding("items");
-				oBinding.filter(aFilters);
-				this._expandAllNodes();
+
+				if (this._filterTimeout) {
+					jQuery.sap.clearDelayedCall(this._filterTimeout);
+				}
+
+				this._filterTimeout = jQuery.sap.delayedCall(250, this, function () {
+
+					// 0 characters - clear filters and collapse all nodes
+					if (sFilterArgument.length === 0) {
+						oBinding.filter([]);
+						this._collapseAllNodes();
+						return;
+					}
+
+					var aFilters = [];
+					if (sFilterArgument) {
+						var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
+						aFilters.push(oNameFilter);
+					}
+
+					oBinding.filter(aFilters);
+					this._expandAllNodes();
+
+					this._filterTimeout = null;
+				});
+
 			},
 
 			_expandAllNodes: function () {

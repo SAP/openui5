@@ -692,7 +692,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on keyboard backspace, if cursor is in front of a token, token gets selected and deleted
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapbackspace = function (oEvent) {
@@ -711,7 +711,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on delete keyboard input, deletes selected tokens
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapdelete = function (oEvent) {
@@ -958,7 +958,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * Function is called on keyboard enter, if possible, adds entered text as new token
 	 *
 	 * @private
-	 * @param {jQuery.event}
+	 * @param {jQuery.Event}
 	 *          oEvent
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
@@ -1097,7 +1097,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 */
 	MultiInput.prototype.onfocusin = function (oEvent) {
 
-		if (this.getEditable() && this.getEnableMultiLineMode()) {
+		if (this.getEditable() && this.getEnableMultiLineMode() && (!oEvent.target.classList.contains("sapMInputValHelp") && !oEvent.target.classList.contains("sapMInputValHelpInner"))) {
 			this.openMultiLine();
 		}
 

@@ -157,7 +157,8 @@ sap.ui.require([
 
 							if (oFixture.constant === "String") {
 								this.mock(Expression).expects("replaceIndexes")
-									.withExactArgs(oModel, oConstantPathValue.path)
+									.withExactArgs(sinon.match.same(oModel),
+										oConstantPathValue.path)
 									.returns("/replaced");
 							}
 							oResult = Expression.expression(oInterface, oPathValue);
@@ -992,8 +993,8 @@ sap.ui.require([
 		this.mock(Expression).expects("parseDate")
 			.withExactArgs(oResult.value).returns(undefined);
 		this.mock(Basics).expects("error")
-			.withExactArgs({path : "/my/path/0", value : oPathValue.value[0], asExpression : false,
-				withType : false}, "Invalid Date 2015-02-30")
+			.withExactArgs({path : "/my/path/0", value : sinon.match.same(oPathValue.value[0]),
+				asExpression : false, withType : false}, "Invalid Date 2015-02-30")
 			.throws(new SyntaxError());
 
 		assert.throws(function () {
@@ -1020,8 +1021,8 @@ sap.ui.require([
 		this.mock(Expression).expects("parseDateTimeOffset")
 			.withExactArgs(oResult.value).returns(undefined);
 		this.mock(Basics).expects("error")
-			.withExactArgs({path : "/my/path/0", value : oPathValue.value[0], asExpression : false,
-				withType : false}, "Invalid DateTime 2015-02-30T13:12:11Z")
+			.withExactArgs({path : "/my/path/0", value : sinon.match.same(oPathValue.value[0]),
+				asExpression : false, withType : false}, "Invalid DateTime 2015-02-30T13:12:11Z")
 			.throws(new SyntaxError());
 
 		assert.throws(function () {

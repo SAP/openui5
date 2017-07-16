@@ -204,6 +204,7 @@
 							thumbnailUrl: "{thumbnailUrl}",
 							uploadedDate: "{uploadedDate}"
 						}),
+						templateShareable: false,
 						sorter: new sap.ui.model.Sorter("/uploadedDate", true, true)
 					}
 				}).setModel(oModel).placeAt("qunit-fixture");
@@ -387,7 +388,6 @@
 				oCollection.invalidate();
 				sap.ui.getCore().applyChanges();
 				oCollection._handleTerminate({}, oCollection.aItems[0]);
-				oCollection.invalidate();
 				sap.ui.getCore().applyChanges();
 				var oDialog = sap.ui.getCore().byId(oCollection.getId() + "deleteDialog");
 				oDialog.getButtons()[1].firePress();

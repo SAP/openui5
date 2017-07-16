@@ -3025,7 +3025,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	/**
 	 * Handles a control event and forwards it to the registered control event listeners.
 	 *
-	 * @param {jQuery.EventObject} oEvent control event
+	 * @param {jQuery.Event} oEvent control event
 	 * @param {string} sUIAreaId id of the UIArea that received the event
 	 * @private
 	 */

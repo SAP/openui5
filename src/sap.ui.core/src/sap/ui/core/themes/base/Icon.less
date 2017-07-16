@@ -14,6 +14,13 @@
 	cursor: pointer;
 }
 
+.sapUiIcon:focus {
+	outline-width: 1px;
+	outline-style: dashed;
+	/* keep the outline within the area of the icon */
+	outline-offset: -1px;
+}
+
 .sapUiIcon:before {
 	content: attr(data-sap-ui-icon-content);
 	speak: none;

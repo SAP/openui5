@@ -10,7 +10,8 @@
 	table-layout: fixed;
 }
 
-html[data-sap-ui-browser='ie11'] .sapMListTbl {
+html[data-sap-ui-browser='ie11'] .sapMListTbl,
+html[data-sap-ui-browser^='ed'] .sapMListTbl {
 	padding: 1px; /* outline must be visible */
 }
 
@@ -60,6 +61,8 @@ tr.sapMListTblHeaderNone > th {
 
 .sapMListTblNavCol {
 	width: 0;
+	vertical-align: top;
+	line-height: 3rem;
 }
 
 .sapMListTblUnreadCol {
@@ -170,8 +173,6 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 
 .sapMListTblNavCol,
 .sapMListTblSelCol {
-	vertical-align: top;
-	line-height: 3rem;
 	padding: 0;
 }
 
@@ -222,8 +223,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 .sapMListTblCell.sapMListTblCellNoData,
-.sapMLIBTypeActive > .sapMListTblCell:nth-last-child(2),
-.sapMLIBTypeInactive > .sapMListTblCell:nth-last-child(2) {
+.sapMListTblCell:nth-last-child(2) {
 	padding-right: 1rem;
 }
 
@@ -317,7 +317,7 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 }
 
 /* min height for the table rows */
-.sapUiSizeCompact .sapMListTblRow {	
+.sapUiSizeCompact .sapMListTblRow {
 	height: 2rem;
 }
 

@@ -363,7 +363,6 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 	/**
 	 * Removes all root elements from the DesignTime and destroys overlays for them and theire public descendants
-	 * @param {string|sap.ui.core.Element} element or elemet's id
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */

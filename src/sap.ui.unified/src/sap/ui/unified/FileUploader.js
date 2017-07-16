@@ -833,7 +833,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		if (uploadForm) {
 			uploadForm.reset();
 		}
-		//clear the value, don't fire change event, and supress the refocusing of the file input field
+		//clear the value, don't fire change event, and suppress the refocusing of the file input field
 		return this.setValue("", false, true);
 	};
 

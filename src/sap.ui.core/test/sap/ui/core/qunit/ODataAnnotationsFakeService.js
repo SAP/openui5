@@ -47,13 +47,13 @@ xhr.onCreate = function(request) {
 				sAnswer = sNorthwindMetadataAnnotated;
 				break;
 
-			case "fakeService://testdata/odata/NOT_EXISTANT/$metadata":
+			case "fakeService://testdata/odata/NOT_EXISTENT/$metadata":
 				iStatus = 404;
 				mHeaders = mMetaDataHeaders;
 				sAnswer = "Sorry, not found...";
 				break;
 
-			case "fakeService://testdata/odata/NOT_EXISTANT":
+			case "fakeService://testdata/odata/NOT_EXISTENT":
 				iStatus = 404;
 				sAnswer = "Sorry, not found...";
 				break;

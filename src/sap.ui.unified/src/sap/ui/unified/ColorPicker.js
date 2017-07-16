@@ -2241,7 +2241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Method is used only for qUnit testing to get the CONSTANTS object.
+	 * Method is used only for QUnit testing to get the CONSTANTS object.
 	 * @returns {object} CONSTANTS object
 	 * @private
 	 */

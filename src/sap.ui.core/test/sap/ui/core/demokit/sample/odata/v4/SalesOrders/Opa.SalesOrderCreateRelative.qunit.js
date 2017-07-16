@@ -20,6 +20,7 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Create, modify and delete within relative listbinding", function (Given, When, Then) {
+		var bRealOData = TestUtils.isRealOData();
 
 		Given.iStartMyUIComponent({
 			componentConfig : {
@@ -63,9 +64,24 @@ sap.ui.require([
 		When.onTheMainPage.pressSaveSalesOrderButton();
 		When.onTheSuccessInfo.confirm();
 		Then.onTheMainPage.checkSalesOrderItemsCount(1);
+		Then.onTheMainPage.checkNewSalesOrderItemProductName(
+			TestUtils.isRealOData() ? "Notebook Basic 15" : "");
 		// update note of new sales order item
 		When.onTheMainPage.changeSalesOrderLineItemNote(0, "OPA: Changed item note after save");
 		When.onTheMainPage.pressSaveSalesOrderButton();
+		Then.onTheMainPage.checkSalesOrderLineItemNote(0, "OPA: Changed item note after save");
+
+		if (bRealOData) {
+			// check correct error handling of multiple changes in one $batch
+			When.onTheMainPage.changeSalesOrderLineItemNote(0, "Note changed");
+			When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "0.0");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			When.onTheErrorInfo.confirm();
+			When.onTheMainPage.changeSalesOrderLineItemQuantity(0, "2.0");
+			When.onTheMainPage.pressSaveSalesOrderButton();
+			Then.onTheMainPage.checkSalesOrderLineItemNote(0, "Note changed");
+		}
+
 		// delete persisted sales order item
 		When.onTheMainPage.deleteSelectedSalesOrderLineItem();
 		When.onTheSalesOrderLineItemDeletionConfirmation.confirm();
@@ -74,7 +90,15 @@ sap.ui.require([
 
 		// delete the last created SalesOrder again
 		Then.onTheMainPage.cleanUp();
-		Then.onTheMainPage.checkLog();
+		Then.onTheMainPage.checkLog(bRealOData ? [{
+			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+			level : jQuery.sap.log.Level.ERROR,
+			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Note"
+		}, {
+			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+			level : jQuery.sap.log.Level.ERROR,
+			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Quantity"
+		}] : undefined);
 		Then.iTeardownMyUIComponent();
 	});
 });

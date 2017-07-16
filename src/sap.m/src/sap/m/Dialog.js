@@ -606,7 +606,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		/**
 		 * Event handler for the focusin event.
 		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onfocusin = function (oEvent) {
@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * Event handler for the escape key pressed event.
 		 * If it occurs and the developer hasn't defined the escapeHandler property, the Dialog is immediately closed.
 		 * Else the escapeHandler is executed and the developer may prevent the closing of the Dialog.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onsapescape = function(oEvent) {
@@ -1224,7 +1224,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._registerResizeHandler = function () {
 			var _$srollSontent = this.$("scroll");
 
-			//The content have to have explicit size so the scroll will work when the user's content is larger then the available space.
+			//The content have to have explicit size so the scroll will work when the user's content is larger than the available space.
 			//This can be removed and the layout change to flex when the support for IE9 is dropped
 			this._resizeListenerId = ResizeHandler.register(_$srollSontent.get(0), jQuery.proxy(this._onResize, this));
 			Device.resize.attachHandler(this._onResize, this);
@@ -1246,7 +1246,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		/**
 		 *
-		 * @param oScrollDomRef
 		 * @private
 		 */
 		Dialog.prototype._registerContentResizeHandler = function() {

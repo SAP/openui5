@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		/** Function for determining the selector later used to apply a change for a given control.
 		 * The function differs between local ids generated starting with 1.40 and the global ids generated in previous versions.
 		 *
-		 * @param {sap.ui.core.Control | string} vControl - sapui5 control or id string for which the selector should be determined
+		 * @param {sap.ui.core.Control | string} vControl - control or id string for which the selector should be determined
 		 * @param {object} mAdditionalSelectorInformation additional mapped data which is added to the selector
 		 * @param {sap.ui.core.Component} (optional) oAppComponent application component, needed only if vControl is a string or XML Node
 		 * @returns {object} - oSelector

@@ -204,6 +204,9 @@
 			}
 		},
 		navigate: function(oEvent) {
+			if (oEvent.getParameter("direction") === "back") {
+				return;
+			}
 			sap.m.MessageToast.show("Event 'navigate' triggered originating from " + oEvent.getParameter("item").getId() + " item");
 			var oSelectionDetails = oEvent.getParameter("item").getParent();
 			var sId = oEvent.getParameter("item").getId();

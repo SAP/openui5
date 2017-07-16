@@ -361,7 +361,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 				appInfo: oData.application,
 				rules: oData.rules,
 				metadata: {
-					title: 'SAPUI5 Check Results',
+					title: oData.name + ' Analysis Results',
 					title_TechnicalInfo: 'Technical Information',
 					title_Issues: 'Issues',
 					title_AppInfo: 'Application Information',
@@ -394,7 +394,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 			archiver.add('issues.json', issues, 'json');
 			archiver.add('appInfos.json', appInfos, 'json');
 			archiver.add('report.html', report);
-			archiver.download();
+			archiver.download("SupportAssistantReport");
 			archiver.clear();
 		});
 	}

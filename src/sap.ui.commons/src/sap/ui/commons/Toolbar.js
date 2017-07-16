@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the space event on the menu open button.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype._handleKeyDown = function (oEvent) {
@@ -449,7 +449,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the click event on the menu open button.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype.onclick = function (oEvent) {
@@ -464,7 +464,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the arrow down event on the menu open button. This opens the popup, if closed.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype.onsapdown = function (oEvent) {
@@ -482,7 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the arrow up event on the menu open button. This closes the popup, if open.
 		 *
-		 * @param {jQuery.EventObject} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Toolbar.prototype.onsapup = function (oEvent) {
@@ -823,7 +823,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Handle the onsapescape event on the overflow popup, this closes the popup
 			 *
-			 * @param {jQuery.EventObject} oEvent The forwarded browser event
+			 * @param {jQuery.Event} oEvent The forwarded browser event
 			 * @private
 			 */
 			onsapescape: function (oEvent) {
@@ -833,7 +833,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Handle the tab key event on the overflow popup, this closes the popup
 			 *
-			 * @param {jQuery.EventObject} oEvent the forwarded browser event
+			 * @param {jQuery.Event} oEvent the forwarded browser event
 			 * @private
 			 */
 			// Should ideally advance to the next tab position but currently only focuses the overflow button again.
@@ -846,7 +846,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Handle the tab back key event on the overflow popup, this closes the popup
 			 *
-			 * @param {jQuery.EventObject} oEvent The forwarded browser event
+			 * @param {jQuery.Event} oEvent The forwarded browser event
 			 * @private
 			 */
 			// Should ideally advance to the next tab position but currently only focuses the overflow button again.
@@ -900,7 +900,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles the right side resize event.
 		 *
-		 * @param {jQuery.Event}  oEvent Event object
 		 * @private
 		 */
 		Toolbar.prototype.onrightsideresize = function () {

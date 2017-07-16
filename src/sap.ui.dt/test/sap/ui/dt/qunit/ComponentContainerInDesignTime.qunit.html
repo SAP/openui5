@@ -90,7 +90,7 @@
 
 				var oOuterLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
 
-				assert.ok(oInnerLayoutOverlay, "an overlay for the root contol of the UIComponent is created");
+				assert.ok(oInnerLayoutOverlay, "an overlay for the root control of the UIComponent is created");
 				assert.strictEqual(sap.ui.dt.ElementUtil.hasAncestor(oInnerLayoutOverlay, oOuterLayoutOverlay), true, "the component root control overlay is child of the root layout overlay");
 			});
 		</script>

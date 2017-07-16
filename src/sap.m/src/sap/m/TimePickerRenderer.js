@@ -101,8 +101,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		 *
 		 * See {@link sap.m.InputBase#writeAccessibilityState}.
 		 * @override
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeAccessibilityState = function (oRm, oControl) {
 			var sAriaLabelledBy = this.getAriaLabelledBy(oControl),

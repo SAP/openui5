@@ -309,8 +309,6 @@ sap.ui.define([
 	 * The method is called after a control has been removed
 	 * in order to update the <code>ShareMenu</code> mode.
 	 *
-	 *
-	 * @param {sap.f.semantic.SemanticControl} oControl
 	 * @returns {Boolean}
 	 */
 	SemanticShareMenu.prototype._onControlRemoved = function() {

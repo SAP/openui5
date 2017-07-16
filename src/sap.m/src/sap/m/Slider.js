@@ -23,7 +23,7 @@ sap.ui.define([
 		 * <strong><i>Overview</i></strong>
 		 *
 		 * A {@link sap.m.Slider} control represents a numerical range and a handle.
-		 * The purpose of the control is to enable visual selection of а value in a continuous numerical range by moving an adjustable handle.
+		 * The purpose of the control is to enable visual selection of a value in a continuous numerical range by moving an adjustable handle.
 		 *
 		 * <strong>Notes:</strong>
 		 * <ul><li>Only horizontal sliders are possible. </li>
@@ -109,7 +109,7 @@ sap.ui.define([
 				 * Defines the size of the slider's selection intervals. (e.g. min = 0, max = 10, step = 5 would result in possible selection of the values 0, 5, 10).
 				 *
 				 * The step must be positive, if a negative number is provided, the default value will be used instead.
-				 * If the width of the slider converted to pixels is less than the range (max – min), the value will be rounded to multiples of the step size.
+				 * If the width of the slider converted to pixels is less than the range (max - min), the value will be rounded to multiples of the step size.
 				 */
 				step: { type: "float", group: "Data", defaultValue: 1 },
 

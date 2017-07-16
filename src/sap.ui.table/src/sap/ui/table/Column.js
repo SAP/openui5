@@ -699,7 +699,12 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			return;
 		}
 
-		this.$().find(".sapUiTableColCell")
+		this.$()
+			.parents(".sapUiTableCHT")
+			.find('td[data-sap-ui-colindex="' + this.getIndex() + '"]') // all td cells in this column header
+			.filter(":not([colspan]):visible") // only visible without a colspan
+			.first()
+			.find(".sapUiTableColCell")
 			.toggleClass("sapUiTableColSF", bSorted || bFiltered)
 			.toggleClass("sapUiTableColFiltered", bFiltered)
 			.toggleClass("sapUiTableColSorted", bSorted)

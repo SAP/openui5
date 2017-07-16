@@ -43,12 +43,12 @@ sap.ui.define([
 	 * demo: {
 	 * 	text: "sap.m", // legacy entry, name of the library
 	 * 	links: {
-	 *		icon: an index of the sapui5 icon font
+	 *		icon: an index of the icon font
 	 *		text: the name of the app
 	 *		description: a short description text
 	 *		ref: a link to the demo app entry point
 	 *		links: an object of links with a key (title) and value (link) each
-	 *		category: one of the demo app categories (Tutorial/Template/Showcase/Misc)
+	 *		category: one of the demo app categories (Showcase/Tool/Tutorial/Template/RTA/Misc)
 	 *		config: the URL to the demo app configuration for downloading the app
 	 * 	}
 	 *
@@ -61,7 +61,7 @@ sap.ui.define([
 	 */
 	function createModelData (aLibs, oDocIndicies) {
 		// generate the global model structure
-		var aCategories = ["Showcase", "Tutorial", "Template", "RTA", "Misc"];
+		var aCategories = ["Showcase", "Tool", "Tutorial", "Template", "RTA", "Misc"];
 		var oDemoAppsByCategory = {};
 
 		// create a helper structure for demo apps by category

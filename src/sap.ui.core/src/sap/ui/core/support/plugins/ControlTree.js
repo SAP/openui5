@@ -164,15 +164,15 @@ sap.ui.define([
 		ControlTree.prototype.renderContentAreas = function() {
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<div>You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
+			rm.write('<div style="padding: 0.5rem">You can find a control in this tree by clicking it in the application UI while pressing the Ctrl+Alt+Shift keys.</div>');
 
 			rm.write('<div id="sapUiSupportControlTreeArea"><ul class="sapUiSupportControlTreeList"></ul></div>');
 
 			rm.write('<div id="sapUiSupportControlTabs" style="visibility:hidden">');
-				rm.write('<button id="sapUiSupportControlTabProperties" class="sapUiSupportBtn">Properties</button>');
-				rm.write('<button id="sapUiSupportControlTabBindingInfos" class="sapUiSupportBtn">Binding Infos</button>');
-				rm.write('<button id="sapUiSupportControlTabBreakpoints" class="sapUiSupportBtn">Breakpoints</button>');
-				rm.write('<button id="sapUiSupportControlTabExport" class="sapUiSupportBtn">Export</button>');
+				rm.write('<button id="sapUiSupportControlTabProperties" class="sapUiSupportBtn sapUiSupportTab sapUiSupportTabLeft">Properties</button>');
+				rm.write('<button id="sapUiSupportControlTabBindingInfos" class="sapUiSupportBtn sapUiSupportTab">Binding Infos</button>');
+				rm.write('<button id="sapUiSupportControlTabBreakpoints" class="sapUiSupportBtn sapUiSupportTab">Breakpoints</button>');
+				rm.write('<button id="sapUiSupportControlTabExport" class="sapUiSupportBtn sapUiSupportTab sapUiSupportTabRight">Export</button>');
 			rm.write('</div>');
 
 			rm.write('<div id="sapUiSupportControlPropertiesArea"></div>');
@@ -630,7 +630,7 @@ sap.ui.define([
 
 			rm.write('<div class="sapUiSupportControlMethods" data-sap-ui-controlid="' + encode(sControlId) + '">');
 
-			rm.write('<select id="sapUiSupportControlMethodsSelect" class="sapUiSupportAutocomplete"><option></option>');
+			rm.write('<select id="sapUiSupportControlMethodsSelect" class="sapUiSupportAutocomplete sapUiSupportSelect"><option></option>');
 
 			$.each(aMethods, function(iIndex, oValue) {
 				if (!oValue.active) {
@@ -641,7 +641,7 @@ sap.ui.define([
 			rm.write('</select>');
 
 			rm.write('<input class="sapUiSupportControlBreakpointInput sapUiSupportAutocomplete" type="text"/>');
-			rm.write('<button id="sapUiSupportControlAddBreakPoint" class="sapUiSupportBtn">Add breakpoint</button>');
+			rm.write('<button id="sapUiSupportControlAddBreakPoint" class="sapUiSupportRoundedButton ">Add breakpoint</button>');
 			rm.write('<hr class="no-border"/><ul id="sapUiSupportControlActiveBreakpoints" class="sapUiSupportList sapUiSupportBreakpointList">');
 
 			$.each(aMethods, function(iIndex, oValue) {
@@ -668,9 +668,9 @@ sap.ui.define([
 
 			var rm = sap.ui.getCore().createRenderManager();
 
-			rm.write('<button id="sapUiSupportControlExportToXml" class="sapUiSupportBtn">Export To XML</button>');
+			rm.write('<button id="sapUiSupportControlExportToXml" class="sapUiSupportRoundedButton sapUiSupportExportButton">Export To XML</button>');
 			rm.write('<br><br>');
-			rm.write('<button id="sapUiSupportControlExportToHtml" class="sapUiSupportBtn">Export To HTML</button>');
+			rm.write('<button id="sapUiSupportControlExportToHtml" class="sapUiSupportRoundedButton sapUiSupportExportButton">Export To HTML</button>');
 
 			rm.flush(this.$().find("#sapUiSupportControlPropertiesArea").get(0));
 			rm.destroy();

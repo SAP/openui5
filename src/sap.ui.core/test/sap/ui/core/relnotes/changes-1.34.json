@@ -1477,7 +1477,7 @@
 			{
 				"id": "ad15c162a81712ab663d77bfca770ca017d1db14",
 				"type": "FIX",
-				"text": ": Do not run OPA qUnit test under IOS  on non-safari browsers",
+				"text": ": Do not run OPA QUnit test under IOS  on non-safari browsers",
 				"references": []
 			}
 		]

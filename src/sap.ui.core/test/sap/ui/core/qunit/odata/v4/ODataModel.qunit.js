@@ -427,17 +427,25 @@ sap.ui.require([
 	QUnit.test("submitBatch", function (assert) {
 		var oModel = createModel(),
 			oModelMock = this.mock(oModel),
-			oReturn,
 			oSubmitPromise = {};
 
 		oModelMock.expects("checkGroupId").withExactArgs("groupId", true);
-		oModelMock.expects("_submitBatch").withExactArgs("groupId")
-			.returns(oSubmitPromise);
+		oModelMock.expects("_submitBatch").never(); // not yet
+		this.stub(sap.ui.getCore(), "addPrerenderingTask", function (fnCallback) {
+			setTimeout(function () {
+				// make sure that _submitBatch is called within fnCallback
+				oModelMock.expects("_submitBatch").withExactArgs("groupId")
+					.returns(oSubmitPromise);
+				fnCallback();
+			}, 0);
+		});
 
 		// code under test
-		oReturn = oModel.submitBatch("groupId");
-
-		assert.strictEqual(oReturn, oSubmitPromise);
+		return oModel.submitBatch("groupId").then(function (oResult) {
+			// this proves that submitBatch() returns a promise which is resolved with the result
+			// of _submitBatch(), which in reality is of course a promise itself
+			assert.strictEqual(oResult, oSubmitPromise);
+		});
 	});
 
 	//*********************************************************************************************
@@ -469,17 +477,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("resetChanges w/o group ID", function (assert) {
 		var oModel = createModel("", {updateGroupId : "updateGroupId"}),
-			oAgeBinding = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
-			oNameBinding = oModel.bindProperty("/EMPLOYEES('1')/Name"),
-			oEntryDateBinding = oModel.bindProperty("/EMPLOYEES('1')/ENTRYDATE", undefined, {
+			oBinding1 = oModel.bindList("/EMPLOYEES"),
+			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
+			oBinding3 = oModel.bindContext("/EMPLOYEES('1')", undefined, {
 				$$updateGroupId : "anotherGroup"
 			});
 
 		this.mock(oModel).expects("checkGroupId").withExactArgs("updateGroupId", true);
 		this.mock(oModel.oRequestor).expects("cancelChanges").withExactArgs("updateGroupId");
-		this.mock(oAgeBinding).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oNameBinding).expects("resetInvalidDataState").withExactArgs();
-		this.mock(oEntryDateBinding).expects("resetInvalidDataState").never();
+		this.mock(oBinding1).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding2).expects("resetInvalidDataState").withExactArgs();
+		this.mock(oBinding3).expects("resetInvalidDataState").never();
 
 		// code under test
 		oModel.resetChanges();
@@ -736,7 +744,8 @@ sap.ui.require([
 		oModelMock = this.mock(oModel),
 		oContext = new BaseContext(oModel, "/foo");
 
-		oModelMock.expects("resolve").withExactArgs("bar", oContext).returns("/foo/bar");
+		oModelMock.expects("resolve").withExactArgs("bar", sinon.match.same(oContext))
+			.returns("/foo/bar");
 
 		// code under test
 		oBindingContext = oModel.createBindingContext("bar", oContext);

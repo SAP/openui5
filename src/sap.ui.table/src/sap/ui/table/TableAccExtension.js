@@ -468,6 +468,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
 
+			if (iSpan <= 1 && oColumn && oColumn.getSorted()) {
+				aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
+			}
+			if (iSpan <= 1 && oColumn && oColumn.getFiltered()) {
+				aLabels.push(oTable.getId() + "-ariacolfiltered");
+			}
+
+			if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "true") {
+				aLabels.push(oTable.getId() + "-ariacolmenu");
+			}
+
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
 				aLabels, mAttributes["aria-describedby"], sText);
 		},
@@ -615,7 +626,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER:
 					var oColumn = mParams && mParams.column;
-					var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
+					var bHasColSpan = mParams && mParams.colspan;
+
 					mAttributes["role"] = "columnheader";
 					var aLabels = [];
 
@@ -624,21 +636,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 						var iIdx = jQuery.inArray(mParams.headerId, aHeaders);
 						aLabels = iIdx > 0 ? aHeaders.slice(0, iIdx + 1) : [mParams.headerId];
 					}
+					for (var i = 0; i < aLabels.length; i++) {
+						aLabels[i] = aLabels[i] + "-inner";
+					}
 					mAttributes["aria-labelledby"] = aLabels;
 
 					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
-					if (bIsMainHeader && oColumn.getSorted()) {
+
+					if (!bHasColSpan && oColumn && oColumn.getSorted()) {
 						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
-						mAttributes["aria-labelledby"].push(sTableId + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
 					}
-					if (bIsMainHeader && oColumn.getFiltered()) {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolfiltered");
-					}
-					if (oColumn && oColumn._menuHasItems()) {
+
+					if (!bHasColSpan && oColumn && oColumn._menuHasItems()) {
 						mAttributes["aria-haspopup"] = "true";
-						mAttributes["aria-labelledby"].push(sTableId + "-ariacolmenu");
 					}
 					break;
 
@@ -653,6 +665,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 					if (oColumn) {
 						aLabels = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
+						for (var i = 0; i < aLabels.length; i++) {
+							aLabels[i] = aLabels[i] + "-inner";
+						}
 
 						if (mParams && mParams.fixed) {
 							aLabels.push(sTableId + "-ariafixedcolumn");
@@ -999,7 +1014,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 	 * ARIA attributes.
 	 * @public (Part of the API for Table control only!)
 	 */
-	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn, $Ref) {
+	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
 		if (!this._accMode) {
 			return;
 		}
@@ -1010,12 +1025,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			index: this.getTable().indexOfColumn(oColumn)
 		});
 
-		$Ref = $Ref ? $Ref : oColumn.$();
-
-		$Ref.attr({
-			"aria-sort" : mAttributes["aria-sort"] || null,
-			"aria-labelledby" : mAttributes["aria-labelledby"] ? mAttributes["aria-labelledby"].join(" ") : null
-		});
+		var aHeaders = ExtensionHelper.getRelevantColumnHeaders(this.getTable(), oColumn);
+		for (var i = 0; i < aHeaders.length; i++) {
+			var $Header = jQuery.sap.byId(aHeaders[i]);
+			if (!$Header.attr("colspan")) {
+				$Header.attr({
+					"aria-sort" : mAttributes["aria-sort"] || null
+				});
+			}
+		}
 	};
 
 	/*

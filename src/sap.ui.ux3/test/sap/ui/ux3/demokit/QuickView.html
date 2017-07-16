@@ -133,7 +133,7 @@ function setKeyboardNavigation(){
 
 function onNavigate(event){
 	alert("Navigate event with the reference to: " + event.getParameter("href"));
-	// Supress link navigation from a QuickView
+	// suppress link navigation from a QuickView
 	event.preventDefault();
 	// Close the QuickView after a click on a link
 	event.getSource().close();

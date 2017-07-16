@@ -238,7 +238,7 @@
 		assert.strictEqual(oRating9.getValue(), 3.5, "The rating value must be 3.5 on " + oRating9);
 		assert.strictEqual(oRating9._roundValueToVisualMode(oRating9.getValue()), 4, "The rounded rating value must be 4 on " + oRating9);
 
-		// check the the calculation of _toPx function are correct
+		// check the calculation of _toPx function are correct
 		assert.strictEqual(oRating9._toPx(), false, "The result of undefined must be false");
 		assert.strictEqual(oRating9._toPx("0"), 0, "The result of 0 must be 0");
 		assert.strictEqual(oRating9._toPx("10px"), 10, "The result of 10px must be 10");

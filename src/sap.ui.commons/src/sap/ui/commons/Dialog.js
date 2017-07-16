@@ -377,7 +377,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle the click event happening on the dialog instance.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onclick = function (oEvent) {
@@ -585,7 +585,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles the sapescape event, triggers closing of the window.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onsapescape = function (oEvent) {
@@ -598,7 +598,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles the sapenter event, triggers the default button of the dialog.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onsapenter = function (oEvent) {
@@ -623,7 +623,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Event handler for the focusin event.
 		 *
 		 * If it occurs on the focus handler elements at the beginning of the dialog, the focus is set to the end, and vice versa.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onfocusin = function (oEvent) {
@@ -644,7 +644,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Restores the focus to the dialog after it has been moved or resized.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.restoreFocus = function () {
@@ -659,7 +658,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handles or cancels the selectstart event when occuring in parts of the dialog.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onselectstart = function (oEvent) {
@@ -793,7 +792,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Handles the dragstart event.
 		 * In case of resize currently ongoing, this cancels the dragstart.
 		 *
-		 * @param {sap.ui.core.BrowserEvent} oEvent The forwarded browser event
+		 * @param {jQuery.Event} oEvent The forwarded browser event
 		 * @private
 		 */
 		Dialog.prototype.ondragstart = function (oEvent) {
@@ -806,7 +805,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Initializes drag and move capabilities.
 		 *
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.onmousedown = function (oEvent) {
@@ -901,7 +900,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Handles the move event taking the current dragMode into account.
 		 * Also stops propagation of the event.
 		 *
-		 * @param {DOMEvent} event The event raised by the browser.
+		 * @param {jQuery.Event} event The event raised by the browser.
 		 * @returns {boolean}
 		 * @private
 		 */
@@ -983,7 +982,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Handle mouseup event.
 		 * This does the cleanup after drag and move handling.
-		 * @param {jQuery.EventObject} oEvent The event object
+		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
 		Dialog.prototype.handleMouseUp = function (oEvent) {

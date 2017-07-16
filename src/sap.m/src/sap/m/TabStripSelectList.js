@@ -73,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		/**
 		 * Handles the <code>mouseenter</code> event.
 		 *
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		 */
 		TabStripSelectList.prototype.mouseenter = function (oEvent) {
 			var oControl = jQuery(oEvent.target).control(0);
@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/S
 		/**
 		 * Handles the <code>mouseleave</code> event.
 		 *
-		 * @param oEvent {jQuery.Event} Event object
+		 * @param {jQuery.Event} oEvent  Event object
 		*/
 		TabStripSelectList.prototype.mouseleave = function (oEvent) {
 			var oControl = jQuery(oEvent.target).control(0);

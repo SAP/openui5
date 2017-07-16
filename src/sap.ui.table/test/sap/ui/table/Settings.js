@@ -1358,6 +1358,15 @@
 			oButton.placeAt(vPlacement || "content");
 			oSettingsSelector.placeAt(vPlacement || "content");
 		}
+
+		var sDragDrop = jQuery.sap.getUriParameters().get("sap-ui-xx-uitabledragdrop");
+		if (sDragDrop === "true") {
+			jQuery.sap.require("sap.ui.table.TableDragDropExtension");
+			sap.ui.table.TableExtension.enrich(oTable, sap.ui.table.TableDragDropExtension);
+			setTimeout(function() {
+				sap.m.MessageToast.show("Initialized Drag & Drop");
+			}, 0);
+		}
 	};
 
 	TABLESETTINGS.getAnalyticalService = function() {

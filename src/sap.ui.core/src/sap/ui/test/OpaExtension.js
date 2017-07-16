@@ -37,6 +37,8 @@ sap.ui.define([
          * Executed in the application frame.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
+         * @name onAfterInit
+         * @alias sap.ui.test.OpaExtension.onAfterInit
          * @public
          * @function
          * @since 1.48
@@ -60,6 +62,8 @@ sap.ui.define([
          * Executed in the application frame.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
+         * @name onBeforeExit
+         * @alias sap.ui.test.OpaExtension.onBeforeExit
          * @public
          * @function
          * @since 1.48
@@ -80,6 +84,8 @@ sap.ui.define([
          * The default QUnit assertion object will be augmented with them.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
+         * @name getAssertions
+         * @alias sap.ui.test.OpaExtension.getAssertions
          * @public
          * @function
          * @since 1.48
@@ -111,15 +117,13 @@ sap.ui.define([
          *                      myCustomAssertion: function() {
          *                          var deferred = $.Deferred();
          *
-         *                          // read the uri parameters
-         *
          *                          // start custom assertion logic, resolve the promise when ready
          *                          setTimeout(function() {
          *                              // Assertion passes
          *                              deferred.resolve({
          *                                  result: true,
          *                                  message: "Custom assertion passes"
-         *                              );
+         *                              });
          *
          *                              // OR Assertion fails
          *                              deferred.resolve({
@@ -163,8 +167,10 @@ sap.ui.define([
          *          onMyView : {
          *              viewName : "MyView",
          *              assertions : {
-         *                  iShouldSeeNoFailures : function () {
+         *                  iShouldUseMyCustomAssertion : function () {
          *                      return this.waitFor({
+         *                          id: "MyControlId",
+         *                          actions: new Press(),
          *                          success : function () {
          *                              Opa5.assert.myCustomAssertion();
          *                          }

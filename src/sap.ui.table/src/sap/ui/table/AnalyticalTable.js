@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
 	 * @public
 	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
 	 * @function
@@ -194,11 +194,33 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	/**
 	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
 	 *
-	 * @deprecated
+	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to this in order to allow method chaining
 	 * @public
 	 */
-	AnalyticalTable.prototype.setEnableGrouping = function(bEnableGrouping) {
-		jQuery.sap.log.error("The property enableGrouping is not supported by control sap.ui.table.AnalyticalTable!");
+	AnalyticalTable.prototype.setEnableGrouping = function() {
+		jQuery.sap.log.error("The property enableGrouping is not supported by the sap.ui.table.AnalyticalTable control");
+		return this;
+	};
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @public
+	 * @name sap.ui.table.AnalyticalTable#getGroupBy
+	 * @function
+	 */
+
+	/**
+	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
+	 *
+	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.table.AnalyticalTable} Reference to this in order to allow method chaining
+	 * @public
+	 */
+	AnalyticalTable.prototype.setGroupBy = function() {
+		jQuery.sap.log.warning("The groupBy association is not supported by the sap.ui.table.AnalyticalTable control");
 		return this;
 	};
 
@@ -228,19 +250,20 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype.bindRows = function(oBindingInfo) {
-		// API Compatibility (sPath, oTemplate, oSorter, aFilters)
-		oBindingInfo = this._applyBindingInfoToModel.apply(this, arguments);
+		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
 
-		var vReturn = Table.prototype.bindRows.call(this, oBindingInfo);
+		if (oBindingInfo != null) {
+			this._applyAnalyticalBindingInfo(oBindingInfo);
+			this._updateTotalRow(true);
+		}
 
-		this._updateTotalRow(true);
-
-		return vReturn;
+		return Table.prototype.bindRows.call(this, oBindingInfo);
 	};
 
 	/**
-	 * _bindAggregation is overwritten, and will be called by either ManagedObject.prototype.bindAggregation
-	 * or ManagedObject.prototype.setModel
+	 * This function will be called by either by {@link sap.ui.base.ManagedObject#bindAggregation} or {@link sap.ui.base.ManagedObject#setModel}.
+	 *
+	 * @override {@link sap.ui.table.Table#_bindAggregation}
 	 */
 	AnalyticalTable.prototype._bindAggregation = function(sName, oBindingInfo) {
 		if (sName === "rows") {
@@ -248,11 +271,22 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			// TODO: think about a boundary check to reset the firstvisiblerow if out of bounds
 			this.setProperty("firstVisibleRow", 0, true);
 
-			// The current syntax for _bindAggregation is sPath can be an object wrapping the other parameters
-			// in this case we have to sanitize the parameters, so the ODataModelAdapter will instantiate the correct binding.
-			this._applyBindingInfoToModel.call(this, Array.prototype.slice.call(arguments, 1));
+			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
 		}
-		return Table.prototype._bindAggregation.apply(this, arguments);
+
+		// Create the binding.
+		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
+
+		var oBinding = this.getBinding("rows");
+
+		if (sName === "rows" && oBinding != null) {
+			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
+			oBinding.attachEvents({
+				// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
+				// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
+				selectionChanged: this._onSelectionChanged.bind(this)
+			});
+		}
 	};
 
 	/**
@@ -308,23 +342,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 
-	AnalyticalTable.prototype._applyBindingInfoToModel = function (oBindingInfo) {
-		// Old API compatibility (sPath, oTemplate|fFactory, oSorter, aFilters)
-		if (typeof oBindingInfo === "string") {
-			oBindingInfo = {
-				path: oBindingInfo,
-				sorter: arguments[2],
-				filters: arguments[3],
-				template: arguments[1]
-			};
-
-			// Allow to pass a factory function as the 2nd parameter.
-			if (typeof oBindingInfo.template === "function") {
-				oBindingInfo.factory = oBindingInfo.template;
-				delete oBindingInfo.template;
-			}
-		}
-
+	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function (oBindingInfo) {
 		// extract the sorters from the columns (TODO: reconsider this!)
 		var aColumns = this.getColumns();
 		for (var i = 0, l = aColumns.length; i < l; i++) {
@@ -353,21 +371,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			}
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
+	};
 
-		// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
-		// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
-		oBindingInfo.events = {
-			selectionChanged: this._onSelectionChanged.bind(this)
-		};
-
-		// This may fail, in case the model is not yet set.
-		// If this case happens, the ODataModelAdapter is added by the overriden _bindAggregation, which is called during setModel(...)
-		var oModel = this.getModel(oBindingInfo.model);
-		if (oModel) {
+	AnalyticalTable.prototype._applyODataModelAnalyticalAdapter = function (oModel) {
+		if (oModel != null) {
 			ODataModelAdapter.apply(oModel);
 		}
-
-		return oBindingInfo;
 	};
 
 	AnalyticalTable.prototype._getColumnInformation = function() {
@@ -1175,7 +1184,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 *
 	 * Explanation of the SelectAll function and what to expect from its behavior:
 	 * All rows/nodes stored locally on the client are selected.
-	 * In addition all subsequent rows/tree nodes, which will be paged into view are also immediatly selected.
+	 * In addition all subsequent rows/tree nodes, which will be paged into view are also immediately selected.
 	 * However, due to obvious performance/network traffic reasons, the SelectAll function will NOT retrieve any data from the backend.
 	 *
 	 * @return {sap.ui.table.AnalyticalTable} a reference to the <code>AnalyticalTable</code> control, can be used for chaining

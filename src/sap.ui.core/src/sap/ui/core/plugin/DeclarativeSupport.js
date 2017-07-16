@@ -40,7 +40,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/core/Declarative
 
 	/**
 	 * Will be invoked by <code>sap.ui.core.Core</code> to notify the plugin to start
-	 * @param {sap.ui.core.Core} oCore reference to the Core
 	 * @public
 	 */
 	DeclarativeSupport.prototype.stopPlugin = function() {

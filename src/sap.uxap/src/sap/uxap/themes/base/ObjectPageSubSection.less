@@ -134,12 +134,31 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 
 .sapUxAPBlockContainerDesktop {
 	padding: 1rem 2rem 3rem 2rem;
+	.sapUiFormResGrid > div {
+		padding: 0 0;
+	}
 }
 .sapUxAPBlockContainerTablet {
 	padding: 1rem 1rem 3rem 1rem;
+	.sapUiFormResGrid > div {
+		padding: 0 0;
+	}
 }
 .sapUxAPBlockContainerPhone {
 	padding: 1rem 0 1rem 0;
+	.sapUiFormResGrid > div {
+		padding: 0 0;
+	}
+}
+
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail,
+.sapUiMedia-Std-Phone .sapMSplitContainer:not(.sapMSplitContainerHideMode) {
+	.sapUiRespGrid.sapUiRespGridHSpace1 {
+		padding: 0 0;
+	}
+	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
+		margin: 0 0;
+	}
 }
 
 /* compact size */

@@ -21,10 +21,22 @@ sap.ui.define([],
 				}
 			},
 			formContainers : {
+				childNames : {
+					singular : "GROUP_CONTROL_NAME",
+					plural : "GROUP_CONTROL_NAME_PLURAL"
+				},
 				domRef: ":sap-domref",
 				actions: {
-					move: "moveControls"
+					move: "moveControls",
+					createContainer :  {
+						changeType : "addGroup",
+						isEnabled : true,
+						getCreatedContainerId : function(sNewControlID) {
+							return sNewControlID;
+						}
+					}
 				}
+
 			}
 		}
 	};

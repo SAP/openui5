@@ -1,12 +1,12 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"myCompany/myApp/model/models",
-	"myCompany/myApp/controller/ErrorHandler"
+	"mycompany/myapp/model/models",
+	"mycompany/myapp/controller/ErrorHandler"
 ], function(UIComponent, Device, models, ErrorHandler) {
 	"use strict";
 
-	return UIComponent.extend("myCompany.myApp.Component", {
+	return UIComponent.extend("mycompany.myapp.Component", {
 
 		metadata: {
 			manifest: "json"

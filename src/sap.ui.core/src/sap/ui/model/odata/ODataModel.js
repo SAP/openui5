@@ -1992,7 +1992,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Checks if a model refresh is needed, either because the the data provided by the sPath and oContext is stored
+	 * Checks if a model refresh is needed, either because the data provided by the sPath and oContext is stored
 	 * in the model or new data is added (POST). For batch requests all embedded requests are checked separately.
 	 *
 	 * @return {boolean}

@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 				popover.oControlsManager._preProcessSapMButton = this._preProcessPopoverControlsSapMButton.bind(popover.oControlsManager);
 
 				if (sap.ui.Device.system.phone) {
-					// This will trigger when the toolbar is in the header/footer, because the the position is known in advance (strictly top/bottom)
+					// This will trigger when the toolbar is in the header/footer, because the position is known in advance (strictly top/bottom)
 					popover.attachBeforeOpen(this._shiftPopupShadow, this);
 
 					// This will trigger when the toolbar is not in the header/footer, when the actual calculation is ready (see the overridden _calcPlacement)

@@ -23,7 +23,7 @@
 			singleContainerFullSize="false">
 			<f:content>
 				<Label text="Name" />
-				<Input value="{SupplierName}" />
+				<Input id="name" value="{SupplierName}" />
 				<Label text="Street/No." />
 				<Input value="{Street}">
 				</Input>

@@ -59,7 +59,7 @@ sap.ui.define([
 		this._oFCL = oFlexibleColumnLayout;
 		this._mode = "Normal";
 
-		// Currently only the the default 3-column type is configurable
+		// Currently only the default 3-column type is configurable
 		this._defaultLayoutType = LT.OneColumn;
 		this._defaultTwoColumnLayoutType = [LT.TwoColumnsBeginExpanded, LT.TwoColumnsMidExpanded].indexOf(oSettings.defaultTwoColumnLayoutType) !== -1 ?
 			oSettings.defaultTwoColumnLayoutType : LT.TwoColumnsBeginExpanded;

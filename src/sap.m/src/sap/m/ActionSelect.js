@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		// Keyboard Navigation for Action buttons
 
 		/**
-		 * Handler for SHIFT-TAB key  - 'tab previous' sap ui5 key event.
+		 * Handler for SHIFT-TAB key  - 'tab previous' key event.
 		 *
 		 * @param oEvent - key event
 		 * @private

@@ -218,7 +218,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/T
 	 * @param {function} functionToCall The handler function to call when the event occurs.
 	 * This function will be called in the context of the oListener instance (if present) or on the event provider instance.
 	 * The event object (sap.ui.base.Event) is provided as first argument of the handler.
-	 * Handlers must not change the content of the event. The second argument is the specified oData instance (if present).
+	 * Handlers must not change the content of the event. The second argument is the specified <code>data</code> object (if present).
 	 * @param {object} [listener] The object that wants to be notified when the event occurs (this context within the handler function).
 	 * If it is not specified, the handler function is called in the context of the event provider.
 	 * @returns {sap.m.FeedContent} Reference to this in order to allow method chaining
