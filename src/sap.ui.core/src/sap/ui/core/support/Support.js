@@ -82,15 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 						Support.exitPlugins(that, true);
 					});
 					this.attachEvent(mEvents.LIBS, function(oEvent){
-						var aLibs = oEvent.mParameters;
-
-						if (!Array.isArray(aLibs)) {
-							aLibs = Object.keys(aLibs).map(function(sParam) {
-								return aLibs[sParam];
-							});
-						}
-
-						sap.ui.getCore().loadLibraries(aLibs, true).then(function() {
+						sap.ui.getCore().loadLibraries(oEvent.mParameters,true).then(function() {
 							jQuery(function(){
 								Support.initPlugins(that, true).then(function() {
 									that.sendEvent(mEvents.SETUP);

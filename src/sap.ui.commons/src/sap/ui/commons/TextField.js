@@ -522,7 +522,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the editable state
 	 *
-	 * @param {boolean} bEditable
+	 * @param bEditable
 	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -544,7 +544,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the enabled state
 	 *
-	 * @param {boolean} bEnabled
+	 * @param bEnabled
 	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the Required-State
 	 *
-	 * @param {boolean} bRequired:
+	 * @param bRequired:
 	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -594,7 +594,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the Design
 	 *
-	 * @param {sap.ui.core.Design} sDesign:
+	 * @param sDesign:
 	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -619,7 +619,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the Value
 	 *
-	 * @param {string} sValue:
+	 * @param sValue:
 	 * @return {sap.ui.commons.TextField} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -835,7 +835,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	TextField.prototype.getAccessibilityInfo = function() {

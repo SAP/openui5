@@ -118,8 +118,8 @@ sap.ui.testfwk.TestFWK.getContentURL = function() {
  * @private
  *
  * @param sURL
- * @param {object} [oThemeConstraints]
- * @param {string} [sLibName]
+ * @param oThemeConstraints optional
+ * @param sLibName optional
  * @returns {sap.ui.testfwk.TestFWK.setContentURL}
  */
 sap.ui.testfwk.TestFWK.setContentURL = function(sURL, oThemeConstraints, sLibName) {
@@ -151,7 +151,7 @@ sap.ui.testfwk.TestFWK.setContentURL = function(sURL, oThemeConstraints, sLibNam
  *
  * @private
  *
- * @param {string} sLibName optional
+ * @param sLibName optional
  */
 sap.ui.testfwk.TestFWK.updateContent = function(sLibName) {
 	if ( !this.oContentWindow || !this.sContentURL ) {
@@ -249,8 +249,8 @@ sap.ui.testfwk.TestFWK.setContrastMode = function(bContrastMode) {
  * If either parameter is null, the other will be returned; if both are null, null will be returned.
  *
  * @private
- * @param {string} sRequestedTheme
- * @param {object} oThemeConstraints
+ * @param sRequestedTheme
+ * @param oThemeConstraints
  * @returns
  */
 sap.ui.testfwk.TestFWK.getEffectiveTheme = function(sRequestedTheme, oThemeConstraints) {

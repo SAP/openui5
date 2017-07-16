@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
-		 * @returns {boolean} If the sap.m.ObjectListItem has attributes
+		 * @returns {boolean}
 		 */
 		ObjectListItem.prototype._hasAttributes = function() {
 			var attributes = this.getAttributes();
@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
-		 * @returns {boolean} If the sap.m.ObjectListItem has status
+		 * @returns {boolean}
 		 */
 		ObjectListItem.prototype._hasStatus = function() {
 			return ((this.getFirstStatus() && !this.getFirstStatus()._isEmpty())
@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
-		 * @returns {boolean} If the sap.m.ObjectListItem has bottom content
+		 * @returns {boolean}
 		 */
 		ObjectListItem.prototype._hasBottomContent = function() {
 
@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
-		 * @returns {Array} The visible attributes of the control
+		 * @returns {Array}
 		 */
 		ObjectListItem.prototype._getVisibleAttributes = function() {
 
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
-		 * @returns {Array} The visible markers of the control
+		 * @returns {Array}
 		 */
 		ObjectListItem.prototype._getVisibleMarkers = function() {
 
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * Lazy loads ObjectListItem's image.
-		 * @returns {object} The image control
+		 *
 		 * @private
 		 */
 		ObjectListItem.prototype._getImageControl = function() {
@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 
 		/**
 		 * @private
-		 * @returns {sap.m.ObjectListItem} Title text control
+		 * @returns Title text control
 		 */
 		ObjectListItem.prototype._getTitleText = function() {
 

@@ -146,8 +146,8 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 
 		/**
 		 * Create the correct event object for a mouse event
-		 * @param {string} sName the mouse event name
-		 * @param {DOMElement} oDomRef the domref on that the event is going to be triggered
+		 * @param sName the mouse event name
+		 * @param oDomRef the domref on that the event is going to be triggered
 		 * @private
 		 */
 		_createAndDispatchMouseEvent: function (sName, oDomRef) {

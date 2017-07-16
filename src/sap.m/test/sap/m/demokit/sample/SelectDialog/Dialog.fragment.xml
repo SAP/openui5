@@ -6,7 +6,7 @@
 		title="Select Product"
 		search="handleSearch"
 		confirm="handleClose"
-		cancel="handleClose"
+		close="handleClose"
 		items="{
 			path: '/ProductCollection'
 		}" >

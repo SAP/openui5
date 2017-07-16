@@ -14,8 +14,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * PaneContainer is an abstraction of Splitter.
-	 *
+	 * PaneContainer is an abstraction of Splitter
 	 * Could be used as an aggregation of ResponsiveSplitter or other PaneContainers.
 	 * @extends sap.ui.core.Element
 	 *
@@ -87,11 +86,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', './Split
 	 *
 	 * @public
 	 * @param oObject
-	 * @param iIndex
 	 * @returns {sap.ui.base.ManagedObject}
 	 */
-	PaneContainer.prototype.insertPane = function (oObject, iIndex) {
-		var vResult =  this.insertAggregation("panes", oObject, iIndex),
+	PaneContainer.prototype.insertPane = function (oObject) {
+		var vResult =  this.insertAggregation("panes", oObject),
 			oEventDelegate = {
 				onAfterRendering: function () {
 					this.triggerResize();

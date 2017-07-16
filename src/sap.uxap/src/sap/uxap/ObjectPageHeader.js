@@ -255,8 +255,7 @@ sap.ui.define([
 						domRef: {type: "string"}
 					}
 				}
-			},
-			designTime: true
+			}
 		}
 	});
 
@@ -570,14 +569,6 @@ sap.ui.define([
 							}
 						}
 					};
-
-					oAction.setVisible = function (bVisible) {
-						oAction._setInternalVisible(bVisible, true);
-						Button.prototype.setVisible.call(this, bVisible);
-
-						oAction.getParent()._adaptOverflow();
-					};
-
 					oAction.onAfterRendering = function () {
 						if (!this._getInternalVisible()) {
 							this.$().hide();

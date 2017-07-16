@@ -21,7 +21,7 @@
         "name": "Dynamic Page",
         "category": "Container",
         "since": "1.42",
-        "samples": ["sap.f.sample.DynamicPageFreeStyle", "sap.f.sample.DynamicPageAnalyticalTable"]
+        "samples": ["sap.f.sample.DynamicPageFreeStyle", "sap.f.sample.DynamicPageListReport", "sap.f.sample.DynamicPageAnalyticalTable"]
       },
       {
         "id": "sap.f.FlexibleColumnLayout",
@@ -43,6 +43,11 @@
         "id": "sap.f.sample.DynamicPageFreeStyle",
         "name": "Dynamic Page Freestyle Example",
         "description": "Dynamic Page freestyle example with a responsive <code>sap.m.Table</code> in the content area, showing that each control can be placed in the title and the header content areas."
+      },
+      {
+        "id": "sap.f.sample.DynamicPageListReport",
+        "name": "Dynamic Page with sap.m.Table",
+        "description": "Dynamic Page containing a sap.m.Table in the content area and filtering options in the header (SAP Fiori 2.0 List Report floorplan)."
       },
       {
         "id": "sap.f.sample.DynamicPageAnalyticalTable",

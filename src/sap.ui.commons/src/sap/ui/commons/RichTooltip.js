@@ -138,7 +138,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 * should be used for rendering
 	 *
 	 * @override
-	 * @param {string} sText the text that should be shown
+	 * @param sText
+	 *            {string} the text that should be shown
 	 */
 	RichTooltip.prototype.setText = function(sText) {
 		if (!!sText) {

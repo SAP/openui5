@@ -2,15 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/Utils"
-], function(
-	jQuery,
-	Base,
-	FlexUtils
-) {
+sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/Utils"], function(jQuery, Base, FlexUtils) {
 	"use strict";
 
 	/**
@@ -23,7 +15,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
-	var PropertyBindingChange = {};
+	var PropertyBindingChange = { };
 
 	/**
 	 * @param {object} oChange - change object with instructions to be applied on the control
@@ -36,41 +28,8 @@ sap.ui.define([
 	PropertyBindingChange.applyChange = function(oChange, oControl, mPropertyBag) {
 		var oDef = oChange.getDefinition();
 		var sPropertyName = oDef.content.property;
-		var vPropertyValue = oDef.content.newBinding;
-		var oModifier = mPropertyBag.modifier;
-
-		oChange.setRevertData({
-			originalValue: oModifier.getPropertyBinding(oControl, sPropertyName)
-		});
-
-		oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
-	};
-
-	/**
-	 * @param {object} oChange - change object with instructions to be applied on the control
-	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} mPropertyBag
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @public
-	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#revertChange
-	 */
-	PropertyBindingChange.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
-
-		if (mRevertData) {
-			var oDef = oChange.getDefinition();
-			var sPropertyName = oDef.content.property;
-			var vPropertyValue = mRevertData.originalValue;
-			var oModifier = mPropertyBag.modifier;
-
-			oModifier.setPropertyBinding(oControl, sPropertyName, vPropertyValue);
-			oChange.resetRevertData();
-		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
-			return false;
-		}
-
-		return true;
+		var oPropertyBinding = oDef.content.newBinding;
+		mPropertyBag.modifier.setPropertyBinding(oControl, sPropertyName, oPropertyBinding);
 	};
 
 	/**
@@ -83,12 +42,19 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.PropertyBindingChange#completeChangeContent
 	 */
 	PropertyBindingChange.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+
 		var oChangeJson = oChange.getDefinition();
+
 		if (oSpecificChangeInfo.content) {
+
 			oChangeJson.content = oSpecificChangeInfo.content;
+
 		} else {
+
 			throw new Error("oSpecificChangeInfo attribute required");
+
 		}
+
 	};
 
 	return PropertyBindingChange;

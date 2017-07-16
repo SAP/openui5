@@ -302,7 +302,7 @@ function(
 		ElementUtil.executeActions(aActions);
 		assert.equal(ElementUtil.hasAncestor(this.oButton, this.oHorizontalLayoutChild), false, 'then afterwards the button is no longer an ancestor of the horizontal layout');
 		assert.equal(ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout), true, 'and the button is still an ancestor of the vertical layout');
-		aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
+		var aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
 		assert.equal(aChildren.length, 6, 'then the vertical layout has now 6 children');
 	});
 
@@ -311,13 +311,6 @@ function(
 		var oLabel = new Label();
 		assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), false,
 			'then the static method "isValidForAggregation" returns false');
-	});
-
-	QUnit.test("when a control has non-multiple aggregations without an existing item", function(assert) {
-		var oFormElement = new FormElement();
-		var oLabel = new Label();
-		assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), true,
-			'then the static method "isValidForAggregation" returns true');
 	});
 
 	QUnit.test("when insertAggregation method is called to insert existing button into horizontalLayout", function(assert) {

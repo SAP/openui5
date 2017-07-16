@@ -208,67 +208,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	Month.prototype.onmouseover = function(oEvent) {
-		var $Target = jQuery(oEvent.target),
-			oSelectedDateRange,
-			iDate1,
-			iDate2;
-
-		if (!this.getIntervalSelection()) {
-			return;
-		}
-
-		oSelectedDateRange = this.getSelectedDates()[0];
-
-		if (!oSelectedDateRange || !oSelectedDateRange.getStartDate() || oSelectedDateRange.getEndDate()) {
-			return;
-		}
-
-		if (!$Target.hasClass('sapUiCalItemText') && !$Target.hasClass('sapUiCalItem')) {
-			return;
-		}
-
-		if ($Target.hasClass('sapUiCalItemText')) {
-			$Target = $Target.parent();
-		}
-
-		iDate1 = parseInt(this._oFormatYyyymmdd.format(oSelectedDateRange.getStartDate()), 10);
-		iDate2 = $Target.data("sapDay");
-
-		//swap if necessary
-		if (iDate1 > iDate2) {
-			iDate1 = iDate1 + iDate2;
-			iDate2 = iDate1 - iDate2;
-			iDate1 = iDate1 - iDate2;
-		}
-
-		if (this.hasListeners("datehovered")) {
-			this.fireEvent("datehovered", { date1: iDate1, date2: iDate2 });
-		} else {
-			this._markDatesBetweenStartAndHoveredDate(iDate1, iDate2);
-		}
-	};
-
-	Month.prototype._markDatesBetweenStartAndHoveredDate = function(iDate1, iDate2) {
-		var aDomRefs,
-			$CheckRef,
-			iCheckDate,
-			i;
-
-		aDomRefs = this.$().find(".sapUiCalItem");
-
-		for (i = 0; i < aDomRefs.length; i++) {
-			$CheckRef = jQuery(aDomRefs[i]);
-			iCheckDate = $CheckRef.data('sapDay');
-
-			if (iCheckDate > iDate1 && iCheckDate < iDate2) {
-				$CheckRef.addClass('sapUiCalItemSelBetween');
-			} else {
-				$CheckRef.removeClass('sapUiCalItemSelBetween');
-			}
-		}
-	};
-
 	Month.prototype.onsapfocusleave = function(oEvent){
 
 		if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {

@@ -66,11 +66,9 @@
 			});
 		};
 
-		var oSelectedAppointment,
-			sDomRefId;
+		var oSelectedAppointment;
 		var handleAppointmentSelect = function(oEvent){
 			oSelectedAppointment = oEvent.getParameter("appointment");
-			sDomRefId = oEvent.getParameter("domRefId");
 		};
 
 		var bRowSelectionChange = false;
@@ -1487,17 +1485,6 @@
 			qutils.triggerEvent("tap", "PC1-R1A1");
 			assert.equal(oSelectedAppointment.getId(), "PC1-R1A1", "appointmentSelect event fired and appointment returned");
 			assert.ok(sap.ui.getCore().byId("PC1-R1A1").getSelected(), "Appointment is selected");
-			assert.equal(sDomRefId, "PC1-R1A1", "sDomRefId returns the right ID of the appointment if clicked on the whole appointment");
-			qutils.triggerEvent("tap", "PC1-R1A1-Title");
-			assert.equal(sDomRefId, "PC1-R1A1", "sDomRefId returns the right ID of the appointment if clicked on the title of the appointment");
-			qutils.triggerEvent("tap", "PC1-R1A1-Text");
-			assert.equal(sDomRefId, "PC1-R1A1", "sDomRefId returns the right ID of the appointment if clicked on the text of the appointment");
-			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
-			sap.ui.getCore().applyChanges();
-			qutils.triggerEvent("tap", "PC1-Row1-CalRow-Group0");
-			assert.equal(sDomRefId, "PC1-Row1-CalRow-Group0", "sDomRefId returns the right ID of the group appointment");
-			oPC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hours);
-			sap.ui.getCore().applyChanges();
 			oSelectedAppointment = undefined;
 		});
 
@@ -1866,7 +1853,7 @@
 				oWeekView = this.sut._getView(sViewKey);
 			//The act of this test is done in the module beforeEach
 			//assert
-			assert.strictEqual(Object.keys(this.sut._oViews).length, 5, "Correct number (5) of views assigned to PlanningCalendar");
+			assert.strictEqual(this.sut._aViews.length, 5, "Correct number (5) of views assigned to PlanningCalendar");
 			assert.strictEqual(oWeekView.getIntervalsS(), 7, "Correct number (7) intervals for S screen sizes");
 			assert.strictEqual(oWeekView.getIntervalsM(), 7, "Correct number (7) intervals for M screen sizes");
 			assert.strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
@@ -3264,133 +3251,6 @@
 					"select should not be visible");
 		});
 
-		QUnit.test("default built-in views", function (assert) {
-			var aViewKey = sap.m.PlanningCalendarBuiltInView.Hour;
-			this.oPC.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-			assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 5, "By default the planning calendar is " +
-				"created with 5 predefined views");
-			assert.equal(this.oPC.getViews().length, 0, "By default in the planning calendar there are no custom views");
-			assert.equal(this.oPC.getViewKey(), aViewKey, "By default the planning calendar view key is hour");
-		});
-
-		QUnit.test("setting the property builtInViews with two arguments", function (assert) {
-			var oItemKey,
-				aViewType = sap.m.PlanningCalendarBuiltInView,
-				aViewKey = sap.m.PlanningCalendarBuiltInView.Day;
-			this.oPC.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-			this.oPC.setBuiltInViews([aViewType.Day, aViewType.Hour]);
-			sap.ui.getCore().applyChanges();
-
-			// Note: updating to the current view key because adding a new view or setting the builtInViews property
-			// with items removes all the previous views and the old key is not valid any more
-			this.oPC.setViewKey(aViewType.Day);
-			assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 2, "When the buildInViews property is set with " +
-				"two views, only they are shown to the end user.");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
-			assert.equal(oItemKey, aViewType.Day, "The key of the first view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[1].getKey();
-			assert.equal(oItemKey, aViewType.Hour, "The key of the second view is OK");
-			assert.equal(this.oPC.getViews().length, 0, "By default in the planning calendar there are no custom views");
-			assert.equal(this.oPC.getViewKey(), aViewKey, "When builtInViews property is set, the view key of the " +
-				"planning calendar is the first assigned");
-		});
-
-		QUnit.test("setting the property builtInViews with no arguments", function (assert) {
-			var oItemKey,
-				aViewType = sap.m.PlanningCalendarBuiltInView,
-				aViewKey = sap.m.PlanningCalendarBuiltInView.Hour;
-			this.oPC.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-			this.oPC.setBuiltInViews([]);
-			sap.ui.getCore().applyChanges();
-			assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 5, "When the buildInViews property is set with " +
-				"an empty array, the PlanningCalendar is showing the 5 predefined views");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
-			assert.equal(oItemKey, aViewType.Hour, "The key of the first view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[1].getKey();
-			assert.equal(oItemKey, aViewType.Day, "The key of the second view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[2].getKey();
-			assert.equal(oItemKey, aViewType.Month, "The key of the third view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[3].getKey();
-			assert.equal(oItemKey, aViewType.Week, "The key of the fourth view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[4].getKey();
-			assert.equal(oItemKey, aViewType.OneMonth, "The key of the fifth view is OK");
-			assert.equal(this.oPC.getViews().length, 0, "By default in the planning calendar there are no custom views");
-			assert.equal(this.oPC.getViewKey(), aViewKey, "When builtInViews property is set to empty array, " +
-				"the view key of the planning calendar is the default one - hour");
-		});
-
-		QUnit.test("with custom view", function (assert) {
-			var oItemKey;
-			this.oPC.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-			this.oPC.addView(
-				new sap.m.PlanningCalendarView({
-					key: "test",
-					intervalType: sap.ui.unified.CalendarIntervalType.Day,
-					description: "test",
-					intervalsS: 7,
-					intervalsM: 7,
-					intervalsL: 7
-				})
-			);
-			// Note: updating to the current view key because adding a new view or setting the builtInViews property
-			// with items removes all the previous views and the old key is not valid any more
-			this.oPC.setViewKey("test");
-			sap.ui.getCore().applyChanges();
-			assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 1, "When the buildInViews property is set with " +
-				"two views and there is a custom view, the PlanningCalendar is showing 3 views");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
-			assert.equal(oItemKey, "test", "The key of the first view is OK");
-			assert.equal(this.oPC.getViews().length, 1, "When set, the there are views in the getViews array");
-		});
-
-		QUnit.test("adding custom views and setting the property builtInViews with two arguments", function (assert) {
-			var oItemKey,
-				aViewType = sap.m.PlanningCalendarBuiltInView,
-				aViewKey = sap.m.PlanningCalendarBuiltInView.Day;
-			this.oPC.placeAt('qunit-fixture');
-			sap.ui.getCore().applyChanges();
-
-			this.oPC.addView(
-				new sap.m.PlanningCalendarView({
-					key: "test",
-					intervalType: sap.ui.unified.CalendarIntervalType.Day,
-					description: "test",
-					intervalsS: 7,
-					intervalsM: 7,
-					intervalsL: 7
-				})
-			);
-			// Note: updating to the current view key because adding a new view or setting the builtInViews property
-			// with items removes all the previous views and the old key is not valid any more
-			this.oPC.setViewKey("test");
-			sap.ui.getCore().applyChanges();
-			assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 1, "When the buildInViews property is set with " +
-				"two views and there is a custom view, the PlanningCalendar is showing 3 views");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
-			assert.equal(oItemKey, "test", "The key of the first view is OK");
-
-			this.oPC.setBuiltInViews([aViewType.Day, aViewType.Hour]);
-			sap.ui.getCore().applyChanges();
-
-			assert.equal(this.oPC._oIntervalTypeSelect.getItems().length, 3, "When the buildInViews property is set with " +
-				"two views and there is a custom view, the PlanningCalendar is showing 3 views");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[0].getKey();
-			assert.equal(oItemKey, aViewType.Day, "The key of the first view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[1].getKey();
-			assert.equal(oItemKey, aViewType.Hour, "The key of the second view is OK");
-			oItemKey = this.oPC._oIntervalTypeSelect.getItems()[2].getKey();
-			assert.equal(oItemKey, "test", "The key of the third view is OK");
-			assert.equal(this.oPC.getViews().length, 1, "When set, the there are views in the getViews array");
-			assert.equal(this.oPC.getViewKey(), aViewKey, "When builtInViews property is set, the view key of the " +
-				"planning calendar is the first assigned");
-		});
-
 		QUnit.module('CalendarAppointment');
 
 		QUnit.test('_getComparer', function(assert) {
@@ -3569,6 +3429,5 @@
 <div id="verySmallUiArea" class="width300"></div>
 <div id="smallUiArea" class="width600"></div>
 <div id="bigUiArea" class="width1024"></div>
-<div id="qunit-fixture"></div>
 </body>
 </html>

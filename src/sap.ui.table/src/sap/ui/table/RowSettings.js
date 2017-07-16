@@ -4,12 +4,9 @@
 
 // Provides control sap.ui.table.RowSettings
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Element', './TableUtils', './library', "sap/ui/core/library"
-], function(jQuery, Element, TableUtils, library, coreLibrary) {
-    "use strict";
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
+	'jquery.sap.global', 'sap/ui/core/Element', './TableUtils', './library', "sap/ui/core/MessageType"
+], function(jQuery, Element, TableUtils, library, MessageType) {
+	"use strict";
 
 	/**
 	 * Constructor for new RowSettings.

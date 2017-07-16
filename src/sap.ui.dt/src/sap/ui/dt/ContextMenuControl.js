@@ -39,7 +39,6 @@ sap.ui.define([
 	 */
 	ContextMenuControl.prototype.init = function() {
 		Menu.prototype.init.apply(this, arguments);
-		this.addStyleClass("sapUiDtContextMenu");
 		this._fnOnKeyDown = this._onKeyDown.bind(this);
 		jQuery(document).keydown(this._fnOnKeyDown);
 		this.attachBrowserEvent("contextmenu", this._onContextMenu, this);

@@ -27,8 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 			alt = oImage.getAlt(),
 			tooltip = oImage.getTooltip_AsString(),
 			bHasPressHandlers = oImage.hasListeners("press"),
-			oLightBox = oImage.getDetailBox(),
-			sUseMap = oImage.getUseMap();
+			oLightBox = oImage.getDetailBox();
 
 		// Additional element for Image with LightBox
 		if (oLightBox) {
@@ -61,13 +60,14 @@ sap.ui.define(['jquery.sap.global'],
 			rm.addClass("sapMPointer");
 		}
 
-		if (sUseMap || !oImage.getDecorative() || bHasPressHandlers) {
+		if (oImage.getUseMap() || !oImage.getDecorative()) {
 			rm.addClass("sapMImgFocusable");
 		}
 
 		rm.writeClasses();
 
 		//TODO implement the ImageMap control
+		var sUseMap = oImage.getUseMap();
 		if (sUseMap) {
 			if (!(jQuery.sap.startsWith(sUseMap, "#"))) {
 				sUseMap = "#" + sUseMap;

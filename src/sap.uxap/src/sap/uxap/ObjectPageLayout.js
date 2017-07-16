@@ -12,20 +12,15 @@ sap.ui.define([
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./ObjectPageSection",
 	"./ObjectPageSubSection",
+	"./ObjectPageSubSectionLayout",
 	"./LazyLoading",
 	"./ObjectPageLayoutABHelper",
 	"./ThrottledTaskHelper",
 	"sap/ui/core/ScrollBar",
-	"sap/ui/core/library",
+	"sap/ui/core/TitleLevel",
 	"./library"
-], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, LazyLoading, ABHelper, ThrottledTask, ScrollBar, coreLibrary, library) {
+], function (jQuery, ResizeHandler, Control, CustomData, Device, ScrollEnablement, ObjectPageSection, ObjectPageSubSection, ObjectPageSubSectionLayout, LazyLoading, ABHelper, ThrottledTask, ScrollBar, TitleLevel, library) {
 	"use strict";
-
-	// shortcut for sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
-
-	// shortcut for sap.uxap.ObjectPageSubSectionLayout
-	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
 	/**
 	 * Constructor for a new ObjectPageLayout.
@@ -164,7 +159,6 @@ sap.ui.define([
 
 				/**
 				 * Determines whether the footer is visible.
-				 * @since 1.40
 				 */
 				showFooter: {type: "boolean", group: "Behavior", defaultValue: false}
 			},
@@ -196,7 +190,6 @@ sap.ui.define([
 
 				/**
 				 * Object page floating footer.
-				 * @since 1.40
 				 */
 				footer: {type: "sap.m.IBar", multiple: false},
 
@@ -373,21 +366,6 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 		if (oHeaderTitle && oHeaderTitle.getAggregation("_expandButton")) {
 			oHeaderTitle.getAggregation("_expandButton").attachPress(this._handleExpandButtonPress, this);
-		}
-	};
-
-	/**
-	 * Retrieves the list of sections to render initially
-	 * (the list includes the sections to be loaded lazily, as these are empty in the beginning, only their skeleton will be rendered)
-	 * @returns the sections list
-	 */
-	ObjectPageLayout.prototype._getSectionsToRender = function () {
-		var oSelectedSection = sap.ui.getCore().byId(this.getSelectedSection());
-
-		if (this.getUseIconTabBar() && oSelectedSection) {
-			return [oSelectedSection]; // only the content for the selected tab should be rendered
-		} else {
-			return this.getSections();
 		}
 	};
 
@@ -817,8 +795,8 @@ sap.ui.define([
 
 	/**
 	 * Overrides the setter for the useIconTabBar property
-	 * @param {boolean} bValue
-	 * @returns {sap.uxap.ObjectPageLayout} this
+	 * @param bValue
+	 * @returns this
 	 */
 	ObjectPageLayout.prototype.setUseIconTabBar = function (bValue) {
 
@@ -931,9 +909,7 @@ sap.ui.define([
 
 		var aTaskArgs = arguments;
 		Array.prototype.splice.call(aTaskArgs, 0, 2); // the first two are not specific to the task execution, so remove them
-		return this._oLayoutTask.reSchedule(bImmediate, aTaskArgs).catch(function(reason) {
-			// implement catch function to prevent uncaught errors message
-		}); // returns promise
+		return this._oLayoutTask.reSchedule(bImmediate, aTaskArgs); // returns promise
 	};
 
 	/**
@@ -1253,7 +1229,7 @@ sap.ui.define([
 	 * Set for reference the destination section of the ongoing scroll
 	 * When this one is set, then the page will skip intermediate sections [during the scroll from the current to the destination section]
 	 * and will scroll directly to the given section
-	 * @param {string} sDirectSectionId - the section to be scrolled directly to
+	 * @param sDirectSectionId - the section to be scrolled directly to
 	 */
 	ObjectPageLayout.prototype.setDirectScrollingToSection = function (sDirectSectionId) {
 		this.sDirectSectionId = sDirectSectionId;
@@ -1286,11 +1262,6 @@ sap.ui.define([
 	ObjectPageLayout.prototype._scrollTo = function (y, time) {
 		if (this._oScroller) {
 			jQuery.sap.log.debug("ObjectPageLayout :: scrolling to " + y);
-
-			if ((time === 0) && (y >= this._getSnapPosition())) {
-				this._toggleHeader(true);
-			}
-
 			this._oScroller.scrollTo(0, y, time);
 		}
 		return this;
@@ -1638,7 +1609,7 @@ sap.ui.define([
 
 	/**
 	 * Set a given section as the currently scrolled section and update the anchorBar relatively
-	 * @param {string} sSectionId the section id
+	 * @param sSectionId the section id
 	 * @private
 	 */
 	ObjectPageLayout.prototype._setAsCurrentSection = function (sSectionId) {
@@ -1889,7 +1860,7 @@ sap.ui.define([
 
 	/**
 	 * toggles the header state
-	 * @param {boolean} bStick boolean true for fixing the header, false for keeping it moving
+	 * @param bStick boolean true for fixing the header, false for keeping it moving
 	 * @private
 	 */
 	ObjectPageLayout.prototype._toggleHeader = function (bStick) {
@@ -1914,8 +1885,8 @@ sap.ui.define([
 	/**
 	 * Restores the focus after moving the Navigation bar after moving it between containers
 	 * @private
-	 * @param {function} fnMoveNavBar a function that moves the navigation bar
-	 * @returns {sap.uxap.ObjectPageLayout} this
+	 * @param fnMoveNavBar a function that moves the navigation bar
+	 * @returns this
 	 */
 	ObjectPageLayout.prototype._restoreFocusAfter = function (fnMoveNavBar) {
 		var oCore = sap.ui.getCore(),

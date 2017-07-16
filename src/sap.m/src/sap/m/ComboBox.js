@@ -298,7 +298,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype._highlightList = function(sValue) {
 			var aItems = this.getVisibleItems(),
-				sValue = sValue.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'),
 				oRegex = new RegExp("^" + sValue, "i");
 
 			aItems.forEach(function (oItem) {
@@ -316,7 +315,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 				oItemTextRef.innerHTML = this._boldItemRef(oItem.getText(), oRegex, sValue);
 
-				if (oItemAdditionalTextRef && oItem.getAdditionalText) {
+				if (oItemAdditionalTextRef) {
 					oItemAdditionalTextRef.innerHTML = this._boldItemRef(oItem.getAdditionalText(), oRegex, sValue);
 				}
 			}, this);
@@ -334,24 +333,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 * @since 1.48
 		 */
 		ComboBox.prototype._boldItemRef = function (sItemText, oRegex, sValue) {
-			var sResult;
+			var sTextReplacement = "<b>" + sItemText.slice(0, sValue.length) + "</b>";
 
-			var sTextReplacement = "<b>" + jQuery.sap.encodeHTML(sItemText.slice(0, sValue.length)) + "</b>";
-
-			// parts should always be max of two because regex is not defined as global
-			// see above method
-			var aParts = sItemText.split(oRegex);
-
-			if (aParts.length === 1) {
-				// no match found, return value as it is
-				sResult = jQuery.sap.encodeHTML(sItemText);
-			} else {
-				sResult = aParts.map(function (sPart) {
-					return jQuery.sap.encodeHTML(sPart);
-				}).join(sTextReplacement);
-			}
-
-			return sResult;
+			return sItemText.replace(oRegex, sTextReplacement);
 		};
 
 		/**
@@ -608,7 +592,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 				var oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
 				var bTextMatched = (oFirstVisibleItem && jQuery.sap.startsWithIgnoreCase(oFirstVisibleItem.getText(), sValue));
 				var bSearchBoth = this.getFilterSecondaryValues();
-				var bDesktopPlatform = sap.ui.Device.system.desktop;
 
 				if (!bEmptyValue && oFirstVisibleItem && oFirstVisibleItem.getEnabled()) {
 
@@ -639,12 +622,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 					if (oControl._bDoTypeAhead) {
 
-						if (bDesktopPlatform) {
-							fnSelectTextIfFocused.call(oControl, sValue.length, oControl.getValue().length);
-						} else {
-							// timeout required for an Android and Windows Phone bug
-							setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
-						}
+						// timeout required for an Android and Windows Phone bug
+						setTimeout(fnSelectTextIfFocused.bind(oControl, sValue.length, oControl.getValue().length), 0);
 					}
 				}
 
@@ -716,9 +695,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.onItemPress = function(oControlEvent) {
 			var oItem = oControlEvent.getParameter("item");
-			var sText = oItem.getText();
 
-			this.updateDomValue(sText);
+			this.updateDomValue(oItem.getText());
 
 			this.close();
 
@@ -1645,21 +1623,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
-			var bDefaultKey = (sKey === ""),
-				// the correct solution for tackling the coupling of selectedKey and value should be by using debounce
-				// however this makes the API async, which alters the existing behaviour of the control
-				// that's why the solution is implemented with skipModelUpdate property
-				bSkipModelUpdate = this.isBound("selectedKey") && this.isBound("value") && this.getBindingInfo("selectedKey").skipModelUpdate;
+			var bDefaultKey = (sKey === "");
 
 			if (bDefaultKey) {
 				this.setSelection(null);
-
-				// if the setSelectedKey in called from ManagedObject's updateProperty
-				// on model change the value property should not be changed
-				if (!bSkipModelUpdate) {
-					this.setValue("");
-				}
-
+				this.setValue("");
 				return this;
 			}
 
@@ -1667,13 +1635,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 
 			if (oItem) {
 				this.setSelection(oItem);
-
-				// if the setSelectedKey in called from ManagedObject's updateProperty
-				// on model change the value property should not be changed
-				if (!bSkipModelUpdate) {
-					this.setValue(this._getSelectedItemText(oItem));
-				}
-
+				this.setValue(this._getSelectedItemText(oItem));
 				return this;
 			}
 
@@ -1691,47 +1653,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextField', './ComboBoxBase', './
 		ComboBox.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
 			return (vSelectedItem === null) ? null : sap.ui.getCore().byId(vSelectedItem) || null;
-		};
-
-		ComboBox.prototype.updateItems = function () {
-			var vResult,
-				oSelectedItem = this.getSelectedItem(), //Get selected item before model update
-				vResult = ComboBoxBase.prototype.updateItems.apply(this, arguments); //Update
-
-			//Debounce & emulate onBeforeRendering- all setters are done
-			jQuery.sap.clearDelayedCall(this._debounceItemsUpdate);
-			this._debounceItemsUpdate = jQuery.sap.delayedCall(0, this, "_syncItemsSelection", [oSelectedItem]);
-
-			return vResult;
-		};
-
-		/**
-		 * Synchronizes combobox's model update with selected key.
-		 *
-		 * @param sSelectedKey
-		 * @param oSelectedItem
-		 * @private
-		 */
-		ComboBox.prototype._syncItemsSelection = function (oSelectedItem) {
-			var bHasMatchingElement, aNewItems,
-				sSelectedKey  = this.getSelectedKey();
-
-			// The method should be executed only when there's previous selection
-			// and that previous selection differs from the current one.
-			if (!oSelectedItem || oSelectedItem === this.getSelectedItem()) {
-				return;
-			}
-
-			// Get the items after model update
-			aNewItems = this.getItems();
-
-			// Find out if there's an item with the same key, to select it
-			bHasMatchingElement = aNewItems.some(function (oItem) {
-				return sSelectedKey === oItem.getKey();
-			});
-
-			// Select the item or set null if there's no record with that key
-			this.setSelectedItem(bHasMatchingElement && sSelectedKey ? this.getItemByKey(sSelectedKey) : null);
 		};
 
 		/**

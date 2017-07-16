@@ -18,9 +18,9 @@ sap.ui.define([
 			this._router.getRoute("product").attachPatternMatched(this._routePatternMatched, this);
 			this._router.getRoute("cartProduct").attachPatternMatched(this._routePatternMatched, this);
 
-			this._router.getTarget("productView").attachDisplay(function (oEvent) {
-				this.fnUpdateProduct(oEvent.getParameter("data").productId);// update the binding based on products cart selection
-			}, this);
+			// register for events
+			var oBus = sap.ui.getCore().getEventBus();
+			oBus.subscribe("shoppingCart", "updateProduct", this.fnUpdateProduct, this);
 		},
 
 		_routePatternMatched: function(oEvent) {
@@ -52,10 +52,10 @@ sap.ui.define([
 			}
 		},
 
-		fnUpdateProduct: function(productId) {
-			var sPath = "/Products('" + productId + "')",
+		fnUpdateProduct: function(sChannel, sEvent, oData) {
+			var sPath = "/Products('" + oData.productId + "')",
 				fnCheck = function () {
-					this._checkIfProductAvailable(sPath);
+					this._checkIfProductAvailable(sPath, oData.productId);
 				};
 
 			this.getView().bindElement({

@@ -270,43 +270,14 @@
 
 	QUnit.test("BindRows", function (assert) {
 		var spy = this.spy(sap.ui.table.AnalyticalTable.prototype, "bindRows");
-		var oTable = new sap.ui.table.AnalyticalTable({
+		new sap.ui.table.AnalyticalTable({
 			rows: {path: "/modelData"},
 			columns: [new sap.ui.table.AnalyticalColumn()]
 		});
 
 		assert.ok(spy.calledOnce, "bindRows was called");
-		assert.ok(!!oTable.getBindingInfo("rows"), "BindingInfo available");
 	});
 
-	QUnit.test("Binding events", function(assert) {
-		var oChangeSpy = this.spy();
-		var oDataRequestedSpy = this.spy();
-		var oDataReceivedSpy = this.spy();
-		var oSelectionChangedSpy = this.spy();
-
-		this.oTable.bindRows({
-			path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
-			events: {
-				change: oChangeSpy,
-				dataRequested: oDataRequestedSpy,
-				dataReceived: oDataReceivedSpy,
-				selectionChanged: oSelectionChangedSpy
-			}
-		});
-
-		var oBinding = this.oTable.getBinding("rows");
-		oBinding.fireEvent("change");
-		oDataRequestedSpy.reset(); // The AnalyticalBinding tends to send multiple requests initially.
-		oBinding.fireEvent("dataRequested");
-		oBinding.fireEvent("dataReceived");
-		oBinding.fireEvent("selectionChanged");
-
-		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
-		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
-		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
-		assert.ok(oSelectionChangedSpy.calledOnce, "The original selectionChanged event listener was called once");
-	});
 
 	QUnit.module("GroupHeaderMenu", {
 		beforeEach: function () {
@@ -494,27 +465,14 @@
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels - Default");
 
-		this.oTable._aGroupedColumns = new Array(5);
 		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
 		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 5, "Property NumberOfExpandedLevels - From BindingInfo");
 
-		this.oTable._aGroupedColumns = [];
-		oBindingInfo = {parameters: {numberOfExpandedLevels: 5}};
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - From BindingInfo");
-
-		this.oTable._aGroupedColumns = new Array(4);
 		oBindingInfo = {};
 		this.oTable.setNumberOfExpandedLevels(4);
 		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property NumberOfExpandedLevels - Custom");
-
-		this.oTable._aGroupedColumns = [];
-		oBindingInfo = {};
-		this.oTable.setNumberOfExpandedLevels(4);
-		this.oTable._applyAnalyticalBindingInfo(oBindingInfo);
-		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 0, "Property NumberOfExpandedLevels (no grouped columns) - Custom");
+		assert.equal(oBindingInfo.parameters.numberOfExpandedLevels, 4, "Property SumOnTop - Custom");
 	});
 
 	QUnit.test("Simple expand/collapse", function (assert) {

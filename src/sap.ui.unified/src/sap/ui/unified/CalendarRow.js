@@ -218,13 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 					 * If set, the appointment was selected by multiple selection (e.g. shift + mouse click).
 					 * So more than the current appointment could be selected.
 					 */
-					multiSelect : {type : "boolean"},
-
-					/**
-					 * Gives the ID of the DOM element of the clicked appointment
-					 * @since 1.50
-					 */
-					domRefId: {type: "string"}
+					multiSelect : {type : "boolean"}
 				}
 			},
 
@@ -300,7 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 			CalendarRow._oStaticSelectedText.toStatic(); //Put to Static UiArea
 		}
 
-		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "EEEE dd/MM/YYYY 'at' HH:mm:ss a"});
+		this._oFormatAria = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long/short"});
 
 		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
 		this._iDaysMinDelta = 30; // minutes
@@ -1537,17 +1531,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/Device', 'sap
 				sAriaLabelSelected = oOtherAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
 				oOtherAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
 			}
-			this.fireSelect({
-				appointments: oAppointment._aAppointments,
-				multiSelect: !bRemoveOldSelection,
-				domRefId: oAppointment.getId()
-			});
-		} else {
-			this.fireSelect({
-				appointment: oAppointment,
-				multiSelect: !bRemoveOldSelection,
-				domRefId: oAppointment.getId()
-			});
+			this.fireSelect({appointments: oAppointment._aAppointments, multiSelect: !bRemoveOldSelection});
+		}else {
+			this.fireSelect({appointment: oAppointment, multiSelect: !bRemoveOldSelection});
 		}
 
 	}

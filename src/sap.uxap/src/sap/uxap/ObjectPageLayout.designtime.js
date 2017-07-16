@@ -19,7 +19,16 @@ sap.ui.define([],
 		aggregations : {
 			sections : {
 				domRef : function(oElement) {
-					return oElement.$("sectionsContainer").get(0);
+					var aSections = oElement.getSections();
+					var bSectionsVisible = aSections.some(function(oSection) {
+						return oSection.getVisible();
+					});
+
+					if (bSectionsVisible) {
+						return oElement.$("opwrapper").get(0);
+					} else {
+						return oElement.$("sectionsContainer").get(0);
+					}
 				},
 				childNames : {
 					singular : function(){
@@ -32,16 +41,14 @@ sap.ui.define([],
 				actions : {
 					move : "moveControls"
 				}
+			},
+			vScroll : {
+				ignore: false,
+				domRef : function(oElement) {
+					return oElement.$("vertSB-sb").get(0);
+				}
 			}
 		},
-		scrollContainers : [{
-			domRef : "> .sapUxAPObjectPageWrapper",
-			aggregations : ["sections", "headerContent"]
-		}, {
-			domRef : function(oElement) {
-				return oElement.$("vertSB-sb").get(0);
-			}
-		}],
 
 		cloneDomRef : ":sap-domref > header"
 	};

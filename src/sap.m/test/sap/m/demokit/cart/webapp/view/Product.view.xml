@@ -6,16 +6,14 @@
 	<Page
 		id="page"
 		title="{Name}"
-		showNavButton="{device>/system/phone}"
+		showNavButton="{device>/isPhone}"
 		navButtonPress="onNavButtonPress" >
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"
-				visible="{device>/system/phone}"
+				visible="{device>/isPhone}"
 				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress" />
-			<ToolbarSpacer/>
-			<Button icon="sap-icon://customer"/>
 		</headerContent>
 		<footer>
 			<Toolbar>
@@ -48,7 +46,7 @@
 						title="{i18n>productMeasuresAttributeText}"
 						text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
 				</attributes>
-				<statuses>
+				<firstStatus>
 					<ObjectStatus
 						text="{
 							path : 'Status',
@@ -58,21 +56,19 @@
 							path : 'Status',
 							formatter : '.formatter.statusState'
 						}" />
-				</statuses>
+				</firstStatus>
 			</ObjectHeader>
-			<VBox
-				alignItems="Center"
-				renderType="Div">
-					<Image
-						id = "productImage"
-						src= "{
+			<VBox alignItems="Center">
+				<Image
+					id = "productImage"
+					src= "{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
 						}"
-						decorative="true"
-						class="sapUiSmallMargin"
-						press="onPicturePress"
-						width="100%"
+					decorative="true"
+					class="sapUiSmallMargin"
+					press="onPicturePress"
+					width="100%"
 					/>
 			</VBox>
 		</content>

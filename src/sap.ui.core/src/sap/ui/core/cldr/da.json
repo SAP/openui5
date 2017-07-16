@@ -3345,9 +3345,6 @@
 		"ZMK": 0,
 		"ZWD": 0
 	},
-	"plurals": {
-		"one": "n = 1 or t != 0 and i = 0,1"
-	},
 	"weekData-minDays": 4,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,

@@ -21,8 +21,8 @@
 	}
 }
 
-.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
-	left: 1px; // Must be in pixels to behave correctly in IE
+.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
+	left: 0.0625rem;
 }
 
 .sapMCbBg.sapMCbMarkChecked:before {
@@ -127,8 +127,8 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 
 /* Compact size */
 .sapUiSizeCompact{
-	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
-		left: 1px; // Must be in pixels to behave correctly in IE
+	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
+		left: 0.0625rem;
 	}
 }
 
@@ -140,7 +140,7 @@ html.sap-desktop {
 			left: 0.365rem;
 		}
 
-		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
+		.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
 			left: -0.0625rem;
 		}
 	}

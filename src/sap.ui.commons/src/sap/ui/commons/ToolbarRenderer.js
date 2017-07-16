@@ -53,7 +53,7 @@ function(jQuery) {
 
 		var sInnerDiv = "<div class='sapUiTbInner' id='" + oToolbar.getId() + "-inner" + "'>";
 		if (bHasRightItems) {
-			rm.write("<div class='sapUiTbCont sapUiTbContLeft'>" + sInnerDiv);
+            rm.write("<div class='sapUiTbCont sapUiTbContLeft'>" + sInnerDiv);
 		} else {
 			rm.write("<div class='sapUiTbCont'>" + sInnerDiv);
 		}
@@ -131,7 +131,7 @@ function(jQuery) {
 	/**
 	 * Fills the overflow popup with the currently invisible toolbar items.
 	 *
-	 * @param {sap.ui.commons.Toolbar} oToolbar The toolbar to be filled
+	 * @param {sap.ui.commons.Toolbar} oToolbar
 	 * @private
 	 */
 	ToolbarRenderer.fillOverflowPopup = function(oToolbar) {
@@ -177,8 +177,7 @@ function(jQuery) {
 	/**
 	 * Creates the overflow popup inside the static area, but does not fill its contents (=no items).
 	 *
-	 * @param {sap.ui.commons.Toolbar} oToolbar The toolbar which popup will be created
-	 * @returns {Object} The object that holds the popup
+	 * @param {sap.ui.commons.Toolbar} oToolbar
 	 * @private
 	 */
 	ToolbarRenderer.initOverflowPopup = function(oToolbar) {
@@ -194,16 +193,16 @@ function(jQuery) {
 	/**
 	 * Either move the items from the overflow popup to the toolbar or just remove them from the DOM.
 	 *
-	 * @param {sap.ui.commons.Toolbar} oToolbar The toolbar which popup items will be rearranged
+	 * @param {sap.ui.commons.Toolbar} oToolbar
 	 * @param {boolean} [bMoveItems=true] move popup items to the toolbar DOM or remove them completely
 	 * @private
 	 */
 	ToolbarRenderer.emptyOverflowPopup = function(oToolbar, bMoveItems) {
 		var oPopupHolder    = oToolbar.getDomRef("pu"),
-			oDomRef         = oToolbar.getDomRef(),
-			oContext        = null,
-			sMethod         = '',
-			aAdditionalArgs = [];
+		    oDomRef         = oToolbar.getDomRef(),
+		    oContext        = null,
+		    sMethod         = '',
+		    aAdditionalArgs = [];
 
 		if (bMoveItems === undefined) {
 			// by default the items are moved from the popup to the toolbar
@@ -245,7 +244,7 @@ function(jQuery) {
 	 * Returns the area in which the overflow popup should be rendered.
 	 *
 	 * @param {sap.ui.commons.Toolbar} oToolbar The Toolbar whose popup area is requested
-	 * @returns {object} The popup area
+	 *
 	 * @private
 	 */
 	ToolbarRenderer.getPopupArea = function(oToolbar) {

@@ -1,4 +1,4 @@
-/* global QUnit sinon */
+/*global QUnit*/
 
 (function(){
 	"use strict";
@@ -13,9 +13,6 @@
 
 	jQuery.sap.require("sap.ui.dt.DesignTime");
 	jQuery.sap.require("sap.ui.dt.Plugin");
-	jQuery.sap.require("sap.ui.layout.form.Form");
-	jQuery.sap.require("sap.ui.layout.form.FormContainer");
-	jQuery.sap.require("sap.ui.core.Title");
 
 	QUnit.module("Given that an Plugin is initialized with register methods", {
 		beforeEach : function(assert) {
@@ -140,35 +137,6 @@
 		}.bind(this));
 
 		this.oDesignTime.addRootElement(oLayout);
-	});
-
-	QUnit.test("when the plugin is added and the element overlay syncs its aggregation overlays", function(assert) {
-		var done = assert.async();
-
-		this.oDesignTime.addPlugin(this.oPlugin);
-		this.oFormContainer = new sap.ui.layout.form.FormContainer("formcontainer", {title: new sap.ui.core.Title({text: "foo"})});
-		this.oForm = new sap.ui.layout.form.Form("form",{
-			title: new sap.ui.core.Title({text: "Form Title"}),
-			editable: true,
-			formContainers: [this.oFormContainer]
-		});
-
-		this.oDesignTime.attachEventOnce("synced", function() {
-			var spy = sinon.spy(this.oPlugin, "callAggregationOverlayRegistrationMethods");
-
-			var oFormContainerElementOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oFormContainer);
-			var oAggregationOverlay = oFormContainerElementOverlay.getAggregationOverlay("formElements");
-			oFormContainerElementOverlay._syncAggregationOverlay(oAggregationOverlay);
-
-			assert.equal(spy.callCount, 1, "the aggregation overlay is registered one time on the plugin");
-
-			done();
-
-		}.bind(this));
-
-		this.oLayout.addContent(this.oForm);
-		sap.ui.getCore().applyChanges();
-
 	});
 
 	QUnit.test("when the plugin is added to designTime and then removed from DT", function(assert) {

@@ -50,70 +50,26 @@ sap.ui.define([
 					jQuery.sap.log.error(e);
 				}
 
-				// Build the full query strings, escape special characters
-				var sQueryDoc = "(category:topics) AND (" + encodeURIComponent(sQuery) + ")";
-				var sQueryApi = "(category:apiref) AND (" + encodeURIComponent(sQuery) + ")";
-				var sQueryExplored = "(category:entity) AND (" + encodeURIComponent(sQuery) + ")";
+				// Build the full query string, escape special characters
+				sQuery = "(category:topics OR category:apiref or category:entity) AND (" + encodeURIComponent(sQuery) + ")";
 
-				var PromiseDoc = new Promise(function (resolve) {
-					jQuery.ajax({
-						url: "search?q=" + sQueryDoc,
-						dataType : "json",
-						success : function(oData, sStatus, xhr) {
-							resolve(oData, sStatus, xhr);
-						},
-						error : function() {
-							resolve([]);
-						}
-					});
+				jQuery.ajax({
+					url: "search?q=" + sQuery,
+					dataType : "json",
+					success : function(oData, sStatus, xhr) {
+						jQuery(function() {
+							that.processResult(oData, sStatus, xhr);
+						});
+					},
+					error : function() {
+						jQuery(function() {
+							that.processResult(null);
+						});
+					}
 				});
-
-				var PromiseApi = new Promise(function (resolve) {
-					jQuery.ajax({
-						url: "search?q=" + sQueryApi,
-						dataType : "json",
-						success : function(oData, sStatus, xhr) {
-							resolve(oData, sStatus, xhr);
-						},
-						error : function() {
-							resolve([]);
-						}
-					});
-				});
-
-				var PromiseExplored = new Promise(function (resolve) {
-					jQuery.ajax({
-						url: "search?q=" + sQueryExplored,
-						dataType : "json",
-						success : function(oData, sStatus, xhr) {
-							resolve(oData, sStatus, xhr);
-						},
-						error : function() {
-							resolve([]);
-						}
-					});
-				});
-
-				Promise.all([PromiseDoc, PromiseApi, PromiseExplored]).then(function(result) {
-					var oData = {},
-						oResultDoc = result[0][0] || {},
-						oResultApi = result[1][0] || {},
-						oResultExplored = result[2][0] || {};
-
-					oResultDoc.matches = oResultDoc.matches || [];
-					oResultApi.matches = oResultApi.matches || [];
-					oResultExplored.matches = oResultExplored.matches || [];
-
-					oData.success = oResultDoc.success || oResultApi.success || oResultExplored.success || false;
-					oData.totalHits = (oResultDoc.totalHits + oResultApi.totalHits + oResultExplored.totalHits) || 0;
-					oData.matches = oResultDoc.matches.concat(oResultApi.matches).concat(oResultExplored.matches);
-					that.processResult(oData);
-				 }).catch(function(reason) {
-					 // implement catch function to prevent uncaught errors message
-				 });
 			},
 
-			processResult : function (oData) {
+			processResult : function (oData, sStatus, xhr) {
 				this.dataObject.data = [];
 				this.dataObject.dataAPI = [];
 				this.dataObject.dataDoc = [];
@@ -122,12 +78,12 @@ sap.ui.define([
 				this.dataObject.APILength = 0;
 				this.dataObject.DocLength = 0;
 				this.dataObject.ExploredLength = 0;
-				if ( oData && oData.success ) {
-					if ( oData.totalHits == 0 ) {
+				if ( oData && oData[0] && oData[0].success ) {
+					if ( oData[0].totalHits == 0 ) {
 						jQuery(".sapUiRrNoData").html("No matches found.");
 					} else {
-						for (var i = 0; i < oData.matches.length; i++) {
-							var oDoc = oData.matches[i];
+						for (var i = 0; i < oData[0].matches.length; i++) {
+							var oDoc = oData[0].matches[i];
 							//TODO: Find a nicer Date formatting procedure
 							oDoc.modifiedStr = oDoc.modified + "";
 							var sModified = oDoc.modifiedStr.substring(0,4) + "/" + oDoc.modifiedStr.substring(4,6) + "/" + oDoc.modifiedStr.substring(6,8) + ", " + oDoc.modifiedStr.substring(8,10) + ":" + oDoc.modifiedStr.substring(10),
@@ -151,7 +107,7 @@ sap.ui.define([
 								this.dataObject.DocLength++;
 							} else if (sNavURL.indexOf("entity/") === 0 ) {
 								bShouldAddToSearchResults = true;
-								sCategory = "Samples";
+								sCategory = "Explored";
 								this.dataObject.dataExplored.push({
 									index: this.dataObject.ExploredLength,
 									title: oDoc.title ? oDoc.title : "Untitled",
@@ -215,7 +171,7 @@ sap.ui.define([
 			},
 
 			categoryExploredFormatter : function (sCategory) {
-				return sCategory === "Samples";
+				return sCategory === "Explored";
 			},
 
 			onAllLoadMore : function (oEvent) {

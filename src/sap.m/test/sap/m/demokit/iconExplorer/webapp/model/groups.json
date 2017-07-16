@@ -177,9 +177,7 @@
 				{ "name" : "it-system" },
 				{ "name" : "it-host" },
 				{ "name" : "it-instance" },
-				{ "name" : "popup-window" },
-				{ "name" : "responsive" },
-				{ "name" : "desktop-mobile" }
+				{ "name" : "popup-window" }
 			]
 		},
 		{
@@ -332,9 +330,7 @@
 				{ "name" : "project-definition-triangle" },
 				{ "name" : "chevron-phase" },
 				{ "name" : "chevron-phase-2" },
-				{ "name" : "program-triangles" },
-				{ "name" : "table-row" },
-				{ "name" : "table-column" }
+				{ "name" : "program-triangles" }
 			]
 		},
 		{
@@ -376,9 +372,7 @@
 				{ "name" : "indent" },
 				{ "name" : "cursor-arrow" },
 				{ "name" : "fx" },
-				{ "name" : "text-color" },
-				{ "name" : "strikethrough" },
-				{ "name" : "text" }
+				{ "name" : "text-color" }
 			]
 		},
 		{
@@ -723,10 +717,7 @@
 				{ "name" : "negative" },
 				{ "name" : "fx" },
 				{ "name" : "blur" },
-				{ "name" : "pixelate" },
-				{ "name" : "validate" },
-				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "pixelate" }
 			]
 		},
 		{
@@ -852,8 +843,7 @@
 				{ "name" : "permission" },
 				{ "name" : "away" },
 				{ "name" : "busy" },
-				{ "name" : "appear-offline" },
-				{ "name" : "validate" }
+				{ "name" : "appear-offline" }
 			]
 		},
 		{
@@ -1165,13 +1155,7 @@
 				{ "name" : "print" },
 				{ "name" : "web-cam" },
 				{ "name" : "projector" },
-				{ "name" : "phone" },
-				{ "name" : "primary-key" },
-				{ "name" : "two-keys" },
-				{ "name" : "table-row" },
-				{ "name" : "table-column" },
-				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "phone" }
 			]
 		},
 		{

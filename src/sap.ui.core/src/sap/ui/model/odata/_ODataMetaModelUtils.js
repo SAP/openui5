@@ -2,9 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([
-	"jquery.sap.global", "./_AnnotationHelperBasics"
-], function (jQuery, _AnnotationHelperBasics) {
+sap.ui.define(["jquery.sap.global"], function (jQuery) {
 	"use strict";
 
 	/*global Promise */
@@ -315,75 +313,30 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds unit annotations to properties that have a <code>sap:unit</code> OData V2
-		 * annotation.
+		 * Adds corresponding unit annotation (Org.OData.Measures.V1.Unit or
+		 * Org.OData.Measures.V1.ISOCurrency)  to the given property based on the
+		 * sap:semantics V2 annotation of the referenced unit property.
 		 *
-		 * Iterates over the given schemas and searches in their complex and entity types for
-		 * properties with a <code>sap:unit</code> OData V2 annotation. Creates a corresponding
-		 * OData V4 annotation <code>Org.OData.Measures.V1.Unit</code> or
-		 * <code>Org.OData.Measures.V1.ISOCurrency</code> based on the
-		 * <code>sap:semantics</code> V2 annotation of the referenced unit property, unless such an
-		 * annotation already exists.
-		 *
-		 * @param {object[]} aSchemas
-		 *   the array of schemas
-		 * @param {sap.ui.model.odata.ODataMetaModel} oMetaModel
-		 *   the OData meta model
+		 * @param {object} oValueProperty
+		 *   the value property for which the unit annotation needs to be determined
+		 * @param {object[]} aProperties
+		 *   the array of properties containing the unit
 		 */
-		addUnitAnnotations : function (aSchemas, oMetaModel) {
-			/**
-			 * Process all types in the given array.
-			 * @param {object[]} [aTypes] A list of complex types or entity types.
-			 */
-			function processTypes(aTypes) {
-				(aTypes || []).forEach(function (oType) {
-					(oType.property || []).forEach(function (oProperty) {
-						var sAnnotationName,
-							sSemantics,
-							oTarget,
-							oUnitPath,
-							sUnitPath = oProperty["sap:unit"],
-							oUnitProperty;
+		addUnitAnnotation : function (oValueProperty, aProperties) {
+			var sUnitProperty = oValueProperty["sap:unit"],
+				i = Utils.findIndex(aProperties, sUnitProperty),
+				oUnit;
 
-						if (sUnitPath) {
-							oUnitPath = {"Path" : sUnitPath};
-							oTarget = _AnnotationHelperBasics.followPath({
-								getModel : function () { return oMetaModel; },
-								getPath : function () { return oType.$path; }
-							}, oUnitPath);
-							if (oTarget && oTarget.resolvedPath) {
-								oUnitProperty = oMetaModel.getProperty(oTarget.resolvedPath);
-								sSemantics = oUnitProperty["sap:semantics"];
-								if (sSemantics === "unit-of-measure") {
-									sAnnotationName = "Org.OData.Measures.V1.Unit";
-								} else if (sSemantics === "currency-code") {
-									sAnnotationName = "Org.OData.Measures.V1.ISOCurrency";
-								} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-									jQuery.sap.log.warning("Unsupported sap:semantics='"
-											+ sSemantics + "' at sap:unit='" + sUnitPath + "'; "
-											+ "expected 'currency-code' or 'unit-of-measure'",
-										oType.namespace + "." + oType.name + "/" + oProperty.name,
-										sLoggingModule);
-								}
-								// Do not overwrite an existing annotation
-								if (sAnnotationName && !(sAnnotationName in oProperty)) {
-									oProperty[sAnnotationName] = oUnitPath;
-								}
-							} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
-								jQuery.sap.log.warning("Path '" + sUnitPath
-										+ "' for sap:unit cannot be resolved",
-									oType.namespace + "." + oType.name + "/" + oProperty.name,
-									sLoggingModule);
-							}
-						}
-					});
-				});
+			if (i >= 0) {
+				oUnit = aProperties[i];
+				if (oUnit["sap:semantics"] === "unit-of-measure") {
+					oValueProperty["Org.OData.Measures.V1.Unit"] =
+						{ "Path" : oUnit.name };
+				} else if (oUnit["sap:semantics"] === "currency-code") {
+					oValueProperty["Org.OData.Measures.V1.ISOCurrency"] =
+						{ "Path" : oUnit.name };
+				}
 			}
-
-			aSchemas.forEach(function (oSchema) {
-				processTypes(oSchema.complexType);
-				processTypes(oSchema.entityType);
-			});
 		},
 
 		/**
@@ -888,10 +841,8 @@ sap.ui.define([
 		 *   annotations "JSON"
 		 * @param {object} oData
 		 *   metadata "JSON"
-		 * @param {sap.ui.model.odata.ODataMetaModel} oMetaModel
-		 *   the metamodel
 		 */
-		merge : function (oAnnotations, oData, oMetaModel) {
+		merge : function (oAnnotations, oData) {
 			var aSchemas = oData.dataServices.schema;
 
 			if (!aSchemas) {
@@ -931,7 +882,6 @@ sap.ui.define([
 								oAnnotations, oSchema, oEntityContainer));
 					});
 			});
-			Utils.addUnitAnnotations(aSchemas, oMetaModel);
 		},
 
 		/**
@@ -967,7 +917,9 @@ sap.ui.define([
 			aChildren.forEach(function (oChild) {
 				var oEntityType;
 
-				if (sTypeClass === "EntitySet") {
+				if (sTypeClass === "Property" && oChild["sap:unit"]) {
+					Utils.addUnitAnnotation(oChild, aChildren);
+				} else if (sTypeClass === "EntitySet") {
 					// calculated entity set annotations need to be added before V4
 					// annotations are merged
 					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);

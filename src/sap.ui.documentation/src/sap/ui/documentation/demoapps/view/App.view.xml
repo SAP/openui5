@@ -16,27 +16,19 @@
 					background="Light">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
-								class="sapUiDemokitLandingImageCell sapUiNoContentPadding welcomeImageCell">
+								class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 							<Image
 									id="phoneImage"
 									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_S_cropped.jpg"
 									width="100%"
-									class="welcomeImage"
-									load="handleLandingImageLoad"
-									visible="{device>/system/phone}"
 									densityAware="false"/>
 							<Image
 									id="desktopImage"
-									class="desktopImage welcomeImage"
+									class="desktopImage"
 									src="./resources/sap/ui/documentation/demoapps/img/DemoApps_M_and_L_cropped.jpg"
-									densityAware="false"
-									load="handleLandingImageLoad"
-									visible="{=!${device>/system/phone}}"
 									width="100%"/>
 							<l:Grid
-									id="landingImageHeadline"
 									width="100%"
-									visible="false"
 									class="headerGrid"
 									hSpacing="0"
 									defaultSpan="L6 M6 S12">
@@ -47,14 +39,13 @@
 											id="download"
 											text="{i18n>downloadButtonText}"
 											type="Emphasized"
-											press="onDownloadButtonPress">
+											press="onDownloadButtonPress"
+											icon="sap-icon://download">
 									</Button>
 								</l:VerticalLayout>
 								<Image
 										src="resources/sap/ui/documentation/demoapps/img/demoAppsTeaser.png"
 										densityAware="false"
-										class="sapUiHideOnPhone"
-										visible="{=!${device>/system/phone}}"
 										width="100%"/>
 							</l:Grid>
 						</l:BlockLayoutCell>
@@ -72,8 +63,7 @@
 					}"/>
 				</l:BlockLayout>
 				<l:BlockLayout
-					id="demoAppsFooter"
-					visible="{/bFooterVisible}">
+					id="demoAppsFooter">
 					<l:BlockLayoutRow>
 						<l:BlockLayoutCell
 								class="demokitInitialPagesColorPatternFContrast">
@@ -82,7 +72,6 @@
 									alignItems="Center">
 								<Image
 										src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
-										densityAware="false"
 										height="2.5rem">
 								</Image>
 								<HBox
@@ -98,12 +87,12 @@
 									<Link
 											class="demokitInitialPagesBrightLink sapUiLargeMarginEnd"
 											text="Privacy"
-											href="https://www.sap.com/corporate/en/legal/privacy.html"
+											href="https://help.hana.ondemand.com/privacy.htm"
 											target="_blank"/>
 									<Link
 											class="demokitInitialPagesBrightLink"
-											text="Terms of Use"
-											href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
+											text="Terms of use"
+											href="https://help.hana.ondemand.com/terms_of_use.html"
 											target="_blank"/>
 								</HBox>
 							</HBox>

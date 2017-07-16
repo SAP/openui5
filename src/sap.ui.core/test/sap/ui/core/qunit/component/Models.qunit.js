@@ -224,9 +224,8 @@ sap.ui.define([
 
 		// model: "default-with-annotations"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
-			odataVersion: "4.0",
 			serviceUrl: '/path/to/odata/service/?sap-client=foo&sap-server=bar',
-			synchronizationMode: "None"
+			synchronizationMode : "None"
 		});
 
 
@@ -1003,48 +1002,6 @@ sap.ui.define([
 		// destroy the component
 		this.oComponent.destroy();
 
-	});
-
-	QUnit.test("consume V2 service with V4 model", function(assert) {
-		this.oComponent = sap.ui.component({
-			name: "sap.ui.test.v4models"
-		});
-
-		// sap.ui.model.odata.v4.ODataModel
-		sinon.assert.callCount(this.modelSpy.odataV4, 1);
-		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
-			serviceUrl: '/path/to/odata/service/',
-			autoExpandSelect: false,
-			odataVersion: "2.0",
-			operationMode: "Server",
-			synchronizationMode: "None"
-		});
-
-		// check if models are set on component (and save them internally)
-		this.assertModelInstances({
-			"ODataV2Consumption": sap.ui.model.odata.v4.ODataModel
-		});
-
-		// destroy the component
-		this.oComponent.destroy();
-	});
-
-	QUnit.test("pass unsupported service version to V4 model", function(assert) {
-		assert.throws(function () {
-			this.oComponent = sap.ui.component({
-				name: "sap.ui.test.v4models.unsupportedVersion"
-			});
-		});
-
-		// sap.ui.model.odata.v4.ODataModel
-		sinon.assert.callCount(this.modelSpy.odataV4, 1);
-		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
-			serviceUrl: '/path/to/odata/service/',
-			autoExpandSelect: false,
-			odataVersion: "foo",
-			operationMode: "Server",
-			synchronizationMode: "None"
-		});
 	});
 
 	QUnit.module("metadata v2 with dataSources (empty inheritance)", {

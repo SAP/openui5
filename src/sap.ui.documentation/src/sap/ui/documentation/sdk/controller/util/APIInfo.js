@@ -15,11 +15,6 @@ sap.ui.define(['jquery.sap.global'],
 		var oLibraryDataCache = {};
 		var oAllLibrariesPromise = null;
 
-		// Libraries that should be ommitted from the tree
-		var LIBRARIES_BLACK_LIST = ["sap.ui.demokit", "sap.ui.documentation"];
-		// Libraries that start with these prefixes should be ommitted from the tree
-		var LIBRARY_PREFIXES_BLACK_LIST = ["themelib_"];
-
 		function getLibraryElementsJSONSync(sLibraryName) {
 			var oResponse = [];
 
@@ -67,9 +62,8 @@ sap.ui.define(['jquery.sap.global'],
 					url : sTestResourcesRoot + sLibraryName.replace(/\./g, '/') + '/designtime/api.json',
 					dataType : 'json',
 					success : function(vResponse) {
-						var aResult = vResponse.symbols || [];
-						oLibraryDataCache[sLibraryName] = aResult;
-						resolve(aResult);
+						oLibraryDataCache[sLibraryName] = vResponse.symbols;
+						resolve(vResponse.symbols);
 					},
 					error : function (err) {
 						jQuery.sap.log.error("failed to load api.json for: " + sLibraryName);
@@ -81,27 +75,12 @@ sap.ui.define(['jquery.sap.global'],
 
 		}
 
-		function getAllLibraryInfos() {
-			var aLibraries = sap.ui.getVersionInfo().libraries;
-
-			aLibraries = aLibraries.filter(function (oLibrary) {
-				var bIsBlacklisted = LIBRARIES_BLACK_LIST.indexOf(oLibrary.name) !== -1;
-				var bStartsWithBlacklistedPrefix = LIBRARY_PREFIXES_BLACK_LIST.some(function (sPrefix) {
-					return oLibrary.name.indexOf(sPrefix) === 0;
-				});
-
-				return !bIsBlacklisted && !bStartsWithBlacklistedPrefix;
-			});
-
-			return aLibraries;
-		}
-
 		function getAllLibrariesElementsJSONPromise() {
 			if (oAllLibrariesPromise) {
 				return oAllLibrariesPromise;
 			}
 
-			var aLibraries = getAllLibraryInfos();
+			var aLibraries = sap.ui.getVersionInfo().libraries;
 
 			// Get a list of promises for each library (these never reject, but can resolve with an empty array)
 			var aPromises = aLibraries.map(function (oLibrary) {

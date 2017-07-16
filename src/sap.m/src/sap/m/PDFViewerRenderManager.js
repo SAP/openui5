@@ -4,25 +4,20 @@
 
 sap.ui.define("sap/m/PDFViewerRenderManager", [
 	"jquery.sap.global",
-	"sap/m/library",
 	"sap/m/Dialog",
 	"sap/m/Button",
+	"sap/m/ButtonType",
 	"sap/m/Link",
 	"sap/m/MessagePage",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/Title",
 	"sap/m/ToolbarSpacer",
-	"sap/m/OverflowToolbarLayoutData"
-], function ($, library, Dialog, Button, Link, MessagePage, OverflowToolbar, OverflowToolbarButton, Title,
-             ToolbarSpacer, OverflowToolbarLayoutData) {
+	"sap/m/OverflowToolbarLayoutData",
+	"sap/m/OverflowToolbarPriority"
+], function ($, Dialog, Button, ButtonType, Link, MessagePage, OverflowToolbar, OverflowToolbarButton, Title,
+             ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarPriority) {
 	"use strict";
-
-	// shortcut for sap.m.OverflowToolbarPriority
-	var OverflowToolbarPriority = library.OverflowToolbarPriority;
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = library.ButtonType;
 
 	var oPDFViewerRenderManager = {
 		extendPdfViewer: function (PDFViewer) {
@@ -91,9 +86,7 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 					oDownloadButton = this._objectsRegister.getPopupDownloadButtonControl();
 				oCloseButton.setText(this._getLibraryResourceBundle().getText("PDF_VIEWER_POPUP_CLOSE_BUTTON"));
 
-				if (this.getShowDownloadButton()) {
-					aButtons.push(oDownloadButton);
-				}
+				aButtons.push(oDownloadButton);
 				aButtons.push(oCloseButton);
 				oPopup.removeAllButtons();
 				aButtons.forEach(function (oButton) {
@@ -107,6 +100,26 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 				if (!!this.getTitle()) {
 					oPopup.setTitle(this.getTitle());
 				}
+			};
+
+			PDFViewer.prototype._initPlaceholderLinkControl = function () {
+				var that = this,
+					sLinkFactoryFunctionName = "getPlaceholderLinkControl";
+
+				this._objectsRegister[sLinkFactoryFunctionName] = function () {
+					var oLink = new Link({
+						href: that.getSource(),
+						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT")
+					});
+
+					that._objectsRegister[sLinkFactoryFunctionName] = function () {
+						oLink.setHref(that.getSource());
+
+						return oLink;
+					};
+
+					return oLink;
+				};
 			};
 
 			PDFViewer.prototype._initPlaceholderMessagePageControl = function () {
@@ -148,31 +161,19 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 						text: that.getTitle()
 					}),
 						oButton = that._objectsRegister.getToolbarDownloadButtonControl();
-
-					function setup() {
-						if (that.getShowDownloadButton()) {
-							oOverflowToolbar.addContent(oButton);
-						} else {
-							oOverflowToolbar.removeContent(oButton);
-						}
-						oButton.setEnabled(that._bRenderPdfContent);
-						oTitle.setText(that.getTitle());
-					}
-
 					oOverflowToolbar.addStyleClass("sapUiTinyMarginBottom");
 
 					oOverflowToolbar.addContent(oTitle);
 					oOverflowToolbar.addContent(new ToolbarSpacer());
-					setup();
+					oOverflowToolbar.addContent(oButton);
 					oButton.setLayoutData(new OverflowToolbarLayoutData({
 							priority: OverflowToolbarPriority.NeverOverflow
 						})
 					);
 
-					that._objectsRegister[sOverflowToolbarFactoryFunctionName] = function (bIsDestroying) {
-						if (!bIsDestroying) {
-							setup();
-						}
+					that._objectsRegister[sOverflowToolbarFactoryFunctionName] = function () {
+						oButton.setEnabled(that._bRenderPdfContent);
+						oTitle.setText(that.getTitle());
 						return oOverflowToolbar;
 					};
 
@@ -185,16 +186,12 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 					sButtonId = this.getId() + "-toolbarDownloadButton",
 					sDownloadButtonFactoryFunctionName = "getToolbarDownloadButtonControl";
 
-				this._objectsRegister[sDownloadButtonFactoryFunctionName] = function (bIsDestroying) {
-					if (bIsDestroying) {
-						return null;
-					}
-
+				this._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
 					var oButton = new OverflowToolbarButton(sButtonId, {
 						type: ButtonType.Transparent,
 						icon: "sap-icon://download"
 					});
-					oButton.attachPress(that.downloadPDF.bind(that));
+					oButton.attachPress(that._onDownloadButtonClickListener.bind(that));
 					oButton.setEnabled(that._bRenderPdfContent);
 
 					that._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {
@@ -215,7 +212,7 @@ sap.ui.define("sap/m/PDFViewerRenderManager", [
 					var oButton = new Button(sButtonId, {
 						text: that._getLibraryResourceBundle().getText("PDF_VIEWER_DOWNLOAD_TEXT")
 					});
-					oButton.attachPress(that.downloadPDF.bind(that));
+					oButton.attachPress(that._onDownloadButtonClickListener.bind(that));
 					oButton.setEnabled(that._bRenderPdfContent);
 
 					that._objectsRegister[sDownloadButtonFactoryFunctionName] = function () {

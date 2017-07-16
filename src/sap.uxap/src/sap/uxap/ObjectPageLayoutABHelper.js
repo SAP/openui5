@@ -110,7 +110,7 @@ sap.ui.define([
 	 * build an sap.m.button equivalent to a section or sub section for insertion in the anchorBar
 	 * also registers the section info for further dom position updates
 	 * @param oSectionBase
-	 * @param {boolean} bIsSection
+	 * @param bIsSection
 	 * @returns {null}
 	 * @private
 	 */

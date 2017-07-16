@@ -328,7 +328,6 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * Checks if the focus is inside of SlideTile
 	 *
 	 * @private
-	 * @returns {boolean} True if focus is inside of SlideTile
 	 */
 	SlideTile.prototype._isFocusInsideST = function() {
 		return this.$()[0] === document.activeElement || this.$().find(document.activeElement).length;
@@ -411,7 +410,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * Scrolls to the tile with given index
 	 *
 	 * @private
-	 * @param {int} tileIndex Index of the tile in the tiles aggregation
+	 * @param {int} index of the tile in the tiles aggregation
 	 */
 	SlideTile.prototype._scrollToTile = function(tileIndex) {
 		if (tileIndex >= 0) {
@@ -548,7 +547,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * Changes the size to given size
 	 *
 	 * @private
-	 * @param {int} tileIndex Index of the element in the tiles aggregation
+	 * @param {int} tileIndex of the element in the tiles aggregation
 	 */
 	SlideTile.prototype._changeSizeTo = function(tileIndex) {
 		var oTile = this.getTiles()[tileIndex];
@@ -571,7 +570,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * Returns the index of the previous tile based on the current index
 	 *
 	 * @private
-	 * @param {int} tileIndex Index of the element in the tiles aggregation
+	 * @param {int} tileIndex of the element in the tiles aggregation
 	 * @returns {int} Index of the previous tile
 	 */
 	SlideTile.prototype._getPreviousTileIndex = function(tileIndex) {
@@ -586,7 +585,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * Returns the index of the next tile based on the current index
 	 *
 	 * @private
-	 * @param {int} tileIndex Index of the element in the tiles aggregation
+	 * @param {int} tileIndex of the element in the tiles aggregation
 	 * @returns {int} Index of the next tile
 	 */
 	SlideTile.prototype._getNextTileIndex = function(tileIndex) {
@@ -647,8 +646,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	/**
 	 * Checks if the given tile has NewsContent
 	 *
-	 * @param {int} tileIndex Index of the tile in the tiles aggregation
-	 * @returns {boolean} True when the tile has NewsContent, otherwise false
+	 * @param {int} index of the tile in the tiles aggregation
+	 * @returns {boolean} true when the tile has NewsContent, otherwise false
 	 * @private
 	 */
 	SlideTile.prototype._hasNewsContent = function(tileIndex) {

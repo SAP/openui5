@@ -16,13 +16,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The SideNavigation control is a container, which consists of flexible and fixed parts on top of each other.
-		 * <h4>Responsive Behavior</h4>
-		 * <ul>
-		 * <li>The flexible part adapts its size to the fixed one.</li>
-		 * <li>The flexible part has a scrollbar when the content is larger than the available space.</li>
-		 * </ul>
-		 *<b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolPage.
+		 * The SideNavigation control is a container, which consists of flexible and fixed parts on top of each other. The flexible part adapts its size to the fixed one.
+		 * The flexible part has a scrollbar when the content is larger than the available space.
+		 * Whenever the height of the whole control is less than 256 pixels, the scrollbar becomes joint for the two parts.
+		 *
+		 * <b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolPage.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE

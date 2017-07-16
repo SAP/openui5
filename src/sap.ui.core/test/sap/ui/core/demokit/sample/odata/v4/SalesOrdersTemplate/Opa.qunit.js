@@ -22,7 +22,7 @@ sap.ui.require([
 
 		When.onTheMainPage.pressValueHelpOnCurrencyCode();
 		When.onTheMainPage.pressValueHelpOnRole();
-		Then.onAnyPage.checkLog();
+		Then.onTheMainPage.checkLog();
 		Then.iTeardownMyUIComponent();
 	});
 });

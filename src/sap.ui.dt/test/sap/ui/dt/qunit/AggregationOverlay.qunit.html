@@ -190,35 +190,6 @@
 				});
 			});
 
-			QUnit.module("Given that an AggregationOverlay is created for an aggregation-like association", {
-				beforeEach : function(assert) {
-					this.oAggregationLikeOverlay = new sap.ui.dt.AggregationOverlay({
-						element : {},
-						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata({
-							data : {
-								aggregationLike : true
-							}
-						})
-					});
-
-					this.oAggregationOverlay = new sap.ui.dt.AggregationOverlay({
-						element : {},
-						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata()
-					});
-				},
-				afterEach : function() {
-					this.oAggregationOverlay.destroy();
-					this.oAggregationLikeOverlay.destroy();
-					sap.ui.dt.Overlay.removeOverlayContainer();
-				}
-			});
-
-			QUnit.test("when asked for being an association", function(assert) {
-				assert.strictEqual(this.oAggregationOverlay.isAssociation(), false, "regular aggregation is no association");
-				assert.strictEqual(this.oAggregationLikeOverlay.isAssociation(), true, "aggregation-like association is an association");
-			});
-
-
 		</script>
 	</head>
 	<body>

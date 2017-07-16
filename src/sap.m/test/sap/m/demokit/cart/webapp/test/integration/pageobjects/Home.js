@@ -23,7 +23,7 @@ sap.ui.define([
 				iGoToTheCartPage : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new Properties({icon : "sap-icon://cart"}),
+						matchers : new Properties({ icon : "sap-icon://cart"}),
 						actions : new Press(),
 						errorMessage : "The cart button was not found and could not be pressed"
 					});
@@ -42,7 +42,7 @@ sap.ui.define([
 				theCategoryListShouldHaveSomeEntries : function () {
 					return this.waitFor({
 						id : "categoryList",
-						matchers: new AggregationFilled({name : "items"}),
+						matchers: new AggregationFilled({ name : "items" }),
 						success : function () {
 							Opa5.assert.ok(true, "CategoryList did contain entries");
 						},

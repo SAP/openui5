@@ -9,10 +9,6 @@ sap.ui.define([
 	function (PDFViewer) {
 		"use strict";
 
-		function shouldShowToolbar(oControl) {
-			return (!!oControl.getTitle() || oControl.getShowDownloadButton()) && !oControl._bIsPopupOpen;
-		}
-
 		/**
 		 * Pdf viewer renderer.
 		 * @namespace
@@ -39,12 +35,23 @@ sap.ui.define([
 			this._writeAccessibilityTags(oRm, oControl);
 			oRm.write(">");
 
-			if (shouldShowToolbar(oControl)) {
+			if (!oControl._bIsPopupOpen) {
 				oRm.renderControl(oControl._objectsRegister.getOverflowToolbarControl());
 			}
 
 			if (oControl._isSourceValidToDisplay() && oControl._isEmbeddedModeAllowed() && PDFViewer._isPdfPluginEnabled()) {
 				this.renderPdfContent(oRm, oControl);
+			} else {
+				oRm.write("<div");
+				oRm.addClass('sapMPDFViewerLink');
+				oRm.addClass('sapMText');
+				oRm.addClass('sapUiSmallMargin');
+				oRm.writeClasses();
+				oRm.write(">");
+
+				oRm.renderControl(oControl._objectsRegister.getPlaceholderLinkControl());
+
+				oRm.write("</div>");
 			}
 
 			oRm.write("</div>");
@@ -60,8 +67,8 @@ sap.ui.define([
 				oRm.write("<iframe");
 				oRm.addClass("sapMPDFViewerContent");
 				oRm.addClass("sapMPDFViewerLoading");
-				if (shouldShowToolbar(oControl)) {
-					oRm.addClass("sapMPDFViewerReducedContent");
+				if (!oControl._bIsPopupOpen) {
+					oRm.addClass("sapMPDFViewerEmbeddedContent");
 				}
 				oRm.writeClasses();
 				oRm.write(">");

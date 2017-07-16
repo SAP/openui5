@@ -9,9 +9,8 @@ sap.ui.define([
     "sap/ui/layout/changeHandler/MoveSimpleForm",
     "sap/ui/layout/changeHandler/HideSimpleForm",
     "sap/ui/layout/changeHandler/UnhideSimpleForm",
-    "sap/ui/layout/changeHandler/AddSimpleFormGroup",
-    "sap/ui/layout/changeHandler/AddSimpleFormField"
-], function (RenameSimpleForm, MoveSimpleForm, HideSimpleForm, UnhideSimpleForm, AddSimpleFormGroup, AddSimpleFormField) {
+    "sap/ui/layout/changeHandler/AddSimpleFormGroup"
+], function (RenameSimpleForm, MoveSimpleForm, HideSimpleForm, UnhideSimpleForm, AddSimpleFormGroup) {
     "use strict";
 
     return {
@@ -22,7 +21,6 @@ sap.ui.define([
         "hideSimpleFormField": HideSimpleForm,
         "unhideSimpleFormField": UnhideSimpleForm,
         "removeSimpleFormGroup": HideSimpleForm,
-        "addSimpleFormGroup": AddSimpleFormGroup,
-        "addSimpleFormField" : AddSimpleFormField
+        "addSimpleFormGroup": AddSimpleFormGroup
     };
 }, /* bExport= */true);

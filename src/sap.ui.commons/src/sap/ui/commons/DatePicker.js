@@ -506,7 +506,6 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
-		 * @returns {Object} Current accessibility state of the control
 		 * @protected
 		 */
 		DatePicker.prototype.getAccessibilityInfo = function() {

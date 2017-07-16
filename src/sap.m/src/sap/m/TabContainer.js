@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					hasSelect: true,
 					itemSelect: function(oEvent) {
 						var oItem = oEvent.getParameter("item"),
-							oSelectedItem = this._fromTabStripItem(oItem);
+						    oSelectedItem = this._fromTabStripItem(oItem);
 						this.setSelectedItem(oSelectedItem, oEvent);
 					}.bind(this),
 					itemClose: function(oEvent) {
@@ -258,8 +258,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Gets the <code>TabContainerItem</code> content of the selected item if present.
-		 * @returns { null | Array<sap.ui.core.Control> } The <code>TabContainerItem</code> content
+		 * Gets the <code>TabContainerItem</code> content if present.
+		 * @returns { null | Array<sap.ui.core.Control> }
 		 * @private
 		 */
 		TabContainer.prototype._getSelectedItemContent = function() {
@@ -494,7 +494,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Re-renders only the displayed content.
 		 * @private
-		 * @param {Object} oContent The content, which should be rendered.
+		 * @param oContent Content, which should be rendered.
 		 */
 		TabContainer.prototype._rerenderContent = function(oContent) {
 			var $content = this.$("content"),

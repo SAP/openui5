@@ -286,19 +286,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an element by its ID in the context of the FragmentControl.
-	 *
-	 * May only be used by the implementation of a specific FragmentControl, not by an application using a FragmentControl.
-	 *
-	 * @param {string} sId FragmentControl local ID of the inner element
-	 * @returns {sap.ui.core.Element} element by its ID or <code>undefined</code>
-	 * @protected
-	 */
-	FragmentControl.prototype.byId = function(sId) {
-		return sap.ui.getCore().byId(Fragment.createId(this.getId(), sId));
-	};
-
-	/**
 	 * Returns the managed object model of the fragment control
 	 *
 	 * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model of the fragment control
@@ -306,9 +293,6 @@ sap.ui.define([
 	 * @private
 	 */
 	FragmentControl.prototype._getManagedObjectModel = function () {
-		if (!this._oManagedObjectModel) {
-			this._oManagedObjectModel = new ManagedObjectModel(this);
-		}
 		return this._oManagedObjectModel;
 	};
 
@@ -487,7 +471,7 @@ sap.ui.define([
 		var sCompositeName = this.getMetadata().getCompositeAggregationName();
 		this._destroyCompositeAggregation();
 		if (!this._oManagedObjectModel) {
-			this._getManagedObjectModel();
+			this._oManagedObjectModel = new ManagedObjectModel(this);
 		}
 		if (jQuery.isArray(oNewContent)) {
 			this.setAggregation(sCompositeName, null);
@@ -620,7 +604,7 @@ sap.ui.define([
 		if (!oFragment) {
 			throw new Error("Fragment " + oFragment.tagName + " not found");
 		}
-		var oManagedObjectModel = this._getManagedObjectModel();
+		var oManagedObjectModel = new ManagedObjectModel(this);
 		var that = this;
 		oManagedObjectModel.getContextName = function () {
 			return that.alias;

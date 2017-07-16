@@ -60,7 +60,7 @@
 				<Property Name="ScheduleKey" Type="Edm.String" Nullable="false" />
 				<Property Name="ItemKey" Type="Edm.String" Nullable="false" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" />
-				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="2" />
+				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Nullable="false" />
 			</EntityType>
 			<EntityType Name="Product">
@@ -148,7 +148,7 @@
 				<Property Name="ScheduleKey" Type="Edm.String" Nullable="false" />
 				<Property Name="ItemKey" Type="Edm.String" Nullable="false" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" />
-				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="2" />
+				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Nullable="false" />
 			</EntityType>
 			<ComplexType Name="Address">
@@ -215,7 +215,6 @@
 				</EntitySet>
 				<EntitySet Name="SalesOrderList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder">
 					<NavigationPropertyBinding Path="SO_2_BP" Target="BusinessPartnerList" />
-					<NavigationPropertyBinding Path="SO_2_SOITEM/SOITEM_2_PRODUCT" Target="ProductList" />
 				</EntitySet>
 				<ActionImport Name="RegenerateEPMData" Action="com.sap.gateway.default.zui5_epm_sample.v0001.RegenerateEPMData" />
 				<FunctionImport Name="GetCreatedByBP" Function="com.sap.gateway.default.zui5_epm_sample.v0001.FuGetCreatedByBP" EntitySet="com.sap.gateway.default.zui5_epm_sample.v0001.Container/BusinessPartnerList" IncludeInServiceDocument="true" />
@@ -1139,11 +1138,11 @@
 				<Annotation Term="SAP__common.Label" String="Unit of Measure" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity Unit" />
 			</Annotations>
-			<Annotations Target="SAP__self.SOLineItem/Product/ProductID">
+			<Annotations Target="SAP__self.SOLineItem/ProductInfo/ProductID">
 				<Annotation Term="SAP__common.Label" String="Product ID" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID" />
 			</Annotations>
-			<Annotations Target="SAP__self.SOLineItem/Product/ProductName">
+			<Annotations Target="SAP__self.SOLineItem/ProductInfo/ProductName">
 				<Annotation Term="SAP__common.Label" String="Name" />
 				<Annotation Term="SAP__common.Heading" String="Product Name" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Name" />

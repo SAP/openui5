@@ -22,12 +22,12 @@ sap.ui.require([
       // mocks the test harness's QUnit executions (use this carefully, only for a very limited scope)
       var fMockQUnitSetup = function() {
         this.oQUnitTestStub = sinon.stub(QUnit, 'test', function(scenarioName, callback) {
-          callback(QUnit.assert);
+          callback();
         });
         this.oQUnitSkipStub = sinon.stub(QUnit, 'skip', function(scenarioName, callback) {
-          callback(QUnit.assert);
+          callback();
         });
-        this.oQUnitOkStub = sinon.stub(QUnit.assert, 'ok');
+        this.oQUnitOkStub = sinon.stub(assert, 'ok');
       };
 
       // restores QUnit to normal

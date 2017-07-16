@@ -75,13 +75,10 @@ sap.ui.define([
 		if (oSpecificChangeInfo.sUnhideId) {
 			var oUnhideElement = sap.ui.getCore().byId(oSpecificChangeInfo.sUnhideId);
 			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oUnhideElement, mPropertyBag.appComponent);
-			oChangeWrapper.addDependentControl(oUnhideElement, "elementSelector", mPropertyBag);
 		} else if (oSpecificChangeInfo.revealedElementId ) {
 			//translate from FormElement (unstable id) to the label control (stable id and in public aggregation)
 			var oFormElement = sap.ui.getCore().byId(oSpecificChangeInfo.revealedElementId || oSpecificChangeInfo.sUnhideId);
-			var oLabel = oFormElement.getLabel();
-			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oLabel, mPropertyBag.appComponent);
-			oChangeWrapper.addDependentControl(oLabel, "elementSelector", mPropertyBag);
+			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oFormElement.getLabel(), mPropertyBag.appComponent);
 		} else {
 			throw new Error("oSpecificChangeInfo.revealedElementId attribute required");
 		}

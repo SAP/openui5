@@ -23,32 +23,10 @@ sap.ui.define([
 					SelectedPayment: "Credit Card",
 					SelectedDeliveryMethod: "Standard Delivery",
 					DifferentDeliveryAddress: false,
-					CashOnDelivery: {
-						FirstName: "",
-						LastName: "",
-						PhoneNumber: "",
-						Email: ""
-					},
-					BillingAddress: {
-						Address: "",
-						City: "",
-						ZipCode: "",
-						Country: "",
-						Note: ""
-					},
-					DeliveryAddress: {
-						Address: "",
-						Country: "",
-						City: "",
-						ZipCode: "",
-						Note: ""
-					},
-					CreditCard: {
-						Name: "",
-						CardNumber: "",
-						SecurityCode: "",
-						Expire: ""
-					}
+					CashOnDelivery:{},
+					BillingAddress:{},
+					DeliveryAddress:{},
+					CreditCard:{}
 				}
 			);
 			this.getView().setModel(oModel);

@@ -96,7 +96,6 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', './library'],
 	 *
 	 * @param {string} sAggregationName The name of the aggregation
 	 * @param {any} oObject The value of the aggregation to be inserted
-	 * @param {int} iIndex The index of the position of the entity to be inserted
 	 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
 	 * @returns {sap.m.ViewSettingsFilterItem} <code>this</code> pointer for chaining
 	 * @override

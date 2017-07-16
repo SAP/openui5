@@ -1083,29 +1083,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return oItem.getVisible() && (this._hasTabularSuggestions() || oItem.getType() !== sap.m.ListType.Inactive);
 	};
 
-	// helper method for distinguish between incremental and non incremental types of input
-	Input.prototype._isIncrementalType = function () {
-		var sTypeOfInput = this.getType();
-		if (sTypeOfInput === "Number" || sTypeOfInput === "Date" ||
-			sTypeOfInput === "Datetime" || sTypeOfInput === "Month" ||
-			sTypeOfInput === "Time" || sTypeOfInput === "Week") {
-			return true;
-		}
-		return false;
-	};
-
 	Input.prototype._onsaparrowkey = function(oEvent, sDir, iItems) {
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
-		if (sDir !== "up" && sDir !== "down") {
+		if (!this._oSuggestionPopup || !this._oSuggestionPopup.isOpen()) {
 			return;
 		}
-		if (this._isIncrementalType()){
-			oEvent.setMarked();
-		}
-
-		if (!this._oSuggestionPopup || !this._oSuggestionPopup.isOpen()) {
+		if (sDir !== "up" && sDir !== "down") {
 			return;
 		}
 
@@ -1386,23 +1371,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 		if (sValue.length >= this.getStartSuggestion()) {
 			this._iSuggestDelay = jQuery.sap.delayedCall(300, this, function(){
-
-				// when using non ASCII characters the value might be the same as previous
-				// don't re populate the suggestion items in this case
-				if (this._sPrevSuggValue !== sValue) {
-
-					this._bBindingUpdated = false;
-					this.fireSuggest({
-						suggestValue: sValue
-					});
-					// if binding is updated during suggest event, the list items don't need to be refreshed here
-					// because they will be refreshed in updateItems function.
-					// This solves the popup blinking problem
-					if (!this._bBindingUpdated) {
-						this._refreshItemsDelayed();
-					}
-
-					this._sPrevSuggValue = sValue;
+				this._bBindingUpdated = false;
+				this.fireSuggest({
+					suggestValue: sValue
+				});
+				// if binding is updated during suggest event, the list items don't need to be refreshed here
+				// because they will be refreshed in updateItems function.
+				// This solves the popup blinking problem
+				if (!this._bBindingUpdated) {
+					this._refreshItemsDelayed();
 				}
 			});
 		} else if (this._bUseDialog) {
@@ -1413,15 +1390,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this._oList.destroyItems();
 			}
 		} else if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
-
-			// when compose a non ASCII character, in Chrome the value is updated in the next browser tick cycle
-			jQuery.sap.delayedCall(0, this, function () {
-				var sNewValue = this._$input.val() || '';
-				if (sNewValue < this.getStartSuggestion()) {
-					this._iPopupListSelectedIndex = -1;
-					this._closeSuggestionPopup();
-				}
-			});
+			this._iPopupListSelectedIndex = -1;
+			this._closeSuggestionPopup();
 		}
 	};
 
@@ -1661,8 +1631,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				this.$("SuggDescr").text(""); // initialize suggestion ARIA text
 				this.$("inner").removeAttr("aria-haspopup");
 				this.$("inner").removeAttr("aria-activedescendant");
-
-				this._sPrevSuggValue = null;
 			}
 
 		};
@@ -1705,10 +1673,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			oInput._oSuggestionPopup = !oInput._bUseDialog ?
 				(new Popover(oInput.getId() + "-popup", {
 					showArrow: false,
-					showHeader: false,
-					placement: sap.m.PlacementType.Vertical,
-					initialFocus: oInput,
-					horizontalScrolling: true
+					showHeader : false,
+					placement : sap.m.PlacementType.Vertical,
+					initialFocus : oInput
 				}).attachAfterClose(function() {
 					if (oInput._iPopupListSelectedIndex  >= 0) {
 						oInput._fireSuggestionItemSelectedEvent();
@@ -2135,8 +2102,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._triggerSuggest(this.getValue());
 		}
 		this._bPopupHasFocus = undefined;
-
-		this._sPrevSuggValue = null;
 	};
 
 	/**

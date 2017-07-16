@@ -4,10 +4,10 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
-	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Helper, _MetadataRequestor, _V4MetadataConverter, TestUtils) {
+], function (jQuery, _Helper, _MetadataConverter, _MetadataRequestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -107,7 +107,7 @@ sap.ui.require([
 				method : "GET"
 			}).returns(createMock(oExpectedXml));
 
-		this.mock(_V4MetadataConverter).expects("convertXMLMetadata").twice()
+		this.mock(_MetadataConverter).expects("convertXMLMetadata").twice()
 			.withExactArgs(sinon.match.same(oExpectedXml))
 			.returns(oExpectedJson);
 
@@ -152,7 +152,7 @@ sap.ui.require([
 					headers : sinon.match.same(mHeaders),
 					method : "GET"
 				}).returns(createMock(oExpectedXml, false, sDate, sLastModified));
-			this.mock(_V4MetadataConverter).expects("convertXMLMetadata")
+			this.mock(_MetadataConverter).expects("convertXMLMetadata")
 				.withExactArgs(sinon.match.same(oExpectedXml))
 				.returns(oExpectedJson);
 

@@ -912,7 +912,7 @@
 		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), this.aColumns.length, "Property: " + this.aColumns.length + " fixed Columns");
 		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable, true), this.aColumns.length - 1, "Computed: " + (this.aColumns.length - 1) + " fixed Columns");
 
-		oTable.setWidth((this.aColumns.length * 100 - 200) + "px");
+		oTable.setWidth((this.aColumns.length * 100 - 60) + "px");
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(ColumnUtils.getFixedColumnCount(oTable), 0, "Property: 0 fixed Columns");

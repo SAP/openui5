@@ -1,0 +1,44 @@
+/* ======================================================= */
+/* Gold Reflection for control sap.ui.dev/Splitter.control */
+/* ======================================================= */
+
+.sapUiVerticalSplitterBar {
+	background-color: @sapUiExtraLightBG;
+	background-image: url(img/splitter/splitter_vert_grip.gif);
+}
+
+.sapUiHorizontalSplitterBar {
+	background-color: @sapUiExtraLightBG;
+	background-image: url(img/splitter/splitter_horiz_grip.gif);
+}
+
+/*
+.sapUiVSplitterSecondPane:focus,
+.sapUiHSplitterSecondPane:focus,
+.sapUiVSplitterFirstPane:focus,
+.sapUiHSplitterFirstPane:focus {
+	outline: @sapUiHighlight dashed 1px;
+}
+*/
+
+.sapUiVerticalSplitterBar:hover{
+	background-color: @sapUiExtraLightBG;
+	cursor: e-resize;
+}
+
+.sapUiHorizontalSplitterBar:hover{
+	background-color: @sapUiExtraLightBG;
+	cursor: n-resize;
+}
+
+.sapUiVSBGhost{
+	background-image: none;
+	background-color: @sapUiHighlight;
+	cursor: e-resize;
+}
+
+.sapUiHSBGhost{
+	background-image: none;
+	background-color: @sapUiHighlight;
+	cursor: n-resize;
+}

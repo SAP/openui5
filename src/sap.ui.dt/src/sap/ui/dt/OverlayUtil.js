@@ -360,17 +360,6 @@ sap.ui.define([
 		}, this);
 	};
 
-	OverlayUtil.iterateOverAggregationLikeChildren = function(oElementOverlay, sAggregationName, fnCallback) {
-		var oElement = oElementOverlay.getElementInstance();
-		var vChildren;
-		if (oElementOverlay.getAggregationOverlay(sAggregationName).isAssociation()){
-			vChildren = ElementUtil.getAssociationInstances(oElement, sAggregationName);
-		} else {
-			vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
-		}
-		ElementUtil.iterateOverElements(vChildren, fnCallback);
-	};
-
 	/**
 	 *
 	 */

@@ -1,7 +1,6 @@
 sap.ui.define([
 	"test/unit/model/formatter",
-	"test/unit/model/LocalStorageModel",
-	"test/unit/model/models"
+	"test/unit/model/LocalStorageModel"
 ], function() {
 	"use strict";
 });

@@ -1,10 +1,10 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/autowaiter/_timeoutCounter",
+	"sap/ui/test/_timeoutCounter",
 	"sap/ui/Device",
 	"sap/m/Button",
-	"sap/ui/test/autowaiter/_autoWaiter"
+	"sap/ui/test/_autoWaiter"
 ], function (Opa5, opaTest, _timeoutCounter, Device, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
 		beforeEach: function () {
@@ -265,8 +265,8 @@ sap.ui.define([
 	QUnit.test("Should not execute any subsequent successes as soon as an exception gets thrown in an inner actions", function (assert) {
 		var oOpa = new Opa5(),
 			// make sure no waitFors are in the queue
-			fnSuccessSpy = sinon.spy(),
-			fnEmptyQueueFail = sinon.spy();
+			fnDone = assert.async(),
+			fnSuccessSpy = sinon.spy();
 
 		oOpa.waitFor({
 			actions: function () {
@@ -280,10 +280,14 @@ sap.ui.define([
 			success: fnSuccessSpy
 		});
 
-		oOpa.emptyQueue().fail(fnEmptyQueueFail);
-		this.oClock.tick(100);
-		sinon.assert.notCalled(fnSuccessSpy);
-		sinon.assert.calledOnce(fnEmptyQueueFail);
+		var oEmptyQueuePromise = oOpa.emptyQueue();
+
+		assert.throws(function () {
+			sinon.assert.notCalled(fnSuccessSpy);
+			this.oClock.tick(100);
+		}.bind(this));
+
+		oEmptyQueuePromise.always(fnDone);
 	});
 
 	QUnit.module("Async actions 2 controls", {

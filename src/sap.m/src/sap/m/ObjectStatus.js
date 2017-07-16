@@ -89,7 +89,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Lazy loads feed icon image.
 	 *
-	 * @returns {object} The feed icon image
 	 * @private
 	 */
 	ObjectStatus.prototype._getImageControl = function() {
@@ -148,7 +147,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Checks if the ObjectStatus is empty.
 	 * @private
-	 * @returns {boolean} If the ObjectStatus is empty
+	 * @returns {boolean}
 	 */
 	ObjectStatus.prototype._isEmpty = function() {
 
@@ -157,8 +156,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 *
-	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	ObjectStatus.prototype.getAccessibilityInfo = function() {

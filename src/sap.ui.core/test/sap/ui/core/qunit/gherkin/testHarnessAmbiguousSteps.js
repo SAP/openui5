@@ -3,7 +3,7 @@
  */
 
 /* eslint-disable quotes */
-/* global QUnit */
+/* global QUnit,sinon */
 
 sap.ui.define([
   "jquery.sap.global",
@@ -16,12 +16,12 @@ sap.ui.define([
 
       // This step definition matches the test step "I should be served a coffee"
       this.register(/^I should be served a coffee$/i, function() {
-        this.assert.ok(true);
+        assert.ok(true);
       });
 
       // this step definition ALSO matches the test step "I should be served a coffee"!
       this.register(/^I should be served a .*$/i, function() {
-        this.assert.ok(true);
+        assert.ok(true);
       });
     }
   });

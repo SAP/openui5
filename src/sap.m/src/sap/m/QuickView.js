@@ -6,14 +6,11 @@
 sap.ui.define([
 	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
 		'./QuickViewBase', './ResponsivePopover', './NavContainer',
-		'./Page', './Bar', './Button'],
+		'./PlacementType', './Page', './Bar', './Button'],
 	function(jQuery, library, Control, IconPool,
 			QuickViewBase, ResponsivePopover, NavContainer,
-			Page, Bar, Button) {
+			PlacementType, Page, Bar, Button) {
 	"use strict";
-
-	// shortcut for sap.m.PlacementType
-	var PlacementType = library.PlacementType;
 
 	/**
 	 * Constructor for a new QuickView.

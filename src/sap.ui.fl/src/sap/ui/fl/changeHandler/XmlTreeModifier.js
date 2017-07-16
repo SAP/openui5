@@ -22,12 +22,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				this.setProperty(oControl, "stashed", oPropertyValue);
 			},
 
-			getStashed: function (oControl) {
-				return this.getProperty(oControl, "stashed");
-			},
-
-			bindProperty: function (oControl, sPropertyName, vBindingInfos) {
-				oControl.setAttribute(sPropertyName, "{" + vBindingInfos + "}");
+			bindProperty: function (oControl, sPropertyName, sBindingPath) {
+				oControl.setAttribute(sPropertyName, "{" + sBindingPath + "}");
 			},
 
 			setProperty: function (oControl, sPropertyName, oPropertyValue) {
@@ -42,24 +38,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				oControl.setAttribute(sPropertyName, oPropertyBinding);
 			},
 
-			getPropertyBinding: function (oControl, sPropertyName) {
-				return oControl.getAttribute(sPropertyName);
-			},
-
-			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
-				var sId;
+			createControl: function (sClassName, oAppComponent, oView, oSelector) {
 				if (!this.bySelector(oSelector, oAppComponent, oView)) {
 					var oNewElementNode = oView.createElement(sClassName);
-					sId = this.getControlIdBySelector(oSelector, oAppComponent);
+					var sId = this.getControlIdBySelector(oSelector, oAppComponent);
 					if (sId) {
 						oNewElementNode.setAttribute("id", sId);
-					}
-					if (mSettings){
-						var oValue;
-						Object.keys(mSettings).forEach(function(sKey) {
-						    oValue = mSettings[sKey];
-						    oNewElementNode.setAttribute(sKey, oValue);
-						});
 					}
 					return oNewElementNode;
 				} else {
@@ -69,7 +53,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 
 			/** SUBSTITUTION UNTIL SmartForm has adopted to the bySelector
 			 *
-			 * @param {string} sId
+			 * @param sId
 			 * @param oView
 			 * @returns {*|Node}
 			 */
@@ -130,11 +114,6 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				sControlType += this._getLocalName(oControl);
 
 				return sControlType;
-			},
-
-			// TODO implement when getAggregation works
-			getAllAggregations: function (oParent) {
-				return {};
 			},
 
 			getAggregation: function (oParent, sName) {
@@ -216,11 +195,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 					}
 					return aChildren;
 				}
-			},
-
-			getBindingTemplate: function (oControl, sAggregationName) {},
-
-			updateAggregatopn: function (oControl, sAggregationName) {}
+			}
 		};
 
 		return jQuery.sap.extend(

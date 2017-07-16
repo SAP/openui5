@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	/**
 	 * Attach multiple events.
 	 *
-	 * @param {Object.<string, function>} oEvents
+	 * @param {object} oEvents
 	 * @protected
 	 */
 	Binding.prototype.attachEvents = function(oEvents) {
@@ -433,9 +433,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Detach multiple events.
+	 * Detach multiple events-
 	 *
-	 * @param {Object.<string, function>} oEvents
+	 * @param {object} oEvents
 	 * @protected
 	 */
 	Binding.prototype.detachEvents = function(oEvents) {

@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRm.write("</span>");
 
 		// Text - Pull down to refresh
-		oRm.write("<span id=" + oControl.getId() + "-T class=\"sapMPullDownText\" aria-live=\"assertive\">");
+		oRm.write("<span id=" + oControl.getId() + "-T class=\"sapMPullDownText\">");
 		oRm.writeEscaped(oResourceBundle.getText(oControl._bTouchMode ? "PULL2REFRESH_PULLDOWN" : "PULL2REFRESH_REFRESH"));
 		oRm.write("</span>");
 

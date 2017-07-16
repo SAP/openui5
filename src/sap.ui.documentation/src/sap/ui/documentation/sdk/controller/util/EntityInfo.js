@@ -205,27 +205,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 	}
 
-	function findLibraryFromEntityName(sEntityName) {
-		var oVersionInfo = sap.ui.getVersionInfo(),
-			oLibrary,
-			iLen,
-			i;
-
-		if ( oVersionInfo && Array.isArray(oVersionInfo.libraries) ) {
-			iLen = oVersionInfo.libraries.length;
-			for (i = 0; i < iLen; i++) {
-				oLibrary = oVersionInfo.libraries[i];
-				if ( sEntityName === oLibrary.name || sEntityName.indexOf(oLibrary.name + ".") === 0 ) {
-					return oLibrary.name;
-				}
-			}
-		}
-
-		// fallback to core (this ensures that the extraordinary packages of sap.ui.core are found, but doesn't work as
-		// soon as other libs do the same)
-		return "sap.ui.core";
-	}
-
 	function get(sEntityName, sLibraryName) {
 
 		var oPackageInfo = getPackageInfo(sEntityName);
@@ -237,11 +216,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 				var oMetadata = oClass.getMetadata();
 				if (oMetadata.getLibraryName) {
 					sLibraryName = oMetadata.getLibraryName();
-				} else {
-					sLibraryName = "sap.ui.core";
 				}
 			} else {
-				sLibraryName = findLibraryFromEntityName(sEntityName);
+				sLibraryName = sEntityName.substr(0, sEntityName.lastIndexOf("."));
 			}
 		}
 
@@ -312,12 +289,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 	}
 
-	return {
+	var EntityInfo = {
 
 		getEntityDocu : function (sEntityName, sLibraryName) {
 			return get(sEntityName, sLibraryName);
 		}
 
 	};
+
+	return EntityInfo;
 
 }, /* bExport= */ true);

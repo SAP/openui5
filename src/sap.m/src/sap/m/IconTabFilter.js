@@ -171,9 +171,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item',
 		// invalidate only the IconTabHeader if a property change
 		// doesn't affect the IconTabBar content
 		switch (sPropertyName) {
-			case 'visible':
-			case 'enabled':
-			case 'textDirection':
 			case 'text':
 			case 'count':
 			case 'showAll':

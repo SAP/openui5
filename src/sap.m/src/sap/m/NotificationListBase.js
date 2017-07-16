@@ -15,25 +15,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
          * @param {object} [mSettings] Initial settings for the new control
          *
          * @class
-         * The NotificationListBase is the abstract base class for {@link sap.m.NotificationListItem} and {@link sap.m.NotificationListGroup}.
-         *
-         * The NotificationList controls are designed for the SAP Fiori notification center.
-         * <h4>Overview</h4>
-         * NotificationListBase defines the general structure of a notification item. Most of the behavioral logic is defined for the single items or groups.
-         * <h4>Structure</h4>
-         * The base holds properties for the following elements:
-         * <ul>
-         * <li>Author name</li>
-         * <li>Author picture</li>
-         * <li>Time stamp</li>
-         * <li>Priority</li>
-         * <li>Title</li>
-         * </ul>
-         * Additionally, by setting these properties you can determine if buttons are shown:
-         * <ul>
-         * <li><code>showButtons</code> - action buttons visibility</li>
-         * <li><code>showCloseButton</code> - close button visibility</li>
-         * </ul>
+         * The NotificationListBase is the base class for NotificationListItem and NotificationListGroup.
          * @extends sap.m.ListItemBase
          *
          * @author SAP SE

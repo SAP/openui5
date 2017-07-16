@@ -273,7 +273,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	/**
 	 * Sets whether or not to display live search bar.
 	 * @param {boolean} bVal Boolean to set live search bar to <code>true</code> or <code>false</code>
-	 * @returns {sap.m.FacetFilter} <code>this</code> to allow method chaining
 	 */
 	FacetFilter.prototype.setLiveSearch = function(bVal) {
 
@@ -488,7 +487,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 */
 	FacetFilter.prototype._startItemNavigation = function() {
 
-		//Collect the dom references of the items
+	    //Collect the dom references of the items
 		var oFocusRef = this.getDomRef(),
 			aRows = oFocusRef.getElementsByClassName("sapMFFHead"),
 			aDomRefs = [];
@@ -506,7 +505,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			this._aDomRefs = aDomRefs;
 		}
 
-		//initialize the delegate add apply it to the control (only once)
+	    //initialize the delegate add apply it to the control (only once)
 		if ((!this.oItemNavigation) || this._addDelegateFlag == true) {
 			this.oItemNavigation = new ItemNavigation();
 			this.addDelegate(this.oItemNavigation);
@@ -519,18 +518,18 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				break;
 			}
 		}
-		// After each rendering the delegate needs to be initialized as well.
+	    // After each rendering the delegate needs to be initialized as well.
 
-		//set the root dom node that surrounds the items
+	    //set the root dom node that surrounds the items
 		this.oItemNavigation.setRootDomRef(oFocusRef);
 
-		//set the array of dom nodes representing the items.
+	    //set the array of dom nodes representing the items.
 		this.oItemNavigation.setItemDomRefs(aDomRefs);
 
 		//turn off the cycling
-		this.oItemNavigation.setCycling(false);
+	    this.oItemNavigation.setCycling(false);
 
-		//set the selected index
+	    //set the selected index
 		this.oItemNavigation.setPageSize(this._pageSize);
 
 	};
@@ -1009,37 +1008,36 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 *
-	 * @param {sap.m.Popover} oPopover the Popover to be opened
-	 * @param {sap.m.Control} oControl The control the popover will be opened "by"
-	 * @returns {sap.m.FacetFilter} <code>this</code> to allow method chaining
+	 * @param oPopover
+	 * @param oControl The control the popover will be opened "by"
 	 * @private
 	 */
 	FacetFilter.prototype._openPopover = function(oPopover, oControl) {
 
-		// Don't open if already open, otherwise the popover will display empty.
-		if (!oPopover.isOpen()) {
+	       // Don't open if already open, otherwise the popover will display empty.
+	       if (!oPopover.isOpen()) {
 
-			var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
-			jQuery.sap.assert(oList, "The facet filter button should be associated with a list.");
+	              var oList = sap.ui.getCore().byId(oControl.getAssociation("list"));
+	              jQuery.sap.assert(oList, "The facet filter button should be associated with a list.");
 
-			oList.fireListOpen({});
-			this._moveListToDisplayContainer(oList, oPopover);
-			oPopover.openBy(oControl);
-			//Display remove facet icon only if ShowRemoveFacetIcon property is set to true
-			if (oList.getShowRemoveFacetIcon()) {
-				this._displayRemoveIcon(true, oList);
-			}
-			if (oList.getWordWrap()) {
-				oPopover.setContentWidth("30%");
-			}
-			oList._applySearch();
-		}
-		return this;
+			      oList.fireListOpen({});
+	              this._moveListToDisplayContainer(oList, oPopover);
+	              oPopover.openBy(oControl);
+	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true
+	              if (oList.getShowRemoveFacetIcon()) {
+	              this._displayRemoveIcon(true, oList);
+	              }
+	              if (oList.getWordWrap()) {
+oPopover.setContentWidth("30%");
+	              }
+	              oList._applySearch();
+	       }
+	       return this;
 	};
 
 
 	/**
-	 * @returns {sap.m.Button} the "add facet" button
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._getAddFacetButton = function() {
@@ -1066,7 +1064,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Gets the facet button for the given list (it is created if it doesn't exist yet).
 	 * The button text is set with the given list title.
 	 *
-	 * @param {sap.m.FacetFilterList} oList The list displayed when the button is pressed
+	 * @param [sap.m.FacetFilterList] oList The list displayed when the button is pressed
 	 * @returns {sap.m.Button} The button for the list
 	 * @private
 	 */
@@ -1125,7 +1123,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	/**
 	 * Updates the facet button text based on selections in the given list.
 	 *
-	 * @param {sap.m.FacetFilterList} oList The FacetFilterList
+	 * @param [sap.m.FacetFilterList] oList The FacetFilterList
 	 * @private
 	 */
 	FacetFilter.prototype._setButtonText = function(oList) {
@@ -1156,7 +1154,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	/**
 	 * Gets the FacetFilterList remove icon for the given list (it is created if it doesn't exist yet ).
 	 * The icon is associated with the FacetFilterList ID, which is why we only need to pass the FacetFilterList to retrieve the icon once it has been created.
-	 * @param {sap.m.FacetFilterList} oList the given list, whose icon will be returned
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._getFacetRemoveIcon = function(oList) {
@@ -1214,8 +1212,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Shows/hides the FacetFilterList remove icon for the given list.
-	 * @param {boolean} bDisplay if the icon will be displayed
-	 * @param {sap.m.FacetFilterList} oList - the list where the icon is
 	 * @private
 	 */
 	FacetFilter.prototype._displayRemoveIcon = function(bDisplay, oList) {
@@ -1401,7 +1397,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * Creates the FacetFilter dialog (if it doesn't exist).
 	 * The dialog contains a NavContainer having two Pages. The first page contains a list of facets.
 	 * The navigation proceeds to a second page containing FacetFilter items for the selected facet.
-	 * @returns {sap.m.Dialog} oDialog The sap.m.Dialog to be added
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._getFacetDialog = function() {
@@ -1416,7 +1412,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				afterClose : function() {
 
 					that._addDelegateFlag = true;
-					that._invalidateFlag = true;
+				    that._invalidateFlag = true;
 
 					// Make sure we restore the FacetFilterList back to the lists aggregation and update its active state
 					// if the user dismisses the dialog while on the filter items page.
@@ -1556,7 +1552,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * from the list to the checkbox so that the checkbox selected state can be updated
 	 * by the list when selection changes.
 	 *
-	 * @param {sap.m.FacetFilterList} oList The sap.m.FacetFilterList from which the checkbox association is created
+	 * @param oList
 	 * @returns {sap.m.Bar} Bar, or null if the given list is not multi-select
 	 * @private
 	 */
@@ -1601,7 +1597,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Navigates to the appropriate FacetFilterItems page when a FacetFilterList item is pressed in the facet page.
-	 * @param {object} oEvent Fired when the sap.m.FacetFilterList is pressed
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._handleFacetListItemPress = function(oEvent) {
@@ -1612,7 +1608,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	/**
 	 * Navigates to the FacetFilterItems page associated with the given FacetFilterList item.
 	 * The listOpen event is fired prior to navigation.
-	 * @param {sap.m.FacetFilterList} oFacetListItem The given sap.m.FacetFilterList item
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._navToFilterItemsPage = function(oFacetListItem) {
@@ -1787,7 +1783,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	};
 
 	/**
-	 * @returns {sap.m.Button} The created reset button
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._createResetButton = function() {
@@ -1818,8 +1814,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Creates an OK button to dismiss the given popover.
-	 * @param {sap.m.Popover} oPopover The sap.m.Popover to which the OK Button is added
-	 * @returns {sap.m.Button} The added OK Button
 	 * @private
 	 */
 	FacetFilter.prototype._addOKButtonToPopover = function(oPopover) {
@@ -1844,7 +1838,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Returns the localized text about selected filters to display on the summary bar.
-	 * @returns {string} The summary text
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._getSummaryText = function() {
@@ -1892,8 +1886,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Returns texts of selected items, visible and invisible.
-	 * @param {sap.m.FacetFilterList} oList The list that is specified
-	 * @returns {array} The texts of selected items
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype._getSelectedItemsText = function(oList) {
@@ -1921,7 +1914,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			oSummaryBar.addContent(new sap.m.ToolbarSpacer({width: ""})); // Push the reset button to the end of the toolbar
 			var oButton = this._createResetButton();
 			oSummaryBar.addContent(oButton);
-			oButton.addStyleClass("sapUiSizeCompact");
 			oButton.addStyleClass("sapMFFRefresh");
 			oButton.addStyleClass("sapMFFBtnHoverable");
 		}
@@ -1948,7 +1940,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Cleans up facet buttons and removes facet icons for the given list.
-	 * @param {sap.m.FacetFilterList} oList The sap.m.FacetFilterList from which icons will be cleaned
+	 *
 	 */
 	FacetFilter.prototype._removeList = function(oList) {
 
@@ -2063,7 +2055,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	/**
 	 * Handles clicks on the carousel scroll arrows.
-	 * @param {object} oEvent The fired event
+	 *
 	 * @private
 	 */
 	FacetFilter.prototype.onclick = function(oEvent) {
@@ -2097,8 +2089,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 */
 	FacetFilter.prototype._scroll = function(iDelta, iDuration) {
 
-		   var oDomRef = this.getDomRef("head");
-		   var iScrollLeft = oDomRef.scrollLeft;
+	       var oDomRef = this.getDomRef("head");
+	       var iScrollLeft = oDomRef.scrollLeft;
 		if (!sap.ui.Device.browser.internet_explorer && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space

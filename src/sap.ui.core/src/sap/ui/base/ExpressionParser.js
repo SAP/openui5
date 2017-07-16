@@ -547,8 +547,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 		 * @returns {boolean} whether a token is recognized
 		 * @throws {Error|Object|SyntaxError}
 		 *   <code>fnResolveBinding</code> may throw <code>SyntaxError</code>;
-		 *   <code>oTokenizer.setIndex()</code> may throw <code>Error</code>;
-		 *   <code>oTokenizer</code> may also throw <code>{name: 'SyntaxError', ...}</code>
+		 *   <code>oTokenizer.setIndex()<code> may throw <code>Error</code>;
+		 *   <code>oTokenizer<code> may also throw <code>{name: 'SyntaxError', ...}</code>
 		 */
 		function consumeToken() {
 			var ch, oBinding, iIndex, aMatches, oToken;

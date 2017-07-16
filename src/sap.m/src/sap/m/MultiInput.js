@@ -32,7 +32,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	* </ul>
 	* <h4>When not to use:</h4>
 	* <ul>
-	* <li> Do not use multi-line inputs in tables and forms.</li>
 	* <li> When you need to select only one value.</li>
 	* <li> When you want the user to select from a predefined set of options. Use {@link sap.m.MultiComboBox} instead.</li>
 	* </ul>
@@ -77,7 +76,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				 * In multi-line display mode, all tokens can be fully viewed and easily edited in the MultiInput.
 				 * The default value is false.
 				 * <b>Note:</b> This property does not take effect on smartphones or when the editable property is set to false.
-				 * <b>Caution:</b> Do not enable multi-line mode in tables and forms.
 				 * @since 1.28
 				 */
 				enableMultiLineMode: {type: "boolean", group: "Behavior", defaultValue: false},
@@ -152,27 +150,24 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 				 * Fired when the tokens aggregation changed (add / remove token)
 				 */
 				tokenUpdate: {
-					allowPreventDefault : true,
-					parameters: {
-						/**
-						 * Type of tokenChange event.
-						 * There are two TokenUpdate types: "added", "removed"
-						 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
-						 */
-						type: {type: "string"},
+					/**
+					 * Type of tokenChange event.
+					 * There are two TokenUpdate types: "added", "removed"
+					 * Use Tokenizer.TokenUpdateType.Added for "added" and Tokenizer.TokenUpdateType.Removed for "removed".
+					 */
+					type: {type: "string"},
 
-						/**
-						 * The array of tokens that are added.
-						 * This parameter is used when tokenUpdate type is "added".
-						 */
-						addedTokens: {type: "sap.m.Token[]"},
+					/**
+					 * The array of tokens that are added.
+					 * This parameter is used when tokenUpdate type is "added".
+					 */
+					addedTokens: {type: "sap.m.Token[]"},
 
-						/**
-						 * The array of tokens that are removed.
-						 * This parameter is used when tokenUpdate type is "removed".
-						 */
-						removedTokens: {type: "sap.m.Token[]"}
-					}
+					/**
+					 * The array of tokens that are removed.
+					 * This parameter is used when tokenUpdate type is "removed".
+					 */
+					removedTokens: {type: "sap.m.Token[]"}
 				}
 			}
 		}
@@ -244,13 +239,8 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	};
 
 	MultiInput.prototype._onTokenUpdate = function (args) {
-		var eventResult = this.fireTokenUpdate(args.getParameters());
-
-		if (!eventResult) {
-			args.preventDefault();
-		} else {
-			this.invalidate();
-		}
+		this.fireTokenUpdate(args.getParameters());
+		this.invalidate();
 	};
 
 	MultiInput.prototype._onSuggestionItemSelected = function (eventArgs) {
@@ -490,7 +480,6 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	MultiInput.prototype.onmousedown = function (e) {
 		if (e.target == this.getDomRef('border')) {
 			e.preventDefault();
-			e.stopPropagation();
 		}
 	};
 
@@ -638,7 +627,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function () {
-		this._tokenizer.scrollToEnd();
+		this._tokenizer._doScrollToEnd();
 		Input.prototype.onAfterRendering.apply(this, arguments);
 	};
 
@@ -1086,19 +1075,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Tokenizer', './Token', './libr
 	 * @param {jQuery.Event} oEvent
 	 */
 	MultiInput.prototype.ontap = function (oEvent) {
-
 		//deselect tokens when focus is on text field
 		if (document.activeElement === this._$input[0]
 			|| document.activeElement === this._tokenizer.getDomRef()) {
 			this._tokenizer.selectAllTokens(false);
 		}
 
-		if (oEvent && oEvent.isMarked("tokenDeletePress")) {
-			return;
-		}
-
 		Input.prototype.ontap.apply(this, arguments);
-
 	};
 
 	MultiInput.prototype._onclick = function (oEvent) {

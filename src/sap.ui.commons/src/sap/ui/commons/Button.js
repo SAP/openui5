@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Function is called when button is clicked.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onclick = function(oEvent) {
@@ -159,9 +159,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the sapenter event does not bubble.
+	 * Handles the sapenter event does not bubble
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onsapenter = function(oEvent) {
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Function is called when mouse key is clicked down. The button style classes
 	 * are replaced then.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onmousedown = function(oEvent) {
@@ -206,7 +206,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * When mouse key is up again, reset the background images to normal.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onmouseup = function(oEvent) {
@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * When mouse is going out of the control, reset the background images to normal.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onmouseout = function(oEvent) {
@@ -230,7 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * When mouse is going over the control a hover effect is done.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onmouseover = function(oEvent) {
@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * When the button looses the focus, this method is called.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onfocusout = function(oEvent) {
@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * When the button gets the focus, this method is called.
 	 *
-	 * @param {jQuery.Event} oEvent The event fired
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	Button.prototype.onfocusin = function(oEvent) {
@@ -328,7 +328,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control.
 	 * @protected
 	 */
 	Button.prototype.getAccessibilityInfo = function() {

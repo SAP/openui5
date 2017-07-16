@@ -1,18 +1,9 @@
 /*!
  * ${copyright}
  */
-
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/base/EventProvider",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings"
-], function (
-	jQuery,
-	EventProvider,
-	Utils,
-	Settings
-) {
+	"sap/ui/base/EventProvider", "sap/ui/fl/Utils", "sap/ui/fl/registry/Settings"
+], function (EventProvider, Utils, Settings) {
 
 	"use strict";
 
@@ -27,17 +18,15 @@ sap.ui.define([
 	 */
 	var Change = function (oFile) {
 		EventProvider.apply(this);
-
-		if (!jQuery.isPlainObject(oFile)) {
+		if (typeof (oFile) !== "object") {
 			Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
 		}
 
 		this._oDefinition = oFile;
-		this._oOriginDefinition = jQuery.extend(true, {}, oFile);
+		this._oOriginDefinition = JSON.parse(JSON.stringify(oFile));
 		this._sRequest = '';
 		this._bIsDeleted = false;
 		this._bUserDependent = (oFile.layer === "USER");
-		this._vRevertData = null;
 	};
 
 	Change.events = {
@@ -557,7 +546,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all dependent global IDs, including the ID from selector of the changes.
+	 * Returns all dependent global IDs.
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to translate the local ID into a global ID
 	 *
@@ -568,27 +557,31 @@ sap.ui.define([
 	Change.prototype.getDependentIdList = function (oAppComponent) {
 		var that = this;
 		var sId;
-		var aDependentSelectors = [this.getSelector()];
+		var aDependentSelectors = [];
 		var aDependentIds = [];
 
 		if (!this._aDependentIdList) {
-			if (this._oDefinition.dependentSelector){
-				aDependentSelectors = Object.keys(this._oDefinition.dependentSelector).reduce(function(aDependentSelectors, sAlias){
-					return aDependentSelectors.concat(that._oDefinition.dependentSelector[sAlias]);
-				}, aDependentSelectors);
+			if (!this._oDefinition.dependentSelector) {
+				this._aDependentIdList = [];
+			} else {
+				Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
+					aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
+				});
+
+				aDependentSelectors = [].concat.apply([], aDependentSelectors);
+
+				aDependentSelectors.forEach(function (oDependentSelector) {
+					sId = oDependentSelector.id;
+					if (oDependentSelector.idIsLocal) {
+						sId = oAppComponent.createId(oDependentSelector.id);
+					}
+					if (aDependentIds.indexOf(sId) === -1) {
+						aDependentIds.push(sId);
+					}
+				});
+
+				this._aDependentIdList = aDependentIds;
 			}
-
-			aDependentSelectors.forEach(function (oDependentSelector) {
-				sId = oDependentSelector.id;
-				if (oDependentSelector.idIsLocal) {
-					sId = oAppComponent.createId(oDependentSelector.id);
-				}
-				if (aDependentIds.indexOf(sId) === -1) {
-					aDependentIds.push(sId);
-				}
-			});
-
-			this._aDependentIdList = aDependentIds;
 		}
 
 		return this._aDependentIdList;
@@ -602,34 +595,6 @@ sap.ui.define([
 	 */
 	Change.prototype.getKey = function () {
 		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
-	};
-
-	/**
-	 * Returns the revert specific data
-	 *
-	 * @returns {*} revert specific data
-	 * @public
-	 */
-	Change.prototype.getRevertData = function() {
-		return this._vRevertData;
-	};
-
-	/**
-	 * Sets the revert specific data
-	 *
-	 * @param {*} vData revert specific data
-	 * @public
-	 */
-	Change.prototype.setRevertData = function(vData) {
-		this._vRevertData = vData;
-	};
-
-	/**
-	 * Reset the revert specific data
-	 * @public
-	 */
-	Change.prototype.resetRevertData = function() {
-		this.setRevertData(null);
 	};
 
 	/**

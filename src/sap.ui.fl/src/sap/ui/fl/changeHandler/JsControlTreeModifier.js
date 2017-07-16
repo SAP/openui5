@@ -38,23 +38,15 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				}
 			},
 
-			getStashed: function (oControl) {
-				if (oControl.getStashed) {
-					return oControl.getStashed();
-				} else {
-					throw new Error("Provided control instance has no getStashed method");
-				}
-			},
-
-			bindProperty: function (oControl, sPropertyName, vBindingInfos) {
-				oControl.bindProperty(sPropertyName, vBindingInfos);
+			bindProperty: function (oControl, sPropertyName, mBindingInfos) {
+				oControl.bindProperty(sPropertyName, mBindingInfos);
 			},
 
 			/**
 			 * Unbind a property
 			 * The value should not be reset to default when unbinding (bSuppressReset = true)
 			 * @param  {sap.ui.core.Control} oControl  The control containing the property
-			 * @param  {string} sPropertyName  The property to be unbound
+			 * @param  {String} sPropertyName  The property to be unbound
 			 */
 			unbindProperty: function (oControl, sPropertyName) {
 				if (oControl) {
@@ -81,18 +73,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			},
 
 			setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
-				this.unbindProperty(oControl, sPropertyName);
 				var mSettings = {};
 				mSettings[sPropertyName] = oPropertyBinding;
 				oControl.applySettings(mSettings);
 			},
 
-			getPropertyBinding: function (oControl, sPropertyName) {
-				return oControl.getBindingInfo(sPropertyName);
-
-			},
-
-			createControl: function (sClassName, oAppComponent, oView, oSelector, mSettings) {
+			createControl: function (sClassName, oAppComponent, oView, oSelector) {
 				if (this.bySelector(oSelector, oAppComponent)) {
 					throw new Error("Can't create a control with duplicated id " + oSelector);
 				}
@@ -100,12 +86,12 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				jQuery.sap.require(sClassName); //ensure class is there
 				var ClassObject = jQuery.sap.getObject(sClassName);
 				var sId = this.getControlIdBySelector(oSelector, oAppComponent);
-				return new ClassObject(sId, mSettings);
+				return new ClassObject(sId);
 			},
 
 			/** SUBSTITUTION UNTIL SmartForm has adopted to the bySelector
 			 *
-			 * @param {sap.ui.core.ID} sId
+			 * @param sId
 			 * @returns {*|Node}
 			 */
 			byId: function (sId) {
@@ -115,8 +101,8 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			/**
 			 * Returns the control for the given id. Undefined if control cannot be found.
 			 *
-			 * @param {sap.ui.core.ID} sId Control id
-			 * @returns {sap.ui.core.Element} Control
+			 * @param {string} sId control id
+			 * @returns {sap.ui.core.Control} Control
 			 * @private
 			 */
 			_byId: function (sId) {
@@ -133,10 +119,6 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 
 			getControlType: function (oControl) {
 				return Utils.getControlType(oControl);
-			},
-
-			getAllAggregations: function (oParent) {
-				return oParent.getMetadata().getAllAggregations();
 			},
 
 			/**
@@ -198,7 +180,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 			 * Removes the object from the aggregation of the given control
 			 *
 			 * @param {sap.ui.core.Control}
-			 *          oControl - the parent control for which the changes should be fetched
+			 *          oParent - the control for which the changes should be fetched
 			 * @param {string}
 			 *          sName - aggregation name
 			 * @param {object}
@@ -228,27 +210,6 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 							var oAggregation = oAggregations[sName];
 							if (oAggregation) {
 								oControl[oAggregation._sRemoveAllMutator]();
-							}
-						}
-					}
-				}
-			},
-
-			getBindingTemplate: function (oControl, sAggregationName) {
-				var oBinding = oControl.getBindingInfo(sAggregationName);
-				return oBinding && oBinding.template;
-			},
-
-			updateAggregatopn: function (oControl, sAggregationName) {
-				if (oControl) {
-					if (oControl.getMetadata) {
-						var oMetadata = oControl.getMetadata();
-						var oAggregations = oMetadata.getAllAggregations();
-						if (oAggregations) {
-							var oAggregation = oAggregations[sAggregationName];
-							if (oAggregation) {
-								oControl[oAggregation._sDestructor]();
-								oControl.updateAggregation(sAggregationName);
 							}
 						}
 					}

@@ -26,6 +26,8 @@ sap.ui.define([
 			init : function () {
 				this.setEditable(false);
 				this.attachValueHelpRequest(this._onValueHelp.bind(this));
+				this.setIconURL("sap-icon://value-help");
+				this.setTooltip("No value help");
 			},
 
 			onBeforeRendering : function () {
@@ -62,8 +64,6 @@ sap.ui.define([
 								that.setIconURL("sap-icon://value-help");
 								that.setEditable(true);
 							});
-					} else {
-						that.setTooltip("No value help");
 					}
 				}, function (oError) {
 					//TODO errors cannot seriously be handled per _instance_ of a control
@@ -100,8 +100,7 @@ sap.ui.define([
 						return new Text({text : oMetaModel.getODataProperty(oEntityType,
 							sPropertyPath)["sap:label"]});
 					}
-					return new ValueHelp({showDetails : oControl.getShowDetails(),
-						value : "{" + sPropertyPath + "}"});
+						return new ValueHelp({value : "{" + sPropertyPath + "}"});
 				}
 
 				function onClose() {

@@ -43,7 +43,6 @@ sap.ui.define([
 			annotationURI : true,
 			autoExpandSelect : true,
 			groupId : true,
-			odataVersion : true,
 			operationMode : true,
 			serviceUrl : true,
 			supportReferences : true,
@@ -77,8 +76,6 @@ sap.ui.define([
 	 *   Controls the model's use of batch requests: '$auto' bundles requests from the model in a
 	 *   batch request which is sent automatically before rendering; '$direct' sends requests
 	 *   directly without batch; other values result in an error
-	 * @param {string} [mParameters.odataVersion="4.0"]
-	 *   The version of the OData service. Supported values are "2.0" and "4.0".
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
 	 *   The operation mode for sorting and filtering with the model's operation mode as default.
 	 *   Since 1.39.0, the operation mode {@link sap.ui.model.odata.OperationMode.Server} is
@@ -101,15 +98,14 @@ sap.ui.define([
 	 *   synchronized at all; all other values are not supported and lead to an error.
 	 * @param {string} [mParameters.updateGroupId]
 	 *   The group ID that is used for update requests. If no update group ID is specified,
-	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined</code>,
+	 *   <code>mParameters.groupId</code> is used. Valid update group IDs are <code>undefined<code>,
 	 *   '$auto', '$direct' or an application group ID, which is a non-empty string consisting of
 	 *   alphanumeric characters from the basic Latin alphabet, including the underscore.
 	 * @throws {Error} If an unsupported synchronization mode is given, if the given service root
 	 *   URL does not end with a forward slash, if an unsupported parameter is given, if OData
 	 *   system query options or parameter aliases are specified as parameters, if an invalid group
 	 *   ID or update group ID is given, if the given operation mode is not supported, if an
-	 *   annotation file cannot be merged into the service metadata, if an unsupported value for
-	 *   <code>odataVersion</code> is given.
+	 *   annotation file cannot be merged into the service metadata.
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataModel
 	 * @author SAP SE
@@ -140,7 +136,6 @@ sap.ui.define([
 					var mHeaders = {
 							"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguageTag()
 						},
-						sODataVersion,
 						sParameter,
 						sServiceUrl,
 						oUri,
@@ -151,11 +146,6 @@ sap.ui.define([
 
 					if (!mParameters || mParameters.synchronizationMode !== "None") {
 						throw new Error("Synchronization mode must be 'None'");
-					}
-					sODataVersion = mParameters.odataVersion || "4.0";
-					if (sODataVersion !== "4.0" && sODataVersion !== "2.0") {
-						throw new Error("Unsupported value for parameter odataVersion: "
-							+ sODataVersion);
 					}
 					for (sParameter in mParameters) {
 						if (!(sParameter in mSupportedParameters)) {
@@ -200,14 +190,12 @@ sap.ui.define([
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
-						this.mUriParameters,
-						this.oMetaModel.fetchEntityContainer.bind(this.oMetaModel),
-						function (sGroupId) {
+						this.mUriParameters, function (sGroupId) {
 							if (sGroupId === "$auto") {
 								sap.ui.getCore().addPrerenderingTask(
 									that._submitBatch.bind(that, sGroupId));
 							}
-						}, sODataVersion);
+						});
 
 					this.aAllBindings = [];
 					this.sDefaultBindingMode = BindingMode.TwoWay;

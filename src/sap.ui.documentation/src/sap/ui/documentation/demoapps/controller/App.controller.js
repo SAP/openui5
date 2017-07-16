@@ -123,6 +123,7 @@ sap.ui.define([
 			this.byId("phoneImage").setVisible(oEvent.name === "Phone");
 			this.byId("desktopImage").setVisible(oEvent.name !== "Phone");
 			this.byId("phoneImage").toggleStyleClass("phoneHeaderImageDesktop", oEvent.name === "Phone");
+			this.byId("download").setIcon(oEvent.name === "Phone" || oEvent.name === "Tablet" ? "" : "sap-icon://download");
 		},
 
 		/**
@@ -182,7 +183,7 @@ sap.ui.define([
 								// promise gets resolved in error case since Promise.all will not wait for all fails
 								aFails.push(oContent.errorMessage);
 							} else {
-								oZipFile.file(sFilePath, oContent, { base64: false, binary: true });
+								oZipFile.file(sFilePath, oContent);
 							}
 						});
 						aPromises.push(oPromise);
@@ -269,14 +270,6 @@ sap.ui.define([
 		 */
 		_handleError: function (sError) {
 			MessageBox.error(sError);
-		},
-
-		/**
-		 * Handles landing image load event and makes landing image headline visible
-		 * when the image has loaded.
-		 */
-		handleLandingImageLoad: function () {
-			this.getView().byId("landingImageHeadline").setVisible(true);
 		}
 	});
 });

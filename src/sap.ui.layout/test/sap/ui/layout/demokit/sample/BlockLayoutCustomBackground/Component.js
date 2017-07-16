@@ -6,7 +6,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 		metadata : {
 			rootView : "sap.ui.layout.sample.BlockLayoutCustomBackground.Block",
-			includes : [ "resources/sample.css" ],
+			includes : [ "sample.css" ],
 			dependencies : {
 				libs : [
 					"sap.m",

@@ -190,7 +190,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 		return sAltText;
 	};
 
-	NumericContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
+	NumericContent.prototype.getTooltip_AsString = function() {
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
 		if (typeof oTooltip === "string" || oTooltip instanceof String) {
@@ -295,8 +295,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 	 * Parses the formatted value
 	 *
 	 * @private
-	 * @param {string} sValue - With scale and value
-	 * @returns {Object} The scale and formatted value
+	 * @param {Object} With scale and value
 	 */
 	NumericContent.prototype._parseFormattedValue = function(sValue) {
 

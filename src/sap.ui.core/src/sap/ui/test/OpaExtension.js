@@ -37,7 +37,8 @@ sap.ui.define([
          * Executed in the application frame.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
-         * @name sap.ui.test.OpaExtension.onAfterInit
+         * @name onAfterInit
+         * @alias sap.ui.test.OpaExtension.onAfterInit
          * @public
          * @function
          * @since 1.48
@@ -61,7 +62,8 @@ sap.ui.define([
          * Executed in the application frame.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
-         * @name sap.ui.test.OpaExtension.onBeforeExit
+         * @name onBeforeExit
+         * @alias sap.ui.test.OpaExtension.onBeforeExit
          * @public
          * @function
          * @since 1.48
@@ -82,7 +84,8 @@ sap.ui.define([
          * The default QUnit assertion object will be augmented with them.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
-         * @name sap.ui.test.OpaExtension.getAssertions
+         * @name getAssertions
+         * @alias sap.ui.test.OpaExtension.getAssertions
          * @public
          * @function
          * @since 1.48

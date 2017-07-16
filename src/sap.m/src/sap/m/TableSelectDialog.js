@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * Table select dialog supports multi-selection when the <code>multiSelect</code> property is set.
 	 *
 	 * The selected items can be stored for later editing when the <code>rememberSelections</code> property is set.
-	 * <b>Note:</b> This property has to be set before the dialog is opened.
+	 * <b>Note:<b> This property has to be set before the dialog is opened.
 	 * <h3>Usage</h3>
 	 * <h4>When to use:</h4>
 	 * <ul>
@@ -452,33 +452,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 
 		return this;
 	};
-	/**
-	 * Enables/Disables busy state.
-	 * @overwrite
-	 * @public
-	 * @param {boolean} flag for enabling busy indicator
-	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
-	 */
-	TableSelectDialog.prototype.setBusy = function (bBusy) {
-		this._oSearchField.setEnabled(!bBusy);
-
-		// Overwrite setBusy as it should be handled in the "real" dialog
-		this._oDialog.setBusy.apply(this._oDialog, arguments);
-
-		// Should return "this"
-		return this;
-	};
-
-	/**
-	 * Gets current busy state.
-	 * @overwrite
-	 * @public
-	 * @returns {boolean} value of currtent busy state.
-	 */
-	TableSelectDialog.prototype.getBusy = function () {
-		// Overwrite getBusy as it should be handled in the "real" dialog
-		return this._oDialog.getBusy.apply(this._oDialog, arguments);
-	};
 
 	/**
 	 * Sets the busyIndicatorDelay value to the internal table
@@ -488,7 +461,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 */
 	TableSelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
 		this._oTable.setBusyIndicatorDelay(iValue);
-		this._oDialog.setBusyIndicatorDelay(iValue);
 		this.setProperty("busyIndicatorDelay", iValue, true);
 
 		return this;
@@ -863,18 +835,22 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	};
 
 	/**
-	 * Shows/hides a local busy indicator, hides/shows the list based on the parameter flag and enables/disables the search field.
+	 * Shows/hides a local busy indicator and hides/shows the list based on the parameter flag. For the first request, the search field is also hidden.
 	 * @private
 	 * @param {boolean} bBusy flag (true = show, false = hide)
 	 */
 	TableSelectDialog.prototype._setBusy = function (bBusy) {
 		if (this._iTableUpdateRequested) { // check if the event was caused by our control
 			if (bBusy) {
-				this._oSearchField.setEnabled(false);
+				if (this._bFirstRequest) { // also hide the header bar for the first request
+					this._oSubHeader.$().css('display', 'none');
+				}
 				this._oTable.addStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'inline-block');
 			} else {
-				this._oSearchField.setEnabled(true);
+				if (this._bFirstRequest) { // also show the header bar again for the first request
+					this._oSubHeader.$().css('display', 'block');
+				}
 				this._oTable.removeStyleClass('sapMSelectDialogListHide');
 				this._oBusyIndicator.$().css('display', 'none');
 			}
@@ -1024,7 +1000,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @private
 	 */
 	TableSelectDialog.prototype._updateSelectionIndicator = function () {
-		var iSelectedContexts = this._oTable.getSelectedContextPaths(true).length,
+		var iSelectedContexts = this._oTable.getSelectedContexts(true).length,
 			oInfoBar = this._oTable.getInfoToolbar();
 
 		// update the selection label
@@ -1039,16 +1015,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 */
 	TableSelectDialog.prototype._fireConfirmAndUpdateSelection = function () {
 		// fire confirm event with current selection
-		var mParams = {
+		this.fireConfirm({
 			selectedItem: this._oSelectedItem,
-			selectedItems: this._aSelectedItems
-		};
-		// retrieve the value for 'selectedContexts' only lazily as it might fail for some models
-		Object.defineProperty(mParams, "selectedContexts", {
-			get: this._oTable.getSelectedContexts.bind(this._oTable, true)
+			selectedItems: this._aSelectedItems,
+			selectedContexts: this._oTable.getSelectedContexts(true)
 		});
-
-		this.fireConfirm(mParams);
 		this._updateSelection();
 	};
 

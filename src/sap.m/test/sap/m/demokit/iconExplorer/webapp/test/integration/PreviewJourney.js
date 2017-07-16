@@ -87,4 +87,14 @@ sap.ui.define([
 		// Assertions
 		Then.onTheAppPage.iShouldSeeMessageToast();
 	});
+
+	opaTest("Preview is closed when pressing the closed button", function (Given, When, Then) {
+		// Actions
+		When.onThePreviewPage.iPressTheCloseButton();
+
+		// Assertions
+		Then.onThePreviewPage.iShouldNotSeeThePreviewArea().
+		and.iTeardownMyAppFrame();
+	});
+
 });

@@ -39,13 +39,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		oControl.getHeight() && oRm.addStyle("height", oControl.getHeight());
 	};
 
-	// Write the counter of the TextArea.
-	TextAreaRenderer.writeDecorations = function(oRm, oControl) {
-		var oCounter = oControl.getAggregation("_counter");
-		oRm.renderControl(oCounter);
-	};
-
-
 	// Write the opening tag name of the TextArea
 	TextAreaRenderer.openInputTag = function(oRm, oControl) {
 		oRm.write("<textarea");
@@ -54,6 +47,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	// Write the closing tag name of the TextArea
 	TextAreaRenderer.closeInputTag = function(oRm, oControl) {
 		oRm.write("</textarea>");
+		var oCounter = oControl.getAggregation("_counter");
+		oRm.renderControl(oCounter);
 	};
 
 	// TextArea does not have value property as HTML element, so overwrite base method

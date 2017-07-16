@@ -16,6 +16,7 @@ sap.ui.define([
 
 		onInit: function () {
 			var oComponent = this.getOwnerComponent();
+
 			this._router = oComponent.getRouter();
 			this._router.getRoute("category").attachMatched(this._loadCategory, this);
 			this._router.getRoute("product").attachMatched(this._loadCategory, this);

@@ -14,7 +14,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 *
 	 * @class
 	 * The protected control provides a popover that displays the details of the items selected in the chart. This control should only be used in the suite.ui.commons.ChartContainer toolbar and sap.ui.comp.smartchart.SmartChart controls. Initially, the control is rendered as a button that opens the popup after clicking on it.
-	 * <b><i>Note:</i></b>It is protected and should ony be used within the framework itself.
+	 * <b><i>Note:<i></b>It is protected and should ony be used within the framework itself.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -621,7 +621,6 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	/**
 	 * Overwrite a property's value on the control and its inner control if it has the same name.
 	 * @param {string} propertyName The name of the property.
-	 * @param {int} value Value to set for the given property name
 	 * @returns {sap.m.ResponsivePopover} this to allow method chaining
 	 * @private
 	 */

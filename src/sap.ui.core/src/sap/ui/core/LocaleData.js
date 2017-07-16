@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
 		 * @param {string} sGreatestDiff the symbol matching the greatest difference in the two dates to format
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
-		 * @returns {string|string[]} the best matching interval pattern if interval difference is given otherwise an array with all possible interval patterns which match the given skeleton format
+		 * @returns {string} the best matching interval pattern
 		 * @since 1.46
 		 * @public
 		 */
@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		/* Helper functions for skeleton pattern processing */
 		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
-			var sPattern, oIntervalFormats, aPatterns;
+			var sPattern, oIntervalFormats;
 			if (sIntervalDiff) {
 				if (sIntervalDiff == "j" || sIntervalDiff == "J") {
 					sIntervalDiff = this.getPreferredHourSymbol();
@@ -347,22 +347,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			} else {
 				sPattern = oAvailableFormats[sSkeleton];
 			}
-
 			if (!sPattern) {
-				aPatterns = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff);
-			} else if (typeof sPattern === "object") {
-				aPatterns = Object.keys(sPattern).map(function(sKey) {
-					return sPattern[sKey];
-				});
-			} else {
-				return sPattern;
+				sPattern = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff);
 			}
-
-			if (aPatterns && aPatterns.length === 1) {
-				return aPatterns[0];
-			}
-
-			return aPatterns;
+			return sPattern;
 		},
 
 		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
@@ -391,12 +379,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						// in the sSkeleton, which means the diff unit is smaller than all units in
 						// the skeleton, return a single date pattern which is generated using the
 						// given skeleton
-						return [this.getCustomDateTimePattern(sSkeleton, sCalendarType)];
+						return this.getCustomDateTimePattern(sSkeleton, sCalendarType);
 					}
 				}
 			}
-
-			var aPatterns;
 
 			if (sIntervalDiff) {
 				// FieldGroup
@@ -458,47 +444,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						sPattern = this.getCombinedIntervalPattern(sSinglePattern, sCalendarType);
 					}
 				}
-
-				aPatterns = [sPattern];
-
 			} else if (!oBestMatch) {
 				sPattern = sSkeleton;
-				aPatterns = [sPattern];
 			} else {
-				if (typeof oBestMatch.pattern === "string") {
-					aPatterns = [oBestMatch.pattern];
-				} else if (typeof oBestMatch.pattern === "object") {
-					aPatterns = [];
-
-					for (var sKey in oBestMatch.pattern) {
-						sPattern = oBestMatch.pattern[sKey];
-						aPatterns.push(sPattern);
-					}
-				}
+				sPattern = oBestMatch.pattern;
 				// if there is no exact match, we need to do further processing
 				if (oBestMatch.distance > 0) {
 					if (oBestMatch.missingTokens.length > 0) {
 						// if tokens are missing create a pattern containing all, otherwise just adjust pattern
 						if (rMixedSkeleton.test(sSkeleton)) {
-							aPatterns = [this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType)];
+							sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
 						} else {
-							aPatterns = this._expandFields(aPatterns, oBestMatch.patternTokens, aTokens);
-							aPatterns = this._appendItems(aPatterns, oBestMatch.missingTokens, sCalendarType);
+							sPattern = this._expandFields(oBestMatch.pattern, oBestMatch.patternTokens, aTokens);
+							sPattern = this._appendItems(sPattern, oBestMatch.missingTokens, sCalendarType);
 						}
 					} else {
-						aPatterns = this._expandFields(aPatterns, oBestMatch.patternTokens, aTokens);
+						sPattern = this._expandFields(oBestMatch.pattern, oBestMatch.patternTokens, aTokens);
 					}
 				}
 			}
-
 			// If special input token "J" was used, remove dayperiod from pattern
 			if (sSkeleton.indexOf("J") >= 0) {
-				aPatterns.forEach(function(sPattern, iIndex) {
-					aPatterns[iIndex] = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/g, "");
-				});
+				sPattern = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/g, "");
 			}
 
-			return aPatterns;
+			return sPattern;
 		},
 
 		_parseSkeletonFormat: function(sSkeleton) {
@@ -637,117 +607,99 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 		},
 
-		_expandFields: function(vPattern, aPatternTokens, aTokens) {
-			var bSinglePattern = (typeof vPattern === "string");
+		_expandFields: function(sPattern, aPatternTokens, aTokens) {
+			var mGroups = {},
+				mPatternGroups = {},
+				sResultPatterm = "",
+				bQuoted = false,
+				i = 0,
+				iSkeletonLength,
+				iPatternLength,
+				iOldLength,
+				iNewLength,
+				oSkeletonToken,
+				oBestToken,
+				oSymbol,
+				oSkeletonSymbol,
+				oBestSymbol,
+				sChar;
+			// Create a map of group names to token
+			aTokens.forEach(function(oToken) {
+				mGroups[oToken.group] = oToken;
+			});
+			// Create a map of group names to token in best pattern
+			aPatternTokens.forEach(function(oToken) {
+				mPatternGroups[oToken.group] = oToken;
+			});
+			// Loop through pattern and adjust symbol length
+			while (i < sPattern.length) {
+				sChar = sPattern.charAt(i);
+				if (bQuoted) {
+					sResultPatterm += sChar;
+					if (sChar == "'") {
+						bQuoted = false;
+					}
+				} else {
+					oSymbol = mCLDRSymbols[sChar];
+					// If symbol is a CLDR symbol and is contained in the group, expand length
+				if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
+						oSkeletonToken = mGroups[oSymbol.group];
+						oBestToken = mPatternGroups[oSymbol.group];
+						oSkeletonSymbol = mCLDRSymbols[oSkeletonToken.symbol];
+						oBestSymbol = mCLDRSymbols[oBestToken.symbol];
 
-			var aPatterns;
-			if (bSinglePattern) {
-				aPatterns = [vPattern];
-			} else {
-				aPatterns = vPattern;
-			}
+						iSkeletonLength = oSkeletonToken.length;
+						iPatternLength = oBestToken.length;
 
-			var aResult = aPatterns.map(function(sPattern) {
-				var mGroups = {},
-					mPatternGroups = {},
-					sResultPatterm = "",
-					bQuoted = false,
-					i = 0,
-					iSkeletonLength,
-					iPatternLength,
-					iOldLength,
-					iNewLength,
-					oSkeletonToken,
-					oBestToken,
-					oSymbol,
-					oSkeletonSymbol,
-					oBestSymbol,
-					sChar;
+						iOldLength = 1;
+						while (sPattern.charAt(i + 1) == sChar) {
+							i++;
+							iOldLength++;
+						}
 
-				// Create a map of group names to token
-				aTokens.forEach(function(oToken) {
-					mGroups[oToken.group] = oToken;
-				});
-				// Create a map of group names to token in best pattern
-				aPatternTokens.forEach(function(oToken) {
-					mPatternGroups[oToken.group] = oToken;
-				});
-				// Loop through pattern and adjust symbol length
-				while (i < sPattern.length) {
-					sChar = sPattern.charAt(i);
-					if (bQuoted) {
-						sResultPatterm += sChar;
-						if (sChar == "'") {
-							bQuoted = false;
+						// Prevent expanding the length of the field when:
+						// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
+						// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
+						//	because switching between numeric to text representation is wrong in all cases
+						if (iSkeletonLength === iPatternLength ||
+							((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
+								(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
+							)) {
+							iNewLength = iOldLength;
+						} else {
+							iNewLength = Math.max(iOldLength, iSkeletonLength);
+						}
+
+						for (var j = 0; j < iNewLength; j++) {
+							sResultPatterm += sChar;
 						}
 					} else {
-						oSymbol = mCLDRSymbols[sChar];
-						// If symbol is a CLDR symbol and is contained in the group, expand length
-					if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
-							oSkeletonToken = mGroups[oSymbol.group];
-							oBestToken = mPatternGroups[oSymbol.group];
-							oSkeletonSymbol = mCLDRSymbols[oSkeletonToken.symbol];
-							oBestSymbol = mCLDRSymbols[oBestToken.symbol];
-
-							iSkeletonLength = oSkeletonToken.length;
-							iPatternLength = oBestToken.length;
-
-							iOldLength = 1;
-							while (sPattern.charAt(i + 1) == sChar) {
-								i++;
-								iOldLength++;
-							}
-
-							// Prevent expanding the length of the field when:
-							// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
-							// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
-							//	because switching between numeric to text representation is wrong in all cases
-							if (iSkeletonLength === iPatternLength ||
-								((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
-									(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
-								)) {
-								iNewLength = iOldLength;
-							} else {
-								iNewLength = Math.max(iOldLength, iSkeletonLength);
-							}
-
-							for (var j = 0; j < iNewLength; j++) {
-								sResultPatterm += sChar;
-							}
-						} else {
-							sResultPatterm += sChar;
-							if (sChar == "'") {
-								bQuoted = true;
-							}
+						sResultPatterm += sChar;
+						if (sChar == "'") {
+							bQuoted = true;
 						}
 					}
-					i++;
 				}
-				return sResultPatterm;
-			});
-
-			return bSinglePattern ? aResult[0] : aResult;
+				i++;
+			}
+			return sResultPatterm;
 		},
 
-		_appendItems: function(aPatterns, aMissingTokens, sCalendarType) {
-			var oAppendItems = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "appendItems");
-			aPatterns.forEach(function(sPattern, iIndex) {
-				var sDisplayName,
-					sAppendPattern,
-					sAppendField;
-
-				aMissingTokens.forEach(function(oToken) {
-					sAppendPattern = oAppendItems[oToken.group];
-					sDisplayName = "'" + this.getDisplayName(oToken.field) + "'";
-					sAppendField = "";
-					for (var i = 0; i < oToken.length; i++) {
-						sAppendField += oToken.symbol;
-					}
-					aPatterns[iIndex] = sAppendPattern.replace(/\{0\}/, sPattern).replace(/\{1\}/, sAppendField).replace(/\{2\}/, sDisplayName);
-				}.bind(this));
+		_appendItems: function(sPattern, aMissingTokens, sCalendarType) {
+			var oAppendItems = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "appendItems"),
+				sDisplayName,
+				sAppendPattern,
+				sAppendField;
+			aMissingTokens.forEach(function(oToken) {
+				sAppendPattern = oAppendItems[oToken.group];
+				sDisplayName = "'" + this.getDisplayName(oToken.field) + "'";
+				sAppendField = "";
+				for (var i = 0; i < oToken.length; i++) {
+					sAppendField += oToken.symbol;
+				}
+				sPattern = sAppendPattern.replace(/\{0\}/, sPattern).replace(/\{1\}/, sAppendField).replace(/\{2\}/, sDisplayName);
 			}.bind(this));
-
-			return aPatterns;
+			return sPattern;
 		},
 
 		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
@@ -981,7 +933,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
 
 			var aPatterns = [],
-				aPluralCategories = this.getPluralCategories(),
 				oScale,
 				oTimeEntry,
 				iValue,
@@ -1004,12 +955,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					} else if (sEntry.indexOf("relativeTime-type-") == 0) {
 						oTimeEntry = oScale[sEntry];
 						iSign = sEntry.substr(18) === "past" ? -1 : 1;
-						aPluralCategories.forEach(function(sKey) { // eslint-disable-line no-loop-func
+						if (oTimeEntry["relativeTimePattern-count-one"]) {
 							aPatterns.push({
 								scale: sScale,
 								sign: iSign,
-								pattern: oTimeEntry["relativeTimePattern-count-" + sKey]
+								pattern: oTimeEntry["relativeTimePattern-count-one"]
 							});
+						}
+						aPatterns.push({
+							scale: sScale,
+							sign: iSign,
+							pattern: oTimeEntry["relativeTimePattern-count-other"]
 						});
 					}
 				}
@@ -1030,7 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @since 1.34
 		 */
 		getRelativePattern: function(sScale, iDiff, bFuture, sStyle) {
-			var sPattern, oTypes, sKey, sPluralCategory;
+			var sPattern, oTypes, sKey;
 
 			if (typeof bFuture === "string") {
 				sStyle = bFuture;
@@ -1053,8 +1009,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 			if (!sPattern) {
 				oTypes = this._get("dateFields", sKey, "relativeTime-type-" + (bFuture ? "future" : "past"));
-				sPluralCategory = this.getPluralCategory(Math.abs(iDiff).toString());
-				sPattern = oTypes["relativeTimePattern-count-" + sPluralCategory];
+
+				if (Math.abs(iDiff) === 1) {
+					sPattern = oTypes["relativeTimePattern-count-one"];
+				}
+
+				if (!sPattern) {
+					sPattern = oTypes["relativeTimePattern-count-other"];
+				}
 			}
 
 			return sPattern;
@@ -1323,234 +1285,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Returns the preferred hour pattern symbol (h for 12, H for 24 hours) for the current locale.
 		 *
-		 * @returns {string} the preferred hour symbol
+		 * returns {string} the preferred hour symbol
 		 * @public
 		 * @since 1.34
 		 */
 		getPreferredHourSymbol: function() {
 			return this._get("timeData", "_preferred");
-		},
-
-		/**
-		 * Returns an array of all plural categories available in this language.
-		 *
-		 * @returns {array} The array of plural categories
-		 * @public
-		 * @since 1.50
-		 */
-		getPluralCategories: function() {
-			var oPlurals = this._get("plurals"),
-				aCategories =  Object.keys(oPlurals);
-			aCategories.push("other");
-			return aCategories;
-		},
-
-		/**
-		 * Returns the plural category (zero, one, two, few, many or other) for the given number value.
-		 * The number should be passed as a string with dot as decimal separator and the number of decimal/fraction digits
-		 * as used in the final output. This is needed in order to preserve trailing zeros which are relevant to
-		 * determine the right plural categpry.
-		 *
-		 * @param {string|number} sNumber The number to find the plural category for
-		 * @returns {string} The plural category
-		 * @public
-		 * @since 1.50
-		 */
-		getPluralCategory: function(sNumber) {
-			var oPlurals = this._get("plurals");
-			if (typeof sNumber === "number") {
-				sNumber = sNumber.toString();
-			}
-			if (!this._pluralTest) {
-				this._pluralTest = {};
-			}
-			for (var sCategory in oPlurals) {
-				var fnTest = this._pluralTest[sCategory];
-				if (!fnTest) {
-					fnTest = this._parsePluralRule(oPlurals[sCategory]);
-					this._pluralTest[sCategory] = fnTest;
-				}
-				if (fnTest(sNumber)) {
-					return sCategory;
-				}
-			}
-			return "other";
-		},
-
-		_parsePluralRule: function(sRule) {
-
-			var OP_OR = "or",
-				OP_AND = "and",
-				OP_MOD = "%",
-				OP_EQ = "=",
-				OP_NEQ = "!=",
-				OPD_N = "n",
-				OPD_I = "i",
-				OPD_F = "f",
-				OPD_T = "t",
-				OPD_V = "v",
-				OPD_W = "w",
-				RANGE = "..",
-				SEP = ",";
-
-			var i = 0,
-				aTokens;
-
-			aTokens = sRule.split(" ");
-
-			function accept(sToken) {
-				if (aTokens[i] === sToken) {
-					i++;
-					return true;
-				}
-				return false;
-			}
-
-			function consume() {
-				var sToken = aTokens[i];
-				i++;
-				return sToken;
-			}
-
-			function or_condition() {
-				var fnAnd, fnOr;
-				fnAnd = and_condition();
-				if (accept(OP_OR)) {
-					fnOr = or_condition();
-					return function(o) {
-						return fnAnd(o) || fnOr(o);
-					};
-				}
-				return fnAnd;
-			}
-
-			function and_condition() {
-				var fnRelation, fnAnd;
-				fnRelation = relation();
-				if (accept(OP_AND)) {
-					fnAnd = and_condition();
-					return function(o) {
-						return fnRelation(o) && fnAnd(o);
-					};
-				}
-				return fnRelation;
-			}
-
-			function relation() {
-				var fnExpr, fnRangeList, bEq;
-				fnExpr = expr();
-				if (accept(OP_EQ)) {
-					bEq = true;
-				} else if (accept(OP_NEQ)) {
-					bEq = false;
-				} else {
-					throw new Error("Expected '=' or '!='");
-				}
-				fnRangeList = range_list();
-				if (bEq) {
-					return function(o) {
-						return fnRangeList(o).indexOf(fnExpr(o)) >= 0;
-					};
-				} else {
-					return function(o) {
-						return fnRangeList(o).indexOf(fnExpr(o)) === -1;
-					};
-				}
-			}
-
-			function expr() {
-				var fnOperand;
-				fnOperand = operand();
-				if (accept(OP_MOD)) {
-					var iDivisor = parseInt(consume(), 10);
-					return function(o) {
-						return fnOperand(o) % iDivisor;
-					};
-				}
-				return fnOperand;
-			}
-
-			function operand() {
-				if (accept(OPD_N)) {
-					return function(o) {
-						return o.n;
-					};
-				} else if (accept(OPD_I)) {
-					return function(o) {
-						return o.i;
-					};
-				} else if (accept(OPD_F)) {
-					return function(o) {
-						return o.f;
-					};
-				} else if (accept(OPD_T)) {
-					return function(o) {
-						return o.t;
-					};
-				} else if (accept(OPD_V)) {
-					return function(o) {
-						return o.v;
-					};
-				} else if (accept(OPD_W)) {
-					return function(o) {
-						return o.w;
-					};
-				} else {
-					throw new Error("Unknown operand: " + consume());
-				}
-			}
-
-			function range_list() {
-				var aValues = [],
-					sRangeList = consume(),
-					aParts = sRangeList.split(SEP),
-					aRange, iFrom, iTo;
-				aParts.forEach(function(sPart) {
-					aRange = sPart.split(RANGE);
-					if (aRange.length === 1) {
-						aValues.push(parseInt(sPart, 10));
-					} else {
-						iFrom = parseInt(aRange[0], 10);
-						iTo = parseInt(aRange[1], 10);
-						for (var i = iFrom; i <= iTo; i++) {
-							aValues.push(i);
-						}
-					}
-				});
-				return function(o) {
-					return aValues;
-				};
-			}
-
-			var fnOr = or_condition();
-			if (i != aTokens.length) {
-				throw new Error("Not completely parsed");
-			}
-			return function(sValue) {
-				var iDotPos = sValue.indexOf("."),
-					sDecimal, sFraction, sFractionNoZeros, o;
-
-				if (iDotPos === -1) {
-					sDecimal = sValue;
-					sFraction = "";
-					sFractionNoZeros = "";
-				} else {
-					sDecimal = sValue.substr(0, iDotPos);
-					sFraction = sValue.substr(iDotPos + 1);
-					sFractionNoZeros = sFraction.replace(/0+$/, '');
-				}
-
-				o = {
-					n: parseFloat(sValue),
-					i: parseInt(sDecimal, 10),
-					v: sFraction.length,
-					w: sFractionNoZeros.length,
-					f: parseInt(sFraction, 10),
-					t: parseInt(sFractionNoZeros, 10)
-				};
-				return fnOr(o);
-			};
 		}
+
 	});
 
 	var mCLDRSymbolGroups = {
@@ -1973,8 +1715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"timeData": {
 				_allowed: "H h",
 				_preferred: "H"
-			},
-			"plurals": {}
+			}
 	};
 
 	var M_ISO639_OLD_TO_NEW = {

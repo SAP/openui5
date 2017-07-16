@@ -123,8 +123,7 @@
 					"target": [
 						"welcome",
 						"categoryView"
-					],
-					"titleTarget": "categoryView"
+					]
 				},
 				{
 					"pattern": "category/{id}/product/{productId}",
@@ -132,15 +131,13 @@
 					"target": [
 						"categoryView",
 						"productView"
-					],
-					"titleTarget": "productView"
+					]
 				},
 				{
 					"pattern": "cart",
 					"name": "cart",
 					"target": [
 						"cart"
-
 					]
 				},
 				{
@@ -171,29 +168,21 @@
 					"viewLevel": 3,
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
-					"controlAggregation": "detailPages",
-					"title":"{Name}"
+					"controlAggregation": "detailPages"
 				},
 				"categoryView": {
 					"viewName": "Category",
 					"viewLevel": 2,
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
-					"title": {
-						"parts": [
-							"i18n>tabTitle",
-							"CategoryName"
-						]
-					}
+					"controlAggregation": "masterPages"
 				},
 				"notFound": {
 					"viewName": "NotFound",
 					"viewLevel": 3,
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
-					"controlAggregation": "detailPages",
-					"title": "{i18n>categoryNoData}"
+					"controlAggregation": "detailPages"
 				},
 				"welcome": {
 					"viewName": "Welcome",
@@ -207,8 +196,7 @@
 					"viewLevel": 1,
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
-					"title": "{i18n>homeTitle}"
+					"controlAggregation": "masterPages"
 				},
 				"homeSlide": {
 					"viewName": "Home",
@@ -221,23 +209,15 @@
 					"viewName": "Cart",
 					"parent": "splitscreenTarget",
 					"controlId": "splitContainer",
-					"controlAggregation": "masterPages",
-					"title": {
-						"parts": [
-							"i18n>tabTitle",
-							"i18n>tableTitleCart"
-						]
-					}
+					"controlAggregation": "masterPages"
 				},
 				"checkout": {
 					"viewName": "Checkout",
-					"viewLevel": 1,
-					"title": "{i18n>checkoutTitle}"
+					"viewLevel": 1
 				},
 				"ordercompleted": {
 					"viewName": "OrderCompleted",
-					"viewLevel": 2,
-					"title": "{i18n>ordercompletedTitle}"
+					"viewLevel": 2
 				}
 			}
 		}

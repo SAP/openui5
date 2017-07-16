@@ -187,12 +187,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 
 		/**
 		 * Sets the minutes slider step.
-		 * @param {int} value The step used to generate values for the minutes slider
-		 * @returns {sap.m.TimePickerSliders} <code>this</code> to allow method chaining
+		 * @param iValue The step used to generate values for the minutes slider
+		 * @returns {*} this
 		 * @public
 		 */
-		TimePickerSliders.prototype.setMinutesStep = function(value) {
-			this.setProperty("minutesStep", value, true);
+		TimePickerSliders.prototype.setMinutesStep = function(iValue) {
+			this.setProperty("minutesStep", iValue, true);
 			var aColumns = this.getAggregation("_columns");
 
 			if (aColumns) {
@@ -206,12 +206,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 
 		/**
 		 * Sets the seconds slider step.
-		 * @param {int} value The step used to generate values for the seconds slider
-		 * @returns {sap.m.TimePickerSliders} <code>this</code> to allow method chaining
+		 * @param iValue The step used to generate values for the seconds slider
+		 * @returns {*} this
 		 * @public
 		 */
-		TimePickerSliders.prototype.setSecondsStep = function(value) {
-			this.setProperty("secondsStep", value, true);
+		TimePickerSliders.prototype.setSecondsStep = function(iValue) {
+			this.setProperty("secondsStep", iValue, true);
 			var aColumns = this.getAggregation("_columns");
 
 			if (aColumns) {
@@ -452,7 +452,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 *
 		 * @param {number} iFrom Starting number
 		 * @param {number} iTo Ending number
-		 * @param {int} iStep The step used for the slider
 		 * @param {number} bLeadingZeroes Whether to add leading zeroes to number values
 		 * @returns {array} Array of key/value pairs
 		 * @private

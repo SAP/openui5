@@ -353,84 +353,92 @@ sap.ui.define([
 	 * @param {string} [oComponent.appVersion] - Current running version of application
 	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - <code>sideId</code> that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
 	 * @param {string} [mPropertyBag.layer] - Layer up to which changes shall be read (excluding the specified layer)
 	 * @param {string} [mPropertyBag.appVersion] - Version of application whose changes shall be read
-	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
 	 *
-	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName</code> and <code>etag</code> value
+	 * @returns {Promise} Returns a Promise with the changes (changes, contexts, optional messagebundle), <code>componentClassName<code> and <code>etag<code> value
 	 * @public
 	 */
 	Connector.prototype.loadChanges = function(oComponent, mPropertyBag) {
-		var that = this;
+		var sUri;
 		var mOptions = {};
-		var sComponentName = oComponent.name;
-		var sUrl = "/sap/bc/lrep/flex/data/";
-		mPropertyBag = mPropertyBag || {};
+		var that = this;
+		var sComponentClassName = oComponent.name;
 
-		if (!sComponentName) {
+		if (!sComponentClassName) {
 			return Promise.reject(new Error("Component name not specified"));
 		}
 
-		if (mPropertyBag.url) {
-			sUrl = mPropertyBag.url;
-		} else {
-			if (mPropertyBag.cacheKey) {
+		sUri = "/sap/bc/lrep/flex/data/";
+
+		var sUpToLayer = "";
+
+		// fill header attribute: appDescriptor.id
+		if (mPropertyBag) {
+			var sCacheKey = mPropertyBag.cacheKey;
+
+			if (sCacheKey) {
 				mOptions.cache = true;
-				sUrl += "~" + mPropertyBag.cacheKey + "~/";
+				sUri += "~" + sCacheKey + "~/";
 			}
 
-			sUrl += sComponentName;
-		}
+			if (mPropertyBag.appDescriptor) {
+				if (mPropertyBag.appDescriptor["sap.app"]) {
+					if (!mOptions.headers) {
+						mOptions.headers = {};
+					}
 
-		if (mPropertyBag.siteId) {
-			if (!mOptions.headers) {
-				mOptions.headers = {};
+					mOptions.headers = {
+						"X-LRep-AppDescriptor-Id": mPropertyBag.appDescriptor["sap.app"].id
+					};
+				}
 			}
 
-			mOptions.headers = {
-				"X-LRep-Site-Id": mPropertyBag.siteId
-			};
-		}
-
-		if (mPropertyBag.layer) {
-			sUrl += "&upToLayerType=" + mPropertyBag.layer;
-		}
-
-		if (mPropertyBag.appDescriptor) {
-			if (mPropertyBag.appDescriptor["sap.app"]) {
+			// fill header attribute: siteId
+			if (mPropertyBag.siteId) {
 				if (!mOptions.headers) {
 					mOptions.headers = {};
 				}
 
 				mOptions.headers = {
-					"X-LRep-AppDescriptor-Id": mPropertyBag.appDescriptor["sap.app"].id
+					"X-LRep-Site-Id": mPropertyBag.siteId
 				};
+			}
+
+			// changes shall be read up to a specified layer type
+			if (mPropertyBag.layer) {
+				sUpToLayer = mPropertyBag.layer;
 			}
 		}
 
-		if (this._sClient) {
-			sUrl += "&sap-client=" + this._sClient;
+		if (sComponentClassName) {
+			sUri += sComponentClassName;
 		}
-
+		if (this._sClient) {
+			sUri += "&sap-client=" + this._sClient;
+		}
+		if (sUpToLayer) {
+			sUri += "&upToLayerType=" + sUpToLayer;
+		}
 		if (oComponent.appVersion && (oComponent.appVersion !== FlexUtils.DEFAULT_APP_VERSION)) {
-			sUrl += "&appVersion=" + oComponent.appVersion;
+			sUri += "&appVersion=" + oComponent.appVersion;
 		}
 
 		// Replace first & with ?
-		sUrl = sUrl.replace("&", "?");
+		sUri = sUri.replace("&", "?");
 
-		return this.send(sUrl, undefined, undefined, mOptions)
+		return this.send(sUri, undefined, undefined, mOptions)
 			.then(function(oResponse) {
 				return {
 					changes: oResponse.response,
-					componentClassName: sComponentName,
+					componentClassName: sComponentClassName,
 					etag: oResponse.etag
 				};
 			}, function(oError) {
 				if (oError.code === 404 || oError.code === 405) {
 					// load changes based old route, because new route is not implemented
-					return that._loadChangesBasedOnOldRoute(sComponentName);
+					return that._loadChangesBasedOnOldRoute(sComponentClassName);
 				} else {
 					throw (oError);
 				}

@@ -1,7 +1,7 @@
-@_sap_ui_dt_Overlay_FocusColor : @sapUiContentFocusColor;
-@_sap_ui_dt_Overlay_TargetZoneColor : @sapUiSelected;
-@_sap_ui_dt_Overlay_SelectionColor : #35F;
-@_sap_ui_dt_Overlay_CuttedColor : white;
+@sapUiDtFocusColor : @sapUiContentFocusColor;
+@sapUiDtTargetZoneColor : @sapUiSelected;
+@sapUiDtSelectionColor : #35F;
+@sapUiDtCuttedColor : white;
 
 #overlay-container {
 	>.sapUiDtOverlay {
@@ -35,7 +35,7 @@
 	&:focus {
 		&:before {
 			content: " ";
-			border: 1px dotted @_sap_ui_dt_Overlay_FocusColor;
+			border: 1px dotted @sapUiDtFocusColor;
 		}
 	}
 }
@@ -59,14 +59,14 @@
 	}
 	&:after {
 		content: " ";
-		border: 1px dashed @_sap_ui_dt_Overlay_TargetZoneColor;
+		border: 1px dashed @sapUiDtTargetZoneColor;
 	}
 }
 
 .sapUiDtOverlaySelected {
 	&:after {
 		content: " ";
-		border: 1px solid @_sap_ui_dt_Overlay_SelectionColor;
+		border: 1px solid @sapUiDtSelectionColor;
 	}
 }
 
@@ -75,7 +75,7 @@
 }
 
 .sapUiDtOverlayCutted {
-	background-color: @_sap_ui_dt_Overlay_CuttedColor !important;
+	background-color: @sapUiDtCuttedColor !important;
 	opacity: 0.5;
 }
 
@@ -104,8 +104,4 @@
 	* {
 		pointer-events: none !important;
 	}
-}
-
-.sapUiDtOverlayScrollContainer {
-	position: absolute;
 }

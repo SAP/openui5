@@ -11,7 +11,6 @@
 	<template:alias name=".stringify"
 			value="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Helper.stringify">
 	<template:alias name=".value" value="sap.ui.model.odata.v4.AnnotationHelper.value">
-	<template:alias name=".label" value="sap.ui.model.odata.v4.AnnotationHelper.label">
 	<VBox>
 		<Panel expandable="true" headerText="(Technical Tests)">
 			<content>
@@ -103,9 +102,18 @@
 					<columns>
 						<template:repeat list="{lineItem>}" var="field">
 							<Column>
-								<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
-									=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
-									text="{field>@@.label}"/>
+								<template:if test="{field>Label}">
+									<template:then>
+										<!-- TODO $EnumMember is a bit strange, what about computed values etc.? -->
+										<Label design="{:= ${field>@com.sap.vocabularies.UI.v1.Importance/$EnumMember}
+											=== 'com.sap.vocabularies.UI.v1.ImportanceType/High' ? 'Bold' : 'Standard'}"
+											text="{field>Label@@.value}"/>
+									</template:then>
+									<template:else>
+										<!-- .../@@.value triggers indirection in case of string constant -->
+										<Text text="{field>Value/$Path@com.sap.vocabularies.Common.v1.Label@@.value}"/>
+									</template:else>
+								</template:if>
 							</Column>
 						</template:repeat>
 					</columns>
@@ -140,7 +148,6 @@
 			</template:with>
 		</template:with>
 	</VBox>
-	</template:alias>
 	</template:alias>
 	</template:alias>
 	</template:alias>

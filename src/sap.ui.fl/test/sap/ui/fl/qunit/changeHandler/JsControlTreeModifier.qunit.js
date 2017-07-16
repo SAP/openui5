@@ -1,26 +1,23 @@
-/* global QUnit */
+/*global QUnit*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-// Restrict coverage to sap.ui.rta library
-if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
-}
-
-sap.ui.define([
-	'sap/m/Button',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier'
-],
-function(
-	Button,
-	JsControlTreeModifier
-) {
+(function(JsControlTreeModifier) {
 	"use strict";
 
-	QUnit.module("Using the JsControlTreeModifier...", {
+	jQuery.sap.registerModulePath("testComponent", "../testComponent");
+
+	QUnit.module("The XmlTreeModifier", {
 		beforeEach: function () {
 
-			jQuery.sap.registerModulePath("testComponent", "../testComponent");
+			var oMockedLrepResponse = {
+				changes: [],
+				contexts: [],
+				settings: []
+			};
+
+			sap.ui.fl.Cache._entries["testComponent.Component"] = {
+				file: oMockedLrepResponse,
+				promise: Promise.resolve(oMockedLrepResponse)
+			};
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "testComponent",
@@ -30,16 +27,17 @@ function(
 				}
 			});
 
+			this.oJsView = this.oComponent.byId("myView");
+			return this.oJsView;
 		},
 
 		afterEach: function () {
 			this.oComponent.destroy();
+			this.oJsView.destroy();
 		}
 	});
 
-	QUnit.test("the constructor processes parameters", function (assert) {
-		var sButtonText = "ButtonText";
-		this.oButton = JsControlTreeModifier.createControl('sap.m.Button', this.oComponent, undefined, "myButton", {'text' : sButtonText});
-		assert.equal(this.oButton.getText(), sButtonText);
+	QUnit.test("does nothing", function (assert) {
+		assert.ok(true);
 	});
-});
+}(sap.ui.fl.changeHandler.JsControlTreeModifier));

@@ -2,7 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define([
+	"sap/ui/fl/Utils", "jquery.sap.global"
+], function(Utils, $) {
 	"use strict";
 
 	/**
@@ -13,7 +15,7 @@ sap.ui.define(function() {
 	 * @experimental Since 1.27.0
 	 *
 	 */
-	var Base = {};
+	var Base = { };
 
 	/**
 	 * Sets a text in a change.

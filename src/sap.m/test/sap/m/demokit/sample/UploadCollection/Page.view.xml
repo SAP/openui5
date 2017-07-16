@@ -1,46 +1,40 @@
-<mvc:View height="100%"
+<mvc:View
+	height="100%"
 	controllerName="sap.m.sample.UploadCollection.Page"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
+
 	<Page showHeader="false">
 		<content>
 			<OverflowToolbar>
-				<ToolbarSpacer />
-				<Label text="Upload button invisible" />
-				<Switch id="uploadInvisibleSwitch"
-					state="false"
-					change="onSwitchUploadInvisibleChange"
-					type="Transparent" />
-				<Label text="Layout: Enable FileUploader" />
-				<Switch state="true"
-					change="onSwitchUploaderChange"
-					type="Transparent" />
-				<Label text="Multi-selection mode" />
-				<Switch id="modeSwitch"
-					state="false"
-					change="onSwitchModeChange"
-					type="Transparent" />
-				<Label text="File types" />
-				<MultiComboBox id="fileTypesBox"
+				<ToolbarSpacer/>
+				<Label text="Upload button invisible"></Label>
+				<Switch id="uploadInvisibleSwitch" state="false" change="onSwitchUploadInvisibleChange" type="Transparent"></Switch>
+				<Label text="Layout: Enable FileUploader"></Label>
+				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
+				<Label text="Multi-selection mode"></Label>
+				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
+				<Label text="File types"></Label>
+				<MultiComboBox
+					id="fileTypesBox"
 					selectionChange="onFileTypeChange"
 					width="250px"
 					placeholder="Choose the valid file types"
 					items="{fileTypes>/items}">
 					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
 				</MultiComboBox>
-				<Select id="tbSelect"
+				<Select
+					id="tbSelect"
 					items="{/items}"
 					selectedKey="{/selectedKey}"
-					change="onSeparatorsChange">
-					<core:Item key="{key}" text="{text}" />
+					change="onSeparatorsChange" >
+					<core:Item key="{key}" text="{text}"/>
 				</Select>
 			</OverflowToolbar>
-			<MessageStrip showIcon="true"
-				type="Information"
-				text="To add files, you can also use drag &amp; drop on your desktop or tablet."
-				class="sapUiTinyMargin" />
-			<UploadCollection id="UploadCollection"
+			<MessageStrip showIcon="true" type="Information" text="To add files, you can also use drag &amp; drop on your desktop or tablet." class="sapUiTinyMargin"></MessageStrip>
+			<UploadCollection
+				id="UploadCollection"
 				maximumFilenameLength="55"
 				maximumFileSize="10"
 				multiple="true"
@@ -58,27 +52,18 @@
 				numberOfAttachmentsText="Uploaded (8)"
 				mode="SingleSelectMaster">
 				<toolbar>
-					<OverflowToolbar id="myId">
-						<Title id="attachmentTitle" />
-						<ToolbarSpacer />
-						<SearchField width="10rem" search="onSearch" />
-						<Button id="deleteSelectedButton"
-							text="Delete"
-							press="onDeleteSelectedItems"
-							enabled="false"
-							visible="false"
-							type="Transparent" />
-						<ToggleButton id="selectAllButton"
-							text="Select all"
-							press="onSelectAllPress"
-							enabled="false"
-							visible="false"
-							type="Transparent" />
-						<UploadCollectionToolbarPlaceholder />
+					<OverflowToolbar id="myId" >
+						<Title id="attachmentTitle"/>
+						<ToolbarSpacer/>
+						<SearchField width="10rem" search="onSearch"></SearchField>
+						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" visible="false" type="Transparent"></Button>
+						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" visible="false" type="Transparent"></ToggleButton>
+						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
 					</OverflowToolbar>
 				</toolbar>
 				<items>
-					<UploadCollectionItem documentId="{documentId}"
+					<UploadCollectionItem
+						documentId="{documentId}"
 						fileName="{fileName}"
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
@@ -92,21 +77,25 @@
 						markers="{path : 'markers', templateShareable : false}"
 						selected="{selected}">
 						<attributes>
-							<ObjectAttribute title="{title}"
+							<ObjectAttribute
+								title="{title}"
 								text="{path : 'text', formatter : '.formatAttribute'}"
 								active="{active}"
-								press="onAttributePress" />
+								press="onAttributePress"/>
 						</attributes>
 						<statuses>
-							<ObjectStatus title="{title}"
+							<ObjectStatus
+								title="{title}"
 								text="{text}"
 								state="{state}"
 								icon="{icon}"
 								iconDensityAware="{iconDensityAware}"
-								textDirection="{textDirection}" />
+								textDirection="{textDirection}"/>
 						</statuses>
 						<markers>
-							<ObjectMarker type="{type}" press="onMarkerPress" />
+							<ObjectMarker
+								type="{type}"
+								press="onMarkerPress"/>
 						</markers>
 					</UploadCollectionItem>
 				</items>

@@ -3,18 +3,15 @@
  */
 
 // Provides helper sap.ui.table.TableExtension.
-sap.ui.define([
-	"jquery.sap.global", "sap/ui/base/Object", "./TableUtils"
-], function(jQuery, BaseObject, TableUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './TableUtils'],
+	function(jQuery, BaseObject, TableUtils) {
 	"use strict";
 
 	/**
-	 * Base class of extensions for sap.ui.table tables.
-	 * <b>This is an internal class that is only intended to be used inside the sap.ui.table library! Any usage outside the sap.ui.table library is
-	 * strictly prohibited!</b>
+	 * Base class of extensions for sap.ui.table.Table, ...
 	 *
-	 * @class Base class of extensions for sap.ui.table tables.
-	 * @abstract
+	 * @class Base class of extensions for sap.ui.table.Table, ...
+	 *
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
 	 * @version ${version}
@@ -22,34 +19,10 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.TableExtension
 	 */
-	var TableExtension = BaseObject.extend("sap.ui.table.TableExtension", /** @lends sap.ui.table.TableExtension.prototype */ {
-		/**
-		 * Instance of the table this extension is applied to.
-		 *
-		 * @type {sap.ui.table.Table}
-		 * @protected
-		 */
-		_table: null,
+	var TableExtension = BaseObject.extend("sap.ui.table.TableExtension", /* @lends sap.ui.table.TableExtension */ {
 
-		/**
-		 * The type of the table this extension is applied to.
-		 *
-		 * @type {sap.ui.table.TableExtension.TABLETYPES}
-		 * @protected
-		 */
-		_type: null,
-
-		/**
-		 * The settings this extension instance has been initialized with.
-		 *
-		 * @type {Object}
-		 * @protected
-		 */
-		_settings: null,
-
-		constructor: function(oTable, mSettings) {
+		constructor : function(oTable, mSettings) {
 			BaseObject.call(this);
-
 			this._table = oTable;
 			this._settings = mSettings || {};
 
@@ -60,112 +33,84 @@ sap.ui.define([
 				this._type = TableExtension.TABLETYPES.ANALYTICAL;
 			}
 
-			var sExtensionName = this._init(this._table, this._type, this._settings);
+			var sName = this._init(this._table, this._type, this._settings);
 
-			// Attach a getter to the table to get the instance of this extension.
-			if (sExtensionName) {
+			//Attaching a getter to the related table control
+			if (sName) {
 				var that = this;
-				oTable["_get" + sExtensionName] = function() { return that; };
+				oTable["_get" + sName] = function(){ return that; };
 			}
 		},
 
-		/**
-		 * @override
-		 * @inheritDoc
+		/*
+		 * @see sap.ui.base.Object#destroy
 		 */
-		destroy: function() {
+		destroy : function() {
 			this._table = null;
 			this._type = null;
 			BaseObject.prototype.destroy.apply(this, arguments);
 		},
 
 		/*
-		 * @override
-		 * @inheritDoc
+		 * @see sap.ui.base.Object#getInterface
 		 */
-		getInterface: function() { return this; }
+		getInterface : function() { return this; }
+
 	});
 
-	/**
-	 * Type of the table.
-	 *
-	 * @type {{TREE: string, ANALYTICAL: string, STANDARD: string}}
-	 * @public
-	 * @static
-	 */
 	TableExtension.TABLETYPES = {
 		TREE: "TREE",
 		ANALYTICAL: "ANALYTICAL",
 		STANDARD: "STANDARD"
 	};
 
-	/**
+	/*
 	 * Returns the related table control.
-	 *
-	 * @returns {sap.ui.table.Table|null} The table control or <code>null</code>, if this extension is not yet initialized.
-	 * @public
-	 *
-	 * @see sap.ui.table.TableExtension#_init
+	 * @public (Part of the API for Table control only!)
 	 */
 	TableExtension.prototype.getTable = function() {
 		return this._table;
 	};
 
-	/**
-	 * Initialize the extension.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.TableExtension.TABLETYPES} sTableType The type of the table.
-	 * @param {Object} [mSettings] Additional settings.
-	 * @returns {string|null} Derived classes should return the name of the extension.
-	 * @abstract
-	 * @protected
+	/*
+	 * Init function may be overridden by the subclasses
 	 */
 	TableExtension.prototype._init = function(oTable, sTableType, mSettings) { return null; };
 
-	/**
-	 * Hook which allows the extension to attach for additional native event listeners after the rendering of the table control.
-	 *
-	 * @abstract
-	 * @protected
+	/*
+	 * Hook which allows the extension to attach for additional browser events after the rendering of the table control.
+	 * Might be overridden in subclasses.
 	 * @see sap.ui.table.Table#_attachEvents
 	 */
 	TableExtension.prototype._attachEvents = function() {};
 
-	/**
-	 * Hook which allows the extension to detach previously attached native event listeners.
-	 *
-	 * @abstract
-	 * @protected
+	/*
+	 * Hook which allows the extension to detach previously attached browser event handlers.
+	 * Might be overridden in subclasses.
 	 * @see sap.ui.table.Table#_detachEvents
 	 */
 	TableExtension.prototype._detachEvents = function() {};
 
-	/**
-	 * Informs all registered extensions of the table to attach their native event listeners.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @public
-	 * @static
+
+	/*
+	 * Informs all registered extensions of the given table to attach their additional events, if needed.
 	 * @see sap.ui.table.TableExtension#_attachEvents
+	 * @public (Part of the API for Table control only!)
 	 */
 	TableExtension.attachEvents = function(oTable) {
 		if (!oTable._aExtensions) {
 			return;
 		}
-
 		for (var i = 0; i < oTable._aExtensions.length; i++) {
 			oTable._aExtensions[i]._attachEvents();
 		}
 	};
 
-	/**
-	 * Informs all registered extensions of the given table to detach their previously attached native event listeners.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @public
-	 * @static
+	/*
+	 * Informs all registered extensions of the given table to detach their previously attached
+	 * browser event handlers, if needed.
 	 * @see sap.ui.table.TableExtension#_detachEvents
+	 * @public (Part of the API for Table control only!)
 	 */
 	TableExtension.detachEvents = function(oTable) {
 		if (!oTable._aExtensions) {
@@ -176,22 +121,16 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Initializes an extension and attaches it to the given Table control.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.TableExtension} ExtensionClass The class of the extension to instantiate.
-	 * @param {Object} mSettings Additional settings used during initialization of the extension.
-	 * @return {sap.ui.table.TableExtension} Returns the created extension instance.
-	 * @public
-	 * @static
+	/*
+	 * Initializes the Extension with the given type and attaches it to the given Table control.
+	 * @public (Part of the API for Table control only!)
 	 */
-	TableExtension.enrich = function(oTable, ExtensionClass, mSettings) {
-		if (!ExtensionClass || !(ExtensionClass.prototype instanceof TableExtension)) {
+	TableExtension.enrich = function(oTable, oExtensionClass, mSettings) {
+		if (!oExtensionClass || !(oExtensionClass.prototype instanceof TableExtension)) {
 			return null;
 		}
 
-		var oExtension = new ExtensionClass(oTable, mSettings);
+		var oExtension = new oExtensionClass(oTable, mSettings);
 		if (!oTable._aExtensions) {
 			oTable._aExtensions = [];
 		}
@@ -199,12 +138,9 @@ sap.ui.define([
 		return oExtension;
 	};
 
-	/**
-	 * Detaches and destroy all registered extensions of the table.
-	 *
-	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @public
-	 * @static
+	/*
+	 * Detaches and destroy all registered extensions of the given Table control.
+	 * @public (Part of the API for Table control only!)
 	 */
 	TableExtension.cleanup = function(oTable) {
 		if (!oTable._bExtensionsInitialized || !oTable._aExtensions) {
@@ -218,4 +154,5 @@ sap.ui.define([
 	};
 
 	return TableExtension;
+
 });

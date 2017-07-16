@@ -130,18 +130,6 @@ sap.ui.define([
 			return Utils.getComponentName(oAppComponent);
 		},
 
-		isVariantByStartupParameter: function (oControl) {
-			// determine UI5 component out of given control
-			if (oControl) {
-				var oAppComponent = this.getAppComponentForControl(oControl);
-				if (oAppComponent) {
-					return !!this._getComponentStartUpParameter(oAppComponent, "sap-app-id");
-				}
-			}
-
-			return false;
-		},
-
 		/**
 		 * Returns the class name of the application component owning the passed component or the component name itself if
 		 * this is already an application component.
@@ -325,7 +313,7 @@ sap.ui.define([
 		 * Determines whether a layer is higher than the max layer.
 		 *
 		 * @param {String} sLayer - Layer name to be evaluated
-		 * @returns {boolean} <code>true</code> if input layer is higher than max layer, otherwise <code>false</code>
+		 * @returns {boolean} <code>true<code> if input layer is higher than max layer, otherwise <code>false<code>
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isOverMaxLayer
@@ -337,7 +325,7 @@ sap.ui.define([
 		/**
 		 * Determines if filtering of changes based on layer is required.
 		 *
-		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
+		 * @returns {boolean} <code>true<code> if the top layer is also the max layer, otherwise <code>false<code>
 		 * @public
 		 * @function
 		 * @name sap.ui.fl.Utils.isLayerFilteringRequired
@@ -920,42 +908,12 @@ sap.ui.define([
 		/**
 		 * Returns whether provided layer is a customer dependent layer
 		 *
-		 * @param {string} sLayerName - layer name
 		 * @returns {boolean} true if provided layer is customer dependent layer else false
 		 * @public
 		 */
 		isCustomerDependentLayer : function(sLayerName) {
 			return (["CUSTOMER", "CUSTOMER_BASE"].indexOf(sLayerName) > -1);
-		},
-
-		/**
-		 * Execute the passed asynchronous functions serialized - one after the other
-		 *
-		 * @param {array.<function>} aPromiseStack - list of asynchronous functions returns promises
-		 * @returns {Promise} Empty resolved promise when all passed promises inside functions have been executed
-		 */
-		execPromiseQueueSerialized : function(aPromiseQueue) {
-			if (aPromiseQueue.length === 0) {
-				return Promise.resolve();
-			}
-			var fnPromise = aPromiseQueue.shift();
-			if (typeof fnPromise === "function") {
-				return fnPromise()
-
-				.catch(function(e) {
-					this.log.error("Changes could not be applied. Merge error detected. " + e);
-				}.bind(this))
-
-				.then(function() {
-					return this.execPromiseQueueSerialized(aPromiseQueue);
-				}.bind(this));
-
-			} else {
-				this.log.error("Changes could not be applied, promise not wrapped inside function.");
-				return this.execPromiseQueueSerialized(aPromiseQueue);
-			}
 		}
-
 	};
 	return Utils;
 }, true);

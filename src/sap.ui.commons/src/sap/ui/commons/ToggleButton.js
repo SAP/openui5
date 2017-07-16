@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './Button'],
 	/**
 	 * Function is called when ToggleButton is clicked.
 	 *
-	 * @param {jQuery.Event} oEvent The fired event
+	 * @param {jQuery.Event} oEvent
 	 * @private
 	 */
 	ToggleButton.prototype.onclick = function(oEvent) {
@@ -86,7 +86,6 @@ sap.ui.define(['jquery.sap.global', './Button'],
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	ToggleButton.prototype.getAccessibilityInfo = function() {

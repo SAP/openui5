@@ -51,7 +51,7 @@ sap.ui.define([
 	* <ul>Text actions:
 	* <li>The main semantic text action - <code>titleMainAction</code></li>
 	* <li>Any custom text actions - <code>titleCustomTextActions</code></li>
-	* <li>The semantic text actions - <code>editAction</code>, <code>deleteAction</code>, <code>copyAction</code> and <code>addAction</code></li></ul>
+	* <li>The semantic text actions - <code>addAction</code>, <code>deleteAction</code>, and <code>copyAction</code></li></ul>
 	*
 	* <ul>Icon actions:
 	* <li>Any custom icon actions - <code>titleCustomIconActions</code></li>
@@ -176,10 +176,9 @@ sap.ui.define([
 				titleMainAction: {type: "sap.f.semantic.TitleMainAction", multiple: false},
 
 				/**
-				 * A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
-				 * @since 1.50
-				 */
-				editAction: {type: "sap.f.semantic.EditAction", multiple: false},
+				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
+				*/
+				addAction: {type: "sap.f.semantic.AddAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
@@ -190,11 +189,6 @@ sap.ui.define([
 				* A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
 				*/
 				copyAction: {type: "sap.f.semantic.CopyAction", multiple: false},
-
-				/**
-				 * A semantic-specific button which is placed in the <code>TextActions</code> area of the <code>SemanticPage</code> title.
-				 */
-				addAction: {type: "sap.f.semantic.AddAction", multiple: false},
 
 				/**
 				* A semantic-specific button which is placed in the <code>IconActions</code> area of the <code>SemanticPage</code> title.

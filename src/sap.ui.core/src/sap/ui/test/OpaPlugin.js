@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global',
 				'./matchers/Interactable',
 				'./matchers/Visible',
 				'./pipelines/MatcherPipeline',
-				'./autowaiter/_autoWaiter',
+				'./_autoWaiter',
 				'sap/ui/test/_opaCorePlugin'],
 	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline, _autoWaiter, _opaCorePlugin) {
 		var oMatcherPipeline = new MatcherPipeline(),

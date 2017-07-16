@@ -94,6 +94,7 @@
 			QUnit.test("when Table is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
 				var done = assert.async();
 
+				sap.ui.getCore().applyChanges();
 				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
 				var oInitialColumnOffset = this.oColumn.$().offset();
 
@@ -101,16 +102,14 @@
 
 				var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
 
-				var fnCallback = function() {
+				oColumnsOverlay.$().on("scroll", function() {
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "then columns are also scrolled");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "if this test fails, check Table.designtime.js : hScroll and vScroll domRefs!");
 
-					oColumnsOverlay.$().off("scroll", fnCallback);
 					done();
-				}.bind(this);
-				oColumnsOverlay.$().on("scroll", fnCallback);
+				}.bind(this));
 
 				oScrollOverlay.$().scrollLeft(20);
 			});
@@ -172,6 +171,7 @@
 			QUnit.test("when AnalyticalTable is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
 				var done = assert.async();
 
+				sap.ui.getCore().applyChanges();
 				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
 				var oInitialColumnOffset = this.oColumn.$().offset();
 
@@ -179,17 +179,14 @@
 
 				var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
 
-				var fnCallback = function() {
+				oColumnsOverlay.$().on("scroll", function() {
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "then columns are also scrolled");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "if this test fails, check AnalyticalTable.designtime.js : hScroll and vScroll domRefs!");
 
-					oColumnsOverlay.$().off("scroll", fnCallback);
 					done();
-				}.bind(this);
-
-				oColumnsOverlay.$().on("scroll", fnCallback);
+				}.bind(this));
 
 				oScrollOverlay.$().scrollLeft(20);
 			});

@@ -69,7 +69,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.changeParameters = function (mParameters) {
 		var mBindingParameters = jQuery.extend(true, {}, this.mParameters),
-			sChangeReason, // @see sap.ui.model.ChangeReason
+			bChanged = false,
 			sKey,
 			that = this;
 
@@ -78,28 +78,6 @@ sap.ui.define([
 				throw new Error("Cannot change $expand or $select parameter in "
 					+ "auto-$expand/$select mode: "
 					+ sName + "=" + JSON.stringify(mParameters[sName]));
-			}
-		}
-
-		/*
-		 * Updates <code>sChangeReason</code> depending on the given custom or system query option
-		 * name:
-		 * - "$filter" and "$search" cause <code>ChangeReason.Filter</code>,
-		 * - "$orderby" causes <code>ChangeReason.Sort</code>,
-		 * - default is <code>ChangeReason.Change</code>.
-		 *
-		 * The "strongest" change reason wins: Filter > Sort > Change.
-		 *
-		 * @param {string} sName
-		 *   The name of a custom or system query option
-		 */
-		function updateChangeReason(sName) {
-			if (sName === "$filter" || sName === "$search") {
-				sChangeReason = ChangeReason.Filter;
-			} else if (sName === "$orderby" && sChangeReason !== ChangeReason.Filter) {
-				sChangeReason = ChangeReason.Sort;
-			} else if (!sChangeReason) {
-				sChangeReason = ChangeReason.Change;
 			}
 		}
 
@@ -117,20 +95,20 @@ sap.ui.define([
 				throw new Error("Unsupported parameter: " + sKey);
 			}
 			if (mParameters[sKey] === undefined && mBindingParameters[sKey] !== undefined) {
-				updateChangeReason(sKey);
 				delete mBindingParameters[sKey];
+				bChanged = true;
 			} else if (mBindingParameters[sKey] !== mParameters[sKey]) {
-				updateChangeReason(sKey);
 				if (typeof mParameters[sKey] === "object") {
 					mBindingParameters[sKey] = jQuery.extend(true, {}, mParameters[sKey]);
 				} else {
 					mBindingParameters[sKey] = mParameters[sKey];
 				}
+				bChanged = true;
 			}
 		}
 
-		if (sChangeReason) {
-			this.applyParameters(mBindingParameters, sChangeReason);
+		if (bChanged) {
+			this.applyParameters(mBindingParameters, ChangeReason.Change);
 		}
 	};
 
@@ -353,7 +331,6 @@ sap.ui.define([
 		var sBaseMetaPath,
 			oCanUseCachePromise,
 			sChildMetaPath,
-			sFullMetaPath,
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			that = this;
@@ -364,6 +341,8 @@ sap.ui.define([
 		 * @returns {SyncPromise} A promise that is resolved with the property
 		 */
 		function fetchPropertyAndType() {
+			var sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
+
 			return oMetaModel.fetchObject(sFullMetaPath).then(function (oProperty) {
 				if (oProperty && oProperty.$kind === "NavigationProperty") {
 					// Ensure that the target type of the navigation property is available
@@ -384,7 +363,6 @@ sap.ui.define([
 
 		sBaseMetaPath = oMetaModel.getMetaPath(oContext.getPath());
 		sChildMetaPath = oMetaModel.getMetaPath("/" + sChildPath).slice(1);
-		sFullMetaPath = _Helper.buildPath(sBaseMetaPath, sChildMetaPath);
 		aPromises = [
 			this.doFetchQueryOptions(this.oContext),
 			// After access to complete meta path of property, the metadata of all prefix paths
@@ -420,8 +398,8 @@ sap.ui.define([
 				return false;
 			}
 			jQuery.sap.log.error("Failed to enhance query options for "
-					+ "auto-$expand/$select as the path '"
-					+ sFullMetaPath
+					+ "auto-$expand/$select as the child binding's path '"
+					+  sChildPath
 					+ "' does not point to a property",
 				JSON.stringify(oProperty),
 				"sap.ui.model.odata.v4.ODataParentBinding");
@@ -429,22 +407,6 @@ sap.ui.define([
 		});
 		that.aChildCanUseCachePromises.push(oCanUseCachePromise);
 		return oCanUseCachePromise;
-	};
-
-	/**
-	 * Fetches the type of the given model path from the metadata.
-	 *
-	 * @param {string} sPath
-	 *   The resource path, e.g. SalesOrderList('4711')/SO_2_BP
-	 * @returns {SyncPromise}
-	 *   A promise that is resolved with the type of the object at the given path.
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.fetchType = function (sPath) {
-		var oMetaModel = this.oModel.getMetaModel();
-
-		return oMetaModel.fetchObject(oMetaModel.getMetaPath("/" + sPath + "/"));
 	};
 
 	/**
@@ -489,44 +451,6 @@ sap.ui.define([
 			return {};
 		}
 		return oContext.getQueryOptionsForPath(_Helper.buildPath(this.sPath, sPath));
-	};
-
-	/**
-	 * Returns the relative path for a given absolute path by stripping off the binding's resolved
-	 * path. Note that the resulting path may start with a key predicate.
-	 *
-	 * Example: (The binding's resolved path is "/foo/bar"):
-	 * /foo/bar/baz -> baz
-	 * /foo/bar('baz') -> ('baz')
-	 * /foo -> undefined if the binding is relative, an Error is thrown otherwise
-	 *
-	 * @param {string} sPath
-	 *   An absolute path
-	 * @returns {string}
-	 *   The path relative to the binding's path or <code>undefined</code> if the path is not a sub
-	 *   path and the binding is relative
-	 * @throws {Error}
-	 *   If the binding is absolute and the path does not start with the binding's path
-	 *
-	 * @private
-	 */
-	ODataParentBinding.prototype.getRelativePath = function (sPath) {
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-
-		if (sPath.indexOf(sResolvedPath) < 0) {
-			if (this.bRelative) {
-				// this path doesn't match, but some parent binding might possibly fulfill it
-				return undefined;
-			}
-			// this path definitely does not match
-			throw new Error(sPath + ": invalid path, must start with " + this.sPath);
-		}
-		sPath = sPath.slice(sResolvedPath.length);
-
-		if (sPath[0] === "/") {
-			sPath = sPath.slice(1);
-		}
-		return sPath;
 	};
 
 	/**
@@ -695,22 +619,22 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the value for the given property path inside the entity with the given absolute path;
+	 * Updates the value for the given property name inside the entity with the given relative path;
 	 * the value is updated in this binding's cache or in its parent context in case it has no
 	 * cache.
 	 *
 	 * @param {string} [sGroupId=getUpdateGroupId()]
 	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyPath
-	 *   The path of the property relative to the entity
+	 * @param {string} sPropertyName
+	 *   Name of property to update
 	 * @param {any} vValue
 	 *   The new value
 	 * @param {function} fnErrorCallback
 	 *   A function which is called with an Error object each time a PATCH request fails
 	 * @param {string} sEditUrl
-	 *   The edit URL corresponding to the entity to be updated
-	 * @param {string} sEntityPath
-	 *   The resolved, absolute entity path (as delivered from ODataMetaModel#fetchUpdateData)
+	 *   The edit URL for the entity which is updated
+	 * @param {string} [sPath]
+	 *   Some relative path
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>update</code> call
 	 * @throws {Error}
@@ -718,8 +642,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyPath, vValue,
-		fnErrorCallback, sEditUrl, sEntityPath) {
+	ODataParentBinding.prototype.updateValue = function (sGroupId, sPropertyName, vValue,
+			fnErrorCallback, sEditUrl, sPath) {
 		var oCache;
 
 		if (!this.oCachePromise.isFulfilled()) {
@@ -729,12 +653,11 @@ sap.ui.define([
 		oCache = this.oCachePromise.getResult();
 		if (oCache) {
 			sGroupId = sGroupId || this.getUpdateGroupId();
-			return oCache.update(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
-				this.getRelativePath(sEntityPath));
+			return oCache.update(sGroupId, sPropertyName, vValue, fnErrorCallback, sEditUrl, sPath);
 		}
 
-		return this.oContext.getBinding()
-			.updateValue(sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl, sEntityPath);
+		return this.oContext.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback, sEditUrl,
+			_Helper.buildPath(this.sPath, sPath));
 	};
 
 	return function (oPrototype) {

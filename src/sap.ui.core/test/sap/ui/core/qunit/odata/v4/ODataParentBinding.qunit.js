@@ -99,61 +99,33 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[undefined, "up"].forEach(function (sGroupId) {
-		QUnit.test("updateValue: binding w/ cache", function (assert) {
+		QUnit.test("updateValue: absolute binding", function (assert) {
 			var oCache = {
 					update : function () {}
 				},
 				oBinding = new ODataParentBinding({
 					oCachePromise : _SyncPromise.resolve(oCache),
+					sPath : "/absolute",
+					bRelative : false,
 					sUpdateGroupId : "myUpdateGroup"
 				}),
 				fnErrorCallback = function () {},
-				sPathInCache = "SO_2_SOITEM/42",
-				sAbsolutePath = "/resolved/binding/path/" + sPathInCache,
+				sPath = "SO_2_SOITEM/42",
+
 				oResult = {};
 
-			this.mock(oBinding).expects("getRelativePath")
-				.withExactArgs(sAbsolutePath).returns(sPathInCache);
 			this.mock(oCache).expects("update")
 				.withExactArgs(sGroupId || "myUpdateGroup", "bar", Math.PI,
-					sinon.match.same(fnErrorCallback), "edit('URL')", sPathInCache)
+					sinon.match.same(fnErrorCallback), "edit('URL')", sPath)
 				.returns(Promise.resolve(oResult));
 
 			// code under test
-			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback,"edit('URL')",
-					sAbsolutePath)
+			return oBinding.updateValue(sGroupId, "bar", Math.PI, fnErrorCallback, "edit('URL')",
+					sPath)
 				.then(function (oResult0) {
 					assert.strictEqual(oResult0, oResult);
 				});
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: absolute binding, patching root entity", function (assert) {
-		var oCache = {
-				update : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oCachePromise : _SyncPromise.resolve(oCache),
-				sPath : "/absolute",
-				bRelative : false,
-				sUpdateGroupId : "myUpdateGroup"
-			}),
-			fnErrorCallback = function () {},
-			oResult = {};
-
-		this.mock(oBinding).expects("getRelativePath").withExactArgs(oBinding.sPath).returns("");
-		this.mock(oCache).expects("update")
-			.withExactArgs("group", "bar", Math.PI, sinon.match.same(fnErrorCallback),
-				"edit('URL')", "")
-			.returns(Promise.resolve(oResult));
-
-		// code under test
-		return oBinding.updateValue("group", "bar", Math.PI, fnErrorCallback, "edit('URL')",
-				oBinding.sPath)
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
 	});
 
 	//*********************************************************************************************
@@ -174,29 +146,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateValue: relative binding w/o cache", function (assert) {
-		var oParentBinding = new ODataParentBinding(),
-			oBinding = new ODataParentBinding({
+	QUnit.test("updateValue: relative binding", function (assert) {
+		var oBinding = new ODataParentBinding({
 				oCachePromise : _SyncPromise.resolve(),
 				oContext : {
-					getBinding : function () { return oParentBinding; }
+					updateValue : function () {}
 				},
 				sPath : "PRODUCT_2_BP",
 				bRelative : true
 			}),
 			fnErrorCallback = function () {},
-			sPath = "/BusinessPartnerList/0/BP_2_XYZ/42",
 			oResult = {};
 
-		this.mock(oParentBinding).expects("updateValue")
-			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback),"edit('URL')",
-				sPath)
+		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "BP_2_XYZ/42")
+			.returns("~BP_2_XYZ/42~");
+		this.mock(oBinding.oContext).expects("updateValue")
+			.withExactArgs("up", "bar", Math.PI, sinon.match.same(fnErrorCallback), "edit('URL')",
+				"~BP_2_XYZ/42~")
 			.returns(Promise.resolve(oResult));
 
 		this.mock(oBinding).expects("getUpdateGroupId").never();
 
 		// code under test
-		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback,"edit('URL')", sPath)
+		return oBinding.updateValue("up", "bar", Math.PI, fnErrorCallback, "edit('URL')",
+				"BP_2_XYZ/42")
 			.then(function (oResult0) {
 				assert.strictEqual(oResult0, oResult);
 			});
@@ -357,67 +330,34 @@ sap.ui.require([
 	//TODO handle encoding in getQueryOptionsForPath
 
 	//*********************************************************************************************
-	// Note: We decided not to analyze $expand for embedded $filter/$orderby and to treat $apply
-	// in the same way. We also decided to use the weakest change reason (Change) in these cases.
 	[{
-		sTestName : "Add parameter $search",
-		sChangeReason : ChangeReason.Filter,
+		sTestName : "Add parameters",
 		mParameters : {
 			$search : "Foo NOT Bar"
 		},
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
 			$expand : "foo",
-			$filter : "OLD gt 1",
 			$search : "Foo NOT Bar",
 			$select : "ProductID"
 		}
 	}, {
-		sTestName : "Add parameter $orderby",
-		sChangeReason : ChangeReason.Sort,
-		mParameters : {
-			$orderby : "Category"
-		},
-		mExpectedParameters : {
-			$apply : "filter(OLD gt 0)",
-			$expand : "foo",
-			$filter : "OLD gt 1",
-			$orderby : "Category",
-			$select : "ProductID"
-		}
-	}, {
-		sTestName : "Delete parameter $expand",
+		sTestName : "Delete parameters",
 		mParameters : {
 			$expand : undefined
 		},
 		mExpectedParameters : {
 			$apply : "filter(OLD gt 0)",
-			$filter : "OLD gt 1",
 			$select : "ProductID"
 		}
 	}, {
-		sTestName : "Delete parameter $filter",
-		sChangeReason : ChangeReason.Filter,
+		sTestName : "Change parameters",
 		mParameters : {
-			$filter : undefined
+			$apply : "filter(NEW gt 0)"
 		},
 		mExpectedParameters : {
-			$apply : "filter(OLD gt 0)",
+			$apply : "filter(NEW gt 0)",
 			$expand : "foo",
-			$select : "ProductID"
-		}
-	}, {
-		sTestName : "Change parameters $filter and $orderby",
-		sChangeReason : ChangeReason.Filter,
-		mParameters : {
-			$filter : "NEW gt 1",
-			$orderby : "Category"
-		},
-		mExpectedParameters : {
-			$apply : "filter(OLD gt 0)",
-			$expand : "foo",
-			$filter : "NEW gt 1",
-			$orderby : "Category",
 			$select : "ProductID"
 		}
 	}, {
@@ -425,23 +365,21 @@ sap.ui.require([
 		mParameters : {
 			$apply : "filter(NEW gt 0)",
 			$expand : {$search : "Foo NOT Bar"},
-			$count : true,
+			$search : "Foo NOT Bar",
 			$select : undefined
 		},
 		mExpectedParameters : {
 			$apply : "filter(NEW gt 0)",
-			$count : true,
 			$expand : {$search : "Foo NOT Bar"},
-			$filter : "OLD gt 1"
+			$search : "Foo NOT Bar"
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("changeParameters: " + oFixture.sTestName, function (assert) {
 			var oBinding = new ODataParentBinding({
 					oModel : {},
 					mParameters : {
-						$apply : "filter(OLD gt 0)",
+						$apply: "filter(OLD gt 0)",
 						$expand : "foo",
-						$filter : "OLD gt 1",
 						$select : "ProductID"
 					},
 					sPath : "/ProductList",
@@ -451,8 +389,7 @@ sap.ui.require([
 
 			oBindingMock.expects("hasPendingChanges").returns(false);
 			oBindingMock.expects("applyParameters")
-				.withExactArgs(oFixture.mExpectedParameters,
-					oFixture.sChangeReason || ChangeReason.Change);
+				.withExactArgs(oFixture.mExpectedParameters, ChangeReason.Change);
 
 			// code under test
 			oBinding.changeParameters(oFixture.mParameters);
@@ -547,7 +484,7 @@ sap.ui.require([
 		this.mock(oBinding).expects("hasPendingChanges").returns(false);
 
 		// code under test
-		oBinding.changeParameters({$apply : undefined});
+		oBinding.changeParameters({$apply: undefined});
 
 		assert.deepEqual(oBinding.mParameters, {}, "parameters unchanged");
 	});
@@ -555,7 +492,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("changeParameters: try to change existing parameter", function (assert) {
 		var mParameters = {
-				$apply : "filter(Amount gt 3)"
+				$apply: "filter(Amount gt 3)"
 			},
 			oBinding = new ODataParentBinding({
 					oModel : {},
@@ -1222,8 +1159,8 @@ sap.ui.require([
 			this.mock(oBinding).expects("selectKeyProperties")
 				.withExactArgs(sinon.match.object, "/EMPLOYEES");
 			this.oLogMock.expects("error").withExactArgs(
-				"Failed to enhance query options for auto-$expand/$select as the path "
-					+ "'/EMPLOYEES" + sPath
+				"Failed to enhance query options for auto-$expand/$select as the child "
+					+ "binding's path '" + sPath.slice(1)
 					+ "' does not point to a property",
 				JSON.stringify(oFixture.oProperty),
 				"sap.ui.model.odata.v4.ODataParentBinding");
@@ -1803,59 +1740,5 @@ sap.ui.require([
 
 			assert.deepEqual(oBinding.mAggregatedQueryOptions, oFixture.result);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchType", function (assert) {
-		var oMetaModel = {
-				getMetaPath : function () {},
-				fetchObject : function () {}
-			},
-			oBinding = new ODataParentBinding({
-				oModel : {
-					getMetaModel : function () { return oMetaModel; }
-				}
-			}),
-			oPromise = {},
-			oResult;
-
-		this.mock(oMetaModel).expects("getMetaPath")
-			.withExactArgs("/EMPLOYEES('1')/EMPLOYEE_2_TEAM/").returns("~");
-		this.mock(oMetaModel).expects("fetchObject").withExactArgs("~").returns(oPromise);
-
-		// code under test
-		oResult = oBinding.fetchType("EMPLOYEES('1')/EMPLOYEE_2_TEAM");
-
-		assert.strictEqual(oResult, oPromise);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getRelativePath", function (assert) {
-		var oAbsoluteBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "/foo"
-			}), oRelativeBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "bar",
-				bRelative : true
-			});
-
-		this.mock(oRelativeBinding.oModel).expects("resolve").exactly(5)
-			.withExactArgs("bar", sinon.match.same(oRelativeBinding.oContext)).returns("/foo/bar");
-
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar/baz"), "baz");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar('baz')"), "('baz')");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oRelativeBinding.getRelativePath("/wrong"), undefined,
-			"no error, binding must pass on to the parent binding for a better error message");
-
-		this.mock(oAbsoluteBinding.oModel).expects("resolve")
-			.withExactArgs("/foo", sinon.match.same(oAbsoluteBinding.oContext)).returns("/foo");
-		assert.throws(function () {
-			oAbsoluteBinding.getRelativePath("/wrong");
-		}, new Error("/wrong: invalid path, must start with /foo"));
 	});
 });

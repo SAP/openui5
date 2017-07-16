@@ -53,10 +53,8 @@ sap.ui.define([
 
 		handleClose: function(oEvent) {
 			var aContexts = oEvent.getParameter("selectedContexts");
-			if (aContexts && aContexts.length) {
+			if (aContexts.length) {
 				MessageToast.show("You have chosen " + aContexts.map(function(oContext) { return oContext.getObject().Name; }).join(", "));
-			} else {
-				MessageToast.show("No new item was selected.");
 			}
 			oEvent.getSource().getBinding("items").filter([]);
 		}

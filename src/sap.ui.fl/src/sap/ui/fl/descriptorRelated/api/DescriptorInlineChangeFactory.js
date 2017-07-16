@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 
 	DescriptorInlineChangeFactory.getDescriptorChangeTypes = function(){
 		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard",
-		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound", "appdescr_app_removeAllInboundsExceptOne",
+		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound",
 		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
 		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
 		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
@@ -185,22 +185,6 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		Utils.checkParameterAndType(mParameters, "inboundId", "string");
 		return this._createDescriptorInlineChange('appdescr_app_removeInbound', mParameters);
 
-	};
-
-	/**
-	 * Creates an inline change of change type appdescr_app_removeAllInboundsExceptOne
-	 *
-	 * @param {object} mParameters parameters of the change type
-	 * @param {string} mParameters.inboundId the id of the inbound that should be preserved
-	 *
-	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
-	 *
-	 * @private
-	 * @sap-restricted
-	 */
-	DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne = function(mParameters) {
-		Utils.checkParameterAndType(mParameters, "inboundId", "string");
-		return this._createDescriptorInlineChange('appdescr_app_removeAllInboundsExceptOne', mParameters);
 	};
 
 	/**

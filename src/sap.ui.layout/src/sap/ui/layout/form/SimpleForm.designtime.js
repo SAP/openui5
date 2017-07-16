@@ -3,7 +3,7 @@
  */
 
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
-sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(ChangeHandlerMediator) {
+sap.ui.define([], function() {
 	"use strict";
 
 	var fnHasContent = function(oFormContainer) {
@@ -52,19 +52,21 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 					plural : "GROUP_CONTROL_NAME_PLURAL"
 				},
 				getIndex : function(oForm, oFormContainer) {
+					var iIndex = 0;
 					var aFormContainers = oForm.getFormContainers();
 
 					if (oFormContainer) {
-						return aFormContainers.indexOf(oFormContainer) + 1;
-					}
-					// if there is no Elements in the FormContainer, the SimpleForm is empty and
-					// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
-					if (aFormContainers[0].getFormElements().length === 0 &&
-						aFormContainers[0].getTitle() === null) {
-						return 0;
+						iIndex = aFormContainers.indexOf(oFormContainer) + 1;
+					} else {
+						var aFormElements = aFormContainers[aFormContainers.length - 1].getFormElements();
+						// if there is no Elements in the FormContainer, the SimpleForm is empty and
+						// the index has to be 0, otherwise the SimpleForm doesn't behave as expected.
+						if (aFormElements.length > 0) {
+							iIndex = aFormContainers.length;
+						}
 					}
 
-					return aFormContainers.length;
+					return iIndex;
 				},
 				beforeMove : function (oSimpleForm) { //TODO has to be relevant container/selector, TODO extract as function
 					if (oSimpleForm){
@@ -130,17 +132,6 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				actions : {
 					move : {
 						changeType : "moveSimpleFormField"
-					},
-					addODataProperty : function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldSettings(oFormContainer);
-
-						if (mChangeHandlerSettings){
-							return {
-								changeType: "addSimpleFormField",
-								changeOnRelevantContainer : true,
-								changeHandlerSettings : mChangeHandlerSettings
-							};
-						}
 					}
 				}
 			}

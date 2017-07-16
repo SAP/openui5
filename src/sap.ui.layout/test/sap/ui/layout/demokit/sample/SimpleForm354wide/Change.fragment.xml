@@ -22,9 +22,9 @@
 			columnsM="1"
 			singleContainerFullSize="false">
 			<f:content>
-				<Label text="Full name of the contact" />
+				<Label text="Name" />
 				<Input id="name" value="{SupplierName}" />
-				<Label text="Street and number where the contact is located" />
+				<Label text="Street/No." />
 				<Input value="{Street}">
 				</Input>
 				<Input value="{HouseNumber}">
@@ -32,14 +32,14 @@
 						<l:GridData span="XL1 L2 M2 S4" />
 					</layoutData>
 				</Input>
-				<Label text="ZIP Code and City" />
+				<Label text="ZIP Code/City" />
 				<Input value="{ZIPCode}">
 					<layoutData>
 						<l:GridData span="XL1 L2 M2 S4" />
 					</layoutData>
 				</Input>
 				<Input value="{City}" />
-				<Label text="Country where the contact is located" />
+				<Label text="Country" />
 				<Select id="country" selectedKey="{Country}">
 					<items>
 						<core:Item text="England" key="England"/>

@@ -218,7 +218,8 @@ sap.ui.define("sap/ui/test/TestUtils", [
 						aResponse = mUrls[sServiceBase + aMatches[2]];
 						if (aResponse) {
 							try {
-								sResponse = "200 OK\r\nContent-Type: " + sJson + "\r\n\r\n"
+								sResponse = "200 OK\r\nContent-Type: " + sJson + "\r\n"
+									+ "ODataVersion: 4.0\r\n\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
 									+ "\r\n";
 								jQuery.sap.log.info(sRequestLine, null, "sap.ui.test.TestUtils");
@@ -314,8 +315,8 @@ sap.ui.define("sap/ui/test/TestUtils", [
 
 				if (!sMessage) {
 					oResult = jQuery.sap.sjax({
-						url : sPath,
-						dataType : "text"
+						url: sPath,
+						dataType: "text"
 					});
 					if (!oResult.success) {
 						throw new Error(sPath + ": resource not found");
@@ -403,7 +404,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		 * QUnit.test("parse error", function (assert) {
 		 *     sap.ui.test.TestUtils.withNormalizedMessages(function () {
 		 *         var oType = new sap.ui.model.odata.type.Decimal({},
-		 *                        {constraints : {precision : 10, scale : 3});
+		 *                        {constraints: {precision: 10, scale: 3});
 		 *
 		 *         assert.throws(function () {
 		 *             oType.parseValue("-123.4567", "string");
@@ -415,13 +416,13 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		 *   the code under test
 		 * @since 1.27.1
 		 */
-		withNormalizedMessages : function (fnCodeUnderTest) {
+		withNormalizedMessages: function (fnCodeUnderTest) {
 			sinon.test(function () {
 				var oCore = sap.ui.getCore(),
 					fnGetBundle = oCore.getLibraryResourceBundle;
 
 				this.stub(oCore, "getLibraryResourceBundle").returns({
-					getText : function (sKey, aArgs) {
+					getText: function (sKey, aArgs) {
 						var sResult = sKey,
 							sText = fnGetBundle.call(oCore).getText(sKey),
 							i;
@@ -494,7 +495,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		},
 
 		/**
-		 * Sets up the fake server for OData responses unless real OData responses are requested.
+		 * Sets up the fake server for OData V4 responses unless real OData responses are requested.
 		 *
 		 * The behavior is controlled by the request property "realOData". If the property has any
 		 * of the following values, the fake server is <i>not</i> set up.

@@ -8,11 +8,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
-	"sap/ui/support/supportRules/ui/external/ElementTree",
-	"sap/ui/support/supportRules/IssueManager",
-	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/ui/models/formatter"
-], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, IssueManager, channelNames, formatter) {
+	"sap/ui/support/supportRules/ElementTree",
+	"sap/ui/support/supportRules/WCBChannels"
+], function ($, Controller, JSONModel, CommunicationBus, SharedModel, ElementTree, channelNames) {
 	"use strict";
 
 	var mIssueSettings = {
@@ -38,21 +36,9 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.support.supportRules.ui.controllers.Issues", {
 		ISSUES_LIMIT : 1000,
-		formatter: formatter,
 		onInit: function () {
-
-			this.model = SharedModel;
-			this.setCommunicationSubscriptions();
-			this.getView().setModel(this.model);
-			this.clearFilters();
-			this._initElementTree();
-			this.treeTable = this.getView().byId("issuesList");
-			this.issueTable = this.getView().byId("issueTable");
-		},
-		setCommunicationSubscriptions: function () {
-
 			CommunicationBus.subscribe(channelNames.ON_ANALYZE_FINISH, function (data) {
-				var that = this;
+			var that = this;
 
 				var problematicControlsIds = {};
 
@@ -74,25 +60,27 @@ sap.ui.define([
 				});
 				this.model.setSizeLimit(this.ISSUES_LIMIT);
 				this.model.setProperty("/issues", data.issues);
+				this.model.setProperty("/maxIssuesDisplayedNumber", Math.min(this.ISSUES_LIMIT, data.issues.length));
 				this.model.setProperty('/analyzePressed', true);
-				this.model.setProperty("/issuesCount", this.data.issues.length);
-				this.model.setProperty("/selectedIssue", "");
+				this.model.setProperty("/visibleIssuesCount", data.issues.length);
+				/*this.elementTreeData = {
+					controls: data.elementTree,
+					issuesIds: problematicControlsIds
+				};*/
+
 				this.elementTree.setData({
 					controls: data.elementTree,
 					issuesIds: problematicControlsIds
 				});
 
 				this.clearFilters();
+				this._selectFirstVisibleIssue();
 			}, this);
-			CommunicationBus.subscribe(channelNames.GET_ISSUES, function (data) {
-				this.structuredIssuesModel = data.groupedIssues;
-				this.model.setProperty("/issues", data.issuesModel);
-				if (data.issuesModel[0]) {
-					this._setSelectedRule(data.issuesModel[0][0]);
-					this.treeTable.setSelectedIndex(1);
-					this.issueTable.setSelectedIndex(0);
-				}
-			}, this);
+
+			this.model = SharedModel;
+			this.getView().setModel(this.model);
+			this.clearFilters();
+			this._initElementTree();
 		},
 		_initElementTree: function () {
 			var that = this;
@@ -102,6 +90,7 @@ sap.ui.define([
 					that.clearFilters();
 					that.model.setProperty("/elementFilter", selectedElementId);
 					that.updateIssuesVisibility();
+					that._selectFirstVisibleIssue();
 				},
 				onHoverChanged: function (hoveredElementId) {
 					CommunicationBus.publish(channelNames.TREE_ELEMENT_MOUSE_ENTER, hoveredElementId);
@@ -132,26 +121,10 @@ sap.ui.define([
 			this.elementTree.clearSelection();
 		},
 		onIssuePressed: function (event) {
-			var selectedIssue = this.model.getProperty("/selectedIssue");
+			var pressedLi = event.mParameters.listItem,
+				selectedIssue = pressedLi.getBindingContext().getObject();
+			this.model.setProperty("/selectedIssue", selectedIssue);
 			this.elementTree.setSelectedElement(selectedIssue.context.id, false);
-		},
-		onRowSelectionChanged: function (event) {
-			if (event.getParameter("rowContext")) {
-				var selection = event.getParameter("rowContext").getObject();
-				if (selection.type === "rule") {
-					this._setSelectedRule(selection);
-				} else {
-					this.model.setProperty("/selectedIssue", "");
-				}
-				if (selection.issueCount < 4 ) {
-					this._setPropertiesOfResponsiveDetailsAndTable("Fixed", "inherit");
-					this.model.setProperty("/visibleRowCount", 4);
-
-				} else {
-					this._setPropertiesOfResponsiveDetailsAndTable("Auto", "5rem");
-				}
-			}
-
 		},
 		openDocumentation: function (oEvent) {
 			var link = sap.ui.getCore().byId(oEvent.mParameters.id),
@@ -159,13 +132,37 @@ sap.ui.define([
 			CommunicationBus.publish(channelNames.OPEN_URL, url);
 		},
 		updateIssuesVisibility: function () {
+			var visibleIssuesCount = 0;
+			var issuesList = this.getView().byId("issuesList");
+
 			if (this.data) {
 				var filteredIssues = this.data.issues.filter(this.filterIssueListItems, this);
-				CommunicationBus.publish(channelNames.REQUEST_ISSUES, filteredIssues);
-				this.model.setProperty("/visibleIssuesCount", filteredIssues.length);
+
+				this.model.setProperty("/issues", filteredIssues);
+				this.model.setProperty("/maxIssuesDisplayedNumber", Math.min(this.ISSUES_LIMIT, filteredIssues.length));
 			}
 
 			this.setToolbarHeight();
+
+			issuesList.getItems().forEach(function (item) {
+				item.updateProperty("visible");
+			});
+
+			issuesList.getItems().forEach(function (item) {
+				if (item.getVisible()) {
+					visibleIssuesCount++;
+				}
+			});
+			this.model.setProperty("/visibleIssuesCount", visibleIssuesCount);
+		},
+		_selectFirstVisibleIssue: function () {
+			var list = this.getView().byId("issuesList"),
+				items = list.getVisibleItems();
+
+			if (items.length > 0) {
+				list.setSelectedItem(items[0]);
+				this.model.setProperty("/selectedIssue", items[0].getBindingContext().getObject());
+			}
 		},
 		filterIssueListItems: function (issue) {
 			var sevFilter = this.model.getProperty("/severityFilter"),
@@ -189,7 +186,14 @@ sap.ui.define([
 			return mIssueSettings.severitytexts[sValue];
 		},
 		setToolbarHeight: function() {
+			var issues = this.model.getProperty("/issues");
+			if (issues && issues.length > this.ISSUES_LIMIT) {
+				this.model.setProperty("/filterBarHeight", "3.5rem");
+				this.model.setProperty("/messegeStripHeight", "2.5rem");
+			} else {
 				this.model.setProperty("/filterBarHeight", "4rem");
+				this.model.setProperty("/messegeStripHeight", "2rem");
+			}
 		},
 		onReportPress: function(oEvent) {
 				var oItem = oEvent.getParameter("item"),
@@ -207,32 +211,6 @@ sap.ui.define([
 				executionScopeTitle: this.model.getProperty("/executionScopeTitle"),
 				analysisDurationTitle: this.model.getProperty("/analysisDurationTitle")
 			};
-		},
-		onRowSelection: function(event) {
-			if (event.getParameter("rowContext")) {
-				var selection = event.getParameter("rowContext").getObject();
-				this.elementTree.setSelectedElement(selection.context.id, false);
-				this.model.setProperty("/selectedIssue/details", selection.details);
-			}
-		},
-		_setSelectedRule: function(selection){
-			var selectedIssues,
-				selectionCopy;
-			if (this.model.getProperty("/visibleIssuesCount") > 0) {
-				selectedIssues = this.structuredIssuesModel[selection.ruleLibName][selection.ruleId];
-				selectionCopy = jQuery.extend(true, {}, selection); // clone the model so that the TreeTable will not be affected
-				selectionCopy.issues = selectedIssues;
-				selectionCopy.resolutionUrls = selectedIssues[0].resolutionUrls;
-				this.issueTable.setSelectedIndex(0);
-				this.model.setProperty("/selectedIssue/details", selectionCopy.details);
-				this.model.setProperty("/selectedIssue", selectionCopy);
-			} else {
-			this.model.setProperty("/selectedIssue", "");
-			}
-		},
-		_setPropertiesOfResponsiveDetailsAndTable: function(visibleRowCountMode, heightDetailsArea){
-			this.model.setProperty("/visibleRowCountMode", visibleRowCountMode);
-			this.model.setProperty("/heightDetailsArea", heightDetailsArea);
 		}
 	});
 });

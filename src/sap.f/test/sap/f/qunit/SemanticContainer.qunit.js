@@ -23,25 +23,19 @@
 	});
 
 	QUnit.test("test Semantic Text Actions", function (assert) {
-		var oMainAction = oFactory.getTitleMainAction(),
-			oEditAction = oFactory.getEditAction(),
-			oDeleteAction = oFactory.getDeleteAction(),
+		var oAddAction = oFactory.getAddAction(),
 			oCopyAction = oFactory.getCopyAction(),
-			oAddAction = oFactory.getAddAction(),
-
+			oDeleteAction = oFactory.getDeleteAction(),
+			oMainAction = oFactory.getTitleMainAction(),
 			sMainActionType = "sap.f.semantic.TitleMainAction",
-			sEditActionType = "sap.f.semantic.EditAction",
+			sAddActionType = "sap.f.semantic.AddAction",
 			sDeleteActionType = "sap.f.semantic.DeleteAction",
 			sCopyActionType = "sap.f.semantic.CopyAction",
-			sAddActionType = "sap.f.semantic.AddAction",
-
 			iMainActionExpectedOrder = oSemanticConfiguration.getOrder(sMainActionType),
-			iEditActionExpectedOrder = oSemanticConfiguration.getOrder(sEditActionType),
-			iDeleteActionExpectedOrder = oSemanticConfiguration.getOrder(sDeleteActionType),
-			iCopyActionExpectedOrder = oSemanticConfiguration.getOrder(sCopyActionType),
 			iAddActionExpectedOrder = oSemanticConfiguration.getOrder(sAddActionType),
-
-			iSemanticTextActions = 5,
+			iCopyActionExpectedOrder = oSemanticConfiguration.getOrder(sCopyActionType),
+			iDeleteActionExpectedOrder = oSemanticConfiguration.getOrder(sDeleteActionType),
+			iSemanticTextActions = 4,
 			aSemanticTextActions = this.oSemanticTitle._aSemanticTextActions;
 
 		// Act
@@ -52,12 +46,9 @@
 		this.oSemanticTitle.addContent(oMainAction, oSemanticConfiguration.getPlacement(sMainActionType));
 
 		// Inserted as third, but should be ordered second.
-		this.oSemanticTitle.addContent(oEditAction, oSemanticConfiguration.getPlacement(sEditActionType));
-
-		// Inserted as fourth, but should be ordered last.
 		this.oSemanticTitle.addContent(oAddAction, oSemanticConfiguration.getPlacement(sAddActionType));
 
-		// Inserted as last, but should be ordered fourth.
+		// Inserted as last and should remain last.
 		this.oSemanticTitle.addContent(oCopyAction, oSemanticConfiguration.getPlacement(sCopyActionType));
 
 		// Assert
@@ -66,27 +57,24 @@
 			iSemanticTextActions + " semantic actions have been added.");
 		assert.equal(this.oDynamicPageTitle.getActions().length - 1, iSemanticTextActions,
 			iSemanticTextActions + " semantic actions have been added to the container.");
+
 		assert.equal(aSemanticTextActions.indexOf(oMainAction), iMainActionExpectedOrder,
 			"The Main Action has the correct order: " + iMainActionExpectedOrder);
-		assert.equal(aSemanticTextActions.indexOf(oEditAction), iEditActionExpectedOrder,
-			"The Edit Action has the correct order: " + iEditActionExpectedOrder);
+		assert.equal(aSemanticTextActions.indexOf(oAddAction), iAddActionExpectedOrder,
+			"The Add Action has the correct order: " + iAddActionExpectedOrder);
 		assert.equal(aSemanticTextActions.indexOf(oDeleteAction), iDeleteActionExpectedOrder,
 			"The Delete Action has the correct order: " + iDeleteActionExpectedOrder);
 		assert.equal(aSemanticTextActions.indexOf(oCopyAction), iCopyActionExpectedOrder,
 			"The Copy Action has the correct order: " + iCopyActionExpectedOrder);
-		assert.equal(aSemanticTextActions.indexOf(oAddAction), iAddActionExpectedOrder,
-			"The Add Action has the correct order: " + iAddActionExpectedOrder);
 
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oMainAction._getControl()), iMainActionExpectedOrder,
 			"The Main Action internal control has the correct order: " + iMainActionExpectedOrder);
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oEditAction._getControl()), iEditActionExpectedOrder,
-			"The Edit Action internal control has the correct order: " + iEditActionExpectedOrder);
+		assert.equal(this.oDynamicPageTitle.indexOfAction(oAddAction._getControl()), iAddActionExpectedOrder,
+			"The Add Action internal control has the correct order: " + iAddActionExpectedOrder);
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oDeleteAction._getControl()), iDeleteActionExpectedOrder,
 			"The Delete Action internal control has the correct order: " + iDeleteActionExpectedOrder);
 		assert.equal(this.oDynamicPageTitle.indexOfAction(oCopyAction._getControl()), iCopyActionExpectedOrder,
 			"The Copy Action internal control has the correct order: " + iCopyActionExpectedOrder);
-		assert.equal(this.oDynamicPageTitle.indexOfAction(oAddAction._getControl()), iAddActionExpectedOrder,
-			"The Add Action internal control has the correct order: " + iAddActionExpectedOrder);
 
 		// Act
 		this.oSemanticTitle.removeContent(oDeleteAction, oSemanticConfiguration.getPlacement(sAddActionType));
@@ -107,6 +95,7 @@
 		oDeleteAction.destroy();
 		oMainAction.destroy();
 	});
+
 
 	QUnit.test("test Semantic Simple Icon Actions", function (assert) {
 		var oFlagAction = oFactory.getFlagAction(),
@@ -340,15 +329,13 @@
 			oShareMenuBtn = oFactory.getAction(),
 			oFlagAction = oFactory.getFlagAction(),
 			oFullScreenAction = oFactory.getFullScreenAction(),
-
 			sAddActionType = "sap.f.semantic.AddAction",
 			sCopyActionType = "sap.f.semantic.CopyAction",
 			sFlagActionType = "sap.f.semantic.FlagAction",
 			sFullScreenActionType = "sap.f.semantic.FullScreenAction",
-
 			iCustomTextActionExpectedOrder = 0,
-			iAddActionExpectedOrder = 2,
-			iCopyActionExpectedOrder = 1,
+			iAddActionExpectedOrder = 1,
+			iCopyActionExpectedOrder = 2,
 			iCustomIconActionExpectedOrder = 3,
 			iFlagActionExpectedOrder = 4,
 			iShareMenuActionExpectedOrder = 5,
@@ -359,13 +346,13 @@
 		// Custom Text | Semantic Text | Custom Icon | Semantic Simple Icon | ShareMenu Icon | Nav Icon
 
 		// Act
-		// Inserted as 1st, but should be ordered 3rd.
+		// Inserted as 1st, but should be ordered 2nd.
 		this.oSemanticTitle.addContent(oAddAction, oSemanticConfiguration.getPlacement(sAddActionType));
 
 		// Inserted as 2nd, but should be 4th.
 		this.oSemanticTitle.addContent(oFlagAction, oSemanticConfiguration.getPlacement(sFlagActionType));
 
-		// Inserted as 3rd, but should be 2nd.
+		// Inserted as 3rd, but should be 2th.
 		this.oSemanticTitle.addContent(oCopyAction, oSemanticConfiguration.getPlacement(sCopyActionType));
 
 		// Inserted as 4th, but should be 7th.
@@ -481,7 +468,7 @@
 			sMessagesIndicatorType = "sap.f.semantic.MessagesIndicator",
 			sDraftIndicatorType = "sap.m.DraftIndicator",
 			iMessagesIndicatorExpectedOrder = 0,
-			iDraftIndicatorExpectedOrder = 2,
+			iDraftIndicatorExpectedOrder = 1,
 			iFooterActions = 2;
 
 		// Act
@@ -586,7 +573,7 @@
 			sPositiveActionType = "sap.f.semantic.PositiveAction",
 			sNegativeActionType = "sap.f.semantic.NegativeAction",
 			iMessagesIndicatorExpectedOrder = 0,
-			iDraftIndicatorExpectedOrder = 2,
+			iDraftIndicatorExpectedOrder = 1,
 			iMainActionExpectedOrder = 3,
 			iPositiveActionExpectedOrder = 4,
 			iNegativeActionExpectedOrder = 5,

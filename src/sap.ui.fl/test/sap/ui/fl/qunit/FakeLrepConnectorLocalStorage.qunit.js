@@ -40,15 +40,6 @@ sap.ui.require([
 		});
 	});
 
-
-	QUnit.test("when settings are requested", function(assert) {
-		return oFakeLrepConnectorLocalStorage.loadSettings("sap.ui.fl.qunit.FakeLrepConnector")
-		.then(function (oSettings) {
-			assert.ok(oSettings);
-		});
-	});
-
-
 	QUnit.module("Give I want to create changes", {
 
 		beforeEach : function(assert) {
