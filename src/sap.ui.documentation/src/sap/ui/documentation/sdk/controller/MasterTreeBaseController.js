@@ -32,9 +32,9 @@ sap.ui.define([
 			 * Makes the tree open all nodes up to the node with "sTopicId" and then selects it
 			 * @private
 			 */
-			_expandTreeToNode: function (sTopicId, oModel) {
-				var oTree = this.byId("tree"),
-					oData = oModel.getData();
+			_expandTreeToNode: function (sTopicId) {
+				var oTree = this.byId("tree");
+				var oData = this.getOwnerComponent().getModel("treeData").getData();
 
 				// Find the path to the new node, traversing the model
 				var aTopicIds = this._oTreeUtil.getPathToNode(sTopicId, oData);
@@ -65,7 +65,7 @@ sap.ui.define([
 			/**
 			 * Scans the items aggregation of a sap.m.Tree for an item that has custom data with key="topicId" and value=sId
 			 * Note: It's important to always fetch the items before searching as they change dynamically when nodes expand/collapse
-			 * @param {string} sId
+			 * @param sId
 			 * @returns {null}
 			 * @private
 			 */
@@ -91,7 +91,7 @@ sap.ui.define([
 			 * Handler for the SearchField
 			 * @param oEvent
 			 */
-			onTreeFilter: function (oEvent, sFilterPath) {
+			onTreeFilter: function (oEvent) {
 				var oTree = this.byId("tree");
 				var sFilterArgument = oEvent.getParameter("newValue").trim();
 				var oBinding = oTree.getBinding("items");
@@ -111,7 +111,7 @@ sap.ui.define([
 
 					var aFilters = [];
 					if (sFilterArgument) {
-						var oNameFilter = new Filter(sFilterPath, FilterOperator.Contains, sFilterArgument);
+						var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
 						aFilters.push(oNameFilter);
 					}
 

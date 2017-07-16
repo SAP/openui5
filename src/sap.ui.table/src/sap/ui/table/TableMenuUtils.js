@@ -68,12 +68,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 				}
 
 				var oCellInfo = MenuUtils.TableUtils.getCellInfo($TableCell);
-				var iColumnIndex = oCellInfo.columnIndex;
-				var iRowIndex = oCellInfo.rowIndex;
+				var iColumnIndex;
 				var bExecuteDefault;
 
-				if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.COLUMNHEADER)) {
+				if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.COLUMNHEADER) {
 					var bCellHasMenuButton = $TableCell.find(".sapUiTableColDropDown").length > 0;
+
+					iColumnIndex = MenuUtils.TableUtils.getColumnHeaderCellInfo($TableCell).index;
 
 					if (Device.system.desktop || bCellHasMenuButton) {
 						MenuUtils.removeColumnHeaderCellMenu(oTable, iColumnIndex);
@@ -81,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 
 						if (bFireEvent) {
 							bExecuteDefault = oTable.fireColumnSelect({
-								column: oTable.getColumns()[iColumnIndex]
+								column: oTable._getVisibleColumns()[iColumnIndex]
 							});
 						}
 
@@ -92,8 +93,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 						MenuUtils.applyColumnHeaderCellMenu(oTable, iColumnIndex, $TableCell);
 					}
 
-				} else if (oCellInfo.isOfType(MenuUtils.TableUtils.CELLTYPE.DATACELL)) {
+				} else if (oCellInfo.type === MenuUtils.TableUtils.CELLTYPES.DATACELL) {
+					var oCellIndices = MenuUtils.TableUtils.getDataCellInfo(oTable, $TableCell);
+					var iRowIndex = oCellIndices.rowIndex;
+
 					bExecuteDefault = true;
+					iColumnIndex = oCellIndices.columnIndex;
 
 					if (bFireEvent) {
 						var oRowColCell = MenuUtils.TableUtils.getRowColCell(oTable, iRowIndex, iColumnIndex, true);
@@ -273,7 +278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/unified/Menu', 'sap
 
 					// Open the menu below the cell if is is not already open.
 					var oCell =  oRow.getCells()[iColumnIndex];
-					var $Cell =  MenuUtils.TableUtils.getParentCell(oTable, oCell.getDomRef());
+					var $Cell =  MenuUtils.TableUtils.getParentDataCell(oTable, oCell.getDomRef());
 
 					if ($Cell !== null && !MenuUtils.TableUtils.Grouping.isInGroupingRow($Cell)) {
 						oCell = $Cell[0];

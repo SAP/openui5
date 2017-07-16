@@ -21,7 +21,6 @@
 					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html',
 					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true',
 					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html',
-					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true',
 					'demokit/sample/ViewTemplate/scenario/Opa.qunit.html',
 					'demokit/sample/ViewTemplate/types/Opa.qunit.html',
 					'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true'
@@ -56,7 +55,7 @@
 				// the credentials are known before running the test suite.
 				oLoginRequest.open("GET", sBase + "proxy/sap/opu/odata4/sap/zui5_testv4/default/"
 					+ "sap/zui5_epm_sample/0001/");
-				oLoginRequest.addEventListener("load", function () {
+				oLoginRequest.addEventListener("load", function (oEvent) {
 					if (oLoginRequest.status === 200) {
 						addScript();
 					} else {
@@ -65,14 +64,16 @@
 					}
 				});
 				oLoginRequest.send();
-			};
+			}
 
 			// For the button "w/o realOData"
 			window.runWithoutRealOData = function () {
 				// inform the framed page that realOData tests are not wanted
 				location.href = location.href + "#noRealOData";
 				addScript();
-			};
+			}
+
+			window.addEventListener("load", runTests);
 
 			// Called from the Testrunner
 			window.suite = function () {
@@ -84,17 +85,6 @@
 				});
 				return oSuite;
 			};
-
-			if (/integrationTestsOnly/i.test(location.href)) {
-				aTests[0] =
-					aTests[0].replace("/internal/1Ring.", "/odata/v4/ODataModel.integration.");
-				aTests.forEach(function (sUrl, i) {
-					if (sUrl.indexOf("coverage") < 0) {
-						aTests[i] = sUrl + (sUrl.indexOf("?") < 0 ? "?" : "&") + "coverage";
-					}
-				});
-			}
-			window.addEventListener("load", runTests);
 		}());
 		</script>
 	</head>

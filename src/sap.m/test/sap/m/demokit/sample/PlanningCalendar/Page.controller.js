@@ -462,11 +462,6 @@ sap.ui.define([
 					var sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
-			},
-
-			handleSelectionFinish: function(oEvent) {
-				var aSelectedKeys = oEvent.getSource().getSelectedKeys();
-				this.getView().byId("PC1").setBuiltInViews(aSelectedKeys);
 			}
 
 		});

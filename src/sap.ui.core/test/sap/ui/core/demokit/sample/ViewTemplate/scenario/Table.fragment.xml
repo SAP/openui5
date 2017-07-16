@@ -13,7 +13,7 @@
 				</Column>
 			</template:if>
 			<template:if test="{field>Action}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldForAction -->
-				<Column demandPopin="true" minScreenWidth="1800px" popinDisplay="WithoutHeader">
+				<Column>
 					<Text text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				</Column>
 			</template:if>

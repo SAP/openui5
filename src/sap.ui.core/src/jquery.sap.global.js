@@ -853,7 +853,7 @@
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
 	 *
-	 * @param {string} sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
+	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
 	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
 	 *
 	 * @private
@@ -1720,8 +1720,8 @@
 		 * Activates or deactivates the performance measure functionality
 		 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
 		 * like "javascript", "require", "xmlhttprequest", "render"
-		 * @param {boolean} bOn - state of the perfomance measurement functionality to set
-		 * @param {string | string[]} aCategories - An optional list of categories that should be measured
+		 * @param {boolean} bOn state of the perfomance measurement functionality to set
+		 * @param {string | string[]}  An optional list of categories that should be measured
 		 *
 		 * @return {boolean} current state of the perfomance measurement functionality
 		 * @name jQuery.sap.measure#setActive
@@ -3996,9 +3996,7 @@
 		 * });
 		 * </pre>
 		 *
-		 *
-		 * <h3>Module Name Syntax</h3>
-		 *
+		 * <b>Module Name Syntax</b><br>
 		 * <code>sap.ui.define</code> uses a simplified variant of the {@link jQuery.sap.getResourcePath
 		 * unified resource name} syntax for the module's own name as well as for its dependencies.
 		 * The only difference to that syntax is, that for <code>sap.ui.define</code> and
@@ -4013,8 +4011,7 @@
 		 * simplifies renaming of packages and allows to map them to a different namespace.
 		 *
 		 *
-		 * <h3>Dependency to Modules</h3>
-		 *
+		 * <b>Dependency to Modules</b><br>
 		 * If a dependencies array is given, each entry represents the name of another module that
 		 * the currently defined module depends on. All dependency modules are loaded before the value
 		 * of the currently defined module is determined. The module value of each dependency module
@@ -4036,7 +4033,7 @@
 		 * to be a function.
 		 *
 		 *
-		 * <h3>Asynchronous Contract</h3>
+		 * <b>Asynchronous Contract</b><br>
 		 * <code>sap.ui.define</code> is designed to support real Asynchronous Module Definitions (AMD)
 		 * in future, although it internally still uses the old synchronous module loading of UI5.
 		 * Callers of <code>sap.ui.define</code> therefore must not rely on any synchronous behavior
@@ -4063,8 +4060,7 @@
 		 * <b>MUST</b> use the old {@link jQuery.sap.declare} and {@link jQuery.sap.require} APIs.
 		 *
 		 *
-		 * <h3>(No) Global References</h3>
-		 *
+		 * <b>(No) Global References</b><br>
 		 * To be in line with AMD best practices, modules defined with <code>sap.ui.define</code>
 		 * should not make any use of global variables if those variables are also available as module
 		 * values. Instead, they should add dependencies to those modules and use the corresponding parameter
@@ -4077,9 +4073,9 @@
 		 * provides two additional functionalities
 		 *
 		 * <ol>
-		 * <li>Before the factory function is called, the existence of the global parent namespace for
+		 * <li>before the factory function is called, the existence of the global parent namespace for
 		 *     the current module is ensured</li>
-		 * <li>The module value will be automatically exported under a global name which is derived from
+		 * <li>the module value will be automatically exported under a global name which is derived from
 		 *     the name of the module</li>
 		 * </ol>
 		 *
@@ -4087,7 +4083,7 @@
 		 * In future versions of UI5, a central configuration option is planned to suppress those 'exports'.
 		 *
 		 *
-		 * <h3>Third Party Modules</h3>
+		 * <b>Third Party Modules</b><br>
 		 * Although third party modules don't use UI5 APIs, they still can be listed as dependencies in
 		 * a <code>sap.ui.define</code> call. They will be requested and executed like UI5 modules, but their
 		 * module value will be <code>undefined</code>.
@@ -4116,22 +4112,15 @@
 		 * </pre>
 		 *
 		 *
-		 * <h3>Differences to Standard AMD</h3>
-		 *
-		 * The current implementation of <code>sap.ui.define</code> differs from the AMD specification
-		 * (https://github.com/amdjs/amdjs-api) or from concrete AMD loaders like <code>requireJS</code>
-		 * in several aspects:
+		 * <b>Differences to requireJS</b><br>
+		 * The current implementation of <code>sap.ui.define</code> differs from <code>requireJS</code>
+		 * or other AMD loaders in several aspects:
 		 * <ul>
-		 * <li>The name <code>sap.ui.define</code> is different from the plain <code>define</code>.
+		 * <li>the name <code>sap.ui.define</code> is different from the plain <code>define</code>.
 		 * This has two reasons: first, it avoids the impression that <code>sap.ui.define</code> is
 		 * an exact implementation of an AMD loader. And second, it allows the coexistence of an AMD
-		 * loader (e.g. requireJS) and <code>sap.ui.define</code> in one application as long as UI5 or
-		 * applications using UI5 are not fully prepared to run with an AMD loader.
-		 * Note that the difference of the API names also implies that the UI5 loader can't be used
-		 * to load 'real' AMD modules as they expect methods <code>define</code> and <code>require</code>
-		 * to be available. Modules that use Unified Module Definition (UMD) syntax, can be loaded,
-		 * but only when no AMD loader is present or when they expose their export also to the global
-		 * namespace, even when an AMD loader is present (as e.g. jQuery does)</li>
+		 * loader (requireJS) and <code>sap.ui.define</code> in one application as long as UI5 or
+		 * applications using UI5 are not fully prepared to run with an AMD loader</li>
 		 * <li><code>sap.ui.define</code> currently loads modules with synchronous XHR calls. This is
 		 * basically a tribute to the synchronous history of UI5.
 		 * <b>BUT:</b> synchronous dependency loading and factory execution explicitly it not part of
@@ -4142,27 +4131,24 @@
 		 * {@link jQuery.sap.require} API.</li>
 		 * <li><code>sap.ui.define</code> does not support plugins to use other file types, formats or
 		 * protocols. It is not planned to support this in future</li>
-		 * <li><code>sap.ui.define</code> does not support absolute URLs as module names (dependencies)
-		 * nor does it allow module names that start with a slash. To refer to a module at an absolute
-		 * URL, a resource root can be registered that points to that URL (or to a prefix of it).</li>
 		 * <li><code>sap.ui.define</code> does <b>not</b> support the 'sugar' of requireJS where CommonJS
 		 * style dependency declarations using <code>sap.ui.require("something")</code> are automagically
 		 * converted into <code>sap.ui.define</code> dependencies before executing the factory function.</li>
 		 * </ul>
 		 *
 		 *
-		 * <h3>Limitations, Design Considerations</h3>
+		 * <b>Limitations, Design Considerations</b><br>
 		 * <ul>
 		 * <li><b>Limitation</b>: as dependency management is not supported for Non-UI5 modules, the only way
 		 *     to ensure proper execution order for such modules currently is to rely on the order in the
 		 *     dependency array. Obviously, this only works as long as <code>sap.ui.define</code> uses
 		 *     synchronous loading. It will be enhanced when asynchronous loading is implemented.</li>
-		 * <li>It was discussed to enforce asynchronous execution of the module factory function (e.g. with a
+		 * <li>it was discussed to enforce asynchronous execution of the module factory function (e.g. with a
 		 *     timeout of 0). But this would have invalidated the current migration scenario where a
 		 *     sync <code>jQuery.sap.require</code> call can load a <code>sap.ui.define</code>'ed module.
 		 *     If the module definition would not execute synchronously, the synchronous contract of the
 		 *     require call would be broken (default behavior in existing UI5 applications)</li>
-		 * <li>A single file must not contain multiple calls to <code>sap.ui.define</code>. Multiple calls
+		 * <li>a single file must not contain multiple calls to <code>sap.ui.define</code>. Multiple calls
 		 *     currently are only supported in the so called 'preload' files that the UI5 merge tooling produces.
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
@@ -4174,7 +4160,6 @@
 		 * @param {boolean} [bExport] whether an export to global names is required - should be used by SAP-owned code only
 		 * @since 1.27.0
 		 * @public
-		 * @see https://github.com/amdjs/amdjs-api
 		 * @experimental Since 1.27.0 - not all aspects of sap.ui.define are settled yet. If the documented
 		 *        constraints and limitations are obeyed, SAP-owned code might use it. If the fourth parameter
 		 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
@@ -4764,9 +4749,9 @@
 							oScript.removeEventListener('load', onload);
 							oScript.removeEventListener('error', onerror);
 							if (bRetryOnFailure) {
-								log.warning("retry loading Javascript resource: " + sResource);
+								jQuery.sap.log.warning("retry loading Javascript resource: " + sResource);
 							} else {
-								log.error("failed to load Javascript resource: " + sResource);
+								jQuery.sap.log.error("failed to load Javascript resource: " + sResource);
 								oModule.state = FAILED;
 							}
 
@@ -4833,7 +4818,7 @@
 		var oScript = window.document.createElement("script");
 		oScript.src = sUrl;
 		oScript.type = "text/javascript";
-		if (mAttributes && typeof mAttributes === "object") {
+		if (typeof mAttributes === "object") {
 			Object.keys(mAttributes).forEach(function(sKey) {
 				if (mAttributes[sKey] != null) {
 					oScript.setAttribute(sKey, mAttributes[sKey]);
@@ -4917,7 +4902,7 @@
 			oLink.type = "text/css";
 			oLink.rel = "stylesheet";
 			oLink.href = sUrl;
-			if (mAttributes && typeof mAttributes === "object") {
+			if (typeof mAttributes === "object") {
 				Object.keys(mAttributes).forEach(function(sKey) {
 					if (mAttributes[sKey] != null) {
 						oLink.setAttribute(sKey, mAttributes[sKey]);

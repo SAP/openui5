@@ -5,12 +5,9 @@
 sap.ui.define([
 	'./SemanticButton',
 	'./SemanticControl',
-	'sap/m/library'
-], function(SemanticButton, SemanticControl, mobileLibrary) {
+	'sap/m/ButtonType'
+], function(SemanticButton, SemanticControl, ButtonType) {
 	"use strict";
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	* Constructor for a new <code>SemanticToggleButton</code>.

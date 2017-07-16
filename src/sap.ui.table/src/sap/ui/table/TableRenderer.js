@@ -14,9 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	/**
 	 * Table renderer.
-	 *
 	 * @namespace
-	 * @name sap.ui.table.TableRenderer
 	 */
 	var TableRenderer = {};
 
@@ -345,20 +343,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderColRowHdr = function(rm, oTable) {
-		var bEnabled = false;
-		var bSelAll = false;
-
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-selall");
-
-		if (TableUtils.hasSelectAll(oTable)) {
-			var bAllRowsSelected = TableUtils.areAllRowsSelected(oTable);
-
+		var oSelMode = oTable.getSelectionMode();
+		var bEnabled = false;
+		var bSelAll = false;
+		if ((oSelMode == "Multi" || oSelMode == "MultiToggle") && oTable.getEnableSelectAll()) {
 			if (oTable._getShowStandardTooltips()) {
-				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				rm.writeAttributeEscaped("title", oTable._oResBundle.getText(sSelectAllResourceTextID));
+				rm.writeAttributeEscaped("title", oTable._oResBundle.getText("TBL_SELECT_ALL"));
 			}
-			if (!bAllRowsSelected) {
+			if (!TableUtils.areAllRowsSelected(oTable)) {
 				rm.addClass("sapUiTableSelAll");
 			} else {
 				bSelAll = true;
@@ -1070,7 +1064,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
-		if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable) && !oTable._bFlatMode) {
+		if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
 			var oRow = oCell.getParent();
 			rm.write("<span class='sapUiTableTreeIcon' tabindex='-1' id='" + oRow.getId() + "-treeicon'");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TREEICON", {row: oRow});

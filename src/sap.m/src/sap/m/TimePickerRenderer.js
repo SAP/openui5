@@ -149,7 +149,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 		/**
 		 * Determines if the given control is labelled by another
-		 * @param {sap.ui.core.Control} oControl the control to check
+		 * @param oControl the control to check
 		 * @returns {boolean} true if there is at least one other control that labels <code>oControl</control>, false otherwise
 		 * @private
 		 */

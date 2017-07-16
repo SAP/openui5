@@ -307,13 +307,12 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		assert.equal(oGetChangePersistenceForComponentCall, sAppVariantId, "the component name was passed correct");
 	});
 
-	QUnit.test("onLoadComponent passes the cache key and url from within the async hints", function (assert) {
+	QUnit.test("onLoadComponent determines the cache key within the async hints", function (assert) {
 
 		var oComponent = {
 			name : "componentName"
 		};
 		var sCacheKey = "abc123";
-		var sUrl = "/a/url/for/the/bachend/call/~" + sCacheKey + "~/";
 
 		var oConfig = {
 			"name": oComponent.name,
@@ -322,8 +321,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 					{
 						"name": "sap.ui.fl.changes",
 						"reference": oComponent.name + ".Component",
-						"cachebusterToken": sCacheKey,
-						"url": sUrl
+						"cachebusterToken": sCacheKey
 					}
 				]
 			}
@@ -354,8 +352,7 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		var oGetChangesForComponentCall = oChangePersistenceStub.getCall(0).args[0];
 		assert.ok( "cacheKey" in oGetChangesForComponentCall, "a cache parameter was passed");
-		assert.equal(oGetChangesForComponentCall.cacheKey, sCacheKey, "the cacheKey was determined correct");
-		assert.equal(oGetChangesForComponentCall.url, sUrl, "the url was determined correct");
+		assert.equal(oGetChangesForComponentCall.cacheKey, sCacheKey, "the cacneKey was determined correct");
 	});
 
 	QUnit.test("onLoadComponent sets max layer filter passed on component data", function (assert) {
@@ -561,6 +558,8 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 	});
 
 	QUnit.test("_getChangesForComponentAfterInstantiation requests mapped changes for a component of the type 'application'", function (assert) {
+
+
 		var oConfig = {
 			name: "theComponentName"
 		};
@@ -584,31 +583,6 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 
 		assert.ok(oGetChangesForComponentStub.calledOnce, "changes were requested once");
 		assert.equal(oPromise, oMappedChangesPromise, "a promise for the changes was returned");
-	});
-
-	QUnit.test("_findFlAsyncHint can find the one flex async hint which targets the current component", function (assert) {
-
-		var sComponentName = "thisIsTheComponentNameYouAreLookingFor";
-		var oFlAsyncHint1 = {
-			"reference": "another.component",
-			"name": "sap.ui.fl.changes"
-		};
-
-		var oFlAsyncHint2 = {
-			"reference": sComponentName,
-			"name": "sap.ui.fl.changes"
-
-		};
-
-		var oAnotherAsyncHint = {
-			"name": "something.different"
-		};
-
-		var aAsyncHints = [oFlAsyncHint1, oAnotherAsyncHint, oFlAsyncHint2];
-
-		var oDeterminedFlAsyncHint = ChangePersistenceFactory._findFlAsyncHint(aAsyncHints, sComponentName);
-
-		assert.equal(oDeterminedFlAsyncHint, oFlAsyncHint2, "the correct flexibility async hint was determined");
 	});
 
 }(sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Utils));

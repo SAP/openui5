@@ -6,7 +6,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns="sap.m">
 	<Page
-		title="Entity"
+		title="{i18n>entity}"
 		class="sapUiFioriObjectPage"
 		navButtonPress="onNavBack"
 		id="page">
@@ -35,13 +35,13 @@
 
 			<attributes>
 				<ObjectAttribute
-					title="Application Component"
+					title="{i18n>attributeApplicationComponent}"
 					text="{/appComponent}" />
 				<ObjectAttribute
-					title="Available Since"
+					title="{i18n>attributeAvailableSince}"
 					text="{entity>since}" />
 				<ObjectAttribute
-					title="Inherits from"
+					title="{i18n>attributeInheritsFrom}"
 					text="{/baseTypeText}"
 					active="{/baseTypeNav}"
 					press="onTypeLinkPress" >
@@ -50,10 +50,10 @@
 					</customData>
 				</ObjectAttribute>
 				<ObjectAttribute
-					title="Content Density"
+					title="{i18n>attributeContentDensity}"
 					text="{entity>formFactors}" />
 				<ObjectAttribute
-					title="Category"
+					title="{i18n>attributeCategory}"
 					text="{entity>category}" />
 			</attributes>
 
@@ -70,7 +70,7 @@
 
 						<IconTabFilter
 							key="about"
-							text="About"
+							text="{i18n>tabAbout}"
 							visible="{/show/about}" >
 							<core:HTML content="{/description}" />
 							<Table
@@ -80,8 +80,8 @@
 								fixedLayout="false"
 								items="{/values}" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="{i18n>colDescription}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>
@@ -97,7 +97,7 @@
 						<IconTabFilter
 							key="samples"
 							count="{/count/samples}"
-							text="Samples"
+							text="{i18n>tabSamples}"
 							visible="{/show/samples}" >
 							<Table
 								class="myTable"
@@ -106,8 +106,8 @@
 								fixedLayout="false"
 								showSeparators="Inner" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column minScreenWidth="Tablet"><Label text="Description" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column minScreenWidth="Tablet"><Label text="{i18n>colDescription}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
@@ -122,7 +122,7 @@
 
 						<IconTabFilter
 							key="properties"
-							text="Properties"
+							text="{i18n>tabProperties}"
 							count="{/count/properties}"
 							visible="{/show/properties}" >
 							<Table
@@ -138,11 +138,11 @@
 									}
 								}" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column><Label text="Type" /></Column>
-									<Column><Label text="Default" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column><Label text="{i18n>colType}" /></Column>
+									<Column><Label text="{i18n>colDefault}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="{i18n>colDescription}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="{i18n>colSince}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>
@@ -173,7 +173,7 @@
 
 						<IconTabFilter
 							key="aggregations"
-							text="Aggregations"
+							text="{i18n>tabAggregations}"
 							count="{/count/aggregations}"
 							visible="{/show/aggregations}" >
 							<Table
@@ -188,11 +188,11 @@
 									}
 								}" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column><Label text="Cardinality" /></Column>
-									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column><Label text="{i18n>colCardinality}" /></Column>
+									<Column><Label text="{i18n>colType}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="{i18n>colDescription}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="{i18n>colSince}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>
@@ -224,7 +224,7 @@
 
 						<IconTabFilter
 							key="associations"
-							text="Associations"
+							text="{i18n>tabAssociations}"
 							count="{/count/associations}"
 							visible="{/show/associations}" >
 							<Table
@@ -239,11 +239,11 @@
 									}
 								}" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column><Label text="Cardinality" /></Column>
-									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column><Label text="{i18n>colCardinality}" /></Column>
+									<Column><Label text="{i18n>colType}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="{i18n>colDescription}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="{i18n>colSince}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>
@@ -274,7 +274,7 @@
 
 						<IconTabFilter
 							key="events"
-							text="Events"
+							text="{i18n>tabEvents}"
 							count="{/count/events}"
 							visible="{/show/events}" >
 							<Table
@@ -283,11 +283,11 @@
 								fixedLayout="false"
 								items="{/events}" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column><Label text="Param" /></Column>
-									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column><Label text="{i18n>colParam}" /></Column>
+									<Column><Label text="{i18n>colType}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="{i18n>colDescription}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="{i18n>colSince}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>
@@ -318,7 +318,7 @@
 
 						<IconTabFilter
 							key="methods"
-							text="Methods"
+							text="{i18n>tabMethods}"
 							count="{/count/methods}"
 							visible="{/show/methods}" >
 							<Table
@@ -327,11 +327,11 @@
 								fixedLayout="false"
 								items="{/methods}" >
 								<columns>
-									<Column><Label text="Name" /></Column>
-									<Column width="15%"><Label text="Param" /></Column>
-									<Column><Label text="Type" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="Description" /></Column>
-									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="Since" /></Column>
+									<Column><Label text="{i18n>colName}" /></Column>
+									<Column width="15%"><Label text="{i18n>colParam}" /></Column>
+									<Column><Label text="{i18n>colType}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><Label text="{i18n>colDescription}" /></Column>
+									<Column minScreenWidth="Tablet" demandPopin="false"><Label text="{i18n>colSince}" /></Column>
 								</columns>
 								<items>
 									<ColumnListItem>

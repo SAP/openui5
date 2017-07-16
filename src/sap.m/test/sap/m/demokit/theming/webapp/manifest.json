@@ -77,10 +77,7 @@
 				"settings": {
 					"bundleName": "sap.ui.demo.theming.i18n.i18n"
 				}
-			},
-			"class":{
-				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/Class.json"}
+			}
 		},
 
 		"routing": {

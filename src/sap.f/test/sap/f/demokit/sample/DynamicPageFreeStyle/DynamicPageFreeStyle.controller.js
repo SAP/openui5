@@ -8,8 +8,9 @@ sap.ui.define([
 
 	return Controller.extend("sap.f.sample.DynamicPageFreeStyle.DynamicPageFreeStyle", {
 		onInit: function () {
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
-			this.getView().setModel(oModel);
+			this.oModel = new JSONModel();
+			this.oModel.loadData(jQuery.sap.getModulePath("sap.f.sample.DynamicPageListReport", "/model.json"), null, false);
+			this.getView().setModel(this.oModel);
 		},
 		getPage : function() {
 			return this.getView().byId("dynamicPageId");

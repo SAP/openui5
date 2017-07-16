@@ -1,12 +1,9 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/library', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon'],
-	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, coreLibrary, ManagedObject, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Orientation', 'sap/ui/base/ManagedObject', 'sap/ui/core/Icon'],
+	function(jQuery, library, Control, Device, ScrollEnablement, ItemNavigation, Orientation, ManagedObject, Icon) {
 	"use strict";
-
-	// shortcut for sap.ui.core.Orientation
-	var Orientation = coreLibrary.Orientation;
 
 	var HeaderContainerItemContainer = Control.extend("sap.m.HeaderContainerItemContainer", {
 		metadata : {
@@ -393,7 +390,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (!this._bRtl) {
 			iScrollLeft = oDomRef.scrollLeft;
 			iScrollWidth = oDomRef.scrollWidth;
-			iClientWidth = oDomRef.clientWidth + (Device.browser.msie ? 1 : 0);
+			iClientWidth = oDomRef.clientWidth;
 			iScrollTarget = iScrollLeft + delta;
 			iPaddingWidth = parseFloat(this.$("scroll-area").css("padding-left"));
 
@@ -501,7 +498,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			if (this._bRtl) {
 				var iScrollLeftRTL = jQuery(oBarHead).scrollLeftRTL();
-				if (iScrollLeftRTL > ((Device.browser.msie || Device.browser.edge) ? 1 : 0)) {
+				if (iScrollLeftRTL > ((Device.browser.internet_explorer || Device.browser.edge) ? 1 : 0)) {
 					bScrollForward = true;
 				}
 			} else if (iScrollLeft > 1) {
@@ -519,23 +516,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			$ButtonContainer = this.$("prev-button-container");
-			var bOldScrollBack = $ButtonContainer.is(":visible");
-			if (bOldScrollBack && !bScrollBack) {
+			var oOldScrollBack = $ButtonContainer.is(":visible");
+			if (oOldScrollBack && !bScrollBack) {
 				$ButtonContainer.hide();
 				this.$().removeClass("sapMHrdrLeftPadding");
 			}
-			if (!bOldScrollBack && bScrollBack) {
+			if (!oOldScrollBack && bScrollBack) {
 				$ButtonContainer.show();
 				this.$().addClass("sapMHrdrLeftPadding");
 			}
 
 			$ButtonContainer = this.$("next-button-container");
-			var bOldScrollForward = $ButtonContainer.is(":visible");
-			if (bOldScrollForward && !bScrollForward) {
+			var oOldScrollForward = $ButtonContainer.is(":visible");
+			if (oOldScrollForward && !bScrollForward) {
 				$ButtonContainer.hide();
 				this.$().removeClass("sapMHrdrRightPadding");
 			}
-			if (!bOldScrollForward && bScrollForward) {
+			if (!oOldScrollForward && bScrollForward) {
 				$ButtonContainer.show();
 				this.$().addClass("sapMHrdrRightPadding");
 			}
@@ -543,13 +540,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	HeaderContainer.prototype._handleBorderReached = function(oEvt) {
-		if (Device.browser.msie && this.bScrollInProcess) {
+		if (Device.browser.internet_explorer && this.bScrollInProcess) {
 			return;
 		}
 		var iIndex = oEvt.getParameter("index");
 		if (iIndex === 0) {
 			this._scroll(-this.getScrollStep(), this.getScrollTime());
-		} else if (iIndex === this.getContent().length - 1) {
+		} else if (iIndex === this.getContent().length - 1){
 			this._scroll(this.getScrollStep(), this.getScrollTime());
 		}
 	};

@@ -15,8 +15,6 @@
 	var CLASS_CLOSE_BUTTON = ".sapMMsgStripCloseButton";
 	var CLASS_TEXT_MESSAGE = ".sapMMsgStripMessage";
 	var CLASS_ICON = ".sapMMsgStripIcon";
-	var CLASS_FORMATTED_TEXT = ".sapMFT";
-	var CLASS_TEXT = ".sapMText";
 
 	QUnit.module("API", {
 		beforeEach: function() {
@@ -107,7 +105,6 @@
 	QUnit.test("Setting the text", function(assert) {
 		// arrange
 		var oText = this.oMessageStrip.getAggregation("_text");
-
 		// act
 		this.oMessageStrip.setText("Test example");
 		sap.ui.getCore().applyChanges();
@@ -115,127 +112,7 @@
 		//assert
 		assert.strictEqual(oText.getText(), "Test example", "should set the text of the hiddent aggregation");
 		assert.strictEqual(oText.getText(), this.oMessageStrip.getText(), "should set the same text on the MS and it's internal aggregation text");
-	});
 
-	QUnit.test("setText", 2, function (oAssert) {
-		// Arrange
-		var sTestString = "test string",
-			oFormattedText = new sap.m.FormattedText(),
-			fnDone = oAssert.async();
-
-		// Mock formatted text setter on the instance and attach to control aggregation
-		oFormattedText.setHtmlText = function (sText) {
-			// Assert
-			oAssert.ok(true, "Mocked setter called");
-			oAssert.strictEqual(sText, sTestString, "Correct arguments are propagated to the internal setter");
-			fnDone();
-		};
-		this.oMessageStrip.setAggregation("_formattedText", oFormattedText);
-
-		// Act
-		this.oMessageStrip.setText(sTestString);
-
-	});
-
-	QUnit.test("setEnableFormattedText", function (oAssert) {
-		// Arrange
-		var oLimitSpy = sinon.spy(sap.m.FormattedText.prototype, "_setUseLimitedRenderingRules"),
-			oSetterSpy = sinon.spy(sap.m.FormattedText.prototype, "setHtmlText"),
-			sTestString = "test string",
-			oFormattedText;
-
-		// Act
-		this.oMessageStrip.setEnableFormattedText(true);
-		oFormattedText = this.oMessageStrip.getAggregation("_formattedText");
-
-		// Assert
-		oAssert.strictEqual(oLimitSpy.callCount, 1, "sap.m.FormattedText._setUseLimitedRenderingRules called once");
-		oAssert.strictEqual(oSetterSpy.callCount, 1, "sap.m.FormattedText.setHtmlText called once");
-		oAssert.ok(oFormattedText instanceof sap.m.FormattedText,
-			"Internal aggregation of type sap.m.FormattedText is created");
-
-		// Act - apply test string and trigger UI update
-		this.oMessageStrip.setText(sTestString);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		oAssert.ok(oFormattedText.getDomRef(),
-			"Internal sap.m.FormattedText is rendered in the DOM");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html(), sTestString,
-			"Rendered HTML in internal sap.m.FormattedText should match passed test string");
-
-		// Act - toggle setter
-		this.oMessageStrip.setEnableFormattedText(false);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		oAssert.notOk(oFormattedText.getDomRef(),
-			"Internal sap.m.FormattedText is not rendered in the DOM");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT).html(), sTestString,
-			"Rendered HTML should match passed test string");
-
-		// Cleanup
-		oLimitSpy.restore();
-		oSetterSpy.restore();
-	});
-
-	QUnit.test("setText and enableFormattedText", function (oAssert) {
-		// Arrange
-		var sTestString = "<strong>Warning:</strong> something went wrong",
-			oFormattedText;
-
-		// Act
-		this.oMessageStrip.setText(sTestString);
-		this.oMessageStrip.setEnableFormattedText(true);
-		sap.ui.getCore().applyChanges();
-
-		oFormattedText = this.oMessageStrip.getAggregation("_formattedText");
-
-		// Assert
-		oAssert.ok(oFormattedText instanceof sap.m.FormattedText,
-			"Internal sap.m.FormattedText is initiated and attached to the _formattedText hidden aggregation");
-		oAssert.ok(oFormattedText.getDomRef(),
-			"sap.m.FormattedText should be rendered in the DOM by the MessageStrip control");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html(), sTestString,
-			"Rendered HTML should match passed test string");
-		oAssert.strictEqual(oFormattedText.getHtmlText(), sTestString,
-			"Test string is propagated to the internal sap.m.FormattedText control");
-	});
-
-	QUnit.test("setText and sap.m.FormattedText - limiting sap.m.FormattedText valid HTML elements", function (oAssert) {
-		// Arrange
-		var oSpy = sinon.spy(sap.m.FormattedText.prototype, "_setUseLimitedRenderingRules"),
-			sHTMLString = [
-				// If you change the order of elements here you should also change the order of the assertions below
-				"a", "abbr", "blockquote", "br", "cite",
-				"code", "em", "h1", "h2", "h3", "h4", "h5",
-				"h6", "p", "pre", "strong", "span", "u",
-				"dl", "dt", "dl", "ul", "ol", "li"
-			].map(function (sValue) {
-				return "<" + sValue + "></" + sValue + ">";
-			}).join(""),
-			$Result;
-
-		// Act
-		this.oMessageStrip.setEnableFormattedText(true);
-		this.oMessageStrip.setText(sHTMLString);
-		sap.ui.getCore().applyChanges();
-
-		// Arrange - get all html elements rendered and evaluate them as jQuery object
-		$Result = jQuery(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html());
-
-		// Assert
-		oAssert.ok(sap.m.FormattedText.prototype._setUseLimitedRenderingRules,
-			"sap.m.FormattedText should have this SAP-restricted method");
-		oAssert.strictEqual(oSpy.callCount, 1, "The method should be called once by the 'setEnableFormattedText' setter.");
-		oAssert.strictEqual($Result.length, 4, "Only 4 HTML elements are rendered and evaluated");
-		oAssert.strictEqual($Result[0].localName, "a", "The element name should be 'a'");
-		oAssert.strictEqual($Result[1].localName, "em", "The element name should be 'em'");
-		oAssert.strictEqual($Result[2].localName, "strong", "The element name should be 'strong'");
-		oAssert.strictEqual($Result[3].localName, "u", "The element name should be 'u'");
-
-		// Cleanup
-		oSpy.restore();
 	});
 
 	QUnit.module("Data binding", {
@@ -268,7 +145,8 @@
 
 		// assert
 		assert.strictEqual(this.oMessageStrip.getText(), sData, "should work");
-		assert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT).text(), sData, "should set the text to the internal aggregation");
+		assert.strictEqual(this.oMessageStrip.$().find('.sapMText').text(), sData, "should set the text to the internal aggregation");
+
 	});
 
 

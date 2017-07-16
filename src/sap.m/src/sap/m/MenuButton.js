@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * Defines the text of the <code>MenuButton</code>.
 				 * <br/><b>Note:</b> In <code>Split</code> <code>buttonMode</code> with <code>useDefaultActionOnly</code>
 				 * set to <code>false</code>, the text is changed to display the last selected item's text,
-				 * while in <code>Regular</code> <code>buttonMode</code> the text stays unchanged.
+				 * while in <code>Regular</code> <code>buttonMode<code> the text stays unchanged.
 				 */
 				text : {type : "string", group : "Misc", defaultValue : null},
 
@@ -240,7 +240,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Creates the button part of a <code>MenuButton</code> in regular mode.
-		 * @returns {object} The created <code>Button</code>
 		 * @private
 		 */
 		MenuButton.prototype._initButton = function() {
@@ -253,7 +252,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Creates the button part of a <code>MenuButton</code> in split mode.
-		 * @returns {object} The created <code>SplitButton</code>
 		 * @private
 		 */
 		MenuButton.prototype._initSplitButton = function() {
@@ -295,7 +293,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Handles the <code>buttonPress</code> event and opens the menu.
-		 * @param {boolean} bWithKeyboard If keyboard is used
 		 * @private
 		 */
 		MenuButton.prototype._handleButtonPress = function(bWithKeyboard) {
@@ -355,7 +352,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Gets the last selected menu item, which can be used
 		 * to trigger the same default action on <code>MenuItem</code> press.
-		 * @returns {string} The last selected item's ID
 		 * @private
 		 */
 		MenuButton.prototype._getLastSelectedItem = function() {
@@ -423,7 +419,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Override setter because the parent control has placed custom logic in it and all changes need to be propagated
 		 * to the internal button aggregation.
-		 * @param {string} sValue The text of the sap.m.MenuButton
+		 * @param {string} sValue
 		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setText = function (sValue) {

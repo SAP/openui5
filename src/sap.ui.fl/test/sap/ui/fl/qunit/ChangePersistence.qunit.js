@@ -89,6 +89,17 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		});
 	});
 
+	QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes having no selector", function(assert) {
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [{
+			fileType: "change"
+		}]}}));
+
+		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
+			assert.strictEqual(changes.length, 0, "No changes shall be returned");
+		});
+	});
+
 	QUnit.test("getChangesForComponent shall return the changes for the component, filtering changes with the current layer (CUSTOMER)", function(assert) {
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
@@ -215,26 +226,21 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			},
 			{
 				fileType: "change",
-				changeType: "defaultVariant",
-				layer: "CUSTOMER",
-				selector: {}
-			},
-			{
-				fileType: "change",
 				changeType: "renameGroup",
 				layer: "CUSTOMER",
 				selector: { id: "controlId1" }
+			},
+			{
+				fileType: "change",
+				changeType: "removeField",
+				layer: "CUSTOMER",
+				selector: {}
 			},
 			{
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER",
 				selector: { persistencyKey: "SmartFilter_Explored" }
-			},
-			{
-				fileType: "variant",
-				changeType: "filterBar",
-				layer: "CUSTOMER"
 			},
 			{
 				fileType: "variant",
@@ -249,27 +255,20 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			},
 			{
 				fileType: "somethingelse"
-			},
-			{
-				fileType: "change",
-				changeType: "appdescr_changes",
-				layer: "CUSTOMER"
 			}
 		]}}));
 
 
 		return this.oChangePersistence.getChangesForComponent({includeVariants : true}).then(function(changes) {
-			assert.strictEqual(changes.length, 5, "both standard UI changes and smart variants were returned");
+			assert.strictEqual(changes.length, 4, "both standard UI changes and smart variants were returned");
 			assert.ok(changes[0]._oDefinition.fileType === "change", "first change has file type change");
 			assert.ok(changes[0].getChangeType() === "defaultVariant", "and change type defaultVariant");
 			assert.ok(changes[1]._oDefinition.fileType === "change", "second change has file type change");
 			assert.ok(changes[1].getChangeType() === "renameGroup", "and change type renameGroup");
 			assert.ok(changes[2]._oDefinition.fileType === "variant", "third change has file type variant");
 			assert.ok(changes[2].getChangeType() === "filterBar", "and change type filterBar");
-			assert.ok(changes[3]._oDefinition.fileType === "change", "forth change has file type change");
+			assert.ok(changes[3]._oDefinition.fileType === "change", "second change has file type change");
 			assert.ok(changes[3].getChangeType() === "codeExt", "and change type codeExt");
-			assert.ok(changes[4]._oDefinition.fileType === "change", "fifth change has file type change");
-			assert.notOk(changes[4].getSelector() , "and does not have selector");
 		});
 	});
 
@@ -484,41 +483,39 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 	});
 
 	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test1", function(assert) {
-		var oChange1 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange1",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "field3-2" },
-				dependentSelector: {
-					"alias" : [{
-						id: "group3"
-					},{
-						id: "group2"
-					}]
-				}
-		}));
-		var oChange2 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange2",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "field3-2" },
-				dependentSelector: {
-					"alias" : [{
-						id: "group2"
-					},{
-						id: "group1"
-					}],
-					"alias2" :{
-						id: "field3-2"
-					}
-				}
-		}));
-		var oChange3 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange3",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "group1" }
-		}));
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group3", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group1"];
+			}
+		};
+		var oChange3 = {
+			getKey: function () {
+				return "fileNameChange3" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "group1" };
+			},
+			getDependentIdList: function () {
+				return ["group1"];
+			}
+		};
 
 		var mExpectedChanges = {
 			mChanges: {
@@ -545,7 +542,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			oChange1,
 			oChange2,
 			oChange3
-		]));
+			]));
 
 		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
 
@@ -557,41 +554,39 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 	});
 
 	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test2", function(assert) {
-		var oChange0 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange0",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "group1" }
-		}));
-		var oChange1 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange1",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "field3-2" },
-				dependentSelector: {
-					"alias" : [{
-						id: "group3"
-					},{
-						id: "group2"
-					}]
-				}
-		}));
-		var oChange2 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange2",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "field3-2" },
-				dependentSelector: {
-					"alias" : [{
-						id: "group2"
-					},{
-						id: "group1"
-					}],
-					"alias2" :{
-						id: "field3-2"
-					}
-				}
-		}));
+		var oChange0 = {
+			getKey: function () {
+				return "fileNameChange0" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "group1" };
+			},
+			getDependentIdList: function () {
+				return ["group1"];
+			}
+		};
+		var oChange1 = {
+			getKey: function () {
+				return "fileNameChange1" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group3", "group2"];
+			}
+		};
+		var oChange2 = {
+			getKey: function () {
+				return "fileNameChange2" + "USER" + "namespace";
+			},
+			getSelector: function () {
+				return { id: "field3-2" };
+			},
+			getDependentIdList: function () {
+				return ["field3-2", "group2", "group1"];
+			}
+		};
 
 		var mExpectedChanges = {
 			mChanges: {
@@ -614,7 +609,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			oChange0,
 			oChange1,
 			oChange2
-		]));
+			]));
 
 		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
 
@@ -623,241 +618,6 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 
 			assert.deepEqual(mChanges, mExpectedChanges);
 		});
-	});
-
-	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test3", function(assert) {
-		var oChange1 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange1",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "field3-2" },
-				dependentSelector: {
-					"alias" : {
-						id: "group3"
-					},
-					"alias2" : {
-						id: "group2"
-					}
-				}
-		}));
-		var oChange2 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange2",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "group2" }
-		}));
-
-		var mExpectedChanges = {
-			mChanges: {
-				"field3-2": [oChange1],
-				"group2": [oChange2]
-			},
-			mDependencies: {
-				"fileNameChange2USERnamespace": {
-					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
-				}
-			},
-			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
-			}
-		};
-
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-			oChange1,
-			oChange2
-		]));
-
-		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-			var mChanges = fnGetChangesMap();
-
-			assert.deepEqual(mChanges, mExpectedChanges);
-		});
-	});
-
-	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test4", function(assert) {
-		var oChange1 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange1",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "group2" }
-		}));
-		var oChange2 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange2",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "field3-2" },
-				dependentSelector: {
-					"alias" : {
-						id: "group3"
-					},
-					"alias2" : {
-						id: "group2"
-					}
-				}
-		}));
-		var mExpectedChanges = {
-			mChanges: {
-				"group2": [oChange1],
-				"field3-2": [oChange2]
-			},
-			mDependencies: {
-				"fileNameChange2USERnamespace": {
-					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
-				}
-			},
-			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
-			}
-		};
-
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-			oChange1,
-			oChange2
-		]));
-
-		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-			var mChanges = fnGetChangesMap();
-
-			assert.deepEqual(mChanges, mExpectedChanges);
-		});
-	});
-
-	QUnit.test("loadChangesMapForComponent returns a map with dependencies - test5", function(assert) {
-		var oChange1 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange1",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "group2" }
-		}));
-		var oChange2 = new Change(Change.createInitialFileContent({
-				id : "fileNameChange2",
-				layer : "USER",
-				namespace: "namespace",
-				selector: { id: "group2" }
-		}));
-
-		var mExpectedChanges = {
-			mChanges: {
-				"group2": [oChange1, oChange2]
-			},
-			mDependencies: {
-				"fileNameChange2USERnamespace": {
-					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
-				}
-			},
-			mDependentChangesOnMe: {
-				"fileNameChange1USERnamespace": ["fileNameChange2USERnamespace"]
-			}
-		};
-
-		this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([
-			oChange1,
-			oChange2
-		]));
-
-		return this.oChangePersistence.loadChangesMapForComponent({}, {appComponent: ""}).then(function(fnGetChangesMap) {
-
-			assert.ok(typeof fnGetChangesMap === "function", "a function is returned");
-			var mChanges = fnGetChangesMap();
-
-			assert.deepEqual(mChanges, mExpectedChanges);
-		});
-	});
-
-	QUnit.test("loadChangesMapForComponent adds legacy change only once in case the component prefix matches the app component ID", function(assert) {
-		var sAppComponentId = "appComponentId";
-
-		var oComponent = {
-			getId: function () {
-				return sAppComponentId;
-			},
-			createId: function (sSuffix) {
-				return sAppComponentId + "---" + sSuffix;
-			}
-		};
-
-		var oChange = new Change({
-			fileName:"change1",
-			fileType: "change",
-			layer: "USER",
-			selector: { id: oComponent.createId("controlId") },
-			dependentSelector: []
-		});
-
-		this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
-
-		assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 1, "thje change was written only once");
-		assert.equal(this.oChangePersistence._mChanges.mChanges[oComponent.createId("controlId")][0], oChange,
-			"the change was written for the selector ID");
-	});
-
-	QUnit.test("loadChangesMapForComponent adds legacy change twice in case the component prefix does not match the app component ID", function(assert) {
-		var sAppComponentId = "appComponentId";
-
-		var oComponent = {
-			getId: function () {
-				return sAppComponentId;
-			},
-			createId: function (sSuffix) {
-				return sAppComponentId + "---" + sSuffix;
-			}
-		};
-
-		var oChange = new Change({
-			fileName:"change1",
-			fileType: "change",
-			layer: "USER",
-			selector: { id: "anotherComponentId---controlId" },
-			dependentSelector: []
-		});
-
-		this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
-
-		assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 2, "the change was written twice");
-		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"].length, 1,
-			"a change was written for the original selector ID");
-		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"][0], oChange,
-			"the change was written for the original selector ID");
-		assert.equal(this.oChangePersistence._mChanges.mChanges["appComponentId---controlId"].length, 1,
-			"a change was written for the selector ID concatenated with the app component ID");
-		assert.equal(this.oChangePersistence._mChanges.mChanges["appComponentId---controlId"][0], oChange,
-			"the change was written for the app selector ID");
-	});
-
-	QUnit.test("loadChangesMapForComponent adds non legacy change only once in case the component prefix does not match the app component ID", function(assert) {
-		var sAppComponentId = "appComponentId";
-
-		var oComponent = {
-			getId: function () {
-				return sAppComponentId;
-			},
-			createId: function (sSuffix) {
-				return sAppComponentId + "---" + sSuffix;
-			}
-		};
-
-		var oChange = new Change({
-			fileName:"change1",
-			fileType: "change",
-			layer: "USER",
-			selector: { id: "anotherComponentId---controlId", idIsLocal: false },
-			dependentSelector: []
-		});
-
-		this.oChangePersistence._addChangeIntoMap(oComponent, oChange);
-
-		assert.equal(Object.keys(this.oChangePersistence._mChanges.mChanges).length, 1, "the change was written only once");
-		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"].length, 1,
-			"a change was written for the original selector ID");
-		assert.equal(this.oChangePersistence._mChanges.mChanges["anotherComponentId---controlId"][0], oChange,
-			"the change was written for the original selector ID");
 	});
 
 	QUnit.test("deleteChanges shall remove the given change from the map", function(assert) {
@@ -1219,91 +979,6 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
 			assert.strictEqual(aDirtyChanges.length, 0);
 		}.bind(this));
-	});
-
-	QUnit.module("Given map dependencies need to be updated", {
-		beforeEach: function (assert) {
-			this._oComponent = {
-				name: "MyComponent",
-				appVersion: "1.2.3"
-			};
-			this.oChangePersistence = new ChangePersistence(this._oComponent);
-			Utils.setMaxLayerParameter("USER");
-
-			var oChangeContent1 = {
-				fileName: "Gizorillus1",
-				layer: "VENDOR",
-				fileType: "change",
-				changeType: "addField",
-				selector: {"id": "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			var oChangeContent2 = {
-				fileName: "Gizorillus2",
-				layer: "VENDOR",
-				fileType: "change",
-				changeType: "addField",
-				selector: {"id": "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			var oChangeContent3 = {
-				fileName: "Gizorillus3",
-				layer: "VENDOR",
-				fileType: "change",
-				changeType: "addField",
-				selector: {"id": "control1"},
-				content: {},
-				originalLanguage: "DE"
-			};
-
-			this.oChange1 = new Change(oChangeContent1);
-			this.oChange2 = new Change(oChangeContent2);
-			this.oChange3 = new Change(oChangeContent3);
-			this.oChange1Key = this.oChange1.getKey();
-			this.oChange2Key = this.oChange2.getKey();
-			this.oChange3Key = this.oChange3.getKey();
-
-			this.mChanges = {
-				"mChanges": {
-					"control1": [this.oChange1, this.oChange2]
-				},
-				"mDependencies": {},
-				"mDependentChangesOnMe": {}
-			};
-			this.mChanges["mDependencies"][this.oChange1Key] = {"dependencies": [this.oChange2Key]};
-			this.mChanges["mDependentChangesOnMe"][this.oChange2Key] = [this.oChange1Key, this.oChange3Key];
-
-			this.oChangePersistence._mChanges = this.mChanges;
-		},
-		afterEach: function (assert) {
-			this.oChange1.destroy();
-			this.oChange2.destroy();
-			this.oChange3.destroy();
-			delete this.oChange1Key;
-			delete this.oChange2Key;
-			delete this.oChange3Key;
-			delete this.mChanges;
-			sandbox.restore();
-			controls.forEach(function(control){
-				control.destroy();
-			});
-		}
-	});
-
-
-	QUnit.test("when '_deleteChangeInMap' is called", function (assert) {
-
-		this.oChangePersistence._deleteChangeInMap(this.oChange1);
-		assert.equal(this.oChangePersistence._mChanges.mChanges["control1"].length, 1, "then one change deleted from map");
-		assert.strictEqual(this.oChangePersistence._mChanges.mChanges["control1"][0].getKey(), this.oChange2.getKey(), "then only second change present");
-		assert.deepEqual(this.oChangePersistence._mChanges.mDependencies, {}, "then dependencies are cleared for change1");
-		assert.equal(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key].length, 1, "then mDependentChangesOnMe for change2 only has one change");
-		assert.strictEqual(this.oChangePersistence._mChanges["mDependentChangesOnMe"][this.oChange2Key][0], this.oChange3Key, "then mDependentChangesOnMe for change2 still has change3");
-
 	});
 
 }(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.fl.registry.Settings));

@@ -1269,7 +1269,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the enabled state
 	 *
-	 * @param {boolean} bEnabled Whether the Slider should be ednabled, or not (disabled)
+	 * @param bEnabled Whether the Slider should be ednabled, or not (disabled)
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1310,7 +1310,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the totalUnits state
 	 *
-	 * @param {int} iTotalUnits Number of the units (tick-spaces)
+	 * @param iTotalUnits Number of the units (tick-spaces)
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1328,7 +1328,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Property setter for the value
 	 * A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param {float} fValue
+	 * @param fValue
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1371,7 +1371,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * fires the change event. The liveChange event must be fired too if the change event is fired.
 	 *
-	 * @param {boolean} bNoLiveChange fire no LiveChange event
+	 * @param bNoLiveChange fire no LiveChange event
 	 * @private
 	 */
 	Slider.prototype.handleFireChange = function(bNoLiveChange) {

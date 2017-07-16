@@ -2,13 +2,13 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
-		title="Welcome"
+		title="{i18n>welcome}"
 		enableScrolling="false">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
 		<content>
-			<Text text="Select an entity from the list..." textAlign="Center" width="100%"></Text>
+			<Text text="{i18n>selectEntity}" textAlign="Center" width="100%"></Text>
 		</content>
 	</Page>
 </mvc:View>

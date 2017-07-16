@@ -111,8 +111,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			 * The component displayed in this ComponentContainer.
 			 */
 			component : {type : "sap.ui.core.UIComponent", multiple : false}
-		},
-		designTime : true
+		}
 	}});
 
 
@@ -141,7 +140,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', './Control', './Component', './Core'
 			oComponent = oComponentContainer.getComponentInstance();
 			if (oComponent) {
 				oComponent.setContainer(oComponentContainer);
-				oComponentContainer.propagateProperties(true); //propagate all
+				oComponentContainer.propagateProperties();
 			}
 		}
 	}

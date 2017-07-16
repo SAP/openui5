@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/ComponentContainer', "sap/ui/core/Component"],
-	function(ComponentContainer /*, Component */) {
+sap.ui.define(['sap/ui/core/ComponentContainer', 'sap/uxap/ObjectPageConfigurationMode', "sap/ui/core/Component"],
+	function (ComponentContainer, ObjectPageConfigurationMode /*, Component */)  {
 		"use strict";
 
 		/**

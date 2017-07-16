@@ -112,7 +112,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			}
 			oRm.writeClasses();
 			oRm.write(">");
-			aSections = oControl._getSectionsToRender();
+			aSections = oControl.getAggregation("sections");
 			if (jQuery.isArray(aSections)) {
 				jQuery.each(aSections, function (iIndex, oSection) {
 					oRm.renderControl(oSection);
@@ -165,9 +165,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
-		 * @param {boolean} bRender - shows if the control should be rendered
-		 * @param {string} sId - the id of the div that should be rendered
-		 * @param {boolean} bRenderAlways - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
+		 * @param bRender - shows if the control should be rendered
+		 * @param sId - the id of the div that should be rendered
+		 * @param bRenderAlways - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
 		 */
 		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId, bApplyBelizePlusClass) {
 			oRm.write("<header ");

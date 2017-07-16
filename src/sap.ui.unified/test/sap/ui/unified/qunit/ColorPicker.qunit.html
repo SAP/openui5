@@ -543,31 +543,6 @@
 						"The passed string is not a valid HSL CSS Color string");
 				});
 
-				QUnit.test("_processRGBChanges - does not reset the HUE slide if pure white color is used", function (oAssert) {
-					// Arrange
-					var iHueValue = 30, // Arbitrary number different than 0
-						oCalculateHSVSpy,
-						oHueFieldSetterSpy;
-
-					this.oCP.setColorString("white");
-					this.oCP.placeAt("qunit-fixture");
-
-					applyChanges();
-
-					oCalculateHSVSpy = sinon.spy(this.oCP, "_calculateHSV");
-					oHueFieldSetterSpy = sinon.spy(this.oCP.oHueField, "setValue");
-
-					// Act
-					this.oCP.Color.h = iHueValue;
-					this.oCP._processRGBChanges();
-
-					// Assert
-					oAssert.strictEqual(this.oCP.Color.h, iHueValue,
-						"Internal HUE value should not be reset nor changed");
-					oAssert.strictEqual(oCalculateHSVSpy.callCount, 0, "_calculateHSV should not be called");
-					oAssert.strictEqual(oHueFieldSetterSpy.callCount, 0, "HUE field 'setValue' should not be called");
-				});
-
 				QUnit.module("sap.ui.unified._ColorPickerBox", {
 					beforeEach: function () {
 						this.oCPBox = new sap.ui.unified._ColorPickerBox();

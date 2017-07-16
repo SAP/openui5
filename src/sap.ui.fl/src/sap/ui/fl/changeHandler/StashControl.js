@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
-], function(
-	jQuery
-) {
+	'jquery.sap.global', './Base'
+], function(jQuery, Base) {
 	"use strict";
 
 	/**
@@ -16,48 +14,21 @@ sap.ui.define([
 	 * @version ${version}
 	 * @experimental Since 1.27.0
 	 */
-	var StashControl = {};
+	var StashControl = { };
 
 	/**
 	 * Stashes and hides a control.
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
-	 * @param {object} mPropertyBag	- map of properties
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
+	 * @param {object} mPropertyBag	- map of properties
 	 * @returns {boolean} true - if change could be applied
 	 * @public
 	 */
 	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getStashed(oControl)
-		});
-
+		mPropertyBag.modifier.setVisible(oControl, false);
 		mPropertyBag.modifier.setStashed(oControl, true);
-		return true;
-	};
-
-	/**
-	 * Reverts previously applied change
-	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
-	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
-	 * @param {object} mPropertyBag	- map of properties
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @returns {boolean} true - if change has been reverted
-	 * @public
-	 */
-	StashControl.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
-
-		if (mRevertData) {
-			mPropertyBag.modifier.setStashed(oControl, mRevertData.originalValue);
-			oChange.resetRevertData();
-		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
-			return false;
-		}
-
 		return true;
 	};
 

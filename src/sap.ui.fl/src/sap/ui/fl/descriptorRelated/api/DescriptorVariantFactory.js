@@ -45,9 +45,6 @@ sap.ui.define([
 			if ( typeof mParameters.isAppVariantRoot != undefined){
 				this._isAppVariantRoot = mParameters.isAppVariantRoot;
 			}
-			if ( typeof mParameters.referenceVersion != undefined){
-				this._referenceVersion = mParameters.referenceVersion;
-			}
 			this._mode = 'NEW';
 
 		} else if (mFileContent) {
@@ -212,9 +209,6 @@ sap.ui.define([
 				};
 				if ( typeof this._isAppVariantRoot != undefined ) {
 					mResult.isAppVariantRoot = this._isAppVariantRoot;
-				}
-				if ( typeof this._referenceVersion != undefined ) {
-					mResult.referenceVersion = this._referenceVersion;
 				}
 				return mResult;
 

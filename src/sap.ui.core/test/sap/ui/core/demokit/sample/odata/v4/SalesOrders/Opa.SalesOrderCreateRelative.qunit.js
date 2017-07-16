@@ -7,10 +7,12 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/TestUtils"
-], function (jQuery, Device, Opa5, opaTest, Press, Interactable, Properties, TestUtils) {
+], function (jQuery, Device, Opa5, opaTest, Press, BindingPath, Interactable, Properties,
+		TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -25,8 +27,6 @@ sap.ui.require([
 				name : "sap.ui.core.sample.odata.v4.SalesOrders"
 			}
 		});
-
-		sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
 		// Preparation: create a new sales order
 		When.onTheMainPage.firstSalesOrderIsVisible();
@@ -89,8 +89,8 @@ sap.ui.require([
 		Then.onTheMainPage.checkTableLength(0, "SalesOrderLineItems");
 
 		// delete the last created SalesOrder again
-		When.onAnyPage.cleanUp("SalesOrders");
-		Then.onAnyPage.checkLog(bRealOData ? [{
+		Then.onTheMainPage.cleanUp();
+		Then.onTheMainPage.checkLog(bRealOData ? [{
 			component : "sap.ui.model.odata.v4.ODataPropertyBinding",
 			level : jQuery.sap.log.Level.ERROR,
 			message : "Failed to update path /SalesOrderList/-1/SO_2_SOITEM/-1/Note"

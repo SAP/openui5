@@ -881,7 +881,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				bChangeDetected = false,
 				oCurrentData,
 				that = this,
-				aOldRefs;
+				oRef,
+				bRefChanged;
 
 		if (this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) {
 			return false;
@@ -890,10 +891,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		if (!bForceUpdate && !this.bNeedsUpdate) {
 
-			// check if expanded data has been changed
-			aOldRefs = this.aExpandRefs;
-			this.checkExpandedList();
-			if (!jQuery.sap.equal(aOldRefs, this.aExpandRefs)) {
+			// check if data in listbinding contains data loaded via expand
+			// if yes and there was a change detected we:
+			// - set the new keys
+			// - trigger clientside filter/sorter
+			oRef = this.oModel._getObject(this.sPath, this.oContext);
+			bRefChanged = Array.isArray(oRef) && !jQuery.sap.equal(oRef, this.aExpandRefs);
+			this.aExpandRefs = oRef;
+			if (bRefChanged) {
+				this.aAllKeys = oRef;
+				this.iLength = oRef.length;
+				this.bLengthFinal = true;
+				this.applyFilter();
+				this.applySort();
 				bChangeDetected = true;
 			} else if (mChangedEntities) {
 				jQuery.each(this.aKeys, function(i, sKey) {

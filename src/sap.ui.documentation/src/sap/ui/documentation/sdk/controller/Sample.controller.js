@@ -9,11 +9,13 @@ sap.ui.define([
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+		"sap/ui/fl/FakeLrepConnectorLocalStorage",
+		"sap/ui/fl/Utils",
 		"sap/m/Text",
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
 		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History) {
+	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, FakeLrepConnectorLocalStorage, Utils, Text, HTML, Device, History) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
@@ -30,13 +32,16 @@ sap.ui.define([
 					showNewTab: false
 				});
 
-				// Load runtime authoring asynchronously
-				Promise.all([
-					sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
-					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
-				]).then(this._loadRTA.bind(this));
+				this._initFakeLREP();
+				this._loadRuntimeAuthoring();
 
 				this.getView().setModel(this._viewModel);
+
+				var that = this;
+
+				ControlsInfo.listeners.push(function () {
+					that._loadSample();
+				});
 			},
 
 			/* =========================================================== */
@@ -46,15 +51,22 @@ sap.ui.define([
 			_onSampleMatched: function (event) {
 				this._sId = event.getParameter("arguments").id;
 
-				ControlsInfo.loadData().then(function (oData) {
-					this._loadSample(oData);
-				}.bind(this));
+				if (this._oRTA && jQuery.sap.byId("RTA-Toolbar")[0]) {
+					this._oRTA.stop(true);
+				}
+
+				this._loadSample();
 			},
 
-			_loadSample: function(oData) {
-				var oSample = oData.samples[this._sId],
-					oContent;
+			_loadSample: function() {
+				var oModelData = this._viewModel.getData();
 
+				if (!ControlsInfo.data) {
+					return;
+				}
+
+				// retrieve sample object
+				var oSample = ControlsInfo.data.samples[this._sId];
 				if (!oSample) {
 					return;
 				}
@@ -63,7 +75,6 @@ sap.ui.define([
 				var oPage = this.getView().byId("page");
 				var oHistory = History.getInstance();
 				var oPrevHash = oHistory.getPreviousHash();
-				var oModelData = this._viewModel.getData();
 				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;
@@ -72,15 +83,12 @@ sap.ui.define([
 				oPage.setTitle("Sample: " + oSample.name);
 
 				try {
-					oContent = this._createComponent();
+					var oContent = this._createComponent();
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
 					return;
 				}
-
-				// Store a reference to the currently opened sample on the application component
-				this.getOwnerComponent()._oCurrentOpenedSample = oContent ? oContent : undefined;
 
 				//get config
 				var oConfig = (this._oComp.getMetadata()) ? this._oComp.getMetadata().getConfig() : null;
@@ -167,7 +175,6 @@ sap.ui.define([
 										var bCompact = this.getRootView().hasStyleClass("sapUiSizeCompact");
 
 										oSampleFrame.sap.ui.getCore().applyTheme(this._oCore.getConfiguration().getTheme());
-										oSampleFrame.sap.ui.getCore().getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
 										oSampleFrame.jQuery('body')
 											.toggleClass("sapUiSizeCompact", bCompact)
 											.toggleClass("sapUiSizeCozy", bCompact);
@@ -179,9 +186,6 @@ sap.ui.define([
 
 						}.bind(this)
 					});
-				} else {
-					// If we already have the control just navigate to the new URL
-					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
 				}
 
 				return this._oHtmlControl;
@@ -222,49 +226,43 @@ sap.ui.define([
 			onToggleFullScreen : function (oEvt) {
 				ToggleFullScreenHandler.updateMode(oEvt, this.getView(), this);
 			},
-
 			_oRTA : null,
+			_initFakeLREP : function(){
+				// fake stable IDs
+				Utils.checkControlId = function() {
+					return true;
+				};
 
-			_loadRTA: function () {
-				sap.ui.require([
-					"sap/ui/fl/Utils",
-					"sap/ui/fl/FakeLrepConnectorLocalStorage"
-				], function (
-					Utils,
-					FakeLrepConnectorLocalStorage
-				) {
+				FakeLrepConnectorLocalStorage.enableFakeConnector({
+					"isKeyUser": true,
+					"isAtoAvailable": false,
+					"isProductiveSystem": true
+				});
+			},
 
-					// fake stable IDs
-					Utils.checkControlId = function() {
-						return true;
-					};
-
-					FakeLrepConnectorLocalStorage.enableFakeConnector({
-						"isProductiveSystem": true
-					});
-					this.getView().byId("toggleRTA").setVisible(true);
-
-					this.getRouter().attachRouteMatched(function () {
-						if (this._oRTA) {
-							this._oRTA.destroy();
-							this._oRTA = null;
-						}
-					}, this);
-				}.bind(this));
+			/*
+			* Loades runtime authoring asynchronously (will fail if the rta library is not loaded)
+			*/
+			_loadRuntimeAuthoring : function() {
+				try {
+					sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
+						this._oRTA = new RuntimeAuthoring();
+						this.getView().byId("toggleRTA").setVisible(true);
+					}.bind(this));
+				} catch (oException) {
+					jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
+				}
 			},
 
 			onToggleAdaptationMode : function (oEvt) {
-				sap.ui.require([
-					"sap/ui/rta/RuntimeAuthoring"
-				], function (
-					RuntimeAuthoring
-				) {
-					if (!this._oRTA) {
-						this._oRTA = new RuntimeAuthoring();
-						this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
-						this._oRTA.start();
-					}
-				}.bind(this));
+				var oRTA = this._oRTA;
+				if (oRTA) {
+					oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+					oRTA.start();
+					setTimeout(function() {
+						oRTA._oToolsMenu._oButtonPublish.setVisible(false);
+					}, 0);
+				}
 			}
 		});
 	}

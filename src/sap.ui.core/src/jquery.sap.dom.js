@@ -1038,7 +1038,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	/**
 	 * Adds the given ID reference to the aria-labelledby attribute.
 	 *
-	 * @param {string} sId The ID reference of an element
+	 * @param {string} sID The ID reference of an element
 	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#addAriaLabelledBy
@@ -1054,7 +1054,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	/**
 	 * Removes the given ID reference from the aria-labelledby attribute.
 	 *
-	 * @param {string} sId The ID reference of an element
+	 * @param {string} sID The ID reference of an element
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#removeAriaLabelledBy
 	 * @public
@@ -1069,7 +1069,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	/**
 	 * Adds the given ID reference to the aria-describedby attribute.
 	 *
-	 * @param {string} sId The ID reference of an element
+	 * @param {string} sID The ID reference of an element
 	 * @param {boolean} [bPrepend=false] whether prepend or not
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#addAriaDescribedBy
@@ -1085,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	/**
 	 * Removes the given ID reference from the aria-describedby attribute.
 	 *
-	 * @param {string} sId The ID reference of an element
+	 * @param {string} sID The ID reference of an element
 	 * @return {jQuery} <code>this</code> to allow method chaining.
 	 * @name jQuery#removeAriaDescribedBy
 	 * @public

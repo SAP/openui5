@@ -166,13 +166,13 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (sType == "selected") {
 			sIcon = oRating.getIconSelected();
-			sParam = "_sap_ui_commons_RatingIndicator_SymbolSelected";
+			sParam = "sapUiRatingSymbolSelected";
 		} else if (sType == "unselected") {
 			sIcon = oRating.getIconUnselected();
-			sParam = "_sap_ui_commons_RatingIndicator_SymbolUnselected";
+			sParam = "sapUiRatingSymbolUnselected";
 		} else {
 			sIcon = oRating.getIconHovered();
-			sParam = "_sap_ui_commons_RatingIndicator_SymbolHovered";
+			sParam = "sapUiRatingSymbolHovered";
 		}
 
 		if (!sIcon) {

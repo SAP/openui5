@@ -88,10 +88,6 @@
 			<semantic:CopyAction />
 		</semantic:copyAction>
 
-		<semantic:editAction>
-			<semantic:EditAction />
-		</semantic:editAction>
-
 		<semantic:favoriteAction>
 			<semantic:FavoriteAction />
 		</semantic:favoriteAction>

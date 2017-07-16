@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.Fiori20Adapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObjectObserver'],
-	function(jQuery,  Object, EventProvider, ManagedObjectObserver) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProvider'],
+	function(jQuery,  Object, EventProvider) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
@@ -423,36 +423,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 
 	Fiori20Adapter._attachModifyAggregation = function(oControl, sAggregationName, oAdaptOptions, oControlToRescan) {
 
+		if (!oControl._attachModifyAggregation || !jQuery.isFunction(oControl._attachModifyAggregation)) {
+			return;
+		}
+
 		var sKey = oControl.getId() + sAggregationName;
 
 		if (this._checkHasListener(sKey)) {
 			return;
 		}
 
-		var oOwnerViewId = this._getCurrentTopViewId(),
-			fnOnModifyAggregation = function(oChanges) {
-				var sMutation = oChanges.mutation,
-					oChild = oChanges.object;
+		var oOwnerViewId = this._getCurrentTopViewId();
+		var fnOnModifyAggregation = function(oEvent) {
+			var sType = oEvent.getParameter("type"),
+				oObject = oEvent.getParameter("object");
 
-				if ((sMutation === "add") || (sMutation === "insert")) {
+			if ((sType === "add") || (sType === "insert")) {
 
-					var bIsPostAdaptation = (this._getCurrentTopViewId() === undefined);
-					if (bIsPostAdaptation) {
-						aCurrentViewPath.push(oOwnerViewId);
-						this._doBFS([{ // scan [for adaptable content] the newly added subtree
-							oNode: oControlToRescan ? oControlToRescan : oChild,
-							oAdaptOptions: oAdaptOptions
-						}]);
-						aCurrentViewPath.pop();
-						this._fireViewChange(oOwnerViewId, oAdaptOptions);
-					}
+				var bIsPostAdaptation = (this._getCurrentTopViewId() === undefined);
+				if (bIsPostAdaptation) {
+					aCurrentViewPath.push(oOwnerViewId);
+					this._doBFS([{ // scan [for adaptable content] the newly added subtree
+						oNode: oControlToRescan ? oControlToRescan : oObject,
+						oAdaptOptions: oAdaptOptions
+					}]);
+					aCurrentViewPath.pop();
+					this._fireViewChange(oOwnerViewId, oAdaptOptions);
 				}
-			}.bind(this),
-			oObserver = new ManagedObjectObserver(fnOnModifyAggregation);
+			}
+		}.bind(this);
 
-		oObserver.observe(oControl, {
-			aggregations: [sAggregationName]
-		});
+		oControl._attachModifyAggregation(sAggregationName, oAdaptOptions, fnOnModifyAggregation);
 
 		this._setHasListener(sKey, fnOnModifyAggregation);
 	};

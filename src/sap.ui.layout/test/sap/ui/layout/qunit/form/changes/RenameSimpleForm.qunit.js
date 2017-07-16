@@ -128,8 +128,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			};
 
 			this.mPropertyBag = {
-				appComponent: this.oMockedComponent,
-				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
+				appComponent: this.oMockedComponent
 			};
 
 			var oChange = {
@@ -281,7 +280,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.equal(oChange.texts.formText.value, this.sNewValue, "the new value has been added to the change");
         assert.equal(oChange.content.elementSelector.id, "Label0", "stableRenamedElementId has been added to the change");
         assert.ok(oChange.content.elementSelector.idIsLocal, "the id is a local one");
-		assert.equal(oChangeWrapper.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel0.getId(), "elementSelector is part of dependent selector");
 	});
 
 	QUnit.test('when calling completeChangeContent for FormContainer', function (assert) {
@@ -308,7 +306,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.equal(oChange.texts.formText.value, this.sNewValue, "the new value has been added to the change");
 		assert.equal(oChange.content.elementSelector.id, "Title0", "stableRenamedElementId has been added to the change");
         assert.ok(oChange.content.elementSelector.idIsLocal, "the id is a local one");
-		assert.equal(oChangeWrapper.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oTitle0.getId(), "elementSelector is part of dependent selector");
 	});
 
 	QUnit.test('when calling applyChange with an empty string as value', function (assert) {

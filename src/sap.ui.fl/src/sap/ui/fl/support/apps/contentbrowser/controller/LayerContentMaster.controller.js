@@ -67,7 +67,7 @@ sap.ui.define([
 		 * Handler if content data was received;
 		 * Sets the received data to the current content model.
 		 * @param {Object} oPage
-		 * @param {Object} oData - data which is received from <code>LRepConnector</code> "getContent" promise
+		 * @param {Object} oData - data which is received from <code>LRepConnector<code> "getContent" promise
 		 * @private
 		 */
 		_onContentReceived: function (oPage, oData) {

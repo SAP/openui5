@@ -19,15 +19,9 @@ sap.ui.define([
 	return Opa5.extend("sap.ui.demo.iconexplorer.test.integration.pages.Common", {
 
 		iStartMyApp: function (oOptions) {
-            var sUrlParameters;
-            oOptions = oOptions || {};
+			oOptions = oOptions || {};
 
-            // Start the app with a minimal delay to make tests run fast but still async to discover basic timing issues
-            var iDelay = oOptions.delay || 10;
-
-            sUrlParameters = "serverDelay=" + iDelay;
-
-            this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
+			this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash));
 		},
 
 		iStartMyAppOnTheDetailsTab: function (oOptions) {

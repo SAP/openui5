@@ -74,14 +74,11 @@ sap.ui.define([
 
 		if (oSpecificChangeInfo.renamedElement && oSpecificChangeInfo.renamedElement.id) {
 			var oRenamedElement = sap.ui.getCore().byId(oSpecificChangeInfo.renamedElement.id);
-			var oStableRenamedElement;
 			if (oSpecificChangeInfo.changeType === "renameLabel") {
-				oStableRenamedElement = oRenamedElement.getLabel();
+				oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getLabel(), mPropertyBag.appComponent);
 			} else if (oSpecificChangeInfo.changeType === "renameTitle") {
-				oStableRenamedElement = oRenamedElement.getTitle();
+				oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getTitle(), mPropertyBag.appComponent);
 			}
-			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oStableRenamedElement, mPropertyBag.appComponent);
-			oChangeWrapper.addDependentControl(oStableRenamedElement, "elementSelector", mPropertyBag);
 		} else {
 			throw new Error("oSpecificChangeInfo.renamedElement attribute required");
 		}

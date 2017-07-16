@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		var oBinding = this.getBinding("rows");
 
 		if (sName === "rows" && oBinding != null) {
-			// Table._addBindingListener can not be used here, as the selectionChanged event will be added by an adapter applied in #getBinding.
+			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
 			oBinding.attachEvents({
 				selectionChanged: this._onSelectionChanged.bind(this)
 			});
@@ -507,13 +507,21 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.selectAll = function () {
-		if (!TableUtils.hasSelectAll(this)) {
+		//select all is only allowed when SelectionMode is "Multi" or "MultiToggle"
+		var oSelMode = this.getSelectionMode();
+		if (!this.getEnableSelectAll() || (oSelMode != "Multi" && oSelMode != "MultiToggle") || !this._getSelectableRowCount()) {
 			return this;
 		}
 
 		//The OData TBA exposes a selectAll function
 		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding.selectAll) {
+		if (oBinding.selectAll) {
+			var $SelAll = this.$("selall");
+			$SelAll.removeClass("sapUiTableSelAll");
+			if (this._getShowStandardTooltips()) {
+				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
+			}
+			this._getAccExtension().setSelectAllState(true);
 			oBinding.selectAll();
 		} else {
 			//otherwise fallback on the tables own function
@@ -679,31 +687,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 */
 	TreeTable.prototype.setGroupBy = function() {
 		jQuery.sap.log.warning("The groupBy association is not supported by the sap.ui.table.TreeTable control");
-		return this;
-	};
-
-	/**
-	 * Allows to hide the tree structure (tree icons, indentation) in tree mode (property <code>useGroupMode</code> is set to <code>false</code>).
-	 *
-	 * This option might be useful in some scenarios when actually a tree table must be used but under certain conditions the data
-	 * is not hierarchical, because it contains leafs only.
-	 *
-	 * <b>Note:</b> In flat mode the user of the table cannot expand or collapse certain nodes and the hierarchy is not
-	 * visible to the user. The caller of this function has to ensure to use this option only with non-hierarchical data.
-	 *
-	 * @param {boolean} bFlat If set to <code>true</code>, the flat mode is enabled
-	 *
-	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
-	 * @protected
-	 */
-	TreeTable.prototype.setUseFlatMode = function(bFlat) {
-		bFlat = !!bFlat;
-		if (bFlat != this._bFlatMode) {
-			this._bFlatMode = bFlat;
-			if (this.getDomRef() && TableUtils.Grouping.isTreeMode(this)) {
-				this.invalidate();
-			}
-		}
 		return this;
 	};
 

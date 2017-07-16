@@ -6,9 +6,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/model/odata/v4/lib/_SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Batch, _Helper, _Requestor, _SyncPromise, TestUtils) {
+], function (jQuery, _Batch, _Helper, _Requestor, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -87,101 +86,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		sODataVersion : "4.0",
-		mFinalHeaders : {
-			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-		},
-		mPredefinedPartHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
-		},
-		mPredefinedRequestHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-			"OData-MaxVersion" : "4.0",
-			"OData-Version" : "4.0",
-			"X-CSRF-Token" : "Fetch"
-		}
-	}, {
-		sODataVersion : "2.0",
-		mFinalHeaders : {
-			"Content-Type" : "application/json;charset=UTF-8"
-		},
-		mPredefinedPartHeaders : {
-			"Accept" : "application/json"
-		},
-		mPredefinedRequestHeaders : {
-			"Accept" : "application/json",
-			"MaxDataServiceVersion" : "2.0",
-			"DataServiceVersion" : "2.0",
-			"X-CSRF-Token" : "Fetch"
-		}
-	}].forEach(function (oFixture) {
-		var sTest = "factory function: check members for OData version = " + oFixture.sODataVersion;
-
-		QUnit.test(sTest, function (assert) {
-			var sBuildQueryResult = "foo",
-				fnFetchEntityContainer = function () {},
-				mHeaders = {},
-				fnOnCreateGroup = function () {},
-				mQueryParams = {},
-				oRequestor;
-
-			this.mock(_Helper).expects("buildQuery")
-				.withExactArgs(mQueryParams)
-				.returns(sBuildQueryResult);
-
-			// code under test
-			oRequestor = _Requestor.create(sServiceUrl, mHeaders, mQueryParams,
-				fnFetchEntityContainer, fnOnCreateGroup, oFixture.sODataVersion);
-
-			assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
-			assert.strictEqual(oRequestor.mHeaders, mHeaders, "parameter mHeaders");
-			assert.strictEqual(oRequestor.sQueryParams, sBuildQueryResult,
-				"parameter mQueryParams");
-			assert.strictEqual(oRequestor.fnFetchEntityContainer, fnFetchEntityContainer);
-			assert.strictEqual(oRequestor.fnOnCreateGroup, fnOnCreateGroup,
-				"parameter fnOnCreateGroup");
-			// OData version specific header maps
-			assert.deepEqual(oRequestor.mFinalHeaders, oFixture.mFinalHeaders, "mFinalHeaders");
-			assert.deepEqual(oRequestor.mPredefinedPartHeaders, oFixture.mPredefinedPartHeaders,
-				"mPredefinedPartHeaders");
-			assert.deepEqual(oRequestor.mPredefinedRequestHeaders,
-				oFixture.mPredefinedRequestHeaders, "mPredefinedRequestHeaders");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("factory function: check members; default values", function (assert) {
-		var mFinalHeaders = {
-				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-			},
-			mPredefinedPartHeaders = {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
-			},
-			mPredefinedRequestHeaders = {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-				"OData-MaxVersion" : "4.0",
-				"OData-Version" : "4.0",
-				"X-CSRF-Token" : "Fetch"
-			},
-			oRequestor;
-
-		// code under test
-		oRequestor = _Requestor.create(sServiceUrl);
-
-		assert.strictEqual(oRequestor.getServiceUrl(), sServiceUrl, "parameter sServiceUrl");
-		assert.deepEqual(oRequestor.mHeaders, {}, "parameter mHeaders");
-		assert.strictEqual(oRequestor.sQueryParams, "", "parameter mQueryParams");
-		assert.strictEqual(oRequestor.fnOnCreateGroup, undefined, "parameter fnOnCreateGroup");
-		// OData version specific header maps
-		assert.deepEqual(oRequestor.mFinalHeaders, mFinalHeaders, "mFinalHeaders");
-		assert.deepEqual(oRequestor.mPredefinedPartHeaders, mPredefinedPartHeaders,
-			"mPredefinedPartHeaders");
-		assert.deepEqual(oRequestor.mPredefinedRequestHeaders, mPredefinedRequestHeaders,
-			"mPredefinedRequestHeaders");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("request", function (assert) {
 		var oChangedPayload = {"foo" : 42},
 			oPayload = {},
@@ -211,200 +115,6 @@ sap.ui.require([
 		return oPromise.then(function (result) {
 				assert.strictEqual(result, oResult);
 			});
-	});
-
-	//*********************************************************************************************
-	[{
-		sODataVersion : "2.0",
-		mExpectedRequestHeaders : {
-			"Accept" : "application/json",
-			"Content-Type" : "application/json;charset=UTF-8",
-			"DataServiceVersion" : "2.0",
-			"MaxDataServiceVersion" : "2.0",
-			"X-CSRF-Token" : "Fetch"
-		}
-	}, {
-		sODataVersion : "4.0",
-		mExpectedRequestHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
-			"OData-MaxVersion" : "4.0",
-			"OData-Version" : "4.0",
-			"X-CSRF-Token" : "Fetch"
-		}
-	}].forEach(function (oFixture) {
-		var sTitle = "request: OData version specific headers for $direct; sODataVersion = "
-				+ oFixture.sODataVersion;
-
-		QUnit.test(sTitle, function (assert) {
-			var oConvertedResponse = {},
-				oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, oFixture.sODataVersion),
-				oResponsePayload = {};
-
-			this.mock(jQuery).expects("ajax")
-				.withExactArgs(sServiceUrl + "Employees", {
-					data : undefined,
-					headers : sinon.match(oFixture.mExpectedRequestHeaders),
-					method : "GET"
-				}).returns(createMock(assert, oResponsePayload, "OK"));
-			this.mock(oRequestor).expects("doFetchV4Response")
-				.withExactArgs(oResponsePayload)
-				.returns(_SyncPromise.resolve(oConvertedResponse));
-
-			// code under test
-			return oRequestor.request("GET", "Employees", "$direct")
-				.then(function (result) {
-					assert.strictEqual(result, oConvertedResponse);
-				});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("request: fail to convert payload, $direct", function (assert) {
-		var oError = {},
-			oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-				undefined, "2.0"),
-			oResponsePayload = {};
-
-		this.mock(jQuery).expects("ajax")
-			.withArgs(sServiceUrl + "Employees")
-			.returns(createMock(assert, oResponsePayload, "OK"));
-		this.mock(oRequestor).expects("doFetchV4Response")
-			.withExactArgs(oResponsePayload)
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
-
-		// code under test
-		return oRequestor.request("GET", "Employees", "$direct")
-			.then(function (result) {
-				assert.notOk("Unexpected success");
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
-	});
-
-	//*********************************************************************************************
-	[{
-		sODataVersion : "2.0",
-		aExpectedRequestHeaders : ["DataServiceVersion", "MaxDataServiceVersion"]
-	}, {
-		sODataVersion : "4.0",
-		aExpectedRequestHeaders : ["OData-MaxVersion", "OData-Version"]
-	}].forEach(function (oFixture) {
-		var sTitle = "request: OData version specific headers for $batch; sODataVersion="
-				+ oFixture.sODataVersion;
-
-		QUnit.test(sTitle, function (assert) {
-			var oRequestor = _Requestor.create(sServiceUrl, undefined, undefined, undefined,
-					undefined, oFixture.sODataVersion),
-				oAjaxResponse = {},
-				oDeserializeBatchResponse = {};
-
-			this.mock(jQuery).expects("ajax")
-				.withExactArgs(sServiceUrl + "$batch", {
-					data : sinon.match.string,
-					headers : sinon.match(function (mAjaxHeaders) {
-						oFixture.aExpectedRequestHeaders.forEach(function (sHeaderKey) {
-							assert.strictEqual(mAjaxHeaders[sHeaderKey], oFixture.sODataVersion,
-								"expected header: " + sHeaderKey);
-						});
-						return true;
-					}),
-					method : "POST"
-				}).returns(createMock(assert, oAjaxResponse, "OK", undefined, "application/json"));
-			this.mock(_Batch).expects("deserializeBatchResponse")
-				.withExactArgs("application/json", oAjaxResponse)
-				.returns(oDeserializeBatchResponse);
-			this.mock(oRequestor).expects("doFetchV4Response").never();
-
-			// code under test
-			return oRequestor
-				.request("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [])
-				.then(function (result) {
-					assert.strictEqual(result, oDeserializeBatchResponse);
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	[{
-		sODataVersion : "2.0",
-		mExpectedRequestHeaders : {
-			"Accept" : "application/json",
-			"Content-Type" : "application/json;charset=UTF-8"
-		},
-		mProductsResponse : {d : {results : [{foo : "bar"}]}}
-	}, {
-		sODataVersion : "4.0",
-		mExpectedRequestHeaders : {
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-		},
-		mProductsResponse : {value : [{foo : "bar"}]}
-	}].forEach(function (oFixture) {
-		var sTitle = "submitBatch(...): OData version specific headers; sODataVersion="
-				+ oFixture.sODataVersion;
-
-		QUnit.test(sTitle, function (assert) {
-			var oConvertedPayload = {},
-				aExpectedRequests = [{
-					method : "GET",
-					url : "Products",
-					headers : oFixture.mExpectedRequestHeaders,
-					body : undefined,
-					$cancel : undefined,
-					$promise : sinon.match.defined,
-					$reject : sinon.match.func,
-					$resolve : sinon.match.func,
-					$submit : undefined
-				}],
-				oGetProductsPromise,
-				oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					undefined, oFixture.sODataVersion),
-				oRequestorMock = this.mock(oRequestor);
-
-			oRequestorMock.expects("doFetchV4Response")
-				.withExactArgs(oFixture.mProductsResponse) // not same; it is stringified and parsed
-				.returns(_SyncPromise.resolve(Promise.resolve(oConvertedPayload)));
-			oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
-				.then(function (oResponse) {
-					assert.strictEqual(oResponse, oConvertedPayload);
-				});
-
-			oRequestorMock.expects("request")
-				.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"},
-					aExpectedRequests)
-				.returns(Promise.resolve([
-					{responseText : JSON.stringify(oFixture.mProductsResponse)}
-				]));
-
-			return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("submitBatch: fail to convert payload", function (assert) {
-		var oError = {},
-			oGetProductsPromise,
-			oRequestor = _Requestor.create("/Service/", undefined, undefined, undefined,
-					undefined, "2.0"),
-			oRequestorMock = this.mock(oRequestor),
-			oResponse = {d : {foo : "bar"}};
-
-		oRequestorMock.expects("doFetchV4Response")
-			.withExactArgs(oResponse)
-			.returns(_SyncPromise.resolve(Promise.reject(oError)));
-		oGetProductsPromise = oRequestor.request("GET", "Products", "group1")
-			.then(function () {
-				assert.notOk("Unexpected success");
-			}, function (oError0) {
-				assert.strictEqual(oError0, oError);
-			});
-		oRequestorMock.expects("request")
-			.withArgs("POST", "$batch")
-			.returns(Promise.resolve([{ responseText : JSON.stringify(oResponse)}]));
-
-		return Promise.all([oGetProductsPromise, oRequestor.submitBatch("group1")]);
 	});
 
 	//*********************************************************************************************
@@ -476,7 +186,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(), fnOnCreateGroup", function (assert) {
 		var fnOnCreateGroup = sinon.spy(),
-			oRequestor = _Requestor.create("/", {}, {}, undefined, fnOnCreateGroup);
+			oRequestor = _Requestor.create("/", {}, {}, fnOnCreateGroup);
 
 		oRequestor.request("GET", "SalesOrders", "groupId");
 		oRequestor.request("GET", "SalesOrders", "groupId");
@@ -689,8 +399,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("$batch repeated", function (assert) {
 		var oBatchRequest = {
-				body : "payload",
-				headers : {
+				body: "payload",
+				headers: {
 					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 					"MIME-Version" : "1.0"
 				}
@@ -740,13 +450,13 @@ sap.ui.require([
 
 			delete oSettings.headers["X-CSRF-Token"];
 			assert.deepEqual(oSettings.headers, {
-				"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+				"Accept": "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 				"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 				"MIME-Version" : "1.0",
-				"OData-MaxVersion" : "4.0",
-				"OData-Version" : "4.0",
-				"_foo" : "_bar",
-				"foo" : "bar"
+				"OData-MaxVersion": "4.0",
+				"OData-Version": "4.0",
+				"_foo": "_bar",
+				"foo": "bar"
 			});
 
 			return jqXHR;
@@ -783,57 +493,57 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): success", function (assert) {
 		var aExpectedRequests = [[{
-				method : "POST",
-				url : "Customers",
-				headers : {
+				method: "POST",
+				url: "Customers",
+				headers: {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "baz"
 				},
-				body : {"ID" : 1},
-				$cancel : undefined,
-				$promise : sinon.match.defined,
-				$reject : sinon.match.func,
-				$resolve : sinon.match.func,
-				$submit : undefined
+				body: {"ID" : 1},
+				$cancel: undefined,
+				$promise: sinon.match.defined,
+				$reject: sinon.match.func,
+				$resolve: sinon.match.func,
+				$submit: undefined
 			}, {
-				method : "DELETE",
-				url : "SalesOrders('42')",
-				headers : {
+				method: "DELETE",
+				url: "SalesOrders('42')",
+				headers: {
 					"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 				},
 				body : undefined,
-				$cancel : undefined,
-				$promise : sinon.match.defined,
-				$reject : sinon.match.func,
-				$resolve : sinon.match.func,
-				$submit : undefined
+				$cancel: undefined,
+				$promise: sinon.match.defined,
+				$reject: sinon.match.func,
+				$resolve: sinon.match.func,
+				$submit: undefined
 			}], {
-				method : "GET",
-				url : "Products",
-				headers : {
+				method: "GET",
+				url: "Products",
+				headers: {
 					"Accept" : "application/json;odata.metadata=full",
 					"Accept-Language" : "ab-CD",
 					"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true",
 					"Foo" : "bar"
 				},
-				body : undefined,
-				$cancel : undefined,
-				$promise : sinon.match.defined,
-				$reject : sinon.match.func,
-				$resolve : sinon.match.func,
-				$submit : undefined
+				body: undefined,
+				$cancel: undefined,
+				$promise: sinon.match.defined,
+				$reject: sinon.match.func,
+				$resolve: sinon.match.func,
+				$submit: undefined
 			}],
 			aPromises = [],
 			aResults = [{"foo1" : "bar1"}, {"foo2" : "bar2"}, undefined],
 			aBatchResults = [[
-					{responseText : JSON.stringify(aResults[1])},
-					{responseText : ""}
+					{responseText: JSON.stringify(aResults[1])},
+					{responseText: ""}
 				],
-				{responseText : JSON.stringify(aResults[0])}
+				{responseText: JSON.stringify(aResults[0])}
 			],
 			oRequestor = _Requestor.create("/Service/", {"Accept-Language" : "ab-CD"});
 
@@ -872,8 +582,8 @@ sap.ui.require([
 
 		assert.strictEqual(oRequestor.mBatchQueue.group1, undefined);
 		TestUtils.deepContains(oRequestor.mBatchQueue.group2, [[/*change set*/], {
-			method : "GET",
-			url : "SalesOrders"
+			method: "GET",
+			url: "SalesOrders"
 		}]);
 
 		return Promise.all(aPromises);
@@ -887,9 +597,9 @@ sap.ui.require([
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				// Note: no empty change set!
-				sinon.match({method : "GET", url : "Products"})
+				sinon.match({method: "GET", url: "Products"})
 			]).returns(Promise.resolve([
-				{responseText : "{}"}
+				{responseText: "{}"}
 			]));
 
 		// code under test
@@ -931,10 +641,10 @@ sap.ui.require([
 		// then two different properties therein: must be merged
 		aPromises.push(oRequestor
 			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
-				{Address : {City : "Walldorf"}}, fnSubmit2));
+				{Address : {City: "Walldorf"}}, fnSubmit2));
 		aPromises.push(oRequestor
 			.request("PATCH", "BusinessPartners('42')", "groupId", {"If-Match" : ""},
-				{Address : {PostalCode : "69190"}}, fnSubmit3));
+				{Address : {PostalCode: "69190"}}, fnSubmit3));
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				[
@@ -1046,17 +756,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("submitBatch(...): failure followed by another request", function (assert) {
-		var oError = {error : {message : "404 Not found"}},
+		var oError = {error: {message: "404 Not found"}},
 			aBatchResult = [{
 				headers : {},
 				responseText : "{}",
 				status : 200,
 				statusText : "ok"
 			}, {
-				getResponseHeader : function () {
+				getResponseHeader: function () {
 					return "application/json";
 				},
-				headers : {"Content-Type" :"application/json"},
+				headers : {"Content-Type":"application/json"},
 				responseText : JSON.stringify(oError),
 				status : 404,
 				statusText : "Not found"
@@ -1111,7 +821,7 @@ sap.ui.require([
 				getResponseHeader : function () {
 					return "application/json";
 				},
-				headers : {"Content-Type" :"application/json"},
+				headers : {"Content-Type":"application/json"},
 				responseText : JSON.stringify(oError),
 				status : 400,
 				statusText : "Bad Request"
@@ -1159,36 +869,36 @@ sap.ui.require([
 	QUnit.test("request(...): batch group id", function (assert) {
 		var oRequestor = _Requestor.create();
 
-		oRequestor.request("PATCH", "EntitySet1", "group", {"foo" : "bar"}, {"a" : "b"});
-		oRequestor.request("PATCH", "EntitySet2", "group", {"bar" : "baz"}, {"c" : "d"});
-		oRequestor.request("PATCH", "EntitySet3", "$auto", {"header" : "value"}, {"e" : "f"});
+		oRequestor.request("PATCH", "EntitySet1", "group", {"foo": "bar"}, {"a": "b"});
+		oRequestor.request("PATCH", "EntitySet2", "group", {"bar": "baz"}, {"c": "d"});
+		oRequestor.request("PATCH", "EntitySet3", "$auto", {"header": "value"}, {"e": "f"});
 
 		TestUtils.deepContains(oRequestor.mBatchQueue, {
 			"group" : [
 				[/*change set!*/{
-					method : "PATCH",
-					url : "EntitySet1",
-					headers : {
-						"foo" : "bar"
+					method: "PATCH",
+					url: "EntitySet1",
+					headers: {
+						"foo": "bar"
 					},
-					body : {"a" : "b"}
+					body: {"a": "b"}
 				}, {
-					method : "PATCH",
-					url : "EntitySet2",
-					headers : {
-						"bar" : "baz"
+					method: "PATCH",
+					url: "EntitySet2",
+					headers: {
+						"bar": "baz"
 					},
-					body : {"c" : "d"}
+					body: {"c": "d"}
 				}]
 			],
-			"$auto" : [
+			"$auto": [
 				[/*change set!*/{
-					method : "PATCH",
-					url : "EntitySet3",
-					headers : {
-						"header" : "value"
+					method: "PATCH",
+					url: "EntitySet3",
+					headers: {
+						"header": "value"
 					},
-					body : {"e" : "f"}
+					body: {"e": "f"}
 				}]
 			]
 		});
@@ -1197,8 +907,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("request(...): call with $batch url", function (assert) {
 		var oBatchRequest = {
-				body : "abcd",
-				headers : {
+				body: "abcd",
+				headers: {
 					"Content-Type" : "multipart/mixed; boundary=batch_id-0123456789012-345",
 					"MIME-Version" : "1.0"
 				}
@@ -1339,7 +1049,7 @@ sap.ui.require([
 					undefined, fnCancel2)
 				.then(unexpected, rejected.bind(null, 2)),
 			oRequestor.request("GET", "Employees", "groupId"),
-			oRequestor.request("POST", "ActionImport('42')", "groupId", {}, {foo : "bar"}),
+			oRequestor.request("POST", "ActionImport('42')", "groupId", {}, {foo: "bar"}),
 			oRequestor.request("POST", "LeaveRequests('42')/name.space.Submit", "groupId", {},
 				oPostData, undefined, fnCancelPost).then(unexpected, function (oError) {
 					assert.strictEqual(oError.canceled, true);
@@ -1354,7 +1064,7 @@ sap.ui.require([
 		// code under test
 		assert.strictEqual(oRequestor.hasPendingChanges(), true);
 
-		sinon.spy(oRequestor, "cancelChangesByFilter");
+		sinon.spy(oRequestor, "cancelChangeRequests");
 
 		// code under test
 		oRequestor.cancelChanges("groupId");
@@ -1364,7 +1074,7 @@ sap.ui.require([
 		sinon.assert.calledOnce(fnCancel2);
 		sinon.assert.calledOnce(fnCancel3);
 		sinon.assert.calledOnce(fnCancelPost);
-		sinon.assert.calledWithExactly(oRequestor.cancelChangesByFilter, sinon.match.func,
+		sinon.assert.calledWithExactly(oRequestor.cancelChangeRequests, sinon.match.func,
 			"groupId");
 
 		// code under test
@@ -1482,7 +1192,7 @@ sap.ui.require([
 				sinon.match({
 					method : "PATCH",
 					url : "Products('0')",
-					body : {Name : "bar"}
+					body: {Name : "bar"}
 				}),
 				sinon.match({
 					method : "GET",
@@ -1528,7 +1238,7 @@ sap.ui.require([
 			oRequestor = _Requestor.create("/Service/"),
 			oTestPromise;
 
-		sinon.spy(oRequestor, "cancelChangesByFilter");
+		sinon.spy(oRequestor, "cancelChangeRequests");
 		oTestPromise = Promise.all([
 			oRequestor.request("POST", "Products", "groupId", {}, oBody, undefined, fnCancel1)
 				.then(function () {
@@ -1543,14 +1253,14 @@ sap.ui.require([
 		// code under test
 		oRequestor.removePost("groupId", oBody);
 
-		assert.ok(oRequestor.cancelChangesByFilter.calledWithExactly(sinon.match.func, "groupId"));
+		assert.ok(oRequestor.cancelChangeRequests.calledWithExactly(sinon.match.func, "groupId"));
 
 		this.mock(oRequestor).expects("request")
 			.withExactArgs("POST", "$batch", undefined, {"Accept" : "multipart/mixed"}, [
 				sinon.match({
 					method : "POST",
 					url : "Products",
-					body : {Name : "bar"}
+					body: {Name : "bar"}
 				})
 			]).returns(Promise.resolve([{}]));
 
@@ -1635,7 +1345,7 @@ sap.ui.require([
 
 		assert.throws(function () {
 			// code under test
-			oRequestor.relocate("$parked.$auto", {foo : "bar"}, "$auto");
+			oRequestor.relocate("$parked.$auto", {foo: "bar"}, "$auto");
 		}, new Error("Request not found in group '$parked.$auto'"));
 
 		oRequestorMock.expects("request")
@@ -1727,192 +1437,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doFetchV4Response (V4)", function (assert) {
-		var oPayload = {},
-			oRequestor = _Requestor.create("/");
-
-		// code under test
-		return oRequestor.doFetchV4Response(oPayload).then(function (oConvertedPayload) {
-			assert.strictEqual(oConvertedPayload, oPayload);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("convertQueryOptions", function (assert) {
-		var oExpand = {},
-			oRequestor = _Requestor.create("/");
-
-		this.mock(oRequestor).expects("convertExpand")
-			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
-
-		assert.deepEqual(oRequestor.convertQueryOptions({
-			foo : "bar",
-			$apply : "filter(Price gt 100)",
-			$count : "true",
-			$expand : oExpand,
-			$filter : "BuyerName eq 'SAP'",
-			$foo : "bar", // to show that any system query option is accepted
-			$levels : "5",
-			$orderby : "GrossAmount asc",
-			$search : "EUR",
-			$select : ["select1", "select2"]
-		}), {
-			foo : "bar",
-			$apply : "filter(Price gt 100)",
-			$count : "true",
-			$expand : "expand",
-			$filter : "BuyerName eq 'SAP'",
-			$foo : "bar",
-			$levels : "5",
-			$orderby : "GrossAmount asc",
-			$search : "EUR",
-			$select : "select1,select2"
-		});
-
-		assert.deepEqual(oRequestor.convertQueryOptions({
-			foo : "bar",
-			"sap-client" : "111",
-			$apply : "filter(Price gt 100)",
-			$count : true,
-			$expand : oExpand,
-			$filter : "BuyerName eq 'SAP'",
-			$orderby : "GrossAmount asc",
-			$search : "EUR",
-			$select : ["select1", "select2"]
-		}, /*bDropSystemQueryOptions*/true), {
-			foo : "bar",
-			"sap-client" : "111"
-		});
-
-		assert.deepEqual(oRequestor.convertQueryOptions({
-			$select : "singleSelect"
-		}), {
-			$select : "singleSelect"
-		});
-
-		assert.strictEqual(oRequestor.convertQueryOptions(undefined), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("convertExpandOptions", function (assert) {
-		var oExpand = {},
-			oRequestor = _Requestor.create("/~/");
-
-		this.mock(oRequestor).expects("convertExpand")
-			.withExactArgs(sinon.match.same(oExpand), undefined).returns("expand");
-
-		assert.strictEqual(oRequestor.convertExpandOptions("foo", {
-			$expand : oExpand,
-			$select : ["select1", "select2"]
-		}), "foo($expand=expand;$select=select1,select2)");
-
-		assert.strictEqual(oRequestor.convertExpandOptions("foo", {}), "foo");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("convertExpand", function (assert) {
-		var oOptions = {},
-			oRequestor = _Requestor.create("/~/");
-
-		["Address", null].forEach(function (vValue) {
-			assert.throws(function () {
-				oRequestor.convertExpand(vValue);
-			}, new Error("$expand must be a valid object"));
-		});
-
-		this.mock(oRequestor).expects("convertExpandOptions")
-			.withExactArgs("baz", sinon.match.same(oOptions), false).returns("baz(options)");
-
-		assert.strictEqual(oRequestor.convertExpand({
-			foo : true,
-			bar : null,
-			baz : oOptions
-		}, false), "foo,bar,baz(options)");
-	});
-
-	//*********************************************************************************************
-	[true, false].forEach(function (bSortExpandSelect, i) {
-		QUnit.test("buildQueryString, " + i, function (assert) {
-			var oConvertedQueryParams = {},
-				oQueryParams = {},
-				oRequestor = _Requestor.create("/~/"),
-				oRequestorMock = this.mock(oRequestor);
-
-			oRequestorMock.expects("convertQueryOptions")
-				.withExactArgs(undefined, undefined, undefined).returns(undefined);
-
-			assert.strictEqual(oRequestor.buildQueryString(), "");
-
-			oRequestorMock.expects("convertQueryOptions")
-				.withExactArgs(sinon.match.same(oQueryParams), true, bSortExpandSelect)
-				.returns(oConvertedQueryParams);
-			this.mock(_Helper).expects("buildQuery")
-				.withExactArgs(sinon.match.same(oConvertedQueryParams)).returns("?query");
-
-			assert.strictEqual(oRequestor.buildQueryString(oQueryParams, true, bSortExpandSelect),
-				"?query");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildQueryString examples", function (assert) {
-		[{
-			o : {foo : ["bar", "€"], $select : "IDÖ"},
-			s : "foo=bar&foo=%E2%82%AC&$select=ID%C3%96"
-		}, {
-			o : {$select : ["ID"]},
-			s : "$select=ID"
-		}, {
-			o : {$select : ["Name", "ID"]},
-			s : "$select=ID,Name"
-		}, {
-			o : {$expand : {SO_2_SOITEM : true, SO_2_BP : true}},
-			s : "$expand=SO_2_BP,SO_2_SOITEM"
-		}, {
-			o : {$expand : {SO_2_BP : true, SO_2_SOITEM : {$select : "CurrencyCode"}}},
-			s : "$expand=SO_2_BP,SO_2_SOITEM($select=CurrencyCode)"
-		}, {
-			o : {
-				$expand : {
-					SO_2_BP : true,
-					SO_2_SOITEM : {
-						$select : ["Note", "ItemPosition"]
-					}
-				}
-			},
-			s : "$expand=SO_2_BP,SO_2_SOITEM($select=ItemPosition,Note)"
-		}, {
-			o : {
-				$expand : {
-					SO_2_SOITEM : {
-						$expand : {
-							SOITEM_2_SO : true,
-							SOITEM_2_PRODUCT : {
-								$expand : {
-									PRODUCT_2_BP : true
-								},
-								$filter : "CurrencyCode eq 'EUR'",
-								$select : "CurrencyCode"
-							}
-						}
-					},
-					SO_2_BP : true
-				},
-				"sap-client" : "003"
-			},
-			s : "$expand=SO_2_BP,SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP;"
-			+ "$filter=CurrencyCode%20eq%20'EUR';$select=CurrencyCode),SOITEM_2_SO)"
-			+ "&sap-client=003"
-		}].forEach(function (oFixture) {
-			var oRequestor = _Requestor.create("/~/");
-
-			assert.strictEqual(
-				oRequestor.buildQueryString(oFixture.o, undefined, true), "?" + oFixture.s,
-				oFixture.s);
-		});
-	});
-
-	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl)),
@@ -1920,13 +1444,13 @@ sap.ui.require([
 
 			function assertResult(oPayload) {
 				assert.deepEqual(oPayload, {
-					"@odata.context" : "$metadata#TEAMS/$entity",
-					"Team_Id" : "TEAM_01",
-					Name : "Business Suite",
-					MEMBER_COUNT : 2,
-					MANAGER_ID : "3",
-					BudgetCurrency : "USD",
-					Budget : "555.55"
+					"@odata.context": "$metadata#TEAMS/$entity",
+					"Team_Id": "TEAM_01",
+					Name: "Business Suite",
+					MEMBER_COUNT: 2,
+					MANAGER_ID: "3",
+					BudgetCurrency: "USD",
+					Budget: "555.55"
 				});
 			}
 
@@ -1946,13 +1470,13 @@ sap.ui.require([
 
 			oRequestor.request("GET", "TEAMS('TEAM_01')", "group").then(function (oResult) {
 				assert.deepEqual(oResult, {
-					"@odata.context" : "$metadata#TEAMS/$entity",
-					"Team_Id" : "TEAM_01",
-					Name : "Business Suite",
-					MEMBER_COUNT : 2,
-					MANAGER_ID : "3",
-					BudgetCurrency : "USD",
-					Budget : "555.55"
+					"@odata.context": "$metadata#TEAMS/$entity",
+					"Team_Id": "TEAM_01",
+					Name: "Business Suite",
+					MEMBER_COUNT: 2,
+					MANAGER_ID: "3",
+					BudgetCurrency: "USD",
+					Budget: "555.55"
 				});
 			}, function (oError) {
 				assert.ok(false, oError);
@@ -2022,4 +1546,3 @@ sap.ui.require([
 });
 // TODO: continue-on-error? -> flag on model
 // TODO: cancelChanges: what about existing GET requests in deferred queue (delete or not)?
-// TODO: tests for doConvertSystemQueryOptions missing. Only tested indirectly

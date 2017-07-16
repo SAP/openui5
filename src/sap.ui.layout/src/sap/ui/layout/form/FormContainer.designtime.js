@@ -33,11 +33,11 @@ sap.ui.define([],
 			formElements : {
 				domRef: function (oFormContainer) {
 					var oDomRef = oFormContainer.getDomRef();
-					var oHeader = oFormContainer.getTitle() || oFormContainer.getToolbar();
-					if (!oDomRef && (oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) && oHeader instanceof sap.ui.core.Element) {
-						return oHeader.getDomRef();
-					} else if (typeof oHeader === "string") {
-						return jQuery(oDomRef).find(".sapUiFormTitle").get(0);
+					if (!oDomRef && oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) {
+						var oHeader = oFormContainer.getTitle() || oFormContainer.getToolbar();
+						if (oHeader) {
+							return oHeader.getDomRef();
+						}
 					} else {
 						return oDomRef;
 					}

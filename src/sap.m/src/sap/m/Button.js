@@ -8,32 +8,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>Button</code>.
+	 * Constructor for a new Button.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Enables users to trigger actions.
-	 *
-	 * <h3>Overview</h3>
-	 *
-	 * The user triggers an action by clicking or tapping the <code>Button</code> or by pressing
-	 * certain keyboard keys, such as Enter.
-	 *
-	 * <h3>Usage</h3>
-	 *
-	 * For the <code>Button</code> UI, you can define text, icon, or both. You can also specify
-	 * whether the text or the icon is displayed first.
-	 *
-	 * You can choose from a set of predefined {@link sap.m.ButtonType ButtonTypes} that offer
-	 * different styling to correspond to the triggered action.
-	 *
-	 * You can set the <code>Button</code> as enabled or disabled. An enabled <code>Button</code> can be
-	 * pressed by clicking or tapping it and it changes its style to provide visual feedback to the user
-	 * that it is pressed or hovered over with the mouse cursor. A disabled <code>Button</code> appears
-	 * inactive and cannot be pressed.
-	 *
+	 * Enables users to trigger actions. For the button UI, you can define some text or an icon, or both.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 * @mixes sap.ui.core.ContextMenuSupport
@@ -53,34 +34,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Determines the text of the <code>Button</code>.
+			 * Button text
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Defines the <code>Button</code> type.
+			 * Type of a button (e.g. Default, Accept, Reject, Back, etc.)
 			 */
 			type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : sap.m.ButtonType.Default},
 
 			/**
-			 * Defines the <code>Button</code> width.
+			 * Defines the width of the button.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
 			/**
-			 * Determines whether the <code>Button</code> is enabled (default is set to <code>true</code>).
-			 * A disabled <code>Button</code> has different colors depending on the {@link sap.m.ButtonType ButtonType}.
+			 * Boolean property to enable the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Defines the icon to be displayed as graphical element within the <code>Button</code>.
-			 * It can be an image or an icon from the icon font.
+			 * Icon to be displayed as graphical element within the button. This can be an image or an icon from the icon font.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Determines whether the icon is displayed before the text.
+			 * If set to true (default), the display sequence is 1. icon 2. control text
 			 */
 			iconFirst : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -119,13 +98,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 
 			/**
-			 * Fired when the user taps the control.
-			 * @deprecated As of version 1.20, use the press event instead
+			 * Event is fired when the user taps the control.
+			 * @deprecated Since version 1.20.0.
+			 * This event is deprecated, use the press event instead.
 			 */
 			tap : {deprecated: true},
 
 			/**
-			 * Fired when the user clicks or taps on the control.
+			 * Event is fired when the user clicks on the control.
 			 */
 			press : {}
 		},
@@ -589,7 +569,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	Button.prototype.getAccessibilityInfo = function() {

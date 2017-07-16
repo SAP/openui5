@@ -231,17 +231,6 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					type : "sap.ui.unified.FileUploader",
 					multiple : false
 				}
-			},
-
-			events: {
-				/**
-				 * This event is triggered when the user presses the filename link.
-				 * If this event is provided, it overwrites the default behavior of opening the file.
-				 *
-				 * @public
-				 * @experimental since 1.50
-				 */
-				press: {}
 			}
 		}
 	});

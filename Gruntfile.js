@@ -142,12 +142,13 @@ module.exports = function(grunt) {
 					path: 'src/sap.ui.support'
 			},
 			{
-					name: 'sap.ui.rta',
-					path: 'src/sap.ui.rta'
-			},
-			{
 					name: 'themelib_sap_bluecrystal',
 					path: 'src/themelib_sap_bluecrystal',
+					type: 'theme'
+			},
+			{
+					name: 'themelib_sap_goldreflection',
+					path: 'src/themelib_sap_goldreflection',
 					type: 'theme'
 			},
 			{

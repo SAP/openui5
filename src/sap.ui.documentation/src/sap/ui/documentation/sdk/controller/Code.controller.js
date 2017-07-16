@@ -30,6 +30,10 @@ sap.ui.define([
 				this.router.getRoute("code_file").attachPatternMatched(this.onRouteMatched, this);
 				this._codeCache = {};
 
+				ControlsInfo.listeners.push(function () {
+					this._loadCode();
+				}.bind(this));
+
 				this._bFirstLoad = true;
 			},
 
@@ -43,18 +47,18 @@ sap.ui.define([
 				this._sId = oEvt.getParameter("arguments").id;
 				this._sFileName = decodeURIComponent(oEvt.getParameter("arguments").fileName);
 
-				ControlsInfo.loadData().then(function(oData) {
-					this._loadCode(oData);
-				}.bind(this));
-
+				this._loadCode();
 			},
 
-			_loadCode: function (oData) {
+			_loadCode: function () {
+				if (!ControlsInfo.data) {
+					return;
+				}
 
 				var sFileName = this._sFileName;
 
 				// retrieve sample object
-				var oSample = oData.samples[this._sId];
+				var oSample = ControlsInfo.data.samples[this._sId];
 				if (!oSample) {
 					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false, { path: this._sId });
 					return;
@@ -224,8 +228,8 @@ sap.ui.define([
 			downloadMockFile : function(sFile) {
 
 				var sRef = jQuery.sap.getModulePath("sap.ui.demo.mock");
-				var sWrongPath = "test-resources/sap/ui/documentation/sdk/images/";
-				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/documentation/sdk/images/";
+				var sWrongPath = "test-resources/sap/ui/demokit/explored/img/";
+				var sCorrectPath = "https://openui5.hana.ondemand.com/test-resources/sap/ui/demokit/explored/img/";
 				var oRegExp = new RegExp(sWrongPath,"g");
 				var sMockData = this.fetchSourceFile(sRef, sFile);
 

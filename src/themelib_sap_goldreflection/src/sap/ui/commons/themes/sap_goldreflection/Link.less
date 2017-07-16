@@ -1,0 +1,27 @@
+.sapUiLnk {
+	text-decoration: none;
+}
+
+.sapUiLnk:hover {
+	text-decoration: underline;
+}
+
+.sapUiLnk:focus {
+	outline: 1px dashed @sapUiHighlight;
+}
+
+/* ================= */
+/* Alignment in Form */
+/* ================= */
+
+/* GridLayout */
+.sapUiGrid td > .sapUiLnk{
+	margin-top: 2px;
+}
+
+/* ResponsiveGridLayout */
+html.sapUiMedia-Std-Phone .sapUiFormResGridCont > div > .sapUiLnk,
+html.sapUiMedia-Std-Tablet .sapUiFormResGridCont > div > .sapUiLnk,
+html.sapUiMedia-Std-Desktop .sapUiFormResGridCont > div > .sapUiLnk {
+	margin-top: 2px;
+}

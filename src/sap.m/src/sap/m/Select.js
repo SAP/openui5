@@ -595,7 +595,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
-				oDomRef.removeAttribute("aria-activedescendant");
 			}
 		};
 

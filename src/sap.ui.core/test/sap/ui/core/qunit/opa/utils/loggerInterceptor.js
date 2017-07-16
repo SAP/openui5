@@ -5,7 +5,7 @@ sap.ui.define([], function () {
 		 * The logger inside of a closure is not testable so it is intercepted by this and returned
 		 * This function only works if the module has not been loaded yet, since unloading the module would also lead to trouble
 		 * (if a module that is unleaded is already saved in another closure)
-		 * @param {string} sNamespaceOfModuleUnderTest the name of the module that is loaded and intercepted
+		 * @param sNamespaceOfModuleUnderTest the name of the module that is loaded and intercepted
 		 * @returns {*} the instance of the logger
 		 */
 		loadAndIntercept : function (sNamespaceOfModuleUnderTest) {

@@ -1,4 +1,4 @@
-/*global QUnit*/
+/*global QUnit, sinon*/
 
 sap.ui.require([
 	"sap/ui/fl/changeHandler/MoveControls",
@@ -7,28 +7,15 @@ sap.ui.require([
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
-	"sap/ui/fl/Utils",
 	"sap/m/Button",
 	"sap/m/ObjectAttribute",
 	"sap/m/ObjectHeader",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/XMLTemplateProcessor",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/core/XMLTemplateProcessor"
 ],
-function(MoveControlsHandler,
-	UIComponent,
-	ComponentContainer,
-	Change,
-	JsControlTreeModifier,
-	XmlTreeModifier,
-	Utils,
-	Button,
-	ObjectAttribute,
-	ObjectHeader,
-	VerticalLayout,
-	XMLTemplateProcessor,
-	sinon
-) {
+function(MoveControlsHandler, UIComponent, ComponentContainer,
+		 Change, JsControlTreeModifier, XmlTreeModifier,
+		 Button, ObjectAttribute, ObjectHeader, VerticalLayout, XMLTemplateProcessor) {
 	"use strict";
 
 	var myObjectAttributeId = "myObjectAttribute";
@@ -75,37 +62,6 @@ function(MoveControlsHandler,
 		};
 	};
 
-	var fnGetSingleMoveChangeContentWrongAggregation = function(
-		bIdIsLocal, sObjectAttributeId, sObjectHeaderId, sLayoutId) {
-		return {
-			movedElements : [{
-				selector : {
-					id : sObjectAttributeId,
-					idIsLocal : bIdIsLocal
-				},
-				sourceIndex : 0,
-				targetIndex : 2
-			}],
-			source : {
-				selector : {
-					id : sLayoutId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "attributes2",
-					type : "sap.m.ObjectHeader"
-				}
-			},
-			target : {
-				selector : {
-					id : sLayoutId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "content",
-					type : "sap.ui.layout.VerticalLayout"
-				}
-			}
-		};
-	};
-
-
 	var fnGetMultiMoveChangeContent = function(
 		bIdIsLocal, sObjectAttributeId, sObjectAttributeId2, sObjectHeaderId, sLayoutId) {
 		return {
@@ -150,24 +106,6 @@ function(MoveControlsHandler,
 		};
 	};
 
-	var fnAssertInitialState = function(assert) {
-		assert.equal(this.oObjectHeader.getAttributes().length, 2, "ObjectHeader has 2 Attributes");
-		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute.getId(), "object attribute 1 is first in the header");
-		assert.equal(this.oObjectHeader.getAttributes()[1].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is second in the header");
-		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
-		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-		assert.equal(this.oLayout.getContent().length, 2, "Layout has 2 Items in it");
-	};
-
-	var fnAssertOriginalStateXML = function(assert) {
-		assert.equal(this.oXmlObjectHeader.childNodes.length, 2, "both object attributes added back from the header");
-		assert.equal(this.oXmlObjectHeader.childNodes[0].getAttribute("id"), this.oGlobalAttribute.getId(), "object attribute 1 is first in the header");
-		assert.equal(this.oXmlObjectHeader.childNodes[1].getAttribute("id"), this.oGlobalAttribute2.getId(), "object attribute 2 is second in the header");
-		assert.equal(this.oXmlLayout.childNodes[0].getAttribute("id"), this.oGlobalObjectHeader.getId(), "object header is still at 1. position");
-		assert.equal(this.oXmlLayout.childNodes[1].getAttribute("id"), this.oGlobalButton.getId(), "button is still at 2. position");
-		assert.equal(this.oXmlLayout.childNodes[0].childNodes.length, 2, "Layout has 2 Items in it");
-	};
-
 	QUnit.module("Given a Move Controls Change Handler on jsControlTree", {
 		beforeEach : function() {
 
@@ -180,16 +118,16 @@ function(MoveControlsHandler,
 			// -- -- -- -- ObjectAttribute2
 			// -- -- Button
 
-			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
 
 			// define js-structure (same as xml-structure see below) for jsView
-			this.oButton = new Button(oComponent.createId(myButtonId));
-			this.oObjectAttribute = new ObjectAttribute(oComponent.createId(myObjectAttributeId));
-			this.oObjectAttribute2 = new ObjectAttribute(oComponent.createId(myObjectAttributeId2));
-			this.oObjectHeader = new ObjectHeader(oComponent.createId(myObjectHeaderId) ,{
+			this.oButton = new sap.m.Button(oComponent.createId(myButtonId));
+			this.oObjectAttribute = new sap.m.ObjectAttribute(oComponent.createId(myObjectAttributeId));
+			this.oObjectAttribute2 = new sap.m.ObjectAttribute(oComponent.createId(myObjectAttributeId2));
+			this.oObjectHeader = new sap.m.ObjectHeader(oComponent.createId(myObjectHeaderId) ,{
 				attributes : [this.oObjectAttribute, this.oObjectAttribute2]
 			});
-			this.oLayout = new VerticalLayout(oComponent.createId(myLayoutId) ,{
+			this.oLayout = new sap.ui.layout.VerticalLayout(oComponent.createId(myLayoutId) ,{
 				content : [this.oObjectHeader, this.oButton]
 			});
 
@@ -201,10 +139,6 @@ function(MoveControlsHandler,
 
 			// local id's for JsControlTreeModifier
 			this.mSingleMoveChangeContentWithLocalId = fnGetSingleMoveChangeContent(
-				true, myObjectAttributeId, myObjectHeaderId, myLayoutId);
-
-			// local id's for JsControlTreeModifier, wrong Aggregation
-			this.mSingleMoveChangeContentWithLocalIdWA = fnGetSingleMoveChangeContentWrongAggregation(
 				true, myObjectAttributeId, myObjectHeaderId, myLayoutId);
 
 			// global id's for JsControlTreeModifier
@@ -252,13 +186,9 @@ function(MoveControlsHandler,
 		assert.deepEqual(oChange.getSelector(), this.mSelectorWithLocalId, "the change SELECTOR is filled correctly");
 		assert.deepEqual(oChange.getContent(), this.mSingleMoveChangeContentWithLocalId, "the change CONTENT is filled correctly");
 		assert.equal(oChange.getChangeType(), "moveControls", "the change TYPE is filled correctly");
-
-		assert.equal(oChange.getDependentControl("source", {modifier: JsControlTreeModifier, appComponent: oComponent}).getId(), this.oObjectHeader.getId(), "source is part of dependent selector");
-		assert.equal(oChange.getDependentControl("target", {modifier: JsControlTreeModifier, appComponent: oComponent}).getId(), this.oLayout.getId(), "target is part of dependent selector");
-		assert.equal(oChange.getDependentControl("movedElements", {modifier: JsControlTreeModifier, appComponent: oComponent})[0].getId(), this.oObjectAttribute.getId(), "movedElements array is part of dependent selector");
 	});
 
-	QUnit.test("When applying the single move change on jsControlTree with local id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the single move change on jsControlTree with local id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithLocalId,
 			content : this.mSingleMoveChangeContentWithLocalId
@@ -271,12 +201,9 @@ function(MoveControlsHandler,
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
 		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
-		fnAssertInitialState.call(this, assert);
 	});
 
-	QUnit.test("When applying the single move change on jsControlTree with global id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the single move change on jsControlTree with global id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : this.mSingleMoveChangeContentWithGlobalId
@@ -289,30 +216,9 @@ function(MoveControlsHandler,
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
 		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
-		fnAssertInitialState.call(this, assert);
 	});
 
-	QUnit.test("When applying the single move change on jsControlTree with local id and a different aggregation and different source parent and reverting it afterwards, Then", function(assert) {
-		var oChange = new Change({
-			selector : this.mSelectorWithLocalId,
-			content : this.mSingleMoveChangeContentWithLocalIdWA
-		});
-
-		assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
-
-		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
-		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is still in the header");
-		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
-		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
-		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
-		fnAssertInitialState.call(this, assert);
-	});
-
-	QUnit.test("When applying the multi move change on jsControlTree with local id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the multi move change on jsControlTree with local id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithLocalId,
 			content : this.mMultiMoveChangeContentWithLocalId
@@ -325,12 +231,9 @@ function(MoveControlsHandler,
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
 		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
 		assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is inserted at the 4. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
-		fnAssertInitialState.call(this, assert);
 	});
 
-	QUnit.test("When applying the multi move change on jsControlTree with global id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the multi move change on jsControlTree with global id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : this.mMultiMoveChangeContentWithGlobalId
@@ -343,9 +246,6 @@ function(MoveControlsHandler,
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
 		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
 		assert.equal(this.oLayout.getContent()[3].getId(), this.oObjectAttribute2.getId(), "object attribute 2 is inserted at the 4. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
-		fnAssertInitialState.call(this, assert);
 	});
 
 	QUnit.test("When applying broken changes (functionality independent of modifier), Then", function(assert) {
@@ -655,7 +555,7 @@ function(MoveControlsHandler,
 		}
 	});
 
-	QUnit.test("When applying the single move change on xmlControlTree with local id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the single move change on xmlControlTree with local id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithLocalId,
 			content : this.mSingleMoveChangeContentWithLocalId
@@ -668,12 +568,9 @@ function(MoveControlsHandler,
 		assert.equal(this.oXmlLayout.childNodes[0].getAttribute("id"), this.oGlobalObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oXmlLayout.childNodes[1].getAttribute("id"), this.oGlobalButton.getId(), "button is still at 2. position");
 		assert.equal(this.oXmlLayout.childNodes[2].getAttribute("id"), this.oGlobalAttribute.getId(), "object attribute is inserted at the 3. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oGlobalObjectHeader, {modifier: XmlTreeModifier, appComponent: this.oRootControl, view: this.oXmlView}));
-		fnAssertOriginalStateXML.call(this, assert);
 	});
 
-	QUnit.test("When applying the single move change on xmlControlTree with global id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the single move change on xmlControlTree with global id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : this.mSingleMoveChangeContentWithGlobalId
@@ -686,12 +583,9 @@ function(MoveControlsHandler,
 		assert.equal(this.oXmlLayout.childNodes[0].getAttribute("id"), this.oGlobalObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oXmlLayout.childNodes[1].getAttribute("id"), this.oGlobalButton.getId(), "button is still at 2. position");
 		assert.equal(this.oXmlLayout.childNodes[2].getAttribute("id"), this.oGlobalAttribute.getId(), "object attribute is inserted at the 3. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oGlobalObjectHeader, {modifier: XmlTreeModifier, view: this.oXmlView}));
-		fnAssertOriginalStateXML.call(this, assert);
 	});
 
-	QUnit.test("When applying the multi move change on xmlControlTree with local id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the multi move change on xmlControlTree with local id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithLocalId,
 			content : this.mMultiMoveChangeContentWithLocalId
@@ -704,12 +598,9 @@ function(MoveControlsHandler,
 		assert.equal(this.oXmlLayout.childNodes[1].getAttribute("id"), this.oGlobalButton.getId(), "button is still at 2. position");
 		assert.equal(this.oXmlLayout.childNodes[2].getAttribute("id"), this.oGlobalAttribute.getId(), "object attribute is inserted at the 3. position");
 		assert.equal(this.oXmlLayout.childNodes[3].getAttribute("id"), this.oGlobalAttribute2.getId(), "object attribute 2 is inserted at the 4. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oGlobalObjectHeader, {modifier: XmlTreeModifier, appComponent: this.oRootControl, view: this.oXmlView}));
-		fnAssertOriginalStateXML.call(this, assert);
 	});
 
-	QUnit.test("When applying the multi move change on xmlControlTree with global id and reverting it afterwards, Then", function(assert) {
+	QUnit.test("When applying the multi move change on xmlControlTree with global id, Then", function(assert) {
 		var oChange = new Change({
 			selector : this.mSelectorWithGlobalId,
 			content : this.mMultiMoveChangeContentWithGlobalId
@@ -722,8 +613,5 @@ function(MoveControlsHandler,
 		assert.equal(this.oXmlLayout.childNodes[1].getAttribute("id"), this.oGlobalButton.getId(), "button is still at 2. position");
 		assert.equal(this.oXmlLayout.childNodes[2].getAttribute("id"), this.oGlobalAttribute.getId(), "object attribute is inserted at the 3. position");
 		assert.equal(this.oXmlLayout.childNodes[3].getAttribute("id"), this.oGlobalAttribute2.getId(), "object attribute 2 is inserted at the 4. position");
-
-		assert.ok(MoveControlsHandler.revertChange(oChange, this.oGlobalObjectHeader, {modifier: XmlTreeModifier, view: this.oXmlView}));
-		fnAssertOriginalStateXML.call(this, assert);
 	});
 });

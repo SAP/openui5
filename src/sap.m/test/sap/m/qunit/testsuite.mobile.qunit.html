@@ -389,6 +389,9 @@
 			// TabStrip
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabStrip.qunit.html");
 
+			// TabStripSelect
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabStripSelect.qunit.html");
+
 			// TabStripItem
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TabStripItem.qunit.html");
 
@@ -464,12 +467,16 @@
 			// ViewSettingsPopover
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsPopover.qunit.html");
 
+			// DesignTime
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Button.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomTile.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/InputListItem.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Select.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/SplitContainer.qunit.html");
+
 			// Design Time & RTA Enabling
 			try {
 				sap.ui.getCore().loadLibrary("sap.ui.rta");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/SplitContainer.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Select.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomTile.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Bar.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Button.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/CustomListItem.qunit.html");
@@ -495,7 +502,6 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Text.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Title.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/dt/Toolbar.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/changeHandler/MoveTableColumns.qunit.html");
 			} catch (e) {
 				jQuery.sap.log.info("sap.ui.rta not available", "enabling tests are skipped, ensure sap.ui.rta from sapui5.runtime is loaded to execute them");
 			}

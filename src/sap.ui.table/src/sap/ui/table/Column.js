@@ -48,8 +48,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			/**
 			 * Defines the minimum width of a column in pixels.
 			 * <p>This property only has an effect if the given column width is flexible, for example with width <code>auto</code>.
-			 * <p>This property only influences the automatic behavior. If a user adjusts the column width manually, the column width can become
-			 * smaller.
+			 * <p>This property only influences the automatic behavior. If a user adjusts the column width manually, the column width can become smaller.
 			 * <p>Minimal column width is device-dependent, for example on desktop devices the column will not be smaller than 48px.
 			 *
 			 * @since 1.44.1
@@ -61,8 +60,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
 			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
 			 * created at the end of the table.
-			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property
-			 * <code>width="auto"</code> instead.
+			 * @deprecated As of version 1.44 this property has no effect. Use the property <code>minWidth</code> in combination with the property <code>width="auto"</code> instead.
 			 */
 			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -147,8 +145,7 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 
 			/**
 			 * If this property is set, the default filter operator of the column is overridden.
-			 * By default <code>Contains</code> is used for string and <code>EQ</code> for other types. A valid
-			 * <code>sap.ui.model.FilterOperator</code> needs to be passed.
+			 * By default <code>Contains</code> is used for string and <code>EQ</code> for other types. A valid <code>sap.ui.model.FilterOperator</code> needs to be passed.
 			 */
 			defaultFilterOperator : {type : "string", group : "Behavior", defaultValue : null},
 
@@ -951,72 +948,67 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 
 	/**
 	 * Returns an unused column template clone. Unused means, it does not have a parent.
-	 *
-	 * @returns {sap.ui.core.Control|null} Column template clone, or <code>null</code> if all clones have parents
+	 * @param {sap.ui.core.Control[]} aTemplateClones Array of available column template clones
+	 * @returns {sap.ui.core.Control|undefined} Column template clone or undefined if all clones have parents
 	 * @private
 	 */
-	Column.prototype._getFreeTemplateClone = function() {
-		var oFreeTemplateClone = null;
+	Column.prototype._getFreeTemplateClone = function(aTemplateClones) {
+		for (var i = 0, l = aTemplateClones.length; i < l; i++) {
+			if (aTemplateClones[i] && aTemplateClones[i].bIsDestroyed) {
+				// remove destroyed clones
+				this._aTemplateClones.splice(i, 1);
+				continue;
+			}
 
-		for (var i = 0; i < this._aTemplateClones.length; i++) {
-			if (this._aTemplateClones[i] == null || this._aTemplateClones[i].bIsDestroyed) {
-				this._aTemplateClones.splice(i, 1); // Remove the reference to a destroyed clone.
-				i--;
-			} else if (oFreeTemplateClone === null && this._aTemplateClones[i].getParent() == null) {
-				oFreeTemplateClone = this._aTemplateClones[i];
+			if (aTemplateClones[i] && !aTemplateClones[i].getParent()) {
+				return aTemplateClones[i];
 			}
 		}
-
-		return oFreeTemplateClone;
 	};
 
 	/**
 	 * Returns a column template clone. It either finds an unused clone or clones a new one from the column template.
-	 *
 	 * @param {int} iIndex Index of the column in the column aggregation of the table
-	 * @returns {sap.ui.core.Control|null} Clone of the column template, or <code>null</code> if no column template is defined
+	 * @param {string} [sIdSuffix=""] String suffix to be added to the clones ID
+	 * @returns {sap.ui.core.Control} Clone of the column template
 	 * @protected
 	 */
+	// for performance reasons, the index of the column in the column aggregation must
+	// be provided by the caller. Otherwise the columns aggregation would be looped over and over again to
+	// figure out the index.
 	Column.prototype.getTemplateClone = function(iIndex) {
-		// For performance reasons, the index of the column in the column aggregation must be provided by the caller.
-		// Otherwise the columns aggregation would be looped over and over again to figure out the index.
-		if (iIndex == null) {
-			return null;
-		}
+		var oClone = this._getFreeTemplateClone(this._aTemplateClones);
 
-		var oClone = this._getFreeTemplateClone();
-
-		if (oClone === null) {
-			// No free template clone available, create one.
+		if (!oClone) {
+			// no clone found, create a new one
 			var oTemplate = this.getTemplate();
 			if (oTemplate) {
 				oClone = oTemplate.clone();
-				this._aTemplateClones.push(oClone);
 			}
 		}
 
-		if (oClone != null) {
-			// Update sap-ui-* as the column index in the column aggregation may have changed.
+		if (oClone) {
+			// update sap-ui-* as the column index in the column aggregation may have changed
 			oClone.data("sap-ui-colindex", iIndex);
 			oClone.data("sap-ui-colid", this.getId());
+			this._aTemplateClones.push(oClone);
 
 			var oTable = this.getParent();
-			if (oTable != null) {
+			if (oTable) {
 				oTable._getAccExtension().addColumnHeaderLabel(this, oClone);
 			}
-		}
 
-		return oClone;
+			return oClone;
+		}
 	};
 
 	/**
-	 * Destroys all column template clones and clears the clone stack.
-	 *
+	 * Destroys all column template clones and clears the clone stack
 	 * @private
 	 */
 	Column.prototype._destroyTemplateClones = function() {
-		for (var i = 0; i < this._aTemplateClones.length; i++) {
-			if (this._aTemplateClones[i] != null && !this._aTemplateClones[i].bIsDestroyed) {
+		for (var i = 0, l = this._aTemplateClones.length; i < l; i++) {
+			if (this._aTemplateClones[i]) {
 				this._aTemplateClones[i].destroy();
 			}
 		}

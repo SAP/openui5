@@ -1,26 +1,23 @@
-/* global QUnit */
+/*global QUnit*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-// Restrict coverage to sap.ui.rta library
-if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
-}
-
-sap.ui.define([
-	'sap/m/Button',
-	'sap/ui/fl/changeHandler/XmlTreeModifier'
-],
-function(
-	Button,
-	XmlTreeModifier
-) {
+(function(XmlTreeModifier) {
 	"use strict";
 
-	QUnit.module("Using the XmlTreeModifier...", {
+	jQuery.sap.registerModulePath("testComponent", "../testComponent");
+
+	QUnit.module("The XmlTreeModifier", {
 		beforeEach: function () {
 
-			jQuery.sap.registerModulePath("testComponent", "../testComponent");
+			var oMockedLrepResponse = {
+				changes: [],
+				contexts: [],
+				settings: []
+			};
+
+			sap.ui.fl.Cache._entries["testComponent.Component"] = {
+				file: oMockedLrepResponse,
+				promise: Promise.resolve(oMockedLrepResponse)
+			};
 
 			this.oComponent = sap.ui.getCore().createComponent({
 				name: "testComponent",
@@ -32,10 +29,14 @@ function(
 
 			this.oDOMParser = new DOMParser();
 			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
+				'<form:SimpleForm id="testComponent---myView--myForm">' +
+				'<Title id="testComponent---myView--myGroup" />' +
+				'<Input id="testComponent---myView--myGroupElement" />' +
+				'</form:SimpleForm>' +
 				'</mvc:View>';
 			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
-
+			return this.oXmlView;
 		},
 
 		afterEach: function () {
@@ -43,9 +44,7 @@ function(
 		}
 	});
 
-	QUnit.test("the constructor processes parameters", function (assert) {
-		var sButtonText = "ButtonText";
-		this.oButtonElement = XmlTreeModifier.createControl('sap.m.Button', this.oComponent, this.oXmlView, "MyButton", {'text' : sButtonText});
-		assert.equal(this.oButtonElement.getAttribute("text"), sButtonText);
+	QUnit.test("does nothing", function (assert) {
+		assert.ok(true);
 	});
-});
+}(sap.ui.fl.changeHandler.XmlTreeModifier));

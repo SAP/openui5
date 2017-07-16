@@ -1,18 +1,21 @@
 {
 	"sap.ui5": {
+
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {
 				},
 				"sap.m": {
 				},
-				"sap.f": {
+				"sap.f" : {
 				}
 			}
 		},
+
 		"config": {
 			"fullWidth": true
 		},
+
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
@@ -25,24 +28,10 @@
 			},
 			"routes": [
 				{
-					"pattern": "page2",
-					"name": "page2",
-					"target": "page2",
-					"layout": "EndColumnFullScreen"
-				},
-				{
-					"pattern": "page3",
-					"name": "page3",
-					"target": "page3",
-					"layout": "EndColumnFullScreen"
-				},
-				{
-					"pattern": ":layout:",
+					"pattern": "",
 					"name": "master",
-					"target": [
-						"master",
-						"detailEmpty"
-					]
+					"target": "master",
+					"layout": "OneColumn"
 				},
 				{
 					"pattern": "detail/{layout}",
@@ -60,6 +49,18 @@
 						"detail",
 						"detailDetail"
 					]
+				},
+				{
+					"pattern": "page2",
+					"name": "page2",
+					"target": "page2",
+					"layout": "EndColumnFullScreen"
+				},
+				{
+					"pattern": "page3",
+					"name": "page3",
+					"target": "page3",
+					"layout": "EndColumnFullScreen"
 				}
 			],
 			"targets": {
@@ -82,10 +83,6 @@
 				"page3": {
 					"viewName": "Page3",
 					"controlAggregation": "endColumnPages"
-				},
-				"detailEmpty": {
-					"viewName": "DetailEmpty",
-					"controlAggregation": "midColumnPages"
 				}
 			}
 		}

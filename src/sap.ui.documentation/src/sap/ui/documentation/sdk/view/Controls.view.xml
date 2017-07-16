@@ -13,39 +13,26 @@
 
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell
-						class="sapUiNoContentPadding sapUiDemokitLandingImageCell sapUiNoContentPadding">
+				<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
 					<Image
-						id="phoneImage"
-						src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped.jpg"
-						width="100%"
-						densityAware="false"
-						class="landingImage"
-						load="handleLandingImageLoad"
-						visible="{device>/system/phone}"/>
-
-					<Image
-						src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped.jpg"
-						width="100%"
-						densityAware="false"
-						class="landingImage"
-						load="handleLandingImageLoad"
-						visible="{=!${device>/system/phone}}"/>
-
-					<l:VerticalLayout
-						id="landingImageHeadline"
-						visible="false"
-						width="100%">
-						<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText"
+							id="phoneImage"
+							src="./resources/sap/ui/documentation/sdk/images/Explored_S_cropped.jpg"
+							width="100%"
+							densityAware="false"
+							visible="{device>/system/phone}"/>
+					<Image	src="./resources/sap/ui/documentation/sdk/images/Explored_M_and_L_cropped.jpg"
+							width="100%"
+							densityAware="false"
+							visible="{=!${device>/system/phone}}"/>
+					<Text class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredHeaderTitleText"
 							text="Samples"
 							width="100%"
 							textAlign="Left"/>
-						<Text
+					<Text
 							class="sapUiDocumentationExploredHeaderText sapUiDocumentationExploredSubText"
 							text="Explore and download code samples"
 							width="100%"
 							textAlign="Left"/>
-					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 

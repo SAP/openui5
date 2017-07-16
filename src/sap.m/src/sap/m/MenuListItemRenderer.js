@@ -34,10 +34,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		 * {@link sap.ui.core.RenderManager}.
 		 *
 		 * @param {sap.ui.core.RenderManager}
-		 *          rm the RenderManager that can be used for writing to the
+		 *          oRenderManager the RenderManager that can be used for writing to the
 		 *          Render-Output-Buffer
 		 * @param {sap.ui.core.Control}
-		 *          oLI an object representation of the control that should be
+		 *          oControl an object representation of the control that should be
 		 *          rendered
 		 */
 		MenuListItemRenderer.renderLIAttributes = function(rm, oLI) {

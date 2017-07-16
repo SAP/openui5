@@ -999,7 +999,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Returns the current media range of the Device or the closest media container
 	 *
-	 * @param {string} sName
+	 * @param sName
 	 * @returns {map}
 	 * @private
 	 * @sap-restricted
@@ -1052,9 +1052,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Registers the given event handler to change events of the screen width/closest media container width, based on the range set with the specified name.
 	 *
-	 * @param {function} fnFunction
-	 * @param {object} oListener
-	 * @param {string} sName
+	 * @param fnFunction
+	 * @param oListener
+	 * @param sName
 	 * @private
 	 * @sap-restricted
 	 */
@@ -1078,9 +1078,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 	/**
 	 * Removes a previously attached event handler from the change events of the screen width/closest media container width.
-	 * @param {function} fnFunction
-	 * @param {object} oListener
-	 * @param {string} sName
+	 * @param fnFunction
+	 * @param oListener
+	 * @param sName
 	 * @private
 	 * @sap-restricted
 	 */

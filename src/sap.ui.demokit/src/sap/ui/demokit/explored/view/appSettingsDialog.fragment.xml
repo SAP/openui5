@@ -4,7 +4,7 @@
 		xmlns:f="sap.ui.layout.form"
 		xmlns:core="sap.ui.core">
 	<Dialog
-			title="Settings"
+			title="{i18n>settingsTitle}"
 			class="sapUiPopupWithPadding"
 			contentWidth="350px"
 			id="AppSettingsDialog">
@@ -15,23 +15,23 @@
 					vSpacing="0.5"
 					defaultSpan="L6 M6 S10">
 				<l:content>
-					<Label text="Theme:" design="Standard" id="ThemeLabel">
+					<Label text="{i18n>settingsTheme}" design="Standard" id="ThemeLabel">
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</Label>
 
 					<Select id="ThemeButtons" width="100%">
-						<core:Item key="sap_belize" text="Belize"/>
-						<core:Item key="sap_belize_plus" text="Belize Deep"/>
-						<core:Item key="sap_belize_hcb" text="High Contrast Black"/>
-						<core:Item key="sap_belize_hcw" text="High Contrast White"/>
+						<core:Item key="sap_belize" text="{i18n>themeBelize}"/>
+						<core:Item key="sap_belize_plus" text="{i18n>themeBelizeDeep}"/>
+						<core:Item key="sap_belize_hcb" text="{i18n>themeHCB}"/>
+						<core:Item key="sap_belize_hcw" text="{i18n>themeHCW}"/>
 						<layoutData>
 							<l:GridData span="L12 M12 S12"/>
 						</layoutData>
 					</Select>
 
-					<Label id="CompactModeLabel" text="Compact Content Density:" design="Standard">
+					<Label id="CompactModeLabel" text="{i18n>settingsCompactMode}" design="Standard">
 						<layoutData>
 							<l:GridData span="L8 M8 S8"/>
 						</layoutData>
@@ -42,7 +42,7 @@
 						</layoutData>
 					</Switch>
 
-					<Label id="RTLLabel" text="Right To Left Mode:" design="Standard">
+					<Label id="RTLLabel" text="{i18n>settingsRTL}" design="Standard">
 						<layoutData>
 							<l:GridData span="L8 M8 S8"/>
 						</layoutData>
@@ -56,10 +56,10 @@
 			</l:Grid>
 		</content>
 		<beginButton>
-			<Button text="OK" press="onSaveAppSettings"/>
+			<Button text="{i18n>settingsOK}" press="onSaveAppSettings"/>
 		</beginButton>
 		<endButton>
-			<Button text="Cancel" press="onDialogCloseButton"/>
+			<Button text="{i18n>settingsCancel}" press="onDialogCloseButton"/>
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>

@@ -319,7 +319,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this._marginBottom = 10;
 
 			this._$window = jQuery(window);
-			this._initialWindowDimensions = {};
+			this._initialWindowDimensions = {
+				width: this._$window.width(),
+				height: this._$window.height()
+			};
 
 			this.oPopup = new Popup();
 			this.oPopup.setShadow(true);
@@ -491,19 +494,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype.onBeforeRendering = function () {
 			var oNavContent, oPageContent;
 
-			if (!this._initialWindowDimensions.width || !this._initialWindowDimensions.height) {
-				this._initialWindowDimensions = {
-					width: this._$window.width(),
-					height: this._$window.height()
-				};
-			}
-
-			// TODO: Nice to refactor scrolling related code - ambiguous
-			if (!this.getHorizontalScrolling() && !this.getVerticalScrolling()) {
-				//  If both properties are false - we do not need scroll enablement for sure
-				this._forceDisableScrolling = true;
-			} else if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
-				// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
+			// When scrolling isn't set manually and content has scrolling, disable scrolling automatically
+			if (!this._bVScrollingEnabled && !this._bHScrollingEnabled && this._hasSingleScrollableContent()) {
 				this._forceDisableScrolling = true;
 				jQuery.sap.log.info("VerticalScrolling and horizontalScrolling in sap.m.Popover with ID " + this.getId() + " has been disabled because there's scrollable content inside");
 			} else {
@@ -749,7 +741,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		 */
 		Popover.prototype.close = function () {
 			var eOpenState = this.oPopup.getOpenState(),
-				bSameFocusElement, oActiveElement;
+				bSameFocusElement;
 
 			if (eOpenState === sap.ui.core.OpenState.CLOSED || eOpenState === sap.ui.core.OpenState.CLOSING) {
 				return this;
@@ -761,10 +753,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			this.oPopup.close(true);
 
 			if (this._oPreviousFocus) {
-				oActiveElement = document.activeElement || {};
 				// if the current focused control/element is the same as the focused control/element before popover is open, no need to restore focus.
 				bSameFocusElement = (this._oPreviousFocus.sFocusId === sap.ui.getCore().getCurrentFocusedControlId()) ||
-					(this._oPreviousFocus.sFocusId === oActiveElement.id);
+					(this._oPreviousFocus.sFocusId === document.activeElement.id);
 
 				// restore previous focus, if the current control isn't the same control as
 				if (!bSameFocusElement) {
@@ -1204,7 +1195,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var body = document.body,
 				html = document.documentElement;
 
-			return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.offsetHeight);
+			return Math.max( body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );
 		};
 
 		Popover.prototype._calcVertical = function () {

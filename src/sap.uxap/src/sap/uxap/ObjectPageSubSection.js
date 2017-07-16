@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
 	"./ObjectPageSectionBase",
+	"./ObjectPageSubSectionLayout",
+	"./ObjectPageSubSectionMode",
 	"./ObjectPageLazyLoader",
 	"./BlockBase",
 	"sap/m/Button",
@@ -20,6 +22,8 @@ sap.ui.define([
 			 Grid,
 			 GridData,
 			 ObjectPageSectionBase,
+			 ObjectPageSubSectionLayout,
+			 ObjectPageSubSectionMode,
 			 ObjectPageLazyLoader,
 			 BlockBase,
 			 Button,
@@ -27,12 +31,6 @@ sap.ui.define([
 			 StashedControlSupport,
 			 library) {
 	"use strict";
-
-	// shortcut for sap.uxap.ObjectPageSubSectionMode
-	var ObjectPageSubSectionMode = library.ObjectPageSubSectionMode;
-
-	// shortcut for sap.uxap.ObjectPageSubSectionLayout
-	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
 	/**
 	 * Constructor for a new ObjectPageSubSection.
@@ -96,8 +94,7 @@ sap.ui.define([
 				 * Actions available for this Subsection
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
-			},
-			designTime: true
+			}
 		}
 	});
 
@@ -759,7 +756,7 @@ sap.ui.define([
 
 	/**
 	 * switch the state for the subsection
-	 * @param {sap.uxap.ObjectPageSubSectionMode} sSwitchToMode
+	 * @param sSwitchToMode
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._switchSubSectionMode = function (sSwitchToMode) {
@@ -777,7 +774,7 @@ sap.ui.define([
 	/**
 	 * set the mode on a control if there is such mode property
 	 * @param oBlock
-	 * @param {string} sMode
+	 * @param sMode
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._setBlockMode = function (oBlock, sMode) {

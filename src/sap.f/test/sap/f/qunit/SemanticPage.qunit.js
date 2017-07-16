@@ -626,7 +626,7 @@
 
 	QUnit.test("test getOrder method", function (assert) {
 		var sSemanticAddType = "sap.f.semantic.AddAction",
-			iSemanticAddTypeOrder = 4,
+			iSemanticAddTypeOrder = 1,
 			sSemanticDeleteType = "sap.f.semantic.DeleteAction",
 			iSemanticDeleteTypeOrder = 2;
 
@@ -662,6 +662,7 @@
 			sSemanticCloseType + " has the correct Constraint: " + sSemanticCloseConstraintType);
 	});
 
+
 	QUnit.test("test isMainAction method", function (assert) {
 		var sSemanticAddType = "sap.f.semantic.AddAction",
 			sSemanticTitleMainActionType = "sap.f.semantic.TitleMainAction";
@@ -683,16 +684,4 @@
 		assert.equal(oSemanticConfiguration.isNavigationAction(sSemanticCloseType), true,
 			sSemanticCloseType + " is a Navigation Action");
 	});
-
-	QUnit.test("test if a SemanticControl should be preprocessed", function (assert) {
-		var sSemanticDraftIndicatorType = "sap.m.DraftIndicator",
-			sSemanticAddType = "sap.f.semantic.AddAction";
-
-		// Assert
-		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticDraftIndicatorType), true,
-			sSemanticDraftIndicatorType + " should be preprocessed");
-		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticAddType), false,
-			sSemanticAddType + " should not be preprocessed");
-	});
-
 })(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage);

@@ -51,7 +51,7 @@ sap.ui.define([
  			 */
 			onPress: function(oEvent) {
 				var sFilter = oEvent.oSource.getFilter();
-				var oSearchField = this.getOwnerComponent().byId("controlsMaster").byId("searchField");
+				var oSearchField = this.getSplitApp().getMasterPages()[0].byId("searchField");
 				oSearchField.setValue(sFilter);
 				oSearchField.fireLiveChange({
 					newValue: sFilter

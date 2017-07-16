@@ -5,7 +5,7 @@ setBlanketFilters("sap/ui/core/FragmentControl.js");
 
 /**
  * setBlanketFilters
- * @param {string} sFilters comma separated strings to filter the paths for blanket
+ * @param sFilters comma separated strings to filter the paths for blanket
  */
 function setBlanketFilters(sFilters) {
 	if (top === window) { //only in local environment
@@ -85,9 +85,6 @@ sap.ui.require([
 		//TODO: Write additional test when another "regular" model is set on Fragment / should survice!
 		//TODO: Write additional test when anpther "regular" model is set on inner control / should survive!
 		assert.strictEqual(oInnerText._getPropertiesToPropagate().oBindingContexts["$this"].oModel, this.oFragmentControl._getManagedObjectModel(), "ControlTree Model is correctly propagated");
-
-		var oInnerTextViaID = this.oFragmentControl.byId("myInnerTextControl");
-		assert.strictEqual(oInnerText, oInnerTextViaID, "Inner control retrieved by ID equals the inner control retrieved by aggregation");
 
 		this.oFragmentControl.setText("");
 		assert.strictEqual(oInnerText.getVisible(), false, "Inner not visible due to condition in SimpleText.control.xml");

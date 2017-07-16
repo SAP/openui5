@@ -3895,7 +3895,7 @@ sap.ui.define([
 	 * @param {object} [mParameters] Optional, can contain the following attributes:
 	 * @param {object} [mParameters.context] If specified, <code>sPath</code> has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData</code> and <code>response</code>.
+	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the <code>If-Match</code> header will be set to this ETag.
@@ -3976,7 +3976,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.method='GET'] HTTP method to use for the function call, should match the metadata for the function import
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {function} [mParameters.success] A callback function which is called when the data has been successfully retrieved. The handler can have
-	 *        the following parameters: <code>oData</code> and <code>response</code>.
+	 *        the following parameters: <code>oData<code> and <code>response</code>.
 	 * @param {function} [mParameters.error] A callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {map} [mParameters.headers] A map of headers for this request

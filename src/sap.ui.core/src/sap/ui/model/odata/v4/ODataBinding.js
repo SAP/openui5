@@ -29,6 +29,10 @@ sap.ui.define([
 			oCurrentCache,
 			that = this;
 
+		if (this.oOperation) { // operation binding manages its cache on its own
+			return;
+		}
+
 		if (!this.bRelative) {
 			oContext = undefined;
 		}
@@ -106,7 +110,7 @@ sap.ui.define([
 			oQueryOptionsPromise,
 			that = this;
 
-		// operation binding manages its cache on its own
+		// operation binding
 		if (this.oOperation) {
 			return _SyncPromise.resolve(undefined);
 		}
@@ -253,25 +257,16 @@ sap.ui.define([
 	 */
 	ODataBinding.prototype.hasPendingChangesInDependents = function () {
 		return this.oModel.getDependentBindings(this).some(function (oDependent) {
-			var oCache, bHasPendingChanges;
+			var oCache;
 
-			if (oDependent.oCachePromise.isFulfilled()) {
-				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
-				if (oCache && oCache.hasPendingChangesForPath("")) {
-					return true;
-				}
+			if (!oDependent.oCachePromise.isFulfilled()) {
+				// No pending changes because create and update are not allowed
+				return false;
 			}
-			if (oDependent.mCacheByContext) {
-				bHasPendingChanges = Object.keys(oDependent.mCacheByContext).some(function (sPath) {
-					return oDependent.mCacheByContext[sPath].hasPendingChangesForPath("");
-				});
-				if (bHasPendingChanges) {
-					return true;
-				}
-			}
-			// Ask dependents, they might have no cache, but pending changes in mCacheByContext
-			return oDependent.hasPendingChangesInDependents();
+
+			oCache = oDependent.oCachePromise.getResult();
+			return oCache && oCache.hasPendingChangesForPath("")
+				|| oDependent.hasPendingChangesInDependents();
 		});
 	};
 
@@ -422,22 +417,17 @@ sap.ui.define([
 		this.oModel.getDependentBindings(this).forEach(function (oDependent) {
 			var oCache;
 
-			if (oDependent.oCachePromise.isFulfilled()) {
-				// Pending changes for this cache are only possible when there is a cache already
-				oCache = oDependent.oCachePromise.getResult();
-				if (oCache) {
-					oCache.resetChangesForPath("");
-				}
-				oDependent.resetInvalidDataState();
+			if (!oDependent.oCachePromise.isFulfilled()) {
+				// No pending changes because create and update are not allowed
+				return;
 			}
-			// mCacheByContext may have changes nevertheless
-			if (oDependent.mCacheByContext) {
-				Object.keys(oDependent.mCacheByContext).forEach(function (sPath) {
-					oDependent.mCacheByContext[sPath].resetChangesForPath("");
-				});
+
+			oCache = oDependent.oCachePromise.getResult();
+			if (oCache) {
+				oCache.resetChangesForPath("");
 			}
-			// Reset dependents, they might have no cache, but pending changes in mCacheByContext
 			oDependent.resetChangesInDependents();
+			oDependent.resetInvalidDataState();
 		});
 	};
 

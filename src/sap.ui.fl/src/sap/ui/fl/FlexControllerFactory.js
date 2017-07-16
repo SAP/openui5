@@ -80,28 +80,5 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * TODO!!!
-	 * Gets the changes and in case of existing changes, prepare the applyChanges function already with the changes.
-	 *
-	 * @param {object} oComponent Component instance that is currently loading
-	 * @param {object} vConfig configuration of loaded component
-	 * @public
-	 */
-	FlexControllerFactory.switchChangesAndPropagate = function (oComponent, sVariantManagementId, sCurrentVariant, sNewVariant) {
-		var oManifest = oComponent.getManifestObject();
-
-		if (Utils.isApplication(oManifest)) {
-			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
-
-			var mChangesToBeSwitched = oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantManagementId, sCurrentVariant, sNewVariant);
-
-			var oAppComponent = Utils.getAppComponentForControl(oComponent);
-
-			oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
-			oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, oComponent);
-		}
-	};
-
 	return FlexControllerFactory;
 }, true);

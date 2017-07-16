@@ -12,7 +12,7 @@ sap.ui.core.UIComponent.extend("sap.m.sample.P13nDialogWithCustomPanel.Component
 		config: {
 			sample: {
 				files: [
-					"Page.view.xml", "Page.controller.js", "CustomPanel.js", "PersonalizationDialog.fragment.xml"
+					"Page.view.xml", "Page.controller.js", "CustomPanel.js", "PersonalizationDialog.fragment.xml", "products.json"
 				]
 			}
 		}

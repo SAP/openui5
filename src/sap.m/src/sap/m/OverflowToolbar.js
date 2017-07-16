@@ -13,16 +13,13 @@ sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/OverflowToolbarAssociativePopover",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
+	"sap/m/OverflowToolbarPriority",
 	"sap/ui/core/IconPool",
 	"sap/m/SearchField"
 ], function (jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData,
-			 OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls,
+			 OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls, OverflowToolbarPriority,
 			 IconPool, SearchField) {
 	"use strict";
-
-
-	// shortcut for sap.m.OverflowToolbarPriority
-	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 
 	/**
@@ -70,13 +67,6 @@ sap.ui.define([
 	 * <li>{@link sap.ui.comp.smartfield.SmartField}</li>
 	 * <li>{@link sap.ui.comp.smartfield.SmartLabel}</li></ul>
 	 *
-	 * <b>Note:</b> The <code>OverflowToolbar</code> is an adaptive container that checks the available
-	 * width and hides the part of its content that doesn't fit. It is intended that simple controls,
-	 * such as {@link sap.m.Button} and {@link sap.m.Label} are used as content. Embedding other
-	 * adaptive container controls, such as {@link sap.m.Breadcrumbs}, results in competition for the available
-	 * space - both controls calculate the available space based on the other one's size and both change their
-	 * width at the same time, leading to incorrectly distributed space.
-	 *
 	 * <h3>Responsive behavior</h3>
 	 *
 	 * The height of the toolbar changes on desktop, tablet, and smartphones.
@@ -105,7 +95,7 @@ sap.ui.define([
 
 	/**
 	 * A shorthand for calling Toolbar.prototype methods
-	 * @param {string} sFuncName - the name of the method
+	 * @param sFuncName - the name of the method
 	 * @param aArguments - the arguments to pass in the form of array
 	 * @returns {*}
 	 * @private
@@ -519,7 +509,7 @@ sap.ui.define([
 
 	/**
 	 * Closes the action sheet, resets the toolbar, and re-initializes variables to force a full layout recalc
-	 * @param {boolean} bHardReset - skip the optimization, described in _setControlsOverflowAndShrinking
+	 * @param bHardReset - skip the optimization, described in _setControlsOverflowAndShrinking
 	 * @private
 	 */
 	OverflowToolbar.prototype._resetAndInvalidateToolbar = function (bHardReset) {
@@ -741,7 +731,7 @@ sap.ui.define([
 
 	/**
 	 *
-	 * @param {boolean} bValue
+	 * @param bValue
 	 * @returns {OverflowToolbar}
 	 * @private
 	 */

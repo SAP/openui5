@@ -137,7 +137,7 @@ which can be [found here](https://gist.github.com/CLAassistant/bd1ea8ec8aa035741
 If employees of a company contribute code, in **addition** to the individual agreement above, there needs to be one company agreement submitted. This is mainly for the protection of the contributing employees.
 
 A company representative authorized to do so needs to download, fill, and print
-the [Corporate Contributor License Agreement](/docs/SAP%20Corporate%20Contributor%20License%20Agreement.pdf) form. Then either:
+the [Corporate Contributor License Agreement](https://github.com/SAP/openui5/blob/master/docs/SAP Corporate Contributor License Agreement.pdf) form. Then either:
 
 -   Scan it and e-mail it to [opensource@sap.com](mailto:opensource@sap.com) and [openui5@sap.com](mailto:openui5@sap.com)
 -   Fax it to: +49 6227 78-45813

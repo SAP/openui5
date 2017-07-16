@@ -1758,11 +1758,6 @@
 		sAriaText = this.oGenericTile._getAriaText();
 		//Assert
 		assert.equal(sAriaText, "someTooltipText", "Expected text for ARIA-label generated in case an explicite tooltip is set");
-		//Act
-		sAriaText = this.oGenericTile._getAriaText();
-		this.oGenericTile.setProperty("ariaLabel", "additional aria text");
-		//Assert
-		assert.equal(this.oGenericTile._getAriaText(), sAriaText + " additional aria text", "Value of ariaLabel property has been appended to resulting aria-label.");
 	});
 
 	QUnit.test("Internal method _getAriaText for actions scope", function(assert) {

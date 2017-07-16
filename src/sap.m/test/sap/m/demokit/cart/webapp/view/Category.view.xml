@@ -8,7 +8,7 @@
 		title="{CategoryName}"
 		showNavButton="true"
 		navButtonPress="onNavButtonPress"
-		showFooter="{=!${device>/system/phone}}" >
+		showFooter="{device>/isNoPhone}" >
 		<headerContent>
 			<ToggleButton
 				icon="sap-icon://complete"
@@ -24,7 +24,7 @@
 		<content>
 			<List
 				id="productList"
-				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
+				mode="{device>/listMode}"
 				selectionChange="onProductListSelect"
 				noDataText="{i18n>categoryNoData}"
 				busyIndicatorDelay="0"
@@ -37,7 +37,7 @@
 				}">
 				<items>
 					<ObjectListItem
-						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
+						type="{device>/listItemType}"
 						icon="{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'

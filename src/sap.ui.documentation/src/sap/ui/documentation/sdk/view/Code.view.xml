@@ -32,6 +32,7 @@
 					<IconTabHeader
 							id="tabHeader"
 							showOverflowSelectList="true"
+							backgroundDesign="Transparent"
 							mode="Inline"
 							items="{/files}"
 							select="handleTabSelectEvent"

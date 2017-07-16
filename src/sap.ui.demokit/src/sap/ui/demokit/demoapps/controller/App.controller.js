@@ -81,7 +81,7 @@ sap.ui.define([
 								// promise gets resolved in error case since Promise.all will not wait for all fails
 								aFails.push(oContent.errorMessage);
 							} else {
-								oZipFile.file(sFilePath, oContent, { base64: false, binary: true });
+								oZipFile.file(sFilePath, oContent);
 							}
 						});
 						aPromises.push(oPromise);

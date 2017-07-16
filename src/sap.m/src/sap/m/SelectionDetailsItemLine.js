@@ -17,7 +17,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Element' ],
 	 * This Element provides a means to fill an {@link sap.m.SelectionDetailsItem} with content.
 	 * It is used for a form-like display of a label followed by a value with an optional unit.
 	 * If the unit is used, the value is displayed bold.
-	 * <b><i>Note:</i></b>It is protected and should ony be used within the framework itself.
+	 * <b><i>Note:<i></b>It is protected and should ony be used within the framework itself.
 	 *
 	 * @extends sap.ui.core.Element
 	 *

@@ -299,26 +299,6 @@
 			oTable.destroy();
 		});
 
-		QUnit.module("Event");
-
-		QUnit.test("SelectAll in selectionChange event", function(assert) {
-			var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
-			sut.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			sut.attachEventOnce("selectionChange", function(e) {
-				assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'selectAll' checkbox is pressed");
-			});
-			var $SelectAllCheckbox = sut.$().find(".sapMCb").first().trigger("tap");
-
-			sut.attachEventOnce("selectionChange", function(e) {
-				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'selectAll' checkbox is unpressed");
-			});
-			$SelectAllCheckbox.trigger("tap");
-
-			//clean up
-			sut.destroy();
-		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

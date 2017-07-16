@@ -13,7 +13,7 @@
 			justifyContent="Center">
 				<l:VerticalLayout>
 					<l:HorizontalLayout>
-						<CheckBox text="I agree to use local storage persistency for:"
+						<CheckBox text="I agree to use local storage presystency for:"
 							  select= "onPersistedSettingSelect"
 							  selected="{/persistingSettings}"
 						/>
@@ -22,6 +22,7 @@
 							alignContent="Center"
 							justifyContent="Start">
 						<l:VerticalLayout class="customSettingsPadding">
+							<Text text="  Selected Rules"></Text>
 							<Text text="  Execution Scope"></Text>
 							<Text text="  Temporary Rules"></Text>
 							<Button text="Delete Persisted Data" press="deletePersistedData"></Button>

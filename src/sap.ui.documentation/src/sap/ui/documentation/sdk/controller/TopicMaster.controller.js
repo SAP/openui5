@@ -38,7 +38,7 @@ sap.ui.define([
 
 				this._topicId = event.getParameter("arguments").id;
 
-				this._expandTreeToNode(this._topicId, this.getModel());
+				this._expandTreeToNode(this._topicId);
 			},
 
 			_onMatched: function () {
@@ -92,28 +92,15 @@ sap.ui.define([
 			},
 
 			onNodeSelect : function (oEvent) {
-				var oNode = oEvent.getParameter("listItem"),
-					sTopicId = oNode.getCustomData()[0].getValue(),
-					oRouter;
+				var node = oEvent.getParameter("listItem");
+				var topicId = node.getCustomData()[0].getValue();
 
-				if (!sTopicId) {
-					jQuery.sap.log.warning("Missing key for entity: " + oNode.getId() + " - cannot navigate to topic");
+				if (!topicId) {
+					jQuery.sap.log.warning("Missing key for entity: " + node.getId() + " - cannot navigate to topic");
 					return;
 				}
 
-				oRouter = this.getRouter();
-
-				// Special case for release notes - we need to navigate to a different route
-				if (sTopicId === "a6a78b7e104348b4bb94fb8bcf003480") {
-					oRouter.navTo("releaseNotes");
-					return;
-				}
-
-				oRouter.navTo("topicId", {id : sTopicId}, false);
-			},
-
-			onTreeFilter: function (oEvent) {
-				MasterTreeBaseController.prototype.onTreeFilter.apply(this, [oEvent, "text"]);
+				this.getRouter().navTo("topicId", {id : topicId}, false);
 			}
 
 		});

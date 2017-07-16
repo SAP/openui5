@@ -3,27 +3,28 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
-	function(jQuery, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/documentation/library'],
+	function(jQuery, LibraryInfo, library) {
 		"use strict";
-
-		var oPromise;
 
 		var ControlsInfo = {
 
-			loadData: function() {
-				if (!oPromise) {
+			listeners: [],
 
-					oPromise = new Promise(function(resolve, reject) {
-						library._loadAllLibInfo(
-							"", "_getDocuIndex",
-							function (aLibs, oDocIndicies) {
-								var oData = ControlsInfo._getIndices(aLibs, oDocIndicies);
-								resolve(oData);
-							});
+			init: function () {
+
+				var that = this;
+
+				library._loadAllLibInfo(
+					"", "_getDocuIndex",
+					function (aLibs, oDocIndicies) {
+						ControlsInfo._getIndices(aLibs, oDocIndicies);
+
+						var listeners = that.listeners;
+						for (var i = 0; i < listeners.length; i++) {
+							listeners[i]();
+						}
 					});
-				}
-				return oPromise;
 			},
 
 			_getIndices: function (aLibs, oDocIndicies) {
@@ -45,7 +46,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 					"Tutorial",
 					"Routing",
 					"Data Binding",
-					"Data Visualization",
 					"Map"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 
 				// call LibraryInfo API method for collecting all component info from the .library files
 
-				var oLibInfo = library._getLibraryInfoSingleton();
+				var oLibInfo = new LibraryInfo();
 				var oLibComponents = {};
 				var oLibraryComponentInfo = function (oComponent) {
 					oLibComponents[oComponent.library] = oComponent.componentInfo;
@@ -307,7 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
 				data.libComponentInfos = oLibComponents;
 
 				data.groups = this.getGroups(data.entities);
-				return data;
+				ControlsInfo.data = data;
 			},
 
 			findGroup: function (groups, name) {

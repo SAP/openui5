@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/base/EventProvider",
 	"sap/m/Button",
-	"sap/m/library",
+	"sap/m/ButtonType",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbarLayoutData",
 	"./SemanticConfiguration",
@@ -20,15 +20,12 @@ sap.ui.define([
 	IconPool,
 	EventProvider,
 	Button,
-	mobileLibrary,
+	ButtonType,
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
 	SemanticConfiguration,
 	SemanticContainer) {
 	"use strict";
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	* Constructor for a <code>sap.f.semantic.SemanticShareMenu</code>.

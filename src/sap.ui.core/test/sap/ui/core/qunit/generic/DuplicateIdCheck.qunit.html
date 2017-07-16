@@ -130,7 +130,7 @@
 							var oElement;
 
 							if (oAggregation.getType() === Control) {
-
+								
 								if (oControl.getMetadata().getName() === "sap.ui.commons.InPlaceEdit" && oAggregation.name === "content") {
 									oElement = new sap.ui.commons.TextField();
 								} else {
@@ -176,6 +176,7 @@
 								"sap.ui.core.tmpl.Template",
 								"sap.m.DateTimeInput", // setting an invalid type crashes and only leaks a picker control because of this
 								"sap.m.FacetFilterItem",
+								"sap.m.TabStripSelect",
 								"sap.m.LightBox",
 								"sap.m.NotificationListGroup",
 								"sap.m.NotificationListItem",

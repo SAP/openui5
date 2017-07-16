@@ -9,9 +9,10 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/controller/util/EntityInfo",
-		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
+		"sap/ui/Device"
 	], function (JSONModel, ComponentContainer, BaseController, ControlsInfo,
-				 EntityInfo, ToggleFullScreenHandler) {
+				 EntityInfo, ToggleFullScreenHandler, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Entity", {
@@ -25,15 +26,15 @@ sap.ui.define([
 				this.router = this.getRouter();
 				this.router.getRoute("entity").attachPatternMatched(this.onRouteMatched, this);
 
-				this._oObjectPage = this.getView().byId("ObjectPageLayout");
-
 				// click handler for @link tags in JSdoc fragments
 				this.getView().attachBrowserEvent("click", this.onJSDocLinkClick, this);
+
+				ControlsInfo.listeners.push(this._loadSample.bind(this));
 
 				this.getView().setModel(new JSONModel());
 			},
 
-			onExit: function () {
+			onExit: function() {
 				this.getView().detachBrowserEvent("click", this.onJSDocLinkClick, this);
 			},
 
@@ -50,6 +51,20 @@ sap.ui.define([
 			onAPIRefPress: function (oEvt) {
 				var sEntityName = oEvt.getSource().data("name");
 				this.getRouter().navTo("apiId", {id: sEntityName}, false);
+			},
+
+			onJSDocLinkClick: function (oEvt) {
+
+				// get target
+				var sType = oEvt.target.getAttribute("data-sap-ui-target");
+				if ( sType && sType.indexOf('#') >= 0 ) {
+					sType = sType.slice(0, sType.indexOf('#'));
+				}
+
+				if ( sType ) {
+					this.getRouter().navTo("entity", {id : sType}, false);
+					oEvt.preventDefault();
+				}
 			},
 
 			onIntroLinkPress: function (oEvt) {
@@ -82,43 +97,18 @@ sap.ui.define([
 				});
 			},
 
-			onJSDocLinkClick: function (oEvent) {
-				var sRoute = "entity",
-					oComponent = this.getOwnerComponent(),
-					aLibsData = oComponent.getModel("libsData").getData(),
-					sTarget = oEvent.target.getAttribute("data-sap-ui-target"),
-					aNavInfo;
+			_TAB_KEYS: ["samples", "about"],
 
-				if (!sTarget) {
+			_loadSample: function () {
+
+				if (!ControlsInfo.data) {
 					return;
 				}
 
-				if (sTarget.indexOf('/') >= 0) {
-					// link refers to a method or event data-sap-ui-target="<class name>/methods/<method name>" OR
-					// data-sap-ui-target="<class name>/events/<event name>
-					aNavInfo = sTarget.split('/');
+				var sNewId = this._sNewId,
+					sNewTab = this._sNewTab;
 
-					if (aNavInfo[0] !== this._sTopicid) {
-						oComponent.getRouter().navTo(sRoute, {id: aNavInfo[0]}, false);
-					}
-				} else if (!aLibsData[sTarget]) {
-					sTarget = sTarget.slice(0, sTarget.lastIndexOf("."));
-
-					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
-				} else {
-					oComponent.getRouter().navTo(sRoute, {id: sTarget}, false);
-				}
-
-				oEvent.preventDefault();
-			},
-
-			_TAB_KEYS: ["samples", "about"],
-
-			_loadSample: function (oControlsData) {
-
-				var sNewId = this._sNewId;
-
-				var aFilteredEntities = oControlsData.entities.filter(function (entity) {
+				var aFilteredEntities = ControlsInfo.data.entities.filter(function (entity) {
 					return entity.id === sNewId;
 				});
 				var oEntity = aFilteredEntities.length ? aFilteredEntities[0] : undefined;
@@ -137,7 +127,7 @@ sap.ui.define([
 					}
 
 					// get view data
-					oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
+					oData = this._getViewData(sNewId, oDoc, oEntity);
 
 					// set view model
 					this.getView().getModel().setData(oData, false /* no merge with previous data */);
@@ -152,30 +142,22 @@ sap.ui.define([
 				}
 
 				// handle unknown tab
-				if (this._TAB_KEYS.indexOf(this._sNewTab) === -1) {
-					this._sNewTab = "samples";
+				if (this._TAB_KEYS.indexOf(sNewTab) === -1) {
+					sNewTab = "samples";
 				}
 
 				// handle invisible tab
-				if (!oData.show[this._sNewTab]) {
-					this._sNewTab = "samples";
+				if (!oData.show[sNewTab]) {
+					sNewTab = "samples";
 				}
-
-				this._switchPageTab();
-
 			},
-
 
 			onRouteMatched: function (oEvt) {
 
 				this._sNewId = oEvt.getParameter("arguments").id;
-				this._sNewTab = oEvt.getParameter("arguments").sectionTab;
+				this._sNewTab = oEvt.getParameter("arguments").part;
 
-				ControlsInfo.loadData().then(function (oData) {
-					this._loadSample(oData);
-				}.bind(this));
-
-				this.searchResultsButtonVisibilitySwitch(this.getView().byId("entityBackToSearch"));
+				this._loadSample();
 			},
 
 			onToggleFullScreen: function (oEvt) {
@@ -183,10 +165,10 @@ sap.ui.define([
 			},
 
 			// ========= internal ===========================================================================
-			_getViewData: function (sId, oDoc, oEntity, oControlsData) {
+			_getViewData: function (sId, oDoc, oEntity) {
 
 				// convert docu
-				var oData = this._convertEntityInfo(sId, oDoc, oControlsData),
+				var oData = this._convertEntityInfo(sId, oDoc),
 					bShouldShowSamplesSection = false,
 					iSamplesCount = 0;
 
@@ -216,7 +198,7 @@ sap.ui.define([
 				return oData;
 			},
 
-			_convertEntityInfo: function (sId, oDoc, oControlsData) {
+			_convertEntityInfo: function (sId, oDoc) {
 
 				// create skeleton data structure
 				var oData = {
@@ -229,7 +211,7 @@ sap.ui.define([
 					shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
 					description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 					docuLink: null,
-					values: oDoc ? oDoc.values : [],
+					values: oDoc.values,
 					show: {
 						baseType: (oDoc) ? !!oDoc.baseType : false,
 						about: !!oDoc,
@@ -239,7 +221,7 @@ sap.ui.define([
 					count: {
 						samples: 0
 					},
-					appComponent: this._getControlComponent(sId, oControlsData)
+					appComponent: this._getControlComponent(sId)
 				};
 
 				// no documentation !
@@ -298,22 +280,7 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				return (sDeprecated) ? "Deprecated" : "";
-			},
-
-			_switchPageTab: function () {
-
-				var oSection = this.getView().byId(this._sNewTab);
-				if (!oSection) {
-					return;
-				}
-				if (this._oObjectPage) {
-					this._oObjectPage.setSelectedSection(oSection.getId());
-				}
-			},
-
-			backToSearch: function () {
-				this.onNavBack();
+				return (sDeprecated) ? this.getView().getModel("i18n").getProperty("deprecated") : "";
 			},
 
 			/**

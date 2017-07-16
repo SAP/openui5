@@ -3396,10 +3396,6 @@
 		"ZMK": 0,
 		"ZWD": 0
 	},
-	"plurals": {
-		"zero": "n % 10 = 0 or n % 100 = 11..19 or v = 2 and f % 100 = 11..19",
-		"one": "n % 10 = 1 and n % 100 != 11 or v = 2 and f % 10 = 1 and f % 100 != 11 or v != 2 and f % 10 = 1"
-	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,

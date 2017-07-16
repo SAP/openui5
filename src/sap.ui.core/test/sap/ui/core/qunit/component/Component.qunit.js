@@ -661,38 +661,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
-
-		sap.ui.core.Component._fnOnInstanceCreated = undefined;
-
-		return sap.ui.component({
-			manifest: "/anylocation/manifest.json",
-			async: true
-		}).then(function(oComponent) {
-			assert.ok(true, "Component is loaded properly!");
-		}, function(oError) {
-			assert.ok(false, "Component should be loaded!");
-		});
-
-	});
-
-	QUnit.test("Usage of manifest property in component configuration for manifest object", function(assert) {
-
-		return sap.ui.component({
-			manifest: {
-				"sap.app" : {
-					"id" : "samples.components.oneview"
-				}
-			},
-			async: true
-		}).then(function(oComponent) {
-			assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
-		}, function(oError) {
-			assert.ok(false, "Component should be loaded!");
-		});
-
-	});
-
 
 	QUnit.module("Component Usage");
 

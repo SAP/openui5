@@ -139,7 +139,7 @@
 
 						// checks whether the given property should not be set for this test
 						var shouldIgnoreProperty = function(sControlName, sPropertyName) {
-							if (sControlName === "sap.m.PlanningCalendar" && (sPropertyName === "viewKey" || sPropertyName === "builtInViews")) { // control fails when key is set where nothing is registered
+							if (sControlName === "sap.m.PlanningCalendar" && sPropertyName === "viewKey") { // control fails when key is set where nothing is registered
 								return true;
 							}
 						}
@@ -164,6 +164,7 @@
 								"sap.ui.core.tmpl.Template",
 								"sap.m.DateTimeInput",  // setting an invalid type crashes and only leaks a picker control because of this
 								"sap.m.FacetFilterItem",
+								"sap.m.TabStripSelect",
 								"sap.m.LightBox",
 								"sap.m.NotificationListItem",
 								"sap.m.TimePickerSlider",
@@ -178,6 +179,9 @@
 								"sap.ui.ux3.NotificationBar",
 								"sap.ui.rta.ContextMenu",
 								"sap.ui.rta.AddElementsDialog",
+								"sap.ui.comp.navpopover.SmartLink",
+								"sap.ui.comp.navpopover.SemanticObjectController",
+								"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
 								"sap.chart.Chart",
 								"sap.makit.Chart",
 								"sap.me.TabContainer",

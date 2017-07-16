@@ -266,17 +266,6 @@ sap.ui.require([
 					"@Common.Label" : "Hail to the Chief"
 				}
 			}],
-			"tea_busi.ComplexType_Salary" : {
-				"$kind" : "ComplexType",
-				"AMOUNT" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.Decimal"
-				},
-				"CURRENCY" : {
-					"$kind" : "Property",
-					"$Type" : "Edm.String"
-				}
-			},
 			"tea_busi.ContainedC" : {
 				"$kind" : "EntityType",
 				"$Key" : ["Id"],
@@ -345,8 +334,7 @@ sap.ui.require([
 				"TEAMS" : {
 					"$kind" : "EntitySet",
 					"$NavigationPropertyBinding" : {
-						"TEAM_2_EMPLOYEES" : "EMPLOYEES",
-						"TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "EMPLOYEES"
+						"TEAM_2_EMPLOYEES" : "EMPLOYEES"
 					},
 					"$Type" : "tea_busi.TEAM"
 				},
@@ -446,10 +434,6 @@ sap.ui.require([
 					"$kind" : "NavigationProperty",
 					"$Type" : "tea_busi.TEAM",
 					"$Nullable" : false
-				},
-				"SALÃRY" : {
-					"$kind" : "Property",
-					"$Type" : "tea_busi.ComplexType_Salary"
 				}
 			},
 			"$$Loop" : "$$Loop/", // some endless loop
@@ -2044,23 +2028,19 @@ sap.ui.require([
 		}]
 	}, { // navigation from contained to root entity
 		// must be appended nevertheless since we only have a type, but no set
-		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_C/5/C_2_EMPLOYEE",
-		canonicalUrl : "/TEAMS(~1)/TEAM_2_CONTAINED_C(~2)/C_2_EMPLOYEE",
+		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S/S_2_EMPLOYEE",
+		canonicalUrl : "/TEAMS(~1)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE",
 		requests : [{
 			entityType : "tea_busi.TEAM",
 			path : "/TEAMS/0",
 			predicate : "(~1)"
-		}, {
-			entityType : "tea_busi.ContainedC",
-			path : "/TEAMS/0/TEAM_2_CONTAINED_C/5",
-			predicate : "(~2)"
 		}]
 	}, { // navigation from entity w/ key predicate to contained to root entity
-		dataPath : "/TEAMS('42')/TEAM_2_CONTAINED_C/5/C_2_EMPLOYEE",
-		canonicalUrl : "/TEAMS('42')/TEAM_2_CONTAINED_C(~1)/C_2_EMPLOYEE",
+		dataPath : "/TEAMS('42')/TEAM_2_CONTAINED_S/5/S_2_EMPLOYEE",
+		canonicalUrl : "/TEAMS('42')/TEAM_2_CONTAINED_S(~1)/S_2_EMPLOYEE",
 		requests : [{
-			entityType : "tea_busi.ContainedC",
-			path : "/TEAMS('42')/TEAM_2_CONTAINED_C/5",
+			entityType : "tea_busi.ContainedS",
+			path : "/TEAMS('42')/TEAM_2_CONTAINED_S/5",
 			predicate : "(~1)"
 		}]
 	}, { // decode entity set initially, encode it finally
@@ -2082,16 +2062,16 @@ sap.ui.require([
 				oHelperMock = this.mock(_Helper),
 				oPromise;
 
-			this.oMetaModelMock.expects("getMetaPath").withExactArgs(oFixture.dataPath)
-				.returns("metapath");
-			this.oMetaModelMock.expects("fetchObject").withExactArgs("metapath")
-				.returns(_SyncPromise.resolve());
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
-				oContextMock.expects("fetchValue")
-					.withExactArgs(oRequest.path || oFixture.dataPath)
-					.returns(_SyncPromise.resolve(oEntityInstance));
+				if (oRequest.path) {
+					oContextMock.expects("fetchAbsoluteValue").withExactArgs(oRequest.path)
+						.returns(_SyncPromise.resolve(oEntityInstance));
+				} else {
+					oContextMock.expects("fetchValue").withExactArgs("")
+						.returns(_SyncPromise.resolve(oEntityInstance));
+				}
 				oHelperMock.expects("getKeyPredicate")
 					.withExactArgs(sinon.match.same(mScope[oRequest.entityType]),
 						sinon.match.same(oEntityInstance))
@@ -2107,282 +2087,63 @@ sap.ui.require([
 			});
 		});
 	});
-
-	//*********************************************************************************************
-	[{ // simple singleton
-		path : "/Me|ID",
-		editUrl : "Me"
-	}, { // simple entity by key predicate
-		path : "/TEAMS('42')|Name",
-		editUrl : "TEAMS('42')"
-	}, { // simple entity from a set
-		path : "/TEAMS/0|Name",
-		fetchPredicates : {
-			"/TEAMS/0" : "tea_busi.TEAM"
-		},
-		editUrl : "TEAMS(~0)"
-	}, { // simple entity from a set, complex property
-		path : "/EMPLOYEES/0|SAL%C3%83RY/CURRENCY",
-		fetchPredicates : {
-			"/EMPLOYEES/0" : "tea_busi.Worker"
-		},
-		editUrl : "EMPLOYEES(~0)"
-	}, { // navigation to root entity
-		path : "/TEAMS/0/TEAM_2_EMPLOYEES/1|ID",
-		fetchPredicates : {
-			"/TEAMS/0/TEAM_2_EMPLOYEES/1" : "tea_busi.Worker"
-		},
-		editUrl : "EMPLOYEES(~0)"
-	}, { // navigation to root entity
-		path : "/TEAMS('42')/TEAM_2_EMPLOYEES/1|ID",
-		fetchPredicates : {
-			"/TEAMS('42')/TEAM_2_EMPLOYEES/1" : "tea_busi.Worker"
-		},
-		editUrl : "EMPLOYEES(~0)"
-	}, { // navigation to root entity with key predicate
-		path : "/TEAMS('42')/TEAM_2_EMPLOYEES('23')|ID",
-		editUrl : "EMPLOYEES('23')"
-	}, { // multiple navigation to root entity
-		path : "/TEAMS/0/TEAM_2_EMPLOYEES/1/EMPLOYEE_2_TEAM|Name",
-		fetchPredicates : {
-			"/TEAMS/0/TEAM_2_EMPLOYEES/1/EMPLOYEE_2_TEAM" : "tea_busi.TEAM"
-		},
-		editUrl : "T%E2%82%ACAMS(~0)"
-	}, { // navigation from entity set to single contained entity
-		path : "/TEAMS/0/TEAM_2_CONTAINED_S|Id",
-		fetchPredicates : {
-			"/TEAMS/0" : "tea_busi.TEAM"
-		},
-		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_S"
-	}, { // navigation from singleton to single contained entity
-		path : "/Me/EMPLOYEE_2_CONTAINED_S|Id",
-		editUrl : "Me/EMPLOYEE_2_CONTAINED_S"
-	}, { // navigation to contained entity within a collection
-		path : "/TEAMS/0/TEAM_2_CONTAINED_C/1|Id",
-		fetchPredicates : {
-			"/TEAMS/0" : "tea_busi.TEAM",
-			"/TEAMS/0/TEAM_2_CONTAINED_C/1" : "tea_busi.ContainedC"
-		},
-		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_C(~1)"
-	}, { // navigation to contained entity with a key predicate
-		path : "/TEAMS('42')/TEAM_2_CONTAINED_C('foo')|Id",
-		editUrl : "TEAMS('42')/TEAM_2_CONTAINED_C('foo')"
-	}, { // navigation from contained entity to contained entity
-		path : "/TEAMS/0/TEAM_2_CONTAINED_S/S_2_C/1|Id",
-		fetchPredicates : {
-			"/TEAMS/0" : "tea_busi.TEAM",
-			"/TEAMS/0/TEAM_2_CONTAINED_S/S_2_C/1" : "tea_busi.ContainedC"
-		},
-		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_S/S_2_C(~1)"
-	}, { // navigation from contained to root entity, resolved via navigation property binding path
-		path : "/TEAMS/0/TEAM_2_CONTAINED_S/S_2_EMPLOYEE|ID",
-		fetchPredicates : {
-			"/TEAMS/0/TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "tea_busi.Worker"
-		},
-		editUrl : "EMPLOYEES(~0)"
-	}, { // navigation from entity w/ key predicate to contained to root entity
-		path : "/TEAMS('42')/TEAM_2_CONTAINED_C/5/C_2_EMPLOYEE|ID",
-		fetchPredicates : {
-			"/TEAMS('42')/TEAM_2_CONTAINED_C/5" : "tea_busi.ContainedC"
-		},
-		editUrl : "TEAMS('42')/TEAM_2_CONTAINED_C(~0)/C_2_EMPLOYEE"
-	}, { // decode entity set initially, encode it finally
-		path : "/T%E2%82%ACAMS/0|Name",
-		fetchPredicates : {
-			"/T%E2%82%ACAMS/0" : "tea_busi.TEAM"
-		},
-		editUrl : "T%E2%82%ACAMS(~0)"
-	}, { // decode navigation property, encode entity set
-		path : "/EMPLOYEES('7')/EMPLOYEE_2_EQUIPM%E2%82%ACNTS(42)|ID",
-		editUrl : "EQUIPM%E2%82%ACNTS(42)"
-	}].forEach(function (oFixture) {
-		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
-			var i = oFixture.path.indexOf("|"),
-				sContextPath = oFixture.path.slice(0, i),
-				sPropertyPath = oFixture.path.slice(i + 1),
-				oContext = Context.create(this.oModel, undefined, sContextPath),
-				oContextMock = this.mock(oContext),
-				oHelperMock = this.mock(_Helper),
-				oPromise,
-				that = this;
-
-			this.oMetaModelMock.expects("getMetaPath")
-				.withExactArgs(oFixture.path.replace("|", "/")).returns("~");
-			this.oMetaModelMock.expects("fetchObject").withExactArgs("~")
-				.returns(_SyncPromise.resolve(Promise.resolve()).then(function () {
-					that.oMetaModelMock.expects("fetchEntityContainer")
-						.returns(_SyncPromise.resolve(mScope));
-					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, i) {
-						var oEntityInstance = {},
-							oEntityTypeName = oFixture.fetchPredicates[sPath];
-
-						// Note: the entity instance is delivered asynchronously
-						oContextMock.expects("fetchValue")
-							.withExactArgs(sPath)
-							.returns(_SyncPromise.resolve(Promise.resolve(oEntityInstance)));
-						oHelperMock.expects("getKeyPredicate")
-							.withExactArgs(sinon.match.same(mScope[oEntityTypeName]),
-								sinon.match.same(oEntityInstance))
-							.returns("(~" + i + ")");
-					});
-				}));
-
-			// code under test
-			oPromise = this.oMetaModel.fetchUpdateData(sPropertyPath, oContext);
-
-			assert.ok(!oPromise.isRejected());
-			return oPromise.then(function (oResult) {
-				assert.strictEqual(oResult.editUrl, oFixture.editUrl);
-				assert.strictEqual(oResult.entityPath, sContextPath);
-				assert.strictEqual(oResult.propertyPath, sPropertyPath);
-			});
-		});
-	});
-	//TODO support collection properties (-> path containing index not leading to predicate)
+	//TODO support non-navigation properties, paths in navigation property bindings
 	//TODO prefer instance annotation at payload for "odata.editLink"?!
 	//TODO target URLs like "com.sap.gateway.default.iwbep.tea_busi_product.v0001.Container/Products(...)"?
-	//TODO type casts, operations?
-
-	//*********************************************************************************************
-	QUnit.test("fetchUpdateData: transient entity", function(assert) {
-		var oContext = Context.create(this.oModel, undefined, "/TEAMS/-1"),
-			sPropertyPath = "Name";
-
-		this.oMetaModelMock.expects("fetchEntityContainer").twice()
-			.returns(_SyncPromise.resolve(mScope));
-		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS/-1")
-			.returns(_SyncPromise.resolve({"@$ui5.transient" : "update"}));
-
-		// code under test
-		return this.oMetaModel.fetchUpdateData(sPropertyPath, oContext).then(function (oResult) {
-			assert.deepEqual(oResult, {
-				entityPath : "/TEAMS/-1",
-				editUrl : undefined,
-				propertyPath : "Name"
-			});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchUpdateData: fetchObject fails", function(assert) {
-		var oContext = {},
-			oExpectedError = new Error(),
-			oMetaModelMock = this.mock(this.oMetaModel),
-			sPath = "some/invalid/path/to/a/property";
-
-		oMetaModelMock.expects("resolve")
-			.withExactArgs(sPath, sinon.match.same(oContext))
-			.returns("~1");
-		oMetaModelMock.expects("getMetaPath").withExactArgs("~1").returns("~2");
-		oMetaModelMock.expects("fetchObject").withExactArgs("~2")
-			.returns(Promise.reject(oExpectedError));
-
-		// code under test
-		return this.oMetaModel.fetchUpdateData(sPath, oContext).then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError, oExpectedError);
-		});
-	});
 
 	//*********************************************************************************************
 	[{
-		dataPath : "/Foo/Bar",
-		message : "Not an entity set: Foo",
-		warning : "Unknown child Foo of tea_busi.DefaultContainer"
+		dataPath : "/TEAMS/0/Team_Id",
+		message : "Not a navigation property: Team_Id"
 	}, {
-		dataPath : "/TEAMS/0/Foo/Bar",
-		message : "Not a (navigation) property: Foo"
+		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0/ID",
+		message : "Not a navigation property: ID"
 	}, {
-		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
+		dataPath : "/TEAMS/0/unknown",
+		message : "Not a navigation property: unknown"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0/unknown",
+		message : "Not a navigation property: unknown"
+	}, {
+		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0",
 		instance : undefined,
-		message : "No instance to calculate key predicate at /TEAMS/0"
+		message : "No instance to calculate key predicate"
 	}, {
+		dataPath : "/TEAMS/0/TEAM_2_EMPLOYEES/0",
+		instance : {},
+		message : "Missing value for key property 'ID'"
+	}, {
+		absolute : true,
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : {},
 		message : "Missing value for key property 'Team_Id' at /TEAMS/0"
+	}, {
+		absolute : true,
+		dataPath : "/TEAMS('42')/TEAM_2_CONTAINED_C/0",
+		instance : {},
+		message : "Missing value for key property 'Id'"
 	}].forEach(function (oFixture) {
-		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
+		QUnit.test("fetchCanonicalUrl: error for " + oFixture.dataPath, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
 				oPromise;
 
-			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			this.oLogMock.expects("error").withExactArgs(oFixture.message, oFixture.dataPath,
+				sODataMetaModel);
+			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			if ("instance" in oFixture) {
-				this.mock(oContext).expects("fetchValue")
+				this.mock(oContext)
+					.expects(oFixture.absolute ? "fetchAbsoluteValue" : "fetchValue")
 					.returns(_SyncPromise.resolve(oFixture.instance));
+			} else {
+				this.mock(oContext).expects("fetchValue").never();
+				this.mock(_Helper).expects("getKeyPredicate").never();
 			}
-			if (oFixture.warning) {
-				this.oLogMock.expects("isLoggable")
-					.withExactArgs(jQuery.sap.log.Level.WARNING, sODataMetaModel)
-					.returns(true);
-				this.oLogMock.expects("warning")
-					.withExactArgs(oFixture.warning, oFixture.dataPath, sODataMetaModel);
-			}
-			this.oLogMock.expects("error")
-				.withExactArgs(oFixture.message, oFixture.dataPath, sODataMetaModel);
 
-			oPromise = this.oMetaModel.fetchUpdateData("", oContext);
+			oPromise = this.oMetaModel.fetchCanonicalPath(oContext);
 			assert.ok(oPromise.isRejected());
 			assert.strictEqual(oPromise.getResult().message,
 				oFixture.dataPath + ": " + oFixture.message);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchCanonicalPath: success", function(assert) {
-		var oContext = {};
-
-		this.mock(this.oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("", sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve(Promise.resolve({
-				editUrl : "edit('URL')",
-				propertyPath : ""
-			})));
-
-		// code under test
-		return this.oMetaModel.fetchCanonicalPath(oContext).then(function (oCanonicalPath) {
-			assert.strictEqual(oCanonicalPath, "/edit('URL')");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchCanonicalPath: not an entity", function(assert) {
-		var oContext = {
-				getPath : function () { return "/TEAMS('4711')/Name"; }
-			};
-
-		this.mock(this.oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("", sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve(Promise.resolve({
-				entityPath : "/TEAMS('4711')",
-				editUrl : "TEAMS('4711')",
-				propertyPath : "Name"
-			})));
-
-		// code under test
-		return this.oMetaModel.fetchCanonicalPath(oContext).then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError.message, "Context " + oContext.getPath()
-				+ " does not point to an entity. It should be " + "/TEAMS('4711')");
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchCanonicalPath: fetchUpdateData fails", function(assert) {
-		var oContext = {},
-			oExpectedError = new Error();
-
-		this.mock(this.oMetaModel).expects("fetchUpdateData")
-			.withExactArgs("", sinon.match.same(oContext))
-			.returns(_SyncPromise.resolve(Promise.reject(oExpectedError)));
-
-		// code under test
-		return this.oMetaModel.fetchCanonicalPath(oContext).then(function () {
-			assert.ok(false);
-		}, function (oError) {
-			assert.strictEqual(oError, oExpectedError);
 		});
 	});
 
@@ -2742,9 +2503,9 @@ sap.ui.require([
 		assertContextPaths(oBinding.getContexts(0, 2), ["ID", "AGE"]);
 		assertContextPaths(oBinding.getContexts(1, 2), ["AGE", "EMPLOYEE_2_CONTAINED_S"]);
 		assertContextPaths(oBinding.getContexts(), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM"]);
 		assertContextPaths(oBinding.getContexts(0, 10), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM"]);
 
 		oMetaModel.setSizeLimit(2);
 		assertContextPaths(oBinding.getContexts(), ["ID", "AGE"]);
@@ -2756,14 +2517,14 @@ sap.ui.require([
 		oMetaModel.setSizeLimit(100);
 		oBinding.sort(new Sorter("@sapui.name"));
 		assertContextPaths(oBinding.getContexts(), ["AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID"]);
 
 		oBinding.attachEvent("filter", function () {
 			assert.ok(false, "unexpected filter event");
 		});
 
 		oBinding.filter(new Filter("$kind", "EQ", "Property"));
-		assertContextPaths(oBinding.getContexts(), ["AGE", "ID", "SALÃRY"]);
+		assertContextPaths(oBinding.getContexts(), ["AGE", "ID"]);
 	});
 
 	//*********************************************************************************************
@@ -2783,8 +2544,7 @@ sap.ui.require([
 			"/EMPLOYEES/AGE",
 			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
 			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
-			"/EMPLOYEES/EMPLOYEE_2_TEAM",
-			"/EMPLOYEES/SALÃRY"
+			"/EMPLOYEES/EMPLOYEE_2_TEAM"
 		]
 	}, {
 		// <template:repeat list="{meta>EMPLOYEES}" ...>
@@ -2796,8 +2556,7 @@ sap.ui.require([
 			"/EMPLOYEES/AGE",
 			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
 			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
-			"/EMPLOYEES/EMPLOYEE_2_TEAM",
-			"/EMPLOYEES/SALÃRY"
+			"/EMPLOYEES/EMPLOYEE_2_TEAM"
 		]
 	}, {
 		// <template:repeat list="{meta>/}" ...>

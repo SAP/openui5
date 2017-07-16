@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * where a filter function can be applied to the list binding. </li>
 	 * <li> The growing functionality of the list does not support two-way Binding, so if you use this control with a JSON model
 	 * make sure the binding mode is set to <code>OneWay</code> and that you update the selection model manually with
-	 * the items passed in the <code>confirm</code> event. </li>
+	 * the items passed in the <code>confirm<code> event. </li>
 	 * <li> In the multi-select mode of the select dialog, checkboxes are provided for choosing multiple entries. </li>
 	 * <li> You can set <code>rememberSelections</code> to true to store the current selection and load this state
 	 * when the dialog is opened again. </li>
@@ -1012,7 +1012,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @private
 	 */
 	SelectDialog.prototype._updateSelectionIndicator = function () {
-		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
+		var iSelectedContexts = this._oList.getSelectedContexts(true).length,
 			oInfoBar = this._oList.getInfoToolbar();
 
 		// update the selection label
@@ -1027,16 +1027,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 */
 	SelectDialog.prototype._fireConfirmAndUpdateSelection = function () {
 		// fire confirm event with current selection
-		var mParams = {
+		this.fireConfirm({
 			selectedItem: this._oSelectedItem,
-			selectedItems: this._aSelectedItems
-		};
-		// retrieve the value for 'selectedContexts' only lazily as it might fail for some models
-		Object.defineProperty(mParams, "selectedContexts", {
-			get: this._oList.getSelectedContexts.bind(this._oList, true)
+			selectedItems: this._aSelectedItems,
+			selectedContexts: this._oList.getSelectedContexts(true)
 		});
-
-		this.fireConfirm(mParams);
 		this._updateSelection();
 	};
 

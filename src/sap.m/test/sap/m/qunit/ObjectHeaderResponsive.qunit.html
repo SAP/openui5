@@ -142,25 +142,6 @@
 					// Assert
 					var iconEl = jQuery.sap.domById(sControlId + "-img");
 					assert.ok(iconEl, "Icon is rendered.");
-					assert.ok(!oObjectHeader.$("img").attr("title"), "icon has no tooltip");
-
-					// Clean up
-					oObjectHeader.destroy();
-				});
-
-				QUnit.test("Title Icon has tooltip", function(assert){
-					// Arrange
-					var oObjectHeader = createObjectHeader({
-						icon: sap.ui.core.IconPool.getIconURI("inbox"),
-						iconTooltip: "test tooltip"
-					});
-
-					// System under Test
-					oObjectHeader.placeAt("qunit-fixture");
-					oCore.applyChanges();
-
-					var $sImg = oObjectHeader.$("img");
-					assert.equal($sImg.attr("title"), "test tooltip", "icon has tooltip");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -1119,12 +1100,11 @@
 					assert.equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 				});
 
-				QUnit.test("Title Image has aria-labelledby and tooltip", function(assert){
+				QUnit.test("Title Image has aria-labelledby", function(assert){
 					// Arrange
 					var oObjectHeader = createObjectHeader({
 						icon: "../images/SAPUI5.jpg",
-						iconAlt: "test image",
-						iconTooltip: "test tooltip"
+						iconAlt: "test image"
 					});
 
 					// System under Test
@@ -1133,7 +1113,6 @@
 
 					var $sImg = oObjectHeader.$("img");
 					assert.ok($sImg.attr("aria-label"), "image has attribute aria-label");
-					assert.equal($sImg.attr("title"), "test tooltip", "image has tooltip");
 				});
 
 				QUnit.test("Title has level H1", function(assert){

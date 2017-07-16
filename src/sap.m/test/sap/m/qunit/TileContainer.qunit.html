@@ -21,14 +21,6 @@
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-
-	<style>
-		.small_60x100 { /* in order to guarantee that the tiles will all be shown/fit into the parent container uiArea1 */
-			width: 60px !important;
-			height: 100px; !important;
-		}
-	</style>
 
 	<script>
 		var core = sap.ui.getCore();
@@ -216,7 +208,7 @@
 			setTimeout(function(){
 				sut._applyDimension();
 				id= sut.getId();
-				oDim = sut._getDimension();
+				oDim = sut._getContainerDimension();
 				pagerHeight = jQuery.sap.byId( id + "-pager").outerHeight();
 
 				assert.equal(sut.$().css("visibility"),"visible","TileContainer was visible");
@@ -253,20 +245,20 @@
 			sut.placeAt("qunit-fixture");
 			core.applyChanges();
 			setTimeout(function() {
-				sut._calculatePageSize();
+				sut._calculatePositions();
 
 				//Add one more Tile than total amount of Tiles fitting in the current container
 				while(sut._iMaxTiles +1 > sut.getTiles().length){
 					lastTile = new m.StandardTile();
 					sut.addTile(lastTile);
-					sut._calculatePageSize();
+					sut._calculatePositions();
 				}
 
 				//Act
 				sut.scrollIntoView(lastTile,false);
 
 				//Assert
-				assert.equal(sut._oPagesInfo.getCurrentPage(), 1);
+				assert.equal(sut._iCurrentPage, 1);
 				assert.equal(sut._iMaxTiles, sut.getPageFirstTileIndex());
 
 				//Cleanup
@@ -432,7 +424,7 @@
 			this.callAndTest(sap.ui.getCore().applyTheme, ["sap_hcb"], assert);
 		});
 
-		QUnit.module("Accessibility attributes", {
+		QUnit.module("Accessability attributes", {
 			getAriaPosInSetValues: function() {
 				return this.sut.getTiles().map(function (tile) {
 					return tile.$().attr('aria-posinset');
@@ -447,17 +439,17 @@
 				var m = sap.m;
 				this.sut = new m.TileContainer("tcAcc", {
 					tiles: [
-						new m.StandardTile({id: 'first'}).addStyleClass("small_60x100"),
-						new m.StandardTile({id: 'second'}).addStyleClass("small_60x100"),
-						new m.StandardTile({id: 'third'}).addStyleClass("small_60x100"),
-						new m.StandardTile({id: 'fourth'}).addStyleClass("small_60x100"),
-						new m.StandardTile({id: 'fifth'}).addStyleClass("small_60x100"),
-						new m.StandardTile({id: 'sixth'}).addStyleClass("small_60x100")
+						new m.StandardTile({id: 'first'}),
+						new m.StandardTile({id: 'second'}),
+						new m.StandardTile({id: 'third'}),
+						new m.StandardTile({id: 'fourth'}),
+						new m.StandardTile({id: 'fifth'}),
+						new m.StandardTile({id: 'sixth'})
 					]
 				});
 
 				// SUT
-				this.sut.placeAt("uiArea1");
+				this.sut.placeAt("qunit-fixture");
 				// Act
 				core.applyChanges();
 			},
@@ -532,9 +524,6 @@
 		});
 
 		QUnit.test("Add of tile updates the aria-posinset and aria-setsize attributes", function(assert) {
-			//Arrange
-			this.sut.removeTile(this.sut.getTiles()[0]);// remove the first tile to free up space for rendering of new tile
-			//Act
 			var oNewTile = new sap.m.StandardTile();
 			this.sut.addTile(oNewTile);
 			assert.deepEqual(this.getAriaPosInSetValues(), this.getExpectedAriaPositionInSetValues(), "Checking the 'aria-posinset' for exact values");
@@ -617,293 +606,22 @@
 			var done = assert.async();
 
 			setTimeout(function(){
-				assert.strictEqual(this.oTileContainer._oPagesInfo.getCount(), 1, "There is one page");
+				assert.strictEqual(this.oTileContainer._iPages, 1, "There is one page");
 
 				newDataModel = new sap.ui.model.json.JSONModel({});
 
 				sap.ui.getCore().setModel(newDataModel);
 
-				assert.strictEqual(this.oTileContainer._oPagesInfo.getCount(), 0, "There are no pages after the model was updated with empty data");
+				assert.strictEqual(this.oTileContainer._iPages, 0, "There are no pages after the model was updated with empty data");
 
 				done();
 			}.bind(this), delay);
 		});
-
-		QUnit.module("Private state and functions", {
-			beforeEach: function() {
-				this.oTC = new sap.m.TileContainer();
-				this.oSut = this.oTC._oPagesInfo;
-			},
-			afterEach: function() {
-				this.oTC.destroy();
-			}
-		});
-
-		QUnit.test("_oPagesInfo initial values", function() {
-			//Assert
-			assert.equal(this.oSut.getCount(),  undefined, "Page count");
-			assert.equal(this.oSut.getOldCount(), undefined, "Old page count");
-			assert.equal(this.oSut.pageCountChanged(), false, "Page count changed");
-
-			assert.equal(this.oSut.getCurrentPage(), undefined, "Current page");
-			assert.equal(this.oSut.getOldCurrentPage(), undefined, "Old current page");
-			assert.equal(this.oSut.currentPageChanged(), false, "Current page changed");
-
-			assert.equal(this.oSut.currentPageIsFirst(), false, "Current page is first");
-			assert.equal(this.oSut.oldCurrentPageIsFirst(), false, "Old current page is first");
-			assert.equal(this.oSut.currentPageIsFirstChanged(), false, "Current page is first changed");
-
-			assert.equal(this.oSut.currentPageIsLast(), false, "Current page is last");
-			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
-			assert.equal(this.oSut.currentPageIsLastChanged(), false, "Current page is last changed");
-
-			assert.equal(this.oSut.isPagerCreated(), false, "Pager created");
-		});
-
-		QUnit.test("_oPagesInfo setters change the value", function() {
-
-			//Act
-			this.oSut.setCount(10);
-			this.oSut.setCurrentPage(3);
-			this.oSut.setPagerCreated(true);
-
-			//Assert
-			assert.equal(this.oSut.getCount(), 10, "Page count");
-			assert.equal(this.oSut.getOldCount(), undefined, "Old page count");
-			assert.equal(this.oSut.pageCountChanged(), true, "Page count changed");
-
-			assert.equal(this.oSut.getCurrentPage(), 3, "Current page");
-			assert.equal(this.oSut.getOldCurrentPage(), undefined, "Old current page");
-			assert.equal(this.oSut.currentPageChanged(), true, "Current page changed");
-
-			assert.equal(this.oSut.currentPageIsFirst(), false, "Current page is first");
-			assert.equal(this.oSut.oldCurrentPageIsFirst(), false, "Old current page is first");
-			assert.equal(this.oSut.currentPageIsFirstChanged(), false, "Current page is first changed");
-
-			assert.equal(this.oSut.currentPageIsLast(), false, "Current page is last");
-			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
-			assert.equal(this.oSut.currentPageIsLastChanged(), false, "Current page is last changed");
-
-			assert.equal(this.oSut.isPagerCreated(), true, "Pager created");
-		});
-
-
-		QUnit.test("_oPages current page is the last page", function() {
-			//Arrange
-			this.oSut.setCount(10);
-			this.oSut.setCurrentPage(3);
-			this.oSut.setPagerCreated(true);
-
-			//Act
-			this.oSut.setCurrentPage(9);
-
-			assert.equal(this.oSut.getCount(), 10, "Page count");
-			assert.equal(this.oSut.getOldCount(), undefined, "Old page count");
-			assert.equal(this.oSut.pageCountChanged(), true, "Page count changed");
-
-			assert.equal(this.oSut.getCurrentPage(), 9, "Current page");
-			assert.equal(this.oSut.getOldCurrentPage(), 3, "Old current page");
-			assert.equal(this.oSut.currentPageChanged(), true, "Current page changed");
-
-			assert.equal(this.oSut.currentPageIsFirst(), false, "Current page is first");
-			assert.equal(this.oSut.oldCurrentPageIsFirst(), false, "Old current page is first");
-			assert.equal(this.oSut.currentPageIsFirstChanged(), false, "Current page is first changed");
-
-			assert.equal(this.oSut.currentPageIsLast(), true, "Current page is last");
-			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
-			assert.equal(this.oSut.currentPageIsLastChanged(), true, "Current page is last changed");
-
-			assert.equal(this.oSut.isPagerCreated(), true, "Pager created");
-		});
-
-		QUnit.test("_oPagesInfo syncOldToCurrentValues", function() {
-
-			//Arrange
-			this.oSut.setCount(10);
-			this.oSut.setCurrentPage(3);
-			this.oSut.setPagerCreated(true);
-			this.oSut.setCurrentPage(9);
-
-			//Act
-			this.oSut.syncOldToCurrentValues();
-
-			//Assert
-			assert.equal(this.oSut.getCount(), 10, "Page count");
-			assert.equal(this.oSut.getOldCount(), 10, "Old page count");
-			assert.equal(this.oSut.pageCountChanged(), false, "Page count changed");
-
-			assert.equal(this.oSut.getCurrentPage(), 9, "Current page");
-			assert.equal(this.oSut.getOldCurrentPage(), 9, "Old current page");
-			assert.equal(this.oSut.currentPageChanged(), false, "Current page changed");
-
-			assert.equal(this.oSut.currentPageIsFirst(), false, "Current page is first");
-			assert.equal(this.oSut.oldCurrentPageIsFirst(), false, "Old current page is first");
-			assert.equal(this.oSut.currentPageIsFirstChanged(), false, "Current page is first changed");
-
-			assert.equal(this.oSut.currentPageIsLast(), true, "Current page is last");
-			assert.equal(this.oSut.oldCurrentPageIsLast(), true, "Old current page is last");
-			assert.equal(this.oSut.currentPageIsLastChanged(), false, "Current page is last changed");
-
-		});
-
-		QUnit.test("_oPagesInfo.reset()", function() {
-			//Act
-			this.oSut.reset();
-			//Assert
-
-			assert.equal(this.oSut.getCount(),  undefined, "Page count");
-			assert.equal(this.oSut.getOldCount(), undefined, "Old page count");
-			assert.equal(this.oSut.pageCountChanged(), false, "Page count changed");
-
-			assert.equal(this.oSut.getCurrentPage(), undefined, "Current page");
-			assert.equal(this.oSut.getOldCurrentPage(), undefined, "Old current page");
-			assert.equal(this.oSut.currentPageChanged(), false, "Current page changed");
-
-			assert.equal(this.oSut.currentPageIsFirst(), false, "Current page is first");
-			assert.equal(this.oSut.oldCurrentPageIsFirst(), false, "Old current page is first");
-			assert.equal(this.oSut.currentPageIsFirstChanged(), false, "Current page is first changed");
-
-			assert.equal(this.oSut.currentPageIsFirst(), false, "Current page is first");
-			assert.equal(this.oSut.oldCurrentPageIsFirst(), false, "Old current page is first");
-			assert.equal(this.oSut.currentPageIsFirstChanged(), false,  "Current page is first changed");
-
-			assert.equal(this.oSut.currentPageIsLast(), false, "Current page is last");
-			assert.equal(this.oSut.oldCurrentPageIsLast(), false, "Old current page is last");
-			assert.equal(this.oSut.currentPageIsLastChanged(), false, "Current page is last changed");
-
-			assert.equal(this.oSut.isPagerCreated(), false, "Pager created");
-		});
-
-		QUnit.test("onBeforeRendering", function() {
-
-			//SUT
-			var aSut = [new sap.m.StandardTile(), new sap.m.StandardTile()],
-				oTC = new sap.m.TileContainer({tiles: aSut}),
-				oSpyPagesInfoReset = sinon.spy(oTC._oPagesInfo, "reset");
-
-			oTC.placeAt('qunit-fixture');
-
-			//Act
-			oTC.onBeforeRendering();
-
-			//Assert
-			aSut.forEach(function(oSutTile) {
-				assert.equal(oSutTile._rendered, false, "Before rendering of TileContainer all tiles are marked as non-rendered flag (._rendered=false)");
-			});
-			assert.equal(oSpyPagesInfoReset.callCount, 1, "Before rendering the oPagesInfo object should be reset");
-
-			//Cleanup
-			oSpyPagesInfoReset.restore();
-			oTC.destroy();
-		});
-
-		QUnit.module("Performance optimizations", {
-			beforeEach: function () {
-				//Sets uiarea size so it can show 2 StandardTile per page + 90px space for navigation buttons
-				jQuery("#uiArea2").width("515px"); //2 x 210px (12 rem + 2x8 margins + 2x1 borders. If changed in less, should be reflected here)
-				jQuery("#uiArea2").height("15rem"); //1 standard tile x 14 rem (if changed in less, should be reflected here)
-
-				var aTiles = [
-							new sap.m.StandardTile("id0", {title: "first"}), new sap.m.StandardTile("id1", {title: "second"}),
-							new sap.m.StandardTile("id2", {title: "thirth"}), new sap.m.StandardTile("id3", {title: "forth"}),
-							new sap.m.StandardTile("id4", {title: "fifth"}), new sap.m.StandardTile("id5", {title: "sixth"})];
-				this.oSut = new sap.m.TileContainer("TCPerformanceRocket", {tiles: aTiles});
-				this.oSut.placeAt('uiArea2');
-				sap.ui.getCore().applyChanges();
-			},
-			afterEach: function() {
-				this.oSut.destroy();
-			}
-		});
-
-		QUnit.test("Initial rendering renders only the tiles that should be visible on the 1st page", function() {
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 2, "Render only the tiles of the initial page");
-			assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
-
-		});
-
-		QUnit.test("Navigation after initial rendering should lazily render needed tiles", function() {
-			//Act
-			this.oSut.$("rightscroller").click();
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 4, "After forward button click the rendered 2 tiles more, so now are 4");
-			assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), false, "The first page is not active anymore");
-			assert.equal(this.oSut.$("pager").children().eq(1).hasClass("sapMTCActive"), true, "The second page is active");
-
-			//Act
-			this.oSut.$("leftscroller").click();
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 4, "After backward button click no new tiles are rendered (still 4)");
-			assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page become active again");
-			assert.equal(this.oSut.$("pager").children().eq(1).hasClass("sapMTCActive"), false, "The second page is not active anymore");
-			assert.equal(this.oSut.$("leftscroller").is(":visible"), false, "When on the first page, backward button should not be visible");
-
-			//Act - go the to last page
-			this.oSut.$("rightscroller").click();
-			this.oSut.$("rightscroller").click();
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 6, "After navigation to the last page 2 more tiles are rendered, so now are 6");
-			assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is correct");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), false, "The first page is not active");
-			assert.equal(this.oSut.$("pager").children().eq(1).hasClass("sapMTCActive"), false, "The second page is not active");
-			assert.equal(this.oSut.$("pager").children().eq(2).hasClass("sapMTCActive"), true, "The second page is active");
-			assert.equal(this.oSut.$("rightscroller").is(":visible"), false, "When on the last page, forward button should not be visible");
-		});
-
-		QUnit.test("Add/Insert tile after initial rendering", function() {
-
-			this.oSut.addTile(new sap.m.StandardTile("id6", {title: "seventh"}));
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 2, "Adding a tile to the last page does not render new tiles nor rearranges them");
-			assert.equal(this.oSut.$("pager").children().size(), 4, "Pager: total count is increased to 4, as this tile is the 7th where 2 tiles per page are rendered");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
-
-			//Act
-			this.oSut.insertTile(new sap.m.StandardTile("id7", {title: "eight"}), 1);
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 3, "Adding a tile to the to the current page renders it and does not destroy the one that goes outside the page");
-			assert.equal(this.oSut.$("pager").children().size(), 4, "Pager: total count is increased to 4, as this tile is the 7th where 2 tiles per page are rendered");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
-		});
-
-		QUnit.test("Delete tile", function() {
-			//Act
-			this.oSut.deleteTile(this.oSut.getTiles()[1]);
-
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 2, "Removing the second tile at the active page will render new");
-			assert.equal(document.getElementById('id1'), null, "The second tile should not be part of the DOM");
-			assert.ok(document.getElementById('id2'), "The third tile should be rendered");
-			assert.equal(this.oSut.$("pager").children().size(), 3, "Pager: total count is not changed");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
-
-
-			//Act
-			this.oSut.deleteTile(sap.ui.getCore().byId('id5')); //delete the six tile, now we have only 4 left
-			//Assert
-			assert.equal(this.oSut.$("cnt").children().size(), 2, "Removing the last tile at the inactive page does not change the rendered tiles");
-			assert.equal(document.getElementById('id5'), null, "The last tile should not be part of the DOM");
-			assert.equal(this.oSut.$("pager").children().size(), 2, "Pager: total count is not changed");
-			assert.equal(this.oSut.$("pager").children().first().hasClass("sapMTCActive"), true, "The first page is active");
-		});
-
 	</script>
 </head>
 
 <body id="body" class="sapUiBody">
 	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>
-	<div id="uiArea1" style="width: 600px; height: 480px"></div>
-	<div id="uiArea2"></div>
 </body>
 </html>

@@ -11,7 +11,6 @@
 			<items>
 				<Image
 						src="./resources/sap/ui/documentation/sdk/images/logo_sap.png"
-						densityAware="false"
 						height="2.5rem">
 				</Image>
 				<FlexBox
@@ -26,12 +25,12 @@
 						<Link
 								class="demokitInitialPagesBrightLink sapUiLargeMarginEnd sapUiTinyMarginBottom"
 								text="Privacy"
-								href="https://www.sap.com/corporate/en/legal/privacy.html"
+								href="https://help.hana.ondemand.com/privacy.htm"
 								target="_blank"/>
 						<Link
 								class="demokitInitialPagesBrightLink"
-								text="Terms of Use"
-								href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
+								text="Terms of use"
+								href="https://help.hana.ondemand.com/terms_of_use.html"
 								target="_blank"/>
 					</items>
 				</FlexBox>

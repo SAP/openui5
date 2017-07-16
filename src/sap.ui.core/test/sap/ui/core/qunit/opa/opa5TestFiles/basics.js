@@ -126,19 +126,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Should return testLib section from config", function (assert) {
-		Opa5.extendConfig({
-			testLibs: {
-				myAwesomeTestLib: {
-					key: "value"
-				}
-			}
-		});
-
-		assert.strictEqual(Opa5.getTestLibConfig('myAwesomeTestLib').key,"value");
-		assert.propEqual(Opa5.getTestLibConfig('notExistingTestLib'),{});
-	});
-
 	function createXmlView(sViewName) {
 		var sView = [
 			'<core:View xmlns:core="sap.ui.core" xmlns="sap.m">',

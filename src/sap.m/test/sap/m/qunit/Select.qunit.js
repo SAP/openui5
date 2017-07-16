@@ -8024,11 +8024,9 @@
 	QUnit.test("onAfterClose", function (assert) {
 
 		// system under test
-		var item2 = new sap.ui.core.Item({text : "2"});
 		var oSelect = new sap.m.Select({
 			items: [
-				new sap.ui.core.Item({text : "1"}),
-				item2
+				new sap.ui.core.Item()
 			]
 		});
 
@@ -8038,13 +8036,8 @@
 		oSelect.focus();
 		oSelect.open();
 
-		if (jQuery.support.cssAnimations) {	// no animation on ie9
-			this.clock.tick(1000);
-		}
-
-        // act
-		sap.ui.test.qunit.triggerEvent("tap", item2.getDomRef());
-
+		// act
+		oSelect.close();
 		if (jQuery.support.cssAnimations) {	// no animation on ie9
 			this.clock.tick(1000);
 		}

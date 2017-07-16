@@ -80,8 +80,7 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	/**
-	 * Returns the plain DT metadata for an aggregation name,
-	 * including also aggregation-like associations
+	 * Returns the plain DT metadata for an aggregation name
 	 * @param {string} sAggregationName an aggregation name
 	 * @return {object} returns the DT metadata for an aggregation with a given name
 	 * @public
@@ -106,21 +105,12 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 	};
 
 	/**
-	 * Returns the DT metadata for all aggregations,
-	 * including also aggregation-like associations
+	 * Returns the DT metadata for all aggregations
 	 * @return {map} returns the DT metadata for all aggregations
 	 * @public
 	 */
 	ElementDesignTimeMetadata.prototype.getAggregations = function() {
-		var mAggregations = this.getData().aggregations;
-		var mAssociations = this.getData().associations || {};
-		Object.keys(mAssociations).forEach(function(sAssociation){
-			var mAssociation = mAssociations[sAssociation];
-			if (mAssociation.aggregationLike){
-				mAggregations[sAssociation] = mAssociation;
-			}
-		});
-		return mAggregations;
+		return this.getData().aggregations;
 	};
 
 	/**
@@ -217,15 +207,6 @@ function(jQuery, DesignTimeMetadata, AggregationDesignTimeMetadata) {
 		}
 	};
 
-	/**
-	 * Returns the scroll containers or an empty array
-	 *
-	 * @return {array} scrollContainers or empty array
-	 * @public
-	 */
-	ElementDesignTimeMetadata.prototype.getScrollContainers = function() {
-		return this.getData().scrollContainers || [];
-	};
 
 	return ElementDesignTimeMetadata;
 }, /* bExport= */ true);

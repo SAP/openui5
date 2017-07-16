@@ -21,29 +21,24 @@ sap.ui.define([],
 		 *          control an object representation of the control that should be rendered
 		 */
 		ToolPageRenderer.render = function (rm, control) {
-
-			var header = control.getAggregation('header');
-
 			rm.write('<div');
 			rm.writeControlData(control);
 			rm.addClass('sapTntToolPage');
-
-			if (header) {
-				rm.addClass('sapTntToolPageWithHeader');
-			}
-
 			rm.writeClasses();
 			rm.write('>');
 
-			if (header) {
-				rm.write('<div id="' + control.getId() + '-header" class="sapTntToolPageHeader">');
-				rm.renderControl(header);
-				rm.write('</div>');
-			}
-
+			this.renderHeader(rm, control);
 			this.renderContentWrapper(rm, control);
 
 			rm.write('</div>');
+		};
+
+		ToolPageRenderer.renderHeader = function (rm, control) {
+			if (control.getAggregation('header')) {
+				rm.write('<div id="' + control.getId() + '-header" class="sapTntToolPageHeader">');
+				rm.renderControl(control.getAggregation('header'));
+				rm.write('</div>');
+			}
 		};
 
 		ToolPageRenderer.renderContentWrapper = function (rm, control) {

@@ -292,53 +292,6 @@
 					oAssert.strictEqual(this.oM._bNoFocus, true, "When invalidating with origin DateRange and parent " +
 						"aggregation 'specialDates' focus should not be returned");
 				});
-
-				QUnit.module("Other");
-
-				QUnit.test("interval selection feedback", function(assert) {
-					//arrange
-					var oMonth = new sap.ui.unified.calendar.Month({
-							intervalSelection: true,
-							date: new Date(2017, 6, 19) //2017, July 19
-						}),
-						$HoveredDate,
-						$HoveredDateBefore,
-						oSelectedDate = new sap.ui.unified.DateRange({ startDate: new Date(2017, 6, 19) });
-
-					oMonth.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-
-					//act - hover a date, with nothing selected yet
-					$HoveredDate = jQuery("#" + oMonth.getId() + "-20170725");
-					oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
-
-					//assert
-					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 0, 'no selection feedback yet');
-
-					//act - hover the same end date
-					oMonth.addSelectedDate(oSelectedDate);
-					oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
-
-					//assert
-					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 5, 'selection feedback is applied');
-
-					//act - hover a date before the selected.startDate
-					$HoveredDateBefore = jQuery("#" + oMonth.getId() + "-20170712");
-					oMonth.onmouseover({ target: $HoveredDateBefore }); //2017, July 12
-
-					//assert
-					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 6, 'selection feedback is applied on hovered dates before start date');
-
-					//act - finish selection and then hover
-					oMonth.getSelectedDates()[0].setEndDate(new Date(2017, 6, 12));
-					oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
-
-					//assert
-					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 6, 'no additional selection feedback after end date has been given');
-
-					//clean
-					oMonth.destroy();
-				});
 			})();
 
 		</script>

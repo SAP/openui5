@@ -2,13 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, coreLibrary, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, ValueState, ValueStateSupport) {
 	"use strict";
-
-
-	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
 
 
 	/**

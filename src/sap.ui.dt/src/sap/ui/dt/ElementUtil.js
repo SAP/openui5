@@ -37,11 +37,11 @@ sap.ui.define(['jquery.sap.global'],
 				if (vElement && vElement.length) {
 					for (var i = 0; i < vElement.length; i++) {
 						var oElement = vElement[i];
-						if (oElement instanceof sap.ui.base.ManagedObject) {
+						if (oElement instanceof sap.ui.core.Element) {
 							fnCallback(oElement);
 						}
 					}
-				} else if (vElement instanceof sap.ui.base.ManagedObject) {
+				} else if (vElement instanceof sap.ui.core.Element) {
 					fnCallback(vElement);
 				}
 			};
@@ -66,8 +66,7 @@ sap.ui.define(['jquery.sap.global'],
 			 */
 			ElementUtil.getElementInstance = function(vElement) {
 				if (typeof vElement === "string") {
-					var oElement = sap.ui.getCore().byId(vElement);
-					return oElement || sap.ui.getCore().getComponent(vElement);
+					return sap.ui.getCore().byId(vElement);
 				} else {
 					return vElement;
 				}
@@ -269,6 +268,9 @@ sap.ui.define(['jquery.sap.global'],
 				return ElementUtil.getAggregation(oParent, oElement.sParentAggregationName);
 			};
 
+			/**
+			 *
+			 */
 			ElementUtil.getAggregationAccessors = function(oElement, sAggregationName) {
 				var oMetadata = oElement.getMetadata();
 				oMetadata.getJSONKeys();
@@ -294,6 +296,9 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			};
 
+			/**
+			 *
+			 */
 			ElementUtil.getAggregation = function(oElement, sAggregationName) {
 				var oValue;
 
@@ -394,51 +399,12 @@ sap.ui.define(['jquery.sap.global'],
 					var sTypeOrInterface = oAggregationMetadata.type;
 
 					// if aggregation is not multiple and already has element inside, then it is not valid for element
-					if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, sAggregationName) &&
-							this.getAggregation(oParent, sAggregationName).length > 0) {
+					if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, sAggregationName)) {
 						return false;
 					}
 					return this.isInstanceOf(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
 				}
 
-			};
-
-			ElementUtil.getAssociationAccessors = function(oElement, sAggregationName) {
-				var oMetadata = oElement.getMetadata();
-				oMetadata.getJSONKeys();
-				var oAssociationMetadata = oMetadata.getAssociation(sAggregationName);
-				if (oAssociationMetadata) {
-					return {
-						get : oAssociationMetadata._sGetter,
-						add : oAssociationMetadata._sMutator,
-						remove : oAssociationMetadata._sRemoveMutator,
-						insert : oAssociationMetadata._sInsertMutator,
-						removeAll : oAssociationMetadata._sRemoveAllMutator
-					};
-				} else {
-					return {};
-				}
-			};
-
-			ElementUtil.getAssociation = function(oElement, sAssociationName) {
-				var oValue;
-				var sGetter = this.getAssociationAccessors(oElement, sAssociationName).get;
-				if (sGetter) {
-					oValue = oElement[sGetter]();
-				}
-				return oValue;
-			};
-
-			ElementUtil.getAssociationInstances = function(oElement, sAssociationName) {
-				var vValue = this.getAssociation(oElement, sAssociationName);
-				vValue = this.getElementInstance(vValue);
-				if (vValue && vValue.length){
-					vValue = vValue.map(function(sId){
-						return this.getElementInstance(sId);
-					});
-				}
-
-				return vValue;
 			};
 
 			/**

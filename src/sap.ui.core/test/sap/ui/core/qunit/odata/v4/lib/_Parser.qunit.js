@@ -3,9 +3,9 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
-	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor"
-], function (jQuery, _Parser, _Requestor) {
+	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_Parser"
+], function (jQuery, _Cache, _Parser) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -71,8 +71,7 @@ sap.ui.require([
 			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.string),
 				{"$expand" : oFixture.parsed});
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Requestor.create("/~/")
-					.convertQueryOptions({"$expand" : oFixture.parsed}),
+			assert.deepEqual(_Cache.convertQueryOptions({"$expand" : oFixture.parsed}),
 				{"$expand" : oFixture.string});
 		});
 	});
@@ -110,8 +109,7 @@ sap.ui.require([
 			assert.deepEqual(_Parser.parseSystemQueryOption("$select=" + oFixture.string),
 					{"$select" : oFixture.parsed});
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Requestor.create("/~/")
-					.convertQueryOptions({"$select" : oFixture.parsed}),
+			assert.deepEqual(_Cache.convertQueryOptions({"$select" : oFixture.parsed}),
 				{"$select" : oFixture.string});
 		});
 	});
@@ -184,11 +182,10 @@ sap.ui.require([
 		mValuesForOption[sOption].forEach(function (sValue) {
 			QUnit.test("_Parser: " + sOption + "=" + sValue, function (assert) {
 				var sAssignment = sOption + "=" + sValue,
+					oResult = {},
 					oExpand = {
 						"$select" : ["*"]
-					},
-					oRequestor = _Requestor.create("/~/"),
-					oResult = {};
+					};
 
 				oResult[sOption] = sValue;
 				oExpand[sOption] = sValue;
@@ -204,7 +201,7 @@ sap.ui.require([
 					"as only/last option in an expand, terminated by ')'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
-					oRequestor.convertQueryOptions({
+					_Cache.convertQueryOptions({
 						"$expand" : {
 							"foo" : oResult
 						}
@@ -221,7 +218,7 @@ sap.ui.require([
 					"as first/inner option in an expand, terminated by ';'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
-					oRequestor.convertQueryOptions({
+					_Cache.convertQueryOptions({
 						"$expand" : {
 							"foo" : oExpand
 						}
@@ -389,8 +386,8 @@ sap.ui.require([
 			assert.deepEqual(_Parser.parseSystemQueryOption(oFixture.string), oFixture.parsed,
 				oFixture.string);
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Requestor.create("/~/").convertQueryOptions(oFixture.parsed),
-				oFixture.converted, JSON.stringify(oFixture.converted));
+			assert.deepEqual(_Cache.convertQueryOptions(oFixture.parsed), oFixture.converted,
+				JSON.stringify(oFixture.converted));
 		});
 	});
 });

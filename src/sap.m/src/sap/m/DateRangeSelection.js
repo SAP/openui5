@@ -766,7 +766,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './DatePicker', './library'
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	DateRangeSelection.prototype.getAccessibilityInfo = function() {

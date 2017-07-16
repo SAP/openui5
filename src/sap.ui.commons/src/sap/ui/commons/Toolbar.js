@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.oOverflowDomRef = null;
 			//reference to the overflow content
 			this._oOverflowPopup = null;
-			this.sOriginalStylePropertyWidth = null;
+		    this.sOriginalStylePropertyWidth = null;
 			this.bHasRightItems = false;
 			this._bRendering = false;
 
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * in order to re-initialize item navigation
 		 * with the currently visible items. Update the visibility of the overflow button.
 		 *
-		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
+		 * @param bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */
 		Toolbar.prototype.updateAfterResize = function (bClearTabStops) {
@@ -294,8 +294,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * ItemNavigation handles Tabindexes. But if TabStop is on now invisible item set it to last
 		 * visible one.
 		 *
-		 * @param {int} iAllItemsBeforeBreak The number of currently visible toolbar items
-		 * @param {boolean} bClearTabStops Whether the tab indices of all toolbar items should be set to -1
+		 * @param iAllItemsBeforeBreak The number of currently visible toolbar items
+		 * @param bClearTabStops Whether the tab indices of all toolbar items should be set to -1
 		 * @private
 		 */
 		Toolbar.prototype.updateItemNavigation = function (iAllItemsBeforeBreak, bClearTabStops) {
@@ -342,9 +342,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * Returns the number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism).
 		 * If the toolbar has not been rendered yet, value "0" is returned.
 		 * Requirement here is that every control has exactly one root HTML element.
-		 * @param {boolean} bIncludeItemsWithAPIPropertyVisibleFalse If true the items with property "visible"=false will be also
-		 * included, although they may not be hidden due to the overflow mechanism
-		 * @return {int} The number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism)
+		 * @param bIncludeItemsWithAPIPropertyVisibleFalse if true the items with property "visible"=false will be also
+		 * included, although they may not be hidden due to the overflow mechanism.
+		 * @return The number of toolbar items that are currently visible (i.e. not hidden due to overflow mechanism).
 		 * @private
 		 */
 		Toolbar.prototype.getVisibleItemInfo = function (bIncludeItemsWithAPIPropertyVisibleFalse) {
@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Modifies the visibility of the overflow button
 		 *
-		 * @param {boolean} bOverflow whether the overflow button should be displayed
+		 * @param bOverflow whether the overflow button should be displayed
 		 * @private
 		 */
 		Toolbar.prototype.updateOverflowIcon = function (bOverflow) {
@@ -568,7 +568,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Closes the overflow popup.
-		 * @param {boolean} bResetFocus Whether the focus must be reset
+		 *
 		 * @private
 		 */
 		Toolbar.prototype.closePopup = function (bResetFocus) {
@@ -601,7 +601,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Prepares the given oCtrl for usage in a toolbar.
 		 * @param {sap.ui.core.Control} oCtrl The control instance whose focus info should be re-directed
-		 * @returns {sap.ui.core.Control} The control instance which focus info is prepared
 		 * @private
 		 */
 		Toolbar.prototype.prepareFocusInfoRedirect = function (oCtrl) {
@@ -626,9 +625,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Cleans up the given oCtrl after usage in a toolbar. Will be used in remove* functions.
+		 * Cleans up the given oCtrl after usage in a toolbar. Will be used in remove* functions
 		 * @param {sap.ui.core.Control} oCtrl The control instance that should be reset to standard focus info
-		 * @returns {sap.ui.core.Control} oCtrl The control instance that is reset to standard focus info
 		 * @private
 		 */
 		Toolbar.prototype.cleanupFocusInfoRedirect = function (oCtrl) {
@@ -801,7 +799,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Called by the Popup, required to simulate a control inside the Popup when there is only some HTML.
 			 * The root of this HTML is returned here.
-			 * @returns {Object} The root of the HTML
+			 *
 			 * @private
 			 */
 			getDomRef: function () {
@@ -978,9 +976,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		/**
-		 * Checks whether a given dom element is the overflow button.
-		 * @param {Object} oElement The element to be check
-		 * @returns {boolean} Whether the given oElement is the overflow button
+		 * Checks whether a given dom element is the overflow button
+		 * @param oElement the element to check
+		 * @returns {boolean} whether the given oElement is the overflow button
 		 */
 		function isOverflowButton(oElement) {
 			var sOverflowId = this.getId() + "-mn";
@@ -992,8 +990,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * property's visibility(i.e. visibility is not false).
 		 * "Second row" items are the items which are not shown in the parent container due to css overflow:hidden, i.e.
 		 * overflowing items.
-		 * @param {Object} oLastVisibleItem The last visible item just before the first item that goes into the overflow (second row)
-		 * @returns {int} The number of items that are not hidden due to overflow
+		 * @param oLastVisibleItem the last visible item just before the first item that goes into the overflow (second row)
+		 * @returns {number}
 		 * @private
 		 */
 		function getCountOfVisibleItemsWithVisibilityTrue(oLastVisibleItem) {

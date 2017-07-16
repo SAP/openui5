@@ -2,12 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './library'],
-	function(jQuery, library) {
+sap.ui.define([ 'jquery.sap.global', 'sap/m/GenericTileScope'],
+	function(jQuery, GenericTileScope) {
 	"use strict";
-
-	// shortcut for sap.m.GenericTileScope
-	var GenericTileScope = library.GenericTileScope;
 
 	/**
 	 * SlideTile renderer.

@@ -145,24 +145,14 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	}
 }
 .sapUxAPBlockContainerPhone {
-	padding: 0 1rem;
+	padding: 1rem 0 1rem 0;
 	.sapUiFormResGrid > div {
 		padding: 0 0;
 	}
-	.sapUiRespGrid.sapUiRespGridHSpace1 {
-		padding: 0 0;
-	}
-	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
-		margin: 0 0;
-	}
 }
 
-.sapUxAPObjectPageSubSectionPromoted .sapUxAPBlockContainerPhone {
-	padding-top: 1rem;
-}
-
-.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSection,
-.sapUiMedia-Std-Phone .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapUxAPObjectPageSubSection {
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail,
+.sapUiMedia-Std-Phone .sapMSplitContainer:not(.sapMSplitContainerHideMode) {
 	.sapUiRespGrid.sapUiRespGridHSpace1 {
 		padding: 0 0;
 	}
@@ -181,30 +171,18 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 		padding: 1rem 2rem 2rem 2rem;
 	}
 	.sapUxAPBlockContainerTablet,
-	.sapUxAPBlockContainerPhone {
+	.sapUxAPBlockContainerPhone{
 		padding: 1rem 1rem 2rem 1rem;
-	}
-	.sapUxAPBlockContainerPhone {
-		.sapUiFormResGrid > div {
-			padding: 0 0;
-		}
-		.sapUiRespGrid.sapUiRespGridHSpace1 {
-			padding: 0 0;
-		}
-		.sapUiRespGrid.sapUiRespGridHSpace1 > div {
-			margin: 0 0;
-		}
 	}
 }
 
-/* IE and Edge ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapUxAPObjectPageSubSection:focus {
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
+	&:focus {
 		outline: none;
 		position: relative;
 	}
-	.sapUxAPObjectPageSubSection:focus:before {
+	&:focus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
@@ -212,9 +190,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		position: absolute;
 		left: 0;
 		top: 0;
-		right: 0;
-		bottom: 0;
-		border: 0.0625rem dashed @sapUiContentFocusColor;
+		border: 0.0625rem dotted @sapUiContentFocusColor;
 		pointer-events: none;
 	}
 }

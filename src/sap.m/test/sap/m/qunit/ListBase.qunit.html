@@ -260,16 +260,8 @@
 			assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 
-			oList.setRememberSelections(false);
-			if (vSelectionMode == "MultiSelect") {
-				assert.strictEqual(oList.getRememberSelections(), false, 'rememberSelections is set to false on ' + oList);
-				assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'Empty array returned as bAll is undefined on ' + oList);
-				assert.strictEqual(oList.getSelectedContextPaths(true).length, 3, 'Selected context paths return via binding context paths as bAll=true on ' + oList);
-			}
-
-			oList.removeSelections(true);
+			oList.setRememberSelections(false).removeSelections(true);
 			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
-			assert.strictEqual(oList.getSelectedContextPaths(true).length, 0, 'Empty array returned via binding context on ' + oList);
 
 			// sort descending
 			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );
@@ -352,7 +344,6 @@
 		QUnit.test("Events", function(assert) {
 			var oList = new sap.m.List({}),
 				oEvents = oList.getMetadata().getAllEvents();
-			bindListData(oList, data2, "/items", createTemplateListItem());
 
 			assert.ok(oEvents.select, 'Event "select" exists');
 			assert.ok(oEvents.selectionChange, 'Event "selectionChange" exists');
@@ -362,38 +353,6 @@
 			assert.ok(oEvents.growingFinished, 'Event "growingFinished" exists');
 			assert.ok(oEvents.updateStarted, 'Event "updateStarted" exists');
 			assert.ok(oEvents.updateFinished, 'Event "updateFinished" exists');
-
-			oList.setMode("MultiSelect");
-			oList.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
-
-			oList.attachEventOnce("selectionChange", function(e) {
-				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 1st item is selected");
-			});
-			oList.getItems()[0].getModeControl().$().trigger("tap");
-
-			oList.attachEventOnce("selectionChange", function(e) {
-				assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'ctrl+A' is pressed");
-			});
-			oList.getItems()[0].focus();
-			sap.ui.test.qunit.triggerKeydown(oList.getItems()[0].$(), jQuery.sap.KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
-
-			oList.attachEventOnce("selectionChange", function(e) {
-				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'ctrl+A' is pressed again");
-			});
-			oList.getItems()[0].focus();
-			sap.ui.test.qunit.triggerKeydown(oList.getItems()[0].$(), jQuery.sap.KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
-
-			var oSelectionChangeSpy = this.spy();
-			oList.attachSelectionChange(oSelectionChangeSpy);
-			oList.selectAll();
-			assert.strictEqual(oSelectionChangeSpy.callCount, 0, "selectAll is not fired via public API call");
-
-			oList.removeSelections();
-			oList.selectAll(true);
-			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
 
 			// cleanup
 			oList.destroy();

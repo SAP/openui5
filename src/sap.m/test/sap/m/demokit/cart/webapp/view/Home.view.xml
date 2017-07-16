@@ -7,9 +7,9 @@
 	<Page
 		id="page"
 		title="{i18n>homeTitle}"
-		showNavButton="{device>/system/phone}"
+		showNavButton="{device>/isPhone}"
 		navButtonPress="onNavButtonPress"
-		showFooter="{=!${device>/system/phone}}" >
+		showFooter="{device>/isNoPhone}" >
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"
@@ -22,7 +22,7 @@
 				<SearchField
 					id="searchField"
 					liveChange="onSearch"
-					showRefreshButton="{=!${device>/support/touch}}"
+					showRefreshButton="{device>/isNoTouch}"
 					placeholder="{i18n>homeSearchPlaceholder}"
 					tooltip="{i18n>homeSearchTooltip}"
 					width="100%">
@@ -32,13 +32,13 @@
 		<content>
 			<PullToRefresh
 				id="pullToRefresh"
-				visible="{device>/support/touch}"
+				visible="{device>/isTouch}"
 				refresh="onRefresh" />
 			<!-- This list shows the search results -->
 			<List
 				visible="false"
 				id="productList"
-				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
+				mode="{device>/listMode}"
 				selectionChange="onProductListSelect"
 				noDataText="{i18n>homeNoData}"
 				items="{
@@ -50,7 +50,7 @@
 				}">
 				<items>
 					<ObjectListItem
-						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
+						type="{device>/listItemType}"
 						icon="{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'

@@ -12,24 +12,18 @@
 			<f:title>
 				<f:DynamicPageTitle>
 					<f:heading>
-						<Title text="Header Title"/>
+						<Title text="Product group"/>
 					</f:heading>
 					<f:expandedContent>
-						<Text text="This is a subheading"/>
+						<Text text="Power Projectors"/>
 					</f:expandedContent>
 					<f:snappedContent>
-						<Text text="This is a subheading"/>
+						<Text text="Power Projectors"/>
 					</f:snappedContent>
 					<f:actions>
 						<ToolbarSpacer/>
 						<Button
-								text="Edit"
-								type="Emphasized"/>
-						<Button
-								text="Delete"
-								type="Transparent"/>
-						<Button
-								text="Copy"
+								text="Global Action"
 								type="Transparent"/>
 						<Button
 								text="Toggle Footer"
@@ -46,85 +40,57 @@
 				<f:DynamicPageHeader pinnable="true">
 					<f:content>
 						<FlexBox
-								alignItems="Start"
-								justifyContent="SpaceBetween">
-							<items>
-								<Panel
-										backgroundDesign="Transparent"
-										class="sapUiNoContentPadding sapUiSmallMarginTop">
-									<content>
-										<layout:HorizontalLayout
-												allowWrapping="true">
-											<layout:VerticalLayout
-													class="sapUiMediumMarginEnd">
-												<ObjectAttribute title="Location" text="Warehouse A"/>
-												<ObjectAttribute title="Halway" text="23L"/>
-												<ObjectAttribute title="Rack" text="34"/>
-											</layout:VerticalLayout>
-											<layout:VerticalLayout>
-												<ObjectAttribute title="Availability"/>
-												<ObjectStatus text="In Stock" state="Success" />
-											</layout:VerticalLayout>
-										</layout:HorizontalLayout>
-									</content>
-								</Panel>
-							</items>
+						alignItems="Start"
+						justifyContent="SpaceBetween">
+						<items>
+							<Panel backgroundDesign="Transparent">
+								<content>
+									<ObjectAttribute title="Functional Area" text="Development"/>
+									<ObjectAttribute title="Cost Center" text="PI DFA GD Programs and Product"/>
+									<ObjectAttribute title="Email" text="email@address.com"/>
+								</content>
+							</Panel>
+							<ObjectStatus text="In Stock" state="Success" />
+						</items>
 						</FlexBox>
 					</f:content>
 				</f:DynamicPageHeader>
 			</f:header>
 			<f:content>
-				<Table id="idProductsTable"
-					   inset="false"
-					   items="{
-							path: '/ProductCollection',
-							sorter: {
-								path: 'Name'
-							}
-						}">
-					<headerToolbar>
-						<Toolbar>
-							<Title text="Products" level="H2"/>
-						</Toolbar>
-					</headerToolbar>
+				<Table
+						id="idProductsTable"
+						inset="false"
+						items="{
+                            path: '/ProductCollection'
+                        }">
+
 					<columns>
 						<Column
-								width="12em">
-							<Text text="Product" />
+								minScreenWidth="Tablet"
+								demandPopin="true">
+							<Text text="Name"/>
 						</Column>
 						<Column
 								minScreenWidth="Tablet"
 								demandPopin="true">
-							<Text text="Supplier" />
+							<Text text="Category"/>
 						</Column>
 						<Column
 								minScreenWidth="Tablet"
-								demandPopin="true"
-								hAlign="End">
-							<Text text="Dimensions" />
-						</Column>
-						<Column
-								hAlign="End">
-							<Text text="Price" />
+								demandPopin="true">
+							<Text text="SupplierName"/>
 						</Column>
 					</columns>
+
 					<items>
-						<ColumnListItem>
+						<ColumnListItem
+								vAlign="Middle">
 							<cells>
 								<ObjectIdentifier
 										title="{Name}"
 										text="{ProductId}"/>
-								<Text
-										text="{SupplierName}" />
-								<Text
-										text="{Width} x {Depth} x {Height} {DimUnit}" />
-								<ObjectNumber
-										number="{
-											parts:[{path:'Price'},{path:'CurrencyCode'}],
-											type: 'sap.ui.model.type.Currency',
-											formatOptions: {showMeasure: false}
-										}"
-										unit="{CurrencyCode}" />
+								<Text text="{Category}"/>
+								<Text text="{SupplierName}"/>
 							</cells>
 						</ColumnListItem>
 					</items>

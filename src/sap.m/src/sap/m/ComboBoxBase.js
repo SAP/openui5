@@ -564,17 +564,19 @@ sap.ui.define(['jquery.sap.global', './Dialog', './ComboBoxTextField', './Toolba
 		ComboBoxBase.prototype.setValueState = function(sValueState) {
 			var sAdditionalText,
 				sValueStateText = this.getValueStateText(),
-				bShow = ( sValueState === sap.ui.core.ValueState.None ? false : this.getShowValueStateMessage());
+				bShow = this.getShowValueStateMessage();
 
 			this._sOldValueState = this.getValueState();
 			ComboBoxTextField.prototype.setValueState.apply(this, arguments);
-
-			this._showValueStateText(bShow);
+			sAdditionalText = ValueStateSupport.getAdditionalText(this);
 
 			if (sValueStateText) {
+				this._showValueStateText(bShow);
 				this._setValueStateText(sValueStateText);
+			} else if (sValueState === sap.ui.core.ValueState.None) {
+				this._showValueStateText(false);
 			} else {
-				sAdditionalText = ValueStateSupport.getAdditionalText(this);
+				this._showValueStateText(bShow);
 				this._setValueStateText(sAdditionalText);
 			}
 

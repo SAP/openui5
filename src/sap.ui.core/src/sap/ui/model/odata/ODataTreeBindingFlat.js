@@ -868,7 +868,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Expands a node or index.
 	 * @param vRowIndex either an index or a node instance
-	 * @param {boolean} bSuppressChange if set to true, no change event will be fired
+	 * @param bSuppressChange if set to true, no change event will be fired
 	 */
 	ODataTreeBindingFlat.prototype.expand = function (vRowIndex, bSuppressChange) {
 		var oToggledNode = vRowIndex;
@@ -926,7 +926,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 	/**
 	 * Sets the number of expanded levels to the given level.
-	 * @param {int} iLevel the number of expanded levels
+	 * @param iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.expandToLevel = function (iLevel) {
 		if (iLevel > this.getNumberOfExpandedLevels()) {
@@ -937,7 +937,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Collapses the given node or index.
 	 * @param vRowIndex either an index or a node instance
-	 * @param {boolean} bSuppressChange if set to true, there will be no change event fired
+	 * @param bSuppressChange if set to true, there will be no change event fired
 	 */
 	ODataTreeBindingFlat.prototype.collapse = function (vRowIndex, bSuppressChange) {
 		var oToggledNode = vRowIndex;
@@ -999,7 +999,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Sets the number of expanded levels to the given level.
 	 * Makes sure to adapt the selection accordingly.
-	 * @param {int} iLevel the number of expanded levels
+	 * @param iLevel the number of expanded levels
 	 */
 	ODataTreeBindingFlat.prototype.collapseToLevel = function (iLevel) {
 		if (iLevel < this.getNumberOfExpandedLevels()) {
@@ -1085,8 +1085,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 * Backtracking up the tree hierarchy.
 	 * fnUp is called for all nodes.
 	 * @param oNode the start node of the upwards traversal
-	 * @param {function} fnUp callback for the backtracking
-	 * @param {boolean} bOldParent a flag to specify if the new or old/original parent should be used for traversal
+	 * @param fnUp callback for the backtracking
+	 * @param bOldParent a flag to specify if the new or old/original parent should be used for traversal
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._up = function(oNode, fnUp, bOldParent) {
@@ -1104,9 +1104,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Backtrack in a deep part of the tree.
 	 * @param oNode
-	 * @param {function} fnUp
+	 * @param fnUp
 	 * @param oBreaker
-	 * @param {boolean} bOldParent
+	 * @param bOldParent
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._structuralUp = function(oNode, fnUp, oBreaker, bOldParent) {
@@ -1127,9 +1127,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	/**
 	 * Backtrack in a flat part of the tree
 	 * @param oNode
-	 * @param {function} fnUp
+	 * @param fnUp
 	 * @param oBreaker
-	 * @param {boolean} bInitial
+	 * @param bInitial
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._flatUp = function(oNode, fnUp, oBreaker, bInitial) {
@@ -2697,7 +2697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 
 	/**
 	 * Gets the node info for the given row-index.
-	 * @param {int} iRowIndex
+	 * @param iRowIndex
 	 * @returns
 	 */
 	ODataTreeBindingFlat.prototype.getNodeInfoByRowIndex = function(iRowIndex) {
@@ -2990,7 +2990,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/TreeBin
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this binding adapter is used.
+	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
 	 *
 	 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 	 * @protected

@@ -33,6 +33,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 		library : "sap.m"
 	}});
 
+	Tree.prototype.init = function() {
+		ListBase.prototype.init.apply(this, arguments);
+		this.setEnableBusyIndicator(false);
+	};
+
 	Tree.prototype.isTreeBinding = function(sName) {
 		return (sName == "items");
 	};
@@ -179,6 +184,18 @@ sap.ui.define(['jquery.sap.global', './ListBase', './TreeItemBase', './library',
 	 */
 	Tree.prototype.setGrowingDirection = function() {
 		jQuery.sap.log.error("GrowingDirection of " + this + " is not supported!");
+		return this;
+	};
+
+	/**
+	 * The <code>enableBusyIndicator</code> property is not supported for control <code>Tree</code>.
+	 * @public
+	 * @deprecated
+	 */
+	Tree.prototype.setEnableBusyIndicator = function(bEnable) {
+		if (bEnable) {
+			jQuery.sap.log.error("enableBusyIndicator property is not supported for control " + this);
+		}
 		return this;
 	};
 

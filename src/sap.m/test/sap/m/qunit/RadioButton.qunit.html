@@ -102,24 +102,6 @@
 
 		});
 
-		QUnit.test("Radio Button with empty string value", function(assert) {
-
-			// arrange
-			var oRadioButton = new sap.m.RadioButton({
-				text: "Text"
-			});
-			oRadioButton.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			oRadioButton.setText("");
-
-			// assertions
-			assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), false, 'The button should not have class sapMRbDis');
-
-			// cleanup
-			oRadioButton.destroy();
-		});
-
 
 		/* =========================================================== */
 		/* API module                                                  */

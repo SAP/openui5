@@ -29,18 +29,7 @@ sap.ui.define([
 			aggregations : {
 				field : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 			},
-			associations: {
-				/**
-				 * Association to controls / IDs that label this control (see WAI-ARIA attribute
-				 * aria-labelledby).
-				 */
-				ariaLabelledBy: {
-					type: "sap.ui.core.Control",
-					multiple: true,
-					singularName: "ariaLabelledBy"
-				}
-			},
-			events : {}
+			events : {/*TODO*/}
 		},
 
 		renderer : {
@@ -55,26 +44,13 @@ sap.ui.define([
 		},
 
 		init : function () {
-			// Note: Do not pass "this"! Template control vs. clone!
 			this.attachModelContextChange(this.onModelContextChange);
-		},
-
-		addAssociation : function() {
-			var oField = this.getAggregation("field");
-
-			if (oField) {
-				oField.addAssociation.apply(oField, arguments);
-			} // else: will be called again later
-			return this;
-		},
-
-		removeAssociation : function() {
-			var oField = this.getAggregation("field");
-
-			if (oField) {
-				oField.removeAssociation.apply(oField, arguments);
-			}
-			return this;
+			this.setAggregation("field", new Input({
+				editable : this.getEditable(),
+				id : this.getId() + "-field",
+				showValueHelp : false,
+				value : this.getValue()
+			}));
 		},
 
 		onModelContextChange : function (oEvent) {
@@ -86,13 +62,11 @@ sap.ui.define([
 					var oField = that.getAggregation("field");
 
 					if (oField) {
-						return; // changes to sValueListType are not supported
+						oField.destroy();
 					}
-
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
-								change: that.onValueChange.bind(that),
 								editable : true,
 								id : that.getId() + "-field",
 								showValueHelp : true,
@@ -157,10 +131,6 @@ sap.ui.define([
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
-		},
-
-		onValueChange : function (oEvent) {
-			this.setProperty("value", oEvent.getParameter("newValue"));
 		},
 
 		onValueHelp : function (oEvent) {

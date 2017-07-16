@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library'],
-	function(jQuery, library) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/theming/Parameters', 'sap/ui/layout/BlockLayoutCell'],
+	function(jQuery, library, Parameters, BlockLayoutCell) {
 		"use strict";
 
 		var BlockLayoutCellRenderer = {};
@@ -14,41 +14,45 @@ sap.ui.define(['jquery.sap.global', './library'],
 			this.endCell(rm);
 		};
 
-		BlockLayoutCellRenderer.startCell = function (oRm, oBlockLayoutCell) {
-			var sCellColor = this.getCellColor(oRm, oBlockLayoutCell);
-
-			oRm.write("<div");
-			oRm.writeControlData(oBlockLayoutCell);
-			oRm.addClass("sapUiBlockLayoutCell");
-			sCellColor && oRm.addClass(sCellColor); // Set any of the predefined cell colors
-
-			if (oBlockLayoutCell._getDifferentSBreakpointSize()) {
-				this.setDifferentSBreakpointSize(oRm, oBlockLayoutCell._getWidthToRowWidthRatio());
+		BlockLayoutCellRenderer.startCell = function (rm, blockLayoutCell) {
+			rm.write("<div");
+			rm.writeControlData(blockLayoutCell);
+			rm.addClass("sapUiBlockLayoutCell");
+			if (blockLayoutCell._getDifferentSBreakpointSize()) {
+				this.setDifferentSBreakpointSize(rm, blockLayoutCell._getWidthToRowWidthRatio());
 			} else {
-				this.setWidth(oRm, oBlockLayoutCell);
+				this.setWidth(rm, blockLayoutCell);
 			}
 
-			oRm.writeStyles();
-			oRm.writeClasses();
-			oRm.write(">");
+			rm.writeStyles();
+			rm.writeClasses();
+			rm.write(">");
 		};
 
-		BlockLayoutCellRenderer.getCellColor = function (oRm, oBlockLayoutCell) {
-			var sColorSet = oBlockLayoutCell.getBackgroundColorSet(),
-				sColorIndex = oBlockLayoutCell.getBackgroundColorShade();
-
-			if (!sColorSet && !sColorIndex) {
-				return "";
-			} else if (( sColorSet && !sColorIndex ) || ( !sColorSet && sColorIndex )) { // XOR check. Both values need to be either defined or not defined.
-				jQuery.sap.log.warning("Both, backgroundColorSet and backgroundColorShade should be defined. ColoSet is not applied to " + oBlockLayoutCell.getId() + ".");
-				return "";
+		BlockLayoutCellRenderer.addColoringStyle = function (rm, blockLayoutCell) {
+			var theme = sap.ui.getCore().getConfiguration().getTheme().toLowerCase();
+			if (!theme || theme.indexOf("hcb") > 0 || theme.indexOf("hcw") > 0) {
+				return;
 			}
 
-			// Get only the unique part of the string
-			sColorSet = sColorSet.replace("ColorSet", "");
-			sColorIndex = sColorIndex.replace("Shade", "");
+			var setIndex = blockLayoutCell.getBackgroundColorSet(),
+				colorIndex = blockLayoutCell.getBackgroundColorIndex(),
+				letters = ['', 'A', 'B', 'C', 'D'],
+				letterIndex = letters[colorIndex];
 
-			return "sapUiBlockLayoutCellColor" + sColorSet + sColorIndex;
+			var param = Parameters.get("_sap_ui_layout_BlockLayout_BlockColorAccentType" + setIndex + letterIndex);
+
+			if (setIndex !== 0 && colorIndex !== 0) {
+				rm.addStyle("background-color", param);
+			}
+
+			if (colorIndex > BlockLayoutCell.maxColorIndex) {
+				jQuery.sap.log.warning("You are using a color index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
+			}
+
+			if (setIndex > BlockLayoutCell.maxSetIndex) {
+				jQuery.sap.log.warning("You are using a set index for BlockLayoutCell: " + blockLayoutCell.getId() + " that's not supported");
+			}
 		};
 
 		BlockLayoutCellRenderer.setDifferentSBreakpointSize = function (rm, widthToRowWidthRatio) {
@@ -70,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 					rm.addStyle("width", width + "%");
 				}
 			} else {
-				var flex = (blockLayoutCell.getWidth() === 0 ) ? 1 : blockLayoutCell.getWidth();
+				var flex = (blockLayoutCell.getWidth() == 0 ) ? 1 : blockLayoutCell.getWidth();
 				this.addFlex(rm, flex);
 			}
 		};
@@ -92,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './library'],
 				}
 
 				var level = blockLayoutCell.getTitleLevel(),
-					autoLevel = level === sap.ui.core.TitleLevel.Auto,
+					autoLevel = level == sap.ui.core.TitleLevel.Auto,
 					tag = autoLevel ? "h2" : level;
 
 				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
@@ -109,11 +113,15 @@ sap.ui.define(['jquery.sap.global', './library'],
 			var content = blockLayoutCell.getContent(),
 				contentClass = "sapUiBlockCellContent ";
 
-			if (blockLayoutCell.getTitleAlignment() === "Center") {
+			if (blockLayoutCell.getTitleAlignment() == "Center") {
 				contentClass += "sapUiBlockCellCenteredContent";
 			}
 
-			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' >");
+			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' ");
+			this.addColoringStyle(rm, blockLayoutCell);
+			rm.writeStyles();
+			rm.write(">");
+
 			this.addTitle(rm, blockLayoutCell);
 			content.forEach(rm.renderControl);
 			rm.write("</div>");

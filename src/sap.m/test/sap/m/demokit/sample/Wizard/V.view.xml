@@ -79,7 +79,7 @@
 										editable="true">
 									<Label text="Cover photo"/>
 									<u:FileUploader
-											width="100%"
+											width="400px"
 											tooltip="Upload product cover photo to the local server"
 											style="Emphasized"
 											placeholder="Choose a file for Upload..."/>

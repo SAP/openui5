@@ -332,62 +332,6 @@ sap.ui.define([
 					bSelectVisible = this.getView().byId("PC1").getViewKey() === "M";
 				this.getView().byId("label").setVisible(bLabelVisible);
 				this.getView().byId("select").setVisible(bSelectVisible);
-			},
-
-			handleSelectionFinish: function(oEvent) {
-				var aSelectedKeys = oEvent.getSource().getSelectedKeys();
-				this.getView().byId("PC1").setBuiltInViews(aSelectedKeys);
-			},
-
-			onPress: function (oEvent) {
-				if (!oEvent.getParameter("pressed")) {
-					this.getView().byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
-							key: "A",
-							intervalType: sap.ui.unified.CalendarIntervalType.Hour,
-							description: "hours view",
-							intervalsS: 2,
-							intervalsM: 4,
-							intervalsL: 6,
-							showSubIntervals: true
-						})
-					);
-					this.getView().byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
-							key: "D",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
-							description: "days view",
-							intervalsS: 1,
-							intervalsM: 3,
-							intervalsL: 7,
-							showSubIntervals: true
-						})
-					);
-					this.getView().byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
-							key: "M",
-							intervalType: sap.ui.unified.CalendarIntervalType.Month,
-							description: "months view",
-							intervalsS: 1,
-							intervalsM: 2,
-							intervalsL: 3,
-							showSubIntervals: true
-						})
-					);
-					this.getView().byId("PC1").addView(
-						new sap.m.PlanningCalendarView({
-							key: "nonWorking",
-							intervalType: sap.ui.unified.CalendarIntervalType.Day,
-							description: "days with non-working dates",
-							intervalsS: 1,
-							intervalsM: 5,
-							intervalsL: 9
-						})
-					);
-					this.getView().byId("PC1").setViewKey("D");
-				} else {
-					this.getView().byId("PC1").destroyViews();
-				}
 			}
 
 		});

@@ -1,92 +1,55 @@
 /* global QUnit */
+jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-QUnit.config.autostart = false;
+if (window.blanket) {
+	window.blanket.options("sap-ui-cover-only", "sap/ui/dt");
+}
 
-sap.ui.require([
-	'sap/ui/dt/DesignTime',
-	'sap/uxap/ObjectPageLayout',
-	'sap/uxap/ObjectPageSection',
-	'sap/uxap/ObjectPageSubSection',
-	'sap/uxap/ObjectPageHeader',
-	'sap/m/Button',
-	'sap/m/VBox'
-],
-function(
-	DesignTime,
-	ObjectPageLayout,
-	ObjectPageSection,
-	ObjectPageSubSection,
-	ObjectPageHeader,
-	Button,
-	VBox
-) {
-	'use strict';
-	QUnit.start();
+jQuery.sap.require("sap.ui.dt.DesignTime");
+jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 
-	QUnit.module('Basic functionality', {
-		beforeEach: function(assert) {
-			var fnDone = assert.async();
+(function(DesignTime, OverlayRegistry) {
+	"use strict";
 
-			this.oButton = new Button({text: "foo"});
-			this.oSubSection = new ObjectPageSubSection("subsection", {
-				blocks: [this.oButton]
+	var oView;
+	var oDesignTime;
+
+	QUnit.module("Given a ObjectPage with an invisible Section", {
+		beforeEach : function(assert) {
+
+			var done = assert.async();
+
+			oView = sap.ui.xmlview("testView", "sap.ui.dt.demo.ObjectPageWithDesignTime");
+			oDesignTime = oView.getController().oDesignTime;
+
+			oDesignTime.attachEventOnce("synced", function() {
+				done();
 			});
-			this.oSubSection2 = new ObjectPageSubSection("subsection2", {
-				blocks: [new Button({text: "bar"})]
-			});
-			this.oSection = new ObjectPageSection("section", {
-				visible: false,
-				subSections: [this.oSubSection]
-			});
-			this.oSection2 = new ObjectPageSection("section2", {
-				subSections: [this.oSubSection2]
-			});
-			this.oLayout = new ObjectPageLayout("layout", {
-				height: "600px",
-				sections : [this.oSection, this.oSection2],
-				headerTitle: new ObjectPageHeader({
-					objectTitle: "Title"
-				})
-			});
-			this.oVBox = new VBox({
-				items : [this.oLayout]
-			}).placeAt("content");
+
+			oView.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVBox]
-			});
-
-			this.oDesignTime.attachEventOnce("synced", function() {
-				sap.ui.getCore().applyChanges();
-				fnDone();
-			});
 		},
 
-		afterEach: function() {
-			this.oDesignTime.destroy();
-			this.oVBox.destroy();
+		afterEach : function() {
+			oView.destroy();
+			oDesignTime.destroy();
 		}
 	});
 
-	QUnit.test("invisible section", function(assert) {
-		var fnDone = assert.async();
+	QUnit.test("When revealing the invisible Section", function(assert) {
+		var done = assert.async();
 
-		this.oDesignTime.attachEventOnce("synced", function() {
+		var oInvisibleSection = sap.ui.getCore().byId("testView--invisibleSection");
+		oInvisibleSection.setVisible(true);
+
+		oDesignTime.attachEventOnce("synced", function() {
+			var oLabel = sap.ui.getCore().byId("testView--name5");
+			var oLabelOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oLabel.getId());
 			sap.ui.getCore().applyChanges();
-
-			var oSectionOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSection);
-			var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
-
-			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().top), Math.ceil(oSectionOverlay.$().offset().top), "top position of the Section overlay is correct");
-			assert.deepEqual(Math.ceil(oSectionOverlay.$().offset().left), Math.ceil(oSectionOverlay.$().offset().left), "left position of the Section overlay is correct");
-			assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().top), Math.ceil(this.oButton.$().offset().top), "top position of the Button overlay is correct");
-			assert.deepEqual(Math.ceil(oButtonOverlay.$().offset().left), Math.ceil(this.oButton.$().offset().left), "left position of the Button overlay is correct");
-
-			fnDone();
-		}, this);
-
-		this.oSection.setVisible(true); // starts test
+			assert.deepEqual(oLabelOverlay.$().offset(), oLabelOverlay.getElementInstance().$().offset(), "then the style is set and overlay position is correct");
+			done();
+		});
 	});
 
-});
+}());

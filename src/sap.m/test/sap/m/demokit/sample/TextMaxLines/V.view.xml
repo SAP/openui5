@@ -23,5 +23,5 @@
 	<MessageStrip
 		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
 		type="Warning"
-		text="Note: In multi-line text the overflow will be hidden (ellipsis won't be shown)." />
+		text="Note: The multi line overflow indicator depends on the browser line clamping support. For such browsers this will be shown as ellipsis, for the other browsers the overflow will just be hidden." />
 </mvc:View>

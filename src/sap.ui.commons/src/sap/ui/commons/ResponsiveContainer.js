@@ -128,8 +128,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Resize handling.
-	 * @param {jQuery.Event} oEvent The fired event
+	 * Resize handling
 	 */
 	ResponsiveContainer.prototype.onresize = function(oEvent) {
 		var oRange = this.findMatchingRange(),

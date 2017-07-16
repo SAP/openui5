@@ -5,9 +5,9 @@
 /**
  * Initialization Code and shared classes of library sap.ui.documentation.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/library', 'sap/m/library'], // library dependency
-	function(jQuery, LibraryInfo) {
+	function(jQuery) {
 
 	'use strict';
 
@@ -36,8 +36,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 
 	var thisLibrary = sap.ui.documentation;
 
-	var _libraryInfoSingleton;
-
 	thisLibrary._getAppInfo = function(fnCallback) {
 		var sUrl = sap.ui.resource("", "sap-ui-version.json");
 
@@ -60,20 +58,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 		});
 	};
 
-	/**
-	 * Ensures that only one instance of LibraryInfo will be used across the app.
-	 * This is important, because the LibraryInfo object stores internally the content of already loaded .library files
-	 * @returns {*}
-	 * @private
-	 */
-	thisLibrary._getLibraryInfoSingleton = function () {
-		if (!_libraryInfoSingleton) {
-			_libraryInfoSingleton = new LibraryInfo();
-		}
-
-		return _libraryInfoSingleton;
-	};
-
 	thisLibrary._loadAllLibInfo = function(sAppRoot, sInfoType, sReqVersion, fnCallback) {
 
 		// parameter fallback for compatibility: if the version is a function
@@ -83,7 +67,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 			sReqVersion = undefined;
 		}
 
-		var libInfo = thisLibrary._getLibraryInfoSingleton();
+		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
+		var LibraryInfo = sap.ui.require("sap/ui/core/util/LibraryInfo");
+		var libInfo = new LibraryInfo();
 
 		// special case: fetching library info and release notes in one cycle
 		// this will use the _getLibraryInfo functionality and

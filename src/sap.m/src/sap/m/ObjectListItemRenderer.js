@@ -90,9 +90,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		 * Renders the HTML for the given control, using the provided
 		 * {@link sap.ui.core.RenderManager}.
 		 *
-		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the
+		 * @param {sap.ui.core.RenderManager}
+		 *          oRenderManager The RenderManager that can be used for writing to the
 		 *          Render-Output-Buffer
-		 * @param {sap.ui.core.Control} oLI An object representation of the control that should be
+		 * @param {sap.ui.core.Control}
+		 *          oControl An object representation of the control that should be
 		 *          rendered
 		 */
 		ObjectListItemRenderer.renderLIAttributes = function(rm, oLI) {

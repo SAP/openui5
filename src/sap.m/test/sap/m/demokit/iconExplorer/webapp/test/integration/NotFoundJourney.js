@@ -47,7 +47,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheTabularNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the not found text for no search results on the grid tab", function (Given, When, Then) {
@@ -55,7 +55,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("grid");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheVisualNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the not found text for no search results on the visual tab", function (Given, When, Then) {
@@ -63,7 +63,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("visual");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheVisualNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the not found text for no search results on the favorites tab", function (Given, When, Then) {
@@ -71,7 +71,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheTabularNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the 'error' icon on the preview pane when an invalid icon was set in the hash", function (Given, When, Then) {

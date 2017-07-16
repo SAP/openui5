@@ -156,9 +156,9 @@ sap.ui.define([
 			var oEntry = this.getView().getModel(sCartModelName).getProperty(sPath);
 			var sId = oEntry.ProductId;
 			if (!sap.ui.Device.system.phone) {
-				this._oRouter.getTargets().display("productView", {
-					productId: sId
-				});
+				this._oRouter.getTargets().display("productView");
+				var bus = sap.ui.getCore().getEventBus();
+				bus.publish("shoppingCart", "updateProduct", {productId: sId});
 			} else {
 				this._oRouter.navTo("cartProduct", {productId: sId});
 			}

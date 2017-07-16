@@ -4,15 +4,9 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './library', 'sap/ui/core/EnabledPropagator', 'sap/m/DialogRenderer', 'sap/ui/core/library'
-], function(jQuery, Dialog, IconTabBar, IconTabFilter, library, EnabledPropagator, DialogRenderer, coreLibrary) {
+	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './library', 'sap/ui/core/EnabledPropagator', 'sap/m/ButtonType', 'sap/m/DialogRenderer', 'sap/ui/core/MessageType'
+], function(jQuery, Dialog, IconTabBar, IconTabFilter, library, EnabledPropagator, ButtonType, DialogRenderer, MessageType) {
 	"use strict";
-
-	// shortcut for sap.ui.core.MessageType
-	var MessageType = coreLibrary.MessageType;
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new P13nDialog.
@@ -411,7 +405,7 @@ sap.ui.define([
 	/**
 	 * Map an item of type <code>sap.m.P13nPanel</code> to an item of type <code>sap.m.IconTabBarFilter</code>
 	 *
-	 * @param {sap.m.P13nPanel} oPanel
+	 * @param {sap.m.P13nPanel} oItem
 	 * @returns {sap.m.Button | sap.m.StandardListItem | null}
 	 * @private
 	 * @name P13nDialog#_mapPanelToNavigationItem

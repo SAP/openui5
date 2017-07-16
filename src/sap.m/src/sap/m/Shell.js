@@ -105,15 +105,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				 * See jQuery.sap.setIcons() for full documentation.
 				 *
 				 */
-				homeIcon : {type : "object", group : "Misc", defaultValue : null},
-
-				/**
-				 * Defines the semantic level of the title.
-				 *
-				 * This information is used by assistive technologies, such as screen readers to create a hierarchical site map for faster navigation.
-				 * Depending on this setting an HTML h1-h6 element is used.
-				 */
-				titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : sap.ui.core.TitleLevel.H1}
+				homeIcon : {type : "object", group : "Misc", defaultValue : null}
 			},
 			defaultAggregation : "app",
 			aggregations : {

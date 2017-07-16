@@ -431,15 +431,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RadioButton.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true);
-
 		if (this._oLabel) {
 			this._oLabel.setText(this.getText());
 		} else {
 			this._createLabel("text", this.getText());
 		}
-
-		this.toggleStyleClass("sapMRbHasLabel", !!sText);
-
+		this.addStyleClass("sapMRbHasLabel");
 		return this;
 	};
 

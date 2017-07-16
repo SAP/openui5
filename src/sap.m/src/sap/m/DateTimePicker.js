@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 					oSwitcher = new sap.m.SegmentedButton(this.getId() + "-Switch", {
 						selectedKey: "Cal",
 						items: [ new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
-								 new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
+						         new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
 						]
 					});
 					oSwitcher.attachSelect(this._handleSelect, this);
@@ -230,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			if (sKey == "Cal") {
 				oCalendar.$().css("display", "");
 				oSliders.$().css("display", "none");
+				oCalendar.focus();
 			} else {
 				oCalendar.$().css("display", "none");
 				oSliders.$().css("display", "");
@@ -543,7 +544,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
-	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	DateTimePicker.prototype.getAccessibilityInfo = function() {
@@ -587,8 +587,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
 			sDisplayFormat = oBinding.oType.getOutputPattern();
-		} else if (oBinding && oBinding.oType && oBinding.oType.oFormat) {
-			sDisplayFormat = oBinding.oType.oFormat.oFormatOptions.pattern;
 		} else {
 			sDisplayFormat = this.getDisplayFormat();
 		}

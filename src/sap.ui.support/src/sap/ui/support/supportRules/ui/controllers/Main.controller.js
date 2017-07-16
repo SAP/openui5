@@ -96,6 +96,17 @@ sap.ui.define([
 				that._settingsPopover.openBy(source);
 			}, 0);
 		},
+
+		onNavConAfterNavigate: function (oEvent) {
+			var to = oEvent.getParameter("to");
+			if (to === this.getView().byId("analysis")) {
+				setTimeout(function () {
+					to.getController().markLIBAsSelected();
+				}, 250);
+			}
+		},
+
+
 		goToAnalysis: function (evt) {
 			var navCon = this.getView().byId("navCon");
 			navCon.to(this.getView().byId("analysis"), "show");
@@ -108,20 +119,7 @@ sap.ui.define([
 		},
 
 		goToWiki: function () {
-			var url,
-				version = "",
-				fullVersion = sap.ui.getVersionInfo().version,
-				majorVersion = jQuery.sap.Version(fullVersion).getMajor(),
-				minorVersion = jQuery.sap.Version(fullVersion).getMinor();
-
-			if (minorVersion % 2 !== 0) {
-				minorVersion--;
-			}
-
-			version += String(majorVersion) + String(minorVersion);
-			// TODO: add right path to supprot assitan section when documentation is publicly released (1.48).
-			url = "https://help.sap.com/viewer/DRAFT/OpenUI5_" + version + "/615d9e4aaa34447fbd4aa5f19dfde9b8.html";
-			window.open(url, '_blank');
+			 window.open('https://uacp2.hana.ondemand.com/viewer/DRAFT/SAPUI5_Internal/57ccd7d7103640e3a187ed55e1d2c163.html','_blank');
 		},
 
 		setRulesLabel: function (libs) {

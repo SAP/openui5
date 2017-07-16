@@ -21,6 +21,7 @@
 				suite.addTestPage(contextPath + sUrl + sParameters);
 				// also execute with qunit-2
 				suite.addTestPage(contextPath + sUrl + sParameters + "&sap-ui-qunitversion=2"); // note sParameters is never empty
+				
 			}
 
 			//OPA
@@ -31,7 +32,6 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/OpaIntegration.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/opaQunit.qunit.html");
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/_LogCollector.qunit.html");
-			addTestPage("/test-resources/sap/ui/core/qunit/opa/autowaiter/autoWaiter.qunit.html");
 
 			// Introduces globals
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/Opa5PageObject.qunit.html", "?sap-ui-xx-noless=true");

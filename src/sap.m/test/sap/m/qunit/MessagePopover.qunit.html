@@ -1230,24 +1230,6 @@
 			//Clean
 			spyInvalidate.restore();
 		});
-
-		QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", function (assert) {
-			//System under test
-			this.oMessagePopover.setModel(this.oModel);
-			sap.ui.getCore().applyChanges();
-
-			//Act
-			this.oMessagePopover.getItems()[0].addCustomData(new sap.ui.core.CustomData({key : "test", value : true}));
-
-			//Open the MessagePopover
-			this.oMessagePopover.openBy(this.oButton);
-			this.clock.tick(500);
-
-			//Assert
-			assert.strictEqual(this.oMessagePopover.getItems()[0].getCustomData().length, 1, "The message popover's item has custom data.");
-			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getCustomData().length, 1, "The custom data was cloned into the message view's item.");
-			assert.ok(this.oMessagePopover._oMessageView.getItems()[0].getCustomData()[0].getValue(), "The data was passed correctly");
-		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

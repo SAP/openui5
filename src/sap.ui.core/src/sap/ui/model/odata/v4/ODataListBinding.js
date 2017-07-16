@@ -124,42 +124,28 @@ sap.ui.define([
 			throw new Error("Cannot delete due to pending changes");
 		}
 		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.iIndex),
-			function (iIndex, aEntities) {
-				var sContextPath, i, sPredicate, sResolvedPath;
-
+			function (iIndex) {
+				var i,
+					oNextContext;
 				if (iIndex === -1) {
 					// happens only for a created context that is not transient anymore
 					oContext.destroy();
 					delete that.aContexts[-1];
 				} else {
-					// prepare all contexts for deletion
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						oContext = that.aContexts[i];
-						if (oContext) {
+						oNextContext = that.aContexts[i + 1];
+						if (oContext && !oNextContext) {
 							that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+							delete that.aContexts[i];
+						} else if (!oContext && oNextContext) {
+							that.aContexts[i]
+								= Context.create(that.oModel, that, that.sPath + "/" + i, i);
+						} else {
+							oContext.checkUpdate();
 						}
 					}
-					sResolvedPath = that.oModel.resolve(that.sPath, that.oContext);
-					that.aContexts.splice(iIndex, 1); // adjust the contexts array
-					for (i = iIndex; i < that.aContexts.length; i += 1) {
-						if (that.aContexts[i]) {
-							// calculate the context path and try to re-use the context for it
-							sPredicate = aEntities[i]["@$ui5.predicate"];
-							sContextPath = sResolvedPath + (sPredicate || "/" + i);
-							oContext = that.mPreviousContextsByPath[sContextPath];
-							if (oContext) {
-								delete that.mPreviousContextsByPath[sContextPath];
-								if (oContext.getIndex() === i) {
-									oContext.checkUpdate(); // same row, but different data
-								} else {
-									oContext.setIndex(i); // same data, but different row
-								}
-							} else {
-								oContext = Context.create(that.oModel, that, sContextPath, i);
-							}
-							that.aContexts[i] = oContext;
-						}
-					}
+					that.aContexts.pop();
 				}
 				that.iMaxLength -= 1; // this doesn't change Infinity
 				that._fireChange({reason : ChangeReason.Remove});
@@ -346,63 +332,40 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates contexts for this list binding in the given range for the given OData response.
-	 * Fires change and dataReceived events. Destroys contexts that became
-	 * obsolete and shrinks the array by removing trailing <code>undefined</code>.
+	 * Creates contexts for this list binding in the given range for the given result length of
+	 * the OData response. Fires change and dataReceived events.
 	 *
 	 * @param {object} oRange
 	 *   The range as returned by {@link #getReadRange}
-	 * @param {object[]} aResults
-	 *   The OData entities read from the cache for the given range
+	 * @param {number} iResultLength
+	 *   The number of OData entities read from the cache for the given range
+	 * @param {number} [iCount]
+	 *   The $count as reported from the cache: A number representing the server-side element count.
 	 * @returns {boolean}
-	 *   <code>true</code>, if contexts have been created or dropped or <code>isLengthFinal</code>
-	 *   has changed
+	 *   <code>true</code>, if contexts have been created or <code>isLengthFinal</code> has changed
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createContexts = function (oRange, aResults) {
+	ODataListBinding.prototype.createContexts = function (oRange, iResultLength, iCount) {
 		var bChanged = false,
 			oContext = this.oContext,
-			sContextPath,
 			i,
-			iCount = aResults.$count,
-			iInitialLength = this.aContexts.length,
 			bLengthFinal = this.bLengthFinal,
 			oModel = this.oModel,
 			sPath = oModel.resolve(this.sPath, oContext),
-			sPredicate,
+			sPathWithIndex,
 			that = this;
 
-		/*
-		 * Shrinks contexts to the new length, destroys unneeded contexts
-		 */
-		function shrinkContexts(iNewLength) {
-			var i;
-
-			for (i = iNewLength; i < that.aContexts.length; i += 1) {
-				if (that.aContexts[i]) {
-					that.aContexts[i].destroy();
-				}
-			}
-			while (iNewLength > 0 && !that.aContexts[iNewLength - 1]) {
-				iNewLength -= 1;
-			}
-			that.aContexts.length = iNewLength;
-			bChanged = true;
-		}
-
-		for (i = oRange.start; i < oRange.start + aResults.length; i += 1) {
+		for (i = oRange.start; i < oRange.start + iResultLength; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				sPredicate = aResults[i - oRange.start]["@$ui5.predicate"];
-				sContextPath = sPath + (sPredicate || "/" + i);
-				if (sContextPath in this.mPreviousContextsByPath) {
-					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
-					delete this.mPreviousContextsByPath[sContextPath];
-					this.aContexts[i].setIndex(i);
+				sPathWithIndex = sPath + "/" + i;
+				if (sPathWithIndex in this.mPreviousContextsByPath) {
+					this.aContexts[i] = this.mPreviousContextsByPath[sPathWithIndex];
+					delete this.mPreviousContextsByPath[sPathWithIndex];
 					this.aContexts[i].checkUpdate();
 				} else {
-					this.aContexts[i] = Context.create(oModel, this, sContextPath, i);
+					this.aContexts[i] = Context.create(oModel, this, sPathWithIndex, i);
 				}
 			}
 		}
@@ -417,7 +380,7 @@ sap.ui.define([
 		}
 		if (iCount !== undefined) {
 			if (this.aContexts.length > iCount) {
-				shrinkContexts(iCount);
+				this.aContexts.length = iCount;
 			}
 			this.iMaxLength = iCount;
 			this.bLengthFinal = true;
@@ -425,17 +388,13 @@ sap.ui.define([
 			if (this.aContexts.length > this.iMaxLength) { // upper boundary obsolete: reset it
 				this.iMaxLength = Infinity;
 			}
-			if (aResults.length < oRange.length) {
-				this.iMaxLength = oRange.start + aResults.length;
+			if (iResultLength < oRange.length) {
+				this.iMaxLength = oRange.start + iResultLength;
 				if (this.aContexts.length > this.iMaxLength) {
-					shrinkContexts(this.iMaxLength);
+					this.aContexts.length = this.iMaxLength;
 				}
 			}
-			// If we started to read beyond the range that we read before and the result is
-			// empty, we cannot say anything about the length
-			if (!(oRange.start > iInitialLength && aResults.length === 0)) {
-				this.bLengthFinal = this.aContexts.length === this.iMaxLength;
-			}
+			this.bLengthFinal = this.aContexts.length === this.iMaxLength;
 		}
 		if (this.bLengthFinal !== bLengthFinal) {
 			// bLengthFinal changed --> send change event even if no new data is available
@@ -525,8 +484,8 @@ sap.ui.define([
 			}
 			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
 		}
-		return _Cache.create(this.oModel.oRequestor, sResourcePath, this.fetchType.bind(this),
-			mQueryOptions, this.oModel.bAutoExpandSelect);
+		return _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
+			this.oModel.bAutoExpandSelect);
 	};
 
 	/**
@@ -562,6 +521,39 @@ sap.ui.define([
 		}
 
 		return ListBinding.prototype.enableExtendedChangeDetection.apply(this, arguments);
+	};
+
+	/**
+	 * Requests the value for the given absolute path; the value is requested from this binding's
+	 * cache or from its context in case it has no cache or the cache does not contain data for
+	 * this path.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path including the binding path
+	 * @returns {SyncPromise}
+	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchAbsoluteValue = function (sPath) {
+		var that = this;
+
+		return this.oCachePromise.then(function (oCache) {
+			var iIndex, iPos, sResolvedPath;
+			if (oCache) {
+				sResolvedPath = that.oModel.resolve(that.sPath, that.oContext) + "/";
+				if (sPath.lastIndexOf(sResolvedPath) === 0) {
+					sPath = sPath.slice(sResolvedPath.length);
+					iIndex = parseInt(sPath, 10); // parseInt ignores any path following the number
+					iPos = sPath.indexOf("/");
+					sPath = iPos > 0 ? sPath.slice(iPos + 1) : "";
+					return that.fetchValue(sPath, undefined, iIndex);
+				}
+			}
+			if (that.oContext && that.oContext.fetchAbsoluteValue) {
+				return that.oContext.fetchAbsoluteValue(sPath);
+			}
+		});
 	};
 
 	/**
@@ -775,29 +767,28 @@ sap.ui.define([
 	 * Requests the value for the given path and index; the value is requested from this binding's
 	 * cache or from its context in case it has no cache.
 	 *
-	 * @param {string} sPath
-	 *   Some absolute path
+	 * @param {string} [sPath]
+	 *   Some relative path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
+	 * @param {number} iIndex
+	 *   Index corresponding to some current context of this binding
 	 * @returns {SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, iIndex) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
-			var sRelativePath;
-
 			if (oCache) {
-				sRelativePath = that.getRelativePath(sPath);
-				if (sRelativePath !== undefined) {
-					return oCache.fetchValue(undefined, sRelativePath, undefined, oListener);
-				}
+				return oCache.fetchValue(undefined, _Helper.buildPath(iIndex, sPath), undefined,
+					oListener);
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener);
+				return that.oContext.fetchValue(_Helper.buildPath(that.sPath, iIndex, sPath),
+					oListener);
 			}
 		});
 	};
@@ -975,24 +966,21 @@ sap.ui.define([
 				oPromise = Promise.resolve(oPromise);
 			}
 			oPromise.then(function (oResult) {
-				var bChanged;
+				var bContextsCreated;
 
 				// ensure that the result is still relevant
 				if (!that.bRelative || that.oContext === oContext) {
-					bChanged = that.createContexts(oRange, oResult.value);
+					bContextsCreated = that.createContexts(oRange, oResult.value.length,
+						oResult.value.$count);
 					if (that.bUseExtendedChangeDetection) {
 						that.oDiff = {
 							// aResult[0] corresponds to oRange.start = iStartInModel for E.C.D.
-							aDiff : that.getDiff(oResult.value, iStartInModel),
+							aDiff: that.getDiff(oResult.value, iStartInModel),
 							iLength : iLength
 						};
 					}
-					if (bFireChange) {
-						if (bChanged) {
-							that._fireChange({reason : sChangeReason});
-						} else { // we cannot keep a diff if we do not tell the control to fetch it!
-							that.oDiff = undefined;
-						}
+					if (bFireChange && bContextsCreated) {
+						that._fireChange({reason: sChangeReason});
 					}
 				}
 				if (bDataRequested) {

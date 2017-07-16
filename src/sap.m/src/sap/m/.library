@@ -12,10 +12,6 @@
     <dependency>
       <libraryName>sap.ui.core</libraryName>
     </dependency>
-    <dependency>
-      <libraryName>sap.ui.unified</libraryName>
-      <lazy>true</lazy>
-    </dependency>
   </dependencies>
 
   <appData>

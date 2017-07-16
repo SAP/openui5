@@ -4,7 +4,7 @@
 
 // Provides the implementation for a Message
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
-	function(jQuery, Object, MessageProcessor) {
+	function(jQuery, Object, library, MessageProcessor) {
 	"use strict";
 
 	/**

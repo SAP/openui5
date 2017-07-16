@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
-], function(
-	jQuery
-) {
+	'jquery.sap.global', './Base'
+], function(jQuery, Base) {
 	"use strict";
 
 	/**
@@ -16,7 +14,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @experimental Since 1.27.0
 	 */
-	var UnhideControl = {};
+	var UnhideControl = { };
 
 	/**
 	 * Unhides a control.
@@ -25,39 +23,10 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
 	 * @param {object} mPropertyBag
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change could be applied
 	 * @public
 	 */
 	UnhideControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		oChange.setRevertData({
-			originalValue: mPropertyBag.modifier.getProperty(oControl, 'visible')
-		});
-
 		mPropertyBag.modifier.setVisible(oControl, true);
-		return true;
-	};
-
-	/**
-	 * Reverts previously applied change
-	 *
-	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
-	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
-	 * @param {object} mPropertyBag
-	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @return {boolean} true - if change has been reverted
-	 * @public
-	 */
-	UnhideControl.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
-
-		if (mRevertData) {
-			mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
-			oChange.resetRevertData();
-		} else {
-			jQuery.sap.log.error("Attempt to revert an unapplied change.");
-			return false;
-		}
-
 		return true;
 	};
 
@@ -69,6 +38,13 @@ sap.ui.define([
 	 * @public
 	 */
 	UnhideControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
+
+		var oChangeJson = oChange.getDefinition();
+
+		if (!oChangeJson.content) {
+			oChangeJson.content = {};
+		}
+
 	};
 
 	return UnhideControl;
