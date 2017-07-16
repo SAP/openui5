@@ -62,8 +62,17 @@ sap.ui.define(["./MessageStripUtilities"],
 	};
 
 	MessageStripRenderer.renderTextAndLink = function (oRm, oControl) {
+		var oFormattedText = oControl.getAggregation("_formattedText");
+
 		oRm.write("<div class='" + MSUtils.CLASSES.MESSAGE + "'>");
-		oRm.renderControl(oControl.getAggregation("_text"));
+
+		// Determine if Formatted text control should be rendered or plain text control on "enableFormattedText" property
+		if (oControl.getEnableFormattedText() && oFormattedText) {
+			oRm.renderControl(oFormattedText);
+		} else {
+			oRm.renderControl(oControl.getAggregation("_text"));
+		}
+
 		oRm.renderControl(oControl.getLink());
 		oRm.write("</div>");
 	};
@@ -71,7 +80,7 @@ sap.ui.define(["./MessageStripUtilities"],
 	MessageStripRenderer.renderCloseButton = function (oRm) {
 		oRm.write("<button");
 		oRm.writeAttribute("class", MSUtils.CLASSES.CLOSE_BUTTON);
-		oRm.writeAttribute("aria-label", MSUtils.RESOURCE_BUNDLE.getText("CLOSE"));
+		oRm.writeAttribute("title", MSUtils.RESOURCE_BUNDLE.getText("CLOSE"));
 		oRm.write("></button>");
 	};
 

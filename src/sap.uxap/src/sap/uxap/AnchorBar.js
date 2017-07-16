@@ -5,7 +5,7 @@
 // Provides control sap.uxap.AnchorBar.
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/PlacementType",
+	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/Toolbar",
 	"sap/ui/core/IconPool",
@@ -17,9 +17,12 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"./HierarchicalSelect",
 	"./library"
-], function (Button, PlacementType, Popover, Toolbar, IconPool, Item, ResizeHandler,
+], function (Button, mobileLibrary, Popover, Toolbar, IconPool, Item, ResizeHandler,
 			 ScrollEnablement, HorizontalLayout, Device, CustomData, HierarchicalSelect, library) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mobileLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new AnchorBar.
@@ -684,7 +687,7 @@ sap.ui.define([
 			var iDuration = duration || AnchorBar.SCROLL_DURATION,
 				iScrollTo;
 
-			if ((this._sHierarchicalSelectMode === AnchorBar._hierarchicalSelectModes.Icon)
+			if (!library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange())
 				&& this._oSectionInfo[sId]) {
 
 				if (this._bRtlScenario && Device.browser.firefox) {
@@ -918,24 +921,32 @@ sap.ui.define([
 	 * Handler for F6 and Shift + F6 group navigation
 	 *
 	 * @param {jQuery.Event} oEvent
-	 * @param bShiftKey serving as a reference if shift is used
+	 * @param {boolean} bShiftKey serving as a reference if shift is used
 	 * @private
 	 */
 	AnchorBar.prototype._handleGroupNavigation = function (oEvent, bShiftKey) {
 		var oEventF6 = jQuery.Event("keydown"),
 			oSettings = {},
-			aSections = this.getParent().getSections(),
+			oObjectPageLayout = this.getParent(),
+			bUseIconTabBar = oObjectPageLayout.getUseIconTabBar(),
+			sCurrentSectionId = oObjectPageLayout.getSelectedSection(),
+			aSections = oObjectPageLayout.getSections(),
 			aSubSections = [this.getDomRef()],
 			aCurrentSubSections;
 
-		//this is needed in order to be sure that next F6 group will be found in sub sections
-		aSections.forEach(function (oSection) {
-			aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
+		if (bUseIconTabBar) {
+			aCurrentSubSections = sap.ui.getCore().byId(sCurrentSectionId).getSubSections().map(function (oSubSection) {
 				return oSubSection.$().attr("tabindex", -1)[0];
 			});
-
-			aSubSections = aSubSections.concat(aCurrentSubSections);
-		});
+		} else {
+			//this is needed in order to be sure that next F6 group will be found in sub sections
+			aSections.forEach(function (oSection) {
+				aCurrentSubSections = oSection.getSubSections().map(function (oSubSection) {
+					return oSubSection.$().attr("tabindex", -1)[0];
+				});
+			});
+		}
+		aSubSections = aSubSections.concat(aCurrentSubSections);
 		oSettings.scope = aSubSections;
 
 		oEvent.preventDefault();
@@ -958,8 +969,6 @@ sap.ui.define([
 		}
 
 		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
-
-		this._sHierarchicalSelectMode = AnchorBar._hierarchicalSelectModes.Text;
 
 		//save max for arrow show/hide management, the max position is the required scroll for the item to be fully visible
 		this._iMaxPosition = -1;

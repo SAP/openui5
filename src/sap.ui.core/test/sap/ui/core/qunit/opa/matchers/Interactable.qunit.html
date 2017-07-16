@@ -39,7 +39,7 @@
 					'sap/ui/test/Opa5',
 					'sap/ui/test/launchers/iFrameLauncher',
 					'sap/ui/test/_LogCollector',
-					'sap/ui/test/_timeoutCounter'
+					'sap/ui/test/autowaiter/_timeoutCounter'
 				], function (Interactable,
 							 $,
 							 Button,
@@ -145,7 +145,7 @@
 								assert.ok(!bInitialPageButtonResultAfterNavigationFinished, "Control is matching");
 								assert.ok(bSecondPageButtonResultAfterNavigationFinished, "Control is matching");
 
-								assert.strictEqual(sLogs, "The NavContainer " + this.oNavContainer + " is currently navigating -  sap.ui.test._autoWaiter");
+								assert.strictEqual(sLogs, "The NavContainer " + this.oNavContainer + " is currently navigating -  sap.ui.test.autowaiter._autoWaiter");
 								fnStart();
 							}, this);
 						});
@@ -281,7 +281,7 @@
 							oLogCollector.getAndClearLog();
 							assert.ok(!this.oInteractable.isMatching(oButton), "No match because the button was invalidated");
 							var sLog = oLogCollector.getAndClearLog();
-							assert.strictEqual(sLog, "The UI needs rerendering -  sap.ui.test._autoWaiter");
+							assert.strictEqual(sLog, "The UI needs rerendering -  sap.ui.test.autowaiter._autoWaiter");
 							fnTimeoutDone();
 						}.bind(this), 0);
 
@@ -322,7 +322,7 @@
 							setTimeout(function () {});
 							var bMatching = new Interactable().isMatching(this.oButton);
 							assert.ok(!bMatching, "is not matching");
-							assert.strictEqual(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test._timeoutCounter");
+							assert.strictEqual(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test.autowaiter._timeoutCounter");
 							fnDone();
 						}.bind(this), 500);
 					});
@@ -439,7 +439,7 @@
 								// prepare sinon and start an XHR
 								var oIFrameWindow = Opa5.getWindow();
 								oXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
-								oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test._timeoutCounter, "hasPendingTimeouts").returns(false);
+								oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._timeoutCounter, "hasPendingTimeouts").returns(false);
 
 								oXHR.onCreate = function (xhr) {
 									aRequests.push(xhr);
@@ -487,7 +487,7 @@
 									id: "buttonOutsideOfTheApp",
 									success: function (oButton) {
 										var oIFrameWindow = Opa5.getWindow();
-										oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test._timeoutCounter, "hasPendingTimeouts").returns(false);
+										oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._timeoutCounter, "hasPendingTimeouts").returns(false);
 										var oInteractable = new Interactable();
 										var bIsMatching = oInteractable.isMatching(oButton);
 										Opa5.assert.ok(bIsMatching, "there is no Navigation");

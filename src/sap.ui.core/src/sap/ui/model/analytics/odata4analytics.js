@@ -4006,7 +4006,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * path comprising a parameterization. If a path is provided, it overwrites
 		 * any parameterization object that might have been specified separately.
 		 *
-		 * @param sResourcePath
+		 * @param {string} sResourcePath
 		 *            Resource path pointing to the entity set of the query result.
 		 *            Must include a valid parameterization if query contains
 		 *            parameters.
@@ -4233,14 +4233,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Specify which dimension components shall be included in the query result.
 		 * The settings get applied to the currently defined aggregation level.
 		 *
-		 * @param sDimensionName
+		 * @param {string} sDimensionName
 		 *            Name of the dimension for which the settings get applied.
 		 *            Specify null to apply the settings to all dimensions in the
 		 *            aggregation level.
-		 * @param bIncludeKey
+		 * @param {boolean} bIncludeKey
 		 *            Indicator whether or not to include the dimension key in the
 		 *            query result. Pass null to keep current setting.
-		 * @param bIncludeText
+		 * @param {boolean} bIncludeText
 		 *            Indicator whether or not to include the dimension text (if
 		 *            available) in the query result. Pass null to keep current
 		 *            setting.
@@ -4284,18 +4284,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Specify which measure components shall be included in the query result.
 		 * The settings get applied to the currently set measures.
 		 *
-		 * @param sMeasureName
+		 * @param {string} sMeasureName
 		 *            Name of the measure for which the settings get applied.
 		 *            Specify null to apply the settings to all currently set
 		 *            measures.
-		 * @param bIncludeRawValue
+		 * @param {boolean} bIncludeRawValue
 		 *            Indicator whether or not to include the raw value in the query
 		 *            result. Pass null to keep current setting.
-		 * @param bIncludeFormattedValue
+		 * @param {boolean} bIncludeFormattedValue
 		 *            Indicator whether or not to include the formatted value (if
 		 *            available) in the query result. Pass null to keep current
 		 *            setting.
-		 * @param bIncludeUnit
+		 * @param {boolean} bIncludeUnit
 		 *            Indicator whether or not to include the unit (if available) in
 		 *            the query result. Pass null to keep current setting.
 		 * @public
@@ -4533,6 +4533,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		},
 
 		/**
+		 * Get the value for the OData system query option $orderby corresponding to
+		 * the sort expression.
+		 *
+		 * @returns {string} The $orderby value for the sort expression or <code>null</code>
+		 */
+		getURIOrderByOptionValue : function () {
+			var aAllMeasureNames,
+				oCondition,
+				sOrderByOptionString = null,
+				aSortConditions = this._oSortExpression
+					? this._oSortExpression._aSortCondition
+					: [],
+				i,
+				n = aSortConditions.length;
+
+			if (n) {
+				aAllMeasureNames = this._oQueryResult.getAllMeasureNames();
+
+				for (i = 0; i < n; i += 1) {
+					oCondition = aSortConditions[i];
+					if (!this._oSelectedPropertyNames[oCondition.property.name]
+						&& aAllMeasureNames.indexOf(oCondition.property.name) < 0) {
+						// sorting of aggregated entities is meaningful only if the sorted property
+						// is also selected or is a measure
+						continue;
+					}
+					sOrderByOptionString = (sOrderByOptionString ? sOrderByOptionString + "," : "")
+						+ oCondition.property.name + " " + oCondition.order;
+				}
+			}
+
+			return sOrderByOptionString;
+		},
+
+		/**
 		 * Get the value of a query option for the OData request URI corresponding
 		 * to this request.
 		 *
@@ -4627,11 +4662,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 				break;
 			}
 			case "$orderby": {
-				var sSortOption = null;
-				if (this._oSortExpression) {
-					sSortOption = this._oSortExpression.getURIOrderByOptionValue(this._oSelectedPropertyNames);
-				}
-				sQueryOptionValue = (sSortOption ? sSortOption : null);
+				sQueryOptionValue = this.getURIOrderByOptionValue();
 				break;
 			}
 			case "$top": {
@@ -4803,7 +4834,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Specify which components of the parameter shall be included in the value
 		 * set.
 		 *
-		 * @param bIncludeText
+		 * @param {boolean} bIncludeText
 		 *            Indicator whether or not to include the parameter text (if
 		 *            available) in the value set. Pass null to keep current
 		 *            setting.
@@ -5085,10 +5116,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Filter', 'sap/ui/model/FilterO
 		 * Specify which components of the dimension shall be included in the value
 		 * set.
 		 *
-		 * @param bIncludeText
+		 * @param {boolean} bIncludeText
 		 *            Indicator whether or not to include the dimension text (if
 		 *            available) in the value set.
-		 * @param bIncludeAttributes
+		 * @param {boolean} bIncludeAttributes
 		 *            Indicator whether or not to include all dimension attributes
 		 *            (if available) in the value set.
 		 * @public

@@ -206,6 +206,24 @@
 			equal(oSpyVerifyValue.callCount, 1, "setMax always calls _verifyValue so the valueState is addressed");
 		});
 
+		QUnit.test('Testing for duplicate id', function (assert) {
+			var oStepInput;
+
+			try {
+				oStepInput = new sap.m.StepInput({
+					editable: true
+				});
+				assert.equal(1, 1, "The control is created succesfully");
+			} catch (e) {
+				assert.equal(1, 0, "Throws an error " + e.stack);
+			}
+
+			// destroy
+			if (oStepInput) {
+				oStepInput.destroy();
+			}
+		});
+
 		QUnit.module("Operations", {
 			beforeEach: function () {
 				this.stepInput = new sap.m.StepInput({
@@ -824,7 +842,7 @@
 			//act
 			oSUT.placeAt('qunit-fixture');
 			oCore.applyChanges();
-			$Input = oSUT.$('input-inner');
+			$Input = oInput.$(oInput.getRenderer().getInnerSuffix());
 			//assert
 			assert.ok($Input.is("[role]"), "Internal Input has 'role' attribute");
 			assert.strictEqual($Input.attr("role"), "spinbutton", "Internal input's 'role' attribute has correct value");
@@ -859,70 +877,72 @@
 		});
 
 		QUnit.test("StepInput correctly alters its internal 'sap.m.Input' ARIA attributes on property changes", function (assert) {
+			//prepare
+			var oInput = this.stepInput._getInput();
+			var sInputSuffix = oInput.getRenderer().getInnerSuffix();
 			//assert - initial values
-			assert.ok(this.stepInput.$('input-inner').is('[aria-valuenow]'), "'aria-valuenow' attribute is rendered in the DOM");
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-valuenow]'), "'aria-valuenow' attribute is rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "4", "'aria-valuenow' attribute has correct initial value");
 			//act - change the 'value' property
 			this.stepInput.setValue(9);
 			oCore.applyChanges();
 			//assert - expect aria-valuenow to be changed accordingly
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-valuenow"), "9", "'aria-valuenow' attribute was updated when the 'value' property was changed");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-valuenow"), "9", "'aria-valuenow' attribute was updated when the 'value' property was changed");
 			//act - change the 'editable' property
 			this.stepInput.setEditable(false);
 			oCore.applyChanges();
 			//assert - expect 'aria-readonly=true' to be rendered in the DOM
-			assert.ok(this.stepInput.$('input-inner').is('[aria-readonly]'), "'aria-readonly' attribute was rendered in the DOM");
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-readonly"), "true", "'aria-readonly' attribute was updated when the 'editable' property was changed");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute was rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-readonly"), "true", "'aria-readonly' attribute was updated when the 'editable' property was changed");
 			//act - change the 'editable' property
 			this.stepInput.setEditable(true);
 			oCore.applyChanges();
 			//assert - expect 'aria-readonly' not to be rendered in the DOM
-			assert.notOk(this.stepInput.$('input-inner').is('[aria-readonly]'), "'aria-readonly' attribute is not rendered in the DOM");
+			assert.notOk(oInput.$(sInputSuffix).is('[aria-readonly]'), "'aria-readonly' attribute is not rendered in the DOM");
 			//act - change the 'enabled' property
 			this.stepInput.setEnabled(false);
 			oCore.applyChanges();
 			//assert - expect 'aria-disabled=true' to be rendered in the DOM
-			assert.ok(this.stepInput.$('input-inner').is('[aria-disabled]'), "'aria-disabled' attribute was rendered");
-			assert.strictEqual(this.stepInput.$('input-inner').attr("aria-disabled"), "true", "'aria-disabled' attribute was updated when the 'enabled' property was changed");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute was rendered");
+			assert.strictEqual(oInput.$(sInputSuffix).attr("aria-disabled"), "true", "'aria-disabled' attribute was updated when the 'enabled' property was changed");
 			//act - change the 'enabled' property
 			this.stepInput.setEnabled(true);
 			oCore.applyChanges();
 			//assert - expect 'aria-disabled' not to be rendered on the DOM
-			assert.notOk(this.stepInput.$('input-inner').is('[aria-disabled]'), "'aria-disabled' attribute is not rendered in the DOM");
+			assert.notOk(oInput.$(sInputSuffix).is('[aria-disabled]'), "'aria-disabled' attribute is not rendered in the DOM");
 			//act - simulate changing the 'value' outside the possible range with typing
-			this.stepInput.$('input-inner').val(11);
-			qutils.triggerKeydown(this.stepInput.$('input-inner')[0], jQuery.sap.KeyCodes.TAB, false, false, false);
+			oInput.$(sInputSuffix).val(11);
+			qutils.triggerKeydown(oInput.$(sInputSuffix)[0], jQuery.sap.KeyCodes.TAB, false, false, false);
 			oCore.applyChanges();
 			//assert - expect 'aria-invalid=true' to be rendered in the DOM
-			assert.ok(this.stepInput.$('input-inner').is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
-			assert.strictEqual(this.stepInput.$('input-inner').attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
+			assert.ok(oInput.$(sInputSuffix).is('[aria-invalid]'), "'aria-invalid' is rendered in the DOM");
+			assert.strictEqual(oInput.$(sInputSuffix).attr('aria-invalid'), "true", "'aria-invalid' attribute was updated when the invalid value is typed and confirmed");
 		});
-	QUnit.module("binding", {
-		beforeEach: function () {
-			this.stepInput = new sap.m.StepInput({
-				value: {
-					path: "/vValue"
-				},
-				displayValuePrecision: {
-					path: "/vPrecision"
-				},
-				max: {
-					path: "/vMax"
-				},
-				min: {
-					path: "/vMin"
-				}
-			});
 
-			this.oModel = new sap.ui.model.json.JSONModel();
-
-			this.stepInput.placeAt('qunit-fixture');
-			oCore.applyChanges();
-		},
-		afterEach: function () {
-			this.stepInput.destroy();
-		}
-	});
+		QUnit.module("binding", {
+			beforeEach: function () {
+				this.stepInput = new sap.m.StepInput({
+					value: {
+						path: "/vValue"
+					},
+					displayValuePrecision: {
+						path: "/vPrecision"
+					},
+					max: {
+						path: "/vMax"
+					},
+					min: {
+						path: "/vMin"
+					}
+				});
+				this.oModel = new sap.ui.model.json.JSONModel();
+				this.stepInput.placeAt('qunit-fixture');
+				oCore.applyChanges();
+			},
+			afterEach: function () {
+				this.stepInput.destroy();
+			}
+		});
 
 		QUnit.test("When value set via binding is undefined", function (assert) {
 			this.oModel.setData({});
@@ -1179,5 +1199,6 @@
 <body id="body" class="sapUiBody">
 <div id="qunit"></div>
 <div id="qunit-fixture"></div>
+<div id="content"></div>
 </body>
 </html>

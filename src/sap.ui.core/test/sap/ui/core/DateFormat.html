@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>DateFormat</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-xx-bindingSyntax="complex" >
+	</script>
+	<style>
+		.large {font-size: 2rem !important}
+		.largeinput {height: 3rem !important }
+		.large .sapMInputBaseInner{font-size: 2rem !important; height: 2.5rem}
+	</style>
+
+	<script>
+	try{
+		sap.ui.getCore().loadLibrary("sap.m");
+		sap.ui.getCore().loadLibrary("sap.ui.layout");
+	}catch(e){
+		alert("This test page requires the library 'sap.m' and 'sap.ui.layout' which are not available.");
+		throw(e);
+	} 
+	</script>
+	<script type="text/javascript" src="FormatHelper.js"></script>
+
+	<script>
+	jQuery.sap.require("sap.ui.core.format.DateFormat");
+	
+	var aSamples = [
+			{key: "custom", text: "Custom", type: "Date", sample: {} },
+			{key: "shortdate", text: "Short date", type: "Date", sample: {style: "short"} },
+			{key: "longdate", text: "Long date", type: "Date", sample: {style: "long"} },
+			{key: "shorttime", text: "Short time", type: "Time", sample: {style: "short"} },
+			{key: "mediumshort", text: "Medium/short datetime", type: "DateTime", sample: {style: "medium/short"} },
+			{key: "relativedate", text: "Relative date", type: "Date", sample: {relative: true} },
+			{key: "relativedatetime", text: "Relative datetime", type: "DateTime", sample: {relative: true} },
+			{key: "relativetime", text: "Relative time", type: "Time", sample: {relative: true} },
+			{key: "intervaldate", text: "Date interval", type: "Date", sample: {format: "yMMMd", interval: true} },
+			{key: "intervaldatetime", text: "Datetime interval", type: "DateTime", sample: {format: "yMdjms", interval: true} },
+			{key: "intervaltime", text: "Time interval", type: "Time", sample: {format: "jm", interval: true} },
+		],
+		aHashParams = [
+			{name: "formatOptions", default: {}},
+			{name: "type", default: "Date"},
+			{name: "date", default: new Date()},
+			{name: "todate", default: new Date()}
+		],
+		oSupportedOptions = {
+			format: {
+				type: "string",
+				regex: /^G*(y*|Y*)(q*|Q*)(M*|L*)(w*|W*)(E*|e*|c*)(d*|D*)(h*|H*|k*|K*|j*|J*)m*s*(z*|Z*|v*|V*|O*|X*|x*)$/,
+				help: "A skeleton pattern which may only contain symbols of this list in canonical order: Era (G), Year (y/Y), Quarter (q/Q), Month (M/L), Week (w/W), Day-Of-Week (E/e/c), Day (d/D), Hour (h/H/k/K/j/J), Minute (m), Second (s), Timezone (z/Z/v/V/O/X/x)"
+			},
+			pattern: {
+				type: "string"
+			},
+			style: {
+				type: "string",
+				regex: /^(short|medium|long|full)$|^((short|medium|long|full)\/(short|medium|long|full))$/,
+				help: "Allowed values are \"short\", \"medium\", \"long\" and \"full\", as well as combined styles for DateTime, separated with a slash, like \"medium/short\"."
+			},
+			strictParsing: {
+				type: "boolean",
+				help: "To enable strict parsing, set to \"true\""
+			},
+			relative: {
+				type: "boolean",
+				help: "To enable relative formatting set to \"true\""
+			},
+			relativeRange: {
+				type: "array",
+				help: "The range where relative formatting should be used as an array from start to end, e.g. [-6, 6]"
+			},
+			relativeScale: {
+				type: "enum",
+				values: ["auto", "year", "quarter", "month", "week", "day", "hour", "minute", "second"],
+				help: "Allowed values are \"auto\", \"year\", \"quarter\", \"month\", \"week\", \"day\", \"hour\", \"minute\" and \"second\", where \"auto\" automatically choses the best matching scale"
+			},
+			relativeStyle: {
+				type: "enum",
+				values: ["wide", "short", "narrow"],
+				help: "Allowed values are \"wide\", \"short\" and \"narrow\""
+			},
+			interval: {
+				type: "boolean",
+				help: "To enable interval formatting set to \"true\""
+			},
+			UTC: {
+				type: "boolean",
+				help: "To format as UTC time instead of local time, set to \"true\""
+			},
+			calendarType: {
+				type: "enum",
+				values: ["Gregorian", "Japanese", "Islamic", "Persian"],
+				help: "Allowed values are \"Gregprian\", \"Japanese\", \"Islamic\" and \"Persian\""
+			}
+		};
+	
+	var oModel = new sap.ui.model.json.JSONModel({
+		date: new Date(),
+		todate: new Date(),
+		formatOptions: {},
+		type: "Date",
+		locales: aLocales,
+		samples: aSamples,
+		sample: "custom"
+	});
+
+	sap.ui.getCore().attachInit(function() {
+		bindHash(oModel, aHashParams, oSupportedOptions);
+	});
+
+	sap.ui.getCore().setModel(oModel);
+
+	var oApp = new sap.m.App({
+		autoFocus: false,
+		pages: [
+			new sap.m.Page({
+				title: "DateFormat",
+				enableScrolling: false,
+				content: [
+					new sap.m.HBox({
+						fitContainer: true,
+						items: [
+							new sap.m.ScrollContainer({
+								layoutData: new sap.m.FlexItemData({
+									baseSize: "100%"
+								}),
+								width: "100%",
+								height: "100%",
+								horizontal: false,
+								vertical: true,
+								content: [
+									new sap.ui.layout.form.SimpleForm({
+										layout: "ResponsiveGridLayout",
+										columnsL: 1,
+										width: "100%",
+										editable: true,
+										content: [
+											new sap.ui.core.Title({
+												text: "Output"
+											}),
+											new sap.m.Label({
+												text: ""
+											}),
+											new sap.m.Text({
+												text: {
+													parts: ["/date", "/todate", "/type", "/formatOptions"],
+													formatter: function(oDate, oToDate, sType, oFormatOptions) {
+														var sFunctionName = "get" + sType + "Instance",
+															oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions);
+														if (oFormatOptions.interval) {
+															return oDateFormat.format([oDate, oToDate]);
+														} else {
+															return oDateFormat.format(oDate);
+														}
+													}
+												}
+											}).addStyleClass("large"),
+											new sap.ui.core.Title({
+												text: "Input"
+											}),
+											new sap.m.Label({
+												text: "Format Options"
+											}),
+											new sap.m.TextArea({
+												rows: 6,
+												value: {
+													path: "/formatOptions",
+													type: new Options(oSupportedOptions)
+												},
+												liveChange: function(oEvent) {
+													var sValue = this.getValue(),
+														oValue;
+													oModel.setProperty("/sample", "custom");
+													try {
+														oValue = jQuery.sap.parseJS(sValue);
+													} catch(e) {
+														this.onChange(oEvent);
+														return;
+													}
+													if (this.getValueState() === "Error" || !jQuery.sap.equal(oValue, this.getBinding("value").getValue())) {
+														this.onChange(oEvent);
+													}
+												}
+											}).addStyleClass("large"),
+											new sap.m.Label({
+												text: "Type"
+											}),
+											new sap.m.Select({
+												selectedKey: "{/type}",		
+												items: [
+													new sap.ui.core.Item({key: "Date", text: "Date"}),
+													new sap.ui.core.Item({key: "Time", text: "Time"}),
+													new sap.ui.core.Item({key: "DateTime", text: "DateTime"})
+												],
+												change: function() {
+													oModel.setProperty("/sample", "custom");
+												}
+											}),
+											new sap.m.Label({
+												text: "Sample"
+											}),
+											new sap.m.Select({
+												selectedKey: "{/sample}",		
+												items: {
+													path: "/samples",
+													template: new sap.ui.core.Item({key: "{key}", text: "{text}"})
+												},
+												change: function() {
+													var oContext = this.getSelectedItem().getBindingContext();
+													oModel.setProperty("/formatOptions", {});
+													oModel.setProperty("/type", oContext.getProperty("type"));
+													oModel.setProperty("/formatOptions", oContext.getProperty("sample"));
+												}
+											}),
+											new sap.m.Label({
+												text: "Date/Time"
+											}),
+											new sap.m.Input({
+												value: {
+													path: "/date",
+													type: new sap.ui.model.type.DateTime({
+														pattern: "yyyy-MM-dd HH:mm:ss"
+													})
+												}
+											}).addStyleClass("large largeinput"),
+											new sap.m.Label({
+												text: "To Date/Time",
+												visible: {
+													path: "/formatOptions",
+													formatter: function(oFormatOptions) {
+														return oFormatOptions.interval === true
+													}
+												}
+											}),
+											new sap.m.Input({
+												value: {
+													path: "/todate",
+													type: new sap.ui.model.type.DateTime({
+														pattern: "yyyy-MM-dd HH:mm:ss"
+													})
+												},
+												visible: {
+													path: "/formatOptions",
+													formatter: function(oFormatOptions) {
+														return oFormatOptions.interval === true
+													}
+												}
+											}).addStyleClass("large largeinput")
+										]
+									}),
+								]
+							}),
+							new sap.m.ScrollContainer({
+								layoutData: new sap.m.FlexItemData({
+									baseSize: "400px"
+								}),
+								width: "400px",
+								height: "100%",
+								horizontal: false,
+								vertical: true,
+								content: [
+									new sap.m.List({
+										items: {
+											path: "/locales",
+											template: new LocaleListItem({
+												locale: "{}",
+												text: {
+													parts: ["/date", "/todate", "/formatOptions", "/type", ""],
+													formatter: function(oDate, oToDate, oFormatOptions, sType, sLocale) {
+														var oLocale = new sap.ui.core.Locale(sLocale),
+															sFunctionName = "get" + sType + "Instance",
+															oDateFormat = sap.ui.core.format.DateFormat[sFunctionName](oFormatOptions, oLocale);
+														if (oFormatOptions.interval) {
+															return oDateFormat.format([oDate, oToDate]);
+														} else {
+															return oDateFormat.format(oDate);
+														}
+													}
+												}
+											})
+										}
+									})
+								]
+							})
+						]
+					})
+				]
+			}) 
+		]
+	}).placeAt("content");
+	
+	sap.ui.getCore().getMessageManager().registerObject(oApp, true);
+	</script>
+
+</head>
+<body class="sapUiBody" role="application" id="content">
+
+</body>
+</html>

@@ -21,14 +21,12 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
-			<l:BlockLayoutRow
-				rowColorSet="ColorSet1"
-				class="shopAdministrationTitle">
+			<l:BlockLayoutRow rowColorSet="ColorSet3">
 				<l:BlockLayoutCell
-					class="sapUiResponsiveContentPadding sapUiSmallMarginBegin"
+					class="sapUiResponsiveContentPadding"
 					title="{i18n>shopAdminTitle}"
-					backgroundColorSet="9"
-					backgroundColorIndex="2"
+					backgroundColorSet="ColorSet9"
+					backgroundColorShade="ShadeB"
 					titleAlignment="Left"/>
 			</l:BlockLayoutRow>
 
@@ -103,7 +101,7 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
-			<l:BlockLayoutRow rowColorSet="ColorSet2">
+			<l:BlockLayoutRow rowColorSet="ColorSet3">
 				<l:BlockLayoutCell>
 					<l:VerticalLayout>
 						<core:Icon
@@ -123,12 +121,10 @@
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 					class="sapUiNoContentPadding"
-					backgroundColorSet="9"
-					backgroundColorIndex="2"
+					backgroundColorSet="ColorSet9"
+					backgroundColorShade="ShadeB"
 					width="3">
-					<Table
-						items="{path:'customer>/customers', templateShareable: false}"
-						class="sapUiContentPadding">
+					<Table items="{path:'customer>/customers', templateShareable: false}">
 						<headerToolbar>
 							<Toolbar design="Transparent">
 								<Title text="{i18n>customerOverviewTitle}"/>

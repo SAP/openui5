@@ -110,6 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	/**
 	 * @private
+	 * @param {jQuery.Event} oEvent The fired event
 	 */
 	SegmentedButton.prototype._buttonSelected = function(oEvent) {
 		var oOldButtonSelection = sap.ui.getCore().byId(this.getSelectedButton()),
@@ -122,6 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	/**
 	 * @private
+	 * @param {boolean} bAddDelegate Whether a delegate is attached
 	 */
 	SegmentedButton.prototype._setItemNavigation = function(bAddDelegate) {
 		var oButton,

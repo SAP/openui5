@@ -69,19 +69,22 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	line-height: 2rem;
 }
 
-/* IE does not support css outline-offset */
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus {
-	outline: none;
-	position: relative;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUxAPObjectPageSection:focus:before {
-	content: "";
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	border: 0.125rem dotted @sapUiContentFocusColor;
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapUxAPObjectPageSection:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapUxAPObjectPageSection:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
+		pointer-events: none;
+	}
 }

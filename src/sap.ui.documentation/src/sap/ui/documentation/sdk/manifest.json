@@ -5,10 +5,7 @@
 		"_version": "1.3.0",
 		"id": "sap.ui.documentation.sdk",
 		"type": "application",
-		"i18n": "i18n/i18n.properties",
-		"title": "{{appTitle}}",
-		"description": "{{appDescription}}",
-
+		"title": "OpenUI5 SDK - Demo Kit v2.0",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
@@ -78,15 +75,6 @@
 			"cozy": true
 		},
 
-		"models": {
-			"i18n": {
-				"type": "sap.ui.model.resource.ResourceModel",
-				"settings": {
-					"bundleName": "sap.ui.documentation.sdk.i18n.i18n"
-				}
-			}
-		},
-
 		"config": {
 			"docuPath": "./docs/topics/",
 			"exploredURI": "./",
@@ -129,7 +117,35 @@
 			"target": ["controlsMaster", "group"]
 		  },
 		  {
-			"pattern": "entity/{id}",
+			"pattern": "entity/{id}/samples",
+			"name": "entitySamplesLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/about",
+			"name": "entityAboutLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/properties",
+			"name": "entityPropertiesLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/aggregations",
+			"name": "entityAggregationsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/associations",
+			"name": "entityAssociationsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/events",
+			"name": "entityEventsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/methods",
+			"name": "entityMethodsLegacyRoute"
+		  },
+		  {
+			"pattern": "entity/{id}/:sectionTab:",
 			"name": "entity",
 			"target": ["controlsMaster", "entity"]
 		  },
@@ -159,6 +175,16 @@
 			"target": ["apiMaster", "apiDetailInitial"]
 		  },
 		  {
+		    "pattern": "api/deprecated",
+			"name": "deprecated",
+			"target": ["apiMaster", "apiDetailDeprecated"]
+		  },
+		  {
+		    "pattern": "api/experimental",
+			"name": "experimental",
+			"target": ["apiMaster", "apiDetailExperimental"]
+		  },
+		  {
 		    "pattern": "api/{id}/:entityType:/:entityId:",
 			"name": "apiId",
 			"target": ["apiMaster", "apiDetail"]
@@ -182,6 +208,22 @@
 			"pattern": "search/{searchParam}",
 			"name": "search",
 			"target": ["searchPage"]
+		  },
+		  {
+			"pattern": "releasenotes.html",
+			"name": "releaseNotes",
+			"target": [
+				"topicMaster",
+				"releaseNotes"
+			]
+		  },
+		  {
+			"pattern": "docs/guide/{id}",
+			"name": "topicIdLegacyRoute"
+		  },
+		  {
+			"pattern": "docs/api/symbols/{id}",
+			"name": "apiIdLegacyRoute"
 		  }
 		],
 
@@ -255,6 +297,16 @@
 			"viewId": "apiDetail",
 			"viewLevel": 2
 		  },
+		  "apiDetailDeprecated": {
+			"viewName": "ApiDetailDeprecated",
+			"viewId": "apiDetailDeprecated",
+			"viewLevel": 2
+		  },
+		  "apiDetailExperimental": {
+			"viewName": "ApiDetailExperimental",
+			"viewId": "apiDetailExperimental",
+			"viewLevel": 2
+		  },
 		  "topicMaster": {
 			"viewName": "TopicMaster",
 			"viewLevel": 1,
@@ -288,6 +340,12 @@
 		  "notFound": {
 			"viewName": "NotFound",
 			"viewId": "notFound"
+		  },
+			"releaseNotes": {
+				"viewName": "ReleaseNotes",
+				"viewLevel": 2,
+				"viewId": "releaseNotes",
+				"controlAggregation": "detailPages"
 		  }
 		}
 	  }

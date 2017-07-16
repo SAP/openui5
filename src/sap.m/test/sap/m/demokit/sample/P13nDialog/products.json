@@ -1,27 +1,86 @@
 {
-	"ColumnCollection":[
-		{"text" : "ProductId", "path" : "productId", "visible" : true},
-		{"text" : "Name", "path" : "name", "visible" : true},
-		{"text" : "Category", "path" : "category"},
-		{"text" : "SupplierName", "path" : "supplierName"},
-		{"text" : "Description", "path" : "description"},
-		{"text" : "WeightMeasure", "path" : "weightMeasure"},
-		{"text" : "WeightUnit", "path" : "weightUnit"},
-		{"text" : "Price", "path" : "price"},
-		{"text" : "CurrencyCode", "path" : "currencyCode"},
-		{"text" : "Status", "path" : "status"},
-		{"text" : "Quantity", "path" : "quantity"},
-		{"text" : "UoM", "path" : "uom"},
-		{"text" : "Width", "path" : "width"},
-		{"text" : "Depth", "path" : "depth"},
-		{"text" : "Height", "path" : "height"},
-		{"text" : "DimUnit", "path" : "dimUnit"},
-		{"text" : "ProductPicUrl", "path" : "productPicUrl"}
-	],
-	"SortItems":[
-		{"columnKeyModel" : "name", "operationModel" : "Descending"}
-	],
-	"FilterItems":[
-		{"columnKeyModel" : "name", "operationModel" : "Contains", "value1Model" : "a"}
-	]
+  "ColumnCollection": [
+    {
+      "text": "Product ID",
+      "columnKey": "productId"
+    },
+    {
+      "text": "Name",
+      "columnKey": "name"
+    },
+    {
+      "text": "Category",
+      "columnKey": "category"
+    },
+    {
+      "text": "Supplier Name",
+      "columnKey": "supplierName"
+    },
+    {
+      "text": "Description",
+      "columnKey": "description"
+    },
+    {
+      "text": "Weight Measure",
+      "columnKey": "weightMeasure"
+    },
+    {
+      "text": "Weight Unit",
+      "columnKey": "weightUnit"
+    },
+    {
+      "text": "Price",
+      "columnKey": "price"
+    },
+    {
+      "text": "Currency Code",
+      "columnKey": "currencyCode"
+    },
+    {
+      "text": "Status",
+      "columnKey": "status"
+    },
+    {
+      "text": "Quantity",
+      "columnKey": "quantity"
+    },
+    {
+      "text": "UoM",
+      "columnKey": "uom"
+    },
+    {
+      "text": "Width",
+      "columnKey": "width"
+    },
+    {
+      "text": "Depth",
+      "columnKey": "depth"
+    },
+    {
+      "text": "Height",
+      "columnKey": "height"
+    },
+    {
+      "text": "DimUnit",
+      "columnKey": "dimUnit"
+    }
+  ],
+  "ColumnsItems": [
+    {
+      "columnKey": "name",
+      "visible": true,
+      "index": 0
+    },
+    {
+      "columnKey": "productId",
+      "visible": true
+    }
+  ],
+  "SortItems": [
+    {
+      "columnKey": "name",
+      "operation": "Descending"
+    }
+  ],
+  "ShowResetEnabled": false
 }

@@ -517,8 +517,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Updates the visibility of the slider's items based on the step and the selected value.
-		 * @param iNewValue The new selected value of the slider
-		 * @param iStep The precision step used for the slider
+		 * @param {int} iNewValue The new selected value of the slider
+		 * @param {int} iStep The precision step used for the slider
 		 * @private
 		 */
 		TimePickerSlider.prototype._updateStepAndValue = function(iNewValue, iStep) {
@@ -549,7 +549,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		/**
 		 * Updates the margins of a slider.
 		 * Covers the cases where the slider is constrained to show an exact number of items.
-		 * @param bIsExpand If we update margins due to expand
+		 * @param {boolean} bIsExpand If we update margins due to expand
 		 * @private
 		 */
 		TimePickerSlider.prototype._updateMargins = function(bIsExpand) {
@@ -602,7 +602,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		/**
 		 * Updates the parts of the layout that depend on the slider's height.
 		 * We call this method when the height changes - like at expand/collapse.
-		 * @param bIsExpand If we update due to expand
+		 * @param {boolean} bIsExpand If we update due to expand
 		 * @private
 		 */
 		TimePickerSlider.prototype._updateDynamicLayout = function (bIsExpand) {
@@ -1263,6 +1263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Gets only the visible items.
+		 * @returns {sap.m.TimePickerSlider} the visible sap.m.TimePickerSlider items
 		 * @private
 		 */
 		TimePickerSlider.prototype._getVisibleItems = function() {

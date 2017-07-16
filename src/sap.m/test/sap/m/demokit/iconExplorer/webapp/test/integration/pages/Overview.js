@@ -13,7 +13,6 @@ sap.ui.define([
 
 	var sViewName = "Overview",
 		sResultsId = "results",
-		sResultsContainerId = "resultContainer",
 		sSearchFieldId = "searchField",
 		sSomethingThatCannotBeFound = "*!-Q@@||";
 
@@ -300,12 +299,8 @@ sap.ui.define([
 						id: "categorySelection",
 						viewName: sViewName,
 						actions: [
-							// combo box does not fully support enter text action so we fire the event manually
-							new EnterText({text: sName}),
-							function (oControl) {
-								oControl.onChange();
-								oControl.fireSelectionChange({ selectedItem: oControl.getSelectableItems()[0]});
-							}],
+							new EnterText({text: sName})
+						],
 						errorMessage: "Failed to find the category selection in overview view.'"
 					});
 
@@ -509,7 +504,7 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeTheTabularNoDataTextForNoSearchResults: function () {
+				iShouldSeeTheNoDataTextForNoSearchResults: function () {
 					return this.waitFor({
 						id: sResultsId,
 						viewName: sViewName,
@@ -517,27 +512,6 @@ sap.ui.define([
 							Opa5.assert.strictEqual(oResults.getNoDataText(), oResults.getModel("i18n").getProperty("overviewNoDataWithSearchText"), "The no data should be shown in the tabular results section");
 						},
 						errorMessage: "The tabular results do not show the no data text for search"
-					});
-				},
-
-				iShouldSeeTheVisualNoDataTextForNoSearchResults: function () {
-					return this.waitFor({
-						id: sResultsContainerId,
-						viewName: sViewName,
-						success: function (oResultContainer) {
-							return this.waitFor({
-								controlType: "sap.m.Label",
-								viewName: sViewName,
-								matchers: [
-									new Ancestor(oResultContainer),
-									new Properties({text: oResultContainer.getModel("i18n").getProperty("overviewNoDataWithSearchText")})
-								],
-								success: function () {
-									Opa5.assert.ok(true, "The no data should be shown in the visual results section");
-								},
-								errorMessage: "The visual results do not show the no data text for search"
-							});
-						}
 					});
 				}
 

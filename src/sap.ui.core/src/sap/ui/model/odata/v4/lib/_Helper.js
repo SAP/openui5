@@ -147,6 +147,11 @@ sap.ui.define([
 					// single name/value pair named error. The value must be a JSON object."
 					oResult.error = JSON.parse(sBody).error;
 					oResult.message = oResult.error.message;
+					if (typeof oResult.message === "object") {
+						// oResult.message is in OData V2 an object containing the human readable
+						// error message in the property value
+						oResult.message = oResult.error.message.value;
+					}
 				} catch (e) {
 					jQuery.sap.log.warning(e.toString(), sBody,
 						"sap.ui.model.odata.v4.lib._Helper");
@@ -296,37 +301,44 @@ sap.ui.define([
 		 *   Entity type metadata
 		 * @param {object} oEntityInstance
 		 *   Entity instance runtime data
+		 * @param {boolean} [bIgnoreMissingKey=false]
+		 *   Do not throw an exception if a key property does not have a value
 		 * @returns {string}
-		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')"
+		 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
+		 *   key property is undefined and <code>bIgnoreMissingKey</code> is true
 		 * @throws {Error}
 		 *   If there is no entity instance or if one key property is undefined
 		 *
 		 * @private
 		 */
-		getKeyPredicate : function (oEntityType, oEntityInstance) {
-			var aKeyProperties = [],
+		getKeyPredicate : function (oEntityType, oEntityInstance, bIgnoreMissingKey) {
+			var bFailed,
+				aKeyProperties = [],
 				bSingleKey = oEntityType.$Key.length === 1;
 
 			if (!oEntityInstance) {
 				throw new Error("No instance to calculate key predicate");
 			}
-			oEntityType.$Key.forEach(function (sName) {
+			bFailed = oEntityType.$Key.some(function (sName) {
 				var vValue = oEntityInstance[sName];
 
 				if (vValue === undefined) {
+					if (bIgnoreMissingKey) {
+						return true;
+					}
 					throw new Error("Missing value for key property '" + sName + "'");
 				}
 				vValue = encodeURIComponent(Helper.formatLiteral(vValue, oEntityType[sName].$Type));
 				aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
 			});
 
-			return "(" + aKeyProperties.join(",") + ")";
+			return bFailed ? undefined : "(" + aKeyProperties.join(",") + ")";
 		},
 
 		/**
 		 * Returns the properties that have been selected for the given path.
 		 *
-		 * @param {objekt} mQueryOptions
+		 * @param {object} mQueryOptions
 		 *   A map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string} sPath
@@ -416,9 +428,13 @@ sap.ui.define([
 		 * @param {object} mChangeListeners A map of change listeners by path
 		 * @param {string} sPath The path of the cache value in the cache
 		 * @param {object} oCacheValue The object in the cache
-		 * @param {object} oPatchValue The value of the PATCH request/response
+		 * @param {object} [oPatchValue] The value of the PATCH request/response
 		 */
 		updateCache : function (mChangeListeners, sPath, oCacheValue, oPatchValue) {
+			// empty PATCH value from 204 response: Nothing to do
+			if (!oPatchValue) {
+				return;
+			}
 
 			// iterate over all properties in the cache
 			Object.keys(oCacheValue).forEach(function (sProperty) {

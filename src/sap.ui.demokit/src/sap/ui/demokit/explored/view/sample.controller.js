@@ -43,7 +43,8 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		onRouteMatched : function (oEvt) {
 
 			if (this._oRTA) {
-				this._oRTA.stop(true);
+				this._oRTA.destroy();
+				this._oRTA = null;
 			}
 
 			if (oEvt.getParameter("name") !== "sample") {
@@ -149,6 +150,11 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 					oHtmlControl.$().on("load", function () {
 						var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 
+						// Some samples don't have the framework loaded (f.e. hello world)
+						if (!oSampleFrame.sap) {
+							return;
+						}
+
 						oSampleFrame.sap.ui.getCore().attachInit(function() {
 							var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 							oSampleFrame.sap.ui.getCore().applyTheme(sap.ui.getCore().getConfiguration().getTheme());
@@ -206,8 +212,6 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			};
 
 			FakeLrepConnectorLocalStorage.enableFakeConnector({
-				"isKeyUser": true,
-				"isAtoAvailable": false,
 				"isProductiveSystem": true
 			});
 		},
@@ -217,10 +221,7 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		*/
 		_loadRuntimeAuthoring : function() {
 			try {
-				sap.ui.require([
-					"sap/ui/rta/RuntimeAuthoring"],
-				function (RuntimeAuthoring) {
-					this._oRTA = new RuntimeAuthoring();
+				sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
 					this.getView().byId("toggleRTA").setVisible(true);
 				}.bind(this));
 			} catch (oException) {
@@ -229,11 +230,17 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		},
 
 		onAdaptUI : function(oEvent) {
-			var oRTA = this._oRTA;
-			if (oRTA) {
-				oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
-				oRTA.start();
-			}
+			sap.ui.require([
+				"sap/ui/rta/RuntimeAuthoring"
+			], function (
+				RuntimeAuthoring
+			) {
+				if (!this._oRTA) {
+					this._oRTA = new RuntimeAuthoring();
+					this._oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
+					this._oRTA.start();
+				}
+			}.bind(this));
 		}
 	});
 

@@ -1,0 +1,121 @@
+{
+	"1.30.0": {
+		"date": "April 2015",
+		"notes": [
+			{
+				"id": "76aa841f4ce4a7a9ce801721c2d2b1cf643d402c",
+				"type": "FEATURE",
+				"text": "sap.ui.rta library added",
+				"references": []
+			},
+			{
+				"id": "28c9cdb87e435e0ea8faa9d9a26d2b99b32fdf9b",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Context sensitivity added to ContextMenu",
+				"references": []
+			},
+			{
+				"id": "01171ba3c1df8143456f8768d85391299b665dde",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Enabling / disabling of CreateCustomField button now supported",
+				"references": []
+			},
+			{
+				"id": "29c2c7437d08fc3ddf2e677e54dd7c64fb5226b8",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Styling of fieldrepository done / context menu fixed",
+				"references": []
+			},
+			{
+				"id": "e692fcdec9917398c94a8db7d08f2a21526131cb",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Example rta page added",
+				"references": []
+			},
+			{
+				"id": "f4fda15762d978f8fbb3623e274f21972d548cb4",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: fakeLrepConnector enabled with localStorage",
+				"references": []
+			},
+			{
+				"id": "6f718e165f5a6cb6a926e2dc0ce6550357e76983",
+				"type": "FIX",
+				"text": "sap.ui.rta: pom dependencies corrected",
+				"references": []
+			},
+			{
+				"id": "e84890605e66d20bdd4faa6975034929b0d8ea01",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Added value help and tooltip in field repository",
+				"references": []
+			},
+			{
+				"id": "de6a827a018d4dc6dfdc33e6d882641d3d60895e",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Added re-sorting button to FieldRepository dialog",
+				"references": []
+			},
+			{
+				"id": "58271edc2bd8bd397ac372bd911f2cd2a6e16f1c",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Added new SamplePage for RuntimeAuthoring - one with adapt button enabled,and one with disabled",
+				"references": []
+			},
+			{
+				"id": "f49acc4df896c8bd9a94852781d442c3409520eb",
+				"type": "FEATURE",
+				"text": "sap.ui.rta: Throws an error if running on a browser different than Internet Explorer or Chrome",
+				"references": []
+			},
+			{
+				"id": "59497c256b3c345ec42f991ae4abc65b5d5b5dca",
+				"type": "FIX",
+				"text": "Fixed Layout for runtime authoring toolbar",
+				"references": []
+			},
+			{
+				"id": "096a41b493939165311cf6c9a0a009dba02fc080",
+				"type": "FIX",
+				"text": "sap.ui.rta: Fixed styling of resort label in field repository",
+				"references": []
+			},
+			{
+				"id": "dc523af591e63075a18cc1fa2685192eaae3a956",
+				"type": "FIX",
+				"text": "sap.ui.rta: Fixed module path for FLP",
+				"references": []
+			},
+			{
+				"id": "a6e7234a6d83631a5cf83e432d183bdef767004c",
+				"type": "FIX",
+				"text": "RTA:Fixed bottom toolbar in RTA",
+				"references": []
+			},
+			{
+				"id": "c9f3511b5abcc4f09e3ffc3eb4e88dad1e859e28",
+				"type": "FIX",
+				"text": "RTA: Implemented ToolsMenu Control API",
+				"references": []
+			},
+			{
+				"id": "f1116f91801c550b321492e3588003fc5c96ed08",
+				"type": "FIX",
+				"text": "RTA:  App-Descriptor is now used in RTA Demo App",
+				"references": []
+			},
+			{
+				"id": "d74d3d191d40bed16df8f4e646810ed212b3ea3a",
+				"type": "FIX",
+				"text": "sap.ui.rta: FieldRepository to filter out already displayed or added fields corrected - entity types to field repository added",
+				"references": []
+			},
+			{
+				"id": "a84a9df1d81905e76470b392bd1a2ae8344b219b",
+				"type": "FIX",
+				"text": ": Button texts in RTA changed",
+				"references": []
+			}
+		]
+	}
+}

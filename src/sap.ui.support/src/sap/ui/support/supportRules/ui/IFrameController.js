@@ -41,7 +41,7 @@ function (jQuery, ManagedObject, CommunicationBus, channelNames, constants) {
 		toolFrame.src = sUrl;
 
 		style.width = "100%";
-		style.height = "50%";
+		style.height = "28px";
 		style.position = "absolute";
 		style.left = "0";
 		style.bottom = "0";

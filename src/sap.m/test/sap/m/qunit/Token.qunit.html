@@ -13,96 +13,195 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-	var token1;
-	var key = "testKey";
-	var text = "testText";
-
-	var oToken = new sap.m.Token("t1");
-	oToken.placeAt("content");
-
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			token1 = sap.ui.getCore().getControl("t1");
+			this.token1 = new sap.m.Token("t1");
+			this.token1.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
-			token1 = null;
+			this.token1.destroy();
 		}
 	});
 
 	// test property accessor methods
 	QUnit.test("setter / getter Key", function(assert) {
-		token1.setKey(key);
-		assert.equal(token1.getKey(), key, "Input value is "+key);
+		var key = "testKey";
+
+		this.token1.setKey(key);
+		assert.equal(this.token1.getKey(), key, "Input value is " + key);
 	});
 
 	QUnit.test("setter / getter Text", function(assert) {
-		token1.setText(text);
-		assert.equal(token1.getText(), text, "Input value is "+text);
+		var text = "testText";
+
+		this.token1.setText(text);
+		assert.equal(this.token1.getText(), text, "Input value is " + text);
 	});
 
 	QUnit.test("setter / getter editable", function(assert) {
 		var isEditable = true;
-		assert.equal(token1.getEditable(), isEditable, "Token is editable");
+		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
 
 		isEditable = false;
-		token1.setEditable(isEditable);
-		assert.equal(token1.getEditable(), isEditable, "Token is not editable");
+		this.token1.setEditable(isEditable);
+		assert.equal(this.token1.getEditable(), isEditable, "Token is not editable");
 
 		isEditable = true;
-		token1.setEditable(isEditable);
-		assert.equal(token1.getEditable(), isEditable, "Token is editable");
+		this.token1.setEditable(isEditable);
+		assert.equal(this.token1.getEditable(), isEditable, "Token is editable");
 	});
 
 	QUnit.test("setter / getter isSelected", function(assert) {
 		var isSelected = false;
-		assert.equal(token1.getSelected(), isSelected, "Token is not selected");
+		assert.equal(this.token1.getSelected(), isSelected, "Token is not selected");
 
 		isSelected = true;
-		token1.setSelected(isSelected);
-		assert.equal(token1.getSelected(), isSelected, "Token is selected");
+		this.token1.setSelected(isSelected);
+		assert.equal(this.token1.getSelected(), isSelected, "Token is selected");
 
 		isSelected = false;
-		token1.setSelected(isSelected);
-		assert.equal(token1.getSelected(), isSelected, "Token is not selected");
+		this.token1.setSelected(isSelected);
+		assert.equal(this.token1.getSelected(), isSelected, "Token is not selected");
 	});
 
 	QUnit.test("show / hide delete icon depending on isEditable", function(assert) {
 		var isEditable = true;
-		token1.setEditable(isEditable);
-		assert.equal(token1.$().children().length, 2, "Token contains icon");
+		this.token1.setEditable(isEditable);
+		assert.ok(!this.token1.$().hasClass("sapMTokenReadOnly"), "Token contains icon");
 
 		isEditable = false;
-		token1.setEditable(isEditable);
+		this.token1.setEditable(isEditable);
+
 		sap.ui.getCore().applyChanges();
-		assert.equal(token1.$().children().length, 1, "Token does not show delete icon");
+
+		//assert.equal(this.token1.$().children().length, 1, "Token does not show delete icon");
+		assert.ok(this.token1.$().hasClass("sapMTokenReadOnly"), "Token does not show delete icon");
 
 	});
 
 	QUnit.test("select/deselect token", function(assert) {
-		token1.setSelected(false);
-		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
-		assert.ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
+		this.token1.setSelected(false);
+		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
+		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 
-		sap.ui.test.qunit.triggerEvent("tap", token1.getDomRef());
-		assert.ok(token1.$().hasClass("sapMTokenSelected"), "token is selected");
+		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
+		assert.ok(this.token1.$().hasClass("sapMTokenSelected"), "token is selected");
 	});
 
 	QUnit.test("setter / getter textDirection", function(assert) {
-		token1.setTextDirection(sap.ui.core.TextDirection.RTL);
-		assert.equal(token1.getTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
+		this.token1.setTextDirection(sap.ui.core.TextDirection.RTL);
+		assert.equal(this.token1.getTextDirection(), sap.ui.core.TextDirection.RTL, "Input value is "+sap.ui.core.TextDirection.RTL);
 	});
 
 	QUnit.test("Token has attribute dir", function(assert) {
-		token1.setTextDirection(sap.ui.core.TextDirection.RTL);
+		this.token1.setTextDirection(sap.ui.core.TextDirection.RTL);
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(token1.$().children(0).attr("dir"), 'rtl', "Token has attribute dir equal to rtl");
+		assert.equal(this.token1.$().children(0).attr("dir"), 'rtl', "Token has attribute dir equal to rtl");
+	});
+
+	QUnit.module("Keyboard Handling", {
+		beforeEach : function() {
+			this.token1 = new sap.m.Token("t1");
+			this.token1.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.token1.destroy();
+		}
+	});
+
+	QUnit.test("Ctrl + Space", function(assert) {
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.SPACE, false, false, true);
+
+		// assert
+		assert.equal(this.token1.getSelected(), true, "Token is selected");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.SPACE, false, false, true);
+
+		// assert
+		assert.equal(this.token1.getSelected(), false, "Token is deselected");
+	});
+
+	QUnit.test("Backspace", function(assert) {
+		// arrange
+		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
+	});
+
+	QUnit.test("Delete", function(assert) {
+		// arrange
+		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.DELETE);
+
+		// assert
+		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
+	});
+
+	QUnit.module("Token in Tokenizer", {
+		beforeEach : function() {
+			this.tokenizer = new sap.m.Tokenizer("t");
+			this.token1 = new sap.m.Token("t1");
+			this.token2 = new sap.m.Token("t2");
+			this.token3 = new sap.m.Token("t3");
+
+			this.tokenizer.addToken(this.token1);
+			this.tokenizer.addToken(this.token2);
+			this.tokenizer.addToken(this.token3);
+
+			this.tokenizer.placeAt("content")
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("Selection", function(assert) {
+		// arrange
+		var fnFireSelectSpy = this.spy(this.token2, "fireSelect"),
+			fnFireDeselectSpy = this.spy(this.token1, "fireDeselect");
+
+		// act
+		sap.ui.test.qunit.triggerEvent("tap", this.token1.getDomRef());
+
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+		// assert
+		assert.equal(fnFireDeselectSpy.callCount, 1, "Token1 deselect event was fired");
+		assert.equal(fnFireSelectSpy.callCount, 1, "Token2 select event was fired");
+	});
+
+	QUnit.test("Pressing delete icon", function(assert) {
+		// arrange
+		var fnFireDeleteSpy = this.spy(this.token1, "fireDelete"),
+			oTokenIcon = jQuery("#t1-icon")[0];
+
+		// act
+		sap.ui.test.qunit.triggerEvent("click", oTokenIcon);
+
+		// assert
+		assert.equal(fnFireDeleteSpy.callCount, 1, "delete event was fired");
+		assert.ok(this.token1.bIsDestroyed, "Token1 is destroyed");
 	});
 </script>
 

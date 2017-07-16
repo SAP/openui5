@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ListBase.
-sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText'],
-	function(jQuery, GroupHeaderListItem, ListItemBase, library, Control, ItemNavigation, InvisibleText) {
+sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/InvisibleText', 'sap/ui/core/LabelEnablement'],
+	function(jQuery, GroupHeaderListItem, ListItemBase, library, Control, ItemNavigation, InvisibleText, LabelEnablement) {
 	"use strict";
 
 
@@ -232,7 +232,12 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 					/**
 					 * Indicates whether the <code>listItem</code> parameter is selected or not.
 					 */
-					selected : {type : "boolean"}
+					selected : {type : "boolean"},
+
+					/**
+					 * Indicates whether the select all action is triggered or not.
+					 */
+					selectAll : {type : "boolean"}
 				}
 			},
 
@@ -432,9 +437,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 	// this gets called only with oData Model when first load or filter/sort
 	ListBase.prototype.refreshItems = function(sReason) {
-		// show loading mask first
-		this._showBusyIndicator();
-
 		if (this._oGrowingDelegate) {
 			// inform growing delegate to handle
 			this._oGrowingDelegate.refreshItems(sReason);
@@ -488,9 +490,54 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		return Control.prototype.setBindingContext.apply(this, arguments);
 	};
 
-	ListBase.prototype._bindAggregation = function(sName) {
-		sName == "items" && this._resetItemsBinding();
-		return Control.prototype._bindAggregation.apply(this, arguments);
+	ListBase.prototype._bindAggregation = function(sName, oBindingInfo) {
+		function addBindingListener(oBindingInfo, sEventName, fHandler) {
+			oBindingInfo.events = oBindingInfo.events || {};
+
+			if (!oBindingInfo.events[sEventName]) {
+				oBindingInfo.events[sEventName] = fHandler;
+			} else {
+				// Wrap the event handler of the other party to add our handler.
+				var fOriginalHandler = oBindingInfo.events[sEventName];
+				oBindingInfo.events[sEventName] = function() {
+					fOriginalHandler.apply(this, arguments);
+					fHandler.apply(this, arguments);
+				};
+			}
+		}
+
+		if (sName === "items") {
+			this._resetItemsBinding();
+			addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequestedListener.bind(this));
+			addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceivedListener.bind(this));
+		}
+
+		Control.prototype._bindAggregation.call(this, sName, oBindingInfo);
+	};
+
+	ListBase.prototype._onBindingDataRequestedListener = function(oEvent) {
+		this._showBusyIndicator();
+
+		if (this._dataReceivedHandlerId != null) {
+			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			delete this._dataReceivedHandlerId;
+		}
+	};
+
+	ListBase.prototype._onBindingDataReceivedListener = function(oEvent) {
+		if (this._dataReceivedHandlerId != null) {
+			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			delete this._dataReceivedHandlerId;
+		}
+
+		// The list will be set to busy when a request is sent, and set to not busy when a response is received.
+		// Under certain conditions it can happen that there are multiple requests in the request queue of the binding, which will be processed
+		// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
+		// processed. With this timer we avoid the flickering, as the list will only be set to not busy after all requests have been processed.
+		this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
+			this._hideBusyIndicator();
+			delete this._dataReceivedHandlerId;
+		});
 	};
 
 	ListBase.prototype.destroyItems = function(bSuppressInvalidate) {
@@ -752,8 +799,9 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		}, this);
 
 		if (bFireEvent && aChangedListItems.length) {
-			this._fireSelectionChangeEvent(aChangedListItems);
+			this._fireSelectionChangeEvent(aChangedListItems, bFireEvent);
 		}
+
 		return this;
 	};
 
@@ -832,14 +880,23 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 	};
 
 	/*
-	 * Returns internal remembered selected context paths as a copy
+	 * Returns internal remembered selected context paths as a copy if rememberSelections is set to true,
+	 * else returns the binding context path for the current selected items.
 	 *
 	 * @return {String[]} selected items binding context path
 	 * @since 1.26
 	 * @protected
 	 */
-	ListBase.prototype.getSelectedContextPaths = function() {
-		return this._aSelectedPaths.slice(0);
+	ListBase.prototype.getSelectedContextPaths = function(bAll) {
+		// return this selectedPaths if rememberSelections is true
+		if (!bAll || (bAll && this.getRememberSelections())) {
+			return this._aSelectedPaths.slice(0);
+		}
+
+		// return the binding context path of current selected items
+		return this.getSelectedItems().map(function(oItem) {
+			return oItem.getBindingContextPath();
+		});
 	};
 
 	/* Determines whether all selectable items are selected or not
@@ -1024,7 +1081,6 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 
 	// fire updateFinished event delayed to make sure rendering phase is done
 	ListBase.prototype._fireUpdateFinished = function(oInfo) {
-		this._hideBusyIndicator();
 		jQuery.sap.delayedCall(0, this, function() {
 			this._bItemNavigationInvalidated = true;
 			this.fireUpdateFinished({
@@ -1116,7 +1172,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 	};
 
 	// Fire selectionChange event and support old select event API
-	ListBase.prototype._fireSelectionChangeEvent = function(aListItems) {
+	ListBase.prototype._fireSelectionChangeEvent = function(aListItems, bSelectAll) {
 		var oListItem = aListItems && aListItems[0];
 		if (!oListItem) {
 			return;
@@ -1126,7 +1182,8 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		this.fireSelectionChange({
 			listItem : oListItem,
 			listItems : aListItems,
-			selected : oListItem.getSelected()
+			selected : oListItem.getSelected(),
+			selectAll: !!bSelectAll
 		});
 
 		// support old API
@@ -1469,6 +1526,10 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 			oBinding = this.getBinding("rows"),
 			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
+		if (LabelEnablement.isRequired(this)) {
+			sStates += oBundle.getText("LIST_REQUIRED") + " ";
+		}
+
 		if (sMode == mMode.MultiSelect) {
 			sStates += oBundle.getText("LIST_MULTISELECTABLE") + " ";
 		} else if (sMode == mMode.Delete) {
@@ -1476,6 +1537,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './ListItemBase', '
 		} else if (sMode != mMode.None) {
 			sStates += oBundle.getText("LIST_SELECTABLE") + " ";
 		}
+
 		if (oBinding && oBinding.isGrouped()) {
 			sStates += oBundle.getText("LIST_GROUPED") + " ";
 		}

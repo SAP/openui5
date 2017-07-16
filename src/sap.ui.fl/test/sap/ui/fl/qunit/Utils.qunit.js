@@ -138,6 +138,25 @@ jQuery.sap.require("sap.m.Button");
 		oGetComponentStub.restore();
 	});
 
+	QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function (assert) {
+
+		this.stub(Utils, "getAppComponentForControl").returns({});
+		this.stub(Utils, "_getComponentStartUpParameter").returns("someId");
+
+		var bIsStartupParameterBasedVariant = Utils.isVariantByStartupParameter({});
+
+		assert.ok(bIsStartupParameterBasedVariant, "the variant was detected");
+	});
+
+	QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function (assert) {
+
+		this.stub(Utils, "getAppComponentForControl").returns({});
+		this.stub(Utils, "_getComponentStartUpParameter").returns();
+
+		var bIsStartupParameterBasedVariant = Utils.isVariantByStartupParameter({});
+
+		assert.ok(!bIsStartupParameterBasedVariant);
+	});
 
 	QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function (assert) {
 		var oUriParams = {

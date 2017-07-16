@@ -1,0 +1,175 @@
+{
+  "1.48.0": {
+    "date": "April 2017",
+    "notes": [
+      {
+        "id": "cf3affc34a9d1c6bd127515388d256e24de210d4",
+        "type": "FEATURE",
+        "text": " sap.ui.rta: add support for sap_belize_hcw theme",
+        "references": []
+      },
+      {
+        "id": "97dd9f68bc99213d83334603e997f769d2872200",
+        "type": "FIX",
+        "text": " Adapt availability for combine plugin",
+        "references": []
+      },
+      {
+        "id": "aec7c740c9a1da0fdc323ca7478f4cdfc30a7d39",
+        "type": "FIX",
+        "text": " Add changeOnRelevantContainer check to Combine and Split plugin",
+        "references": []
+      },
+      {
+        "id": "1373ff0be726ad280076f3d7a274479c3caadc5d",
+        "type": "FIX",
+        "text": " Application load without productid parameter",
+        "references": []
+      },
+      {
+        "id": "914e4c10592f83970ce644031eb80af4ea72f9d2",
+        "type": "FIX",
+        "text": " Fix error in ControlMovement test",
+        "references": []
+      },
+      {
+        "id": "a84b43fb6c00644558eb220ddb806e935a88488b",
+        "type": "FIX",
+        "text": " RTA Demoapp Detail Page not loading in Safari/Firefox",
+        "references": []
+      },
+      {
+        "id": "e876bcac2a511a97293c7e225fe41d33caea99b4",
+        "type": "FIX",
+        "text": " RTA now opens correctly in dialog",
+        "references": []
+      },
+      {
+        "id": "6fd567d45266566d0e6639f942574ac66361edb9",
+        "type": "FIX",
+        "text": " RTA: Removed invisible custom fields should not be displayed",
+        "references": []
+      },
+      {
+        "id": "e13ad3f430a5162d5fc2a8ceac4b88986a2f478c",
+        "type": "FIX",
+        "text": " Smart Form Dialog same instance opening",
+        "references": []
+      },
+      {
+        "id": "0ebe05f74488f44b666dce22fa27eb9d7a6625a8",
+        "type": "FIX",
+        "text": " sap.ui.comp - sap.ui.rta - undo after combine",
+        "references": []
+      },
+      {
+        "id": "808c1c24ca70099739b2dfbf1911ac25918a138f",
+        "type": "FIX",
+        "text": " sap.ui.rta - Combine: duplicate Id during reload",
+        "references": []
+      },
+      {
+        "id": "f0df361f0db0395af862d896b1ee33954d115a5e",
+        "type": "FIX",
+        "text": " sap.ui.rta: Border fixes in HCB theme",
+        "references": []
+      },
+      {
+        "id": "dbc30a0986699d4046f08cea478626120fc6b24d",
+        "type": "FIX",
+        "text": " sap.ui.rta: Fixed personalization check when exiting RTA",
+        "references": []
+      },
+      {
+        "id": "261ecc1269cb2d9952ef6cbc0711fe79180d45c5",
+        "type": "FIX",
+        "text": " sap.ui.rta: MS Edge support for testsuite + language independence",
+        "references": []
+      },
+      {
+        "id": "5b1cb918e7b5904653c09bbd0a2a78558d9c7760",
+        "type": "FIX",
+        "text": " sap.ui.rta: Pop-up texts for adapt UI reload with personalization",
+        "references": []
+      },
+      {
+        "id": "d8c16e75ea6d34987a0ab81dd06a0b86f7bb9241",
+        "type": "FIX",
+        "text": " sap.ui.rta: bugfix selection with keyboard",
+        "references": []
+      },
+      {
+        "id": "4c3e16e3345218c8acb7ef402a2595f37d5b9887",
+        "type": "FIX",
+        "text": " sap.ui.rta: improvements of the AdditionalElementsAnalyzer",
+        "references": []
+      },
+      {
+        "id": "5bd809e6ace16dc9d3aed842b2887d97b6763eed",
+        "type": "FIX",
+        "text": " sap.ui.rta: multi-selection fixes",
+        "references": []
+      },
+      {
+        "id": "8ec8e52d56e362eaf6c353bc9fcbef83221696ef",
+        "type": "FIX",
+        "text": " sap.ui.rta: redo with CTRL+Y",
+        "references": []
+      },
+      {
+        "id": "85a17ebfd77d819f1bf169d29b3abdce971d04c6",
+        "type": "FIX",
+        "text": " sap.ui.rta: rename to empty strings should not be possible",
+        "references": []
+      },
+      {
+        "id": "f09b673a8bc6da6a54af52c8db86d75090ff47ba",
+        "type": "FIX",
+        "text": ": RTA - not editable when siblings in other aggregration",
+        "references": []
+      },
+      {
+        "id": "9ee7e932d32016820adbf884c6852d11b07acc37",
+        "type": "FIX",
+        "text": ": RTA Add-Field Dialog disabled button styling",
+        "references": []
+      },
+      {
+        "id": "266a2bd3b82c983a06e3892793a1259e6d02f49f",
+        "type": "FIX",
+        "text": ": RTA drag \u0026 drop placeholder background settings",
+        "references": []
+      },
+      {
+        "id": "0eb99a453034dbd2751b6eba924976ab6d4f3e59",
+        "type": "FIX",
+        "text": ": Remove RTA Standalone application and added sap.app.id",
+        "references": []
+      },
+      {
+        "id": "6a214c2fcd9dbaac355d41ed4fb76afda9af95ee",
+        "type": "FIX",
+        "text": ": sap.ui.rta: Context-menu qunit fix",
+        "references": []
+      },
+      {
+        "id": "29d12bc01f255dc326026355a6b2b5d483474ef1",
+        "type": "FIX",
+        "text": ": simpleform fix editable titles (RTA-part)",
+        "references": []
+      },
+      {
+        "id": "ccb13415ad8b2e937633e78021247a502e1e04aa",
+        "type": "FIX",
+        "text": " Demoapp popover/dialogs overlay enablement",
+        "references": []
+      },
+      {
+        "id": "6125b786415135d5fec63b18b8b054c4a223055f",
+        "type": "FIX",
+        "text": " sap.ui.rta: Toolbar being created after App reload triggered",
+        "references": []
+      }
+    ]
+  }
+}

@@ -116,6 +116,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
         RangeSlider.prototype.exit = function () {
             this._oResourceBundle = null;
             this._aInitialFocusRange = null;
+	        this._liveChangeLastValue = null;
 
             if (this._oRangeLabel) {
                 this._oRangeLabel.destroy();
@@ -655,6 +656,11 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
+            // Should be prevent as in Safari while dragging the handle everything else gets selection.
+            // As part of the RangeSlider, Inputs in the tooltips should be excluded
+            if (oEvent.target.className.indexOf("sapMInput") === -1) {
+                oEvent.preventDefault();
+            }
 
             // we need to recalculate the styles since something may have changed
             // the screen size between touches.
@@ -742,7 +748,7 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
             aRangeTemp = this._getNormalizedRange(this.getRange(), aInitialRange, aHandles);
             //check if the current range is equal to the new one
             bRangesEquality = aRange.every(function (fValue, iIndex) {return fValue === aRangeTemp[iIndex];});
-            bRangeInBoudaries = aRange.every(function (fValue) {return (fValue > fMin && fValue < fMax );});
+            bRangeInBoudaries = aRange.every(function (fValue) {return (fValue >= fMin && fValue <= fMax );});
             bRangeOnBoudaries = aRangeTemp.indexOf(fMin) > -1 || aRangeTemp.indexOf(fMax) > -1;
             if (!bRangesEquality) {
                 //check the need to update the handle depending of number of the selected handles and the handles position
@@ -752,7 +758,25 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
                 this._adjustTooltipsContainer();
                 aRangeTemp = this._getNormalizedRange(this.getRange(), aInitialRange, aHandles);
             }
+
+            this._triggerLiveChange();
             this.setRange(aRangeTemp);
+        };
+
+        RangeSlider.prototype._triggerLiveChange = function () {
+            var bFireLiveChange,
+                aRange = this.getRange();
+
+            this._liveChangeLastValue = this._liveChangeLastValue || [];
+
+            bFireLiveChange = aRange.some(function (fValue, index) {
+                return fValue !== this._liveChangeLastValue[index];
+            }, this);
+
+            if (bFireLiveChange) {
+                this._liveChangeLastValue = aRange.slice(); //Save a copy, not a reference
+                this.fireLiveChange({range: aRange});
+            }
         };
 
         /**
@@ -772,11 +796,16 @@ sap.ui.define(["jquery.sap.global", "./Slider", "./Input", "sap/ui/core/Invisibl
 
             for (i = 0; i < aRange.length; i++) {
                 aRangeNormalized[i] = (aRange[i] < fMin ? fMin : aRange[i]);
-                aRangeNormalized[i] = (aRange[i] > fMax ? fMax : aRange[i]);
+                aRangeNormalized[i] = (aRange[i] > fMax ? fMax : aRangeNormalized[i]);
                 if (aHandles.length === 2) {
-                    iOtherElementIndex = Math.abs(i - 1);
-                    aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] <= fMin ? aRangeNormalized[i] + iSelectedRange : aRangeNormalized[iOtherElementIndex]);
-                    aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] >= fMax ? aRangeNormalized[i] - iSelectedRange : aRangeNormalized[iOtherElementIndex]);
+                    if (aRangeNormalized[0] == fMin) {
+                        aRangeNormalized[1] = aRangeNormalized[0] + iSelectedRange;
+                    } else {
+                        iOtherElementIndex = Math.abs(i - 1);
+                        aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] <= fMin ? aRangeNormalized[i] + iSelectedRange : aRangeNormalized[iOtherElementIndex]);
+                        aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] >= fMax ? aRangeNormalized[i] - iSelectedRange : aRangeNormalized[iOtherElementIndex]);
+
+                    }
                 }
             }
             return aRangeNormalized;

@@ -3,8 +3,11 @@
  */
 
 // Provides control sap.uxap.ObjectPageSectionBase.
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLevel", "./library"], function (jQuery, Control, TitleLevel, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/library", "./library"], function (jQuery, Control, coreLibrary, library) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new ObjectPageSectionBase.
@@ -94,8 +97,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 		//hidden status
 		this._isHidden = false;
 
-		this._oParentObjectPageLayout = undefined; //store the parent objectPageLayout
-
 		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
 	};
 
@@ -120,8 +121,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * set the internal visibility of the sectionBase. This is set by the ux rules (for example don't display a section that has no subSections)
-	 * @param bValue
-	 * @param bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
+	 * @param {boolean} bValue
+	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._setInternalVisible = function (bValue, bInvalidate) {
@@ -139,8 +140,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * set the internal visibility of the sectionBase title. This is set by the ux rules (for example don't display a subSection title if there are only 1 in the section)
-	 * @param bValue
-	 * @param bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
+	 * @param {boolean} bValue
+	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
@@ -158,8 +159,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * set the internal title of the sectionBase. This is set by the ux rules (for example the subSection title becomes the section title if there are only 1 subSection in the section)
-	 * @param sValue
-	 * @param bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
+	 * @param {string} sValue
+	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
 	 * @private
 	 */
 
@@ -231,11 +232,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._getObjectPageLayout = function () {
-		if (!this._oParentObjectPageLayout) {
-			this._oParentObjectPageLayout = library.Utilities.getClosestOPL(this);
-		}
-
-		return this._oParentObjectPageLayout;
+		return library.Utilities.getClosestOPL(this);
 	};
 
 	/**
@@ -322,7 +319,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * Called to set the visibility of the section / subsection
-	 * @params oSection, sCurrentLowestImportanceLevelToShow
+	 * @param {string} sCurrentLowestImportanceLevelToShow
 	 *
 	 * @private
 	 */
@@ -501,7 +498,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Control", "sap/ui/core/TitleLev
 
 	/**
 	 * Tells the ObjectPageLayout instance to scroll itself to a given section (by Id)
-	 * @param sId
+	 * @param {string} sId
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._scrollParent = function (sId) {

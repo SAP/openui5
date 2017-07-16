@@ -129,6 +129,7 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		aLabels.push(oTable.getId() + "-rownumberofrows");
@@ -457,6 +458,7 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		if (bFocus) {
@@ -582,15 +584,13 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		aLabels.push(oTable.getId() + "-ariarowheaderlabel");
 
 		if (bFocus) {
 			aLabels.push(oTable.getId() + "-rownumberofrows");
-			if (iRow == 0) {
-				aLabels.push(oTable.getId() + "-ariarowselected");
-			}
 			if (bGroup) {
 				aLabels.push(oTable.getId() + "-ariarowgrouplabel");
 			} else if (bSum) {
@@ -742,6 +742,7 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		if (bFocus) {
@@ -882,7 +883,7 @@
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
+			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set row header somewhere else on the table
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
@@ -900,7 +901,7 @@
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall", "aria-labelledby of select all");
+			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall", "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set row header somewhere else on the table
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
@@ -1116,7 +1117,7 @@
 	QUnit.test("HiddenTexts", function (assert) {
 		var aHiddenTexts = ["ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel", "ariagrouptotallabel",
 			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
-			"ariafixedcolumn", "ariainvalid"];
+			"ariafixedcolumn", "ariainvalid", "ariaselection"];
 		var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");
 		$Elem = $Elem.children();

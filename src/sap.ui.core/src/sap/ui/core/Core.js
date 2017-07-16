@@ -785,7 +785,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			if ( m ) {
 				aLibs.push( m[1] );
 			} else {
-				aModules.push( jQuery.sap.getResourceName( sModule ) );
+				aModules.push( jQuery.sap.getResourceName( sModule, "" ) );
 			}
 		});
 
@@ -1362,7 +1362,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {string|object} libConfig Name of the library to preload or settings object describing library
 	 * @param {string} [libConfig.name] Name of the library to preload
-	 * @param {boolean|undefined} [libConfig.json] Whether library supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 * @param {boolean|undefined} [libConfig.json] Whether library supports only json (<code>true</code>) or only JS (<code>false</code>)
 	 *                               or whether both should be tried (undefined)
 	 * @returns {Promise} A promise to be fulfilled when the lib has been preloaded
 	 * @private
@@ -1489,7 +1489,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *
 	 * @param {string|object} libConfig Name of the library to preload or settings object describing library.
 	 * @param {string} [libConfig.name] Name of the library to preload
-	 * @param {boolean|undefined} [libConfig.json] Whether lib supports only json (<code>true<true>) or only JS (<code>false<code>)
+	 * @param {boolean|undefined} [libConfig.json] Whether lib supports only json (<code>true</code>) or only JS (<code>false</code>)
 	 *                               or whether both should be tried (undefined)
 	 * @private
 	 */
@@ -3304,7 +3304,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
@@ -3346,7 +3347,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
@@ -3386,7 +3388,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public
@@ -3428,7 +3431,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 *            fnFunction The function to call, when the event occurs. This function will be called on the
 	 *            oListener-instance (if present) or in a 'static way'.
 	 * @param {object}
-	 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+	 *            [oListener] Object on which to call the given function.
+	 *            If empty, an unspecified context object is used (listeners cannot expect this to be the <code>Core</code>).
 	 *
 	 * @return {sap.ui.core.Core} <code>this</code> to allow method chaining
 	 * @public

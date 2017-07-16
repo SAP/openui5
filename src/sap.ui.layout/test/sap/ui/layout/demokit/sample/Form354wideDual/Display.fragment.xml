@@ -28,22 +28,22 @@
 			<f:formContainers>
 				<f:FormContainer title="Office">
 					<f:formElements>
-						<f:FormElement label="Name">
+						<f:FormElement label="Full name of the contact">
 							<f:fields>
 								<Text text="{SupplierName}" id="nameText"  />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Street">
+						<f:FormElement label="Street and number where the contact is located">
 							<f:fields>
 								<Text text="{Street} {HouseNumber}" />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="ZIP Code/City">
+						<f:FormElement label="ZIP Code and City">
 							<f:fields>
 								<Text text="{ZIPCode} {City}" />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Country">
+						<f:FormElement label="Country where the contact is located">
 							<f:fields>
 								<Text text="{Country}" id="countryText" />
 							</f:fields>
@@ -52,12 +52,12 @@
 				</f:FormContainer>
 				<f:FormContainer title="Online">
 					<f:formElements>
-						<f:FormElement label="Web">
+						<f:FormElement label="Web page of the contact">
 							<f:fields>
 								<Text text="{Url}" />
 							</f:fields>
 						</f:FormElement>
-						<f:FormElement label="Twitter">
+						<f:FormElement label="Twitter account of the contact">
 							<f:fields>
 								<Text text="{Twitter}" />
 							</f:fields>

@@ -41,6 +41,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				oRm.addClass(CSS_CLASS + "Disabled");
 			}
 
+			if ((bAutoAdjustWidth || oSelect.getWidth() === "auto") && (sType === sap.m.SelectType.Default)) {
+				oRm.addClass(CSS_CLASS + "MinWidth");
+			}
+
 			if (bAutoAdjustWidth) {
 				oRm.addClass(CSS_CLASS + "AutoAdjustedWidth");
 			} else {
@@ -216,7 +220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 */
 		SelectRenderer.renderShadowList = function(oRm, oList) {
 			var oListRenderer = oList.getRenderer();
-			oListRenderer.writeOpenListTag(oRm, oList);
+			oListRenderer.writeOpenListTag(oRm, oList, { elementData: false });
 			this.renderShadowItems(oRm, oList);
 			oListRenderer.writeCloseListTag(oRm, oList);
 		};

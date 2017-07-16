@@ -32,17 +32,29 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		var oServer = this._oSandbox.useFakeServer();
 		oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.string",
 							[200, { "Content-Type": "text/plain" }, //Simulate an server with incorrect content type response
-							'{ "id": "id.string", "content": [] }']);
+							'{ "id": "id.string", "reference":"base.id", "content": [] }']);
 		oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.json",
 							[200, { "Content-Type": "application/json" },
-							'{ "id": "id.json", "content": [] }']);
+							'{ "id": "id.json", "reference":"base.id", "content": [] }']);
+		oServer.respondWith("GET", "/sap/bc/lrep/appdescr_variants/id.refVer",
+				[200, { "Content-Type": "application/json" },
+					'{ "id": "id.refVer", "reference":"base.id", "referenceVersion":"1.1", "content": [] }']);
 		oServer.autoRespond = true;
 
 		return DescriptorVariantFactory.createForExisting("id.string").then(function(oVariant){
 			assert.equal(oVariant._getMap().id, "id.string");
+			assert.equal(oVariant._getMap().reference, "base.id");
+			assert.ok(!oVariant._getMap().referenceVersion);
 			return DescriptorVariantFactory.createForExisting("id.json");
 		}).then(function(oVariant){
 			assert.equal(oVariant._getMap().id, "id.json");
+			assert.equal(oVariant._getMap().reference, "base.id");
+			assert.ok(!oVariant._getMap().referenceVersion);
+			return DescriptorVariantFactory.createForExisting("id.refVer");
+		}).then(function(oVariant){
+			assert.equal(oVariant._getMap().id, "id.refVer");
+			assert.equal(oVariant._getMap().reference, "base.id");
+			assert.equal(oVariant._getMap().referenceVersion, "1.1");
 		});
 	});
 
@@ -247,6 +259,28 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_app_removeInbound({
+				"inboundId" : {}
+			});
+		});
+	});
+
+	QUnit.test("create_app_removeAllInboundsExceptOne", function(assert) {
+		return DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
+			"inboundId" : "a.id"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne");
+		});
+	});
+
+	QUnit.test("create_app_removeAllInboundsExceptOne failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
+				"inbounds" : "a.id"
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
 				"inboundId" : {}
 			});
 		});
@@ -1131,11 +1165,13 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 	});
 
 	QUnit.test("getJson", function(assert) {
+		var oDescriptorVariant;
 		return DescriptorVariantFactory.createNew({
 			"id" : "a.id",
 			"reference": "a.reference",
 			"isAppVariantRoot":	false
-		}).then(function(oDescriptorVariant) {
+		}).then(function(_oDescriptorVariant) {
+			oDescriptorVariant = _oDescriptorVariant;
 			var mExpectedJson = {
 					"id" : "a.id",
 					"reference": "a.reference",
@@ -1151,30 +1187,55 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			assert.ok(mJsonResult);
 			assert.deepEqual(mJsonResult, mExpectedJson);
 			//with an inline change
-			return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"}).then(function(oDescriptorInlineChange){
-				return oDescriptorVariant.addDescriptorInlineChange(oDescriptorInlineChange).then(function() {
-					var mExpectedJsonWithContent = {
-							"id" : "a.id",
-							"reference": "a.reference",
-							"fileName":	"manifest",
-							"fileType":	"appdescr_variant",
-							"isAppVariantRoot":	false,
-							"layer": "CUSTOMER",
-							"namespace": "apps/a.reference/changes/a.id/",
-							"packageName": "$TMP",
-							"content": [{
-								"changeType": "changeType",
-								"content": {
-									"param":"value"
-								},
-								"texts": {"a": "b"}
-							}]
-					};
-					var mJsonResultWithContent = oDescriptorVariant.getJson();
-					assert.ok(mJsonResultWithContent);
-					assert.deepEqual(mJsonResultWithContent, mExpectedJsonWithContent);
-				});
+			return DescriptorInlineChangeFactory.createNew("changeType",{"param":"value"},{"a": "b"});
+		}).then(function(oDescriptorInlineChange){
+			return oDescriptorVariant.addDescriptorInlineChange(oDescriptorInlineChange);
+		}).then(function() {
+			var mExpectedJsonWithContent = {
+					"id" : "a.id",
+					"reference": "a.reference",
+					"fileName":	"manifest",
+					"fileType":	"appdescr_variant",
+					"isAppVariantRoot":	false,
+					"layer": "CUSTOMER",
+					"namespace": "apps/a.reference/changes/a.id/",
+					"packageName": "$TMP",
+					"content": [{
+						"changeType": "changeType",
+						"content": {
+							"param":"value"
+						},
+						"texts": {"a": "b"}
+					}]
+			};
+			var mJsonResultWithContent = oDescriptorVariant.getJson();
+			assert.ok(mJsonResultWithContent);
+			assert.deepEqual(mJsonResultWithContent, mExpectedJsonWithContent);
+
+			return DescriptorVariantFactory.createNew({
+				"id" : "a.id",
+				"reference": "a.reference",
+				"referenceVersion": "1.1",
+				"isAppVariantRoot":	false
 			});
+		}).then(function(_oDescriptorVariant) {
+			var oDescriptorVariant = _oDescriptorVariant;
+
+			var mExpectedJson = {
+					"id" : "a.id",
+					"reference": "a.reference",
+					"fileName":	"manifest",
+					"fileType":	"appdescr_variant",
+					"isAppVariantRoot":	false,
+					"layer": "CUSTOMER",
+					"namespace": "apps/a.reference/changes/a.id/",
+					"packageName": "$TMP",
+					"content": [],
+					"referenceVersion": "1.1"
+			};
+			var mJsonResult = oDescriptorVariant.getJson();
+			assert.ok(mJsonResult);
+			assert.deepEqual(mJsonResult, mExpectedJson);
 		});
 	});
 
@@ -1650,6 +1711,21 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 			return oDescriptorVariant.submit().then(function(oResponse){
 				assert.notEqual(oResponse, null);
 				assert.equal(that._fStubSend.getCall(0).args[0] , "/sap/bc/lrep/appdescr_variants/");
+			});
+		});
+	});
+
+	QUnit.test("new with referenceVersion - submit", function(assert) {
+		var that = this;
+		return DescriptorVariantFactory.createNew({
+			"id" : "a.id",
+			"reference": "a.reference",
+			"referenceVersion": "1.1"
+		}).then(function(oDescriptorVariant) {
+			return oDescriptorVariant.submit().then(function(oResponse){
+				assert.notEqual(oResponse, null);
+				assert.equal(that._fStubSend.getCall(0).args[0] , "/sap/bc/lrep/appdescr_variants/");
+				assert.equal(that._fStubSend.getCall(0).args[2].referenceVersion , "1.1");
 			});
 		});
 	});

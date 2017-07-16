@@ -635,11 +635,7 @@ sap.ui.define([
 		 * @private
 		 */
 		BlockBase.prototype._getObjectPageLayout = function () {
-			if (!this._oParentObjectPageLayout) {
-				this._oParentObjectPageLayout = library.Utilities.getClosestOPL(this);
-			}
-
-			return this._oParentObjectPageLayout;
+			return library.Utilities.getClosestOPL(this);
 		};
 
 		/**
@@ -656,8 +652,8 @@ sap.ui.define([
 		/**
 		 * Set the showSubSectionMore property.
 		 * Ask the parent ObjectPageSubSection to refresh its see more visibility state if present.
-		 * @param bValue
-		 * @param bInvalidate
+		 * @param {boolean} bValue
+		 * @param {boolean} bInvalidate
 		 * @returns {*}
 		 */
 		BlockBase.prototype.setShowSubSectionMore = function (bValue, bInvalidate) {
@@ -706,10 +702,10 @@ sap.ui.define([
 		/**
 		 * Override of the default model lifecycle method to disable the automatic binding resolution for lazyloading.
 		 * @override
-		 * @param bSkipLocal
-		 * @param bSkipChildren
-		 * @param sModelName
-		 * @param bUpdateAll
+		 * @param {boolean} bSkipLocal
+		 * @param {boolean} bSkipChildren
+		 * @param {string} sModelName
+		 * @param {boolean} bUpdateAll
 		 * @returns {*}
 		 */
 		BlockBase.prototype.updateBindingContext = function (bSkipLocal, bSkipChildren, sModelName, bUpdateAll) {
@@ -723,8 +719,8 @@ sap.ui.define([
 		/**
 		 * Override of the default model lifecycle method to disable the automatic binding resolution for lazyloading.
 		 * @override
-		 * @param bUpdateAll
-		 * @param sModelName
+		 * @param {boolean} bUpdateAll
+		 * @param {string} sModelName
 		 * @returns {*}
 		 */
 		BlockBase.prototype.updateBindings = function (bUpdateAll, sModelName) {

@@ -10,6 +10,11 @@ sap.ui.define([
 ], function (jQuery, _Helper, _SyncPromise) {
 	"use strict";
 
+	// Matches two cases:  segment with predicate or simply predicate:
+	//   EMPLOYEE(ID='42') -> aMatches[1] === "EMPLOYEE", aMatches[2] === "(ID='42')"
+	//   (ID='42') ->  aMatches[1] === "",  aMatches[2] === "(ID='42')"
+	var rSegmentWithPredicate = /^([^(]*)(\(.*\))$/;
+
 	/**
 	 * Adds the given delta to the collection's $count if there is one.
 	 *
@@ -22,43 +27,6 @@ sap.ui.define([
 		if (aCollection.$count !== undefined) {
 			setCount(mChangeListeners, sPath, aCollection, aCollection.$count + iDelta);
 		}
-	}
-
-	/**
-	 * Converts the known OData system query options from map or array notation to a string. All
-	 * other parameters are simply passed through.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {function(string,any)} fnResultHandler
-	 *   The function to process the converted options getting the name and the value
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 */
-	function convertSystemQueryOptions(mQueryOptions, fnResultHandler, bDropSystemQueryOptions,
-			bSortExpandSelect) {
-		Object.keys(mQueryOptions).forEach(function (sKey) {
-			var vValue = mQueryOptions[sKey];
-
-			if (bDropSystemQueryOptions && sKey[0] === '$') {
-				return;
-			}
-
-			switch (sKey) {
-				case "$expand":
-					vValue = Cache.convertExpand(vValue, bSortExpandSelect);
-					break;
-				case "$select":
-					if (Array.isArray(vValue)) {
-						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
-					}
-					break;
-				default:
-					// nothing to do
-			}
-			fnResultHandler(sKey, vValue);
-		});
 	}
 
 	/**
@@ -104,7 +72,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Requests the elements in the given range and places them into the aElements list. While the
+	 * Requests the elements in the given range and places them into the aElements list. Calculates
+	 * the key predicates for all entities in the result before the promise is resolved. While the
 	 * request is running, all indexes in this range contain the Promise.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
@@ -121,34 +90,53 @@ sap.ui.define([
 	function requestElements(oCache, iStart, iEnd, sGroupId, fnDataRequested) {
 		var iExpectedLength = iEnd - iStart,
 			oPromise,
-			sResourcePath = oCache.sResourcePath + "$skip=" + iStart + "&$top=" + iExpectedLength;
+			sResourcePath = oCache.sResourcePath + oCache.sQueryString + "$skip=" + iStart
+				+ "&$top=" + iExpectedLength;
 
-		oPromise = oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
-				fnDataRequested)
-			.then(function (oResult) {
-				var iCount,
-					sCount,
-					i,
-					iResultLength = oResult.value.length;
+		oPromise = Promise.all([
+			oCache.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
+				fnDataRequested),
+			oCache.fetchTypes()
+		]).then(function (aResult) {
+			var iCount,
+				sCount,
+				oElement,
+				i,
+				sPredicate,
+				oResult = aResult[0],
+				iResultLength = oResult.value.length;
 
-				Cache.computeCount(oResult);
-				oCache.sContext = oResult["@odata.context"];
-				sCount = oResult["@odata.count"];
-				if (sCount) {
-					setCount(oCache.mChangeListeners, "", oCache.aElements, sCount);
+			Cache.computeCount(oResult);
+			oCache.sContext = oResult["@odata.context"];
+			sCount = oResult["@odata.count"];
+			if (sCount) {
+				oCache.iLimit = parseInt(sCount, 10);
+				setCount(oCache.mChangeListeners, "", oCache.aElements, oCache.iLimit);
+			}
+			for (i = 0; i < iResultLength; i++) {
+				oElement = oResult.value[i];	oCache.aElements[iStart + i] = oElement;
+				oCache.calculateKeyPredicates(oElement, aResult[1]);
+				sPredicate = oElement["@$ui5.predicate"];
+				if (sPredicate) {
+					oCache.aElements.$byPredicate[sPredicate] = oElement;
 				}
-				for (i = 0; i < iResultLength; i++) {
-					oCache.aElements[iStart + i] = oResult.value[i];
-				}
-				if (iResultLength < iExpectedLength) {
+			}
+			if (iResultLength < iExpectedLength) { // a short read
 					iCount = Math.min(getCount(oCache.aElements), iStart + iResultLength);
-					setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
 					oCache.aElements.length = iCount;
-				}
-			})["catch"](function (oError) {
-				fill(oCache.aElements, undefined, iStart, iEnd);
-				throw oError;
-			});
+					// If the server did not send a count, the calculated count is greater than 0
+					// and the element before has not been read yet, we do not know the count:
+					// The element might or might not exist.
+					if (!sCount && iCount > 0 && !oCache.aElements[iCount - 1]) {
+						iCount = undefined;
+					}
+				setCount(oCache.mChangeListeners, "", oCache.aElements, iCount);
+				oCache.iLimit = iCount;
+			}
+		})["catch"](function (oError) {
+			fill(oCache.aElements, undefined, iStart, iEnd);
+			throw oError;
+		});
 
 		fill(oCache.aElements, oPromise, iStart, iEnd);
 	}
@@ -184,21 +172,27 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
+	 * @param {function} fnFetchType
+	 *   A function taking a path as parameter and returning a sync promise resolving with the
+	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
+	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function Cache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
+	function Cache(oRequestor, sResourcePath, fnFetchType, mQueryOptions, bSortExpandSelect) {
 		this.bActive = true;
-		this.mChangeListeners = {};
-		this.mPatchRequests = {}; //map path to an array of (PATCH) promises
-		this.mPostRequests = {}; //map path to an array of entity data (POST bodies)
+		this.mChangeListeners = {}; // map from path to an array of change listeners
+		this.fnFetchType = fnFetchType;
+		this.mPatchRequests = {}; // map from path to an array of (PATCH) promises
+		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
 		this.mQueryOptions = mQueryOptions;
+		this.sQueryString = oRequestor.buildQueryString(mQueryOptions, false, bSortExpandSelect);
 		this.oRequestor = oRequestor;
-		this.sResourcePath = sResourcePath
-			+ Cache.buildQueryString(mQueryOptions, false, bSortExpandSelect);
+		this.sResourcePath = sResourcePath;
 		this.bSortExpandSelect = bSortExpandSelect;
+		this.oTypePromise = undefined;
 	}
 
 	/**
@@ -213,7 +207,7 @@ sap.ui.define([
 	 * @param {function} fnCallback
 	 *   A function which is called after a transient entity has been deleted from the cache or
 	 *   after the entity has been deleted from the server and from the cache; the index of the
-	 *   entity is passed as parameter
+	 *   entity and the entity list are passed as parameter
 	 * @returns {Promise}
 	 *   A promise for the DELETE request
 	 */
@@ -242,7 +236,7 @@ sap.ui.define([
 			}
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
@@ -259,10 +253,14 @@ sap.ui.define([
 						if (vDeleteProperty === "-1") {
 							delete vCacheData[-1];
 						} else {
+							if (oEntity["@$ui5.predicate"]) {
+								delete vCacheData.$byPredicate[oEntity["@$ui5.predicate"]];
+							}
 							vCacheData.splice(vDeleteProperty, 1);
 						}
 						addToCount(that.mChangeListeners, sParentPath, vCacheData, -1);
-						fnCallback(Number(vDeleteProperty));
+						that.iLimit -= 1;
+						fnCallback(Number(vDeleteProperty), vCacheData);
 					} else {
 						if (vDeleteProperty) {
 							vCacheData[vDeleteProperty] = null;
@@ -289,12 +287,67 @@ sap.ui.define([
 		if (oItem) {
 			if (!mMap[sPath]) {
 				mMap[sPath] = [oItem];
-			} else if (mMap[sPath].indexOf(oItem) >= 0) {
-				return;
-			} else {
+			} else if (mMap[sPath].indexOf(oItem) < 0) {
 				mMap[sPath].push(oItem);
 			}
 		}
+	};
+
+	/**
+	 * Recursively calculates the key predicates for all entities in the result.
+	 *
+	 * @param {object} oRootInstance A single top-level instance
+	 * @param {object} mTypeForPath A map from path to the entity type (as delivered by
+	 *   {@link #fetchTypes})
+	 */
+	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForPath) {
+		/**
+		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
+		 * from predicate to entity.
+		 *
+		 * @param {object[]} aInstances The collection
+		 * @param {string} sPath The path of the collection in mTypeForPath
+		 */
+		function visitArray(aInstances, sPath) {
+			var i, oInstance, sPredicate;
+
+			aInstances.$byPredicate = {};
+			for (i = 0; i < aInstances.length; i++) {
+				oInstance = aInstances[i];
+				visitInstance(oInstance, sPath);
+				sPredicate = oInstance["@$ui5.predicate"];
+				if (sPredicate) {
+					aInstances.$byPredicate[oInstance["@$ui5.predicate"]] = oInstance;
+				}
+			}
+		}
+
+		/**
+		 * Adds a predicate to the given instance if it is an entity.
+		 *
+		 * @param {object} oInstance The instance
+		 * @param {string} sPath The path of the instance in mTypeForPath
+		 */
+		function visitInstance(oInstance, sPath) {
+			var oType = mTypeForPath[sPath];
+
+			if (oType && oInstance) { // oType is only defined when at an entity
+				oInstance["@$ui5.predicate"] = _Helper.getKeyPredicate(oType, oInstance, true);
+
+				Object.keys(oInstance).forEach(function (sProperty) {
+					var vPropertyValue = oInstance[sProperty],
+						sPropertyPath = sPath + "/" + sProperty;
+
+					if (Array.isArray(vPropertyValue)) {
+						visitArray(vPropertyValue, sPropertyPath);
+					} else {
+						visitInstance(vPropertyValue, sPropertyPath);
+					}
+				});
+			}
+		}
+
+		visitInstance(oRootInstance, this.sResourcePath);
 	};
 
 	/**
@@ -352,7 +405,7 @@ sap.ui.define([
 		function request(sPostGroupId) {
 			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
 			return _SyncPromise.resolve(vPostPath).then(function (sPostPath) {
-				sPostPath += Cache.buildQueryString(that.mQueryOptions, true);
+				sPostPath += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 				that.addByPath(that.mPostRequests, sPath, oEntityData);
 				return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 						setCreatePending, cleanUp)
@@ -409,7 +462,9 @@ sap.ui.define([
 
 	/**
 	 * Drills down into the given object according to <code>sPath</code>. Logs an error if the path
-	 * leads into void.
+	 * leads into void. Paths may contain key predicates like "TEAM_2_EMPLOYEES('42')/Name". The
+	 * initial segment in a collection cache may even start with a key predicate, for example a path
+	 * could be "('42')/Name".
 	 *
 	 * @param {object} oData
 	 *   The result from a read or cache lookup
@@ -419,40 +474,99 @@ sap.ui.define([
 	 *   The result matching to <code>sPath</code>
 	 */
 	Cache.prototype.drillDown = function (oData, sPath) {
-		var that = this;
+		var aMatches,
+			that = this;
 
 		function invalidSegment(sSegment) {
 			jQuery.sap.log.error("Failed to drill-down into " + sPath + ", invalid segment: "
 				+ sSegment, that.toString(), "sap.ui.model.odata.v4.lib._Cache");
+			return undefined;
 		}
 
-		if (sPath) {
-			sPath.split("/").every(function (sSegment) {
-				if (sSegment === "$count") {
-					if (!Array.isArray(oData)) {
-						invalidSegment(sSegment);
-						oData = undefined;
-						return false;
-					}
-					oData = oData.$count;
-					return true;
+		if (!sPath) {
+			return oData;
+		}
+		return sPath.split("/").reduce(function (vValue, sSegment) {
+			if (sSegment === "$count") {
+				return Array.isArray(vValue) ? vValue.$count : invalidSegment(sSegment);
+			}
+			if (vValue === undefined || vValue === null) {
+				// already beyond the valid data: an unresolved navigation property or a property of
+				// a complex type which is null
+				return undefined;
+			}
+			if (typeof vValue !== "object") {
+				return invalidSegment(sSegment);
+			}
+			aMatches = rSegmentWithPredicate.exec(sSegment);
+			if (aMatches) {
+				if (aMatches[1]) { // e.g. "TEAM_2_EMPLOYEES('42')
+					vValue = vValue[aMatches[1]]; // there is a navigation property, follow it
 				}
-				if (!oData || typeof oData !== "object") {
-					if (oData !== null) {
-						invalidSegment(sSegment);
-					}
-					oData = undefined;
-					return false;
+				if (vValue) { // ensure that we do not fail on a missing navigation property
+					vValue = vValue.$byPredicate[aMatches[2]]; // search the key predicate
 				}
-				oData = oData[sSegment];
-				if (oData === undefined) {
-					invalidSegment(sSegment);
-					return false;
+			} else {
+				vValue = vValue[sSegment];
+			}
+			return vValue === undefined ? invalidSegment(sSegment) : vValue;
+		}, oData);
+	};
+
+	/**
+	 * Fetches the type from the metadata for the root entity plus all types for $expand and puts
+	 * them into a map from type to path. Only (entity) types having a list of key properties
+	 * are remembered.
+	 *
+	 * @returns {SyncPromise}
+	 *   A promise that is resolved with a map from resource path + entity path to the type
+	 */
+	Cache.prototype.fetchTypes = function () {
+		var aPromises, mTypeForPath, that = this;
+
+		/*
+		 * Recursively calls fetchType for all (sub)paths in $expand.
+		 * @param {string} sBasePath The resource path + entity path
+		 * @param {object} mQueryOptions The corresponding query options
+		 */
+		function fetchExpandedTypes(sBasePath, mQueryOptions) {
+			if (mQueryOptions && mQueryOptions.$expand) {
+				Object.keys(mQueryOptions.$expand).forEach(function (sNavigationPath) {
+					var sPath = sBasePath;
+
+					sNavigationPath.split("/").forEach(function (sSegment) {
+						sPath += "/" + sSegment;
+						fetchType(sPath);
+					});
+					fetchExpandedTypes(sPath, mQueryOptions.$expand[sNavigationPath]);
+				});
+			}
+		}
+
+		/*
+		 * Fetches the type for the given path, adds the promise to aPromises and puts the type
+		 * into mTypeForPath if it has a list of key properties.
+		 * @param {string} sPath The resource path + navigation path (which may lead to an entity
+		 *   or complex type)
+		 */
+		function fetchType(sPath) {
+			aPromises.push(that.fnFetchType(sPath).then(function (oType) {
+				if (oType.$Key) {
+					mTypeForPath[sPath] = oType;
 				}
-				return true;
+			}));
+		}
+
+		if (!this.oTypePromise) {
+			aPromises = [];
+			mTypeForPath = {};
+			fetchType(this.sResourcePath);
+			fetchExpandedTypes(this.sResourcePath, this.mQueryOptions);
+			this.oTypePromise = Promise.all(aPromises).then(function () {
+				return mTypeForPath;
 			});
 		}
-		return oData;
+		return this.oTypePromise;
 	};
 
 	/**
@@ -568,7 +682,7 @@ sap.ui.define([
 	 * @returns {string} The URL
 	 */
 	Cache.prototype.toString = function () {
-		return this.oRequestor.getServiceUrl() + this.sResourcePath;
+		return this.oRequestor.getServiceUrl() + this.sResourcePath + this.sQueryString;
 	};
 
 	/**
@@ -670,7 +784,7 @@ sap.ui.define([
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request
-			sEditUrl += Cache.buildQueryString(that.mQueryOptions, true);
+			sEditUrl += that.oRequestor.buildQueryString(that.mQueryOptions, true);
 			return patch();
 		});
 	};
@@ -687,17 +801,26 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
+	 * @param {function} fnFetchType
+	 *   A function taking a path as parameter and returning a sync promise resolving with the
+	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
+	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 */
-	function CollectionCache(oRequestor, sResourcePath, mQueryOptions) {
+	function CollectionCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions,
+			bSortExpandSelect) {
 		Cache.apply(this, arguments);
 
 		this.sContext = undefined;         // the "@odata.context" from the responses
 		this.aElements = [];               // the available elements
+		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // see setCount
-
-		this.sResourcePath += this.sResourcePath.indexOf("?") >= 0 ? "&" : "?";
+		this.iLimit = Infinity;            // the upper limit for the count (for the case that the
+									       // exact value is unknown)
+		this.sQueryString = this.sQueryString ? this.sQueryString + "&" : "?";
 	}
 
 	// make CollectionCache a Cache
@@ -767,7 +890,7 @@ sap.ui.define([
 	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
 	 *   reset to <code>undefined</code>.
 	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
@@ -787,7 +910,7 @@ sap.ui.define([
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 
-		iEnd = Math.min(iEnd, getCount(this.aElements));
+		iEnd = Math.min(iEnd, this.iLimit);
 
 		for (i = iIndex; i < iEnd; i++) {
 			if (this.aElements[i] !== undefined) {
@@ -802,7 +925,6 @@ sap.ui.define([
 		}
 		if (iGapStart >= 0) {
 			requestElements(this, iGapStart, iEnd, sGroupId, fnDataRequested);
-			fnDataRequested = undefined;
 		}
 
 		// Note: this.aElements[-1] cannot be a promise...
@@ -837,7 +959,7 @@ sap.ui.define([
 	 *   A map of key-value pairs representing the query string
 	 */
 	function PropertyCache(oRequestor, sResourcePath, mQueryOptions) {
-		Cache.apply(this, arguments);
+		Cache.call(this, oRequestor, sResourcePath, undefined, mQueryOptions);
 
 		this.oPromise = null;
 	}
@@ -883,7 +1005,7 @@ sap.ui.define([
 	 * @returns {SyncPromise}
 	 *   A promise to be resolved with the element.
 	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 */
 	PropertyCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
@@ -891,8 +1013,9 @@ sap.ui.define([
 
 		that.registerChange("", oListener);
 		if (!this.oPromise) {
-			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", this.sResourcePath,
-				sGroupId, undefined, undefined, fnDataRequested));
+			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET",
+				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
+				fnDataRequested));
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -921,6 +1044,10 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
+	 * @param {function} fnFetchType
+	 *   A function taking a path as parameter and returning a sync promise resolving with the
+	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
+	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
@@ -930,7 +1057,8 @@ sap.ui.define([
 	 *   a request, {@link #read} may only read from the cache; otherwise {@link #post} throws an
 	 *   error.
 	 */
-	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost) {
+	function SingleCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions, bSortExpandSelect,
+			bPost) {
 		Cache.apply(this, arguments);
 
 		this.bPost = bPost;
@@ -942,7 +1070,60 @@ sap.ui.define([
 	SingleCache.prototype = Object.create(Cache.prototype);
 
 	/**
+	 * Returns a promise to be resolved with an OData object for the requested data. Calculates
+	 * the key predicates for all entities in the result before the promise is resolved.
+	 *
+	 * @param {string} [sGroupId]
+	 *   ID of the group to associate the request with;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back end request is sent.
+	 *   If no back end request is needed, the function is not called.
+	 * @param {object} [oListener]
+	 *   An optional change listener that is added for the given path. Its method
+	 *   <code>onChange</code> is called with the new value if the property at that path is modified
+	 *   via {@link #update} later.
+	 * @returns {SyncPromise}
+	 *   A promise to be resolved with the element.
+	 *
+	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
+	 *   arrives.
+	 * @throws {Error}
+	 *   If the cache is using POST but no POST request has been sent yet
+	 */
+	SingleCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
+		var sResourcePath = this.sResourcePath + this.sQueryString,
+			that = this;
+
+		this.registerChange(sPath, oListener);
+		if (!this.oPromise) {
+			if (this.bPost) {
+				throw new Error("Cannot fetch a value before the POST request");
+			}
+			this.oPromise = _SyncPromise.all([
+				this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
+					fnDataRequested),
+				this.fetchTypes()
+			]).then(function (aResult) {
+				that.calculateKeyPredicates(aResult[0], aResult[1]);
+				Cache.computeCount(aResult[0]);
+				return aResult[0];
+			});
+		}
+		return this.oPromise.then(function (oResult) {
+			that.checkActive();
+			if (oResult["$ui5.deleted"]) {
+				throw new Error("Cannot read a deleted entity");
+			}
+			return that.drillDown(oResult, sPath);
+		});
+	};
+
+	/**
 	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
+	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *
 	 * @param {string} [sGroupId]
 	 *   ID of the group to associate the request with;
@@ -970,7 +1151,8 @@ sap.ui.define([
 		}
 		this.oPromise = _SyncPromise.resolve(
 			this.oRequestor
-				.request("POST", this.sResourcePath, sGroupId, {"If-Match" : sETag}, oData)
+				.request("POST", this.sResourcePath + this.sQueryString, sGroupId,
+					{"If-Match" : sETag}, oData)
 				.then(function (oResult) {
 					that.bPosting = false;
 					return oResult;
@@ -983,176 +1165,9 @@ sap.ui.define([
 		return this.oPromise;
 	};
 
-	/**
-	 * Returns a promise to be resolved with an OData object for the requested data.
-	 *
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the request with;
-	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
-	 * @param {string} [sPath]
-	 *   Relative path to drill-down into
-	 * @param {function} [fnDataRequested]
-	 *   The function is called just before the back end request is sent.
-	 *   If no back end request is needed, the function is not called.
-	 * @param {object} [oListener]
-	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code> is called with the new value if the property at that path is modified
-	 *   via {@link #update} later.
-	 * @returns {SyncPromise}
-	 *   A promise to be resolved with the element.
-	 *
-	 *   The promise is rejected if the cache is inactive (see @link {#setActive}) when the response
-	 *   arrives.
-	 * @throws {Error}
-	 *   If the cache is using POST but no POST request has been sent yet
-	 */
-	SingleCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
-		var that = this,
-			sResourcePath = this.sResourcePath;
-
-		this.registerChange(sPath, oListener);
-		if (!this.oPromise) {
-			if (this.bPost) {
-				throw new Error("Cannot fetch a value before the POST request");
-			}
-			this.oPromise = _SyncPromise.resolve(this.oRequestor.request("GET", sResourcePath,
-					sGroupId, undefined, undefined, fnDataRequested))
-				.then(function (oResult) {
-					Cache.computeCount(oResult);
-					return oResult;
-				});
-		}
-		return this.oPromise.then(function (oResult) {
-			that.checkActive();
-			if (oResult["$ui5.deleted"]) {
-				throw new Error("Cannot read a deleted entity");
-			}
-			return that.drillDown(oResult, sPath);
-		});
-	};
-
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
-
-	/**
-	 * Builds a query string from the parameter map. Converts the known OData system query
-	 * options, all other OData system query options are rejected; with
-	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-	 *
-	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string}
-	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
-	 * @example
-	 * {
-	 *		$expand : {
-	 *			"SO_2_BP" : true,
-	 *			"SO_2_SOITEM" : {
-	 *				"$expand" : {
-	 *					"SOITEM_2_PRODUCT" : {
-	 *						"$apply" : "filter(Price gt 100)",
-	 *						"$expand" : {
-	 *							"PRODUCT_2_BP" : null,
-	 *						},
-	 *						"$select" : "CurrencyCode"
-	 *					},
-	 *					"SOITEM_2_SO" : null
-	 *				}
-	 *			}
-	 *		},
-	 *		"sap-client" : "003"
-	 *	}
-	 */
-	Cache.buildQueryString = function (mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect) {
-		return _Helper.buildQuery(
-			Cache.convertQueryOptions(mQueryOptions, bDropSystemQueryOptions, bSortExpandSelect));
-	};
-
-	/**
-	 * Converts the value for a "$expand" in mQueryParams.
-	 *
-	 * @param {object} mExpandItems The expand items, a map from path to options
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string} The resulting value for the query string
-	 * @throws {Error} If the expand items are not an object
-	 */
-	Cache.convertExpand = function (mExpandItems, bSortExpandSelect) {
-		var aKeys,
-			aResult = [];
-
-		if (!mExpandItems || typeof mExpandItems !== "object") {
-			throw new Error("$expand must be a valid object");
-		}
-
-		aKeys = Object.keys(mExpandItems);
-		if (bSortExpandSelect) {
-			aKeys = aKeys.sort();
-		}
-		aKeys.forEach(function (sExpandPath) {
-			var vExpandOptions = mExpandItems[sExpandPath];
-
-			if (vExpandOptions && typeof vExpandOptions === "object") {
-				aResult.push(Cache.convertExpandOptions(sExpandPath, vExpandOptions,
-					bSortExpandSelect));
-			} else {
-				aResult.push(sExpandPath);
-			}
-		});
-
-		return aResult.join(",");
-	};
-
-	/**
-	 * Converts the expand options.
-	 *
-	 * @param {string} sExpandPath The expand path
-	 * @param {boolean|object} vExpandOptions
-	 *   The options; either a map or simply <code>true</code>
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {string} The resulting string for the OData query in the form "path" (if no
-	 *   options) or "path($option1=foo;$option2=bar)"
-	 */
-	Cache.convertExpandOptions = function (sExpandPath, vExpandOptions, bSortExpandSelect) {
-		var aExpandOptions = [];
-
-		convertSystemQueryOptions(vExpandOptions, function (sOptionName, vOptionValue) {
-			aExpandOptions.push(sOptionName + '=' + vOptionValue);
-		}, undefined, bSortExpandSelect);
-		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
-			: sExpandPath;
-	};
-
-	/**
-	 * Converts the query options. All known OData system query options are converted to
-	 * strings, so that the result can be used for _Helper.buildQuery; with
-	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
-	 *
-	 * @param {object} mQueryOptions The query options
-	 * @param {boolean} [bDropSystemQueryOptions=false]
-	 *   Whether all system query options are dropped (useful for non-GET requests)
-	 * @param {boolean} [bSortExpandSelect=false]
-	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
-	 * @returns {object} The converted query options
-	 */
-	Cache.convertQueryOptions = function (mQueryOptions, bDropSystemQueryOptions,
-			bSortExpandSelect) {
-		var mConvertedQueryOptions = {};
-
-		if (!mQueryOptions) {
-			return undefined;
-		}
-		convertSystemQueryOptions(mQueryOptions, function (sKey, vValue) {
-			mConvertedQueryOptions[sKey] = vValue;
-		}, bDropSystemQueryOptions, bSortExpandSelect);
-		return mConvertedQueryOptions;
-	};
 
 	/**
 	 * Creates a cache for a collection of entities that performs requests using the given
@@ -1163,6 +1178,10 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
+	 * @param {function} fnFetchType
+	 *   A function taking a path as parameter and returning a sync promise resolving with the
+	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
+	 *   be followed by structural or navigation properties.
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -1175,8 +1194,10 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.create = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect) {
-		return new CollectionCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
+	Cache.create = function (oRequestor, sResourcePath, fnFetchType, mQueryOptions,
+			bSortExpandSelect) {
+		return new CollectionCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions,
+			bSortExpandSelect);
 	};
 
 	/**
@@ -1209,6 +1230,10 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
+	 * @param {function} fnFetchType
+	 *   A function taking a path as parameter and returning a sync promise resolving with the
+	 *   related type from the metadata. The path must start with <code>sResourcePath</code> and may
+	 *   be followed by structural or navigation properties.
 	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -1225,9 +1250,10 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 */
-	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost) {
-		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost);
+	Cache.createSingle = function (oRequestor, sResourcePath, fnFetchType, mQueryOptions,
+			bSortExpandSelect, bPost) {
+		return new SingleCache(oRequestor, sResourcePath, fnFetchType, mQueryOptions,
+			bSortExpandSelect, bPost);
 	};
 
 	/**

@@ -1,1694 +1,873 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-<title>Test Page for sap.m.P13nColumnsPanel</title>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-
-</script>
-
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script
-	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<script>
-	(function() {
-		jQuery.sap.require("sap.m.P13nColumnsPanel");
-		jQuery.sap.require("sap.m.P13nColumnsItem");
-		jQuery.sap.require("sap.m.ColumnListItem");
-		jQuery.sap.require("sap.m.P13nItem");
-		var oP13nColumnsPanel = null;
-
-		QUnit.module("Properties", {
-			beforeEach: function() {
-				oP13nColumnsPanel = new sap.m.P13nColumnsPanel({});
-			},
-			afterEach: function() {
-				/* 			oP13nColumnsPanel.destroy();
-				 oP13nColumnsPanel = null; */
-			}
-		});
-
-		QUnit.test("Shall be instantiable to check conrol existence", function(assert) {
-			assert.ok(oP13nColumnsPanel, "Could not instantiate P13nColumnsPanel");
-		});
-
-		QUnit.test("Shall check _ItemMoveToTop", function(assert) {
-			assert.ok(oP13nColumnsPanel._ItemMoveToTop, "Method does not exist");
-
-			var getArrayIndexByItemKeySpy = sinon.stub();
-			var handleItemIndexChangedSpy = sinon.stub();
-			var changeColumnsItemsIndexesSpy = sinon.stub();
-			var afterMoveItemSpy = sinon.stub();
-			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
-			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
-			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
-			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			//CUT -> check that the method is not executed as this._oSelectedItem is empty
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._ItemMoveToTop();
-			assert.strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
-
-			//CUT -> check that the method is executed, BUT item will not be moved as minimum boundary is reached
-			getArrayIndexByItemKeySpy.returns(0);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveToTop();
-			assert.strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
-
-			//CUT -> check that the method _is executed with old and new Indexes
-			getArrayIndexByItemKeySpy.returns(5);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveToTop();
-			assert.strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 0), true, "Item move was done with wrong parameter");
-			assert.strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should not be done");
-			assert.strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
-		});
-
-		QUnit.test("Shall check _ItemMoveUp", function(assert) {
-			assert.ok(oP13nColumnsPanel._ItemMoveUp, "Method does not exist");
-
-			var getArrayIndexByItemKeySpy = sinon.stub();
-			var handleItemIndexChangedSpy = sinon.stub();
-			var changeColumnsItemsIndexesSpy = sinon.stub();
-			var afterMoveItemSpy = sinon.stub();
-			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
-			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
-			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
-			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			//CUT -> check that the method is not executed as this._oSelectedItem is empty
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._ItemMoveUp();
-
-			assert.strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
-
-			//CUT -> check that the method is executed, BUT item will not be moved as minimum boundary is reached
-			getArrayIndexByItemKeySpy.returns(0);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveUp();
-
-			assert.strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
-
-			//CUT -> check that the method is executed with old and new Indexes
-			getArrayIndexByItemKeySpy.returns(5);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveUp();
-
-			assert.strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true, "Item move was done with wrong parameter");
-
-			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, where the new index was filled by method: _getPreviousItemIndex
-			getArrayIndexByItemKeySpy.returns(5);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-
-			var getPreviousItemIndexSpy = sinon.stub();
-			getPreviousItemIndexSpy.returns(3);
-			oP13nColumnsPanel._bShowSelected = true;
-			oP13nColumnsPanel._getPreviousItemIndex = getPreviousItemIndexSpy;
-
-			oP13nColumnsPanel._ItemMoveUp();
-
-			assert.strictEqual(getPreviousItemIndexSpy.called, true, "Method: getPreviousItemIndex shall not be called to get the previous selected item");
-			assert.strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 3), true, "Item move was done with wrong parameter");
-			assert.strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should not be done");
-			assert.strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
-		});
-
-		QUnit.test("Shall check _ItemMoveDown", function(assert) {
-			assert.ok(oP13nColumnsPanel._ItemMoveDown, "Method does not exist");
-
-			var getArrayIndexByItemKeySpy = sinon.stub();
-			var handleItemIndexChangedSpy = sinon.stub();
-			var changeColumnsItemsIndexesSpy = sinon.stub();
-			var afterMoveItemSpy = sinon.stub();
-			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
-			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
-			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
-			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			//CUT -> check that the method is not executed as this._oSelectedItem is empty
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._ItemMoveDown();
-
-			assert.strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
-
-			//CUT -> check that the method is executed, BUT item will not be moved as maximum boundary is reached
-			getArrayIndexByItemKeySpy.returns(5);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveDown();
-
-			assert.strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
-
-			//CUT -> check that the method _is executed with old and new Indexes
-			getArrayIndexByItemKeySpy.returns(4);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveDown();
-
-			assert.strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 5), true, "Item move was done with wrong parameter");
-
-			//CUT -> "Show Selected" is active -> now check that the method is executed with old and new index, whereas the new index was filled by method: _getNextSelectedItemIndex
-			getArrayIndexByItemKeySpy.returns(2);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-
-			var getNextItemIndexSpy = sinon.stub();
-			getNextItemIndexSpy.returns(4);
-			oP13nColumnsPanel._bShowSelected = true;
-			oP13nColumnsPanel._getNextItemIndex = getNextItemIndexSpy;
-			handleItemIndexChangedSpy.reset();
-			oP13nColumnsPanel._ItemMoveDown();
-
-			assert.strictEqual(getNextItemIndexSpy.called, true, "Method: getNextItemIndex shall not be called to get the previous selected item");
-			assert.strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true, "Item move was done with wrong parameter");
-			assert.strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should not be done");
-			assert.strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
-		});
-
-		QUnit.test("Shall check _ItemMoveToBottom", function(assert) {
-			assert.ok(oP13nColumnsPanel._ItemMoveToBottom, "Method does not exist");
-
-			var getArrayIndexByItemKeySpy = sinon.stub();
-			var handleItemIndexChangedSpy = sinon.stub();
-			var changeColumnsItemsIndexesSpy = sinon.stub();
-			var afterMoveItemSpy = sinon.stub();
-			oP13nColumnsPanel._getArrayIndexByItemKey = getArrayIndexByItemKeySpy;
-			oP13nColumnsPanel._handleItemIndexChanged = handleItemIndexChangedSpy;
-			oP13nColumnsPanel._changeColumnsItemsIndexes = changeColumnsItemsIndexesSpy;
-			oP13nColumnsPanel._afterMoveItem = afterMoveItemSpy;
-
-			//CUT -> check that the method is not executed as this._oSelectedItem is empty
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._ItemMoveToBottom();
-
-			assert.strictEqual(getArrayIndexByItemKeySpy.callCount, 0, 'Method was executed although it should not be done');
-
-			//CUT -> check that the method is executed, BUT item will not be moved as maximum boundary is reached
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem2, oTableItem1
-			]);
-
-			getArrayIndexByItemKeySpy.returns(1);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._ItemMoveToBottom();
-
-			assert.strictEqual(handleItemIndexChangedSpy.notCalled, true, "Boundary check did fail -> general moveItem method shall not be executed");
-
-			//CUT -> check that the method _is executed with old and new Indexes
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			var oTableItem3 = new sap.m.ColumnListItem();
-			oTableItem3.data('P13nColumnKey', '4713');
-			var oTableItem4 = new sap.m.ColumnListItem();
-			oTableItem4.data('P13nColumnKey', '4714');
-			var oTableItem5 = new sap.m.ColumnListItem();
-			oTableItem5.data('P13nColumnKey', '4715');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5
-			]);
-
-			getArrayIndexByItemKeySpy.returns(1);
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._ItemMoveToBottom();
-
-			assert.strictEqual(handleItemIndexChangedSpy.calledWith(oP13nColumnsPanel._oSelectedItem, 4), true, "Item move was done with wrong parameter");
-			assert.strictEqual(changeColumnsItemsIndexesSpy.called, true, "Method: _changeColumnsItemsIndexes was not called, although it should be done");
-			assert.strictEqual(afterMoveItemSpy.called, true, "Method: _afterMoveItem was not called, although it should not be done");
-		});
-
-		QUnit.test("Shall check _changeColumnsItemsIndexes", function(assert) {
-			assert.ok(oP13nColumnsPanel._changeColumnsItemsIndexes, "Method does not exist");
-
-			var getColumnsItemsSpy = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems = getColumnsItemsSpy;
-			getColumnsItemsSpy.returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"setIndex": sinon.stub()
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"setIndex": sinon.stub()
-				}
-			]);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}
-			]);
-
-			//CUT -> check that the method is not executed as no parameter are passed in
-			oP13nColumnsPanel._changeColumnsItemsIndexes();
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.notCalled, true, "Method: getColumnsItems was called, although it should not be done because of missing input parameter");
-
-			//CUT -> check that the method is executed AND the index of first columnsItem has been changed to 0
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem();
-			oP13nColumnsPanel._oSelectedItem.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._changeColumnsItemsIndexes(1, 2);
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method: getColumnsItems was not called, although it should not be done");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getColumnKey.called, true, "Method: getColumnKey of first columnsItem was not called, although it should be done");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getIndex.called, true, "Method: getIndex of first columnsItem was not called, although it should be done");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.called, true, "Method: setIndex of first columnsItem was not called, although it should be done");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(0), true, "setIndex of first columnsItem has been called with wrong property value");
-
-			// Second columnsItem with key = 4712 shall not be changed as this is the instance of oSelectedItem; that shall be
-			// excluded as this has already the right index value
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getColumnKey.called, true, "Method: getColumnKey of second columnsItem was not called, although it should be done to identify the current columnsItem");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].getIndex.notCalled, true, "Method: getIndex of first columnsItem was called, although it should not be done");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.notCalled, true, "Method: setIndex of first columnsItem was called, although it should not be done");
-
-			//CUT -> check that the method is executed AND the index of first columnsItem has been changed to 0
-			oP13nColumnsPanel.getColumnsItems()[0].setIndex.reset();
-			oP13nColumnsPanel._changeColumnsItemsIndexes(2, 1);
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].setIndex.calledWith(2), true, "setIndex of first columnsItem has been called with wrong property value");
-		});
-
-		QUnit.test("Shall check _swopShowSelectedButton", function(assert) {
-			assert.ok(oP13nColumnsPanel._swopShowSelectedButton, "Method does not exist");
-			var bShowSelected_Before = bShowSelected_After = oP13nColumnsPanel._bShowSelected;
-			oP13nColumnsPanel._filterItems = sinon.stub();
-			oP13nColumnsPanel._fnHandleResize = sinon.stub();
-
-			//CUT
-			oP13nColumnsPanel._swopShowSelectedButton();
-			bShowSelected_After = oP13nColumnsPanel._bShowSelected;
-
-			assert.notEqual(bShowSelected_Before, bShowSelected_After, "Button swop did not work");
-			assert.strictEqual(oP13nColumnsPanel._filterItems.called, true, "Method _filterItems wasn't called");
-			assert.strictEqual(oP13nColumnsPanel._fnHandleResize.called, true, "Method _fnHandleResize wasn't called");
-		});
-
-		QUnit.test("Shall check _afterMoveItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._afterMoveItem, "Method does not exist");
-			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
-			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-
-			//CUT
-			oP13nColumnsPanel._afterMoveItem();
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "Method _scrollToSelectedItem wasn't called");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Method _calculateMoveButtonAppearance wasn't called");
-		});
-
-		QUnit.test("Shall check _filterItems if no filters are activated", function(assert) {
-			assert.ok(oP13nColumnsPanel._filterItems, "Method does not exist");
-			var oItem = {
-				"id": "4711",
-				"getId": function() {
-					return this.id;
-				},
-				"getCells": function() {
-					return [
-						{
-							"getText": function() {
-								return "TestText";
-							}
-						}
-					];
-				},
-				"setVisible": sinon.stub()
-			};
-
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oItem
-			]);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([]);
-			oP13nColumnsPanel._bShowSelected = false;
-			oP13nColumnsPanel._bSearchFilterActive = false;
-
-			//CUT
-			oP13nColumnsPanel._filterItems();
-			assert.strictEqual(oItem.setVisible.called, true, "Wrong filter logic: The one existing item should be set to visible");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Wrong filter logic: The table should return at least one item");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, false, "Wrong filter logic: getSelectedItems should not be called at all");
-		});
-
-		QUnit.test("Shall check _filterItems if Search field filters is activ", function(assert) {
-			var oItem = {
-				"id": "4711",
-				"getId": function() {
-					return this.id;
-				},
-				"getCells": function() {
-					return [
-						{
-							"getText": function() {
-								return "TestText";
-							}
-						}
-					];
-				},
-				"setVisible": sinon.stub()
-			};
-
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oItem
-			]);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([]);
-			oP13nColumnsPanel._bShowSelected = false;
-			oP13nColumnsPanel._bSearchFilterActive = true;
-
-			oP13nColumnsPanel._oSearchField.setValue('Test')
-			//CUT -> With a filter that fit's to the table item (item visibility shall be set to true)
-			oP13nColumnsPanel._filterItems();
-			assert.strictEqual(oItem.setVisible.called, true, "Set visible method is not called at all");
-			assert.strictEqual(oItem.setVisible.calledWith(true), true, "Set visible method is called with wrong parameter");
-
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "getItems method was not called at all");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.callCount, 2, "getItems method shall have been called two times");
-
-			oP13nColumnsPanel._oTable.getItems.reset();
-			oP13nColumnsPanel._oSearchField.setValue('TestA')
-			//CUT -> With a filter that does not fit to the table items (item visibility shall be set to false)
-			oP13nColumnsPanel._filterItems();
-			assert.strictEqual(oItem.setVisible.called, true, "Set visible method is not called at all");
-			assert.strictEqual(oItem.setVisible.calledWith(false), true, "Set visible method is called with wrong parameter");
-
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "getItems method was not called at all");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.callCount, 2, "getItems method shall have been called two times");
-
-			assert.strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, false, "getSelectedItems shall not be called");
-		});
-
-		QUnit.test("Shall check _filterItems if \"ShowSelected\" filter is activ", function(assert) {
-			var oItem = {
-				"id": "4711",
-				"getId": function() {
-					return this.id;
-				},
-				"getCells": function() {
-					return [
-						{
-							"getText": function() {
-								return "TestText";
-							}
-						}
-					];
-				},
-				"setVisible": sinon.stub()
-			};
-
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oItem
-			]);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
-				oItem
-			]);
-			oP13nColumnsPanel._bShowSelected = true;
-			oP13nColumnsPanel._bSearchFilterActive = false;
-
-			//CUT (with one selected item = oItem)
-			oP13nColumnsPanel._filterItems();
-			assert.strictEqual(oItem.setVisible.called, true, "Set visible method is not called at all");
-			assert.strictEqual(oItem.setVisible.calledWith(true), true, "Set visible method is called with wrong parameter");
-
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "getItems method was not called at all");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.callCount, 1, "getItems method shall have been called 1 time");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, true, "getSelectedItems shall have been called");
-
-			//CUT (with no selected items)
-			oP13nColumnsPanel._oTable.getItems.reset();
-			oP13nColumnsPanel._oTable.getSelectedItems.returns([]);
-			oP13nColumnsPanel._oTable.getSelectedItems.reset();
-
-			oP13nColumnsPanel._filterItems();
-			assert.strictEqual(oItem.setVisible.called, true, "Set visible method is not called at all");
-			assert.strictEqual(oItem.setVisible.calledWith(false), true, "Set visible method is called with wrong parameter");
-
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "getItems method was not called at all");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.callCount, 1, "getItems method shall have been called 1 time");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.called, true, "getSelectedItems shall have been called");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getSelectedItems.callCount, 1, "getSelectedItems method shall have been called 1 time");
-		});
-
-		QUnit.test("Shall check _executeSearch", function(assert) {
-			assert.ok(oP13nColumnsPanel._executeSearch, "Method does not exist");
-			oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue')
-			oP13nColumnsPanel._deactivateSelectedItem = sinon.stub();
-			oP13nColumnsPanel._filterItems = sinon.stub();
-			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-			oP13nColumnsPanel._scrollToSelectedItem = sinon.stub();
-
-			//CUT -> execute method -> _oSelectedItem is undefined
-			oP13nColumnsPanel._executeSearch();
-			assert.strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
-			assert.strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
-			assert.strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false, "method: _deactivateSelectedItem shall not be called, as _oSelectedItem is empty");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "method: _calculateMoveButtonAppearance shall be called");
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "method: _scrollToSelectedItem shall be called");
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true, "method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
-
-			//CUT -> execute method with _oSelectedItem that is invisible after filterItems method
-			oP13nColumnsPanel._oSearchField.setValue('TestSearchFieldValue');
-			oP13nColumnsPanel._deactivateSelectedItem.reset();
-			oP13nColumnsPanel._filterItems.reset()
-			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
-			oP13nColumnsPanel._scrollToSelectedItem.reset();
-			oP13nColumnsPanel._oSelectedItem = new sap.m.ColumnListItem({
-				"visible": false
-			});
-
-			oP13nColumnsPanel._executeSearch();
-			assert.strictEqual(oP13nColumnsPanel._bSearchFilterActive, true, "Search filter shall be actived");
-			assert.strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, true, "method: _deactivateSelectedItem shall be called, as _oSelectedItem is NOT empty and invisble");
-			assert.strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
-			assert.strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "method: _scrollToSelectedItem shall be called");
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(oP13nColumnsPanel._oSelectedItem), true, "method: _scrollToSelectedItem shall be called with _oSelectedItem as input parameter");
-
-			//CUT -> execute method, but no content is filled in Search field or was removed via reset button
-			oP13nColumnsPanel._oSearchField.setValue('');
-			oP13nColumnsPanel._deactivateSelectedItem.reset();
-			oP13nColumnsPanel._filterItems.reset()
-			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
-			oP13nColumnsPanel._scrollToSelectedItem.reset();
-			oP13nColumnsPanel._oSelectedItem = undefined;
-
-			oP13nColumnsPanel._executeSearch();
-			assert.strictEqual(oP13nColumnsPanel._bSearchFilterActive, false, "Search filter shall be deactived");
-			assert.strictEqual(oP13nColumnsPanel._deactivateSelectedItem.called, false, "method: _deactivateSelectedItem shall not be called, as _oSelectedItem is NOT empty and invisble");
-			assert.strictEqual(oP13nColumnsPanel._filterItems.called, true, "_filterItems method shall be called");
-			assert.strictEqual(oP13nColumnsPanel._filterItems.callCount, 1, "_filterItems method shall only be called once");
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.called, true, "method: _scrollToSelectedItem shall be called");
-			assert.strictEqual(oP13nColumnsPanel._scrollToSelectedItem.calledWith(undefined), true, "method: _scrollToSelectedItem was called with the wrong input parameter, as _oSelectedItem is undefined");
-		});
-
-		QUnit.test("Shall check _updateSelectAllDescription", function(assert) {
-			assert.ok(oP13nColumnsPanel._updateSelectAllDescription, "Method does not exist");
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
-				{}, {}, {}
-			]);
-			var sText = "Test text from ressource bundle";
-			oP13nColumnsPanel._oRb.getText = sinon.stub().returns(sText);
-
-			var oColumn = oP13nColumnsPanel._oTable.getColumns()[0];
-			var oColumnHeader = oColumn.getHeader();
-			oColumnHeader.setText = sinon.stub();
-
-			//CUT
-			oP13nColumnsPanel._updateSelectAllDescription();
-			assert.strictEqual(oColumnHeader.setText.called, true, "Column header text shall be called");
-			assert.strictEqual(oColumnHeader.setText.callCount, 1, "Setting of column header text shall only be called once");
-			assert.strictEqual(oColumnHeader.setText.args[0][0], sText, "Column header text shall not be empty");
-
-		});
-
-		QUnit.test("Shall check _itemPressed", function(assert) {
-			assert.ok(oP13nColumnsPanel._itemPressed, "Method does not exist");
-
-			var oEvent = {}, oItem = {
-				"id": "tempItem"
-			};
-			oEvent.getParameter = sinon.stub().returns(oItem);
-			oP13nColumnsPanel._removeHighLightingFromItem = sinon.stub();
-			oP13nColumnsPanel._setHighLightingToItem = sinon.stub();
-			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-
-			//CUT (no table item was selected up to here)
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._itemPressed(oEvent);
-
-			assert.strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, false, "HighLighting does not need to be removed");
-			assert.strictEqual(oP13nColumnsPanel._oSelectedItem, oItem, "The selected table item is wrong");
-			assert.strictEqual(oP13nColumnsPanel._setHighLightingToItem.called, true, "The selected item shall be highlighted");
-			assert.strictEqual(oP13nColumnsPanel._setHighLightingToItem.calledWith(oItem), true, "Wrong item instance passed to highlighting method");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Move button appearance was not recalculated");
-
-			//CUT (a table item is already selected up to here)
-			var oItem2 = {
-				"id": "tempItem2"
-			};
-			oEvent.getParameter.returns(oItem2);
-			oP13nColumnsPanel._oSelectedItem = oItem;
-			oP13nColumnsPanel._removeHighLightingFromItem.reset();
-			oP13nColumnsPanel._setHighLightingToItem.reset();
-			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
-
-			oP13nColumnsPanel._itemPressed(oEvent);
-
-			assert.strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, true, "HighLighting needs to be removed from previous selected item");
-			assert.strictEqual(oP13nColumnsPanel._oSelectedItem, oItem2, "The selected table item is wrong");
-			assert.strictEqual(oP13nColumnsPanel._setHighLightingToItem.called, true, "The selected item shall be highlighted");
-			assert.strictEqual(oP13nColumnsPanel._setHighLightingToItem.calledWith(oItem2), true, "Wrong item instance passed to highlighting method");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Move button appearance was not recalculated");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.callCount, 1, "Calculation of move button appearance was called to often.");
-		});
-
-		QUnit.test("Shall check _calculateMoveButtonAppearance", function(assert) {
-			assert.ok(oP13nColumnsPanel._calculateMoveButtonAppearance, "Method does not exist");
-
-			//CUT (no table item was selected up to here)
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._calculateMoveButtonAppearance();
-
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if no item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if no item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if no item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall be disabled if no item is selected");
-
-			//CUT (selected table item is the first item in the list)
-			var oItem = new sap.m.ColumnListItem({
-				"id": "tempItemAtTopIndex"
-			});
-			oItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._oSelectedItem = oItem;
-
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(0);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			oP13nColumnsPanel._calculateMoveButtonAppearance();
-
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if first item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if first item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true, "Down button shall be enabled if the first item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true, "To Bottom button shall be enabled if the first item is selected");
-
-			//CUT (selected table item is the last item in the list)
-			var oItem = new sap.m.ColumnListItem({
-				"id": "tempItemAtBottomIndex"
-			});
-			oItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._oSelectedItem = oItem;
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(5);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			oP13nColumnsPanel._calculateMoveButtonAppearance();
-
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true, "To Top button shall be enabled if last item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true, "Up button shall be enabled if last item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the last item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To bottom button shall be disabled if the last item is selected");
-
-			//CUT (selected table item is one in the middle)
-			var oItem = new sap.m.ColumnListItem({
-				"id": "tempItemWithinTheMiddle1"
-			});
-			oItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._oSelectedItem = oItem;
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(3);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			oP13nColumnsPanel._calculateMoveButtonAppearance();
-
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), true, "To Top button shall be enabled if any middle item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), true, "Up button shall be enabled if any middle item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), true, "Down button shall be enabled if any middle item is selected");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), true, "To Bottom button shall be enabled if any middle item is selected");
-
-			//CUT (selected table item does return with an index that is higher as the max the table length)
-			var oItem = new sap.m.ColumnListItem({
-				"id": "tempItemWithinTheMiddle2"
-			});
-			oItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._oSelectedItem = oItem;
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(6);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			oP13nColumnsPanel._calculateMoveButtonAppearance();
-
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
-
-			//CUT (selected table item does return with an index that is lower the 0, which is the lowest table index)
-			var oItem = new sap.m.ColumnListItem({
-				"id": "tempItemWithinTheMiddle3"
-			});
-			oItem.data('P13nColumnKey', '4711');
-			oP13nColumnsPanel._oSelectedItem = oItem;
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub().returns(-1);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}
-			]);
-
-			oP13nColumnsPanel._calculateMoveButtonAppearance();
-
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton.getEnabled(), false, "To Top button shall be disabled if the selected item does return an index that is out of the table boundaries");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton.getEnabled(), false, "Up button shall be disabled if the selected item does return an index that is out of the table boundaries");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton.getEnabled(), false, "Down button shall be disabled if the selected item does return an index that is out of the table boundaries");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton.getEnabled(), false, "To Bottom button shall shall be disabled if the selected item does return an index that is out of the table boundaries");
-		});
-
-		QUnit.test("Shall check _setHighLightingToItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._setHighLightingToItem, "Method does not exist");
-
-			var oItem = {};
-			oItem.addStyleClass = sinon.stub();
-			//CUT
-			oP13nColumnsPanel._setHighLightingToItem(oItem);
-			assert.strictEqual(oItem.addStyleClass.called, true, "At given item a specific style class shall be set");
-		});
-
-		QUnit.test("Shall check _removeHighLightingFromItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._removeHighLightingFromItem, "Method does not exist");
-
-			var oItem = {};
-			oItem.removeStyleClass = sinon.stub();
-			//CUT
-			oP13nColumnsPanel._removeHighLightingFromItem(oItem);
-			assert.strictEqual(oItem.removeStyleClass.called, true, "At given item the specific style class shall be removed");
-		});
-
-		QUnit.test("Shall check _deactivateSelectedItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._deactivateSelectedItem, "Method does not exist");
-
-			//CUT
-			oP13nColumnsPanel._oSelectedItem = null;
-			oP13nColumnsPanel._removeHighLightingFromItem = sinon.stub();
-			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-
-			oP13nColumnsPanel._deactivateSelectedItem();
-			assert.strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, false, "No item is selected & no highlighting needs to be removed");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, false, "No item is selected & no highlighting needs to be removed");
-
-			//CUT
-			var oItem = sinon.stub();
-			oP13nColumnsPanel._oSelectedItem = oItem;
-			oP13nColumnsPanel._removeHighLightingFromItem.reset();
-			oP13nColumnsPanel._calculateMoveButtonAppearance.reset();
-
-			oP13nColumnsPanel._deactivateSelectedItem();
-			assert.strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.called, true, "An item is selected -> method to remove highlighting needs to be called");
-			assert.strictEqual(oP13nColumnsPanel._removeHighLightingFromItem.calledWith(oItem), true, "Method to remove item highlighting needs to be called for actual selected item");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Item selection was removed -> -> Recalculate move button appearance");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.callCount, 1, "Recalculate of move button appearance shall only be called once");
-			assert.strictEqual(oP13nColumnsPanel._oSelectedItem, null, "Instance of selected item shall be reset");
-		});
-
-		QUnit.test("Shall check _getArrayIndexByItemKey", function(assert) {
-			assert.ok(oP13nColumnsPanel._getArrayIndexByItemKey, "Method does not exist");
-
-			var oItem = null
-			var oTableItem1, oTableItem2, oTableItem3, oTableItem4, oTableItem5, oTableItem6;
-
-			//CUT (no valid item is passed into the method)
-			oItem = null, iItemIndex = null;
-			iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey("4711", []);
-			assert.strictEqual(iItemIndex, -1, "Wrong return value if no valid item is passed");
-
-			//CUT (Valid item with key 4711 that exist in the list)
-			oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oTableItem3 = new sap.m.ColumnListItem();
-			oTableItem3.data('P13nColumnKey', '4713');
-			oTableItem4 = new sap.m.ColumnListItem();
-			oTableItem4.data('P13nColumnKey', '4714');
-			oTableItem5 = new sap.m.ColumnListItem();
-			oTableItem5.data('P13nColumnKey', '4715');
-			oTableItem6 = new sap.m.ColumnListItem();
-			oTableItem6.data('P13nColumnKey', '4716');
-
-			var aTableItems = [
-				oTableItem2, oTableItem3, oTableItem4, oTableItem1, oTableItem5, oTableItem6
-			];
-			iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey("4711", aTableItems);
-			assert.strictEqual(iItemIndex, 3, "Wrong index return for a valid item");
-
-			//CUT (Valid item with key 4717 that does not exist in the list)
-			oItem = new sap.m.P13nItem(), iItemIndex = null;
-			oItem.data('P13nColumnKey', '4717');
-
-			oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4712');
-			oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4714');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1, oTableItem2
-			]);
-
-			iItemIndex = oP13nColumnsPanel._getArrayIndexByItemKey(oItem);
-			assert.strictEqual(iItemIndex, -1, "Wrong index return -> item is valid but it shall not exist in that list of items");
-		});
-
-		QUnit.test("Shall check onBeforeRendering", function(assert) {
-			assert.ok(oP13nColumnsPanel.onBeforeRendering, "Method does not exist");
-
-			oP13nColumnsPanel._calculateMoveButtonAppearance = sinon.stub();
-			oP13nColumnsPanel._updateSelectAllDescription = sinon.stub();
-
-			var oInitialModel = {
-				"id": "initial model"
-			};
-			oP13nColumnsPanel._oTable.getModel = sinon.stub().returns({
-				"getJSON": function() {
-					return {};
-				}
-			});
-			oP13nColumnsPanel._oTable.getModel().getJSON = sinon.stub().returns(oInitialModel);
-			sap.ui.Device.resize.attachHandler = sinon.stub();
-
-			// CUT (onBeforeRendering will be called for the very first time)
-			oP13nColumnsPanel._bOnBeforeRenderingFirstTimeExecuted = false;
-			oP13nColumnsPanel.onBeforeRendering();
-
-			assert.strictEqual(oP13nColumnsPanel._bOnBeforeRenderingFirstTimeExecuted, true, "Marker that onAfterRendering method was called shall be set to true");
-			assert.strictEqual(oP13nColumnsPanel._calculateMoveButtonAppearance.called, true, "Calculation of move button appearance shall be called");
-		});
-
-		QUnit.test("Shall check exit", function(assert) {
-			assert.ok(oP13nColumnsPanel.exit, "Method does not exist");
-
-			var fMoveToTopButton = oP13nColumnsPanel._oMoveToTopButton.destroy;
-			oP13nColumnsPanel._oMoveToTopButton.destroy = oMoveToTopButtonStub = sinon.stub();
-
-			var fMoveUpButton = oP13nColumnsPanel._oMoveUpButton.destroy;
-			oP13nColumnsPanel._oMoveUpButton.destroy = oMoveUpButtonStub = sinon.stub();
-
-			var fMoveDownpButton = oP13nColumnsPanel._oMoveDownButton.destroy;
-			oP13nColumnsPanel._oMoveDownButton.destroy = oMoveDownButtonStub = sinon.stub();
-
-			var fMoveToBottomButton = oP13nColumnsPanel._oMoveToBottomButton.destroy;
-			oP13nColumnsPanel._oMoveToBottomButton.destroy = oMoveToBottomButtonStub = sinon.stub();
-
-			var fSearchField = oP13nColumnsPanel._oSearchField.destroy;
-			oP13nColumnsPanel._oSearchField.destroy = oSearchFieldStub = sinon.stub();
-
-			var fToolbar = oP13nColumnsPanel._oToolbar.destroy;
-			oP13nColumnsPanel._oToolbar.destroy = oToolbarStub = sinon.stub();
-
-			var fTable = oP13nColumnsPanel._oTable.destroy;
-			oP13nColumnsPanel._oTable.destroy = oTableStub = sinon.stub();
-
-			// CUT
-			oP13nColumnsPanel.exit();
-
-			assert.strictEqual(oMoveToTopButtonStub.called, true, "Destroy of move to Top button shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToTopButton, null, "Move to Top button shall be set to null");
-			assert.strictEqual(oMoveUpButtonStub.called, true, "Destroy of move Up button shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oMoveUpButton, null, "Move Up button shall be set to null");
-			assert.strictEqual(oMoveDownButtonStub.called, true, "Destroy of move Down button shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oMoveDownButton, null, "Move Down button shall be set to null");
-			assert.strictEqual(oMoveToBottomButtonStub.called, true, "Destroy of move to Bottom button shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oMoveToBottomButton, null, "Move to Bottom button shall be set to null");
-			assert.strictEqual(oSearchFieldStub.called, true, "Destroy of search field shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oSearchField, null, "Serach field shall be set to null");
-			assert.strictEqual(oToolbarStub.called, true, "Destroy of toolbar shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oToolbar, null, "Toolbar shall be set to null");
-			assert.strictEqual(oTableStub.called, true, "Destroy of table shall be be called");
-			assert.strictEqual(oP13nColumnsPanel._oTable, null, "Table shall be set to null");
-		});
-
-		QUnit.test("Shall check _scrollToSelectedItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._scrollToSelectedItem, "Method does not exist");
-
-			var oItem = new sap.m.ColumnListItem();
-			oItem.getDomRef = sinon.stub().returns({});
-			oItem.focus = sinon.stub();
-			document.activeElement.focus = sinon.stub();
-
-			// CUT
-			oP13nColumnsPanel._scrollToSelectedItem(oItem);
-			assert.strictEqual(oItem.getDomRef.called, true, "Method to get the Dom reference of given item was not called");
-			assert.strictEqual(oItem.focus.called, true, "Focus was not set to given item");
-			assert.strictEqual(document.activeElement.focus.called, true, "Focus was not reset to previous focused object");
-		});
-
-		QUnit.test("Shall check _getPreviousItemIndex", function(assert) {
-			assert.ok(oP13nColumnsPanel._getPreviousItemIndex, "Method does not exist");
-
-			var oResultIndex = null;
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			oTableItem1.getSelected = sinon.stub().returns(true);
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oTableItem2.getSelected = sinon.stub().returns(false);
-			var oTableItem3 = new sap.m.ColumnListItem();
-			oTableItem3.data('P13nColumnKey', '4712');
-			oTableItem3.getSelected = sinon.stub().returns(true)
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1, oTableItem2, oTableItem3
-			]);
-
-			//CUT -> check that the method is NOT executed, as no start index is passed in
-			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex();
-			assert.strictEqual(oResultIndex, -1, "No valid index shall be found");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, false, "Method getItems from main table shall not be called");
-
-			//CUT -> check that the method is executed and previuos item index is returned
-			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
-			assert.strictEqual(oResultIndex, 1, "No valid index shall be found");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, false, "Method getItems from main table shall not be called");
-
-			// button "show selected" will be actived and with that method _getPreviousItemIndex shall only considers selected items
-			oP13nColumnsPanel._bShowSelected = true;
-
-			//CUT -> check that the method is executed
-			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
-			assert.strictEqual(oResultIndex, 0, "Wrong index was returned");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
-
-			//CUT -> check that the method is executed, but no further valid index will be found (as no other selected items exist up to index 0)
-			oP13nColumnsPanel._oTable.getItems.reset();
-			oTableItem1.getSelected.returns(false);
-			oResultIndex = oP13nColumnsPanel._getPreviousItemIndex(2);
-			assert.strictEqual(oResultIndex, -1, "Wrong index was returned");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
-		});
-
-		QUnit.test("Shall check _getNextItemIndex", function(assert) {
-			assert.ok(oP13nColumnsPanel._getNextItemIndex, "Method does not exist");
-
-			var oResultIndex = null;
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			oTableItem1.getSelected = sinon.stub().returns(true);
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oTableItem2.getSelected = sinon.stub().returns(false);
-			var oTableItem3 = new sap.m.ColumnListItem();
-			oTableItem3.data('P13nColumnKey', '4712');
-			oTableItem3.getSelected = sinon.stub().returns(true)
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1, oTableItem2, oTableItem3
-			]);
-
-			//CUT -> check that the method is NOT executed, as no start index is passed in
-			oResultIndex = oP13nColumnsPanel._getNextItemIndex();
-			assert.strictEqual(oResultIndex, -1, "No valid index shall be found");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, false, "Method getItems from main table shall not be called");
-
-			//CUT -> check that the method is executed and next item index is returned
-			oResultIndex = oP13nColumnsPanel._getNextItemIndex(1);
-			assert.strictEqual(oResultIndex, 2, "No valid index shall be found");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table shall be called to get the maximum border to where an item can be moved");
-
-			// button "show selected" will be actived and with that method _getPreviousItemIndex shall only considers selected items
-			oP13nColumnsPanel._bShowSelected = true;
-
-			//CUT -> check that the method is executed
-			oP13nColumnsPanel._oTable.getItems.reset();
-			oResultIndex = oP13nColumnsPanel._getNextItemIndex(0);
-			assert.strictEqual(oResultIndex, 2, "Wrong index was returned");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
-
-			//CUT -> check that the method is executed, but no further valid index will be found (as no other selected items exist up to table end)
-			oP13nColumnsPanel._oTable.getItems.reset();
-			oTableItem3.getSelected.returns(false);
-			oResultIndex = oP13nColumnsPanel._getNextItemIndex(0);
-			assert.strictEqual(oResultIndex, -1, "Wrong index was returned");
-			assert.strictEqual(oP13nColumnsPanel._oTable.getItems.called, true, "Method getItems from main table was not called");
-		});
-
-		QUnit.test("Shall check _handleItemIndexChanged", function(assert) {
-			assert.ok(oP13nColumnsPanel._handleItemIndexChanged, "Method does not exist");
-
-			var oItem = new sap.m.ColumnListItem();
-
-			oP13nColumnsPanel._createNewColumnsItem = sinon.stub();
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
-			oP13nColumnsPanel._updateTableItems = sinon.stub();
-			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
-
-			oP13nColumnsPanel._extractExistingColumnsItems = sinon.stub().returns([]);
-			oP13nColumnsPanel.getColumnsItems = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems.returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"setIndex": sinon.stub()
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"setIndex": sinon.stub()
-				}
-			]);
-
-			//CUT -> check that the method is NOT executed, as needed input parameter are missing
-			oP13nColumnsPanel._handleItemIndexChanged();
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
-
-			//CUT -> check that the method is executed -> columnsItem with this key does not exist -> create new one
-			oItem.data('P13nColumnKey', '4713');
-			oP13nColumnsPanel._getArrayIndexByItemKey.returns(-1);
-			var oNewColumnsItem = sinon.stub();
-			oNewColumnsItem.setIndex = sinon.stub();
-			oP13nColumnsPanel._createNewColumnsItem.returns(oNewColumnsItem);
-
-			oP13nColumnsPanel._handleItemIndexChanged(oItem, 3);
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, true, "Method shall be executed");
-			assert.strictEqual(oNewColumnsItem.setIndex.called, true, "Method shall be executed");
-
-			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just change the index property
-			oP13nColumnsPanel.getColumnsItems.reset();
-			oP13nColumnsPanel._getArrayIndexByItemKey.reset();
-			oP13nColumnsPanel._updateTableItems.reset();
-			oP13nColumnsPanel._createNewColumnsItem.reset();
-			oP13nColumnsPanel.fireAddColumnsItem.reset();
-
-			oItem.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
-
-			oP13nColumnsPanel._handleItemIndexChanged(oItem, 0);
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._updateTableItems.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.called, true, "Method shall be executed");
-		});
-
-		QUnit.test("Shall check _handleItemVisibilityChanged", function(assert) {
-			assert.ok(oP13nColumnsPanel._handleItemVisibilityChanged, "Method does not exist");
-
-			var oItem = new sap.m.ColumnListItem();
-			oItem.getSelected = sinon.stub().returns(true);
-
-			oP13nColumnsPanel._createNewColumnsItem = sinon.stub();
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
-			oP13nColumnsPanel._updateTableItems = sinon.stub();
-			oP13nColumnsPanel.fireAddColumnsItem = sinon.stub();
-			oP13nColumnsPanel._reOrderExistingTableItems = sinon.stub();
-
-			oP13nColumnsPanel._extractExistingColumnsItems = sinon.stub().returns([]);
-			oP13nColumnsPanel.getColumnsItems = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems.returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getVisible": sinon.stub().returns(true),
-					"setVisible": sinon.stub(),
-					"setIndex": sinon.stub()
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getVisible": sinon.stub().returns(false),
-					"setVisible": sinon.stub(),
-					"setIndex": sinon.stub()
-				}
-			]);
-
-			//CUT -> check that the method is NOT executed, as needed input parameter is missing
-			oP13nColumnsPanel._handleItemVisibilityChanged();
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
-
-			//CUT -> check that the method is executed -> columnsItem with this key does not exist -> create new one
-			oItem.data('P13nColumnKey', '4713');
-			oP13nColumnsPanel._getArrayIndexByItemKey.returns(-1);
-			var oNewColumnsItem = sinon.stub();
-			oNewColumnsItem.setVisible = sinon.stub();
-			oP13nColumnsPanel._createNewColumnsItem.returns(oNewColumnsItem);
-
-			oP13nColumnsPanel._handleItemVisibilityChanged([
-				oItem
-			]);
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._updateTableItems.called, false, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, true, "Method shall be executed");
-			assert.strictEqual(oNewColumnsItem.setVisible.called, true, "Method shall be executed");
-
-			//CUT -> check that the method is executed -> columnsItem with this key already exist -> just
-			//change the visible property and reorder the existing table items
-			oP13nColumnsPanel.getColumnsItems.reset();
-			oP13nColumnsPanel._getArrayIndexByItemKey.reset();
-			oP13nColumnsPanel._updateTableItems.reset();
-			oP13nColumnsPanel._createNewColumnsItem.reset();
-			oP13nColumnsPanel.fireAddColumnsItem.reset();
-			oP13nColumnsPanel._reOrderExistingTableItems.reset();
-
-			oItem.data('P13nColumnKey', '4712');
-
-			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
-			oP13nColumnsPanel._oTableItemsOrdering._bShallBeOrdered = true;
-			oP13nColumnsPanel._handleItemVisibilityChanged([
-				{
-					"columnKey": oItem.data('P13nColumnKey'),
-					"visible": oItem.getSelected()
-				}
-			]);
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._updateTableItems.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._createNewColumnsItem.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel.fireAddColumnsItem.called, false, "Method shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setVisible.args[0][0], true, "Method setVisible called with the wrong input ");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.called, true, "Method shall be executed");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[1].setIndex.args[0][0], undefined, "Method setIndex called with the wrong input ");
-			assert.strictEqual(oP13nColumnsPanel._reOrderExistingTableItems.called, false, "Method shall not be executed");
-		});
-
-		QUnit.test("Shall check _createNewColumnsItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._createNewColumnsItem, "Method does not exist");
-
-			//CUT -> check that method is executed and a new columnsItem instance created
-			var sItemKey = "4711"
-			var oNewColumnsItem = oP13nColumnsPanel._createNewColumnsItem(sItemKey);
-			assert.notEqual(oNewColumnsItem, null, "columnsItem shall be instanciated");
-			assert.strictEqual(oNewColumnsItem.getColumnKey(), sItemKey, "New columnsItem shall conatins the given key");
-			assert.strictEqual(oNewColumnsItem instanceof sap.m.P13nColumnsItem, true, "new columnsItem shall be an instance of type sap.m.P13nColumnsItem");
-		});
-
-		QUnit.test("Shall check _getColumnsItemByKey", function(assert) {
-			assert.ok(oP13nColumnsPanel._getColumnsItemByKey, "Method does not exist");
-
-			var oColumnsItem = null;
-
-			//CUT -> check that method is executed and null is returned as no itemKey is passed in
-			oColumnsItem = oP13nColumnsPanel._getColumnsItemByKey();
-			assert.strictEqual(oColumnsItem, null, "no columnsItem shall be returned as no itemKey is passed in for that can be searched");
-
-			oP13nColumnsPanel._getArrayIndexByItemKey = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"setIndex": sinon.stub()
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"setIndex": sinon.stub()
-				}
-			]);
-
-			//CUT -> check that method is executed and a well defined columnsItem is returned
-			oColumnsItem = null;
-			oP13nColumnsPanel._getArrayIndexByItemKey.returns(1);
-			oColumnsItem = oP13nColumnsPanel._getColumnsItemByKey("4712");
-
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems.called, true, "Method getColumnsItems shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._getArrayIndexByItemKey.called, true, "Method _getArrayIndexByItemKey shall be executed");
-			assert.notEqual(oColumnsItem, null, "columnsItem shall not be null as a valid columnsItem does exist with key 4712");
-			assert.strictEqual(oColumnsItem.getColumnKey(), "4712", "returned columnsItem instance is wrong as it shall have the columnKey 4712");
-		});
-
-		QUnit.test("Shall check _updateTableItems", function(assert) {
-			assert.ok(oP13nColumnsPanel._updateTableItems, "Method does not exist");
-
-			var oColumnsItem = new sap.m.P13nColumnsItem({
-				"columnKey": "4711"
-			});
-
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem2, oTableItem1
-			]);
-
-			oP13nColumnsPanel._applyColumnsItem2TableItem = sinon.stub();
-
-			//CUT -> check that method is executed for the given columnsItem
-			oP13nColumnsPanel._updateTableItems(oColumnsItem);
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true, "Method _applyColumnsItem2TableItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 1, 'Method _applyColumnsItem2TableItem was executed to often');
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oColumnsItem, oTableItem1), true, 'Method _applyColumnsItem2TableItem was called with the wrong input parameter');
-
-			//CUT -> check that method is executed for all existing columnsItems & corresponding table items (in the example 2 times)
-			oP13nColumnsPanel._applyColumnsItem2TableItem.reset();
-			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"setIndex": sinon.stub()
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"setIndex": sinon.stub()
-				}
-			]);
-
-			oP13nColumnsPanel._updateTableItems();
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.called, true, "Method _applyColumnsItem2TableItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.callCount, 2, 'Method _applyColumnsItem2TableItem was executed to often');
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[0], oTableItem1), true, 'Method _applyColumnsItem2TableItem was first time called with the wrong input parameter');
-			assert.strictEqual(oP13nColumnsPanel._applyColumnsItem2TableItem.calledWith(oP13nColumnsPanel.getColumnsItems()[1], oTableItem2), true, 'Method _applyColumnsItem2TableItem was second time called with the wrong input parameter');
-		});
-
-		QUnit.test("Shall check _addTableItem ", function(assert) {
-			assert.ok(oP13nColumnsPanel._addTableItem, "Method does not exist");
-
-			var oNewCreatedTableItem = null, oItem = null;
-
-			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
-			oP13nColumnsPanel._oTable.addItem = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"getVisible": sinon.stub().returns(true),
-					"getWidth": sinon.stub().returns("100px")
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"getVisible": sinon.stub().returns(true),
-					"getWidth": sinon.stub().returns("120px")
-				}
-			]);
-
-			// CUT -> method shall not be executed, as the one needed input parameter is missing
-			oP13nColumnsPanel._addTableItem();
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
-
-			// CUT -> method shall be executed and new item shall be added as no columnsItem can be found for it
-			oItem = new sap.m.P13nItem({
-				"columnKey": "4713"
-			})
-			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
-			oNewCreatedTableItem.setSelected = sinon.stub();
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem = sinon.stub();
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
-
-			oP13nColumnsPanel._addTableItem(oItem);
-			assert.strictEqual(oNewCreatedTableItem.setSelected.called, false, "Method oNewCreatedTableItem.setSelected shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.insertItem shall not be executed");
-
-			// CUT -> method shall be executed and new item shall be inserted as a valid columnsItem is found for it
-			oP13nColumnsPanel._oTable.addItem.reset();
-			oP13nColumnsPanel._oTable.insertItem.reset();
-			oItem = new sap.m.P13nItem({
-				"columnKey": "4711"
-			})
-			oNewCreatedTableItem.data('P13nColumnKey', "4711");
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
-
-			oP13nColumnsPanel._addTableItem(oItem);
-			assert.strictEqual(oNewCreatedTableItem.setSelected.called, true, "Method oNewCreatedTableItem.setSelected shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true, "Method _oTable.insertItem shall be called with right input parameter");
-
-			// CUT -> method shall be executed and new item shall be added. But ONLY very less columnsItem properties are filled
-			oP13nColumnsPanel._oTable.addItem.reset();
-			oP13nColumnsPanel._oTable.insertItem.reset();
-			oNewCreatedTableItem.setSelected.reset();
-			oItem = new sap.m.P13nItem({
-				"columnKey": "4711"
-			})
-			oNewCreatedTableItem.data('P13nColumnKey', "4711");
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
-
-			oP13nColumnsPanel.getColumnsItems()[0].getIndex = sinon.stub().returns(undefined);
-			oP13nColumnsPanel.getColumnsItems()[0].getVisible = sinon.stub().returns(undefined);
-			oP13nColumnsPanel.getColumnsItems()[0].getWidth = sinon.stub().returns("200px");
-
-			oP13nColumnsPanel._addTableItem(oItem);
-
-			// following methods were executed, but just to check whether the corresponding property does exist or is undefined
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getVisible.called, true, "Method columnsItems.getVisible shall be executed, to check, whether visible property must be set");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getIndex.called, true, "Method columnsItems.getIndex shall be executed, to check, whether index property must be set");
-			assert.strictEqual(oP13nColumnsPanel.getColumnsItems()[0].getWidth.called, true, "Method columnsItems.getWidth shall be executed, to check, whether width property must be set");
-
-			// next test shall check what was executed with the less columnsItem data
-			assert.strictEqual(oNewCreatedTableItem.setSelected.called, false, "Method oNewCreatedTableItem.setSelected shall not be executed, as visible property is undefined");
-			assert.strictEqual(oNewCreatedTableItem.data('P13nColumnWidth'), "200px", "New width shall be set into custom data of new table item");
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, true, "Method _oTable.addItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.insertItem shall NOT be executed");
-		});
-
-		QUnit.test("Shall check _insertTableItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._insertTableItem, "Method does not exist");
-
-			var oNewCreatedTableItem = null, oItem = null;
-
-			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
-			oP13nColumnsPanel._oTable.addItem = sinon.stub();
-			oP13nColumnsPanel.getColumnsItems = sinon.stub().returns([
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"getVisible": sinon.stub().returns(true),
-					"getWidth": sinon.stub().returns("100px")
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"getVisible": sinon.stub().returns(true),
-					"getWidth": sinon.stub().returns("120px")
-				}
-			]);
-
-			// CUT -> method shall not be executed, as the one needed input parameter is missing
-			oP13nColumnsPanel._insertTableItem();
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.addItem shall not be executed");
-
-			// CUT -> method shall be executed and new item shall be inserted at the passed input parameter, as no columnsItem can be found for it
-			oItem = new sap.m.P13nItem({
-				"columnKey": "4713"
-			})
-			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
-			oNewCreatedTableItem.setSelected = sinon.stub();
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem = sinon.stub();
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
-
-			oP13nColumnsPanel._insertTableItem(3, oItem);
-			assert.strictEqual(oNewCreatedTableItem.setSelected.called, false, "Method oNewCreatedTableItem.setSelected shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall never be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 3), true, "Method _oTable.insertItem shall be called with right input parameter");
-
-			// CUT -> method shall be executed and new item shall be inserted at the index found from a valid columnsItem
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.reset();
-			oP13nColumnsPanel._oTable.addItem.reset();
-			oP13nColumnsPanel._oTable.insertItem.reset();
-			oItem = new sap.m.P13nItem({
-				"columnKey": "4711"
-			})
-			oNewCreatedTableItem.data('P13nColumnKey', "4711");
-			oP13nColumnsPanel._createNewTableItemBasedOnP13nItem.returns(oNewCreatedTableItem);
-
-			oP13nColumnsPanel._insertTableItem(3, oItem);
-			assert.strictEqual(oNewCreatedTableItem.setSelected.called, true, "Method oNewCreatedTableItem.setSelected shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.addItem.called, false, "Method _oTable.addItem shall never be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.calledWith(oNewCreatedTableItem, 1), true, "Method _oTable.insertItem shall be called with right input parameter");
-		});
-
-		QUnit.test("Shall check _createNewTableItemBasedOnP13nItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._createNewTableItemBasedOnP13nItem, "Method does not exist");
-
-			var oNewCreatedTableItem = null, oItem = null;
-
-			// CUT -> method shall not be executed, as the one needed input parameter is missing
-			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem();
-			assert.strictEqual(oNewCreatedTableItem, null, "No new table item instance shall be created");
-
-			// CUT -> method shall be executed and new table item instance shall be created
-			oItem = new sap.m.P13nItem();
-			oItem.getColumnKey = sinon.stub().returns("4711");
-			oItem.getText = sinon.stub().returns("New table item");
-			oItem.getVisible = sinon.stub().returns(true);
-			oItem.getTooltip = sinon.stub().returns("tooltip");
-
-			oNewCreatedTableItem = oP13nColumnsPanel._createNewTableItemBasedOnP13nItem(oItem);
-			assert.notEqual(oNewCreatedTableItem, null, "A new table item instance shall be created");
-			assert.strictEqual(oNewCreatedTableItem.data('P13nColumnKey'), "4711", "New created table item instance shall have custom data for P13nColumnKey");
-			assert.strictEqual(oItem.getColumnKey.called, true, "Method getColumnKey() shall be called to get data of oItem");
-		});
-
-		QUnit.test("Shall check _applyColumnsItem2TableItem", function(assert) {
-			assert.ok(oP13nColumnsPanel._applyColumnsItem2TableItem, "Method does not exist");
-
-			var oColumnsItem = new sap.m.P13nColumnsItem({
-				"columnKey": "4711",
-				"index": 1,
-				"visible": true,
-				"width": "100px"
-			});
-
-			var oTableItem = new sap.m.ColumnListItem();
-			oTableItem.data('P13nColumnKey', '4711');
-			oTableItem.setSelected = sinon.stub();
-			oP13nColumnsPanel._oTable.removeItem = sinon.stub();
-			oP13nColumnsPanel._oTable.insertItem = sinon.stub();
-
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem
-			]);
-
-			// CUT -> method shall be executed but due to missing input parameter nothing shall happen
-			oP13nColumnsPanel._applyColumnsItem2TableItem();
-			assert.strictEqual(oTableItem.setSelected.called, false, "Method oTableItem.setSelected shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.removeItem.called, false, "Method _oTable.removeItem shall not be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, false, "Method _oTable.insertItem shall not be executed");
-			assert.strictEqual(oTableItem.data('P13nColumnWidth'), null, "Table item shall not contains any width information");
-
-			// CUT -> method shall be executed and changes from oColumnsItem shall be taken over into oTableItem
-			oP13nColumnsPanel._applyColumnsItem2TableItem(oColumnsItem, oTableItem);
-			assert.strictEqual(oTableItem.setSelected.called, true, "Method oTableItem.setSelected shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.removeItem.called, true, "Method _oTable.removeItem shall be executed");
-			assert.strictEqual(oP13nColumnsPanel._oTable.insertItem.called, true, "Method _oTable.insertItem shall be executed");
-			assert.strictEqual(oTableItem.data('P13nColumnWidth'), "100px", "Table item shall contain the defined width information");
-		});
-
-		QUnit.test("Shall check _reOrderExistingTableItems", function(assert) {
-			assert.ok(oP13nColumnsPanel._reOrderExistingTableItems, "Method does not exist");
-
-			var oTableItemA = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: "A"
-					})
-				],
-				visible: true,
-				selected: true,
-				type: sap.m.ListType.Active
-			});
-
-			var oTableItemB = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: "B"
-					})
-				],
-				visible: true,
-				selected: false,
-				type: sap.m.ListType.Active
-			});
-
-			var oTableItemC = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: "C"
-					})
-				],
-				visible: true,
-				selected: false,
-				type: sap.m.ListType.Active
-			});
-			var oTableItemD = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: "D"
-					})
-				],
-				visible: true,
-				selected: true,
-				type: sap.m.ListType.Active
-			});
-			var oTableItemE = new sap.m.ColumnListItem({
-				cells: [
-					new sap.m.Text({
-						text: "E"
-					})
-				],
-				visible: true,
-				selected: true,
-				type: sap.m.ListType.Active
-			});
-
-			oP13nColumnsPanel._oTable.addItem(oTableItemE);
-			oP13nColumnsPanel._oTable.addItem(oTableItemC);
-			oP13nColumnsPanel._oTable.addItem(oTableItemD);
-			oP13nColumnsPanel._oTable.addItem(oTableItemA);
-			oP13nColumnsPanel._oTable.addItem(oTableItemB);
-
-			// CUT -> method shall be executed and existing table items be reOrdered
-			oP13nColumnsPanel._reOrderExistingTableItems();
-
-			var aTableItems = oP13nColumnsPanel._oTable.getItems();
-			//SortOrder -> at first all selected items in the same order as they exist in the table
-			// afterwards all unselected table items in a n alphanumerical sort order
-			assert.ok(aTableItems, "Table shall exist");
-			assert.strictEqual(aTableItems.length, 5, "Table shall contain 5 items in a special sorted order");
-			assert.strictEqual(aTableItems[0].getCells()[0].getText(), "E", "Column E shall be first column");
-			assert.strictEqual(aTableItems[0].getSelected(), true, "Column E shall be selected");
-			assert.strictEqual(aTableItems[1].getCells()[0].getText(), "D", "Column D shall be first column");
-			assert.strictEqual(aTableItems[1].getSelected(), true, "Column D shall be selected");
-			assert.strictEqual(aTableItems[2].getCells()[0].getText(), "A", "Column A shall be first column");
-			assert.strictEqual(aTableItems[2].getSelected(), true, "Column A shall be selected");
-			assert.strictEqual(aTableItems[3].getCells()[0].getText(), "B", "Column B shall be first column");
-			assert.strictEqual(aTableItems[3].getSelected(), false, "Column B shall be unselected");
-			assert.strictEqual(aTableItems[4].getCells()[0].getText(), "C", "Column C shall be first column");
-			assert.strictEqual(aTableItems[4].getSelected(), false, "Column C shall be unselected");
-
-		});
-
-		QUnit.test("Shall check onBeforeNavigationFrom", function(assert) {
-			assert.ok(oP13nColumnsPanel.onBeforeNavigationFrom, "Method does not exist");
-
-			// CUT -> method shall be executed -> threshold is not defined -> BeforeNavigationFrom shall result in true
-			assert.strictEqual(oP13nColumnsPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced");
-			assert.strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
-		});
-
-		QUnit.test("Shall check onBeforeNavigationFromAsync", function(assert) {
-
-			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in true as threshold is not reached
-			oP13nColumnsPanel.setVisibleItemsThreshold(10);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}, {}, {}, {}
-			]); // 9 table items are selected
-
-			assert.strictEqual(oP13nColumnsPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced as threshold is not reached");
-		});
-
-		QUnit.test("Shall check onBeforeNavigationFromAsync", function(assert) {
-
-			// CUT -> method shall be executed -> threshold is defined -> BeforeNavigationFrom shall result in false as threshold is exceeded
-			oP13nColumnsPanel.setVisibleItemsThreshold(10);
-			oP13nColumnsPanel._oTable.getSelectedItems = sinon.stub().returns([
-				{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-			]); // 11 table items are selected
-
-			assert.strictEqual(oP13nColumnsPanel.onBeforeNavigationFrom(), false, "navigation validation shall be influenced as threshold is exceeded");
-			assert.strictEqual(oP13nColumnsPanel.getVisibleItemsThreshold(), 10, "Getter for visible items threshold shall return 10 (which was set before)");
-		});
-
-		QUnit.test("Shall check _extractExistingColumnsItems", function(assert) {
-			assert.ok(oP13nColumnsPanel._extractExistingColumnsItems, "Method does not exist");
-
-			// CUT -> method shall not be executed -> as no valid input parameter is passed in
-			var aExtractionResultExpected = null;
-			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems();
-			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
-
-			// CUT -> method shall be executed and a valid extraction result shall be passed back
-			var aColumnsItems = [
-				{
-					"getColumnKey": sinon.stub().returns("4711"),
-					"getIndex": sinon.stub().returns(1),
-					"getVisible": sinon.stub().returns(true),
-					"getWidth": sinon.stub().returns("100px")
-				}, {
-					"getColumnKey": sinon.stub().returns("4712"),
-					"getIndex": sinon.stub().returns(2),
-					"getVisible": sinon.stub().returns(true),
-					"getWidth": sinon.stub().returns("120px")
-				}
-			];
-			aExtractionResultExpected = [
-				{
-					"columnKey": "4711",
-					"index": 1,
-					"visible": true,
-					"width": "100px"
-				}, {
-					"columnKey": "4712",
-					"index": 2,
-					"visible": true,
-					"width": "120px"
-				}
-			];
-			var aExtractionResult = oP13nColumnsPanel._extractExistingColumnsItems(aColumnsItems);
-			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
-		});
-
-		QUnit.test("Shall check _extractExistingTableItems", function(assert) {
-			assert.ok(oP13nColumnsPanel._extractExistingTableItems, "Method does not exist");
-
-			var aExtractionResultExpected = null, aExtractionResult = null;
-
-			// CUT -> method shall not be executed -> as no valid input parameter is passed in
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
-			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
-			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "no extraction result shall be returned");
-
-			// CUT -> method shall be executed and a valid extraction result shall be passed back
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			oTableItem1.data('P13nColumnWidth', '100px');
-			oTableItem1.setSelected(true);
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oTableItem2.data('P13nColumnWidth', '120px');
-			oTableItem2.setSelected(false);
-			var oTableItem3 = new sap.m.ColumnListItem();
-			oTableItem3.data('P13nColumnKey', '4713');
-			oTableItem3.data('P13nColumnWidth', '80px');
-			oTableItem3.setSelected(false);
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem3, oTableItem1, oTableItem2
-			]);
-
-			aExtractionResultExpected = [
-				{
-					"columnKey": "4713",
-					"index": 0,
-					"visible": false,
-					"width": "80px"
-				}, {
-					"columnKey": "4711",
-					"index": 1,
-					"visible": true,
-					"width": "100px"
-				}, {
-					"columnKey": "4712",
-					"index": 2,
-					"visible": false,
-					"width": "120px"
-				}
-
-			];
-			aExtractionResult = oP13nColumnsPanel._extractExistingTableItems();
-			assert.deepEqual(aExtractionResult, aExtractionResultExpected, "a valid extraction result shall be returned");
-		});
-
-		QUnit.test("Shall check this._getTableItemsChangeStatus", function(assert) {
-			assert.ok(oP13nColumnsPanel._getTableItemsChangeStatus, "Method does not exist");
-
-			var bTableItemsChangeStatusResult = null;
-			var oTableItem1 = new sap.m.ColumnListItem();
-			oTableItem1.data('P13nColumnKey', '4711');
-			oTableItem1.data('P13nColumnWidth', '');
-
-			var oTableItem2 = new sap.m.ColumnListItem();
-			oTableItem2.data('P13nColumnKey', '4712');
-			oTableItem2.data('P13nColumnWidth', '');
-
-			// CUT -> method shall not be executed -> as table is empty & saved table items are also empty
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
-			oP13nColumnsPanel._aExistingTableItems = null;
-			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
-			assert.strictEqual(bTableItemsChangeStatusResult, false, "No changes detected: table is empty & saved table items are also empty");
-
-			// CUT -> method shall not be executed -> Change shall be detected
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1
-			]);
-			oP13nColumnsPanel._aExistingTableItems = null;
-			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
-			assert.strictEqual(bTableItemsChangeStatusResult, true, "Changes detected: table is filled with one items & saved table items are also empty");
-
-			// CUT -> method shall be executed -> Change shall be detected
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([]);
-			oP13nColumnsPanel._aExistingTableItems = [
-				{
-					"columnKey": "4713",
-				}
-			];
-			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
-			assert.strictEqual(bTableItemsChangeStatusResult, true, "Changes detected: table is empty & saved table items is filled with one item");
-
-			// CUT -> method shall be executed -> Both places have the same child items -> No changes!
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1
-			]);
-			oP13nColumnsPanel._aExistingTableItems = [
-				{
-					"columnKey": "4711",
-					"index": 0,
-					"visible": false,
-					"width": ''
-				}
-			];
-			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
-			assert.strictEqual(bTableItemsChangeStatusResult, false, "No changes detected: table has same content as saved table item list");
-
-			// CUT -> method shall be executed -> Changes shall be detected -> Order is different
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1, oTableItem2
-			]);
-			oP13nColumnsPanel._aExistingTableItems = [
-				{
-					"columnKey": "4712",
-					"index": 0,
-					"visible": false,
-					"width": ''
-				}, {
-					"columnKey": "4711",
-					"index": 0,
-					"visible": false,
-					"width": ''
-				}
-			];
-			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
-			assert.strictEqual(bTableItemsChangeStatusResult, true, "Changes deteced: Order of table items is different to saved table items");
-
-			// CUT -> method shall be executed -> Changes shall be detected -> Order is equal, but property index is different
-			oP13nColumnsPanel._oTable.getItems = sinon.stub().returns([
-				oTableItem1, oTableItem2
-			]);
-			oP13nColumnsPanel._aExistingTableItems = [
-				{
-					"columnKey": "4711",
-					"index": 0,
-					"visible": true,
-					"width": ''
-				}, {
-					"columnKey": "4712",
-					"index": 0,
-					"visible": false,
-					"width": ''
-				}
-			];
-			bTableItemsChangeStatusResult = oP13nColumnsPanel._getTableItemsChangeStatus();
-			assert.strictEqual(bTableItemsChangeStatusResult, true, "Changes deteced: Order is equal, but property index is different");
-
-		});
-	}());
-</script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Test Page for sap.m.P13nColumnsPanel</title>
+    <script src="../shared-config.js"></script>
+    <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
+            data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+
+    </script>
+
+    <link rel="stylesheet"
+          href="../../../../resources/sap/ui/thirdparty/qunit.css"
+          type="text/css" media="screen"/>
+    <script
+            src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+    <script
+            src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+    <script
+            src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+    <script
+            src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+    <script
+            src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+    <script
+            src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+    <!-- use the sinon faketimers for this test -->
+    <script>
+        sinon.config.useFakeTimers = true;
+    </script>
+
+    <script>
+        (function () {
+            jQuery.sap.require("sap.m.P13nColumnsPanel");
+            jQuery.sap.require("sap.m.P13nColumnsItem");
+            jQuery.sap.require("sap.m.P13nItem");
+
+            module("sap.ui.mdc.experimental.P13nColumnPanel: simple", {
+                beforeEach: function () {
+                },
+                afterEach: function () {
+                }
+            });
+
+            test("Instantiate panel", function (assert) {
+                var oPanel = new sap.m.P13nColumnsPanel();
+                assert.ok(oPanel, "Could not instantiate P13nColumnsPanel");
+                oPanel.destroy();
+            });
+
+            test("Show panel", function (assert) {
+                var oPanel = new sap.m.P13nColumnsPanel();
+                oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+                assert.ok(oPanel.getDomRef());
+                oPanel.destroy();
+            });
+
+            module("sap.m.P13nColumnPanel: via constructor", {
+                beforeEach: function () {
+                },
+                afterEach: function () {
+                }
+            });
+
+            test("Initial columns order: 'items' then 'columnsItems'", function (assert) {
+                var oPanel = new sap.m.P13nColumnsPanel({
+                    items: [new sap.m.P13nItem({
+                        columnKey: "A",
+                        text: "A"
+                    }), new sap.m.P13nItem({
+                        columnKey: "B",
+                        text: "B"
+                    })],
+                    columnsItems: [new sap.m.P13nColumnsItem({
+                        columnKey: "A",
+                        index: 0,
+                        visible: false
+                    }), new sap.m.P13nColumnsItem({
+                        columnKey: "B",
+                        index: 1,
+                        visible: true
+                    })]
+                });
+                oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                assert.ok(oPanel.$().find("table"));
+                assert.equal(oPanel.$().find("td").find("span").length, 2);
+                assert.equal(oPanel.$().find("td").find("span")[0].textContent, "B");
+                assert.equal(oPanel.$().find("td").find("span")[1].textContent, "A");
+
+                assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
+                assert.ok(oPanel._getMarkedTableItem());
+                assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+                assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
+
+                oPanel.destroy();
+            });
+
+            test("Initial columns order: 'columnsItems' then 'items'", function (assert) {
+                var oPanel = new sap.m.P13nColumnsPanel({
+                    columnsItems: [new sap.m.P13nColumnsItem({
+                        columnKey: "A",
+                        index: 0,
+                        visible: false
+                    }), new sap.m.P13nColumnsItem({
+                        columnKey: "B",
+                        index: 1,
+                        visible: true
+                    })],
+                    items: [new sap.m.P13nItem({
+                        columnKey: "A",
+                        text: "A"
+                    }), new sap.m.P13nItem({
+                        columnKey: "B",
+                        text: "B"
+                    })]
+                });
+                oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                assert.ok(oPanel.$().find("table"));
+                assert.equal(oPanel.$().find("td").find("span").length, 2);
+                assert.equal(oPanel.$().find("td").find("span")[0].textContent, "B");
+                assert.equal(oPanel.$().find("td").find("span")[1].textContent, "A");
+
+                assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
+                assert.ok(oPanel._getMarkedTableItem());
+                assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+                assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
+
+                oPanel.destroy();
+            });
+
+            module("sap.m.P13nColumnPanel: via binding", {
+                beforeEach: function () {
+                },
+                afterEach: function () {
+                }
+            });
+
+            test("Initial 2 columns order: 'items' then 'columnsItems'", function (assert) {
+                var oPanel = new sap.m.P13nColumnsPanel({
+                    items: {
+                        path: "/items",
+                        template: new sap.m.P13nItem({
+                            columnKey: "{columnKey}",
+                            text: "{text}"
+                        })
+                    },
+                    columnsItems: {
+                        path: "/columnsItems",
+                        template: new sap.m.P13nColumnsItem({
+                            columnKey: "{columnKey}",
+                            index: "{index}",
+                            visible: "{visible}"
+                        })
+                    }
+                });
+                oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "B",
+                        text: "B"
+                    }],
+                    columnsItems: [{
+                        columnKey: "A",
+                        index: 0,
+                        visible: false
+                    }, {
+                        columnKey: "B",
+                        index: 1,
+                        visible: true
+                    }]
+                }));
+                oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                assert.ok(oPanel.$().find("table"));
+                assert.equal(oPanel.$().find("td").find("span").length, 2);
+                assert.equal(oPanel.$().find("td").find("span")[0].textContent, "B");
+                assert.equal(oPanel.$().find("td").find("span")[1].textContent, "A");
+
+                assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
+                assert.ok(oPanel._getMarkedTableItem());
+                assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+                assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
+
+//                assert.equal(oPanel.getModel().getProperty("/items/0/columnKey"), "A");
+//                assert.equal(oPanel.getModel().getProperty("/items/1/columnKey"), "B");
+//                assert.equal(oPanel.getModel().getProperty("/columnsItems/0/index"), 0);
+//                assert.equal(oPanel.getModel().getProperty("/columnsItems/1/index"), 1);
+
+                oPanel.destroy();
+            });
+
+            test("Initial 3 columns order: 'columnsItems' then 'items'", function (assert) {
+                var oPanel = new sap.m.P13nColumnsPanel({
+                    columnsItems: {
+                        path: "/columnsItems",
+                        template: new sap.m.P13nColumnsItem({
+                            columnKey: "{columnKey}",
+                            index: "{index}",
+                            visible: "{visible}"
+                        })
+                    },
+                    items: {
+                        path: "/items",
+                        template: new sap.m.P13nItem({
+                            columnKey: "{columnKey}",
+                            text: "{text}"
+                        })
+                    }
+                });
+                oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "B",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "A",
+                        index: 1,
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        index: 2,
+                        visible: false
+                    }]
+                }));
+                oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                assert.ok(oPanel.$().find("table"));
+                assert.equal(oPanel.$().find("td").find("span").length, 3);
+                assert.equal(oPanel.$().find("td").find("span")[0].textContent, "B");
+                assert.equal(oPanel.$().find("td").find("span")[1].textContent, "A");
+                assert.equal(oPanel.$().find("td").find("span")[2].textContent, "C");
+
+                assert.deepEqual(oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
+                assert.ok(oPanel._getMarkedTableItem());
+                assert.deepEqual(oPanel._getMarkedTableItem(), jQuery(oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+                assert.deepEqual(oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], oPanel.$().find("td").find("span")[0].parentNode.parentNode);
+
+//                assert.equal(oPanel.getModel().getProperty("/items/0/columnKey"), "B");
+//                assert.equal(oPanel.getModel().getProperty("/items/1/columnKey"), "A");
+//                assert.equal(oPanel.getModel().getProperty("/items/2/columnKey"), "C");
+//                assert.equal(oPanel.getModel().getProperty("/columnsItems/0/index"), 0);
+//                assert.equal(oPanel.getModel().getProperty("/columnsItems/1/index"), 1);
+//                assert.equal(oPanel.getModel().getProperty("/columnsItems/2/index"), 2);
+
+                oPanel.destroy();
+            });
+
+            module("sap.m.P13nColumnPanel: move down", {
+                beforeEach: function () {
+                    this.oPanel = new sap.m.P13nColumnsPanel({
+                        items: {
+                            path: "/items",
+                            template: new sap.m.P13nItem({
+                                columnKey: "{columnKey}",
+                                text: "{text}"
+                            })
+                        },
+                        columnsItems: {
+                            path: "/columnsItems",
+                            template: new sap.m.P13nColumnsItem({
+                                columnKey: "{columnKey}",
+                                index: "{index}",
+                                visible: "{visible}"
+                            })
+                        }
+                    });
+                },
+                afterEach: function () {
+                    this.oPanel.destroy();
+                }
+            });
+
+            test("selected B after selected A", function (assert) {
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "B",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "A",
+                        index: 1,
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        index: 2,
+                        visible: false
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act: B, A, C -> A, B, C
+                this.oPanel.onPressButtonMoveDown();
+
+                assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
+                assert.ok(this.oPanel._getMarkedTableItem());
+                assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[1].parentNode).control()[0]);
+                assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[1].parentNode.parentNode);
+
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/columnKey"), "A");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/columnKey"), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/columnsItems/0/index"), 1);
+//                assert.equal(this.oPanel.getModel().getProperty("/columnsItems/1/index"), 0);
+//                assert.equal(this.oPanel.getModel().getProperty("/columnsItems/2/index"), 2);
+            });
+
+            test("selected B after unselected C", function (assert) {
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "B",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "A",
+                        index: 1,
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        index: 2,
+                        visible: false
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act: B, A, C -> A, C, B
+                this.oPanel.onPressButtonMoveToBottom();
+
+                assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "B");
+                assert.ok(this.oPanel._getMarkedTableItem());
+                assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[2].parentNode).control()[0]);
+                assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[2].parentNode.parentNode);
+
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/columnKey"), "A");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/columnKey"), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/position"), 1);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/position"), 0);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/position"), 2);
+            });
+
+            test("unselected A after unselected C", function (assert) {
+                this.oPanel._setColumnKeyOfMarkedItem("A");
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "A",
+                        index: 0,
+                        visible: false
+                    }, {
+                        columnKey: "B",
+                        index: 1,
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        index: 2,
+                        visible: false
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act: B, A, C -> A, C, B
+                this.oPanel.onPressButtonMoveToBottom();
+
+                assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "A");
+                assert.ok(this.oPanel._getMarkedTableItem());
+                assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[2].parentNode).control()[0]);
+                assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[2].parentNode.parentNode);
+
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/columnKey"), "A");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/columnKey"), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/position"), 1);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/position"), 0);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/position"), 2);
+            });
+
+            module("sap.m.P13nColumnPanel: move up", {
+                beforeEach: function () {
+                    this.oPanel = new sap.m.P13nColumnsPanel({
+                        items: {
+                            path: "/items",
+                            template: new sap.m.P13nItem({
+                                columnKey: "{columnKey}",
+                                text: "{text}"
+                            })
+                        },
+                        columnsItems: {
+                            path: "/columnsItems",
+                            template: new sap.m.P13nColumnsItem({
+                                columnKey: "{columnKey}",
+                                index: "{index}",
+                                visible: "{visible}"
+                            })
+                        }
+                    });
+                },
+                afterEach: function () {
+                    this.oPanel.destroy();
+                }
+            });
+
+            test("selected A after selected B", function (assert) {
+                this.oPanel._setColumnKeyOfMarkedItem("A");
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "B",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "A",
+                        index: 1,
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        index: 2,
+                        visible: false
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act: B, A, C -> A, B, C
+                this.oPanel.onPressButtonMoveUp();
+
+                assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "A");
+                assert.ok(this.oPanel._getMarkedTableItem());
+                assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+                assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[0].parentNode.parentNode);
+
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/columnKey"), "A");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/columnKey"), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/position"), 1);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/position"), 0);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/position"), 2);
+            });
+
+            test("unselected C after selected B", function (assert) {
+                this.oPanel._setColumnKeyOfMarkedItem("C");
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    items: [{
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "B",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "A",
+                        index: 1,
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        index: 2,
+                        visible: false
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                // act: B, A, C -> C, B, A
+                this.oPanel.onPressButtonMoveToTop();
+
+                assert.deepEqual(this.oPanel._getInternalModel().getProperty("/columnKeyOfMarkedItem"), "C");
+                assert.ok(this.oPanel._getMarkedTableItem());
+                assert.deepEqual(this.oPanel._getMarkedTableItem(), jQuery(this.oPanel.$().find("td").find("span")[0].parentNode).control()[0]);
+                assert.deepEqual(this.oPanel.$().find(".sapMP13nColumnsPanelItemSelected")[0], this.oPanel.$().find("td").find("span")[0].parentNode.parentNode);
+
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "B");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/columnKey"), "A");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/columnKey"), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/position"), 1);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/position"), 2);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/position"), 0);
+            });
+
+            module("sap.m.P13nColumnPanel: _selectTableItem aggregation ^D, C, ^B", {
+                beforeEach: function () {
+                    this.oPanel = new sap.m.P13nColumnsPanel({
+                        items: {
+                            path: "/items",
+                            template: new sap.m.P13nItem({
+                                columnKey: "{columnKey}",
+                                text: "{text}"
+                            })
+                        },
+                        columnsItems: {
+                            path: "/columnsItems",
+                            template: new sap.m.P13nColumnsItem({
+                                columnKey: "{columnKey}",
+                                index: "{index}",
+                                visible: "{visible}"
+                            })
+                        }
+                    });
+                    this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                        items: [{
+                            columnKey: "D",
+                            text: "D"
+                        }, {
+                            columnKey: "C",
+                            text: "C"
+                        }, {
+                            columnKey: "B",
+                            text: "B"
+                        }],
+                        columnsItems: [{
+                            columnKey: "D",
+                            index: 0,
+                            visible: true
+                        }, {
+                            columnKey: "C",
+                            index: 1,
+                            visible: false
+                        }, {
+                            columnKey: "B",
+                            index: 2,
+                            visible: true
+                        }]
+                    }));
+                    this.oPanel.placeAt("content");
+                    sap.ui.getCore().applyChanges();
+                },
+                afterEach: function () {
+                    this.oPanel.destroy();
+                }
+            });
+
+            test("1. Model: ^D, ^B, C", function (assert) {
+                var oTableItem = jQuery(this.oPanel.$().find("td").find("span")[2].parentNode.parentNode).control()[0];
+                oTableItem.setVisible(true);
+                this.oPanel._selectTableItem();
+
+                assert.equal(this.oPanel._getColumnKeyByTableItem(oTableItem), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/columnKey"), "D");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/columnKey"), "C");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/columnKey"), "B");
+//                assert.equal(this.oPanel.getModel().getProperty("/items/0/position"), 0);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/1/position"), 2);
+//                assert.equal(this.oPanel.getModel().getProperty("/items/2/position"), 1);
+            });
+
+            module("sap.m.P13nColumnPanel: visibleItemsThreshold", {
+                beforeEach: function () {
+                    this.oPanel = new sap.m.P13nColumnsPanel({
+                        visibleItemsThreshold: "{/threshold}",
+                        items: {
+                            path: "/items",
+                            template: new sap.m.P13nItem({
+                                columnKey: "{columnKey}",
+                                text: "{text}"
+                            })
+                        },
+                        columnsItems: {
+                            path: "/columnsItems",
+                            template: new sap.m.P13nColumnsItem({
+                                columnKey: "{columnKey}",
+                                index: "{index}",
+                                visible: "{visible}"
+                            })
+                        }
+                    });
+                },
+                afterEach: function () {
+                    this.oPanel.destroy();
+                }
+            });
+            QUnit.test("Shall check onBeforeNavigationFrom", function (assert) {
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced");
+                assert.strictEqual(this.oPanel.getVisibleItemsThreshold(), -1, "Getter for visible items threshold shall return -1 = default value, which was not overwritten)");
+            });
+
+            QUnit.test("Shall check onBeforeNavigationFromAsync", function (assert) {
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    threshold: 2,
+                    items: [{
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "A",
+                        visible: true
+                    }, {
+                        columnKey: "B",
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        visible: false
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+                assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), true, "navigation validation shall not be influenced as threshold is not reached");
+            });
+
+            QUnit.test("Shall check onBeforeNavigationFromAsync", function (assert) {
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel({
+                    threshold: 2,
+                    items: [{
+                        columnKey: "A",
+                        text: "A"
+                    }, {
+                        columnKey: "B",
+                        text: "B"
+                    }, {
+                        columnKey: "C",
+                        text: "C"
+                    }],
+                    columnsItems: [{
+                        columnKey: "A",
+                        visible: true
+                    }, {
+                        columnKey: "B",
+                        visible: true
+                    }, {
+                        columnKey: "C",
+                        visible: true
+                    }]
+                }));
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+
+                assert.strictEqual(this.oPanel.onBeforeNavigationFrom(), false, "navigation validation shall be influenced as threshold is reached");
+            });
+        }());
+
+        module("sap.m.P13nColumnsPanel: FIX", {
+            beforeEach: function () {
+                this.oPanel = new sap.m.P13nColumnsPanel({
+                    items: {
+                        path: "/items",
+                        template: new sap.m.P13nItem({
+                            columnKey: "{columnKey}",
+                            text: "{text}"
+                        })
+                    },
+                    columnsItems: {
+                        path: "/columnsItems",
+                        template: new sap.m.P13nColumnsItem({
+                            columnKey: "{columnKey}",
+                            index: "{index}",
+                            visible: "{visible}"
+                        })
+                    },
+                    changeColumnsItems: function (oEvent) {
+                        // At least enough for this test!
+                        this.getModel().setProperty("/columnsItems", oEvent.getParameter("items"));
+                    }
+                });
+                this.oDataInitial = {
+                    items: [{
+                        columnKey: "keyC",
+                        text: "C"
+                    }, {
+                        columnKey: "keyB",
+                        text: "B foo"
+                    }, {
+                        columnKey: "keyA",
+                        text: "A foo"
+                    }],
+                    columnsItems: [{
+                        columnKey: "keyA",
+                        index: 0,
+                        visible: true
+                    }, {
+                        columnKey: "keyB",
+                        index: 1,
+                        visible: true
+                    }]
+                };
+                this.oPanel.setModel(new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, this.oDataInitial)));
+
+                this.oPanel.placeAt("content");
+                sap.ui.getCore().applyChanges();
+            },
+            afterEach: function () {
+                this.oPanel.destroy();
+            }
+        });
+
+        QUnit.test("Reset after entered search text", function (assert) {
+            // arrange: deselect first item "A", move it down, enter search text and click 'search'
+            sap.ui.test.qunit.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
+                srcControl: this.oPanel
+            });
+            this.oPanel.onPressButtonMoveDown();
+            this.oPanel._getSearchField().setValue("foo");
+            sap.ui.test.qunit.triggerTouchEvent("touchend", this.oPanel._getSearchField().$().find(".sapMSFS")[0], {
+                srcControl: this.oPanel._getSearchField()
+            });
+            this.clock.tick(500);
+
+            // asserts before act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, false);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 3); // 1 header cell + 1 cell * 2 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "B foo");
+            assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "A foo");
+
+            // act: Reset
+            this.oPanel.getModel().setProperty("/", this.oDataInitial);
+            this.clock.tick(500);
+
+            // asserts after act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 3); // 1 header cell + 1 cell * 2 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "A foo");
+            assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "B foo");
+        });
+
+        QUnit.test("Reset after 'Show Selected' clicked", function (assert) {
+            // arrange: deselect first item "A", move it down and click 'Show Selected'
+            sap.ui.test.qunit.triggerTouchEvent("tap", this.oPanel._oTable.getItems()[0].$().find(".sapMCbMark")[0], {
+                srcControl: this.oPanel
+            });
+            this.oPanel.onPressButtonMoveDown();
+            // As the toolbar can be overflowed, no 'Show Selected' button can not have a dom reference
+            var oEvent = jQuery.Event("ontap");
+            var oButton = this.oPanel._getToolbar().getContent()[2];
+            oButton.ontap.apply(oButton, [oEvent]);
+            this.clock.tick(500);
+
+            // asserts before act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 (visible and invisible) items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "none");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 2); // visible checkboxes - header + 1 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 2); // 1 header cell + 1 cell * 1 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "B foo");
+
+            // act: Reset
+            this.oPanel.getModel().setProperty("/", this.oDataInitial);
+            this.clock.tick(500);
+
+            // asserts after act
+            assert.equal(this.oPanel.$().find("table").length, 1);
+            assert.equal(this.oPanel.$().find("tr").length, 4); //header + 3 (visible and invisible) items
+            assert.equal(this.oPanel.$().find("tr")[0].style.display, ""); // header
+            assert.equal(this.oPanel.$().find("tr")[1].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[2].style.display, "");
+            assert.equal(this.oPanel.$().find("tr")[3].style.display, "none");
+
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox").length, 3); // visible checkboxes - header + 2 items
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[0].checked, false); // header
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[1].checked, true);
+            assert.equal(this.oPanel.$().find("tr").find("input:CheckBox")[2].checked, true);
+
+            assert.equal(this.oPanel.$().find("tr").find("span").length, 3); // 1 header cell + 1 cell * 2 items
+            assert.equal(this.oPanel.$().find("tr").find("span")[1].textContent, "A foo");
+            assert.equal(this.oPanel.$().find("tr").find("span")[2].textContent, "B foo");
+        });
+
+    </script>
 
 
 </head>
 <body id="body" class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for sap.m.P13nColumnsPanel</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
+<h1 id="qunit-header">QUnit Page for sap.m.P13nColumnsPanel</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
 
-	<div id="content"></div>
+<div id="content"></div>
 </body>
 </html>
 

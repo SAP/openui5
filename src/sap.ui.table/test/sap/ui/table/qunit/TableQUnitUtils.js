@@ -271,16 +271,19 @@
 		return jQuery(oOuterElement);
 	};
 
-	window.checkFocus = function(oCell, assert, bInside) {
-		var activeElement = document.activeElement || document;
-		var cell = oCell.get && oCell.get(0) || oCell;
-		if (bInside) {
-			assert.ok(cell !== activeElement && cell.contains(activeElement),
-				"Focus is inside of the expected cell: " + cell.id + " is parent of " + activeElement.id);
-		} else {
-			assert.ok(cell === activeElement, "Focus is on the expected position: " + cell.id + " == " + activeElement.id);
-		}
-		return jQuery(activeElement);
+	/**
+	 * Check whether an element is focused.
+	 * @param {jQuery|HTMLElement} oElement The element to check.
+	 * @param {Object} assert QUnit assert object.
+	 * @returns {jQuery} A jQuery object containing the active element.
+	 */
+	window.checkFocus = function(oElement, assert) {
+		var $ActiveElement = jQuery(document.activeElement);
+		var $Element = jQuery(oElement);
+
+		assert.ok($Element[0] === document.activeElement, "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
+
+		return $ActiveElement;
 	};
 
 	window.fakeGroupRow = function(iRow) {

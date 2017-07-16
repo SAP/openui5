@@ -27,10 +27,15 @@
 					id="tree"
 					mode="SingleSelectMaster"
 					selectionChange="onNodeSelect"
-					items="{ path: 'treeData>/' }">
+					items="{
+						path: 'treeData>/',
+						sorter : {
+							path : 'name',
+							comparator : '.compareTreeNodes'
+						}
+					}">
 				<StandardTreeItem
-						title="{treeData>text}"
-						selected="{treeData>isSelected}">
+						title="{treeData>text}">
 					<customData>
 						<core:CustomData key="nodeId" value="{treeData>name}" />
 					</customData>

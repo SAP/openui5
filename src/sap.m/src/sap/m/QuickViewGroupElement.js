@@ -4,11 +4,14 @@
 
 // Provides control sap.m.QuickViewGroupElement
 sap.ui.define([
-		'jquery.sap.global', './library', 'sap/ui/core/Element', './QuickViewGroupElementType',
+		'jquery.sap.global', './library', 'sap/ui/core/Element',
 		'./Link', './Text', 'sap/ui/core/CustomData'],
-	function(jQuery, library, Element, GroupElementType,
+	function(jQuery, library, Element,
 				Link, Text, CustomData) {
 		"use strict";
+
+		// shortcut for sap.m.QuickViewGroupElementType
+		var GroupElementType = library.QuickViewGroupElementType;
 
 		/**
 		* Constructor for a new QuickViewGroupElement.
@@ -133,7 +136,8 @@ sap.ui.define([
 
 					return new Link({
 						href : href,
-						text : this.getValue()
+						text : this.getValue(),
+						wrapping : true
 					});
 				case GroupElementType.phone:
 				case GroupElementType.mobile:

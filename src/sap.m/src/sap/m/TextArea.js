@@ -16,7 +16,40 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.TextArea</code> enables multi-line text input.
+	 * A control that is used for multi-line input of text.
+	 * <h3>Overview</h3>
+	 * The text area is used to enter multiple lines of text. When empty, it can hold a placeholder similar to an {@link sap.m.Input input}.
+	 * You can define the height and width of the text area and also determine specific behavior when handling long texts.
+	 * <h3>Structure</h3>
+	 * Parameters that determine the size:
+	 * <ul>
+	 * <li><code>rows</code> - Number of visible text lines (overruled by <code>height</code>, if both are set)</li>
+	 * <li><code>cols</code> - Number of visible characters per line line (overruled by <code>width</code>, if both are set)</li>
+	 * <li><code>height</code> - Height of the control</li>
+	 * <li><code>width</code> - Width of the control</li>
+	 * </ul>
+	 * Parameters that determine the behavior:
+	 * <ul>
+	 * <li><code>growing</code> - The text area adjusts its size based on the content</li>
+	 * <li><code>growingMaxLines</code> - Threshold for the <code>growing</code> property (shouldn't exceed the screen size)</li>
+	 * <li><code>maxLength</code> - Maximum number of characters that can be entered in a text area</li>
+	 * <li><code>wrapping</code> - The way the entered text is wrapped by the control</li>
+	 * <li><code>showExceededText</code> - Determines how text beyond the <code>maxLength</code> length is handled</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You want to enter multiple lines of text.</li>
+	 * <li>Always provide labels for a text area.</li>
+	 * <li>A placeholder does not substitute a label.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li>On smaller screens, you can scroll down the text area to see the entire text. To indicate that the text continues, the control shows only half of the last line.</li>
+	 * <li>If you have a growing text area, have in mind that its maximum height should not exceed the height of the screen. If that is the case, the screen height is used instead.</li>
+	 * <li>If <code>showExceededText</code> is set to TRUE and you paste a longer text, all characters beyond the <code>maxLength</code> limit are automatically selected.</li>
+	 * <li>If <code>showExceededText</code> is set to TRUE, the control will display a counter for the remaining characters.
+	 *
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
@@ -169,7 +202,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	// Attach listeners on after rendering and find iscroll
 	TextArea.prototype.onAfterRendering = function() {
 		InputBase.prototype.onAfterRendering.call(this);
-		var oTextArea = this.getFocusDomRef(),
+		var oTextAreaRef = this.getFocusDomRef(),
 			fMaxHeight,
 			oStyle;
 
@@ -178,7 +211,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 			this._sResizeListenerId = ResizeHandler.register(this, this._resizeHandler.bind(this));
 			// adjust textarea height
 			if (this.getGrowingMaxLines() > 0) {
-				oStyle = window.getComputedStyle(oTextArea);
+				oStyle = window.getComputedStyle(oTextAreaRef);
 				fMaxHeight = parseFloat(oStyle.lineHeight) * this.getGrowingMaxLines() +
 						parseFloat(oStyle.paddingTop) + parseFloat(oStyle.borderTopWidth) + parseFloat(oStyle.borderBottomWidth);
 
@@ -187,7 +220,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 					fMaxHeight += parseFloat(oStyle.paddingBottom);
 				}
 
-				oTextArea.style.maxHeight = fMaxHeight + "px";
+				oTextAreaRef.style.maxHeight = fMaxHeight + "px";
 			}
 
 			this._adjustHeight();
@@ -267,8 +300,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	};
 
 	TextArea.prototype.getValue = function() {
-		var oTextArea = this.getFocusDomRef();
-		return oTextArea ? oTextArea.value : this.getProperty("value");
+		var oTextAreaRef = this.getFocusDomRef();
+		return oTextAreaRef ? oTextAreaRef.value : this.getProperty("value");
 	};
 
 	TextArea.prototype.setValue = function (sValue) {
@@ -300,15 +333,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 			return;
 		}
 
-		var oTextArea = this.getFocusDomRef(),
-			sValue = oTextArea.value,
+		var oTextAreaRef = this.getFocusDomRef(),
+			sValue = oTextAreaRef.value,
 			iMaxLength = this.getMaxLength();
 
 		if (this.getShowExceededText() === false && this._getInputValue().length < this.getMaxLength()) {
 			// some browsers do not respect to maxlength property of textarea
 			if (iMaxLength > 0 && sValue.length > iMaxLength) {
 				sValue = sValue.substring(0, iMaxLength);
-				oTextArea.value = sValue;
+				oTextAreaRef.value = sValue;
 			}
 		}
 
@@ -324,7 +357,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 
 		// handle growing
 		if (this.getGrowing()) {
-			this._adjustHeight(oTextArea);
+			this._adjustHeight(oTextAreaRef);
 		}
 
 		this.fireLiveChange({
@@ -359,19 +392,23 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	};
 
 	TextArea.prototype._adjustHeight = function() {
-		var oTextArea = this.getFocusDomRef(),
-			fHeight = oTextArea.scrollHeight + oTextArea.offsetHeight - oTextArea.clientHeight;
+		var oTextAreaRef = this.getFocusDomRef(),
+			fHeight = oTextAreaRef.scrollHeight + oTextAreaRef.offsetHeight - oTextAreaRef.clientHeight;
 
 		if (this.getValue() && fHeight !== 0) {
-			oTextArea.style.height = fHeight + "px";
+			oTextAreaRef.style.height = fHeight + "px";
 			this._updateOverflow();
 		}
 	};
 
 	TextArea.prototype._updateOverflow = function() {
-		var oTextArea = this.getFocusDomRef();
-		var fMaxHeight = parseFloat(window.getComputedStyle(oTextArea)["max-height"]);
-		oTextArea.style.overflowY = (oTextArea.scrollHeight > fMaxHeight) ? "auto" : "";
+		var oTextAreaRef = this.getFocusDomRef(),
+			fMaxHeight;
+
+		if (oTextAreaRef) {
+			fMaxHeight = parseFloat(window.getComputedStyle(oTextAreaRef)["max-height"]);
+			oTextAreaRef.style.overflowY = (oTextAreaRef.scrollHeight > fMaxHeight) ? "auto" : "";
+		}
 	};
 
 	TextArea.prototype._getInputValue = function(sValue) {
@@ -394,16 +431,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	};
 
 	TextArea.prototype._updateMaxLengthAttribute = function () {
-		var oTextArea = this.getFocusDomRef();
-		if (!oTextArea) {
+		var oTextAreaRef = this.getFocusDomRef();
+		if (!oTextAreaRef) {
 			return;
 		}
 
 		if (this.getShowExceededText()) {
-			oTextArea.removeAttribute("maxlength");
+			oTextAreaRef.removeAttribute("maxlength");
 			this._handleShowExceededText();
 		} else {
-			this.getMaxLength() && oTextArea.setAttribute("maxlength", this.getMaxLength());
+			this.getMaxLength() && oTextAreaRef.setAttribute("maxlength", this.getMaxLength());
 		}
 	};
 
@@ -489,11 +526,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './Text', "sap/ui/core/Resize
 	 */
 	TextArea.prototype._onTouchMove = function(oEvent) {
 
-		var oTextArea = this.getFocusDomRef(),
+		var oTextAreaRef = this.getFocusDomRef(),
 			iPageY = oEvent.touches[0].pageY,
-			iScrollTop = oTextArea.scrollTop,
+			iScrollTop = oTextAreaRef.scrollTop,
 			bTop = iScrollTop <= 0,
-			bBottom = iScrollTop + oTextArea.clientHeight >= oTextArea.scrollHeight,
+			bBottom = iScrollTop + oTextAreaRef.clientHeight >= oTextAreaRef.scrollHeight,
 			bGoingUp = this._iStartY > iPageY,
 			bGoingDown =  this._iStartY < iPageY,
 			bOnEnd = bTop && bGoingDown || bBottom && bGoingUp;

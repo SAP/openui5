@@ -1387,7 +1387,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
         /**
          * Overriden setter for the max width internally.
          *
-         * @param sMaxWidth
+         * @param {sap.ui.core.CSSSize} sMaxWidth
+         * @returns {sap.ui.ux3.ToolPopup}
          */
         ToolPopup.prototype.setMaxWidth = function (sMaxWidth) {
             var pattern = /[0-9]+px/;

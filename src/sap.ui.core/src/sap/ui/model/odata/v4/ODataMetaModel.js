@@ -271,7 +271,8 @@ sap.ui.define([
 	 *
 	 * Example:
 	 * <pre>
-	 * &lt;template:repeat list="{path : 'entityType>', filters : {path : '@sapui.name', operator : 'StartsWith', value1 : 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
+	 * &lt;template:repeat list="{path : 'entityType>', filters : {path : '@sapui.name', operator :
+	 *     'StartsWith', value1 : 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
 	 * </pre>
 	 *
 	 * @extends sap.ui.model.ClientListBinding
@@ -655,163 +656,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchCanonicalPath = function (oContext) {
-		return this.fetchEntityContainer().then(function (mScope) {
-			var sCandidate, // the encoded candidate for the canonical path in case it's composed
-				oEntityContainer = mScope[mScope.$EntityContainer],
-				sEntitySetName, // the current encoded entity set name (only valid if not contained)
-				oEntitySet, // the current entity set of the instance (undefined if contained)
-				oEntityType, // the current entity type
-				iPredicateIndex,
-				aSegments = oContext.getPath().split("/");
-
-			/*
-			 * Logs and throws an error.
-			 * @param {string} sMessage The message
-			 * @param {string} [sErrorPath] An optional path for error messages
-			 */
-			function error(sMessage, sErrorPath) {
-				var sPath = oContext.getPath();
-
-				if (sErrorPath && sErrorPath !== sPath) {
-					sMessage = sMessage + " at " + sErrorPath;
-				}
-				logAndThrowError(sMessage, sPath);
+		return this.fetchUpdateData("", oContext).then(function (oResult) {
+			if (oResult.propertyPath) {
+				throw new Error("Context " + oContext.getPath()
+					+ " does not point to an entity. It should be " + oResult.entityPath);
 			}
-
-			/*
-			 * Fetches the canonical path of the containing entity
-			 * @param {number} iLength The path length
-			 * @returns {SyncPromise} A promise on the canonical path
-			 */
-			function fetchCanonicalPathOfContainingEntity(iLength) {
-				if (oEntitySet.$kind === "Singleton") {
-					return _SyncPromise.resolve(sEntitySetName);
-				}
-				return fetchKeyPredicate(iLength).then(function (sKeyPredicate) {
-					return sEntitySetName + sKeyPredicate;
-				});
-			}
-
-			/*
-			 * Fetches the key predicate for the absolute path from aSegments[0..iLength] using the
-			 * context.
-			 * @param {number} iLength The path length
-			 * @returns {SyncPromise} A Promise on the key predicate for that path
-			 */
-			function fetchKeyPredicate(iLength) {
-				var sSubPath = aSegments.slice(0, iLength).join("/");
-
-				return oContext.fetchAbsoluteValue(sSubPath).then(function (oEntityInstance) {
-					return keyPredicate(oEntityInstance, sSubPath);
-				});
-			}
-
-			/*
-			 * Calculates the key predicate using oEntityType and the given entity instance. Logs
-			 * an error if calculating the key predicate failed.
-			 * @param {object} oEntityInstance The entity instance
-			 * @param {string} [sPath] An optional path for error messages
-			 * @returns {string} The key predicate
-			 */
-			function keyPredicate(oEntityInstance, sPath) {
-				try {
-					return _Helper.getKeyPredicate(oEntityType, oEntityInstance);
-				} catch (e) {
-					error(e.message, sPath);
-				}
-			}
-
-			/*
-			 * Recursively processes the segments with navigation properties.
-			 * @param {number} i The segment to process next
-			 * @returns {String|SyncPromise} The canonical path or a promise on it
-			 */
-			function processSegment(i) {
-				var oNavigationProperty,
-					sNavigationPropertyName,
-					sSegment;
-
-				// recursion end
-				if (i === aSegments.length) {
-					if (sCandidate) {
-						return "/" + sCandidate;
-					}
-					if (oEntitySet.$kind === "Singleton") {
-						return "/" + sEntitySetName;
-					}
-					return oContext.fetchValue("").then(function (oEntityInstance) {
-						return "/" + sEntitySetName + keyPredicate(oEntityInstance);
-					});
-				}
-
-				sSegment = aSegments[i];
-				if (rNumber.test(sSegment)) {
-					// an index: if there is no entity set, it is a path to a contained entity;
-					// add the contained entity's key predicate
-					if (!oEntitySet) {
-						return fetchKeyPredicate(i + 1).then(function (sKeyPredicate) {
-							sCandidate += sKeyPredicate;
-							return processSegment(i + 1);
-						});
-					}
-					// ignore the index otherwise
-					return processSegment(i + 1);
-				}
-				iPredicateIndex = sSegment.indexOf("(");
-				sNavigationPropertyName = decodeURIComponent(
-					iPredicateIndex > 0 ? sSegment.slice(0, iPredicateIndex) : sSegment
-				);
-				oNavigationProperty = oEntityType[sNavigationPropertyName];
-				if (!oNavigationProperty || oNavigationProperty.$kind !== "NavigationProperty") {
-					error("Not a navigation property: " + sNavigationPropertyName);
-				}
-				if (!oEntitySet || (sCandidate && oNavigationProperty.$ContainsTarget)) {
-					// We're already processing contained entities or we start it and already have
-					// a candidate: simply append the segment
-					sCandidate += "/" + sSegment;
-					oEntityType = mScope[oNavigationProperty.$Type];
-					oEntitySet = undefined;
-					return processSegment(i + 1);
-				}
-				if (oNavigationProperty.$ContainsTarget) {
-					// a navigation property containing the target: calculate the canonical path of
-					// the containing entity, append the navigation property and remember it as
-					// candidate
-					return fetchCanonicalPathOfContainingEntity(i).then(function (sPath) {
-						sCandidate = sPath + "/" + sSegment;
-						oEntitySet = undefined;
-						oEntityType = mScope[oNavigationProperty.$Type];
-						return processSegment(i + 1);
-					});
-				}
-				// a navigation to an entity set
-				sEntitySetName = oEntitySet.$NavigationPropertyBinding[sNavigationPropertyName];
-				// remember the target's set name, set and type
-				oEntitySet = oEntityContainer[sEntitySetName];
-				oEntityType = mScope[oNavigationProperty.$Type];
-				sEntitySetName = encodeURIComponent(sEntitySetName);
-				// We have a candidate exactly if there is a predicate
-				sCandidate = iPredicateIndex > 0
-					? sEntitySetName + sSegment.slice(iPredicateIndex)
-					: undefined;
-				return processSegment(i + 1);
-			}
-
-			// Here we start: aSegments[0] is empty, aSegments[1] is an entity set or an entity
-			// instance (with key predicate), the other segments are navigation properties (poss.
-			// with key predicate) or indexes
-			iPredicateIndex = aSegments[1].indexOf("(");
-			if (iPredicateIndex > 0) {
-				sCandidate = aSegments[1];
-				sEntitySetName = sCandidate.slice(0, iPredicateIndex);
-			} else {
-				sEntitySetName = aSegments[1];
-			}
-			oEntitySet = oEntityContainer[decodeURIComponent(sEntitySetName)];
-			oEntityType = mScope[oEntitySet.$Type];
-
-			// now iterate over the navigation segments
-			return processSegment(2);
+			return "/" + oResult.editUrl;
 		});
 	};
 
@@ -852,7 +702,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests a module for the given <code>sModuleName<code>.
+	 * Requests a module for the given <code>sModuleName</code>.
 	 *
 	 * @param {string} sModuleName
 	 *   The name of the module to fetch (e.g. sap.ui.model.odata.type.Int16)
@@ -1305,6 +1155,150 @@ sap.ui.define([
 				return oType;
 			});
 			return oProperty["$ui5.type"];
+		});
+	};
+
+	/**
+	 * Fetches the paths and the edit URL required for the update of the given property.
+	 * Example: When called on a context with path "/SalesOrderList/0" and a property path
+	 * "SO_2_BP/CompanyName", it delivers the editUrl "BusinessPartnerList('42')", the
+	 * entityPath "/SalesOrderList/0/SO_2_BP" and the propertyPath "CompanyName".
+	 *
+	 * @param {string} sPropertyPath
+	 *   A path of a property in the OData data model, relative to <code>oContext</code>.
+	 * @param {sap.ui.model.odata.v4.Context} oContext
+	 *   A context
+	 * @returns {SyncPromise}
+	 *   A promise that gets resolved with an object having the following properties:
+	 *   <li>
+	 *    <ul><code>editUrl</code>: The edit URL or undefined if the entity is transient
+	 *    <ul><code>entityPath</code>: The resolved, absolute path of the entity to be PATCHed
+	 *    <ul><code>propertyPath</code>: The path of the property relative to the entity
+	 *   </li>
+	 *
+	 * @private
+	 */
+	ODataMetaModel.prototype.fetchUpdateData = function (sPropertyPath, oContext) {
+		var sResolvedPath = this.resolve(sPropertyPath, oContext),
+			that = this;
+
+		function error(sMessage) {
+			jQuery.sap.log.error(sMessage, sResolvedPath, sODataMetaModel);
+			throw new Error(sResolvedPath + ": " + sMessage);
+		}
+
+		// First fetch the complete metapath to ensure that everything is in mScope
+		// This also ensures that the metadata is valid
+		return this.fetchObject(this.getMetaPath(sResolvedPath)).then(function () {
+			// Then fetch mScope
+			return that.fetchEntityContainer();
+		}).then(function (mScope) {
+			var aEditUrl,        // The edit URL as array of segments (poss. with promises)
+				oEntityContainer = mScope[mScope.$EntityContainer],
+				sEntityPath,     // The absolute path to the entity for the PATCH (encoded)
+				oEntitySet,      // The entity set that starts the edit URL
+				sEntitySetName,  // The name of this entity set (decoded)
+				sInstancePath,   // The absolute path to the instance currently in evaluation
+			                     // (encoded; re-builds sResolvedPath)
+				sNavigationPath, // The relative meta path starting from oEntitySet (decoded)
+				//sPropertyPath, // The relative path following sEntityPath (parameter re-used -
+								 // encoded)
+				aSegments,       // The resource path split in segments
+				bTransient = false, // Whether there is a transient entity -> no edit URL available
+				oType;           // The type of the data at sInstancePath
+
+			// Replaces the last segment in aEditUrl with a a request to append the key predicate
+			// for oType and the instance at sInstancePath. Does not calculate it yet, because it
+			// might be replaced again later.
+			function prepareKeyPredicate() {
+				aEditUrl.push({path : sInstancePath, prefix : aEditUrl.pop(), type : oType});
+			}
+
+			// Determines the predicate from a segment (empty string if there is none)
+			function predicate(sSegment) {
+				var i = sSegment.indexOf("(");
+				return i >= 0 ? sSegment.slice(i) : "";
+			}
+
+			// Strips off the predicate from a segment
+			function stripPredicate(sSegment) {
+				var i = sSegment.indexOf("(");
+				return i >= 0 ? sSegment.slice(0, i) : sSegment;
+			}
+
+			aSegments = sResolvedPath.slice(1).split("/");
+			aEditUrl = [aSegments.shift()];
+			sInstancePath = "/" + aEditUrl[0];
+			sEntityPath = sInstancePath;
+			sEntitySetName = decodeURIComponent(stripPredicate(aEditUrl[0]));
+			oEntitySet = oEntityContainer[sEntitySetName];
+			if (!oEntitySet) {
+				error("Not an entity set: " + sEntitySetName);
+			}
+			oType = mScope[oEntitySet.$Type];
+			sPropertyPath = "";
+			sNavigationPath = "";
+			aSegments.forEach(function (sSegment) {
+				var oProperty, sPropertyName;
+
+				sInstancePath += "/" + sSegment;
+				if (rNumber.test(sSegment)) {
+					prepareKeyPredicate();
+					sEntityPath += "/" + sSegment;
+				} else {
+					sPropertyName = decodeURIComponent(stripPredicate(sSegment));
+					sNavigationPath = _Helper.buildPath(sNavigationPath, sPropertyName);
+					oProperty = oType[sPropertyName];
+					if (!oProperty) {
+						error("Not a (navigation) property: " + sPropertyName);
+					}
+					oType = mScope[oProperty.$Type];
+					if (oProperty.$kind === "NavigationProperty") {
+						if (sNavigationPath in oEntitySet.$NavigationPropertyBinding) {
+							sEntitySetName = oEntitySet.$NavigationPropertyBinding[sNavigationPath];
+							oEntitySet = oEntityContainer[sEntitySetName];
+							sNavigationPath = "";
+							aEditUrl = [encodeURIComponent(sEntitySetName) + predicate(sSegment)];
+							// A target at a :n navigation property gets its predicate either from
+							// the line above or from a subsequent index segment
+							if (!oProperty.$isCollection) {
+								// A :1 navigation property identifies the target, the set however
+								// doesn't -> add the predicate
+								// Example: EMPLOYEES('1')/EMPLOYEE_2_TEAM -> TEAMS('A')
+								prepareKeyPredicate();
+							}
+						} else {
+							aEditUrl.push(sSegment);
+						}
+						sEntityPath = sInstancePath;
+						sPropertyPath = "";
+					} else {
+						sPropertyPath = _Helper.buildPath(sPropertyPath, sSegment);
+					}
+				}
+			});
+			// aEditUrl may still contain key predicate requests, run them and wait for the promises
+			return _SyncPromise.all(aEditUrl.map(function (vSegment) {
+				if (typeof vSegment === "string") {
+					return vSegment;
+				}
+				// calculate the key predicate asynchronously and append it to the prefix
+				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
+					if (oEntity && ("@$ui5.transient" in oEntity)) {
+						bTransient = true;
+						return undefined;
+					}
+					return vSegment.prefix + _Helper.getKeyPredicate(vSegment.type, oEntity);
+				}).catch(function (oError) { // enrich the error message with the path
+					error(oError.message + " at " + vSegment.path);
+				});
+			})).then(function (aFinalEditUrl) {
+				return {
+					editUrl : bTransient ? undefined : aFinalEditUrl.join("/"),
+					entityPath : sEntityPath,
+					propertyPath : sPropertyPath
+				};
+			});
 		});
 	};
 

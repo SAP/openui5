@@ -8,7 +8,8 @@
 		xmlns:l="sap.ui.layout"
 		xmlns:f="sap.ui.layout.form"
 		xmlns:tools="sap.ui.codeeditor"
-		xmlns:mvc="sap.ui.core.mvc">
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:t="sap.ui.table">
 	<m:NavContainer
 		id="rulesNavContainer"
 		afterNavigate="onAfterNavigate">
@@ -35,18 +36,47 @@
 					</m:headerContent>
 					<m:subHeader>
 						<m:Bar >
-							<m:contentLeft>
-								<m:Button  text="Select all" press="selectAll" visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"/>
-								<m:Button  text="Deselect all" press="deselectAll" visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"/>
-							</m:contentLeft>
 							<m:contentRight>
 								<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
 								</m:contentRight>
 							</m:Bar>
 							</m:subHeader>
-					<l:VerticalLayout id="ruleSetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'availableRules' }">
-
-					</l:VerticalLayout>
+						<t:TreeTable
+								id="ruleList"
+								selectionMode="Multi"
+								enableColumnReordering="false"
+								expandFirstLevel="true"
+								rows="{path: '/treeViewModel'}"
+								cellClick="onCellClick"
+								rowHeight="24"
+								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
+								visibleRowCountMode="Auto"
+								selectionBehavior="RowSelector">
+							<t:columns>
+								<t:Column label="Rules">
+									<t:template>
+										<m:Text text="{name}"></m:Text>
+									</t:template>
+								</t:Column>
+								<t:Column label="Categories"
+										  width="10rem">
+									<t:template>
+										<m:Text text="{categories}"></m:Text>
+									</t:template>
+								</t:Column>
+								<t:Column width="60px" label="Actions">
+								<t:template>
+									<t:RowAction>
+										<t:items>
+										<t:RowActionItem icon="sap-icon://edit" press="editRule"  visible="{= ${libName} === 'temporary'}"></t:RowActionItem>
+										<t:RowActionItem icon="sap-icon://delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}"></t:RowActionItem>
+										<t:RowActionItem icon="sap-icon://copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}"></t:RowActionItem>
+										</t:items>
+									</t:RowAction>
+								</t:template>
+								</t:Column>
+							</t:columns>
+						</t:TreeTable>
 					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'availableLibraries' }">
 						<m:List
 							id="availableLibrariesSet"
@@ -63,23 +93,23 @@
 				</m:Page>
 				<m:Page showHeader="false">
 					<m:Bar>
-						<m:contentLeft>
-							<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" titleStyle="H6" class="customMarginLeft" />
+						<m:contentLeft >
+							<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined}" titleStyle="H6" class="customMarginLeft" />
 						</m:contentLeft>
 						<m:contentMiddle>
 							<m:IconTabHeader
 									selectedKey="{/selectedRulePreviewKey}"
 									class="customIconTabHeader">
 								<m:items>
-									<m:IconTabFilter key="ruleProperties" text="Rule properties" />
-									<m:IconTabFilter key="checkFunction" text="Check function" />
-									<m:IconTabFilter key="jsonOutput" text="Code" />
+									<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="ruleProperties" text="Rule properties" />
+									<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="checkFunction" text="Check function" />
+									<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="jsonOutput" text="Code" />
 								</m:items>
 							</m:IconTabHeader>
 						</m:contentMiddle>
 					</m:Bar>
 					<f:SimpleForm
-							visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' }">
+							visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined}">
 						<f:content>
 							<m:Label text="ID" />
 							<m:Text text="{/selectedRule/id}" />
@@ -98,7 +128,9 @@
 							<m:Label text="Resolution URLs" />
 							<l:VerticalLayout
 									content="{/selectedRule/resolutionurls}">
-								<m:Link text="{text}" />
+								<m:Link target="_blank"
+										text="{text}"
+										href="{href}"/>
 							</l:VerticalLayout>
 						</f:content>
 						<f:layoutData><l:SplitterLayoutData size="40%" /></f:layoutData>
@@ -177,16 +209,18 @@
 						<m:TextArea value="{/editRule/description}"  required = "true"/>
 						<m:Label text="Resolution" />
 						<m:TextArea value="{/editRule/resolution}"  required = "true"/>
+						<m:Label text="Min version" />
+						<m:TextArea value="{/editRule/minversion}"  required = "true"/>
 						<m:Label text="Resolution URLS" />
 						<l:VerticalLayout>
 							<l:HorizontalLayout>
 								<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
 								<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
-								<m:Button text="Add" press="addLinkToEditRule" icon="sap-icon://add" />
+								<m:Button text="Add Link" press="addLinkToRule" icon="sap-icon://add" />
 							</l:HorizontalLayout>
 							<l:VerticalLayout
 									content="{/editRule/resolutionurls}">
-								<m:Link text="{text}" />
+								<m:Link text="{text}" href="{href}" target="_blank"/>
 							</l:VerticalLayout>
 						</l:VerticalLayout>
 					</f:content>
@@ -270,12 +304,14 @@
 						<m:TextArea value="{/newRule/description}"  required = "true"/>
 						<m:Label text="Resolution" />
 						<m:TextArea value="{/newRule/resolution}"  required = "true"/>
+						<m:Label text="Min version" />
+						<m:TextArea value="{/newRule/minversion}"  required = "true"/>
 						<m:Label text="Resolution URLS" />
 						<l:VerticalLayout>
 							<l:HorizontalLayout>
 								<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
 								<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
-								<m:Button text="Add" press="addLinkToNewRule" icon="sap-icon://add" />
+								<m:Button text="Add" press="addLinkToRule" icon="sap-icon://add" />
 							</l:HorizontalLayout>
 							<l:VerticalLayout
 									content="{/newRule/resolutionurls}">

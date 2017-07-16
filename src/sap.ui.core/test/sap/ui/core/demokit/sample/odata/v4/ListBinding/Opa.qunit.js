@@ -24,7 +24,7 @@ sap.ui.require([
 		Then.onTheMainPage.checkEmployeeNameInRow(0, "Walter\"s Win's");
 		When.onTheMainPage.selectFirstEmployee();
 		Then.onTheMainPage.checkEmployeeEquipmentInRow(0, "Office PC");
-		Then.onTheMainPage.checkLog();
+		Then.onAnyPage.checkLog();
 		Then.iTeardownMyUIComponent();
 	});
 });

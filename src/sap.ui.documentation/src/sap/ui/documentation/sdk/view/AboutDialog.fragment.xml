@@ -17,27 +17,27 @@
 			<Page
 				id="aboutMaster"
 				title="About">
-				<l:VerticalLayout class="sapUiSmallMargin">
-					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/logo_sapui5.png" width="100%" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
-					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/sap_logo.png" width="100%" class="sapUiSmallMarginBottom" visible="{appView>/isOpenUI5}"/>
+				<VBox class="sapUiSmallMargin">
+					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/Logo_B_SAPUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
+					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/Logo_B_OpenUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{appView>/isOpenUI5}"/>
 					<Text text="UI5 Demo Kit - UI Development Toolkit for HTML5" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
 					<Text text="© Copyright 2009-2017 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
 					<Text text="© 2009-2017 SAP SE or an SAP affiliate company." visible="{appView>/isOpenUI5}"/>
-					<l:HorizontalLayout class="sapUiMediumMarginBottom" visible="{appView>/isOpenUI5}" allowWrapping="true">
+					<HBox class="sapUiMediumMarginBottom" visible="{appView>/isOpenUI5}" allowWrapping="true">
 						<Text text="Licensed under the Apache License, Version 2.0 – see"/>
 						<Link text="LICENSE.txt" href="LICENSE.txt" target="_blank" class="aboutLink"/>
-					</l:HorizontalLayout>
+					</HBox>
 					<Text text="UI5 Version {appView>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
 					<Text text="This software includes the folloing library versions"/>
-					<l:HorizontalLayout class="sapUiSmallMarginBottom" allowWrapping="true">
+					<HBox class="sapUiSmallMarginBottom" allowWrapping="true">
 						<Text text="(a full change log for all libraries can be found"/>
 						<Link text="here" href="releasenotes.html" target="_blank" class="aboutLink"/>
 						<Text text=")."/>
-					</l:HorizontalLayout>
+					</HBox>
 					<Link text="Version Details" press="onAboutVersionDetails" class="sapUiMediumMarginBottom"/>
 					<Text text="This software includes third-party open source software." class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
 					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
-				</l:VerticalLayout>
+				</VBox>
 			</Page>
 			<Page
 				id="aboutDetail"

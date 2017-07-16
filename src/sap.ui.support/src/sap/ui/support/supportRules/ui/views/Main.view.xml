@@ -19,7 +19,7 @@
 				<Bar class="sapContrast" design="SubHeader">
 					<contentLeft>
 						<!--<c:Icon src="sap-icon://sap-ui5" />-->
-						<Image src="../ui/images/icon_white_19x15_blue.png"></Image>
+						<Image src="../ui/images/Logo_O_22x22.png"></Image>
 						<Text text="{/constants/SUPPORT_ASSISTANT_NAME}" class="STCustomHeaderInfo" />
 					</contentLeft>
 
@@ -57,7 +57,7 @@
 
 					<contentRight>
 						<Button text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis"/>
-						<Button text="{= 'Issues (' + ${/issues}.length + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
+						<Button text="{= 'Issues (' + ${/issuesCount} + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
 
 						<c:Icon src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon"/>
 
@@ -73,8 +73,7 @@
 
 			<l:flexContent>
 				<NavContainer
-					id="navCon"
-					afterNavigate="onNavConAfterNavigate">
+					id="navCon">
 					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis"></mvc:XMLView>
 					<mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues"></mvc:XMLView>
 				</NavContainer>

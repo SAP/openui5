@@ -133,12 +133,29 @@ sap.ui.define([
 
 	};
 
+
+	/**
+	 * Loads the settings.
+	 * The settings is actually an empty object and is required for mocking the customer/vendor based process.
+	 *
+	 * @returns {Promise} Returns a Promise with an empty object as current settings
+	 * @public
+	 */
+	FakeLrepConnectorLocalStorage.prototype.loadSettings = function() {
+
+		return new Promise(function(resolve, reject){
+			var oSettings = {};
+			resolve(oSettings);
+		});
+
+	};
+
 	/**
 	 * Enables fake LRep connector.
 	 *
-	 * Hooks into the @link {sap.ui.fl.LrepConnector.createConnector} factory function to enable the fake LRep connector.
-	 * If the <code>sAppComponentName<code> is provided, replaces the connector instance of corresponding @link {sap.ui.fl.ChangePersistence} by a fake one.
-	 * After enabling fake LRep connector, function @link {sap.ui.fl.FakeLrepConnectorLocalStorage.disableFakeConnector} must be called to restore the original connector.
+	 * Hooks into the {@link sap.ui.fl.LrepConnector.createConnector} factory function to enable the fake LRep connector.
+	 * If the <code>sAppComponentName</code> is provided, replaces the connector instance of corresponding {@link sap.ui.fl.ChangePersistence} by a fake one.
+	 * After enabling fake LRep connector, function {@link sap.ui.fl.FakeLrepConnectorLocalStorage.disableFakeConnector} must be called to restore the original connector.
 	 *
 	 * @param {object} [mSettings] - map of FakeLrepConnector settings
 	 * @param {string} [sAppComponentName] - Name of application component to overwrite the existing LRep connector
@@ -180,8 +197,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Restores the original @link {sap.ui.fl.LrepConnector.createConnector} factory function.
-	 * If the <code>sAppComponentName<code> is provided, restores the connector instance of corresponding @link {sap.ui.fl.ChangePersistence} by the original one.
+	 * Restores the original {@link sap.ui.fl.LrepConnector.createConnector} factory function.
+	 * If the <code>sAppComponentName</code> is provided, restores the connector instance of corresponding {@link sap.ui.fl.ChangePersistence} by the original one.
 	 *
 	 * @param {string} [sAppComponentName] - Name of application component to restore the original LRep connector
 	 * @param {string} [sAppVersion] - Version of application to restore the original LRep connector

@@ -17,14 +17,12 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
 
 	(function() {
 		/**
-		 * Renders the HTML for the given control, using the provided
+		 * Renders the HTML for the given control, using the provided.
 		 * {@link sap.ui.core.RenderManager}.
 		 *
-		 * @param {sap.ui.core.RenderManager}
-		 *            oRenderManager the RenderManager that can be used for writing
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing
 		 *            to the Render-Output-Buffer
-		 * @param {sap.ui.core.Control}
-		 *            oControl an object representation of the control that should
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should
 		 *            be rendered
 		 */
 		BorderLayoutRenderer.render = function(oRm, oControl) {

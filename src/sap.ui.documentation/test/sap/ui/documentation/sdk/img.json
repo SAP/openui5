@@ -1,0 +1,19 @@
+{
+	"products": {
+		"pic1": "test-resources/sap/ui/documentation/sdk/images/HT-7777-large.jpg",
+		"pic2": "test-resources/sap/ui/documentation/sdk/images/HT-6120-large.jpg",
+		"pic3": "test-resources/sap/ui/documentation/sdk/images/HT-6100-large.jpg",
+		"screw": "test-resources/sap/ui/documentation/sdk/images/screw.jpg"
+	},
+	"images": [
+		"test-resources/sap/ui/documentation/sdk/images/bigimgs/273303_low_jpg_srgb.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/bigimgs/273537_low_jpg_srgb.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/bigimgs/274731_high_jpg_eci_rgb.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/HT-1603.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/HT-2002.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/HT-2020.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/HT-2025.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/HT-2026.jpg",
+		"test-resources/sap/ui/documentation/sdk/images/HT-2027.jpg"
+	]
+}

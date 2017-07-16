@@ -108,7 +108,7 @@ sap.ui.define([
 			this.getView().getModel().resetChanges();
 		},
 
-		onCancelSalesOrderSchedules : function (oEvent) {
+		onCloseSalesOrderSchedules : function (oEvent) {
 			this.getView().byId("SalesOrderSchedulesDialog").close();
 		},
 
@@ -217,6 +217,7 @@ sap.ui.define([
 			});
 
 			this._setSalesOrderLineItemBindingContext(oContext);
+			oView.getModel("ui").setProperty("/bCreateItemPending", true);
 
 			// Note: this promise fails only if the transient entity is deleted
 			oContext.created().then(function () {
@@ -225,9 +226,11 @@ sap.ui.define([
 				// What we need would be a complete refresh for the selected sales order and all its
 				// dependents
 				// that._setSalesOrderLineItemBindingContext(oContext);
+				oView.getModel("ui").setProperty("/bCreateItemPending", false);
 				MessageBox.success("Line item created: " + oContext.getProperty("ItemPosition"));
 			}, function (oError) {
-				// delete of transient entity, nothing to do
+				// delete of transient entity
+				oView.getModel("ui").setProperty("/bCreateItemPending", false);
 			});
 		},
 
@@ -351,7 +354,6 @@ sap.ui.define([
 			oBinding.filter(sQuery
 				? new Filter("GrossAmount", FilterOperator.GT, sQuery)
 				: null);
-			this._setSalesOrderBindingContext();
 		},
 
 		onFilterItems : function (oEvent) {
@@ -456,11 +458,6 @@ sap.ui.define([
 		},
 
 		onSaveSalesOrder : function () {
-			this.submitBatch("SalesOrderUpdateGroup");
-		},
-
-		onSaveSalesOrderSchedules : function () {
-			this.getView().byId("SalesOrderSchedulesDialog").close();
 			this.submitBatch("SalesOrderUpdateGroup");
 		},
 

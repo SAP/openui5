@@ -4,19 +4,38 @@
 
 // Provides control sap.m.MessageStrip.
 sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./MessageStripUtilities",
-	"./Text", "./Link"], function (jQuery, library, Control, MSUtils, Text, Link) {
+	"./Text", "./Link", "./FormattedText"], function (jQuery, library, Control, MSUtils, Text, Link, FormattedText) {
 	"use strict";
 
 	/**
 	 * Constructor for a new MessageStrip.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * MessageStrip is a control that enables the embedding of application-related messages in the application.
-	 * There are 4 types of messages: Information, Success, Warning and Error.
+	 * <h3>Overview</h3>
+	 * The message strip displays 4 types of messages, each with a corresponding semantic color and icon: Information, Success, Warning and Error.
+	 *
 	 * Each message can have a close button, so that it can be removed from the UI if needed.
+	 *
+	 * With version 1.50 you can use a limited set of formatting tags for the message text by setting <code>enableFormattedText</code>. The allowed tags are:
+	 * <ul>
+	 * <li>&lt;a&gt;</li>
+	 * <li>&lt;em&gt;</li>
+	 * <li>&lt;strong&gt;</li>
+	 * <li>&lt;u&gt;</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You want to provide information or status update within the detail area of an object</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>You want to display information within the object page header, within a control, in the master list, or above the page header.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -59,7 +78,23 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 				/**
 				 * Determines if the message has a close button in the upper right corner.
 				 */
-				showCloseButton: { type: "boolean", group: "Appearance", defaultValue: false }
+				showCloseButton: { type: "boolean", group: "Appearance", defaultValue: false },
+
+				/**
+				 * Determines the limited collection of HTML elements passed to the <code>text</code> property should be
+				 * evaluated.
+				 *
+				 * <b>Note:</b> If this property is set to true the string passed to <code>text</code> property
+				 * can evaluate the following list of limited HTML elements. All other HTML elements and their nested
+				 * content will not be rendered by the control:
+				 * <ul>
+				 *	<li><code>a</code></li>
+				 *	<li><code>em</code></li>
+				 *	<li><code>strong</code></li>
+				 *	<li><code>u</code></li>
+				 * </ul>
+				 */
+				enableFormattedText: { type: "boolean", group: "Appearance", defaultValue: false }
 			},
 			defaultAggregation: "link",
 			aggregations: {
@@ -68,6 +103,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 				 * Adds an sap.m.Link control which will be displayed at the end of the message.
 				 */
 				link: { type: "sap.m.Link", multiple: false, singularName: "link" },
+
+				/**
+				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
+				 * @private
+				 */
+				_formattedText: { type: "sap.m.FormattedText", multiple: false, visibility: "hidden" },
 
 				/**
 				 * Hidden aggregation which is used to transform the string message into sap.m.Text control.
@@ -97,8 +138,16 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * @returns {sap.m.MessageStrip} this to allow method chaining
 	 */
 	MessageStrip.prototype.setText = function (sText) {
+		// Update the internal FormattedText control if needed
+		var oFormattedText = this.getAggregation("_formattedText");
+		if (oFormattedText) {
+			oFormattedText.setHtmlText(sText);
+		}
+
+		// Update the internal text control
 		this.getAggregation("_text").setText(sText);
-		return this.setProperty("text", sText, true);
+
+		return this.setProperty("text", sText);
 	};
 
 	/**
@@ -115,6 +164,22 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 		}
 
 		return this.setProperty("type", sType);
+	};
+
+	MessageStrip.prototype.setEnableFormattedText = function (bEnable) {
+		var oFormattedText  = this.getAggregation("_formattedText");
+
+		if (bEnable) {
+			if (!oFormattedText) {
+				oFormattedText = new FormattedText();
+				oFormattedText._setUseLimitedRenderingRules(true);
+				this.setAggregation("_formattedText", oFormattedText);
+			}
+			// Aways call setHtmlText - do not use a constructor property to avoid unwanted warnings for HTML elements
+			oFormattedText.setHtmlText(this.getText());
+		}
+
+		return this.setProperty("enableFormattedText", bEnable);
 	};
 
 	MessageStrip.prototype.setAggregation = function (sName, oControl, bSupressInvalidate) {

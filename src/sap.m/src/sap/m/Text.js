@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Text
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device'],
+	function(jQuery, library, Control, Device) {
 	"use strict";
 
 	/**
@@ -65,7 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * Limits the number of lines for wrapping texts.
 			 *
-			 * Note: The multi-line overflow indicator depends on the browser line clamping support. For such browsers, this will be shown as ellipsis, for the other browsers the overflow will just be hidden.
+			 * <b>Note:</b> In multi-line text the overflow will be hidden (ellipsis won't be shown).
 			 * @since 1.13.2
 			 */
 			maxLines : {type : "int", group : "Appearance", defaultValue : null}
@@ -80,13 +80,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * It is better to define line-height in CSS instead of "normal" to get consistent maxLines results since normal line-height
 	 * not only varies from browser to browser but they also vary from one font face to another and can also vary within a given face.
 	 *
-	 * Default value is 1.2
-	 *
 	 * @since 1.22
 	 * @protected
 	 * @type {number}
 	 */
-	Text.prototype.normalLineHeight = 1.2;
+	Text.prototype.normalLineHeight = Device.browser.webkit ? 1 : 1.2;
 
 	/**
 	 * Determines per instance whether line height should be cached or not.

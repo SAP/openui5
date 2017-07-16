@@ -127,6 +127,7 @@
 				var oFormOverlay = OverlayRegistry.getOverlay(oForm);
 				var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
 				oForm.getFormContainers()[0].removeAllFormElements();
+				this.oSimpleForm.removeContent(oForm.getAggregation("formContainers")[0].getTitle())
 				assert.equal(fnGetIndex(oForm), 0, "then the new index should be 0");
 			});
 

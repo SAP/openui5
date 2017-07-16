@@ -72,7 +72,6 @@
 												id="categorySelection"
 												items="{/groups}"
 												class=" sapUiTinyMarginEnd"
-												placeholder="{i18n>overviewSelectCategoryPlaceholder}"
 												tooltip="{i18n>overviewSelectCategoryTooltip}"
 												change="onSelectCategory"
 												visible="{= ${device>/system/phone} ? false : true}"
@@ -192,6 +191,8 @@
 														<Button icon="sap-icon://{name}" type="Emphasized"/>
 													</OverflowToolbar>
 												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+											<l:BlockLayoutRow>
 												<l:BlockLayoutCell>
 													<StandardListItem
 														id="previewListItem"
@@ -220,33 +221,35 @@
 														</content>
 													</IconTabBar>
 												</l:BlockLayoutCell>
+											</l:BlockLayoutRow>
+											<l:BlockLayoutRow>
 												<l:BlockLayoutCell>
 													<GenericTile
-															id="previewGenericTile"
-															header="GenericTile"
-															class="previewGenericTile"
-															subheader="with Icon">
+														id="previewGenericTile"
+														header="GenericTile"
+														class="previewGenericTile"
+														subheader="with Icon">
 														<tileContent>
 															<TileContent footer="Footer">
 																<content>
 																	<NumericContent
-																		value="42"
-																		scale="EUR"
-																		valueColor="Neutral"
-																		indicator="Up"
-																		state="Loaded"
-																		icon="sap-icon://{name}"/>
+																			value="42"
+																			scale="EUR"
+																			valueColor="Neutral"
+																			indicator="Up"
+																			state="Loaded"
+																			icon="sap-icon://{name}"/>
 																</content>
 															</TileContent>
 														</tileContent>
 													</GenericTile>
 												</l:BlockLayoutCell>
 												<l:BlockLayoutCell>
-														<f:Avatar
-															src="sap-icon://{name}"
-															displaySize="L"
-															class="sapUiTinyMarginBottom"/>
-														<Text width="100%" textAlign="Center" text="Avatar"/>
+													<f:Avatar
+														src="sap-icon://{name}"
+														displaySize="L"
+														class="sapUiTinyMarginBottom"/>
+													<Text width="100%" textAlign="Center" text="Avatar"/>
 												</l:BlockLayoutCell>
 											</l:BlockLayoutRow>
 										</l:BlockLayout>
@@ -262,7 +265,8 @@
 												path: 'tags',
 												templateShareable: true
 											}"
-											editable="false">
+											editable="false"
+											class="tagsArea" >
 											<Token text="{name}" press="onTagSelect"/>
 										</Tokenizer>
 									</Panel>
@@ -284,6 +288,13 @@
 				tooltip="{i18n>overviewRandomIconButtonTooltip}"
 				icon="sap-icon://activate"
 				press="onSurpriseMe"/>
+			<Button
+				id="download"
+				visible="{= ${device>/system/phone} ? false : true}"
+				text="{i18n>overviewDownloadButtonTitle}"
+				tooltip="{i18n>overviewDownloadButtonTooltip}"
+				icon="sap-icon://download"
+				press="onDownload"/>
 		</semantic:customHeaderContent>
 
 	</semantic:FullscreenPage>

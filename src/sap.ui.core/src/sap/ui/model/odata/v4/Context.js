@@ -80,7 +80,7 @@ sap.ui.define([
 	 *   that the values are not available yet ({@link #getProperty} and {@link #getObject}) or
 	 *   asynchronously ({@link #requestProperty} and {@link #requestObject}).
 	 *
-	 *   Context instances are immutable.
+	 *   Context instances are immutable except for their indexes.
 	 * @extends sap.ui.model.Context
 	 * @public
 	 * @since 1.39.0
@@ -201,22 +201,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Delegates to the <code>fetchAbsoluteValue</code> method of this context's binding which
-	 * requests the value for the given absolute path including the query string as maintained by
-	 * that binding.
-	 *
-	 * @param {string} sPath
-	 *   An absolute path including a query string
-	 * @returns {SyncPromise}
-	 *   A promise on the outcome of the binding's <code>fetchAbsoluteValue</code> call
-	 *
-	 * @private
-	 */
-	Context.prototype.fetchAbsoluteValue = function (sPath) {
-		return this.oBinding.fetchAbsoluteValue(sPath);
-	};
-
-	/**
 	 * Returns a promise for the "canonical path" of the entity for this context.
 	 *
 	 * @returns {SyncPromise}
@@ -232,10 +216,10 @@ sap.ui.define([
 
 	/**
 	 * Delegates to the <code>fetchValue</code> method of this context's binding which requests
-	 * the value for the given path, relative to this context, as maintained by that binding.
+	 * the value for the given path. A relative path is assumed to be relative to this context.
 	 *
 	 * @param {string} [sPath]
-	 *   A relative path within the JSON structure
+	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
 	 * @returns {SyncPromise}
@@ -244,9 +228,15 @@ sap.ui.define([
 	 * @private
 	 */
 	Context.prototype.fetchValue = function (sPath, oListener) {
-		return this.iIndex === -2
-			? _SyncPromise.resolve()
-			: this.oBinding.fetchValue(sPath, oListener, this.iIndex);
+		if (this.iIndex === -2) {
+			return _SyncPromise.resolve(); // no cache access for virtual contexts
+		}
+		// Create an absolute path based on the context's path to ensure that fetchValue uses key
+		// predicates if the context does. Then the path to register the listener in the cache is
+		// the same that is used for an update and the update notifies the listener.
+		return this.oBinding.fetchValue(
+			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
+			oListener);
 	};
 
 	/**
@@ -520,6 +510,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the context's index.
+	 *
+	 * @param {number} iIndex
+	 *   The new index
+	 *
+	 * @private
+	 */
+	Context.prototype.setIndex = function (iIndex) {
+		this.iIndex = iIndex;
+	};
+
+	/**
 	 * Returns a string representation of this object including the binding path.
 	 *
 	 * @return {string} A string description of this binding
@@ -533,49 +535,6 @@ sap.ui.define([
 			sIndex = "[" + this.iIndex + (this.isTransient() ? "|transient" : "") + "]";
 		}
 		return this.sPath + sIndex;
-	};
-
-	/**
-	 * Delegates to the <code>updateValue</code> method of this context's binding which updates the
-	 * value for the given path, relative to this context, as maintained by that binding.
-	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for this update call.
-	 * @param {string} sPropertyName
-	 *   Name of property to update
-	 * @param {any} vValue
-	 *   The new value
-	 * @param {function} fnErrorCallback
-	 *   A function which is called with an Error object each time a PATCH request fails
-	 * @param {string} [sEditUrl]
-	 *   The edit URL corresponding to the entity to be updated
-	 * @param {string} [sPath]
-	 *   Some relative path
-	 * @returns {Promise}
-	 *   A promise on the outcome of the binding's <code>updateValue</code> call
-	 *
-	 * @private
-	 */
-	Context.prototype.updateValue = function (sGroupId, sPropertyName, vValue, fnErrorCallback,
-			sEditUrl, sPath) {
-		var that = this;
-
-		// Note: iIndex === -2 will fail with "No instance to calculate key predicate" below
-		sPath = _Helper.buildPath(this.iIndex, sPath);
-
-		if (this.isTransient()) {
-			// Note: must not be falsy, otherwise a parent context would insert its own edit URL
-			sEditUrl = "n/a";
-		}
-		if (sEditUrl) {
-			return this.oBinding.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback,
-				sEditUrl, sPath);
-		}
-
-		return this.fetchCanonicalPath().then(function (sEditUrl) {
-			return that.oBinding.updateValue(sGroupId, sPropertyName, vValue, fnErrorCallback,
-				sEditUrl.slice(1), sPath);
-		});
 	};
 
 	return {

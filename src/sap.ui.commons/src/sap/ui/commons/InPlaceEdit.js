@@ -609,6 +609,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
+		 * @returns {Object} Current accessibility state of the control.
 		 * @protected
 		 */
 		InPlaceEdit.prototype.getAccessibilityInfo = function() {
@@ -805,8 +806,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		function iconForUndoButton(oInPlaceEdit){
 
 			if (oInPlaceEdit._oUndoButton) {
-				var sIcon = Parameters._getThemeImage('sapUiIpeUndoImageURL');
-				var sIconHovered = Parameters._getThemeImage('sapUiIpeUndoImageDownURL');
+				var sIcon = Parameters._getThemeImage('_sap_ui_commons_InPlaceEdit_UndoImageURL');
+				var sIconHovered = Parameters._getThemeImage('_sap_ui_commons_InPlaceEdit_UndoImageDownURL');
 				if (!sIcon) {
 					sIcon = "sap-icon://decline";
 				}
@@ -878,8 +879,8 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 		function iconForEditButton(oInPlaceEdit){
 
 			if (oInPlaceEdit._oEditButton) {
-				var sIcon = Parameters._getThemeImage('sapUiIpeEditImageURL');
-				var sIconHovered = Parameters._getThemeImage('sapUiIpeEditImageDownURL');
+				var sIcon = Parameters._getThemeImage('_sap_ui_commons_InPlaceEdit_EditImageURL');
+				var sIconHovered = Parameters._getThemeImage('_sap_ui_commons_InPlaceEdit_EditImageDownURL');
 				if (!sIcon) {
 					sIcon = "sap-icon://edit";
 				}

@@ -205,6 +205,32 @@
 		assert.strictEqual(bPassedArg, true, "should pass true as argument");
 	});
 
+	QUnit.test("triggeredByInteraction when setting expanded by a setter", function(assert) {
+		var bPassedArg,
+			fnEventSpy = sinon.spy(function (oEvent) {
+				bPassedArg = oEvent.getParameter('triggeredByInteraction');
+			});
+
+		this.createPanel({ expanded: false });
+		this.oPanel.attachExpand(fnEventSpy);
+		this.oPanel.setExpanded(true);
+
+		assert.notOk(bPassedArg, "Event should be triggered by a setter");
+	});
+
+	QUnit.test("triggeredByInteraction when setting expanded by an user interaction", function(assert) {
+		var bPassedArg,
+			fnEventSpy = sinon.spy(function (oEvent) {
+				bPassedArg = oEvent.getParameter('triggeredByInteraction');
+			});
+
+		this.createPanel({ expanded: false });
+		this.oPanel.attachExpand(fnEventSpy);
+		this.oPanel._getIcon().firePress();
+
+		assert.ok(bPassedArg, "Event should be triggered by an user interaction");
+	});
+
 	QUnit.module("Rendering", {
 		beforeEach: function () {
 			this.oPanel = new sap.m.Panel({

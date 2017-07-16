@@ -1,0 +1,33 @@
+<core:FragmentDefinition 
+    xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1" 
+    xmlns:m="sap.m" 
+    xmlns:core="sap.ui.core">
+    <m:VBox>
+        <m:HBox>
+            <template:if test="{= ${this>textFirst} === 'x'}">
+                <template:then>
+                    <m:Text id="FC_textIfTextFirst" text="{$this>text}" width="10rem" class="sapUiSmallMarginTop"/>
+                    <m:Input id="FC_inputIfTextFirst" value="{$this>value}" width="10rem" />
+                </template:then>
+                <template:else>
+                    <m:Input id="FC_textThenTextFirst" value="{$this>value}" width="10rem" />
+                    <m:Text id="FC_inputThenTextFirst" text="{$this>text}" width="10rem" class="sapUiSmallMarginTop"/>
+                </template:else>
+            </template:if>
+        </m:HBox>
+        <template:if test="{= ${this>desktop}  === 'x'}">
+            <template:then>
+                <m:Text id="FC_textIfDesktop" text="This is a Desktop ..." width="10rem" />
+            </template:then>
+        </template:if>
+        <template:if test="{= ${this>tablet}  === 'x'}">
+            <template:then>
+                <m:Text id="FC_textIfTablet" text="This is a Desktop ..." width="10rem" />
+            </template:then>
+        </template:if>
+        <m:Text id="FC_text0" text="pre-processing desktop ... {this>desktop}" />
+        <m:Text id="FC_text1" text="pre-processing tablet ... {this>tablet}" />
+        <m:Text id="FC_text2" text="runtime desktop ... {$this>desktop}" />
+        <m:Text id="FC_text3" text="runtime tablet ... {$this>tablet}" />
+    </m:VBox>
+</core:FragmentDefinition>

@@ -123,17 +123,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue", function (assert) {
+	[undefined, "bar"].forEach(function (sPath) {
+		QUnit.test("fetchValue, relative", function (assert) {
+			var oBinding = {
+					fetchValue : function () {}
+				},
+				oContext = Context.create(null, oBinding, "/foo", 42),
+				oListener = {},
+				oResult = {};
+
+			this.mock(_Helper).expects("buildPath").withExactArgs("/foo", sPath).returns("/~");
+			this.mock(oBinding).expects("fetchValue")
+				.withExactArgs("/~", sinon.match.same(oListener))
+				.returns(oResult);
+
+			assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: /bar", function (assert) {
 		var oBinding = {
 				fetchValue : function () {}
 			},
 			oContext = Context.create(null, oBinding, "/foo", 42),
 			oListener = {},
 			oResult = {},
-			sPath = "bar";
+			sPath = "/bar";
 
 		this.mock(oBinding).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener), 42)
+			.withExactArgs(sPath, sinon.match.same(oListener))
 			.returns(oResult);
 
 		assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
@@ -149,20 +168,6 @@ sap.ui.require([
 
 		assert.strictEqual(oResult.isFulfilled(), true);
 		assert.strictEqual(oResult.getResult(), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchAbsoluteValue", function (assert) {
-		var oBinding = {
-				fetchAbsoluteValue : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 42),
-			oResult = {},
-			sPath = "bar";
-
-		this.mock(oBinding).expects("fetchAbsoluteValue").withExactArgs(sPath).returns(oResult);
-
-		assert.strictEqual(oContext.fetchAbsoluteValue(sPath), oResult);
 	});
 
 	//*********************************************************************************************
@@ -444,83 +449,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, "edit('URL')"].forEach(function (sEditUrl) {
-		QUnit.test("updateValue, editUrl=" + sEditUrl, function (assert) {
-			var oBinding = {
-					updateValue : function () {}
-				},
-				fnErrorCallback = function () {},
-				oContext = Context.create(null, oBinding, "/foo", 42),
-				oResult = {},
-				sPropertyName = "bar",
-				vValue = Math.PI;
-
-			this.mock(_Helper).expects("buildPath").withExactArgs(42, "SO_2_SOITEM/42")
-				.returns("~");
-			this.mock(oContext).expects("fetchCanonicalPath")
-				.exactly(sEditUrl ? 0 : 1)
-				.withExactArgs()
-				.returns(_SyncPromise.resolve("/edit('URL')"));
-			this.mock(oBinding).expects("updateValue")
-				.withExactArgs("up", sPropertyName, vValue, sinon.match.same(fnErrorCallback),
-					"edit('URL')", "~")
-				.returns(Promise.resolve(oResult));
-
-			return oContext.updateValue("up", sPropertyName, vValue, fnErrorCallback, sEditUrl,
-					"SO_2_SOITEM/42")
-				.then(function (oResult0) {
-					assert.strictEqual(oResult0, oResult);
-				});
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: transient context", function (assert) {
-		var oBinding = {
-				updateValue : function () {}
-			},
-			fnErrorCallback = function () {},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/-1", -1,
-				new Promise(function () {})),
-			sPropertyName = "bar",
-			oResult = {},
-			vValue = Math.PI;
-
-		assert.ok(oContext.isTransient());
-
-		this.mock(oBinding).expects("updateValue")
-			.withExactArgs("up", sPropertyName, vValue, sinon.match.same(fnErrorCallback), "n/a",
-				"-1/SO_2_SOITEM/42")
-			.returns(Promise.resolve(oResult));
-
-		return oContext.updateValue("up", sPropertyName, vValue, fnErrorCallback, undefined,
-				"SO_2_SOITEM/42")
-			.then(function (oResult0) {
-				assert.strictEqual(oResult0, oResult);
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("updateValue: error handling", function (assert) {
-		var oBinding = {
-				updateValue : function () {}
-			},
-			oContext = Context.create(null, oBinding, "/foo", 0),
-			oError = new Error();
-
-		this.mock(oContext).expects("fetchCanonicalPath")
-			.withExactArgs()
-			.returns(_SyncPromise.reject(oError)); // rejected!
-		this.mock(oBinding).expects("updateValue").never();
-
-		return oContext.updateValue("up", "bar", Math.PI).then(function (oResult0) {
-			assert.ok(false);
-		}, function (oError0) {
-			assert.strictEqual(oError0, oError);
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("fetchCanonicalPath", function (assert) {
 		var oMetaModel = {
 				fetchCanonicalPath : function () {}
@@ -776,5 +704,13 @@ sap.ui.require([
 
 		// code under test
 		oContext.checkUpdate();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setIndex", function (assert) {
+		var oContext = Context.create(this.oModel, {/*oBinding*/}, "/EMPLOYEES('42')", 42);
+
+		oContext.setIndex(23);
+		assert.strictEqual(oContext.getIndex(), 23);
 	});
 });

@@ -161,6 +161,7 @@
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" />
         <exclude name="sap/ui/thirdparty/jszip.js" />
         <exclude name="sap/ui/thirdparty/punycode.js" />
+        <exclude name="sap/ui/thirdparty/qunit-2.js" />
         <exclude name="sap/ui/thirdparty/qunit.js" />
         <exclude name="sap/ui/thirdparty/qunit-composite.js" />
         <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
@@ -306,6 +307,9 @@
         </lib>
         <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
         	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="klayjs" displayName="KLayJS" homepage="https://github.com/OpenKieler/klayjs">
+            <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="Eclipse Public License" file="../thirdparty/licenses/klayjs-ECLIPSE-LICENSE.txt" />
         </lib>
     </thirdparty>
 

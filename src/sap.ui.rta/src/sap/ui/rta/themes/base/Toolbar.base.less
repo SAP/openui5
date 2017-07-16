@@ -1,0 +1,19 @@
+/**
+	Toolbar
+ */
+.sapUiRtaToolbar.sapMTB {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 0 20px;
+
+	height: 46px; /* Overrider `.sapUiSizeCompact .sapMTB` */
+	border-bottom: none; /* Override `.sapMTB` */
+	}
+	.sapUiRtaToolbar.sapMTB > :last-child {
+		margin-right: 0; /* Override `.sapMIBar.sapMTB .sapMBarChild` */
+		}
+	.sapUiRtaToolbar.sapMTB > :first-child {
+		margin-left: 0; /* Override `.sapMIBar .sapMBarChild:first-child` */
+		}

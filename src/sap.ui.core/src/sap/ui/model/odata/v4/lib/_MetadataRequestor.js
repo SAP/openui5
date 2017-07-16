@@ -6,8 +6,8 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./_Helper",
-	"./_MetadataConverter"
-], function (jQuery, _Helper, _MetadataConverter) {
+	"./_V4MetadataConverter"
+], function (jQuery, _Helper, _V4MetadataConverter) {
 	"use strict";
 
 	return {
@@ -44,7 +44,7 @@ sap.ui.define([
 							headers : mHeaders
 						})
 						.then(function (oData, sTextStatus, jqXHR) {
-							var oJSON = _MetadataConverter.convertXMLMetadata(oData),
+							var oJSON = _V4MetadataConverter.convertXMLMetadata(oData),
 								sLastModified = jqXHR.getResponseHeader("Last-Modified")
 									|| jqXHR.getResponseHeader("Date");
 

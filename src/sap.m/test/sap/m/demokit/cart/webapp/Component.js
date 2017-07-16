@@ -1,8 +1,10 @@
 sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/json/JSONModel',
-	'sap/ui/demo/cart/model/LocalStorageModel'
-], function (UIComponent, JSONModel, LocalStorageModel) {
+	'sap/ui/demo/cart/model/LocalStorageModel',
+    'jquery.sap.global',
+    'sap/ui/demo/cart/model/models'
+], function (UIComponent, JSONModel, LocalStorageModel, $, models) {
 
 	"use strict";
 
@@ -15,29 +17,24 @@ sap.ui.define([
 		init: function () {
 			// call overwritten init (calls createContent)
 			UIComponent.prototype.init.apply(this, arguments);
-
+            this.getRouter().attachTitleChanged(function(oEvent) {
+                var sTitle = oEvent.getParameter("title");
+                $(document).ready(function(){
+                    document.title = sTitle;
+                });
+            });
 			//create and set cart model
 			var oCartModel = new LocalStorageModel("SHOPPING_CART", {
 				cartEntries: {},
 				savedForLaterEntries: {}
 			});
-			this.setModel(oCartModel, "cartProducts");
 
-			// set device model
-			var oDeviceModel = new JSONModel({
-				// feature toggle for a save for later functionality in the Cart.view.xml
-				isTouch: sap.ui.Device.support.touch,
-				isNoTouch: !sap.ui.Device.support.touch,
-				isPhone: sap.ui.Device.system.phone,
-				isNoPhone: !sap.ui.Device.system.phone,
-				listMode: (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-				listItemType: (sap.ui.Device.system.phone) ? "Active" : "Inactive"
-			});
-			oDeviceModel.setDefaultBindingMode("OneWay");
-			this.setModel(oDeviceModel, "device");
+            this.setModel(oCartModel, "cartProducts");
+
+			// set the device model
+			this.setModel(models.createDeviceModel(), "device");
 
 			this.getRouter().initialize();
-			this._oRouter = this.getRouter();
 		},
 
 		myNavBack: function () {
@@ -46,11 +43,11 @@ sap.ui.define([
 			if (oPrevHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				this._oRouter.navTo("home", {}, true);
+				this.getRouter().navTo("home", {}, true);
 			}
 		},
 
-		createContent: function () {
+        createContent: function () {
 			// create root view
 			return sap.ui.view("AppView", {
 				viewName: "sap.ui.demo.cart.view.App",

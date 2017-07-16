@@ -6,13 +6,17 @@
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		showHeader="{device>/isPhone}"
+		showHeader="true"
+		title="{i18n>welcomeHeadline}"
 		class="customBackground">
 		<customHeader>
 			<Toolbar>
 				<Button
 					icon="sap-icon://menu2"
-					press="onShowCategories"/>
+					press="onShowCategories"
+					visible="{device>/system/phone}"/>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://customer"/>
 			</Toolbar>
 		</customHeader>
 		<content>
@@ -23,9 +27,10 @@
 							id="welcomeCarousel"
 							showPageIndicator="false"
 							loop="true"
-							pageChanged="onCarouselPageChanged">
+							pageChanged="onCarouselPageChanged"
+							visible="{=!${device>/system/phone}}">
 							<pages>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselShipping',
@@ -37,7 +42,7 @@
 										text="{i18n>welcomeCarouselShipping}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselInviteFriend',
@@ -49,7 +54,7 @@
 										text="{i18n>welcomeCarouselInviteFriend}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselTablet',
@@ -61,7 +66,7 @@
 										text="{i18n>welcomeCarouselTablet}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselCreditCard',
@@ -78,14 +83,14 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
-			<Title tooltip="{i18n>welcomeDescription}" text="{i18n>welcomeHeadline}" class="welcomeText"/>
-
+			<Title
+				tooltip="{i18n>welcomeDescription}"
+				text="{i18n>welcomeHeadline}"
+				class="welcomeText"/>
 			<Title
 				text="{i18n>promotedTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
-
 			<l:BlockLayout background="Dashboard">
 				<l:BlockLayoutRow
 					id="promotedRow"
@@ -137,7 +142,6 @@
 										<l:GridData span="XL4 L4 M4 S4" />
 									</layoutData>
 								</Button>
-
 								<ObjectListItem
 									class="welcomePrice"
 									number="{
@@ -158,12 +162,10 @@
 					</l:content>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
 			<Title
 				text="{i18n>viewedTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
-
 			<l:BlockLayout background="Dashboard">
 				<l:BlockLayoutRow
 					id="viewedRow"
@@ -236,7 +238,7 @@
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
 			<Title
-				text="{i18n>favoritTitle}"
+				text="{i18n>favoriteTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
 			<l:BlockLayout background="Dashboard">

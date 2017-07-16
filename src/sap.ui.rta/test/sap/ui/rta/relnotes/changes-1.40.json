@@ -1,0 +1,58 @@
+{
+	"1.40.0": {
+		"date": "June 2016",
+		"notes": [
+			{
+				"id": "057fd736a8388f8bf6d2d5685781742c3b8bb3ec",
+				"type": "FIX",
+				"text": "Group element is placed in the correct group",
+				"references": []
+			},
+			{
+				"id": "568991e28f5de7b9e9ac106fc4186f321890fec8",
+				"type": "FIX",
+				"text": "fixes incident 1670254512, sporadig failure of test on IE11, Edge and Safari",
+				"references": []
+			},
+			{
+				"id": "44b85deab9380d05ab2ac2154082e230bf7abc91",
+				"type": "FIX",
+				"text": "sap.ui.rta Prevent menu items + cut and paste for controls where parent needs and has no stable id",
+				"references": []
+			}
+		]
+	},
+	"1.40.1": {
+		"date": "July 2016",
+		"notes": [
+			{
+				"id": "52061063190062735756432ef7672d32352f42f4",
+				"type": "FIX",
+				"text": "preparation for simpleform - changeType change",
+				"references": []
+			}
+		]
+	},
+	"1.40.2": {
+		"date": "July 2016",
+		"notes": [
+			{
+				"id": "602f268f9b3b82c1903851eea7e2a76321cb6ed9",
+				"type": "FIX",
+				"text": "fixes incident 1680132445, Add dialog not working in UR5",
+				"references": []
+			}
+		]
+	},
+	"1.40.3": {
+		"date": "July 2016",
+		"notes": [
+			{
+				"id": "fb81ed1c8f414cc095736a8db50db975e0eff6f8",
+				"type": "FIX",
+				"text": "Remove hard-coded toolbar text",
+				"references": []
+			}
+		]
+	}
+}

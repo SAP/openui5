@@ -37,6 +37,10 @@ SemanticUtil = (function (
 				"className" : "DeleteAction"
 			},
 			{
+				"constructor" : sap.f.semantic.EditAction,
+				"className" : "EditAction"
+			},
+			{
 				"constructor" : sap.f.semantic.DiscussInJamAction,
 				"className" : "DiscussInJamAction"
 			},

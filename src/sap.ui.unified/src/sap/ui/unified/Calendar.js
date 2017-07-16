@@ -285,8 +285,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	Calendar.prototype._createMonth = function(sId){
 		var oMonth = new Month(sId, {width: "100%"});
 
-		return oMonth;
+		oMonth.attachEvent("datehovered", this._handleDateHovered, this);
 
+		return oMonth;
+	};
+
+	Calendar.prototype._handleDateHovered = function(oEvent) {
+		var aMonths = this.getAggregation("month"),
+			oDate1 = oEvent.getParameter("date1"),
+			oDate2 = oEvent.getParameter("date2"),
+			i;
+
+		for (i = 0; i < aMonths.length; i++) {
+			aMonths[i]._markDatesBetweenStartAndHoveredDate(oDate1, oDate2);
+		}
 	};
 
 	Calendar.prototype.onBeforeRendering = function(){
@@ -355,9 +367,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	Calendar.prototype.removeSelectedDate = function(oSelectedDate) {
+		this._bDateRangeChanged = true;
+		return this.removeAggregation("selectedDates", oSelectedDate);
+	};
+
 	// overwrite removing of date ranged because invalidate don't get information about it
 	Calendar.prototype.removeAllSelectedDates = function() {
-
 		this._bDateRangeChanged = true;
 		var aRemoved = this.removeAllAggregation("selectedDates");
 		return aRemoved;

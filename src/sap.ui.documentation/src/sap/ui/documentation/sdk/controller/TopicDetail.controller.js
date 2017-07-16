@@ -7,8 +7,9 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/documentation/sdk/controller/util/XML2JSONUtils",
-		"sap/ui/Device"
-	], function (BaseController, JSONModel, XML2JSONUtils, Device) {
+		"sap/ui/Device",
+		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler"
+	], function (BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetail", {
@@ -104,6 +105,10 @@ sap.ui.define([
 
 			backToSearch: function (text) {
 				this.onNavBack();
+			},
+
+			onToggleFullScreen: function(oEvent) {
+				ToggleFullScreenHandler.updateMode(oEvent, this.getView(), this);
 			}
 
 		});

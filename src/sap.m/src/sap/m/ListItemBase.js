@@ -3,10 +3,14 @@
  */
 
 // Provides control sap.m.ListItemBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button', 'sap/m/ButtonType'],
-	function(jQuery, library, Control, IconPool, Icon, Button, ButtonType) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Icon', 'sap/m/Button'],
+	function(jQuery, library, Control, IconPool, Icon, Button) {
 	"use strict";
 
+
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 
 	/**
@@ -305,7 +309,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var aOutput = [],
 			mType = sap.m.ListType,
 			sType = this.getType(),
-			sHighlight = this.getHighlight();
+			sHighlight = this.getHighlight(),
+			sTooltip = this.getTooltip_AsString();
 
 		if (this.getSelected()) {
 			aOutput.push(oBundle.getText("LIST_ITEM_SELECTED"));
@@ -336,6 +341,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.getContentAnnouncement) {
 			aOutput.push((this.getContentAnnouncement(oBundle) || "").trim());
+		}
+
+		if (sTooltip) {
+			aOutput.push(sTooltip);
 		}
 
 		return aOutput.join(" ");

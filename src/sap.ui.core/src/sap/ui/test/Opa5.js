@@ -228,12 +228,15 @@ sap.ui.define([
 
 
 		/**
-		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects
+		 * Destroys the UIComponent and removes the div from the dom like all the references on its objects.
+		 * Use {@link sap.ui.test.Opa5#hasUIComponentStarted} to ensure that a UIComponent has been started and teardown can be safely performed.
 		 *
 		 * @since 1.48 If appParams were applied to the current URL, they will be removed
 		 * after UIComponent is destroyed
 		 *
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * If no UIComponent has been started or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -243,7 +246,6 @@ sap.ui.define([
 			oOptions.success = function () {
 				componentLauncher.teardown();
 			};
-			this.waitFor(oOptions);
 
 			// remove appParams from this frame URL as application under test is stopped
 			var oParamsWaitForOptions = createWaitForObjectWithoutDefaults();
@@ -253,15 +255,21 @@ sap.ui.define([
 					uri.search(true),Opa.config.appParams));
 				window.history.replaceState({},"",uri.toString());
 			};
-			this.waitFor(oParamsWaitForOptions);
+
+			return $.when(this.waitFor(oOptions), this.waitFor(oParamsWaitForOptions));
 		};
 
 		/**
-		 * Tears down an IFrame or a component, launched by
-		 * @link{sap.ui.test.Opa5#iStartMyAppInAFrame} or @link{sap.ui.test.Opa5#iStartMyUIComponent}.
-		 * This function desinged for making your test's teardown independent of the startup.
-		 * If nothing has been started, this function will throw an error.
-		 * @returns {jQuery.promise|*|{result, arguments}}
+		 * Tears down the started application regardless of how it was started.
+		 * Removes the IFrame launched by {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
+		 * or destroys the UIComponent launched by {@link sap.ui.test.Opa5#iStartMyUIComponent}.
+		 * This function is designed to make the test's teardown independent of the startup.
+		 * Use {@link sap.ui.test.Opa5#hasAppStarted} to ensure that the application has been started and teardown can be safely performed.
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If nothing has been started or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
+		 * @public
+		 * @function
 		 */
 		Opa5.prototype.iTeardownMyApp = function () {
 			var that = this;
@@ -271,7 +279,6 @@ sap.ui.define([
 			oExtensionOptions.success = function () {
 				that._unloadExtensions(iFrameLauncher.getWindow() || window);
 			};
-			this.waitFor(oExtensionOptions);
 
 			var oOptions = createWaitForObjectWithoutDefaults();
 			oOptions.success = function () {
@@ -286,7 +293,7 @@ sap.ui.define([
 				}
 			}.bind(this);
 
-			return this.waitFor(oOptions);
+			return $.when(this.waitFor(oExtensionOptions), this.waitFor(oOptions));
 		};
 
 		/**
@@ -327,8 +334,11 @@ sap.ui.define([
 		}
 
 		/**
-		 * Removes the IFrame from the DOM and removes all the references to its objects
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * Removes the IFrame from the DOM and removes all the references to its objects.
+		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an IFrame has been started and teardown can be safely performed.
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
@@ -336,11 +346,44 @@ sap.ui.define([
 
 		/**
 		 * Removes the IFrame from the DOM and removes all the references to its objects
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * Use {@link sap.ui.test.Opa5#hasAppStartedInAFrame} to ensure that an IFrame has been started and teardown can be safely performed.
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If no IFrame has been created or an error occurs, the promise is rejected with the options object.
+		 * A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 * @function
 		 */
 		Opa5.prototype.iTeardownMyAppFrame = iTeardownMyAppFrame;
+
+		/**
+		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyAppInAFrame}
+		 * @returns {boolean} A boolean indicating whether the application has been started in an iFrame
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.hasAppStartedInAFrame = function () {
+			return iFrameLauncher.hasLaunched();
+		};
+
+		/**
+		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyUIComponent}
+		 * @returns {boolean} A boolean indicating whether the application has been started as a UIComponent
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.hasUIComponentStarted = function () {
+			return componentLauncher.hasLaunched();
+		};
+
+		/**
+		 * Checks if the application has been started using {@link sap.ui.test.Opa5#iStartMyAppInAFrame} or {@link sap.ui.test.Opa5#iStartMyUIComponent}
+		 * @returns {boolean} A boolean indicating whether the application has been started regardless of how it was started
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.hasAppStarted = function () {
+			return iFrameLauncher.hasLaunched() || componentLauncher.hasLaunched();
+		};
 
 		/**
 		 * Takes the same parameters as {@link sap.ui.test.Opa#waitFor}. Also allows you to specify additional parameters:
@@ -545,7 +588,8 @@ sap.ui.define([
 		 * @since 1.48 All config parameters could be overwritten from URL. Should be prefixed with 'opa'
 		 * and have uppercase first character. Like 'opaExecutionDelay=1000' will overwrite 'executionDelay'
 		 *
-		 * @returns {jQuery.promise} A promise that gets resolved on success
+		 * @returns {jQuery.promise} A promise that gets resolved on success.
+		 * If an error occurs, the promise is rejected with the options object. A detailed error message containing the stack trace and Opa logs is available in options.errorMessage.
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (options) {
@@ -742,7 +786,7 @@ sap.ui.define([
 		 *         // this statement will time out after 20 seconds and poll every 100 ms
 		 *         oOpa.waitFor({
 		 *             timeout: 20;
-		*         });
+		 *         });
 		 *     </code>
 		 * </pre>
 		 *
@@ -778,6 +822,23 @@ sap.ui.define([
 		 * @since 1.48 Application config parameters could be overwritten from URL.
 		 * Every parameter that is not prefixed with 'opa' and is not blacklisted as QUnit
 		 * parameter is parsed and overwrites respective 'appParams' value.
+		 *
+		 * @since 1.49 Declarative configuration of test libraries is supported
+		 * <pre>
+		 *     <code>
+		 *         // in your app
+		 *         Opa5.extendConfig({
+		 *             testLibs: {
+		 *                 someAwesomeTestLib: {
+		 *                     key: 'value'
+		 *                 }
+		 *             }
+		 *         });
+		 *
+		 *         // so the test library could do
+		 *         var key = Opa5.getTestLibConfig('someAwesomeTestLib').key;         *
+		 *     </code>
+		 * </pre>
 		 *
 		 * @param {object} options The values to be added to the existing config
 		 * @public
@@ -823,6 +884,23 @@ sap.ui.define([
 			Opa.extendConfig({
 				appParams: appParams
 			});
+		};
+
+		/**
+		 * Return particular test lib config object.
+		 * This method is intended to be used by test libraries to
+		 * access their configuration provided by the test in
+		 * the testLibs section in {@link sap.ui.test.Opa5#extendConfig}
+		 * @param {string} sTestLibName test library name
+		 * @returns {object} this test library config object or empty object if
+		 * configuration is not provided
+		 * @public
+		 * @since 1.49
+		 * @function
+		 */
+		Opa5.getTestLibConfig = function(sTestLibName) {
+			return Opa.config.testLibs && Opa.config.testLibs[sTestLibName] ?
+				Opa.config.testLibs[sTestLibName] : {};
 		};
 
 		/**

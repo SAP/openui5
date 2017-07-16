@@ -213,6 +213,17 @@
 			});
 
 
+			QUnit.test("ignore null parameters", function(assert) {
+				try {
+					jQuery.sap.includeScript("testdata/dummy.js", null);
+					assert.ok(true, "No exception occurs when using null as parameter.");
+				} catch (ex) {
+					assert.ok(false, "No exception must occur when using null as parameter!");
+				}
+			});
+
+
+
 			//****************************************************
 			// includeStylesheet tests
 			//****************************************************
@@ -419,6 +430,16 @@
 					done();
 				});
 
+			});
+
+
+			QUnit.test("ignore null parameters", function(assert) {
+				try {
+					jQuery.sap.includeStyleSheet("testdata/testEmpty.css", null);
+					assert.ok(true, "No exception occurs when using null as parameter.");
+				} catch (ex) {
+					assert.ok(false, "No exception must occur when using null as parameter!");
+				}
 			});
 
 

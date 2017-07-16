@@ -10,7 +10,6 @@
 			id="fileUploader"
 			name="myFileUpload"
 			uploadUrl="upload/"
-			width="400px"
 			tooltip="Upload your file to the local server"
 			uploadComplete="handleUploadComplete"/>
 		<Button

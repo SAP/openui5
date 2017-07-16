@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return sAltText;
 	};
 
-	TileContent.prototype.getTooltip_AsString = function() {
+	TileContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
 		var sTooltip = this.getTooltip();
 		var sAltText = "";
 		if (typeof sTooltip === "string" || sTooltip instanceof String) {

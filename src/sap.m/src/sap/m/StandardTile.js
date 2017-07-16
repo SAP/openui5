@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 	 * @constructor
 	 * @public
 	 * @since 1.12
+	 * @deprecated As of version 1.50, use {@link sap.m.GenericTile} instead
 	 * @alias sap.m.StandardTile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -102,8 +103,8 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 	};
 
 	/**
-	 * Gets the icon of the StandardTile control.
-	 *
+	 * Gets the icon of the <code>StandardTile</code> control.
+	 * @returns {Object} The icon of the control
 	 * @public
 	 */
 	StandardTile.prototype.getIcon = function() {
@@ -117,7 +118,7 @@ sap.ui.define(['jquery.sap.global', './Tile', './library', 'sap/ui/core/IconPool
 
 	/**
 	 * Lazy loads StandardTile icon image.
-	 *
+	 * @returns {Object} The icon image
 	 * @private
 	 */
 	StandardTile.prototype._getImage = function() {

@@ -23,9 +23,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 */
 	LabelRenderer.render = function(rm, oLabel){
 		// convenience variable
-		var r = LabelRenderer;
+		var r = LabelRenderer,
+			sTextDir = oLabel.getTextDirection(),
+			sTextAlign = oLabel.getTextAlign(),
+			sWidth = oLabel.getWidth(),
+			sLabelText = oLabel.getText(),
+			sTooltip = oLabel.getTooltip_AsString(),
+			// render bdi tag only if the browser is different from IE and Edge since it is not supported there
+			bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge,
+			bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge;
 
-		// write the HTML into the render manager
+		// write the HTML into the render managerr
 		rm.write("<label");
 		rm.writeControlData(oLabel);
 
@@ -48,13 +56,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		// text direction
-		var sTextDir = oLabel.getTextDirection();
 		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
 		// style for width
-		var sWidth = oLabel.getWidth();
 		if (sWidth) {
 			rm.addStyle("width", sWidth);
 		} else {
@@ -62,15 +68,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		// style for text alignment
-		var sTextAlign = oLabel.getTextAlign();
 		if (sTextAlign) {
-			var sTextAlign = r.getTextAlign(sTextAlign, sTextDir);
+			sTextAlign = r.getTextAlign(sTextAlign, sTextDir);
 			if (sTextAlign) {
 				rm.addStyle("text-align", sTextAlign);
 			}
 		}
 
-		var sLabelText = oLabel.getText();
 		if (sLabelText == "") {
 			rm.addClass("sapMLabelNoText");
 		}
@@ -78,7 +82,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.writeStyles();
 		rm.writeClasses();
 
-		var sTooltip = oLabel.getTooltip_AsString();
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
@@ -86,9 +89,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.write(">");
 
 		// write the label text
-
 		if (sLabelText) {
-			rm.writeEscaped(sLabelText);
+			if (bRenderBDI) {
+				//TODO: To be removed after change completion of BLI incident #1770022720
+				rm.write('<bdi>');
+				rm.writeEscaped(sLabelText);
+				rm.write('</bdi>');
+			} else {
+				rm.writeEscaped(sLabelText);
+			}
 		}
 		rm.write("</label>");
 	};

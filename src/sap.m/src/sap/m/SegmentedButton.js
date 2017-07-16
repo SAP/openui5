@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns a new array with all rendered button widths.
 	 * @param {array} aButtons with buttons
-	 * @returns {array}
+	 * @returns {array} The array of the widths
 	 * @private
 	 */
 	SegmentedButton.prototype._getRenderedButtonWidths = function (aButtons) {
@@ -451,11 +451,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	})();
 
 	/**
-	 * Gets the selectedKey and is usable only when the control is initiated with the items aggregation.
+	 * Gets the <code>selectedKey</code> and is usable only when the control is initiated with the <code>items</code> aggregation.
 	 *
 	 * @return {string} Current selected key
+	 * @public
 	 * @override
-	 * @since 1.28.0
+	 * @since 1.28
 	 */
 	SegmentedButton.prototype.getSelectedKey = function() {
 		var aButtons = this.getButtons(),
@@ -475,12 +476,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the selectedKey and is usable only when the control is initiated with the items aggregation.
+	 * Sets the <code>selectedKey</code> and is usable only when the control is initiated with the <code>items</code> aggregation.
 	 *
 	 * @param {string} sKey The key of the button to be selected
-	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
+	 * @returns {sap.m.SegmentedButton} <code>this</code> pointer for chaining
+	 * @public
 	 * @override
-	 * @since 1.28.0
+	 * @since 1.28
 	 */
 	SegmentedButton.prototype.setSelectedKey = function(sKey) {
 		var aButtons = this.getButtons(),
@@ -534,8 +536,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adds item to <code>items</code> aggregation
-	 * @param {sap.m.SegmentedButtonItem} oItem
+	 * Adds item to <code>items</code> aggregation.
+	 * @param {sap.m.SegmentedButtonItem} oItem The item to be added
 	 * @param {boolean} [bSuppressInvalidate=false] If <code>true</code> the control invalidation will be suppressed
 	 * @public
 	 * @override
@@ -546,8 +548,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Removes an item from <code>items</code> aggregation
-	 * @param {sap.m.SegmentedButtonItem} oItem
+	 * Removes an item from <code>items</code> aggregation.
+	 * @param {sap.m.SegmentedButtonItem} oItem The item to be removed
 	 * @param {boolean} [bSuppressInvalidate=false] If <code>true</code> the control invalidation will be suppressed
 	 * @public
 	 * @override
@@ -564,8 +566,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Inserts item into <code>items</code> aggregation
-	 * @param {sap.m.SegmentedButtonItem} oItem
+	 * Inserts item into <code>items</code> aggregation.
+	 * @param {sap.m.SegmentedButtonItem} oItem The item to be inserted
 	 * @param {int} iIndex index the item should be inserted at
 	 * @param {boolean} [bSuppressInvalidate=false] If <code>true</code> the control invalidation will be suppressed
 	 * @public
@@ -592,6 +594,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/** Event handler for the internal button press events.
+	 * @param {Object} oEvent The event to be fired
 	 * @private
 	 */
 	SegmentedButton.prototype._buttonPressed = function (oEvent) {
@@ -715,7 +718,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called when the select is changed so that the SegmentedButton internals stay in sync.
-	 * @param oEvent
+	 * @param {Object} oEvent The event fired
 	 * @private
 	 */
 	SegmentedButton.prototype._selectChangeHandler = function(oEvent) {

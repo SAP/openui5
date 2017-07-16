@@ -26,14 +26,11 @@
 
 .sapMTextAreaGrow {
 	/* should not grow more than screen size */
+	max-height: calc(~"100vh - 6rem");
 	overflow: hidden;
 }
 
 .sapMTextAreaWithCounter {
-	& .sapMTextAreaInner:not(.sapMTextAreaGrow) {
-		height: calc(100% - 1.5rem);
-	}
-
 	& .sapMTextAreaCounter {
 		float:right;
 		overflow: hidden;
@@ -48,11 +45,6 @@
 		border-color: transparent;
 	}
 
-	&.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner):not(.sapMTextAreaGrow) {
-		&::before {
-			bottom: 1.7rem;
-		}
-	}
 }
 
 .sapMInputBase.sapMTextArea {
@@ -79,20 +71,8 @@
 		margin: 0.1875rem 0;
 
 		.sapMTextAreaInner {
+			line-height: 1.4rem;
 			padding: 0.1875rem 0.5rem;
-			height: auto;
-		}
-	}
-
-	.sapMTextAreaWithCounter {
-		& .sapMTextAreaInner:not(.sapMTextAreaGrow) {
-			height: 100%;
-		}
-
-		&.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner):not(.sapMTextAreaGrow) {
-			&::before {
-				bottom: 1.5rem;
-			}
 		}
 	}
 }

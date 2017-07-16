@@ -127,6 +127,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Sets the title of the <code>Menu</code>.
 		 * @param {String} sTitle The new title of the <code>Menu</code>
+		 * @returns {sap.m.Menu} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		Menu.prototype.setTitle = function(sTitle) {
@@ -143,8 +144,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Opens the <code>Menu</code> next to the given control.
-		 * @param oControl The control that defines the position for the menu
-		 * @param bWithKeyboard Whether the menu is opened with a shortcut or not
+		 * @param {object} oControl The control that defines the position for the menu
+		 * @param {boolean} bWithKeyboard Whether the menu is opened with a shortcut or not
 		 * @public
 		 */
 		Menu.prototype.openBy = function(oControl, bWithKeyboard) {
@@ -277,6 +278,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Gets the internal <code>sap.m.NavContainer</code> for mobile.
+		 * @returns {sap.m.NavContainer} The sap.m.NavContainer
 		 * @private
 		 */
 		Menu.prototype._getNavContainer = function() {
@@ -323,8 +325,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		Menu.prototype._handleListItemPress = function(oEvent) {
 			var oListItem = oEvent.getParameter("listItem"),
-			    oMenuItem = sap.ui.getCore().byId(oListItem.getMenuItem()),
-			    pageId = oMenuItem._getVisualChild();
+				oMenuItem = sap.ui.getCore().byId(oListItem.getMenuItem()),
+				pageId = oMenuItem._getVisualChild();
 
 			if (pageId) {
 				this._getNavContainer().to(pageId);
@@ -336,8 +338,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Sets an ARIA tooltip for a back button of a page.
-		 * @param oParent The parent item for the page
-		 * @param oPage The page
+		 * @param {object} oParent The parent item for the page
+		 * @param {object} oPage The page
 		 * @private
 		 */
 		Menu.prototype._setBackButtonTooltipForPageWithParent = function(oParent, oPage) {
@@ -516,7 +518,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		/**
 		 * Checks whether the <code>Menu</code> should run with cozy design.
 		 * This function must only be called on the root menu (<code>getRootMenu</code>) to get proper results.
-		 *
+		 * @param {object} oMenu The <code>Menu</code> which is checked
+		 * @returns {boolean} If the <code>Menu</code> should run with cozy design
 		 * @private
 		 */
 		Menu.prototype._isMenuCozy = function(oMenu) {
@@ -773,6 +776,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Provides a DOM reference ID of the menu container.
+		 * @returns {string} The DOM reference ID of the menu container
 		 */
 		Menu.prototype.getDomRefId = function() {
 			if (Device.system.phone) {
@@ -784,6 +788,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		/**
 		 * Opens the menu as a context menu.
+		 * @param {object} oEvent The event that is fired
+		 * @param {object} oOpenerRef The reference of the opener
 		 */
 		Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
 

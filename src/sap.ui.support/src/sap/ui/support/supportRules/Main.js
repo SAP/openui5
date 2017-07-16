@@ -1,7 +1,9 @@
 /*!
  * ${copyright}
  */
-
+/**
+ * @typedef {object} Event Certain event that's fired by the a user action in the browser
+ */
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/ManagedObject",
@@ -9,7 +11,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
-	"sap/ui/support/supportRules/Highlighter",
+	"sap/ui/support/supportRules/ui/external/Highlighter",
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/RuleSet",
@@ -27,11 +29,22 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	var oMain = null;
 	var customSuffix = 'sprt';
 
-	/**
-	 * Controller for the support tools
-	 * Provides integration with respective data services
-	 */
 	var Main = ManagedObject.extend("sap.ui.support.Main", {
+
+		/**
+		 * <h3>Overview</h3>
+		 * Controller for the support tools.
+		 * Provides integration with respective data services.
+		 *
+		 * @public
+		 * @class
+		 * @constructor
+		 * @namespace
+		 * @name sap.ui.support.Main
+		 * @memberof sap.ui.support
+		 * @author SAP SE
+		 * @version @{version}
+		 */
 		constructor: function () {
 			if (!oMain) {
 				var that = this;
@@ -44,9 +57,28 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				ManagedObject.apply(this, arguments);
 
 				jQuery.sap.support = {
-					analyze: function (executionScope, ruleDescriptors) {
-						return oMain.analyze(executionScope, ruleDescriptors);
+
+					/**
+					 * Analyzes all rules in the given execution scope.
+					 * @public
+					 * @method
+					 * @name sap.ui.support.Main.analyze
+					 * @memberof sap.ui.support.Main
+					 * @param {Object} oExecutionScope The execution scope of the analysis with the type of the scope
+					 * @param {Object[]} aRuleDescriptors An array with rules against which the analysis will be run
+					 * @returns {Promise} Notifies the finished state by starting the Analyzer
+					 */
+					analyze: function (oExecutionScope, aRuleDescriptors) {
+						return oMain.analyze(oExecutionScope, aRuleDescriptors);
 					},
+					/**
+					 * Gets history with current issues.
+					 * @public
+					 * @method
+					 * @name sap.ui.support.Main.getAnalysisHistory
+					 * @memberof sap.ui.support.Main
+					 * @returns {Object[]} Current history.
+					 */
 					getAnalysisHistory: function () {
 						if (that._oAnalyzer.running()) {
 							return null;
@@ -54,6 +86,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 						return IssueManager.getHistory();
 					},
+					/**
+					 * Gets formatted current history.
+					 * @public
+					 * @method
+					 * @name sap.ui.support.Main.getFormattedAnalysisHistory
+					 * @memberof sap.ui.support.Main
+					 * @returns {Promise} Analyzed and formatted history
+					 */
 					getFormattedAnalysisHistory: function () {
 						if (that._oAnalyzer.running()) {
 							return;
@@ -81,7 +121,11 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	});
 
 	/**
-	 * Checks if the current page is inside an iframe.
+	 * Checks if the current page is inside an iFrame.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._isInIframe
+	 * @memberof sap.ui.support.Main
 	 */
 	Main.prototype._isInIframe = function () {
 		try {
@@ -93,9 +137,15 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	};
 
 	/**
-	 * This controller is started by the core as plugin
+	 * This controller is started by the core as a plugin.
+	 * @private
+	 * @method
+	 * @method
+	 * @name sap.ui.support.Main.startPlugin
+	 * @memberof sap.ui.support.Main
+	 * @param {Object[]} aSupportModeConfig Configuration for the SupportAssistant when it's launched.
 	 */
-	Main.prototype.startPlugin = function (supportModeConfig) {
+	Main.prototype.startPlugin = function (aSupportModeConfig) {
 		if (this._pluginStarted) {
 			return;
 		}
@@ -106,13 +156,13 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 		sap.ui.getCore().registerPlugin({
 			startPlugin: function (oCore) {
-				that._supportModeConfig = supportModeConfig = supportModeConfig || oCore.getConfiguration().getSupportMode();
+				that._supportModeConfig = aSupportModeConfig = aSupportModeConfig || oCore.getConfiguration().getSupportMode();
 				that._setCommunicationSubscriptions();
 
 				// If the current page is inside of an iframe don't start the Support tool.
 				// Otherwise if there are any iframes inside a page, all of them
 				// will have the Support tool started along with the parent page.
-				var bForceUIInFrame = that._isInIframe() && supportModeConfig.indexOf("frame-force-ui") !== -1;
+				var bForceUIInFrame = that._isInIframe() && aSupportModeConfig.indexOf("frame-force-ui") !== -1;
 
 				that._oCore = oCore;
 				that._oDataCollector = new DataCollector(oCore);
@@ -124,14 +174,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				// Make sure that we load UI frame, when no parameter supplied
 				// but tools is required to load, or when parameter is there
 				// but is not equal to 'silent'
-				if (!supportModeConfig ||
-					supportModeConfig.indexOf("silent") === -1 ||
+				if (!aSupportModeConfig ||
+					aSupportModeConfig.indexOf("silent") === -1 ||
 					bForceUIInFrame) {
 					// Lazily, asynchronously load the frame controller
 					sap.ui.require(["sap/ui/support/supportRules/ui/IFrameController"], function (IFrameCtrl) {
 						IFrameController = IFrameCtrl;
 
-						IFrameController.injectFrame(supportModeConfig);
+						IFrameController.injectFrame(aSupportModeConfig);
 
 						// Validate messages
 						CommunicationBus.onMessageChecks.push(function (msg) {
@@ -164,6 +214,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		});
 	};
 
+	/**
+	 * Event handler used to catch when new rules are added to a library.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._onLibraryChanged
+	 * @memberof sap.ui.support.Main
+	 * @param {Event} oEvent Contains information about the library and newly created rules
+	 */
 	Main.prototype._onLibraryChanged = function (oEvent) {
 		if (oEvent.getParameter("stereotype") === "library" && this._rulesCreated) {
 			var that = this;
@@ -174,24 +232,35 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}
 	};
 
+	/**
+	 * Creates event listeners for new elements that are published to the Core object by the CommunicationBus.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._createCoreSpies
+	 * @memberof sap.ui.support.Main
+	 */
 	Main.prototype._createCoreSpies = function () {
 		var that = this,
-			notifyDirtyStateInterval = 500;
+			iNotifyDirtyStateInterval = 500;
 
-		this._dirtyTimeoutHandle = null;
+		this._fnDirtyTimeoutHandle = null;
 
 		var spyFunction = function (fnName) {
+
 			var oldFunction = that._oCore[fnName];
+
 			that._oCore[fnName] = function () {
 				oldFunction.apply(that._oCore, arguments);
+
 				/**
 				 * If we have 50 new elements in the core, don't send 50 new messages for
 				 * dirty state instead wait 500ms and send one message.
 				 */
-				clearTimeout(that._dirtyTimeoutHandle);
-				that._dirtyTimeoutHandle = setTimeout(function () {
+				clearTimeout(that._fnDirtyTimeoutHandle);
+
+				that._fnDirtyTimeoutHandle = setTimeout(function () {
 					CommunicationBus.publish(channelNames.ON_CORE_STATE_CHANGE);
-				}, notifyDirtyStateInterval);
+				}, iNotifyDirtyStateInterval);
 			};
 		};
 
@@ -199,28 +268,42 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		spyFunction("deregisterElement");
 	};
 
+	/**
+	 * Sets subscriptions to the CommunicationBus for temporary rules.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._setCommunicationSubscriptions
+	 * @memberof sap.ui.support.Main
+	 */
 	Main.prototype._setCommunicationSubscriptions = function () {
 		// If configuration contains 'silent' there must be no subscription
 		// for temporary rules
 		if (this._supportModeConfig.indexOf("silent") < 0) {
+
             CommunicationBus.subscribe(channelNames.VERIFY_CREATE_RULE, function (tempRuleSerialized) {
+
                 var tempRule = RuleSerializer.deserialize(tempRuleSerialized),
                     tempRuleSet = this._mRuleSets[constants.TEMP_RULESETS_NAME].ruleset,
                     result = tempRuleSet.addRule(tempRule);
+
                 CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
                     result: result,
                     newRule: RuleSerializer.serialize(tempRule)
                 });
+
             }, this);
 
 			CommunicationBus.subscribe(channelNames.VERIFY_UPDATE_RULE, function (data) {
+
 				var tempRule = RuleSerializer.deserialize(data.updateObj),
 					tempRuleSet = this._mRuleSets[constants.TEMP_RULESETS_NAME].ruleset,
 					result = tempRuleSet.updateRule(data.oldId, tempRule);
+
 				CommunicationBus.publish(channelNames.VERIFY_RULE_UPDATE_RESULT, {
 					result: result,
 					updateRule: RuleSerializer.serialize(tempRule)
 				});
+
 			}, this);
 
 			CommunicationBus.subscribe(channelNames.OPEN_URL, function (url) {
@@ -285,10 +368,36 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._fetchNonLoadedRuleSets();
 			});
 		}, this);
+
+		CommunicationBus.subscribe(channelNames.REQUEST_RULES_MODEL, function (deserializedRules) {
+			if (deserializedRules) {
+				CommunicationBus.publish(channelNames.GET_RULES_MODEL, IssueManager.getTreeTableViewModel(deserializedRules));
+			}
+		}, this);
+
+		CommunicationBus.subscribe(channelNames.REQUEST_ISSUES, function (issues) {
+			if (issues) {
+				var groupedIssues = IssueManager.groupIssues(issues),
+					issuesModel = IssueManager.getIssuesViewModel(groupedIssues);
+
+				CommunicationBus.publish(channelNames.GET_ISSUES, {
+					groupedIssues: groupedIssues,
+					issuesModel: issuesModel
+				});
+			}
+		}, this);
 	};
 
+	/**
+	 * Gets the load origin of the SupportAssistant.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._getLoadFromSupportOrigin
+	 * @memberof sap.ui.support.Main
+	 * @returns {boolean} bLoadFromSupportOrigin Ensures that the SupportAssistant hasn't been fired from a different origin
+	 */
 	Main.prototype._getLoadFromSupportOrigin = function () {
-		var loadFromSupportOrigin = false;
+		var bLoadFromSupportOrigin = false;
 
 		var coreUri = new window.URI(jQuery.sap.getModulePath("sap.ui.core"));
 		var supportUri = new window.URI(jQuery.sap.getModulePath("sap.ui.support"));
@@ -296,14 +405,24 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		// If loading support tool from different origin,
 		// i.e. protocol or host (host name + port) different
 		if (coreUri.protocol() !== supportUri.protocol() || coreUri.host() !== supportUri.host()) {
-			loadFromSupportOrigin = true;
+			bLoadFromSupportOrigin = true;
 		}
 
-		return loadFromSupportOrigin;
+		return bLoadFromSupportOrigin;
 	};
 
+	/**
+	 * Gets all libraries along with internal and external rules in them.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._fetchLibraryFiles
+	 * @memberof sap.ui.support.Main
+	 * @param {string[]} aLibNames Contains all library names for the given state
+	 * @param {function} fnProcessFile Callback that publishes all rules within each library in the SupportAssistant
+	 * @returns {Promise[]} aAjaxPromises Promises for each library in the SupportAssistant
+	 */
 	Main.prototype._fetchLibraryFiles = function (libNames, fnProcessFile) {
-		var ajaxPromises = [],
+		var aAjaxPromises = [],
 			that = this;
 
 		var supportModulePath = jQuery.sap.getModulePath("sap.ui.support");
@@ -325,7 +444,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}
 
 			var internalLibName = customizableLibName + '.internal';
-			var libraryInternalResourceRoot = supportModulesRoot.replace('/resources', '') + 'test-resources/' + libPath + '/internal';
+			var libraryInternalResourceRoot = supportModulesRoot.replace('resources/', '') + 'test-resources/' + libPath + '/internal';
 
 			jQuery.sap.registerModulePath(internalLibName, libraryInternalResourceRoot);
 
@@ -334,7 +453,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}
 
 			// CHECK FOR INTERNAL RULES
-			ajaxPromises.push(new Promise(function (resolve) {
+			aAjaxPromises.push(new Promise(function (resolve) {
 				try {
 					sap.ui.require([(internalLibName).replace(/\./g, "/") + "/library.support"], function () {
 						fnProcessFile(internalLibName);
@@ -346,7 +465,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}));
 
 			// CHECK FOR PUBLIC RULES
-			ajaxPromises.push(new Promise(function (resolve) {
+			aAjaxPromises.push(new Promise(function (resolve) {
 				try {
 					sap.ui.require([customizableLibName.replace(/\./g, "/") + "/library.support"], function () {
 						fnProcessFile(customizableLibName);
@@ -358,24 +477,27 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			}));
 		});
 
-		return ajaxPromises;
+		return aAjaxPromises;
 	};
 
 	/**
 	 * Factory function for creating a RuleSet. Helps reducing API complexity.
 	 * @private
-	 * @param {object} librarySupport object to be used for RuleSet creation
-	 * @returns {object} ruleset object to be added to _mRuleSets
+	 * @method
+	 * @name sap.ui.support.Main._createRuleSet
+	 * @memberof sap.ui.support.Main
+	 * @param {object} librarySupport Object to be used for RuleSet creation
+	 * @returns {object} ruleset RuleSet added to _mRuleSets
 	 */
-	Main.prototype._createRuleSet = function (librarySupport) {
+	Main.prototype._createRuleSet = function (oLibrarySupport) {
 		var oLib = {
-			name: librarySupport.name,
-			niceName: librarySupport.niceName
+			name: oLibrarySupport.name,
+			niceName: oLibrarySupport.niceName
 		};
 		var oRuleSet = new RuleSet(oLib);
 
-		for (var i = 0; i < librarySupport.ruleset.length; i++) {
-			var ruleset = librarySupport.ruleset[i];
+		for (var i = 0; i < oLibrarySupport.ruleset.length; i++) {
+			var ruleset = oLibrarySupport.ruleset[i];
 
 			// If the ruleset contains arrays of rules make sure we add them.
 			if (jQuery.isArray(ruleset)) {
@@ -393,9 +515,18 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		};
 	};
 
-	Main.prototype._fetchSupportRuleSets = function (libNames) {
-		libNames = libNames || [];
-		libNames = libNames.concat(Object.keys(sap.ui.getCore().getLoadedLibraries()));
+	/**
+	 * Gets all rulesets from the SupportAssistant
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._fetchSupportRuleSets
+	 * @memberof sap.ui.support.Main
+	 * @param {string[]} aLibNames Contains all library names in the SupportAssistant
+	 * @returns {Promise<CommunicationBus>} mainPromise Has promises for all libraries regarding rulesets in the SupportAssistant
+	 */
+	Main.prototype._fetchSupportRuleSets = function (aLibNames) {
+		aLibNames = aLibNames || [];
+		aLibNames = aLibNames.concat(Object.keys(sap.ui.getCore().getLoadedLibraries()));
 
 		var that = this;
 
@@ -405,15 +536,26 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._versionInfo = versionInfo;
 				RuleSet.versionInfo = versionInfo;
 
-				var libFetchPromises = that._fetchLibraryFiles(libNames, function (libName) {
-					var normalizedLibName = libName.replace('.' + customSuffix, ''),
-						libSupport = jQuery.sap.getObject(libName).library.support;
+				var libFetchPromises = that._fetchLibraryFiles(aLibNames, function (libName) {
+					var normalizedLibName = libName.replace("." + customSuffix, "").replace(".internal", ""),
+						libSupport = jQuery.sap.getObject(libName).library.support,
+						library = that._mRuleSets[normalizedLibName];
 
 					if (libSupport.ruleset instanceof RuleSet) {
-						that._mRuleSets[normalizedLibName] = libSupport;
+						if (library) {
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, libSupport.ruleset._mRules);
+						} else {
+							library = libSupport;
+						}
 					} else {
-						that._mRuleSets[normalizedLibName] = that._createRuleSet(libSupport);
+						if (library) {
+							library.ruleset._mRules = jQuery.extend(library.ruleset._mRules, that._createRuleSet(libSupport));
+						} else {
+							library = that._createRuleSet(libSupport);
+						}
 					}
+
+					that._mRuleSets[normalizedLibName] = library;
 				});
 
 				Promise.all(libFetchPromises).then(function () {
@@ -431,18 +573,27 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		return mainPromise;
 	};
 
+	/**
+	 * Gets all non loaded libraries in the SupportAssistant which aren't loaded by the user.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._fetchNonLoadedRuleSets
+	 * @memberof sap.ui.support.Main
+	 */
 	Main.prototype._fetchNonLoadedRuleSets = function () {
-		var libs = this._versionInfo.libraries,
+		var aLibraries = this._versionInfo.libraries,
 			data = [];
 
-		var libNames = libs.map(function (lib) {
+		var aLibNames = aLibraries.map(function (lib) {
 			return lib.name;
 		});
 
-		var libFetchPromises = this._fetchLibraryFiles(libNames, function (libName) {
-			libName = libName.replace('.' + customSuffix, '');
+		var libFetchPromises = this._fetchLibraryFiles(aLibNames, function (sLibraryName) {
+			sLibraryName = sLibraryName.replace("." + customSuffix, "").replace(".internal", "");
 
-			data.push(libName);
+			if (data.indexOf(sLibraryName) < 0) {
+				data.push(sLibraryName);
+			}
 		});
 
 		Promise.all(libFetchPromises).then(function () {
@@ -452,6 +603,13 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		});
 	};
 
+	/**
+	 * Create a library for the temporary rules.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._initTempRulesLib
+	 * @memberof sap.ui.support.Main
+	 */
 	Main.prototype._initTempRulesLib = function () {
 		if (this._mRuleSets[constants.TEMP_RULESETS_NAME]) {
 			return;
@@ -469,11 +627,14 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	};
 
 	/**
-	 * @param {object} executionScope - The execution scope of the analysis
-	 * @param {array} ruleDescriptors - An array with rules against which the analysis will be run
-	 * @returns {promise} to notify of finished state
+	 * Analyzes all rules in the given execution scope.
+	 * @private
+	 * @static
+	 * @method
+	 * @param {object[]} aRuleDescriptors An array with rules against which the analysis will be run
+	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
-	Main.prototype.analyze = function (executionScope, ruleDescriptors) {
+	Main.prototype.analyze = function (oExecutionScope, aRuleDescriptors) {
 		var that = this;
 
 		if (this._oAnalyzer && this._oAnalyzer.running()) {
@@ -481,7 +642,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}
 
 		// Validations
-		if (executionScope && ExecutionScope.possibleScopes.indexOf(executionScope.type) === -1) {
+		if (oExecutionScope && ExecutionScope.possibleScopes.indexOf(oExecutionScope.type) === -1) {
 			jQuery.sap.log.error("Invalid execution scope type. Type must be one of the following: "
 				+ ExecutionScope.possibleScopes.join(", "));
 			return;
@@ -490,21 +651,21 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		// When analyze is called as an API function there is a selectors property
 		// which is used to reduce complexity of the API function
 		// selectors is mapped to parentId and components.
-		if (executionScope && executionScope.selectors) {
-			this._mapExecutionScope(executionScope);
+		if (oExecutionScope && oExecutionScope.selectors) {
+			this._mapExecutionScope(oExecutionScope);
 		}
 
 		// Set default scope
-		executionScope = executionScope || {type: "global"};
+		oExecutionScope = oExecutionScope || {type: "global"};
 
 		this._oAnalyzer.reset();
 
-		this.setExecutionScope(executionScope);
+		this.setExecutionScope(oExecutionScope);
 
-		if (Array.isArray(ruleDescriptors)) {
+		if (Array.isArray(oExecutionScope)) {
 			// If there are 0 rules don't add tasks.
-			if (ruleDescriptors.length > 0) {
-				this._addTasksForSelectedRules(ruleDescriptors);
+			if (oExecutionScope.length > 0) {
+				this._addTasksForSelectedRules(oExecutionScope);
 			}
 		} else {
 			this._addTasksForAllRules();
@@ -517,75 +678,133 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		});
 	};
 
-	Main.prototype._addTasksForSelectedRules = function (ruleDescriptors) {
+	/**
+	 * Adds tasks for all selected rules in the Analyzer.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._addTasksForSelectedRules
+	 * @memberof sap.ui.support.Main
+	 * @param {object[]} aRuleDescriptors An array with rules against which the analysis will be run
+	 */
+	Main.prototype._addTasksForSelectedRules = function (aRuleDescriptors) {
 		var that = this;
 
 		this._oSelectedRulesIds = {};
 
-		ruleDescriptors.forEach(function (ruleDescriptor) {
+		aRuleDescriptors.forEach(function (ruleDescriptor) {
 			var libWithRules = that._mRuleSets[ruleDescriptor.libName],
 				executedRule = libWithRules.ruleset.getRules()[ruleDescriptor.ruleId];
+
 			that._oAnalyzer.addTask([executedRule.title], function (oObject) {
 				that._analyzeSupportRule(oObject);
 			}, [executedRule]);
+
 			that._oSelectedRulesIds[ruleDescriptor.ruleId] = true;
 		});
 	};
 
+	/**
+	 * Adds tasks for all rules in the Analyzer.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._addTasksForAllRules
+	 * @memberof sap.ui.support.Main
+	 */
 	Main.prototype._addTasksForAllRules = function () {
 		var that = this;
 
 		Object.keys(that._mRuleSets).map(function (libName) {
 			var rulesetRules = that._mRuleSets[libName].ruleset.getRules();
+
 			Object.keys(rulesetRules).map(function (ruleId) {
 				var rule = rulesetRules[ruleId];
 				that._oAnalyzer.addTask([rule.title], function (oObject) {
 					that._analyzeSupportRule(oObject);
 				}, [rule]);
 			});
+
 		});
 	};
 
-	Main.prototype.setExecutionScope = function (settings) {
-		this._oExecutionScope = ExecutionScope(this._oCore, settings);
+	/**
+	 * Sets execution scope.
+	 * @private
+	 * @method
+	 * @method
+	 * @name sap.ui.support.Main.setExecutionScope
+	 * @memberof sap.ui.support.Main
+	 * @param {object} oSettings Contains the type of execution scope
+	 */
+	Main.prototype.setExecutionScope = function (oSettings) {
+		this._oExecutionScope = ExecutionScope(this._oCore, oSettings);
 	};
 
-	// Map the execution scope selectors property to parentId and components.
-	// Doing this internally to reduce API complexity.
-	Main.prototype._mapExecutionScope = function (executionScope) {
-		if (executionScope.type === "subtree") {
-			if (typeof executionScope.selectors === "string") {
-				executionScope.parentId = executionScope.selectors;
-			} else if (Array.isArray(executionScope.selectors)) {
-				executionScope.parentId = executionScope.selectors[0];
+	/**
+	 * Maps the execution scope <code>selectors</code> property to <code>parentId</code> and components.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._mapExecutionScope
+	 * @memberof sap.ui.support.Main
+	 * @param {object} oExecutionScope The execution scope of the analysis with the type of the scope
+	 */
+	Main.prototype._mapExecutionScope = function (oExecutionScope) {
+		if (oExecutionScope.type === "subtree") {
+
+			if (typeof oExecutionScope.selectors === "string") {
+
+				oExecutionScope.parentId = oExecutionScope.selectors;
+
+			} else if (Array.isArray(oExecutionScope.selectors)) {
+
+				oExecutionScope.parentId = oExecutionScope.selectors[0];
+
 			}
-		} else if (executionScope.type === "components") {
-			if (typeof executionScope.selectors === "string") {
-				executionScope.components = [executionScope.selectors];
-			} else if (Array.isArray(executionScope.selectors)) {
-				executionScope.components = executionScope.selectors;
+
+		} else if (oExecutionScope.type === "components") {
+
+			if (typeof oExecutionScope.selectors === "string") {
+
+				oExecutionScope.components = [oExecutionScope.selectors];
+
+			} else if (Array.isArray(oExecutionScope.selectors)) {
+
+				oExecutionScope.components = oExecutionScope.selectors;
+
 			}
+
 		}
 
-		delete executionScope.selectors;
+		delete oExecutionScope.selectors;
 	};
 
 	/**
 	 * Called after the analyzer finished and reports whether there are issues or not.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._done
+	 * @memberof sap.ui.support.Main
 	 */
 	Main.prototype._done = function () {
-		var issues = IssueManager.getIssuesViewModel(),
-			elementTree = this._createElementTree();
+		var aIssues = IssueManager.getIssuesModel(),
+			aElementTree = this._createElementTree();
 
 		CommunicationBus.publish(channelNames.ON_ANALYZE_FINISH, {
-			issues: issues,
-			elementTree: elementTree,
+			issues: aIssues,
+			elementTree: aElementTree,
 			elapsedTime: this._oAnalyzer.getElapsedTimeString()
 		});
 
 		this._oAnalyzer.resolve();
 	};
 
+	/**
+	 * Creates element tree for the TreeTable in the Issues view.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._createElementTree
+	 * @memberof sap.ui.support.Main
+	 * @returns {object[]} The element tree for the current view displayed in the Issues view
+	 */
 	Main.prototype._createElementTree = function () {
 		var contextElements = this._copyElementsStructure(),
 			elementTree = [];
@@ -606,33 +825,52 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		}];
 	};
 
-	Main.prototype._setContextElementReferences = function (contextElements) {
+	/**
+	 * Sets the references in the elements from the element tree.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._setContextElementReferences
+	 * @memberof sap.ui.support.Main
+	 * @param {object} oContextElements Contains all context elements from the element tree
+	 */
+	Main.prototype._setContextElementReferences = function (oContextElements) {
 		var coreElements = this._oCore.mElements;
 
-		for (var elementId in contextElements) {
-			var element = contextElements[elementId],
+		for (var elementId in oContextElements) {
+			var element = oContextElements[elementId],
 				parent = coreElements[elementId] == undefined ? undefined : coreElements[elementId].getParent();
 
 			if (coreElements[elementId] instanceof sap.ui.core.ComponentContainer) {
 				var componentContainer = coreElements[elementId],
 					componentId = componentContainer.getComponent();
+
 				if (componentId) {
-					element.content.push(contextElements[componentId]);
-					contextElements[componentId].skip = true;
+					element.content.push(oContextElements[componentId]);
+					oContextElements[componentId].skip = true;
 				}
 			}
 
 			if (parent) {
 				var parentId = parent.getId();
-				if (!contextElements[parentId]) {
+
+				if (!oContextElements[parentId]) {
 					continue;
 				}
-				contextElements[parentId].content.push(contextElements[elementId]);
-				contextElements[elementId].skip = true;
+
+				oContextElements[parentId].content.push(oContextElements[elementId]);
+				oContextElements[elementId].skip = true;
 			}
 		}
 	};
 
+	/**
+	 * Copies element structure from the execution scope.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._copyElementsStructure
+	 * @memberof sap.ui.support.Main
+	 * @returns {object} copy Contains copied elements structure
+	 */
 	// TODO: the element crushing needs to be encapsulated on it's own
 	Main.prototype._copyElementsStructure = function () {
 		var copy = {},
@@ -689,12 +927,15 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 	/**
 	 * Used to create a data object for the report.
-	 *
-	 * @param {object} reportConstants - the string constants used in the report and in the Support Tools UI.
-	 * @return {object} contains all the information required to create a report.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._getReportData
+	 * @memberof sap.ui.support.Main
+	 * @param {object} oReportConstants Contains execution scopes and string constants used in the report and in the Support Tools UI.
+	 * @returns {object} Contains all the information required to create a report
 	 */
-	Main.prototype._getReportData = function (reportConstants) {
-		var issues = IssueManager.groupIssues(IssueManager.getIssuesViewModel()),
+	Main.prototype._getReportData = function (oReportConstants) {
+		var issues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
 			rules = this._mRuleSets,
 			selectedRules = this._oSelectedRulesIds;
 		return {
@@ -705,20 +946,23 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			scope: {
 				executionScope: this._oExecutionScope,
 				scopeDisplaySettings: {
-					executionScopes: reportConstants.executionScopes,
-					executionScopeTitle: reportConstants.executionScopeTitle
+					executionScopes: oReportConstants.executionScopes,
+					executionScopeTitle: oReportConstants.executionScopeTitle
 				}
 			},
 			analysisDuration: this._oAnalyzer.getElapsedTimeString(),
-			analysisDurationTitle: reportConstants.analysisDurationTitle,
+			analysisDurationTitle: oReportConstants.analysisDurationTitle,
 			name: constants.SUPPORT_ASSISTANT_NAME
 		};
 	};
 
 	/**
-	 * Callback for checking a support rule from the analyzer
-	 *
-	 * @param oRule
+	  * Callback for checking a support rule from the analyzer.
+	 * @private
+	 * @method
+	 * @name sap.ui.support.Main._analyzeSupportRule
+	 * @memberof sap.ui.support.Main
+	 * @param {object} oRule Contains all data for a given support rule that is to be analyzed
 	 */
 	Main.prototype._analyzeSupportRule = function (oRule) {
 		try {

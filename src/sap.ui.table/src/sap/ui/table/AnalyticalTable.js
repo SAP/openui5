@@ -272,21 +272,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			this.setProperty("firstVisibleRow", 0, true);
 
 			this._applyODataModelAnalyticalAdapter(oBindingInfo.model);
+
+			// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
+			// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table.
+			Table._addBindingListener(oBindingInfo, "selectionChanged", this._onSelectionChanged.bind(this));
 		}
 
 		// Create the binding.
 		Table.prototype._bindAggregation.call(this, sName, oBindingInfo);
-
-		var oBinding = this.getBinding("rows");
-
-		if (sName === "rows" && oBinding != null) {
-			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
-			oBinding.attachEvents({
-				// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
-				// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
-				selectionChanged: this._onSelectionChanged.bind(this)
-			});
-		}
 	};
 
 	/**
@@ -361,9 +354,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		if (!oBindingInfo.parameters.hasOwnProperty("sumOnTop")) {
 			oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
 		}
+
 		if (!oBindingInfo.parameters.hasOwnProperty("numberOfExpandedLevels")) {
 			oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
 		}
+
+		// The binding does not support the number of expanded levels to be bigger than the number of grouped columns.
+		if (oBindingInfo.parameters.numberOfExpandedLevels > this._aGroupedColumns.length) {
+			oBindingInfo.parameters.numberOfExpandedLevels = 0;
+		}
+
 		if (!oBindingInfo.parameters.hasOwnProperty("autoExpandMode")) {
 			var sExpandMode = this.getAutoExpandMode();
 			if (sExpandMode != TreeAutoExpandMode.Bundled && sExpandMode != TreeAutoExpandMode.Sequential) {

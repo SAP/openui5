@@ -86,7 +86,8 @@ sap.ui.define([
 				/**
 				 * Preserves the current header state when scrolling.
 				 * For example, if the user expands the header by clicking on the title and then scrolls down the page, the header will remain expanded.
-				 * <br><b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
+				 *
+				 * <b>Note:</b> Based on internal rules, the value of the property is not always taken into account - for example,
 				 * when the control is rendered on tablet or mobile and the control`s title and header
 				 * are with height larger than the given threshold.
 				 */
@@ -98,7 +99,7 @@ sap.ui.define([
 				 * The header can be also expanded/collapsed by user interaction,
 				 * which requires the property to be internally mutated by the control to reflect the changed state.
 				 *
-				 * <b>Note:</b> Please be aware that initially collapsed header state is not supported, so <code>headerExpanded</code> should not be set to <code>false</code> when initializing the control.
+				 * <b>Note:</b> As of version 1.48, you can initialize the control in collapsed header state by setting this property to <code>false</code>.
 				 */
 				headerExpanded: {type: "boolean", group: "Behavior", defaultValue: true},
 
@@ -150,7 +151,8 @@ sap.ui.define([
 				 * <code>DynamicPage</code> custom <code>ScrollBar</code>.
 				 */
 				_scrollBar: {type: "sap.ui.core.ScrollBar", multiple: false, visibility: "hidden"}
-			}
+			},
+			designTime : true
 		}
 	});
 
@@ -211,6 +213,7 @@ sap.ui.define([
 		this._bExpandingWithAClick = false;
 		this._bSuppressToggleHeaderOnce = false;
 		this._headerBiggerThanAllowedHeight = false;
+		this._bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false;
 		this._oScrollHelper = new ScrollEnablement(this, this.getId() + "-content", {
 			horizontal: false,
 			vertical: true
@@ -352,7 +355,7 @@ sap.ui.define([
 
 	/**
 	 * Hides/shows the footer container.
-	 * @param bShow
+	 * @param {boolean} bShow
 	 * @private
 	 */
 	DynamicPage.prototype._toggleFooter = function (bShow) {
@@ -727,14 +730,21 @@ sap.ui.define([
 
 	/**
 	 * Determines if it's possible for the header to collapse (snap) on scroll.
+	 * <code>Note:</code>
+	 * For IE and Edge we use 1px threshold,
+	 * because the clientHeight returns results in 1px difference compared to the scrollHeight,
+	 * the reason is not defined.
+	 *
 	 * @returns {boolean}
 	 * @private
 	 */
 	DynamicPage.prototype._canSnapHeaderOnScroll = function () {
-		var iMaxScrollPosition = this._getMaxScrollPosition();
+		var iMaxScrollPosition = this._getMaxScrollPosition(),
+			iThreshold = this._bMSBrowser ? 1 : 0;
 
 		if (this._bHeaderInTitleArea) { // when snapping with scroll, the header will be in the content area
 			iMaxScrollPosition += this._getHeaderHeight();
+			iMaxScrollPosition -= iThreshold;
 		}
 		return iMaxScrollPosition > this._getSnappingHeight();
 	};
@@ -766,7 +776,7 @@ sap.ui.define([
 	/**
 	 * Determines if the control would need a <code>ScrollBar</code>.
 	 * <code>Note:</code>
-	 * For IE and Edge we use 1px threshhold,
+	 * For IE and Edge we use 1px threshold,
 	 * because the clientHeight returns results in 1px difference compared to the scrollHeight,
 	 * the reason is not defined.
 	 *
@@ -774,8 +784,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._needsVerticalScrollBar = function () {
-		var bMSBrowser = Device.browser.internet_explorer || Device.browser.edge || false,
-			iThreshold = bMSBrowser ? 1 : 0;
+		var iThreshold = this._bMSBrowser ? 1 : 0;
 
 		return this._getMaxScrollPosition() > iThreshold;
 	};
@@ -941,7 +950,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
-	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout<code>),
+	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
 	 * thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
 	 * @param {Number} iWidth - the actual width of the control
 	 * @private

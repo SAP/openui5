@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core"
+	xmlns:commons="sap.ui.commons" xmlns:layout="sap.ui.layout"
+	xmlns:sap.m="sap.m">
+	<sap.m:Dialog class="sapUiRtaConfirmationDialog" verticalScrolling="false" title="{/titleText}" icon="{/icon}">
+		<layout:VerticalLayout width="100%">
+			<commons:TextView class="sapUiRtaConfirmationDialogText" text="{/messageText}" />
+		</layout:VerticalLayout>
+		<sap.m:beginButton>
+			<sap.m:Button class="sapUiRtaConfirmationDialogRemoveButton" text="{/removeText}" press="removeField" />
+		</sap.m:beginButton>
+		<sap.m:endButton>
+			<sap.m:Button class="sapUiRtaConfirmationDialogCancelButton" text="{/cancelText}" press="closeDialog" />
+		</sap.m:endButton>
+	</sap.m:Dialog>
+</core:FragmentDefinition>

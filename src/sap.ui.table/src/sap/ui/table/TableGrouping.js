@@ -116,14 +116,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {number} iRowIndex the row index which should be toggled.
 		 * @param {boolean} [bExpand] If defined instead of toggling the desired state is set.
-		 * @return {boolean} the new expand state in case an action was performed, <code>null</code> otherwise.
+		 * @return {boolean|null} the new expand state in case an action was performed, <code>null</code> otherwise.
 		 * @private
 		 */
 		toggleGroupHeader : function(oTable, iRowIndex, bExpand) {
 			var oBinding = oTable.getBinding("rows");
+
 			if (oBinding) {
 				var bIsExpanded = oBinding.isExpanded(iRowIndex);
-				if (oBinding.nodeHasChildren && !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iRowIndex))) {
+				var bIsLeaf = true; // If the node state can not be determined, we assume it is a leaf.
+
+				if (oBinding.nodeHasChildren != null) {
+					if (oBinding.getNodeByIndex != null) {
+						bIsLeaf = !oBinding.nodeHasChildren(oBinding.getNodeByIndex(iRowIndex));
+					} else {
+						// The sap.ui.model.TreeBindingCompatibilityAdapter has no #getNodeByIndex function and #nodeHasChildren always returns true.
+						bIsLeaf = false;
+					}
+				}
+
+				if (bIsLeaf) {
 					return null; // a leaf can't be expanded or collapsed
 				} else if (bExpand === true && !bIsExpanded) { // Force expand
 					oBinding.expand(iRowIndex);
@@ -134,8 +146,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 				} else {
 					return null;
 				}
+
 				return !bIsExpanded;
 			}
+
 			return null;
 		},
 
@@ -186,12 +200,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 */
 		isInGroupingRow : function(oCellRef) {
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
-			if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.DATACELL) {
+
+			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.DATACELL)) {
 				return oInfo.cell.parent().hasClass("sapUiTableGroupHeader");
-			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER
-							|| oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWACTION) {
+			} else if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ROWHEADER | TableGrouping.TableUtils.CELLTYPE.ROWACTION)) {
 				return oInfo.cell.hasClass("sapUiTableGroupHeader");
 			}
+
 			return false;
 		},
 
@@ -216,12 +231,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 */
 		isInSumRow : function(oCellRef) {
 			var oInfo = TableGrouping.TableUtils.getCellInfo(oCellRef);
-			if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.DATACELL) {
+
+			if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.DATACELL)) {
 				return oInfo.cell.parent().hasClass("sapUiAnalyticalTableSum");
-			} else if (oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWHEADER
-							|| oInfo && oInfo.type === TableGrouping.TableUtils.CELLTYPES.ROWACTION) {
+			} else if (oInfo.isOfType(TableGrouping.TableUtils.CELLTYPE.ROWHEADER | TableGrouping.TableUtils.CELLTYPE.ROWACTION)) {
 				return oInfo.cell.hasClass("sapUiAnalyticalTableSum");
 			}
+
 			return false;
 		},
 
@@ -601,6 +617,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 					} else {
 						this.expand(iIndex);
 					}
+				},
+
+				// For compatibility with TreeBinding adapters.
+				nodeHasChildren: function(oContext) {
+					if (oContext == null || oContext.__groupInfo == null) {
+						return false;
+					} else {
+						return oContext.__groupInfo.groupHeader === true;
+					}
+				},
+				getNodeByIndex: function(iIndex) {
+					return aContexts[iIndex];
 				}
 			});
 

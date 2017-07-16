@@ -24,8 +24,8 @@
 							  visible="false">
 				<headerTitle>
 					<ObjectPageHeader id="title" objectTitle="{topics>/kind} {topics>/name}"
-									  objectSubtitle="{ parts : [{path: 'topics>/deprecated'}],
-                                                                                                                                                                                                                                formatter: '.formatSubtitle'}">
+									  objectSubtitle="{parts : [{path: 'topics>/deprecated'}],
+									                   formatter: '.formatSubtitle'}">
 						<actions>
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 							<ObjectPageHeaderActionButton
@@ -33,7 +33,7 @@
 									class="sapUiHideOnPhone"
 									visible="{=!${device>/system/phone}}"
 									icon="sap-icon://full-screen"
-									tooltip="{i18n>sampleFullScreenTooltip}"
+									tooltip="Show this sample in full screen mode"
 									press="onToggleFullScreen" />
 						</actions>
 					</ObjectPageHeader>
@@ -41,34 +41,23 @@
 				</headerTitle>
 
 				<headerContent>
-					<layout:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin">
-						<layout:VerticalLayout width="100%">
-							<m:ObjectAttribute
-									visible="{=${topics>/isClass}}"
-									title="Control Sample"
-									text="{entity>/sample}"
-									active="{entity>/hasSample}"
-									press="onSampleLinkPress"
-									class="sapUiTinyMarginBottom">
-								<m:customData>
-									<core:CustomData key="name" value="{topics>/name}" />
-								</m:customData>
-							</m:ObjectAttribute>
+					<layout:Grid defaultSpan="L4 M6 S12" class="sapUiNoMargin" hSpacing="0">
+						<layout:VerticalLayout width="98%">
 
-							<m:ObjectAttribute
-									visible="{=${topics>/isClass}}"
-									title="Inherited from"
-									text="{topics>/extendsText}"
-									active="{topics>/isDerived}"
-									press="onTypeLinkPress"
-									class="sapUiTinyMarginBottom">
-								<m:customData>
-									<core:CustomData key="type" value="{topics>/extends}" />
-								</m:customData>
-							</m:ObjectAttribute>
+							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
+								<m:Label text="Control Sample:"/>
+								<m:Link text="{entity>/sample}" visible="{=${entity>/hasSample}}" href="#/entity/{topics>/name}"/>
+								<m:Text text="{entity>/sample}" visible="{=!${entity>/hasSample}}"/>
+							</m:HBox>
 
-							<m:HBox class="sapUiDocumentationImplementsDiv sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
-								<m:Text text="Implements:"/>
+							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
+								<m:Label text="Extends:"/>
+								<m:Link text="{topics>/extendsText}" visible="{=${topics>/isDerived}}" press="onTypeLinkPress"/>
+								<m:Text text="{topics>/extendsText}" visible="{=!${topics>/isDerived}}"/>
+							</m:HBox>
+
+							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/hasImplementsData}}">
+								<m:Label text="Implements:"/>
 								<m:HBox items="{path: 'topics>/implementsParsed'}">
 										<m:HBox>
 											<m:Link text="{topics>name}" href="#/api/{topics>href}"/>
@@ -125,9 +114,38 @@
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
-									<layout:VerticalLayout>
+									<layout:VerticalLayout width="100%">
+										<m:MessageStrip
+											visible="{=${topics>/deprecated} !== undefined}"
+											text="Deprecated since version {topics>/deprecated/since}. {topics>/deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											enableFormattedText="true"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
+
+										<layout:HorizontalLayout class="sapUiTinyMarginTop sapUiDocumentationAnnotationsText" visible="{topics>/hasAnnotations}">
+											<m:Text text="A detailed description of the OData annotations handled by this control is available"/>
+											<m:Link text="here" press="onAnnotationsLinkPress"/>
+											<m:Text text="."/>
+										</layout:HorizontalLayout>
+										<layout:HorizontalLayout class="sapUiDocumentationAnnotationsText" visible="{topics>/hasAnnotations}">
+											<m:Label text="Annotation Limitations:" design="Bold"/>
+											<m:Text text="Qualifier support for entity types is limited for this control."/>
+										</layout:HorizontalLayout>
+
+										<m:MessageStrip
+											visible="{=${topics>/experimental} !== undefined}"
+											text="Experimental API since version {topics>/experimental/since} {topics>/experimental/text}"
+											type="Warning"
+											showIcon="true"
+											showCloseButton="false"
+											enableFormattedText="true"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
 
 										<m:Table visible="{topics>/hasChildren}"
 												 items="{ path : 'topics>/controlChildren'}"
@@ -174,7 +192,12 @@
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+
+													<m:Text class="sapUiDocumentationParamBold" text="{parts: [
+															{path: 'topics>name'},
+															{path: 'topics>/name'},
+															{path: 'topics>static'}],
+														formatter: '.formatEntityName'}" wrapping="false"/>
 
 													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
 														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
@@ -202,10 +225,52 @@
 									<layout:VerticalLayout width="100%">
 										<core:HTML content="{parts: [{path: 'topics>/constructor/description'}],
 																	  formatter: '.formatDescription'}{}"/>
-										<ce:CodeEditor height="2rem" width="100%" visible="{topics>/hasConstructor}" editable="false" lineNumbers="true"
-													   value="{parts: [{path: 'topics>/name' },
-																			{path: 'topics>/constructor/parameters' }],
-																	 		formatter: '.formatConstructor'}"/>
+										<ce:CodeEditor height="auto"
+													   maxLines="20"
+													   width="100%"
+													   visible="{topics>/hasConstructor}"
+													   editable="false" lineNumbers="true"
+													   syntaxHints="false"
+													   class="sapUiSmallMarginBottom"
+													   value="{parts: [{path: 'topics>/name'},
+																		{path: 'topics>/constructor/parameters'}],
+															   formatter: '.formatConstructor'}"/>
+
+										<m:Table items="{ path: 'constructorParams>/parameters'}"
+												showSeparators="Inner"
+		 										fixedLayout="true">
+											<m:columns>
+												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
+												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+											</m:columns>
+											<m:items>
+												<m:ColumnListItem>
+													<m:cells>
+														<custom:ParamText customClass="{parts: [{path: 'constructorParams>isSubProperty'},
+																								{path: 'constructorParams>isSubSubProperty'},
+																								{path: 'appView>/bPhoneSize'}],
+																								formatter: '.formatEventClassName'}"
+																		  text="{= ${constructorParams>name}}"/>
+
+														<layout:VerticalLayout content="{path: 'constructorParams>types', templateShareable: 'false'}">
+															<m:HBox>
+																<m:items>
+																	<m:Link text="{constructorParams>value}"
+																			enabled="{parts: [{path: 'constructorParams>value'}],
+																				  formatter: '.formatLinkEnabled'}"
+																			press="onTypeLinkPress"/>
+																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${constructorParams>isLast} === false}" wrapping="false"/>
+																</m:items>
+															</m:HBox>
+														</layout:VerticalLayout>
+
+														<core:HTML content="{parts: [{path: 'constructorParams>description'}],
+																	 formatter: '.formatDescription'}"/>
+													</m:cells>
+												</m:ColumnListItem>
+											</m:items>
+										</m:Table>
 									</layout:VerticalLayout>
 								</blocks>
 							</ObjectPageSubSection>
@@ -226,8 +291,8 @@
 
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top" width="10%"><m:Label text="Visibility"/></m:Column>
+											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="Block"></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
@@ -242,15 +307,32 @@
 													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
+													<m:ObjectStatus text="{topics>visibility}" state="{= ${topics>visibility} === 'public' ? 'Success' : 'Warning'}" />
 
-													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
-														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</layout:VerticalLayout>
+													<m:VBox>
+														<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
+																					  formatter: '.formatDescriptionSince'}"/>
 
-													<core:HTML content="{parts: [{path: 'topics>description'},
-																					 {path: 'topics>deprecated/text'},
-																					 {path: 'topics>deprecated/since'}],
-																			 	  formatter: '.formatDescription'}"/>
+														<m:MessageStrip
+															visible="{=${topics>deprecated} !== undefined}"
+															text="Deprecated since version {topics>deprecated/since}. {topics>deprecated/text}"
+															type="Error"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiMediumMarginBottom">
+														</m:MessageStrip>
+														<m:MessageStrip
+															visible="{=${topics>experimental} !== undefined}"
+															text="Experimental API since {topics>experimental/since} {topics>experimental/text}"
+															type="Warning"
+															showIcon="true"
+															showCloseButton="false"
+															enableFormattedText="true"
+															class="sapUiMediumMarginBottom">
+														</m:MessageStrip>
+													</m:VBox>
+
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
@@ -270,12 +352,31 @@
 								<blocks>
 									<layout:VerticalLayout>
 
-										<core:HTML content="{parts: [{path: 'events>description'},
-																				{path: 'events>deprecated/text'},
-																				{path: 'events>deprecated/since'}],
-																			 formatter: '.formatDescription'}"/>
+										<core:HTML content="{parts: [{path: 'events>description'}, {path: 'events>since'}],
+																			 formatter: '.formatDescriptionSince'}"/>
 
-										<m:Table items="{ path : 'events>parameters'}"
+										<m:ObjectStatus text="Visibility: {events>visibility}" state="{= ${events>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
+
+										<m:MessageStrip
+											visible="{=${events>deprecated} !== undefined}"
+											text="Deprecated since version {events>deprecated/since}. {events>deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											enableFormattedText="true"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+										<m:MessageStrip
+											visible="{=${events>experimental} !== undefined}"
+											text="Experimental API since {events>experimental/since} {events>experimental/text}"
+											type="Warning"
+											showIcon="true"
+											showCloseButton="false"
+											enableFormattedText="true"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+
+										<m:Table items="{ path : 'events>parameters', templateShareable: 'false'}"
 												 showSeparators="Inner"
 												 fixedLayout="true">
 											<m:columns>
@@ -289,12 +390,12 @@
 														<custom:ParamText customClass="{parts: [{path: 'events>isSubProperty'},
 																								{path: 'events>isSubSubProperty'},
 																								{path: 'appView>/bPhoneSize'}],
-																						formatter: '.formatEventClassName'}" 
+																						formatter: '.formatEventClassName'}"
 																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${events>phoneName} ? ${events>phoneName} : ${events>name} }"
 																wrapping="false"/>
 														<m:Link text="{events>type}"
-																enabled="{parts: [{path: 'events>'}],
-																		  formatter: '.formatEventLinkEnabled'}"
+																enabled="{parts: [{path: 'events>type'}],
+																		  formatter: '.formatLinkEnabled'}"
 																press="onTypeLinkPress"/>
 														<core:HTML content="{parts: [{path: 'events>description'},
 																					 {path: 'events>deprecated/text'},
@@ -317,24 +418,55 @@
 									   subSections="{ path : 'methods>/methods'}" >
 						<subSections>
 
-							<ObjectPageSubSection title="{parts: [{path: 'methods>'}],
-																   formatter: '.formatMethodsName'}">
+							<ObjectPageSubSection title="{parts: [
+												{path: 'methods>name'},
+												{path: 'topics>/name'},
+												{path: 'methods>static'}
+											], formatter: '.formatEntityName'}">
 								<blocks>
 
-									<layout:VerticalLayout>
+									<layout:VerticalLayout width="100%">
 
-										<core:HTML content="{parts: [{path: 'methods>description'},
-																	{path: 'methods>deprecated/text'},
-																	{path: 'methods>deprecated/since'}],
-																			 formatter: '.formatDescription'}"/>
+										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>since'}],
+																			 formatter: '.formatDescriptionSince'}"/>
 
-										<m:Table items="{ path : 'methods>parameters'}"
-												 showSeparators="Inner"
-												 fixedLayout="true">
+										<m:ObjectStatus text="Visibility: {methods>visibility}" state="{= ${methods>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
+
+										<m:MessageStrip
+											visible="{=${methods>deprecated} !== undefined}"
+											text="Deprecated since version {methods>deprecated/since}. {methods>deprecated/text}"
+											type="Error"
+											showIcon="true"
+											showCloseButton="false"
+											enableFormattedText="true"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+										<m:MessageStrip
+											visible="{=${methods>experimental} !== undefined}"
+											text="Experimental API since {methods>experimental/since} {methods>experimental/text}"
+											type="Warning"
+											showIcon="true"
+											showCloseButton="false"
+											enableFormattedText="true"
+											class="sapUiMediumMarginBottom">
+										</m:MessageStrip>
+
+										<ce:CodeEditor height="auto" maxLines="20" width="100%" editable="false" lineNumbers="true"
+											syntaxHints="false"
+											value="{parts: [{path: 'methods>name' },
+														{path: 'methods>parameters'},
+														{path: 'methods>returnValue'}],
+													formatter: '.formatMethodCode'}"
+											class="sapUiSmallMarginBottom" />
+
+										<m:Table items="{ path : 'methods>parameters', templateShareable: 'false'}"
+												showSeparators="Inner"
+												fixedLayout="true"
+												visible="{= ${methods>parameters}.length > 0}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
@@ -347,14 +479,14 @@
 																		  wrapping="false"/>
 
 
-														<layout:VerticalLayout content="{methods>types}">
+														<layout:VerticalLayout content="{path: 'methods>types', templateShareable: 'false'}">
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{methods>value}"
 																			enabled="{parts: [{path: 'methods>value'}],
 																				  formatter: '.formatLinkEnabled'}"
 																			press="onTypeLinkPress"/>
-																	<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
@@ -370,23 +502,24 @@
 
 										<m:Table showSeparators="Inner"
 												 class="sapUiDocumentationReturnsTable"
-												 fixedLayout="true">
+												 fixedLayout="true"
+												 visible="{= ${methods>returnValue} !== undefined}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Returns"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
 													<m:cells>
 
-														<layout:VerticalLayout content="{methods>returnValue/types}">
+														<layout:VerticalLayout content="{path: 'methods>returnValue/types', templateShareable: 'false'}">
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{methods>value}"
 																			enabled="{parts: [{path: 'methods>value'}],
 																				  formatter: '.formatLinkEnabled'}"
 																			press="onTypeLinkPress"/>
-																	<m:Text text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
+																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
 														</layout:VerticalLayout>
@@ -516,11 +649,51 @@
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																					 {path: 'topics>deprecated/text'},
 																					 {path: 'topics>deprecated/since'}],
-																			 	  formatter: '.formatDescription'}"/>
+																		formatter: '.formatDescription'}"/>
 												</m:cells>
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<ObjectPageSection id="annotations"
+									   title="Annotations"
+									   visible="{topics>/hasAnnotations}"
+									   subSections="{ path : 'topics>/ui5-metadata/annotations'}" >
+						<subSections>
+							<ObjectPageSubSection title="{= ${topics>annotation} !== 'undefined' ? ${topics>annotation} : '(' + ${topics>namespace} + ')' }">
+								<blocks>
+									<layout:VerticalLayout width="100%">
+
+										<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
+																			 formatter: '.formatAnnotationDescription'}"/>
+
+										<m:Table
+											 showSeparators="Inner"
+											 fixedLayout="true">
+										<m:columns>
+											<m:Column vAlign="Top" width="45%"><m:Label text="Namespace"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Target Type"/></m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Applies To"/></m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<core:HTML content="{parts: [{path: 'topics>namespace'}],
+																			 formatter: '.formatAnnotationNamespace'}"/>
+													<core:HTML content="{parts: [{path: 'topics>target'}],
+																			 formatter: '.formatAnnotationTarget'}"/>
+													<core:HTML content="{parts: [{path: 'topics>appliesTo'}],
+																			 formatter: '.formatAnnotationTarget'}"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+
+									</layout:VerticalLayout>
 								</blocks>
 							</ObjectPageSubSection>
 						</subSections>

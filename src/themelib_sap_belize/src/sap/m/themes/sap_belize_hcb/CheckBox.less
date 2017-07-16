@@ -68,6 +68,16 @@ html.sap-desktop {
 	}
 }
 
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
+		outline-style: dashed;
+	}
+	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
+
 .sapMCb:not(.sapMCbWarn):not(.sapMCbErr) .sapMCbBg.sapMCbHoverable:hover {
 	background-color: @sapUiSelected;
 }

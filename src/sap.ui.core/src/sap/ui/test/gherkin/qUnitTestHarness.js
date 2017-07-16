@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/* global jQuery,QUnit,assert */
+/* global jQuery,QUnit */
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 // Only load QUnit if it has not been loaded via script tag
@@ -75,7 +75,7 @@ sap.ui.define([
       $.sap.log.info("[GHERKIN] Running feature: '" + oFeatureTest.name + "'");
       oFeatureTest.testScenarios.forEach(function(oTestScenario) {
         var fnTestFunction = (!oFeatureTest.skip && !oTestScenario.skip) ? QUnit.test : QUnit.skip;
-        fnTestFunction(oTestScenario.name, function() {
+        fnTestFunction(oTestScenario.name, function(assert) {
           $.sap.log.info("[GHERKIN] Running scenario: '" + oTestScenario.name + "'");
           oTestScenario.testSteps.forEach(function(oTestStep) {
             $.sap.log.info("[GHERKIN] Running step: text='" + oTestStep.text + "' regex='" + oTestStep.regex + "'");
@@ -83,7 +83,7 @@ sap.ui.define([
             if (oTestStep.isMatch) {
               QUnit.config.current.assertions.pop(); // don't break QUnit expect() behaviour
             }
-            oTestGenerator.execute(oTestStep);
+            oTestGenerator.execute(oTestStep, assert);
           });
         });
       });

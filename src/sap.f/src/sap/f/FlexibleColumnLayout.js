@@ -6,15 +6,18 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"./library",
-	"./LayoutType",
 	"sap/ui/Device",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Control",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Button",
 	"sap/m/NavContainer"
-], function (jQuery, library, LT, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
+], function (jQuery, library, Device, ResizeHandler, Control, InvisibleText, Button, NavContainer) {
 	"use strict";
+
+
+	// shortcut for sap.f.LayoutType
+	var LT = library.LayoutType;
 
 
 	/**
@@ -645,7 +648,6 @@ sap.ui.define([
 	/**
 	 * Updates the content of a column by flushing its container div only
 	 * @param {string} sColumn
-	 * @param oControl
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._flushColumnContent = function (sColumn) {
@@ -653,7 +655,7 @@ sap.ui.define([
 			oRm = sap.ui.getCore().createRenderManager();
 
 		oRm.renderControl(oControl);
-		oRm.flush(this._$columns[sColumn][0], undefined, true);
+		oRm.flush(this._$columns[sColumn].find(".sapFFCLColumnContent")[0], undefined, true);
 		oRm.destroy();
 	};
 
@@ -961,7 +963,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the maximum number of columns that can be displayed at once for a certain control width
-	 * @param iWidth
+	 * @param {int} iWidth
 	 * @returns {number}
 	 * @private
 	 */

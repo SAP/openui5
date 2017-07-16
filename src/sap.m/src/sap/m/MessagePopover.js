@@ -3,12 +3,12 @@
  */
 
 // Provides control sap.m.MessagePopover.
-sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
-		"./StandardListItem", "./ListType" ,"./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
+sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
+		"./StandardListItem", "sap/ui/core/Control", "sap/ui/core/IconPool",
 		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
 		"./semantic/SemanticPage", "./Link" ,"./Popover", "./MessagePopoverItem", "./MessageView"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
-			  StandardListItem, ListType, library, Control, PlacementType, IconPool,
+			  StandardListItem, Control, IconPool,
 			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Link, Popover, MessagePopoverItem,
 			  MessageView) {
 		"use strict";
@@ -30,7 +30,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * <li> If the message cannot be fully displayed or includes a long description, the message popover provides navigation to the detailed description.</li>
 		 * </ul>
 		 * <h3>Structure</h3>
-		 * The message popover stores all messages in an association of type {@link sap.m.MessagePopoverItem} named <code>items</code>.
+		 * The message popover stores all messages in an association of type {@link sap.m.MessageItem} named <code>items</code>.
 		 *
 		 * A set of properties determines how the items are rendered:
 		 * <ul>
@@ -99,7 +99,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					/**
 					 * A list with message items
 					 */
-					items: {type: "sap.m.MessagePopoverItem", multiple: true, singularName: "item"},
+					items: {type: "sap.m.MessageItem", altTypes: ["sap.m.MessagePopoverItem"], multiple: true, singularName: "item"},
 
 					/**
 					 * A custom header button
@@ -345,24 +345,19 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				var items = this.getItems();
 				var that = this;
 
-				this._oMessageView.removeAllItems();
+				this._oMessageView.destroyItems();
 
 				items.forEach(function (item) {
-
 					// we need to know if the MessagePopover's item was changed so to
 					// update the MessageView's items as well
 					item._updateProperties(function () {
 						that._bItemsChanged = true;
 					});
 
-					this._oMessageView.addItem(new sap.m.MessageItem({
-						type: item.getType(),
-						title: item.getTitle(),
-						subtitle: item.getSubtitle(),
-						description: item.getDescription(),
-						markupDescription: item.getMarkupDescription(),
-						longtextUrl: item.getLongtextUrl(),
-						counter: item.getCounter()
+					// we need to clone the item along with its bindings and aggregations
+					this._oMessageView.addItem(item.clone("", "", {
+						cloneChildren: true,
+						cloneBinding: true
 					}));
 				}, this);
 

@@ -87,6 +87,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			iconAlt : {type : "string", group : "Accessibility", defaultValue : null},
 
 			/**
+			 * Determines the tooltip text of the <code>ObjectHeader</code> icon.
+			 */
+			iconTooltip : {type : "string", group : "Accessibility", defaultValue : null},
+
+			/**
 			 * By default, this is set to <code>true</code> but then one or more requests are sent trying to get
 			 * the density perfect version of image if this version of image doesn't exist on the server.
 			 *
@@ -135,7 +140,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			showTitleSelector : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * Determines the value state of the <code>number<code> and <code>numberUnit<code> properties.
+			 * Determines the value state of the <code>number</code> and <code>numberUnit</code> properties.
 			 * @since 1.16.0
 			 */
 			numberState : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
@@ -160,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
 
 			/**
-			 * Determines whether the <code>ObjectHeader<code> is rendered with a different design that
+			 * Determines whether the <code>ObjectHeader</code> is rendered with a different design that
 			 * reacts responsively to the screen sizes.
 			 *
 			 * <b>Note:</b> Be aware that the design and behavior of the responsive <code>ObjectHeader</code>
@@ -477,7 +482,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Every time a control is inserted in the ObjectHeader, it must be monitored for size/visibility changes
-	 * @param oControl
+	 * @param {sap.m.Control} oControl The inserted control
 	 * @private
 	 */
 	ObjectHeader.prototype._registerControlListener = function (oControl) {
@@ -488,7 +493,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Each time a control is removed from the ObjectHeader, detach listeners
-	 * @param oControl
+	 * @param {sap.m.Control} oControl The removed control
 	 * @private
 	 */
 	ObjectHeader.prototype._deregisterControlListener = function (oControl) {
@@ -559,7 +564,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Sets the new text for the tooltip of the select title arrow to the internal aggregation
 	 * @override
 	 * @public
-	 * @param sTooltip the tooltip of the title selector
+	 * @param {string} sTooltip the tooltip of the title selector
 	 * @returns {sap.m.ObjectHeader} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
@@ -659,7 +664,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @private
-	 * @returns {Array}
+	 * @returns {Array} The visible markers
 	 */
 	ObjectHeader.prototype._getVisibleMarkers = function() {
 
@@ -749,7 +754,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Handles space or enter key
-	 *
+	 * @param {object} oEvent The fired event
 	 * @private
 	 */
 	ObjectHeader.prototype._handleSpaceOrEnter = function(oEvent) {
@@ -841,7 +846,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Handle link behavior of the link and title when are active
-	 *
+	 * @param {object} oEvent The fired event
+	 * @param {string} sSourceId The source ID of the link
 	 * @private
 	 */
 	ObjectHeader.prototype._linkClick = function(oEvent, sSourceId) {
@@ -899,7 +905,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Called on orientation change to rerender the title.
-	 * nCutLen - the number of the characters to which the title should be cut
+	 * @param {number} nCutLen The number of the characters to which the title should be cut
 	 * according to the design specification (80 or 50 chars)
 	 *
 	 * @private
@@ -958,7 +964,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Lazy load object header's image.
-	 *
+	 * @returns {object} The image control
 	 * @private
 	 */
 	ObjectHeader.prototype._getImageControl = function() {
@@ -968,6 +974,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var mProperties = jQuery.extend(
 			{
 				src : this.getIcon(),
+				tooltip: this.getIconTooltip(),
 				alt: this.getIconAlt(),
 				useIconTooltip : false,
 				densityAware : this.getIconDensityAware()
@@ -1099,9 +1106,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * @param [string]
-	 *            sId control id to be escaped
-	 * @returns escaped control id with "#" prefix
+	 * @param {string} sId Control ID to be escaped
+	 * @returns {string} Escaped control id with "#" prefix
 	 * @private
 	 */
 	ObjectHeader._escapeId = function(sId) {
@@ -1110,7 +1116,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @private
-	 * @returns {boolean}
+	 * @returns {boolean} If there is bottom content
 	 */
 	ObjectHeader.prototype._hasBottomContent = function() {
 		return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers());
@@ -1118,7 +1124,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @private
-	 * @returns {boolean}
+	 * @returns {boolean} If there is icon
 	 */
 	ObjectHeader.prototype._hasIcon = function() {
 		return !!this.getIcon().trim();
@@ -1126,7 +1132,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @private
-	 * @returns {boolean}
+	 * @returns {boolean} If there are attributes
 	 */
 	ObjectHeader.prototype._hasAttributes = function() {
 		var attributes = this.getAttributes();
@@ -1142,7 +1148,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * @private
-	 * @returns {boolean}
+	 * @returns {boolean} IF there is status
 	 */
 	ObjectHeader.prototype._hasStatus = function() {
 		var bHasStatus = ((this.getFirstStatus() && !this.getFirstStatus()._isEmpty()) || (this.getSecondStatus() && !this.getSecondStatus()._isEmpty()));
@@ -1165,7 +1171,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns the default background design for the different types of the ObjectHeader
 	 * @private
-	 * @returns {sap.m.BackgroundDesign}
+	 * @returns {sap.m.BackgroundDesign} The default background design
 	 */
 	ObjectHeader.prototype._getDefaultBackgroundDesign = function() {
 		if (this.getCondensed()) {
@@ -1183,7 +1189,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Returns either the default background or the one that is set by the user
-	 *
+	 * @returns {sap.m.BackgroundDesign} The default of the set by the user background design
 	 * @private
 	 */
 	ObjectHeader.prototype._getBackground = function() {
@@ -1198,7 +1204,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Sets the text alignment for all additional numbers inside the AdditionalNumbers aggregation
-	 *
+	 * @param {string} sTextAlign The text alignment to be set
 	 * @private
 	 */
 	ObjectHeader.prototype._setTextAlignANum = function(sTextAlign) {
@@ -1211,8 +1217,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns <code>true</code> if the name of the current media range of the control is <code>sRangeName</code>
 	 *
-	 * @param sRangeName - media range set
-	 * @returns {boolean}
+	 * @param {string} sRangeName Media range set
+	 * @returns {boolean} <code>true</code> if the name of the current media range of the control is the given range name
 	 * @private
 	 */
 	ObjectHeader.prototype._isMediaSize = function (sRangeName) {

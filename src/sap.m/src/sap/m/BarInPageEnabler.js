@@ -31,9 +31,9 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	/**
-	 * Creates (if not already created) and returns an invisible text element for screan reader support
-	 * @param sType - the type of the control we want to get a label for
-	 * @param sText - the text to be used
+	 * Creates (if not already created) and returns an invisible text element for screen reader support.
+	 * @param {string} sType - the type of the control we want to get a label for
+	 * @param {string} sText - the text to be used
 	 * @private
 	 */
 	var _ensureInvisibleText = function(sType, sText) {
@@ -67,8 +67,8 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 		/**
 		 * Sets the HTML tag of the root element.
-		 * @param {string} sTag
-		 * @returns {sap.m.IBar} this for chaining
+		 * @param {string} sNewTag The new root element
+		 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
 		 * @protected
 		 */
 		setHTMLTag : function (sNewTag) {
@@ -169,8 +169,9 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		},
 
 		/**
-		 * Writes landmarks info to the bar
-		 *
+		 * Writes landmarks info to the bar.
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 * @private
 		 */
 		_writeLandmarkInfo: function (oRm, oControl) {
@@ -247,7 +248,7 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 	/**
 	 * Adds the sapMBarChildClass to a control.
-	 * @param {sap.ui.core.Control} oControl
+	 * @param {sap.ui.core.Control} oControl The sap.ui.core.Control to which the sapMBarChildClass will be added
 	 * @protected
 	 * @static
 	 */

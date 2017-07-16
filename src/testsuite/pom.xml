@@ -141,12 +141,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>themelib_sap_bluecrystal</artifactId>
+			<artifactId>sap.ui.rta</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>themelib_sap_goldreflection</artifactId>
+			<artifactId>themelib_sap_bluecrystal</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

@@ -351,6 +351,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
+				var scrollPosY;
+				var scrollPosX;
+
 				that._setDimensions();
 				that._adjustScrollingPane();
 
@@ -363,12 +366,32 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				} else {
 					// the top and left position need to be calculated with the
 					// window scroll position
-					oPosition.at.top = 'calc(50% + ' + (window.scrollY === undefined ? window.pageYOffset : window.scrollY) + 'px)';
+					if (window.scrollY === undefined) {
+						scrollPosY = window.pageYOffset;
+					} else {
+						scrollPosY = window.scrollY;
+					}
+
+					// on iOS this can be a negative integer
+					// which is causing the dialog to be rendered partially off-screen
+					if (scrollPosY < 0) {
+						scrollPosY = 0;
+					}
+
+					oPosition.at.top = 'calc(50% + ' + scrollPosY + 'px)';
 
 					if (that._bRTL) {
 						oPosition.at.left = 'auto'; // RTL mode adds right 50% so we have to remove left 50%
 					} else {
-						oPosition.at.left = 'calc(50% + ' + (window.scrollX === undefined ? window.pageXOffset : window.scrollX) + 'px)';
+						if (window.scrollX === undefined) {
+							scrollPosX = window.pageXOffset;
+						} else {
+							scrollPosX = window.scrollX;
+						}
+						if (scrollPosX < 0) {
+							scrollPosX = 0;
+						}
+						oPosition.at.left = 'calc(50% + ' + scrollPosX + 'px)';
 					}
 				}
 
@@ -701,7 +724,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 *
 		 * @param {Object} $Ref
 		 * @param {number} iRealDuration
-		 * @param fnOpened
+		 * @param {function} fnOpened
 		 * @private
 		 */
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
@@ -715,7 +738,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 *
 		 * @param {Object} $Ref
 		 * @param {number} iRealDuration
-		 * @param fnClose
+		 * @param {function} fnClose
 		 * @private
 		 */
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {

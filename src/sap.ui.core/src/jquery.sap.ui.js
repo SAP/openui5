@@ -62,42 +62,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Global' /* cyclic: , 'sap/ui/core/Co
 	};
 
 	/**
-	 * Function identifying the closest SAPUI5 Control in the given jQuery context (provided via jQuery.map method).
-	 * @private
-	 */
-	function fgetControl() {
-		// as with jQuery 1.4.3 and 1.4.4 there is a big problem here, we increase checks here
-		if (!this || !this.nodeType || this.nodeType === 9) {
-			return null;
-		} // in this case, we are on the HTML Document and cannot do anything
-		// in IE8 'closest' might fail (e.g. when the element is not in the current document tree)
-		// The following line would probably also work for the 'try-catch' below but induce performance penalty in EVERY call of this method.
-		// if(jQuery(document.documentElement).has(this)) {
-		try {
-			var sId = jQuery(this).closest("[data-sap-ui]").attr("id");
-			return sId ? sap.ui.getCore().byId(sId) : null;
-		} catch (e) {
-			// probably IE8 case where element is not in current document tree... ==> there is no current control
-			return null;
-		}
-	}
-
-	/**
 	 * Extension function to the jQuery.fn which identifies SAPUI5 controls in the given jQuery context.
 	 *
-	 * @param {int} [idx] optional parameter to return the control instance at the given idx's position in the array.
-	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} depending on the given context and idx parameter an array of controls, an instance or null.
+	 * @param {int} [iIndex] optional parameter to return the control instance at the given index in the array.
+	 * @returns {sap.ui.core.Control[] | sap.ui.core.Control | null} depending on the given context and index parameter an array of controls, an instance or null.
 	 * @name jQuery#control
 	 * @function
 	 * @public
 	 */
-	jQuery.fn.control = function(idx) {
-		var aControls = this.map(fgetControl);
-		if (idx === undefined || isNaN(idx)) {
-			return aControls.get();
-		} else {
-			return aControls.get(idx);
-		}
+	jQuery.fn.control = function(iIndex, bIncludeRelated /* respects to associated DOM elements to a control via data-sap-ui-related attribute */) {
+		var aControls = this.map(function() {
+			var sControlId;
+			if (bIncludeRelated) {
+				var $Closest = jQuery(this).closest("[data-sap-ui],[data-sap-ui-related]");
+				sControlId = $Closest.attr("data-sap-ui-related") || $Closest.attr("id");
+			} else {
+				sControlId = jQuery(this).closest("[data-sap-ui]").attr("id");
+			}
+			return sap.ui.getCore().byId(sControlId);
+		});
+
+		return aControls.get(iIndex);
 	};
 
 

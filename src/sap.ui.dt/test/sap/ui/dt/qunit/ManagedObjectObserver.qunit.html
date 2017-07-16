@@ -20,154 +20,236 @@
 <script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script>
 	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	QUnit.config.autostart = false;
 
-	jQuery.sap.require("sap.ui.dt.ManagedObjectObserver");
+	sap.ui.define([	"sap/ui/dt/ManagedObjectObserver",
+					"sap/ui/core/Element"],
+		function(ManagedObjectObserver, Element) {
+			"use strict";
 
-	var TestObject = sap.ui.core.Element.extend("sap.ui.dt.TestObject", {
-		metadata: {
-			properties: {
-				"myProperty": {
-					type: "boolean"
+			QUnit.start();
+
+			var TestObject = Element.extend("sap.ui.dt.TestObject", {
+				metadata: {
+					properties: {
+						"myProperty": {
+							type: "boolean"
+						}
+					},
+					associations: {
+						"myAssociation": {
+							"type": "sap.ui.core.Control",
+							"multiple": true
+						},
+						"mySingleAssociation": {
+							"type": "sap.ui.core.Element",
+						},
+						"myOverwrittenAssociation": {
+							"type": "sap.ui.core.Element",
+							"multiple": true
+						}
+					},
+					aggregations: {
+						"myAggregation": {
+							"type": "sap.ui.core.Element"
+						},
+						"mySingleAggregation": {
+							"type": "sap.ui.core.Element",
+							"multiple": false
+						},
+						"myOverwrittenAggregation": {
+							"type": "sap.ui.core.Element"
+						}
+					}
 				}
-			},
-			associations: {
-				"myAssociation": {
-					"type": "sap.ui.core.Control"
-				}
-			},
-			aggregations: {
-				"myAggregation": {
-					"type": "sap.ui.core.Element"
+			});
+
+			TestObject.prototype.addMyOverwrittenAggregation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.insertMyOverwrittenAggregation = function () {
+				//don't call the generic method as we would do something special...
+			};
+			TestObject.prototype.removeMyOverwrittenAggregation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.removeAllMyOverwrittenAggregation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.destroyMyOverwrittenAggregation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.addMyOverwrittenAssociation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.removeMyOverwrittenAssociation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			TestObject.prototype.removeAllMyOverwrittenAssociation = function () {
+				//don't call the generic method as we would do something special...
+			};
+
+			QUnit.module("Given that an ManagedObject is observed", {
+				beforeEach: function () {
+					this.oManagedObject = new TestObject();
+					this.oOtherObject = new TestObject();
+					this.oManagedObjectObserver = new ManagedObjectObserver({
+						target: this.oManagedObject,
+						destroyed: fnObserverDestroyedCalled,
+						modified: fnObserverModifiedCalled
+					});
 				},
-				"mySingleAggregation": {
-					"type": "sap.ui.core.Element",
-					"multiple": false
-				},
-				"myOverwrittenAggregation": {
-					"type": "sap.ui.core.Element"
+				afterEach: function () {
+					this.oManagedObjectObserver.destroy();
+					this.oManagedObject.destroy();
+					this.oOtherObject.destroy();
 				}
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the property of the ManagedObject is modified", function () {
+				this.oManagedObject.setMyProperty(true);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the single aggregation is set via mutator", function () {
+				this.oManagedObject.setMySingleAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the single aggregation is set via setAggregation", function () {
+				this.oManagedObject.setAggregation("mySingleAggregation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is set via modifier", function () {
+				this.oManagedObject.addMyAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is set via addAggregation", function () {
+				this.oManagedObject.addAggregation("myAggregation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is set via insertAggregation", function () {
+				this.oManagedObject.insertAggregation("myAggregation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function () {
+				this.oManagedObject.removeAggregation("myAggregation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function () {
+				this.oManagedObject.removeMyAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destroyAggregation", function () {
+				this.oManagedObject.destroyAggregation("myAggregation");
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destructor", function () {
+				this.oManagedObject.destroyMyAggregation();
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is emptied via mutator", function () {
+				this.oManagedObject.removeAllMyAggregation();
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via add mutator", function () {
+				this.oManagedObject.addMyOverwrittenAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via insert mutator", function () {
+				this.oManagedObject.insertMyOverwrittenAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via remove mutator", function () {
+				this.oManagedObject.removeMyOverwrittenAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is emptied via removeAll mutator", function () {
+				this.oManagedObject.removeAllMyOverwrittenAggregation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is destroyed via destructor", function () {
+				this.oManagedObject.destroyMyOverwrittenAggregation();
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the parent is set", function () {
+				this.oManagedObject.setParent(this.oOtherObject);
+			});
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the single association is set via mutator", function () {
+				this.oManagedObject.setMySingleAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the single association is set via setAssociation", function () {
+				this.oManagedObject.setAssociation("mySingleAssociation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is set via modifier", function () {
+				this.oManagedObject.addMyAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is set via addAssociation", function () {
+				this.oManagedObject.addAssociation("myAssociation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple association is removed via removeAssociation", function () {
+				this.oManagedObject.removeAssociation("myAssociation", this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple association is removed via removeAssociation", function () {
+				this.oManagedObject.removeMyAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple association is emptied via mutator", function () {
+				this.oManagedObject.removeAllMyAssociation();
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is accessed via add mutator", function () {
+				this.oManagedObject.addMyOverwrittenAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is accessed via remove mutator", function () {
+				this.oManagedObject.removeMyOverwrittenAssociation(this.oOtherObject);
+			});
+
+			whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten Association is emptied via removeAll mutator", function () {
+				this.oManagedObject.removeAllMyOverwrittenAssociation(this.oOtherObject);
+			});
+
+
+			function fnObserverModifiedCalled(oEvent) {
+				assert.ok(oEvent, 'then a "Modified" event is fired on modifying the target');
 			}
-		}
-	});
 
-	TestObject.prototype.addMyOverwrittenAggregation = function(){
-		//don't call the generic method as we would do something special...
-	};
+			function fnObserverDestroyedCalled(oEvent) {
+				assert.ok(oEvent, 'then a "Destroyed" event is fired on destroying the target');
+			}
 
-	TestObject.prototype.insertMyOverwrittenAggregation = function(){
-		//don't call the generic method as we would do something special...
-	};
-	TestObject.prototype.removeMyOverwrittenAggregation = function(){
-		//don't call the generic method as we would do something special...
-	};
+			function whenThisHappensThenOneModifiedEventShouldBeFired(sTestDescription, fnWhen) {
+				QUnit.test(sTestDescription, function (assert) {
+					assert.expect(1);
+					fnWhen.call(this);
+				});
+			}
 
-	TestObject.prototype.removeAllMyOverwrittenAggregation = function(){
-		//don't call the generic method as we would do something special...
-	};
-
-	TestObject.prototype.destroyMyOverwrittenAggregation = function(){
-		//don't call the generic method as we would do something special...
-	};
-	QUnit.module("Given that an ManagedObject is observed", {
-		beforeEach: function() {
-			this.oManagedObject = new TestObject();
-			this.oOtherObject = new TestObject();
-			this.oManagedObjectObserver = new sap.ui.dt.ManagedObjectObserver({
-				target: this.oManagedObject
+			QUnit.test("when the ManagedObject is destroyed", function (assert) {
+				assert.expect(1);
+				this.oManagedObject.destroy();
 			});
-		},
-		afterEach: function() {
-			this.oManagedObjectObserver.destroy();
-			this.oManagedObject.destroy();
-			this.oOtherObject.destroy();
-		}
-	});
 
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the property of the ManagedObject is modified", function() {
-		this.oManagedObject.setMyProperty(true);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the single aggregation is set via mutator", function() {
-		this.oManagedObject.setMySingleAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the single aggregation is set via setAggregation", function() {
-		this.oManagedObject.setAggregation("mySingleAggregation", this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is set via modifier", function() {
-		this.oManagedObject.addMyAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is set via addAggregation", function() {
-		this.oManagedObject.addAggregation("myAggregation", this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is set via insertAggregation", function() {
-		this.oManagedObject.insertAggregation("myAggregation", this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function() {
-		this.oManagedObject.removeAggregation("myAggregation", this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when an object in the multiple aggregation is removed via removeAggregation", function() {
-		this.oManagedObject.removeMyAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destroyAggregation", function() {
-		this.oManagedObject.destroyAggregation("myAggregation");
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is destroyed via destructor", function() {
-		this.oManagedObject.destroyMyAggregation();
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the multiple aggregation is emptied via mutator", function() {
-		this.oManagedObject.removeAllMyAggregation();
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via add mutator", function() {
-		this.oManagedObject.addMyOverwrittenAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via insert mutator", function() {
-		this.oManagedObject.insertMyOverwrittenAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is accessed via remove mutator", function() {
-		this.oManagedObject.removeMyOverwrittenAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is emptied via removeAll mutator", function() {
-		this.oManagedObject.removeAllMyOverwrittenAggregation(this.oOtherObject);
-	});
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the overwritten aggregation is destroyed via destructor", function() {
-		this.oManagedObject.destroyMyOverwrittenAggregation();
-	})
-
-	whenThisHappensThenOneModifiedEventShouldBeFired("when the parent is set", function() {
-		this.oManagedObject.setParent(this.oOtherObject);
-	})
-
-	function whenThisHappensThenOneModifiedEventShouldBeFired(sTestDescription, fnWhen) {
-		QUnit.test(sTestDescription, function(assert) {
-			assert.expect(1);
-			this.oManagedObjectObserver.attachModified(function(oEvent) {
-				assert.ok(oEvent, 'then a "Modified" event is fired');
+			QUnit.test("when the element is observed and then unobserved", function (assert) {
+				var oOtherManagedObjectObserver = new ManagedObjectObserver();
+				assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, undefined, "then _bIsObserved flag does not exist");
+				oOtherManagedObjectObserver.setTarget(this.oManagedObject);
+				assert.ok(oOtherManagedObjectObserver._bIsObserved, "then _bIsObserved flag is set on setting the target");
+				this.oManagedObject.destroy();
+				assert.strictEqual(oOtherManagedObjectObserver._bIsObserved, false, "then _bIsObserved flag is unset on destroying the target");
+				assert.strictEqual(this.oManagedObject.destroy, Element.prototype.destroy, "then original base functions (like destroy) are set back on destroying the target");
 			});
-			fnWhen.call(this);
 		});
-	}
-
-	QUnit.test("when the MangedObject is destroyed", function(assert) {
-		assert.expect(1);
-		this.oManagedObjectObserver.attachDestroyed(function(oEvent) {
-			assert.ok(oEvent, 'then a "Destroyed" event is fired');
-		});
-		this.oManagedObject.destroy();
-	});
 
 	//TODO binding tests
 </script>

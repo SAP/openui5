@@ -141,7 +141,7 @@ button.sapUiSupportHelpButton:hover {
 .sapUiSupportPnlHdrHdl::before {
 	font-family: "SAP-icons";
 	speak: none;
-	content: "\e1e1";
+	content: "\e1e2";
 }
 
 .sapUiSupportPnlHdr .sapUiSupportPanelTitle {

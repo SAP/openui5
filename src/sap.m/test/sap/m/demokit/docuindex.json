@@ -54,6 +54,18 @@
 				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json"
 			},
 			{
+				"icon": "begin",
+				"text": "Basic Template",
+				"desc": "Blank app as starting point for your app development",
+				"ref" : "test-resources/sap/m/demokit/basicTemplate/webapp/index.html",
+				"links": {
+					"Run Integration Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/unitTests.qunit.html"
+				},
+				"category": "Template",
+				"config": "test-resources/sap/m/demokit/basicTemplate/demoapp.json"
+			},
+			{
 				"icon": "legend",
 				"text": "Bulletin Board",
 				"desc": "Worklist app created with the 'Testing' tutorial" ,
@@ -625,7 +637,8 @@
 		  "since": "1.30",
 		  "samples": [
 			"sap.m.sample.MessageStrip",
-			"sap.m.sample.DynamicMessageStripGenerator"
+			"sap.m.sample.DynamicMessageStripGenerator",
+			"sap.m.sample.MessageStripWithEnableFormattedText"
 		  ]
 		},
 		{
@@ -835,7 +848,8 @@
 		  "since": "1.48",
 		  "samples": [
 			  "sap.m.sample.PDFViewerEmbedded",
-			  "sap.m.sample.PDFViewerPopup"
+			  "sap.m.sample.PDFViewerPopup",
+			  "sap.m.sample.PDFViewerMultiple"
 		  ]
 		},
 		{
@@ -1556,6 +1570,11 @@
 		  "id": "sap.m.sample.PDFViewerPopup",
 		  "name": "PDF Viewer - Popup",
 		  "description": "A PDF viewer opening as a popup dialog."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerMultiple",
+		  "name": "PDF Viewer - Two PDF Documents",
+		  "description": "Two PDF viewer frames displayed side by side."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",
@@ -2412,6 +2431,11 @@
 		  "description": "MessageStrip for showing status messages."
 		},
 		{
+			"id": "sap.m.sample.MessageStripWithEnableFormattedText",
+			"name": "Message Strip with enableFormattedText",
+			"description": "A sample MessageStrip that shows status messages with additional formatting."
+		},
+		{
 		  "id": "sap.m.sample.DynamicMessageStripGenerator",
 		  "name": "Dynamic Message Strip Generator",
 		  "description": "Generates MessageStrips with random properties."
@@ -2719,7 +2743,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendar",
 		  "name": "simple Planning Calendar",
-		  "description": "PlanningCalendar with single row selection."
+		  "description": "PlanningCalendar with single row selection that illustrates the built-in views."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMulti",
@@ -2734,7 +2758,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendarViews",
 		  "name": "Planning Calendar - with custom views",
-		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
+		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. It illustrates both built-in and custom views. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarOneLine",

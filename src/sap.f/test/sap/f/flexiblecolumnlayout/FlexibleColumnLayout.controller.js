@@ -17,6 +17,12 @@ sap.ui.define([
 
 			var sLayout = oEvent.getParameters().arguments.layout;
 
+			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
+			if (!sLayout) {
+				var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(0);
+				sLayout = oNextUIState.layout;
+			}
+
 			// Update the layout of the FlexibleColumnLayout
 			if (sLayout) {
 				oModel.setProperty("/layout", sLayout);

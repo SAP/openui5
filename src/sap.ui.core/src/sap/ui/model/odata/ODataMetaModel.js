@@ -188,9 +188,9 @@ sap.ui.define([
 					}
 					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
-					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
 					that.oModel = new JSONModel(oData);
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData, that);
 					jQuery.sap.measure.end(sPerformanceLoad);
 				}
 
@@ -610,7 +610,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the OData default entity container.
+	 * Returns the OData default entity container. If there is only a single schema with a single
+	 * entity container, the entity container does not need to be marked as default explicitly.
 	 *
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the entity container is returned as a path or as an object
@@ -635,6 +636,13 @@ sap.ui.define([
 					return false; //break
 				}
 			});
+
+			if (!vResult && aSchemas.length === 1 && aSchemas[0].entityContainer
+					&& aSchemas[0].entityContainer.length === 1) {
+				vResult = bAsPath
+					? "/dataServices/schema/0/entityContainer/0"
+					: aSchemas[0].entityContainer[0];
+			}
 		}
 
 		return vResult;

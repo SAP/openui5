@@ -1,13 +1,4 @@
-<mvc:View height="100%" controllerName="sap.m.sample.P13nDialog.Page"
-	xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m">
-	<l:VerticalLayout
-		class="sapUiContentPadding"
-		width="100%">
-		<l:content>
-			<Button
-				text="Show Personalization Dialog"
-				press="onPersonalizationDialogPress" />
-		</l:content>
-	</l:VerticalLayout>
-</mvc:View>
+<core:View height="100%" xmlns:core="sap.ui.core" xmlns="sap.m" class="sapUiContentPadding"
+           controllerName="sap.m.sample.P13nDialog.Page">
+    <Button text="Show Personalization Dialog" press="onPersonalizationDialogPress"/>
+</core:View>

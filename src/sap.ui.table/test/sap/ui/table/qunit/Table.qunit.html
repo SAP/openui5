@@ -232,7 +232,6 @@
 	});
 
 	QUnit.test("Multi Selection", function(assert) {
-
 		var iFirstRow = oTable.getFirstVisibleRow();
 
 		function triggerSelectionOnRow(i, bKeyboard, bCtrlKey, bShiftKey) {
@@ -309,6 +308,34 @@
 		}
 	});
 
+	QUnit.test("SelectAll", function(assert) {
+		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+		sap.ui.getCore().applyChanges();
+
+		var $SelectAll = oTable.$("selall");
+		var sSelectAllTitleText = oTable._oResBundle.getText("TBL_SELECT_ALL");
+		var sDeselectAllTitleText = oTable._oResBundle.getText("TBL_DESELECT_ALL");
+
+		// Initially no rows are selected.
+		assert.ok($SelectAll.hasClass("sapUiTableSelAll"), "Initial: The SelectAll checkbox is not checked");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAllTitleText, "Initial: The SelectAll title text is correct");
+
+		// Select all rows. The SelectAll checkbox should be checked.
+		oTable.selectAll();
+		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Called selectAll: The SelectAll checkbox is checked");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Called selectAll: The SelectAll title text is correct");
+
+		// Deselect the first row. The SelectAll checkbox should not be checked.
+		oTable.removeSelectionInterval(0, 0);
+		assert.ok($SelectAll.hasClass("sapUiTableSelAll"), "Deselected the first row: The SelectAll checkbox is not checked");
+		assert.strictEqual($SelectAll.attr("title"), sSelectAllTitleText, "Deselected the first row: The SelectAll title text is correct");
+
+		// Select the first row again. The SelectAll checkbox should be checked.
+		oTable.addSelectionInterval(0, 0);
+		assert.ok(!$SelectAll.hasClass("sapUiTableSelAll"), "Selected the first row again: The SelectAll checkbox is checked");
+		assert.strictEqual($SelectAll.attr("title"), sDeselectAllTitleText, "Selected the first row again: The SelectAll title text is correct");
+	});
+
 	QUnit.test("VisibleRowCount", function(assert) {
 		assert.expect(6);
 		var fnError = sinon.spy(jQuery.sap.log, "error");
@@ -316,7 +343,7 @@
 		assert.equal( oTable.getVisibleRowCount(), 8, "Visible Row Count is set correct!");
 		oTable.setVisibleRowCount(Infinity);
 		assert.ok(oTable.getVisibleRowCount() !== Infinity, "visibleRowCount cannot be Inifinity, this must have been ignored");
-		assert.equal(oTable.getVisibleRowCount(), 8, "Visisble Row Count is still 8")
+		assert.equal(oTable.getVisibleRowCount(), 8, "Visisble Row Count is still 8");
 		oTable.setVisibleRowCountMode(sap.ui.table.VisibleRowCountMode.Auto);
 		assert.equal(fnError.callCount, 0, "Error was not logged so far");
 		oTable.setVisibleRowCount(15);
@@ -844,63 +871,19 @@
 	});
 
 	QUnit.test("No fixed column used, when table is too small.", function(assert) {
-		var done = assert.async();
-		var fResolve;
-		var iActualRenderCount = 0;
-		var iExpectedRenderCount;
-		var iAfterRenderingTimeoutId = null;
-		var bFixedColumnsIgnored;
-
 		oTable.setFixedColumnCount(3);
+		oTable.setWidth("400px");
 
-		oTable.addEventDelegate({
-			onAfterRendering: assertFixedColumns
-		});
+		sap.ui.getCore().applyChanges();
 
-		function _test(iWidth, _iExpectedRenderCount, bExpectedFixedColumnsIgnored) {
-			return new Promise(function(resolve) {
-				iActualRenderCount = 0;
-				iExpectedRenderCount = _iExpectedRenderCount;
-				iAfterRenderingTimeoutId = null;
-				bFixedColumnsIgnored = bExpectedFixedColumnsIgnored;
-				oTable.setWidth(iWidth + "px");
-				sap.ui.getCore().applyChanges();
-				fResolve = resolve;
-			});
-		}
+		assert.equal(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
+		assert.equal(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
 
-		function assertFixedColumns() {
-			iActualRenderCount++;
+		oTable.setWidth("500px");
 
-			if (iAfterRenderingTimeoutId === null) {
-				iAfterRenderingTimeoutId = window.setTimeout(function() {
-					assert.strictEqual(iActualRenderCount, iExpectedRenderCount, "Number of renderings should be: " + iExpectedRenderCount);
+		sap.ui.getCore().applyChanges();
 
-					if (bFixedColumnsIgnored) {
-						assert.ok(oTable._bIgnoreFixedColumnCount, "Fixed columns are ignored");
-						assert.strictEqual(oTable.getFixedColumnCount(), 0, "getFixedColumnCount returns 0");
-						assert.strictEqual(oTable.getProperty("fixedColumnCount"), 3, "The value of the fixedColumnCount property is 3");
-					} else {
-						assert.ok(!oTable._bIgnoreFixedColumnCount, "Fixed columns are not ignored");
-						assert.strictEqual(oTable.getFixedColumnCount(), 3, "getFixedColumnCount returns 3");
-					}
-
-					fResolve();
-				}, 100)
-			}
-		}
-
-		assert.expect(14);
-
-		_test(480, 1, false).then(function() {
-			return _test(470, 2, true);
-		}).then(function() {
-			return _test(450, 1, true);
-		}).then(function() {
-			return _test(480, 2, false);
-		}).then(function() {
-			done();
-		});
+		assert.equal(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
 	});
 
 	QUnit.module("API assertions", {
@@ -1629,6 +1612,29 @@
 		});
 
 		assert.ok(spy.calledOnce, "bindRows was called");
+	});
+
+	QUnit.test("Binding events", function(assert) {
+		var oChangeSpy = this.spy();
+		var oDataRequestedSpy = this.spy();
+		var oDataReceivedSpy = this.spy();
+
+		oTable.bindRows({
+			path: "/modelData",
+			events: {
+				change: oChangeSpy,
+				dataRequested: oDataRequestedSpy,
+				dataReceived: oDataReceivedSpy
+			}
+		});
+
+		var oBinding = oTable.getBinding("rows");
+		oBinding.fireEvent("dataRequested");
+		oBinding.fireEvent("dataReceived");
+
+		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
+		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
+		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
 	});
 
 	QUnit.module("Callbacks", {

@@ -7,20 +7,30 @@ sap.ui.define([
 			'jquery.sap.global', './library', 'sap/ui/core/Control',
 				'sap/ui/core/IconPool', 'sap/ui/layout/form/SimpleForm',
 				'sap/ui/layout/VerticalLayout', 'sap/ui/layout/HorizontalLayout',
-				'./Page', './Button', './ButtonType', './Bar',
+				'./Page', './Button', './Bar',
 				'./Title', './Image', './Link', './Text',
-				'./QuickViewGroupElementType',
-				'./Label', './HBox', 'sap/ui/core/Icon', 'sap/ui/core/Title', 'sap/ui/core/TitleLevel',
-				'sap/ui/core/CustomData', 'sap/ui/layout/form/SimpleFormLayout'],
+				'./Label', './HBox', 'sap/ui/core/Icon', 'sap/ui/core/Title',
+				'sap/ui/core/CustomData', 'sap/ui/core/library', 'sap/ui/layout/library'],
 		function(jQuery, library, Control,
 					IconPool, SimpleForm,
 					VerticalLayout, HorizontalLayout,
-					Page, Button, ButtonType, Bar,
+					Page, Button, Bar,
 					Title, Image, Link, Text,
-					QuickViewGroupElementType,
-					Label, HBox, Icon, CoreTitle, CoreTitleLevel,
-					CustomData, SimpleFormLayout) {
+					Label, HBox, Icon, CoreTitle,
+					CustomData, coreLibrary, layoutLibrary) {
 			"use strict";
+
+			// shortcut for sap.ui.layout.form.SimpleFormLayout
+			var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+
+			// shortcut for sap.ui.core.TitleLevel
+			var CoreTitleLevel = coreLibrary.TitleLevel;
+
+			// shortcut for sap.m.QuickViewGroupElementType
+			var QuickViewGroupElementType = library.QuickViewGroupElementType;
+
+			// shortcut for sap.m.ButtonType
+			var ButtonType = library.ButtonType;
 
 			/**
 			* Constructor for a new QuickViewPage.
@@ -331,11 +341,11 @@ sap.ui.define([
 			QuickViewPage.prototype._getPageHeaderContent = function() {
 				var oIcon,
 					oVLayout = new VerticalLayout(),
-					oHLayout = new HorizontalLayout();
-
-				var sIcon = this.getIcon();
-				var sTitle = this.getTitle();
-				var sDescription = this.getDescription();
+					oHLayout = new HorizontalLayout(),
+					sIcon = this.getIcon(),
+					sTitle = this.getTitle(),
+					sDescription = this.getDescription(),
+					sTitleUrl = this.getTitleUrl();
 
 				if (!sIcon && !sTitle && !sDescription) {
 					return null;
@@ -345,20 +355,21 @@ sap.ui.define([
 					if (this.getIcon().indexOf("sap-icon") == 0) {
 						oIcon = new Icon({
 							src: sIcon,
-							useIconTooltip : false,
-							tooltip : sTitle
+							decorative: !sTitleUrl,
+							useIconTooltip: false,
+							tooltip: sTitle
 						});
 					} else {
 						oIcon = new Image({
 							src: sIcon,
-							decorative : false,
-							tooltip : sTitle
+							decorative: false,
+							tooltip: sTitle
 						}).addStyleClass("sapUiIcon");
 					}
 
 					oIcon.addStyleClass("sapMQuickViewThumbnail");
 
-					if (this.getTitleUrl()) {
+					if (sTitleUrl) {
 						oIcon.attachPress(this._crossApplicationNavigation(this));
 					}
 
@@ -367,10 +378,10 @@ sap.ui.define([
 
 				var oTitle;
 
-				if (this.getTitleUrl()) {
+				if (sTitleUrl) {
 					oTitle = new Link({
 						text	: sTitle,
-						href	: this.getTitleUrl(),
+						href	: sTitleUrl,
 						target	: "_blank"
 					});
 				} else if (this.getCrossAppNavCallback()) {

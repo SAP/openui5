@@ -117,8 +117,7 @@
 		<buttons>
 			<Button
 				text="{i18n>TechnInfo.DiagnosticsButton.Text}"
-				press="onOpenDiagnostics"
-				type="Emphasized"/>
+				press="onOpenDiagnostics"/>
 			<Button
 				text="{i18n>TechnInfo.AssistantButton.Text}"
 				press="onOpenAssistant"
@@ -139,8 +138,7 @@
 			</Button>
 			<Button
 				text="{i18n>CLOSE}"
-				press="close"
-				type="Emphasized">
+				press="close">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>

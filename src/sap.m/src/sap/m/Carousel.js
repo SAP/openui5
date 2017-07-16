@@ -466,7 +466,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Private method which adjusts the Hud visibility and fires a page change
 	 * event when the active page changes
 	 *
-	 * @param iNewPageIndex index of new page in 'pages' aggregation.
+	 * @param {int} iNewPageIndex index of new page in 'pages' aggregation.
 	 * @private
 	 */
 	Carousel.prototype._changePage = function(iNewPageIndex) {
@@ -498,7 +498,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Sets HUD control's visibility after page has changed
 	 *
-	 * @param iNextSlide index of the next active page
+	 * @param {int} iNextSlide index of the next active page
 	 * @private
 	 *
 	 */
@@ -605,7 +605,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Gets the icon of the requested arrow (left/right).
 	 * @private
-	 * @param sName left or right
+	 * @param {string} sName left or right
 	 * @returns icon of the requested arrow
 	 */
 	Carousel.prototype._getNavigationArrow = function(sName) {

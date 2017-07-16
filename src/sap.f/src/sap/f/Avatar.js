@@ -230,7 +230,7 @@ sap.ui.define([
 	 * Checks the validity of the <code>initials</code> parameter and returns <code>true</code> if the
 	 * initials are correct.
 	 *
-	 * @param sInitials
+	 * @param {string} sInitials
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -249,7 +249,7 @@ sap.ui.define([
 	/**
 	 * Validates the <code>src</code> parameter, and sets the actual type appropriately.
 	 *
-	 * @param sSrc
+	 * @param {string} sSrc
 	 * @returns {sap.f.Avatar}
 	 * @private
 	 */
@@ -267,7 +267,7 @@ sap.ui.define([
 	/**
 	 * Validates the entered parameters, and returns what the actual display type parameter would be.
 	 *
-	 * @returns {string|*}
+	 * @returns {sap.f.AvatarType}
 	 * @private
 	 */
 	Avatar.prototype._getActualDisplayType = function () {
@@ -290,8 +290,8 @@ sap.ui.define([
 	/**
 	 * Returns the path for the default icon, based on the value of the <code>DisplayShape</code> property.
 	 *
-	 * @param sDisplayShape
-	 * @returns {*}
+	 * @param {sap.f.AvatarShape} sDisplayShape
+	 * @returns {string} the default icon
 	 * @private
 	 */
 	Avatar.prototype._getDefaultIconPath = function (sDisplayShape) {

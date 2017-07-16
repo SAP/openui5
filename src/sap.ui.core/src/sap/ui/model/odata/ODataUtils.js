@@ -214,6 +214,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * setOrigin("/backend/service/url;o=OTHERSYS8?myUrlParam=true&x=4", {alias: "DEMO_123", force: true});
 	 * - result /backend/service/url;o=DEMO_123?myUrlParam=true&x=4
 	 *
+	 * setOrigin("/backend/service;o=NOT_TOUCHED/url;v=2;o=OTHERSYS8;srv=XVC", {alias: "DEMO_123", force: true});
+	 * - result /backend/service;o=NOT_TOUCHED/url;v=2;o=DEMO_123;srv=XVC
+	 *
 	 * setOrigin("/backend/service/url/", {system: "DEMO", client: 134});
 	 * - result /backend/service/url;o=sid(DEMO.134)/
 	 *
@@ -262,7 +265,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 
 		//trim trailing "/" from url if present
 		var sTrailingSlash = "";
-		if (jQuery.sap.endsWith(sBaseURL, "/")) {
+		if (sBaseURL[sBaseURL.length - 1] === "/") {
 			sBaseURL = sBaseURL.substring(0, sBaseURL.length - 1);
 			sTrailingSlash = "/"; // append the trailing slash later if necessary
 		}
@@ -270,12 +273,21 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		// origin already included
 		// regex will only match ";o=" occurrences which do not end in a slash "/" at the end of the string.
 		// The last ";o=" occurrence at the end of the baseURL is the only origin that can match.
-		var rOriginCheck = /(;o=[^/]+)$/;
-		if (sBaseURL.match(rOriginCheck) != null) {
+		var rSegmentCheck = /(\/[^\/]+)$/g;
+		var rOriginCheck = /(;o=[^\/;]+)/g;
+
+		var sLastSegment = sBaseURL.match(rSegmentCheck)[0];
+		var aLastOrigin = sLastSegment.match(rOriginCheck);
+		var sFoundOrigin = aLastOrigin ? aLastOrigin[0] : null;
+
+		if (sFoundOrigin) {
 			// enforce new origin
 			if (vParameters.force) {
 				// same regex as above
-				sBaseURL = sBaseURL.replace(rOriginCheck, ";o=" + sOrigin);
+
+				var sChangedLastSegment = sLastSegment.replace(sFoundOrigin, ";o=" + sOrigin);
+				sBaseURL = sBaseURL.replace(sLastSegment, sChangedLastSegment);
+
 				return sBaseURL + sTrailingSlash + sURLParams;
 			}
 			//return the URL as it was

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TimePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', 'sap/ui/model/odata/type/Time', './TimePickerSliders'],
-	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimeODataModel, TimePickerSliders) {
+sap.ui.define(['jquery.sap.global', './InputBase', './DateTimeField', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', 'sap/ui/model/odata/type/Time', './TimePickerSliders', './MaskEnabler'],
+	function(jQuery, InputBase, DateTimeField, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimeODataModel, TimePickerSliders, MaskEnabler) {
 		"use strict";
 
 		/**
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * For larger screens, such as tablet or desktop, it opens as a popover. For
 		 * mobile devices, it opens in full screen.
 		 *
-		 * @extends sap.m.MaskInput
+		 * @extends sap.m.DateTimeField
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -84,32 +84,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @since 1.32
 		 * @alias sap.m.TimePicker
 		 */
-		var TimePicker = MaskInput.extend("sap.m.TimePicker", /** @lends sap.m.TimePicker.prototype */ {
+		var TimePicker = DateTimeField.extend("sap.m.TimePicker", /** @lends sap.m.TimePicker.prototype */ {
 			metadata : {
 				library : "sap.m",
 				properties : {
-					/**
-					 * Determines the format, displayed in the input field and the picker sliders.
-					 *
-					 * The default value is the browser's medium time format locale setting
-					 * {@link sap.ui.core.LocaleData#getTimePattern}.
-					 * If data binding with type {@link sap.ui.model.type.Time} or {@link sap.ui.model.odata.type.Time}
-					 * is used for the <code>value</code> property, the <code>displayFormat</code> property
-					 * is ignored as the information is provided from the binding itself.
-					 */
-					displayFormat : {type : "string", group : "Appearance", defaultValue : null},
-
-					/**
-					 * Determines the format of the value property.
-					 *
-					 * The default value is the browser's medium time format locale setting
-					 * {@link sap.ui.core.LocaleData#getTimePattern}.
-					 * If data binding with type {@link sap.ui.model.type.Time} or {@link sap.ui.model.odata.type.Time}
-					 * is used for the <code>value</code> property, the <code>valueFormat</code> property
-					 * is ignored as the information is provided from the binding itself.
-					 */
-					valueFormat : {type : "string", group : "Data", defaultValue : null},
-
 					/**
 					 * Defines the locale used to parse string values representing time.
 					 *
@@ -122,15 +100,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * Default value is taken from browser's locale setting.
 					 */
 					localeId: {type : "string", group: "Data"},
-
-					/**
-					 *  Holds a reference to a JavaScript Date Object. The <code>value</code> (string)
-					 * property will be set according to it. Alternatively, if the <code>value</code>
-					 * and <code>valueFormat</code> pair properties are supplied instead,
-					 * the <code>dateValue</code> will be instantiated according to the parsed
-					 * <code>value</code>.
-					 */
-					dateValue : {type : "object", group : "Data", defaultValue : null},
 
 					/**
 					 * Displays the text of the general picker label and is read by screen readers.
@@ -150,9 +119,32 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					 * The seconds slider is populated only by multiples of the step.
 					 * @since 1.40
 					 */
-					secondsStep: {type: "int", group: "Misc", defaultValue: 1}
+					secondsStep: {type: "int", group: "Misc", defaultValue: 1},
+
+					/**
+					 * Defines a placeholder symbol. Shown at the position where there is no user input yet.
+					 */
+					placeholderSymbol: {type: "string", group: "Misc", defaultValue: "_"},
+
+					/**
+					 * Mask defined by its characters type (respectively, by its length).
+					 * You should consider the following important facts:
+					 * 1. The mask characters normally correspond to an existing rule (one rule per unique char).
+					 * Characters which don't, are considered immutable characters (for example, the mask '2099', where '9' corresponds to a rule
+					 * for digits, has the characters '2' and '0' as immutable).
+					 * 2. Adding a rule corresponding to the <code>placeholderSymbol</code> is not recommended and would lead to an unpredictable behavior.
+					 * 3. You can use the special escape character '^' called "Caret" prepending a rule character to make it immutable.
+					 * Use the double escape '^^' if you want to make use of the escape character as an immutable one.
+					 */
+					mask: {type: "string", group: "Misc", defaultValue: null}
 				},
 				aggregations: {
+
+					/**
+					 A list of validation rules (one rule per mask character).
+					 */
+					rules: {type: "sap.m.MaskInputRule", multiple: true, singularName: "rule"},
+
 					/**
 					 * Internal aggregation that contains the inner _picker pop-up.
 					 */
@@ -160,8 +152,52 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				}
 		}});
 
+		/**
+		 * Determines the format, displayed in the input field and the picker sliders.
+		 *
+		 * The default value is the browser's medium time format locale setting
+		 * {@link sap.ui.core.LocaleData#getTimePattern}.
+		 * If data binding with type {@link sap.ui.model.type.Time} or {@link sap.ui.model.odata.type.Time}
+		 * is used for the <code>value</code> property, the <code>displayFormat</code> property
+		 * is ignored as the information is provided from the binding itself.
+		 *
+		 * @returns {string} the value of property <code>displayFormat</code>
+		 * @public
+		 * @name sap.m.TimePicker#getDisplayFormat
+		 * @function
+		 */
+
+		/**
+		 * Determines the format of the value property.
+		 *
+		 * The default value is the browser's medium time format locale setting
+		 * {@link sap.ui.core.LocaleData#getTimePattern}.
+		 * If data binding with type {@link sap.ui.model.type.Time} or {@link sap.ui.model.odata.type.Time}
+		 * is used for the <code>value</code> property, the <code>valueFormat</code> property
+		 * is ignored as the information is provided from the binding itself.
+		 *
+		 * @returns {string} the value of property <code>valueFormat</code>
+		 * @public
+		 * @name sap.m.TimePicker#getValueFormat
+		 * @function
+		 */
+
+		/**
+		 *  Holds a reference to a JavaScript Date Object. The <code>value</code> (string)
+		 * property will be set according to it. Alternatively, if the <code>value</code>
+		 * and <code>valueFormat</code> pair properties are supplied instead,
+		 * the <code>dateValue</code> will be instantiated according to the parsed
+		 * <code>value</code>.
+		 *
+		 * @returns {object} the value of property <code>dateValue</code>
+		 * @public
+		 * @name sap.m.TimePicker#getDateValue
+		 * @function
+		 */
+
 		IconPool.insertFontFaceStyle();
 		EnabledPropagator.call(TimePicker.prototype, true);
+		MaskEnabler.call(TimePicker.prototype);
 
 		var TimeFormatStyles = {
 				Short: "short",
@@ -182,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.init = function() {
 
-			MaskInput.prototype.init.apply(this, arguments);
+			MaskEnabler.init.apply(this, arguments);
 
 			this.setDisplayFormat(getDefaultDisplayFormat());
 
@@ -217,7 +253,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				this._oTimeSemanticMaskHelper.destroy();
 			}
 
-			MaskInput.prototype.exit.apply(this, arguments);
+			MaskEnabler.exit.apply(this, arguments);
 
 			this._removePickerEvents();
 
@@ -229,13 +265,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this._sUsedValuePattern = null;
 			this._sValueFormat = null;
 			this._sLastChangeValue = null;
-		};
-
-		/**
-		 * Called before the control is rendered.
-		 */
-		TimePicker.prototype.onBeforeRendering = function() {
-			MaskInput.prototype.onBeforeRendering.apply(this, arguments);
 		};
 
 		/**
@@ -274,28 +303,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var oPicker = this._getPicker();
 			var bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
 
-			MaskInput.prototype.onfocusin.apply(this, arguments);
+			MaskEnabler.onfocusin.apply(this, arguments);
 
 			if (oPicker && oPicker.isOpen() && !bIconClicked) {
 				this._closePicker();
 			}
-		};
-
-		/**
-		 * Handler for oninput event
-		 * @param {jQuery.Event} oEvent  Event object
-		 */
-		TimePicker.prototype.oninput = function (oEvent) {
-			MaskInput.prototype.oninput.apply(this, arguments);
-		};
-
-		/**
-		 * Handles the focusout event.
-		 *
-		 * @param {jQuery.Event} oEvent Event object
-		 */
-		TimePicker.prototype.onfocusout = function (oEvent) {
-			MaskInput.prototype.onfocusout.apply(this, arguments);
 		};
 
 		/**
@@ -369,13 +381,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				}
 			}
 
-			if (this.isActive() && (this._$input.val() !== sValue)) {
-				this.updateDomValue(sValue);
-				if (this.bShowLabelAsPlaceholder) {
-					// because value property might not be updated between typing
-					this.$("placeholder").css("display", sValue ? "none" : "inline");
-				}
-			}
+			this.updateDomValue(sValue);
 
 			if (oDate) {
 				// get the value in valueFormat
@@ -413,116 +419,85 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 		/**
 		 * Sets the minutes slider step.
-		 * @param iStep The step used to generate values for the minutes slider
+		 * @param {int} step The step used to generate values for the minutes slider
 		 * @returns {*} this
 		 * @public
 		 */
-		TimePicker.prototype.setMinutesStep = function(iStep) {
+		TimePicker.prototype.setMinutesStep = function(step) {
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders.setMinutesStep(iStep);
+				oSliders.setMinutesStep(step);
 			}
-			return this.setProperty("minutesStep", iStep, true);
+			return this.setProperty("minutesStep", step, true);
 		};
 
 		/**
 		 * Sets the seconds slider step.
-		 * @param iStep The step used to generate values for the seconds slider
-		 * @returns {*} this
+		 * @param {int} step The step used to generate values for the seconds slider
+		 * @returns {sap.m.TimePicker} <code>this</code> to allow method chaining
 		 * @public
 		 */
-		TimePicker.prototype.setSecondsStep = function(iStep) {
+		TimePicker.prototype.setSecondsStep = function(step) {
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders.setSecondsStep(iStep);
+				oSliders.setSecondsStep(step);
 			}
-			return this.setProperty("secondsStep", iStep, true);
+			return this.setProperty("secondsStep", step, true);
 		};
 
 		/**
 		 * Sets the title label inside the picker.
 		 *
-		 * @param {string} sTitle A title
+		 * @param {string} title A title
+		 * @returns {sap.m.TimePicker} <code>this</code> to allow method chaining
 		 */
-		TimePicker.prototype.setTitle = function(sTitle) {
+		TimePicker.prototype.setTitle = function(title) {
 			var oSliders = this._getSliders();
 
 			if (oSliders) {
-				oSliders.setLabelText(sTitle);
+				oSliders.setLabelText(title);
 			}
 
-			this.setProperty("title", sTitle, true);
+			this.setProperty("title", title, true);
 
 			return this;
 		};
 
-		/**
-		 * Sets the <code>valueFormat</code> property.
-		 *
-		 * @override
-		 * @param {string} sValueFormat The format of strings that are set as value to the control
-		 * @returns {sap.m.TimePicker} this instance, used for chaining
-		 * @public
-		 */
-		TimePicker.prototype.setValueFormat = function(sValueFormat) {
-			var sValue = this.getValue(),
-				oDate;
+		TimePicker.prototype._handleDateValidation = function (oDate) {
 
-			this.setProperty("valueFormat", sValueFormat, true); // no rerendering
+			if (!oDate) {
+				this._bValid = false;
+				jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+			} else {
+				this._bValid = true;
+				this.setProperty("dateValue", oDate, true); // no rerendering
 
-			if (sValue) {
-				oDate = this._parseValue(sValue);
-				if (!oDate) {
-					this._bValid = false;
-					jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+				var sValue = this._formatValue(oDate);
+
+				if (this.isActive()) {
+					this.updateDomValue(sValue);
 				} else {
-					this._bValid = true;
-					this.setProperty("dateValue", oDate, true); // no rerendering
-
-					sValue = this._formatValue(oDate);
-
-					if (this.isActive()) {
-						this._synchronizeInput(sValue);
-					} else {
-						this.setProperty("value", sValue, true); // no rerendering
-						this._sLastChangeValue = sValue;
-					}
+					this.setProperty("value", sValue, true); // no rerendering
+					this._sLastChangeValue = sValue;
 				}
 			}
-
-			return this;
 		};
 
-		/**
-		 * Sets the <code>displayFormat</code>.
-		 *
-		 * @override
-		 * @param {string} sDisplayFormat The format of the string inside the input
-		 * @returns {sap.m.TimePicker} this instance, used for chaining
-		 * @public
-		 */
-		TimePicker.prototype.setDisplayFormat = function(sDisplayFormat) {
-			var sOutputValue,
-				oDateValue;
+		TimePicker.prototype.setDisplayFormat = function (sDisplayFormat) {
 
-			// if displayFormat changes the value must be formatted again
 			this.setProperty("displayFormat", sDisplayFormat, true); // no rerendering
 
 			this._initMask();
 
-			oDateValue = this.getDateValue();
+			var oDateValue = this.getDateValue();
 
 			if (!oDateValue) {
 				return this;
 			}
 
-			sOutputValue = this._formatValue(oDateValue);
-
-			if (this.isActive()) {
-				this._synchronizeInput(sOutputValue);
-			}
+			this.updateDomValue(this._formatValue(oDateValue));
 
 			return this;
 		};
@@ -547,7 +522,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			this._initMask();
 
-			MaskInput.prototype.setValue.call(this, sValue);
+			MaskEnabler.setValue.call(this, sValue);
 			this._sLastChangeValue = sValue;
 			this._bValid = true;
 
@@ -556,9 +531,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				oDate = this._parseValue(sValue);
 				if (!oDate) {
 					this._bValid = false;
-					jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+						jQuery.sap.log.warning("Value can not be converted to a valid date", this);
+					}
 				}
-			}
 
 			if (this._bValid) {
 				this.setProperty("dateValue", oDate, true); // no rerendering
@@ -572,55 +547,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			}
 
 			// do not call InputBase.setValue because the displayed value and the output value might have different pattern
-			if (this.isActive()) {
-				this._synchronizeInput(sOutputValue);
-			}
+			this.updateDomValue(sOutputValue);
 
 			return this;
 
-		};
-
-		/**
-		 * Sets the <code>dateValue</code> JavaScript date object.
-		 *
-		 * Recommended usage is when <code>value</code> is not set, as they are mutually exclusive.
-		 *
-		 * @override
-		 * @param {Date} oDate New date object
-		 * @returns {sap.m.TimePicker|Error} this instance, used for chaining
-		 * @public
-		 */
-		TimePicker.prototype.setDateValue = function(oDate) {
-			var sValue;
-
-			if (oDate && !(oDate instanceof Date)) {
-				throw new Error("Date must be a JavaScript date object; " + this);
-			}
-
-			if (jQuery.sap.equal(this.getDateValue(), oDate)) {
-				return this;
-			}
-
-			this._bValid = true;
-			this.setProperty("dateValue", oDate, true); // no rerendering
-
-			// convert date object to value
-			sValue = this._formatValue(oDate, true);
-
-			// set the property in any case but check validity on output
-			this.setProperty("value", sValue, true); // no rerendering
-			this._sLastChangeValue = sValue;
-
-			if (this.isActive()) {
-				// convert to output
-				sValue = this._formatValue(oDate);
-
-				if (this._$input.val() !== sValue) {
-					this.updateDomValue(sValue);
-				}
-			}
-
-			return this;
 		};
 
 		/**
@@ -649,20 +579,31 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			return this;
 		};
 
-		/**
-		 * Provides a placeholder string to be displayed inside the input, when it is empty.
-		 *
-		 * @override
-		 * @returns {string} The placeholder string
-		 * @public
-		 */
-		TimePicker.prototype.getPlaceholder = function() {
-			var sPlaceholder = this.getProperty("placeholder");
+		TimePicker.prototype._getDefaultDisplayStyle = function () {
+			return TimeFormatStyles.Medium;
+		};
 
-			if (!sPlaceholder) {
-				sPlaceholder =  this._getFormat();
+		TimePicker.prototype._getDefaultValueStyle = function () {
+			return TimeFormatStyles.Medium;
+		};
+
+		TimePicker.prototype._getFormatterInstance = function(oFormat, sPattern, bRelative, sCalendarType, bDisplayFormat) {
+
+			if (sPattern === TimeFormatStyles.Short || sPattern === TimeFormatStyles.Medium || sPattern === TimeFormatStyles.Long) {
+				oFormat = sap.ui.core.format.DateFormat.getTimeInstance({style: sPattern, strictParsing: true, relative: bRelative}, new sap.ui.core.Locale(this.getLocaleId()));
+			} else {
+				oFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, new sap.ui.core.Locale(this.getLocaleId()));
 			}
-			return sPlaceholder;
+
+			if (bDisplayFormat) {
+				this._sUsedDisplayPattern = sPattern;
+				this._oDisplayFormat = oFormat;
+			} else {
+				this._sUsedValuePattern = sPattern;
+				this._sValueFormat = oFormat;
+			}
+
+			return oFormat;
 		};
 
 		/**
@@ -780,7 +721,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 				oEvent.preventDefault(); //ie expands the address bar on F4
 			} else {
-				MaskInput.prototype.onkeydown.call(this, oEvent);
+				MaskEnabler.onkeydown.call(this, oEvent);
 			}
 		};
 
@@ -854,23 +795,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		};
 
 		/**
-		 * Updates the input with a given value if necessary.
-		 *
-		 * @param {string} sValue A value to synchronized the input with
-		 * @private
-		 */
-		TimePicker.prototype._synchronizeInput = function(sValue) {
-			if ((this._$input.val() !== sValue)) {
-				this.updateDomValue(sValue);
-			}
-		};
-
-		/**
 		 * Creates the picker.
 		 *
 		 * Uses {@link sap.m.ResponsivePopover} control for a picker.
 		 *
 		 * @param {string} sFormat Time format used for creating the sliders inside the picker
+		 * @returns {sap.m.TimePicker} the sap.m.TimePicker
 		 * @private
 		 */
 		TimePicker.prototype._createPicker = function(sFormat) {
@@ -1004,8 +934,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype._parseValue = function(sValue, bDisplayFormat) {
-			var oFormat = this._getFormatter(bDisplayFormat);
-
 			//because of the leading space in formats without a leading zero
 			if (bDisplayFormat) {
 				sValue = this._oTimeSemanticMaskHelper.stripValueOfLeadingSpaces(sValue);
@@ -1015,7 +943,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			}
 
 			// convert to date object
-			return oFormat.parse(sValue);
+			return DateTimeField.prototype._parseValue.call(this, sValue, bDisplayFormat);
 		};
 
 		/**
@@ -1029,14 +957,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @private
 		 */
 		TimePicker.prototype._formatValue = function(oDate, bValueFormat) {
-			var sValue = "",
-				oFormat;
+			var sValue = DateTimeField.prototype._formatValue.apply(this, arguments);
 
 			if (oDate) {
-				oFormat = this._getFormatter(!bValueFormat);
-				// convert to date object
-				sValue = oFormat.format(oDate);
-
 				// in display format the formatter returns strings without the leading space
 				// that we use in the mask - "9:15" instead of " 9:15"
 				// that's because the mask is fixed length
@@ -1104,65 +1027,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 				this.fireChangeEvent(this.getValue(), {valid: true});
 			}
-		};
-
-		/**
-		 * Gets or creates a formatter object used when formatting date objects to or from
-		 * <code>displayFormat</code> or <code>valueFormat</code> .
-		 *
-		 * @param {boolean} bDisplayFormat Defines whether the formatter object should format date objects to <code>displayFormat</code> or to <code>valueFormat</code>
-		 * @returns {sap.ui.core.format.DateFormat} The formatter object
-		 * @private
-		 */
-		TimePicker.prototype._getFormatter = function(bDisplayFormat) {
-			var sPattern = this._getBoundValueTypePattern(),
-				bRelative = false,
-				oFormat,
-				oBinding = this.getBinding("value");
-
-			if (oBinding && oBinding.oType && oBinding.oType.oOutputFormat) {
-				bRelative = !!oBinding.oType.oOutputFormat.oFormatOptions.relative;
-			}
-
-			/* eslint-disable no-lonely-if */
-			if (!sPattern) {
-				// not databinding is used -> use given format
-				if (bDisplayFormat) {
-					sPattern = ( this.getDisplayFormat() || TimeFormatStyles.Medium );
-				} else {
-					sPattern = ( this.getValueFormat() || TimeFormatStyles.Medium );
-				}
-			}
-
-			if (bDisplayFormat) {
-				if (sPattern === this._sUsedDisplayPattern) {
-					oFormat = this._oDisplayFormat;
-				}
-			} else {
-				if (sPattern === this._sUsedValuePattern) {
-					oFormat = this._sValueFormat;
-				}
-			}
-
-			if (oFormat) {
-				return oFormat;
-			}
-
-			if (sPattern === TimeFormatStyles.Short || sPattern === TimeFormatStyles.Medium || sPattern === TimeFormatStyles.Long) {
-				oFormat = sap.ui.core.format.DateFormat.getTimeInstance({style: sPattern, strictParsing: true, relative: bRelative}, new sap.ui.core.Locale(this.getLocaleId()));
-			} else {
-				oFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: sPattern, strictParsing: true, relative: bRelative}, new sap.ui.core.Locale(this.getLocaleId()));
-			}
-
-			if (bDisplayFormat) {
-				this._sUsedDisplayPattern = sPattern;
-				this._oDisplayFormat = oFormat;
-			} else {
-				this._sUsedValuePattern = sPattern;
-				this._sValueFormat = oFormat;
-			}
-
-			return oFormat;
 		};
 
 		/**
@@ -1429,9 +1293,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		};
 
 		/**
-		 * Removes any whitespaces precedung the hours value (e.g. "<space>1:13:32" -> "1:13:32",
+		 * Removes any whitespaces preceding the hours value (e.g. "<space>1:13:32" -> "1:13:32",
 		 * "PM<space>1:13:32" -> "PM1:13:32").
-		 * @param value
+		 * @param {string} value the value to be stripped
 		 * @returns {*} the stripped value
 		 */
 		TimeSemanticMaskHelper.prototype.stripValueOfLeadingSpaces = function(value) {
@@ -1490,11 +1354,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
+		 * @returns {Object} Current accessibility state of the control.
 		 * @protected
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {
 			var oRenderer = this.getRenderer();
-			var oInfo = MaskInput.prototype.getAccessibilityInfo.apply(this, arguments);
+			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
 			if (this._bValid) {
 				var oDate = this.getDateValue();
@@ -1515,24 +1380,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			return oLocaleData.getTimePattern(TimeFormatStyles.Medium);
 		}
 
-		TimePicker.prototype._getDisplayFormatPattern = function() {
-			return this._getBoundValueTypePattern() || this.getDisplayFormat();
-		};
-
-		TimePicker.prototype._getBoundValueTypePattern = function() {
-			var oBinding = this.getBinding("value"),
-				oBindingType = oBinding && oBinding.getType && oBinding.getType();
-
-			if (oBindingType instanceof TimeModel) {
-				return oBindingType.getOutputPattern();
-			}
-
-			if (oBindingType instanceof TimeODataModel && oBindingType.oFormat) {
-				return oBindingType.oFormat.oFormatOptions.pattern;
-			}
-
-			return undefined;
-		};
 
 		/**
 		 * Fires when the input operation has finished and the value has changed.

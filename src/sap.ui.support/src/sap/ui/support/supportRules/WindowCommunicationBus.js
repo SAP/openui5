@@ -2,17 +2,34 @@
  * ${copyright}
  */
 
+/**
+ * @typedef {object} EventListener
+ */
 sap.ui.define([
 	"jquery.sap.global"
 ],
 function (jQuery) {
 	"use strict";
 
+	/**
+	 * <h3>Overview</h3>
+	 * The CommunicationBus is responsible for core communication between the SupportAssistant the views and SupportAssistant in iFrame mode.
+	 * @class
+	 * @constructor
+	 * @name sap.ui.support.WindowCommunicationBus
+	 * @memberof sap.ui.support
+	 * @author SAP SE
+	 * @version ${version}
+	 * @private
+	 */
 	var CommunicationBus = {
 		channels: {},
 		onMessageChecks: []
 	};
 
+	/**
+	 * Indicates the origin of the SupportAssistant.
+	 */
 	var originParameter = jQuery.sap.getUriParameters().get("sap-ui-xx-support-origin");
 	var origin = originParameter;
 	var frameIdentifier = jQuery.sap.getUriParameters().get("sap-ui-xx-frame-identifier") || '_unnamed_frame_-_use_message_origin_';
@@ -31,25 +48,46 @@ function (jQuery) {
 
 	CommunicationBus.origin = origin;
 
-	CommunicationBus.subscribe = function (channelName, callback, context) {
-		if (!this.channels[channelName]) {
-			this.channels[channelName] = [{
-				callback: callback,
-				context: context
+	/**
+	 * Subscribes to a channel with callback and given context
+	 * @private
+	 * @static
+	 * @method
+	 * @name sap.ui.support.WindowCommunicationBus.subscribe
+	 * @memberof sap.ui.support.WindowCommunicationBus
+	 * @param {string} sChannelName Name of the channel to subscribe
+	 * @param {function} fnCallback Callback for the SupportAssistant
+	 * @param {object} oContext Context for the subscribed channel
+	 */
+	CommunicationBus.subscribe = function (sChannelName, fnCallback, oContext) {
+		if (!this.channels[sChannelName]) {
+			this.channels[sChannelName] = [{
+				callback: fnCallback,
+				context: oContext
 			}];
 			return;
 		}
 
-		this.channels[channelName].push({
-			callback: callback,
-			context: context
+		this.channels[sChannelName].push({
+			callback: fnCallback,
+			context: oContext
 		});
 	};
 
-	CommunicationBus.publish = function (channelName, aParams) {
+	/**
+	 * Publishes given channel by name and settings
+	 * @private
+	 * @static
+	 * @method
+	 * @name sap.ui.support.WindowCommunicationBus.publish
+	 * @memberof sap.ui.support.WindowCommunicationBus
+	 * @param {string} sChannelName Name of the channel to publish
+	 * @param {string} aParams Settings passed to the SupportAssistant
+	 */
+	CommunicationBus.publish = function (sChannelName, aParams) {
 		var receivingWindow = this._getReceivingWindow(),
 			dataObject = {
-				channelName: channelName,
+				channelName: sChannelName,
 				params: aParams,
 				_frameIdentifier: frameIdentifier,
 				_origin: window.location.href
@@ -61,10 +99,27 @@ function (jQuery) {
 		receivingWindow.postMessage(dataObject, this.origin);
 	};
 
+	/**
+	 * Clears all subscribed channels from the CommunicationBus
+	 * @private
+	 * @static
+	 * @method
+	 * @name sap.ui.support.WindowCommunicationBus.destroyChanels
+	 * @memberof sap.ui.support.WindowCommunicationBus
+	 */
 	CommunicationBus.destroyChanels = function () {
 		CommunicationBus.channels = {};
 	};
 
+	/**
+	 * Retrieves the window hosting the SupportAssistant
+	 * @private
+	 * @static
+	 * @method
+	 * @name sap.ui.support.WindowCommunicationBus._getReceivingWindow
+	 * @memberof sap.ui.support.WindowCommunicationBus
+	 * @returns {object} Window containing the SupportAssistant
+	 */
 	CommunicationBus._getReceivingWindow = function () {
 
 		if (window.communicationWindows && window.communicationWindows.hasOwnProperty("supportTool")) {
@@ -76,10 +131,19 @@ function (jQuery) {
 		return window.opener || window.parent;
 	};
 
-	CommunicationBus._onmessage = function (evt) {
+	/**
+	 * This is the message handler used for communication between the CommunicationBus and {@link sap.ui.support.WCBChannels}
+	 * @private
+	 * @static
+	 * @method
+	 * @name sap.ui.support.WindowCommunicationBus._onmessage
+	 * @memberof sap.ui.support.WindowCommunicationBus
+	 * @param {EventListener} evt Event fired by the channels attached to the CommunicationBus
+	 */
+	CommunicationBus._onmessage = function (eMessage) {
 		// Validate received message
 		var checkResults = CommunicationBus.onMessageChecks.every(function (fnMsgCheck) {
-			return fnMsgCheck.call(null, evt);
+			return fnMsgCheck.call(null, eMessage);
 		});
 
 		if (!checkResults) {
@@ -87,8 +151,8 @@ function (jQuery) {
 			return;
 		}
 
-		var channelName = evt.data.channelName,
-			params = evt.data.params,
+		var channelName = eMessage.data.channelName,
+			params = eMessage.data.params,
 			callbackObjects = CommunicationBus.channels[channelName];
 
 		if (!callbackObjects) {

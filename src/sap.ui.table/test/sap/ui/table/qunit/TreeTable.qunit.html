@@ -242,6 +242,40 @@
 		assert.ok(spy.calledOnce, "bindRows was called");
 	});
 
+	QUnit.test("Binding events", function(assert) {
+		var oChangeSpy = this.spy();
+		var oDataRequestedSpy = this.spy();
+		var oDataReceivedSpy = this.spy();
+
+		this.table.bindRows({
+			path: "/root",
+			events: {
+				change: oChangeSpy,
+				dataRequested: oDataRequestedSpy,
+				dataReceived: oDataReceivedSpy
+			}
+		});
+
+		var oBinding = this.table.getBinding("rows");
+		oBinding.fireEvent("dataRequested");
+		oBinding.fireEvent("dataReceived");
+
+		assert.ok(oChangeSpy.calledOnce, "The original change event listener was called once");
+		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
+		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
+	});
+
+	QUnit.test("FlatMode", function(assert) {
+		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length > 0, "Tree Icons available in TreeMode");
+		assert.ok(!this.table._bFlatMode, "Flat Mode not set");
+
+		this.table.setUseFlatMode(true);
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length == 0, "Tree Icons not available in FlatMode");
+		assert.ok(this.table._bFlatMode, "Flat Mode set");
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.table = createTable();

@@ -152,6 +152,7 @@
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("y", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"y\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "d", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
+			assert.ok(Array.isArray(oLocaleData.getCustomIntervalPattern("yMd", "", aCalendarTypes[i])), "getCustomIntervalPattern(\"yMd\", \"\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yw", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("Q", "Q", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
@@ -199,12 +200,32 @@
 		assert.ok(oLocaleData.getPreferredCalendarType() in sap.ui.core.CalendarType, "getPreferredCalendar()");
 		assert.equal(typeof oLocaleData.getCalendarWeek("wide", 1), "string", "getCalendarWeek wide");
 		assert.equal(typeof oLocaleData.getCalendarWeek("narrow", 1), "string", "getCalendarWeek narrow");
+		assert.equal(typeof oLocaleData.getPluralCategories(), "object", "getPluralCategories");
+		assert.ok(oLocaleData.getPluralCategories().length >= 1, "object", "getPluralCategories contains at least \"other\"");
+		assert.equal(typeof oLocaleData.getPluralCategory("0"), "string", "getPluralCategory(\"0\")");
+		assert.equal(typeof oLocaleData.getPluralCategory("1"), "string", "getPluralCategory(\"1\")");
+		assert.equal(typeof oLocaleData.getPluralCategory("-2.00"), "string", "getPluralCategory(\"-2.00\")");
+		assert.equal(typeof oLocaleData.getPluralCategory("123.456"), "string", "getPluralCategory(\"123.456\")");
+
 
 		// there's no currency symbol defined for EUR and USD in 'es_MX' locale in CLDR data version 26
 		if (sLocale !== "xx_XX" /*&& sLocale !== "es_MX"*/) {
 			assert.equal(oLocaleData.getCurrencyCodeBySymbol(oLocaleData.getCurrencySymbol("EUR")), "EUR", "Currency Symbol € has currency code EUR");
 			assert.equal(oLocaleData.getCurrencyCodeBySymbol(oLocaleData.getCurrencySymbol("USD")), "USD", "Currency Symbol for US Dollar has currency code USD");
 		}
+	}
+
+	function customTests_ar_SA(oLocaleData) {
+		assert.equal(oLocaleData.getPluralCategories().length, 6, "six plural forms");
+		assert.equal(oLocaleData.getPluralCategories()[0], "zero", "special plural form for zero");
+		assert.equal(oLocaleData.getPluralCategories()[1], "one", "special plural form for one");
+		assert.equal(oLocaleData.getPluralCategories()[2], "two", "special plural form for two");
+		assert.equal(oLocaleData.getPluralCategory("0"), "zero", "plural category zero for 0");
+		assert.equal(oLocaleData.getPluralCategory("1"), "one", "plural category one for 1");
+		assert.equal(oLocaleData.getPluralCategory("2.0"), "two", "plural category two for 2.0");
+		assert.equal(oLocaleData.getPluralCategory("4"), "few", "plural category few for 4");
+		assert.equal(oLocaleData.getPluralCategory("11"), "many", "plural category many for 11");
+		assert.equal(oLocaleData.getPluralCategory("101"), "other", "plural category other for 101");
 	}
 
 	function customTests_de_AT(oLocaleData) {
@@ -259,6 +280,14 @@
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 		assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+		assert.equal(oLocaleData.getPluralCategories().length, 2, "two plural forms");
+		assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
+		assert.equal(oLocaleData.getPluralCategory("0"), "other", "plural category other for 0");
+		assert.equal(oLocaleData.getPluralCategory("1"), "one", "plural category one for 1");
+		assert.equal(oLocaleData.getPluralCategory("2.0"), "other", "plural category other for 2.0");
+		assert.equal(oLocaleData.getPluralCategory("4"), "other", "plural category other for 4");
+		assert.equal(oLocaleData.getPluralCategory("10"), "other", "plural category other for 10");
+		assert.equal(oLocaleData.getPluralCategory("101"), "other", "plural category other for 101");
 	}
 
 	function customTests_de_XX(oLocaleData) {
@@ -443,6 +472,14 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "H:mm–H:mm", "interval format \"jm\", \"j\"");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
+		assert.equal(oLocaleData.getPluralCategories().length, 4, "four plural forms");
+		assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
+		assert.equal(oLocaleData.getPluralCategory("0"), "many", "plural category many for 0");
+		assert.equal(oLocaleData.getPluralCategory("1"), "one", "plural category one for 1");
+		assert.equal(oLocaleData.getPluralCategory("2.0"), "other", "plural category other for 2.0");
+		assert.equal(oLocaleData.getPluralCategory("4"), "few", "plural category few for 4");
+		assert.equal(oLocaleData.getPluralCategory("10"), "many", "plural category many for 10");
+		assert.equal(oLocaleData.getPluralCategory("101"), "one", "plural category one for 101");
 	}
 
 	function customTests_pt_BR(oLocaleData) {

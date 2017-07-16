@@ -11,7 +11,9 @@ sap.ui.define([
 			this._sValidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerEmbedded", "/sample.pdf");
 			this._sInvalidPath = jQuery.sap.getModulePath("sap.m.sample.PDFViewerEmbedded", "/sample_nonexisting.pdf");
 			this._oModel = new JSONModel({
-				Source: this._sValidPath
+				Source: this._sValidPath,
+				Title: "My Custom Title",
+				Height: "600px"
 			});
 			this.getView().setModel(this._oModel);
 		},

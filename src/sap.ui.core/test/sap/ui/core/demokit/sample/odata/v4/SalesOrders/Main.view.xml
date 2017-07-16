@@ -104,7 +104,8 @@
 					},
 					templateShareable : false
 				}"
-			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
+			mode="{= ${ui>/bCreateItemPending} ? 'None' : 'SingleSelectMaster'}"
+			selectionChange="onSalesOrdersSelect">
 			<headerToolbar>
 				<Toolbar>
 					<content>
@@ -113,11 +114,14 @@
 								<ToolbarLayoutData shrinkable="false" />
 							</layoutData>
 						</Title>
-						<Button enabled="{= !${ui>/bCreateSalesOrderPending} }"
+						<Button enabled="{= !${ui>/bCreateSalesOrderPending}
+								&amp;&amp; !${ui>/bCreateItemPending} }"
 							icon="sap-icon://add" id="createSalesOrder" press="onCreateSalesOrder"
 							tooltip="Create sales order"/>
 						<Button
-							enabled="{ui>/bSalesOrderSelected}" icon="sap-icon://delete"
+							enabled="{= ${ui>/bSalesOrderSelected}
+								&amp;&amp; !${ui>/bCreateItemPending}}"
+							icon="sap-icon://delete"
 							id="deleteSalesOrder" press="onDeleteSalesOrder"
 							tooltip="Delete sales order"/>
 						<Button
@@ -137,8 +141,7 @@
 						<ToolbarSpacer />
 						<SearchField id="filterGrossAmount"
 							placeholder="Filter by gross amount greater than"
-							value="{path : 'ui>/filterValue',
-								type:'sap.ui.model.odata.type.Decimal'}"
+							value="{path : 'ui>/filterValue'}"
 							visible="{ui>/bRealOData}" width="50%" search="onFilter">
 							<layoutData>
 								<ToolbarLayoutData shrinkable="false" />
@@ -206,7 +209,9 @@
 				</ColumnListItem>
 			</items>
 		</Table>
-		<VBox id="ObjectPage" visible="{ui>/bSalesOrderSelected}" binding="{
+		<VBox id="ObjectPage"
+			visible="{=${ui>/bSalesOrderSelected} &amp;&amp; !${ui>/bSelectedSalesOrderTransient}}"
+			binding="{
 					events : {
 						dataReceived : '.onDataEvents',
 						dataRequested : '.onDataEvents'
@@ -247,10 +252,9 @@
 							</content>
 						</Toolbar>
 						<buttons>
-							<Button icon="sap-icon://save" press="onSaveSalesOrderSchedules"
-								text="Save" type="Accept"/>
 							<Button icon="sap-icon://sys-cancel-2"
-								press="onCancelSalesOrderSchedules" text="Cancel" type="Reject"/>
+								press="onCloseSalesOrderSchedules" text="Close"
+								tooltip="Close dialog"/>
 						</buttons>
 						<content>
 							<Table id="SalesOrderSchedules" items="{SO_2_SCHDL}"
@@ -358,7 +362,8 @@
 							<Title id="SalesOrderLineItemsTitle"
 								text="{headerContext>$count} Sales Order Line Items"
 								titleStyle="H2"/>
-							<Button icon="sap-icon://add" id="createSalesOrderLineItem"
+							<Button enabled="{= !${ui>/bCreateItemPending} }"
+								icon="sap-icon://add" id="createSalesOrderLineItem"
 								press="onCreateSalesOrderLineItem"
 								tooltip="Create sales order line item"/>
 							<Button

@@ -139,6 +139,7 @@ sap.ui.define([
 		 */
 		fillJSONModel: function (oModel) {
 			function fnHandleLibInfoLoaded  (aLibs, oDocIndicies) {
+				oModel.setProperty("/bFooterVisible", true);
 				if (!aLibs) {
 					return;
 				}
@@ -149,6 +150,7 @@ sap.ui.define([
 			}
 
 			// load and process all lib info
+			oModel.setProperty("/bFooterVisible", false);
 			library._loadAllLibInfo("", "_getDocuIndex", fnHandleLibInfoLoaded);
 		}
 	};

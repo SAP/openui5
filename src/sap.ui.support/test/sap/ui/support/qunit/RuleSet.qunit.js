@@ -4,6 +4,9 @@
 	"use strict";
 
 	jQuery.sap.require("sap/ui/support/supportRules/RuleSet");
+	jQuery.sap.require("sap/ui/support/supportRules/Storage");
+	jQuery.sap.require("sap/ui/thirdparty/sinon");
+	jQuery.sap.require("sap/ui/thirdparty/sinon-qunit");
 
 	var createValidRule = function (id) {
 		return {
@@ -13,7 +16,8 @@
 			description: "desc",
 			resolution: "res",
 			audiences: ["Control"],
-			categories: ["Performance"]
+			categories: ["Performance"],
+			selected:true
 		};
 	};
 
@@ -35,7 +39,8 @@
 	});
 
 	QUnit.test("Creating rule set with no name", function (assert) {
-		new sap.ui.support.supportRules.RuleSet();
+		var ruleSet = new sap.ui.support.supportRules.RuleSet();
+		assert.strictEqual(ruleSet._oSettings.name, undefined, "There is no set name in the RuleSet !");
 		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error.");
 	});
 
@@ -138,4 +143,74 @@
 		assert.equal(rule.categories.length, 1, "should work change categories");
 		assert.equal(rule.categories[0], "Performance", "should change categories");
 	});
+
+	QUnit.test("Adding a rule with wrong category", function (assert) {
+		var settingsObj = createValidRule("id1");
+		settingsObj.categories.push("Non existing category");
+		this.ruleSet.addRule(settingsObj);
+		assert.equal(jQuery.sap.log.error.calledOnce, true, "should throw an error");
+	});
+
+	QUnit.module("RuleSet static functions test", {
+		setup: function () {
+			this.ruleSet = new sap.ui.support.supportRules.RuleSet({
+				name: "sap.ui.testName"
+			});
+			this.libraries = [
+				{title: "test", type: "library", rules: [createValidRule("id1"), createValidRule("id2")]},
+				{title: "tested", type: "library", rules: [createValidRule("id3"), createValidRule("id4")]}
+			];
+		},
+		teardown: function () {
+			// Restores original function
+			sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
+			this.libraries = null;
+		}
+	});
+
+	QUnit.test("Extract rules settings to object", function (assert) {
+		var rulesSettings = sap.ui.support.supportRules.RuleSet._extractRulesSettingsToSave(this.libraries);
+
+		assert.strictEqual(typeof rulesSettings, 'object', "should return object");
+		assert.equal(Object.keys(rulesSettings).length, 2, "should contain 2 objects");
+		assert.ok(rulesSettings.hasOwnProperty("test"), "should have the library name");
+		assert.equal(Object.keys(rulesSettings["test"]).length, 2, "first library should contain 2 rules");
+		assert.ok(rulesSettings["test"].hasOwnProperty("id1") && typeof rulesSettings["test"]["id1"] === 'object', "should contain first rule as object");
+		assert.ok(rulesSettings["test"].hasOwnProperty("id2") && typeof rulesSettings["test"]["id2"] === 'object', "should contain second rule as object");
+		assert.ok(rulesSettings.hasOwnProperty("tested"), "should have the library name");
+		assert.equal(Object.keys(rulesSettings["tested"]).length, 2, "second library should contain 2 rules");
+		assert.ok(rulesSettings["tested"].hasOwnProperty("id3") && typeof rulesSettings["tested"]["id3"] === 'object', "should contain first rule as object");
+		assert.ok(rulesSettings["tested"].hasOwnProperty("id4") && typeof rulesSettings["tested"]["id4"] === 'object', "should contain second rule as object");
+	});
+
+	QUnit.test("Load and update rules settings from local stored rule sets", function (assert) {
+		this.libraries[0].rules[0].selected = false;
+		this.libraries[1].rules[1].selected = false;
+
+		// Mock storage function
+		sinon.stub(sap.ui.support.supportRules.Storage, "getSelectedRules", function () {
+			return JSON.parse('{"test":{"id1":{"id":"id1","selected":true},"id2":{"id":"id2","selected":true}},' +
+				'"tested":{"id3":{"id":"id3","selected":true},"id4":{"id":"id4","selected":true}}}');
+		});
+
+		sap.ui.support.supportRules.RuleSet.loadSelectionOfRules(this.libraries);
+		this.libraries.forEach(function (lib) {
+			assert.ok(lib.rules[0].selected === true, "first rule should be selected");
+			assert.ok(lib.rules[1].selected === true, "second rule should be selected");
+		});
+		sap.ui.support.supportRules.Storage.getSelectedRules.restore();
+	});
+
+	QUnit.test("Should not update libraries if storage is empty", function (assert) {
+		var originalLibrary = this.libraries.slice();
+		// Mock storage function
+		sinon.stub(sap.ui.support.supportRules.Storage, "getSelectedRules", function () {
+			return null;
+		});
+		sap.ui.support.supportRules.RuleSet.loadSelectionOfRules(this.libraries);
+
+		assert.ok(JSON.stringify(originalLibrary) === JSON.stringify(this.libraries), "library should not be changed");
+		sap.ui.support.supportRules.Storage.getSelectedRules.restore();
+	});
+
 }());

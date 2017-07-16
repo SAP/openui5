@@ -21,7 +21,7 @@ sap.ui.define([
 	}
 
 	QUnit.test("Test displaying of link when pdf plugin is not installed", function (assert) {
-		assert.expect(1);
+		assert.expect(3);
 		var done = assert.async();
 
 		var oModel = new JSONModel({
@@ -30,6 +30,7 @@ sap.ui.define([
 
 		var oOptions = {
 			source: "{/source}",
+			title: "My Custom Title",
 			loaded: function () {
 				assert.ok(false, "'loaded' should not be fired");
 			},
@@ -39,7 +40,9 @@ sap.ui.define([
 		};
 
 		var checkSubstituteContent = function () {
-			assert.ok(oPdfViewer.$().find(".sapMPDFViewerLink").length === 1, "Link was displayed");
+			assert.ok(oPdfViewer.$("overflowToolbar").length === 1, "Toolbar is displayed");
+			assert.ok(oPdfViewer.$("overflowToolbar-title").length === 1, "Title is displayed");
+			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed");
 			done();
 		};
 

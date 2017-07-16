@@ -23,7 +23,7 @@ sap.ui.define([
 	 * Creates or returns an instance of the ChangePersistence
 	 * @param {String} sComponentName - Name of the component
 	 * @param {String} sAppVersion - Current running version of application
-	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence<code> instance
+	 * @returns {sap.ui.fl.ChangePersistence} <code>ChangePersistence</code> instance
 	 *
 	 * @public
 	 */
@@ -109,9 +109,10 @@ sap.ui.define([
 			if (oConfig) {
 				var aAsyncHints = oConfig.asyncHints;
 				if (aAsyncHints && aAsyncHints.requests && Array.isArray(aAsyncHints.requests)) {
-					var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests);
-					if (oFlAsyncHint && sComponentName === oFlAsyncHint.reference) {
+					var oFlAsyncHint = this._findFlAsyncHint(aAsyncHints.requests, sComponentName);
+					if (oFlAsyncHint) {
 						oChangePersistenceWrapper.oRequestOptions.cacheKey = oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
+						oChangePersistenceWrapper.oRequestOptions.url = oFlAsyncHint.url;
 					}
 				}
 			}
@@ -186,12 +187,12 @@ sap.ui.define([
 		return oChangePersistenceWrapper.oChangePersistence.loadChangesMapForComponent(oComponent, oChangePersistenceWrapper.oRequestOptions);
 	};
 
-	ChangePersistenceFactory._findFlAsyncHint = function (oAsyncHintRequest) {
+	ChangePersistenceFactory._findFlAsyncHint = function (oAsyncHintRequest, sReference) {
 		var that = this;
 		var oFlAsyncHint;
 
 		jQuery.each(oAsyncHintRequest, function (nIndex, oAsyncHint) {
-			if (that._flAsyncHintMatches(oAsyncHint)) {
+			if (that._flAsyncHintMatches(oAsyncHint, sReference)) {
 				oFlAsyncHint = oAsyncHint;
 				return false; // break forEach
 			}
@@ -200,8 +201,8 @@ sap.ui.define([
 		return oFlAsyncHint;
 	};
 
-	ChangePersistenceFactory._flAsyncHintMatches = function (oAsyncHintRequest) {
-		return oAsyncHintRequest.name === "sap.ui.fl.changes";
+	ChangePersistenceFactory._flAsyncHintMatches = function (oAsyncHintRequest, sReference) {
+		return oAsyncHintRequest.name === "sap.ui.fl.changes" && oAsyncHintRequest.reference === sReference;
 	};
 
 	return ChangePersistenceFactory;

@@ -134,7 +134,7 @@
 				<Property Name="ORT01" Type="Edm.String" MaxLength="25"
 					sap:label="City" />
 				<Property Name="WAERS" Type="Edm.String" MaxLength="5"
-					sap:display-format="UpperCase" sap:label="Curency" sap:value-list="standard"
+					sap:display-format="UpperCase" sap:label="Currency" sap:value-list="standard"
 					sap:semantics="currency-code" />
 			</EntityType>
 			<EntityContainer Name="FAR_CUSTOMER_LINE_ITEMS_Entities"

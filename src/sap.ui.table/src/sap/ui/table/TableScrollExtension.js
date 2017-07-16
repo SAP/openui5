@@ -4,7 +4,7 @@
 
 // Provides helper sap.ui.table.TableScrollExtension.
 sap.ui.define([
-	'jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/Device', './library'
+	"jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "./library"
 ], function(jQuery, TableExtension, TableUtils, Device, library) {
 	"use strict";
 
@@ -167,7 +167,8 @@ sap.ui.define([
 				return;
 			}
 
-			// Do not scroll in action mode when scrolling was not initiated by a keyboard action! Might cause loss of user input and other undesired behavior.
+			// Do not scroll in action mode when scrolling was not initiated by a keyboard action! Might cause loss of user input and other undesired
+			// behavior.
 			this._getKeyboardExtension().setActionMode(false);
 
 			/**
@@ -459,9 +460,9 @@ sap.ui.define([
 		onfocusin: function(oEvent) {
 			var $ctrlScr;
 			var $FocusedDomRef = jQuery(oEvent.target);
-			if ($FocusedDomRef.parent('.sapUiTableTr').length > 0) {
+			if ($FocusedDomRef.parent(".sapUiTableTr").length > 0) {
 				$ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-			} else if ($FocusedDomRef.parent('.sapUiTableColHdr').length > 0) {
+			} else if ($FocusedDomRef.parent(".sapUiTableColHdr").length > 0) {
 				$ctrlScr = jQuery(this.getDomRef("sapUiTableColHdrScr"));
 			}
 
@@ -487,9 +488,10 @@ sap.ui.define([
 
 	/**
 	 * Extension for sap.ui.table.Table which handles scrolling.
+	 * <b>This is an internal class that is only intended to be used inside the sap.ui.table library! Any usage outside the sap.ui.table library is
+	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles scrolling.
-	 *
 	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
@@ -497,9 +499,11 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.TableScrollExtension
 	 */
-	var TableScrollExtension = TableExtension.extend("sap.ui.table.TableScrollExtension", /* @lends sap.ui.table.TableScrollExtension */ {
-		/*
-		 * @see sap.ui.table.TableExtension#_init
+	var TableScrollExtension = TableExtension.extend("sap.ui.table.TableScrollExtension", /** @lends sap.ui.table.TableScrollExtension.prototype */ {
+		/**
+		 * @override
+		 * @inheritDoc
+		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable, sTableType, mSettings) {
 			this._type = sTableType;
@@ -515,8 +519,9 @@ sap.ui.define([
 			return "ScrollExtension";
 		},
 
-		/*
-		 * @see sap.ui.table.TableExtension#_attachEvents
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
 		_attachEvents: function() {
 			var oTable = this.getTable();
@@ -532,8 +537,9 @@ sap.ui.define([
 			}
 		},
 
-		/*
-		 * @see sap.ui.table.TableExtension#_detachEvents
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
 		_detachEvents: function() {
 			var oTable = this.getTable();
@@ -549,8 +555,10 @@ sap.ui.define([
 			}
 		},
 
-		/*
-		 * Enables debugging for the extension.
+		/**
+		 * Enables debugging for the extension. Internal helper classes become accessible.
+		 *
+		 * @private
 		 */
 		_debug: function() {
 			this._ExtensionHelper = ExtensionHelper;
@@ -559,8 +567,9 @@ sap.ui.define([
 			this._VerticalScrollingHelper = VerticalScrollingHelper;
 		},
 
-		/*
-		 * @see sap.ui.base.Object#destroy
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
 		destroy: function() {
 			// Deregister the delegate.
@@ -571,186 +580,193 @@ sap.ui.define([
 			this._delegate = null;
 
 			TableExtension.prototype.destroy.apply(this, arguments);
-		},
-
-		// "Public" functions which allow the table to communicate with this extension should go here.
-
-		/**
-		 * Scrolls the data in the table forward or backward by setting the property <code>firstVisibleRow</code>.
-		 *
-		 * @param {boolean} [bDown=false] Whether to scroll down or up.
-		 * @param {boolean} [bPage=false] If <code>true</code>, the amount of visible scrollable rows (a page) is scrolled, otherwise a single row is scrolled.
-		 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
-		 * @return {boolean} Returns <code>true</code>, if scrolling was actually performed.
-		 * @private
-		 */
-		scroll: function(bDown, bPage, bIsKeyboardScroll) {
-			if (bDown == null) {
-				bDown = false;
-			}
-			if (bPage == null) {
-				bPage = false;
-			}
-			if (bIsKeyboardScroll == null) {
-				bIsKeyboardScroll = false;
-			}
-
-			var oTable = this.getTable();
-			var bScrolled = false;
-			var iRowCount = oTable._getRowCount();
-			var iVisibleRowCount = oTable.getVisibleRowCount();
-			var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
-			var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
-			var iSize = bPage ? iScrollableRowCount : 1;
-
-			if (bDown) {
-				if (iFirstVisibleScrollableRow + iVisibleRowCount < iRowCount) {
-					oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
-					bScrolled = true;
-				}
-			} else if (iFirstVisibleScrollableRow > 0) {
-				oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
-				bScrolled = true;
-			}
-
-			if (bScrolled && bIsKeyboardScroll) {
-				this._bIsScrolledVerticallyByKeyboard = true;
-			}
-
-			return bScrolled;
-		},
-
-		/**
-		 * Scrolls the data in the table to the end or to the beginning by setting the property <code>firstVisibleRow</code>.
-		 *
-		 * @param {boolean} [bDown=false] Whether to scroll down or up.
-		 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
-		 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
-		 * @private
-		 */
-		scrollMax: function(bDown, bIsKeyboardScroll) {
-			if (bDown == null) {
-				bDown = false;
-			}
-			if (bIsKeyboardScroll == null) {
-				bIsKeyboardScroll = false;
-			}
-
-			var oTable = this.getTable();
-			var bScrolled = false;
-			var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
-
-			if (bDown) {
-				var iFirstVisibleRow = oTable._getRowCount() - TableUtils.getNonEmptyVisibleRowCount(oTable);
-				if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
-					oTable.setFirstVisibleRow(iFirstVisibleRow);
-					bScrolled = true;
-				}
-			} else if (iFirstVisibleScrollableRow > 0) {
-				oTable.setFirstVisibleRow(0);
-				bScrolled = true;
-			}
-
-			if (bScrolled && bIsKeyboardScroll) {
-				this._bIsScrolledVerticallyByKeyboard = true;
-			}
-
-			return bScrolled;
-		},
-
-		/**
-		 * Returns the horizontal scrollbar.
-		 *
-		 * @returns {HTMLElement|null} Returns <code>null</code>, if the horizontal scrollbar does not exist.
-		 * @private
-		 */
-		getHorizontalScrollbar: function() {
-			var oTable = this.getTable();
-
-			if (oTable != null) {
-				var oVSb = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
-
-				if (oVSb != null) {
-					return oVSb;
-				}
-			}
-
-			return null;
-		},
-
-		/**
-		 * Returns the vertical scrollbar.
-		 *
-		 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
-		 * @private
-		 */
-		getVerticalScrollbar: function() {
-			var oTable = this.getTable();
-
-			if (oTable != null) {
-				var oVSb = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
-
-				if (oVSb != null) {
-					return oVSb;
-				}
-			}
-
-			return null;
-		},
-
-		/**
-		 * Checks whether the horizontal scrollbar is visible.
-		 *
-		 * @returns {boolean} Returns <code>true</code>, if the horizontal scrollbar is visible.
-		 * @private
-		 */
-		isHorizontalScrollbarVisible: function() {
-			var oTable = this.getTable();
-
-			if (oTable != null) {
-				var oTableElement = oTable.getDomRef();
-
-				if (oTableElement != null) {
-					return oTableElement.classList.contains("sapUiTableHScr");
-				}
-			}
-
-			return false;
-		},
-
-		/**
-		 * Checks whether the vertical scrollbar is visible.
-		 *
-		 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is visible.
-		 * @private
-		 */
-		isVerticalScrollbarVisible: function() {
-			var oTable = this.getTable();
-
-			if (oTable != null) {
-				var oTableElement = oTable.getDomRef();
-
-				if (oTableElement != null) {
-					return oTableElement.classList.contains("sapUiTableVScr");
-				}
-			}
-
-			return false;
-		},
-
-		/**
-		 * Update the height of the vertical scrollbar by setting its <code>max-height</code> value.
-		 *
-		 * @private
-		 *
-		 * @see sap.ui.table.Table#_getVSbHeight
-		 */
-		updateVerticalScrollbarHeight: function() {
-			var oTable = this.getTable();
-			oTable.getDomRef(SharedDomRef.VerticalScrollBar).style.maxHeight = oTable._getVSbHeight() + "px";
 		}
 	});
 
-	return TableScrollExtension;
+	/**
+	 * Scrolls the data in the table forward or backward by setting the property <code>firstVisibleRow</code>.
+	 *
+	 * @param {boolean} [bDown=false] Whether to scroll down or up.
+	 * @param {boolean} [bPage=false] If <code>true</code>, the amount of visible scrollable rows (a page) is scrolled,
+	 *                                otherwise a single row is scrolled.
+	 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
+	 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
+	 * @public
+	 */
+	TableScrollExtension.prototype.scroll = function(bDown, bPage, bIsKeyboardScroll) {
+		if (bDown == null) {
+			bDown = false;
+		}
+		if (bPage == null) {
+			bPage = false;
+		}
+		if (bIsKeyboardScroll == null) {
+			bIsKeyboardScroll = false;
+		}
 
+		var oTable = this.getTable();
+		var bScrolled = false;
+		var iRowCount = oTable._getRowCount();
+		var iVisibleRowCount = oTable.getVisibleRowCount();
+		var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
+		var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
+		var iSize = bPage ? iScrollableRowCount : 1;
+
+		if (bDown) {
+			if (iFirstVisibleScrollableRow + iVisibleRowCount < iRowCount) {
+				oTable.setFirstVisibleRow(Math.min(iFirstVisibleScrollableRow + iSize, iRowCount - iVisibleRowCount));
+				bScrolled = true;
+			}
+		} else if (iFirstVisibleScrollableRow > 0) {
+			oTable.setFirstVisibleRow(Math.max(iFirstVisibleScrollableRow - iSize, 0));
+			bScrolled = true;
+		}
+
+		if (bScrolled && bIsKeyboardScroll) {
+			this._bIsScrolledVerticallyByKeyboard = true;
+		}
+
+		return bScrolled;
+	};
+
+	/**
+	 * Scrolls the data in the table to the end or to the beginning by setting the property <code>firstVisibleRow</code>.
+	 *
+	 * @param {boolean} [bDown=false] Whether to scroll down or up.
+	 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
+	 * @returns {boolean} Returns <code>true</code>, if scrolling was actually performed.
+	 * @public
+	 */
+	TableScrollExtension.prototype.scrollMax = function(bDown, bIsKeyboardScroll) {
+		if (bDown == null) {
+			bDown = false;
+		}
+		if (bIsKeyboardScroll == null) {
+			bIsKeyboardScroll = false;
+		}
+
+		var oTable = this.getTable();
+		var bScrolled = false;
+		var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
+
+		if (bDown) {
+			var iFirstVisibleRow = oTable._getRowCount() - TableUtils.getNonEmptyVisibleRowCount(oTable);
+			if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
+				oTable.setFirstVisibleRow(iFirstVisibleRow);
+				bScrolled = true;
+			}
+		} else if (iFirstVisibleScrollableRow > 0) {
+			oTable.setFirstVisibleRow(0);
+			bScrolled = true;
+		}
+
+		if (bScrolled && bIsKeyboardScroll) {
+			this._bIsScrolledVerticallyByKeyboard = true;
+		}
+
+		return bScrolled;
+	};
+
+	/**
+	 * Returns the horizontal scrollbar.
+	 *
+	 * @returns {HTMLElement|null} Returns <code>null</code>, if the horizontal scrollbar does not exist.
+	 * @public
+	 */
+	TableScrollExtension.prototype.getHorizontalScrollbar = function() {
+		var oTable = this.getTable();
+
+		if (oTable != null) {
+			var oVSb = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
+
+			if (oVSb != null) {
+				return oVSb;
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Returns the vertical scrollbar.
+	 *
+	 * @returns {HTMLElement|null} Returns <code>null</code>, if the vertical scrollbar does not exist.
+	 * @public
+	 */
+	TableScrollExtension.prototype.getVerticalScrollbar = function() {
+		var oTable = this.getTable();
+
+		if (oTable != null) {
+			var oVSb = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
+
+			if (oVSb != null) {
+				return oVSb;
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Checks whether the horizontal scrollbar is visible.
+	 *
+	 * @returns {boolean} Returns <code>true</code>, if the horizontal scrollbar is visible.
+	 * @public
+	 */
+	TableScrollExtension.prototype.isHorizontalScrollbarVisible = function() {
+		var oTable = this.getTable();
+
+		if (oTable != null) {
+			var oTableElement = oTable.getDomRef();
+
+			if (oTableElement != null) {
+				return oTableElement.classList.contains("sapUiTableHScr");
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * Checks whether the vertical scrollbar is visible.
+	 *
+	 * @returns {boolean} Returns <code>true</code>, if the vertical scrollbar is visible.
+	 * @public
+	 */
+	TableScrollExtension.prototype.isVerticalScrollbarVisible = function() {
+		var oTable = this.getTable();
+
+		if (oTable != null) {
+			var oTableElement = oTable.getDomRef();
+
+			if (oTableElement != null) {
+				return oTableElement.classList.contains("sapUiTableVScr");
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * Update the height of the vertical scrollbar by setting its <code>max-height</code> value.
+	 *
+	 * @name sap.ui.table.TableScrollExtension#updateVerticalScrollbarHeight
+	 * @public
+	 * @see sap.ui.table.Table#_getVSbHeight
+	 */
+	TableScrollExtension.prototype.updateVerticalScrollbarHeight = function() {
+		var oTable = this.getTable();
+		oTable.getDomRef(SharedDomRef.VerticalScrollBar).style.maxHeight = oTable._getVSbHeight() + "px";
+	};
+
+	return TableScrollExtension;
 }, /* bExport= */ true);
+
+/**
+ * Gets the scroll extension.
+ *
+ * @name sap.ui.table.Table#_getScrollExtension
+ * @function
+ * @returns {sap.ui.table.TableScrollExtension} The scroll extension.
+ * @private
+ */

@@ -346,6 +346,36 @@
 			oActionSelect.destroy();
 		});
 
+		QUnit.module("Focus handling", {
+			beforeEach: function() {
+				this.oActionSelect = new sap.m.ActionSelect({
+					items: [
+						new sap.ui.core.Item()
+					],
+					buttons: [
+						new sap.m.Button()
+					]
+				});
+				this.oActionSelect.placeAt("actionselect-content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oActionSelect.destroy();
+			}
+		});
+
+		QUnit.test("_toggleListFocusIndication should remove focus indication", function(assert) {
+			this.oActionSelect.open();
+			this.clock.tick();
+
+			// act
+			this.oActionSelect._toggleListFocusIndication(true);
+			this.clock.tick();
+
+			// assert
+			assert.ok(this.oActionSelect.getSelectedItem().$().hasClass("sapMActionSelectItemWithoutFocus"), "Item should not be focused");
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

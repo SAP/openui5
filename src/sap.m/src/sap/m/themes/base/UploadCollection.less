@@ -130,12 +130,6 @@
 	position: absolute;
 }
 
-/*focus for the file name */
-.sapMUCItem .sapMUCTextContainer > .sapMUCFileName.sapMLnk:not(.sapMLnkDsbl):focus {
-	outline:			1px dotted;
-	outline-offset:		0.0625rem;
-}
-
 /*positioning of the Progress label */
 .sapMLabel.sapMUCProgress {
 	display: block;
@@ -161,6 +155,7 @@
 	padding: 1rem;
 	text-align: center;
 	background: @sapUiGroupContentBackground;
+	display: block;
 
 	.sapUiIcon {
 		color: fade(@sapUiContentNonInteractiveIconColor, 50);
