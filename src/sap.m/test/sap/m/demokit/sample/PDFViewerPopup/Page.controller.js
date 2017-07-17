@@ -14,11 +14,11 @@ sap.ui.define([
 
 			var oSample1Model = new JSONModel({
 				Source: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample1.pdf"),
-				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample1.png")
+				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample1.jpg")
 			});
 			var oSample2Model = new JSONModel({
 				Source: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample2.pdf"),
-				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample2.png")
+				Preview: jQuery.sap.getModulePath("sap.m.sample.PDFViewerPopup", "/sample2.jpg")
 			});
 
 			this.getView().byId('image1').setModel(oSample1Model);
