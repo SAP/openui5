@@ -46,8 +46,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * number of months displayed
-			 * on phones always only one month is displayed
+			 * Determines the number of months displayed.
+			 *
+			 * As of version 1.50, the duplicated dates are not displayed if there are
+			 * multiple months.
+			 *
+			 * <b>Note:</b> On phones, only one month is displayed.
 			 * @since 1.28.0
 			 */
 			months : {type : "int", group : "Appearance", defaultValue : 1},
