@@ -31,6 +31,7 @@ sap.ui.define([
 		oFullConfig = {
 			"DataServices" : {
 				"Schema" : {
+					__postProcessor : postProcessSchema,
 					__processor : _MetadataConverter.processSchema,
 					"Association" : {
 						__processor : processAssociation,
@@ -81,6 +82,95 @@ sap.ui.define([
 				}
 			}
 		};
+
+	/**
+	 * Merges converted V2 annotations with V4 annotations.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function convertV2Annotations(oElement, oAggregate) {
+		var mAnnotations = oAggregate.convertedV2Annotations[oAggregate.annotatable.path] || {},
+			oAttribute,
+			aAttributes = oElement.attributes,
+			i,
+			n = aAttributes.length;
+
+		for (i = 0; i < n; i++) {
+			oAttribute = aAttributes[i];
+			if (oAttribute.namespaceURI !== sSapNamespace) {
+				continue;
+			}
+			switch (oAttribute.localName) {
+				case "aggregation-role":
+					if (oAttribute.value === "dimension") {
+						mAnnotations["@com.sap.vocabularies.Analytics.v1.Dimension"] = true;
+					} else if (oAttribute.value === "measure") {
+						mAnnotations["@com.sap.vocabularies.Analytics.v1.Measure"] = true;
+					}
+					break;
+				case "display-format":
+					if (oAttribute.value === "NonNegative") {
+						mAnnotations["@com.sap.vocabularies.Common.v1.IsDigitSequence"] = true;
+					} else if (oAttribute.value === "UpperCase") {
+						mAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"] = true;
+					}
+					break;
+				case "field-control":
+					mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
+						$Path : oAttribute.value
+					};
+					break;
+				case "heading":
+					mAnnotations["@com.sap.vocabularies.Common.v1.Heading"] = oAttribute.value;
+					break;
+				case "label":
+					mAnnotations["@com.sap.vocabularies.Common.v1.Label"] = oAttribute.value;
+					break;
+				case "precision":
+					mAnnotations["@Org.OData.Measures.V1.Scale"] = {
+						$Path : oAttribute.value
+					};
+					break;
+				case "text":
+					mAnnotations["@com.sap.vocabularies.Common.v1.Text"] = {
+						$Path : oAttribute.value
+					};
+					break;
+				case "quickinfo":
+					mAnnotations["@com.sap.vocabularies.Common.v1.QuickInfo"] =
+						oAttribute.value;
+					break;
+				case "visible":
+					if (oAttribute.value === "false") {
+						mAnnotations["@com.sap.vocabularies.UI.v1.Hidden"] = true;
+						mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
+							$EnumMember :
+								"com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
+						};
+					}
+					break;
+				default:
+					//no conversion supported
+			}
+		}
+		if (Object.keys(mAnnotations).length > 0) {
+			oAggregate.convertedV2Annotations[oAggregate.annotatable.path] = mAnnotations;
+		}
+	}
+
+	/**
+	 * Post-processing of an Schema element.
+	 *
+	 * @param {Element} oElement The element
+	 * @param {any[]} aResult The results from child elements
+	 * @param {object} oAggregate The aggregate
+	 */
+	function postProcessSchema(oElement, aResult, oAggregate) {
+		if (Object.keys(oAggregate.convertedV2Annotations).length > 0) {
+			oAggregate.schema.$Annotations = oAggregate.convertedV2Annotations;
+		}
+		oAggregate.convertedV2Annotations = {}; // reset schema annotations for next schema
+	}
 
 	/**
 	 * Processes an Association element.
@@ -346,6 +436,8 @@ sap.ui.define([
 
 		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.annotatable(oAggregate, sName);
+
+		convertV2Annotations(oElement, oAggregate);
 	}
 
 	/**
@@ -448,6 +540,8 @@ sap.ui.define([
 				"associationSet" : null, // the current associationSet
 				"associationSets" : [], // list of associationSets
 				"constraintRole" : null, // the current Principal/Dependent
+				// maps annotatable path to a map of converted V2 annotations for current Schema
+				"convertedV2Annotations" : {},
 				"defaultEntityContainer" : null, // the name of the default EntityContainer
 				"entityContainer" : null, // the current EntityContainer
 				"entitySet" : null, // the current EntitySet
