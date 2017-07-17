@@ -2,7 +2,6 @@
 	"changes" : {
 		"changes" : [
 			{
-				"variantMgmtRef":"",
 				"variantRef":"",
 				"fileName":"id_1445501120486_25",
 				"fileType":"change",
@@ -26,7 +25,6 @@
 				}
 			},
 			{
-				"variantMgmtRef":"",
 				"variantRef":"",
 				"fileName":"id_1445501120486_26",
 				"fileType":"change",
@@ -50,7 +48,6 @@
 				}
 			},
 			{
-				"variantMgmtRef":"",
 				"variantRef":"",
 				"fileName":"id_1445501120486_27",
 				"fileType":"change",
@@ -79,29 +76,31 @@
 				"defaultVariant" : "variant0",
 				"variants" : [
 					{
-						"fileName":"variant0",
-						"title":"variant A",
-						"fileType":"variant",
-						"component":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
-						"layer":"CUSTOMER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
+						"content": {
+							"fileName":"variant0",
+							"title":"variant A",
+							"fileType":"variant",
+							"variantMgmtRef":"variantManagementOrdersTable",
+							"component":"sap.ui.rta.test.Demo.md.Component",
+							"packageName":"$TMP",
+							"content":{},
+							"selector":{
+								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							},
+							"layer":"CUSTOMER",
+							"texts":{},
+							"namespace":"sap.ui.rta.test.Demo.md.Component",
+							"creation":"",
+							"originalLanguage":"EN",
+							"conditions":{},
+							"support":{
+								"generator":"Change.createInitialFileContent",
+								"service":"",
+								"user":""
+							}
 						},
 						"changes" : [
 							{
-								"variantMgmtRef":"variantManagementOrdersTable",
 								"variantRef":"variant0",
 								"fileName":"id_1445501120486_41",
 								"fileType":"change",
@@ -125,7 +124,6 @@
 								}
 							},
 							{
-								"variantMgmtRef":"variantManagementOrdersTable",
 								"variantRef":"variant0",
 								"fileName":"id_1445501120486_42",
 								"fileType":"change",
@@ -151,29 +149,104 @@
 						]
 					},
 					{
-						"fileName":"variant1",
-						"title":"variant B",
-						"fileType":"variant",
-						"component":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
-						"layer":"CUSTOMER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
+						"content": {
+							"fileName":"variantManagementOrdersTable",
+							"title":"Standard",
+							"fileType":"variant",
+							"variantMgmtRef":"variantManagementOrdersTable",
+							"component":"sap.ui.rta.test.Demo.md.Component",
+							"packageName":"$TMP",
+							"content":{},
+							"selector":{
+								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							},
+							"layer":"CUSTOMER",
+							"texts":{},
+							"namespace":"sap.ui.rta.test.Demo.md.Component",
+							"creation":"",
+							"originalLanguage":"EN",
+							"conditions":{},
+							"support":{
+								"generator":"Change.createInitialFileContent",
+								"service":"",
+								"user":"SAP"
+							}
 						},
 						"changes" : [
 							{
-								"variantMgmtRef":"variantManagementOrdersTable",
+								"variantRef":"variantManagementOrdersTable",
+								"fileName":"id_1445501120486_41",
+								"fileType":"change",
+								"changeType":"hideControl",
+								"component":"sap.ui.rta.test.Demo.md.Component",
+								"packageName":"$TMP",
+								"content":{},
+								"selector":{
+									"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+								},
+								"layer":"CUSTOMER",
+								"texts":{},
+								"namespace":"sap.ui.rta.test.Demo.md.Component",
+								"creation":"",
+								"originalLanguage":"EN",
+								"conditions":{},
+								"support":{
+									"generator":"Change.createInitialFileContent",
+									"service":"",
+									"user":""
+								}
+							},
+							{
+								"variantRef":"variantManagementOrdersTable",
+								"fileName":"id_1445501120486_43",
+								"fileType":"change",
+								"changeType":"hideControl",
+								"component":"sap.ui.rta.test.Demo.md.Component",
+								"packageName":"$TMP",
+								"content":{},
+								"selector":{
+									"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+								},
+								"layer":"CUSTOMER",
+								"texts":{},
+								"namespace":"sap.ui.rta.test.Demo.md.Component",
+								"creation":"",
+								"originalLanguage":"EN",
+								"conditions":{},
+								"support":{
+									"generator":"Change.createInitialFileContent",
+									"service":"",
+									"user":""
+								}
+							}
+						]
+					},
+					{
+						"content": {
+							"fileName":"variant2",
+							"title":"variant AA",
+							"fileType":"variant",
+							"variantMgmtRef":"variantManagementOrdersTable",
+							"component":"sap.ui.rta.test.Demo.md.Component",
+							"packageName":"$TMP",
+							"content":{},
+							"selector":{
+								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							},
+							"layer":"CUSTOMER",
+							"texts":{},
+							"namespace":"sap.ui.rta.test.Demo.md.Component",
+							"creation":"",
+							"originalLanguage":"EN",
+							"conditions":{},
+							"support":{
+								"generator":"Change.createInitialFileContent",
+								"service":"",
+								"user":""
+							}
+						},
+						"changes" : [
+							{
 								"variantRef":"variant0",
 								"fileName":"id_1445501120486_41",
 								"fileType":"change",
@@ -197,9 +270,8 @@
 								}
 							},
 							{
-								"variantMgmtRef":"variantManagementOrdersTable",
-								"variantRef":"variant1",
-								"fileName":"id_1445501120486_43",
+								"variantRef":"variant0",
+								"fileName":"id_1445501120486_42",
 								"fileType":"change",
 								"changeType":"hideControl",
 								"component":"sap.ui.rta.test.Demo.md.Component",
@@ -228,25 +300,28 @@
 				"defaultVariant" : "variant0",
 				"variants" : [
 					{
-						"fileName":"variant0",
-						"title":"variant A",
-						"fileType":"variant",
-						"component":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
-						"layer":"CUSTOMER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
+						"content": {
+							"fileName":"variant0",
+							"title":"variant A",
+							"fileType":"variant",
+							"variantMgmtRef":"variantManagementOrdersObjectPage",
+							"component":"sap.ui.rta.test.Demo.md.Component",
+							"packageName":"$TMP",
+							"content":{},
+							"selector":{
+								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							},
+							"layer":"CUSTOMER",
+							"texts":{},
+							"namespace":"sap.ui.rta.test.Demo.md.Component",
+							"creation":"",
+							"originalLanguage":"EN",
+							"conditions":{},
+							"support":{
+								"generator":"Change.createInitialFileContent",
+								"service":"",
+								"user":""
+							}
 						},
 						"changes" : [
 							{
@@ -298,25 +373,28 @@
 						]
 					},
 					{
-						"fileName":"variant1",
-						"title":"variant B",
-						"fileType":"variant",
-						"component":"sap.ui.rta.test.Demo.md.Component",
-						"packageName":"$TMP",
-						"content":{},
-						"selector":{
-							"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
-						},
-						"layer":"CUSTOMER",
-						"texts":{},
-						"namespace":"sap.ui.rta.test.Demo.md.Component",
-						"creation":"",
-						"originalLanguage":"EN",
-						"conditions":{},
-						"support":{
-							"generator":"Change.createInitialFileContent",
-							"service":"",
-							"user":""
+						"content": {
+							"fileName":"variant1",
+							"title":"variant B",
+							"fileType":"variant",
+							"variantMgmtRef":"variantManagementOrdersObjectPage",
+							"component":"sap.ui.rta.test.Demo.md.Component",
+							"packageName":"$TMP",
+							"content":{},
+							"selector":{
+								"id":"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+							},
+							"layer":"CUSTOMER",
+							"texts":{},
+							"namespace":"sap.ui.rta.test.Demo.md.Component",
+							"creation":"",
+							"originalLanguage":"EN",
+							"conditions":{},
+							"support":{
+								"generator":"Change.createInitialFileContent",
+								"service":"",
+								"user":""
+							}
 						},
 						"changes" : [
 							{

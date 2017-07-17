@@ -76,6 +76,23 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the variant model object
+	 *
+	 * @returns {Object} Variant Model Object
+	 * @public
+	 */
+	FlexController.prototype.getVariantModelData = function () {
+		var oData;
+		if (this._oChangePersistence &&
+				this._oChangePersistence._oVariantController._mVariantManagement &&
+				Object.keys(this._oChangePersistence._oVariantController._mVariantManagement).length > 0) {
+			oData = this._oChangePersistence._oVariantController._fillVariantModel();
+		}
+
+		return oData;
+	};
+
+	/**
 	 * Create a change
 	 *
 	 * @param {object} oChangeSpecificData property bag (nvp) holding the change information (see sap.ui.fl.Change#createInitialFileContent
