@@ -530,18 +530,35 @@
 		});
 		QUnit.test("Default event on FileNameLink press", function(assert) {
 			//Arrange
-			var oStub = sinon.stub(sap.m.UploadCollection.prototype, "_triggerLink");
+			var oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
 			var oItem = new sap.m.UploadCollectionItem({
-				fileName: "anyFileName"
+				fileName: "anyFileName",
+				url: "test.url"
 			});
 			sap.ui.getCore().applyChanges();
 			//Act
 			var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
 			oFileName.firePress();
 			//Assert
-			assert.equal(sap.m.UploadCollection.prototype._triggerLink.called, true, "Default event triggered on FileNameLink press");
+			assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Default event triggered on FileNameLink press");
 			//Cleanup
 			oStub.restore();
+		});
+		QUnit.test("Check if _createIcon returns Icon or Image", function(assert) {
+			//Arrange
+			var oItem = new sap.m.UploadCollectionItem({
+				fileName: "anyFileName",
+				press: function() {}
+			});
+			sap.ui.getCore().applyChanges();
+			//Act
+			var oIcon = this.oUploadCollection._createIcon(oItem, "item_0", oItem.getProperty("fileName"), this);
+
+			oItem.setProperty("thumbnailUrl", "sap-icon://document");
+			var oImage = this.oUploadCollection._createIcon(oItem, "item_0", oItem.getProperty("fileName"), this);
+			//Assert
+			assert.ok(oIcon.sId.indexOf("-ia_iconHL") > -1, "_createIcon returned an icon");
+			assert.ok(oImage.sId.indexOf("-ia_imageHL") > -1, "_createIcon returned an image");
 		});
 		QUnit.test("Function _createDeleteButton", function(assert) {
 			//Arrange
