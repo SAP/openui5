@@ -201,6 +201,8 @@ sap.ui.define([
 	 */
 	VariantManagement.prototype.init = function() {
 
+		this.attachModelContextChange(this._setModel, this);
+
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
 		var oVariantInvisibleText = new InvisibleText({
@@ -385,12 +387,12 @@ sap.ui.define([
 		}
 	};
 
-	VariantManagement.prototype.setModel = function(oModel, sName) {
-		if ((VariantManagement.MODEL_NAME === sName) && this.getVariantMgmtId()) {
+	VariantManagement.prototype._setModel = function() {
+
+		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+		if (oModel) {
 			this._setBindingContext(oModel, this.getVariantMgmtId());
 		}
-
-		Control.prototype.setModel.apply(this, arguments);
 	};
 
 	VariantManagement.prototype.setVariantMgmtId = function(sValue) {
