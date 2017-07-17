@@ -23,7 +23,7 @@
 }
 
 /* Custom focus outline */
-html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
 }
@@ -34,7 +34,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		outline: none;
 		position: relative;
 	}
-	.sapMRI:focus:not(.sapMRIDisabled)::before {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly)::before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
