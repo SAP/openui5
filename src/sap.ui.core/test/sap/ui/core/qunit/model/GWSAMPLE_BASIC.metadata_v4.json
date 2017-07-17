@@ -312,6 +312,210 @@
 			},
 			"GWSAMPLE_BASIC.VH_UnitWeight/Msehl": {
 				"@com.sap.vocabularies.Common.v1.Label": "Unit text"
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ContactSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ProductSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrderLineItemSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrderSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_AddressTypeSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_BPRoleSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CategorySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CountrySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CurrencySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_LanguageSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_ProductTypeCodeSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitLengthSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitQuantitySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitWeightSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
 			}
 		}
 	},

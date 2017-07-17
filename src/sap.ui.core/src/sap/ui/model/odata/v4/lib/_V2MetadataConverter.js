@@ -14,6 +14,36 @@ sap.ui.define([
 		// namespaces
 		sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
 		sMicrosoftNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
+		mV2toV4 = {
+			"creatable" : {
+				"property" : "Insertable",
+				"term" : "@Org.OData.Capabilities.V1.InsertRestrictions"
+			},
+			"deletable" : {
+				"property" : "Deletable",
+				"term" : "@Org.OData.Capabilities.V1.DeleteRestrictions"
+			},
+			"deletable-path" : {
+				"property" : "Deletable",
+				"term" : "@Org.OData.Capabilities.V1.DeleteRestrictions"
+			},
+			"requires-filter" : {
+				"property" : "RequiresFilter",
+				"term" : "@Org.OData.Capabilities.V1.FilterRestrictions"
+			},
+			"searchable" : {
+				"property" : "Searchable",
+				"term" : "@Org.OData.Capabilities.V1.SearchRestrictions"
+			},
+			"updatable" : {
+				"property" : "Updatable",
+				"term" : "@Org.OData.Capabilities.V1.UpdateRestrictions"
+			},
+			"updatable-path" : {
+				"property" : "Updatable",
+				"term" : "@Org.OData.Capabilities.V1.UpdateRestrictions"
+			}
+		},
 		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
 
 		// the configurations for traverse
@@ -95,12 +125,16 @@ sap.ui.define([
 		};
 
 	/**
-	 * Merges converted V2 annotations with V4 annotations.
+	 * Iterates over all attributes and converts V2 annotations to corresponding V4 annotations
+	 * based on the given kind.
+	 *
 	 * @param {Element} oElement The element
 	 * @param {object} oAggregate The aggregate
+	 * @param {string} sKind The kind of the element, e.g. "EntitySet" or "Property"
 	 */
-	function convertV2Annotations(oElement, oAggregate) {
-		var mAnnotations = oAggregate.convertedV2Annotations[oAggregate.annotatable.path] || {},
+	function convertAnnotations(oElement, oAggregate, sKind) {
+		var sElementPath = oAggregate.annotatable.path,
+			mAnnotations = oAggregate.convertedV2Annotations[sElementPath] || {},
 			oAttribute,
 			aAttributes = oElement.attributes,
 			i,
@@ -111,63 +145,143 @@ sap.ui.define([
 			if (oAttribute.namespaceURI !== sSapNamespace) {
 				continue;
 			}
-			switch (oAttribute.localName) {
-				case "aggregation-role":
-					if (oAttribute.value === "dimension") {
-						mAnnotations["@com.sap.vocabularies.Analytics.v1.Dimension"] = true;
-					} else if (oAttribute.value === "measure") {
-						mAnnotations["@com.sap.vocabularies.Analytics.v1.Measure"] = true;
-					}
-					break;
-				case "display-format":
-					if (oAttribute.value === "NonNegative") {
-						mAnnotations["@com.sap.vocabularies.Common.v1.IsDigitSequence"] = true;
-					} else if (oAttribute.value === "UpperCase") {
-						mAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"] = true;
-					}
-					break;
-				case "field-control":
-					mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
-						$Path : oAttribute.value
-					};
-					break;
-				case "heading":
-					mAnnotations["@com.sap.vocabularies.Common.v1.Heading"] = oAttribute.value;
-					break;
-				case "label":
-					mAnnotations["@com.sap.vocabularies.Common.v1.Label"] = oAttribute.value;
-					break;
-				case "precision":
-					mAnnotations["@Org.OData.Measures.V1.Scale"] = {
-						$Path : oAttribute.value
-					};
-					break;
-				case "text":
-					mAnnotations["@com.sap.vocabularies.Common.v1.Text"] = {
-						$Path : oAttribute.value
-					};
-					break;
-				case "quickinfo":
-					mAnnotations["@com.sap.vocabularies.Common.v1.QuickInfo"] =
-						oAttribute.value;
-					break;
-				case "visible":
-					if (oAttribute.value === "false") {
-						mAnnotations["@com.sap.vocabularies.UI.v1.Hidden"] = true;
-						mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
-							$EnumMember :
-								"com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
-						};
-					}
-					break;
-				default:
-					//no conversion supported
+			if (sKind === "EntitySet") {
+				convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate);
+			} else if (sKind === "Property") {
+				convertPropertyAnnotations(oAttribute, mAnnotations);
 			}
+		}
+		if (sKind === "EntitySet"
+				&& oElement.getAttributeNS(sSapNamespace, "searchable") !== "true") {
+			// default for sap:searchable is false --> add v4 annotation, if value of
+			// v2 annotation is not true
+			setAnnotation(mAnnotations, "searchable", false);
 		}
 		if (Object.keys(mAnnotations).length > 0) {
 			oAggregate.convertedV2Annotations[oAggregate.annotatable.path] = mAnnotations;
 		}
 	}
+
+	/**
+	 * Converts a V2 annotation of an EntitySet to the corresponding V4 annotation and puts
+	 * the annotation into the given map of V4 annotations.
+	 *
+	 * @param {Element} oElement The element
+	 * @param {Attr} oAttribute The attribute
+	 * @param {object} mAnnotations Map of V4 annotations
+	 * @param {object} oAggregate The aggregate (for error handling)
+	 */
+	function convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate) {
+		var sConflictingV2Annotation;
+
+		switch (oAttribute.localName){
+			case "creatable":
+			case "deletable":
+			case "updatable":
+				if (oAttribute.value === "false") {
+					setAnnotation(mAnnotations, oAttribute.localName, false);
+				}
+				break;
+			case "deletable-path":
+			case "updatable-path":
+				sConflictingV2Annotation = oAttribute.localName.slice(0, 9);
+				if (oElement.getAttributeNS(sSapNamespace, sConflictingV2Annotation)) {
+					setAnnotation(mAnnotations, oAttribute.localName, false);
+					jQuery.sap.log.warning("Inconsistent metadata in '" + oAggregate.url + "'",
+						"Use either 'sap:" + sConflictingV2Annotation + "' or 'sap:"
+							+ sConflictingV2Annotation + "-path'"
+							+ " at entity set '" + oAggregate.annotatable.path + "'", sModuleName);
+				} else {
+					setAnnotation(mAnnotations, oAttribute.localName, {
+						$Path : oAttribute.value
+					});
+				}
+				break;
+			case "label":
+				mAnnotations["@com.sap.vocabularies.Common.v1.Label"] = oAttribute.value;
+				break;
+			case "pageable":
+				if (oAttribute.value === "false") {
+					mAnnotations["@Org.OData.Capabilities.V1.SkipSupported"] = false;
+					mAnnotations["@Org.OData.Capabilities.V1.TopSupported"] = false;
+				}
+				break;
+			case "requires-filter":
+				if (oAttribute.value === "true") {
+					setAnnotation(mAnnotations, oAttribute.localName, true);
+				}
+				break;
+			case "topable":
+				if (oAttribute.value === "false") {
+					mAnnotations["@Org.OData.Capabilities.V1.TopSupported"] = false;
+				}
+				break;
+			default: //no conversion yet
+		}
+	}
+
+	/**
+	 * Converts a V2 annotation of an EntitySet to the corresponding V4 annotation and puts
+	 * the annotation into the given map of V4 annotations.
+	 *
+	 * @param {Attr} oAttribute The attribute
+	 * @param {object} mAnnotations Map of V4 annotations
+	 */
+	function convertPropertyAnnotations(oAttribute, mAnnotations) {
+		switch (oAttribute.localName) {
+			case "aggregation-role":
+				if (oAttribute.value === "dimension") {
+					mAnnotations["@com.sap.vocabularies.Analytics.v1.Dimension"] = true;
+				} else if (oAttribute.value === "measure") {
+					mAnnotations["@com.sap.vocabularies.Analytics.v1.Measure"] = true;
+				}
+				break;
+			case "display-format":
+				if (oAttribute.value === "NonNegative") {
+					mAnnotations["@com.sap.vocabularies.Common.v1.IsDigitSequence"] = true;
+				} else if (oAttribute.value === "UpperCase") {
+					mAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"] = true;
+				}
+				break;
+			case "field-control":
+				mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
+					$Path : oAttribute.value
+				};
+				break;
+			case "heading":
+				mAnnotations["@com.sap.vocabularies.Common.v1.Heading"] = oAttribute.value;
+				break;
+			case "label":
+				mAnnotations["@com.sap.vocabularies.Common.v1.Label"] = oAttribute.value;
+				break;
+			case "precision":
+				mAnnotations["@Org.OData.Measures.V1.Scale"] = {
+					$Path : oAttribute.value
+				};
+				break;
+			case "text":
+				mAnnotations["@com.sap.vocabularies.Common.v1.Text"] = {
+					$Path : oAttribute.value
+				};
+				break;
+			case "quickinfo":
+				mAnnotations["@com.sap.vocabularies.Common.v1.QuickInfo"] =
+					oAttribute.value;
+				break;
+			case "visible":
+				if (oAttribute.value === "false") {
+					mAnnotations["@com.sap.vocabularies.UI.v1.Hidden"] = true;
+					mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
+						$EnumMember :
+							"com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
+					};
+				}
+				break;
+			default:
+				//no conversion supported
+		}
+	}
+
 
 	/**
 	 * Post-processing of an Schema element.
@@ -304,6 +418,8 @@ sap.ui.define([
 				V2MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
 		};
 		V2MetadataConverter.annotatable(oAggregate, sName);
+
+		convertAnnotations(oElement, oAggregate, "EntitySet");
 	}
 
 	/**
@@ -519,7 +635,22 @@ sap.ui.define([
 		oAggregate.type[sName] = oProperty;
 		V2MetadataConverter.annotatable(oAggregate, sName);
 
-		convertV2Annotations(oElement, oAggregate);
+		convertAnnotations(oElement, oAggregate, "Property");
+	}
+
+	/**
+	 * Sets an annotation for the given V2 name in the given annotations map.
+	 *
+	 * @param {object} mAnnotations Map of annotations to be updated
+	 * @param {string} sV2Name The name of the V2 annotation
+	 * @param {object|boolean} vValue The new value
+	 */
+	function setAnnotation(mAnnotations, sV2Name, vValue) {
+		var mAnnotationInfo = mV2toV4[sV2Name],
+			oAnnotation = mAnnotations[mAnnotationInfo.term] || {};
+
+		oAnnotation[mAnnotationInfo.property] = vValue;
+		mAnnotations[mAnnotationInfo.term] = oAnnotation;
 	}
 
 	/**

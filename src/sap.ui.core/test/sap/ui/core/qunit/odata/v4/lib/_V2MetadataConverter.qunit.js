@@ -34,7 +34,7 @@ sap.ui.require([
 	function testConversion(assert, sXmlSnippet, oExpected) {
 		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
 				+ sXmlSnippet + '</edmx:DataServices></edmx:Edmx>'),
-			oResult = _V2MetadataConverter.convertXMLMetadata(oXML);
+			oResult = _V2MetadataConverter.convertXMLMetadata(oXML, "/foo/bar/$metadata");
 
 		oExpected.$Version = "4.0";
 		assert.deepEqual(oResult, oExpected);
@@ -367,6 +367,18 @@ sap.ui.require([
 			{
 				"$EntityContainer" : "GWSAMPLE_BASIC.0001.Container",
 				"GWSAMPLE_BASIC.0001." : {
+					"$Annotations": {
+						"GWSAMPLE_BASIC.0001.Container/BusinessPartnerSet": {
+							"@Org.OData.Capabilities.V1.SearchRestrictions": {
+								"Searchable": false
+							}
+						},
+						"GWSAMPLE_BASIC.0001.Container/ProductSet": {
+							"@Org.OData.Capabilities.V1.SearchRestrictions": {
+								"Searchable": false
+							}
+						}
+					},
 					"$kind" : "Schema"
 				},
 				"GWSAMPLE_BASIC.0001.BusinessPartner" : {
@@ -661,7 +673,6 @@ sap.ui.require([
 						</EntityType>\
 					</Schema>',
 				{
-					"$Version" : "4.0",
 					"GWSAMPLE_BASIC.0001." : {
 						"$Annotations" : {
 							"GWSAMPLE_BASIC.0001.Foo/Bar" : oFixture.expectedAnnotationsV4
@@ -678,5 +689,175 @@ sap.ui.require([
 				});
 		});
 	});
+
+	//*********************************************************************************************
+	[{ // sap:creatable
+		annotationsV2 : 'sap:creatable="false"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.InsertRestrictions' : {
+				"Insertable" : false
+			}
+		}
+	}, { // sap:deletable and sap:deletable-path
+		annotationsV2 : 'sap:deletable="false"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"Deletable" : false
+			}
+		}
+	}, {
+		annotationsV2 : 'sap:deletable-path="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"Deletable" : {
+					$Path : "PathExpression"
+				}
+			}
+		}
+	}, { // if both V2 annotations are set there is an inconsistency -> use false
+		annotationsV2 : 'sap:deletable="foo-bar" sap:deletable-path="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"Deletable" : false
+			}
+		},
+		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set" +
+			" 'GWSAMPLE_BASIC.Container/FooSet'"
+	}, {
+		annotationsV2 : 'sap:deletable-path="PathExpression" sap:deletable="foo-bar"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+				"Deletable" : false
+			}
+		},
+		message : "Use either 'sap:deletable' or 'sap:deletable-path' at entity set" +
+			" 'GWSAMPLE_BASIC.Container/FooSet'"
+	}, { // sap:label
+		annotationsV2 : 'sap:label="Value"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+		}
+	}, { // sap:pageable
+		annotationsV2 : 'sap:pageable="false"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.SkipSupported' : false,
+			'@Org.OData.Capabilities.V1.TopSupported' : false
+		}
+	}, { // sap:requires-filter
+		annotationsV2 : 'sap:requires-filter="true"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.FilterRestrictions' : {
+				"RequiresFilter" : true
+			}
+		}
+	}, { // sap:searchable - different default values in V2 and V2
+		annotationsV2 : '',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
+				"Searchable" : false
+			}
+		}
+	}, {
+		annotationsV2 : 'sap:searchable="false"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.SearchRestrictions' : {
+				"Searchable" : false
+			}
+		}
+	}, {
+		annotationsV2 : 'sap:searchable="true"',
+		expectedAnnotationsV4 : {}
+	}, { // sap:topable
+		annotationsV2 : 'sap:topable="false"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.TopSupported' : false
+		}
+	}, { // sap:updatable and sap:updatable-path
+		annotationsV2 : 'sap:updatable="false"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+				"Updatable" : false
+			}
+		}
+	}, {
+		annotationsV2 : 'sap:updatable-path="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+				"Updatable" : {
+					$Path : "PathExpression"
+				}
+			}
+		}
+	}, { // if both V2 annotations are set there is an inconsistency -> use false
+		annotationsV2 : 'sap:updatable-path="PathExpression" sap:updatable="foo-bar"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+				"Updatable" : false
+			}
+		},
+		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set" +
+			" 'GWSAMPLE_BASIC.Container/FooSet'"
+	}, {
+		annotationsV2 : 'sap:updatable="foo-bar" sap:updatable-path="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Capabilities.V1.UpdateRestrictions' : {
+				"Updatable" : false
+			}
+		},
+		message : "Use either 'sap:updatable' or 'sap:updatable-path' at entity set" +
+			" 'GWSAMPLE_BASIC.Container/FooSet'"
+	}].forEach(function (oFixture) {
+		var sTitle = "convert: V2 annotation at EntitySet: " + oFixture.annotationsV2;
+
+		QUnit.test(sTitle, function (assert) {
+			var mAnnotations = jQuery.extend({
+					'@Org.OData.Capabilities.V1.SearchRestrictions' : {
+						"Searchable" : false
+					}
+				}, oFixture.expectedAnnotationsV4),
+				sXML = '\
+					<Schema Namespace="GWSAMPLE_BASIC">\
+						<EntityType Name="Foo"/>\
+						<EntityContainer Name="Container">\
+							<EntitySet Name="FooSet" EntityType="GWSAMPLE_BASIC.Foo" '
+								+ oFixture.annotationsV2 + '/>\
+							</EntityContainer>\
+					</Schema>',
+				oExpectedResult = {
+					"$EntityContainer" : "GWSAMPLE_BASIC.Container",
+					"GWSAMPLE_BASIC." : {
+						"$Annotations" : {
+							"GWSAMPLE_BASIC.Container/FooSet" : mAnnotations
+						},
+						"$kind" : "Schema"
+					},
+					"GWSAMPLE_BASIC.Foo" : {
+						"$kind" : "EntityType"
+					},
+					"GWSAMPLE_BASIC.Container" : {
+						"$kind" : "EntityContainer",
+						"FooSet" : {
+							"$kind" : "EntitySet",
+							"$Type" : "GWSAMPLE_BASIC.Foo"
+						}
+					}
+				};
+
+			// no expectedAnnotationsV4 so there is no need for $annotations at the schema
+			if (!Object.keys(oFixture.expectedAnnotationsV4).length) {
+				delete oExpectedResult["GWSAMPLE_BASIC."]["$Annotations"];
+			}
+			if (oFixture.message) {
+				this.oLogMock.expects("warning")
+					.withExactArgs("Inconsistent metadata in '/foo/bar/$metadata'",
+						oFixture.message, sModuleName);
+			}
+			testConversion(assert, sXML, oExpectedResult);
+		});
+	});
 	// TODO _V2MetadataConverter.postProcessSchema: merge V2 annotations, don't replace
+	// TODO InsertRestrictions, DeleteRestrictions or UpdateRestrictions define two properties
+	// Xable and NonXableNavigationProperties (e.g. Insertable and
+	// NonInsertableNavigationProperties); take care that both can contain values and do not
+	// overwrite the others
 });
