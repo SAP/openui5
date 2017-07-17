@@ -43,6 +43,13 @@ sap.ui.require([
 
 	QUnit.module("Given an instance of FakeLrepConnector", {
 		beforeEach : function(assert) {
+			var done = assert.async();
+			jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
+				.done(function(oFakeVariantResponse) {
+					this.oResponse = {};
+					this.oResponse.changes = oFakeVariantResponse;
+					done();
+				}.bind(this));
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -51,98 +58,73 @@ sap.ui.require([
 
 	QUnit.test("when create change which is variant and send it to LrepConnector", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-				return oFakeLrepConnector.create(oFakeVariantResponse, "testChangeList", true).then(function(result){
-					assert.deepEqual(result.response, oFakeVariantResponse , "then an exact payload was returned.");
-					assert.equal(result.status, 'success' , "successfully.");
-					done();
-				});
-		 });
+		oFakeLrepConnector.create(this.oResponse, "testChangeList", true).then( function(result){
+			assert.deepEqual(result.response, this.oResponse, "then an exact payload was returned.");
+			assert.equal(result.status, 'success' , "successfully.");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("when calling 'getVariants' of the VariantController", function(assert) {
-		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-				var aExpectedVariants = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants;
-				var aVariants = oVariantController.getVariants("variantManagementOrdersTable");
-				assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
-				assert.equal(aVariants[0].content.fileName, "variantManagementOrdersTable", "and ordered with standard variant first");
-				done();
-		 });
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aExpectedVariants = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants;
+		var aVariants = oVariantController.getVariants("variantManagementOrdersTable");
+		assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
+		assert.equal(aVariants[0].content.fileName, "variantManagementOrdersTable", "and ordered with standard variant first");
 	});
 
+
 	QUnit.test("when calling 'getVariants' of the VariantController with an invalid variantManagementId", function(assert) {
-		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-				var aVariants =  oVariantController.getVariants("invalidVariantManagementId");
-				assert.equal(aVariants.length, 0, "then an empty array is returned");
-				done();
-		 });
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aVariants = oVariantController.getVariants("invalidVariantManagementId");
+		assert.equal(aVariants.length, 0, "then an empty array is returned");
 	});
 
 	QUnit.test("when calling 'getVariantChanges' of the VariantController", function(assert) {
-		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-				var aExpectedDefChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
-				var aExpectedChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[2].changes;
-				var aDefChanges = oVariantController.getVariantChanges("variantManagementOrdersTable");
-				var aChanges = oVariantController.getVariantChanges("variantManagementOrdersTable", "variant2");
-				assert.deepEqual(aExpectedDefChanges, aDefChanges, "then the changes of the default variant are returned");
-				assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
-				done();
-		 });
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aExpectedDefChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
+		var aExpectedChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[2].changes;
+		var aDefChanges = oVariantController.getVariantChanges("variantManagementOrdersTable");
+		var aChanges = oVariantController.getVariantChanges("variantManagementOrdersTable", "variant2");
+		assert.deepEqual(aExpectedDefChanges, aDefChanges, "then the changes of the default variant are returned");
+		assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
 	});
 
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
-		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-				var aExpChanges1 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
-				var aExpChanges2 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
-				var aExpectedChanges = aExpChanges1.concat(aExpChanges2);
-				var aChanges = oVariantController.loadDefaultChanges();
-				assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
-				done();
-		 });
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
+		var aExpChanges1 = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
+		var aExpChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
+		var aExpectedChanges = aExpChanges1.concat(aExpChanges2);
+		var aChanges = oVariantController.loadDefaultChanges();
+		assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
 	});
 
 	QUnit.test("when calling 'getChangesForComponent' of the ChangePersistence", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-			sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-			var aExpectedChanges0 = oFakeVariantResponse.changes.changes;
-			var aExpectedChanges1 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
-			var aExpectedChanges2 = oFakeVariantResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
-			var aExpectedChanges = aExpectedChanges0.concat(aExpectedChanges1).concat(aExpectedChanges2).map(function(oChangeContent){
-				return new Change(oChangeContent);
-			});
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var aExpectedChanges0 = this.oResponse.changes.changes;
+		var aExpectedChanges1 = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
+		var aExpectedChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
+		var aExpectedChanges = aExpectedChanges0.concat(aExpectedChanges1).concat(aExpectedChanges2).map(function(oChangeContent){
+			return new Change(oChangeContent);
+		});
 
-			var oComponent = {
-					name: "MyComponent",
-					appVersion: "1.2.3",
-				getId : function() {return "RTADemoAppMD";}
-			};
-			var oChangePersistence = new ChangePersistence(oComponent);
+		var oComponent = {
+				name: "MyComponent",
+				appVersion: "1.2.3",
+			getId : function() {return "RTADemoAppMD";}
+		};
+		var oChangePersistence = new ChangePersistence(oComponent);
 
-			var mPropertyBag = {viewId: "view1--view2"};
-			return oChangePersistence.getChangesForComponent(oComponent, mPropertyBag).then(function(aChanges) {
-				assert.deepEqual(aChanges, aExpectedChanges, "the variant changes are available together with the ");
-				done();
-			});
-		 });
+		var mPropertyBag = {viewId: "view1--view2"};
+		return oChangePersistence.getChangesForComponent(oComponent, mPropertyBag).then(function(aChanges) {
+			assert.deepEqual(aChanges, aExpectedChanges, "the variant changes are available together with the ");
+			done();
+		});
 	});
 
 	QUnit.test("when calling 'getChangesForVariantSwitch' of the VariantController", function(assert) {
@@ -183,32 +165,27 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
-		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-		 .done(function(oFakeVariantResponse) {
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				var oRevertedChange = new Change(oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes[1]);
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		var oRevertedChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes[1]);
 
-				var oNewChange = new Change(oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes[1]);
+		var oNewChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes[1]);
 
-				var mExpectedSwitches = {
-					aRevert : [oRevertedChange],
-					aNew : [oNewChange]
-				};
+		var mExpectedSwitches = {
+			aRevert : [oRevertedChange],
+			aNew : [oNewChange]
+		};
 
-				var oComponent = {
-					name: "MyComponent",
-					appVersion: "1.2.3",
-					getId : function() {return "RTADemoAppMD";}
-				};
-				this.oChangePersistence = new ChangePersistence(oComponent);
-				this.oChangePersistence._oVariantController._mVariantManagement = oFakeVariantResponse.changes.variantSection;
+		var oComponent = {
+			name: "MyComponent",
+			appVersion: "1.2.3",
+			getId : function() {return "RTADemoAppMD";}
+		};
+		this.oChangePersistence = new ChangePersistence(oComponent);
+		this.oChangePersistence._oVariantController._mVariantManagement = this.oResponse.changes.variantSection;
 
-				this.mPropertyBag = {viewId: "view1--view2"};
-				var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("variantManagementOrdersTable", "variant0", "variantManagementOrdersTable");
-				assert.deepEqual(mSwitches, mExpectedSwitches, "the expected changes are in the switches map");
-				done();
-		 });
+		this.mPropertyBag = {viewId: "view1--view2"};
+		var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("variantManagementOrdersTable", "variant0", "variantManagementOrdersTable");
+		assert.deepEqual(mSwitches, mExpectedSwitches, "the expected changes are in the switches map");
 	});
 
 	QUnit.test("when calling '_fillVariantModel'", function(assert) {
@@ -324,69 +301,66 @@ sap.ui.require([
 	//Integration test
 	QUnit.test("when calling 'switchChangesAndPropagate'", function(assert) {
 		var done = assert.async();
-		jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
-			.done(function(oFakeVariantResponse) {
-				assert.expect(18);
-				sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFakeVariantResponse));
-				sandbox.stub(Utils, "isApplication").returns(true);
-				sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
+		assert.expect(18);
+		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
+		sandbox.stub(Utils, "isApplication").returns(true);
+		sandbox.stub(Utils, "getComponentClassName").returns("MyComponent");
 
-				var oManifestObj = {
-					"sap.app": {
-						id: "MyComponent",
-						"applicationVersion": {
-							"version" : "1.2.3"
-						}
-					}
-				};
-				var oManifest = new sap.ui.core.Manifest(oManifestObj);
-				var oComponent = {
-					name: "MyComponent",
-					appVersion: "1.2.3",
-					getId : function() {return "RTADemoAppMD";},
-					getManifestObject : function() {return oManifest;}
-				};
+		var oManifestObj = {
+			"sap.app": {
+				id: "MyComponent",
+				"applicationVersion": {
+					"version" : "1.2.3"
+				}
+			}
+		};
+		var oManifest = new sap.ui.core.Manifest(oManifestObj);
+		var oComponent = {
+			name: "MyComponent",
+			appVersion: "1.2.3",
+			getId : function() {return "RTADemoAppMD";},
+			getManifestObject : function() {return oManifest;}
+		};
 
-				this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+		this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 
-				var aRevertedChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes
-					.map(function(oChangeContent) {
-						var oChange =  new Change(oChangeContent);
-						oChange._aDependentIdList = [];
-						return oChange;
-					});
-
-				var aExpectedChanges = oFakeVariantResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes
-					.map(function(oChangeContent) {
-						var oChange =  new Change(oChangeContent);
-						oChange._aDependentIdList = [];
-						return oChange;
-				});
-
-				this.mPropertyBag = {viewId: "view1--view2"};
-
-				return this.oFlexController._oChangePersistence.loadChangesMapForComponent(oComponent, this.mPropertyBag)
-				.then(function() {
-					assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aRevertedChanges[1].getKey()] instanceof Object);
-					fnGetChanges.call(this, aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
-
-					var oData = this.oFlexController.getVariantModelData();
-					var oModel = new VariantModel(oData, this.oFlexController, oComponent);
-
-					var sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
-					assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
-
-					oModel.switchToVariant("variantManagementOrdersTable", "variantManagementOrdersTable");
-
-					assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
-					fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
-
-					sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
-					assert.equal(sCurrentVariant, "variantManagementOrdersTable", "the current variant key after switch is correct");
-
-					done();
-				}.bind(this));
+		var aRevertedChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes
+			.map(function(oChangeContent) {
+				var oChange =  new Change(oChangeContent);
+				oChange._aDependentIdList = [];
+				return oChange;
 			});
+
+		var aExpectedChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes
+			.map(function(oChangeContent) {
+				var oChange =  new Change(oChangeContent);
+				oChange._aDependentIdList = [];
+				return oChange;
+		});
+
+		this.mPropertyBag = {viewId: "view1--view2"};
+
+		return this.oFlexController._oChangePersistence.loadChangesMapForComponent(oComponent, this.mPropertyBag)
+		.then(function() {
+			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aRevertedChanges[1].getKey()] instanceof Object);
+			fnGetChanges.call(this, aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+
+			var oData = this.oFlexController.getVariantModelData();
+			var oModel = new VariantModel(oData, this.oFlexController, oComponent);
+
+			var sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+			assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
+
+			oModel.switchToVariant("variantManagementOrdersTable", "variantManagementOrdersTable");
+
+			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
+			fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+
+			sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+			assert.equal(sCurrentVariant, "variantManagementOrdersTable", "the current variant key after switch is correct");
+
+			done();
+		}.bind(this));
 	});
 
 });
