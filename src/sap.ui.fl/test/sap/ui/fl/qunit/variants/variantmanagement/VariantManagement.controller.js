@@ -1,12 +1,12 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/MessageToast'
-], function(Controller, JSONModel, MessageToast) {
+	'sap/ui/core/mvc/Controller', 'sap/ui/fl/variants/VariantModel', 'sap/ui/fl/variants/VariantManagement', 'sap/m/MessageToast'
+], function(Controller, VariantModel, VariantManagement, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.fl.sample.variantmanagement.VariantManagement", {
 
 		onInit: function() {
-			var oModel = new JSONModel({
+			this.oModel = new VariantModel({
 				M0: {
 					currentVariant: "2",
 					defaultVariant: "2",
@@ -16,8 +16,6 @@ sap.ui.define([
 							key: "Standard",
 							title: "Standard",
 							author: "A",
-							originalTitle: "Standard",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: true,
@@ -27,8 +25,6 @@ sap.ui.define([
 							key: "1",
 							title: "One",
 							author: "A",
-							originalTitle: "One",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -37,9 +33,7 @@ sap.ui.define([
 						}, {
 							key: "2",
 							title: "Two",
-							originalTitle: "Two",
 							author: "B",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -48,7 +42,6 @@ sap.ui.define([
 						}, {
 							key: "3",
 							title: "Three",
-							originalTitle: "Three",
 							global: true,
 							toBeDeleted: false,
 							favorite: true,
@@ -59,8 +52,6 @@ sap.ui.define([
 						}, {
 							key: "4",
 							title: "Four",
-							originalTitle: "Four",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -69,8 +60,6 @@ sap.ui.define([
 						}, {
 							key: "5",
 							title: "Five",
-							originalTitle: "Five",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -79,8 +68,6 @@ sap.ui.define([
 						}, {
 							key: "6",
 							title: "Six",
-							originalTitle: "Six",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -89,8 +76,6 @@ sap.ui.define([
 						}, {
 							key: "7",
 							title: "Seven",
-							originalTitle: "Seven",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -99,8 +84,6 @@ sap.ui.define([
 						}, {
 							key: "8",
 							title: "Eight",
-							originalTitle: "Eight",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: true,
@@ -109,8 +92,6 @@ sap.ui.define([
 						}, {
 							key: "9",
 							title: "Nine",
-							originalTitle: "Nine",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -129,8 +110,6 @@ sap.ui.define([
 							key: "Standard",
 							title: "Standard",
 							author: "A",
-							originalTitle: "Standard",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: true,
@@ -139,8 +118,6 @@ sap.ui.define([
 						}, {
 							key: "1",
 							title: "ONE",
-							originalTitle: "ONE",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: true,
@@ -149,8 +126,6 @@ sap.ui.define([
 						}, {
 							key: "2",
 							title: "TWO",
-							originalTitle: "TWO",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: true,
@@ -159,8 +134,6 @@ sap.ui.define([
 						}, {
 							key: "3",
 							title: "THREE",
-							originalTitle: "THREE",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -169,8 +142,6 @@ sap.ui.define([
 						}, {
 							key: "4",
 							title: "FOUR",
-							originalTitle: "FOUR",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -179,8 +150,6 @@ sap.ui.define([
 						}, {
 							key: "5",
 							title: "FIVE",
-							originalTitle: "FIVE",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -189,8 +158,6 @@ sap.ui.define([
 						}, {
 							key: "6",
 							title: "SIX",
-							originalTitle: "SIX",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -199,8 +166,6 @@ sap.ui.define([
 						}, {
 							key: "7",
 							title: "SEVEN",
-							originalTitle: "SEVEN",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -209,8 +174,6 @@ sap.ui.define([
 						}, {
 							key: "8",
 							title: "EIGHT",
-							originalTitle: "EIGHT",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -219,8 +182,6 @@ sap.ui.define([
 						}, {
 							key: "9",
 							title: "NINE",
-							originalTitle: "NINE",
-							toBeDeleted: false,
 							favorite: true,
 							originalFavorite: true,
 							readOnly: false,
@@ -232,18 +193,85 @@ sap.ui.define([
 			});
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM.setModel(oModel, "$FlexVariants");
+			this.oVM.setModel(this.oModel, "$FlexVariants");
 
-			var oCurrentVariantChangeBinding = oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));
+			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));
 			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
 				MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
 			});
 
 		},
 
+		onDestroyVMBtn: function(oEvent) {
+			var oParent = this.oVM.getParent();
+
+			oParent.removeContent(this.oVM);
+			var sVMId = this.oVM.getId();
+			var sName = this.oVM.getVariantMgmtId();
+			var bShowFav = this.oVM.getShowFavorites();
+			var bShowShare = this.oVM.getShowShare();
+			var bShowExe = this.oVM.getShowExecuteOnSelection();
+			// var bShowDef = this.oVM.getShowAsDefault();
+
+			this.oVM.destroy();
+			var oVM = new VariantManagement(sVMId);
+			oParent.addContent(oVM);
+
+			this.oVM = this.getView().byId("idVariantManagementCtrl");
+			this.oVM.setVariantMgmtId(sName);
+			this.oVM.setShowFavorites(!bShowFav);
+			this.oVM.setShowShare(bShowShare);
+			this.oVM.setShowExecuteOnSelection(bShowExe);
+			// this.oVM.setShowAsDefault(bShowDef);
+
+			this.oVM.setModel(this.oModel, "$FlexVariants");
+
+			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext("$FlexVariants"));
+			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
+				MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
+			});
+
+		},
+
+		onToggleShowShareBtn: function(oEvent) {
+			this.oVM.setShowShare(!this.oVM.getShowShare());
+		},
+		onToggleShowExeOnSeltBtn: function(oEvent) {
+			this.oVM.setShowExecuteOnSelection(!this.oVM.getShowExecuteOnSelection());
+		},
+		onToggleShowAsDefaultBtn: function(oEvent) {
+			this.oVM.setShowSetAsDefault(!this.oVM.getShowSetAsDefault());
+		},
+		onToggleFavoritesBtn: function(oEvent) {
+			this.oVM.setShowFavorites(!this.oVM.getShowFavorites());
+		},
+
+		onOpenMamageDialogBtn: function(oEvent) {
+			this.oVM.openManagementDialog(true);
+		},
+
+		onToggleManageBtn: function(oEvent) {
+			this.oVM.setShowManage(!this.oVM.getShowManage());
+		},
+		onToggleSaveBtn: function(oEvent) {
+			this.oVM.setShowSave(!this.oVM.getShowSave());
+		},
+		onToggleSaveAsBtn: function(oEvent) {
+			this.oVM.setShowSaveAs(!this.oVM.getShowSaveAs());
+		},
+
 		onMarkAsChanged: function(oEvent) {
 			this.oVM.setModified(true);
 		},
+		onVMIdChange: function(oEvent) {
+			var sId = this.oVM.getVariantMgmtId();
+			if (sId === "M0") {
+				this.oVM.setVariantMgmtId("M1");
+			} else {
+				this.oVM.setVariantMgmtId("M0");
+			}
+		},
+
 		onSave: function(oEvent) {
 			var params = oEvent.getParameters();
 
@@ -282,12 +310,6 @@ sap.ui.define([
 
 			oModel.checkUpdate(true);
 
-		},
-		onSelect: function(oEvent) {
-			var params = oEvent.getParameters();
-			var sMessage = "New Variant Selected: " + params.key;
-			MessageToast.show(sMessage);
-			jQuery.sap.log.error(sMessage);
 		}
 	});
 });
