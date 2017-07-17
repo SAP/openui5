@@ -45,8 +45,9 @@ sap.ui.define([
 				var splitApp = this.getView().getParent().getParent();
 				splitApp.setMode(sap.m.SplitAppMode.ShowHideMode);
 
-				// When no particular topic is selected, expand the first node of the tree only
-				this._expandFirstNodeOnly();
+				// When no particular topic is selected, collapse all nodes
+				this._collapseAllNodes();
+				this._clearSelection();
 			},
 
 			_fetchDocuIndex : function () {
@@ -60,32 +61,30 @@ sap.ui.define([
 			},
 
 			_preProcessDocuIndex: function (oData) {
+
 				var sMainSectionId = "95d113be50ae40d5b0b562b84d715227",
 					sTestPagesSectionId = "1b4124400a764ec0a8623d0d5c585321",
-					oProcessedData,
-					iTestPagesSectionIndex,
+					oProcessedData = [],
 					oTestPagesSection,
 					oMainSection;
 
-				// Remove dummy top-level elements (either empty text, or key=index)
-				oProcessedData = oData.filter(function (oEntry) {
-					return oEntry.text !== "" && oEntry.key !== "index";
-				});
-
 				// Search for the sections that we're interested in (main and test pages)
-				for (var i = 0; i < oProcessedData.length; i++) {
-					if (oProcessedData[i].key === sMainSectionId) {
-						oMainSection = oProcessedData[i];
-					} else if (oProcessedData[i].key === sTestPagesSectionId) {
-						oTestPagesSection = oProcessedData[i];
-						iTestPagesSectionIndex = i;
+				for (var i = 0; i < oData.length; i++) {
+					if (oData[i].key === sMainSectionId) {
+						oMainSection = oData[i];
+					} else if (oData[i].key === sTestPagesSectionId) {
+						oTestPagesSection = oData[i];
 					}
 				}
 
-				// If there is a "Test Pages" section, move it as the last element of the main section
-				if (oMainSection && oTestPagesSection) {
-					oProcessedData.splice(iTestPagesSectionIndex, 1);
-					oMainSection.links.push(oTestPagesSection);
+				// If the main section is found, move its content as top-level content of the resulting array
+				if (oMainSection) {
+					oProcessedData = oMainSection.links;
+
+					// If there is a "Test Pages" section, move it as the last element of the resulting array
+					if (oTestPagesSection) {
+						oProcessedData.push(oTestPagesSection);
+					}
 				}
 
 				return oProcessedData;

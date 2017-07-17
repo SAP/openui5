@@ -133,6 +133,15 @@ sap.ui.define([
 				oTree.collapseAll();
 			},
 
+			_clearSelection: function () {
+				var oTree = this.byId("tree"),
+					aItems = oTree.getItems();
+
+				if (aItems.length) {
+					aItems[0].setSelected(false);
+				}
+			},
+
 			_expandFirstNodeOnly: function () {
 				var oTree = this.byId("tree");
 				this._collapseAllNodes();
