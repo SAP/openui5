@@ -424,7 +424,6 @@
 		});
 
 		QUnit.module("Rendering of UploadCollection with hideUploadButton = true", {
-
 			beforeEach: function() {
 				this.oUploadCollection = new sap.m.UploadCollection("uploadCollectionHideUpload1", {
 					uploadButtonInvisible: true
@@ -439,8 +438,6 @@
 		});
 
 		QUnit.test("File upload button is not visible", function(assert) {
-			//Arrange
-			//Act
 			//Assert
 			assert.equal(this.oUploadCollection._getFileUploader().getVisible(), false, "File Uploader is not visible");
 		});
@@ -448,7 +445,6 @@
 		QUnit.test("File upload button is visible after setting uploadButtonInvisible to false", function(assert) {
 			//Arrange
 			this.oUploadCollection.setUploadButtonInvisible(false);
-			//Act
 			//Assert
 			assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 		});
@@ -475,12 +471,13 @@
 
 		QUnit.module("Internal Methods", {
 			beforeEach : function() {
-				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
-					items: {
-						path : "/items",
-						template : createItemTemplate(),
-						templateShareable : false
-					}
+				this.oSpySetProperty = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
+				this.oSpyApplySettings = sinon.spy(sap.ui.base.ManagedObject.prototype, "applySettings");
+				this.oItem = new sap.m.UploadCollectionItem({
+					fileName: "anyFileName"
+				});
+				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection",{
+					items: this.oItem
 				});
 				this.oUploadCollection.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
@@ -493,6 +490,12 @@
 				};
 			},
 			afterEach: function() {
+				this.oSpySetProperty.restore();
+				this.oSpyApplySettings.restore();
+				if(this.oIcon) {
+					this.oIcon.destroy();
+					this.oIcon = null;
+				}
 				this.oUploadCollection.destroy();
 				this.oUploadCollection = null;
 			}
@@ -500,16 +503,11 @@
 
 		QUnit.test("Function _getFileNameControl", function(assert) {
 			//Arrange
-			var oItem = new sap.m.UploadCollectionItem({
-				fileName: "anyFileName"
-			});
-			oItem._requestIdName = 0;
-			this.oUploadCollection.insertItem(oItem);
-			sap.ui.getCore().applyChanges();
-			var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
-			var oSpyGetter = sinon.spy(oItem, "_getFileNameLink");
+			this.oItem._requestIdName = 0;
+			var oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this),
+				oSpyGetter = sinon.spy(this.oItem, "_getFileNameLink");
 			//Act
-			oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
+			oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this);
 			//Assert
 			assert.equal(oSpyGetter.callCount, 1, "_getFileNameLink on oItem object was called once");
 			assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
@@ -535,16 +533,13 @@
 
 		QUnit.test("Custom event on FileNameLink press", function(assert) {
 			//Arrange
-			var bLinkPressed = false;
-			var oItem = new sap.m.UploadCollectionItem({
-				fileName: "anyFileName",
-				press: function() {
-					bLinkPressed = true;
-				}
+			var oFileName,
+				bLinkPressed = false;
+			this.oItem.attachPress(function() {
+				bLinkPressed = true
 			});
-			sap.ui.getCore().applyChanges();
 			//Act
-			var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
+			oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this);
 			oFileName.firePress();
 			//Assert
 			assert.equal(bLinkPressed, true, "Custom event triggered on FileNameLink press");
@@ -552,14 +547,11 @@
 
 		QUnit.test("Default event on FileNameLink press", function(assert) {
 			//Arrange
-			var oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
-			var oItem = new sap.m.UploadCollectionItem({
-				fileName: "anyFileName",
-				url: "test.url"
-			});
-			sap.ui.getCore().applyChanges();
+			var oFileName,
+				oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
+			this.oItem.setUrl("test.url");
 			//Act
-			var oFileName = this.oUploadCollection._getFileNameControl(oItem, this);
+			oFileName = this.oUploadCollection._getFileNameControl(this.oItem, this);
 			oFileName.firePress();
 			//Assert
 			assert.equal(this.oUploadCollection._triggerLink.callCount, 1, "Default event triggered on FileNameLink press");
@@ -567,22 +559,64 @@
 			oStub.restore();
 		});
 
-		QUnit.test("Check if _createIcon returns Icon or Image", function(assert) {
-			//Arrange
-			var oItem = new sap.m.UploadCollectionItem({
-				fileName: "anyFileName",
-				press: function() {}
-			});
-			sap.ui.getCore().applyChanges();
+		QUnit.test("Check if _createIcon returns an Icon", function(assert) {
 			//Act
-			var oIcon = this.oUploadCollection._createIcon(oItem, "item_0", oItem.getProperty("fileName"), this);
-
-			oItem.setProperty("thumbnailUrl", "sap-icon://document");
-			var oImage = this.oUploadCollection._createIcon(oItem, "item_0", oItem.getProperty("fileName"), this);
+			this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
 			//Assert
-			assert.ok(oIcon.sId.indexOf("-ia_iconHL") > -1, "_createIcon returned an icon");
-			assert.ok(oImage.sId.indexOf("-ia_imageHL") > -1, "_createIcon returned an image");
+			assert.ok(this.oIcon.sId.indexOf("-ia_iconHL") > -1, "_createIcon returned an icon");
 		});
+
+		QUnit.test("Check if _createIcon returns an Image", function(assert) {
+			//Act
+			this.oItem.setThumbnailUrl("sap-icon://document");
+			this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+			//Assert
+			assert.ok(this.oIcon.sId.indexOf("-ia_imageHL") > -1, "_createIcon returned an image");
+		});
+
+		QUnit.test("Function _createIcon uses ManagedObject's setter for alt property if an icon is created", function(assert) {
+			//Act
+			this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+			//Assert
+			assert.ok(this.oSpySetProperty.calledWith("alt", "anyFileName"), "Setter for alt property called with correct parameters");
+		});
+
+		QUnit.test("Function _createIcon doesn't set alt property during ManagedObject's create method if an icon is created", function(assert) {
+			//Arrange
+			var oSettings = {
+					src: "sap-icon://document",
+					decorative: false,
+					useIconTooltip: false
+				};
+			//Act
+			this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+			//Assert
+			assert.ok(this.oSpyApplySettings.calledWith(oSettings), "Alt property is not set in ManagedObject's constructor");
+		});
+
+		QUnit.test("Function _createIcon uses ManagedObject's setter for alt property if an image is created", function(assert) {
+			//Arrange
+			this.oItem.setThumbnailUrl("anyFolder/myThumbnailFile.jpg");
+			//Act
+			this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+			//Assert
+			assert.ok(this.oSpySetProperty.calledWith("alt", "anyFileName"), "Setter for alt property called with correct parameters");
+		});
+
+		QUnit.test("Function _createIcon doesn't set alt property during ManagedObject's create method if an image is created", function(assert) {
+			//Arrange
+			this.oItem.setThumbnailUrl("anyFolder/myThumbnailFile.jpg");
+			var oSettings = {
+					id: "item-ia_imageHL",
+					src: "anyFolder/myThumbnailFile.jpg",
+					decorative: false
+				};
+			//Act
+			this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+			//Assert
+			assert.ok(this.oSpyApplySettings.calledWith(oSettings), "Alt property is not set in ManagedObject's constructor");
+		});
+
 		QUnit.test("Function _createDeleteButton", function(assert) {
 			//Arrange
 			var oItem = new sap.m.UploadCollectionItem({
@@ -608,14 +642,10 @@
 		});
 
 		QUnit.test("Set number of attachments title", function(assert) {
-			var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
-			this.oUploadCollection._setNumberOfAttachmentsTitle(999);
-			assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments");
 			var sText = "My own text for attachments";
 			this.oUploadCollection.setNumberOfAttachmentsText("My own text for attachments");
 			this.oUploadCollection._setNumberOfAttachmentsTitle();
 			assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
-			sap.ui.getCore().applyChanges();
 			assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
 		});
 
