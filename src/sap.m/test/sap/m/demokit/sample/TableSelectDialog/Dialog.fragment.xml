@@ -51,7 +51,7 @@
 				</header>
 			</Column>
 			<Column
-				minScreenWidth="Tablet"
+				minScreenWidth="Desktop"
 				demandPopin="true"
 				hAlign="End">
 				<header>
@@ -59,7 +59,7 @@
 				</header>
 			</Column>
 			<Column
-				minScreenWidth="Tablet"
+				minScreenWidth="Desktop"
 				demandPopin="true"
 				hAlign="Center">
 				<header>
