@@ -106,11 +106,33 @@ sap.ui.require([
 				this.IssueManager.addIssue(createValidIssue());
 			}
 
+			this.IssueManager.clearIssues();
+
 			assert.equal(this.IssueManager.getHistory()[0] instanceof Object, true, 'There should be some issues in the history');
 
 			this.IssueManager.clearHistory();
 
 			assert.equal(typeof this.IssueManager.getHistory()[0], 'undefined', 'Should dump them to history');
+		});
+
+		QUnit.test('IssueManager clearIssues', function (assert) {
+			var issueCount = 10;
+
+			// Add an empty history to mock a case where the analysis returned 0 issues
+			this.IssueManager.clearIssues();
+
+			for (var i = 0; i < issueCount; i++) {
+				this.IssueManagerFacade.addIssue(createValidIssue());
+			}
+
+			// Save the previously added 10 issues to the history
+			this.IssueManager.clearIssues();
+
+			var history = this.IssueManager.getHistory();
+
+			assert.equal(history.length, 2, 'There should be two runs in the history');
+			assert.equal(history[0].issues.length, 0, 'There should be 0 issues in the first history');
+			assert.equal(history[1].issues.length, 10, 'There should be 10 issues in the second history');
 		});
 
 		QUnit.test('IssueManager getHistory', function (assert) {
@@ -120,6 +142,8 @@ sap.ui.require([
 			for (var i = 0; i < iIssues; i++) {
 				this.IssueManagerFacade.addIssue(createValidIssue());
 			}
+
+			this.IssueManager.clearIssues();
 
 			iIssuesCount = this.IssueManager.getHistory()[0].issues.length;
 
@@ -132,6 +156,8 @@ sap.ui.require([
 			for (var i = 0; i < iIssues; i++) {
 				this.IssueManagerFacade.addIssue(createValidIssue());
 			}
+
+			this.IssueManager.clearIssues();
 
 			assert.throws(function () {
 				this.IssueManagerFacade.getConvertedHistory();
