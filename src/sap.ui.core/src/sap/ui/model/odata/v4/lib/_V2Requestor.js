@@ -54,7 +54,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts an OData V4 value of type Edm.Double, Edm.Float or Edm.Single to the corresponding
+	 * Converts an OData V2 value of type Edm.Double or Edm.Single (Edm.Float) to the corresponding
 	 * OData V4 value.
 	 *
 	 * @param {string} sV2Value
@@ -62,7 +62,7 @@ sap.ui.define([
 	 * @returns {any}
 	 *   The corresponding OData V4 value
 	 */
-	_V2Requestor.prototype.convertDoubleFloatSingle = function (sV2Value) {
+	_V2Requestor.prototype.convertDoubleSingle = function (sV2Value) {
 		switch (sV2Value) {
 			case "NaN":
 			case "INF":
@@ -163,7 +163,7 @@ sap.ui.define([
 				return vValue;
 			case "Edm.Double":
 			case "Edm.Single":
-				return this.convertDoubleFloatSingle(vValue);
+				return this.convertDoubleSingle(vValue);
 			default:
 				throw new Error("Type '" + sPropertyType + "' of property '" + sPropertyName
 					+ "' in type '" + sTypeName + "' is unknown; cannot convert value: " + vValue);
@@ -180,6 +180,8 @@ sap.ui.define([
 	 *   the V2 response cannot be converted
 	 */
 	_V2Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
+		// d.results may be an array of entities in case of a collection request or the property
+		// 'results' of a single request.
 		var bIsCollection = oResponsePayload.d.results && !oResponsePayload.d.__metadata,
 			oPayload = bIsCollection
 				? {value : oResponsePayload.d.results}
@@ -193,8 +195,8 @@ sap.ui.define([
 			oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
 		}
 
-		return this.fnFetchEntityContainer().then(function (mTypeByName) {
-			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mTypeByName);
+		return this.fnFetchEntityContainer().then(function (mScope) {
+			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mScope);
 			return oPayload;
 		});
 	};

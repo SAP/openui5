@@ -65,8 +65,8 @@ sap.ui.define([
 	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
 	 *   request the CSRF token
 	 * @param {function} fnFetchEntityContainer
-	 *   A function that returns a _SyncPromise which resolves with the metadata entity
-	 *   container
+	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+	 *   container is fully available, or rejected with an error.
 	 * @param {function (string)} [fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group

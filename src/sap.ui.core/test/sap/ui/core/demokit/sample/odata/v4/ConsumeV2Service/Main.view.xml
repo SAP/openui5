@@ -23,11 +23,13 @@
 			<Label labelFor="decimal" text="Decimal"/>
 			<Text id="decimal" text="{path : 'Decimal', type : 'sap.ui.model.odata.type.Decimal'}"/>
 			<Label labelFor="double" text="Double"/>
-			<!-- expected value has no leading 0; typeof Double is "number" -->
-			<Text id="double" text="{= 0 + %{Double} }"/>
+			<!-- expected tooltip has no leading 0; typeof Double is "number" -->
+			<Text id="double" text="{path : 'Double', type : 'sap.ui.model.odata.type.Double'}"
+				tooltip="{= String(0 + %{Double})}"/>
 			<Label labelFor="float" text="Float"/>
-			<!-- expected value has no leading 0; typeof Float is "number" -->
-			<Text id="float" text="{= 0 + %{Float} }"/>
+			<!-- expected tooltip has no leading 0; typeof Float is "number" -->
+			<Text id="float" text="{path : 'Float', type : 'sap.ui.model.odata.type.Single'}"
+				tooltip="{= String(0 + %{Float})}"/>
 			<Label labelFor="guid" text="Guid"/>
 			<Text id="guid" text="{path : 'GlobalUID', type : 'sap.ui.model.odata.type.Guid'}"/>
 			<Label labelFor="int16" text="Int16"/>
@@ -39,8 +41,9 @@
 			<Label labelFor="sbyte" text="SByte"/>
 			<Text id="sbyte" text="{path : 'SByte', type : 'sap.ui.model.odata.type.SByte'}"/>
 			<Label labelFor="single" text="Single"/>
-			<!-- expected value has no leading 0; typeof Single is "number" -->
-			<Text id="single" text="{= 0 + %{Single} }"/>
+			<!-- expected tooltip has no leading 0; typeof Single is "number" -->
+			<Text id="single" text="{path : 'Single', type : 'sap.ui.model.odata.type.Single'}"
+				tooltip="{= String(0 + %{Single})}"/>
 			<Label labelFor="string" text="String"/>
 			<Text id="string" text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
 		</form:SimpleForm>

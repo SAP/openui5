@@ -241,13 +241,13 @@ sap.ui.require([
 		{sType : "Edm.Boolean"},
 		{sType : "Edm.Byte"},
 		{sType : "Edm.Decimal"},
-		{sType : "Edm.Double", sConvertMethod : "convertDoubleFloatSingle"},
+		{sType : "Edm.Double", sConvertMethod : "convertDoubleSingle"},
 		{sType : "Edm.Guid"},
 		{sType : "Edm.Int16"},
 		{sType : "Edm.Int32"},
 		{sType : "Edm.Int64"},
 		{sType : "Edm.SByte"},
-		{sType : "Edm.Single", sConvertMethod : "convertDoubleFloatSingle"},
+		{sType : "Edm.Single", sConvertMethod : "convertDoubleSingle"},
 		{sType : "Edm.String"}
 	].forEach(function (oFixture) {
 		QUnit.test("convertPrimitive, " + oFixture.sType, function (assert) {
@@ -318,13 +318,13 @@ sap.ui.require([
 		input : 42,
 		output : 42
 	}].forEach(function (oFixture, i) {
-		QUnit.test("convertDoubleFloatSingle, " + i, function (assert) {
+		QUnit.test("convertDoubleSingle, " + i, function (assert) {
 			var oRequestor = {};
 
 			asV2Requestor(oRequestor);
 
 			// code under test
-			assert.strictEqual(oRequestor.convertDoubleFloatSingle(oFixture.input),
+			assert.strictEqual(oRequestor.convertDoubleSingle(oFixture.input),
 				oFixture.output);
 		});
 	});
