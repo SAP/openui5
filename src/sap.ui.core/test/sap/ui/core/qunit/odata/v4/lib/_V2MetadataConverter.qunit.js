@@ -978,6 +978,90 @@ sap.ui.require([
 			assert.deepEqual(oFixture.v4Annotations, oFixture.result);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("convert: V4 Annotations", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="foo" Alias="f">\
+					<Annotations Target="f.Bar/f.Baz">\
+						<Annotation Term="f.Binary" Binary="T0RhdGE"/>\
+						<Annotation Term="f.Bool" Bool="false"/>\
+						<Annotation Term="f.Date" Date="2015-01-01" />\
+						<Annotation Term="f.DateTimeOffset"\
+							DateTimeOffset="2000-01-01T16:00:00.000-09:00" />\
+						<Annotation Term="f.Decimal" Decimal="3.14" />\
+						<Annotation Term="f.Duration" Duration="P11D23H59M59S" />\
+						<Annotation Term="f.EnumMember"\
+							EnumMember="f.Enum/Member1 f.Enum/Member2"/>\
+						<Annotation Term="f.Float1" Float="2.718" />\
+						<Annotation Term="f.Float2" Float="NaN" />\
+						<Annotation Term="f.Float3" Float="INF" />\
+						<Annotation Term="f.Float4" Float="-INF" />\
+						<Annotation Term="f.Guid"\
+							Guid="21EC2020-3AEA-1069-A2DD-08002B30309D" />\
+						<Annotation Term="f.Int1" Int="42"/>\
+						<Annotation Term="f.Int2" Int="9007199254740991" />\
+						<Annotation Term="f.Int3" Int="9007199254740992" />\
+						<Annotation Term="f.String" String="foobar" />\
+						<Annotation Term="f.TimeOfDay" TimeOfDay="21:45:00" />\
+						<Annotation Term="f.AnnotationPath"\
+							AnnotationPath="Path/f.Bar/f.Baz@f.Term" />\
+						<Annotation Term="f.NavigationPropertyPath"\
+							NavigationPropertyPath="Path/f.Bar/f.Baz" />\
+						<Annotation Term="f.Path" Path="Path/f.Bar/f.Baz" />\
+						<Annotation Term="f.PropertyPath" PropertyPath="Path/f.Bar/f.Baz" />\
+						<Annotation Term="f.UrlRef" UrlRef="http://foo.bar" />\
+						<Annotation Term="f.Invalid" Invalid="foo" />\
+						<Annotation Term="f.Baz" Qualifier="Employee"/>\
+					</Annotations>\
+					<Annotations Target="f.Bar/Abc" Qualifier="Employee">\
+						<Annotation Term="f.Baz"/>\
+					</Annotations>\
+				</Schema>',
+			{
+				"$Version" : "4.0",
+				"foo." : {
+					"$kind" : "Schema",
+					"$Annotations" : {
+						"foo.Bar/foo.Baz" : {
+							"@foo.Binary" : {"$Binary" : "T0RhdGE"},
+							"@foo.Bool" : false,
+							"@foo.Date" : {"$Date" : "2015-01-01"},
+							"@foo.DateTimeOffset" : {
+								"$DateTimeOffset" : "2000-01-01T16:00:00.000-09:00"
+							},
+							"@foo.Decimal" : {"$Decimal" : "3.14"},
+							"@foo.Duration" : {"$Duration" : "P11D23H59M59S"},
+							"@foo.EnumMember" : {
+								"$EnumMember" : "foo.Enum/Member1 foo.Enum/Member2"
+							},
+							"@foo.Float1" : 2.718,
+							"@foo.Float2" : {"$Float" : "NaN"},
+							"@foo.Float3" : {"$Float" : "INF"},
+							"@foo.Float4" : {"$Float" : "-INF"},
+							"@foo.Guid" : {"$Guid" : "21EC2020-3AEA-1069-A2DD-08002B30309D"},
+							"@foo.Int1" : 42,
+							"@foo.Int2" : 9007199254740991,
+							"@foo.Int3" : {"$Int" : "9007199254740992"},
+							"@foo.String" : "foobar",
+							"@foo.TimeOfDay" : {"$TimeOfDay" : "21:45:00"},
+							"@foo.AnnotationPath" : {
+								"$AnnotationPath" : "Path/foo.Bar/foo.Baz@foo.Term"
+							},
+							"@foo.NavigationPropertyPath" : {
+								"$NavigationPropertyPath" : "Path/foo.Bar/foo.Baz"
+							},
+							"@foo.Path" : {"$Path" : "Path/foo.Bar/foo.Baz"},
+							"@foo.PropertyPath" : {"$PropertyPath" : "Path/foo.Bar/foo.Baz"},
+							"@foo.UrlRef" : {"$UrlRef" : "http://foo.bar"},
+							"@foo.Invalid" : true,
+							"@foo.Baz#Employee" : true
+						},
+						"foo.Bar/Abc" : {"@foo.Baz#Employee" : true}
+					}
+				}
+			});
+	});
 	// TODO InsertRestrictions, DeleteRestrictions or UpdateRestrictions define two properties
 	// Xable and NonXableNavigationProperties (e.g. Insertable and
 	// NonInsertableNavigationProperties); take care that both can contain values and do not

@@ -68,6 +68,7 @@ sap.ui.define([
 				"Schema" : {
 					__postProcessor : postProcessSchema,
 					__processor : _MetadataConverter.processSchema,
+					__include : [_MetadataConverter.oAnnotationsConfig],
 					"Association" : {
 						__processor : processAssociation,
 						"End" : {
@@ -771,6 +772,8 @@ sap.ui.define([
 				"function" : null, // the current function
 				"namespace" : null, // the namespace of the current Schema
 				"navigationProperties" : [], // a list of navigation property data
+				"processFacetAttributes" : V2MetadataConverter.processFacetAttributes,
+				"processTypedCollection" : processTypedCollection,
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
 				"result" : {

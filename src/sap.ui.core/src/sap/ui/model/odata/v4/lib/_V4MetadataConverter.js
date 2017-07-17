@@ -11,100 +11,7 @@ sap.ui.define([
 
 	var sEdmxNamespace = "http://docs.oasis-open.org/odata/ns/edmx",
 		V4MetadataConverter,
-		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
-		oAnnotationLeafConfig = {
-			"AnnotationPath" : {__postProcessor : postProcessLeaf},
-			"Binary" : {__postProcessor : postProcessLeaf},
-			"Bool" : {__postProcessor : postProcessLeaf},
-			"Date" : {__postProcessor : postProcessLeaf},
-			"DateTimeOffset" : {__postProcessor : postProcessLeaf},
-			"Decimal" : {__postProcessor : postProcessLeaf},
-			"Duration" : {__postProcessor : postProcessLeaf},
-			"EnumMember" : {__postProcessor : postProcessLeaf},
-			"Float" : {__postProcessor : postProcessLeaf},
-			"Guid" : {__postProcessor : postProcessLeaf},
-			"Int" : {__postProcessor : postProcessLeaf},
-			"LabeledElementReference" : {__postProcessor : postProcessLabeledElementReference},
-			"NavigationPropertyPath" : {__postProcessor : postProcessLeaf},
-			"Path" : {__postProcessor : postProcessLeaf},
-			"PropertyPath" : {__postProcessor : postProcessLeaf},
-			"String" : {__postProcessor : postProcessLeaf},
-			"TimeOfDay" : {__postProcessor : postProcessLeaf}
-		},
-		// When oAnnotationExpressionConfig is defined, it is added to this array for the recursion
-		aExpressionInclude = [oAnnotationLeafConfig],
-		oAnnotationConfig = {
-			"Annotation" : {
-				__processor : processAnnotation,
-				__postProcessor : postProcessAnnotation,
-				__include : aExpressionInclude
-			}
-		},
-		aAnnotatableExpressionInclude = [oAnnotationLeafConfig, oAnnotationConfig],
-		oOperatorConfig = {
-			__processor : processAnnotatableExpression,
-			__postProcessor : postProcessOperation,
-			__include : aAnnotatableExpressionInclude
-		},
-		oAnnotationExpressionConfig = {
-			"And" : oOperatorConfig,
-			"Apply" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessApply,
-				__include : aAnnotatableExpressionInclude
-			},
-			"Cast" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessCastOrIsOf,
-				__include : aAnnotatableExpressionInclude
-			},
-			"Collection" : {
-				__postProcessor : postProcessCollection,
-				__include : aExpressionInclude
-			},
-			"Eq" : oOperatorConfig,
-			"Ge" : oOperatorConfig,
-			"Gt" : oOperatorConfig,
-			"If" : oOperatorConfig,
-			"IsOf" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessCastOrIsOf,
-				__include : aAnnotatableExpressionInclude
-			},
-			"LabeledElement" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessLabeledElement,
-				__include : aAnnotatableExpressionInclude
-			},
-			"Le" : oOperatorConfig,
-			"Lt" : oOperatorConfig,
-			"Ne" : oOperatorConfig,
-			"Null" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessNull,
-				__include : [oAnnotationConfig]
-			},
-			"Not" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessNot,
-				__include : aAnnotatableExpressionInclude
-			},
-			"Or" : oOperatorConfig,
-			"Record" : {
-				__processor : processAnnotatableExpression,
-				__postProcessor : postProcessRecord,
-				__include : [oAnnotationConfig],
-				"PropertyValue" : {
-					__processor : processPropertyValue,
-					__postProcessor : postProcessPropertyValue,
-					__include : aAnnotatableExpressionInclude
-				}
-			},
-			"UrlRef" : {
-				__postProcessor : postProcessUrlRef,
-				__include : aExpressionInclude
-			}
-		},
+		oAnnotationConfig = _MetadataConverter.oAnnotationConfig,
 		oAliasConfig = {
 			"Reference" : {
 				"Include" : {__processor : _MetadataConverter.processAlias}
@@ -161,14 +68,10 @@ sap.ui.define([
 			"DataServices" : {
 				"Schema" : {
 					__processor : _MetadataConverter.processSchema,
-					__include : [oAnnotationConfig],
+					__include : [_MetadataConverter.oAnnotationsConfig, oAnnotationConfig],
 					"Action" : {
 						__processor : processActionOrFunction,
 						__include : [oActionOrFunctionConfig, oAnnotationConfig]
-					},
-					"Annotations" : {
-						__processor : processAnnotations,
-						__include : [oAnnotationConfig]
 					},
 					"Function" : {
 						__processor : processActionOrFunction,
@@ -227,300 +130,6 @@ sap.ui.define([
 			}
 		};
 
-	// enable the recursion
-	aExpressionInclude.push(oAnnotationExpressionConfig);
-	aAnnotatableExpressionInclude.push(oAnnotationExpressionConfig);
-	// yet another recursion: annotated Annotation
-	oAnnotationConfig.Annotation.Annotation = oAnnotationConfig.Annotation;
-
-	/**
-	 * Determines the value for an annotation of the given type.
-	 * @param {string} sType
-	 *   The annotation type (either from the attribute name in the Annotation element or from the
-	 *   element name itself)
-	 * @param {string} sValue
-	 *   The value in the XML (either the attribute value or the element's text value)
-	 * @param {object} oAggregate
-	 *   The aggregate
-	 * @returns {any}
-	 *   The value for the JSON
-	 */
-	function getAnnotationValue(sType, sValue, oAggregate) {
-		var i, vValue, aValues;
-
-		switch (sType) {
-			case "AnnotationPath":
-			case "NavigationPropertyPath":
-			case "Path":
-			case "PropertyPath":
-				sValue = V4MetadataConverter.resolveAliasInPath(sValue, oAggregate);
-				// falls through
-			case "Binary":
-			case "Date":
-			case "DateTimeOffset":
-			case "Decimal":
-			case "Duration":
-			case "Guid":
-			case "TimeOfDay":
-			case "UrlRef":
-				vValue = {};
-				vValue["$" + sType] = sValue;
-				return vValue;
-			case "Bool":
-				return sValue === "true";
-			case "EnumMember":
-				aValues = sValue.trim().replace(/ +/g, " ").split(" ");
-				for (i = 0; i < aValues.length; i++) {
-					aValues[i] = V4MetadataConverter.resolveAliasInPath(aValues[i], oAggregate);
-				}
-				return {$EnumMember : aValues.join(" ")};
-			case "Float":
-				if (sValue === "NaN" || sValue === "INF" || sValue === "-INF") {
-					return {$Float : sValue};
-				}
-				return parseFloat(sValue);
-			case "Int":
-				vValue = parseInt(sValue, 10);
-				return _Helper.isSafeInteger(vValue) ? vValue : {$Int : sValue};
-			case "String":
-				return sValue;
-			default:
-				return undefined;
-		}
-	}
-
-	/**
-	 * Determines the value for an inline annotation in the element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate
-	 *   The aggregate
-	 * @returns {any}
-	 *   The value for the JSON
-	 */
-	function getInlineAnnotationValue(oElement, oAggregate) {
-		var oAttribute,
-			oAttributeList = oElement.attributes,
-			i,
-			vValue;
-
-		// check the last attribute first, this is typically the one with the annotation value
-		for (i = oAttributeList.length - 1; i >= 0; i--) {
-			oAttribute = oAttributeList.item(i);
-			vValue = getAnnotationValue(oAttribute.name, oAttribute.value, oAggregate);
-			if (vValue !== undefined) {
-				return vValue;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Post-processing of an Annotation element. Sets the result of the single child element at the
-	 * annotation if there was a child.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 */
-	function postProcessAnnotation(oElement, aResult, oAggregate) {
-		// oAggregate.annotatable is the Annotation itself currently.
-		var oAnnotatable = oAggregate.annotatable.parent;
-
-		oAnnotatable.target[oAnnotatable.qualifiedName] =
-			aResult.length ? aResult[0] : getInlineAnnotationValue(oElement, oAggregate);
-	}
-
-	/**
-	 * Post-processing of an Apply element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessApply(oElement, aResult, oAggregate) {
-		var oResult = oAggregate.annotatable.target;
-
-		oResult.$Apply = aResult;
-		oResult.$Function =
-			V4MetadataConverter.resolveAlias(oElement.getAttribute("Function"), oAggregate);
-		return oResult;
-	}
-
-	/**
-	 * Post-processing of a Cast or IsOf element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessCastOrIsOf(oElement, aResult, oAggregate) {
-		var sName = oElement.localName,
-			oResult = oAggregate.annotatable.target;
-
-		oResult["$" + sName] = aResult[0];
-		processTypedCollection(oElement.getAttribute("Type"), oResult, oAggregate);
-		V4MetadataConverter.processFacetAttributes(oElement, oResult);
-		return oResult;
-	}
-
-	/**
-	 * Post-processing of a Collection element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessCollection(oElement, aResult, oAggregate) {
-		return aResult;
-	}
-
-	/**
-	 * Post-processing of a LabeledElement element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {any} The value for the JSON
-	 */
-	function postProcessLabeledElement(oElement, aResult, oAggregate) {
-		var oResult = oAggregate.annotatable.target;
-
-		oResult.$LabeledElement = aResult.length ? aResult[0] :
-			getInlineAnnotationValue(oElement, oAggregate);
-		oResult.$Name = oElement.getAttribute("Name");
-		return oResult;
-	}
-
-	/**
-	 * Post-processing of a LabeledElementReference element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {any} The value for the JSON
-	 */
-	function postProcessLabeledElementReference(oElement, aResult, oAggregate) {
-		return {
-			"$LabeledElementReference" :
-				V4MetadataConverter.resolveAlias(oElement.textContent, oAggregate)
-		};
-	}
-
-	/**
-	 * Post-processing of a leaf element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {any} The constant value for the JSON
-	 */
-	function postProcessLeaf(oElement, aResult, oAggregate) {
-		return getAnnotationValue(oElement.localName, oElement.textContent, oAggregate);
-	}
-
-	/**
-	 * Post-processing of a Not element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessNot(oElement, aResult, oAggregate) {
-		var oResult = oAggregate.annotatable.target;
-
-		oResult.$Not = aResult[0];
-		return oResult;
-	}
-
-	/**
-	 * Post-processing of a Null element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessNull(oElement, aResult, oAggregate) {
-		var oAnnotatable = oAggregate.annotatable,
-			vResult = null;
-
-		if (oAnnotatable.qualifiedName) {
-			vResult = oAnnotatable.target;
-			vResult.$Null = null;
-		}
-		return vResult;
-	}
-
-	/**
-	 * Post-processing of a PropertyValue element within a Record element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {any} The value for the JSON
-	 */
-	function postProcessPropertyValue(oElement, aResult, oAggregate) {
-		return {
-			property : oElement.getAttribute("Property"),
-			value : aResult.length ? aResult[0] :
-				getInlineAnnotationValue(oElement, oAggregate)
-		};
-	}
-
-	/**
-	 * Post-processing of a Record element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessRecord(oElement, aResult, oAggregate) {
-		var i,
-			oPropertyValue,
-			oResult = oAggregate.annotatable.target,
-			oType = oElement.getAttribute("Type");
-
-		if (oType) {
-			oResult.$Type = V4MetadataConverter.resolveAlias(oType, oAggregate);
-		}
-		for (i = 0; i < aResult.length; i++) {
-			oPropertyValue = aResult[i];
-			oResult[oPropertyValue.property] = oPropertyValue.value;
-		}
-		return oResult;
-	}
-
-	/**
-	 * Post-processing of an operation element (And, Or, Eq etc) within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @param {object} oAggregate The aggregate
-	 * @returns {object} The value for the JSON
-	 */
-	function postProcessOperation(oElement, aResult, oAggregate) {
-		var oResult = oAggregate.annotatable.target;
-
-		oResult["$" + oElement.localName] = aResult;
-		return oResult;
-	}
-
-	/**
-	 * Post-processing of a UrlRef element within an Annotation element.
-	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
-	 * @returns {object} The constant value for the JSON
-	 */
-	function postProcessUrlRef(oElement, aResult) {
-		return {$UrlRef : aResult[0]};
-	}
 
 	/**
 	 * Processes an Action or Function element.
@@ -543,56 +152,6 @@ sap.ui.define([
 		V4MetadataConverter.getOrCreateArray(oAggregate.result, sQualifiedName).push(oAction);
 		oAggregate.actionOrFunction = oAction;
 		V4MetadataConverter.annotatable(oAggregate, oAction);
-	}
-
-	/**
-	 * Processes an element of an annotatable expression.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processAnnotatableExpression(oElement, oAggregate) {
-		V4MetadataConverter.annotatable(oAggregate, {});
-	}
-
-	/**
-	 * Processes an Annotations element.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processAnnotations(oElement, oAggregate) {
-		V4MetadataConverter.annotatable(oAggregate,
-			V4MetadataConverter.resolveAliasInPath(oElement.getAttribute("Target"), oAggregate),
-			undefined, // no prefix
-			oElement.getAttribute("Qualifier"));
-	}
-
-	/**
-	 * Processes an Annotation element within Annotations.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processAnnotation(oElement, oAggregate) {
-		var oAnnotatable = oAggregate.annotatable,
-			oAnnotations,
-			sQualifiedName = oAnnotatable.prefix + "@"
-				+ V4MetadataConverter.resolveAlias(oElement.getAttribute("Term"), oAggregate),
-			// oAnnotatable.qualifier can only come from <Annotations>. If such a qualifier is set
-			// <Annotation> itself MUST NOT supply a qualifier. (see spec Part 3, 14.3.2)
-			sQualifier = oAnnotatable.qualifier || oElement.getAttribute("Qualifier");
-
-		if (sQualifier) {
-			sQualifiedName += "#" + sQualifier;
-		}
-
-		if (typeof oAnnotatable.target === "string") {
-			oAnnotations = V4MetadataConverter.getOrCreateObject(oAggregate.schema, "$Annotations");
-			oAnnotatable.target = oAnnotations[oAnnotatable.target] = {};
-		}
-
-		oAnnotatable.qualifiedName = sQualifiedName;
-		// do not calculate a value yet, this is done in postProcessAnnotation
-		oAnnotatable.target[sQualifiedName] = true;
-		V4MetadataConverter.annotatable(oAggregate, oAnnotatable.target, sQualifiedName);
 	}
 
 	/**
@@ -741,7 +300,7 @@ sap.ui.define([
 			= V4MetadataConverter.resolveAlias(oElement.getAttribute(sWhat), oAggregate);
 		 V4MetadataConverter.processAttributes(oElement, oImport, {
 			"EntitySet" : function (sValue) {
-				return resolveTargetPath(sValue, oAggregate);
+				return V4MetadataConverter.resolveTargetPath(sValue, oAggregate);
 			},
 			"IncludeInServiceDocument" : V4MetadataConverter.setIfTrue
 		});
@@ -794,7 +353,7 @@ sap.ui.define([
 				oAggregate.entitySet, "$NavigationPropertyBinding");
 
 		oNavigationPropertyBinding[oElement.getAttribute("Path")]
-			= resolveTargetPath(oElement.getAttribute("Target"), oAggregate);
+			= V4MetadataConverter.resolveTargetPath(oElement.getAttribute("Target"), oAggregate);
 	}
 
 	/**
@@ -815,16 +374,6 @@ sap.ui.define([
 
 		V4MetadataConverter.getOrCreateArray(oActionOrFunction, "$Parameter").push(oParameter);
 		V4MetadataConverter.annotatable(oAggregate, oParameter);
-	}
-
-	/**
-	 * Processes a PropertyValue element within a Record.
-	 * @param {Element} oElement The element
-	 * @param {object} oAggregate The aggregate
-	 */
-	function processPropertyValue(oElement, oAggregate) {
-		V4MetadataConverter.annotatable(oAggregate, oAggregate.annotatable.target,
-			oElement.getAttribute("Property"));
 	}
 
 	/**
@@ -1021,30 +570,6 @@ sap.ui.define([
 		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
-	/**
-	 * Resolves a target path including resolve aliases.
-	 * @param {string} sPath The target path
-	 * @param {object} oAggregate The aggregate containing the aliases
-	 * @returns {string} The target path with the alias resolved (if there was one)
-	 */
-	function resolveTargetPath(sPath, oAggregate) {
-		var iSlash;
-
-		if (!sPath) {
-			return sPath;
-		}
-
-		sPath =  V4MetadataConverter.resolveAliasInPath(sPath, oAggregate);
-		iSlash = sPath.indexOf("/");
-
-		if (iSlash >= 0 && sPath.indexOf("/", iSlash + 1) < 0) { // if there is exactly one slash
-			if (sPath.slice(0, iSlash) === oAggregate.result.$EntityContainer) {
-				return sPath.slice(iSlash + 1);
-			}
-		}
-		return sPath;
-	}
-
 	V4MetadataConverter = jQuery.extend({}, _MetadataConverter, {
 		/**
 		 * Converts the metadata from XML format to a JSON object.
@@ -1076,6 +601,8 @@ sap.ui.define([
 				"enumTypeMemberCounter" : 0, // the current EnumType member value counter
 				"namespace" : null, // the namespace of the current Schema
 				"navigationProperty" : null, // the current NavigationProperty
+				"processFacetAttributes" : V4MetadataConverter.processFacetAttributes,
+				"processTypedCollection" : processTypedCollection,
 				"reference" : null, // the current Reference
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
