@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var Converter,
+	var V2MetadataConverter,
 		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
 		// the configurations for traverse
 		oAliasConfig = {
@@ -92,7 +92,7 @@ sap.ui.define([
 		var sName = oElement.getAttribute("Role");
 
 		oAggregate.association.roles[sName] = {
-			typeName : Converter.resolveAlias(oElement.getAttribute("Type"), oAggregate),
+			typeName : V2MetadataConverter.resolveAlias(oElement.getAttribute("Type"), oAggregate),
 			multiplicity : oElement.getAttribute("Multiplicity")
 		};
 	}
@@ -130,10 +130,10 @@ sap.ui.define([
 		};
 
 		processType(oElement, oAggregate, oType);
-		Converter.processAttributes(oElement, oType, {
-			"Abstract" : Converter.setIfTrue,
+		V2MetadataConverter.processAttributes(oElement, oType, {
+			"Abstract" : V2MetadataConverter.setIfTrue,
 			"BaseType" : function (sType) {
-				return sType ? Converter.resolveAlias(sType, oAggregate) : undefined;
+				return sType ? V2MetadataConverter.resolveAlias(sType, oAggregate) : undefined;
 			}
 		});
 	}
@@ -146,7 +146,7 @@ sap.ui.define([
 	function processEntityTypeKeyPropertyRef(oElement, oAggregate) {
 		var sName = oElement.getAttribute("Name");
 
-		Converter.getOrCreateArray(oAggregate.type, "$Key").push(sName);
+		V2MetadataConverter.getOrCreateArray(oAggregate.type, "$Key").push(sName);
 	}
 
 	/**
@@ -190,7 +190,7 @@ sap.ui.define([
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
 		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
-		Converter.annotatable(oAggregate, sQualifiedName);
+		V2MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -203,7 +203,7 @@ sap.ui.define([
 	 */
 	function processTypedCollection(sType, oProperty, oAggregate, oElement) {
 		var sDisplayFormat,
-			aMatches = Converter.rCollection.exec(sType);
+			aMatches = V2MetadataConverter.rCollection.exec(sType);
 
 		if (aMatches) {
 			oProperty.$isCollection = true;
@@ -225,7 +225,7 @@ sap.ui.define([
 				sType = "Edm.TimeOfDay";
 				break;
 			default:
-				sType = Converter.resolveAlias(sType, oAggregate);
+				sType = V2MetadataConverter.resolveAlias(sType, oAggregate);
 		}
 		oProperty.$Type = sType;
 	}
@@ -245,7 +245,7 @@ sap.ui.define([
 		oAggregate.navigationProperties.push({
 			property : oProperty,
 			associationName :
-				Converter.resolveAlias(oElement.getAttribute("Relationship"), oAggregate),
+				V2MetadataConverter.resolveAlias(oElement.getAttribute("Relationship"), oAggregate),
 			fromRoleName : oElement.getAttribute("FromRole"),
 			toRoleName : oElement.getAttribute("ToRole")
 		});
@@ -263,10 +263,10 @@ sap.ui.define([
 			};
 
 		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate, oElement);
-		Converter.processFacetAttributes(oElement, oProperty);
+		V2MetadataConverter.processFacetAttributes(oElement, oProperty);
 
 		oAggregate.type[sName] = oProperty;
-		Converter.annotatable(oAggregate, sName);
+		V2MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -298,7 +298,7 @@ sap.ui.define([
 		});
 	}
 
-	Converter = jQuery.extend({}, _MetadataConverter, {
+	V2MetadataConverter = jQuery.extend({}, _MetadataConverter, {
 		/**
 		 * Converts the metadata from XML format to a JSON object.
 		 *
@@ -311,7 +311,7 @@ sap.ui.define([
 			var oAggregate, oElement;
 
 			jQuery.sap.measure.average("convertXMLMetadata", "",
-				"sap.ui.model.odata.V2.lib._V2MetadataConverter");
+				"sap.ui.model.odata.v4.lib._V2MetadataConverter");
 			oAggregate = {
 				"aliases" : {}, // maps alias -> namespace
 				"association" : null, // the current association
@@ -323,15 +323,15 @@ sap.ui.define([
 				"schema" : null, // the current Schema
 				"type" : null, // the current EntityType/ComplexType
 				"result" : {
-					"$Version" : "4.0"
+					"$Version" : "4.0" // The result of the conversion is a V4 streamlined JSON
 				}
 			};
 			oElement = oDocument.documentElement;
 
 			// pass 1: find aliases
-			Converter.traverse(oElement, oAggregate, oAliasConfig);
+			V2MetadataConverter.traverse(oElement, oAggregate, oAliasConfig);
 			// pass 2: full conversion
-			Converter.traverse(oElement, oAggregate, oFullConfig);
+			V2MetadataConverter.traverse(oElement, oAggregate, oFullConfig);
 			// pass 3
 			updateNavigationProperties(oAggregate);
 
@@ -346,13 +346,13 @@ sap.ui.define([
 		 * @param {object} oResult The result object to fill
 		 */
 		processFacetAttributes : function (oElement, oResult) {
-			Converter.processAttributes(oElement, oResult, {
-				"DefaultValue" : Converter.setValue,
-				"MaxLength" : Converter.setNumber,
-				"Nullable" : Converter.setIfFalse,
-				"Precision" : Converter.setNumber,
-				"Scale" :  Converter.setNumber,
-				"Unicode" : Converter.setIfFalse
+			V2MetadataConverter.processAttributes(oElement, oResult, {
+				"DefaultValue" : V2MetadataConverter.setValue,
+				"MaxLength" : V2MetadataConverter.setNumber,
+				"Nullable" : V2MetadataConverter.setIfFalse,
+				"Precision" : V2MetadataConverter.setNumber,
+				"Scale" :  V2MetadataConverter.setNumber,
+				"Unicode" : V2MetadataConverter.setIfFalse
 			});
 			if (oElement.getAttribute("FixedLength") === "false") {
 				oResult.$Scale = "variable";
@@ -360,5 +360,5 @@ sap.ui.define([
 		}
 	});
 
-	return Converter;
+	return V2MetadataConverter;
 }, /* bExport= */false);

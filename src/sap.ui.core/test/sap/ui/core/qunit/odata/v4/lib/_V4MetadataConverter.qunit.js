@@ -11,7 +11,9 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var mFixture = {
+	var sEdmx = '<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"'
+			+ ' xmlns="http://docs.oasis-open.org/odata/ns/edm">',
+		mFixture = {
 			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
 				: {source : "metadata.xml"},
 			"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/metadata.json"
@@ -28,9 +30,10 @@ sap.ui.require([
 	 *   the expected JSON object
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected) {
-		var oXML = xml(assert, '<Edmx>' + sXmlSnippet + '</Edmx>'),
+		var oXML = xml(assert, sEdmx + sXmlSnippet + "</edmx:Edmx>"),
 			oResult = _V4MetadataConverter.convertXMLMetadata(oXML);
 
+		oExpected.$Version = "4.0";
 		assert.deepEqual(oResult, oExpected);
 	}
 
@@ -51,17 +54,16 @@ sap.ui.require([
 		var aMatches, sPath;
 
 		function localTest() {
-			var oXml = xml(assert, '\
-					<Edmx>\
-						<DataServices>\
+			var oXml = xml(assert, sEdmx + '\
+						<edmx:DataServices>\
 							<Schema Namespace="foo" Alias="f">\
 								<Annotations Target="foo.Bar">\
 									<Annotation Term="foo.Term">' + sXmlSnippet + '\
 									</Annotation>\
 								</Annotations>\
 							</Schema>\
-						</DataServices>\
-					</Edmx>'),
+						</edmx:DataServices>\
+					</edmx:Edmx>'),
 				// code under localTest
 				oResult = _V4MetadataConverter.convertXMLMetadata(oXml);
 			assert.deepEqual(oResult["foo."].$Annotations["foo.Bar"]["@foo.Term"], vExpected,
@@ -114,7 +116,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Singleton", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
 							<Singleton Name="Me" Type="f.Worker">\
@@ -122,7 +124,7 @@ sap.ui.require([
 							</Singleton>\
 						</EntityContainer>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"$EntityContainer" : "foo.Container",
 				"foo." : {
@@ -144,16 +146,16 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Reference", function (assert) {
 		testConversion(assert, '\
-				<Reference Uri="/qux/$metadata">\
-					<Include Namespace="qux.foo"/>\
-					<Include Namespace="qux.bar"/>\
-					<IncludeAnnotations TermNamespace="qux.foo"/>\
-					<IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
+				<edmx:Reference Uri="/qux/$metadata">\
+					<edmx:Include Namespace="qux.foo"/>\
+					<edmx:Include Namespace="qux.bar"/>\
+					<edmx:IncludeAnnotations TermNamespace="qux.foo"/>\
+					<edmx:IncludeAnnotations TermNamespace="qux.bar" TargetNamespace="qux.bar"\
 						Qualifier="Tablet"/>\
-				</Reference>\
-				<Reference Uri="/bla/$metadata">\
-					<Include Namespace="bla"/>\
-				</Reference>',
+				</edmx:Reference>\
+				<edmx:Reference Uri="/bla/$metadata">\
+					<edmx:Include Namespace="bla"/>\
+				</edmx:Reference>',
 			{
 				"$Reference" : {
 					"/qux/$metadata" : {
@@ -177,10 +179,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in types", function (assert) {
 		testConversion(assert, '\
-				<Reference Uri="/qux/$metadata">\
-					<Include Namespace="qux" Alias="q"/>\
-				</Reference>\
-				<DataServices>\
+				<edmx:Reference Uri="/qux/$metadata">\
+					<edmx:Include Namespace="qux" Alias="q"/>\
+				</edmx:Reference>\
+				<edmx:DataServices>\
 					<Schema Namespace="bar">\
 						<ComplexType Name="Worker">\
 							<Property Name="Something" Type="q.Something"/>\
@@ -190,7 +192,7 @@ sap.ui.require([
 						</ComplexType>\
 					</Schema>\
 					<Schema Namespace="foo" Alias="f"/>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"$Reference" : {
 					"/qux/$metadata" : {
@@ -230,7 +232,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: aliases in container", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
 							<EntitySet Name="SpecialTeams" EntityType="f.Team">\
@@ -247,7 +249,7 @@ sap.ui.require([
 							</EntitySet>\
 						</EntityContainer>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"$EntityContainer" : "foo.Container",
 				"foo." : {
@@ -276,7 +278,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: IncludeInServiceDocument", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo">\
 						<EntityContainer Name="Container">\
 							<EntitySet Name="Teams" EntityType="foo.Team"\
@@ -286,7 +288,7 @@ sap.ui.require([
 							<EntitySet Name="Teams3" EntityType="foo.Team"/>\
 						</EntityContainer>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"$EntityContainer" : "foo.Container",
 				"foo." : {
@@ -314,7 +316,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: EntityType attributes, key alias", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityType Name="Worker" OpenType="true" HasStream="true">\
 							<Key>\
@@ -324,7 +326,7 @@ sap.ui.require([
 						<EntityType Name="Base" Abstract="true"/>\
 						<EntityType Name="Derived" BaseType="f.Base"/>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema"
@@ -351,13 +353,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: ComplexType attributes", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo">\
 						<ComplexType Name="Worker" OpenType="true" HasStream="true"/>\
 						<ComplexType Name="Base" Abstract="true"/>\
 						<ComplexType Name="Derived" BaseType="foo.Base"/>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema"
@@ -458,7 +460,7 @@ sap.ui.require([
 				};
 
 			testConversion(assert, '\
-					<DataServices>\
+					<edmx:DataServices>\
 						<Schema Namespace="foo">\
 							<' + sType + ' Name="Worker">\
 								<Property Name="Salary" Type="Edm.Decimal" Precision="8"\
@@ -480,7 +482,7 @@ sap.ui.require([
 									ContainsTarget="false" />\
 							</' + sType + '>\
 						</Schema>\
-					</DataServices>',
+					</edmx:DataServices>',
 				oExpected);
 		});
 	});
@@ -488,7 +490,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: EnumType", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo">\
 						<EnumType Name="Bar1" IsFlags="true">\
 							<Member Name="p_1" Value="1" />\
@@ -515,7 +517,7 @@ sap.ui.require([
 							<Member Name="_1" />\
 						</EnumType>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema"
@@ -570,11 +572,11 @@ sap.ui.require([
 					$UnderlyingType : "Edm.String"
 				});
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo">\
 						<TypeDefinition Name="Bar" UnderlyingType="Edm.String"/>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema"
@@ -590,7 +592,7 @@ sap.ui.require([
 	["Action", "Function"].forEach(function (sRunnable) {
 		QUnit.test("convertXMLMetadata: " + sRunnable, function (assert) {
 			testConversion(assert, '\
-					<DataServices>\
+					<edmx:DataServices>\
 						<Schema Namespace="foo" Alias="f">\
 							<' + sRunnable + ' Name="Baz" EntitySetPath="Employees"\
 								IsBound="false" >\
@@ -602,7 +604,7 @@ sap.ui.require([
 							</' + sRunnable + '>\
 							<' + sRunnable + ' Name="Baz" IsComposable="true" IsBound="true"/>\
 						</Schema>\
-					</DataServices>',
+					</edmx:DataServices>',
 				{
 					"foo." : {
 						"$kind" : "Schema"
@@ -678,7 +680,7 @@ sap.ui.require([
 				}
 			});
 			testConversion(assert, '\
-					<DataServices>\
+					<edmx:DataServices>\
 						<Schema Namespace="foo" Alias="f">\
 							<EntityContainer Name="Container">\
 								<' + sWhat + 'Import Name="Baz1" ' + sWhat + '="foo.Baz"\
@@ -693,7 +695,7 @@ sap.ui.require([
 									EntitySet="f.Container/Employees/Team"/>\
 							</EntityContainer>\
 						</Schema>\
-					</DataServices>',
+					</edmx:DataServices>',
 				oExpected);
 		});
 	});
@@ -701,13 +703,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Term", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<Term Name="Term1" Type="Collection(Edm.String)" Nullable="false"\
 							MaxLength="10" Precision="2" Scale="variable" SRID="42"/>\
 						<Term Name="Term2" Type="f.Bar" BaseTerm="f.Term1" Nullable="true"/>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema"
@@ -733,7 +735,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: Annotations", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<Annotations Target="f.Bar/f.Baz">\
 							<Annotation Term="f.Binary" Binary="T0RhdGE"/>\
@@ -770,7 +772,7 @@ sap.ui.require([
 							<Annotation Term="f.Baz"/>\
 						</Annotations>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema",
@@ -967,7 +969,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inline annotations: Schema, EntityType, ComplexType", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<Annotation Term="f.Term1" String="Schema"/>\
 						<EntityType Name="EntityType">\
@@ -990,7 +992,7 @@ sap.ui.require([
 						</ComplexType>\
 						<Annotation Term="f.Term2" String="Schema"/>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema",
@@ -1037,7 +1039,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inline annotations: EnumType, Term, TypeDefinition", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<EnumType Name="EnumType">\
 							<Member Name="Member">\
@@ -1052,7 +1054,7 @@ sap.ui.require([
 							<Annotation Term="f.Term" String="TypeDefinition"/>\
 						</TypeDefinition>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema",
@@ -1089,7 +1091,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inline annotations: Action, Function", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<Action Name="Action">\
 							<Parameter Name="Parameter" Type="Edm.String">\
@@ -1107,7 +1109,7 @@ sap.ui.require([
 							<Annotation Term="f.Term" String="Function"/>\
 						</Function>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema"
@@ -1138,7 +1140,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inline annotations: EntityContainer and children", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<EntityContainer Name="Container">\
 							<EntitySet Name="EntitySet" EntityType="f.EntityType">\
@@ -1159,7 +1161,7 @@ sap.ui.require([
 							<Annotation Term="f.Term2" String="EntitySet"/>\
 						</Annotations>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"$EntityContainer" : "foo.Container",
 				"foo." : {
@@ -1208,9 +1210,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("inline annotations: Reference", function (assert) {
 		testConversion(assert, '\
-				<Reference Uri="qux/$metadata">\
+				<edmx:Reference Uri="qux/$metadata">\
 					<Annotation Term="foo.Term" String="Reference"/>\
-				</Reference>',
+				</edmx:Reference>',
 			{
 				"$Reference" : {
 					"qux/$metadata" : {
@@ -1223,7 +1225,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("annotated annotations", function (assert) {
 		testConversion(assert, '\
-				<DataServices>\
+				<edmx:DataServices>\
 					<Schema Namespace="foo" Alias="f">\
 						<Annotation Term="f.Term1" String="Schema" Qualifier="q1">\
 							<Annotation Term="f.Term2" Qualifier="q2" String="Annotation2">\
@@ -1236,7 +1238,7 @@ sap.ui.require([
 							</Annotation>\
 						</ComplexType>\
 					</Schema>\
-				</DataServices>',
+				</edmx:DataServices>',
 			{
 				"foo." : {
 					"$kind" : "Schema",
