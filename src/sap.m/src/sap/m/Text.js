@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Text
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/Device'],
-	function(jQuery, library, Control, Device) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
+	function(jQuery, library, Control) {
 	"use strict";
 
 	/**
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 * @type {number}
 	 */
-	Text.prototype.normalLineHeight = Device.browser.webkit ? 1 : 1.2;
+	Text.prototype.normalLineHeight = 1.4;
 
 	/**
 	 * Determines per instance whether line height should be cached or not.
