@@ -104,7 +104,7 @@
 							<t:columns>
 								<t:Column label="Issues">
 									<t:template>
-										<Text text="{name}"></Text>
+										<Text text="{name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 							</t:columns>
