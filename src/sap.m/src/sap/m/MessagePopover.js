@@ -205,6 +205,8 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 		}
 
 		var CSS_CLASS = "sapMMsgPopover",
+			DEFAULT_CONTENT_HEIGHT = "320px",
+			DEFAULT_CONTENT_WIDTH = "440px",
 			ICONS = {
 				back: IconPool.getIconURI("nav-back"),
 				close: IconPool.getIconURI("decline"),
@@ -281,7 +283,8 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 
 			this._oPopover = new ResponsivePopover(this.getId() + "-messagePopover", {
 				showHeader: false,
-				contentWidth: "440px",
+				contentWidth: DEFAULT_CONTENT_WIDTH,
+				contentHeight: DEFAULT_CONTENT_HEIGHT,
 				placement: this.getPlacement(),
 				showCloseButton: false,
 				verticalScrolling: false,
@@ -554,15 +557,15 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 		};
 
 		/**
-		 * Expands the MessagePopover so that the width and height are equal
+		 * Expands the MessagePopover so that the width and height are with their default values
 		 * @private
 		 */
 		MessagePopover.prototype._expandMsgPopover = function () {
 			var sDomHeight,
-				sHeight = this._oPopover.getContentWidth();
-
-			if (this.getInitiallyExpanded()) {
+				sHeight = DEFAULT_CONTENT_HEIGHT,
 				sDomHeight = this._oPopover.$("cont").css("height");
+
+			if (this.getInitiallyExpanded() && sDomHeight !== "0px") {
 				sHeight = parseFloat(sDomHeight) ? sDomHeight : sHeight;
 			}
 
