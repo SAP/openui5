@@ -190,7 +190,6 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		var oAppComponent = this.getAppComponent();
 		var oChangeDefinition = oChange.getDefinition();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-		var oChangeHandler = this.getChangeHandler();
 
 		// If the command has a "getState" implementation, use that instead of recording the undo
 		if (this.getFnGetState()){
@@ -202,10 +201,9 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 			RtaControlTreeModifier.startRecordingUndo();
 		}
 
-		return Promise.resolve(oChangeHandler.applyChange(oChange, oSelectorElement, {
-			modifier: RtaControlTreeModifier,
-			appComponent : oAppComponent
-		}))
+		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
+
+		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, {modifier: RtaControlTreeModifier, appComponent: oAppComponent}))
 
 		.then(function() {
 			if (!this.getFnGetState()){
