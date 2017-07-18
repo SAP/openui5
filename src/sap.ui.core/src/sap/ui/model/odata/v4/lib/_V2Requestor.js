@@ -40,6 +40,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Converts an OData V2 value {@link https://tools.ietf.org/html/rfc3548#section-3} of type
+	 * Edm.Binary to the corresponding OData V4 value
+	 * {@link https://tools.ietf.org/html/rfc4648#section-5}.
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 */
+	_V2Requestor.prototype.convertBinary = function (sV2Value) {
+		return sV2Value.replace(/\+/g, "-").replace(/\//g, "_");
+	};
+
+	/**
 	 * Converts an OData V4 value of type Edm.Double, Edm.Float or Edm.Single to the corresponding
 	 * OData V4 value.
 	 *
@@ -131,7 +145,8 @@ sap.ui.define([
 	_V2Requestor.prototype.convertPrimitive = function (vValue, sPropertyType, sTypeName,
 			sPropertyName) {
 		switch (sPropertyType) {
-			case "Edm.Binary": // no conversion
+			case "Edm.Binary":
+				return this.convertBinary(vValue);
 			case "Edm.Boolean":
 			case "Edm.Byte":
 			case "Edm.Decimal":

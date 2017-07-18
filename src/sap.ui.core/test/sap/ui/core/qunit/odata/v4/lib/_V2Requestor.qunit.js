@@ -198,8 +198,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
+		{sType : "Edm.Binary", sConvertMethod : "convertBinary"},
 		{sType : "Edm.Boolean"},
-		{sType : "Edm.Binary"},
 		{sType : "Edm.Byte"},
 		{sType : "Edm.Decimal"},
 		{sType : "Edm.Double", sConvertMethod : "convertDoubleFloatSingle"},
@@ -244,6 +244,24 @@ sap.ui.require([
 			+ "cannot convert value: foo"));
 	});
 
+	//*********************************************************************************************
+	[{
+		input : "A+A+",
+		output : "A-A-"
+	},
+	{
+		input : "A/A/",
+		output :"A_A_"
+	}	].forEach(function (oFixture, i) {
+		QUnit.test("convertBinary, " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			// code under test
+			assert.strictEqual(oRequestor.convertBinary(oFixture.input), oFixture.output);
+		});
+	});
 	//*********************************************************************************************
 	[{
 		input : "1.0000000000000001E63",
