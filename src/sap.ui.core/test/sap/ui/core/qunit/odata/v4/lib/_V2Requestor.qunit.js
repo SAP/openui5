@@ -206,6 +206,7 @@ sap.ui.require([
 		{sType : "Edm.Guid"},
 		{sType : "Edm.Int16"},
 		{sType : "Edm.Int32"},
+		{sType : "Edm.Int64"},
 		{sType : "Edm.SByte"},
 		{sType : "Edm.Single", sConvertMethod : "convertDoubleFloatSingle"},
 		{sType : "Edm.String"}

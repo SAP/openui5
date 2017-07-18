@@ -16,6 +16,7 @@
 		"GlobalUID" : "0050568d-393c-1ee4-a5ae-9aae85248ff2",
 		"Int16" : 32767,
 		"Int32" : 2147483647,
+		"Int64" : "-9223372036854775808",
 		"SByte" : -128,
 		"Single" : "1.234567E3",
 		"String" : "String Expression",

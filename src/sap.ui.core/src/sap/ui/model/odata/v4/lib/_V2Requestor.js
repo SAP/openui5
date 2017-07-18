@@ -138,6 +138,7 @@ sap.ui.define([
 			case "Edm.Guid":
 			case "Edm.Int16":
 			case "Edm.Int32":
+			case "Edm.Int64":
 			case "Edm.SByte":
 			case "Edm.String":
 				return vValue;
