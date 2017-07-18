@@ -95,9 +95,11 @@ h2 {
 #header_wrap h2, #header_wrap h2 a {
   text-shadow: 0 0 2px white;
 }
+
 img {
   max-width: 100%
 }
+
 h3 {
   font-size: 26px;
   margin: 32px 0 0px 0;
@@ -671,3 +673,44 @@ Simple Syntax Highlighter
 .sh-js-keyword{
   color: #c26230;
 }
+
+/*******************************************************************************
+Logo page styles
+*******************************************************************************/
+
+.headlineLogo{
+  font-weight: bold;
+}
+
+.wrapperColorSpecs{
+  width: 700px; 
+  height: 40px; 
+  overflow: hidden;
+}
+
+.colorSpecsHead{
+  width: 180px; 
+  height: 60px; 
+  float:left;
+  text-align: center;
+}
+
+.colorSpecsFront{
+  width: 100px;
+  height: 60px;
+  float:left;
+  text-align: center; 
+  vertical-align: middle; 
+  line-height: 60px;
+}
+
+.colorSpecs{
+  width: 180px;
+  height: 60px;
+  float:left;
+  text-align: center; 
+  vertical-align: middle; 
+  line-height: 60px;
+}
+
+
