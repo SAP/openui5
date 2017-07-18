@@ -27,66 +27,66 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var UploadCollectionItem = Element.extend("sap.m.UploadCollectionItem", /** @lends sap.m.UploadCollectionItem.prototype */ {
-			metadata : {
+			metadata: {
 
-				library : "sap.m",
-				properties : {
+				library: "sap.m",
+				properties: {
 
 					/**
 					 * Specifies the name of the user who uploaded the file.
 					 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 					 * However, if the property is filled, it is displayed as an attribute. To make sure the title does not appear twice, do not use the property.
 					 */
-					contributor : {
-						type : "string",
-						group : "Data",
-						defaultValue : null
+					contributor: {
+						type: "string",
+						group: "Data",
+						defaultValue: null
 					},
 
 					/**
 					 * Specifies a unique identifier of the file (created by the application).
 					 */
-					documentId : {
-						type : "string",
-						group : "Misc",
-						defaultValue : null
+					documentId: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
 					 * Specifies the name of the uploaded file.
 					 */
-					fileName : {
-						type : "string",
-						group : "Misc",
-						defaultValue : null
+					fileName: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
 					 * Specifies the size of the uploaded file (in megabytes).
 					 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 					 */
-					fileSize : {
-						type : "float",
-						group : "Misc",
-						defaultValue : null
+					fileSize: {
+						type: "float",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
 					 * Specifies the MIME type of the file.
 					 */
-					mimeType : {
-						type : "string",
-						group : "Misc",
-						defaultValue : null
+					mimeType: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
-					 * Specifies the URL where the thumbnail of the file is located.
+					 * Specifies the URL where the thumbnail of the file is located. This can also be an SAPUI5 icon URL.
 					 */
-					thumbnailUrl : {
-						type : "string",
-						group : "Misc",
-						defaultValue : null
+					thumbnailUrl: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
@@ -94,20 +94,20 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * The application has to define the date format.
 					 * @deprecated since version 1.30. This property is deprecated; use the aggregation attributes instead.
 					 */
-					uploadedDate : {
-						type : "string",
-						group : "Misc",
-						defaultValue : null
+					uploadedDate: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
 					 * Specifies the URL where the file is located.
 					 * If the application doesn't provide a value for this property, the icon and the file name of the UploadCollectionItem are not clickable.
 					 */
-					url : {
-						type : "string",
-						group : "Misc",
-						defaultValue : null
+					url: {
+						type: "string",
+						group: "Misc",
+						defaultValue: null
 					},
 
 					/**
@@ -115,10 +115,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * If the value is true, the Edit button is enabled and the edit function can be used.
 					 * If the value is false, the edit function is not available.
 					 */
-					enableEdit : {
-						type : "boolean",
-						group : "Behavior",
-						defaultValue : true
+					enableEdit: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
 					},
 
 					/**
@@ -126,10 +126,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * If the value is true, the Delete button is enabled and the delete function can be used.
 					 * If the value is false, the delete function is not available.
 					 */
-					enableDelete : {
-						type : "boolean",
-						group : "Behavior",
-						defaultValue : true
+					enableDelete: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
 					},
 
 					/**
@@ -137,10 +137,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * If the value is true, the Edit button is visible.
 					 * If the value is false, the Edit button is not visible.
 					 */
-					visibleEdit : {
-						type : "boolean",
-						group : "Behavior",
-						defaultValue : true
+					visibleEdit: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
 					},
 
 					/**
@@ -148,33 +148,34 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * If the value is true, the Delete button is visible.
 					 * If the value is false, the Delete button is not visible.
 					 */
-					visibleDelete : {
-						type : "boolean",
-						group : "Behavior",
-						defaultValue : true
+					visibleDelete: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: true
 					},
 
 					/**
 					 * Aria label for the icon (or for the image).
-					 * @experimental since version 1.30. The behavior of the property might change in the next version.
+					 * @since 1.30
 					 */
-					ariaLabelForPicture : {type : "string",
-						group : "Accessibility",
-						defaultValue : null
+					ariaLabelForPicture: {
+						type: "string",
+						group: "Accessibility",
+						defaultValue: null
 					},
 
 					/**
 					 * Defines the selected state of the UploadCollectionItem.
 					 * @since 1.34
 					 */
-					selected : {
-						type : "boolean",
-						group : "Behavior",
-						defaultValue : false
+					selected: {
+						type: "boolean",
+						group: "Behavior",
+						defaultValue: false
 					}
 				},
-				defaultAggregation : "attributes",
-				aggregations : {
+				defaultAggregation: "attributes",
+				aggregations: {
 					/**
 					 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
 					 * attributes are displayed after an item has been uploaded.
@@ -185,29 +186,29 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * ‘contributor’:’A’ and ‘contributor’:’B’ are displayed. To make sure the title does not appear twice, check if one of the properties is filled.
 					 * @since 1.30
 					 */
-					attributes : {
-						type : "sap.m.ObjectAttribute",
-						multiple : true,
-						bindable : "bindable"
+					attributes: {
+						type: "sap.m.ObjectAttribute",
+						multiple: true,
+						bindable: "bindable"
 					},
 					/**
 					 * Hidden aggregation for the attributes created from the deprecated properties uploadedDate, contributor and fileSize
 					 * @since 1.30
 					 */
-					_propertyAttributes : {
-						type : "sap.m.ObjectAttribute",
-						multiple : true,
-						visibility : "hidden"
+					_propertyAttributes: {
+						type: "sap.m.ObjectAttribute",
+						multiple: true,
+						visibility: "hidden"
 					},
 					/**
 					 * Statuses of an uploaded item
 					 * Statuses will be displayed after an item has been uploaded
 					 * @since 1.30
 					 */
-					statuses : {
-						type : "sap.m.ObjectStatus",
-						multiple : true,
-						bindable : "bindable"
+					statuses: {
+						type: "sap.m.ObjectStatus",
+						multiple: true,
+						bindable: "bindable"
 					},
 					/**
 					 * Markers of an uploaded item
@@ -215,21 +216,21 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * But not in Edit mode
 					 * @since 1.40
 					 */
-					markers : {
-						type : "sap.m.ObjectMarker",
-						multiple : true,
-						bindable : "bindable"
+					markers: {
+						type: "sap.m.ObjectMarker",
+						multiple: true,
+						bindable: "bindable"
 					}
 				},
 
-				associations : {
+				associations: {
 					/**
 					 * ID of the FileUploader instance
-					 * since version 1.30
+					 * @since 1.30
 					 */
-					fileUploader : {
-						type : "sap.ui.unified.FileUploader",
-						multiple : false
+					fileUploader: {
+						type: "sap.ui.unified.FileUploader",
+						multiple: false
 					}
 				},
 
@@ -239,7 +240,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * If this event is provided, it overwrites the default behavior of opening the file.
 					 *
 					 * @public
-					 * @experimental since 1.50
+					 * @since 1.50
 					 */
 					press: {}
 				}
