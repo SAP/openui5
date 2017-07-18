@@ -86,7 +86,7 @@ sap.ui.define([
 		},
 
 		handleMessagePopoverPress: function (oEvent) {
-			oMessagePopover.openBy(oEvent.getSource());
+			oMessagePopover.toggle(oEvent.getSource());
 		}
 	});
 
