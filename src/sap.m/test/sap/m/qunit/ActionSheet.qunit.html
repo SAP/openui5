@@ -612,6 +612,48 @@
 				}, 500);
 			});
 
+			asyncTest('Inserting button should not missmatch Aria labels', function () {
+				//Setup
+				var oButton = new sap.m.Button({
+						text: "Open ActionSheet",
+						press: function () {
+							oActionSheet.openBy(this);
+						}
+					}),
+					oASButton1 = new sap.m.Button({text: "Button1", id: "asButton1"}),
+					oASButton2 = new sap.m.Button({text: "Button2", id: "asButton2"}),
+					oASButton3 = new sap.m.Button({text: "Button3", id: "asButton3"}),
+					oActionSheet = new sap.m.ActionSheet({
+						cancelButtonText: "Cancel",
+						title: "Title",
+						buttons: [
+							oASButton1, oASButton3
+						]
+					});
+
+				// Act
+				oActionSheet.insertButton(oASButton2, 1);
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function () {
+					var sInvisibleTextId = oASButton2.getAriaLabelledBy()[0],
+						oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+
+					//Assert
+					strictEqual(oActionSheet.indexOfAggregation("buttons", oASButton2), 1, "Inserted button should be correctly placed at the second place.");
+					strictEqual(oInvisibleText.getText().indexOf("2"), 0, "Invisible text should correctly state that the Button is placed at position #2.");
+
+					//Cleanup
+					start();
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+				}, 500);
+			});
+
 			asyncTest('Invisible buttons should not be counted', function() {
 				var oButton = new sap.m.Button({
 					text : "Open ActionSheet",
