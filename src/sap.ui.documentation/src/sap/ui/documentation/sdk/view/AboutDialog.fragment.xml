@@ -18,16 +18,16 @@
 				id="aboutMaster"
 				title="About">
 				<VBox class="sapUiSmallMargin">
-					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/Logo_B_SAPUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
-					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/Logo_B_OpenUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{appView>/isOpenUI5}"/>
+					<Image id="aboutLogoSAP" src="./resources/sap/ui/documentation/sdk/images/Logo_B_SAPUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Image id="aboutLogoUI5" src="./resources/sap/ui/documentation/sdk/images/Logo_B_OpenUI5_H.png" densityAware="false" width="100%" class="sapUiSmallMarginBottom" visible="{versionData>/isOpenUI5}"/>
 					<Text text="UI5 Demo Kit - UI Development Toolkit for HTML5" class="sapMTitleStyleH2 sapUiSmallMarginBottom" />
-					<Text text="© Copyright 2009-2017 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
-					<Text text="© 2009-2017 SAP SE or an SAP affiliate company." visible="{appView>/isOpenUI5}"/>
-					<HBox class="sapUiMediumMarginBottom" visible="{appView>/isOpenUI5}" allowWrapping="true">
+					<Text text="© Copyright 2009-2017 SAP SE. All rights reserved." class="sapUiMediumMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Text text="© 2009-2017 SAP SE or an SAP affiliate company." visible="{versionData>/isOpenUI5}"/>
+					<HBox class="sapUiMediumMarginBottom" visible="{versionData>/isOpenUI5}" allowWrapping="true">
 						<Text text="Licensed under the Apache License, Version 2.0 – see"/>
 						<Link text="LICENSE.txt" href="LICENSE.txt" target="_blank" class="aboutLink"/>
 					</HBox>
-					<Text text="UI5 Version {appView>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
+					<Text text="UI5 Version {versionData>/fullVersion}" class="sapMTitleStyleH4 sapUiSmallMarginBottom"/>
 					<Text text="This software includes the folloing library versions"/>
 					<HBox class="sapUiSmallMarginBottom" allowWrapping="true">
 						<Text text="(a full change log for all libraries can be found"/>
@@ -35,8 +35,8 @@
 						<Text text=")."/>
 					</HBox>
 					<Link text="Version Details" press="onAboutVersionDetails" class="sapUiMediumMarginBottom"/>
-					<Text text="This software includes third-party open source software." class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
-					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${appView>/isOpenUI5}}"/>
+					<Text text="This software includes third-party open source software." class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
+					<Link text="Included Third-Party Software" press="onAboutThirdParty" class="sapUiSmallMarginBottom" visible="{=!${versionData>/isOpenUI5}}"/>
 				</VBox>
 			</Page>
 			<Page
@@ -57,7 +57,7 @@
 								<f:formElements>
 									<f:FormElement label="Version">
 										<f:fields>
-											<Text text="{appView>version}" class="sapUiSmallMarginBottom"/>
+											<Text text="{versionData>/version}" class="sapUiSmallMarginBottom"/>
 										</f:fields>
 									</f:FormElement>
 									<f:FormElement label="Description">
@@ -70,7 +70,7 @@
 											<Link text="Open Change Log" press="onReleaseDialogOpen" class="sapUiSmallMarginBottom">
 												<customData>
   													<core:CustomData key="library" value="{appView>library}" />
-  													<core:CustomData key="version" value="{appView>version}" />
+  													<core:CustomData key="version" value="{versionData>/version}" />
   												</customData>
 											</Link>
 										</f:fields>

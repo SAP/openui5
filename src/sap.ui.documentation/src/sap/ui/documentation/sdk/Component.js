@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/core/UIComponent",
 		"sap/ui/Device",
 		"sap/ui/documentation/sdk/model/models",
@@ -12,7 +13,7 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/controller/util/ConfigUtil",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/m/ColumnListItem"
-	], function (UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo, ColumnListItem) {
+	], function (jQuery, UIComponent, Device, models, ErrorHandler, JSONModel, DocumentationRouter, ConfigUtil, APIInfo, ColumnListItem) {
 		"use strict";
 
 		var aTreeContent = [],
@@ -53,15 +54,18 @@ sap.ui.define([
 				// set the global libs data
 				this.setModel(new JSONModel(), "libsData");
 
+				// set the global version data
+				this.setModel(new JSONModel(), "versionData");
+
 				// call the base component's init function and create the App view
 				UIComponent.prototype.init.apply(this, arguments);
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
 
-				// Preload API Info on desktop for faster startup
 				if (Device.system.desktop) {
-					this.fetchAPIInfoAndBindModels();
+					// Preload API Info on desktop for faster startup
+					this.fetchVersionInfo().then(this.fetchAPIInfoAndBindModels.bind(this));
 				}
 
 				// Prevents inappropriate focus change which causes ObjectPage to scroll,
@@ -113,14 +117,26 @@ sap.ui.define([
 
 			// MODELS
 
+			fetchVersionInfo: function () {
+				if (!this._oVersionInfoPromise) {
+					this._oVersionInfoPromise = sap.ui.getVersionInfo({async: true})
+						.then(this._bindVersionModel.bind(this));
+				}
+
+				return this._oVersionInfoPromise;
+			},
+
 			fetchAPIInfoAndBindModels: function () {
+				var oVersionModel = this.getModel("versionData"),
+					bIsInternalVersion = oVersionModel.getProperty("/isInternal"),
+					aLibraries = oVersionModel.getProperty("/libraries");
 
 				if (this._modelsPromise) {
 					return this._modelsPromise;
 				}
 
 				this._modelsPromise = new Promise(function (resolve) {
-					APIInfo.getAllLibrariesElementsJSONPromise().then(function(aLibsData) {
+					APIInfo.getAllLibrariesElementsJSONPromise(aLibraries).then(function(aLibsData) {
 						aLibsData.forEach(this._parseLibraryElements, this);
 
 						if (aTreeContent.length > 0) {
@@ -137,7 +153,7 @@ sap.ui.define([
 							});
 						}
 
-						this._addDeprecatedAndExperimentalData(oLibsData);
+						this._addDeprecatedAndExperimentalData(oLibsData, bIsInternalVersion);
 
 						this._bindAllLibsModel(oLibsData);
 						this._bindTreeModel(aTreeContent);
@@ -246,7 +262,29 @@ sap.ui.define([
 				treeModel.setData(aTreeContent, false);
 			},
 
-			_addDeprecatedAndExperimentalData : function(oLibsData) {
+			_bindVersionModel : function (oVersionInfo) {
+				var sVersion, oVersionInfoData;
+
+				if (!oVersionInfo) {
+					return;
+				}
+
+				sVersion = oVersionInfo.version;
+				oVersionInfoData = {
+					versionGav: oVersionInfo.gav,
+					version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
+					fullVersion: sap.ui.version,
+					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
+					isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav),
+					isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1),
+					isInternal: /internal/i.test(oVersionInfo.name),
+					libraries: oVersionInfo.libraries
+				};
+
+				this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
+			},
+
+			_addDeprecatedAndExperimentalData : function(oLibsData, bIsInternalVersion) {
 				var sWithoutVersion = "Without Version";
 
 				oLibsData.deprecated = {
@@ -275,7 +313,8 @@ sap.ui.define([
 						entityName : oEntityObject.name,
 						text : oEntityObject[oDataType].text || oEntityObject.description,
 						type : sObjectType,
-						"static" : !!oEntityObject.static
+						"static" : !!oEntityObject.static,
+						visibility: oEntityObject.visibility
 					};
 
 					if (oEntityObject[oDataType].since) {
@@ -297,6 +336,10 @@ sap.ui.define([
 					}
 				}
 
+				function isMethodRestricted(oMethod) {
+					return oMethod.visibility === "restricted";
+				}
+
 				/* Iterate over the oLibsData object, gather information about all deprecated and experimental
 				entities and aggregate it in new properties in oLibsData.
 				 */
@@ -304,6 +347,11 @@ sap.ui.define([
 					var sLib = oLibsData[sLibName];
 
 					sLib.methods && sLib.methods.forEach(function(oMethod) {
+						var bIsMethodRestricted = isMethodRestricted(oMethod);
+
+						if (bIsMethodRestricted && !bIsInternalVersion) {
+							return; /* exclude restricted methods from non-internal version */
+						}
 						if (oMethod.deprecated) {
 							addData("deprecated", oMethod, "methods", sLib.name);
 						}

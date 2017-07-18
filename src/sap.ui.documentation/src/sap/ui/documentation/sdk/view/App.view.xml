@@ -58,7 +58,7 @@
 					</layoutData>
 				</ToolbarSpacer>
 
-				<ObjectStatus text="Version {appView>/version} {= ${appView>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${appView>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
+				<ObjectStatus text="Version {versionData>/version} {= ${versionData>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
@@ -76,12 +76,12 @@
 					<menu>
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
-								<MenuItem text="Version {appView>/version}" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="Version {versionData>/version}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
-								<MenuItem text="Legal" visible="{=!${appView>/isOpenUI5}}"/>
-								<MenuItem text="Privacy" visible="{=!${appView>/isOpenUI5}}"/>
-								<MenuItem text="Terms of Use" visible="{=!${appView>/isOpenUI5}}">
+								<MenuItem text="Legal" visible="{=!${versionData>/isOpenUI5}}"/>
+								<MenuItem text="Privacy" visible="{=!${versionData>/isOpenUI5}}"/>
+								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">
 									<items>
 										<MenuItem text="Terms of Use" />
 										<MenuItem text="Copyright" />

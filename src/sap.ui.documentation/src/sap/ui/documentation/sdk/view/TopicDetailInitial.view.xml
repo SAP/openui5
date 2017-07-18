@@ -41,6 +41,13 @@
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
+			<l:BlockLayoutRow visible="{versionData>/isInternal}">
+				<l:BlockLayoutCell>
+					<MessageStrip
+						text="This is the internal version of the documentation. It contains topics that are still under construction, as well as SAP-internal information that should not be passed on to anybody outside SAP."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
 			<l:BlockLayoutRow class="sapUiContentPadding">
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternB">
@@ -128,7 +135,7 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternA"
-						visible="{=!${appView>/isOpenUI5}}">
+						visible="{=!${versionData>/isOpenUI5}}">
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
@@ -142,7 +149,7 @@
 
 				<l:BlockLayoutCell
 						class="largeCell demokitInitialPagesColorPatternC"
-						visible="{=!${appView>/isOpenUI5}}">
+						visible="{=!${versionData>/isOpenUI5}}">
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
