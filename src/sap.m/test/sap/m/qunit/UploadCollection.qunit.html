@@ -1096,6 +1096,38 @@
 			stubGetContent.restore();
 		});
 
+		QUnit.module("Focus after item deletion", {
+			beforeEach: function() {
+				this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+					items: {
+						path: "/items",
+						template: createItemTemplate(),
+						templateShareable: false
+					}
+				});
+				this.oUploadCollection.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oUploadCollection.destroy();
+				this.oUploadCollection = null;
+			}
+		});
+
+		QUnit.test("Focus is only set once after delete", function(assert) {
+			//Arrange
+			var oSpy = sinon.spy(this.oUploadCollection, "_setFocusAfterDeletion");
+			this.oUploadCollection.sDeletedItemId = "someId";
+
+			//Act
+			this.oUploadCollection.rerender();
+			this.oUploadCollection.rerender();
+
+			//Assert
+			assert.equal(this.oUploadCollection.sDeletedItemId, null, "Member sDeletedItemId has been reset.");
+			assert.equal(oSpy.callCount, 1, "Focus has been set after deletion.");
+		});
+
 		/* --------------------------------------- */
 		/* Test for upload progress rendering      */
 		/* --------------------------------------- */
