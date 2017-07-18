@@ -142,8 +142,9 @@ sap.ui.define([
 			if (Device.browser.internet_explorer) {
 				// hacky code how to recognize that pdf plugin is installed and enabled
 				try {
-					// eslint-disable-next-line no-new
+					/* eslint-disable no-new */
 					new ActiveXObject("AcroPDF.PDF");
+					/* eslint-enable no-new */
 				} catch (e) {
 					bIsEnabled = false;
 				}
@@ -423,7 +424,7 @@ sap.ui.define([
 		 * @public
 		 */
 		PDFViewer.prototype.downloadPDF = function () {
-			var oWindow = window.open(this._getRenderSource());
+			var oWindow = window.open(this.getSource());
 			oWindow.focus();
 		};
 
