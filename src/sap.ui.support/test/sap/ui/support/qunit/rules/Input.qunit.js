@@ -1,4 +1,4 @@
-/*global QUnit,testRule*/
+/*global QUnit*/
 
 sap.ui.require(["jquery.sap.global"], function (jQuery) {
 	"use strict";
