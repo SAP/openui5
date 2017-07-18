@@ -1011,19 +1011,17 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					}
 				} else if (this.sFocusId) {
 					//set focus on line item after status = Edit
-					sap.m.UploadCollection.prototype._setFocus2LineItem(this.sFocusId);
+					sap.m.UploadCollection.prototype._setFocusToLineItem(this.sFocusId);
 					this.sFocusId = null;
 				} else if (this.sDeletedItemId) {
 					//set focus on line item after an item was deleted
-					sap.m.UploadCollection.prototype._setFocusAfterDeletion(this.sDeletedItemId, that);
+					this._setFocusAfterDeletion();
 				}
 			}
-		} else {
-			if (this.sFocusId) {
-				//set focus after removal of file from upload list
-				sap.m.UploadCollection.prototype._setFocus2LineItem(this.sFocusId);
-				this.sFocusId = null;
-			}
+		} else if (this.sFocusId) {
+			//set focus after removal of file from upload list
+			this._setFocusToLineItem(this.sFocusId);
+			this.sFocusId = null;
 		}
 	};
 
@@ -2982,49 +2980,40 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		oEvent.setMarked();
 	};
 
-	// ================================================================================
-	// helpers
-	// ================================================================================
-	/**
-	 * @description Set the focus after the list item was deleted.
-	 * @param {Object} DeletedItemId ListItem id which was deleted
-	 * @param {Object} oContext Context of the ListItem which was deleted
-	 * @returns {void}
-	 * @private
-	 */
-	UploadCollection.prototype._setFocusAfterDeletion = function(DeletedItemId, oContext) {
-		if (!DeletedItemId) {
-			return;
-		}
-		var iLength = oContext.aItems.length;
-		var sLineId = null;
+		// ================================================================================
+		// helpers
+		// ================================================================================
+		/**
+		 *  Set the focus after the list item was deleted.
+		 * @private
+		 */
+		UploadCollection.prototype._setFocusAfterDeletion = function() {
+			var iLength = this.aItems.length;
+			var sLineId ;
 
-		if (iLength === 0){
-			var oFileUploader = jQuery.sap.byId(oContext._oFileUploader.sId);
-			var oFocusObj = oFileUploader.find(":button");
-			jQuery.sap.focus(oFocusObj);
-		} else {
-			var iLineNumber = DeletedItemId.split("-").pop();
-			//Deleted item is not the last one of the list
-			if ((iLength - 1) >= iLineNumber) {
-				sLineId = DeletedItemId + "-cli";
+			if (iLength === 0){
+				this._oFileUploader.focus();
 			} else {
-				sLineId = oContext.aItems.pop().sId + "-cli";
+				var iLineNumber = this.sDeletedItemId.split("-").pop();
+				//Deleted item is not the last one of the list
+				if ((iLength - 1) >= iLineNumber) {
+					sLineId = this.sDeletedItemId + "-cli";
+				} else {
+					sLineId = this.aItems.pop().sId + "-cli";
+				}
+				this._setFocusToLineItem(sLineId);
+				}this.sDeletedItemId = null;
 			}
-			sap.m.UploadCollection.prototype._setFocus2LineItem(sLineId);
-			this.sDeletedItemId = null;
-		}
-	};
+		;
 
-	/**
-	 * @description Set the focus to the list item.
-	 * @param {string} sFocusId ListItem which should get the focus
-	 * @returns {void}
-	 * @private
-	 */
-	UploadCollection.prototype._setFocus2LineItem = function(sFocusId) {
-		jQuery.sap.byId(sFocusId).focus();
-	};
+		/**
+		 *  Set the focus to the list item.
+		 * @param {string} itemId ListItem which should get the focus
+		 * @private
+		 */
+		UploadCollection.prototype._setFocusToLineItem = function(itemId) {
+			jQuery.sap.byId(itemId).focus();
+		};
 
 	/**
 	 * @description Handle of keyboard activity ENTER.
