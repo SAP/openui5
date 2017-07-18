@@ -201,6 +201,7 @@ sap.ui.require([
 		{sType : "Edm.Boolean"},
 		{sType : "Edm.Binary"},
 		{sType : "Edm.Byte"},
+		{sType : "Edm.Decimal"},
 		{sType : "Edm.Double", sConvertMethod : "convertDoubleFloatSingle"},
 		{sType : "Edm.Guid"},
 		{sType : "Edm.Int16"},

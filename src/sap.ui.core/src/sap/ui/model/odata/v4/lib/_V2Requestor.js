@@ -134,6 +134,7 @@ sap.ui.define([
 			case "Edm.Binary": // no conversion
 			case "Edm.Boolean":
 			case "Edm.Byte":
+			case "Edm.Decimal":
 			case "Edm.Guid":
 			case "Edm.Int16":
 			case "Edm.Int32":
