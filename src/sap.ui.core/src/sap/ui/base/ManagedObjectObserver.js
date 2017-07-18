@@ -5,7 +5,7 @@
 // Provides class sap.ui.base.ManagedObjectObserver.
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject', 'jquery.sap.script'
-], function(jQuery, BaseObject, ManagedObject/*, jQuerySap1*/) {
+], function (jQuery, BaseObject, ManagedObject/*, jQuerySap1*/) {
 	"use strict";
 
 	/**
@@ -71,7 +71,7 @@ sap.ui.define([
 	 * @alias sap.ui.base.ManagedObjectObserver
 	 */
 	var ManagedObjectObserver = BaseObject.extend("sap.ui.base.ManagedObjectObserver", {
-		constructor: function(fnCallback) {
+		constructor: function (fnCallback) {
 			if (!fnCallback && typeof fnCallback !== "function") {
 				throw new Error("Missing callback function in ManagedObjectObserver constructor");
 			}
@@ -99,10 +99,10 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.model.base
 	 */
-	ManagedObjectObserver.prototype.observe = function(oObject, oConfiguration) {
+	ManagedObjectObserver.prototype.observe = function (oObject, oConfiguration) {
 		if (!(oObject instanceof ManagedObject)) {
 			// silently ignore calls with null or undefined
-			if ( oObject == null ) {
+			if (oObject == null) {
 				return;
 			}
 			throw new TypeError("ManagedObjectObserver can only handle ManagedObjects, but observe was called for " + oObject);
@@ -128,10 +128,10 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.model.base
 	 */
-	ManagedObjectObserver.prototype.unobserve = function(oObject, oConfiguration) {
+	ManagedObjectObserver.prototype.unobserve = function (oObject, oConfiguration) {
 		if (!(oObject instanceof ManagedObject)) {
 			// silently ignore calls with null or undefined
-			if ( oObject == null ) {
+			if (oObject == null) {
 				return;
 			}
 			throw new TypeError("ManagedObjectObserver can only handle ManagedObjects, but unobserve was called for " + oObject);
@@ -159,10 +159,10 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.model.base
 	 */
-	ManagedObjectObserver.prototype.isObserved = function(oObject, oConfiguration) {
+	ManagedObjectObserver.prototype.isObserved = function (oObject, oConfiguration) {
 		if (!(oObject instanceof ManagedObject)) {
 			// silently ignore calls with null or undefined
-			if ( oObject == null ) {
+			if (oObject == null) {
 				return false;
 			}
 			throw new TypeError("ManagedObjectObserver can only handle ManagedObjects, but isObserved was called for " + oObject);
@@ -175,7 +175,7 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.model.base
 	 */
-	ManagedObjectObserver.prototype.disconnect = function() {
+	ManagedObjectObserver.prototype.disconnect = function () {
 		destroy(this);
 	};
 
@@ -195,9 +195,9 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.base.ManagedObject
 	 */
-	Observer.propertyChange = function(oManagedObject, sName, vOld, vNew) {
+	Observer.propertyChange = function (oManagedObject, sName, vOld, vNew) {
 		// managed object does a propertyChange.call(this, sName, vOld, vNew)
-		handleChange("properties", oManagedObject, sName, function() {
+		handleChange("properties", oManagedObject, sName, function () {
 			return {
 				type: "property",
 				old: vOld,
@@ -216,9 +216,9 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.base.ManagedObject
 	 */
-	Observer.aggregationChange = function(oManagedObject, sName, sMutation, vObjects) {
+	Observer.aggregationChange = function (oManagedObject, sName, sMutation, vObjects) {
 		// managed object does an aggregationChange.call(this, sName, sMutation, vObjects)
-		handleChange("aggregations", oManagedObject, sName, function() {
+		handleChange("aggregations", oManagedObject, sName, function () {
 			return {
 				type: "aggregation",
 				mutation: sMutation,
@@ -238,9 +238,9 @@ sap.ui.define([
 	 * @private
 	 * @sap-restricted sap.ui.base.ManagedObject
 	 */
-	Observer.associationChange = function(oManagedObject, sName, sMutation, vIds) {
+	Observer.associationChange = function (oManagedObject, sName, sMutation, vIds) {
 		// managed object does an associationChange.call(this, sName, sMutation, vIds)
-		handleChange("associations", oManagedObject, sName, function() {
+		handleChange("associations", oManagedObject, sName, function () {
 			return {
 				type: "association",
 				mutation: sMutation,
@@ -343,9 +343,9 @@ sap.ui.define([
 			return false;
 		} else {
 			//make a subset check
-			return isSubArray(oTargetConfig.configurations[iIndex].properties,oConfiguration.properties) &&
-			isSubArray(oTargetConfig.configurations[iIndex].aggregations,oConfiguration.aggregations) &&
-			isSubArray(oTargetConfig.configurations[iIndex].associations,oConfiguration.associations);
+			return isSubArray(oTargetConfig.configurations[iIndex].properties, oConfiguration.properties) &&
+				isSubArray(oTargetConfig.configurations[iIndex].aggregations, oConfiguration.aggregations) &&
+				isSubArray(oTargetConfig.configurations[iIndex].associations, oConfiguration.associations);
 
 		}
 	}
@@ -353,7 +353,7 @@ sap.ui.define([
 	// removes a given listener by looking at all registered targets and their listeners.
 	// if there are no more listeners to a target, the registered target is removed from the mTargets map.
 	function destroy(oListener) {
-		for ( var n in mTargets) {
+		for (var n in mTargets) {
 			var oTargetConfig = mTargets[n];
 			for (var i = 0; i < oTargetConfig.listeners.length; i++) {
 				if (oTargetConfig.listeners[i] === oListener) {
@@ -370,8 +370,13 @@ sap.ui.define([
 
 	// update a complete configuration
 	function updateConfiguration(oCurrentConfig, oAdditionalConfig, bRemove) {
+		oCurrentConfig.properties = oCurrentConfig.properties || [];
 		updateSingleArray(oCurrentConfig.properties, oAdditionalConfig.properties, bRemove);
+
+		oCurrentConfig.aggregations = oCurrentConfig.aggregations || [];
 		updateSingleArray(oCurrentConfig.aggregations, oAdditionalConfig.aggregations, bRemove);
+
+		oCurrentConfig.associations = oCurrentConfig.associations || [];
 		updateSingleArray(oCurrentConfig.associations, oAdditionalConfig.associations, bRemove);
 	}
 
@@ -381,8 +386,6 @@ sap.ui.define([
 			return;
 		}
 
-		aOrig = aOrig || [];
-
 		for (var i = 0; i < aAdditional.length; i++) {
 			var iIndex = aOrig.indexOf(aAdditional[i]);
 			if (iIndex > -1 && bRemove) {
@@ -390,22 +393,21 @@ sap.ui.define([
 			} else if (iIndex === -1 && !bRemove) {
 				aOrig.push(aAdditional[i]);
 			}
-
 		}
 	}
 
-	function isSubArray(aFullArray,aSubArray) {
-		if ( !Array.isArray(aSubArray) || aSubArray.length == 0 ) {
+	function isSubArray(aFullArray, aSubArray) {
+		if (!Array.isArray(aSubArray) || aSubArray.length == 0) {
 			// empty array is contained in 'anything'
 			return true;
 		}
 
-		if ( !Array.isArray(aFullArray) || aFullArray.length == 0 ) {
+		if (!Array.isArray(aFullArray) || aFullArray.length == 0) {
 			// empty array contains no other (non-empty) array
 			return false;
 		}
 
-		var aUnion = jQuery.sap.unique( aFullArray.concat(aSubArray) ); // merge arrays, remove duplicates
+		var aUnion = jQuery.sap.unique(aFullArray.concat(aSubArray)); // merge arrays, remove duplicates
 
 		//in case aSubArray is inside aFullArray the length did not change
 		return aFullArray.length === aUnion.length;
@@ -416,7 +418,7 @@ sap.ui.define([
 	function normalizeConfiguration(oObject, oConfiguration) {
 		var oMetadata = oObject.getMetadata();
 
-		oConfiguration.properties   = oConfiguration.properties === true   ? Object.keys(oMetadata.getAllProperties()) : oConfiguration.properties;
+		oConfiguration.properties = oConfiguration.properties === true ? Object.keys(oMetadata.getAllProperties()) : oConfiguration.properties;
 		oConfiguration.aggregations = oConfiguration.aggregations === true ? Object.keys(oMetadata.getAllAggregations()) : oConfiguration.aggregations;
 		oConfiguration.associations = oConfiguration.associations === true ? Object.keys(oMetadata.getAllAssociations()) : oConfiguration.associations;
 	}
