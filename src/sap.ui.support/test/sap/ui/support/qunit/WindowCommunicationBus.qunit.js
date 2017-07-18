@@ -85,19 +85,4 @@
 			this.channelName = null;
 		}
 	});
-
-	QUnit.test('Calling publish of the communication bus', function (assert) {
-		// arrange
-		var done = assert.async();
-		var subscribedFunction = function () {
-			// assert
-			assert.ok(true, 'Should call the subscribed function');
-			done();
-		};
-
-		this.communicationBus.subscribe(this.channelName, subscribedFunction, {id: 'testScope'});
-
-		// act
-		this.communicationBus.publish(this.channelName, null);
-	});
 }());
