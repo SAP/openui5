@@ -436,7 +436,8 @@
 			"sap.m.sample.UploadCollection",
 			"sap.m.sample.UploadCollectionForPendingUpload",
 			"sap.m.sample.UploadCollectionVersioning",
-			"sap.m.sample.UploadCollectionSortingFiltering"
+			"sap.m.sample.UploadCollectionSortingFiltering",
+			"sap.m.sample.UploadCollectionFolderHierarchy"
 		  ]
 		},
 		{
@@ -2559,6 +2560,11 @@
 		  "id": "sap.m.sample.UploadCollectionSortingFiltering",
 		  "name": "With Grouping, Sorting and Filtering Feature",
 		  "description": "Shows the UploadCollection with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
+		},
+		{
+		  "id": "sap.m.sample.UploadCollectionFolderHierarchy",
+		  "name": "Upload Collection with Folder Hierarchy",
+		  "description": "Shows the UploadCollection with a navigable folder structure."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
