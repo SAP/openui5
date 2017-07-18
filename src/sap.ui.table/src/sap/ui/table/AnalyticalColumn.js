@@ -256,7 +256,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library', 'sap/ui/core/Elemen
 	};
 
 	AnalyticalColumn.prototype.shouldRender = function() {
-		if (!this.getVisible()) {
+		if (!this.getVisible() || this.getTemplate() == null) {
 			return false;
 		}
 		return (!this.getGrouped() || this._bLastGroupAndGrouped || this.getShowIfGrouped()) && (!this._bDependendGrouped || this._bLastGroupAndGrouped);
