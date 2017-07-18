@@ -27,7 +27,8 @@ sap.ui.define(["jquery.sap.global",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
 		types: [
-			"sap.f.LayoutType"
+			"sap.f.LayoutType",
+			"sap.f.DynamicPageTitleArea"
 		],
 		controls: [
 			"sap.f.Avatar",
@@ -62,6 +63,34 @@ sap.ui.define(["jquery.sap.global",
 			"sap.f.semantic.TitleMainAction"
 		]
 	});
+
+
+	/**
+	* Defines the areas within the <code>sap.f.DynamicPageTitle</code>.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.50
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	sap.f.DynamicPageTitleArea = {
+		/**
+		* The area includes the <code>heading<code>, <code>expandedContent<code> and <code>snappedContent<code> aggregations,
+		* positioned in the beginning area of the {@link sap.f.DynamicPageTitle}.
+		*
+		* @public
+		*/
+		Begin: "Begin",
+
+		/**
+		* The area includes the <code>content<code> aggregation,
+		* positioned in the middle part of the {@link sap.f.DynamicPageTitle}.
+		*
+		* @public
+		*/
+		Middle: "Middle"
+	};
+
 
 	/**
 	 * Layouts, representing the number of columns to be displayed and their relative widths for a {@link sap.f.FlexibleColumnLayout} control.

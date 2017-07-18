@@ -324,7 +324,41 @@
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "Action removed successfully");
 	});
 
-	/* --------------------------- DynamicPage Title API ---------------------------------- */
+	QUnit.test("test primaryArea", function (assert) {
+		var oDynamicPageTitle = this.oDynamicPageTitle,
+			$beginArea = oDynamicPageTitle.$beginArea,
+			$middleArea = oDynamicPageTitle.$middleArea,
+			sBeginArea = sap.f.DynamicPageTitleArea.Begin,
+			sMiddleArea = sap.f.DynamicPageTitleArea.Middle;
+
+		// Assert default: primary area is "Begin"
+		assert.equal(oDynamicPageTitle.getPrimaryArea(), sBeginArea, "is the default one");
+		assert.equal($beginArea.hasClass("sapFDynamicPageTitleAreaHighPriority"), true,
+			"The DynamicPageTitle" + sBeginArea + "  area is high priority");
+		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
+			"The DynamicPageTitle" + sMiddleArea + "  area is low priority");
+
+		// Action: Change primary area to "Middle"
+		oDynamicPageTitle.setPrimaryArea(sMiddleArea);
+
+		// Assert
+		assert.equal($beginArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
+			"The DynamicPageTitle" + sBeginArea + " low priority");
+		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaHighPriority"), true,
+			"The DynamicPageTitle" + sMiddleArea + " area has high priority");
+
+		// Action: Change primary area back to "Begin"
+		oDynamicPageTitle.setPrimaryArea(sBeginArea);
+
+		// Assert
+		assert.equal($beginArea.hasClass("sapFDynamicPageTitleAreaHighPriority"), true,
+			"The DynamicPageTitle" + sBeginArea + "  area is high priority");
+		assert.equal($middleArea.hasClass("sapFDynamicPageTitleAreaLowPriority"), true,
+			"The DynamicPageTitle" + sMiddleArea + "  area is low priority");
+	});
+
+
+	/* --------------------------- DynamicPage Header API ---------------------------------- */
 	QUnit.module("DynamicPage Header - API ", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPage();
