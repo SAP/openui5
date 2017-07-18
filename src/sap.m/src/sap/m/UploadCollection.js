@@ -2009,7 +2009,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 			var sCompact = "";
 			var sFileName;
 			var sMessageText;
-			oContext.sDeletedItemId = sItemId;
+
 			for (var i = 0; i < aItems.length; i++) {
 				if (aItems[i].sId === sItemId) {
 					iIndex = i;
@@ -2020,6 +2020,11 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 					break;
 				}
 			}
+			if (aItems[iIndex].hasListeners("deletePress")) {
+				aItems[iIndex].fireDeletePress();
+				return;
+			}
+			oContext.sDeletedItemId = sItemId;
 			if (jQuery.sap.byId(oContext.sId).hasClass("sapUiSizeCompact")) {
 				sCompact = "sapUiSizeCompact";
 			}
