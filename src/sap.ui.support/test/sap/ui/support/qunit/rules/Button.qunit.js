@@ -38,11 +38,11 @@ sap.ui.require(["jquery.sap.global"], function (jQuery) {
 		}
 	});
 
-	testRule({
-		executionScopeType: "subtree",
-		executionScopeSelectors: "buttonTestsContext",
-		libName: "sap.m",
-		ruleId: "onlyIconButtonNeedsTooltip",
-		expectedNumberOfIssues: 1
-	});
+	// testRule({
+	// 	executionScopeType: "subtree",
+	// 	executionScopeSelectors: "buttonTestsContext",
+	// 	libName: "sap.m",
+	// 	ruleId: "onlyIconButtonNeedsTooltip",
+	// 	expectedNumberOfIssues: 1
+	// });
 });
