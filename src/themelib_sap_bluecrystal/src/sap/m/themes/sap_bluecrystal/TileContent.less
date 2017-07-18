@@ -4,15 +4,31 @@
 /* Footer CSS */
 .sapMTileCntFtrTxt {
 	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMTileCntFooterTextColorNeutral {
 	color: @sapUiTileTextColor;
 }
 
-.sapMTileCntFtrTxt {
-	font-size: @sapMFontMediumSize;
+.sapMTileCntFooterTextColorGood {
+	color: @sapUiPositiveText;
+}
+
+.sapMTileCntFooterTextColorError {
+	color: @sapUiNegativeText;
+}
+
+.sapMTileCntFooterTextColorCritical {
+	color: @sapUiCriticalText;
 }
 
 .sapMTileCnt.News {
 	background-color: fade(@sapUiLightestBG, 60);
+}
+
+.sapMTileCnt.News .sapMTileCntFtrTxt {
+	color: @sapUiTileTextColor;
 }
 
 /* BREAKPOINT FOR SMALL PHONES */
