@@ -58,7 +58,7 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (event) {
 				var topicId = event.getParameter("arguments").id,
-					topicURL = this._oConfig.docuPath + topicId + ".html",
+					topicURL = this._oConfig.docuPath + topicId + (topicId.match(/\.html/) ? "" : ".html"),
 					htmlContent = jQuery.sap.syncGetText(topicURL).data,
 					jsonObj;
 
