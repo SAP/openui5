@@ -674,48 +674,4 @@ Simple Syntax Highlighter
   color: #c26230;
 }
 
-/*******************************************************************************
-Logo page styles
-*******************************************************************************/
-
-.headlineLogo{
-  font-weight: bold;
-}
-
-.newLogoOnly{
-  height: 250px;
-  padding: 30px 20px 20px 50px;
-}
-
-.wrapperColorSpecs{
-  width: 700px; 
-  height: 40px; 
-  overflow: hidden;
-}
-
-.colorSpecsHead{
-  width: 180px; 
-  height: 60px; 
-  float:left;
-  text-align: center;
-}
-
-.colorSpecsFront{
-  width: 100px;
-  height: 60px;
-  float:left;
-  text-align: center; 
-  vertical-align: middle; 
-  line-height: 40px;
-}
-
-.colorSpecs{
-  width: 180px;
-  height: 60px;
-  float:left;
-  text-align: center; 
-  vertical-align: middle; 
-  line-height: 40px;
-}
-
 

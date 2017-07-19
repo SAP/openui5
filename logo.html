@@ -6,6 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 		<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/logo.css">
 		<link rel="icon"
 			type="image/png"
 			href="images/favicon.ico">
@@ -95,38 +96,39 @@
 					
 					<p>The <span class="strong">OpenUI5</span> logo comes in 2 flavors: Fire and Water.<br/>
 					The orange logo sits on black background, blue stands on white.</p>
-					<a href="resources/OpenUI5_newlogo_orange_only.png"><img src="resources/OpenUI5_newlogo_orange_only.png" class="newLogoOnly"/></a>
-					<a href="resources/OpenUI5_newlogo_blue_only.png"><img src="resources/OpenUI5_newlogo_blue_only.png" class="newLogoOnly"/></a>
-					
+					<div class="logo-flex-container">
+						<div class="logo-flex-item ui5-logo-new">
+							<img src="resources/OpenUI5_newlogo_orange_only.png"/>
+						</div>
+						<div class="logo-flex-item ui5-logo-new">
+							<img src="resources/OpenUI5_newlogo_blue_only.png"/>
+						</div>
+
+					</div>
 					<h3 class="headlineLogo">Colors: 2 Color Tracks</h3>
 					
 					<p>Main and Secondary colors are mostly meant for additional elements (e.g. header in a presentation, sticker on an image).<br/>
 					You can use them as background colors only if the logo is single colored (black for orange and white for blue).<br/>
 					Both tracks could be combined with neutral greys.</p>
 					
-					<div class="wrapperColorSpecs">
-						<div style="width: 120px; height: 100px; float:left;"></div>
-						<div class="colorSpecsHead">Main</div>
-						<div class="colorSpecsHead">Secondary</div>
-						<div class="colorSpecsHead">Background</div>
+					<div class="color-flex-container color-table_header">
+						<div class="color-table-block color-flex-title"></div>
+						<div class="color-table-block color-flex-item">Main</div>
+						<div class="color-table-block color-flex-item">Secondary</div>
+						<div class="color-table-block color-flex-item">Background</div>
 					</div>
 					
-					<div class="wrapperColorSpecs">
-						<div class="colorSpecsFront">Fire:</div>
-						<div style="width: 20px; height: 60px; float:left;"></div>
-						<div class="colorSpecs" style="background-color: #FF5A37;">#FF5A37</div>
-						<div class="colorSpecs" style="background-color: #FFA42C;">#FFA42C</div>
-						<div class="colorSpecs" style="background-color: #000000; color: #FFFFFF;">#000000</div>
+					<div class=" color-flex-container">
+						<div class="color-table-block color-flex-title">Fire:</div>
+						<div class="color-table-block color-flex-item" style="background-color: #FF5A37;">#FF5A37</div>
+						<div class="color-table-block color-flex-item" style="background-color: #FFA42C;">#FFA42C</div>
+						<div class="color-table-block color-flex-item" style="background-color: #000000; color: #FFFFFF;">#000000</div>
 					</div>
-					
-					<div style="width: 700px; height: 20px;"></div>
-					
-					<div class="wrapperColorSpecs">
-						<div class="colorSpecsFront">Water:</div>
-						<div style="width: 20px; height: 60px; float:left;"></div>
-						<div class="colorSpecs" style="background-color: #1873B4;">#1873B4</div>
-						<div class="colorSpecs" style="background-color: #53B8DE;">#53B8DE</div>
-						<div class="colorSpecs" style="background-color: #FFFFFF;">#FFFFFF</div>
+					<div class=" color-flex-container">
+						<div class="color-table-block color-flex-title">Water:</div>
+						<div class="color-table-block color-flex-item" style="background-color: #1873B4;">#1873B4</div>
+						<div class="color-table-block color-flex-item" style="background-color: #53B8DE;">#53B8DE</div>
+						<div class="color-table-block color-flex-item" style="background-color: #FFFFFF;">#FFFFFF</div>
 					</div>
 					
 					<div style="height: 20px;"></div>
@@ -136,11 +138,25 @@
 					<p>Depending on the context, you have two layout options - horizontal and vertical.<br/>
 						Download the different versions in the Assets section below.</p>
 
-					<a href="resources/OpenUI5_newlogo_orange_horizontal.png"><img src="resources/OpenUI5_newlogo_orange_horizontal.png" style="width: 40%; padding: 10px 0px 0px 50px;"/></a>
-					<a href="resources/OpenUI5_newlogo_blue_horizontal.png"><img src="resources/OpenUI5_newlogo_blue_horizontal.png" style="width: 40%; padding: 10px 0px 0px 0px;"/></a>
-					<a href="resources/OpenUI5_newlogo_orange_vertical.png"><img src="resources/OpenUI5_newlogo_orange_vertical.png" style="width: 40%; padding: 0px 0 10px 50px;"/></a>
-					<a href="resources/OpenUI5_newlogo_blue_vertical.png"><img src="resources/OpenUI5_newlogo_blue_vertical.png" style="width: 40%; padding: 0px 0 10px 0px;"/></a>
-					
+					<div class="logo-flex-container">
+						<div class="logo-flex-item">
+							<a href="resources/OpenUI5_newlogo_orange_horizontal.png" class="logo-image-link">
+								<img src="resources/OpenUI5_newlogo_orange_horizontal.png" />
+							</a>
+							<a href="resources/OpenUI5_newlogo_orange_vertical.png" class="logo-image-link">
+								<img src="resources/OpenUI5_newlogo_orange_vertical.png" />
+							</a>
+						</div>
+						<div  class="logo-flex-item">
+							<a href="resources/OpenUI5_newlogo_blue_horizontal.png" class="logo-image-link">
+								<img src="resources/OpenUI5_newlogo_blue_horizontal.png" />
+							</a>
+							<a href="resources/OpenUI5_newlogo_blue_vertical.png" class="logo-image-link">
+								<img src="resources/OpenUI5_newlogo_blue_vertical.png" />
+							</a>
+						</div>
+					</div>
+
 					<h3 class="headlineLogo">Assets</h3>
 					
 					<h4>Web:</h4>
