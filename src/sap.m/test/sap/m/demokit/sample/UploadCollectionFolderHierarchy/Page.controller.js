@@ -1,9 +1,10 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/m/MessageToast",
+	"sap/m/MessageBox",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, MessageToast, Controller, JSONModel) {
+], function(jQuery, MessageToast, MessageBox, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.UploadCollectionFolderHierarchy.Page", {
@@ -76,6 +77,21 @@ sap.ui.define([
 			}
 		},
 
+		onFolderDeletePress: function(event) {
+			var oItem = event.getSource();
+			var sFolderName = oItem.getFileName();
+			MessageBox.show("Are you sure you want to delete '" +  sFolderName + "'?", {
+				title: "Delete Folder",
+				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+				onClose: function(oAction) {
+					if (oAction === MessageBox.Action.OK) {
+						this.deleteItemByPath(oItem.getBindingContext().sPath);
+					}
+				}.bind(this),
+				dialogId: "messageBoxDeleteFolder"
+			});
+		},
+
 		onBreadcrumbPress: function(event) {
 			var oLink = event.getSource();
 			var iIndex = this.oBreadcrumbs.indexOfLink(oLink);
@@ -112,10 +128,32 @@ sap.ui.define([
 
 			if (context.getProperty("type") === "folder") {
 				oItem.attachPress(this.onFolderPress, this);
+				oItem.attachDeletePress(this.onFolderDeletePress, this);
 			}
 			return oItem;
 		},
 
+		/**
+		 * Deletes the item in the data model by using the binding path of the item
+		 *
+		 * @param {string} sItemPath The binding path of the item
+		 */
+		deleteItemByPath: function(sItemPath) {
+			var sCurrentPath = this.getCurrentFolderPath();
+			var oData = this.oModel.getProperty(sCurrentPath);
+			var aItems = oData && oData.items;
+			var oItemData = this.oModel.getProperty(sItemPath);
+			if (oItemData && aItems) {
+				aItems.splice(aItems.indexOf(oItemData), 1);
+				this.oModel.setProperty(sCurrentPath + "/items", aItems);
+			}
+		},
+
+		/**
+		 * Deletes the item in the data model by using the item document id
+		 *
+		 * @param {string} sItemToDeleteId The document id of the item
+		 */
 		deleteItemById: function(sItemToDeleteId){
 			var sCurrentPath = this.getCurrentFolderPath();
 			var oData = this.oModel.getProperty(sCurrentPath);

@@ -514,12 +514,33 @@
 			assert.equal(oSpyGetter.callCount, 1, "_getFileNameLink on oItem object was called once");
 			assert.equal(oFileName.mEventRegistry.press.length, 1, "One press handler attached in case the function is called more times");
 		});
+
+		QUnit.test("Delete press event is fired", function(assert) {
+			//Arrange
+			var bDeleteButtonPressed = false;
+			var oItem = new sap.m.UploadCollectionItem({
+				fileName: "anyFileName",
+				deletePress: function() {
+					bDeleteButtonPressed = true;
+				}
+			});
+			this.oUploadCollection.insertItem(oItem);
+			sap.ui.getCore().applyChanges();
+			var oButton = oItem._getDeleteButton();
+			//Act
+			oButton.firePress();
+			//Assert
+			assert.equal(bDeleteButtonPressed, true, "Delete press event is fired");
+		});
+
 		QUnit.test("Custom event on FileNameLink press", function(assert) {
 			//Arrange
 			var bLinkPressed = false;
 			var oItem = new sap.m.UploadCollectionItem({
 				fileName: "anyFileName",
-				press: function() { bLinkPressed = true }
+				press: function() {
+					bLinkPressed = true;
+				}
 			});
 			sap.ui.getCore().applyChanges();
 			//Act
@@ -528,6 +549,7 @@
 			//Assert
 			assert.equal(bLinkPressed, true, "Custom event triggered on FileNameLink press");
 		});
+
 		QUnit.test("Default event on FileNameLink press", function(assert) {
 			//Arrange
 			var oStub = sinon.stub(this.oUploadCollection, "_triggerLink");
@@ -544,6 +566,7 @@
 			//Cleanup
 			oStub.restore();
 		});
+
 		QUnit.test("Check if _createIcon returns Icon or Image", function(assert) {
 			//Arrange
 			var oItem = new sap.m.UploadCollectionItem({

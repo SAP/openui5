@@ -239,10 +239,17 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/
 					 * This event is triggered when the user presses the filename link.
 					 * If this event is provided, it overwrites the default behavior of opening the file.
 					 *
-					 * @public
 					 * @since 1.50
 					 */
-					press: {}
+					press: {},
+
+					/**
+					 * When a deletePress event handler is attached to the item and the user presses the delete button, this event is triggered.
+					 * If this event is triggered, it overwrites the default delete behavior of UploadCollection and the fileDeleted event of UploadCollection is not triggered.
+					 *
+					 * @since 1.50
+					 */
+					deletePress: {}
 				}
 			}
 		});
