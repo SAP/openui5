@@ -4,6 +4,7 @@
 	"use strict";
 
 	jQuery.sap.require("sap.ui.fl.variants.VariantManagement");
+	jQuery.sap.require("sap.ui.fl.variants.VariantModel");
 	jQuery.sap.require("sap.ui.layout.Grid");
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 
@@ -28,7 +29,7 @@
 				variantMgmtId: "0"
 			});
 
-			oModel = new sap.ui.model.json.JSONModel([
+			oModel = new sap.ui.fl.variants.VariantModel([
 				{
 					defaultVariant: "Standard",
 					currentVariant: "Standard",
@@ -38,8 +39,6 @@
 							key: "Standard",
 							title: "Standard",
 							author: "A",
-							originalTitle: "Standard",
-							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
 							originalFavorite: true
@@ -47,8 +46,6 @@
 							key: "1",
 							title: "One",
 							author: "A",
-							originalTitle: "One",
-							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
 							originalFavorite: true
@@ -56,8 +53,6 @@
 							key: "2",
 							title: "Two",
 							author: "V",
-							originalTitle: "Two",
-							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
 							originalFavorite: true
@@ -65,8 +60,6 @@
 							key: "3",
 							title: "Three",
 							author: "U",
-							originalTitle: "Three",
-							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
 							originalFavorite: true
@@ -74,8 +67,6 @@
 							key: "4",
 							title: "Four",
 							author: "Z",
-							originalTitle: "Four",
-							toBeDeleted: false,
 							readOnly: true,
 							favorite: true,
 							originalFavorite: true
