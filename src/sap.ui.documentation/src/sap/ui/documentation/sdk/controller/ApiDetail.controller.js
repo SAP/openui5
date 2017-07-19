@@ -489,6 +489,7 @@ sap.ui.define([
 			 * @returns {Array} - the adjusted array
 			 */
 			buildMethodsModel: function (methods) {
+				var bIsInternalVersion = this.getOwnerComponent().isInternalVersion();
 
 				// No methods, do nothing
 				if (!methods.length) {
@@ -496,7 +497,7 @@ sap.ui.define([
 				}
 
 				var result = methods.filter(function (method) {
-					return method.visibility !== "restricted";
+					return bIsInternalVersion ? true : method.visibility !== "restricted";
 				}).map(function (method) {
 					var subParameters = [];
 					method.parameters = method.parameters || [];

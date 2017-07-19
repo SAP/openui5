@@ -148,6 +148,9 @@ sap.ui.define([
 				return this._modelsPromise;
 			},
 
+			isInternalVersion : function() {
+				return /internal/i.test(sap.ui.getVersionInfo().name);
+			},
 
 			_parseLibraryElements : function (aLibraryElementsJSON) {
 
@@ -247,7 +250,8 @@ sap.ui.define([
 			},
 
 			_addDeprecatedAndExperimentalData : function(oLibsData) {
-				var sWithoutVersion = "Without Version";
+				var sWithoutVersion = "Without Version",
+					bIsInternalVersion = this.isInternalVersion();
 
 				oLibsData.deprecated = {
 					noVersion : {
@@ -304,6 +308,12 @@ sap.ui.define([
 					var sLib = oLibsData[sLibName];
 
 					sLib.methods && sLib.methods.forEach(function(oMethod) {
+						var bIsMethodRestricted = oMethod.visibility === "restricted";
+
+						if (bIsMethodRestricted && !bIsInternalVersion) {
+							return; /* exclude restricted methods from non-internal version */
+						}
+
 						if (oMethod.deprecated) {
 							addData("deprecated", oMethod, "methods", sLib.name);
 						}
