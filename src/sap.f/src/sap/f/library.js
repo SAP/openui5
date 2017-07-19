@@ -61,7 +61,16 @@ sap.ui.define(["jquery.sap.global",
 			"sap.f.semantic.SendMessageAction",
 			"sap.f.semantic.ShareInJamAction",
 			"sap.f.semantic.TitleMainAction"
-		]
+		],
+		extensions: {
+            flChangeHandlers: {
+				"sap.f.DynamicPageHeader" : {
+					"hideControl": "default",
+					"unhideControl": "default",
+					"moveControls": "default"
+				}
+			}
+		}
 	});
 
 
