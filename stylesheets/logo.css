@@ -23,6 +23,10 @@
 	margin-bottom: 20px;
 }
 
+.padding-bottom {
+	padding-bottom: 20px;
+}
+
 .logo-image-link > img {
 	display: inline-block;
 	margin: -4px;
@@ -69,7 +73,6 @@
 		display: block;
 	}
 }
-
 
 @media (max-width: 400px) {
 	.logo-flex-container {
