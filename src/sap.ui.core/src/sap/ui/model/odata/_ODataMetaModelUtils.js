@@ -11,6 +11,13 @@ sap.ui.define([
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
+		// maps V2 sap:semantics value for a date part to corresponding V4 term relative to
+		// com.sap.vocabularies.Common.v1.
+		mDatePartSemantics2CommonTerm = {
+			"year" : "IsCalendarYear",
+			"yearmonth" : "IsCalendarYearMonth",
+			"yearmonthday" : "IsCalendarDate"
+		},
 		// maps V2 filter-restriction value to corresponding V4 FilterExpressionType enum value
 		mFilterRestrictions = {
 			"interval" : "SingleInterval",
@@ -259,6 +266,12 @@ sap.ui.define([
 						sV4TypeList;
 
 					if (!sV2Semantics) {
+						return;
+					}
+					if (sV2Semantics in mDatePartSemantics2CommonTerm) {
+						sV4Annotation = "com.sap.vocabularies.Common.v1."
+							+ mDatePartSemantics2CommonTerm[sV2Semantics];
+						oProperty[sV4Annotation] = oBoolTrue;
 						return;
 					}
 					aMatches = rSemanticsWithTypes.exec(sV2Semantics);

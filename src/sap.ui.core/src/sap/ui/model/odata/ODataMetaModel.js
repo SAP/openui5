@@ -125,7 +125,9 @@ sap.ui.define([
 	 * <li>"body", "from", "received", "sender" and "subject" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
 	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to V4 annotation
-	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
+	 * <code>com.sap.vocabularies.Communication.v1.Task</code>);</li>
+	 * <li>"year", "yearmonth", "yearmonthday" (mapped to the corresponding V4 annotation
+	 * <code>com.sap.vocabularies.Common.v1.IsCalendar(Year|YearMonth|Date)</code>).</li>
 	 * </ul>
 	 * </ul>
 	 * For example:

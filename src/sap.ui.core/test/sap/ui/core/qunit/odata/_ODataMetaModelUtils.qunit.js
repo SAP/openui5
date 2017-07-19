@@ -621,6 +621,39 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		semantics : "year",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYear"
+	}, {
+		semantics : "yearmonth",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYearMonth"
+	}, {
+		semantics : "yearmonthday",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarDate"
+	}].forEach(function (oFixture) {
+		var sSemantics = oFixture.semantics,
+			sTerm = oFixture.term;
+
+		QUnit.test("addSapSemantics: " + sSemantics, function (assert) {
+			var oType = {
+					"name" : "Type",
+					"property" : [{
+						"name" : "Property",
+						"sap:semantics" : sSemantics,
+						"type" : "Edm.String",
+					}]
+				},
+				oExpectedResult = clone(oType);
+
+			// code under test
+			Utils.addSapSemantics(oType);
+
+			oExpectedResult.property[0][sTerm] = {"Bool" : "true"};
+			assert.deepEqual(oType, oExpectedResult);
+		});
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
 		QUnit.test("addSapSemantics: unsupported sap:semantics, log = " + bIsLoggable,
 			function (assert) {
