@@ -267,28 +267,22 @@ sap.ui.require([
 					"author": "SAP",
 					"key": "variantMgmtId1",
 					"layer": "VENDOR",
-					"originalTitle": "Standard",
 					"readOnly": true,
-					"title": "Standard",
-					"toBeDeleted": false
+					"title": "Standard"
 				},
 				{
 					"author": "Me",
 					"key": "variant0",
 					"layer": "CUSTOMER",
-					"originalTitle": "variant A",
 					"readOnly": false,
-					"title": "variant A",
-					"toBeDeleted": false
+					"title": "variant A"
 				},
 				{
 					"author": "Me",
 					"key": "variant1",
 					"layer": "CUSTOMER",
-					"originalTitle": "variant B",
 					"readOnly": false,
-					"title": "variant B",
-					"toBeDeleted": false
+					"title": "variant B"
 				}]
 			}
 		};

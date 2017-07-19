@@ -191,11 +191,9 @@ sap.ui.define([
 				oVariantData[sKey].variants[index] = {
 					key : oVariant.content.fileName,
 					title : oVariant.content.title,
-					originalTitle : oVariant.content.title,
 					author : oVariant.content.support.user,
 					layer : oVariant.content.layer,
-					readOnly : oVariant.content.fileName === sKey,
-					toBeDeleted : false
+					readOnly : oVariant.content.fileName === sKey
 				};
 			});
 		}.bind(this));
