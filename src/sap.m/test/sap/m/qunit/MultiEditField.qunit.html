@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MultiEditField - sap.m - QUnit test</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.m">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+		jQuery.sap.require("sap.m.MultiEditField");
+		QUnit.module("Basic methods", {
+			beforeEach: function() {
+				this.oMultiEditField = new sap.m.MultiEditField({
+					unit: new sap.m.MultiEditField(),
+					items: [
+						new sap.ui.core.Item({
+							key: "key",
+							text: "sample text"
+						})
+					]
+				})
+				this.oMultiEditField.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oMultiEditField.destroy();
+				this.oMultiEditField = null;
+			}
+		});
+
+		QUnit.test("Check if items have the correct key and text", function(assert) {
+			//Act
+			var items = this.oMultiEditField.getItems();
+			//Assert
+			assert.strictEqual(items[0].getKey(), "_keep", "Item key correct.");
+			assert.strictEqual(items[0].getText(), "Keep existing value", "Item text correct.");
+
+			assert.strictEqual(items[1].getKey(), "_blank", "Item key correct.");
+			assert.strictEqual(items[1].getText(), "Leave blank", "Item text correct.");
+
+			assert.strictEqual(items[2].getKey(), "_new", "Item key correct.");
+			assert.strictEqual(items[2].getText(), "Select new value", "Item text correct.");
+		});
+
+		QUnit.test("Check if items of _oPrefilledItems get destroyed on exit.", function(assert) {
+			//Act
+			var prefilledItems = this.oMultiEditField._oPrefilledItems;
+			this.oMultiEditField.destroy();
+			//Assert
+			for (var property in prefilledItems) {
+				assert.equal(prefilledItems[property]._bIsBeingDestroyed, true, prefilledItems[property].sId + " has been destroyed.");
+			}
+			assert.equal(this.oMultiEditField._oPrefilledItems, null, "_oPrefilledItems has been destroyed.");
+		});
+
+		QUnit.test("Check if ValueHelp is displayed on property change.", function(assert) {
+			//Arrange
+			this.oMultiEditField.setShowValueHelp(false);
+			//Act
+			sap.ui.getCore().applyChanges();
+			//Assert
+			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["showValueHelp"]), -1, "ValueHelp will not be displayed.");
+		});
+
+		QUnit.test("Check if ValueHelp is initially displayed.", function(assert) {
+			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["showValueHelp"]), -1, "ValueHelp will be displayed.");
+		});
+
+		QUnit.test("Check if blank item is displayed on property change.", function(assert) {
+			//Arrange
+			this.oMultiEditField.setNullable(false);
+			//Act
+			sap.ui.getCore().applyChanges();
+			//Assert
+			assert.equal(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["nullable"]), -1, "Blank item will not be displayed.");
+		});
+
+		QUnit.test("Check if blank item is initially displayed.", function(assert) {
+			assert.notEqual(this.oMultiEditField.indexOfItem(this.oMultiEditField._oPrefilledItems["nullable"]), -1, "Blank item will be displayed.");
+		});
+	</script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
