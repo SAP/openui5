@@ -846,16 +846,23 @@ sap.ui.define([
 		 * @param {string} sTypeClass
 		 *   the type class of the given object; supported type classes are "Property" and
 		 *   "EntitySet"
+         * @param {object} oMetaModel
+         *   the metamodel
 		 */
-		liftSAPData : function (o, sTypeClass) {
+		liftSAPData : function (o, sTypeClass, oMetaModel) {
 			if (!o.extensions) {
 				return;
 			}
 
 			o.extensions.forEach(function (oExtension) {
-				if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
-					o["sap:" + oExtension.name] = oExtension.value;
-					Utils.addV4Annotation(o, oExtension, sTypeClass);
+				if (typeof oMetaModel !== "undefined"){
+                    if (oExtension.namespace === oMetaModel.oMetadata.mNamespaces.sap) {
+                        o["sap:" + oExtension.name] = oExtension.value;
+                        Utils.addV4Annotation(o, oExtension, sTypeClass);
+                    }
+				}else if (oExtension.namespace === "http://www.sap.com/Protocols/SAPData") {
+                    o["sap:" + oExtension.name] = oExtension.value;
+                    Utils.addV4Annotation(o, oExtension, sTypeClass);
 				}
 			});
 			// after all SAP V2 annotations are lifted up add V4 annotations that are calculated
@@ -901,7 +908,7 @@ sap.ui.define([
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
 
-				Utils.liftSAPData(oSchema);
+				Utils.liftSAPData(oSchema, null, oMetaModel);
 				oSchema.$path = "/dataServices/schema/" + i;
 				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
 
