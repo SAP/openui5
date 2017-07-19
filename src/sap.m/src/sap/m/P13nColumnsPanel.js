@@ -100,7 +100,7 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * Contains <code>columnsItems</code> that needs to be created in the model.
-                         * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
+						 * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
 						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						newItems: {
@@ -108,7 +108,7 @@ sap.ui.define([
 						},
 						/**
 						 * Contains <code>columnsItems</code> that needs to be changed in the model.
-                         * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
+						 * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
 						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						existingItems: {
@@ -651,9 +651,6 @@ sap.ui.define([
 	P13nColumnsPanel.prototype._onExecuteSearch = function() {
 		this._switchVisibilityOfUnselectedModelItems();
 		this._filterModelItemsBySearchText();
-
-		this._scrollToSelectedItem(this._getMarkedTableItem());
-
 		this._updateControlLogic();
 	};
 	P13nColumnsPanel.prototype._switchVisibilityOfUnselectedModelItems = function() {
@@ -1065,10 +1062,10 @@ sap.ui.define([
 			}
 		}, this);
 
-        this._switchVisibilityOfUnselectedModelItems();
-        this._filterModelItemsBySearchText();
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
 
-        var aMItems = this._getInternalModel().getProperty("/items");
+		var aMItems = this._getInternalModel().getProperty("/items");
 		// Sort the table items only by persistentIndex
 		this._sortModelItemsByPersistentIndex(aMItems);
 		this._updateCounts(aMItems);
