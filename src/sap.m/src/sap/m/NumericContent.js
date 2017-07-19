@@ -65,13 +65,13 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 				"scale" : {type : "string", group : "Appearance", defaultValue : null},
 
 				/**
-				 * Updates the size of the control. If not set then the default size is applied based on the device tile.
+				 * Updates the size of the control. If not set, then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The NumericContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
 				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto"},
 
 				/**
-				 * The number of characters to display for the value property.
+				 * The number of characters of the <code>value</code> property to display.
 				 */
 				"truncateValueTo" : {type : "int", group : "Appearance", defaultValue : 4},
 
@@ -91,7 +91,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 				"width" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 				/**
-				 * If the value is set to false, the content will fit to the whole size of the control.
+				 * If the value is set to false, the content is adjusted to the whole size of the control.
 				 */
 				"withMargin" : {type : "boolean", group : "Appearance", defaultValue : true},
 
