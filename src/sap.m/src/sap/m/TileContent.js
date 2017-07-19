@@ -32,24 +32,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				 */
 				"footer" : {type : "string", group : "Appearance", defaultValue : null},
 				/**
+				 * The semantic color of the footer.
+				 * @since 1.44
+				 */
+				"footerColor" : {type : "sap.m.ValueColor", group : "Appearance", defaultValue : "Neutral"},
+				/**
 				 * Updates the size of the tile. If it is not set, then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The TileContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : "Auto"},
+				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto"},
 				/**
 				 * The percent sign, the currency symbol, or the unit of measure.
 				 */
-				"unit" : {type : "string", group : "Misc", defaultValue : null},
+				"unit" : {type : "string", group : "Data", defaultValue : null},
 				/**
 				 * Disables control if true.
-				 *
-				 * @since 1.23
 				 */
-				"disabled" : {type : "boolean", group : "Misc", defaultValue : false},
+				"disabled" : {type : "boolean", group : "Behavior", defaultValue : false},
 				/**
 				 * The frame type: 1x1 or 2x1.
-				 *
-				 * @since 1.25
 				 */
 				"frameType" : {type : "sap.m.FrameType", group : "Appearance", defaultValue : sap.m.FrameType.Auto}
 			},
