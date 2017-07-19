@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (jQuery, _Helper, _MetadataConverter) {
 	"use strict";
 
-	var Converter,
+	var V4MetadataConverter,
 		// All Annotations elements that don't have expressions as child (leaf, non-recursive)
 		oAnnotationLeafConfig = {
 			"AnnotationPath" : {__postProcessor : postProcessLeaf},
@@ -252,7 +252,7 @@ sap.ui.define([
 			case "NavigationPropertyPath":
 			case "Path":
 			case "PropertyPath":
-				sValue = Converter.resolveAliasInPath(sValue, oAggregate);
+				sValue = V4MetadataConverter.resolveAliasInPath(sValue, oAggregate);
 				// falls through
 			case "Binary":
 			case "Date":
@@ -270,7 +270,7 @@ sap.ui.define([
 			case "EnumMember":
 				aValues = sValue.trim().replace(/ +/g, " ").split(" ");
 				for (i = 0; i < aValues.length; i++) {
-					aValues[i] = Converter.resolveAliasInPath(aValues[i], oAggregate);
+					aValues[i] = V4MetadataConverter.resolveAliasInPath(aValues[i], oAggregate);
 				}
 				return {$EnumMember : aValues.join(" ")};
 			case "Float":
@@ -343,7 +343,7 @@ sap.ui.define([
 
 		oResult.$Apply = aResult;
 		oResult.$Function =
-			Converter.resolveAlias(oElement.getAttribute("Function"), oAggregate);
+			V4MetadataConverter.resolveAlias(oElement.getAttribute("Function"), oAggregate);
 		return oResult;
 	}
 
@@ -361,7 +361,7 @@ sap.ui.define([
 
 		oResult["$" + sName] = aResult[0];
 		processTypedCollection(oElement.getAttribute("Type"), oResult, oAggregate);
-		Converter.processFacetAttributes(oElement, oResult);
+		V4MetadataConverter.processFacetAttributes(oElement, oResult);
 		return oResult;
 	}
 
@@ -405,7 +405,7 @@ sap.ui.define([
 	function postProcessLabeledElementReference(oElement, aResult, oAggregate) {
 		return {
 			"$LabeledElementReference" :
-				Converter.resolveAlias(oElement.textContent, oAggregate)
+				V4MetadataConverter.resolveAlias(oElement.textContent, oAggregate)
 		};
 	}
 
@@ -486,7 +486,7 @@ sap.ui.define([
 			oType = oElement.getAttribute("Type");
 
 		if (oType) {
-			oResult.$Type = Converter.resolveAlias(oType, oAggregate);
+			oResult.$Type = V4MetadataConverter.resolveAlias(oType, oAggregate);
 		}
 		for (i = 0; i < aResult.length; i++) {
 			oPropertyValue = aResult[i];
@@ -533,15 +533,15 @@ sap.ui.define([
 				$kind : sKind
 			};
 
-		 Converter.processAttributes(oElement, oAction, {
-			"IsBound" : Converter.setIfTrue,
-			"EntitySetPath" : Converter.setValue,
-			"IsComposable" : Converter.setIfTrue
+		 V4MetadataConverter.processAttributes(oElement, oAction, {
+			"IsBound" : V4MetadataConverter.setIfTrue,
+			"EntitySetPath" : V4MetadataConverter.setValue,
+			"IsComposable" : V4MetadataConverter.setIfTrue
 		});
 
-		Converter.getOrCreateArray(oAggregate.result, sQualifiedName).push(oAction);
+		V4MetadataConverter.getOrCreateArray(oAggregate.result, sQualifiedName).push(oAction);
 		oAggregate.actionOrFunction = oAction;
-		Converter.annotatable(oAggregate, oAction);
+		V4MetadataConverter.annotatable(oAggregate, oAction);
 	}
 
 	/**
@@ -550,7 +550,7 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processAnnotatableExpression(oElement, oAggregate) {
-		Converter.annotatable(oAggregate, {});
+		V4MetadataConverter.annotatable(oAggregate, {});
 	}
 
 	/**
@@ -559,8 +559,8 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processAnnotations(oElement, oAggregate) {
-		Converter.annotatable(oAggregate,
-			Converter.resolveAliasInPath(oElement.getAttribute("Target"), oAggregate),
+		V4MetadataConverter.annotatable(oAggregate,
+			V4MetadataConverter.resolveAliasInPath(oElement.getAttribute("Target"), oAggregate),
 			undefined, // no prefix
 			oElement.getAttribute("Qualifier"));
 	}
@@ -574,7 +574,7 @@ sap.ui.define([
 		var oAnnotatable = oAggregate.annotatable,
 			oAnnotations,
 			sQualifiedName = oAnnotatable.prefix + "@"
-				+ Converter.resolveAlias(oElement.getAttribute("Term"), oAggregate),
+				+ V4MetadataConverter.resolveAlias(oElement.getAttribute("Term"), oAggregate),
 			// oAnnotatable.qualifier can only come from <Annotations>. If such a qualifier is set
 			// <Annotation> itself MUST NOT supply a qualifier. (see spec Part 3, 14.3.2)
 			sQualifier = oAnnotatable.qualifier || oElement.getAttribute("Qualifier");
@@ -584,14 +584,14 @@ sap.ui.define([
 		}
 
 		if (typeof oAnnotatable.target === "string") {
-			oAnnotations = Converter.getOrCreateObject(oAggregate.schema, "$Annotations");
+			oAnnotations = V4MetadataConverter.getOrCreateObject(oAggregate.schema, "$Annotations");
 			oAnnotatable.target = oAnnotations[oAnnotatable.target] = {};
 		}
 
 		oAnnotatable.qualifiedName = sQualifiedName;
 		// do not calculate a value yet, this is done in postProcessAnnotation
 		oAnnotatable.target[sQualifiedName] = true;
-		Converter.annotatable(oAggregate, oAnnotatable.target, sQualifiedName);
+		V4MetadataConverter.annotatable(oAggregate, oAnnotatable.target, sQualifiedName);
 	}
 
 	/**
@@ -609,8 +609,8 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processEdmx(oElement, oAggregate) {
-		 Converter.processAttributes(oElement, oAggregate.result, {
-			"Version" : Converter.setValue
+		 V4MetadataConverter.processAttributes(oElement, oAggregate.result, {
+			"Version" : V4MetadataConverter.setValue
 		});
 	}
 
@@ -626,7 +626,7 @@ sap.ui.define([
 			"$kind" : "EntityContainer"
 		};
 		oAggregate.result.$EntityContainer = sQualifiedName;
-		Converter.annotatable(oAggregate, sQualifiedName);
+		V4MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -639,12 +639,13 @@ sap.ui.define([
 
 		oAggregate.entityContainer[sName] = oAggregate.entitySet = {
 			$kind : "EntitySet",
-			$Type : Converter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
+			$Type :
+				V4MetadataConverter.resolveAlias(oElement.getAttribute("EntityType"), oAggregate)
 		};
-		 Converter.processAttributes(oElement, oAggregate.entitySet, {
-			"IncludeInServiceDocument" : Converter.setIfFalse
+		 V4MetadataConverter.processAttributes(oElement, oAggregate.entitySet, {
+			"IncludeInServiceDocument" : V4MetadataConverter.setIfFalse
 		});
-		Converter.annotatable(oAggregate, sName);
+		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -674,7 +675,7 @@ sap.ui.define([
 		} else {
 			vKey = sName;
 		}
-		Converter.getOrCreateArray(oAggregate.type, "$Key").push(vKey);
+		V4MetadataConverter.getOrCreateArray(oAggregate.type, "$Key").push(vKey);
 	}
 
 	/**
@@ -688,8 +689,8 @@ sap.ui.define([
 				"$kind" : "EnumType"
 			};
 
-		 Converter.processAttributes(oElement, oEnumType, {
-			"IsFlags" : Converter.setIfTrue,
+		 V4MetadataConverter.processAttributes(oElement, oEnumType, {
+			"IsFlags" : V4MetadataConverter.setIfTrue,
 			"UnderlyingType" : function (sValue) {
 				return sValue !== "Edm.Int32" ? sValue : undefined;
 			}
@@ -697,7 +698,7 @@ sap.ui.define([
 
 		oAggregate.result[sQualifiedName] = oAggregate.enumType = oEnumType;
 		oAggregate.enumTypeMemberCounter = 0;
-		Converter.annotatable(oAggregate, sQualifiedName);
+		V4MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -720,7 +721,7 @@ sap.ui.define([
 			oAggregate.enumTypeMemberCounter++;
 		}
 		oAggregate.enumType[sName] = vValue;
-		Converter.annotatable(oAggregate, sName);
+		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -736,16 +737,16 @@ sap.ui.define([
 			sName = oElement.getAttribute("Name");
 
 		oImport["$" + sWhat]
-			= Converter.resolveAlias(oElement.getAttribute(sWhat), oAggregate);
-		 Converter.processAttributes(oElement, oImport, {
+			= V4MetadataConverter.resolveAlias(oElement.getAttribute(sWhat), oAggregate);
+		 V4MetadataConverter.processAttributes(oElement, oImport, {
 			"EntitySet" : function (sValue) {
 				return resolveTargetPath(sValue, oAggregate);
 			},
-			"IncludeInServiceDocument" : Converter.setIfTrue
+			"IncludeInServiceDocument" : V4MetadataConverter.setIfTrue
 		});
 
 		oAggregate.entityContainer[sName] = oImport;
-		Converter.annotatable(oAggregate, sName);
+		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -754,7 +755,7 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processInclude(oElement, oAggregate) {
-		var oInclude = Converter.getOrCreateArray(oAggregate.reference, "$Include");
+		var oInclude = V4MetadataConverter.getOrCreateArray(oAggregate.reference, "$Include");
 
 		oInclude.push(oElement.getAttribute("Namespace") + ".");
 	}
@@ -769,13 +770,14 @@ sap.ui.define([
 			oIncludeAnnotation = {
 				"$TermNamespace" : oElement.getAttribute("TermNamespace") + "."
 			},
-			aIncludeAnnotations = Converter.getOrCreateArray(oReference, "$IncludeAnnotations");
+			aIncludeAnnotations =
+				V4MetadataConverter.getOrCreateArray(oReference, "$IncludeAnnotations");
 
-		 Converter.processAttributes(oElement, oIncludeAnnotation, {
+		 V4MetadataConverter.processAttributes(oElement, oIncludeAnnotation, {
 			"TargetNamespace" : function setValue(sValue) {
 				return sValue ? sValue + "." : sValue;
 			},
-			"Qualifier" : Converter.setValue
+			"Qualifier" : V4MetadataConverter.setValue
 		});
 
 		aIncludeAnnotations.push(oIncludeAnnotation);
@@ -787,8 +789,8 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processNavigationPropertyBinding(oElement, oAggregate) {
-		var oNavigationPropertyBinding =
-				Converter.getOrCreateObject(oAggregate.entitySet, "$NavigationPropertyBinding");
+		var oNavigationPropertyBinding = V4MetadataConverter.getOrCreateObject(
+				oAggregate.entitySet, "$NavigationPropertyBinding");
 
 		oNavigationPropertyBinding[oElement.getAttribute("Path")]
 			= resolveTargetPath(oElement.getAttribute("Target"), oAggregate);
@@ -804,14 +806,14 @@ sap.ui.define([
 			oParameter = {};
 
 		processTypedCollection(oElement.getAttribute("Type"), oParameter, oAggregate);
-		 Converter.processAttributes(oElement, oParameter, {
-			"Name" : Converter.setValue,
-			"Nullable" : Converter.setIfFalse
+		 V4MetadataConverter.processAttributes(oElement, oParameter, {
+			"Name" : V4MetadataConverter.setValue,
+			"Nullable" : V4MetadataConverter.setIfFalse
 		});
-		Converter.processFacetAttributes(oElement, oParameter);
+		V4MetadataConverter.processFacetAttributes(oElement, oParameter);
 
-		Converter.getOrCreateArray(oActionOrFunction, "$Parameter").push(oParameter);
-		Converter.annotatable(oAggregate, oParameter);
+		V4MetadataConverter.getOrCreateArray(oActionOrFunction, "$Parameter").push(oParameter);
+		V4MetadataConverter.annotatable(oAggregate, oParameter);
 	}
 
 	/**
@@ -820,7 +822,8 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processPropertyValue(oElement, oAggregate) {
-		Converter.annotatable(oAggregate, oAggregate.annotatable.target, oElement.getAttribute("Property"));
+		V4MetadataConverter.annotatable(oAggregate, oAggregate.annotatable.target,
+			oElement.getAttribute("Property"));
 	}
 
 	/**
@@ -829,10 +832,10 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processReference(oElement, oAggregate) {
-		var oReference = Converter.getOrCreateObject(oAggregate.result, "$Reference");
+		var oReference = V4MetadataConverter.getOrCreateObject(oAggregate.result, "$Reference");
 
 		oAggregate.reference = oReference[oElement.getAttribute("Uri")] = {};
-		Converter.annotatable(oAggregate, oAggregate.reference);
+		V4MetadataConverter.annotatable(oAggregate, oAggregate.reference);
 	}
 
 	/**
@@ -845,13 +848,13 @@ sap.ui.define([
 			oReturnType = {};
 
 		processTypedCollection(oElement.getAttribute("Type"), oReturnType, oAggregate);
-		 Converter.processAttributes(oElement, oReturnType, {
-			"Nullable" : Converter.setIfFalse
+		 V4MetadataConverter.processAttributes(oElement, oReturnType, {
+			"Nullable" : V4MetadataConverter.setIfFalse
 		});
-		Converter.processFacetAttributes(oElement, oReturnType);
+		V4MetadataConverter.processFacetAttributes(oElement, oReturnType);
 
 		oActionOrFunction.$ReturnType = oReturnType;
-		Converter.annotatable(oAggregate, oReturnType);
+		V4MetadataConverter.annotatable(oAggregate, oReturnType);
 	}
 
 	/**
@@ -864,9 +867,9 @@ sap.ui.define([
 
 		oAggregate.entityContainer[sName] = oAggregate.entitySet = {
 			$kind : "Singleton",
-			$Type : Converter.resolveAlias(oElement.getAttribute("Type"), oAggregate)
+			$Type : V4MetadataConverter.resolveAlias(oElement.getAttribute("Type"), oAggregate)
 		};
-		Converter.annotatable(oAggregate, sName);
+		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -881,16 +884,16 @@ sap.ui.define([
 			};
 
 		processTypedCollection(oElement.getAttribute("Type"), oTerm, oAggregate);
-		 Converter.processAttributes(oElement, oTerm, {
-			"Nullable" : Converter.setIfFalse,
+		 V4MetadataConverter.processAttributes(oElement, oTerm, {
+			"Nullable" : V4MetadataConverter.setIfFalse,
 			"BaseTerm" : function (sValue) {
-				return sValue ? Converter.resolveAlias(sValue, oAggregate) : undefined;
+				return sValue ? V4MetadataConverter.resolveAlias(sValue, oAggregate) : undefined;
 			}
 		});
-		Converter.processFacetAttributes(oElement, oTerm);
+		V4MetadataConverter.processFacetAttributes(oElement, oTerm);
 
 		oAggregate.result[sQualifiedName] = oTerm;
-		Converter.annotatable(oAggregate, sQualifiedName);
+		V4MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -902,17 +905,17 @@ sap.ui.define([
 	function processType(oElement, oAggregate, oType) {
 		var sQualifiedName = oAggregate.namespace + oElement.getAttribute("Name");
 
-		 Converter.processAttributes(oElement, oType, {
-			"OpenType" : Converter.setIfTrue,
-			"HasStream" : Converter.setIfTrue,
-			"Abstract" : Converter.setIfTrue,
+		 V4MetadataConverter.processAttributes(oElement, oType, {
+			"OpenType" : V4MetadataConverter.setIfTrue,
+			"HasStream" : V4MetadataConverter.setIfTrue,
+			"Abstract" : V4MetadataConverter.setIfTrue,
 			"BaseType" : function (sType) {
-				return sType ? Converter.resolveAlias(sType, oAggregate) : undefined;
+				return sType ? V4MetadataConverter.resolveAlias(sType, oAggregate) : undefined;
 			}
 		});
 
 		oAggregate.result[sQualifiedName] = oAggregate.type = oType;
-		Converter.annotatable(oAggregate, sQualifiedName);
+		V4MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -923,13 +926,13 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function processTypedCollection(sType, oProperty, oAggregate) {
-		var aMatches = Converter.rCollection.exec(sType);
+		var aMatches = V4MetadataConverter.rCollection.exec(sType);
 
 		if (aMatches) {
 			oProperty.$isCollection = true;
 			sType = aMatches[1];
 		}
-		oProperty.$Type = Converter.resolveAlias(sType, oAggregate);
+		oProperty.$Type = V4MetadataConverter.resolveAlias(sType, oAggregate);
 	}
 
 	/**
@@ -945,8 +948,8 @@ sap.ui.define([
 			};
 
 		oAggregate.result[sQualifiedName] = oTypeDefinition;
-		Converter.processFacetAttributes(oElement, oTypeDefinition);
-		Converter.annotatable(oAggregate, sQualifiedName);
+		V4MetadataConverter.processFacetAttributes(oElement, oTypeDefinition);
+		V4MetadataConverter.annotatable(oAggregate, sQualifiedName);
 	}
 
 	/**
@@ -961,14 +964,14 @@ sap.ui.define([
 			};
 
 		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate);
-		 Converter.processAttributes(oElement, oProperty, {
-			"Nullable" : Converter.setIfFalse,
-			"Partner" : Converter.setValue,
-			"ContainsTarget" : Converter.setIfTrue
+		 V4MetadataConverter.processAttributes(oElement, oProperty, {
+			"Nullable" : V4MetadataConverter.setIfFalse,
+			"Partner" : V4MetadataConverter.setValue,
+			"ContainsTarget" : V4MetadataConverter.setIfTrue
 		});
 
 		oAggregate.type[sName] = oAggregate.navigationProperty = oProperty;
-		Converter.annotatable(oAggregate, sName);
+		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -978,7 +981,7 @@ sap.ui.define([
 	 */
 	function processTypeNavigationPropertyOnDelete(oElement, oAggregate) {
 		oAggregate.navigationProperty.$OnDelete = oElement.getAttribute("Action");
-		Converter.annotatable(oAggregate, oAggregate.navigationProperty, "$OnDelete");
+		V4MetadataConverter.annotatable(oAggregate, oAggregate.navigationProperty, "$OnDelete");
 	}
 
 	/**
@@ -988,11 +991,11 @@ sap.ui.define([
 	 */
 	function processTypeNavigationPropertyReferentialConstraint(oElement, oAggregate) {
 		var sProperty = oElement.getAttribute("Property"),
-			oReferentialConstraint = Converter.getOrCreateObject(oAggregate.navigationProperty,
-				"$ReferentialConstraint");
+			oReferentialConstraint = V4MetadataConverter.getOrCreateObject(
+				oAggregate.navigationProperty, "$ReferentialConstraint");
 
 		oReferentialConstraint[sProperty] = oElement.getAttribute("ReferencedProperty");
-		Converter.annotatable(oAggregate, oReferentialConstraint, sProperty);
+		V4MetadataConverter.annotatable(oAggregate, oReferentialConstraint, sProperty);
 	}
 
 	/**
@@ -1007,14 +1010,14 @@ sap.ui.define([
 			};
 
 		processTypedCollection(oElement.getAttribute("Type"), oProperty, oAggregate);
-		 Converter.processAttributes(oElement, oProperty, {
-			"Nullable" : Converter.setIfFalse,
-			"DefaultValue" : Converter.setValue
+		 V4MetadataConverter.processAttributes(oElement, oProperty, {
+			"Nullable" : V4MetadataConverter.setIfFalse,
+			"DefaultValue" : V4MetadataConverter.setValue
 		});
-		Converter.processFacetAttributes(oElement, oProperty);
+		V4MetadataConverter.processFacetAttributes(oElement, oProperty);
 
 		oAggregate.type[sName] = oProperty;
-		Converter.annotatable(oAggregate, sName);
+		V4MetadataConverter.annotatable(oAggregate, sName);
 	}
 
 	/**
@@ -1030,7 +1033,7 @@ sap.ui.define([
 			return sPath;
 		}
 
-		sPath =  Converter.resolveAliasInPath(sPath, oAggregate);
+		sPath =  V4MetadataConverter.resolveAliasInPath(sPath, oAggregate);
 		iSlash = sPath.indexOf("/");
 
 		if (iSlash >= 0 && sPath.indexOf("/", iSlash + 1) < 0) { // if there is exactly one slash
@@ -1041,7 +1044,7 @@ sap.ui.define([
 		return sPath;
 	}
 
-	Converter = jQuery.extend({}, _MetadataConverter, {
+	V4MetadataConverter = jQuery.extend({}, _MetadataConverter, {
 		/**
 		 * Converts the metadata from XML format to a JSON object.
 		 *
@@ -1073,9 +1076,9 @@ sap.ui.define([
 			oElement = oDocument.documentElement;
 
 			// first round: find aliases
-			Converter.traverse(oElement, oAggregate, oAliasConfig);
+			V4MetadataConverter.traverse(oElement, oAggregate, oAliasConfig);
 			// second round, full conversion
-			Converter.traverse(oElement, oAggregate, oFullConfig);
+			V4MetadataConverter.traverse(oElement, oAggregate, oFullConfig);
 			jQuery.sap.measure.end("convertXMLMetadata");
 			return oAggregate.result;
 		},
@@ -1087,17 +1090,17 @@ sap.ui.define([
 		 * @param {object} oResult The result object to fill
 		 */
 		processFacetAttributes : function (oElement, oResult) {
-			 Converter.processAttributes(oElement, oResult, {
-				"MaxLength" : Converter.setNumber,
-				"Precision" : Converter.setNumber,
+			 V4MetadataConverter.processAttributes(oElement, oResult, {
+				"MaxLength" : V4MetadataConverter.setNumber,
+				"Precision" : V4MetadataConverter.setNumber,
 				"Scale" : function (sValue) {
-					return sValue === "variable" ? sValue : Converter.setNumber(sValue);
+					return sValue === "variable" ? sValue : V4MetadataConverter.setNumber(sValue);
 				},
-				"SRID" : Converter.setValue,
-				"Unicode" : Converter.setIfFalse
+				"SRID" : V4MetadataConverter.setValue,
+				"Unicode" : V4MetadataConverter.setIfFalse
 			});
 		}
 	});
 
-	return Converter;
+	return V4MetadataConverter;
 }, /* bExport= */false);

@@ -11,7 +11,11 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var mFixture = {
+	var sEdmx = '<edmx:Edmx Version="1.0" xmlns="http://schemas.microsoft.com/ado/2008/09/edm"'
+			+ ' xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"'
+			+ ' xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"'
+			+ ' xmlns:sap="http://www.sap.com/Protocols/SAPData">',
+		mFixture = {
 			"/GWSAMPLE_BASIC/$metadata" : {source : "GWSAMPLE_BASIC.metadata.xml"},
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
 			"/GWSAMPLE_BASIC/metadata_v4.json" : {source : "GWSAMPLE_BASIC.metadata_v4.json"}
@@ -27,10 +31,11 @@ sap.ui.require([
 	 *   the expected JSON object
 	 */
 	function testConversion(assert, sXmlSnippet, oExpected) {
-		var oXML = xml(assert, '<Edmx xmlns:sap="http://www.sap.com/Protocols/SAPData">'
-				+ '<DataServices>' + sXmlSnippet + '</DataServices></Edmx>'),
+		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
+				+ sXmlSnippet + '</edmx:DataServices></edmx:Edmx>'),
 			oResult = _V2MetadataConverter.convertXMLMetadata(oXML);
 
+		oExpected.$Version = "4.0";
 		assert.deepEqual(oResult, oExpected);
 	}
 
@@ -67,12 +72,10 @@ sap.ui.require([
 				<Schema Namespace="bar" Alias="b">\
 					<ComplexType Name="Worker">\
 						<Property Name="Something" Type="b.Something"/>\
-						<Property Name="ManyThings" Type="Collection(b.Something)"/>\
 					</ComplexType>\
 				</Schema>\
 				<Schema Namespace="foo" Alias="f"/>',
 			{
-				"$Version" : "4.0",
 				"bar." : {
 					"$kind" : "Schema"
 				},
@@ -80,11 +83,6 @@ sap.ui.require([
 					"$kind" : "ComplexType",
 					"Something" : {
 						"$kind" : "Property",
-						"$Type" : "bar.Something"
-					},
-					"ManyThings" : {
-						"$kind" : "Property",
-						"$isCollection" : true,
 						"$Type" : "bar.Something"
 					}
 				},
@@ -95,7 +93,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertXMLMetadata: EntityType attributes, key alias", function (assert) {
+	QUnit.test("convertXMLMetadata: EntityType attributes", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="foo" Alias="f">\
 					<EntityType Name="Worker">\
@@ -107,7 +105,6 @@ sap.ui.require([
 					<EntityType Name="Derived" BaseType="f.Base"/>\
 				</Schema>',
 			{
-				"$Version" : "4.0",
 				"foo." : {
 					"$kind" : "Schema"
 				},
@@ -127,13 +124,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("convertXMLMetadata: ComplexType attributes", function (assert) {
+	QUnit.test("convertXMLMetadata: ComplexType", function (assert) {
 		testConversion(assert, '\
 				<Schema Namespace="foo">\
 					<ComplexType Name="Worker" />\
 				</Schema>',
 			{
-				"$Version" : "4.0",
 				"foo." : {
 					"$kind" : "Schema"
 				},
@@ -180,11 +176,11 @@ sap.ui.require([
 						<Schema Namespace="foo">\
 							<' + sType + ' Name="Worker">\
 								<Property Name="Salary" Type="' + sNamespace + 'Decimal"\
-								    Precision="8" Scale="2"/>\
-								<Property Name="p1" Type="Collection(' + sNamespace + 'String)"\
+									Precision="8" Scale="2"/>\
+								<Property Name="p1" Type="' + sNamespace + 'String"\
 									Unicode="false" />\
 								<Property Name="p2" Type="' + sNamespace + 'String"\
-								    Unicode="true" />\
+									Unicode="true" />\
 								<Property Name="p3" Type="' + sNamespace + 'Int32"\
 									DefaultValue="42"/>\
 								<Property Name="p4" Type="' + sNamespace + 'Time"/>\
@@ -195,7 +191,6 @@ sap.ui.require([
 							</' + sType + '>\
 						</Schema>',
 					{
-						"$Version" : "4.0",
 						"foo." : {
 							"$kind" : "Schema"
 						},
@@ -208,7 +203,6 @@ sap.ui.require([
 								"$Scale" : 2
 							},
 							"p1" : {
-								"$isCollection" : true,
 								"$kind" : "Property",
 								"$Type" : "Edm.String",
 								"$Unicode" : false
@@ -276,7 +270,6 @@ sap.ui.require([
 					</Association>\
 				</Schema>',
 			oExpectedResult = {
-				"$Version" : "4.0",
 				"GWSAMPLE_BASIC.0001." : {
 					"$kind" : "Schema"
 				},
