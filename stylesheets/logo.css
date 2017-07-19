@@ -19,6 +19,10 @@
 	flex: 1 1 25%;
 }
 
+.margin-bottom {
+	margin-bottom: 20px;
+}
+
 .logo-image-link > img {
 	display: inline-block;
 	margin: -4px;
