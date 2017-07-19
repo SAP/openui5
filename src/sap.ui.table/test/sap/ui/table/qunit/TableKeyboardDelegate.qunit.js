@@ -656,19 +656,25 @@ QUnit.test("_isInteractiveElement", function(assert) {
 	$NoFocus[0].tabIndex = 0;
 	var $NoTab = getCell(0, iNumberOfCols - 1).find("input");
 	var $FullyInteractive = getCell(0, iNumberOfCols - 2).find("input");
-	var $TreeIcon = jQuery('<div class="sapUiTableTreeIcon"></div>');
+	var $TreeIconOpen = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconNodeOpen"></div>');
+	var $TreeIconClosed = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconNodeClosed"></div>');
+	var $TreeIconLeaf = jQuery('<div class="sapUiTableTreeIcon sapUiTableTreeIconLeaf"></div>');
 
 	assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab), "(jQuery) Not focusable and not tabbable element is not interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus), "(jQuery) Not focusable and tabbable element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab), "(jQuery) Focusable and not tabbable input element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive), "(jQuery) Focusable and tabbable input element is interactive");
-	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIcon), "(jQuery) TreeIcon is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen), "(jQuery) TreeIcon of open node is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed), "(jQuery) TreeIcon of closed node is interactive");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf), "(jQuery) TreeIcon of leaf node is not interactive");
 
 	assert.ok(!TableKeyboardDelegate2._isElementInteractive($NoFocusNoTab[0]), "(HTMLElement) Not focusable and not tabbable element is not interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoFocus[0]), "(HTMLElement) Not focusable and tabbable element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($NoTab[0]), "(HTMLElement) Focusable and not tabbable input element is interactive");
 	assert.ok(TableKeyboardDelegate2._isElementInteractive($FullyInteractive[0]), "(HTMLElement) Focusable and tabbable input element is interactive");
-	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIcon[0]), "(HTMLElement) TreeIcon is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconOpen[0]), "(HTMLElement) TreeIcon of open node is interactive");
+	assert.ok(TableKeyboardDelegate2._isElementInteractive($TreeIconClosed[0]), "(HTMLElement) TreeIcon of closed node is interactive");
+	assert.ok(!TableKeyboardDelegate2._isElementInteractive($TreeIconLeaf[0]), "(HTMLElement) TreeIcon of leaf node is not interactive");
 
 	assert.ok(!TableKeyboardDelegate2._isElementInteractive(), "No parameter passed: False was returned");
 });
@@ -704,6 +710,48 @@ QUnit.test("_getInteractiveElements", function(assert) {
 
 	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements();
 	assert.strictEqual($InteractiveElements, null, "No parameter passed: Null was returned");
+});
+
+QUnit.test("_getInteractiveElements - TreeTable Icon Cell", function(assert) {
+	var $TreeIconCell = getCell(0, 0, null, null, oTreeTable);
+	var sTreeIconOpenClass = "sapUiTableTreeIconNodeOpen";
+	var sTreeIconClosedClass = "sapUiTableTreeIconNodeClosed";
+	var sTreeIconLeafClass = "sapUiTableTreeIconLeaf";
+
+	// Closed node
+	var $InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell);
+	assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Tree icon cell of closed node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconClosedClass),
+		"(JQuery) Tree icon cell of closed node: The correct closed node element was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Tree icon cell of closed node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconClosedClass),
+		"(HTMLElement) Tree icon cell of closed node: The correct closed node element was returned");
+
+	// Open node
+	$InteractiveElements[0].classList.remove(sTreeIconClosedClass);
+	$InteractiveElements[0].classList.add(sTreeIconOpenClass);
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell);
+	assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Tree icon cell of open node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconOpenClass),
+		"(JQuery) Tree icon cell of open node: The correct open node element was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell[0]);
+	assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Tree icon cell of open node: One element was returned");
+	assert.ok($InteractiveElements[0].classList.contains(sTreeIconOpenClass),
+		"(HTMLElement) Tree icon cell of open node: The correct open node element was returned");
+
+	// Leaf node
+	$InteractiveElements[0].classList.remove(sTreeIconOpenClass);
+	$InteractiveElements[0].classList.add(sTreeIconLeafClass);
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell);
+	assert.strictEqual($InteractiveElements, null, "(JQuery) Tree icon cell of leaf node: No element was returned");
+
+	$InteractiveElements = TableKeyboardDelegate2._getInteractiveElements($TreeIconCell[0]);
+	assert.strictEqual($InteractiveElements, null, "(HTMLElement) Tree icon cell of leaf node: No element was returned");
 });
 
 QUnit.test("_getFirstInteractiveElement", function(assert) {
