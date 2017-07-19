@@ -38,6 +38,10 @@
 	line-height: 60px;
 }
 
+.margin-bottom {
+   margin-bottom: 20px;
+} 
+
 @media (max-width: 800px) {
 	.ui5-logo-new{
 		margin: 20px;
@@ -59,7 +63,6 @@
 
 	.color-flex-title {
 		display: block;
-		margin-top: 20px;
 	}
 }
 
