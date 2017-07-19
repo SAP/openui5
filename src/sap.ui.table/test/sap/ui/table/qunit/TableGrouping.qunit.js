@@ -1,4 +1,4 @@
-/*global QUnit,oTable,oTreeTable*/
+/*global QUnit,sinon,oTable,oTreeTable*/
 
 (function () {
 	"use strict";
@@ -77,6 +77,10 @@
 	});
 
 	QUnit.test("toggleGroupHeaderByRef", function (assert) {
+		var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+			oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+		});
+		oTreeTable.attachToggleOpenState(oToggleOpenStateEventSpy);
 
 		function checkExpanded(sType, bExpectExpanded) {
 			assert.equal(oTreeTable.getBinding("rows").isExpanded(0), bExpectExpanded, sType + ": First row " + (bExpectExpanded ? "" : "not ") + "expanded");
@@ -86,21 +90,39 @@
 			var iIndex = -1;
 			var bExpanded = false;
 			var bCalled = false;
+
+			var fOnGroupHeaderChanged = oTreeTable._onGroupHeaderChanged;
 			oTreeTable._onGroupHeaderChanged = function (iRowIndex, bIsExpanded) {
 				iIndex = iRowIndex;
 				bExpanded = bIsExpanded;
 				bCalled = true;
+				fOnGroupHeaderChanged.apply(oTreeTable, arguments);
 			};
+
 			var bRes = Grouping.toggleGroupHeaderByRef(oTreeTable, oRef, bForceExpand);
+
 			assert.ok(bExpectChange && bRes || !bExpectChange && !bRes, sType + ": " + sText);
+
 			if (bExpectChange) {
 				assert.ok(bCalled, sType + ": _onGroupHeaderChanged called");
 				assert.ok(bExpectExpanded === bExpanded, sType + ": _onGroupHeaderChanged provides correct expand state");
 				assert.ok(iIndex == 0, sType + ": _onGroupHeaderChanged provides correct index");
+
+				assert.ok(oToggleOpenStateEventSpy.calledOnce,  "The toggleOpenState event was called once");
+				assert.deepEqual(oToggleOpenStateEventSpy._mEventParameters, {
+					id: oTreeTable.getId(),
+					rowIndex: iIndex,
+					rowContext: oTreeTable.getContextByIndex(iIndex),
+					expanded: bExpanded
+				}, "The toggleOpenState event was called with the correct parameters");
 			} else {
 				assert.ok(!bCalled, sType + ": _onGroupHeaderChanged not called");
+				assert.ok(oToggleOpenStateEventSpy.notCalled,  "The toggleOpenState event was not called");
 			}
+
 			checkExpanded(sType, bExpectExpanded);
+
+			oToggleOpenStateEventSpy.reset();
 		}
 
 		function testWithValidDomRef(sType, oRef) {
