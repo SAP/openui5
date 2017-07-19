@@ -129,11 +129,12 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"],
 	ObjectPageHeaderRenderer._renderObjectPageTitle = function (oRm, oControl, bTitleInContent) {
 		var sOHTitle = oControl.getObjectTitle(),
 			bMarkers = (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged())),
-			oBreadCrumbs = oControl._lazyLoadInternalAggregation('_breadCrumbs', true);
+			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation();
 
-		if (!bTitleInContent && oBreadCrumbs && oBreadCrumbs.getLinks().length) {
-			oRm.renderControl(oBreadCrumbs);
+		if (!bTitleInContent && oBreadCrumbsAggregation) {
+			oRm.renderControl(oBreadCrumbsAggregation);
 		}
+
 		oRm.write("<h1");
 		oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitle');
 		if (oControl.getIsObjectTitleAlwaysVisible()) {
