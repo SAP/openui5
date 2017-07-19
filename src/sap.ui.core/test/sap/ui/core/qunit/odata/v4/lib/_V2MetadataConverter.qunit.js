@@ -412,4 +412,108 @@ sap.ui.require([
 			assert.deepEqual(aResults[0], aResults[1]);
 		});
 	});
+
+	//*********************************************************************************************
+	[{ // annotations with boolean primitive values
+		annotationsV2 : 'sap:aggregation-role="dimension"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Analytics.v1.Dimension' : true
+		}
+	}, {
+		annotationsV2 : 'sap:aggregation-role="measure"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Analytics.v1.Measure' : true
+		}
+	}, {
+		annotationsV2 : 'sap:display-format="NonNegative"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
+		}
+	}, {
+		annotationsV2 : 'sap:display-format="UpperCase"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.IsUpperCase' : true
+		}
+	}, { // annotations with string values
+		annotationsV2 : 'sap:heading="Value"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.Heading' : 'Value'
+		}
+	}, {
+		annotationsV2 : 'sap:label="Value"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+		}
+	}, {
+		annotationsV2 : 'sap:quickinfo="Value"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+		}
+	}, { // annotations with path expression as value
+		annotationsV2 : 'sap:field-control="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.FieldControl' : {
+				$Path : "PathExpression"
+			}
+		}
+	}, {
+		annotationsV2 : 'sap:precision="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@Org.OData.Measures.V1.Scale' : {
+				$Path : "PathExpression"
+			}
+		}
+	}, {
+		annotationsV2 : 'sap:text="PathExpression"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.Text' : {
+				$Path : "PathExpression"
+			}
+		}
+	}, { // multiple V4 annotations for one V2 annotation
+		annotationsV2 : 'sap:visible="false"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.FieldControl' : {
+				$EnumMember : "com.sap.vocabularies.Common.v1.FieldControlType/Hidden"
+			},
+			'@com.sap.vocabularies.UI.v1.Hidden' : true
+		}
+	}, { // combination of v2 annotations
+		annotationsV2 : 'sap:text="PathExpression" sap:label="Value"',
+		expectedAnnotationsV4 : {
+			'@com.sap.vocabularies.Common.v1.Label' : 'Value',
+			'@com.sap.vocabularies.Common.v1.Text' : {
+				$Path : "PathExpression"
+			}
+		}
+	}].forEach(function (oFixture) {
+		var sTitle = "convert: V2 annotation at Property: " + oFixture.annotationsV2;
+
+		QUnit.test(sTitle, function (assert) {
+			testConversion(assert, '\
+						<Schema Namespace="GWSAMPLE_BASIC.0001">\
+						<EntityType Name="Foo">\
+							<Property Name="Bar" Type="Edm.String" \
+								' + oFixture.annotationsV2 + ' />\
+						</EntityType>\
+					</Schema>',
+				{
+					"$Version" : "4.0",
+					"GWSAMPLE_BASIC.0001." : {
+						"$Annotations" : {
+							"GWSAMPLE_BASIC.0001.Foo/Bar" : oFixture.expectedAnnotationsV4
+						},
+						"$kind" : "Schema"
+					},
+					"GWSAMPLE_BASIC.0001.Foo" : {
+						"$kind" : "EntityType",
+						"Bar" : {
+							"$kind" : "Property",
+							"$Type" : "Edm.String"
+						}
+					}
+				});
+		});
+	});
+	// TODO _V2MetadataConverter.postProcessSchema: merge V2 annotations, don't replace
 });
