@@ -665,6 +665,9 @@ sap.ui.require([
 		var sTitle = "convert: V2 annotation at Property: " + oFixture.annotationsV2;
 
 		QUnit.test(sTitle, function (assert) {
+			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
 			testConversion(assert, '\
 					<Schema Namespace="GWSAMPLE_BASIC.0001">\
 						<EntityType Name="Foo">\
@@ -855,7 +858,126 @@ sap.ui.require([
 			testConversion(assert, sXML, oExpectedResult);
 		});
 	});
-	// TODO _V2MetadataConverter.postProcessSchema: merge V2 annotations, don't replace
+
+	//*********************************************************************************************
+	[{
+		convertedV2Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			}
+		},
+		v4Annotations : {},
+		result : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			}
+		}
+	}, {
+		convertedV2Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			}
+		},
+		v4Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/tango" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			}
+		},
+		result : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			},
+			"GWSAMPLE_BASIC.0001.Foo/tango" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Value'
+			}
+		}
+	}, {
+		convertedV2Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV2'
+			}
+		},
+		v4Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV4'
+			}
+		},
+		result : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'ValueV4'
+			}
+		}
+	}, {
+		convertedV2Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.Label' : 'Label'
+			}
+		},
+		v4Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true
+			}
+		},
+		result : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
+				'@com.sap.vocabularies.Common.v1.Label' : 'Label'
+			}
+		}
+	}, {
+		convertedV2Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+					"Deletable" : false
+				},
+				'@com.sap.vocabularies.Common.v1.Label' : 'Label',
+				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+			},
+			"GWSAMPLE_BASIC.0001.Foo/ChaChaCha" : {
+				'@com.sap.vocabularies.Common.v1.Heading' : 'ValueV2',
+				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV2'
+			}
+		},
+		v4Annotations : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+					"NonDeletableNavigationProperties" : []
+				},
+				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
+				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV4'
+			},
+			"GWSAMPLE_BASIC.0001.Foo/Jive" : {
+				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
+				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'ValueV4'
+			}
+		},
+		result : {
+			"GWSAMPLE_BASIC.0001.Foo/Bar" : {
+				'@Org.OData.Capabilities.V1.DeleteRestrictions' : {
+					"NonDeletableNavigationProperties" : []
+				},
+				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
+				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV4',
+				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'Value'
+			},
+			"GWSAMPLE_BASIC.0001.Foo/ChaChaCha" : {
+				'@com.sap.vocabularies.Common.v1.Heading' : 'ValueV2',
+				'@com.sap.vocabularies.Common.v1.Label' : 'LabelV2'
+			},
+			"GWSAMPLE_BASIC.0001.Foo/Jive" : {
+				'@com.sap.vocabularies.Common.v1.IsDigitSequence' : true,
+				'@com.sap.vocabularies.Common.v1.QuickInfo' : 'ValueV4'
+			}
+		}
+	}].forEach(function (oFixture, i) {
+		QUnit.test("mergeAnnotations: complex merge - " + i, function (assert) {
+			// Code under test
+			_V2MetadataConverter.mergeAnnotations(oFixture.convertedV2Annotations,
+				oFixture.v4Annotations);
+
+			assert.deepEqual(oFixture.v4Annotations, oFixture.result);
+		});
+	});
 	// TODO InsertRestrictions, DeleteRestrictions or UpdateRestrictions define two properties
 	// Xable and NonXableNavigationProperties (e.g. Insertable and
 	// NonInsertableNavigationProperties); take care that both can contain values and do not

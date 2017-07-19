@@ -291,9 +291,13 @@ sap.ui.define([
 	 * @param {object} oAggregate The aggregate
 	 */
 	function postProcessSchema(oElement, aResult, oAggregate) {
-		if (Object.keys(oAggregate.convertedV2Annotations).length > 0) {
+		if (oAggregate.schema.$Annotations) {
+			V2MetadataConverter.mergeAnnotations(oAggregate.convertedV2Annotations,
+				oAggregate.schema.$Annotations);
+		} else if (Object.keys(oAggregate.convertedV2Annotations).length > 0) {
 			oAggregate.schema.$Annotations = oAggregate.convertedV2Annotations;
 		}
+
 		oAggregate.convertedV2Annotations = {}; // reset schema annotations for next schema
 	}
 
@@ -785,6 +789,30 @@ sap.ui.define([
 
 			jQuery.sap.measure.end("convertXMLMetadata");
 			return oAggregate.result;
+		},
+
+		/**
+		 * Merges the given V2 annotations into the given V4 annotations map. If the annotation
+		 * is contained in both maps the V4 one wins.
+		 * @param {object} mConvertedV2Annotations
+		 *   Maps annotatable path to a map of converted V2 annotations; this object is modified
+		 *   during the merge
+		 * @param {object} [mV4Annotations]
+		 *   Maps annotatable path to a map of V4 annotations; V2 annotations are merged into this
+		 *   object
+		 */
+		mergeAnnotations : function (mConvertedV2Annotations, mV4Annotations) {
+			var sAnnotatablePath;
+
+			for (sAnnotatablePath in mConvertedV2Annotations) {
+				if (sAnnotatablePath in mV4Annotations) {
+					mV4Annotations[sAnnotatablePath] = jQuery.extend(
+						mConvertedV2Annotations[sAnnotatablePath],
+						mV4Annotations[sAnnotatablePath]);
+				} else {
+					mV4Annotations[sAnnotatablePath] = mConvertedV2Annotations[sAnnotatablePath];
+				}
+			}
 		},
 
 		/**
