@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
+		<title>Drag and Drop: control with custom ghost</title>
+
+		<script id='sap-ui-bootstrap'
+			src='../../../../../../resources/sap-ui-core.js'
+			data-sap-ui-xx-supportedLanguages="en"
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m'></script>
+
+		<script>
+			jQuery.sap.registerModulePath("my", "./");
+
+			sap.ui.require(["my/DraggableText"], function(DraggableText) {
+				"use strict";
+
+				var oControl = new DraggableText({
+					text: "Drag Me! My ghost will surprise you.",
+					dragDropConfig: new sap.ui.core.dnd.DragDropInfo() // just make it draggable, no specific target
+				});
+
+				oControl.placeAt("content");
+			});
+		</script>
+
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
+</html>
