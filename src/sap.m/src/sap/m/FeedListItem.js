@@ -223,7 +223,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		var sImgId = this.getId() + '-icon';
 		var mProperties = {
 			src : sIconSrc,
-			alt : this.getSender(),
+			alt : encodeURI(this.getSender()),
 			densityAware : this.getIconDensityAware(),
 			decorative : false,
 			useIconTooltip : false };
