@@ -610,6 +610,37 @@
 				//Assert
 				assert.equal(sFullText, "Test<br> with a <br> <br> newline<br>", "The \\n has been replaced with <br> tag");
 			});
+
+			QUnit.module("Special characters", {
+				beforeEach: function() {
+					var oData,
+						oModel;
+
+					this.oFeedListItem = new sap.m.FeedListItem({
+						sender: "{/sender}",
+						senderActive: "{/senderActive}",
+						text: "{/text}"
+					});
+
+					oData = {
+						"text": "Some Text",
+						"sender": "Al{exandra",
+						"senderActive": true
+					};
+					oModel = new sap.ui.model.json.JSONModel();
+					oModel.setData(oData);
+					this.oFeedListItem.setModel(oModel);
+					this.oFeedListItem.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("Special characters in the sender property do not lead to an exception", function(assert) {
+				assert.ok(true, "No exception occurred");
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
