@@ -1,8 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand', "sap/ui/fl/changeHandler/PropertyBindingChange", "sap/ui/rta/Utils"], function(FlexCommand,
-		PropertyBindingChangeHandler, Utils) {
+sap.ui.define([
+	'sap/ui/rta/command/FlexCommand',
+	"sap/ui/rta/Utils"
+], function(
+	FlexCommand,
+	Utils
+) {
 	"use strict";
 
 	/**
@@ -49,10 +54,6 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand', "sap/ui/fl/changeHandler/Proper
 			events : {}
 		}
 	});
-
-	BindProperty.prototype.init = function() {
-		this.setChangeHandler(PropertyBindingChangeHandler);
-	};
 
 	/**
 	 * @override to suppress the binding strings to be used as

@@ -138,7 +138,6 @@ function(
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
 				element : new Button(),
-				changeHandler : HideControl,
 				changeType : "hideControl"
 			});
 		},
@@ -323,7 +322,7 @@ function(
 				newValue : this.NEW_VALUE,
 				semanticMeaning : "resize"
 			});
-			this.fnApplyChangeSpy = sandbox.spy(this.oPropertyCommand.getChangeHandler(), "applyChange");
+			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -400,7 +399,7 @@ function(
 				propertyName : "value",
 				newBinding : this.NEW_VALUE_BINDING
 			});
-			this.fnApplyChangeSpy = sandbox.spy(this.oBindShowValueHelpCommand.getChangeHandler(), "applyChange");
+			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -423,7 +422,7 @@ function(
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
 			assert.equal(this.oInput.getShowValueHelp(), this.OLD_BOOLEAN_VALUE, "then the controls property changed accordingly");
 
-			this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
+			return this.oBindShowValueHelpCommandWithoutOldValueSet.execute();
 		}.bind(this))
 
 		.then(function() {
@@ -445,7 +444,7 @@ function(
 			assert.equal(this.fnApplyChangeSpy.callCount, 1, "then the changehandler should not be called for the undo.");
 			assert.equal(this.oInput.getValue(), this.OLD_VALUE, "then the controls property changed accordingly");
 
-			this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
+			return this.oBindValuePropertyCommandWithoutOldBindingSet.execute();
 		}.bind(this))
 
 		.then(function() {
@@ -790,31 +789,5 @@ function(
 		assert.equal(oMoveCmd.getChangeType(), "moveControls", "then the command with corresponding changeType is returned");
 
 		oMoveCmd.destroy();
-	});
-
-	QUnit.test("when asking for a move command for control or aggregation without move action registration", function(assert){
-		var oMoveCmd = CommandFactory.getCommandFor(this.oMovable, "Move", {
-			movedElements : [{
-				id : this.oMovable.getId(),
-				sourceIndex : 0,
-				targetIndex : 1
-			}],
-			source : {
-				publicAggregation : "fakeAggreagtionWithoutMove"
-			}
-		}, this.oSourceParentDesignTimeMetadata );
-		assert.ok(!oMoveCmd, "then no command is returned");
-
-		var oMoveCmd2 = CommandFactory.getCommandFor(this.oRootElement, "Move", {
-			movedElements : [{
-				element : this.oMovable,
-				sourceIndex : 0,
-				targetIndex : 1
-			}],
-			source : {
-				publicAggregation : "content"
-			}
-		}, this.oOtherParentDesignTimeMetadata);
-		assert.ok(!oMoveCmd2, "then no command is returned");
 	});
 });

@@ -56,7 +56,7 @@ sap.ui.define([
 
 	LREPSerializer.prototype.handleCommandExecuted = function(oEvent) {
 		var oParams = oEvent.getParameters();
-		var aCommands = this.getCommandStack()._getSubCommands(oParams.command);
+		var aCommands = this.getCommandStack().getSubCommands(oParams.command);
 
 		if (oParams.undo) {
 			var oFlexController;
@@ -67,17 +67,11 @@ sap.ui.define([
 				if (oCommand instanceof sap.ui.rta.command.FlexCommand){
 					var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
-
-					// while performing undo, we add another change to FL. This change has to be removed from the custom Data
-					if (oCommand._oPreparedUndoChange) {
-						oFlexController.removeFromAppliedChangesOnControl(oCommand._oPreparedUndoChange, oAppComponent, oControl);
-					}
 				}
 				oFlexController.deleteChange(oChange);
 			});
 		} else {
 			var aDescriptorCreateAndAdd = [];
-
 			aCommands.forEach(function(oCommand) {
 				if (oCommand instanceof sap.ui.rta.command.FlexCommand){
 					var oAppComponent = oCommand.getAppComponent();
@@ -107,7 +101,8 @@ sap.ui.define([
 		var oFlexController = FlexControllerFactory.createForControl(oRootControl);
 		return oFlexController.saveAll()
 
-		// needed because the FlexChanges are stored with a different ComponentName (sComponentName + ".Component")
+		// needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
+		// -> two different ChangePersistences
 		.then(function() {
 			var sComponentName = FlexUtils.getComponentClassName(sap.ui.getCore().byId(this.getRootControl())).replace(".Component", "");
 			var oRootControl = sap.ui.getCore().byId(this.getRootControl());

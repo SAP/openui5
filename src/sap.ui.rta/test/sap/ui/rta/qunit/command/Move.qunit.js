@@ -118,7 +118,6 @@ sap.ui.define([
 
 		assert.ok(oCommand, "move command for Button exists");
 		assert.equal(oCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-		assert.ok(oCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
 		oCommand.execute().then( function() {
 			assert.equal(this.fnCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice (1x SF, 1x undo preparation)");

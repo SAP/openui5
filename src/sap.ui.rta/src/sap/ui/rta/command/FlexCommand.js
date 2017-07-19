@@ -26,9 +26,6 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		metadata : {
 			library : "sap.ui.rta",
 			properties : {
-				changeHandler : {
-					type : "any"
-				},
 				changeType : {
 					type : "string"
 				},
@@ -193,9 +190,10 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	/**
 	 * @private
 	 * @param {void} vChange - change object
+	 * @param {boolean} bNotMarkAsAppliedChange - optional - apply the change without marking them as applied change in the custom Data
 	 * @returns {promise} empty promise
 	 */
-	FlexCommand.prototype._applyChange = function(vChange) {
+	FlexCommand.prototype._applyChange = function(vChange, bNotMarkAsAppliedChange) {
 		//TODO: remove the following compatibility code when concept is implemented
 		var oChange = vChange.change || vChange;
 
@@ -216,6 +214,12 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
 
 		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, {modifier: RtaControlTreeModifier, appComponent: oAppComponent}))
+
+		.then(function() {
+			if (bNotMarkAsAppliedChange) {
+				oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oSelectorElement);
+			}
+		})
 
 		.then(function() {
 			if (!this.getFnGetState()){

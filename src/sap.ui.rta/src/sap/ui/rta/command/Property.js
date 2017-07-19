@@ -1,8 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/FlexCommand', "sap/ui/fl/changeHandler/PropertyChange", "sap/ui/rta/Utils"], function(FlexCommand,
-		PropertyChangeHandler, Utils) {
+sap.ui.define([
+	'sap/ui/rta/command/FlexCommand',
+	"sap/ui/rta/Utils"
+], function(
+	FlexCommand,
+	Utils
+) {
 	"use strict";
 
 	/**
@@ -41,10 +46,6 @@ sap.ui.define(['sap/ui/rta/command/FlexCommand', "sap/ui/fl/changeHandler/Proper
 			events : {}
 		}
 	});
-
-	Property.prototype.init = function() {
-		this.setChangeHandler(PropertyChangeHandler);
-	};
 
 	Property.prototype._getChangeSpecificData = function() {
 		var oElement = this.getElement();

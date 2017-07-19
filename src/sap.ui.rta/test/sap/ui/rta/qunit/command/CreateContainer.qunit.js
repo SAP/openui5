@@ -134,7 +134,6 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			var sChangeType = this.oCreateContainerDesignTimeMetadata.getAggregationAction("createContainer", this.oForm)[0].changeType;
 			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
 			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-			assert.ok(this.oCreateContainerCommand.getChangeHandler().applyChange, "change handler is assigned to a command");
 
 			this.oCreateContainerCommand.execute().then( function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
