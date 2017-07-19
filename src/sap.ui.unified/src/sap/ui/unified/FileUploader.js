@@ -182,7 +182,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			/**
 			 * The header parameters for the FileUploader which are only submitted with XHR requests. Header parameters are not supported by Internet Explorer 9.
 			 */
-			headerParameters : {type : "sap.ui.unified.FileUploaderParameter", multiple : true, singularName : "headerParameter"}
+			headerParameters : {type : "sap.ui.unified.FileUploaderParameter", multiple : true, singularName : "headerParameter"},
+
+			/**
+			 * Settings for the <code>XMLHttpRequest</code> object.
+			 * <b>Note:</b> This aggregation is only used when the <code>sendXHR</code> property is set to <code>true</code>.
+			 * @since 1.52
+			 */
+			xhrSettings : {type : "sap.ui.unified.FileUploaderXHRSettings", multiple : false}
 		},
 		events : {
 
@@ -510,6 +517,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				this.$().find(".sapUiFupInputMask").attr("title", jQuery.sap.encodeHTML(oTooltip));
 			}
 		}
+		return this;
+	};
+
+	FileUploader.prototype.setXhrSettings = function (oXhrSettings) {
+		this.setAggregation("xhrSettings", oXhrSettings, true);
+
 		return this;
 	};
 
@@ -1221,7 +1234,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	* @private
 	*/
 	FileUploader.prototype._sendFilesWithXHR = function (aFiles) {
-		var iFiles, sHeader, sValue, oXhrEntry;
+		var iFiles,
+			sHeader,
+			sValue,
+			oXhrEntry,
+			oXHRSettings = this.getXhrSettings();
 
 		if (aFiles.length > 0) {
 			if (this.getUseMultipart()) {
@@ -1236,12 +1253,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			for (var j = 0; j < iFiles; j++) {
 				//keep a reference on the current upload xhr
 				this._uploadXHR = new window.XMLHttpRequest();
+
 				oXhrEntry = {
 					xhr: this._uploadXHR,
 					requestHeaders: []
 				};
 				this._aXhr.push(oXhrEntry);
 				oXhrEntry.xhr.open("POST", this.getUploadUrl(), true);
+				if (oXHRSettings) {
+					oXhrEntry.xhr.withCredentials = oXHRSettings.getWithCredentials();
+				}
 				if (this.getHeaderParameters()) {
 					var aHeaderParams = this.getHeaderParameters();
 					for (var i = 0; i < aHeaderParams.length; i++) {
