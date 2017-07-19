@@ -7,14 +7,8 @@
 		id="page"
 		title="{CategoryName}"
 		showNavButton="true"
-		navButtonPress="onNavButtonPress"
-		showFooter="{=!${device>/system/phone}}" >
+		navButtonPress="onNavButtonPress">
 		<headerContent>
-			<ToggleButton
-				icon="sap-icon://complete"
-				tooltip="{i18n>categoryAvailabilityFilterTooltip}"
-				press="onAvailabilityFilterToggle"
-				pressed="{ui>/availabilityFilterOn}"/>
 			<Button
 				icon="sap-icon://cart"
 				tooltip="{i18n>toCartButtonTooltip}"
@@ -35,6 +29,15 @@
 						descending : false
 					}
 				}">
+				<infoToolbar>
+					<Toolbar
+						id="categoryInfoToolbar"
+						visible="false">
+						<content>
+							<Title id="categoryInfoToolbarTitle"/>
+						</content>
+					</Toolbar>
+				</infoToolbar>
 				<items>
 					<ObjectListItem
 						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
@@ -68,5 +71,14 @@
 				</items>
 			</List>
 		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Button
+					id="masterListFilterButton"
+					icon="sap-icon://filter"
+					press="onMasterListFilterPressed"/>
+			</Toolbar>
+		</footer>
 	</Page>
 </mvc:View>

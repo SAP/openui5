@@ -1,0 +1,26 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ViewSettingsDialog
+		id="masterListFilterDialog"
+		confirm="handleConfirm">
+		<filterItems>
+			<ViewSettingsFilterItem
+				text="{i18n>availabilityText}"
+				key="availabilityKey">
+				<items>
+					<ViewSettingsItem text="{i18n>availableProductsText}" key="Available" />
+					<ViewSettingsItem text="{i18n>outOfStockProductsText}" key="OutOfStock" />
+				</items>
+			</ViewSettingsFilterItem>
+			<ViewSettingsFilterItem
+				text="{i18n>priceText}"
+				key="priceKey">
+				<items>
+					<ViewSettingsItem text="{i18n>moreThanText}" key="More" />
+					<ViewSettingsItem text="{i18n>lessThanText}" key="Less" />
+				</items>
+			</ViewSettingsFilterItem>
+		</filterItems>
+	</ViewSettingsDialog>
+</core:FragmentDefinition>
