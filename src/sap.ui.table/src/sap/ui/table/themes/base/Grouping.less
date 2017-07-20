@@ -12,24 +12,23 @@
 @_sapUiTableGroupIconFontSize: @sapMFontMediumSize;
 
 .sapUiTableTreeIcon {
-	display: none;
-	width: 25px;
-	padding: 0;
-	flex-shrink: 0;
-	margin-right: 6px;
+	flex: none;
+	text-align: center;
+	width: @_sapUiTableRowHdrWidth;
+	align-self: center;
 }
 
 .sapUiSizeCondensed {
-	
+
 	.sapUiTableCell > .sapUiTableTreeIcon {
 		padding: 0;
 		margin-right: 1px;
 	}
-	
+
 	.sapUiTableCell > .sapUiTableTreeIcon::before {
 		line-height: 1.5rem;
 	}
-	
+
 }
 
 .sapUiTableTreeIcon:focus {
@@ -56,10 +55,6 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 	}
 }
 
-.sapUiTableTreeMode .sapUiTableTreeIcon,
-.sapUiTableTreeMode .sapUiTableTreeIcon::before {
-	display: inline-block;
-}
 
 
 
@@ -100,12 +95,13 @@ html[data-sap-ui-browser^="ie"] .sapUiTableTreeIcon:focus::before {
 .sapUiTableTreeIcon::before {
 	font-family: "SAP-icons";
 	font-size: 12px;
-	font-weight: normal;
-	display: none;
+	color: @sapUiContentIconColor;
+}
+
+.sapUiTableGroupIcon::before {
 	width: @_sapUiTableRowHdrWidth;
 	text-align: center;
 	vertical-align: middle;
-	color: @sapUiContentIconColor;
 }
 
 .sapUiTableGroupIcon.sapUiTableGroupIconOpen::before,
@@ -124,8 +120,6 @@ html[dir=rtl] {
 		content: '\e067';
 	}
 }
-
-.sapUiTableTreeIcon.sapUiTableTreeIconLeaf {}
 
 // Fading effect for overlapping
 .sapUiTableGroupIcon:after {
