@@ -8,7 +8,7 @@
 		<form:SimpleForm binding="{
 				path : '/EdmTypesCollection(\'1\')',
 				parameters : {
-					$select : 'ID,Binary,Boolean,Byte,Date,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String'
+					$select : 'ID,Binary,Boolean,Byte,Date,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String,Time'
 				}
 			}" layout="ResponsiveGridLayout">
 			<form:title>
@@ -48,6 +48,8 @@
 				tooltip="{= String(0 + %{Single})}"/>
 			<Label labelFor="string" text="String"/>
 			<Text id="string" text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
+			<Label labelFor="time" text="Time"/>
+			<Text id="time" text="{path : 'Time', type : 'sap.ui.model.odata.type.TimeOfDay'}"/>
 		</form:SimpleForm>
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
 			   items="{
