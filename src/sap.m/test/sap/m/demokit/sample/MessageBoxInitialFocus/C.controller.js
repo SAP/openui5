@@ -21,11 +21,12 @@ sap.ui.define([
 
 		handleConfirmMessageBoxPressInitialFocus: function(oEvent) {
 			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
-			MessageBox.confirm(
+			MessageBox.warning(
 					"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
 					{
-						icon: MessageBox.Icon.INFORMATION,
+						icon: MessageBox.Icon.WARNING,
 						title: "Focus on a Button",
+						actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
 						styleClass: bCompact ? "sapUiSizeCompact" : "",
 						initialFocus: MessageBox.Action.CANCEL
 					}
@@ -37,7 +38,7 @@ sap.ui.define([
 			MessageBox.show(
 					'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive',
 					{
-						icon: MessageBox.Icon.INFORMATION,
+						icon: MessageBox.Icon.WARNING,
 						title: "Focus on a Custom Button",
 						actions: [MessageBox.Action.YES, MessageBox.Action.NO, "Custom Button"],
 						styleClass: bCompact ? "sapUiSizeCompact" : "",

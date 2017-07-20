@@ -198,7 +198,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * where <code>oAction</code> is the button that the user has tapped. For example, when the user has pressed the close button,
 				 * an sap.m.MessageBox.Action.Close is returned.
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {sap.m.MessageBox.Icon} [mOptions.icon] The icon to be displayed.
 				 * @param {string} [mOptions.title] The title of the message box.
@@ -439,7 +439,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * Applications have to use <code>fnCallback</code> to continue work after the
 				 * user closed the alert dialog.
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {function} [mOptions.onClose] callback function to be called when the user closes the dialog
 				 * @param {string} [mOptions.title='Alert'] Title to be displayed in the alert dialog
@@ -514,7 +514,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * Applications have to use <code>fnCallback</code> to continue work after the
 				 * user closed the confirmation dialog
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {function} [mOptions.onClose] Callback to be called when the user closes the dialog
 				 * @param {string} [mOptions.title='Confirmation'] Title to display in the confirmation dialog
@@ -585,7 +585,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * Applications have to use <code>fnCallback</code> to continue work after the
 				 * user closed the error dialog.
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Error'] Title of the error dialog
@@ -641,7 +641,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * Applications have to use <code>fnCallback</code> to continue work after the
 				 * user closed the information dialog
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Information'] Title of the information dialog
@@ -697,7 +697,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * Applications have to use <code>fnCallback</code> to continue work after the
 				 * user closed the warning dialog
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Warning'] Title of the warning dialog
@@ -753,7 +753,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 				 * Applications have to use <code>fnCallback</code> to continue work after the
 				 * user closed the success dialog
 				 *
-				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMassage is deprecated since version 1.30.4.
+				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
 				 * @param {function} [mOptions.onClose] Callback when the user closes the dialog
 				 * @param {string} [mOptions.title='Success'] Title of the success dialog
