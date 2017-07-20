@@ -3,9 +3,15 @@
  */
 //Provides mixin sap.ui.model.odata.v4.lib._V2Requestor
 sap.ui.define([
+	"sap/ui/core/format/DateFormat",
 	"./_Helper"
-], function (_Helper) {
+], function (DateFormat, _Helper) {
 	"use strict";
+
+	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
+		rDate = /^\/Date\((\d+)\)\/$/,
+		rPlus = /\+/g,
+		rSlash = /\//g;
 
 	/**
 	 * A mixin for a requestor using an OData V2 service.
@@ -50,7 +56,36 @@ sap.ui.define([
 	 *   The corresponding OData V4 value
 	 */
 	_V2Requestor.prototype.convertBinary = function (sV2Value) {
-		return sV2Value.replace(/\+/g, "-").replace(/\//g, "_");
+		return sV2Value.replace(rPlus, "-").replace(rSlash, "_");
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.DateTime with <code>sap:display-format="Date"</code>
+	 * to the corresponding OData V4 Edm.Date value
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 */
+	_V2Requestor.prototype.convertDate = function (sV2Value) {
+		var oDate,
+			oFormatter,
+			aMatches = rDate.exec(sV2Value);
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.DateTime value '" + sV2Value + "'");
+		}
+
+		oDate = new Date(parseInt(aMatches[1], 10));
+		oFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true});
+		if (Number(aMatches[1] % (24 * 60 * 60 * 1000)) !== 0) {
+			throw new Error("Cannot convert Edm.DateTime value '" + sV2Value
+				+ "' to Edm.Date because it contains a time of day");
+		}
+		return oFormatter.format(oDate);
 	};
 
 	/**
@@ -151,6 +186,8 @@ sap.ui.define([
 		switch (sPropertyType) {
 			case "Edm.Binary":
 				return this.convertBinary(vValue);
+			case "Edm.Date":
+				return this.convertDate(vValue);
 			case "Edm.Boolean":
 			case "Edm.Byte":
 			case "Edm.Decimal":

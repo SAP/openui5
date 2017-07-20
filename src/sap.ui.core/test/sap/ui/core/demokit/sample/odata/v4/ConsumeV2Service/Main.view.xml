@@ -8,7 +8,7 @@
 		<form:SimpleForm binding="{
 				path : '/EdmTypesCollection(\'1\')',
 				parameters : {
-					$select : 'ID,Binary,Boolean,Byte,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String'
+					$select : 'ID,Binary,Boolean,Byte,Date,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String'
 				}
 			}" layout="ResponsiveGridLayout">
 			<form:title>
@@ -20,6 +20,8 @@
 			<Text id="boolean" text="{path : 'Boolean', type : 'sap.ui.model.odata.type.Boolean'}"/>
 			<Label labelFor="byte" text="Byte"/>
 			<Text id="byte" text="{path : 'Byte', type : 'sap.ui.model.odata.type.Byte'}"/>
+			<Label labelFor="date" text="Date"/>
+			<Text id="date" text="{path : 'Date', type : 'sap.ui.model.odata.type.Date'}"/>
 			<Label labelFor="decimal" text="Decimal"/>
 			<Text id="decimal" text="{path : 'Decimal', type : 'sap.ui.model.odata.type.Decimal'}"/>
 			<Label labelFor="double" text="Double"/>
