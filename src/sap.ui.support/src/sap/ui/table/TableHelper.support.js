@@ -66,7 +66,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 			oRuleDef = TableSupportHelper.normalizeRule(oRuleDef);
 			var sResult = oRuleset.addRule(oRuleDef);
 			if (sResult != "success") {
-				jQuery.sap.log.warning("Support Rule '" + oRuleDef.id + "' for library sap.m not applied: " + sResult);
+				jQuery.sap.log.warning("Support Rule '" + oRuleDef.id + "' for library sap.ui.table not applied: " + sResult);
 			}
 		},
 
