@@ -73,7 +73,7 @@
 								class="demokitInitialPagesWhiteText"
 								titleStyle="H1"/>
 						<Text
-								text="Set up and tutorials"
+								text="Setup and tutorials"
 								class="demokitInitialPagesWhiteText"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
