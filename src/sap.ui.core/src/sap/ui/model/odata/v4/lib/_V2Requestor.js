@@ -186,6 +186,13 @@ sap.ui.define([
 				: oResponsePayload.d,
 			that = this;
 
+		if (oResponsePayload.d.__count) {
+			oPayload["@odata.count"] = oResponsePayload.d.__count;
+		}
+		if (oResponsePayload.d.__next) {
+			oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
+		}
+
 		return this.fnFetchEntityContainer().then(function (mTypeByName) {
 			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mTypeByName);
 			return oPayload;
