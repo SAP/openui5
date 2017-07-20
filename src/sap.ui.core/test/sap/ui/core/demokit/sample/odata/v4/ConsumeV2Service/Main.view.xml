@@ -8,11 +8,14 @@
 		<form:SimpleForm binding="{
 				path : '/EdmTypesCollection(\'1\')',
 				parameters : {
-					$select : 'ID,Boolean,Byte,Decimal,Double,Float,Guid,Int16,Int32,Int64,SByte,Single,String'}
+					$select : 'ID,Binary,Boolean,Byte,Decimal,Double,Float,Guid,Int16,Int32,Int64,SByte,Single,String'
+				}
 			}" layout="ResponsiveGridLayout">
 			<form:title>
 				<core:Title text="Single Entity"/>
 			</form:title>
+			<Label labelFor="binary" text="Binary"/>
+			<Text id="binary" text="{path : 'Binary', type : 'sap.ui.model.odata.type.String'}"/>
 			<Label labelFor="boolean" text="Boolean"/>
 			<Text id="boolean" text="{path : 'Boolean', type : 'sap.ui.model.odata.type.Boolean'}"/>
 			<Label labelFor="byte" text="Byte"/>
