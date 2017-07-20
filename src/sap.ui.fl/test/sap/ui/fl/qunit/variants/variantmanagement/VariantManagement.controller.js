@@ -207,7 +207,7 @@ sap.ui.define([
 
 			oParent.removeContent(this.oVM);
 			var sVMId = this.oVM.getId();
-			var sName = this.oVM.getVariantMgmtId();
+			var sName = this.oVM.getVariantManagementKey();
 			var bShowFav = this.oVM.getShowFavorites();
 			var bShowShare = this.oVM.getShowShare();
 			var bShowExe = this.oVM.getShowExecuteOnSelection();
@@ -218,7 +218,7 @@ sap.ui.define([
 			oParent.addContent(oVM);
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM.setVariantMgmtId(sName);
+			this.oVM.setVariantManagementKey(sName);
 			this.oVM.setShowFavorites(!bShowFav);
 			this.oVM.setShowShare(bShowShare);
 			this.oVM.setShowExecuteOnSelection(bShowExe);
@@ -264,11 +264,11 @@ sap.ui.define([
 			this.oVM.setModified(true);
 		},
 		onVMIdChange: function(oEvent) {
-			var sId = this.oVM.getVariantMgmtId();
+			var sId = this.oVM.getVariantManagementKey();
 			if (sId === "M0") {
-				this.oVM.setVariantMgmtId("M1");
+				this.oVM.setVariantManagementKey("M1");
 			} else {
-				this.oVM.setVariantMgmtId("M0");
+				this.oVM.setVariantManagementKey("M0");
 			}
 		},
 

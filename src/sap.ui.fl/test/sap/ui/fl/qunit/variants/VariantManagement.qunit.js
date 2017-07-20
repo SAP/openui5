@@ -26,11 +26,11 @@
 	QUnit.module("sap.ui.fl.variants.VariantManagement", {
 		beforeEach: function() {
 			this.oVariantManagement = new sap.ui.fl.variants.VariantManagement({
-				variantMgmtId: "0"
+				variantManagementKey: "One"
 			});
 
-			oModel = new sap.ui.fl.variants.VariantModel([
-				{
+			oModel = new sap.ui.fl.variants.VariantModel({
+				"One": {
 					defaultVariant: "Standard",
 					currentVariant: "Standard",
 					modified: false,
@@ -72,8 +72,23 @@
 							originalFavorite: true
 						}
 					]
+				},
+				"Two": {
+					defaultVariant: "Standard",
+					currentVariant: "Standard",
+					modified: false,
+					variants: [
+						{
+							key: "Standard",
+							title: "Standard",
+							author: "A",
+							readOnly: true,
+							favorite: true,
+							originalFavorite: true
+						}
+					]
 				}
-			]);
+			});
 		},
 		afterEach: function() {
 		}
@@ -106,6 +121,26 @@
 		assert.equal(aItems[1].toBeDeleted, false);
 		assert.equal(aItems[1].originalTitle, aItems[1].title);
 		assert.equal(aItems[2].key, "2");
+
+	});
+
+	QUnit.test("Check variantManagementKey functionality", function(assert) {
+
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+
+		var aItems = this.oVariantManagement._getItems();
+		assert.ok(aItems);
+		assert.equal(aItems.length, 5);
+
+		this.oVariantManagement.setVariantManagementKey("Two");
+		aItems = this.oVariantManagement._getItems();
+		assert.ok(aItems);
+		assert.equal(aItems.length, 1);
+
+		this.oVariantManagement.setVariantManagementKey("One");
+		aItems = this.oVariantManagement._getItems();
+		assert.ok(aItems);
+		assert.equal(aItems.length, 5);
 
 	});
 
@@ -269,15 +304,17 @@
 
 	QUnit.test("Checking _handleManageCancelPressed", function(assert) {
 
-		var oItem = oModel.getData()[0].variants[1];
-
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+
+		var oItemDel = this.oVariantManagement._getItemByKey("1");
+		var oItemRen = this.oVariantManagement._getItemByKey("3");
 
 		var aItems = this.oVariantManagement._getItems();
 		assert.ok(aItems);
 		assert.equal(aItems.length, 5);
 
-		oItem.toBeDeleted = true;
+		oItemDel.toBeDeleted = true;
+		oItemRen.title = "Not Three";
 
 		this.oVariantManagement._createManagementDialog();
 		assert.ok(this.oVariantManagement.oManagementDialog);
@@ -295,35 +332,12 @@
 		assert.ok(aRows);
 		assert.equal(aRows.length, 5);
 
-	});
+		var oItem = this.oVariantManagement._getItemByKey("3");
+		assert.ok(oItem);
+		assert.equal(oItem.title, "Three");
+		assert.equal(oItem.originalTitle, oItem.title);
 
-// QUnit.test("Checking _handleManageDeletePressed", function(assert) {
-//
-// var oItem = fCreateItem({}, "k1", "text1");
-// this.oVariantManagement.addItem(oItem);
-//
-// oItem = fCreateItem({}, "k2", "text2");
-// this.oVariantManagement.addItem(oItem);
-//
-// this.oVariantManagement._createManagementDialog();
-// assert.ok(this.oVariantManagement.oManagementDialog);
-// sinon.stub(this.oVariantManagement.oManagementDialog, "open");
-//
-// this.oVariantManagement._openManagementDialog();
-// var aRows = this.oVariantManagement.oManagementTable.getItems();
-// assert.ok(aRows);
-// assert.equal(aRows.length, 3);
-//
-// this.oVariantManagement._handleManageDeletePressed(oItem);
-//
-// this.oVariantManagement._deleteOccured = true;
-//
-// this.oVariantManagement._openManagementDialog();
-// var aRows = this.oVariantManagement.oManagementTable.getItems();
-// assert.ok(aRows);
-// assert.equal(aRows.length, 2);
-//
-// });
+	});
 
 	QUnit.test("Checking _handleManageSavePressed; deleted item is NOT selected", function(assert) {
 

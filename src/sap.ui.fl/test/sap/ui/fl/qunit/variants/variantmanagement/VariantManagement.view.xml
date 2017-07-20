@@ -34,7 +34,7 @@
 		</m:VBox>
 		<m:Label text="Variants" />
 		<VariantManagement id="idVariantManagementCtrl"
-			variantMgmtId="M0" save="onSave" manage="onManage"
+			variantManagementKey="M0" save="onSave" manage="onManage"
 			showExecuteOnSelection="true" showShare="true" showFavorites="true" />
 	</l:VerticalLayout>
 </mvc:View>
