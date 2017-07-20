@@ -115,7 +115,11 @@ sap.ui.define([
 				continue;
 			}
 			if (typeof vValue === "object") { // non-primitive property value
-				this.convertNonPrimitive(vValue, mTypeByName);
+				if (vValue.__deferred) {
+					delete vObject[sPropertyName];
+				} else {
+					this.convertNonPrimitive(vValue, mTypeByName);
+				}
 				continue;
 			}
 			sPropertyType = oType[sPropertyName] && oType[sPropertyName].$Type;

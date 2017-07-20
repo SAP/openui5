@@ -178,6 +178,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertNonPrimitive, __deferred (& 'for' loop & recursion)", function (assert) {
+		var fnConvertNonPrimitive,
+			oObject = {
+				__metadata : {type : "TypeQName"},
+				complex : {},
+				missing : null,
+				Products : {
+					__deferred: {}
+				},
+				property : "42"
+			},
+			oRequestor = {},
+			mTypeByName = {"TypeQName" : {property : {$Type : "Edm.Double"}}};
+
+		asV2Requestor(oRequestor);
+		// remember original function, do not call mock as "code under test" ;-)
+		fnConvertNonPrimitive = oRequestor.convertNonPrimitive.bind(oRequestor);
+
+		this.mock(oRequestor).expects("convertNonPrimitive")
+			.withExactArgs(oObject.complex, mTypeByName);
+		this.mock(oRequestor).expects("convertPrimitive")
+			.withExactArgs(oObject.property, "Edm.Double", "TypeQName", "property")
+			.returns(42);
+
+		// code under test
+		fnConvertNonPrimitive(oObject, mTypeByName);
+
+		assert.deepEqual(oObject, {
+			complex : {},
+			missing : null,
+			property : 42
+		}, "__deferred navigation property deleted");
+	});
+
+	//*********************************************************************************************
 	[{}, undefined].forEach(function (oInlineMetadata, i) {
 		QUnit.test("convertNonPrimitive, __metadata.type missing, " + i, function (assert) {
 			var oObject = {
