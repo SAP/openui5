@@ -68,7 +68,7 @@ sap.ui.define([
 				/**
 				 * Sets the logical id of the variant management.
 				 */
-				variantMgmtId: {
+				variantManagementKey: {
 					type: "string",
 					group: "Misc",
 					defaultValue: null
@@ -233,18 +233,7 @@ sap.ui.define([
 
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
 
-		this.oModel = new JSONModel({
-			showManage: true,
-			showSave: true,
-			showSaveAs: true,
-			showExecuteOnSelection: false,
-			showShare: false,
-			showSetAsDefault: true,
-			showFavorites: false
-		});
-		this.setModel(this.oModel, VariantManagement.INNER_MODEL_NAME);
-
-		this._bindProperties();
+		this._createInnerModel();
 
 		var oVariantInvisibleText = new InvisibleText({
 			text: {
@@ -321,6 +310,22 @@ sap.ui.define([
 		});
 		this.oVariantLayout.addStyleClass("sapUiFlVarMngmtLayout");
 		this.addDependent(this.oVariantLayout);
+	};
+
+	VariantManagement.prototype._createInnerModel = function() {
+
+		var oModel = new JSONModel({
+			showManage: true,
+			showSave: true,
+			showSaveAs: true,
+			showExecuteOnSelection: false,
+			showShare: false,
+			showSetAsDefault: true,
+			showFavorites: false
+		});
+		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
+
+		this._bindProperties();
 	};
 
 	VariantManagement.prototype._bindProperties = function() {
@@ -459,7 +464,7 @@ sap.ui.define([
 
 		if (!this.oContext) {
 			oModel = this.getModel(VariantManagement.MODEL_NAME);
-			sVariantKey = this.getVariantMgmtId();
+			sVariantKey = this.getVariantManagementKey();
 			if (oModel && sVariantKey) {
 				this.oContext = new Context(oModel, "/" + sVariantKey);
 
@@ -472,9 +477,9 @@ sap.ui.define([
 		this._setBindingContext();
 	};
 
-	VariantManagement.prototype.setVariantMgmtId = function(sValue) {
+	VariantManagement.prototype.setVariantManagementKey = function(sValue) {
 		this.oContext = null;
-		this.setProperty("variantMgmtId", sValue);
+		this.setProperty("variantManagementKey", sValue);
 		this._setBindingContext();
 	};
 
@@ -722,7 +727,7 @@ sap.ui.define([
 			this.oDefault = new CheckBox(this.getId() + "-default", {
 				text: this._oRb.getText("VARIANT_MANAGEMENT_SETASDEFAULT"),
 				visible: {
-					path: "/showAsDefault",
+					path: "/showSetAsDefault",
 					model: VariantManagement.INNER_MODEL_NAME
 				},
 				width: "100%"
@@ -1599,21 +1604,6 @@ sap.ui.define([
 
 	// exit destroy all controls created in init
 	VariantManagement.prototype.exit = function() {
-
-// if (this.oVariantPopOver) {
-// this.oVariantPopOver.destroy();
-// this.oVariantPopOver = undefined;
-// }
-//
-// if (this.oSaveAsDialog) {
-// this.oSaveAsDialog.destroy();
-// this.oSaveAsDialog = undefined;
-// }
-//
-// if (this.oManagementDialog) {
-// this.oManagementDialog.destroy();
-// this.oManagementDialog = undefined;
-// }
 
 		if (this.oDefault && !this.oDefault._bIsBeingDestroyed) {
 			this.oDefault.destroy();
