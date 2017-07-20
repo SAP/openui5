@@ -36,9 +36,6 @@ sap.ui.define(['jquery.sap.global'],
 		// render bdi tag only if the browser is different from IE and Edge since it is not supported there
 		var bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge;
 
-		// get icon from icon pool
-		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
-
 		// start button tag
 		oRm.write("<button");
 		oRm.writeControlData(oButton);
@@ -179,16 +176,6 @@ sap.ui.define(['jquery.sap.global'],
 		// close inner button tag
 		oRm.write(">");
 
-		// set image for internal image control (back)
-		if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
-			this.writeInternalIconPoolHtml(oRm, oButton, sBackURI);
-		}
-
-		// write icon
-		if (oButton.getIcon()) {
-			this.writeImgHtml(oRm, oButton);
-		}
-
 		// write button text
 		if (sText) {
 			oRm.write("<span");
@@ -201,6 +188,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttribute("id", oButton.getId() + "-content");
 			oRm.write(">");
 
+			renderIcons.call(this, sType, oRm, oButton);
 			if (bRenderBDI) {
 				oRm.write("<bdi>");
 			}
@@ -209,6 +197,8 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.write("</bdi>");
 			}
 			oRm.write("</span>");
+		} else {
+			renderIcons.call(this, sType, oRm, oButton);
 		}
 
 		// special handling for IE focus outline
@@ -259,6 +249,24 @@ sap.ui.define(['jquery.sap.global'],
 	function renderTabIndex(oButton, oRm){
 		if (oButton._bExcludeFromTabChain) {
 			oRm.writeAttribute("tabindex", -1);
+		}
+	}
+
+	/**
+	 * Renders the icons of the button.
+	 * @param {string} sType The type of the button to be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.m.Button} oButton The sap.m.Button to be rendered
+	 */
+	function renderIcons(sType, oRm, oButton) {
+		// get icon from icon pool
+		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
+
+		if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
+			this.writeInternalIconPoolHtml(oRm, oButton, sBackURI);
+		}
+		if (oButton.getIcon()) {
+			this.writeImgHtml(oRm, oButton);
 		}
 	}
 

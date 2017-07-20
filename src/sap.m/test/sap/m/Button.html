@@ -674,8 +674,31 @@
 		text: "עברית 123 (now English in the brackets 456)"
 	});
 
+	var model = new sap.ui.model.json.JSONModel([
+		{row:[{icon: "sap-icon://add-product", text: "1-1"}]},
+		{row:[{icon: "", text: "1-2"}]}
+	]);
+	var oTable = new sap.m.Table({
+		columns: new sap.m.Column(),
+		items: {
+			path:"/",
+			template: new sap.m.ColumnListItem({
+				cells: {
+					path:"row",
+					template: new sap.m.Button({
+						width: "100%",
+						icon:"{icon}",
+						text: "{text}"
+					})
+				}
+			})
+		}
+	});
+
+	oTable.setModel(model);
+
 	oPage1.addContent(oBar2)
-	      .addContent(new sap.ui.core.HTML("myEmptyLine1", {content: "<br>"}))
+				.addContent(new sap.ui.core.HTML("myEmptyLine1", {content: "<br>"}))
 				.addContent(new sap.ui.core.HTML("myHtmlBarDefault", {content: ""}))
 				.addContent(oButtonBarDefault)
 				.addContent(new sap.ui.core.HTML("myHtmlBarUnstyled", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
@@ -787,7 +810,9 @@
 				.addContent(new sap.ui.core.HTML("myHtmloButtonBdi", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
 				.addContent(oButtonBdi)
 				.addContent(new sap.ui.core.HTML("myHtmloButtonBdi2", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
-				.addContent(oButtonBdi2);
+				.addContent(oButtonBdi2)
+				.addContent(new sap.ui.core.HTML("oTestButton", {content: "<div class='ButtonSpace'>&nbsp;</div>"}))
+				.addContent(oTable);
 
 	oApp.addPage(oPage1);
 	oApp.placeAt("body");
