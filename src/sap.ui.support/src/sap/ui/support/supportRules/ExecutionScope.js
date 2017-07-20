@@ -52,6 +52,27 @@ sap.ui.define(["jquery.sap.global"],
 			components: componentsContext
 		};
 
+		function isInPublicAggregation(oChild) {
+			// Try getting a child via its parent
+			var oChildAsAggregation = oChild.getParent().getMetadata().getAggregation(oChild.sParentAggregationName);
+			return !!oChildAsAggregation;
+		}
+
+		function getPublicElementsInside(oControlRoot) {
+			var oRoot;
+
+			if (oControlRoot.getRootControl) {
+				oRoot = oControlRoot.getRootControl();
+				if (oRoot) {
+					//TODO also exclude clones of binding templates, but include the binding template
+					//TODO also exclude customData etc.?
+					return oRoot.findAggregatedObjects(true, isInPublicAggregation);
+				}
+			}
+
+			return [];
+		}
+
 		function ExecutionScope(core, context) {
 			coreInstance = core;
 			elements = [];
@@ -62,6 +83,21 @@ sap.ui.define(["jquery.sap.global"],
 			return {
 				getElements: function () {
 					return elements;
+				},
+				getPublicElements: function () {
+					var aPublicElements = [];
+					var mComponents = core.mObjects.component;
+					var mUIAreas = core.mUIAreas;
+
+					for (var i in mComponents) {
+						aPublicElements = aPublicElements.concat(getPublicElementsInside(mComponents[i]));
+					}
+
+					for (var key in mUIAreas) {
+						aPublicElements = aPublicElements.concat(getPublicElementsInside(mUIAreas[key]));
+					}
+
+					return aPublicElements;
 				},
 				getElementsByClassName: function (classNameSelector) {
 					if (typeof classNameSelector === "string") {
