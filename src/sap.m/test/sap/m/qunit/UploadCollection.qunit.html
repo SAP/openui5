@@ -588,6 +588,81 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.module("Internal Methods", {
+		beforeEach : function() {
+			this.oSpySetProperty = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
+			this.oSpyApplySettings = sinon.spy(sap.ui.base.ManagedObject.prototype, "applySettings");
+			this.oItem = new sap.m.UploadCollectionItem({
+				fileName: "anyFileName"
+			});
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection",{
+				items: this.oItem
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSpySetProperty.restore();
+			this.oSpyApplySettings.restore();
+			if(this.oIcon) {
+				this.oIcon.destroy();
+				this.oIcon = null;
+			}
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Check if _createIcon returns an Image", function(assert) {
+		//Act
+		this.oItem.setThumbnailUrl("sap-icon://document");
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		//Assert
+		assert.ok(this.oIcon.sId.indexOf("-ia_imageHL") > -1, "_createIcon returned an image");
+	});
+
+	QUnit.test("Function _createIcon uses ManagedObject's setter for alt property if an icon is created", function(assert) {
+		//Act
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		//Assert
+		assert.ok(this.oSpySetProperty.calledWith("alt", "anyFileName"), "Setter for alt property called with correct parameters");
+	});
+
+	QUnit.test("Function _createIcon doesn't set alt property during ManagedObject's create method if an icon is created", function(assert) {
+		//Arrange
+		var oSettings = {
+			src: "sap-icon://document",
+			decorative: false,
+			useIconTooltip: false
+		};
+		//Act
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		//Assert
+		assert.ok(this.oSpyApplySettings.calledWith(oSettings), "Alt property is not set in ManagedObject's constructor");
+	});
+
+	QUnit.test("Function _createIcon uses ManagedObject's setter for alt property if an image is created", function(assert) {
+		//Arrange
+		this.oItem.setThumbnailUrl("anyFolder/myThumbnailFile.jpg");
+		//Act
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		//Assert
+		assert.ok(this.oSpySetProperty.calledWith("alt", "anyFileName"), "Setter for alt property called with correct parameters");
+	});
+
+	QUnit.test("Function _createIcon doesn't set alt property during ManagedObject's create method if an image is created", function(assert) {
+		//Arrange
+		this.oItem.setThumbnailUrl("anyFolder/myThumbnailFile.jpg");
+		var oSettings = {
+			src: "anyFolder/myThumbnailFile.jpg",
+			decorative: false
+		};
+		//Act
+		this.oIcon = this.oUploadCollection._createIcon(this.oItem, "item", this.oItem.getFileName(), this);
+		//Assert
+		assert.ok(this.oSpyApplySettings.calledWith(oSettings), "Alt property is not set in ManagedObject's constructor");
+	});
+
 	QUnit.module("List API Methods", {
 		beforeEach : function() {
 			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
