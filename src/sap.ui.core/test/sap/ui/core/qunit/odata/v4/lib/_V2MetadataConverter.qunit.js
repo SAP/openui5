@@ -1063,6 +1063,28 @@ sap.ui.require([
 				}
 			});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("convert: sap:label at EntityType", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="foo">\
+					<EntityType Name="Bar" sap:label="LabelEntityType"/>\
+				</Schema>',
+				{
+					"foo." : {
+						"$Annotations" : {
+							"foo.Bar" : {
+								'@com.sap.vocabularies.Common.v1.Label' : 'LabelEntityType'
+							}
+						},
+						"$kind" : "Schema"
+					},
+					"foo.Bar" : {
+						"$kind" : "EntityType"
+					}
+				});
+	});
+	// TODO convert sap:label at FunctionImport and Parameter
 	// TODO InsertRestrictions, DeleteRestrictions or UpdateRestrictions define two properties
 	// Xable and NonXableNavigationProperties (e.g. Insertable and
 	// NonInsertableNavigationProperties); take care that both can contain values and do not

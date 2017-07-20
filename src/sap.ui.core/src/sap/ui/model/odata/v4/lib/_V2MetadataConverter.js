@@ -27,6 +27,21 @@ sap.ui.define([
 				"property" : "Deletable",
 				"term" : "@Org.OData.Capabilities.V1.DeleteRestrictions"
 			},
+			"field-control" : {
+				"term" : "@com.sap.vocabularies.Common.v1.FieldControl"
+			},
+			"heading" : {
+				"term" : "@com.sap.vocabularies.Common.v1.Heading"
+			},
+			"label" : {
+				"term" : "@com.sap.vocabularies.Common.v1.Label"
+			},
+			"precision" : {
+				"term" : "@Org.OData.Measures.V1.Scale"
+			},
+			"quickinfo" : {
+				"term" : "@com.sap.vocabularies.Common.v1.QuickInfo"
+			},
 			"requires-filter" : {
 				"property" : "RequiresFilter",
 				"term" : "@Org.OData.Capabilities.V1.FilterRestrictions"
@@ -34,6 +49,9 @@ sap.ui.define([
 			"searchable" : {
 				"property" : "Searchable",
 				"term" : "@Org.OData.Capabilities.V1.SearchRestrictions"
+			},
+			"text" : {
+				"term" : "@com.sap.vocabularies.Common.v1.Text"
 			},
 			"updatable" : {
 				"property" : "Updatable",
@@ -141,23 +159,28 @@ sap.ui.define([
 			i,
 			n = aAttributes.length;
 
-		for (i = 0; i < n; i++) {
-			oAttribute = aAttributes[i];
-			if (oAttribute.namespaceURI !== sSapNamespace) {
-				continue;
+		if (sKind === "EntityType") {
+			setAnnotation(mAnnotations, "label", oElement.getAttributeNS(sSapNamespace, "label"));
+		} else {
+			for (i = 0; i < n; i++) {
+				oAttribute = aAttributes[i];
+				if (oAttribute.namespaceURI !== sSapNamespace) {
+					continue;
+				}
+				if (sKind === "EntitySet") {
+					convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate);
+				} else if (sKind === "Property") {
+					convertPropertyAnnotations(oAttribute, mAnnotations);
+				}
 			}
-			if (sKind === "EntitySet") {
-				convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate);
-			} else if (sKind === "Property") {
-				convertPropertyAnnotations(oAttribute, mAnnotations);
+			if (sKind === "EntitySet"
+					&& oElement.getAttributeNS(sSapNamespace, "searchable") !== "true") {
+				// default for sap:searchable is false --> add v4 annotation, if value of
+				// v2 annotation is not true
+				setAnnotation(mAnnotations, "searchable", false);
 			}
 		}
-		if (sKind === "EntitySet"
-				&& oElement.getAttributeNS(sSapNamespace, "searchable") !== "true") {
-			// default for sap:searchable is false --> add v4 annotation, if value of
-			// v2 annotation is not true
-			setAnnotation(mAnnotations, "searchable", false);
-		}
+
 		if (Object.keys(mAnnotations).length > 0) {
 			oAggregate.convertedV2Annotations[oAggregate.annotatable.path] = mAnnotations;
 		}
@@ -230,6 +253,20 @@ sap.ui.define([
 	 */
 	function convertPropertyAnnotations(oAttribute, mAnnotations) {
 		switch (oAttribute.localName) {
+			// simple cases
+			case "heading":
+			case "label":
+			case "quickinfo":
+				setAnnotation(mAnnotations, oAttribute.localName, oAttribute.value);
+				break;
+			case "field-control":
+			case "precision":
+			case "text":
+				setAnnotation(mAnnotations, oAttribute.localName, {
+					$Path : oAttribute.value
+				});
+				break;
+			// more complex cases
 			case "aggregation-role":
 				if (oAttribute.value === "dimension") {
 					mAnnotations["@com.sap.vocabularies.Analytics.v1.Dimension"] = true;
@@ -243,31 +280,6 @@ sap.ui.define([
 				} else if (oAttribute.value === "UpperCase") {
 					mAnnotations["@com.sap.vocabularies.Common.v1.IsUpperCase"] = true;
 				}
-				break;
-			case "field-control":
-				mAnnotations["@com.sap.vocabularies.Common.v1.FieldControl"] = {
-					$Path : oAttribute.value
-				};
-				break;
-			case "heading":
-				mAnnotations["@com.sap.vocabularies.Common.v1.Heading"] = oAttribute.value;
-				break;
-			case "label":
-				mAnnotations["@com.sap.vocabularies.Common.v1.Label"] = oAttribute.value;
-				break;
-			case "precision":
-				mAnnotations["@Org.OData.Measures.V1.Scale"] = {
-					$Path : oAttribute.value
-				};
-				break;
-			case "text":
-				mAnnotations["@com.sap.vocabularies.Common.v1.Text"] = {
-					$Path : oAttribute.value
-				};
-				break;
-			case "quickinfo":
-				mAnnotations["@com.sap.vocabularies.Common.v1.QuickInfo"] =
-					oAttribute.value;
 				break;
 			case "visible":
 				if (oAttribute.value === "false") {
@@ -444,6 +456,8 @@ sap.ui.define([
 				return sType ? V2MetadataConverter.resolveAlias(sType, oAggregate) : undefined;
 			}
 		});
+
+		convertAnnotations(oElement, oAggregate, "EntityType");
 	}
 
 	/**
@@ -645,6 +659,7 @@ sap.ui.define([
 
 	/**
 	 * Sets an annotation for the given V2 name in the given annotations map.
+	 * Does nothing if vValue is <code>null</code> or <code>""</code>
 	 *
 	 * @param {object} mAnnotations Map of annotations to be updated
 	 * @param {string} sV2Name The name of the V2 annotation
@@ -652,9 +667,16 @@ sap.ui.define([
 	 */
 	function setAnnotation(mAnnotations, sV2Name, vValue) {
 		var mAnnotationInfo = mV2toV4[sV2Name],
+			oAnnotation;
+		if (vValue === null || vValue === "") {
+			return;
+		}
+		if (mAnnotationInfo.property) {
 			oAnnotation = mAnnotations[mAnnotationInfo.term] || {};
-
-		oAnnotation[mAnnotationInfo.property] = vValue;
+			oAnnotation[mAnnotationInfo.property] = vValue;
+		} else {
+			oAnnotation = vValue;
+		}
 		mAnnotations[mAnnotationInfo.term] = oAnnotation;
 	}
 
