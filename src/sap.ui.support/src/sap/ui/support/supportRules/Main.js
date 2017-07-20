@@ -227,6 +227,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._oCoreFacade = null;
 				that._oDataCollector = null;
 				that._oExecutionScope = null;
+				that._rulesCreated = false;
+				that._mRuleSets = null;
 			}
 		});
 	};
@@ -693,6 +695,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			this._addTasksForAllRules();
 		}
 
+		IssueManager.clearIssues();
+
 		return new Promise(function (resolve) {
 			that._oAnalyzer.start(resolve);
 		});
@@ -733,6 +737,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	Main.prototype._addTasksForAllRules = function () {
 		var that = this;
 
+		this._oSelectedRulesIds = {};
+
 		Object.keys(that._mRuleSets).map(function (libName) {
 			var rulesetRules = that._mRuleSets[libName].ruleset.getRules();
 
@@ -741,6 +747,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._oAnalyzer.addTask([rule.title], function (oObject) {
 					that._analyzeSupportRule(oObject);
 				}, [rule]);
+
+				that._oSelectedRulesIds[ruleId] = true;
 			});
 
 		});
@@ -814,7 +822,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			elapsedTime: this._oAnalyzer.getElapsedTimeString()
 		});
 
-		IssueManager.clearIssues();
+		IssueManager.saveHistory();
 
 		this._oAnalyzer.resolve();
 	};
