@@ -730,8 +730,19 @@ QUnit.test("getCellInfo", function(assert) {
 
 		oTable.setBusy(true);
 		sap.ui.getCore().applyChanges();
+		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is visible: Returned true");
 
-		assert.ok(TableUtils.isBusyIndicatorVisible(oTable), "The busy indicator is visible: Returned true");
+		oTable.getRows()[0].getCells()[0].setBusyIndicatorDelay(0);
+		oTable.getRows()[0].getCells()[0].setBusy(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is visible, and a cells busy indicator is visible: Returned true");
+
+		oTable.setBusy(false);
+		sap.ui.getCore().applyChanges();
+		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is not visible, but a cells busy indicator is visible: Returned false");
 	});
 
 	QUnit.test("hasPendingRequest", function(assert) {
