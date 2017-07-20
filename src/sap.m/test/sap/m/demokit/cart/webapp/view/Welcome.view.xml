@@ -91,7 +91,6 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
 			<Title
 				text="{i18n>promotedTitle}"
 				titleStyle="H2"

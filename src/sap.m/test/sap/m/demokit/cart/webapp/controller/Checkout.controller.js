@@ -4,9 +4,8 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/Device',
 	'sap/ui/demo/cart/model/formatter',
-	'sap/m/MessageToast',
 	'sap/m/MessageBox'
-], function (BaseController, cart, JSONModel, Device, formatter, MessageToast, MessageBox) {
+], function (BaseController, cart, JSONModel, Device, formatter, MessageBox) {
 	"use strict";
 
 	var _oHistory = {
