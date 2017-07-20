@@ -681,10 +681,10 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 		this.setExecutionScope(oExecutionScope);
 
-		if (Array.isArray(oExecutionScope)) {
+		if (Array.isArray(aRuleDescriptors)) {
 			// If there are 0 rules don't add tasks.
-			if (oExecutionScope.length > 0) {
-				this._addTasksForSelectedRules(oExecutionScope);
+			if (aRuleDescriptors.length > 0) {
+				this._addTasksForSelectedRules(aRuleDescriptors);
 			}
 		} else if (aRuleDescriptors
 			&& typeof aRuleDescriptors === "object"
