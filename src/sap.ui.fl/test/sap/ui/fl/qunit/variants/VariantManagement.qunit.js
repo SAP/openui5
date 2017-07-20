@@ -6,6 +6,7 @@
 	jQuery.sap.require("sap.ui.fl.variants.VariantManagement");
 	jQuery.sap.require("sap.ui.fl.variants.VariantModel");
 	jQuery.sap.require("sap.ui.layout.Grid");
+	jQuery.sap.require("sap.m.Input");
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 	var oModel;
@@ -122,6 +123,28 @@
 		assert.equal(aItems[1].originalTitle, aItems[1].title);
 		assert.equal(aItems[2].key, "2");
 
+	});
+
+	QUnit.test("Check _checkVariantNameConstraints", function(assert) {
+		var oInput = new sap.m.Input();
+
+		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
+
+		oInput.setValue("New");
+		this.oVariantManagement._checkVariantNameConstraints(oInput, null, "1");
+		assert.equal(oInput.getValueState(), "None");
+
+		oInput.setValue("");
+		this.oVariantManagement._checkVariantNameConstraints(oInput, null, "1");
+		assert.equal(oInput.getValueState(), "Error");
+
+		oInput.setValue("One");
+		this.oVariantManagement._checkVariantNameConstraints(oInput, null, "1");
+		assert.equal(oInput.getValueState(), "None");
+
+		this.oVariantManagement._checkVariantNameConstraints(oInput, null, "2");
+		assert.equal(oInput.getValueState(), "Error");
+		oInput.destroy();
 	});
 
 	QUnit.test("Check variantManagementKey functionality", function(assert) {
@@ -263,7 +286,28 @@
 		assert.ok(bCalled);
 	});
 
-	QUnit.test("Create Management Dialog", function(assert) {
+	QUnit.test("Checking openManagementDialog", function(assert) {
+		var bDestroy = false;
+		this.oVariantManagement.oManagementDialog = {
+			destroy: function() {
+				bDestroy = true;
+			}
+		};
+
+		sinon.stub(this.oVariantManagement, "_openManagementDialog");
+
+		this.oVariantManagement.openManagementDialog();
+		assert.ok(this.oVariantManagement._openManagementDialog.calledOnce);
+		assert.ok(!bDestroy);
+
+		this.oVariantManagement.openManagementDialog(true);
+		assert.ok(this.oVariantManagement._openManagementDialog.calledTwice);
+		assert.ok(bDestroy);
+		assert.equal(this.oVariantManagement.oManagementDialog, undefined);
+
+	});
+
+	QUnit.test("Checking create management dialog", function(assert) {
 
 		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
 

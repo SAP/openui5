@@ -388,7 +388,8 @@ sap.ui.define([
 	VariantManagement.prototype.setSelectedVariantKey = function(sKey) {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
-			oModel.setProperty(this.oContext + "/currentVariant", sKey);
+			// oModel.setProperty(this.oContext + "/currentVariant", sKey);
+			oModel._updateCurrentVariant(this.getVariantManagementKey(), sKey);
 		}
 
 		return null;
@@ -981,7 +982,7 @@ sap.ui.define([
 	/**
 	 * Opens the manage dialog.
 	 * @public
-	 * @param {boolean} in case this is set to <code>true</code> the former dialog will be destroyed, before a new one is created.
+	 * @param {boolean} bCreateAlways in case this is set to <code>true</code> the former dialog will be destroyed, before a new one is created.
 	 */
 	VariantManagement.prototype.openManagementDialog = function(bCreateAlways) {
 		if (bCreateAlways && this.oManagementDialog) {
