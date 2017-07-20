@@ -1714,25 +1714,24 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		 * @private
 		 */
 		UploadCollection.prototype._createIcon = function(oItem, sItemId, sFileNameLong) {
-			var sThumbnailUrl, sThumbnail, oItemIcon;
+			var sThumbnailUrl, sThumbnail, oItemIcon, sStyleClass;
 
 			sThumbnailUrl = oItem.getThumbnailUrl();
 			if (sThumbnailUrl) {
 				oItemIcon = IconPool.createControlByURI({
 					id : sItemId + "-ia_imageHL",
 					src : sap.m.UploadCollection.prototype._getThumbnail(sThumbnailUrl, sFileNameLong),
-					decorative : false,
-					alt: this._getAriaLabelForPicture(oItem)
+					decorative : false
 				}, Image).addStyleClass("sapMUCItemImage sapMUCItemIcon");
+				oItemIcon.setAlt(this._getAriaLabelForPicture(oItem)); //Set the alt property directly to avoid some additional logic in the icon's constructor
 			} else {
 				sThumbnail = sap.m.UploadCollection.prototype._getThumbnail(undefined, sFileNameLong);
-				var sStyleClass;
 				oItemIcon = new Icon(sItemId + "-ia_iconHL", {
 					src : sThumbnail,
 					decorative : false,
-					useIconTooltip : false,
-					alt: this._getAriaLabelForPicture(oItem)
+					useIconTooltip : false
 				});
+				oItemIcon.setAlt(this._getAriaLabelForPicture(oItem)); //Set the alt property directly to avoid some additional logic in the icon's constructor
 				//Sets the right style class depending on the icon/placeholder status (clickable or not)
 				if (this.sErrorState !== "Error" && jQuery.trim(oItem.getProperty("url"))) {
 					sStyleClass = "sapMUCItemIcon";
