@@ -129,6 +129,7 @@ sap.ui.define([
 			if (context.getProperty("type") === "folder") {
 				oItem.attachPress(this.onFolderPress, this);
 				oItem.attachDeletePress(this.onFolderDeletePress, this);
+				oItem.setAriaLabelForPicture("Folder");
 			}
 			return oItem;
 		},
