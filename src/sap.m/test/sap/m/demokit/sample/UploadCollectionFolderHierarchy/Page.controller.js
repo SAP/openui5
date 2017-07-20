@@ -61,7 +61,7 @@ sap.ui.define([
 			var oContext = event.getSource().getBindingContext();
 
 			var aSubItems = oContext && oContext.getProperty("items");
-			if (aSubItems && aSubItems.length > 0) {
+			if (aSubItems) {
 				this.bindUploadCollectionItems(oContext.getPath("items"));
 				// save the current folder name and path in model
 				var sCurrentFolder = this.getCurrentLocationText();
