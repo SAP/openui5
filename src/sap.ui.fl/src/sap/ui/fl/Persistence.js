@@ -241,6 +241,7 @@ sap.ui.define([
 			if (bNoFilter === true && oChangeContent.fileType === 'change' || that._sStableId === value) {
 				oChange = new Change(oChangeContent);
 				oChange.attachEvent(Change.events.markForDeletion, that._onDeleteChange.bind(that));
+				oChange.setState(Change.states.PERSISTED);
 				sChangeId = oChange.getId();
 				if (oChange.isValid()) {
 					if (that._oChanges[sChangeId] && oChange.isVariant()) {

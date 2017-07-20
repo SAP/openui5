@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/base/EventProvider",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings"
 ], function (
 	jQuery,
-	EventProvider,
+	ManagedObject,
 	Utils,
 	Settings
 ) {
@@ -17,34 +17,52 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * A change object based on the json data with dirty handling.
-	 * @constructor
-	 * @alias sap.ui.fl.Change
+	 * Flexibility change class. Stores change content and related information.
+	 *
 	 * @param {object} oFile - file content and admin data
-	 * @experimental Since 1.25.0
+	 *
+	 * @class Change class.
+	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
+	 * @alias sap.ui.fl.Change
+	 * @experimental Since 1.25.0
 	 */
-	var Change = function (oFile) {
-		EventProvider.apply(this);
+	var Change = ManagedObject.extend("sap.ui.fl.Change", /** @lends sap.ui.fl.Change.prototype */
+	{
+		constructor : function(oFile){
+			ManagedObject.apply(this);
 
-		if (!jQuery.isPlainObject(oFile)) {
-			Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
+			if (!jQuery.isPlainObject(oFile)) {
+				Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
+			}
+
+			this._oDefinition = oFile;
+			this._oOriginDefinition = jQuery.extend(true, {}, oFile);
+			this._sRequest = '';
+			this._bUserDependent = (oFile.layer === "USER");
+			this._vRevertData = null;
+			this.setState(Change.states.NEW);
+		},
+		metadata : {
+			properties : {
+				state : {
+					type: "string"
+				}
+			}
 		}
+	});
 
-		this._oDefinition = oFile;
-		this._oOriginDefinition = jQuery.extend(true, {}, oFile);
-		this._sRequest = '';
-		this._bIsDeleted = false;
-		this._bUserDependent = (oFile.layer === "USER");
-		this._vRevertData = null;
+	Change.states = {
+		NEW: "NEW",
+		PERSISTED : "NONE",
+		DELETED: "DELETE",
+		DIRTY: "UPDATE"
 	};
 
 	Change.events = {
 		markForDeletion: "markForDeletion"
 	};
-
-	Change.prototype = jQuery.sap.newObject(EventProvider.prototype);
 
 	/**
 	 * Returns if the change protocol is valid
@@ -181,6 +199,7 @@ sap.ui.define([
 	 */
 	Change.prototype.setContent = function (oContent) {
 		this._oDefinition.content = oContent;
+		this.setState(Change.states.DIRTY);
 	};
 
 	/**
@@ -241,6 +260,7 @@ sap.ui.define([
 		if (this._oDefinition.texts) {
 			if (this._oDefinition.texts[sTextId]) {
 				this._oDefinition.texts[sTextId].value = sNewText;
+				this.setState(Change.states.DIRTY);
 			}
 		}
 	};
@@ -330,24 +350,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Mark the current change to be deleted persistently
+	 * Marks the current change to be deleted persistently
 	 *
 	 * @public
 	 */
 	Change.prototype.markForDeletion = function () {
-		this._bIsDeleted = true;
-	};
-
-	/**
-	 * Determines whether the change has to be updated on the back end
-	 * @returns {boolean} content of the change document has changed (change is in dirty state)
-	 * @private
-	 */
-	Change.prototype._isDirty = function () {
-		var sCurrentDefinition = JSON.stringify(this._oDefinition);
-		var sOriginDefinition = JSON.stringify(this._oOriginDefinition);
-
-		return (sCurrentDefinition !== sOriginDefinition);
+		this.setState(Change.states.DELETED);
 	};
 
 	/**
@@ -422,14 +430,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getPendingAction = function () {
-		if (this._bIsDeleted) {
-			return "DELETE";
-		} else if (!this._oDefinition.creation) {
-			return "NEW";
-		} else if (this._isDirty() === true) {
-			return "UPDATE";
-		}
-		return "NONE";
+		return this.getState();
 	};
 
 	/**
@@ -453,6 +454,7 @@ sap.ui.define([
 		if (sResponse) {
 			this._oDefinition = JSON.parse(sResponse);
 			this._oOriginDefinition = JSON.parse(sResponse);
+			this.setState(Change.states.PERSISTED);
 		}
 	};
 

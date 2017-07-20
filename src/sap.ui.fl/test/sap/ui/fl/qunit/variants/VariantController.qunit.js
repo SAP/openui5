@@ -122,7 +122,10 @@ sap.ui.require([
 
 		var mPropertyBag = {viewId: "view1--view2"};
 		return oChangePersistence.getChangesForComponent(oComponent, mPropertyBag).then(function(aChanges) {
-			assert.deepEqual(aChanges, aExpectedChanges, "the variant changes are available together with the ");
+			assert.equal(aChanges.length, aExpectedChanges.length, "the variant changes are available together with the component change");
+			aChanges.forEach(function (oChange, i) {
+				assert.deepEqual(oChange._oDefinition, aExpectedChanges[i]._oDefinition, "the change content returns correctly");
+			});
 			done();
 		});
 	});
@@ -161,7 +164,14 @@ sap.ui.require([
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
 		var mChanges = oVariantController.getChangesForVariantSwitch("variantManagementId", "variant0", "variant1");
-		assert.deepEqual(mChanges, {aNew : [aChanges[3], aChanges[4]], aRevert : [aChanges[2], aChanges[1]]}, "then the switches map is returned");
+		var aExpectedNew = [aChanges[3], aChanges[4]];
+		var aExpectedRevert = [aChanges[2], aChanges[1]];
+		mChanges.aNew.forEach(function (oChange, i) {
+			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
+		});
+		mChanges.aRevert.forEach(function (oChange, i) {
+			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
+		});
 	});
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
@@ -170,10 +180,8 @@ sap.ui.require([
 
 		var oNewChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes[1]);
 
-		var mExpectedSwitches = {
-			aRevert : [oRevertedChange],
-			aNew : [oNewChange]
-		};
+		var aExpectedNew = [oNewChange];
+		var aExpectedRevert = [oRevertedChange];
 
 		var oComponent = {
 			name: "MyComponent",
@@ -185,7 +193,12 @@ sap.ui.require([
 
 		this.mPropertyBag = {viewId: "view1--view2"};
 		var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("variantManagementOrdersTable", "variant0", "variantManagementOrdersTable");
-		assert.deepEqual(mSwitches, mExpectedSwitches, "the expected changes are in the switches map");
+		mSwitches.aNew.forEach(function (oChange, i) {
+			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
+		});
+		mSwitches.aRevert.forEach(function (oChange, i) {
+			assert.deepEqual(oChange._oDefinition, aExpectedRevert[i]._oDefinition, "the change content returns correctly");
+		});
 	});
 
 	QUnit.test("when calling '_fillVariantModel'", function(assert) {
