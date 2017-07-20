@@ -39,11 +39,15 @@ sap.ui.define([
 				"thumbnailUrl" : "",
 				"url" : ""
 			};
-			// insert file after all folders
-			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].type !== "folder") {
-					aItems.splice(i, 0, oItem);
-					break;
+			if (aItems.length === 0) {
+				aItems.push(oItem);
+			} else {
+				// insert file after all folders
+				for (var i = 0; i < aItems.length; i++) {
+					if (aItems[i].type !== "folder") {
+						aItems.splice(i, 0, oItem);
+						break;
+					}
 				}
 			}
 			this.oModel.setProperty(sCurrentPath + "/items", aItems);
