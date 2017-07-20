@@ -9,17 +9,27 @@ sap.ui.define([],
 
 	return {
 		aggregations : {
-			content : {
-				domRef :  function(oElement) {
-					return oElement.$("contentWrapper").get(0);
-				}
+			title : {
+				domRef : ":sap-domref .sapFDynamicPageTitle"
 			},
-			vScroll : {
-				ignore: false,
+			header : {
+				domRef : ":sap-domref .sapFDynamicPageHeader"
+			},
+			content : {
+				domRef :  ":sap-domref .sapFDynamicPageContent"
+			},
+			footer : {
+				domRef : ":sap-domref .sapFDynamicPageActualFooterControl"
+			},
+			scrollContainers : [{
+				domRef : "> .sapFDynamicPageContentWrapper",
+				aggregations : ["header", "content"]
+			},
+			{
 				domRef : function(oElement) {
 					return oElement.$("vertSB-sb").get(0);
 				}
-			}
+			}]
 		}
 
 	};
