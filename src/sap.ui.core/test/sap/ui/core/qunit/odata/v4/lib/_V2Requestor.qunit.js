@@ -64,10 +64,14 @@ sap.ui.require([
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
+				"__count": "3",
+				"__next": "...?$skiptoken=12",
 				"results" : [{"String" : "foo"}, {"Boolean" : true}]
 			}
 		},
 		oExpectedResult : {
+			"@odata.count" : "3", // Note: v4.ODataModel uses IEEE754Compatible=true
+			"@odata.nextLink" : "...?$skiptoken=12",
 			"value" : [{"String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
