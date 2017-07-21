@@ -10,9 +10,6 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .customBackground section
 }
 
 .sapUiDemoCart .welcomeText {
-	display: block;
-	padding-left: 3rem;
-	padding: 1rem;
 	font-size: 2rem;
 	font-weight: bold;
 }
