@@ -242,7 +242,8 @@ sap.ui.define([
 		// Level 0 - the first page
 		if (iNextLevel === 0) {
 			// From any layout, going to level 0 is always showing the begin column only, unless initialColumnsCount=2. Then a 2-column layout is suggested even for level 0
-			if (iInitial === 2) {
+			// However, a 2-column layout should only be suggested if there is enough space for 2 columns, hence the additional check
+			if (iInitial === 2 && this._canShowTwoColumns()) {
 				sNextLayout = this._defaultTwoColumnLayoutType;
 			} else {
 				sNextLayout = LT.OneColumn;
@@ -447,6 +448,21 @@ sap.ui.define([
 			defaultTwoColumnLayoutType: this._defaultTwoColumnLayoutType,
 			defaultThreeColumnLayoutType: this._defaultThreeColumnLayoutType
 		};
+	};
+
+	/**
+	 * Determines whether the FCL can display 2 columns side by side.
+	 * This check can only be performed reliably if the control is rendered (so that its width can be measured).
+	 * Otherwise, only a best guess can be made, based on the window size, instead.
+	 *
+	 * @returns {boolean}
+	 * @private
+	 */
+	FlexibleColumnLayoutSemanticHelper.prototype._canShowTwoColumns = function () {
+		var iControlWidth = this._oFCL._getControlWidth(),
+			iMaxColumnsCount = this._oFCL._getMaxColumnsCountForWidth( iControlWidth || window.innerWidth);
+
+		return iMaxColumnsCount > 1;
 	};
 
 	return FlexibleColumnLayoutSemanticHelper;
