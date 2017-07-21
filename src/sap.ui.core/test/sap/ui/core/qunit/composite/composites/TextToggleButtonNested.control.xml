@@ -1,0 +1,6 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites">
+    <m:VBox>
+        <f:TextToggleButton textChanged="onTextChanged"/>
+        <m:Button text="Refresh" press="onPressRefresh"/>
+    </m:VBox>
+</FragmentDefinition>

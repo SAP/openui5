@@ -76,9 +76,9 @@ sap.ui.define([
 		createContent: function() {
 
 			//register new table
-			jQuery.sap.require("sap.ui.core.FragmentControl");
+			jQuery.sap.require("sap.ui.core.XMLComposite");
 			sap.ui.core.util.XMLPreprocessor.plugIn(function(oNode, oVisitor) {
-				sap.ui.core.FragmentControl.initialTemplating(oNode, oVisitor, "sap.ui.mdc.sample.templates.Table");
+				sap.ui.core.XMLComposite.initialTemplating(oNode, oVisitor, "sap.ui.mdc.sample.templates.Table");
 			},"sap.ui.mdc.sample.templates","Table");
 
 			var topPath = window.location.pathname;

@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m"
+				xmlns:core="sap.ui.core"
+				xmlns:layout="sap.ui.layout"
+				xmlns:mdc="sap.mdc">
+	<layout:VerticalLayout id="lyt"
+					width="100%">
+		<mdc:MyToolbar buttons="{$outerLayoutModel>/items}">
+			<Button text="{$outerLayoutModel>text}" press="showContexts"></Button>
+		</mdc:MyToolbar>
+	</layout:VerticalLayout>
+</core:FragmentDefinition>
