@@ -22,7 +22,8 @@ sap.ui.define([
 	'sap/m/ScrollContainer',
 	'sap/ui/model/Sorter',
 	'sap/ui/dt/ElementUtil',
-	'sap/m/VBox'
+	'sap/m/VBox',
+	'sap/ui/rta/Utils'
 ], function (
 	jQuery,
 	ManagedObject,
@@ -44,7 +45,8 @@ sap.ui.define([
 	ScrollContainer,
 	Sorter,
 	ElementUtil,
-	VBox
+	VBox,
+	Utils
 ) {
 	"use strict";
 
@@ -93,6 +95,7 @@ sap.ui.define([
 		// sap.m.Dialog shouldn't have no parent or a rendered parent
 		// otherwise invalidate/filter/... is not working correctly
 		this._oDialog = new Dialog().addStyleClass("sapUIRtaFieldRepositoryDialog");
+		this._oDialog.addStyleClass(Utils.getRtaStyleClass());
 		this._oDialog.removeStyleClass("sapUiPopupWithPadding");
 		this._oDialog.setModel(new JSONModel({
 			elements: []

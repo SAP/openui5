@@ -33,6 +33,9 @@ sap.ui.define([
 			properties: {
 				contextElement : {
 					type : "object"
+				},
+				styleClass: {
+					type: "string"
 				}
 			},
 			associations: {},
@@ -100,6 +103,7 @@ sap.ui.define([
 		this.setContextElement(oTargetOverlay.getElementInstance());
 
 		this._oContextMenuControl = new ContextMenuControl();
+		this._oContextMenuControl.addStyleClass(this.getStyleClass());
 		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);

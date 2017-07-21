@@ -298,7 +298,9 @@ sap.ui.define([
 			});
 
 			// Context Menu
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin();
+			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
+				styleClass: Utils.getRtaStyleClass()
+			});
 
 			// TabHandling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
@@ -546,7 +548,9 @@ sap.ui.define([
 		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
-		MessageBox.error(sMsg);
+		MessageBox.error(sMsg, {
+			styleClass: Utils.getRtaStyleClass()
+		});
 	};
 
 	RuntimeAuthoring.prototype._onAppClosed = function() {
@@ -861,7 +865,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._openSelection = function () {
-	   return new TransportSelection().openTransportSelection(null, this._oRootControl);
+	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClass());
 	};
 
 	/**
@@ -945,7 +949,8 @@ sap.ui.define([
 			MessageBox.show(sMessage, {
 				icon: oMessageType,
 				title: sTitle,
-				onClose: resolve
+				onClose: resolve,
+				styleClass: Utils.getRtaStyleClass()
 			});
 		});
 	};
@@ -1024,7 +1029,8 @@ sap.ui.define([
 		MessageBox.confirm(sMessage, {
 			icon: MessageBox.Icon.WARNING,
 			title : sTitle,
-			onClose : fnConfirmDiscardAllChanges
+			onClose : fnConfirmDiscardAllChanges,
+			styleClass: Utils.getRtaStyleClass()
 		});
 	};
 
@@ -1592,7 +1598,8 @@ sap.ui.define([
 				icon: MessageBox.Icon.QUESTION,
 				title : sTitle,
 				actions : [sConfirmButtonText, sCancelButtonText],
-				onClose : fnCallback
+				onClose : fnCallback,
+				styleClass: Utils.getRtaStyleClass()
 			});
 		}.bind(this));
 	};
