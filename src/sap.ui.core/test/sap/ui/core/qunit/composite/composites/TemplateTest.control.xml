@@ -1,0 +1,5 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:f="composites">
+    <m:HBox>
+        <f:SimpleText text="{$this>text}"/>
+    </m:HBox>
+</FragmentDefinition>

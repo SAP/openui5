@@ -1,0 +1,11 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
+    <m:VBox>
+        <AggregationProxy ref="{$this>outerButton}"/>
+        <m:VBox items="{path:'$this>texts', filters:{path:'text', operator:'Contains', value1:'Text'}, sorter:{path:'text', descending:true}}">
+            <m:Text text="{$this>text}"/>
+        </m:VBox>
+        <m:VBox items="{path:'$this>outerLinks'}">
+            <AggregationProxy type="sap.m.Link"/>
+        </m:VBox>
+    </m:VBox>
+</FragmentDefinition>

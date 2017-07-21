@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/FragmentControl'
-], function(jQuery, FragmentControl) {
+	'jquery.sap.global', 'sap/ui/core/XMLComposite'
+], function(jQuery, XMLComposite) {
 	"use strict";
-	var Table = FragmentControl.extend("sap.ui.mdc.sample.templates.Table", /* @lends sap.ui.mdc.sample.templates.Table.prototype */ {
+	var Table = XMLComposite.extend("sap.ui.mdc.sample.templates.Table", /* @lends sap.ui.mdc.sample.templates.Table.prototype */ {
 		metadata: {
 			designTime: true,
 			properties: {

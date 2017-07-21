@@ -145,6 +145,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			"sap.ui.core.FragmentControl",
 			"sap.ui.core.mvc.View",
 			"sap.ui.core.mvc.XMLView",
+			"sap.ui.core.XMLComposite",
 			"sap.ui.core.mvc.JSView",
 			"sap.ui.core.mvc.JSONView",
 			"sap.ui.core.mvc.HTMLView",
