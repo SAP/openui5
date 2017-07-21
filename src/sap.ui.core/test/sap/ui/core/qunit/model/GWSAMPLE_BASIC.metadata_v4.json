@@ -553,6 +553,10 @@
 			"$Type": "GWSAMPLE_BASIC.Product",
 			"$kind": "EntitySet"
 		},
+		"RegenerateAllData": {
+			"$Action": "GWSAMPLE_BASIC.RegenerateAllData",
+			"$kind": "ActionImport"
+		},
 		"SalesOrderLineItemSet": {
 			"$NavigationPropertyBinding": {
 				"ToHeader": "SalesOrderSet",
@@ -743,6 +747,20 @@
 			"$kind": "Property"
 		}
 	},
+	"GWSAMPLE_BASIC.RegenerateAllData": [
+		{
+			"$Parameter": [
+				{
+					"$Name": "NoOfSalesOrders",
+					"$Type": "Edm.Int32"
+				}
+			],
+			"$ReturnType": {
+				"$Type": "GWSAMPLE_BASIC.CT_String"
+			},
+			"$kind": "Action"
+		}
+	],
 	"GWSAMPLE_BASIC.SalesOrder": {
 		"$Key": [
 			"SalesOrderID"

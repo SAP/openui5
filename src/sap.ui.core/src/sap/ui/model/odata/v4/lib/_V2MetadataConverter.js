@@ -4,15 +4,18 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"./_Helper",
 	"./_MetadataConverter"
-], function (jQuery, _Helper, _MetadataConverter) {
+], function (jQuery, _MetadataConverter) {
 	"use strict";
 
-	var sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
-		V2MetadataConverter,
+	var V2MetadataConverter,
+		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
+
+		// namespaces
+		sEdmxNamespace = "http://schemas.microsoft.com/ado/2007/06/edmx",
 		sMicrosoftNamespace = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata",
 		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
+
 		// the configurations for traverse
 		oAliasConfig = {
 			"DataServices" : {
@@ -70,6 +73,12 @@ sap.ui.define([
 						},
 						"EntitySet" : {
 							__processor : processEntitySet
+						},
+						"FunctionImport" : {
+							__processor : processFunctionImport,
+							"Parameter" : {
+								__processor : processParameter
+							}
 						}
 					},
 					"EntityType" : {
@@ -328,6 +337,66 @@ sap.ui.define([
 	}
 
 	/**
+	 * Processes a FunctionImport element.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processFunctionImport(oElement, oAggregate) {
+		var sHttpMethod = oElement.getAttributeNS(sMicrosoftNamespace, "HttpMethod"),
+			sKind = sHttpMethod === "POST" ? "Action" : "Function",
+			oFunction = {
+				$kind : sKind
+			},
+			sName = oElement.getAttribute("Name"),
+			sQualifiedName = oAggregate.namespace + sName,
+			oFunctionImport = {
+				$kind : sKind + "Import"
+			},
+			sReturnType = oElement.getAttribute("ReturnType"),
+			oReturnType;
+
+		oFunctionImport["$" + sKind] = sQualifiedName;
+		V2MetadataConverter.processAttributes(oElement, oFunctionImport, {
+			"EntitySet" : V2MetadataConverter.setValue
+		});
+		if (sReturnType) {
+			oFunction.$ReturnType = oReturnType = {};
+			processTypedCollection(sReturnType, oReturnType, oAggregate, oElement);
+		}
+		if (oElement.getAttributeNS(sSapNamespace, "action-for")) {
+			jQuery.sap.log.warning("Unsupported 'sap:action-for' at FunctionImport '" + sName
+				+ "', removing this FunctionImport", undefined, sModuleName);
+		} else {
+			// add Function and FunctionImport to the result
+			oAggregate.entityContainer[sName] = oFunctionImport;
+			oAggregate.result[sQualifiedName] = [oFunction];
+		}
+		// Remember the current function (even if it has not been added to the result), so that
+		// processParameter adds to this. This avoids that parameters belonging to a removed
+		// FunctionImport are added to the predecessor.
+		oAggregate.function = oFunction;
+		V2MetadataConverter.annotatable(oAggregate, oFunctionImport);
+	}
+
+	/**
+	 * Processes a Parameter element within an Action or Function.
+	 * @param {Element} oElement The element
+	 * @param {object} oAggregate The aggregate
+	 */
+	function processParameter(oElement, oAggregate) {
+		var oFunction = oAggregate.function,
+			oParameter = {
+				$Name : oElement.getAttribute("Name")
+			};
+
+		V2MetadataConverter.processFacetAttributes(oElement, oParameter);
+		processTypedCollection(oElement.getAttribute("Type"), oParameter, oAggregate, oElement);
+
+		V2MetadataConverter.getOrCreateArray(oFunction, "$Parameter").push(oParameter);
+		V2MetadataConverter.annotatable(oAggregate, oParameter);
+	}
+
+	/**
 	 * Processes a Principal element below a ReferentialConstraint element.
 	 * @param {Element} oElement The element
 	 * @param {object} oAggregate The aggregate
@@ -545,8 +614,7 @@ sap.ui.define([
 		convertXMLMetadata : function (oDocument, sUrl) {
 			var oAggregate, oElement;
 
-			jQuery.sap.measure.average("convertXMLMetadata", "",
-				"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+			jQuery.sap.measure.average("convertXMLMetadata", "", sModuleName);
 
 			oElement = oDocument.documentElement;
 			if (oElement.localName !== "Edmx" || oElement.namespaceURI !== sEdmxNamespace) {
@@ -565,6 +633,7 @@ sap.ui.define([
 				"defaultEntityContainer" : null, // the name of the default EntityContainer
 				"entityContainer" : null, // the current EntityContainer
 				"entitySet" : null, // the current EntitySet
+				"function" : null, // the current function
 				"namespace" : null, // the namespace of the current Schema
 				"navigationProperties" : [], // a list of navigation property data
 				"schema" : null, // the current Schema

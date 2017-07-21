@@ -2636,7 +2636,8 @@ sap.ui.require([
 			</ColumnListItem>\
 		</items>\
 	</Table>\
-</FlexBox>';
+</FlexBox>',
+		that = this;
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
 				"&$select=ToLineItems/ItemPosition,SalesOrderID",
@@ -2650,6 +2651,13 @@ sap.ui.require([
 			})
 			.expectChange("id", "0500000001")
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
+
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			that.oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+						+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
 
 		// code under test
 		return this.createView(assert, sView, createModelForV2SalesOrderService());

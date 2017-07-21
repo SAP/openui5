@@ -19,7 +19,8 @@ sap.ui.require([
 			"/GWSAMPLE_BASIC/$metadata" : {source : "GWSAMPLE_BASIC.metadata.xml"},
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
 			"/GWSAMPLE_BASIC/metadata_v4.json" : {source : "GWSAMPLE_BASIC.metadata_v4.json"}
-		};
+		},
+		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter";
 
 	/**
 	 * Tests the conversion of the given XML snippet.
@@ -401,6 +402,124 @@ sap.ui.require([
 			});
 	});
 
+	//*********************************************************************************************
+	[undefined, "GET", "POST"].forEach(function (sMethod) {
+		QUnit.test("convert: FunctionImport, Method=" + sMethod, function (assert) {
+			var sWhat = sMethod === "POST" ? "Action" : "Function",
+				sMethodAttribute = sMethod ? ' m:HttpMethod="' + sMethod + '"' : "",
+				sXml = '\
+					<Schema Namespace="foo" Alias="f">\
+						<EntityContainer Name="Container">\
+							<FunctionImport Name="Baz" ReturnType="Collection(Edm.String)"'
+									+ sMethodAttribute + '>\
+								<Parameter Name="p1" Type="f.Bar" Nullable="false"/>\
+								<Parameter Name="p2" Type="Collection(f.Bar)" MaxLength="10"\
+									Precision="2" FixedLength="false"/>\
+							</FunctionImport>\
+						</EntityContainer>\
+					</Schema>',
+				sExpected = {
+					"$EntityContainer" : "foo.Container",
+					"foo." : {
+						"$kind" : "Schema"
+					},
+					"foo.Container" : {
+						"$kind" : "EntityContainer",
+						"Baz": {
+							"$kind": sWhat + "Import"
+						}
+					},
+					"foo.Baz" : [{
+						"$kind" : sWhat,
+						"$Parameter" : [{
+							"$Name" : "p1",
+							"$Type" : "foo.Bar",
+							"$Nullable" : false
+						}, {
+							"$Name" : "p2",
+							"$isCollection" : true,
+							"$Type" : "foo.Bar",
+							"$MaxLength" : 10,
+							"$Precision" : 2,
+							"$Scale" : "variable"
+						}],
+						"$ReturnType" : {
+							"$isCollection" : true,
+							"$Type" : "Edm.String"
+						}
+					}]
+				};
+
+			sExpected["foo.Container"]["Baz"]["$" + sWhat] = "foo.Baz";
+			testConversion(assert, sXml, sExpected);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert: FunctionImport w/ EntitySet", function (assert) {
+		testConversion(assert, '\
+				<Schema Namespace="foo" Alias="f">\
+					<EntityContainer Name="Container">\
+						<FunctionImport Name="Baz" ReturnType="Edm.String" EntitySet="Bar"/>\
+					</EntityContainer>\
+				</Schema>',
+			{
+				"$Version" : "4.0",
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema"
+				},
+				"foo.Container" : {
+					"$kind" : "EntityContainer",
+					"Baz": {
+						"$EntitySet" : "Bar",
+						"$Function" : "foo.Baz",
+						"$kind" : "FunctionImport"
+					}
+				},
+				"foo.Baz" : [{
+					"$kind" : "Function",
+					"$ReturnType" : {
+						"$Type" : "Edm.String"
+					}
+				}]
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert: FunctionImport w/ sap:action-for", function (assert) {
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'Baz',"
+				+ " removing this FunctionImport", undefined, sModuleName);
+
+		testConversion(assert, '\
+				<Schema Namespace="foo" Alias="f">\
+					<EntityContainer Name="Container">\
+						<FunctionImport Name="Bar"/>\
+						<FunctionImport Name="Baz" sap:action-for="EntityType">\
+							<Parameter Name="p1" Type="String"/>\
+						</FunctionImport>\
+					</EntityContainer>\
+				</Schema>',
+			{
+				"$Version" : "4.0",
+				"$EntityContainer" : "foo.Container",
+				"foo." : {
+					"$kind" : "Schema"
+				},
+				"foo.Bar": [{
+					"$kind": "Function"
+				}],
+				"foo.Container": {
+					"$kind": "EntityContainer",
+					"Bar" : {
+						"$kind" : "FunctionImport",
+						"$Function" : "foo.Bar"
+					}
+				}
+			});
+	});
+
 
 	//*********************************************************************************************
 	QUnit.test("try to read some random XML as V2", function (assert) {
@@ -438,6 +557,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("convertXMLMetadata: test service", function (assert) {
+		var oLogMock = this.oLogMock;
+
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+						+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
+
 		return Promise.all([
 			jQuery.ajax("/GWSAMPLE_BASIC/$metadata").then(function (oXML) {
 					return _V2MetadataConverter.convertXMLMetadata(oXML);
@@ -526,7 +654,7 @@ sap.ui.require([
 
 		QUnit.test(sTitle, function (assert) {
 			testConversion(assert, '\
-						<Schema Namespace="GWSAMPLE_BASIC.0001">\
+					<Schema Namespace="GWSAMPLE_BASIC.0001">\
 						<EntityType Name="Foo">\
 							<Property Name="Bar" Type="Edm.String" \
 								' + oFixture.annotationsV2 + ' />\
