@@ -129,7 +129,7 @@ sap.ui.define([
 
 		handleEntryListDelete: function (oEvent) {
 			// show confirmation dialog
-			var sEntryId = oEvent.getParameter("listItem").getBindingContext(sCartModelName).getObject().Id;
+			var sEntryId = oEvent.getParameter("listItem").getBindingContext(sCartModelName).getObject().ProductId;
 			var oBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			MessageBox.show(
 				oBundle.getText("CART_DELETE_DIALOG_MSG"), {
@@ -139,13 +139,19 @@ sap.ui.define([
 						if (MessageBox.Action.DELETE === oAction) {
 							var oModel = this.getView().getModel(sCartModelName);
 							var oData = oModel.getData();
-							var aNewEntries = jQuery.grep(oData.cartEntries, function (oEntry) {
-								var keep = (oEntry.Id !== sEntryId);
-								if (!keep) {
-									oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
+							var aNewEntries={};
+							for (var i in oData.cartEntries)
+							{
+								if (oData.cartEntries.hasOwnProperty(i)) {
+									oEntry = oData.cartEntries[i];
+									var keep = (oEntry.ProductId !== sEntryId);
+									if (keep) {
+										aNewEntries[oEntry.ProductId] = oEntry;
+									} else {
+										oData.totalPrice = parseFloat(oData.totalPrice).toFixed(2) - parseFloat(oEntry.Price).toFixed(2) * oEntry.Quantity;
+									}
 								}
-								return keep;
-							});
+							}
 							oData.cartEntries = aNewEntries;
 							oData.showEditAndProceedButton = aNewEntries.length > 0;
 							oModel.setData(oData);
