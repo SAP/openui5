@@ -119,7 +119,9 @@ sap.ui.define([
 		var oNewsetChange = this.getNewestDefaultVariantChangeDeleteTheRest(mChanges);
 
 		if (oNewsetChange) {
-			oNewsetChange.getContent().defaultVariantName = sNewDefaultVariantId;
+			var oContent = oNewsetChange.getContent();
+			oContent.defaultVariantName = sNewDefaultVariantId;
+			oNewsetChange.setContent(oContent);
 		}
 
 		return oNewsetChange;

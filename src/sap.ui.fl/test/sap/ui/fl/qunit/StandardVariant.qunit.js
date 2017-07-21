@@ -216,6 +216,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 
 		assert.strictEqual(oUpdatedChange, mChanges.firstChange);
 		assert.strictEqual(mChanges.firstChange.getContent().executeOnSelect, newExecuteOnSelect);
+		assert.equal(mChanges.firstChange.getState(), Change.states.DIRTY);
 	});
 
 	QUnit.test('updateStandardVariantChange shall return undefined if no standard variant change has been found', function(assert) {

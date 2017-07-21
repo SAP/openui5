@@ -119,7 +119,9 @@ sap.ui.define([
 		var oNewsetChange = this.getNewestStandardVariantChangeDeleteTheRest(mChanges);
 
 		if (oNewsetChange) {
-			oNewsetChange.getContent().executeOnSelect = bNewExecuteOnSelect;
+			var oContent = oNewsetChange.getContent();
+			oContent.executeOnSelect = bNewExecuteOnSelect;
+			oNewsetChange.setContent(oContent);
 		}
 
 		return oNewsetChange;
