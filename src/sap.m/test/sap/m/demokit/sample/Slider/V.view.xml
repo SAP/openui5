@@ -20,17 +20,14 @@
 				showAdvancedTooltip="true"
 				showHandleTooltip="false"
 				inputsAsTooltips="true"
-				class="sapUiSmallMarginBottom" />
-
-		<Text text="Slider with tickmarks"/>
-		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiSmallMarginBottom" width="100%"/>
-		<Slider enableTickmarks="true" class="sapUiSmallMarginBottom" width="100%"/>
-		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiSmallMarginBottom" width="100%"/>
-
-		<Text text="Slider with tickmarks and labels"/>
+				class="sapUiMediumMarginBottom" />
+		<Text text="Slider with tickmarks" class="sapUiSmallMarginBottom"/>
+		<Slider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiMediumMarginBottom" width="100%"/>
+		<Slider enableTickmarks="true" class="sapUiMediumMarginBottom" width="100%"/>
+		<Slider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiLargeMarginBottom" width="100%"/>
+		<Text text="Slider with tickmarks and labels" class="sapUiSmallMarginBottom"/>
 		<Slider min="0" max="30" enableTickmarks="true" class="sapUiSmallMarginBottom" width="100%">
 			<ResponsiveScale tickmarksBetweenLabels="3"/>
 		</Slider>
-
 	</l:VerticalLayout>
 </mvc:View>
