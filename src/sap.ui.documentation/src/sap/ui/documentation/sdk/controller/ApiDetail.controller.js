@@ -155,33 +155,34 @@ sap.ui.define([
 			 * @private
 			 */
 			_onTopicMatched: function (oEvent) {
-				var oApiDetailObjectPage = this.byId("apiDetailObjectPage");
+				var oApiDetailObjectPage = this.byId("apiDetailObjectPage"),
+					oComponent = this.getOwnerComponent();
 
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
-				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
+				oComponent.fetchVersionInfo()
+					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
+					.then(function () {
+						oApiDetailObjectPage._suppressLayoutCalculations();
+						this._bindData(this._sTopicid);
+						this._bindEntityData(this._sTopicid);
+						this._createMethodsSummary();
+						this._createEventsSummary();
+						this._createAnnotationsSummary();
+						oApiDetailObjectPage._resumeLayoutCalculations();
 
-					oApiDetailObjectPage._suppressLayoutCalculations();
-					this._bindData(this._sTopicid);
-					this._bindEntityData(this._sTopicid);
-					this._createMethodsSummary();
-					this._createEventsSummary();
-					this._createAnnotationsSummary();
-					oApiDetailObjectPage._resumeLayoutCalculations();
+						if (this._sEntityType) {
+							this._scrollToEntity(this._sEntityType, this._sEntityId);
+						} else {
+							this._scrollContentToTop();
+						}
 
-					if (this._sEntityType) {
-						this._scrollToEntity(this._sEntityType, this._sEntityId);
-					} else {
-						this._scrollContentToTop();
-					}
+						setTimeout(this._prettify, 0);
 
-					setTimeout(this._prettify, 0);
-
-					this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
-
-				}.bind(this));
+						this.searchResultsButtonVisibilitySwitch(this.getView().byId("apiDetailBackToSearch"));
+					}.bind(this));
 
 			},
 
@@ -489,14 +490,15 @@ sap.ui.define([
 			 * @returns {Array} - the adjusted array
 			 */
 			buildMethodsModel: function (methods) {
+				var bIsInternalVersion = this.getModel("versionData").getProperty("/isInternal");
 
 				// No methods, do nothing
 				if (!methods.length) {
 					return methods;
 				}
 
-				var result = methods.filter(function (method) {
-					return method.visibility !== "restricted";
+				var result = methods.filter(function (method) {/* exclude restricted methods from none-internal versions */
+					return bIsInternalVersion ? true : method.visibility !== "restricted";
 				}).map(function (method) {
 					var subParameters = [];
 					method.parameters = method.parameters || [];

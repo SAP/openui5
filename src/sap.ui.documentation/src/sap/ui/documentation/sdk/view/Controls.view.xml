@@ -180,7 +180,7 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
-			<l:BlockLayoutRow visible="{= !${appView>/isOpenUI5}}">
+			<l:BlockLayoutRow visible="{= !${versionData>/isOpenUI5}}">
 				<l:BlockLayoutCell class="largeCell demokitInitialPagesColorPatternE">
 					<l:VerticalLayout>
 						<core:Icon

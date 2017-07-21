@@ -47,20 +47,24 @@ sap.ui.define([
 			},
 
 			_onTopicMatched: function (oEvent) {
+				var oComponent = this.getOwnerComponent();
+
 				if (this._hasMatched) {
 					return;
 				}
 
 				this._hasMatched = true;
 
-				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
-					var aLibsData = this.getOwnerComponent().getModel("libsData").getData();
+				oComponent.fetchVersionInfo()
+					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
+					.then(function () {
+						var aLibsData = oComponent.getModel("libsData").getData();
 
-					this.getModel("deprecatedAPIs").setData(aLibsData.deprecated);
-					this.getModel("experimentalAPIs").setData(aLibsData.experimental);
+						this.getModel("deprecatedAPIs").setData(aLibsData.deprecated);
+						this.getModel("experimentalAPIs").setData(aLibsData.experimental);
 
-					setTimeout(this._prettify, 0);
-				}.bind(this));
+						setTimeout(this._prettify, 0);
+					}.bind(this));
 			},
 
 			_prettify: function () {
