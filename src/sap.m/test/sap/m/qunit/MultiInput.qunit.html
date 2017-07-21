@@ -355,8 +355,48 @@
 		equals(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
 	});
 
-	module("Validation", {
-		setup: function() {
+	QUnit.test("test text validation on focus leave when duplicate token is created", function(assert) {
+		//arrange
+		var testTokenText = "C-Item",
+			firstToken = new sap.m.Token({
+				text: testTokenText,
+				key: testTokenText
+			});
+
+		this.multiInput1.addValidator(function(args){
+			return new sap.m.Token({text: args.text, key: args.text});
+		});
+
+		this.multiInput1.addToken(firstToken);
+
+		//act
+		this.multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = this.multiInput1.getTokens();
+		assert.equal(aTokens.length, 1, "MultiInput contains 1 token");
+		assert.equal(aTokens[0].getText(), testTokenText, "Token text == " + testTokenText);
+
+		this.multiInput1.setValue(testTokenText);
+		//act
+		this.multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = this.multiInput1.getTokens();
+		assert.equal(aTokens.length, 1, "MultiInput contains still contains 1 token, duplicate token was not added");
+
+		this.multiInput1.setValue("B-Item");
+		//act
+		this.multiInput1.onsapfocusleave({});
+
+		//assert
+		var aTokens = this.multiInput1.getTokens();
+		assert.equal(aTokens.length, 2, "MultiInput contains contains 2 token");
+
+	});
+
+	QUnit.module("Validation", {
+		beforeEach: function() {
 			this.multiInput1 = new sap.m.MultiInput();
 			this.multiInput1.placeAt("qunit-fixture");
 
