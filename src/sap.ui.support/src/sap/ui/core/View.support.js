@@ -93,6 +93,65 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 				}
 			});
 
+			oRuleSet.addRule({
+				id: "XMLViewLowerCaseControl",
+				audiences: ["Control","Application"],
+				categories: ["Performance"],
+				enabled: true,
+				title: "Control tag in XMl view starts with lower case",
+				description: "Control tags with lower case cannot be loaded in Linux-based systems",
+				resolution: "Start the Control tag with upper case",
+				resolutionurls: [],
+				check: function (oIssueManager, oCoreFacade, oScope) {
+
+					//get all aggregations of each element
+					var aAggregationsOfElements = oScope.getElements().map(
+							function (oElement) {
+								return Object.keys(oElement.mAggregations);
+							}
+					);
+					//flatten array of arrays and filter duplicates
+					var aAggregations = aAggregationsOfElements.reduce(
+						function(a, b) {
+							return a.concat(b);
+						}).filter(
+							function (x, i, a) {
+								return a.indexOf(x) === i;
+							});
+
+					var aXMLViews = oScope.getElements().filter(function (oControl) {
+						return oControl.getMetadata().getName() === "sap.ui.core.mvc.XMLView";
+					});
+
+					aXMLViews.forEach(function (oXMLView) {
+						var aLocalName = [];
+						var _getTags = function (oXcontent) {
+							aLocalName.push(oXcontent.localName);
+							for (var i = 0; i < oXcontent.children.length; i++) {
+								_getTags(oXcontent.children[i]);
+							}
+						};
+
+						_getTags(oXMLView._xContent);
+						aLocalName = jQuery.uniqueSort(aLocalName);
+
+						aLocalName.forEach(function (sTag) 	{
+							var sFirstLetter = sTag.charAt(0);
+							// check for lowercase, aggregations are excluded
+							if ((sFirstLetter.toLowerCase() === sFirstLetter) && !aAggregations.includes(sTag)) {
+								var sViewName = oXMLView.getViewName().split("\.").pop();
+								oIssueManager.addIssue({
+									severity: Severity.High,
+									details: "View '" + sViewName + "' (" + oXMLView.getId() + ") contains a Control tag that starts with lower case '" + sTag + "'",
+									context: {
+										id: oXMLView.getId()
+									}
+								});
+							}
+						});
+					});
+				}
+			});
 
 			/**
 			 * Checks for unused namespaces inside an XML view
@@ -130,7 +189,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 									if (!sContent.match("<" + sLocalName + ":")) {
 										var sViewName = oXMLView.getViewName().split("\.").pop();
 										oIssueManager.addIssue({
-											severity: Severity.Medium,
+											severity: Severity.Error,
 											details: "View '" + sViewName + "' (" + oXMLView.getId() + ") contains an unused XML namespace '" + sLocalName + "' referencing library '" + sFullName + "'",
 											context: {
 												id: oXMLView.getId()
