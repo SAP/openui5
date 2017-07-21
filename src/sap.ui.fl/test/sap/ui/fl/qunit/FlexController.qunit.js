@@ -1332,7 +1332,7 @@ function (
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				applyChange: this.oChangeHandlerApplyChangeStub,
-				removeFromAppliedChangesOnControl: this.oChangeHandlerRevertChangeStub
+				revertChange: this.oChangeHandlerRevertChangeStub
 			});
 		},
 		afterEach: function (assert) {
@@ -1468,7 +1468,7 @@ function (
 
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 				applyChange: this.oChangeHandlerApplyChangeStub,
-				removeFromAppliedChangesOnControl: this.oChangeHandlerRevertChangeStub
+				revertChange: this.oChangeHandlerRevertChangeStub
 			});
 
 			var oManifestObj = {
@@ -1633,7 +1633,7 @@ function (
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
 			applyChange: this.oChangeHandlerApplyChangeStub,
-			removeFromAppliedChangesOnControl: this.oChangeHandlerRevertChangeStub
+			revertChange: this.oChangeHandlerRevertChangeStub
 			});
 		},
 		afterEach: function (assert) {
