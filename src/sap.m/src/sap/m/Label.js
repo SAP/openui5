@@ -63,7 +63,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Indicates that user input is required in the input this label labels.
 			 */
-			required : {type : "boolean", group : "Misc", defaultValue : false}
+			required : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Determines if the label is in displayOnly mode. Controls in this mode are not interactive, not editable, not focusable, and not in the tab chain. <b>Note:<b> This property should be used only in Form controls in review.
+			 */
+			displayOnly : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		associations : {
 
@@ -97,6 +102,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.$().attr("title", this.getTooltip());
 		}
 		return this;
+	};
+
+	Label.prototype.setDisplayOnly = function(displayOnly) {
+		if (typeof displayOnly !== "boolean") {
+		    jQuery.sap.log.error("DisplayOnly property should be boolean. The new value will not be set");
+		    return this;
+		}
+
+		this.$().toggleClass("sapMLabelDisplayOnly", displayOnly);
+
+		return sap.ui.core.Control.prototype.setProperty.call(this, "displayOnly", displayOnly);
 	};
 
 	/**
