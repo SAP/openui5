@@ -2485,7 +2485,7 @@ sap.ui.define([
 
 		if ( this._observer ) {
 			// TODO notify observer to cleanup bookkeeping?
-			this._observer = undefined;
+			this._observer.objectDestroyed(this);
 		}
 
 		EventProvider.prototype.destroy.apply(this, arguments);
@@ -2908,6 +2908,10 @@ sap.ui.define([
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
 		this.mBindingInfos[sName] = oBindingInfo;
 
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "property");
+		}
+
 		// if the models are already available, create the binding
 		if (bAvailable) {
 			this._bindProperty(sName, oBindingInfo);
@@ -3030,6 +3034,10 @@ sap.ui.define([
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
+
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "ready", oBindingInfo, "property");
+		}
 	};
 
 	/**
@@ -3051,6 +3059,11 @@ sap.ui.define([
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
 			}
+
+			if (this._observer) {
+				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "property");
+			}
+
 			delete this.mBindingInfos[sName];
 			if (!bSuppressReset) {
 				this.resetProperty(sName);
@@ -3284,6 +3297,10 @@ sap.ui.define([
 		// store binding info to create the binding, as soon as the model is available, or when the model is changed
 		this.mBindingInfos[sName] = oBindingInfo;
 
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "prepare", oBindingInfo, "aggregation");
+		}
+
 		// if the model is already available create the binding
 		if (this.getModel(oBindingInfo.model)) {
 			this._bindAggregation(sName, oBindingInfo);
@@ -3340,6 +3357,10 @@ sap.ui.define([
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
+
+		if (this._observer) {
+			this._observer.bindingChange(this, sName, "ready", oBindingInfo, "aggregation");
+		}
 	};
 
 	/**
@@ -3368,6 +3389,10 @@ sap.ui.define([
 				if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
 					oBindingInfo.template._sapui_candidateForDestroy = true;
 				}
+			}
+
+			if (this._observer) {
+				this._observer.bindingChange(this,sName,"remove", this.mBindingInfos[sName], "aggregation");
 			}
 
 			delete this.mBindingInfos[sName];
@@ -3685,6 +3710,11 @@ sap.ui.define([
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				if (this._observer) {
+					var sMember = oBindingInfo.factory ? "aggregation" : "property";
+					this._observer.bindingChange(this, sName, "remove", oBindingInfo, sMember);
+				}
+
 				removeBinding(oBindingInfo);
 			}
 
