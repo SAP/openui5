@@ -43,6 +43,7 @@ sap.ui.require([
 					sap:updatable="false" />\
 				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
 					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
+				<Property Name="YearMonthDay" Type="Edm.String" sap:semantics="yearmonthday" />\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" \
 					FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="false"/>\
 				<NavigationProperty Name="Corrupt" Relationship="NOT.Found" FromRole="F" \
@@ -1317,6 +1318,7 @@ sap.ui.require([
 					oContactTel = oContact.property[4],
 					oAnyProperty = oBusinessPartner.property[1],
 					oNonFilterable = oBusinessPartner.property[2],
+					oYearMonthDay = oBusinessPartner.property[3],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
@@ -1710,6 +1712,15 @@ sap.ui.require([
 						: [ {"PropertyPath" : "AnyProperty"} ]
 					}, "BusinessPartnerSet filter restrictions");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
+
+				// sap:semantics="yearmonthday" --> com.sap.vocabularies.Common.v1.IsCalendarDate
+				assert.deepEqual(oYearMonthDay["sap:semantics"], "yearmonthday");
+				delete oYearMonthDay["sap:semantics"];
+				assert.deepEqual(
+					oYearMonthDay["com.sap.vocabularies.Common.v1.IsCalendarDate"],
+					{"Bool" : "true"},
+					'sap:semantics="yearmonthday" --> ...Common.v1.IsCalendarDate');
+				delete oYearMonthDay["com.sap.vocabularies.Common.v1.IsCalendarDate"];
 
 				// sap:semantics for Communication.Contact
 				// test only a subset of sap:semantics (different categories)
