@@ -803,6 +803,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var tokenExists = this._tokenExists(oToken);
 		if (tokenExists) {
+			var oParent = this.getParent();
+			if (oParent instanceof sap.m.MultiInput && fValidateCallback) {
+				fValidateCallback(false);
+			}
+
 			return false;
 		}
 
