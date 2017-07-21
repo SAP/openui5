@@ -125,7 +125,6 @@ function(
 				if (mOptions.model instanceof Model) {
 					this.oView.setModel(mOptions.model);
 				}
-
 				sap.ui.getCore().applyChanges();
 
 				// Fetch command to operate - as well as its parameters, its control with design time meta data
