@@ -69,7 +69,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					 *  The pin/unpin button in the header.
 					 */
 					_pinButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
-				}
+				},
+				designTime: true
 			}
 		});
 
