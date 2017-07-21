@@ -302,7 +302,7 @@
 					"Make Table Sorting Bookmarkable",
 					"Make Dialogs Bookmarkable",
 					"Reuse an Existing Route",
-					"Handlle Invalid Hashes by Listening to Bypassed Events",
+					"Handle Invalid Hashes by Listening to Bypassed Events",
 					"Listen to Matched Events of Any Route"
 				]
 			},
