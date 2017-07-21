@@ -186,6 +186,24 @@
 		oProgIndicator.destroy();
 	});
 
+	QUnit.test("Display-Only progress indicator", function(assert) {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			displayOnly: true
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), true, "should have class 'sapMPIDisplayOnly'");
+
+		oProgIndicator.setDisplayOnly(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), false, "class 'sapMPIDisplayOnly' should be removed");
+
+		oProgIndicator.destroy();
+	});
+
 	QUnit.test("ARIA attributes should be present", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50

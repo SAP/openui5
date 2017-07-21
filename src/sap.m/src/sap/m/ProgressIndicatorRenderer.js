@@ -46,6 +46,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMPIBarDisabled");
 		}
 
+		if (oControl.getDisplayOnly()) {
+			oRm.addClass("sapMPIDisplayOnly");
+		}
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.writeAccessibilityState(oControl, {
