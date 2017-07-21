@@ -140,7 +140,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		}
 
 		if (!this.bUseExtendedChangeDetection) {
-			var oList = this.oModel._getObject(this.sPath, this.oContext);
+			var oList = this.oModel._getObject(this.sPath, this.oContext) || [];
 			if (!jQuery.sap.equal(this.oList, oList) || bForceupdate) {
 				this.update();
 				this._fireChange({reason: ChangeReason.Change});
@@ -150,8 +150,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			var that = this;
 
 			//If the list has changed we need to update the indices first
-			var oList = this.oModel._getObject(this.sPath, this.oContext);
-			if (oList && this.oList.length != oList.length) {
+			var oList = this.oModel._getObject(this.sPath, this.oContext) || [];
+			if (this.oList.length != oList.length) {
 				bChangeDetected = true;
 			}
 			if (!jQuery.sap.equal(this.oList, oList)) {
