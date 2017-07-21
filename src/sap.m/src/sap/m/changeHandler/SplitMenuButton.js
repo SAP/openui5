@@ -91,10 +91,10 @@ sap.ui.define(["sap/ui/fl/Utils"], function(FlexUtils) {
 						return oMenuItem.firePress(oEvent);
 					});
 				}
-				oModifier.insertAggregation(oControl, oBarAggregation, oButton, iAggregationIndex + index);
+				oModifier.insertAggregation(oParent, oBarAggregation, oButton, iAggregationIndex + index);
 			});
 
-			oModifier.removeAggregation(oControl, oBarAggregation, oSourceControl);
+			oModifier.removeAggregation(oParent, oBarAggregation, oSourceControl);
 			oModifier.insertAggregation(oControl, "dependents", oSourceControl);
 
 			return true;
