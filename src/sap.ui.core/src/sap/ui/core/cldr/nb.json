@@ -6,7 +6,7 @@
 		"ace": "achinesisk",
 		"ach": "acoli",
 		"ada": "adangme",
-		"ady": "adyghe",
+		"ady": "adygeisk",
 		"ae": "avestisk",
 		"aeb": "tunisisk-arabisk",
 		"af": "afrikaans",
@@ -24,22 +24,22 @@
 		"ang": "gammelengelsk",
 		"anp": "angika",
 		"ar": "arabisk",
-		"ar_001": "moderne standard arabisk",
+		"ar_001": "moderne standardarabisk",
 		"arc": "arameisk",
-		"arn": "araukansk",
+		"arn": "mapudungun",
 		"aro": "araona",
 		"arp": "arapaho",
 		"arq": "algerisk arabisk",
 		"arw": "arawak",
 		"ary": "marokkansk-arabisk",
 		"arz": "egyptisk arabisk",
-		"as": "assamisk",
+		"as": "assamesisk",
 		"asa": "asu",
 		"ase": "amerikansk tegnspråk",
 		"ast": "asturisk",
 		"av": "avarisk",
 		"avk": "kotava",
-		"awa": "awadhi",
+		"awa": "avadhi",
 		"ay": "aymara",
 		"az": "aserbajdsjansk",
 		"az_alt-short": "azeri",
@@ -47,7 +47,7 @@
 		"bal": "baluchi",
 		"ban": "balinesisk",
 		"bar": "bairisk",
-		"bas": "basa",
+		"bas": "basaa",
 		"bax": "bamun",
 		"bbc": "batak toba",
 		"bbj": "ghomala",
@@ -78,7 +78,7 @@
 		"brx": "bodo",
 		"bs": "bosnisk",
 		"bss": "akose",
-		"bua": "buriat",
+		"bua": "burjatisk",
 		"bug": "buginesisk",
 		"bum": "bulu",
 		"byn": "blin",
@@ -93,7 +93,7 @@
 		"cgg": "kiga",
 		"ch": "chamorro",
 		"chb": "chibcha",
-		"chg": "chagatai",
+		"chg": "tsjagatai",
 		"chk": "chuukesisk",
 		"chm": "mari",
 		"chn": "chinook",
@@ -107,6 +107,7 @@
 		"cps": "kapiz",
 		"cr": "cree",
 		"crh": "krimtatarisk",
+		"crs": "seselwa",
 		"cs": "tsjekkisk",
 		"csb": "kasjubisk",
 		"cu": "kirkeslavisk",
@@ -117,10 +118,10 @@
 		"dar": "dargwa",
 		"dav": "taita",
 		"de": "tysk",
-		"de_AT": "østerriksk tysk",
-		"de_CH": "sveitsisk høytysk",
+		"de_AT": "tysk (Østerrike)",
+		"de_CH": "tysk (Sveits)",
 		"del": "delaware",
-		"den": "slavisk",
+		"den": "slavey",
 		"dgr": "dogrib",
 		"din": "dinka",
 		"dje": "zarma",
@@ -129,7 +130,7 @@
 		"dtp": "sentraldusun",
 		"dua": "duala",
 		"dum": "mellomnederlandsk",
-		"dv": "divehi",
+		"dv": "dhivehi",
 		"dyo": "jola-fonyi",
 		"dyu": "dyula",
 		"dz": "dzongkha",
@@ -143,18 +144,18 @@
 		"el": "gresk",
 		"elx": "elamittisk",
 		"en": "engelsk",
-		"en_AU": "australsk engelsk",
-		"en_CA": "canadisk engelsk",
-		"en_GB": "britisk engelsk",
-		"en_GB-alt-short": "engelsk – Storbritannia",
-		"en_US": "amerikansk engelsk",
-		"en_US-alt-short": "engelsk – USA",
+		"en_AU": "engelsk (Australia)",
+		"en_CA": "engelsk (Canada)",
+		"en_GB": "engelsk (Storbritannia)",
+		"en_GB-alt-short": "engelsk (Storbritannia)",
+		"en_US": "engelsk (USA)",
+		"en_US-alt-short": "engelsk (USA)",
 		"enm": "mellomengelsk",
 		"eo": "esperanto",
 		"es": "spansk",
-		"es_419": "latinamerikansk spansk",
-		"es_ES": "europeisk spansk",
-		"es_MX": "meksikansk spansk",
+		"es_419": "spansk (Latin-Amerika)",
+		"es_ES": "spansk (Spania)",
+		"es_MX": "spansk (Mexico)",
 		"esu": "sentralyupik",
 		"et": "estisk",
 		"eu": "baskisk",
@@ -163,17 +164,17 @@
 		"fa": "persisk",
 		"fan": "fang",
 		"fat": "fanti",
-		"ff": "fulani",
+		"ff": "fulfulde",
 		"fi": "finsk",
-		"fil": "filippinsk",
+		"fil": "filipino",
 		"fit": "tornedalsfinsk",
 		"fj": "fijiansk",
 		"fo": "færøysk",
 		"fon": "fon",
 		"fr": "fransk",
-		"fr_CA": "canadisk fransk",
-		"fr_CH": "sveitsisk fransk",
-		"frc": "kajunfransk",
+		"fr_CA": "fransk (Canada)",
+		"fr_CH": "fransk (Sveits)",
+		"frc": "cajunfransk",
 		"frm": "mellomfransk",
 		"fro": "gammelfransk",
 		"frp": "arpitansk",
@@ -188,8 +189,8 @@
 		"gay": "gayo",
 		"gba": "gbaya",
 		"gbz": "zoroastrisk dari",
-		"gd": "skotsk gælisk",
-		"gez": "ges",
+		"gd": "skotsk-gælisk",
+		"gez": "geez",
 		"gil": "kiribatisk",
 		"gl": "galisisk",
 		"glk": "gileki",
@@ -241,7 +242,7 @@
 		"io": "ido",
 		"is": "islandsk",
 		"it": "italiensk",
-		"iu": "inuktitut",
+		"iu": "inuittisk",
 		"izh": "ingrisk",
 		"ja": "japansk",
 		"jam": "jamaicansk kreolengelsk",
@@ -288,7 +289,7 @@
 		"kos": "kosraeansk",
 		"kpe": "kpelle",
 		"kr": "kanuri",
-		"krc": "karachay-balkar",
+		"krc": "karatsjajbalkarsk",
 		"kri": "krio",
 		"krj": "kinaray-a",
 		"krl": "karelsk",
@@ -298,7 +299,7 @@
 		"ksf": "bafia",
 		"ksh": "kølnsk",
 		"ku": "kurdisk",
-		"kum": "kumyk",
+		"kum": "kumykisk",
 		"kut": "kutenai",
 		"kv": "komi",
 		"kw": "kornisk",
@@ -309,10 +310,10 @@
 		"lah": "lahnda",
 		"lam": "lamba",
 		"lb": "luxemburgsk",
-		"lez": "lezghian",
+		"lez": "lesgisk",
 		"lfn": "lingua franca nova",
 		"lg": "ganda",
-		"li": "limburgisk",
+		"li": "limburgsk",
 		"lij": "ligurisk",
 		"liv": "livisk",
 		"lkt": "lakota",
@@ -342,8 +343,7 @@
 		"man": "mandingo",
 		"mas": "masai",
 		"mde": "maba",
-		"mdf": "moksha",
-		"mdh": "mdh",
+		"mdf": "moksja",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -356,7 +356,6 @@
 		"mi": "maori",
 		"mic": "micmac",
 		"min": "minangkabau",
-		"mis": "mis",
 		"mk": "makedonsk",
 		"ml": "malayalam",
 		"mn": "mongolsk",
@@ -376,7 +375,7 @@
 		"mwv": "mentawai",
 		"my": "burmesisk",
 		"mye": "myene",
-		"myv": "erzya",
+		"myv": "erzia",
 		"mzn": "mazandarani",
 		"na": "nauru",
 		"nan": "minnan",
@@ -398,7 +397,7 @@
 		"nn": "norsk nynorsk",
 		"nnh": "ngiemboon",
 		"no": "norsk",
-		"nog": "nogai",
+		"nog": "nogaisk",
 		"non": "gammelnorsk",
 		"nov": "novial",
 		"nqo": "nʼko",
@@ -426,6 +425,7 @@
 		"pap": "papiamento",
 		"pau": "palauisk",
 		"pcd": "pikardisk",
+		"pcm": "nigeriansk pidginspråk",
 		"pdc": "pennsylvaniatysk",
 		"pdt": "plautdietsch",
 		"peo": "gammelpersisk",
@@ -441,8 +441,8 @@
 		"ps": "pashto",
 		"ps_alt-variant": "pushto",
 		"pt": "portugisisk",
-		"pt_BR": "brasiliansk portugisisk",
-		"pt_PT": "europeisk portugisisk",
+		"pt_BR": "portugisisk (Brasil)",
+		"pt_PT": "portugisisk (Portugal)",
 		"qu": "quechua",
 		"quc": "quiché",
 		"qug": "kichwa (Chimborazo-høylandet)",
@@ -467,7 +467,7 @@
 		"rwk": "rwa",
 		"sa": "sanskrit",
 		"sad": "sandawe",
-		"sah": "jakutsk",
+		"sah": "jakutisk",
 		"sam": "samaritansk arameisk",
 		"saq": "samburu",
 		"sas": "sasak",
@@ -475,11 +475,11 @@
 		"saz": "saurashtra",
 		"sba": "ngambay",
 		"sbp": "sangu",
-		"sc": "sardinsk",
+		"sc": "sardisk",
 		"scn": "siciliansk",
 		"sco": "skotsk",
 		"sd": "sindhi",
-		"sdc": "sassarisk sardinsk",
+		"sdc": "sassaresisk sardisk",
 		"sdh": "sørkurdisk",
 		"se": "nordsamisk",
 		"see": "seneca",
@@ -493,7 +493,7 @@
 		"sh": "serbokroatisk",
 		"shi": "tachelhit",
 		"shn": "shan",
-		"shu": "Tsjad-arabisk",
+		"shu": "tsjadisk arabisk",
 		"si": "singalesisk",
 		"sid": "sidamo",
 		"sk": "slovakisk",
@@ -511,7 +511,7 @@
 		"sog": "sogdisk",
 		"sq": "albansk",
 		"sr": "serbisk",
-		"srn": "sranan tongo",
+		"srn": "sranan",
 		"srr": "serer",
 		"ss": "swati",
 		"ssy": "saho",
@@ -526,7 +526,7 @@
 		"sw_CD": "kongolesisk swahili",
 		"swb": "komorisk",
 		"syc": "klassisk syrisk",
-		"syr": "syrisk",
+		"syr": "gammelsyrisk",
 		"szl": "schlesisk",
 		"ta": "tamil",
 		"tcy": "tulu",
@@ -541,12 +541,12 @@
 		"tig": "tigré",
 		"tiv": "tiv",
 		"tk": "turkmensk",
-		"tkl": "tokelau",
+		"tkl": "tokelauisk",
 		"tkr": "tsakhursk",
 		"tl": "tagalog",
 		"tlh": "klingon",
 		"tli": "tlingit",
-		"tly": "talysh",
+		"tly": "talysj",
 		"tmh": "tamasjek",
 		"tn": "setswana",
 		"to": "tongansk",
@@ -561,13 +561,13 @@
 		"tt": "tatarisk",
 		"ttt": "muslimsk tat",
 		"tum": "tumbuka",
-		"tvl": "tuvalu",
+		"tvl": "tuvalsk",
 		"tw": "twi",
 		"twq": "tasawaq",
 		"ty": "tahitisk",
-		"tyv": "tuvinisk",
+		"tyv": "tuvinsk",
 		"tzm": "sentralmarokkansk tamazight",
-		"udm": "udmurt",
+		"udm": "udmurtisk",
 		"ug": "uigurisk",
 		"uga": "ugaritisk",
 		"uk": "ukrainsk",
@@ -587,14 +587,14 @@
 		"vro": "sørestisk",
 		"vun": "vunjo",
 		"wa": "vallonsk",
-		"wae": "walser",
-		"wal": "walamo",
-		"war": "waray",
+		"wae": "walsertysk",
+		"wal": "wolaytta",
+		"war": "waray-waray",
 		"was": "washo",
 		"wbp": "warlpiri",
 		"wo": "wolof",
 		"wuu": "wu",
-		"xal": "kalmyk",
+		"xal": "kalmukkisk",
 		"xh": "xhosa",
 		"xmf": "mingrelsk",
 		"xog": "soga",
@@ -607,7 +607,7 @@
 		"yrl": "nheengatu",
 		"yue": "kantonesisk",
 		"za": "zhuang",
-		"zap": "zapotec",
+		"zap": "zapotekisk",
 		"zbl": "blissymboler",
 		"zea": "zeeuws",
 		"zen": "zenaga",
@@ -618,7 +618,7 @@
 		"zu": "zulu",
 		"zun": "zuni",
 		"zxx": "uten språklig innhold",
-		"zza": "zaza"
+		"zza": "zazaisk"
 	},
 	"scripts": {
 		"Adlm": "Adlm",
@@ -668,7 +668,7 @@
 		"Grek": "gresk",
 		"Gujr": "gujarati",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "hanb",
 		"Hang": "hangul",
 		"Hani": "han",
 		"Hano": "hanunoo",
@@ -681,11 +681,11 @@
 		"Hira": "hiragana",
 		"Hluw": "anatoliske hieroglyfer",
 		"Hmng": "pahawh hmong",
-		"Hrkt": "katakana eller hiragana",
+		"Hrkt": "japanske stavelsesskrifter",
 		"Hung": "gammelungarsk",
 		"Inds": "indus",
 		"Ital": "gammelitalisk",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "javanesisk",
 		"Jpan": "japansk",
 		"Jurc": "jurchen",
@@ -757,7 +757,6 @@
 		"Qaaf": "qaaf",
 		"Qaag": "qaag",
 		"Qaah": "qaah",
-		"Qaaj": "Qaaj",
 		"Qaak": "qaak",
 		"Qaal": "qaal",
 		"Qaam": "qaam",
@@ -843,7 +842,7 @@
 		"Yiii": "yi",
 		"Zinh": "nedarvet",
 		"Zmth": "matematisk notasjon",
-		"Zsye": "Zsye",
+		"Zsye": "zsye",
 		"Zsym": "symboler",
 		"Zxxx": "språk uten skrift",
 		"Zyyy": "felles",
@@ -941,6 +940,7 @@
 		"CX": "Christmasøya",
 		"CY": "Kypros",
 		"CZ": "Tsjekkia",
+		"CZ-alt-variant": "Den tsjekkiske republikk",
 		"DE": "Tyskland",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -957,6 +957,7 @@
 		"ES": "Spania",
 		"ET": "Etiopia",
 		"EU": "EU",
+		"EZ": "EZ",
 		"FI": "Finland",
 		"FJ": "Fiji",
 		"FK": "Falklandsøyene",
@@ -1036,7 +1037,7 @@
 		"MG": "Madagaskar",
 		"MH": "Marshalløyene",
 		"MK": "Makedonia",
-		"MK-alt-variant": "Makedonia (FYROM)",
+		"MK-alt-variant": "Den tidligere jugoslaviske republikk Makedonia",
 		"ML": "Mali",
 		"MM": "Myanmar (Burma)",
 		"MN": "Mongolia",
@@ -1082,7 +1083,7 @@
 		"PW": "Palau",
 		"PY": "Paraguay",
 		"QA": "Qatar",
-		"QO": "ytre Oseania",
+		"QO": "Ytre Oseania",
 		"RE": "Réunion",
 		"RO": "Romania",
 		"RS": "Serbia",
@@ -1130,6 +1131,8 @@
 		"UA": "Ukraina",
 		"UG": "Uganda",
 		"UM": "USAs ytre øyer",
+		"UN": "FN",
+		"UN-alt-short": "FN",
 		"US": "USA",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
@@ -1160,14 +1163,14 @@
 			"short": "dd.MM.y"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"full-alt-variant": "HH:mm:ss zzzz",
-			"long": "HH.mm.ss z",
-			"long-alt-variant": "HH:mm:ss z",
-			"medium": "HH.mm.ss",
-			"medium-alt-variant": "HH:mm:ss",
-			"short": "HH.mm",
-			"short-alt-variant": "HH:mm"
+			"full": "HH:mm:ss zzzz",
+			"full-alt-variant": "HH.mm.ss zzzz",
+			"long": "HH:mm:ss z",
+			"long-alt-variant": "HH.mm.ss z",
+			"medium": "HH:mm:ss",
+			"medium-alt-variant": "HH.mm.ss",
+			"short": "HH:mm",
+			"short-alt-variant": "HH.mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1178,24 +1181,24 @@
 				"d": "d.",
 				"E": "ccc",
 				"Ed": "E d.",
-				"Ehm": "E h.mm a",
-				"EHm": "E HH.mm",
-				"Ehms": "E h.mm.ss a",
-				"EHms": "E HH.mm.ss",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "d. MMM y G",
 				"GyMMMEd": "E d. MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
-				"hmsv": "h.mm.ss a v",
-				"Hmsv": "HH.mm.ss v",
-				"hmv": "h.mm a v",
-				"Hmv": "HH.mm v",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
 				"M": "L.",
 				"Md": "d.M.",
 				"MEd": "E d.M",
@@ -1204,7 +1207,7 @@
 				"MMMd": "d. MMM",
 				"MMMEd": "E d. MMM",
 				"MMMMd": "d. MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y",
 				"yM": "M.y",
 				"yMd": "d.M.y",
@@ -1215,7 +1218,9 @@
 				"yMMMEd": "E d. MMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "W. 'uke' 'i' MMM",
+				"yw": "'uke' w 'i' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1243,22 +1248,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a–h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a–h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a–h a v",
@@ -1584,17 +1589,17 @@
 			"full": "EEEE d. MMMM y G",
 			"long": "d. MMMM y G",
 			"medium": "d. MMM y G",
-			"short": "d.M. y G"
+			"short": "d.M.y G"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"full-alt-variant": "HH:mm:ss zzzz",
-			"long": "HH.mm.ss z",
-			"long-alt-variant": "HH:mm:ss z",
-			"medium": "HH.mm.ss",
-			"medium-alt-variant": "HH:mm:ss",
-			"short": "HH.mm",
-			"short-alt-variant": "HH:mm"
+			"full": "HH:mm:ss zzzz",
+			"full-alt-variant": "HH.mm.ss zzzz",
+			"long": "HH:mm:ss z",
+			"long-alt-variant": "HH.mm.ss z",
+			"medium": "HH:mm:ss",
+			"medium-alt-variant": "HH.mm.ss",
+			"short": "HH:mm",
+			"short-alt-variant": "HH.mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -1615,10 +1620,10 @@
 				"GyMMMEd": "E d. MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
 				"M": "L.",
 				"Md": "d.M.",
 				"MEd": "E d.M",
@@ -1627,7 +1632,7 @@
 				"MMMd": "d. MMM",
 				"MMMEd": "E d. MMM",
 				"MMMMd": "d. MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
 				"yyyyM": "M.y G",
@@ -1667,22 +1672,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -2008,14 +2013,14 @@
 			"short": "d.M y G"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"full-alt-variant": "HH:mm:ss zzzz",
-			"long": "HH.mm.ss z",
-			"long-alt-variant": "HH:mm:ss z",
-			"medium": "HH.mm.ss",
-			"medium-alt-variant": "HH:mm:ss",
-			"short": "HH.mm",
-			"short-alt-variant": "HH:mm"
+			"full": "HH:mm:ss zzzz",
+			"full-alt-variant": "HH.mm.ss zzzz",
+			"long": "HH:mm:ss z",
+			"long-alt-variant": "HH.mm.ss z",
+			"medium": "HH:mm:ss",
+			"medium-alt-variant": "HH.mm.ss",
+			"short": "HH:mm",
+			"short-alt-variant": "HH.mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -2036,10 +2041,10 @@
 				"GyMMMEd": "E d. MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
 				"M": "L.",
 				"Md": "d.M.",
 				"MEd": "E d.M",
@@ -2048,7 +2053,7 @@
 				"MMMd": "d. MMM",
 				"MMMEd": "E d. MMM",
 				"MMMMd": "d. MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
 				"yyyyM": "M.y G",
@@ -2088,22 +2093,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -2435,17 +2440,17 @@
 			"full": "EEEE d. MMMM y G",
 			"long": "d. MMMM y G",
 			"medium": "d. MMM y G",
-			"short": "d.M. y G"
+			"short": "d.M.y G"
 		},
 		"timeFormats": {
-			"full": "HH.mm.ss zzzz",
-			"full-alt-variant": "HH:mm:ss zzzz",
-			"long": "HH.mm.ss z",
-			"long-alt-variant": "HH:mm:ss z",
-			"medium": "HH.mm.ss",
-			"medium-alt-variant": "HH:mm:ss",
-			"short": "HH.mm",
-			"short-alt-variant": "HH:mm"
+			"full": "HH:mm:ss zzzz",
+			"full-alt-variant": "HH.mm.ss zzzz",
+			"long": "HH:mm:ss z",
+			"long-alt-variant": "HH.mm.ss z",
+			"medium": "HH:mm:ss",
+			"medium-alt-variant": "HH.mm.ss",
+			"short": "HH:mm",
+			"short-alt-variant": "HH.mm"
 		},
 		"dateTimeFormats": {
 			"full": "{1} {0}",
@@ -2466,10 +2471,10 @@
 				"GyMMMEd": "E d. MMM y G",
 				"h": "h a",
 				"H": "HH",
-				"hm": "h.mm a",
-				"Hm": "HH.mm",
-				"hms": "h.mm.ss a",
-				"Hms": "HH.mm.ss",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
 				"M": "L.",
 				"Md": "d.M.",
 				"MEd": "E d.M",
@@ -2478,7 +2483,7 @@
 				"MMMd": "d. MMM",
 				"MMMEd": "E d. MMM",
 				"MMMMd": "d. MMMM",
-				"ms": "mm.ss",
+				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
 				"yyyyM": "M.y G",
@@ -2518,22 +2523,22 @@
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h.mm a – h.mm a",
-					"h": "h.mm–h.mm a",
-					"m": "h.mm–h.mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
-					"H": "HH.mm–HH.mm",
-					"m": "HH.mm–HH.mm"
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h.mm a – h.mm a v",
-					"h": "h.mm–h.mm a v",
-					"m": "h.mm–h.mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
-					"H": "HH.mm–HH.mm v",
-					"m": "HH.mm–HH.mm v"
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
 					"a": "h a – h a v",
@@ -2875,12 +2880,12 @@
 			"relative-type-0": "i år",
 			"relative-type-1": "neste år",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "+{0} år",
-				"relativeTimePattern-count-other": "+{0} år"
+				"relativeTimePattern-count-one": "om {0} år",
+				"relativeTimePattern-count-other": "om {0} år"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "–{0} år",
-				"relativeTimePattern-count-other": "–{0} år"
+				"relativeTimePattern-count-one": "for {0} år siden",
+				"relativeTimePattern-count-other": "for {0} år siden"
 			}
 		},
 		"year-narrow": {
@@ -2900,7 +2905,7 @@
 		"quarter-wide": {
 			"displayName": "kvartal",
 			"relative-type--1": "forrige kvartal",
-			"relative-type-0": "dette kvartal",
+			"relative-type-0": "dette kvartalet",
 			"relative-type-1": "neste kvartal",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} kvartal",
@@ -2993,7 +2998,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "for {0} uke siden",
 				"relativeTimePattern-count-other": "for {0} uker siden"
-			}
+			},
+			"relativePeriod": "uken {0}"
 		},
 		"week-short": {
 			"displayName": "uke",
@@ -3007,10 +3013,11 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "for {0} u. siden",
 				"relativeTimePattern-count-other": "for {0} u. siden"
-			}
+			},
+			"relativePeriod": "uken {0}"
 		},
 		"week-narrow": {
-			"displayName": "uke",
+			"displayName": "u.",
 			"relative-type--1": "forrige uke",
 			"relative-type-0": "denne uken",
 			"relative-type-1": "neste uke",
@@ -3021,7 +3028,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "-{0} u.",
 				"relativeTimePattern-count-other": "-{0} u."
-			}
+			},
+			"relativePeriod": "u. {0}"
 		},
 		"day-wide": {
 			"displayName": "dag",
@@ -3056,7 +3064,7 @@
 			}
 		},
 		"day-narrow": {
-			"displayName": "dag",
+			"displayName": "d.",
 			"relative-type--2": "i forgårs",
 			"relative-type--1": "i går",
 			"relative-type-0": "i dag",
@@ -3076,6 +3084,7 @@
 		},
 		"hour-wide": {
 			"displayName": "time",
+			"relative-type-0": "denne timen",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} time",
 				"relativeTimePattern-count-other": "om {0} timer"
@@ -3087,6 +3096,7 @@
 		},
 		"hour-short": {
 			"displayName": "t",
+			"relative-type-0": "denne timen",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} t",
 				"relativeTimePattern-count-other": "om {0} t"
@@ -3098,6 +3108,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "t",
+			"relative-type-0": "denne timen",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} t",
 				"relativeTimePattern-count-other": "+{0} t"
@@ -3109,6 +3120,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minutt",
+			"relative-type-0": "dette minuttet",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} minutt",
 				"relativeTimePattern-count-other": "om {0} minutter"
@@ -3120,6 +3132,7 @@
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "dette minuttet",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "om {0} min",
 				"relativeTimePattern-count-other": "om {0} min"
@@ -3131,6 +3144,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "m",
+			"relative-type-0": "dette minuttet",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} min",
 				"relativeTimePattern-count-other": "+{0} min"
@@ -3210,12 +3224,12 @@
 		"100000000000000-other": "000 billioner"
 	},
 	"decimalFormat-short": {
-		"1000-one": "0 K",
-		"1000-other": "0 K",
-		"10000-one": "00 K",
-		"10000-other": "00 K",
-		"100000-one": "000 K",
-		"100000-other": "000 K",
+		"1000-one": "0k",
+		"1000-other": "0k",
+		"10000-one": "00k",
+		"10000-other": "00k",
+		"100000-one": "000k",
+		"100000-other": "000k",
 		"1000000-one": "0 mill",
 		"1000000-other": "0 mill",
 		"10000000-one": "00 mill",
@@ -3268,8 +3282,8 @@
 	"symbols-latn-perMille": "‰",
 	"symbols-latn-infinity": "∞",
 	"symbols-latn-nan": "NaN",
-	"symbols-latn-timeSeparator": ".",
-	"symbols-latn-timeSeparator-alt-variant": ":",
+	"symbols-latn-timeSeparator": ":",
+	"symbols-latn-timeSeparator-alt-variant": ".",
 	"currencySymbols": {
 		"EUR": "€",
 		"GBP": "£",
@@ -3283,6 +3297,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

@@ -8,16 +8,13 @@
 		"ada": "adangme",
 		"ady": "adigeo",
 		"ae": "avéstico",
-		"aeb": "aeb",
 		"af": "afrikáans",
 		"afh": "afrihili",
 		"agq": "aghem",
 		"ain": "ainu",
 		"ak": "akan",
 		"akk": "acadio",
-		"akz": "akz",
 		"ale": "aleutiano",
-		"aln": "aln",
 		"alt": "altái meridional",
 		"am": "amárico",
 		"an": "aragonés",
@@ -27,18 +24,12 @@
 		"ar_001": "árabe estándar moderno",
 		"arc": "arameo",
 		"arn": "mapuche",
-		"aro": "aro",
 		"arp": "arapaho",
-		"arq": "arq",
 		"arw": "arahuaco",
-		"ary": "ary",
-		"arz": "arz",
 		"as": "asamés",
 		"asa": "asu",
-		"ase": "ase",
 		"ast": "asturiano",
 		"av": "avar",
-		"avk": "avk",
 		"awa": "avadhi",
 		"ay": "aimara",
 		"az": "azerbaiyano",
@@ -46,39 +37,31 @@
 		"ba": "bashkir",
 		"bal": "baluchi",
 		"ban": "balinés",
-		"bar": "bar",
 		"bas": "basa",
 		"bax": "bamun",
-		"bbc": "bbc",
 		"bbj": "ghomala",
 		"be": "bielorruso",
 		"bej": "beja",
 		"bem": "bemba",
-		"bew": "bew",
 		"bez": "bena",
 		"bfd": "bafut",
-		"bfq": "bfq",
 		"bg": "búlgaro",
 		"bgn": "baluchi occidental",
 		"bho": "bhojpuri",
 		"bi": "bislama",
 		"bik": "bicol",
 		"bin": "bini",
-		"bjn": "bjn",
 		"bkm": "kom",
 		"bla": "siksika",
 		"bm": "bambara",
 		"bn": "bengalí",
 		"bo": "tibetano",
-		"bpy": "bpy",
-		"bqi": "bqi",
 		"br": "bretón",
 		"bra": "braj",
-		"brh": "brh",
 		"brx": "bodo",
 		"bs": "bosnio",
 		"bss": "akoose",
-		"bua": "buriat",
+		"bua": "buriato",
 		"bug": "buginés",
 		"bum": "bulu",
 		"byn": "blin",
@@ -104,9 +87,9 @@
 		"ckb": "kurdo sorani",
 		"co": "corso",
 		"cop": "copto",
-		"cps": "cps",
 		"cr": "cree",
 		"crh": "tártaro de Crimea",
+		"crs": "criollo seychelense",
 		"cs": "checo",
 		"csb": "casubio",
 		"cu": "eslavo eclesiástico",
@@ -126,7 +109,6 @@
 		"dje": "zarma",
 		"doi": "dogri",
 		"dsb": "bajo sorbio",
-		"dtp": "dtp",
 		"dua": "duala",
 		"dum": "neerlandés medieval",
 		"dv": "divehi",
@@ -137,7 +119,6 @@
 		"ebu": "embu",
 		"ee": "ewé",
 		"efi": "efik",
-		"egl": "egl",
 		"egy": "egipcio antiguo",
 		"eka": "ekajuk",
 		"el": "griego",
@@ -155,28 +136,23 @@
 		"es_419": "español latinoamericano",
 		"es_ES": "español de España",
 		"es_MX": "español de México",
-		"esu": "esu",
 		"et": "estonio",
-		"eu": "vasco",
+		"eu": "euskera",
 		"ewo": "ewondo",
-		"ext": "ext",
 		"fa": "persa",
 		"fan": "fang",
 		"fat": "fanti",
 		"ff": "fula",
 		"fi": "finés",
 		"fil": "filipino",
-		"fit": "fit",
 		"fj": "fiyiano",
 		"fo": "feroés",
 		"fon": "fon",
 		"fr": "francés",
 		"fr_CA": "francés canadiense",
 		"fr_CH": "francés suizo",
-		"frc": "frc",
 		"frm": "francés medieval",
 		"fro": "francés antiguo",
-		"frp": "frp",
 		"frr": "frisón septentrional",
 		"frs": "frisón oriental",
 		"fur": "friulano",
@@ -184,19 +160,16 @@
 		"ga": "irlandés",
 		"gaa": "ga",
 		"gag": "gagauzo",
-		"gan": "gan",
+		"gan": "gan (China)",
 		"gay": "gayo",
 		"gba": "gbaya",
-		"gbz": "gbz",
 		"gd": "gaélico escocés",
 		"gez": "geez",
 		"gil": "gilbertés",
 		"gl": "gallego",
-		"glk": "glk",
 		"gmh": "alemán de la alta edad media",
 		"gn": "guaraní",
-		"goh": "alemán de la alta edad antigua",
-		"gom": "gom",
+		"goh": "alto alemán antiguo",
 		"gon": "gondi",
 		"gor": "gorontalo",
 		"got": "gótico",
@@ -204,25 +177,22 @@
 		"grc": "griego antiguo",
 		"gsw": "alemán suizo",
 		"gu": "gujarati",
-		"guc": "guc",
-		"gur": "gur",
 		"guz": "gusii",
 		"gv": "manés",
 		"gwi": "kutchin",
 		"ha": "hausa",
 		"hai": "haida",
-		"hak": "hak",
+		"hak": "kejia (China)",
 		"haw": "hawaiano",
 		"he": "hebreo",
 		"hi": "hindi",
-		"hif": "hif",
 		"hil": "hiligaynon",
 		"hit": "hitita",
 		"hmn": "hmong",
 		"ho": "hiri motu",
 		"hr": "croata",
-		"hsb": "alto sorbio",
-		"hsn": "hsn",
+		"hsb": "sorbio alto",
+		"hsn": "xiang (China)",
 		"ht": "haitiano",
 		"hu": "húngaro",
 		"hup": "hupa",
@@ -242,15 +212,12 @@
 		"is": "islandés",
 		"it": "italiano",
 		"iu": "inuktitut",
-		"izh": "izh",
 		"ja": "japonés",
-		"jam": "jam",
 		"jbo": "lojban",
 		"jgo": "ngomba",
 		"jmc": "machame",
 		"jpr": "judeo-persa",
 		"jrb": "judeo-árabe",
-		"jut": "jut",
 		"jv": "javanés",
 		"ka": "georgiano",
 		"kaa": "karakalpako",
@@ -263,17 +230,13 @@
 		"kbl": "kanembu",
 		"kcg": "tyap",
 		"kde": "makonde",
-		"kea": "criollo caboverdiano",
-		"ken": "ken",
+		"kea": "Criollo (Cabo Verde)",
 		"kfo": "koro",
 		"kg": "kongo",
-		"kgp": "kgp",
 		"kha": "khasi",
 		"kho": "kotanés",
 		"khq": "koyra chiini",
-		"khw": "khw",
 		"ki": "kikuyu",
-		"kiu": "kiu",
 		"kj": "kuanyama",
 		"kk": "kazajo",
 		"kkj": "kako",
@@ -289,8 +252,6 @@
 		"kpe": "kpelle",
 		"kr": "kanuri",
 		"krc": "karachay-balkar",
-		"kri": "kri",
-		"krj": "krj",
 		"krl": "carelio",
 		"kru": "kurukh",
 		"ks": "cachemiro",
@@ -310,30 +271,23 @@
 		"lam": "lamba",
 		"lb": "luxemburgués",
 		"lez": "lezgiano",
-		"lfn": "lfn",
 		"lg": "ganda",
 		"li": "limburgués",
-		"lij": "lij",
-		"liv": "liv",
 		"lkt": "lakota",
-		"lmo": "lmo",
 		"ln": "lingala",
-		"lo": "laosiano",
+		"lo": "lao",
 		"lol": "mongo",
 		"loz": "lozi",
 		"lrc": "lorí septentrional",
 		"lt": "lituano",
-		"ltg": "ltg",
 		"lu": "luba-katanga",
 		"lua": "luba-lulua",
 		"lui": "luiseño",
 		"lun": "lunda",
 		"luo": "luo",
-		"lus": "lushai",
+		"lus": "mizo",
 		"luy": "luyia",
 		"lv": "letón",
-		"lzh": "lzh",
-		"lzz": "lzz",
 		"mad": "madurés",
 		"maf": "mafa",
 		"mag": "magahi",
@@ -343,7 +297,6 @@
 		"mas": "masái",
 		"mde": "maba",
 		"mdf": "moksha",
-		"mdh": "mdh",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -356,7 +309,6 @@
 		"mi": "maorí",
 		"mic": "micmac",
 		"min": "minangkabau",
-		"mis": "mis",
 		"mk": "macedonio",
 		"ml": "malayalam",
 		"mn": "mongol",
@@ -365,33 +317,30 @@
 		"moh": "mohawk",
 		"mos": "mossi",
 		"mr": "maratí",
-		"mrj": "mrj",
 		"ms": "malayo",
 		"mt": "maltés",
 		"mua": "mundang",
-		"mul": "lenguas múltiples",
+		"mul": "varios idiomas",
 		"mus": "creek",
 		"mwl": "mirandés",
 		"mwr": "marwari",
-		"mwv": "mwv",
 		"my": "birmano",
 		"mye": "myene",
 		"myv": "erzya",
 		"mzn": "mazandaraní",
 		"na": "nauruano",
-		"nan": "nan",
+		"nan": "min nan (Chino)",
 		"nap": "napolitano",
 		"naq": "nama",
 		"nb": "noruego bokmal",
 		"nd": "ndebele septentrional",
 		"nds": "bajo alemán",
-		"nds_NL": "bajo alemán (Países Bajos)",
+		"nds_NL": "bajo sajón",
 		"ne": "nepalí",
 		"new": "newari",
 		"ng": "ndonga",
 		"nia": "nias",
 		"niu": "niueano",
-		"njo": "njo",
 		"nl": "neerlandés",
 		"nl_BE": "flamenco",
 		"nmg": "kwasio",
@@ -400,7 +349,6 @@
 		"no": "noruego",
 		"nog": "nogai",
 		"non": "nórdico antiguo",
-		"nov": "nov",
 		"nqo": "n’ko",
 		"nr": "ndebele meridional",
 		"nso": "sotho septentrional",
@@ -419,24 +367,19 @@
 		"os": "osético",
 		"osa": "osage",
 		"ota": "turco otomano",
-		"pa": "panyabí",
+		"pa": "punyabí",
 		"pag": "pangasinán",
 		"pal": "pahlavi",
 		"pam": "pampanga",
 		"pap": "papiamento",
 		"pau": "palauano",
-		"pcd": "pcd",
-		"pdc": "pdc",
-		"pdt": "pdt",
+		"pcm": "pidgin de Nigeria",
 		"peo": "persa antiguo",
-		"pfl": "pfl",
 		"phn": "fenicio",
 		"pi": "pali",
 		"pl": "polaco",
-		"pms": "pms",
-		"pnt": "pnt",
 		"pon": "pohnpeiano",
-		"prg": "prg",
+		"prg": "prusiano antiguo",
 		"pro": "provenzal antiguo",
 		"ps": "pastún",
 		"ps_alt-variant": "pashtún",
@@ -445,12 +388,9 @@
 		"pt_PT": "portugués de Portugal",
 		"qu": "quechua",
 		"quc": "quiché",
-		"qug": "qug",
 		"raj": "rajasthani",
 		"rap": "rapanui",
 		"rar": "rarotongano",
-		"rgn": "rgn",
-		"rif": "rif",
 		"rm": "retorrománico",
 		"rn": "kiroundi",
 		"ro": "rumano",
@@ -458,10 +398,7 @@
 		"rof": "rombo",
 		"rom": "romaní",
 		"root": "raíz",
-		"rtm": "rtm",
 		"ru": "ruso",
-		"rue": "rue",
-		"rug": "rug",
 		"rup": "arrumano",
 		"rw": "kinyarwanda",
 		"rwk": "rwa",
@@ -472,24 +409,20 @@
 		"saq": "samburu",
 		"sas": "sasak",
 		"sat": "santali",
-		"saz": "saz",
 		"sba": "ngambay",
 		"sbp": "sangu",
 		"sc": "sardo",
 		"scn": "siciliano",
 		"sco": "escocés",
 		"sd": "sindhi",
-		"sdc": "sdc",
 		"sdh": "kurdo meridional",
 		"se": "sami septentrional",
 		"see": "seneca",
 		"seh": "sena",
-		"sei": "sei",
 		"sel": "selkup",
 		"ses": "koyraboro senni",
 		"sg": "sango",
 		"sga": "irlandés antiguo",
-		"sgs": "sgs",
 		"sh": "serbocroata",
 		"shi": "tashelhit",
 		"shn": "shan",
@@ -498,8 +431,6 @@
 		"sid": "sidamo",
 		"sk": "eslovaco",
 		"sl": "esloveno",
-		"sli": "sli",
-		"sly": "sly",
 		"sm": "samoano",
 		"sma": "sami meridional",
 		"smj": "sami lule",
@@ -516,20 +447,17 @@
 		"ss": "siswati",
 		"ssy": "saho",
 		"st": "sesotho meridional",
-		"stq": "stq",
 		"su": "sundanés",
 		"suk": "sukuma",
 		"sus": "susu",
 		"sux": "sumerio",
 		"sv": "sueco",
-		"sw": "swahili",
-		"sw_CD": "swahili del Congo",
+		"sw": "suajili",
+		"sw_CD": "suajili del Congo",
 		"swb": "comorense",
 		"syc": "siríaco clásico",
 		"syr": "siriaco",
-		"szl": "szl",
 		"ta": "tamil",
-		"tcy": "tcy",
 		"te": "telugu",
 		"tem": "temne",
 		"teo": "teso",
@@ -542,24 +470,19 @@
 		"tiv": "tiv",
 		"tk": "turcomano",
 		"tkl": "tokelauano",
-		"tkr": "tkr",
 		"tl": "tagalo",
 		"tlh": "klingon",
 		"tli": "tlingit",
-		"tly": "tly",
 		"tmh": "tamashek",
-		"tn": "setchwana",
+		"tn": "setsuana",
 		"to": "tongano",
 		"tog": "tonga del Nyasa",
 		"tpi": "tok pisin",
 		"tr": "turco",
-		"tru": "tru",
 		"trv": "taroko",
 		"ts": "tsonga",
-		"tsd": "tsd",
 		"tsi": "tsimshiano",
 		"tt": "tártaro",
-		"ttt": "ttt",
 		"tum": "tumbuka",
 		"tvl": "tuvaluano",
 		"tw": "twi",
@@ -578,14 +501,9 @@
 		"uz": "uzbeko",
 		"vai": "vai",
 		"ve": "venda",
-		"vec": "vec",
-		"vep": "vep",
 		"vi": "vietnamita",
-		"vls": "vls",
-		"vmf": "vmf",
 		"vo": "volapük",
 		"vot": "vótico",
-		"vro": "vro",
 		"vun": "vunjo",
 		"wa": "valón",
 		"wae": "walser",
@@ -594,10 +512,9 @@
 		"was": "washo",
 		"wbp": "warlpiri",
 		"wo": "wolof",
-		"wuu": "wuu",
+		"wuu": "wu",
 		"xal": "kalmyk",
 		"xh": "xhosa",
-		"xmf": "xmf",
 		"xog": "soga",
 		"yao": "yao",
 		"yap": "yapés",
@@ -605,14 +522,12 @@
 		"ybb": "yemba",
 		"yi": "yídish",
 		"yo": "yoruba",
-		"yrl": "yrl",
 		"yue": "cantonés",
 		"za": "zhuang",
 		"zap": "zapoteco",
 		"zbl": "símbolos Bliss",
-		"zea": "zea",
 		"zen": "zenaga",
-		"zgh": "tamazight estándar marroquí",
+		"zgh": "tamazight marroquí estándar",
 		"zh": "chino",
 		"zh_Hans": "chino simplificado",
 		"zh_Hant": "chino tradicional",
@@ -668,7 +583,7 @@
 		"Grek": "griego",
 		"Gujr": "gujarati",
 		"Guru": "gurmuji",
-		"Hanb": "Hanb",
+		"Hanb": "hanb",
 		"Hang": "hangul",
 		"Hani": "han",
 		"Hano": "hanunoo",
@@ -685,7 +600,7 @@
 		"Hung": "húngaro antiguo",
 		"Inds": "Indio (harappan)",
 		"Ital": "antigua bastardilla",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "javanés",
 		"Jpan": "japonés",
 		"Kali": "kayah li",
@@ -743,55 +658,6 @@
 		"Phnx": "fenicio",
 		"Plrd": "Pollard Miao",
 		"Prti": "Prti",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "rejang",
 		"Roro": "rongo-rongo",
 		"Runr": "rúnico",
@@ -835,8 +701,8 @@
 		"Xsux": "cuneiforme sumerio-acadio",
 		"Yiii": "yi",
 		"Zinh": "heredado",
-		"Zmth": "Zmth",
-		"Zsye": "Zsye",
+		"Zmth": "notación matemática",
+		"Zsye": "emojis",
 		"Zsym": "símbolos",
 		"Zxxx": "no escrito",
 		"Zyyy": "común",
@@ -862,7 +728,7 @@
 		"015": "África del Norte",
 		"017": "África Central",
 		"018": "África del Sur",
-		"019": "Américas",
+		"019": "América",
 		"021": "Norteamérica",
 		"029": "Caribe",
 		"030": "Asia Oriental",
@@ -890,9 +756,9 @@
 		"AW": "Aruba",
 		"AX": "Islas Åland",
 		"AZ": "Azerbaiyán",
-		"BA": "Bosnia-Herzegovina",
+		"BA": "Bosnia y Herzegovina",
 		"BB": "Barbados",
-		"BD": "Bangladesh",
+		"BD": "Bangladés",
 		"BE": "Bélgica",
 		"BF": "Burkina Faso",
 		"BG": "Bulgaria",
@@ -912,7 +778,7 @@
 		"BY": "Bielorrusia",
 		"BZ": "Belice",
 		"CA": "Canadá",
-		"CC": "Islas Cocos (Keeling)",
+		"CC": "Islas Cocos",
 		"CD": "República Democrática del Congo",
 		"CD-alt-variant": "Congo (República Democrática del Congo)",
 		"CF": "República Centroafricana",
@@ -920,7 +786,7 @@
 		"CG-alt-variant": "Congo (República)",
 		"CH": "Suiza",
 		"CI": "Costa de Marfil",
-		"CI-alt-variant": "CI",
+		"CI-alt-variant": "Costa de Marfil",
 		"CK": "Islas Cook",
 		"CL": "Chile",
 		"CM": "Camerún",
@@ -933,7 +799,8 @@
 		"CW": "Curazao",
 		"CX": "Isla de Navidad",
 		"CY": "Chipre",
-		"CZ": "República Checa",
+		"CZ": "Chequia",
+		"CZ-alt-variant": "República Checa",
 		"DE": "Alemania",
 		"DG": "Diego García",
 		"DJ": "Yibuti",
@@ -950,6 +817,7 @@
 		"ES": "España",
 		"ET": "Etiopía",
 		"EU": "Unión Europea",
+		"EZ": "EZ",
 		"FI": "Finlandia",
 		"FJ": "Fiyi",
 		"FK": "Islas Malvinas",
@@ -963,7 +831,7 @@
 		"GD": "Granada",
 		"GE": "Georgia",
 		"GF": "Guayana Francesa",
-		"GG": "Guernsey",
+		"GG": "Guernesey",
 		"GH": "Ghana",
 		"GI": "Gibraltar",
 		"GL": "Groenlandia",
@@ -977,7 +845,7 @@
 		"GU": "Guam",
 		"GW": "Guinea-Bisáu",
 		"GY": "Guyana",
-		"HK": "Región Administrativa Especial de Hong Kong de la República Popular China",
+		"HK": "RAE de Hong Kong (China)",
 		"HK-alt-short": "Hong Kong",
 		"HM": "Islas Heard y McDonald",
 		"HN": "Honduras",
@@ -1033,7 +901,7 @@
 		"ML": "Mali",
 		"MM": "Myanmar (Birmania)",
 		"MN": "Mongolia",
-		"MO": "Región Administrativa Especial de Macao de la República Popular China",
+		"MO": "RAE de Macao (China)",
 		"MO-alt-short": "Macao",
 		"MP": "Islas Marianas del Norte",
 		"MQ": "Martinica",
@@ -1075,7 +943,7 @@
 		"PW": "Palaos",
 		"PY": "Paraguay",
 		"QA": "Catar",
-		"QO": "Territorios alejados de Oceanía",
+		"QO": "Islas Ultramarinas",
 		"RE": "Reunión",
 		"RO": "Rumanía",
 		"RS": "Serbia",
@@ -1110,8 +978,8 @@
 		"TH": "Tailandia",
 		"TJ": "Tayikistán",
 		"TK": "Tokelau",
-		"TL": "Timor Oriental",
-		"TL-alt-variant": "TL",
+		"TL": "Timor-Leste",
+		"TL-alt-variant": "Timor Oriental",
 		"TM": "Turkmenistán",
 		"TN": "Túnez",
 		"TO": "Tonga",
@@ -1123,6 +991,7 @@
 		"UA": "Ucrania",
 		"UG": "Uganda",
 		"UM": "Islas Ultramarinas Menores de Estados Unidos",
+		"UN": "UN",
 		"US": "Estados Unidos",
 		"US-alt-short": "EE. UU.",
 		"UY": "Uruguay",
@@ -1131,7 +1000,7 @@
 		"VC": "San Vicente y las Granadinas",
 		"VE": "Venezuela",
 		"VG": "Islas Vírgenes Británicas",
-		"VI": "Islas Vírgenes de los Estados Unidos",
+		"VI": "Islas Vírgenes de EE. UU.",
 		"VN": "Vietnam",
 		"VU": "Vanuatu",
 		"WF": "Wallis y Futuna",
@@ -1214,7 +1083,9 @@
 				"yMMMMd": "d 'de' MMMM 'de' y",
 				"yMMMMEd": "EEE, d 'de' MMMM 'de' y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ 'de' y"
+				"yQQQQ": "QQQQ 'de' y",
+				"MMMMW": "'semana' W 'de' MMM",
+				"yw": "'semana' w 'de' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1529,7 +1400,7 @@
 					"1er. trimestre",
 					"2º. trimestre",
 					"3er. trimestre",
-					"4º trimestre"
+					"4o. trimestre"
 				]
 			},
 			"stand-alone": {
@@ -1556,30 +1427,30 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
 					"a. m.",
 					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			}
 		},
@@ -1954,7 +1825,7 @@
 					"1er. trimestre",
 					"2º. trimestre",
 					"3er. trimestre",
-					"4º trimestre"
+					"4o. trimestre"
 				]
 			},
 			"stand-alone": {
@@ -1981,30 +1852,30 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
 					"a. m.",
 					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			}
 		},
@@ -2376,7 +2247,7 @@
 					"1er. trimestre",
 					"2º. trimestre",
 					"3er. trimestre",
-					"4º trimestre"
+					"4o. trimestre"
 				]
 			},
 			"stand-alone": {
@@ -2403,30 +2274,30 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
 					"a. m.",
 					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			}
 		},
@@ -2807,7 +2678,7 @@
 					"1er. trimestre",
 					"2º. trimestre",
 					"3er. trimestre",
-					"4º trimestre"
+					"4o. trimestre"
 				]
 			},
 			"stand-alone": {
@@ -2834,30 +2705,30 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
 					"a. m.",
 					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"narrow": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				],
 				"wide": [
-					"a.m.",
-					"p.m."
+					"a. m.",
+					"p. m."
 				]
 			}
 		},
@@ -2919,9 +2790,9 @@
 		},
 		"quarter-wide": {
 			"displayName": "trimestre",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "el trimestre pasado",
+			"relative-type-0": "este trimestre",
+			"relative-type-1": "el próximo trimestre",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "en {0} trimestre",
 				"relativeTimePattern-count-other": "en {0} trimestres"
@@ -2933,9 +2804,9 @@
 		},
 		"quarter-short": {
 			"displayName": "trim.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "el trimestre pasado",
+			"relative-type-0": "este trimestre",
+			"relative-type-1": "el próximo trimestre",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "en {0} trim.",
 				"relativeTimePattern-count-other": "en {0} trim"
@@ -2947,9 +2818,9 @@
 		},
 		"quarter-narrow": {
 			"displayName": "trim.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "el trimestre pasado",
+			"relative-type-0": "este trimestre",
+			"relative-type-1": "el próximo trimestre",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} T",
 				"relativeTimePattern-count-other": "+{0} T"
@@ -3013,7 +2884,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "hace {0} semana",
 				"relativeTimePattern-count-other": "hace {0} semanas"
-			}
+			},
+			"relativePeriod": "la semana del {0}"
 		},
 		"week-short": {
 			"displayName": "sem.",
@@ -3027,7 +2899,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "hace {0} sem.",
 				"relativeTimePattern-count-other": "hace {0} sem."
-			}
+			},
+			"relativePeriod": "la semana del {0}"
 		},
 		"week-narrow": {
 			"displayName": "sem.",
@@ -3041,7 +2914,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "-{0} sem.",
 				"relativeTimePattern-count-other": "-{0} sem."
-			}
+			},
+			"relativePeriod": "la semana del {0}"
 		},
 		"day-wide": {
 			"displayName": "día",
@@ -3096,6 +2970,7 @@
 		},
 		"hour-wide": {
 			"displayName": "hora",
+			"relative-type-0": "esta hora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "dentro de {0} hora",
 				"relativeTimePattern-count-other": "dentro de {0} horas"
@@ -3107,6 +2982,7 @@
 		},
 		"hour-short": {
 			"displayName": "h",
+			"relative-type-0": "esta hora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "en {0} h",
 				"relativeTimePattern-count-other": "en {0} n"
@@ -3118,6 +2994,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "h",
+			"relative-type-0": "esta hora",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} h",
 				"relativeTimePattern-count-other": "+{0} h"
@@ -3129,6 +3006,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minuto",
+			"relative-type-0": "este minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "dentro de {0} minuto",
 				"relativeTimePattern-count-other": "dentro de {0} minutos"
@@ -3140,6 +3018,7 @@
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "este minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "en {0} min",
 				"relativeTimePattern-count-other": "en {0} min"
@@ -3151,6 +3030,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "min",
+			"relative-type-0": "este minuto",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "+{0} min",
 				"relativeTimePattern-count-other": "+{0} min"
@@ -3307,6 +3187,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

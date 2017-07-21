@@ -24,7 +24,7 @@
 		"ang": "Oudengels",
 		"anp": "Angika",
 		"ar": "Arabisch",
-		"ar_001": "modern standaard Arabisch",
+		"ar_001": "Arabisch (wereld)",
 		"arc": "Aramees",
 		"arn": "Mapudungun",
 		"aro": "Araona",
@@ -107,6 +107,7 @@
 		"cps": "Capiznon",
 		"cr": "Cree",
 		"crh": "Krim-Tataars",
+		"crs": "Seychellencreools",
 		"cs": "Tsjechisch",
 		"csb": "Kasjoebisch",
 		"cu": "Kerkslavisch",
@@ -117,8 +118,8 @@
 		"dar": "Dargwa",
 		"dav": "Taita",
 		"de": "Duits",
-		"de_AT": "Oostenrijks Duits",
-		"de_CH": "Zwitsers Hoogduits",
+		"de_AT": "Duits (Oostenrijk)",
+		"de_CH": "Duits (Zwitserland)",
 		"del": "Delaware",
 		"den": "Slavey",
 		"dgr": "Dogrib",
@@ -143,18 +144,18 @@
 		"el": "Grieks",
 		"elx": "Elamitisch",
 		"en": "Engels",
-		"en_AU": "Australisch Engels",
-		"en_CA": "Canadees Engels",
-		"en_GB": "Brits Engels",
+		"en_AU": "Engels (Australië)",
+		"en_CA": "Engels (Canada)",
+		"en_GB": "Engels (Verenigd Koninkrijk)",
 		"en_GB-alt-short": "Engels (VK)",
-		"en_US": "Amerikaans Engels",
+		"en_US": "Engels (Verenigde Staten)",
 		"en_US-alt-short": "Engels (VS)",
 		"enm": "Middelengels",
 		"eo": "Esperanto",
 		"es": "Spaans",
-		"es_419": "Latijns-Amerikaans Spaans",
-		"es_ES": "Europees Spaans",
-		"es_MX": "Mexicaans Spaans",
+		"es_419": "Spaans (Latijns-Amerika)",
+		"es_ES": "Spaans (Spanje)",
+		"es_MX": "Spaans (Mexico)",
 		"esu": "Yupik",
 		"et": "Estisch",
 		"eu": "Baskisch",
@@ -171,8 +172,8 @@
 		"fo": "Faeröers",
 		"fon": "Fon",
 		"fr": "Frans",
-		"fr_CA": "Canadees Frans",
-		"fr_CH": "Zwitsers Frans",
+		"fr_CA": "Frans (Canada)",
+		"fr_CH": "Frans (Zwitserland)",
 		"frc": "Cajun-Frans",
 		"frm": "Middelfrans",
 		"fro": "Oudfrans",
@@ -343,7 +344,6 @@
 		"mas": "Maa",
 		"mde": "Maba",
 		"mdf": "Moksja",
-		"mdh": "mdh",
 		"mdr": "Mandar",
 		"men": "Mende",
 		"mer": "Meru",
@@ -356,7 +356,6 @@
 		"mi": "Maori",
 		"mic": "Mi’kmaq",
 		"min": "Minangkabau",
-		"mis": "mis",
 		"mk": "Macedonisch",
 		"ml": "Malayalam",
 		"mn": "Mongools",
@@ -393,7 +392,7 @@
 		"niu": "Niueaans",
 		"njo": "Ao Naga",
 		"nl": "Nederlands",
-		"nl_BE": "Vlaams",
+		"nl_BE": "Nederlands (België)",
 		"nmg": "Ngumba",
 		"nn": "Noors - Nynorsk",
 		"nnh": "Ngiemboon",
@@ -426,6 +425,7 @@
 		"pap": "Papiaments",
 		"pau": "Palaus",
 		"pcd": "Picardisch",
+		"pcm": "Nigeriaans Pidgin",
 		"pdc": "Pennsylvania-Duits",
 		"pdt": "Plautdietsch",
 		"peo": "Oudperzisch",
@@ -441,8 +441,8 @@
 		"ps": "Pasjtoe",
 		"ps_alt-variant": "Pashto",
 		"pt": "Portugees",
-		"pt_BR": "Braziliaans Portugees",
-		"pt_PT": "Europees Portugees",
+		"pt_BR": "Portugees (Brazilië)",
+		"pt_PT": "Portugees (Portugal)",
 		"qu": "Quechua",
 		"quc": "K’iche’",
 		"qug": "Kichwa",
@@ -523,7 +523,7 @@
 		"sux": "Soemerisch",
 		"sv": "Zweeds",
 		"sw": "Swahili",
-		"sw_CD": "Congo Swahili",
+		"sw_CD": "Swahili (Congo-Kinshasa)",
 		"swb": "Shimaore",
 		"syc": "Klassiek Syrisch",
 		"syr": "Syrisch",
@@ -613,15 +613,15 @@
 		"zen": "Zenaga",
 		"zgh": "Standaard Marokkaanse Tamazight",
 		"zh": "Chinees",
-		"zh_Hans": "vereenvoudigd Chinees",
-		"zh_Hant": "traditioneel Chinees",
+		"zh_Hans": "Chinees (vereenvoudigd)",
+		"zh_Hant": "Chinees (traditioneel)",
 		"zu": "Zoeloe",
 		"zun": "Zuni",
 		"zxx": "geen linguïstische inhoud",
 		"zza": "Zaza"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
+		"Adlm": "Adlam",
 		"Afak": "Defaka",
 		"Aghb": "Kaukasisch Albanees",
 		"Ahom": "Ahom",
@@ -635,7 +635,7 @@
 		"Bass": "Bassa Vah",
 		"Batk": "Batak",
 		"Beng": "Bengaals",
-		"Bhks": "Bhks",
+		"Bhks": "Bhaiksuki",
 		"Blis": "Blissymbolen",
 		"Bopo": "Bopomofo",
 		"Brah": "Brahmi",
@@ -714,7 +714,7 @@
 		"Mahj": "Mahajani",
 		"Mand": "Mandaeans",
 		"Mani": "Manicheaans",
-		"Marc": "Marc",
+		"Marc": "Marchen",
 		"Maya": "Mayahiërogliefen",
 		"Mend": "Mende",
 		"Merc": "Meroitisch cursief",
@@ -729,7 +729,7 @@
 		"Mymr": "Birmaans",
 		"Narb": "Oud Noord-Arabisch",
 		"Nbat": "Nabateaans",
-		"Newa": "Newa",
+		"Newa": "Newari",
 		"Nkgb": "Naxi Geba",
 		"Nkoo": "N’Ko",
 		"Nshu": "Nüshu",
@@ -737,7 +737,7 @@
 		"Olck": "Ol Chiki",
 		"Orkh": "Orkhon",
 		"Orya": "Odia",
-		"Osge": "Osge",
+		"Osge": "Osage",
 		"Osma": "Osmanya",
 		"Palm": "Palmyreens",
 		"Pauc": "Pau Cin Hau",
@@ -757,7 +757,6 @@
 		"Qaaf": "Qaaf",
 		"Qaag": "Qaag",
 		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
 		"Qaak": "Qaak",
 		"Qaal": "Qaal",
 		"Qaam": "Qaam",
@@ -843,7 +842,7 @@
 		"Yiii": "Yi",
 		"Zinh": "Overgeërfd",
 		"Zmth": "Wiskundige notatie",
-		"Zsye": "Zsye",
+		"Zsye": "emoji",
 		"Zsym": "Symbolen",
 		"Zxxx": "ongeschreven",
 		"Zyyy": "algemeen",
@@ -940,7 +939,8 @@
 		"CW": "Curaçao",
 		"CX": "Christmaseiland",
 		"CY": "Cyprus",
-		"CZ": "Tsjechië",
+		"CZ": "Tsjechische Republiek",
+		"CZ-alt-variant": "Tsjechië",
 		"DE": "Duitsland",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -957,6 +957,7 @@
 		"ES": "Spanje",
 		"ET": "Ethiopië",
 		"EU": "Europese Unie",
+		"EZ": "EZ",
 		"FI": "Finland",
 		"FJ": "Fiji",
 		"FK": "Falklandeilanden",
@@ -1130,6 +1131,8 @@
 		"UA": "Oekraïne",
 		"UG": "Oeganda",
 		"UM": "Kleine afgelegen eilanden van de Verenigde Staten",
+		"UN": "verenigde naties",
+		"UN-alt-short": "vn",
 		"US": "Verenigde Staten",
 		"US-alt-short": "VS",
 		"UY": "Uruguay",
@@ -1166,8 +1169,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
+			"full": "{1} 'om' {0}",
+			"long": "{1} 'om' {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -1193,23 +1196,25 @@
 				"hmv": "h:mm a v",
 				"Hmv": "HH:mm v",
 				"M": "L",
-				"Md": "d-M",
-				"MEd": "E d-M",
+				"Md": "d/M",
+				"MEd": "E d/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E d MMM",
 				"MMMMd": "d MMMM",
 				"ms": "mm:ss",
 				"y": "y",
-				"yM": "M-y",
-				"yMd": "d-M-y",
-				"yMEd": "E d-M-y",
+				"yM": "M/y",
+				"yMd": "d/M/y",
+				"yMEd": "E d/M/y",
 				"yMMM": "MMM y",
 				"yMMMd": "d MMM y",
 				"yMMMEd": "E d MMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "'week' W 'van' MMM",
+				"yw": "'week' w 'in' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1265,12 +1270,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "d/MM – d/MM",
+					"M": "d/MM – d/MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E d/MM – E d/MM",
+					"M": "E d/MM – E d/MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -1290,18 +1295,18 @@
 					"y": "y–y"
 				},
 				"yM": {
-					"M": "MM-y – MM-y",
-					"y": "MM-y – MM-y"
+					"M": "MM/y – MM/y",
+					"y": "MM/y – MM/y"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y",
-					"M": "dd-MM-y – dd-MM-y",
-					"y": "dd-MM-y – dd-MM-y"
+					"d": "d/MM/y – d/MM/y",
+					"M": "d/MM/y – d/MM/y",
+					"y": "d/MM/y – d/MM/y"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y",
-					"M": "E dd-MM-y – E dd-MM-y",
-					"y": "E dd-MM-y – E dd-MM-y"
+					"d": "E d/MM/y – E d/MM/y",
+					"M": "E d/MM/y – E d/MM/y",
+					"y": "E d/MM/y – E d/MM/y"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y",
@@ -1590,8 +1595,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
+			"full": "{1} 'om' {0}",
+			"long": "{1} 'om' {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -1686,12 +1691,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "d/MM – d/MM",
+					"M": "d/MM – d/MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E d/MM – E d/MM",
+					"M": "E d/MM – E d/MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -1711,18 +1716,18 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G"
+					"M": "MM/y – MM/y G",
+					"y": "MM/y – MM/y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G"
+					"d": "d/MM/y – d/MM/y G",
+					"M": "d/MM/y – d/MM/y G",
+					"y": "d/MM/y – d/MM/y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G"
+					"d": "E d/MM/y – E d/MM/y G",
+					"M": "E d/MM/y – E d/MM/y G",
+					"y": "E d/MM/y – E d/MM/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
@@ -2104,12 +2109,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "d/MM – d/MM",
+					"M": "d/MM – d/MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E d/MM – E d/MM",
+					"M": "E d/MM – E d/MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -2129,18 +2134,18 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G"
+					"M": "MM/y – MM/y G",
+					"y": "MM/y – MM/y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G"
+					"d": "d/MM/y – d/MM/y G",
+					"M": "d/MM/y – d/MM/y G",
+					"y": "d/MM/y – d/MM/y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G"
+					"d": "E d/MM/y – E d/MM/y G",
+					"M": "E d/MM/y – E d/MM/y G",
+					"y": "E d/MM/y – E d/MM/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
@@ -2435,8 +2440,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} {0}",
-			"long": "{1} {0}",
+			"full": "{1} 'om' {0}",
+			"long": "{1} 'om' {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -2458,8 +2463,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "d-M",
-				"MEd": "E d-M",
+				"Md": "d/M",
+				"MEd": "E d/M",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "E d MMM",
@@ -2467,9 +2472,9 @@
 				"ms": "mm:ss",
 				"y": "y G",
 				"yyyy": "y G",
-				"yyyyM": "M-y GGGGG",
-				"yyyyMd": "d-M-y GGGGG",
-				"yyyyMEd": "E d-M-y GGGGG",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E d/M/y GGGGG",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM y G",
 				"yyyyMMMEd": "E d MMM y G",
@@ -2531,12 +2536,12 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "d/MM – d/MM",
+					"M": "d/MM – d/MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E d/MM – E d/MM",
+					"M": "E d/MM – E d/MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -2556,18 +2561,18 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G"
+					"M": "MM/y – MM/y G",
+					"y": "MM/y – MM/y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G"
+					"d": "d/MM/y – d/MM/y G",
+					"M": "d/MM/y – d/MM/y G",
+					"y": "d/MM/y – d/MM/y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G"
+					"d": "E d/MM/y – E d/MM/y G",
+					"M": "E d/MM/y – E d/MM/y G",
+					"y": "E d/MM/y – E d/MM/y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
@@ -2858,7 +2863,7 @@
 			}
 		},
 		"year-short": {
-			"displayName": "jr.",
+			"displayName": "jr",
 			"relative-type--1": "vorig jaar",
 			"relative-type-0": "dit jaar",
 			"relative-type-1": "volgend jaar",
@@ -2872,7 +2877,7 @@
 			}
 		},
 		"year-narrow": {
-			"displayName": "jr.",
+			"displayName": "jr",
 			"relative-type--1": "vorig jaar",
 			"relative-type-0": "dit jaar",
 			"relative-type-1": "volgend jaar",
@@ -2981,7 +2986,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} week geleden",
 				"relativeTimePattern-count-other": "{0} weken geleden"
-			}
+			},
+			"relativePeriod": "de week van {0}"
 		},
 		"week-short": {
 			"displayName": "wk",
@@ -2995,7 +3001,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} week geleden",
 				"relativeTimePattern-count-other": "{0} weken geleden"
-			}
+			},
+			"relativePeriod": "de week van {0}"
 		},
 		"week-narrow": {
 			"displayName": "wk",
@@ -3009,7 +3016,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} week geleden",
 				"relativeTimePattern-count-other": "{0} weken geleden"
-			}
+			},
+			"relativePeriod": "de week van {0}"
 		},
 		"day-wide": {
 			"displayName": "dag",
@@ -3063,7 +3071,8 @@
 			"displayName": "dag van de week"
 		},
 		"hour-wide": {
-			"displayName": "Uur",
+			"displayName": "uur",
+			"relative-type-0": "binnen een uur",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} uur",
 				"relativeTimePattern-count-other": "over {0} uur"
@@ -3075,6 +3084,7 @@
 		},
 		"hour-short": {
 			"displayName": "uur",
+			"relative-type-0": "binnen een uur",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} uur",
 				"relativeTimePattern-count-other": "over {0} uur"
@@ -3085,7 +3095,8 @@
 			}
 		},
 		"hour-narrow": {
-			"displayName": "u",
+			"displayName": "uur",
+			"relative-type-0": "binnen een uur",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} uur",
 				"relativeTimePattern-count-other": "over {0} uur"
@@ -3097,6 +3108,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minuut",
+			"relative-type-0": "binnen een minuut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} minuut",
 				"relativeTimePattern-count-other": "over {0} minuten"
@@ -3107,7 +3119,8 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "min.",
+			"displayName": "min",
+			"relative-type-0": "binnen een minuut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} min.",
 				"relativeTimePattern-count-other": "over {0} min."
@@ -3118,7 +3131,8 @@
 			}
 		},
 		"minute-narrow": {
-			"displayName": "m",
+			"displayName": "min",
+			"relative-type-0": "binnen een minuut",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} min.",
 				"relativeTimePattern-count-other": "over {0} min."
@@ -3141,7 +3155,7 @@
 			}
 		},
 		"second-short": {
-			"displayName": "sec.",
+			"displayName": "sec",
 			"relative-type-0": "nu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} sec.",
@@ -3288,6 +3302,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

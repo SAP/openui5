@@ -17,7 +17,7 @@
 		"akk": "akkadi",
 		"akz": "alabama",
 		"ale": "aleutti",
-		"aln": "geg",
+		"aln": "gegi",
 		"alt": "altai",
 		"am": "amhara",
 		"an": "aragonia",
@@ -108,6 +108,7 @@
 		"cr": "cree",
 		"crh": "krimintataari",
 		"crh_alt-secondary": "kriminturkki",
+		"crs": "seychellienkreoli",
 		"cs": "tšekki",
 		"csb": "kašubi",
 		"cu": "kirkkoslaavi",
@@ -347,7 +348,6 @@
 		"mas": "maasai",
 		"mde": "maba",
 		"mdf": "mokša",
-		"mdh": "mdh",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -360,7 +360,6 @@
 		"mi": "maori",
 		"mic": "micmac",
 		"min": "minangkabau",
-		"mis": "mis",
 		"mk": "makedonia",
 		"ml": "malajalam",
 		"mn": "mongoli",
@@ -373,7 +372,7 @@
 		"ms": "malaiji",
 		"mt": "malta",
 		"mua": "mundang",
-		"mul": "monia kieliä",
+		"mul": "useita kieliä",
 		"mus": "creek",
 		"mwl": "mirandeesi",
 		"mwr": "marwari",
@@ -430,6 +429,7 @@
 		"pap": "papiamentu",
 		"pau": "palau",
 		"pcd": "picardi",
+		"pcm": "nigerianpidgin",
 		"pdc": "pennsylvaniansaksa",
 		"pdt": "plautdietsch",
 		"peo": "muinaispersia",
@@ -575,7 +575,7 @@
 		"uga": "ugarit",
 		"uk": "ukraina",
 		"umb": "mbundu",
-		"und": "määrittämätön kieli",
+		"und": "tuntematon kieli",
 		"ur": "urdu",
 		"uz": "uzbekki",
 		"vai": "vai",
@@ -624,7 +624,7 @@
 		"zza": "zaza"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
+		"Adlm": "fulanin adlam-aakkosto",
 		"Afak": "afaka",
 		"Aghb": "kaukasianalbanialainen",
 		"Ahom": "ahom",
@@ -638,7 +638,7 @@
 		"Bass": "bassa",
 		"Batk": "batakilainen",
 		"Beng": "bengalilainen",
-		"Bhks": "Bhks",
+		"Bhks": "sanskritin bhaiksuki-aakkosto",
 		"Blis": "bliss-symbolit",
 		"Bopo": "bopomofo",
 		"Brah": "brahmi",
@@ -674,7 +674,7 @@
 		"Grek": "kreikkalainen",
 		"Gujr": "gudžaratilainen",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "kiinan han ja bopomofo",
 		"Hang": "hangul",
 		"Hani": "kiinalainen han",
 		"Hano": "hanunoolainen",
@@ -691,7 +691,7 @@
 		"Hung": "muinaisunkarilainen",
 		"Inds": "induslainen",
 		"Ital": "muinaisitalialainen",
-		"Jamo": "Jamo",
+		"Jamo": "korean hangulin jamo-elementit",
 		"Java": "jaavalainen",
 		"Jpan": "japanilainen",
 		"Jurc": "džurtšen",
@@ -720,7 +720,7 @@
 		"Mahj": "mahajanilainen",
 		"Mand": "mandealainen",
 		"Mani": "manikealainen",
-		"Marc": "Marc",
+		"Marc": "tiibetiläinen marchan-kirjoitus",
 		"Maya": "maya-hieroglyfit",
 		"Mend": "mende",
 		"Merc": "meroiittinen kursiivikirjoitus",
@@ -736,7 +736,7 @@
 		"Mymr": "burmalainen",
 		"Narb": "muinaispohjoisarabialainen",
 		"Nbat": "nabatealainen",
-		"Newa": "Newa",
+		"Newa": "newarin newa-tavukirjoitus",
 		"Nkgb": "naxi geba",
 		"Nkoo": "n’ko",
 		"Nshu": "nüshu",
@@ -744,7 +744,7 @@
 		"Olck": "ol chiki",
 		"Orkh": "orkhon",
 		"Orya": "orijalainen",
-		"Osge": "Osge",
+		"Osge": "osagen aakkosto",
 		"Osma": "osmanjalainen",
 		"Palm": "palmyralainen",
 		"Pauc": "zotuallai",
@@ -756,55 +756,6 @@
 		"Phnx": "foinikialainen",
 		"Plrd": "Pollardin foneettinen",
 		"Prti": "piirtokirjoitusparthialainen",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "rejang",
 		"Roro": "rongorongo",
 		"Runr": "riimukirjoitus",
@@ -851,7 +802,7 @@
 		"Yiii": "yiläinen",
 		"Zinh": "peritty",
 		"Zmth": "matemaattinen",
-		"Zsye": "Zsye",
+		"Zsye": "emoji-symbolit",
 		"Zsym": "symbolit",
 		"Zxxx": "kirjoittamaton",
 		"Zyyy": "määrittämätön",
@@ -948,7 +899,8 @@
 		"CW": "Curaçao",
 		"CX": "Joulusaari",
 		"CY": "Kypros",
-		"CZ": "Tšekki",
+		"CZ": "Tšekinmaa",
+		"CZ-alt-variant": "Tšekki",
 		"DE": "Saksa",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -965,6 +917,7 @@
 		"ES": "Espanja",
 		"ET": "Etiopia",
 		"EU": "Euroopan unioni",
+		"EZ": "EZ",
 		"FI": "Suomi",
 		"FJ": "Fidži",
 		"FK": "Falklandinsaaret",
@@ -1110,7 +1063,7 @@
 		"SM": "San Marino",
 		"SN": "Senegal",
 		"SO": "Somalia",
-		"SR": "Surinam",
+		"SR": "Suriname",
 		"SS": "Etelä-Sudan",
 		"ST": "São Tomé ja Príncipe",
 		"SV": "El Salvador",
@@ -1138,6 +1091,8 @@
 		"UA": "Ukraina",
 		"UG": "Uganda",
 		"UM": "Yhdysvaltain erillissaaret",
+		"UN": "Yhdistyneet kansakunnat",
+		"UN-alt-short": "YK",
 		"US": "Yhdysvallat",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
@@ -1219,7 +1174,9 @@
 				"yMMMM": "LLLL y",
 				"yMMMMccccd": "cccc d. MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "LLLL'n' W. 'viikko'",
+				"yw": "'vuoden' y 'viikko' w"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1336,18 +1293,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"tammikuuta",
-					"helmikuuta",
-					"maaliskuuta",
-					"huhtikuuta",
-					"toukokuuta",
-					"kesäkuuta",
-					"heinäkuuta",
-					"elokuuta",
-					"syyskuuta",
-					"lokakuuta",
-					"marraskuuta",
-					"joulukuuta"
+					"tammik.",
+					"helmik.",
+					"maalisk.",
+					"huhtik.",
+					"toukok.",
+					"kesäk.",
+					"heinäk.",
+					"elok.",
+					"syysk.",
+					"lokak.",
+					"marrask.",
+					"jouluk."
 				],
 				"narrow": [
 					"T",
@@ -1582,8 +1539,8 @@
 			"1": "jKr."
 		},
 		"era-narrow": {
-			"0": "eK",
-			"1": "jK"
+			"0": "eKr",
+			"1": "jKr"
 		}
 	},
 	"ca-islamic": {
@@ -2179,18 +2136,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"tammikuuta",
-					"helmikuuta",
-					"maaliskuuta",
-					"huhtikuuta",
-					"toukokuuta",
-					"kesäkuuta",
-					"heinäkuuta",
-					"elokuuta",
-					"syyskuuta",
-					"lokakuuta",
-					"marraskuuta",
-					"joulukuuta"
+					"tammik.",
+					"helmik.",
+					"maalisk.",
+					"huhtik.",
+					"toukok.",
+					"kesäk.",
+					"heinäk.",
+					"elok.",
+					"syysk.",
+					"lokak.",
+					"marrask.",
+					"jouluk."
 				],
 				"narrow": [
 					"T",
@@ -2926,7 +2883,7 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} neljännes sitten",
-				"relativeTimePattern-count-other": "{0} neljännes sitten"
+				"relativeTimePattern-count-other": "{0} neljännestä sitten"
 			}
 		},
 		"quarter-narrow": {
@@ -2997,7 +2954,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} viikko sitten",
 				"relativeTimePattern-count-other": "{0} viikkoa sitten"
-			}
+			},
+			"relativePeriod": "päivän {0} viikolla"
 		},
 		"week-short": {
 			"displayName": "vk",
@@ -3011,7 +2969,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} vk sitten",
 				"relativeTimePattern-count-other": "{0} vk sitten"
-			}
+			},
+			"relativePeriod": "päivän {0} viikolla"
 		},
 		"week-narrow": {
 			"displayName": "vk",
@@ -3025,7 +2984,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} vk sitten",
 				"relativeTimePattern-count-other": "{0} vk sitten"
-			}
+			},
+			"relativePeriod": "päivän {0} viikolla"
 		},
 		"day-wide": {
 			"displayName": "päivä",
@@ -3080,6 +3040,7 @@
 		},
 		"hour-wide": {
 			"displayName": "tunti",
+			"relative-type-0": "tämän tunnin aikana",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} tunnin päästä",
 				"relativeTimePattern-count-other": "{0} tunnin päästä"
@@ -3091,6 +3052,7 @@
 		},
 		"hour-short": {
 			"displayName": "t",
+			"relative-type-0": "tunnin sisällä",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} t päästä",
 				"relativeTimePattern-count-other": "{0} t päästä"
@@ -3102,6 +3064,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "t",
+			"relative-type-0": "tunnin sisällä",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} t päästä",
 				"relativeTimePattern-count-other": "{0} t päästä"
@@ -3113,6 +3076,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minuutti",
+			"relative-type-0": "tämän minuutin aikana",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} minuutin päästä",
 				"relativeTimePattern-count-other": "{0} minuutin päästä"
@@ -3124,6 +3088,7 @@
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "minuutin sisällä",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} min päästä",
 				"relativeTimePattern-count-other": "{0} min päästä"
@@ -3135,6 +3100,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "min",
+			"relative-type-0": "minuutin sisällä",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} min päästä",
 				"relativeTimePattern-count-other": "{0} min päästä"
@@ -3289,6 +3255,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

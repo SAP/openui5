@@ -268,7 +268,7 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd.–dd. MMM", "interval format \"MMMdd\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm–HH:mm 'Uhr'", "interval format \"Hm\", \"H\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm–HH:mm 'Uhr'", "interval format \"jm\", \"j\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("yw", "y"), "y ('Woche': w) – y ('Woche': w)", "interval format \"yw\", \"y\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yw", "y"), "'Woche' w 'des' 'Jahres' y – 'Woche' w 'des' 'Jahres' y", "interval format \"yw\", \"y\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Q", "Q"), "Q – Q", "interval format \"Q\", \"Q\"");
 		// skeleton "yMMdd" has pattern "dd.MM.y" and
 		// skeleton "yMMMd" has pattern "d. MMM y"
