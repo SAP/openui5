@@ -61,12 +61,14 @@ sap.ui.define([
 		Then.onCheckout.iShouldSeeTheWizardStepContentsStep();
 	});
 
-	opaTest("Should return to the cart", function (Given, When, Then) {
+	opaTest("Should return to the home", function (Given, When, Then) {
 
 		// Actions
 		When.onCheckout.iPressOnTheReturnToShopButton();
 
-		Then.onTheCart.iShouldSeeTheProductInMyCart();
+		// Assertions
+		Then.onHome.iShouldSeeTheCategoryList().
+		and.theCategoryListShouldHaveSomeEntries();
 	});
 
 
@@ -74,6 +76,7 @@ sap.ui.define([
 	opaTest("Should return to checkout", function (Given, When, Then) {
 
 		// Actions
+		When.onHome.iGoToTheCartPage();
 		When.onTheCart.iPressOnTheProceedButton();
 
 		// Assertions
