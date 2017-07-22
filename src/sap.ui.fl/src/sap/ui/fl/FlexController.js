@@ -450,7 +450,7 @@ sap.ui.define([
 
 			.then(function() {
 				if (bRevert) {
-					return oChangeHandler.removeFromAppliedChangesOnControl(oChange, oControl, mPropertyBag);
+					return oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
 				}
 			})
 
