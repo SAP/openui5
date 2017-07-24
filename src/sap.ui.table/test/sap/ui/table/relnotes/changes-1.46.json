@@ -564,5 +564,34 @@
         "references": []
       }
     ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "0e66cd57bb4b425ed11e11f54d5b958c658cfb61",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "4995aa5acb3aae34cd0bdd92e8af5020e2ec2259",
+        "type": "FIX",
+        "text": " Table: Correctly update the NoData text",
+        "references": []
+      },
+      {
+        "id": "3e27811603eb758d1f2f2d71f2fce97499f77ab1",
+        "type": "FIX",
+        "text": " TreeTable: Position of the TreeIcon",
+        "references": []
+      },
+      {
+        "id": "219c79442b9eedd27d36180df42610c499461028",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      }
+    ]
   }
 }

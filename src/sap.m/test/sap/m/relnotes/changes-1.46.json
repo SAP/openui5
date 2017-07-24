@@ -2508,5 +2508,124 @@
         "references": []
       }
     ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "68e17c63b58e02e1fa31cf550b7243adbab28390",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Fix ArialablledBy for buttons.",
+        "references": []
+      },
+      {
+        "id": "3a4eb310a8fcdf05d8a5e9b920c3da6026eefa92",
+        "type": "FIX",
+        "text": " sap.m.Button: Has correct border in disabled state in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "0ba7277fd4b65ff7ef35982772c6311ae50ee552",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Bound selectedKey is now updated on model change",
+        "references": []
+      },
+      {
+        "id": "a85fd1df9f4c72fc58a9b9eee70181792e6835c2",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Header contents are now vertically centered correctly in compact mode",
+        "references": []
+      },
+      {
+        "id": "4089dea21b5f7fd707d95d2b77d8348566070b30",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Special characters in the sender property are displayed correctly",
+        "references": []
+      },
+      {
+        "id": "6135c135cecf4be95da0d98b0d675c83d6012ac6",
+        "type": "FIX",
+        "text": " sap.m.HeaderContainer: Overflow button placement in compact mode corrected",
+        "references": []
+      },
+      {
+        "id": "2a3c35194c08a5ad2be9c09ad3c2a6a4313a0fc6",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent the soft keyboard to be opened when opening the dropdown list",
+        "references": []
+      },
+      {
+        "id": "1db1d876cae8fdea4bf7d92576fa49f26e676ed8",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit checking background color is corrected",
+        "references": []
+      },
+      {
+        "id": "468acc6d1a55c1406e960dbe62aa144cdd937851",
+        "type": "FIX",
+        "text": " sap.m.Panel: Flickering in IE when panel has scrollable content",
+        "references": []
+      },
+      {
+        "id": "50c90f1f4c8a621cadafa4f45c5a37db911c2fe1",
+        "type": "FIX",
+        "text": " sap.m.Popover: Vertical calculations in IE fixed",
+        "references": []
+      },
+      {
+        "id": "e490f31b6adae8faf6a3353ff85779ae457f9e2e",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Moved tooltip to input element",
+        "references": []
+      },
+      {
+        "id": "b499f68cab002f3e8e4f7c12cf55d3e199bf066d",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Public functions are now displayed in the API reference.",
+        "references": []
+      },
+      {
+        "id": "daf727a2aeb21cad77603fcfd50f869b86755a9a",
+        "type": "FIX",
+        "text": " sap.m.Shell: Support of TitleLevel added",
+        "references": []
+      },
+      {
+        "id": "b109b99ffd964fd8dcf02b1883f8b32440d69ea4",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now fires change event on focus out",
+        "references": []
+      },
+      {
+        "id": "7879eb477e97d1f39a61d126a920e459fe074948",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Testing touch event is now corrected",
+        "references": []
+      },
+      {
+        "id": "e86a6a6b5ef747b52414f55f2cbac18e168016b8",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      },
+      {
+        "id": "c2353af93df3478132817f065bee5d9c50c5dd84",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus after item deletion corrected",
+        "references": []
+      },
+      {
+        "id": "8f04c265f8a083af7f2bdbf04dd7d3f6cda9a903",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in HCB and belize_hcb improved",
+        "references": []
+      },
+      {
+        "id": "bbe251d29fb70689ab9418e909a69548430115fc",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: testsuite example read correctly",
+        "references": []
+      }
+    ]
   }
 }

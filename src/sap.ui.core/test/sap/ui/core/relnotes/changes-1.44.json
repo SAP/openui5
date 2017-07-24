@@ -1020,5 +1020,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.16": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "d35cdccc5c86f52e9b16881d04880869a13abdf5",
+        "type": "FIX",
+        "text": " sap.ui.core.support.TechnicalInfo: Generating default bootstrap url problem fixed.",
+        "references": []
+      }
+    ]
   }
 }

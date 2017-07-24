@@ -527,5 +527,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.16": {
+    "date": "June 2017",
+    "notes": [
+      {
+        "id": "85cacfb605b0be2ea10c0bd1b2dde8404b566f84",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Styling of span tags corrected for the text area",
+        "references": []
+      }
+    ]
   }
 }

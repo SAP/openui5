@@ -940,5 +940,40 @@
         "references": []
       }
     ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "63262cf3641e5c268b6ba6cdba5ac1b90ac08374",
+        "type": "FIX",
+        "text": " core.ComponentContainer: Propagate all models/listener",
+        "references": []
+      },
+      {
+        "id": "58ba91e4ca91f0a2fb856811e37a5265607b08fd",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": []
+      },
+      {
+        "id": "8d14cb67bc4bf3d4a12934be6d34aa5bf31326f5",
+        "type": "FIX",
+        "text": " sap.ui.core.support.Support: Diagnostics tool loading in IE fixed",
+        "references": []
+      },
+      {
+        "id": "76a69643222d76cd7d66af354c8321d40d83f5f9",
+        "type": "FIX",
+        "text": " sap.ui.core.support.TechnicalInfo: Generating default bootstrap url problem fixed.",
+        "references": []
+      },
+      {
+        "id": "f0ca4d7bd881dc0afcd92813f57f496e323fbf04",
+        "type": "FIX",
+        "text": " sap.ui.core.util.File.save JSDoc: Update browser limitations (Safari)",
+        "references": []
+      }
+    ]
   }
 }
