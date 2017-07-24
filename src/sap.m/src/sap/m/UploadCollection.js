@@ -2349,10 +2349,10 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		 * @private
 		 */
 		UploadCollection.prototype._handleCancel = function(oEvent, oContext, sSourceId) {
-			var oSourceItem = UploadCollection._findById(sSourceId, oContext.aItems);
-			oSourceItem._status = UploadCollection._displayStatus;
-			oSourceItem.errorState = null;
-			oSourceItem.changedFileName = sap.ui.getCore().byId(sSourceId + "-ta_editFileName").getProperty("value");
+			var oItem = UploadCollection._findById(sSourceId, oContext.aItems);
+			oItem._status = UploadCollection._displayStatus;
+			oItem.errorState = null;
+			oItem.changedFileName = oItem._getFileNameEditBox().getProperty("value");
 			oContext.sFocusId = oContext.editModeItem + "-cli";
 			oContext.sErrorState = null;
 			oContext.editModeItem = null;

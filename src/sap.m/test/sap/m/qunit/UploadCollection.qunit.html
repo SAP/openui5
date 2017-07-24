@@ -2004,18 +2004,28 @@
 
 		QUnit.test("Cancelling the edit mode of an item while another item is being uploaded", function(assert) {
 			//Arrange
+			var oClock = sinon.useFakeTimers();
+
 			var oItem = new sap.m.UploadCollectionItem({
 				fileName: "File.jpg"
 			});
+
 			oItem._status = sap.m.UploadCollection._uploadingStatus;
 			this.oUploadCollection.aItems.unshift(oItem);
+
 			var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
+
+			this.oUploadCollection.invalidate();
 			sap.ui.getCore().byId(sEditButtonId).firePress();
 			sap.ui.getCore().applyChanges();
+
 			//Act
 			this.oUploadCollection._handleCancel(null, this.oUploadCollection, this.oUploadCollection.editModeItem);
 			//Assert
 			assert.equal(this.oUploadCollection.aItems[1]._status, sap.m.UploadCollection._displayStatus, "Cancelling the edit mode has been successfully executed");
+
+			oItem.destroy();
+			oClock.restore();
 		});
 
 		QUnit.module("Tests starting with following scenario: open edit mode of list item, enter empty name, click ok", {
