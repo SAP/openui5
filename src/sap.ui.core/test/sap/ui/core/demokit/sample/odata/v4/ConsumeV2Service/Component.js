@@ -56,7 +56,7 @@ sap.ui.define([
 						"EdmTypesCollection?$select=ID,Boolean,Byte,GlobalUID,Int16,Int32,SByte,String&$skip=0&$top=100" : {
 							source : "EdmTypesV2.json"
 						},
-						"EdmTypesCollection('1')?$select=ID,Binary,Boolean,Byte,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String" : {
+						"EdmTypesCollection('1')?$select=ID,Binary,Boolean,Byte,Date,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String" : {
 							source : "EdmTypesV2_SingleEntity.json"
 						}
 					}, "sap/ui/core/sample/odata/v4/ConsumeV2Service/data",

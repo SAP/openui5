@@ -240,6 +240,7 @@ sap.ui.require([
 		{sType : "Edm.Binary", sConvertMethod : "convertBinary"},
 		{sType : "Edm.Boolean"},
 		{sType : "Edm.Byte"},
+		{sType : "Edm.Date", sConvertMethod : "convertDate"},
 		{sType : "Edm.Decimal"},
 		{sType : "Edm.Double", sConvertMethod : "convertDoubleSingle"},
 		{sType : "Edm.Guid"},
@@ -287,11 +288,10 @@ sap.ui.require([
 	[{
 		input : "A+A+",
 		output : "A-A-"
-	},
-	{
+	}, {
 		input : "A/A/",
 		output :"A_A_"
-	}	].forEach(function (oFixture, i) {
+	}].forEach(function (oFixture, i) {
 		QUnit.test("convertBinary, " + i, function (assert) {
 			var oRequestor = {};
 
@@ -301,6 +301,41 @@ sap.ui.require([
 			assert.strictEqual(oRequestor.convertBinary(oFixture.input), oFixture.output);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("convertDate, success", function (assert) {
+		var oRequestor = {};
+
+		asV2Requestor(oRequestor);
+
+		// code under test
+		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "/Date(1395705600001)/",
+		expectedError : "Cannot convert Edm.DateTime value '/Date(1395705600001)/' to Edm.Date" +
+			" because it contains a time of day"
+	}, {
+		input : "a/Date(0000000000000)/",
+		expectedError : "Not a valid Edm.DateTime value 'a/Date(0000000000000)/'"
+	}, {
+		input : "/Date(0000000000000)/e",
+		expectedError : "Not a valid Edm.DateTime value '/Date(0000000000000)/e'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertDate, error " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			assert.throws(function () {
+				// code under test
+				return oRequestor.convertDate(oFixture.input);
+			}, new Error(oFixture.expectedError));
+		});
+	});
+
 	//*********************************************************************************************
 	[{
 		input : "1.0000000000000001E63",
