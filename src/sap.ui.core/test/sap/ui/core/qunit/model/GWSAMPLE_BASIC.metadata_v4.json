@@ -37,6 +37,24 @@
 			"GWSAMPLE_BASIC.BusinessPartner/WebAddress": {
 				"@com.sap.vocabularies.Common.v1.Label": "Web Address"
 			},
+			"GWSAMPLE_BASIC.CT_Address": {
+				"@com.sap.vocabularies.Communication.v1.Contact": {
+					"adr": {
+						"code": {
+							"$Path": "PostalCode"
+						},
+						"country": {
+							"$Path": "Country"
+						},
+						"locality": {
+							"$Path": "City"
+						},
+						"street": {
+							"$Path": "Street"
+						}
+					}
+				}
+			},
 			"GWSAMPLE_BASIC.CT_Address/AddressType": {
 				"@com.sap.vocabularies.Common.v1.Label": "Address Type"
 			},
@@ -54,6 +72,27 @@
 			},
 			"GWSAMPLE_BASIC.CT_Address/Street": {
 				"@com.sap.vocabularies.Common.v1.Label": "Street"
+			},
+			"GWSAMPLE_BASIC.Contact": {
+				"@com.sap.vocabularies.Communication.v1.Contact": {
+					"bday": {
+						"$Path": "DateOfBirth"
+						},
+					"n": {
+						"additional": {
+							"$Path": "MiddleName"
+							},
+						"given": {
+							"$Path": "FirstName"
+						},
+						"surname": {
+							"$Path": "LastName"
+						}
+						},
+					"nickname": {
+						"$Path": "Nickname"
+					}
+				}
 			},
 			"GWSAMPLE_BASIC.Contact/BusinessPartnerID": {
 				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. ID"

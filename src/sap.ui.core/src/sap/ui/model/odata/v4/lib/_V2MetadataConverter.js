@@ -62,6 +62,146 @@ sap.ui.define([
 				"term" : "@Org.OData.Capabilities.V1.UpdateRestrictions"
 			}
 		},
+		mV2toV4Semantics = {
+			"bday" : {
+				TermName : "Contact"
+			},
+			"city" : {
+				Path : "adr",
+				TermName : "Contact",
+				V4Attribute: "locality"
+			},
+			"country" : {
+				Path : "adr",
+				TermName : "Contact"
+			},
+			"familyname" : {
+				Path : "n",
+				TermName : "Contact",
+				V4Attribute: "surname"
+			},
+			"givenname" : {
+				Path : "n",
+				TermName : "Contact",
+				V4Attribute: "given"
+			},
+			"honorific" : {
+				Path : "n",
+				TermName : "Contact",
+				V4Attribute: "prefix"
+			},
+			"middlename" : {
+				Path : "n",
+				TermName : "Contact",
+				V4Attribute: "additional"
+			},
+			"name" : {
+				TermName : "Contact",
+				V4Attribute: "fn"
+			},
+			"nickname" : {
+				TermName : "Contact"
+			},
+			"note" : {
+				TermName : "Contact"
+			},
+			"org" : {
+				TermName : "Contact"
+			},
+			"org-role" : {
+				TermName : "Contact",
+				V4Attribute : "role"
+			},
+			"org-unit" : {
+				TermName : "Contact",
+				V4Attribute : "orgunit"
+			},
+			"photo" : {
+				TermName : "Contact"
+			},
+			"pobox" : {
+				Path : "adr",
+				TermName : "Contact"
+			},
+			"region" : {
+				Path : "adr",
+				TermName : "Contact"
+			},
+			"street" : {
+				Path : "adr",
+				TermName : "Contact"
+			},
+			"suffix" : {
+				Path : "n",
+				TermName : "Contact"
+			},
+			"title" : {
+				TermName : "Contact"
+			},
+			"zip" : {
+				Path : "adr",
+				TermName : "Contact",
+				V4Attribute: "code"
+			},
+			// event annotations
+			"class" : {
+				TermName : "Event"
+			},
+			"dtend" : {
+				TermName : "Event"
+			},
+			"dtstart" : {
+				TermName : "Event"
+			},
+			"duration" : {
+				TermName : "Event"
+			},
+			"fbtype" : {
+				TermName : "Event"
+			},
+			"location" : {
+				TermName : "Event"
+			},
+			"status" : {
+				TermName : "Event"
+			},
+			"transp" : {
+				TermName : "Event"
+			},
+			"wholeday" : {
+				TermName : "Event"
+			},
+			// message annotations
+			"body" : {
+				TermName : "Message"
+			},
+			"from" : {
+				TermName : "Message"
+			},
+			"received" : {
+				TermName : "Message"
+			},
+			"sender" : {
+				TermName : "Message"
+			},
+			"subject" : {
+				TermName : "Message"
+			},
+			// task annotations
+			"completed" : {
+				TermName : "Task"
+			},
+			"due" : {
+				TermName : "Task"
+			},
+			"percent-complete" : {
+				TermName : "Task",
+				V4Attribute: "percentcomplete"
+			},
+			"priority" : {
+				TermName : "Task"
+			}
+		},
 		sSapNamespace = "http://www.sap.com/Protocols/SAPData",
 
 		// the configurations for traverse
@@ -156,6 +296,8 @@ sap.ui.define([
 			mAnnotations = oAggregate.convertedV2Annotations[sElementPath] || {},
 			oAttribute,
 			aAttributes = oElement.attributes,
+			sParentPath = oAggregate.annotatable.parent.path,
+			mSemanticAnnotations = oAggregate.convertedV2Annotations[sParentPath] || {},
 			i,
 			n = aAttributes.length;
 
@@ -169,6 +311,8 @@ sap.ui.define([
 				}
 				if (sKind === "EntitySet") {
 					convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate);
+				} else if (sKind === "Property" && oAttribute.localName === "semantics") {
+					convertPropertySemanticAnnotations(oAttribute, mSemanticAnnotations);
 				} else if (sKind === "Property") {
 					convertPropertyAnnotations(oAttribute, mAnnotations);
 				}
@@ -182,7 +326,10 @@ sap.ui.define([
 		}
 
 		if (Object.keys(mAnnotations).length > 0) {
-			oAggregate.convertedV2Annotations[oAggregate.annotatable.path] = mAnnotations;
+			oAggregate.convertedV2Annotations[sElementPath] = mAnnotations;
+		}
+		if (Object.keys(mSemanticAnnotations).length > 0) {
+			oAggregate.convertedV2Annotations[sParentPath] = mSemanticAnnotations;
 		}
 	}
 
@@ -295,6 +442,35 @@ sap.ui.define([
 		}
 	}
 
+	/**
+	 * Converts a sap:semantics V2 annotation of a property to the corresponding V4 annotation at
+	 * an EntityType and puts the annotation into the given map of V4 annotations.
+	 *
+	 * @param {Attr} oAttribute The attribute
+	 * @param {object} mSemanticAnnotations Map of V4 annotations
+	 */
+	function convertPropertySemanticAnnotations(oAttribute, mSemanticAnnotations) {
+		var oAnnotations,
+			oPath,
+			oSemantics,
+			sValue = oAttribute.value;
+
+		if (mV2toV4Semantics[sValue]) {
+			oPath = {
+				"$Path" : oAttribute.ownerElement.getAttribute("Name")
+			};
+			oAnnotations = V2MetadataConverter.getOrCreateObject(mSemanticAnnotations,
+				"@com.sap.vocabularies.Communication.v1." + mV2toV4Semantics[sValue].TermName);
+			if (mV2toV4Semantics[sValue].Path) {
+				oSemantics = V2MetadataConverter.getOrCreateObject(oAnnotations,
+					mV2toV4Semantics[sValue].Path);
+				oSemantics[mV2toV4Semantics[sValue].V4Attribute || sValue] = oPath;
+				oAnnotations[mV2toV4Semantics[sValue].Path] = oSemantics;
+			} else {
+				oAnnotations[mV2toV4Semantics[sValue].V4Attribute || sValue] = oPath;
+			}
+		}
+	}
 
 	/**
 	 * Post-processing of an Schema element.

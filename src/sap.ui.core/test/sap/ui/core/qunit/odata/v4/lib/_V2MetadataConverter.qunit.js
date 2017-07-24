@@ -23,6 +23,24 @@ sap.ui.require([
 		sModuleName = "sap.ui.model.odata.v4.lib._V2MetadataConverter";
 
 	/**
+	 * Tests that the given XML snippet produces the expected annotations.
+	 * @param {object} assert
+	 *   QUnit's assert
+	 * @param {string} sXmlSnippet
+	 *   the XML snippet; it will be inserted below an element <Schema Namespace="GWSAMPLE_BASIC">
+	 * @param {object} oExpected
+	 *   the expected annotations as JSON object
+	 */
+	function testAnnotationConversion(assert, sXmlSnippet, oExpected) {
+		var oXML = xml(assert, sEdmx + '<edmx:DataServices m:DataServiceVersion="2.0">'
+				+ '<Schema Namespace="GWSAMPLE_BASIC">' + sXmlSnippet
+				+ '</Schema></edmx:DataServices></edmx:Edmx>'),
+			oResult = _V2MetadataConverter.convertXMLMetadata(oXML, "/foo/bar/$metadata");
+
+		assert.deepEqual(oResult["GWSAMPLE_BASIC."].$Annotations, oExpected);
+	}
+
+	/**
 	 * Tests the conversion of the given XML snippet.
 	 * @param {object} assert
 	 *   QUnit's assert
@@ -693,6 +711,276 @@ sap.ui.require([
 				});
 		});
 	});
+
+	//*********************************************************************************************
+	[{
+		v2Semantics : 'sap:semantics="name"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"fn" : { "$Path" : "Bar" }
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="note"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"note" : { "$Path" : "Bar" }
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="givenname"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"n" : {
+					"given": {
+						"$Path" : "Bar"
+					}
+				}
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="middlename"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"n" : {
+					"additional": {
+						"$Path" : "Bar"
+					}
+				}
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="familyname"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"n" : {
+					"surname": {
+						"$Path" : "Bar"
+					}
+				}
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="nickname"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"nickname": {
+					"$Path" : "Bar"
+				}
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="honorific"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"n" : {
+					"prefix": {
+						"$Path" : "Bar"
+					}
+				}
+			}
+		}
+	}, {
+		v2Semantics : 'sap:semantics="suffix"',
+		expectedSemanticsV4 : {
+			'@com.sap.vocabularies.Communication.v1.Contact' : {
+				"n" : {
+					"suffix": {
+						"$Path" : "Bar"
+					}
+				}
+			}
+		}
+	}].forEach(function (oFixture) {
+		var sTitle = "convert: V2 annotation at Property: " + oFixture.v2Semantics;
+		QUnit.test("convert sap:semantics=" + sTitle, function (assert) {
+			// there are no $annotations yet at the schema so mergeAnnotations is not called
+			this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+			testAnnotationConversion(assert, '\
+						<EntityType Name="Foo">\
+							<Property Name="Bar" Type="Edm.String" ' + oFixture.v2Semantics +' />\
+						</EntityType>',
+				{
+					"GWSAMPLE_BASIC.Foo" : oFixture.expectedSemanticsV4
+				});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=* to contact", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="name"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="givenname"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="middlename"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="familyname"/>\
+					<Property Name="P05" Type="Edm.String" sap:semantics="nickname"/>\
+					<Property Name="P06" Type="Edm.String" sap:semantics="honorific"/>\
+					<Property Name="P07" Type="Edm.String" sap:semantics="suffix"/>\
+					<Property Name="P08" Type="Edm.String" sap:semantics="note"/>\
+					<Property Name="P09" Type="Edm.String" sap:semantics="photo"/>\
+					<Property Name="P10" Type="Edm.String" sap:semantics="org"/>\
+					<Property Name="P11" Type="Edm.String" sap:semantics="org-unit"/>\
+					<Property Name="P12" Type="Edm.String" sap:semantics="org-role"/>\
+					<Property Name="P13" Type="Edm.String" sap:semantics="title"/>\
+					<Property Name="P14" Type="Edm.String" sap:semantics="bday"/>\
+					<Property Name="P15" Type="Edm.String" sap:semantics="city"/>\
+					<Property Name="P16" Type="Edm.String" sap:semantics="street"/>\
+					<Property Name="P17" Type="Edm.String" sap:semantics="country"/>\
+					<Property Name="P18" Type="Edm.String" sap:semantics="region"/>\
+					<Property Name="P19" Type="Edm.String" sap:semantics="zip"/>\
+					<Property Name="P20" Type="Edm.String" sap:semantics="pobox"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"adr": {
+							"code": { "$Path": "P19" },
+							"country": { "$Path": "P17" },
+							"locality": { "$Path": "P15" },
+							"pobox": { "$Path": "P20" },
+							"region": { "$Path": "P18" },
+							"street": { "$Path": "P16" }
+						},
+						"bday" : { "$Path" : "P14" },
+						"fn" : { "$Path" : "P01" },
+						"n" : {
+							"given": { "$Path" : "P02" },
+							"additional": { "$Path" : "P03" },
+							"surname": { "$Path" : "P04" },
+							"prefix": { "$Path" : "P06" },
+							"suffix": { "$Path" : "P07" }
+						},
+						"nickname" : { "$Path" : "P05" },
+						"note" : { "$Path" : "P08" },
+						"photo" : { "$Path" : "P09" },
+						"org" : { "$Path" : "P10" },
+						"orgunit" : { "$Path" : "P11" },
+						"role" : { "$Path" : "P12" },
+						"title" : { "$Path" : "P13" }
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=* to Event", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="dtstart"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="dtend"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="duration"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="class"/>\
+					<Property Name="P05" Type="Edm.String" sap:semantics="status"/>\
+					<Property Name="P06" Type="Edm.String" sap:semantics="transp"/>\
+					<Property Name="P07" Type="Edm.String" sap:semantics="fbtype"/>\
+					<Property Name="P08" Type="Edm.String" sap:semantics="wholeday"/>\
+					<Property Name="P09" Type="Edm.String" sap:semantics="location"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Event" : {
+						"dtstart": {"$Path" : "P01"},
+						"dtend" : { "$Path" : "P02" },
+						"duration" : { "$Path" : "P03" },
+						"class" : { "$Path" : "P04" },
+						"status" : { "$Path" : "P05" },
+						"transp" : { "$Path" : "P06" },
+						"fbtype" : { "$Path" : "P07" },
+						"wholeday" : { "$Path" : "P08" },
+						"location" : { "$Path" : "P09" }
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=* to Task", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="due"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="completed"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="percent-complete"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="priority"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Task" : {
+						"due": {"$Path" : "P01"},
+						"completed" : { "$Path" : "P02" },
+						"percentcomplete" : { "$Path" : "P03" },
+						"priority" : { "$Path" : "P04" }
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=* to Message", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="from"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="sender"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="subject"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="body"/>\
+					<Property Name="P05" Type="Edm.String" sap:semantics="received"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Message" : {
+						"from": {"$Path" : "P01"},
+						"sender" : { "$Path" : "P02" },
+						"subject" : { "$Path" : "P03" },
+						"body" : { "$Path" : "P04" },
+						"received" : { "$Path" : "P05" }
+					}
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=* to Contact, Event, Task, Message", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="name"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="dtend"/>\
+					<Property Name="P03" Type="Edm.String" sap:semantics="percent-complete"/>\
+					<Property Name="P04" Type="Edm.String" sap:semantics="body"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"fn" : { "$Path" : "P01" },
+					},
+					"@com.sap.vocabularies.Communication.v1.Event" : {
+						"dtend" : { "$Path" : "P02" },
+					},
+					"@com.sap.vocabularies.Communication.v1.Task" : {
+						"percentcomplete" : { "$Path" : "P03" },
+					},
+					"@com.sap.vocabularies.Communication.v1.Message" : {
+						"body" : { "$Path" : "P04" },
+					}
+				}
+			});
+	});
+
 
 	//*********************************************************************************************
 	[{ // sap:creatable
