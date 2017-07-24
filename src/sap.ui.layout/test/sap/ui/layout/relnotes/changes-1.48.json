@@ -197,5 +197,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "0a90b7fe1a70f4d539cd1c58a461da16e6e74267",
+        "type": "FIX",
+        "text": " SimpleForm removing Label creates empty container",
+        "references": []
+      },
+      {
+        "id": "a9958fddf7ea62cbc0b2c3d96972ce366823f303",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: Inserting PaneConainers in a selected index is now working",
+        "references": []
+      }
+    ]
   }
 }

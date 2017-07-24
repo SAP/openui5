@@ -305,5 +305,22 @@
         "references": []
       }
     ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "7a2cdc11d363590a41dcab1341d8742e650655a0",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "8fa3bdfcd9a47f75502ed7231d13121bb402032d",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      }
+    ]
   }
 }

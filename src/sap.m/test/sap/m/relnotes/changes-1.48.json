@@ -1925,5 +1925,130 @@
         "references": []
       }
     ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "abf39c79f9db9c5362d5a64d9bd1a14eb601c8a7",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Fix ArialablledBy for buttons.",
+        "references": []
+      },
+      {
+        "id": "6beea17c132725a4d7813d89e89dd929c74f1fc7",
+        "type": "FIX",
+        "text": " sap.m.Button: Has correct border in disabled state in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "7308a68dd1e72dd2a8b81d831a09041e5a559149",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Bound selectedKey is now updated on model change",
+        "references": []
+      },
+      {
+        "id": "3d7f7b9a44d9356daf08bb7ea014a237eb3916b1",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Header contents are now vertically centered correctly in compact mode",
+        "references": []
+      },
+      {
+        "id": "704d201863cc0fddee239b3e2861e69e1f663964",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Special characters in the sender property are displayed correctly",
+        "references": []
+      },
+      {
+        "id": "87b12f7f4d9d14a070c2b26550eea4ba4dcbf3e0",
+        "type": "FIX",
+        "text": " sap.m.List: Screenreader announcement of required state",
+        "references": []
+      },
+      {
+        "id": "61eac767382d459700a8287f96573f0eba6ed4d3",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent the soft keyboard to be opened when opening the dropdown list",
+        "references": []
+      },
+      {
+        "id": "53d83d302614ed644dd6a3cdef6e8fe8d3e375cc",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit checking background color is corrected",
+        "references": []
+      },
+      {
+        "id": "6b2f2f44165b60a251c24f7e13023c0923531e0e",
+        "type": "FIX",
+        "text": " sap.m.Popover: Vertical calculations in IE fixed",
+        "references": []
+      },
+      {
+        "id": "954d17e0d854d926bd05da083ba30d5914eb8df0",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Public functions are now displayed in the API reference.",
+        "references": []
+      },
+      {
+        "id": "38f743cc5597ce6ae5908b5991c4240385141ff2",
+        "type": "FIX",
+        "text": " sap.m.Shell: Support of TitleLevel added",
+        "references": []
+      },
+      {
+        "id": "9658c1df7dd3580ccf27c0538e4c7997b688de48",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now fires change event on focus out",
+        "references": []
+      },
+      {
+        "id": "297186bb7e5e060abb93b7e9e581f3003b279d92",
+        "type": "FIX",
+        "text": " sap.m.Text: MaxLines property documentation corrected",
+        "references": []
+      },
+      {
+        "id": "5343eafec8b19be35d885a75dede86e6f6bdc2be",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Testing touch event is now corrected",
+        "references": []
+      },
+      {
+        "id": "19e51be36b4ea49e632e1b1432eab922c9dd0c96",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      },
+      {
+        "id": "f1bbf5eb6449d232b284036d4f70ac033a6196b7",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Cancel on rename no longer saves the new name",
+        "references": []
+      },
+      {
+        "id": "77bb438253bbb26bd23706cbd1150dec9fd5cab6",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: FileName property handling improved",
+        "references": []
+      },
+      {
+        "id": "54aa98951310a24e10f38ef7759053fbf31d885b",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus after item deletion corrected",
+        "references": []
+      },
+      {
+        "id": "5a20bc6ec364d318802a7e80db9f3caee83fc640",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in HCB and belize_hcb improved",
+        "references": []
+      },
+      {
+        "id": "ec20262cca254d5af8610f854b24acce93af0bac",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingDialog: testsuite example read correctly",
+        "references": []
+      }
+    ]
   }
 }

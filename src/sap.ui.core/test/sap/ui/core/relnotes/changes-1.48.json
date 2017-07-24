@@ -786,5 +786,40 @@
         "references": []
       }
     ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "c5fac81998a0252780a7eb084fc1a3fe93b5d146",
+        "type": "FIX",
+        "text": " core.ComponentContainer: Propagate all models/listener",
+        "references": []
+      },
+      {
+        "id": "048ee5f270a25952dff94e0215c4ec2f90de05e1",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": []
+      },
+      {
+        "id": "3330439fb426d7a45d1b1ef02b90a021b748a862",
+        "type": "FIX",
+        "text": " sap.ui.core.support.Support: Diagnostics tool loading in IE fixed",
+        "references": []
+      },
+      {
+        "id": "d94dfe26b6ca5f13295aa2e00d10d1286ea4dbd3",
+        "type": "FIX",
+        "text": " sap.ui.core.util.File.save JSDoc: Update browser limitations (Safari)",
+        "references": []
+      },
+      {
+        "id": "ed08094c7d54d6840362c08af6b7d2b86dbefc7c",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODataMetaModel#getODataEntityContainer: support simple case w/o IsDefaultEntityContainer flag",
+        "references": []
+      }
+    ]
   }
 }

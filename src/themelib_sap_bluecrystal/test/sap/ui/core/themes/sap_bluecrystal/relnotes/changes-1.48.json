@@ -115,5 +115,16 @@
         "references": []
       }
     ]
+  },
+  "1.48.5": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "19e51be36b4ea49e632e1b1432eab922c9dd0c96",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      }
+    ]
   }
 }
