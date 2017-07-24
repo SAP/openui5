@@ -211,6 +211,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 				namespace: 'localchange'
 			})
 		};
+		mChanges.firstChange.setState(Change.states.PERSISTED);
 
 		var oUpdatedChange = this.oStandardVariant.updateExecuteOnSelect(mChanges, newExecuteOnSelect);
 

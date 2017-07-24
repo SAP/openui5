@@ -103,12 +103,38 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.ok(oInstance.getContent());
 	});
 
+	QUnit.test("Change.setState with an incorrect value", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState("anInvalidState");
+		assert.equal(oInstance.getPendingAction(), "NEW");
+	});
+
+	QUnit.test("Change.setState to DIRTY when current state is NEW", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+	});
+
+	QUnit.test("Change.setState to DIRTY when current state is PERSISTED", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
+		oInstance.setState(Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "UPDATE");
+	});
+
 	QUnit.test("Change.setContent", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPendingAction(), "NEW");
 		oInstance.setContent({something: "nix"});
 		assert.deepEqual(oInstance.getContent(), {something: "nix"});
-		assert.equal(oInstance.getState(), Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
+		oInstance.setContent({something: "updated"});
+		assert.deepEqual(oInstance.getContent(), {something: "updated"});
+		assert.equal(oInstance.getPendingAction(), "UPDATE");
 	});
 
 	QUnit.test("Change.getContext", function(assert) {
@@ -125,6 +151,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.setText('variantName', 'newText');
 		assert.equal(oInstance.getText('variantName'), 'newText');
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
 		oInstance.setText('variantName', 'myVariantName');
 		assert.equal(oInstance.getState(), Change.states.DIRTY);
 	});
@@ -173,6 +201,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 	QUnit.test("Change.getPendingChanges", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPendingAction(), Change.states.NEW);
+		oInstance.setState(Change.states.PERSISTED);
 
 		oInstance.setContent({});
 		assert.equal(oInstance.getPendingAction(), Change.states.DIRTY);

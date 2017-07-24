@@ -64,6 +64,40 @@ sap.ui.define([
 		markForDeletion: "markForDeletion"
 	};
 
+	Change.prototype.setState = function(sState) {
+		if (this._isValidState(sState)) {
+			this.setProperty("state", sState);
+		}
+		return this;
+	};
+
+	/**
+	 * Validates if the new state of change has a valid value
+	 * The new state value has to be in the <code>Change.states<code> list
+	 * Moving of state directly from <code>Change.states.NEW<code> to <code>Change.states.DIRTY<code> is not allowed.
+	 * @param {string} sState - value of target state
+	 * @returns {boolean} - new state is valid
+	 * @private
+	 */
+	Change.prototype._isValidState = function(sState) {
+		//new state have to be in the Change.states value list
+		var bStateFound = false;
+		Object.keys(Change.states).some(function(sKey){
+			if (Change.states[sKey] === sState) {
+				bStateFound = true;
+			}
+			return bStateFound;
+		});
+		if (!bStateFound) {
+			return false;
+		}
+		//change' state can not move from NEW to DIRTY directly
+		if ((this.getState() === Change.states.NEW) && (sState === Change.states.DIRTY)) {
+			return false;
+		}
+		return true;
+	};
+
 	/**
 	 * Returns if the change protocol is valid
 	 * @returns {boolean} Change is valid (mandatory fields are filled, etc)
