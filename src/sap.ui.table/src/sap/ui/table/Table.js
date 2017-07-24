@@ -856,7 +856,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oCCnt = oDomRef.querySelector(".sapUiTableCCnt");
 
 			if (oCCnt) {
-				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+				var iUsedHeight = oDomRef.scrollHeight - parseFloat(window.getComputedStyle(oCCnt).height);
 				// take into account controls above the table in the container
 				var iTableTop = 0;
 				if (oDomRef.parentNode.firstChild !== oDomRef) {
