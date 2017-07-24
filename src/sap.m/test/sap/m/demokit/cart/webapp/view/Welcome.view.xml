@@ -20,8 +20,7 @@
 				<contentMiddle>
 					<Title
 						tooltip="{i18n>welcomeDescription}"
-						text="{i18n>welcomeHeadline}"
-						class="welcomeText"/>
+						text="{i18n>welcomeHeadline}"/>
 				</contentMiddle>
 				<contentRight>
 					<Button icon="sap-icon://customer"/>
