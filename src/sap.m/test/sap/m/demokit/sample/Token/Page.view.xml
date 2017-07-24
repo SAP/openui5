@@ -1,7 +1,10 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.Token.Page"
+	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-		<Token text="Test Token"/>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Token text="Test Token" />
+	</l:VerticalLayout>
 </mvc:View>

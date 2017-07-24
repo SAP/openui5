@@ -1,13 +1,16 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.Tokenizer.Page"
+	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Tokenizer width="100%"
-		tokens="{
-            path: '/ProductCollection',
-            sorter: { path: 'Name' }
-        }">
-		<Token key="{ProductId}" text="{Name}" />
-	</Tokenizer>
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<Tokenizer width="100%"
+			tokens="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<Token key="{ProductId}" text="{Name}" />
+		</Tokenizer>
+	</l:VerticalLayout>
 </mvc:View>
