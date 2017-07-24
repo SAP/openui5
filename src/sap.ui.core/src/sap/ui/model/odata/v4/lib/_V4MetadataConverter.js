@@ -630,7 +630,9 @@ sap.ui.define([
 		 */
 		processFacetAttributes : function (oElement, oResult) {
 			 V4MetadataConverter.processAttributes(oElement, oResult, {
-				"MaxLength" : V4MetadataConverter.setNumber,
+				"MaxLength" : function (sValue) {
+					return sValue === "max" ? undefined : V4MetadataConverter.setNumber(sValue);
+				},
 				"Precision" : V4MetadataConverter.setNumber,
 				"Scale" : function (sValue) {
 					return sValue === "variable" ? sValue : V4MetadataConverter.setNumber(sValue);

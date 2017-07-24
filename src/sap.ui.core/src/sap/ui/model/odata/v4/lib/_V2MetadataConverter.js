@@ -827,7 +827,9 @@ sap.ui.define([
 		processFacetAttributes : function (oElement, oResult) {
 			V2MetadataConverter.processAttributes(oElement, oResult, {
 				"DefaultValue" : V2MetadataConverter.setValue,
-				"MaxLength" : V2MetadataConverter.setNumber,
+				"MaxLength" : function (sValue) {
+					return sValue === "Max" ? undefined : V2MetadataConverter.setNumber(sValue);
+				},
 				"Nullable" : V2MetadataConverter.setIfFalse,
 				"Precision" : V2MetadataConverter.setNumber,
 				"Scale" :  V2MetadataConverter.setNumber,
