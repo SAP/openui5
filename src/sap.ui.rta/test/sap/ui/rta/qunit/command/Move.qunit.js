@@ -196,9 +196,9 @@ sap.ui.define([
 	QUnit.test("After executing, undoing and redoing the command", function(assert) {
 		return Promise.resolve()
 
-		.then(this.oMoveCommand.execute())
+		.then(this.oMoveCommand.execute.bind(this.oMoveCommand))
 
-		.then(this.oMoveCommand.undo())
+		.then(this.oMoveCommand.undo.bind(this.oMoveCommand))
 
 		.then(function() {
 			var oChange = this.oMoveCommand.getPreparedChange();
@@ -206,10 +206,11 @@ sap.ui.define([
 				var oAppComponent = this.oMoveCommand.getAppComponent();
 				var oControl = ControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 				var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-				oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+				return oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
 			}
-			return this.oMoveCommand.execute();
 		}.bind(this))
+
+		.then(this.oMoveCommand.execute.bind(this.oMoveCommand))
 
 		.then(assertObjectAttributeMoved.bind(this, assert));
 	});
