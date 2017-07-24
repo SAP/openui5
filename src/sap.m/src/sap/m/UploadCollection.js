@@ -880,7 +880,7 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 		};
 
 		UploadCollection.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
-			var oFileFromDragDrop, iIndexOfFile;
+			var oFileFromDragDrop, iIndexOfFile, aItems;
 			if (!this.getInstantUpload() && sAggregationName === "items" && vObject) {
 				oFileFromDragDrop = vObject._internalFileIdWithinDragDropArray;
 				// if the deleted file is from drag and drop, removes it from the drag and drop array
@@ -889,13 +889,15 @@ sap.ui.define(["jquery.sap.global", "./MessageBox", "./Dialog", "./library", "sa
 					if (iIndexOfFile !== -1) {
 						this._aFilesFromDragAndDropForPendingUpload.splice(iIndexOfFile, 1);
 					}
+				} else if (jQuery.isNumeric(vObject)) {
+					aItems = this.getItems();
+					this._aDeletedItemForPendingUpload.push(aItems[vObject]);
 				} else {
 					this._aDeletedItemForPendingUpload.push(vObject);
 				}
 			}
-			if (Control.prototype.removeAggregation) {
-				return Control.prototype.removeAggregation.apply(this, arguments);
-			}
+
+			return Control.prototype.removeAggregation.apply(this, arguments);
 		};
 
 		UploadCollection.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
