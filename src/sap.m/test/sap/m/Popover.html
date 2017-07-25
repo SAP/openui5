@@ -292,6 +292,7 @@
 			showHeader: true,
 			beginButton: oBeginButton,
 			endButton: oEndButton,
+			modal: true,
 			beforeOpen: function (oEvent) {
 				jQuery.sap.log.info("before popover opens!!!");
 			},
@@ -423,7 +424,7 @@
 		oButton7.addStyleClass("positioned7");
 
 		var oButton8 = new sap.m.Button("btn8", {
-			text: "Popover Auto",
+			text: "Popover Auto 1",
 			press: function () {
 				oPopover.setPlacement(sap.m.PlacementType.Auto);
 				oPopover.openBy(this);
@@ -432,7 +433,7 @@
 		oButton8.addStyleClass("positioned8");
 
 		var oButton9 = new sap.m.Button("btn9", {
-			text: "Popover Auto",
+			text: "Popover Auto 2",
 			press: function () {
 				oPopover.setPlacement(sap.m.PlacementType.Auto);
 				oPopover.openBy(this);
