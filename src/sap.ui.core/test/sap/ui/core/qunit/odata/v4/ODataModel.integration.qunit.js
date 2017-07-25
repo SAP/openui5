@@ -120,15 +120,18 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, {
+			// These metadata files are _always_ faked, the query option "realOData" is ignored
+			TestUtils.useFakeServer(this.oSandbox, "/sap/ui/core/qunit", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
-					: {source : "../../../model/GWSAMPLE_BASIC.metadata.xml"},
+					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-					: {source : "metadata.xml"},
+					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
-					: {source : "metadata_tea_busi_product.xml"},
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/$metadata"
-					: {source : "metadata_zui5_epm_sample.xml"}
+					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -2637,7 +2640,10 @@ sap.ui.require([
 		</items>\
 	</Table>\
 </FlexBox>',
-		that = this;
+			oModel = createModelForV2SalesOrderService({
+				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+			}),
+			that = this;
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
 				"&$select=ToLineItems/ItemPosition,SalesOrderID",
@@ -2660,7 +2666,12 @@ sap.ui.require([
 		});
 
 		// code under test
-		return this.createView(assert, sView, createModelForV2SalesOrderService());
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.deepEqual(
+				oModel.getMetaModel().getObject(
+					"/SalesOrderSet/NetAmount@Org.OData.Measures.V1.ISOCurrency"),
+				{"$Path" : "CurrencyCode"});
+		});
 	});
 });
 //TODO test bound action
