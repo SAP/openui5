@@ -8,7 +8,7 @@
 		<form:SimpleForm binding="{
 				path : '/EdmTypesCollection(\'1\')',
 				parameters : {
-					$select : 'ID,Binary,Boolean,Byte,Date,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String,Time'
+					$select : 'ID,Binary,Boolean,Byte,Date,DateTime,DateTimeOffset,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String,Time'
 				}
 			}" layout="ResponsiveGridLayout">
 			<form:title>
@@ -17,39 +17,43 @@
 			<Label labelFor="binary" text="Binary"/>
 			<Text id="binary" text="{path : 'Binary', type : 'sap.ui.model.odata.type.String'}"/>
 			<Label labelFor="boolean" text="Boolean"/>
-			<Text id="boolean" text="{path : 'Boolean', type : 'sap.ui.model.odata.type.Boolean'}"/>
+			<Text id="boolean" text="{Boolean}"/>
 			<Label labelFor="byte" text="Byte"/>
-			<Text id="byte" text="{path : 'Byte', type : 'sap.ui.model.odata.type.Byte'}"/>
+			<Text id="byte" text="{Byte}"/>
 			<Label labelFor="date" text="Date"/>
-			<Text id="date" text="{path : 'Date', type : 'sap.ui.model.odata.type.Date'}"/>
+			<Text id="date" text="{Date}"/>
+			<Label labelFor="dateTime" text="DateTime"/>
+			<Text id="dateTime" text="{DateTime}"/>
+			<Label labelFor="dateTimeOffset" text="DateTimeOffset"/>
+			<Text id="dateTimeOffset" text="{DateTimeOffset}"/>
 			<Label labelFor="decimal" text="Decimal"/>
-			<Text id="decimal" text="{path : 'Decimal', type : 'sap.ui.model.odata.type.Decimal'}"/>
+			<Text id="decimal" text="{Decimal}"/>
 			<Label labelFor="double" text="Double"/>
 			<!-- expected tooltip has no leading 0; typeof Double is "number" -->
-			<Text id="double" text="{path : 'Double', type : 'sap.ui.model.odata.type.Double'}"
+			<Text id="double" text="{Double}"
 				tooltip="{= String(0 + %{Double})}"/>
 			<Label labelFor="float" text="Float"/>
 			<!-- expected tooltip has no leading 0; typeof Float is "number" -->
-			<Text id="float" text="{path : 'Float', type : 'sap.ui.model.odata.type.Single'}"
+			<Text id="float" text="{Float}"
 				tooltip="{= String(0 + %{Float})}"/>
 			<Label labelFor="guid" text="Guid"/>
-			<Text id="guid" text="{path : 'GlobalUID', type : 'sap.ui.model.odata.type.Guid'}"/>
+			<Text id="guid" text="{GlobalUID}"/>
 			<Label labelFor="int16" text="Int16"/>
-			<Text id="int16" text="{path : 'Int16', type : 'sap.ui.model.odata.type.Int16'}"/>
+			<Text id="int16" text="{Int16}"/>
 			<Label labelFor="int32" text="Int32"/>
-			<Text id="int32" text="{path : 'Int32', type : 'sap.ui.model.odata.type.Int32'}"/>
+			<Text id="int32" text="{Int32}"/>
 			<Label labelFor="int64" text="Int64"/>
-			<Text id="int64" text="{path : 'Int64', type : 'sap.ui.model.odata.type.Int64'}"/>
+			<Text id="int64" text="{Int64}"/>
 			<Label labelFor="sbyte" text="SByte"/>
-			<Text id="sbyte" text="{path : 'SByte', type : 'sap.ui.model.odata.type.SByte'}"/>
+			<Text id="sbyte" text="{SByte}"/>
 			<Label labelFor="single" text="Single"/>
 			<!-- expected tooltip has no leading 0; typeof Single is "number" -->
-			<Text id="single" text="{path : 'Single', type : 'sap.ui.model.odata.type.Single'}"
+			<Text id="single" text="{Single}"
 				tooltip="{= String(0 + %{Single})}"/>
 			<Label labelFor="string" text="String"/>
-			<Text id="string" text="{path : 'String', type : 'sap.ui.model.odata.type.String'}"/>
+			<Text id="string" text="{String}"/>
 			<Label labelFor="time" text="Time"/>
-			<Text id="time" text="{path : 'Time', type : 'sap.ui.model.odata.type.TimeOfDay'}"/>
+			<Text id="time" text="{Time}"/>
 		</form:SimpleForm>
 		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
 			   items="{

@@ -339,6 +339,59 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		input : "/Date(1420529121547+0000)/",
+		output : "2015-01-06T07:25:21.547Z"
+	}, {
+		input : "/Date(1420529121547+0500)/",
+		output : "2015-01-06T12:25:21.547+05:00"
+	}, {
+		input : "/Date(1420529121547+1500)/",
+		output : "2015-01-06T22:25:21.547+15:00"
+	}, {
+		input : "/Date(1420529121547+0530)/",
+		output : "2015-01-06T12:55:21.547+05:30"
+	}, {
+		input : "/Date(1420529121547+0030)/",
+		output : "2015-01-06T07:55:21.547+00:30"
+	}, {
+		input : "/Date(1420529121547-0530)/",
+		output : "2015-01-06T01:55:21.547-05:30"
+	}, {
+		input : "/Date(1395752399000)/", // DateTime in V2
+		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			// code under test
+			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input), oFixture.output);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "a/Date(0000000000000+0000)/",
+		expectedError : "Not a valid Edm.DateTimeOffset value 'a/Date(0000000000000+0000)/'"
+	}, {
+		input : "/Date(0000000000000+0000)/e",
+		expectedError : "Not a valid Edm.DateTimeOffset value '/Date(0000000000000+0000)/e'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertDateTimeOffset, error " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			assert.throws(function () {
+				// code under test
+				return oRequestor.convertDateTimeOffset(oFixture.input);
+			}, new Error(oFixture.expectedError));
+		});
+	});
+
+	//*********************************************************************************************
+	[{
 		input : "1.0000000000000001E63",
 		output : 1.0000000000000001E63
 	}, {
