@@ -130,10 +130,9 @@ sap.ui.require([
 
 				this.oVariantManagementControl.setAssociation("for", "objPage", true);
 
-				//this.oObjectPageLayout.setVariantManagement("varMgtKey");
-
+				this.oButton2 = new Button();
 				this.oLayoutOuter = new VerticalLayout("verlayouter", {
-					content: [this.oObjectPageLayout]
+					content: [this.oButton2]
 				});
 
 				this.oPage = new Page("mainPage", {
@@ -170,14 +169,14 @@ sap.ui.require([
 			},
 			afterEach: function (assert) {
 				sandbox.restore();
-				this.oLayout.destroy();
+				this.oLayoutOuter.destroy();
 				this.oPage.destroy();
 				this.oDesignTime.destroy();
 			}
 		});
 
 		QUnit.test("when registerElementOverlay is called", function(assert) {
-			assert.ok(ElementOverlay.prototype.getVariantManagement, "then getVariantManagement added to the  ElementOverlay prototype");
+			assert.ok(ElementOverlay.prototype.getVariantManagement, "then getVariantManagement added to the ElementOverlay prototype");
 			assert.ok(ElementOverlay.prototype.setVariantManagement, "then setVariantManagement added to the ElementOverlay prototype");
 		});
 
@@ -188,8 +187,8 @@ sap.ui.require([
 
 		QUnit.test("when registerElementOverlay is called with VariantManagement control Overlay", function(assert) {
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), "varMgtKey", "then Variant Management Key successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
-			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement Key set to an element outside element not a part of the associated control");
+			assert.strictEqual(this.oObjectPageLayoutOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
+			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
 		});
@@ -198,8 +197,8 @@ sap.ui.require([
 			sandbox.stub(BaseTreeModifier, "getSelector").returns({id: this.sLocalVariantManagementId});
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 
-			assert.strictEqual(this.oObjectPageSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then Variant Management Key successfully set to ObjectPageSection (first child) Overlay");
-			assert.strictEqual(this.oObjectPageSubSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then Variant Management Key successfully set to ObjectPageSubSection (second child) Overlay");
+			assert.strictEqual(this.oObjectPageSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageSection (first child) Overlay");
+			assert.strictEqual(this.oObjectPageSubSectionOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then Variant Management reference successfully set to ObjectPageSubSection (second child) Overlay");
 		});
 
 		QUnit.test("when isVariantSwitchAvailable is called with VariantManagement overlay", function(assert) {
@@ -278,11 +277,33 @@ sap.ui.require([
 			assert.ok(this.oControlVariantPlugin.configureVariants, "then configureVariants added to the  ElementOverlay prototype");
 		});
 
+		QUnit.test("when _propagateVariantManagement is called with a root overlay and VariantManagement reference", function(assert) {
+			var aOverlays = this.oControlVariantPlugin._propagateVariantManagement(this.oObjectPageLayoutOverlay, "varMgtKey");
+			assert.equal(this.oButtonOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully propagated from the root overlay to last child overlay)");
+			assert.equal(aOverlays.length, 5, "then VariantManagement reference successfully set for all 5 child ElementOverlays");
+		});
+
+		QUnit.test("when _getVariantManagementFromParent is called with an overlay with no VariantManagement reference", function(assert) {
+			assert.notOk(this.oButtonOverlay.getVariantManagement(), "no VariantManagement reference set initially for the last overlay");
+			this.oObjectPageLayoutOverlay.setVariantManagement("varMgtKey");
+			var sVarMgmt = this.oControlVariantPlugin._getVariantManagementFromParent(this.oButtonOverlay);
+			assert.equal(sVarMgmt, "varMgtKey", "then correct VariantManagement reference returned");
+		});
+
 		//Integration Test
-		QUnit.test("when ControlVariant Plugin is added to designTime", function(assert) {
-			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then Variant Management Key is initially undefined");
+		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", function(assert) {
+			var done = assert.async();
+			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then VariantManagement Key is initially undefined");
 			this.oDesignTime.addPlugin(this.oControlVariantPlugin);
 			sap.ui.getCore().applyChanges();
-			assert.ok(this.oButtonOverlay.getVariantManagement(), "varMgtKey", "then Variant Management Key successfully propagated from ObjectPageLayout to Button (last element)");
+			assert.ok(this.oButtonOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully propagated from ObjectPageLayout to Button (last element)");
+			var oTestButton = new Button("testButton");
+			this.oLayout.addContent(oTestButton);
+			sap.ui.getCore().applyChanges();
+			this.oDesignTime.attachEventOnce("synced", function() {
+				var oTestButtonOverlay = OverlayRegistry.getOverlay(oTestButton);
+				assert.equal(oTestButtonOverlay.getVariantManagement(), "varMgtKey", "then VariantManagement reference successfully set for newly inserted ElementOverlay from parent ElementOverlays");
+				done();
+			});
 		});
 	});

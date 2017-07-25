@@ -1,7 +1,7 @@
 {
 	"changes" : [
 		{
-			"variantRef":"",
+			"variantReference":"",
 			"fileName":"id_1445501120486_25",
 			"fileType":"change",
 			"changeType":"hideControl",
@@ -24,7 +24,7 @@
 			}
 		},
 		{
-			"variantRef":"",
+			"variantReference":"",
 			"fileName":"id_1445501120486_26",
 			"fileType":"change",
 			"changeType":"hideControl",
@@ -47,7 +47,7 @@
 			}
 		},
 		{
-			"variantRef":"",
+			"variantReference":"",
 			"fileName":"id_1445501120486_27",
 			"fileType":"change",
 			"changeType":"hideControl",
@@ -100,7 +100,7 @@
 					},
 					"changes" : [
 						{
-							"variantRef":"variant0",
+							"variantReference":"variant0",
 							"fileName":"id_1445501120486_41",
 							"fileType":"change",
 							"changeType":"hideControl",
@@ -123,7 +123,7 @@
 							}
 						},
 						{
-							"variantRef":"variant0",
+							"variantReference":"variant0",
 							"fileName":"id_1445501120486_42",
 							"fileType":"change",
 							"changeType":"hideControl",
@@ -173,7 +173,7 @@
 					},
 					"changes" : [
 						{
-							"variantRef":"idMain1--variantManagementOrdersTable",
+							"variantReference":"idMain1--variantManagementOrdersTable",
 							"fileName":"id_1445501120486_41",
 							"fileType":"change",
 							"changeType":"hideControl",
@@ -196,7 +196,7 @@
 							}
 						},
 						{
-							"variantRef":"idMain1--variantManagementOrdersTable",
+							"variantReference":"idMain1--variantManagementOrdersTable",
 							"fileName":"id_1445501120486_43",
 							"fileType":"change",
 							"changeType":"hideControl",
@@ -246,6 +246,7 @@
 					},
 					"changes" : [
 						{
+							"variantReference":"variant2",
 							"fileName": "id_1500543015867_80_moveControls",
 							"fileType": "change",
 							"changeType": "moveControls",
@@ -318,6 +319,7 @@
 							}
 						},
 						{
+							"variantReference":"variant2",
 							"fileName": "id_1500638301854_28_rename",
 							"fileType": "change",
 							"changeType": "rename",

@@ -87,6 +87,31 @@ sap.ui.define([
 		return this.oData[sVariantMgmtRef].currentVariant;
 	};
 
+	VariantModel.prototype.getVariantManagementReference = function(sVariantRef) {
+		var sVariantManagementReference = "";
+		Object.keys(this.oData).some(function(sKey) {
+			return this.oData[sKey].variants.some(function(oVariant) {
+				if (oVariant.key === sVariantRef) {
+					sVariantManagementReference = sKey;
+					return true;
+				}
+			});
+		}.bind(this));
+		return sVariantManagementReference;
+	};
+
+	VariantModel.prototype._addChange = function(oChange) {
+		var sVariantRef = oChange.getVariantReference();
+		var sVariantMgmtRef = this.getVariantManagementReference(sVariantRef);
+		return this.oVariantController.addChangeToVariant(oChange, sVariantMgmtRef, sVariantRef);
+	};
+
+	VariantModel.prototype._removeChange = function(oChange) {
+		var sVariantRef = oChange.getVariantReference();
+		var sVariantMgmtRef = this.getVariantManagementReference(sVariantRef);
+		return this.oVariantController.removeChangeFromVariant(oChange, sVariantMgmtRef, sVariantRef);
+	};
+
 	/**
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantMgmtRef The variant management Ref
