@@ -9,16 +9,6 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .customBackground section
 	border-bottom-width: 0;
 }
 
-.sapUiDemoCart .welcomeText {
-	font-size: 2rem;
-	font-weight: bold;
-}
-
-/* override background color for non-accessibility themes */
-html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoCart .welcomeText {
-	background-color: rgba(255,255,255,0.5);
-}
-
 .sapUiDemoCart .welcomeCarouselText {
 	color: white;
 	display: block;
