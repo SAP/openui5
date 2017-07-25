@@ -70,5 +70,14 @@
 			"owner": "mitch-b",
 			"license": "MIT",
 			"type": "Control"
+		},
+		"ui5-CRUDModel": {
+			"name": "OpenUI5-SAPUI5-CRUDModel",
+			"description": "OpenUI5/SAPUI5 Model implementation for mevdschee/php-crud-api and mevdschee/php-api-auth",
+			"githubLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
+			"documentationLink": "https://github.com/VyseExhale/OpenUI5-SAPUI5-CRUDModel",
+			"owner": "VyseExhale",
+			"license": "MIT",
+			"type": "Model"
 		}
 	}
