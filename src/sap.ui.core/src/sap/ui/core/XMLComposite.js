@@ -129,7 +129,7 @@ sap.ui.define([
 	 * rendering part is added as a fragment.
 	 * The fragment that is used should appear in the same folder as the control's JS implementation with the file extension
 	 * <code>.control.xml</code>.
-	 * The fragment's content can access the interface data from the fragment control via bindings. Currently only aggregations and properties
+	 * The fragment's content can access the interface data from the XMLComposite control via bindings. Currently only aggregations and properties
 	 * can be used with bindings inside a fragment.
 	 * The exposed model that is used for internal bindings in the fragment has the default name <code>$this</code>. The name will always start
 	 * with an <code>$</code>. The metadata of the derived control can define the alias with its metadata. A code example can be found below.
@@ -219,7 +219,7 @@ sap.ui.define([
 	 *    &lt;/core:FragmentDefinition&gt;
 	 * </pre>
 	 *
-	 * All events handled within the fragment will be dispatched to the Fragment Control. It is recommended to follow this paradigm to allow
+	 * All events handled within the fragment will be dispatched to the XMLComposite control. It is recommended to follow this paradigm to allow
 	 * reuse of a XMLComposite without any dependency to controller code of the current embedding view.
 	 *
 	 * <pre>
