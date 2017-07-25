@@ -16,6 +16,19 @@ sap.ui.define([
 		onTheWelcomePage: {
 			actions: {
 
+				iLookAtTheScreen : function () {
+					return this;
+				},
+
+				iPressTheMenuButton : function () {
+					return this.waitFor({
+						viewName: sViewName,
+						matchers: new Properties({ icon : "sap-icon://menu2" }),
+						actions: new Press(),
+						errorMessage: "No Menu button found"
+					});
+				},
+
 				iPressTheProductLink: function () {
 					return this.waitFor({
 						controlType: "sap.m.ObjectIdentifier",

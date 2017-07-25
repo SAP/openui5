@@ -1,5 +1,7 @@
 sap.ui.define([
 	//page objects
+	'sap/ui/demo/cart/test/pageobjects/Welcome',
+	'sap/ui/demo/cart/test/pageobjects/Checkout',
 	'sap/ui/demo/cart/test/pageobjects/Home',
 	'sap/ui/demo/cart/test/pageobjects/Category',
 	'sap/ui/demo/cart/test/pageobjects/Product',
