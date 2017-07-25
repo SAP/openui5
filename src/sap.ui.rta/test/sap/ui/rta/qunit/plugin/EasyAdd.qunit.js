@@ -44,7 +44,8 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyAdd");
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 

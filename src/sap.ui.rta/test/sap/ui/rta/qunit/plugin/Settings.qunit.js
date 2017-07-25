@@ -46,7 +46,8 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 	sinon.stub(sap.ui.fl.changeHandler.PropertyChange, "completeChangeContent");

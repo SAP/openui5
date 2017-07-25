@@ -63,7 +63,8 @@ function(
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 
 	sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);

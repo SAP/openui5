@@ -179,10 +179,10 @@ sap.ui.define([
 		}
 	};
 
-	Remove.prototype._getRemoveCommand = function(oRemovedElement, oDesignTimeMetadata) {
+	Remove.prototype._getRemoveCommand = function(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey) {
 		return this.getCommandFactory().getCommandFor(oRemovedElement, "Remove", {
 			removedElement : oRemovedElement
-		}, oDesignTimeMetadata);
+		}, oDesignTimeMetadata, sVariantManagementKey);
 	};
 
 	Remove.prototype._fireElementModified = function(oCompositeCommand) {
@@ -202,6 +202,14 @@ sap.ui.define([
 
 			var oRemovedElement = oOverlay.getElementInstance();
 			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+			var oRemoveAction = this._getRemoveAction(oOverlay);
+			var oRelevantElement;
+			if (oRemoveAction.changeOnRelevantContainer) {
+				oRelevantElement = oOverlay.getRelevantContainer();
+			} else {
+				oRelevantElement = oRemovedElement;
+			}
+			var sVariantManagementKey = this.getVariantManagementKey(oOverlay, oRelevantElement, oRemoveAction.changeType);
 
 			if (this.isRemoveEnabled(oOverlay)) {
 				var sConfirmationText = this._getConfirmationText(oOverlay);
@@ -210,13 +218,13 @@ sap.ui.define([
 						Utils.openRemoveConfirmationDialog(oRemovedElement, sConfirmationText)
 						.then(function(bConfirmed) {
 							if (bConfirmed) {
-								oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata);
+								oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey);
 								oCompositeCommand.addCommand(oCommand);
 							}
 						}.bind(this))
 					);
 				} else {
-					oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata);
+					oCommand = this._getRemoveCommand(oRemovedElement, oDesignTimeMetadata, sVariantManagementKey);
 					oCompositeCommand.addCommand(oCommand);
 				}
 			}

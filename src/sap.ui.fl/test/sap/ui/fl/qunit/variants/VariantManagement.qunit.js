@@ -274,6 +274,7 @@
 		assert.ok(this.oVariantManagement.oSaveAsDialog);
 		sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
 
+		sinon.stub(oModel, "switchToVariant").returns(Promise.resolve());
 		this.oVariantManagement.setSelectedVariantKey("1");
 
 		this.oVariantManagement._openSaveAsDialog();
@@ -496,6 +497,7 @@
 		oItemFav.favorite = false;
 		this.oVariantManagement._handleManageFavoriteChanged(oItemFav);
 
+		sinon.stub(oModel, "switchToVariant").returns(Promise.resolve());
 		this.oVariantManagement.setSelectedVariantKey("1");
 
 		this.oVariantManagement._handleManageSavePressed();

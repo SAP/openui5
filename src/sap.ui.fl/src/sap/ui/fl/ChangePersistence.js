@@ -602,7 +602,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
 	 */
 	ChangePersistence.prototype.loadSwitchChangesMapForComponent = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
-		return this._oVariantController.getChangesForVariantSwitch(sVariantManagementId, sCurrentVariant, sNewVariant);
+		return this._oVariantController.getChangesForVariantSwitch(sVariantManagementId, sCurrentVariant, sNewVariant, this._mChanges.mChanges);
 	};
 
 	return ChangePersistence;

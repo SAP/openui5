@@ -37,7 +37,8 @@ jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 	sinon.stub(sap.ui.fl.changeHandler.PropertyChange, "completeChangeContent");

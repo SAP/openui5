@@ -44,7 +44,7 @@ sap.ui.require([
 	QUnit.module("Given an instance of FakeLrepConnector", {
 		beforeEach : function(assert) {
 			var done = assert.async();
-			jQuery.getJSON("../testResources/FakeVariantLrepResponse.json")
+			jQuery.getJSON("../testResources/TestFakeVariantLrepResponse.json")
 				.done(function(oFakeVariantResponse) {
 					this.oResponse = {};
 					this.oResponse.changes = oFakeVariantResponse;
@@ -161,9 +161,12 @@ sap.ui.require([
 		var aChanges = aChangeContents.map(function (oChangeContent) {
 			return new Change(oChangeContent);
 		});
+		var mCurrentChanges = {
+			"dummyControlSelector":	[aChanges[0], aChanges[1], aChanges[2]]
+		};
 
 		var oVariantController = new VariantController("MyComponent", "1.2.3", oFakeVariantResponse);
-		var mChanges = oVariantController.getChangesForVariantSwitch("variantManagementId", "variant0", "variant1");
+		var mChanges = oVariantController.getChangesForVariantSwitch("variantManagementId", "variant0", "variant1", mCurrentChanges);
 		var aExpectedNew = [aChanges[3], aChanges[4]];
 		var aExpectedRevert = [aChanges[2], aChanges[1]];
 		mChanges.aNew.forEach(function (oChange, i) {
@@ -176,12 +179,15 @@ sap.ui.require([
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
-		var oRevertedChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes[1]);
+		var aExistingChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes.map(function (oChange) {
+			return new Change(oChange);
+		});
+		//var oRevertedChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes[1]);
 
 		var oNewChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes[1]);
 
 		var aExpectedNew = [oNewChange];
-		var aExpectedRevert = [oRevertedChange];
+		var aExpectedRevert = [aExistingChanges[1]];
 
 		var oComponent = {
 			name: "MyComponent",
@@ -189,6 +195,7 @@ sap.ui.require([
 			getId : function() {return "RTADemoAppMD";}
 		};
 		this.oChangePersistence = new ChangePersistence(oComponent);
+		this.oChangePersistence._mChanges.mChanges = {"dummyControlSelector": aExistingChanges};
 		this.oChangePersistence._oVariantController._mVariantManagement = this.oResponse.changes.variantSection;
 
 		this.mPropertyBag = {viewId: "view1--view2"};
@@ -349,27 +356,27 @@ sap.ui.require([
 		this.mPropertyBag = {viewId: "view1--view2"};
 
 		return this.oFlexController._oChangePersistence.loadChangesMapForComponent(oComponent, this.mPropertyBag)
-		.then(function() {
-			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aRevertedChanges[1].getKey()] instanceof Object);
-			fnGetChanges.call(this, aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+			.then(function() {
+				assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aRevertedChanges[1].getKey()] instanceof Object);
+				fnGetChanges.call(this, aRevertedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+				//this.oFlexController._oChangePersistence._mChanges.mChanges = {"dummyControlSelector": aRevertedChanges};
 
-			oData = this.oFlexController.getVariantModelData();
-			oModel = new VariantModel(oData, this.oFlexController, oComponent);
+				oData = this.oFlexController.getVariantModelData();
+				oModel = new VariantModel(oData, this.oFlexController, oComponent);
 
-			sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
-			assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
-			return oModel.switchToVariant("variantManagementOrdersTable", "variantManagementOrdersTable");
-		}.bind(this))
+				sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+				assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
+				oModel._updateCurrentVariant("variantManagementOrdersTable", "variantManagementOrdersTable")
+				.then(function() {
+					assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
+					fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-		.then(function() {
-			assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
-			fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
+					sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+					assert.equal(sCurrentVariant, "variantManagementOrdersTable", "the current variant key after switch is correct");
 
-			sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
-			assert.equal(sCurrentVariant, "variantManagementOrdersTable", "the current variant key after switch is correct");
-
-			done();
-		}.bind(this));
+					done();
+				}.bind(this));
+			}.bind(this));
 	});
 
 });

@@ -42,7 +42,8 @@ jQuery.sap.require("sap.ui.rta.plugin.EasyRemove");
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 

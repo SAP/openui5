@@ -92,7 +92,8 @@ sap.ui.require([
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 	var sandbox = sinon.sandbox.create();
 

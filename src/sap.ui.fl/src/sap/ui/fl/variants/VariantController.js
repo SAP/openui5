@@ -146,18 +146,33 @@ sap.ui.define([
 	 * @param {String} sVariantManagementId The variant management id
 	 * @param {String} sCurrentVariant The id of the currently used variant
 	 * @param {String} sNewVariant The id of the newly selected variant
+	 * @param {Object} mChanges The changes inside the current changes map
 	 * @returns {Object} The map containing all changes to be reverted and all new changes
 	 * @public
 	 */
-	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
-		var aCurrentChanges = this.getVariantChanges(sVariantManagementId, sCurrentVariant).map(function(oChangeContent) {
-			return new Change(oChangeContent);
+	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementId, sCurrentVariant, sNewVariant, mChanges) {
+		var aCurrentChangeKeys = this.getVariantChanges(sVariantManagementId, sCurrentVariant).map(function(oChangeContent) {
+			return new Change(oChangeContent).getKey();
 		});
+
+		var aCurrentVariantChanges = Object.keys(mChanges).reduce(function(aChanges, sControlId) {
+
+			var aCurrentFilteredChanges = [];
+			mChanges[sControlId].forEach(function(oChange) {
+				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
+				if (iChangeIndex !== -1) {
+					aCurrentFilteredChanges.push(oChange);
+				}
+			});
+			return aChanges.concat(aCurrentFilteredChanges);
+
+		}, []);
+
 		var aNewChanges = this.getVariantChanges(sVariantManagementId, sNewVariant).map(function(oChangeContent) {
 			return new Change(oChangeContent);
 		});
-		var aRevertChanges = aCurrentChanges.slice();
-		aCurrentChanges.some(function(oChange) {
+		var aRevertChanges = aCurrentVariantChanges.slice();
+		aCurrentVariantChanges.some(function(oChange) {
 			if (oChange.getKey() === aNewChanges[0].getKey()) {
 				aNewChanges.shift();
 				aRevertChanges.shift();

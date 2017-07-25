@@ -86,7 +86,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	 * (in some cases element of a command is unstable, so change needs to be created and stored upfront)
 	 * @override
 	 */
-	FlexCommand.prototype.prepare = function(mFlexSettings) {
+	FlexCommand.prototype.prepare = function(mFlexSettings, sVariantManagementKey) {
 		if (
 			!this.getSelector()
 			&& this.getElement()
@@ -98,7 +98,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 			};
 			this.setSelector(oSelector);
 		}
-		this._oPreparedChange = this._createChange(mFlexSettings);
+		this._oPreparedChange = this._createChange(mFlexSettings, sVariantManagementKey);
 	};
 
 	/**
@@ -142,8 +142,8 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	 * @returns {object} change object
 	 * @private
 	 */
-	FlexCommand.prototype._createChange = function(mFlexSettings) {
-		return this._createChangeFromData(this._getChangeSpecificData(), mFlexSettings);
+	FlexCommand.prototype._createChange = function(mFlexSettings, sVariantManagementKey) {
+		return this._createChangeFromData(this._getChangeSpecificData(), mFlexSettings, sVariantManagementKey);
 	};
 
 	/**
@@ -155,11 +155,23 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 	 * @returns {object} change object
 	 * @private
 	 */
-	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings) {
+	FlexCommand.prototype._createChangeFromData = function(mChangeSpecificData, mFlexSettings, sVariantManagementKey) {
 		if (mFlexSettings) {
 			jQuery.extend(mChangeSpecificData, mFlexSettings);
 		}
+		var oModel = this.getAppComponent().getModel("$FlexVariants");
+		var sVariantKey;
+		if (oModel && sVariantManagementKey) {
+			sVariantKey = oModel.getCurrentVariantRef(sVariantManagementKey);
+		}
 		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
+		var mVariantObj = {
+			"variantManagementKey": sVariantManagementKey,
+			"variantKey": sVariantKey
+		};
+		if (sVariantKey) {
+			jQuery.extend(mChangeSpecificData, mVariantObj);
+		}
 		return oFlexController.createChange(mChangeSpecificData, this.getElement() || this.getSelector());
 	};
 
