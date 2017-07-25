@@ -1031,5 +1031,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "8c081b2d9bac4e88e6ac2b59fe2c8caa19f18608",
+        "type": "FIX",
+        "text": " jquery: prevent auto-detection of content type",
+        "references": []
+      },
+      {
+        "id": "f42c5cbbd2e8b2363a94ef0a0b3ac357bfbaf330",
+        "type": "FIX",
+        "text": " sap.ui.core.util.File.save JSDoc: Update browser limitations (Safari)",
+        "references": []
+      },
+      {
+        "id": "3c88961ee9b207328909719ec436b9d9941b0da5",
+        "type": "FIX",
+        "text": " sap_hcb: @sapUiPositiveText color fix",
+        "references": []
+      }
+    ]
   }
 }

@@ -686,5 +686,40 @@
         "references": []
       }
     ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "9bc2e7f985b137112b0c6bfccf76a48b76eab26f",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "ced7eb2c6ecb8bc166c41049ebe003e0ff067925",
+        "type": "FIX",
+        "text": " Table: Correctly update the NoData text",
+        "references": []
+      },
+      {
+        "id": "15d0f6fc2b8f6831660a8ad52d103514155aa86d",
+        "type": "FIX",
+        "text": " TreeTable: Leaf icons are no longer in the tab chain",
+        "references": []
+      },
+      {
+        "id": "757bc255b8805d924bfc734de6de26bc5429cd59",
+        "type": "FIX",
+        "text": " TreeTable: Position of the TreeIcon",
+        "references": []
+      },
+      {
+        "id": "16afd0d434505a78166744db9f10bd0d0ec1818f",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      }
+    ]
   }
 }

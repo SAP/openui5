@@ -2321,5 +2321,100 @@
         "references": []
       }
     ]
+  },
+  "1.44.18": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "e4b6d52a1fb45455e2bf29ac8521d0e3edd7fbd7",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Fix ArialablledBy for buttons.",
+        "references": []
+      },
+      {
+        "id": "3b00eb61bbe57abd17aa202fe8c0d3fb490b3ec0",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Bound selectedKey is now updated on model change",
+        "references": []
+      },
+      {
+        "id": "de8bc9e1fbf0254bd67dffbce5555e61365d45c4",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Header contents are now vertically centered correctly in compact mode",
+        "references": []
+      },
+      {
+        "id": "6c4f3090bf0d5098f9156d8b4eab737ca34fe464",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: Special characters in the sender property are displayed correctly",
+        "references": []
+      },
+      {
+        "id": "025c687f369eaa3f0bd4f8fb8ce32f516aabe36d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent the soft keyboard to be opened when opening the dropdown list",
+        "references": []
+      },
+      {
+        "id": "86308354fc4ad2c06b1bd8e3996ecf0f63df5235",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: qunit checking background color is corrected",
+        "references": []
+      },
+      {
+        "id": "0aecf849aceeeccbfb3617fcb4d88039b90de6aa",
+        "type": "FIX",
+        "text": " sap.m.Popover: Vertical calculations in IE fixed",
+        "references": []
+      },
+      {
+        "id": "ea4e571bcb64a5baea446932d64ad030f4d3b347",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Moved tooltip to input element",
+        "references": []
+      },
+      {
+        "id": "0aae6b1d402936c415ae13af6d64a01b9ca50d6d",
+        "type": "FIX",
+        "text": " sap.m.Shell: Support of TitleLevel added",
+        "references": []
+      },
+      {
+        "id": "c2b2f32a22bdb94d7e7b08d3b59c569a47049d08",
+        "type": "FIX",
+        "text": " sap.m.StepInput: Now fires change event on focus out",
+        "references": []
+      },
+      {
+        "id": "e60987c052d4bd0f4b599df0d83dadf1418512a5",
+        "type": "FIX",
+        "text": " sap.m.Text: MaxLines property documentation corrected",
+        "references": []
+      },
+      {
+        "id": "66163aa1797f45ca52db7fe67bfb6afe07ecf7e9",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Testing touch event is now corrected",
+        "references": []
+      },
+      {
+        "id": "92cea4ddf5fda4a3a5236c0a9d5d04cbb935331f",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      },
+      {
+        "id": "3b4882e28402d4665036f3dde17b5e1a2523d4bc",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus after item deletion corrected",
+        "references": []
+      },
+      {
+        "id": "37e0f20739e334d6a5362c7ca5e349676471efb3",
+        "type": "FIX",
+        "text": " sap.m.UploadCollection: Focus handling in HCB and belize_hcb improved",
+        "references": []
+      }
+    ]
   }
 }
