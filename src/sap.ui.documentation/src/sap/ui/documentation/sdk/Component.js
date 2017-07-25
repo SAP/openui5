@@ -65,7 +65,7 @@ sap.ui.define([
 
 				if (Device.system.desktop) {
 					// Preload API Info on desktop for faster startup
-					this.fetchVersionInfo().then(this.fetchAPIInfoAndBindModels.bind(this));
+					this.loadVersionInfo().then(this.fetchAPIInfoAndBindModels.bind(this));
 				}
 
 				// Prevents inappropriate focus change which causes ObjectPage to scroll,
@@ -117,7 +117,7 @@ sap.ui.define([
 
 			// MODELS
 
-			fetchVersionInfo: function () {
+			loadVersionInfo: function () {
 				if (!this._oVersionInfoPromise) {
 					this._oVersionInfoPromise = sap.ui.getVersionInfo({async: true})
 						.then(this._bindVersionModel.bind(this));

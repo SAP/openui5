@@ -18,6 +18,13 @@ sap.ui.define([
 			// Prerequisites
 			_oCore: sap.ui.getCore(),
 
+			onInit: function() {
+				// Load <code>versionInfo</code> to ensure the <code>versionData</code> model is loaded.
+				if (Device.system.phone || Device.system.tablet) {
+					this.getOwnerComponent().loadVersionInfo(); // for Desktop is always loaded in <code>Component.js</code>
+				}
+			},
+
 			hideMasterSide : function() {
 				var splitApp = this.getSplitApp();
 				splitApp.setMode(sap.m.SplitAppMode.HideMode);
