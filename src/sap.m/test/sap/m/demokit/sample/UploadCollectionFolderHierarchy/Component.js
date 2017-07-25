@@ -15,7 +15,8 @@ sap.ui.define([
 					stretch: true,
 					files: [
 						"Page.view.xml",
-						"Page.controller.js"
+						"Page.controller.js",
+						"UploadCollectionData.json"
 					]
 				}
 			}
