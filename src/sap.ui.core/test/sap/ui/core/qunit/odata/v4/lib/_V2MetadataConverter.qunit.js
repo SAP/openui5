@@ -164,6 +164,7 @@ sap.ui.require([
 		localTest("Unicode", "false", false);
 		localTest("Unicode", "true", undefined);
 		localTest("MaxLength", "12345", 12345);
+		localTest("MaxLength", "Max", undefined);
 		localTest("FixedLength", "true", undefined);
 		localTest("FixedLength", "false", {$Scale : "variable"});
 	});

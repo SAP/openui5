@@ -351,6 +351,7 @@ sap.ui.require([
 		localTest("Unicode", "false", false);
 		localTest("Unicode", "true", undefined);
 		localTest("MaxLength", "12345", 12345);
+		localTest("MaxLength", "max", undefined);
 		localTest("SRID", "42", "42");
 	});
 
