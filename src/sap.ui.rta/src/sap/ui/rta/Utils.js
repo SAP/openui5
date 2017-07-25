@@ -422,6 +422,7 @@ function(
 		oModel || (oModel = oElement.getModel());
 
 		var oBindingContext = oElement.getBindingContext();
+
 		if (oBindingContext) {
 			return Utils.getEntityTypeByPath(oModel, oBindingContext.getPath()) || {};
 		}
