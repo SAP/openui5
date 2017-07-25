@@ -64,6 +64,7 @@
 
 		QUnit.test("BlockLayout Default values", function (assert) {
 			assert.strictEqual(this.BlockLayout.getBackground(), "Default", "Background's default value should be equal to Default");
+			assert.strictEqual(this.BlockLayout.getKeepFontSize(), false, "KeepFontSize's default value should be equal to Default");
 			assert.strictEqual(this.BlockLayoutConstants.SIZES.S, 600, "Break point M should be equal to 600");
 			assert.strictEqual(this.BlockLayoutConstants.SIZES.M, 1024, "Break point M should be equal to 1024");
 		});
@@ -405,6 +406,26 @@
 
 			// Cleanup
 			oContainer.destroy();
+		});
+
+		QUnit.test("Should not add the font modifying stlye classes if keepFontSize is off", function (assert) {
+			// System under test
+			var blockLayout = new sap.ui.layout.BlockLayout({
+				keepFontSize: true
+			});
+
+			// Act
+			blockLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			assert.ok(blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "style class is added");
+
+			// Act part 2 - change the property - style class should be gone
+			blockLayout.setKeepFontSize(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(!blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "no style class is added");
 		});
 
 	</script>

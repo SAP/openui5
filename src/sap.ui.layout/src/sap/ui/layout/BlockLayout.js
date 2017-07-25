@@ -68,8 +68,13 @@ sap.ui.define(['sap/ui/core/Control', './library', 'jquery.sap.global', 'sap/ui/
 				 * Determines the background used for the Layout
 				 * @since 1.42
 				 */
-				background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" }
+				background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" },
 
+				/**
+				 * Keeps the font-size of the contents as is, independent from the screen size.
+				 * @since 1.52
+				 */
+				keepFontSize: { type: "boolean", group:"Behaviour", defaultValue: false}
 			},
 			defaultAggregation : "content",
 			aggregations : {
