@@ -95,8 +95,8 @@ function(
 		var aPropertiesKeys = Object.keys(oChildElement.getMetadata().getAllProperties());
 
 		return aPropertiesKeys
-		// filter properties which are not bound
-			.filter(oChildElement.isBound.bind(oChildElement))
+			// filter properties which are not bound
+			.filter(oChildElement.getBinding.bind(oChildElement))
 			.reduce(function (aBindings, sPropertyName) {
 				return aBindings.concat(
 					flattenBindings(
