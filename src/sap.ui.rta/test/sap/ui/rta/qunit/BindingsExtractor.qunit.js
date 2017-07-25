@@ -92,6 +92,16 @@ function(
 			"the bound property inside the group element field is found");
 	});
 
+	QUnit.test("when getting the Bindings for a field bound to non-existent model,", function(assert) {
+		var oMainModel = this.oView.getModel();
+		var oGroupElement = this.oView.byId("NonExistentModel");
+		var aBindings = BindingsExtractor.getBindings(oGroupElement, oMainModel);
+		assert.strictEqual(
+			aBindings.length,
+			0,
+			"then no binding is found");
+	});
+
 	function renderComplexView(assert) {
 		var oView = sap.ui.xmlview("idMain1", "sap.ui.rta.test.additionalElements.ComplexTest");
 		oView.placeAt("test-view");

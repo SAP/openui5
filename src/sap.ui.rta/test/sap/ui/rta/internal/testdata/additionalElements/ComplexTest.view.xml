@@ -103,6 +103,9 @@
 									<smartForm:GroupElement label="Field with absolute binding" id="EntityType02.AbsoluteBinding" visible="false">
 										<smartField:SmartField value="{/ModelName/PropertyName}"/>
 									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Field with binding to non-existent model" id="NonExistentModel" visible="false">
+										<smartField:SmartField value="{NonExistentModel>PropertyName}"/>
+									</smartForm:GroupElement>
 								</smartForm:Group>
 							</smartForm:SmartForm>
 						</uxap:ObjectPageSubSection>
