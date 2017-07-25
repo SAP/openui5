@@ -27,6 +27,7 @@ module.exports = [
 	"ObjectHeaderVisualTest.spec.js",
 	"ObjectNumberVisualTest.spec.js",
 	"OverflowToolbar.spec.js",
+	"OverflowToolbarInRTE.spec.js",
 	"Page.spec.js",
 	"Panel.spec.js",
 	"PlanningCalendar.spec.js",
