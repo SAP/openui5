@@ -499,4 +499,39 @@ function(
 			"when oObjectPageSubSection3Overlay parameter set then oObjectPageSubSection1Overlay is returned");
 	});
 
+	QUnit.test("when setRtaStyleClassName is called in sap_belize", function(assert) {
+		var sExpectedStyleClass = "sapContrast";
+		this.sandbox.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize");
+		Utils._sRtaStyleClassName = "";
+
+		Utils.setRtaStyleClassName("Invalid Layer");
+		assert.equal(Utils.getRtaStyleClassName(), "", "then the StyleClass is not set");
+
+		Utils.setRtaStyleClassName("CUSTOMER");
+		assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+
+		Utils.setRtaStyleClassName("USER");
+		assert.equal(Utils.getRtaStyleClassName(), "", "then the StyleClass is reset");
+
+		Utils.setRtaStyleClassName("VENDOR");
+		assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+	});
+
+	QUnit.test("when setRtaStyleClassName is called in sap_belize_plus", function(assert) {
+		var sExpectedStyleClass = "sapContrastPlus";
+		this.sandbox.stub(sap.ui.getCore().getConfiguration(), "getTheme").returns("sap_belize_plus");
+		Utils._sRtaStyleClassName = "";
+
+		Utils.setRtaStyleClassName("Invalid Layer");
+		assert.equal(Utils.getRtaStyleClassName(), "", "then the StyleClass is not set");
+
+		Utils.setRtaStyleClassName("CUSTOMER");
+		assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+
+		Utils.setRtaStyleClassName("USER");
+		assert.equal(Utils.getRtaStyleClassName(), "", "then the StyleClass is reset");
+
+		Utils.setRtaStyleClassName("VENDOR");
+		assert.equal(Utils.getRtaStyleClassName(), sExpectedStyleClass, "then the StyleClass is set");
+	});
 });

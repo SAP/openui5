@@ -41,13 +41,32 @@ function(
 
 	Utils._sFocusableOverlayClass = ".sapUiDtOverlaySelectable";
 
+	Utils._sRtaStyleClassName = "";
+
 	/**
 	 * Returns the rta specific Style Class
 	 *
 	 * @return {string} styleClass for RTA
 	 */
-	Utils.getRtaStyleClass = function() {
-		return "sapContrast";
+	Utils.getRtaStyleClassName = function() {
+		return Utils._sRtaStyleClassName;
+	};
+
+	/**
+	 * Sets the rta specific Style Class to "sapContrast", except for the User layer.
+	 *
+	 * @param {string} sLayer the current Layer from RTA
+	 */
+	Utils.setRtaStyleClassName = function(sLayer) {
+		if (sLayer === "USER") {
+			Utils._sRtaStyleClassName = "";
+		} else if (FlexUtils.getLayerIndex(sLayer) > -1) {
+			if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize") {
+				Utils._sRtaStyleClassName = "sapContrast";
+			} else if (sap.ui.getCore().getConfiguration().getTheme() === "sap_belize_plus") {
+				Utils._sRtaStyleClassName = "sapContrastPlus";
+			}
+		}
 	};
 
 	/**
