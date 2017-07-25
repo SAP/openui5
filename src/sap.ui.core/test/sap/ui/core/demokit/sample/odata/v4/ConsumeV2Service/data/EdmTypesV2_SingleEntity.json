@@ -10,6 +10,8 @@
 		"Boolean" : true,
 		"Byte" : 255,
 		"Date" : "\/Date(1395705600000)\/",
+		"DateTime" : "\/Date(1395752399000)\/",
+		"DateTimeOffset" : "\/Date(1420529121547+0000)\/",
 		"Decimal" : "1234567890.12345678901234",
 		"DigitSequence" : "0012345",
 		"Double" : "1.0000000000000001E63",

@@ -11,6 +11,13 @@ sap.ui.define([
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
 		rDate = /^\/Date\((\d+)\)\/$/,
 		oDateFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true}),
+		// Example "/Date(1420529121547+0530)/", the offset ("+0530") is optional
+		// matches: 1 = ticks in milliseconds, 2 = offset sign, 3 = offset hours, 4 = offset minutes
+		rDateTimeOffset = /^\/Date\((\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
+		oDateTimeOffsetFormatter =
+			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss", UTC : true}),
+		oDateTimeOffsetMSFormatter =
+			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS", UTC : true}),
 		rPlus = /\+/g,
 		rSlash = /\//g,
 		// Example: "PT11H33M55S",
@@ -88,6 +95,43 @@ sap.ui.define([
 				+ "' to Edm.Date because it contains a time of day");
 		}
 		return oDateFormatter.format(oDate);
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.DateTimeOffset or Edm.DateTime without
+	 * <code>sap:display-format="Date"</code> to the corresponding OData V4 Edm.DateTimeOffset value
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 */
+	_V2Requestor.prototype.convertDateTimeOffset = function (sV2Value) {
+		var aMatches = rDateTimeOffset.exec(sV2Value),
+			oFormatter,
+			sOffset,
+			iOffsetHours,
+			iOffsetMinutes,
+			iOffsetSign,
+			iTicks;
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.DateTimeOffset value '" + sV2Value + "'");
+		}
+		iTicks = parseInt(aMatches[1], 10);
+		iOffsetHours = parseInt(aMatches[3], 10);
+		iOffsetMinutes = parseInt(aMatches[4], 10);
+		if (!aMatches[2] || iOffsetHours === 0 && iOffsetMinutes === 0) {
+			sOffset = "Z";
+		} else {
+			iOffsetSign = aMatches[2] === "-" ? -1 : 1;
+			iTicks += iOffsetSign * (iOffsetHours * 60 * 60 * 1000 + iOffsetMinutes * 60 * 1000);
+			sOffset = aMatches[2] + aMatches[3] + ":"  + aMatches[4];
+		}
+		oFormatter = iTicks % 1000 ? oDateTimeOffsetMSFormatter : oDateTimeOffsetFormatter;
+		return oFormatter.format(new Date(iTicks)) + sOffset;
 	};
 
 	/**
@@ -214,6 +258,8 @@ sap.ui.define([
 				return this.convertBinary(vValue);
 			case "Edm.Date":
 				return this.convertDate(vValue);
+			case "Edm.DateTimeOffset":
+				return this.convertDateTimeOffset(vValue);
 			case "Edm.Boolean":
 			case "Edm.Byte":
 			case "Edm.Decimal":
