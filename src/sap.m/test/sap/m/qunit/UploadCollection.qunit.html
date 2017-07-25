@@ -1890,7 +1890,6 @@
 
 	QUnit.module("Display tests", {
 		beforeEach : function() {
-			this.fnTriggerLink = sap.m.UploadCollection.prototype._triggerLink;
 			this.oUploadCollection = new sap.m.UploadCollection({
 				items : {
 					path : "/items",
@@ -1904,16 +1903,12 @@
 		afterEach : function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
-			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
 		}
 	});
 
 	QUnit.test("Display", function(assert) {
-		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
-			assert.ok(true, "Link is triggered");
-		};
 		assert.expect(8); // verifies the event handler was executed
-		//check status = "display"
+		var oSpy = sinon.spy(sap.m.UploadCollection.prototype, "_triggerLink");
 		var iLength = this.oUploadCollection.aItems.length;
 		for (var i = 0; i < iLength; i++) {
 			assert.equal( this.oUploadCollection.aItems[i]._status, "display", "Status of item " + i + " is correct");
@@ -1926,11 +1921,16 @@
 		assert.equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		assert.equal(oFileName.getEnabled(), true, "File name is enabled");
 
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
+		qutils.triggerEvent(sap.ui.Device.system.desktop ? "click" : "tap", this.oUploadCollection.aItems[1].sId + "-ia_iconHL");
 		sap.ui.getCore().applyChanges();
 		// No Event should be triggered, because there is no url provided at aItems[0] --> no change at expect(8)!
-		qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		qutils.triggerEvent(sap.ui.Device.system.desktop ? "click" : "tap", this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		sap.ui.getCore().applyChanges();
+
+		assert.equal(oSpy.callCount, 1, "Link has been triggered.");
+
+		//Cleanup
+		oSpy.restore();
 	});
 
 	QUnit.module("Properties", {
