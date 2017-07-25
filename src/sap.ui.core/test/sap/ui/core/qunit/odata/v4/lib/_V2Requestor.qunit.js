@@ -249,7 +249,8 @@ sap.ui.require([
 		{sType : "Edm.Int64"},
 		{sType : "Edm.SByte"},
 		{sType : "Edm.Single", sConvertMethod : "convertDoubleSingle"},
-		{sType : "Edm.String"}
+		{sType : "Edm.String"},
+		{sType : "Edm.TimeOfDay", sConvertMethod : "convertTimeOfDay"}
 	].forEach(function (oFixture) {
 		QUnit.test("convertPrimitive, " + oFixture.sType, function (assert) {
 			var oRequestor = {},
@@ -364,7 +365,54 @@ sap.ui.require([
 		});
 	});
 
-	//*****************************************************************************************
+	//*********************************************************************************************
+	[{
+		input : "PT11H33M55S",
+		output : "11:33:55"
+	}, {
+		input : "PT11H",
+		output : "11:00:00"
+	}, {
+		input : "PT33M",
+		output : "00:33:00"
+	}, {
+		input : "PT55S",
+		output : "00:00:55"
+	}, {
+		input : "PT11H33M55.1234567S",
+		output : "11:33:55.1234567"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertTimeOfDay, success " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			// code under test
+			assert.strictEqual(oRequestor.convertTimeOfDay(oFixture.input), oFixture.output);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "APT11H33M55S",
+		expectedError : "Not a valid Edm.Time value 'APT11H33M55S'"
+	}, {
+		input : "PT11H33M55S123",
+		expectedError : "Not a valid Edm.Time value 'PT11H33M55S123'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertTimeOfDay, error " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			assert.throws(function () {
+				// code under test
+				return oRequestor.convertTimeOfDay(oFixture.input);
+			}, new Error(oFixture.expectedError));
+		});
+	});
+
+	//*********************************************************************************************
 	[{ // test dropSystemQueryOptions
 		dropSystemQueryOptions : true,
 		expectedResultHandlerCalls : [{key : "foo", value : "bar"}],
@@ -506,7 +554,7 @@ sap.ui.require([
 		}
 	});
 
-	//*****************************************************************************************
+	//*********************************************************************************************
 	["foo", undefined, null].forEach(function (vExpandOption) {
 		var sTitle = "doConvertSystemQueryOptions (V2): wrong $expand : " + vExpandOption;
 
@@ -522,7 +570,7 @@ sap.ui.require([
 		});
 	});
 
-	//*****************************************************************************************
+	//*********************************************************************************************
 	[{
 		queryOptions : {"$foo" : "bar"},
 		error : "Unsupported system query option: $foo"

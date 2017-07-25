@@ -21,6 +21,7 @@
 		"SByte" : -128,
 		"Single" : "1.234567E3",
 		"String" : "String Expression",
-		"String40" : "String Maxlength 40"
+		"String40" : "String Maxlength 40",
+		"Time" : "PT11H33M55S"
 	}
 }

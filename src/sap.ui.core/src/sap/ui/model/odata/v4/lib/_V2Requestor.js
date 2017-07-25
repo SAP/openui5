@@ -10,8 +10,13 @@ sap.ui.define([
 
 	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
 		rDate = /^\/Date\((\d+)\)\/$/,
+		oDateFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true}),
 		rPlus = /\+/g,
-		rSlash = /\//g;
+		rSlash = /\//g,
+		// Example: "PT11H33M55S",
+		// PT followed by optional hours, optional minutes, optional seconds with optional fractions
+		rTime = /^PT(?:(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(\.\d+)?S)?)$/i,
+		oTimeFormatter = DateFormat.getTimeInstance({pattern: "HH:mm:ss", UTC : true});
 
 	/**
 	 * A mixin for a requestor using an OData V2 service.
@@ -72,20 +77,17 @@ sap.ui.define([
 	 */
 	_V2Requestor.prototype.convertDate = function (sV2Value) {
 		var oDate,
-			oFormatter,
 			aMatches = rDate.exec(sV2Value);
 
 		if (!aMatches) {
 			throw new Error("Not a valid Edm.DateTime value '" + sV2Value + "'");
 		}
-
 		oDate = new Date(parseInt(aMatches[1], 10));
-		oFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true});
 		if (Number(aMatches[1] % (24 * 60 * 60 * 1000)) !== 0) {
 			throw new Error("Cannot convert Edm.DateTime value '" + sV2Value
 				+ "' to Edm.Date because it contains a time of day");
 		}
-		return oFormatter.format(oDate);
+		return oDateFormatter.format(oDate);
 	};
 
 	/**
@@ -106,6 +108,30 @@ sap.ui.define([
 			default:
 				return parseFloat(sV2Value);
 		}
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.Time to the corresponding OData V4 Edm.TimeOfDay value
+	 *
+	 *  @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 */
+	_V2Requestor.prototype.convertTimeOfDay = function (sV2Value) {
+		var oDate,
+			aMatches = rTime.exec(sV2Value),
+			iTicks;
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.Time value '" + sV2Value + "'");
+		}
+
+		iTicks = Date.UTC(1970, 0, 1, aMatches[1] || 0, aMatches[2] || 0, aMatches[3] || 0);
+		oDate = new Date(iTicks);
+		return oTimeFormatter.format(oDate) + (aMatches[4] || "");
 	};
 
 	/**
@@ -201,6 +227,8 @@ sap.ui.define([
 			case "Edm.Double":
 			case "Edm.Single":
 				return this.convertDoubleSingle(vValue);
+			case "Edm.TimeOfDay":
+				return this.convertTimeOfDay(vValue);
 			default:
 				throw new Error("Type '" + sPropertyType + "' of property '" + sPropertyName
 					+ "' in type '" + sTypeName + "' is unknown; cannot convert value: " + vValue);
