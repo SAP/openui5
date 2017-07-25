@@ -393,84 +393,91 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var sControlType = oModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
+		var sAppliedChanges, sChangeId, oAppliedChangeCustomData;
 
-		if (!oChangeHandler) {
-			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
-			return Promise.resolve();
-		}
+		return Promise.resolve()
 
-		var mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
-		var sAppliedChanges = mCustomData.appliedChangesString;
-		var aAppliedChanges = mCustomData.appliedChanges;
-		var oAppliedChangeCustomData = mCustomData.appliedChangeCustomData;
+		.then(function() {
+			var oModifier = mPropertyBag.modifier;
+			var sControlType = oModifier.getControlType(oControl);
+			var oChangeHandler = this._getChangeHandler(oChange, sControlType);
 
-		var sChangeId = oChange.getId();
-		if (aAppliedChanges.indexOf(sChangeId) === -1) {
+			if (!oChangeHandler) {
+				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
+				return Promise.resolve();
+			}
 
-			return Promise.resolve()
+			var mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
+			sAppliedChanges = mCustomData.appliedChangesString;
+			var aAppliedChanges = mCustomData.appliedChanges;
+			oAppliedChangeCustomData = mCustomData.appliedChangeCustomData;
 
-			.then(function() {
-				return oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
-			})
+			sChangeId = oChange.getId();
 
-			.then(function() {
-				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
-				this._writeCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
-			}.bind(this))
+			if (aAppliedChanges.indexOf(sChangeId) === -1) {
+				return Promise.resolve()
 
-			.catch(function() {
-				this._setMergeError(true);
-				Utils.log.error("Change could not be applied. Merge error detected.");
-			}.bind(this));
+				.then(function() {
+					return oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+				})
 
-		} else {
-			return Promise.resolve();
-		}
+				.then(function() {
+					var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
+					this._writeCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
+				}.bind(this))
+
+				.catch(function(sReason) {
+					this._setMergeError(true);
+					Utils.log.error("Change could not be applied. Merge error detected.");
+				}.bind(this));
+			}
+		}.bind(this));
+
+
 	};
 
-	FlexController.prototype._removeFromAppliedChanges = function(oChange, oControl, mPropertyBag, bRevert) {
-		var oModifier = mPropertyBag.modifier;
-		var sControlType = oModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType);
+	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
+		var aAppliedChanges, oAppliedChangeCustomData, iIndex;
+		return Promise.resolve()
 
-		if (bRevert && !oChangeHandler) {
-			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
-			return Promise.resolve();
-		}
+		.then(function() {
+			var oModifier = mPropertyBag.modifier;
+			var sControlType = oModifier.getControlType(oControl);
+			var oChangeHandler = this._getChangeHandler(oChange, sControlType);
 
-		var mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
-		var aAppliedChanges = mCustomData.appliedChanges;
-		var oAppliedChangeCustomData = mCustomData.appliedChangeCustomData;
+			if (bRevert && !oChangeHandler) {
+				Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
+				return Promise.resolve();
+			}
 
-		var sChangeId = oChange.getId();
-		var iIndex = aAppliedChanges.indexOf(sChangeId);
-		if (iIndex > -1) {
+			var mCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
+			aAppliedChanges = mCustomData.appliedChanges;
+			oAppliedChangeCustomData = mCustomData.appliedChangeCustomData;
 
-			return Promise.resolve()
+			var sChangeId = oChange.getId();
+			iIndex = aAppliedChanges.indexOf(sChangeId);
+			if (iIndex > -1) {
+				return Promise.resolve()
 
-			.then(function() {
-				if (bRevert) {
-					return oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
-				}
-			})
+				.then(function() {
+					if (bRevert) {
+						return oChangeHandler.revertChange(oChange, oControl, mPropertyBag);
+					}
+				})
 
-			.catch(function() {
-				Utils.log.error("Change could not be reverted.");
-			})
+				.catch(function(sReason) {
+					Utils.log.error("Change could not be reverted.");
+				})
 
-			.then(function() {
-				if (oAppliedChangeCustomData) {
-					aAppliedChanges.splice(iIndex, 1);
-					this._writeCustomData(oAppliedChangeCustomData, aAppliedChanges.join(), mPropertyBag, oControl);
-				}
-			}.bind(this));
+				.then(function() {
+					if (oAppliedChangeCustomData) {
+						aAppliedChanges.splice(iIndex, 1);
+						this._writeCustomData(oAppliedChangeCustomData, aAppliedChanges.join(), mPropertyBag, oControl);
+					}
+				}.bind(this));
+			}
+		}.bind(this));
 
-		} else {
-			return Promise.resolve();
-		}
 	};
 
 	FlexController.prototype._writeCustomData = function(oCustomData, sValue, mPropertyBag, oControl) {
@@ -800,7 +807,7 @@ sap.ui.define([
 				};
 				var oSelector = this._getSelectorOfChange(oChange);
 				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
-				return this._removeFromAppliedChanges(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, true)
+				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, true)
 				.then(function() {
 					this._oChangePersistence._deleteChangeInMap(oChange);
 				}.bind(this));
@@ -855,7 +862,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
-		return this._removeFromAppliedChanges(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
+		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
 	};
 
 	FlexController.prototype._updateDependencies = function (mDependencies, mDependentChangesOnMe, sChangeKey) {

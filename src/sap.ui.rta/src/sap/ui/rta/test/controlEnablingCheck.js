@@ -288,6 +288,7 @@ function(
 
 			// Since we don't use the CommandStack here, we have to take care of the applied Changes,
 			// which are stored in the custom data of the control, ourselves.
+			// (The original Change doesn't get deleted there, and therefore can't be applied again without this)
 			.then(function() {
 				var oChange = this.oCommand.getPreparedChange();
 				if (this.oCommand.getAppComponent) {
@@ -313,6 +314,7 @@ function(
 
 			// Since we don't use the CommandStack here, we have to take care of the applied Changes,
 			// which are stored in the custom data of the control, ourselves.
+			// (The original Change doesn't get deleted there, and therefore can't be applied again without this)
 			.then(function() {
 				var oChange = this.oCommand.getPreparedChange();
 				if (this.oCommand.getAppComponent) {

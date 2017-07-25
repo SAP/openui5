@@ -1671,7 +1671,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController._removeFromAppliedChanges(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
+		return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
 
 		.then(function() {
 			assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
@@ -1737,7 +1737,7 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController._removeFromAppliedChanges(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
+		return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
 
 		.then(function() {
 			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");

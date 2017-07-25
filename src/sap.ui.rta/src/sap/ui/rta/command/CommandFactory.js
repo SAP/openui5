@@ -5,20 +5,6 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 	function(ManagedObject, ElementUtil, OverlayRegistry, ChangeRegistry) {
 	"use strict";
 
-	var fnGetChangeHandler = function(sControlType, sChangeType){
-		var oResult = ChangeRegistry.getInstance().getRegistryItems({
-			controlType : sControlType,
-			changeTypeName : sChangeType
-		});
-
-		if (oResult && oResult[sControlType] && oResult[sControlType][sChangeType]) {
-			var oRegItem = oResult[sControlType][sChangeType];
-			return oRegItem.getChangeTypeMetadata().getChangeHandler();
-		} else {
-			jQuery.sap.log.warning("No '" + sChangeType + "' change handler for " + sControlType + " registered");
-		}
-	};
-
 	var fnConfigureActionCommand = function(oElement, oCommand, vAction){
 		var sChangeType;
 		if (typeof (vAction) === "string"){
@@ -30,14 +16,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		if (!sChangeType){
 			return false;
 		}
-		var sControlType = oElement.getMetadata().getName();
 
-		var ChangeHandler = fnGetChangeHandler(sControlType, sChangeType);
-		if (!ChangeHandler){
-			return false;
-		}
-
-		oCommand.setChangeHandler(ChangeHandler);
 		oCommand.setChangeType(sChangeType);
 		return true;
 	};

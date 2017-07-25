@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 	};
 
 	Move.prototype.undo = function() {
-		return this._applyChange(this._oPreparedUndoChange);
+		return this._applyChange(this._oPreparedUndoChange, true);
 	};
 
 	return Move;
