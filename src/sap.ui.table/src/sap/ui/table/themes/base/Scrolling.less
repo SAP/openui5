@@ -28,6 +28,8 @@
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: auto;
 	background-color: @sapUiListBackground;
+	z-index: 4; // Ensure that the scroll bar is above the column resizer/reorder bars. The bars will still be visible in the column header and fixed
+				// row areas, as these do not have a dedicated scroll bar element, instead the scroll bar area is realized by setting a margin.
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiTableVSb {
@@ -45,15 +47,15 @@ html[data-sap-ui-browser^="ed"] .sapUiTableVSb {
 }
 
 .sapUiTableVScr {
-	
+
 	.sapUiTableVSb {
 		display: block;
 	}
-	
+
 	.sapUiTableHSb, .sapUiTableCtrlScr, .sapUiTableColHdrScr  {
 		margin-right: @_sapUiTableDefaultScrollBarSize;
 	}
-	
+
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiTableVScr {
@@ -108,19 +110,19 @@ html[data-sap-ui-browser^="ed"] .sapUiTableHSb {
 }
 
 .sapUiTableHScr {
-	
+
 	.sapUiTableHSb {
 		display: block;
 	}
-	
+
 	.sapUiTableFtr {
 		border-top: 1px solid @sapUiListHeaderBorderColor;
 	}
-	
+
 	.sapUiTableColReorderIndicator, .sapUiTableColRsz {
 		bottom: @_sapUiTableDefaultScrollBarSize;
 	}
-	
+
 }
 
 html[data-sap-ui-browser^="ie"] .sapUiTableHScr {
@@ -141,14 +143,14 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 
 	.sapUiTableVSb,
 	.sapUiTableHSb {
-		
+
 		&::-webkit-scrollbar {
 			-webkit-appearance: none;
 			width: @_sapUiTableScrollBarSizeMOBILE;
 			height: @_sapUiTableScrollBarSizeMOBILE;
 			background-color: @sapUiScrollBarTrackColor;
 		}
-		
+
 		&::-webkit-scrollbar-thumb {
 			background-color: @sapUiScrollBarFaceColor;
 			border-top: 0.125rem solid @sapUiScrollBarBorderColor;
@@ -174,11 +176,11 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 			margin-right: @_sapUiTableScrollBarSizeMOBILE;
 		}
 	}
-	
+
 	.sapUiTableHScr {
 		.sapUiTableColReorderIndicator, .sapUiTableColRsz {
 			bottom: @_sapUiTableScrollBarSizeMOBILE;
 		}
 	}
-	
+
 }
