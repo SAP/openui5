@@ -10,7 +10,7 @@ sap.ui.define([
     "use strict";
 
     /*
-    var oLogger = $.sap.log.getLogger("sap.ui.test.OpaExtension",
+    var oLogger = _OpaLogger.getLogger("sap.ui.test.OpaExtension",
         $.sap.log.Level.DEBUG);
     */
 

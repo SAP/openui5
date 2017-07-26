@@ -19,7 +19,11 @@
 		jQuery.sap.require("sap/ui/thirdparty/sinon-qunit");
 		jQuery.sap.require("sap/ui/thirdparty/sinon-ie");
 		QUnit.config.autostart = false;
-		sap.ui.require(["sap/ui/test/_LogCollector", "jquery.sap.global"], function (_LogCollector, $) {
+		sap.ui.require([
+			"sap/ui/test/_LogCollector",
+			"sap/ui/test/_OpaLogger",
+			"jquery.sap.global"
+		], function (_LogCollector, _OpaLogger, $) {
 			"use strict";
 
 			QUnit.module("Singleton");
@@ -38,7 +42,7 @@
 			var sComponent = "sap.ui.test";
 			var oInstance = _LogCollector.getInstance();
 			var sExpectedLog = sLogMessage + " - " + sLogDetails + " " + sComponent;
-			var oLogger = $.sap.log.getLogger(sComponent, _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+			var oLogger = _OpaLogger.getLogger(sComponent);
 
 			function assertContainsLog (assert, sMessage) {
 				assert.strictEqual(sMessage, sExpectedLog, "The message '" + sMessage + "' contains the expectedLog '" + sExpectedLog + "'")
@@ -72,16 +76,21 @@
 			QUnit.test("Should read multiple logs", function (assert) {
 				oLogger.debug(sLogMessage, sLogDetails);
 				oLogger.debug(sLogMessage, sLogDetails);
-				// should be ommited no component
-				$.sap.log.debug(sLogMessage, sLogDetails);
-				$.sap.log.error(sLogMessage, sLogDetails);
 
 				var aLogs = oInstance.getAndClearLog().split("\n");
 				assert.strictEqual(aLogs.length, 2, "Got 2 logs");
 				aLogs.forEach(function (sLog) {
 					assertContainsLog(assert, sLog);
 				});
-				assert.strictEqual(oInstance.getAndClearLog(), "", "Log was empty");
+			});
+
+			QUnit.test("Should only collect logs with the right component", function (assert) {
+				var oIgnoredLogger = _OpaLogger.getLogger("someComponent");
+				oIgnoredLogger.error(sLogMessage, sLogDetails);
+				oIgnoredLogger.debug(sLogMessage, sLogDetails);
+				$.sap.log.debug(sLogMessage, sLogDetails);
+				$.sap.log.error(sLogMessage, sLogDetails);
+				assert.strictEqual(oInstance.getAndClearLog(), "", "Log should be empty");
 			});
 
 			QUnit.test("Should guard against memory leaking", function (assert) {
