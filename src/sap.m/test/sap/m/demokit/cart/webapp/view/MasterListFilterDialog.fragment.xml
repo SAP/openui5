@@ -1,9 +1,12 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
 	<ViewSettingsDialog
 		id="masterListFilterDialog"
-		confirm="handleConfirm">
+		confirm="handleConfirm"
+		cancel="handleCancel"
+		resetFilters="handleResetFilters">
 		<filterItems>
 			<ViewSettingsFilterItem
 				text="{i18n>availabilityText}"
@@ -14,14 +17,24 @@
 					<ViewSettingsItem text="{i18n>discontinuedProductsText}" key="Discontinued" />
 				</items>
 			</ViewSettingsFilterItem>
-			<ViewSettingsFilterItem
+			<ViewSettingsCustomItem
 				text="{i18n>priceText}"
-				key="priceKey">
-				<items>
-					<ViewSettingsItem text="{i18n>moreThanText}" key="More" />
-					<ViewSettingsItem text="{i18n>lessThanText}" key="Less" />
-				</items>
-			</ViewSettingsFilterItem>
+				key="Price">
+				<customControl>
+					<l:VerticalLayout
+						width="100%"
+						class="sapUiContentPadding">
+						<RangeSlider
+							id="rangeSlider"
+							width="100%"
+							value2="5000"
+							class="sapUiSmallMarginTop"
+							max="5000"
+							step="10"
+							change="handleChange"/>
+					</l:VerticalLayout>
+				</customControl>
+			</ViewSettingsCustomItem>
 		</filterItems>
 	</ViewSettingsDialog>
 </core:FragmentDefinition>

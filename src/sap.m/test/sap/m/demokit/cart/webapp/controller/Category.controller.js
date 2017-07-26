@@ -4,17 +4,20 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
-	'sap/m/MessageToast'
+	'jquery.sap.global'
 ], function (BaseController,
 			 formatter,
 			 Device,
 			 Filter,
 			 FilterOperator,
-			 MessageToast) {
+			 $) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Category", {
 		formatter : formatter,
+		// Define filterPreviousValues as global variables because they need to be accessed from different functions
+		_filterPreviousValue: 0,
+		_filterPreviousValue2: 5000,
 
 		onInit: function () {
 			var oComponent = this.getOwnerComponent();
@@ -108,14 +111,22 @@ sap.ui.define([
 			var oList = this.getView().byId("productList"),
 				oBinding = oList.getBinding("items"),
 				aSelectedFilterItems = oEvent.getParameter("filterItems"),
-				sFilterString = oEvent.getParameters().filterString,
+				oCustomFilter =  this._oDialog.getFilterItems()[1],
 				oFilter,
+				oCustomKeys = {},
 				aFilters = [],
 				aAvailableFilters = [],
 				aPriceFilters = [];
 
+			// Add the slider custom filter if the user selects some values
+			if (oCustomFilter.getCustomControl().getAggregation("content")[0].getValue() !== oCustomFilter.getCustomControl().getAggregation("content")[0].getMin() ||
+				oCustomFilter.getCustomControl().getAggregation("content")[0].getValue2() !== oCustomFilter.getCustomControl().getAggregation("content")[0].getMax()) {
+				aSelectedFilterItems.push(oCustomFilter);
+			}
 			aSelectedFilterItems.forEach(function (oItem) {
-				var sFilterKey = oItem.getProperty("key");
+				var sFilterKey = oItem.getProperty("key"),
+					iValueLow,
+					iValueHigh;
 				switch (sFilterKey) {
 					case "Available":
 						oFilter = new Filter("Status", FilterOperator.EQ, "A");
@@ -132,14 +143,12 @@ sap.ui.define([
 						aAvailableFilters.push(oFilter);
 						break;
 
-					case "More":
-						oFilter = new Filter("Price", FilterOperator.GE, 500);
+					case "Price":
+						iValueLow = oItem.getCustomControl().getAggregation("content")[0].getValue();
+						iValueHigh = oItem.getCustomControl().getAggregation("content")[0].getValue2();
+						oFilter = new Filter("Price", FilterOperator.BT, iValueLow, iValueHigh);
 						aPriceFilters.push(oFilter);
-						break;
-
-					case "Less":
-						oFilter = new Filter("Price", FilterOperator.LT, 500);
-						aPriceFilters.push(oFilter);
+						oCustomKeys["priceKey"] = {Price: true};
 						break;
 				}
 			});
@@ -152,14 +161,14 @@ sap.ui.define([
 			oFilter = new Filter({filters: aFilters, and: true});
 			if (aFilters.length > 0) {
 				oBinding.filter(oFilter);
-				MessageToast.show(sFilterString);
 				this.byId("categoryInfoToolbar").setVisible(true);
 				var sText = this.getResourceBundle().getText("filterByText") + " ";
 				var sSeparator = "";
-				var oKeys = oEvent.getParameter("filterCompoundKeys");
+				var oFilterKey = oEvent.getParameter("filterCompoundKeys");
+				var oKeys = $.extend(oFilterKey, oCustomKeys);
 				for (var key in oKeys) {
 					if (oKeys.hasOwnProperty(key)) {
-						sText = sText + sSeparator  + this.getResourceBundle().getText(key);
+						sText = sText + sSeparator  + this.getResourceBundle().getText(key, [this._filterPreviousValue, this._filterPreviousValue2]);
 						sSeparator = ", ";
 					}
 				}
@@ -170,6 +179,7 @@ sap.ui.define([
 				this.byId("categoryInfoToolbarTitle").setText("");
 			}
 		},
+
 		/**
 		 * Open the filter dialog
 		 */
@@ -190,11 +200,58 @@ sap.ui.define([
 		},
 
 		/**
-		 * Call the apply filter private function
+		 * Updates the previous slider values
 		 * @param {sap.ui.base.Event} oEvent the press event of the sap.m.Button
 		 */
 		handleConfirm: function (oEvent) {
+			var oCustomFilter = this._getDialog().getFilterItems()[1];
+			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
+			this._filterPreviousValue = oSlider.getValue();
+			this._filterPreviousValue2 = oSlider.getValue2();
 			this._applyFilter(oEvent);
+		},
+
+		/**
+		 * Sets the slider values to the previous ones
+		 * Updates the filter count
+		 */
+		handleCancel: function () {
+			var oCustomFilter = this._oDialog.getFilterItems()[1];
+			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
+			oSlider.setValue(this._filterPreviousValue).setValue2(this._filterPreviousValue2);
+			if (this._filterPreviousValue > oSlider.getMin() || this._filterPreviousValue2 !== oSlider.getMax()) {
+				oCustomFilter.setFilterCount(1);
+			} else {
+				oCustomFilter.setFilterCount(0);
+			}
+		},
+
+		/**
+		 * Updates filter count if there is a change in one of the slider values
+		 * @param {sap.ui.base.Event} oEvent the change event of the sap.m.RangeSlider
+		 */
+		handleChange: function (oEvent) {
+			var oCustomFilter = this._getDialog().getFilterItems()[1];
+			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
+			var iLowValue = oEvent.getParameter("range")[0];
+			var iHighValue = oEvent.getParameter("range")[1];
+			if (iLowValue !== oSlider.getMin() || iHighValue !== oSlider.getMax()) {
+				oCustomFilter.setFilterCount(1);
+			} else {
+				oCustomFilter.setFilterCount(0);
+			}
+
+		},
+
+		/**
+		 * Reset the price custom filter
+		 */
+		handleResetFilters: function () {
+			var oCustomFilter = this._oDialog.getFilterItems()[1];
+			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
+			oSlider.setValue(oSlider.getMin());
+			oSlider.setValue2(oSlider.getMax());
+			oCustomFilter.setFilterCount(0);
 		}
 	});
 });
