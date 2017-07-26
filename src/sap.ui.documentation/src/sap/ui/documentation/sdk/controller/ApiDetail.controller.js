@@ -105,9 +105,15 @@ sap.ui.define([
 				var sRoute = "apiId",
 					oComponent = this.getOwnerComponent(),
 					aLibsData = oComponent.getModel("libsData").getData(),
-					sTarget = oEvent.target.getAttribute("data-sap-ui-target"),
+					oTarget = oEvent.target,
+					sTarget = oTarget.getAttribute("data-sap-ui-target"),
 					sMethodName = "",
 					aNavInfo;
+
+				// Handle link to method|event from a MessageStrip for which we can't use data-sap-ui-target
+				if (!sTarget && oTarget.getAttribute("href") === "#") {
+					sTarget = oTarget.getAttribute("target");
+				}
 
 				if (!sTarget) {
 					return;
@@ -834,6 +840,80 @@ sap.ui.define([
 			 */
 			formatEntityName: function (sName, sClassName, bStatic) {
 				return (bStatic === true) ? sClassName + "." + sName : sName;
+			},
+
+			/**
+			 * Formats the entity deprecation message and pre-process jsDoc link and code blocks
+			 * @param {string} sSince since text
+			 * @param {string} sDescription deprecation description text
+			 * @param {string} sEntityType string representation of entity type
+			 * @returns {string} formatted deprecation message
+			 */
+			formatDeprecated: function (sSince, sDescription, sEntityType) {
+				var aResult;
+				// Evaluate links and code blocks in the deprecation description
+
+				if (sDescription) {
+					// Handle {@link ...}, {@link ... ...}, {@link #...} and <code>...</code> patterns
+					sDescription = sDescription.replace(/{@link\s+([^}\s]+)(?:\s+([^}]*))?}|<code>(\S+)<\/code>/gi,
+						function (sMatch, sEntity, sName, sCodeEntity) {
+							var sTarget;
+
+							if (sCodeEntity) {
+								// Handle code block pattern
+								return ['<em>', sCodeEntity, '</em>'].join("");
+							} else {
+								// Handle link patterns
+
+								// Build Target
+								if (sEntityType) {
+									// Handle hash pattern - used for methods and events on some occasions
+									sEntity = sEntity[0] === "#" ? sEntity.substring(1, sEntity.length) : sEntity;
+									sTarget = [this._sTopicid, "/", sEntityType, "/", sEntity].join("");
+								} else {
+									// Direct link to entity
+									sTarget = sEntity;
+								}
+
+								// link attributes should follow the pattern {href="#" target="entity|method|event"}
+								// so they could be handled by onJSDocLinkClick listener
+								return ['<a target="', sTarget, '" href="#">', (sName ? sName : sEntity), '</a>'].join("");
+							}
+
+						}.bind(this));
+				}
+
+				// Build deprecation message
+				// Note: there may be no since or no description text available
+				aResult = ["Deprecated"];
+				if (sSince) {
+					aResult.push(" since " + sSince);
+				}
+				if (sDescription) {
+					aResult.push(". " + sDescription);
+				}
+
+				return aResult.join("");
+			},
+
+			/**
+			 * Formats method deprecation message and pre-process jsDoc link and code blocks
+			 * @param {string} sSince since text
+			 * @param {string} sDescription deprecation description text
+			 * @returns {string} formatted deprecation message
+			 */
+			formatMethodDeprecated: function (sSince, sDescription) {
+				return this.formatDeprecated(sSince, sDescription, "methods");
+			},
+
+			/**
+			 * Formats event deprecation message and pre-process jsDoc link and code blocks
+			 * @param {string} sSince since text
+			 * @param {string} sDescription deprecation description text
+			 * @returns {string} formatted deprecation message
+			 */
+			formatEventDeprecated: function (sSince, sDescription) {
+				return this.formatDeprecated(sSince, sDescription, "events");
 			},
 
 			/**
