@@ -41,8 +41,17 @@ function(
 
 	Component.prototype.createContent = function () {
 		this._createFakeLrep();
-		this._rootView = sap.ui.xmlview(this.createId("idMain1"), { viewName : "sap.m.sample.Table.Table" });
-		return this._rootView;
+
+		var oApp = new sap.m.App();
+
+		var oPage = sap.ui.view(this.createId("idMain1"), {
+			viewName : "sap.m.sample.Table.Table",
+			type : sap.ui.core.mvc.ViewType.XML
+		});
+
+		oApp.addPage(oPage);
+
+		return oApp;
 	};
 
 	Component.prototype._createFakeLrep = function () {
