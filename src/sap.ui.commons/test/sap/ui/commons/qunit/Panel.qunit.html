@@ -340,13 +340,6 @@
 
 			ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
 			equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
-			if (sap.ui.Device.browser.internet_explorer) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
-			} else if (sap.ui.Device.browser.firefox) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
-			} else if (sap.ui.Device.browser.webkit) {
-				equal(jQuery(oContDomRef3).css("backgroundColor"), "rgba(0, 0, 0, 0)", "Panel should now be filled with a transparent color");
-			}
 		});
 
 		test("Border Design", function() {
