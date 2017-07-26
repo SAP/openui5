@@ -47,6 +47,20 @@ sap.ui.define([
 		QUnit.assert.contains(this.oLoggerSpy.args[1][0], "Polling finished");
 	});
 
+	QUnit.test("Should end immediately if condition is already met", function (assert) {
+		this.fnHasToWaitStub.returns(false);
+
+		this.autoWaiterAsync.waitAsync(this.fnCallbackSpy);
+
+		assert.ok(this.fnHasToWaitStub.calledOnce, "Should poll for autoWaiter conditions to be met");
+		assert.ok(this.fnCallbackSpy.calledOnce, "Should invoke the callback when the autoWaiter conditions are met");
+		assert.ok(!this.fnCallbackSpy.args[0][0], "Should invoke the callback with no arguments");
+		assert.ok($.isEmptyObject(this.clock.timers), "Should stop polling when autoWaiter conditions are met");
+		assert.ok(this.oLoggerSpy.calledTwice, "Should log polling state");
+		QUnit.assert.contains(this.oLoggerSpy.args[0][0], "Start polling");
+		QUnit.assert.contains(this.oLoggerSpy.args[1][0], "Polling finished");
+	});
+
 	QUnit.test("Should timeout if conditions cannot be met in a given timeframe", function (assert) {
 		var iTimeoutAttempts = Math.ceil(iPollTimeout * 1000 / iPollInterval);
 		this.fnHasToWaitStub.returns(true);
@@ -65,6 +79,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not fail if no callback was passed", function (assert) {
+		this.fnHasToWaitStub.returns(false);
 		this.autoWaiterAsync.waitAsync();
 
 		this.clock.tick(iPollInterval);
@@ -109,7 +124,7 @@ sap.ui.define([
 
 	QUnit.test("Should log autoWaiter pending work on timeout", function (assert) {
 		var iTimeoutAttempts = Math.ceil(iPollTimeout * 1000 / iPollInterval);
-		var sAutoWaiterLog = "autoWaiterLogCollector#getLog";
+		var sAutoWaiterLog = "autoWaiterLogCollector#getAndClearLog";
 		var fnGetAndClearLogStub = sinon.stub(sap.ui.test.autowaiter._autoWaiterLogCollector, "getAndClearLog");
 		var fnStartLogSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterLogCollector, "start");
 		var fnStopLogSpy = sinon.spy(sap.ui.test.autowaiter._autoWaiterLogCollector, "stop");
@@ -133,7 +148,7 @@ sap.ui.define([
 		fnStopLogSpy.restore();
 	});
 
-	QUnit.module("AutoWaiterAsync - autoWait timeout Waiter", {
+	QUnit.module("AutoWaiterAsync - autoWait timeout waiter", {
 		beforeEach: function () {
 			this.clock = sinon.useFakeTimers();
 			this.fnHasPendingStub = sinon.stub(sap.ui.test.autowaiter._XHRWaiter, "hasPending");

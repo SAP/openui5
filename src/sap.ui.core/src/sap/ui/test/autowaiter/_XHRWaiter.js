@@ -5,16 +5,17 @@
 /*global XMLHttpRequest */
 sap.ui.define([
 	"sap/ui/thirdparty/sinon",
-	"sap/ui/test/_OpaLogger"
-], function (sinon, _OpaLogger) {
+	"sap/ui/test/_OpaLogger",
+	"sap/ui/test/autowaiter/_utils"
+], function (sinon, _OpaLogger, _utils) {
 	"use strict";
 
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRWaiter");
 	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRWaiter#hasPending");
 	var aXHRs = [];
-	var aFakeXHRs = [];
-	var fnUseFakeOriginal = sinon.useFakeXMLHttpRequest;
 
 	// restore seems to be a new function everytime you call useFakeXmlHttpRequest so hook it everytime
+	var fnUseFakeOriginal = sinon.useFakeXMLHttpRequest;
 	sinon.useFakeXMLHttpRequest = function () {
 		var FakeXmlHttpRequest = fnUseFakeOriginal.apply(this, arguments);
 		hookIntoSinonRestore();
@@ -28,7 +29,7 @@ sap.ui.define([
 		if (fnOriginalRestore) {
 			XMLHttpRequest.restore = function () {
 				var vReturn = fnOriginalRestore.apply(this, arguments);
-				aFakeXHRs.length = 0;
+				aXHRs = filterFakeXHRs();
 				return vReturn;
 			};
 		}
@@ -40,28 +41,32 @@ sap.ui.define([
 	// Hook into Xhr send for sinon Xhrs
 	var fnOriginalFakeSend = sinon.FakeXMLHttpRequest.prototype.send;
 	sinon.FakeXMLHttpRequest.prototype.send = function () {
-		this.addEventListener("readystatechange", function() {
-			if (this.readyState === 4) {
-				aFakeXHRs.splice(aXHRs.indexOf(this), 1);
-			}
-		});
-		aFakeXHRs.push(this);
-
+		hookIntoXHRSend.call(this, true);
 		return fnOriginalFakeSend.apply(this, arguments);
 	};
 
 	// Hook into Xhr send for regular Xhrs
 	var fnOriginalSend = XMLHttpRequest.prototype.send;
 	XMLHttpRequest.prototype.send = function () {
-		this.addEventListener("readystatechange", function() {
-			if (this.readyState === 4) {
-				aXHRs.splice(aXHRs.indexOf(this), 1);
-			}
-		});
-		aXHRs.push(this);
-
+		hookIntoXHRSend.call(this);
 		return fnOriginalSend.apply(this, arguments);
 	};
+
+	function hookIntoXHRSend(bIsFake) {
+		var sXHRType = bIsFake ? "FakeXHR" : "XHR";
+		var oNewPendingXHRInfo = {url: this.url, method: this.method, fake: bIsFake, trace: _utils.resolveStackTrace()};
+		var oNewPendingXHRLog = createLogForSingleRequest(oNewPendingXHRInfo);
+
+		aXHRs.push(oNewPendingXHRInfo);
+		oLogger.trace("New pending " + sXHRType + ":" + oNewPendingXHRLog);
+
+		this.addEventListener("readystatechange", function() {
+			if (this.readyState === 4) {
+				aXHRs.splice(aXHRs.indexOf(oNewPendingXHRInfo), 1);
+				oLogger.trace(sXHRType + " finished:" + oNewPendingXHRLog);
+			}
+		});
+	}
 
 	// Hook into Xhr open to get the url and method
 	var fnOriginalOpen = XMLHttpRequest.prototype.open;
@@ -71,27 +76,31 @@ sap.ui.define([
 		return fnOriginalOpen.apply(this, arguments);
 	};
 
-	function logPendingRequests () {
-		var sLogMessage = "There are '" + aXHRs.length + "' open XHRs and '" + aFakeXHRs.length + "' open FakeXHRs.";
+	function createLogForSingleRequest (oXHR) {
+		var sMessage = oXHR.fake ? "\nFakeXHR: " : "\nXHR: ";
+		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method + "' Stack: " + oXHR.trace;
+		return sMessage;
+	}
+
+	function logPendingRequests() {
+		var iFakeXHRLength = filterFakeXHRs(true).length;
+		var sLogMessage = "There are " + (aXHRs.length - iFakeXHRLength) + " open XHRs and " + iFakeXHRLength + " open FakeXHRs.";
 		aXHRs.forEach(function (oXHR) {
 			sLogMessage += createLogForSingleRequest(oXHR);
-		});
-		aFakeXHRs.forEach(function (oXHR) {
-			sLogMessage += createLogForSingleRequest(oXHR, true);
 		});
 
 		oHasPendingLogger.debug(sLogMessage);
 	}
 
-	function createLogForSingleRequest (oXHR, bIsFake) {
-		var sMessage = bIsFake ? "\nFakeXHR: " : "\nXHR: ";
-		sMessage += "URL: '" + oXHR.url + "' Method: '" + oXHR.method  + "'";
-		return sMessage;
+	function filterFakeXHRs(bIsFake) {
+		return aXHRs.filter(function (oXHR) {
+			return bIsFake ? oXHR.fake : !oXHR.fake;
+		});
 	}
 
 	return {
 		hasPending: function () {
-			var bHasPendingRequests = aXHRs.length > 0 || aFakeXHRs.length > 0;
+			var bHasPendingRequests = aXHRs.length > 0;
 			if (bHasPendingRequests) {
 				logPendingRequests();
 			}

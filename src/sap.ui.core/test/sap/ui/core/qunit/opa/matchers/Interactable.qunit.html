@@ -326,7 +326,8 @@
 							// the actual blocking timeout
 							setTimeout(function () {});
 							var bMatching = new Interactable().isMatching(this.oButton);
-							QUnit.assert.contains(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test.autowaiter._timeoutWaiter#hasPending");
+							assert.ok(!bMatching, "is not matching");
+							QUnit.assert.contains(oLogCollector.getAndClearLog(), "There are 1 open blocking timeouts");
 							fnDone();
 						}.bind(this), 500);
 					});
@@ -444,7 +445,6 @@
 								var oIFrameWindow = Opa5.getWindow();
 								oXHR = oIFrameWindow.sinon.useFakeXMLHttpRequest();
 								oIFrameWindow.sinon.stub(oIFrameWindow.sap.ui.test.autowaiter._timeoutWaiter, "hasPending").returns(false);
-
 								oXHR.onCreate = function (xhr) {
 									aRequests.push(xhr);
 								};

@@ -10,13 +10,6 @@ sap.ui.define([
 	var oDebugSpy = sinon.spy(oLogger[1], "debug");
 	var timeoutWaiter = sap.ui.test.autowaiter._timeoutWaiter;
 
-	function assertLog (iNumberBlocking, iNumberNonBlocking) {
-		if (!iNumberNonBlocking) {
-			iNumberNonBlocking = 0;
-		}
-		sinon.assert.calledWith(oDebugSpy, "There are '" + iNumberBlocking + "' open blocking Timeouts. And " + iNumberNonBlocking + " non blocking timeouts")
-	}
-
 	["Timeout", "Immediate"].forEach(function (sFunctionUnderTest) {
 		var fnSetFunction = window["set" + sFunctionUnderTest];
 		var fnClearFunction = window["clear" + sFunctionUnderTest];
@@ -52,22 +45,23 @@ sap.ui.define([
 
 		QUnit.test("Should return that there are no pending timeouts", function (assert) {
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
-			sinon.assert.notCalled(oDebugSpy);
+			sinon.assert.neverCalledWithMatch(oDebugSpy, /There are [0-9]+ open blocking timeouts/);
 		});
 
 		QUnit.test("Should return that there are no pending Timeouts if a timeout has finished", function (assert) {
 			var fnDone = assert.async();
-			fnSetFunction(function () {
+			var iID = fnSetFunction(function () {
 				assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
-				sinon.assert.notCalled(oDebugSpy);
+				sinon.assert.neverCalledWithMatch(oDebugSpy, /There are [0-9]+ open blocking timeouts/);
 				fnDone();
-			});
+			}, 100);
+			sinon.assert.calledWithMatch(oTraceSpy, "Timeout with ID " + iID + " scheduled");
 		});
 
 		QUnit.test("Should ignore long runners", function (assert) {
 			var iID = setTimeout(function () {}, 1001);
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
-			sinon.assert.alwaysCalledWithMatch(oTraceSpy, "Long-running timeout is ignored");
+			sinon.assert.calledWithMatch(oTraceSpy, "Long-running timeout is ignored");
 			// do not interfere with other tests
 			clearTimeout(iID);
 		});
@@ -101,11 +95,21 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			fnSetFunction(function () {
-				assertLog(1);
+				sinon.assert.calledWithMatch(oDebugSpy, "There are 1 open blocking timeouts")
 				fnDone();
 			});
 
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
+		});
+
+		QUnit.test("Should log args and execution stack trace", function callingFunction (assert) {
+			var fnDone = assert.async();
+			var iID = fnSetFunction(function timeoutFunction () { fnDone(); }, 100);
+			sinon.assert.calledWithMatch(oTraceSpy, "Timeout with ID " + iID + " scheduled");
+			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
+			sinon.assert.calledWithMatch(oDebugSpy, "There are 1 open blocking timeouts\nTimeout: ID: " + iID + " Delay: 100 Depth: 0 " +
+				"Function: function timeoutFunction");
+			sinon.assert.calledWithMatch(oDebugSpy, "callingFunction");
 		});
 
 		QUnit.module("timeoutWaiter - multiple " + sFunctionUnderTest, {
@@ -114,25 +118,25 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Should handle a 2 timeouts", function (assert) {
+		QUnit.test("Should handle 2 timeouts", function (assert) {
 			var fnFirstTimeoutDone = assert.async();
 			var fnSecondTimeoutDone = assert.async();
 
 			fnSetFunction(function () {
 				assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
-				assertLog(1);
+				sinon.assert.calledWithMatch(oDebugSpy, "There are 1 open blocking timeouts")
 				oDebugSpy.reset();
 				fnFirstTimeoutDone();
 			});
 
 			fnSetFunction(function () {
 				assert.ok(!timeoutWaiter.hasPending(), "There was no timeout");
-				sinon.assert.notCalled(oDebugSpy);
+				sinon.assert.neverCalledWithMatch(oDebugSpy, /There are [0-9]+ open blocking timeouts/);
 				fnSecondTimeoutDone();
 			}, 20);
 
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
-			assertLog(2);
+			sinon.assert.calledWithMatch(oDebugSpy, "There are 2 open blocking timeouts")
 			oDebugSpy.reset();
 		});
 
@@ -162,7 +166,7 @@ sap.ui.define([
 			});
 			fnClearFunction(iId);
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts");
-			sinon.assert.notCalled(oDebugSpy);
+			sinon.assert.calledWithMatch(oTraceSpy, "Timeout with ID " + iId + " cleared");
 		});
 
 
@@ -177,7 +181,7 @@ sap.ui.define([
 			var iId = fnSetFunction(fnSecondTimeoutSpy);
 			fnClearFunction(iId);
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
-			assertLog(1);
+			sinon.assert.calledWithMatch(oDebugSpy, "There are 1 open blocking timeouts")
 		});
 	});
 
@@ -197,8 +201,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
-			sinon.assert.alwaysCalledWithMatch(oTraceSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
-			aTimeouts.forEach(function (iID) {
+			sinon.assert.calledWithMatch(oTraceSpy, /Non-blocking timeout is ignored/);			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
 			});
 			fnDone();
@@ -217,7 +220,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			assert.ok(!timeoutWaiter.hasPending(), "there are no pending timeouts - spawned " + aTimeouts.length + " timeouts");
-			sinon.assert.alwaysCalledWithMatch(oTraceSpy, /Deep-nested timeout with ID [0-9]+ is ignored/);
+			sinon.assert.calledWithMatch(oTraceSpy, /Non-blocking timeout is ignored/);
 			aTimeouts.forEach(function (iID) {
 				clearTimeout(iID);
 			});

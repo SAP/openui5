@@ -3,15 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/_opaCorePlugin",
 	"sap/ui/test/autowaiter/_XHRWaiter",
 	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/ui/test/autowaiter/_navigationContainerWaiter",
 	"sap/ui/test/autowaiter/_UIUpdatesWaiter"
-], function (_OpaLogger, _opaCorePlugin, _XHRWaiter, _timeoutWaiter, _promiseWaiter,
-		_navigationContainerWaiter, _UIUpdatesWaiter) {
+], function (_XHRWaiter, _timeoutWaiter, _promiseWaiter, _navigationContainerWaiter, _UIUpdatesWaiter) {
 	"use strict";
 
 	// TODO: add possibility to add and exclude validators
