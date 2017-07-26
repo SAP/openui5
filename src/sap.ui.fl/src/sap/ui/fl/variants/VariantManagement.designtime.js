@@ -20,9 +20,9 @@ sap.ui.define([], function() {
 			showFavorites: {
 				ignore: false
 			},
-			variantManagementKey: {
-				ignore: false
-			},
+// variantManagementKey: {
+// ignore: false
+// },
 			industrySolutionMode: {
 				ignore: false
 			},

@@ -7,7 +7,7 @@ sap.ui.define([
 
 		onInit: function() {
 			this.oModel = new VariantModel({
-				M0: {
+				"__xmlview0--idVariantManagementCtrl": {
 					currentVariant: "2",
 					defaultVariant: "2",
 					modified: false,
@@ -192,6 +192,10 @@ sap.ui.define([
 				}
 			});
 
+			this.oModel._updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
+				this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+			}; // overrule default
+
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
 			this.oVM.setModel(this.oModel, "$FlexVariants");
 
@@ -207,7 +211,6 @@ sap.ui.define([
 
 			oParent.removeContent(this.oVM);
 			var sVMId = this.oVM.getId();
-			var sName = this.oVM.getVariantManagementKey();
 			var bShowFav = this.oVM.getShowFavorites();
 			var bShowShare = this.oVM.getShowShare();
 			var bShowExe = this.oVM.getShowExecuteOnSelection();
@@ -218,7 +221,6 @@ sap.ui.define([
 			oParent.addContent(oVM);
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
-			this.oVM.setVariantManagementKey(sName);
 			this.oVM.setShowFavorites(!bShowFav);
 			this.oVM.setShowShare(bShowShare);
 			this.oVM.setShowExecuteOnSelection(bShowExe);
@@ -262,14 +264,6 @@ sap.ui.define([
 
 		onMarkAsChanged: function(oEvent) {
 			this.oVM.setModified(true);
-		},
-		onVMIdChange: function(oEvent) {
-			var sId = this.oVM.getVariantManagementKey();
-			if (sId === "M0") {
-				this.oVM.setVariantManagementKey("M1");
-			} else {
-				this.oVM.setVariantManagementKey("M0");
-			}
 		},
 
 		onSave: function(oEvent) {

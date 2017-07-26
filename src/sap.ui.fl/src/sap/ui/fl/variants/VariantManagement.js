@@ -66,15 +66,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the logical id of the variant management.
-				 */
-				variantManagementKey: {
-					type: "string",
-					group: "Misc",
-					defaultValue: null
-				},
-
-				/**
 				 * If set to<code>true</code>, the scenario is an industry-specific solution.<br>
 				 * <b>Node:</b>This flag is only used internally in the app variant scenarios.
 				 */
@@ -129,6 +120,16 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
+				}
+			},
+			associations: {
+
+				/**
+				 * Contains the controls, for which the variant management is responsible.
+				 */
+				"for": {
+					type: "sap.ui.core.Control",
+					multiple: true
 				}
 			},
 			events: {
@@ -389,7 +390,7 @@ sap.ui.define([
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			// oModel.setProperty(this.oContext + "/currentVariant", sKey);
-			oModel._updateCurrentVariant(this.getVariantManagementKey(), sKey);
+			oModel._updateCurrentVariant(this.getId(), sKey);
 		}
 
 		return null;
@@ -465,7 +466,7 @@ sap.ui.define([
 
 		if (!this.oContext) {
 			oModel = this.getModel(VariantManagement.MODEL_NAME);
-			sVariantKey = this.getVariantManagementKey();
+			sVariantKey = this.getId();
 			if (oModel && sVariantKey) {
 				this.oContext = new Context(oModel, "/" + sVariantKey);
 
@@ -478,14 +479,7 @@ sap.ui.define([
 		this._setBindingContext();
 	};
 
-	VariantManagement.prototype.setVariantManagementKey = function(sValue) {
-		this.oContext = null;
-		this.setProperty("variantManagementKey", sValue);
-		this._setBindingContext();
-	};
-
 // VARIANT LIST
-
 	VariantManagement.prototype._createVariantList = function() {
 
 		if (!this.oContext || this.oVariantPopOver) { // create only if context is available
@@ -556,9 +550,9 @@ sap.ui.define([
 					}
 				}
 				if (sSelectionKey) {
+					// this.setModified(false);
 					this.setSelectedVariantKey(sSelectionKey);
 					this.oVariantPopOver.close();
-					this.setModified(false);
 				}
 			}.bind(this)
 		});
