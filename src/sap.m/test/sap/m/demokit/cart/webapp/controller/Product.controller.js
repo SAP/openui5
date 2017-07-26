@@ -2,9 +2,7 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/demo/cart/controller/BaseController',
 	'sap/ui/demo/cart/model/formatter',
-	'sap/ui/demo/cart/model/cart',
-	'sap/m/MessageToast',
-	'sap/m/MessageBox'
+	'sap/ui/demo/cart/model/cart'
 ], function ($, BaseController, formatter, cart) {
 	"use strict";
 
