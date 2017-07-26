@@ -60,7 +60,7 @@
 			"" : {
 				"dataSource" : "default",
 				"settings" : {
-					"autoExpandSelect" : false,
+					"autoExpandSelect" : true,
 					"operationMode" : "Server",
 					"synchronizationMode" : "None"
 				},

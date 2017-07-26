@@ -38,7 +38,7 @@ sap.ui.define([
 				//replace model from manifest in case of proxy
 				oModel.destroy();
 				oModel = new ODataModel({
-					autoExpandSelect : false,
+					autoExpandSelect : true,
 					groupId : sGroupId,
 					odataVersion : "2.0",
 					operationMode : OperationMode.Server,
@@ -53,10 +53,10 @@ sap.ui.define([
 						"$metadata" : {
 							source : "metadataV2.xml"
 						},
-						"EdmTypesCollection?$select=ID,Boolean,Byte,GlobalUID,Int16,Int32,SByte,String&$skip=0&$top=100" : {
+						"EdmTypesCollection?$select=Boolean,Byte,GlobalUID,ID,Int16,Int32,SByte,String&$skip=0&$top=100" : {
 							source : "EdmTypesV2.json"
 						},
-						"EdmTypesCollection('1')?$select=ID,Binary,Boolean,Byte,Date,DateTime,DateTimeOffset,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String,Time" : {
+						"EdmTypesCollection('1')?$select=Binary,Boolean,Byte,Date,DateTime,DateTimeOffset,Decimal,Double,Float,GlobalUID,ID,Int16,Int32,Int64,SByte,Single,String,Time" : {
 							source : "EdmTypesV2_SingleEntity.json"
 						}
 					}, "sap/ui/core/sample/odata/v4/ConsumeV2Service/data",
