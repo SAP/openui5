@@ -220,7 +220,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 
 			getBindingTemplate: function (oControl, sAggregationName) {},
 
-			updateAggregatopn: function (oControl, sAggregationName) {}
+			updateAggregation: function (oControl, sAggregationName) {}
 		};
 
 		return jQuery.sap.extend(

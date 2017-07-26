@@ -114,7 +114,7 @@ sap.ui.define([
 
 			if (oTemplate) {
 				switchCells(oTemplate, iSourceIndex, iTargetIndex);
-				oModifier.updateAggregatopn(oTable, ITEMS_AGGREGATION_NAME);
+				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
 			} else {
 				moveColumns(iSourceIndex, iTargetIndex);
 			}

@@ -239,7 +239,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 				return oBinding && oBinding.template;
 			},
 
-			updateAggregatopn: function (oControl, sAggregationName) {
+			updateAggregation: function (oControl, sAggregationName) {
 				if (oControl) {
 					if (oControl.getMetadata) {
 						var oMetadata = oControl.getMetadata();
