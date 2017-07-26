@@ -51,7 +51,7 @@ sap.ui.define([
 		isMatching:  function(oControl) {
 			var bHasToWait = iFrameLauncher._getAutoWaiter().hasToWait();
 			if (bHasToWait) {
-				// There are open requests - the XHR counter will log if there are open XHRs
+				// There are open requests - _XHRWaiter will log if there are open XHRs
 				return false;
 			}
 

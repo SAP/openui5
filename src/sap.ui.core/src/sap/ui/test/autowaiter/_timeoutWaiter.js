@@ -9,9 +9,10 @@ sap.ui.define([
 ], function ($, _OpaLogger, _ParameterValidator) {
 	"use strict";
 
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutCounter");
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutWaiter");
+	var oHasPendingLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._timeoutWaiter#hasPending");
 	var oConfigValidator = new _ParameterValidator({
-		errorPrefix: "sap.ui.test.autowaiter._timeoutCounter#extendConfig"
+		errorPrefix: "sap.ui.test.autowaiter._timeoutWaiter#extendConfig"
 	});
 	var mTimeouts = {};
 	var config = {
@@ -62,44 +63,9 @@ sap.ui.define([
 	createTimeoutWrapper("Timeout");
 	createTimeoutWrapper("Immediate");
 
-	var iPendingPromises = 0;
-
-	function wrapPromiseFunction (sOriginalFunctionName) {
-		var fnOriginal = Promise[sOriginalFunctionName];
-		Promise[sOriginalFunctionName] = function () {
-
-			var bTooLate = false;
-
-			// Timeout to detect long runners
-			var iTimeout = setTimeout(function () {
-				bTooLate = true;
-				iPendingPromises--;
-			}, config.maxDelay);
-
-			var fnCountDownPromises = function () {
-				if (bTooLate) {
-					// the timeout already counted down - do nothing
-					return;
-				}
-				// count down and clear the timeout to make sure it is only counted down once
-				iPendingPromises--;
-				clearTimeout(iTimeout);
-			};
-
-			iPendingPromises++;
-			var oPromise = fnOriginal.apply(this, arguments);
-			oPromise.then(fnCountDownPromises, fnCountDownPromises);
-			return oPromise;
-		};
-	}
-
-	wrapPromiseFunction("resolve");
-	wrapPromiseFunction("all");
-	wrapPromiseFunction("race");
-	wrapPromiseFunction("reject");
 
 	return {
-		hasPendingTimeouts: function () {
+		hasPending: function () {
 			var aTotalTimeouts = Object.keys(mTimeouts);
 			var iNumberOfBlockingTimeouts = aTotalTimeouts.filter(function (iID) {
 				var bIgnored = mTimeouts[iID] >= config.maxDepth;
@@ -110,13 +76,9 @@ sap.ui.define([
 				return !bIgnored;
 			}).length;
 			var bHasPendingTimeouts = iNumberOfBlockingTimeouts > 0;
-			// promise synchronization uses setTimeout so first check the Promise then the timeout
-			if (iPendingPromises > 0) {
-				oLogger.debug("There are " + iPendingPromises + " pending microtasks");
-				return true;
-			}
 			if (bHasPendingTimeouts) {
-				oLogger.debug("There are '" + iNumberOfBlockingTimeouts + "' open blocking Timeouts. And " + (aTotalTimeouts.length - iNumberOfBlockingTimeouts) + " non blocking timeouts");
+				oHasPendingLogger.debug("There are '" + iNumberOfBlockingTimeouts + "' open blocking Timeouts. And " +
+					(aTotalTimeouts.length - iNumberOfBlockingTimeouts) + " non blocking timeouts");
 			}
 			return bHasPendingTimeouts;
 		},

@@ -3,44 +3,31 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_opaCorePlugin",
-	"sap/ui/test/autowaiter/_XHRCounter",
-	"sap/ui/test/autowaiter/_timeoutCounter"
-], function ($, _OpaLogger, _opaCorePlugin, _XHRCounter, _timeoutCounter) {
+	"sap/ui/test/autowaiter/_XHRWaiter",
+	"sap/ui/test/autowaiter/_timeoutWaiter",
+	"sap/ui/test/autowaiter/_promiseWaiter",
+	"sap/ui/test/autowaiter/_navigationContainerWaiter",
+	"sap/ui/test/autowaiter/_UIUpdatesWaiter"
+], function (_OpaLogger, _opaCorePlugin, _XHRWaiter, _timeoutWaiter, _promiseWaiter,
+		_navigationContainerWaiter, _UIUpdatesWaiter) {
 	"use strict";
 
-	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiter");
-
-	function hasNavigatingNavContainers () {
-		var sControlType = "sap.m.NavContainer";
-		var fnNavContainer = $.sap.getObject(sControlType);
-		// no Nav container has been loaded - continue
-		if (sap.ui.lazyRequire._isStub(sControlType) || !fnNavContainer) {
-			return false;
-		}
-
-		return _opaCorePlugin.getAllControls(fnNavContainer).some(function (oNavContainer) {
-			if (oNavContainer._bNavigating) {
-				oLogger.debug("The NavContainer " + oNavContainer + " is currently navigating");
-			}
-
-			return oNavContainer._bNavigating;
-		});
-	}
-
-	function hasPendingUIUpdates () {
-		var bUIDirty = _opaCorePlugin.isUIDirty();
-		if (bUIDirty) {
-			oLogger.debug("The UI needs rerendering");
-		}
-		return bUIDirty;
-	}
+	// TODO: add possibility to add and exclude validators
+	// execute wait helpers in sequence and stop on the first that returns true
+	// eg: there's no use to call _timeoutWaiter if _UIUpdatesWaiter is true
+	var aWaiters = [_navigationContainerWaiter, _UIUpdatesWaiter, _XHRWaiter, _promiseWaiter, _timeoutWaiter];
 
 	return {
 		hasToWait: function () {
-			return hasNavigatingNavContainers() || _XHRCounter.hasPendingRequests() || hasPendingUIUpdates() || _timeoutCounter.hasPendingTimeouts();
+			var result = false;
+			aWaiters.forEach(function (oWaiter) {
+				if (!result && oWaiter.hasPending()) {
+					result = true;
+				}
+			});
+			return result;
 		}
 	};
 }, true);

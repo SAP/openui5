@@ -4,9 +4,9 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function (loggerInterceptor, MockServer, Device) {
 
-	jQuery.sap.unloadResources("sap/ui/test/autowaiter/_XHRCounter.js", false, true, true);
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._XHRCounter");
-	var XHRCounter = sap.ui.test.autowaiter._XHRCounter;
+	jQuery.sap.unloadResources("sap/ui/test/autowaiter/_XHRWaiter.js", false, true, true);
+	var aLoggers = loggerInterceptor.loadAndIntercept("sap.ui.test.autowaiter._XHRWaiter");
+	var XHRWaiter = sap.ui.test.autowaiter._XHRWaiter;
 
 	function whenRequestDone(oXHR) {
 		return new Promise(function (fnResolve) {
@@ -25,18 +25,18 @@ sap.ui.define([
 		return oXHR;
 	}
 
-	QUnit.module("XHRCounter - no xhrs");
+	QUnit.module("XHRWaiter - no xhrs");
 
 	QUnit.test("Should return that there are no pending Xhrs", function (assert) {
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
 	QUnit.test("Should return that there are no pending Xhrs when an Xhr is created", function (assert) {
 		new XMLHttpRequest();
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
-	QUnit.module("XHRCounter - open xhr with sinon", {
+	QUnit.module("XHRWaiter - open xhr with sinon", {
 		beforeEach: function () {
 			// Mock server sets it to true when loaded
 			sinon.FakeXMLHttpRequest.useFilters = false;
@@ -47,7 +47,7 @@ sap.ui.define([
 				aRequests.push(xhr);
 			};
 			this.aRequests = aRequests;
-			this.oDebugSpy = sinon.spy(oLogger, "debug");
+			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
 		},
 		afterEach: function () {
 			sinon.FakeXMLHttpRequest.useFilters = true;
@@ -59,42 +59,42 @@ sap.ui.define([
 	QUnit.test("Should return no pending request if there is an open xhr", function (assert) {
 		var oXHR = new XMLHttpRequest();
 		oXHR.open("GET", "/foo", true);
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
 	QUnit.test("Should return pending request if there is a send xhr", function (assert) {
 		createAndSendXHR("/foo");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWith(this.oDebugSpy, "There are '0' open XHRs and '1' open FakeXHRs.\nFakeXHR: URL: '/foo' Method: 'GET'");
 	});
 
 	QUnit.test("Should return that there is no open xhr when the request has been responded", function (assert) {
 		createAndSendXHR("/foo");
 		this.aRequests[0].respond(200, {}, '{}');
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
 	QUnit.test("Should return that there is an open xhr when 1 of 2 request have been responded", function (assert) {
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		createAndSendXHR("/foo");
 		createAndSendXHR("/bar");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWith(this.oDebugSpy, "There are '0' open XHRs and '2' open FakeXHRs." +
 			"\nFakeXHR: URL: '/foo' Method: 'GET'" +
 			"\nFakeXHR: URL: '/bar' Method: 'GET'");
 		this.aRequests[0].respond(200, {}, '{}');
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		this.aRequests[1].respond(200, {}, '{}');
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
 	QUnit.test("Should return that there is no open xhr when the request has been aborted", function (assert) {
 		var oXHR = createAndSendXHR("/foo");
 		oXHR.abort();
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
-	QUnit.module("XHRCounter - sinon cleanup");
+	QUnit.module("XHRWaiter - sinon cleanup");
 
 	QUnit.test("Should restore the send function", function (assert) {
 		var oXhr = new XMLHttpRequest();
@@ -120,9 +120,9 @@ sap.ui.define([
 		assert.strictEqual(fnSendBeforeSinon, fnSendAfterSinon, "the xhr send function is reused");
 	});
 
-	QUnit.module("XHR Counter - Native XHR", {
+	QUnit.module("XHR Waiter - Native XHR", {
 		beforeEach: function () {
-			this.oDebugSpy = sinon.spy(oLogger, "debug");
+			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
 		},
 		afterEach: function () {
 			this.oDebugSpy.restore();
@@ -132,20 +132,20 @@ sap.ui.define([
 	QUnit.test("Should return no pending request if there is an open xhr", function (assert) {
 		var oXHR = new XMLHttpRequest();
 		oXHR.open("GET", "/foo", true);
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		sinon.assert.notCalled(this.oDebugSpy);
 	});
 
 	QUnit.test("Should return pending request if there is a send xhr", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are no pending xhrs");
 		return whenRequestDone(oXHR);
 	});
 
 	QUnit.test("Should return that there is no open xhr when the request has been responded", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
 		return whenRequestDone(oXHR).then(function () {
-			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
 	});
 
@@ -161,12 +161,12 @@ sap.ui.define([
 		QUnit.test("Should return that there is an open xhr when 1 of 2 request are done", function (assert) {
 			var done = assert.async();
 
-			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs at test start");
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs at test start");
 
 			var oXHR1 = createAndSendXHR("/foo");
 			var oXHR2 = createAndSendXHR("/bar");
 
-			assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+			assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 
 			sinon.assert.calledWith(this.oDebugSpy, "There are '2' open XHRs and '0' open FakeXHRs." +
 				"\nXHR: URL: '/foo' Method: 'GET'" +
@@ -177,24 +177,24 @@ sap.ui.define([
 
 			var bFirstRequestPassed = false;
 			var bSecondRequestPassed = false;
-			var bHasPendingRequests = false;
+			var bhasPending = false;
 
 			oFirstRequestPromise.then(function () {
 				bFirstRequestPassed = true;
-				bHasPendingRequests = bHasPendingRequests || XHRCounter.hasPendingRequests();
+				bhasPending = bhasPending || XHRWaiter.hasPending();
 				assertPassedConditions();
 			});
 
 			oSecondRequestPromise.then(function () {
 				bSecondRequestPassed = true;
-				bHasPendingRequests = bHasPendingRequests || XHRCounter.hasPendingRequests();
+				bhasPending = bhasPending || XHRWaiter.hasPending();
 				assertPassedConditions();
 			});
 
 			function assertPassedConditions() {
 				if (bFirstRequestPassed && bSecondRequestPassed) {
-					assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs at test end");
-					assert.ok(bHasPendingRequests, "After the first request passed there were still pending requests");
+					assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs at test end");
+					assert.ok(bhasPending, "After the first request passed there were still pending requests");
 					done();
 				}
 			}
@@ -204,10 +204,10 @@ sap.ui.define([
 	QUnit.test("Should return that there is no open xhr when the request has been aborted", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
 		oXHR.abort();
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
-	QUnit.module("XHR Counter - sinon fake server", {
+	QUnit.module("XHR Waiter - sinon fake server", {
 		beforeEach: function () {
 			this.aFiltersOfMockServer = sinon.FakeXMLHttpRequest.filters;
 			// don't let mockserver interfere
@@ -220,7 +220,7 @@ sap.ui.define([
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.respondWith("GET", "/foo",
 				[200, {},'{}']);
-			this.oDebugSpy = sinon.spy(oLogger, "debug");
+			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
 		},
 		afterEach: function () {
 			this.oServer.restore();
@@ -232,37 +232,37 @@ sap.ui.define([
 
 	QUnit.test("Should hook into defaked requests", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		return whenRequestDone(oXHR).then(function () {
-			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
 	});
 
 	QUnit.test("Should hook into faked requests", function (assert) {
 		createAndSendXHR("foo");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		this.oServer.respond();
-		assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+		assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 	});
 
 	QUnit.test("Should combine faked and defaked requests", function (assert) {
 		createAndSendXHR("foo");
 		var oXHR = createAndSendXHR("actions.js");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWith(this.oDebugSpy, "There are '1' open XHRs and '1' open FakeXHRs." +
 			"\nXHR: URL: 'actions.js' Method: 'GET'" +
 			"\nFakeXHR: URL: 'foo' Method: 'GET'");
 		this.oServer.respond();
 		this.oDebugSpy.reset();
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWith(this.oDebugSpy, "There are '1' open XHRs and '0' open FakeXHRs." +
 			"\nXHR: URL: 'actions.js' Method: 'GET'");
 		return whenRequestDone(oXHR).then(function () {
-			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
 	});
 
-	QUnit.module("XHR Counter - mock server", {
+	QUnit.module("XHR Waiter - mock server", {
 		beforeEach: function () {
 			this.sServiceUrl = "/my/odata/service/";
 			var oMockServer = new MockServer({ rootUri : this.sServiceUrl});
@@ -278,7 +278,7 @@ sap.ui.define([
 
 			oMockServer.start();
 			this.oMockServer = oMockServer;
-			this.oDebugSpy = sinon.spy(oLogger, "debug");
+			this.oDebugSpy = sinon.spy(aLoggers[0], "debug");
 		},
 		afterEach: function () {
 			this.oMockServer.stop();
@@ -289,21 +289,21 @@ sap.ui.define([
 
 	QUnit.test("Should hook into a oData request", function (assert) {
 		var oXHR = createAndSendXHR("/my/odata/service/Products");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWith(this.oDebugSpy, "There are '0' open XHRs and '1' open FakeXHRs." +
 			"\nFakeXHR: URL: '/my/odata/service/Products' Method: 'GET'");
 		return whenRequestDone(oXHR).then(function () {
-			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
 	});
 
 	QUnit.test("Should hook into a defaked mockserver request", function (assert) {
 		var oXHR = createAndSendXHR("actions.js");
-		assert.ok(XHRCounter.hasPendingRequests(), "there are pending xhrs");
+		assert.ok(XHRWaiter.hasPending(), "there are pending xhrs");
 		sinon.assert.calledWith(this.oDebugSpy, "There are '1' open XHRs and '0' open FakeXHRs." +
 			"\nXHR: URL: 'actions.js' Method: 'GET'");
 		return whenRequestDone(oXHR).then(function () {
-			assert.ok(!XHRCounter.hasPendingRequests(), "there are no pending xhrs");
+			assert.ok(!XHRWaiter.hasPending(), "there are no pending xhrs");
 		});
 	});
 });

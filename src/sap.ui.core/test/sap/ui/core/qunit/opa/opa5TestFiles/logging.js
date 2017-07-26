@@ -11,7 +11,7 @@ sap.ui.define([
 	// all modules that save Opa5 inside their closure and modify it need to be unlaoded too!
 	jQuery.sap.unloadResources("sap/ui/test/opaQunit.js", false, true, true);
 
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa5");
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa5")[2];
 	var Opa5 = sap.ui.test.Opa5;
 	var Opa = sap.ui.test.Opa;
 
