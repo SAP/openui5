@@ -1,15 +1,15 @@
 <mvc:View height="100%" controllerName="sap.m.sample.MultiInputMultiLine.Page"
 		xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
-	<VBox>
+	<VBox class="sapUiSmallMargin">
 			<items>
-			<Label text="MultiInput in MultiLine Display Mode" labelFor="multiInput1"/>
+			<Label text="MultiInput in multi-line Display Mode" labelFor="multiInput1"/>
 			<MultiInput id="multiInput1" width="100%" enableMultiLineMode="true" showValueHelp="false"/>
 
-			<Label text="MultiInput with asynchronously validation in MultiLine Display Mode" labelFor="multiInput3"/>
+			<Label text="MultiInput with asynchronously validation in multi-line display mode" labelFor="multiInput3" class="sapUiSmallMarginTop"/>
 			<MultiInput id="multiInput3" width="100%" enableMultiLineMode="true" placeholder= "tokens get validated asynchronously after 500ms" showValueHelp="false"/>
 
-			<Label text="MultiInput with suggestion table in MultiLine Mode Display" labelFor="multiInput2"/>
+			<Label text="MultiInput with suggestion table in multi-line display mode" labelFor="multiInput2" class="sapUiSmallMarginTop"/>
 			<MultiInput
 				id="multiInput2"
 				width="100%"
@@ -62,7 +62,7 @@
 				</suggestionRows>
 			</MultiInput>
 
-			<Label text="MultiInput with suggestion list items in MultiLine Mode Display" labelFor="multiInput4"/>
+			<Label text="MultiInput with suggestion list items in multi-line display mode" labelFor="multiInput4" class="sapUiSmallMarginTop"/>
 			<MultiInput id="multiInput4"
 				width="100%"
 				enableMultiLineMode="true"

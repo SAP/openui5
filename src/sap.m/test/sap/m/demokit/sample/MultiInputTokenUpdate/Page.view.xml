@@ -1,7 +1,7 @@
 <mvc:View height="100%" controllerName="sap.m.sample.MultiInputTokenUpdate.Page"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
-	<VBox>
+	<VBox class="sapUiSmallMargin">
 		<Text text="Open a new Excel file and write the letters from 'a' to 'f' in a column. Copy the column and paste it into the MultiInput below"/>
 		<MultiInput id="tokenUpdateMI" tokenUpdate="_onTokenUpdate" tokenChange="_onTokenChange"/>
 		<Text text="Expected result is that tokens with texts 'c', 'd' and 'f' will be created instantly and a single
