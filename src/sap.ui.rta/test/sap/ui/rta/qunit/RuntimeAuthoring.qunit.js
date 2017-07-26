@@ -288,6 +288,7 @@ sap.ui.require([
 
 		this.oRta.attachStart(function() {
 			assert.equal(this.oRta._oToolsMenu.getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
+			assert.equal(this.oRta._oToolsMenu.getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
 			done();
 		}.bind(this));
 

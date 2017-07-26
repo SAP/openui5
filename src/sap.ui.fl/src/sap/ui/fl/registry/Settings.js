@@ -335,6 +335,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns true if ATO is available in the back end.
+	 *
+	 * @returns {boolean} true if ATO is available.
+	 * @public
+	 */
+	Settings.prototype.isAtoAvailable = function() {
+		var bIsAtoAvailable = false;
+		if (this._oSettings.isAtoAvailable) {
+			bIsAtoAvailable = this._oSettings.isAtoAvailable;
+		}
+		return bIsAtoAvailable;
+	};
+
+	/**
 	 * Checks whether the current system is defined as a productive system.
 	 *
 	 * @public

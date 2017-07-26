@@ -43,7 +43,8 @@ sap.ui.define([
 		"sap/ui/rta/util/PopupManager",
 		"sap/ui/core/BusyIndicator",
 		"sap/ui/dt/DOMUtil",
-		"sap/ui/rta/util/StylesLoader"
+		"sap/ui/rta/util/StylesLoader",
+		"sap/ui/rta/appVariant/ManageAppsLoader"
 	],
 	function(
 		jQuery,
@@ -85,7 +86,8 @@ sap.ui.define([
 		PopupManager,
 		BusyIndicator,
 		DOMUtil,
-		StylesLoader
+		StylesLoader,
+		ManageAppsLoader
 	) {
 	"use strict";
 
@@ -502,17 +504,19 @@ sap.ui.define([
 				return Promise.resolve(bReloadTriggered);
 			}.bind(this))
 			.then(function (bReloadTriggered) {
+				var bIsAppVariantSupported;
 				if (this.getShowToolbars() && !bReloadTriggered) {
 					// Create ToolsMenu
 					return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl))
 						.then(function(oSettings) {
+							bIsAppVariantSupported = ManageAppsLoader.hasAppVariantsSupport(this.getLayer(), oSettings.isAtoEnabled() && oSettings.isAtoAvailable());
 							return !oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured();
-						})
+						}.bind(this))
 						.catch(function(oError) {
 							return false;
 						})
 						.then(function (bShowPublish) {
-							this._createToolsMenu(bShowPublish);
+							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
 							return this._oToolsMenu.show();
 						}.bind(this))
 						.then(function() {
@@ -736,7 +740,7 @@ sap.ui.define([
 		return this.getCommandStack().redo();
 	};
 
-	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable) {
+	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable, bIsAppVariantSupported) {
 		if (!this._oToolsMenu) {
 			var fnConstructor;
 
@@ -760,13 +764,15 @@ sap.ui.define([
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
+					manageAppsVisible: bIsAppVariantSupported,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
 					restore: this._onRestore.bind(this),
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
-					modeChange: this._onModeChange.bind(this)
+					modeChange: this._onModeChange.bind(this),
+					manageApps: ManageAppsLoader.load.bind(null, this.getRootControl())
 				});
 			}
 
