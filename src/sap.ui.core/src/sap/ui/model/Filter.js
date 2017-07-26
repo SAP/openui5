@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 	 * @example <caption>Using an object with a path, an operator and one or two values</caption>
 	 *
 	 *   sap.ui.define(['sap/ui/model/Filter', 'sap/ui/model/FilterOperator'], function(Filter, FilterOperator) {
-	 *     new sap.ui.model.Filter({
+	 *     new Filter({
 	 *       path: "Price",
 	 *       operator: FilterOperator.BT,
 	 *       value1: 11.0,
