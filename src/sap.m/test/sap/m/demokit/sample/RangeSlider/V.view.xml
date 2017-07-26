@@ -15,6 +15,7 @@
 		<Text text="RangeSlider with tickmarks" class="sapUiSmallMarginBottom" />
 		<RangeSlider enableTickmarks="true" range="0,10" min="0" max="10" class="sapUiMediumMarginBottom"/>
 		<RangeSlider enableTickmarks="true" class="sapUiMediumMarginBottom"/>
+		<Text text="RangeSlider with tickmarks and step '5'" class="sapUiSmallMarginBottom" />
 		<RangeSlider enableTickmarks="true" min="-100" max="100" step="5" class="sapUiLargeMarginBottom"/>
 		<Text text="RangeSlider with tickmarks and labels" class="sapUiSmallMarginBottom" />
 		<RangeSlider min="0" max="30" range="5,20" enableTickmarks="true" class="sapUiSmallMarginBottom">
