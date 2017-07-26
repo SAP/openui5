@@ -332,6 +332,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				this._getDialog().close();
 				this.fireItemSelected({ item: oMenuItem });
 			}
+			oMenuItem.firePress();
 		};
 
 		/**
@@ -472,6 +473,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 			if (oMenuItem && !oMenuItem.getItems().length) {
 				this.fireItemSelected({item: oMenuItem});
+			}
+			if (oMenuItem) {
+				oMenuItem.firePress();
 			}
 		};
 
