@@ -46,6 +46,11 @@
 	margin-bottom: 0.5rem;
 }
 
+/* We remove margin for p tags in JsDoc when we are in the context of a table cell */
+.sapUxAPObjectPageSection .sapMListTbl .sapUiDocumentationJsDoc p {
+	margin: 0;
+}
+
 .sapMListTbl .sapUiVlt .sapMText,
 .sapMListTbl .sapUiVlt .sapMLabel {
 	padding-top: 0.5rem;
