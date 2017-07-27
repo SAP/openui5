@@ -116,7 +116,7 @@
 								<m:ColumnListItem type="Navigation" press="onNavToSample" vAlign="Middle">
 									<m:cells>
 										<m:Text text="{name}" class="entitySampleName" wrapping="false" />
-										<m:FormattedText htmlText="{description}" />
+										<m:FormattedText htmlText="{=${description} ? ${description} : ''}" />
 									</m:cells>
 								</m:ColumnListItem>
 							</m:items>
