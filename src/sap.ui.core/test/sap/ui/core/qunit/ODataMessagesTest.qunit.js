@@ -514,6 +514,81 @@ function runODataMessagesTests() {
 		});
 	});
 
+
+	QUnit.test("ODataMessageParser: error for newly created resource with relative target", function(assert) {
+		var done = assert.async();
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+				}
+			});
+
+
+			//SETUP
+			var oRequest = {
+				method: "POST"
+			};
+
+			var oResponse = {
+				statusCode: "201", //CREATED
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;"
+				}
+			};
+
+			var oResponseHeaderSapMessageObject = {
+				"code":		"999",
+				"message":	"resource created but error occurred",
+				"severity":	"error",
+				"details": []
+			};
+
+			// location header set in response (Products)
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			//response location:    fakeservice://testdata/odata/northwind/Products(1)
+			//target:               name
+			oRequest.requestUri = sServiceURI + "/Products";
+			oResponseHeaderSapMessageObject.target = "name";
+			oResponse.headers["location"] = sServiceURI + "/Products(1)";
+			oResponse.headers["Sap-Message"] = JSON.stringify(oResponseHeaderSapMessageObject);
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/name", "target is relative to newly created product");
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Categories(1)/Products
+			//response location:    fakeservice://testdata/odata/northwind/Products(1)
+			//target:               name
+			oRequest.requestUri = sServiceURI + "/Categories(1)/Products";
+			oResponseHeaderSapMessageObject.target = "name";
+			oResponse.headers["location"] = sServiceURI + "/Products(1)";
+			oResponse.headers["Sap-Message"] = JSON.stringify(oResponseHeaderSapMessageObject);
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/name", "target is relative to newly created product");
+
+
+			done();
+		});
+	});
+
 	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
 		var done = assert.async();
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
