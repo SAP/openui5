@@ -371,6 +371,28 @@
 		oRangeSlider._triggerLiveChange();
 		//Assert
 		assert.ok(fnLiveChange.calledTwice, "liveChange listener should be called once again when the range is changed.");
+    });
+
+    QUnit.test("Handle input event:", function (assert) {
+        var oRangeSlider = new sap.m.RangeSlider({
+                range: [37.2,58.45],
+                min: 0,
+                max: 100,
+                inputsAsTooltips: true,
+                step: 0.01
+            });
+
+        oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+        sap.ui.getCore().applyChanges();
+
+		// Act
+        oRangeSlider._mHandleTooltip.start.tooltip.fireChange({value: 15.12});
+        sap.ui.getCore().applyChanges();
+
+		// Assert
+        assert.strictEqual(oRangeSlider.getRange()[0], 15.12, "The RangeSlider handleInputChange method didn't truncate the value");
+
+        oRangeSlider.destroy();
 	});
 
 }());

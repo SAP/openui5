@@ -151,6 +151,23 @@
                 showHandleTooltip: false,
                 name: "RangeSlider9"
             }).placeAt("content1");
+
+            new sap.m.RangeSlider({
+                inputsAsTooltips: true,
+                step: 0.01,
+                width: "50%",
+                min: -100,
+                max: 100,
+                range: [-35, 40],
+                liveChange: function(oControlEvent) {
+                    jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
+                },
+                change : function(oControlEvent) {
+                    jQuery.sap.log.info("Event fired: 'change' range property to " + oControlEvent.getParameter("range") + " on " + this);
+                },
+                showHandleTooltip: false,
+                name: "RangeSlider10"
+            }).placeAt("content2");
         </script>
     </head>
     <body class="sapUiBody">
