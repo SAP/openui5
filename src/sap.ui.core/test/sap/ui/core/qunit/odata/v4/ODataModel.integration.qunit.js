@@ -34,7 +34,7 @@ sap.ui.require([
 		var mDefaultParameters = {
 				groupId : "$direct",
 				operationMode : OperationMode.Server,
-				serviceUrl : TestUtils.proxy(sServiceUrl),
+				serviceUrl : sServiceUrl,
 				synchronizationMode : "None"
 			};
 
@@ -150,12 +150,6 @@ sap.ui.require([
 			this.mListChanges = {};
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
-
-			if (bCheckLogin) {
-				bCheckLogin = false;
-				// The tests only wait for 1 second, so we log in to the server before running them.
-				return jQuery.ajax(TestUtils.proxy(sTeaBusi));
-			}
 		},
 
 		afterEach : function () {
