@@ -472,8 +472,13 @@ sap.ui.require([
 		queryOptions : {
 			"$expand" : {"baz" : true, "nested" : {"$expand" : "xyz", "$select" : "uvw"}},
 			"$select" : "abc",
+			"$orderby" : "abc",
 			"foo" : "bar"
 		}
+	}, { // simple tests for $orderby
+		expectedResultHandlerCalls : [{key : "$orderby", value : "foo,bar"}],
+		expectedResultHandlerCallsSorted : [{key : "$orderby", value : "foo,bar"}],
+		queryOptions : {"$orderby" : "foo,bar"}
 	}, { // simple tests for $select
 		expectedResultHandlerCalls : [{key : "$select", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$select", value : "bar,foo"}],
@@ -546,10 +551,12 @@ sap.ui.require([
 	}, { // test nested $expand structure
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
+			{key : "$orderby", value : "foo,bar"},
 			{key : "$select", value : "foo/xyz,foo/bar/*,baz/*,abc"}
 		],
 		expectedResultHandlerCallsSorted : [
 			{key : "$expand", value : "baz,foo,foo/bar"},
+			{key : "$orderby", value : "foo,bar"},
 			{key : "$select", value : "abc,baz/*,foo/bar/*,foo/xyz"}
 		],
 		queryOptions : {
@@ -562,7 +569,8 @@ sap.ui.require([
 				},
 				"baz" : true
 			},
-			"$select" : "abc"
+			"$select" : "abc",
+			"$orderby" : "foo,bar"
 		}
 	}].forEach(function (oFixture, i) {
 		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
@@ -627,6 +635,15 @@ sap.ui.require([
 	[{
 		queryOptions : {"$foo" : "bar"},
 		error : "Unsupported system query option: $foo"
+	}, {
+		queryOptions : {
+			"$expand" : {
+				"foo" : {
+					"$orderby" : "bar"
+				}
+			}
+		},
+		error : "Unsupported query option in $expand: $orderby"
 	}, {
 		queryOptions : {
 			"$expand" : {

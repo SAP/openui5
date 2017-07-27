@@ -2673,6 +2673,51 @@ sap.ui.require([
 				{"$Path" : "CurrencyCode"});
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: test conversion of $orderby for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: $orderby", function (assert) {
+		var sView = '\
+<Table id="table" items="{path :\'/SalesOrderSet\',\
+		parameters : {\
+			$select : \'SalesOrderID\',\
+			$orderby : \'SalesOrderID\'\
+		}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createModelForV2SalesOrderService({
+				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+			}),
+			that = this;
+
+		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
+				"&$skip=0&$top=100",
+			{
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			that.oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+						+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
+
+		// code under test
+		return this.createView(assert, sView, oModel);
+	});
 });
 //TODO test bound action
 //TODO test delete
