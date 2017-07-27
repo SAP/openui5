@@ -11,7 +11,7 @@
 				 fixedLayout="false">
 			<m:columns>
 				<m:Column vAlign="Top"><m:Label text="Event"/></m:Column>
-				<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+				<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 			</m:columns>
 			<m:items>
 				<m:ColumnListItem visible="{= !!${events>name} }">
