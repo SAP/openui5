@@ -32,6 +32,10 @@ sap.ui.define([
 			this.bObserve = bObserve;
 			this.oFlexController = oFlexController;
 			this.oComponent = oComponent;
+			this.oVariantController = undefined;
+			if (oFlexController && oFlexController._oChangePersistence) {
+				this.oVariantController = oFlexController._oChangePersistence._oVariantController;
+			}
 
 			if (oData && typeof oData == "object") {
 
@@ -98,6 +102,49 @@ sap.ui.define([
 		this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
 
 		this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent);
+	};
+
+	VariantModel.prototype.ensureStandardEntryExists = function(sVariantManagementKey) {
+		var oData = this.getData();
+		if (!oData[sVariantManagementKey]) {
+			// Set Standard Data to Model
+			oData[sVariantManagementKey] = {
+				modified: false,
+				currentVariant: "Standard",
+				defaultVariant: "Standard",
+				variants: [
+					{
+						author: "SAP",
+						key: "Standard",
+						layer: "CUSTOMER",
+						originalTitle: "Standard",
+						readOnly: true,
+						title: "Standard",
+						toBeDeleted: false
+					}
+				]
+			};
+			this.setData(oData);
+
+			// Set Standard Data to VariantController
+			if (this.oVariantController) {
+				var oVariantControllerData = {changes: { variantSection: {}}};
+				oVariantControllerData.changes.variantSection[sVariantManagementKey] = {
+					defaultVariant: "Standard",
+					variants: [
+						{
+							content: {
+								fileName: sVariantManagementKey,
+								title: "Standard",
+								fileType: "variant",
+								variantMgmtRef: sVariantManagementKey
+							}
+						}
+					]
+				};
+				this.oVariantController._setChangeFileContent(oVariantControllerData);
+			}
+		}
 	};
 
 	return VariantModel;

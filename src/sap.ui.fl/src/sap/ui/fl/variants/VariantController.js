@@ -118,8 +118,8 @@ sap.ui.define([
 			});
 
 		 return aFiltered.reduce(function(aResult, oVariant) {
-			return aResult.concat(oVariant.changes);
-		 },[]);
+			return oVariant.changes ? aResult.concat(oVariant.changes) : aResult;
+		},[]);
 		}
 	};
 
