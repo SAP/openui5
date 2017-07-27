@@ -399,7 +399,7 @@ sap.ui.define([
 					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
 
-				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData);
+				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData, oControlData.methods);
 
 				if (oControlData.implements && oControlData.implements.length) {
 					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
@@ -562,12 +562,13 @@ sap.ui.define([
 				return result;
 			},
 
-			buildBorrowedModel: function (sTopicId, aLibsData) {
+			buildBorrowedModel: function (sTopicId, aLibsData, aMethods) {
 				var aBaseClassMethods,
 					aBaseClassEvents,
 					sBaseClass,
 					aBorrowChain,
-					oBaseClass;
+					oBaseClass,
+					aMethodNames;
 
 				aBorrowChain = {
 					methods: [],
@@ -577,6 +578,17 @@ sap.ui.define([
 
 				var fnVisibilityFilter = function (item) {
 					return item.visibility === "public";
+				};
+
+				// Get all method names
+				aMethodNames = aMethods.map(function (oMethod) {
+					return oMethod.name;
+				});
+
+				// Filter all borrowed methods and if some of them are overridden by the class
+				// we should exclude them from the borrowed methods list. BCP: 1780319087
+				var fnOverrideMethodFilter = function (item) {
+					return aMethodNames.indexOf(item.name) === -1;
 				};
 
 				var fnMethodsMapper = function (item) {
@@ -599,7 +611,9 @@ sap.ui.define([
 						break;
 					}
 
-					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter).map(fnMethodsMapper);
+					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter)
+						.filter(fnOverrideMethodFilter).map(fnMethodsMapper);
+
 					if (aBaseClassMethods.length) {
 						aBorrowChain.methods.push({
 							name: sBaseClass,
