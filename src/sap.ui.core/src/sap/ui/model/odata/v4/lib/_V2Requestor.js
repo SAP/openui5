@@ -182,14 +182,16 @@ sap.ui.define([
 	 * Converts a complex value or a collection of complex values from an OData V2 response payload
 	 * to an object in OData V4 JSON format.
 	 *
-	 * @param {object} vObject
+	 * @param {object} oObject
 	 *   The object to be converted
 	 * @param {object} mTypeByName
 	 *   A map of type metadata by qualified name
+	 * @returns {object}
+	 *   The converted payload
 	 * @throws {Error}
 	 *   If oObject does not contain inline metadata with type information
 	 */
-	_V2Requestor.prototype.convertNonPrimitive = function (vObject, mTypeByName) {
+	_V2Requestor.prototype.convertNonPrimitive = function (oObject, mTypeByName) {
 		var sPropertyName,
 			sPropertyType,
 			oType,
@@ -197,41 +199,43 @@ sap.ui.define([
 			vValue,
 			that = this;
 
-		// collection of complex values, coll. of primitive values only supported since OData V3
-		if (Array.isArray(vObject)) {
-			vObject.forEach(function (vItem) {
-				that.convertNonPrimitive(vItem, mTypeByName);
+		// results may be an array of entities or the property 'results' of a single request.
+		if (oObject.results && !oObject.__metadata) {
+			// collection of complex values, coll. of primitive values only supported since OData V3
+			oObject.results.forEach(function (oItem) {
+				that.convertNonPrimitive(oItem, mTypeByName);
 			});
-			return;
+			return oObject.results;
 		}
 
 		// complex value
-		if (!vObject.__metadata || !vObject.__metadata.type) {
+		if (!oObject.__metadata || !oObject.__metadata.type) {
 			throw new Error("Cannot convert complex value without type information in "
-					+ "__metadata.type: " + JSON.stringify(vObject));
+					+ "__metadata.type: " + JSON.stringify(oObject));
 		}
 
-		sTypeName = vObject.__metadata.type;
+		sTypeName = oObject.__metadata.type;
 		oType = mTypeByName[sTypeName]; // can be entity type or complex type
-		delete vObject.__metadata;
-		for (sPropertyName in vObject) {
-			vValue = vObject[sPropertyName];
+		delete oObject.__metadata;
+		for (sPropertyName in oObject) {
+			vValue = oObject[sPropertyName];
 			if (vValue === null) {
 				continue;
 			}
 			if (typeof vValue === "object") { // non-primitive property value
 				if (vValue.__deferred) {
-					delete vObject[sPropertyName];
+					delete oObject[sPropertyName];
 				} else {
-					this.convertNonPrimitive(vValue, mTypeByName);
+					oObject[sPropertyName] = this.convertNonPrimitive(vValue, mTypeByName);
 				}
 				continue;
 			}
 			sPropertyType = oType[sPropertyName] && oType[sPropertyName].$Type;
 			// primitive property value
-			vObject[sPropertyName] = this.convertPrimitive(vValue, sPropertyType,
+			oObject[sPropertyName] = this.convertPrimitive(vValue, sPropertyType,
 				sTypeName, sPropertyName);
 		}
+		return oObject;
 	};
 
 	/**
@@ -291,23 +295,22 @@ sap.ui.define([
 	 *   the V2 response cannot be converted
 	 */
 	_V2Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
-		// d.results may be an array of entities in case of a collection request or the property
-		// 'results' of a single request.
-		var bIsCollection = oResponsePayload.d.results && !oResponsePayload.d.__metadata,
-			oPayload = bIsCollection
-				? {value : oResponsePayload.d.results}
-				: oResponsePayload.d,
-			that = this;
-
-		if (oResponsePayload.d.__count) {
-			oPayload["@odata.count"] = oResponsePayload.d.__count;
-		}
-		if (oResponsePayload.d.__next) {
-			oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
-		}
+		var that = this;
 
 		return this.fnFetchEntityContainer().then(function (mScope) {
-			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mScope);
+			var oPayload = that.convertNonPrimitive(oResponsePayload.d, mScope);
+
+			// d.results may be an array of entities in case of a collection request or the property
+			// 'results' of a single request.
+			if (oResponsePayload.d.results && !oResponsePayload.d.__metadata) {
+				oPayload = {value : oPayload};
+				if (oResponsePayload.d.__count) {
+					oPayload["@odata.count"] = oResponsePayload.d.__count;
+				}
+				if (oResponsePayload.d.__next) {
+					oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
+				}
+			}
 			return oPayload;
 		});
 	};
