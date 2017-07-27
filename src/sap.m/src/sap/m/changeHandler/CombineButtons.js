@@ -16,6 +16,35 @@ sap.ui.define(["sap/ui/fl/Utils"],
 		 */
 		var CombineButtons = { };
 
+		CombineButtons.ADD_HELPER_FUNCTIONS = {
+			_fnFindIndexInAggregation : function(oParent, oSourceControl, sParentAggregation) {
+				var oParentAggregation,
+					bMultipleAggregation = false,
+					sParentAggregationSingularName,
+					sAggregationNameToUpper;
+
+				// We need to check the aggregation name and if it is multiple or not.
+				// There are cases when the control's parent method is overwritten and
+				// this leads to differences in the result given by oParent.indexOfAggregation
+				// method. Having this in mind:
+				// 1. We get the aggregation from the Parent's metadata
+				oParentAggregation = oParent.getMetadata().getAllAggregations()[sParentAggregation];
+
+				// 2. Then we check if it is multiple
+				bMultipleAggregation = oParentAggregation.multiple;
+
+				// 3. We get the its name or its singular name if it is multiple
+				sParentAggregationSingularName = bMultipleAggregation ? oParentAggregation.singularName : oParentAggregation.name;
+
+				// 4. We change it to upper case in order to be able to create the method
+				// which is potentially overwritten and/or has additional logic to it
+				sAggregationNameToUpper = jQuery.sap.charToUpperCase(sParentAggregationSingularName);
+
+				// 5. We return the correct index of the control in its Parent aggregation
+				return oParent["indexOf" + sAggregationNameToUpper](oSourceControl);
+			}
+		};
+
 		/**
 		 * Combines sap.m.Button(s) in a sap.m.MenuButton
 		 *
@@ -39,7 +68,7 @@ sap.ui.define(["sap/ui/fl/Utils"],
 				oSourceControl = oModifier.bySelector(oChangeDefinition.content.combineButtonSelectors[0], mPropertyBag.appComponent),
 				oAppComponent = mPropertyBag.appComponent,
 				oParent = oModifier.getParent(oSourceControl),
-				iAggregationIndex, sBarAggregation, aButtons,
+				iAggregationIndex, sParentAggregation, aButtons,
 				bIsRtl = sap.ui.getCore().getConfiguration().getRTL(),
 				oMenu, oMenuButton, aMenuButtonName = [];
 
@@ -47,8 +76,8 @@ sap.ui.define(["sap/ui/fl/Utils"],
 				return oModifier.bySelector(oCombineButtonSelector, oAppComponent);
 			});
 
-			sBarAggregation = aButtons[0].sParentAggregationName;
-			iAggregationIndex = oParent.indexOfAggregation(sBarAggregation, oSourceControl);
+			sParentAggregation = aButtons[0].sParentAggregationName;
+			iAggregationIndex = this.ADD_HELPER_FUNCTIONS._fnFindIndexInAggregation(oParent, oSourceControl, sParentAggregation);
 
 			oMenu = oModifier.createControl("sap.m.Menu", mPropertyBag.appComponent, oView);
 			oMenu.attachItemSelected(function (oEvent) {
@@ -74,7 +103,7 @@ sap.ui.define(["sap/ui/fl/Utils"],
 				oModifier.setProperty(oIdToSave, "key", "originalButtonId");
 				oModifier.setProperty(oIdToSave, "value", oModifier.getId(oButton));
 
-				oModifier.removeAggregation(oParent, sBarAggregation, oButton);
+				oModifier.removeAggregation(oParent, sParentAggregation, oButton);
 				// adding each button control to the menuItem's dependents aggregation
 				// this way we can save all relevant information it my have
 				oModifier.insertAggregation(oMenuItem, "dependents", oButton);
@@ -86,7 +115,7 @@ sap.ui.define(["sap/ui/fl/Utils"],
 			oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
 			oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0);
 
-			oModifier.insertAggregation(oParent, sBarAggregation, oMenuButton, iAggregationIndex);
+			oModifier.insertAggregation(oParent, sParentAggregation, oMenuButton, iAggregationIndex);
 
 		};
 

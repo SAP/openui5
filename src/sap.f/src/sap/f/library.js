@@ -68,7 +68,8 @@ sap.ui.define(["jquery.sap.global",
 					"hideControl": "default",
 					"unhideControl": "default",
 					"moveControls": "default"
-				}
+				},
+				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle"
 			}
 		}
 	});
