@@ -6338,7 +6338,7 @@
 	});
 
 	QUnit.test("Navigate without Ctrl key", function (assert) {
-		goUpDownWithArrowKeys(assert, iNumberOfCols - 1, false);
+		goUpDownWithArrowKeys(assert, 0, false);
 	});
 
 	QUnit.test("Navigate Row Actions", function (assert) {
