@@ -398,6 +398,8 @@ sap.ui.define([
 					vValue = convertExpand([], vValue, "");
 					vValue = (bSortExpandSelect ? vValue.sort() : vValue).join(",");
 					break;
+				case "$orderby":
+					break;
 				case "$select":
 					aSelects.push.apply(aSelects,
 						Array.isArray(vValue) ? vValue : vValue.split(","));
