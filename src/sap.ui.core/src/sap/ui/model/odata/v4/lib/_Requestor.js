@@ -402,6 +402,58 @@ sap.ui.define([
 	};
 
 	/**
+	 * Formats a given internal value into a literal suitable for usage in URLs.
+	 *
+	 * @param {any} vValue
+	 *   The value according to "OData JSON Format Version 4.0" section "7.1 Primitive Value"
+	 * @param {object} oProperty
+	 *   The OData property
+	 * @returns {string}
+	 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
+	 *   "5.1.1.6.1 Primitive Literals"
+	 * @throws {Error}
+	 *   If the value is undefined or the type is not supported
+	 */
+	Requestor.prototype.formatPropertyAsLiteral = function (vValue, oProperty) {
+		return _Helper.formatLiteral(vValue, oProperty.$Type);
+	};
+
+	/**
+	 * Returns the key predicate (see "4.3.1 Canonical URL") for the given entity type metadata
+	 * and entity instance runtime data.
+	 *
+	 * @param {object} oEntityType
+	 *   Entity type metadata
+	 * @param {object} oEntityInstance
+	 *   Entity instance runtime data
+	 * @param {boolean} [bIgnoreMissingKey=false]
+	 *   Do not throw an exception if a key property does not have a value
+	 * @returns {string}
+	 *   The key predicate, e.g. "(Sector='DevOps',ID='42')" or "('42')" or undefined if one
+	 *   key property is undefined
+	 *
+	 * @private
+	 */
+	Requestor.prototype.getKeyPredicate = function (oEntityType, oEntityInstance) {
+		var bFailed,
+			aKeyProperties = [],
+			bSingleKey = oEntityType.$Key.length === 1,
+			that = this;
+
+		bFailed = oEntityType.$Key.some(function (sName) {
+			var vValue = oEntityInstance[sName];
+
+			if (vValue === undefined) {
+				return true;
+			}
+			vValue = encodeURIComponent(that.formatPropertyAsLiteral(vValue, oEntityType[sName]));
+			aKeyProperties.push(bSingleKey ? vValue : encodeURIComponent(sName) + "=" + vValue);
+		});
+
+		return bFailed ? undefined : "(" + aKeyProperties.join(",") + ")";
+	};
+
+	/**
 	 * Returns this requestor's service URL.
 	 *
 	 * @returns {string}

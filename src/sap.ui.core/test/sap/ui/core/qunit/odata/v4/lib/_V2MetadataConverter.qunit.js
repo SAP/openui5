@@ -238,19 +238,23 @@ sap.ui.require([
 							},
 							"p4" : {
 								"$kind" : "Property",
-								"$Type" : "Edm.TimeOfDay"
+								"$Type" : "Edm.TimeOfDay",
+								"$v2Type" : "Edm.Time"
 							},
 							"p5" : {
 								"$kind" : "Property",
-								"$Type" : "Edm.DateTimeOffset"
+								"$Type" : "Edm.DateTimeOffset",
+								"$v2Type" : "Edm.DateTime"
 							},
 							"p6" : {
 								"$kind" : "Property",
-								"$Type" : "Edm.Date"
+								"$Type" : "Edm.Date",
+								"$v2Type" : "Edm.DateTime"
 							},
 							"p7" : {
 								"$kind" : "Property",
-								"$Type" : "Edm.Single"
+								"$Type" : "Edm.Single",
+								"$v2Type" : "Edm.Float"
 							}
 						}
 					});
