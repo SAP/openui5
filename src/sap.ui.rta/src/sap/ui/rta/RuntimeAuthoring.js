@@ -301,7 +301,7 @@ sap.ui.define([
 
 			// Context Menu
 			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
-				styleClass: Utils.getRtaStyleClass()
+				styleClass: Utils.getRtaStyleClassName()
 			});
 
 			// Tab Handling
@@ -396,6 +396,7 @@ sap.ui.define([
 			mFlexSettings.layer = aUriLayer[0];
 		}
 
+		Utils.setRtaStyleClassName(mFlexSettings.layer);
 		this.setProperty("flexSettings", jQuery.extend(this.getFlexSettings(), mFlexSettings));
 	};
 
@@ -553,7 +554,7 @@ sap.ui.define([
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
 		MessageBox.error(sMsg, {
-			styleClass: Utils.getRtaStyleClass()
+			styleClass: Utils.getRtaStyleClassName()
 		});
 	};
 
@@ -871,7 +872,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._openSelection = function () {
-	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClass());
+	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClassName());
 	};
 
 	/**
@@ -956,7 +957,7 @@ sap.ui.define([
 				icon: oMessageType,
 				title: sTitle,
 				onClose: resolve,
-				styleClass: Utils.getRtaStyleClass()
+				styleClass: Utils.getRtaStyleClassName()
 			});
 		});
 	};
@@ -1036,7 +1037,7 @@ sap.ui.define([
 			icon: MessageBox.Icon.WARNING,
 			title : sTitle,
 			onClose : fnConfirmDiscardAllChanges,
-			styleClass: Utils.getRtaStyleClass()
+			styleClass: Utils.getRtaStyleClassName()
 		});
 	};
 
@@ -1605,7 +1606,7 @@ sap.ui.define([
 				title : sTitle,
 				actions : [sConfirmButtonText, sCancelButtonText],
 				onClose : fnCallback,
-				styleClass: Utils.getRtaStyleClass()
+				styleClass: Utils.getRtaStyleClassName()
 			});
 		}.bind(this));
 	};
