@@ -84,16 +84,15 @@ html[data-sap-ui-browser*='ie'] .sapMBtnInner {
 
 /* paddings depends on the presence and placement of text and icons */
 .sapMBtnInner.sapMBtnText {
+	padding-left: 0.75rem;
 	padding-right: 0.75rem;
 }
-.sapMBtn bdi:only-child {
-	padding-left: 0.75rem;
+.sapMBtnInner.sapMBtnText.sapMBtnIconFirst,
+.sapMBtnInner.sapMBtnText.sapMBtnBack {
+	padding-left: 2.375rem;
 }
-.sapMBtnBase:not(.sapMBtn) bdi{
-	display: block;
-}
-.sapMBtnCustomIcon .sapMBtnIcon .sapMBtnIconLeft .sapUiIcon .sapUiIconMirrorInRTL :disabled {
-	color: @sapUiButtonIconColor;
+.sapMBtnInner.sapMBtnText.sapMBtnBack.sapMBtnIconFirst {
+	padding-left: 4.750rem;
 }
 .sapMBtnInner.sapMBtnText.sapMBtnIconLast {
 	padding-right: 2.375rem;
@@ -103,6 +102,7 @@ html[data-sap-ui-browser*='ie'] .sapMBtnInner {
 /* Content area        */
 /* ------------------- */
 .sapMBtnContent {
+	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -139,9 +139,6 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 }
 .sapMBtnText > .sapMBtnIconLeft + .sapMBtnIconLeft {
 	left: 2.375rem;
-}
-.sapMBtnText ~ .sapMBtnIcon {
-	padding-left: 0;
 }
 .sapMBtnText > .sapMBtnIconRight {
 	right: 0;
@@ -357,15 +354,6 @@ span.sapMBtnInner.sapMBtnEmphasized {
 :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnEmphasized > .sapMBtnIcon {
 	color:            @sapUiButtonEmphasizedTextColor;
 }
-.sapMBtn .sapMBtnEmphasized .sapMBtnIcon  {
-	color: @sapUiButtonEmphasizedTextColor;
-}
-.sapMBtn .sapMBtnReject .sapMBtnIcon  {
-	color: @sapUiButtonRejectTextColor;
-}
-.sapMBtn .sapMBtnAccept .sapMBtnIcon  {
-	color: @sapUiButtonAcceptTextColor;
-}
 
 .sapMBtn:hover > .sapMBtnHoverable.sapMBtnEmphasized:not(.sapMBtnActive) {
 	background-color: @sapUiButtonEmphasizedHoverBackground;
@@ -480,6 +468,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 
 .sapMIBar-CTX .sapMBtnDisabled,
 .sapMIBar-CTX .sapMBtnDisabled .sapMBtnContent > .sapMBtnIcon {
+	color: @sapUiButtonHeaderDisabledTextColor;
 	text-shadow: none;
 }
 
