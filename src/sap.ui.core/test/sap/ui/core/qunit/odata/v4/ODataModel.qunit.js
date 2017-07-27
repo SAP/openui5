@@ -134,12 +134,11 @@ sap.ui.require([
 			synchronizationMode : "None"});
 
 		assert.strictEqual(oModel.sOperationMode, OperationMode.Server);
-		oMetaModel = oModel.getMetaModel();
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs({}, false, true).returns(mModelOptions);
 		this.mock(_MetadataRequestor).expects("create")
-			.withExactArgs({"Accept-Language" : "ab-CD"}, sinon.match.same(mModelOptions))
+			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", sinon.match.same(mModelOptions))
 			.returns(oMetadataRequestor);
 
 		// code under test
@@ -174,14 +173,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	["2.0", "4.0"].forEach(function (sODataVersion) {
-		QUnit.test("create _Requestor for odataVersion: " + sODataVersion, function (assert) {
+		QUnit.test("create requestors for odataVersion: " + sODataVersion, function (assert) {
+			var oModel;
+
 			this.mock(_Requestor).expects("create")
 				.withExactArgs(getServiceUrl(), {"Accept-Language" : "ab-CD"}, sinon.match.object,
 					sinon.match.func, sinon.match.func, sODataVersion)
 				.returns({});
 
+			this.mock(_MetadataRequestor).expects("create")
+				.withExactArgs({"Accept-Language" : "ab-CD"}, sODataVersion, sinon.match.object)
+				.returns({});
+
 			// code under test
-			createModel("", {odataVersion : sODataVersion});
+			oModel = createModel("", {odataVersion : sODataVersion});
+
+			assert.strictEqual(oModel.getODataVersion(), sODataVersion);
 		});
 	});
 

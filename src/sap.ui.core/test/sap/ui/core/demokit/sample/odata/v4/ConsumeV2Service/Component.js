@@ -51,13 +51,12 @@ sap.ui.define([
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(this.oSandbox, {
 						"$metadata" : {
-							//TODO workaround for not yet implemented metadata conversion
-							source : "metadataV4.xml"
+							source : "metadataV2.xml"
 						},
-						"EdmTypesCollection?$select=ID,Boolean,Byte,Guid,Int16,Int32,SByte,String&$skip=0&$top=100" : {
+						"EdmTypesCollection?$select=ID,Boolean,Byte,GlobalUID,Int16,Int32,SByte,String&$skip=0&$top=100" : {
 							source : "EdmTypesV2.json"
 						},
-						"EdmTypesCollection('1')?$select=ID,Boolean,Byte,Double,Float,Guid,Int16,Int32,SByte,Single,String" : {
+						"EdmTypesCollection('1')?$select=ID,Binary,Boolean,Byte,Date,DateTime,DateTimeOffset,Decimal,Double,Float,GlobalUID,Int16,Int32,Int64,SByte,Single,String,Time" : {
 							source : "EdmTypesV2_SingleEntity.json"
 						}
 					}, "sap/ui/core/sample/odata/v4/ConsumeV2Service/data",

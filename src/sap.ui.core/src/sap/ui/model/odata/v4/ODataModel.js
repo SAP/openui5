@@ -153,6 +153,7 @@ sap.ui.define([
 						throw new Error("Synchronization mode must be 'None'");
 					}
 					sODataVersion = mParameters.odataVersion || "4.0";
+					this.sODataVersion = sODataVersion;
 					if (sODataVersion !== "4.0" && sODataVersion !== "2.0") {
 						throw new Error("Unsupported value for parameter odataVersion: "
 							+ sODataVersion);
@@ -196,7 +197,7 @@ sap.ui.define([
 					this.bAutoExpandSelect = mParameters.autoExpandSelect === true;
 
 					this.oMetaModel = new ODataMetaModel(
-						_MetadataRequestor.create(mHeaders, this.mUriParameters),
+						_MetadataRequestor.create(mHeaders, sODataVersion, this.mUriParameters),
 						this.sServiceUrl + "$metadata", mParameters.annotationURI, this,
 						mParameters.supportReferences);
 					this.oRequestor = _Requestor.create(this.sServiceUrl, mHeaders,
@@ -809,6 +810,20 @@ sap.ui.define([
 	// @override
 	ODataModel.prototype.getObject = function () {
 		throw new Error("Unsupported operation: v4.ODataModel#getObject");
+	};
+
+	/**
+	 * Returns the version of the OData service.
+	 *
+	 * @returns {string}
+	 *   The version of the OData service
+	 *
+	 * @public
+	 * @since 1.49.0
+	 */
+	// @override
+	ODataModel.prototype.getODataVersion = function () {
+		return this.sODataVersion;
 	};
 
 	/**
