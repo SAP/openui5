@@ -26,9 +26,7 @@
 
 	QUnit.module("sap.ui.fl.variants.VariantManagement", {
 		beforeEach: function() {
-			this.oVariantManagement = new sap.ui.fl.variants.VariantManagement({
-				variantManagementKey: "One"
-			});
+			this.oVariantManagement = new sap.ui.fl.variants.VariantManagement("One", {});
 
 			oModel = new sap.ui.fl.variants.VariantModel({
 				"One": {
@@ -73,25 +71,11 @@
 							originalFavorite: true
 						}
 					]
-				},
-				"Two": {
-					defaultVariant: "Standard",
-					currentVariant: "Standard",
-					modified: false,
-					variants: [
-						{
-							key: "Standard",
-							title: "Standard",
-							author: "A",
-							readOnly: true,
-							favorite: true,
-							originalFavorite: true
-						}
-					]
 				}
 			});
 		},
 		afterEach: function() {
+			this.oVariantManagement.destroy();
 		}
 	});
 
@@ -145,26 +129,6 @@
 		this.oVariantManagement._checkVariantNameConstraints(oInput, null, "2");
 		assert.equal(oInput.getValueState(), "Error");
 		oInput.destroy();
-	});
-
-	QUnit.test("Check variantManagementKey functionality", function(assert) {
-
-		this.oVariantManagement.setModel(oModel, sap.ui.fl.variants.VariantManagement.MODEL_NAME);
-
-		var aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 5);
-
-		this.oVariantManagement.setVariantManagementKey("Two");
-		aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 1);
-
-		this.oVariantManagement.setVariantManagementKey("One");
-		aItems = this.oVariantManagement._getItems();
-		assert.ok(aItems);
-		assert.equal(aItems.length, 5);
-
 	});
 
 	QUnit.test("Create Variants List", function(assert) {
