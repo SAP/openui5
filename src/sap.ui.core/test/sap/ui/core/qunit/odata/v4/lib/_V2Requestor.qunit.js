@@ -4,8 +4,9 @@
 sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_SyncPromise",
-	"sap/ui/model/odata/v4/lib/_V2Requestor"
-], function (jQuery, _SyncPromise, asV2Requestor) {
+	"sap/ui/model/odata/v4/lib/_V2Requestor",
+	"sap/ui/model/odata/ODataUtils"
+], function (jQuery, _SyncPromise, asV2Requestor, ODataUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -683,6 +684,47 @@ sap.ui.require([
 			assert.throws(function () {
 				oRequestor.doConvertSystemQueryOptions(oFixture.queryOptions, function () {});
 			}, new Error(oFixture.error));
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bWithV2Type) {
+		QUnit.test("formatPropertyAsLiteral, bWithV2Type=" + bWithV2Type, function (assert) {
+			var sKeyPredicate = "(~)",
+				oProperty = {
+					"$Type" : "Edm.Bar"
+				},
+				oRequestor = {},
+				sResult,
+				vValue = {};
+
+			asV2Requestor(oRequestor);
+
+			oProperty[bWithV2Type ? "$v2Type" : "$Type"] = "Edm.Foo";
+			this.mock(ODataUtils).expects("formatValue")
+				.withExactArgs(sinon.match.same(vValue), "Edm.Foo")
+				.returns(sKeyPredicate);
+
+			// code under test
+			sResult = oRequestor.formatPropertyAsLiteral(vValue, oProperty);
+
+			assert.strictEqual(sResult, sKeyPredicate);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("formatPropertyAsLiteral: unsupported types", function (assert) {
+		var oProperty = {},
+			oRequestor = {},
+			vValue = {};
+
+		asV2Requestor(oRequestor);
+
+		["Binary", "DateTime", "DateTimeOffset", "Time"].forEach(function (sType) {
+			oProperty.$v2Type = "Edm." + sType;
+			assert.throws(function () {
+				oRequestor.formatPropertyAsLiteral(vValue, oProperty);
+			}, new Error("Type 'Edm." + sType + "' in the key is not supported"));
 		});
 	});
 });

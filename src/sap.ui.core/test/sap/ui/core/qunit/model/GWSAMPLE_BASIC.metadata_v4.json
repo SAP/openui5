@@ -582,7 +582,8 @@
 		"ChangedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CompanyName": {
 			"$MaxLength": 80,
@@ -592,7 +593,8 @@
 		"CreatedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CurrencyCode": {
 			"$MaxLength": 5,
@@ -704,7 +706,8 @@
 		"DateOfBirth": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"EmailAddress": {
 			"$MaxLength": 255,
@@ -874,12 +877,14 @@
 		"ChangedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CreatedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CurrencyCode": {
 			"$MaxLength": 5,
@@ -1022,12 +1027,14 @@
 		"ChangedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CreatedAt": {
 			"$Precision": 7,
 			"$Type": "Edm.DateTimeOffset",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"CurrencyCode": {
 			"$MaxLength": 5,
@@ -1125,7 +1132,8 @@
 		},
 		"DeliveryDate": {
 			"$Type": "Edm.Date",
-			"$kind": "Property"
+			"$kind": "Property",
+			"$v2Type": "Edm.DateTime"
 		},
 		"GrossAmount": {
 			"$Precision": 16,
