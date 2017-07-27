@@ -213,7 +213,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					this._oTrigger.$().attr({
 						"tabindex": 0,
 						"role": "button",
-						"aria-live": "polite"
+						"aria-labelledby": sTriggerID + "Text" + " " + sTriggerID + "Info"
 					});
 				}
 			}, this);
