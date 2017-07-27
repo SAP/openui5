@@ -415,25 +415,28 @@ sap.ui.define([
 			sChangeId = oChange.getId();
 
 			if (aAppliedChanges.indexOf(sChangeId) === -1) {
-				return Promise.resolve()
+				var vResult;
+				try {
+					vResult = oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+				} catch (e) {
+					vResult = Promise.reject();
+				}
 
-				.then(function() {
-					return oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
-				})
+				if (!(vResult instanceof Promise)) {
+					vResult = Promise.resolve(vResult);
+				}
 
-				.then(function() {
+				vResult.then(function() {
 					var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 					this._writeCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
 				}.bind(this))
 
-				.catch(function(sReason) {
+				.catch(function() {
 					this._setMergeError(true);
 					Utils.log.error("Change could not be applied. Merge error detected.");
 				}.bind(this));
 			}
 		}.bind(this));
-
-
 	};
 
 	FlexController.prototype._removeFromAppliedChangesAndMaybeRevert = function(oChange, oControl, mPropertyBag, bRevert) {
