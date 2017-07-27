@@ -1,7 +1,562 @@
 {
+	"$EntityContainer": "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities",
 	"$Version": "4.0",
 	"GWSAMPLE_BASIC.": {
-		"$kind": "Schema"
+		"$kind": "Schema",
+		"$Annotations" : {
+			"GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. ID"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerRole": {
+				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. Role"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/ChangedAt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/CompanyName": {
+				"@com.sap.vocabularies.Common.v1.Label": "Company Name"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/CreatedAt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/CurrencyCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Currency"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/EmailAddress": {
+				"@com.sap.vocabularies.Common.v1.Label": "E-Mail Address"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/FaxNumber": {
+				"@com.sap.vocabularies.Common.v1.Label": "Fax Number"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/LegalForm": {
+				"@com.sap.vocabularies.Common.v1.Label": "Legal Form"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/PhoneNumber": {
+				"@com.sap.vocabularies.Common.v1.Label": "Phone No."
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/WebAddress": {
+				"@com.sap.vocabularies.Common.v1.Label": "Web Address"
+			},
+			"GWSAMPLE_BASIC.CT_Address": {
+				"@com.sap.vocabularies.Communication.v1.Contact": {
+					"adr": {
+						"code": {
+							"$Path": "PostalCode"
+						},
+						"country": {
+							"$Path": "Country"
+						},
+						"locality": {
+							"$Path": "City"
+						},
+						"street": {
+							"$Path": "Street"
+						}
+					}
+				}
+			},
+			"GWSAMPLE_BASIC.CT_Address/AddressType": {
+				"@com.sap.vocabularies.Common.v1.Label": "Address Type"
+			},
+			"GWSAMPLE_BASIC.CT_Address/Building": {
+				"@com.sap.vocabularies.Common.v1.Label": "Building"
+			},
+			"GWSAMPLE_BASIC.CT_Address/City": {
+				"@com.sap.vocabularies.Common.v1.Label": "City"
+			},
+			"GWSAMPLE_BASIC.CT_Address/Country": {
+				"@com.sap.vocabularies.Common.v1.Label": "Country"
+			},
+			"GWSAMPLE_BASIC.CT_Address/PostalCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Postal Code"
+			},
+			"GWSAMPLE_BASIC.CT_Address/Street": {
+				"@com.sap.vocabularies.Common.v1.Label": "Street"
+			},
+			"GWSAMPLE_BASIC.Contact": {
+				"@com.sap.vocabularies.Communication.v1.Contact": {
+					"bday": {
+						"$Path": "DateOfBirth"
+						},
+					"n": {
+						"additional": {
+							"$Path": "MiddleName"
+							},
+						"given": {
+							"$Path": "FirstName"
+						},
+						"surname": {
+							"$Path": "LastName"
+						}
+						},
+					"nickname": {
+						"$Path": "Nickname"
+					}
+				}
+			},
+			"GWSAMPLE_BASIC.Contact/BusinessPartnerID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. ID"
+			},
+			"GWSAMPLE_BASIC.Contact/ContactGuid": {
+				"@com.sap.vocabularies.Common.v1.Label": "Contact GUID"
+			},
+			"GWSAMPLE_BASIC.Contact/DateOfBirth": {
+				"@com.sap.vocabularies.Common.v1.Label": "Date of Birth"
+			},
+			"GWSAMPLE_BASIC.Contact/EmailAddress": {
+				"@com.sap.vocabularies.Common.v1.Label": "E-Mail Address"
+			},
+			"GWSAMPLE_BASIC.Contact/FaxNumber": {
+				"@com.sap.vocabularies.Common.v1.Label": "Fax Number"
+			},
+			"GWSAMPLE_BASIC.Contact/FirstName": {
+				"@com.sap.vocabularies.Common.v1.Label": "First Name"
+			},
+			"GWSAMPLE_BASIC.Contact/Initials": {
+				"@com.sap.vocabularies.Common.v1.Label": "Initials"
+			},
+			"GWSAMPLE_BASIC.Contact/Language": {
+				"@com.sap.vocabularies.Common.v1.Label": "Language Key"
+			},
+			"GWSAMPLE_BASIC.Contact/LastName": {
+				"@com.sap.vocabularies.Common.v1.Label": "Last Name"
+			},
+			"GWSAMPLE_BASIC.Contact/MiddleName": {
+				"@com.sap.vocabularies.Common.v1.Label": "Middle Name"
+			},
+			"GWSAMPLE_BASIC.Contact/Nickname": {
+				"@com.sap.vocabularies.Common.v1.Label": "Nickname"
+			},
+			"GWSAMPLE_BASIC.Contact/PhoneNumber": {
+				"@com.sap.vocabularies.Common.v1.Label": "Phone No."
+			},
+			"GWSAMPLE_BASIC.Contact/Sex": {
+				"@com.sap.vocabularies.Common.v1.Label": "Sex"
+			},
+			"GWSAMPLE_BASIC.Contact/Title": {
+				"@com.sap.vocabularies.Common.v1.Label": "Title"
+			},
+			"GWSAMPLE_BASIC.Product/Category": {
+				"@com.sap.vocabularies.Common.v1.Label": "Prod. Cat."
+			},
+			"GWSAMPLE_BASIC.Product/ChangedAt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.Product/CreatedAt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.Product/CurrencyCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Currency"
+			},
+			"GWSAMPLE_BASIC.Product/Depth": {
+				"@com.sap.vocabularies.Common.v1.Label": "Dimensions"
+			},
+			"GWSAMPLE_BASIC.Product/Description": {
+				"@com.sap.vocabularies.Common.v1.Label": "Prod.Descrip."
+			},
+			"GWSAMPLE_BASIC.Product/DescriptionLanguage": {
+				"@com.sap.vocabularies.Common.v1.Label": "Language"
+			},
+			"GWSAMPLE_BASIC.Product/DimUnit": {
+				"@com.sap.vocabularies.Common.v1.Label": "Dim. Unit"
+			},
+			"GWSAMPLE_BASIC.Product/Height": {
+				"@com.sap.vocabularies.Common.v1.Label": "Dimensions"
+			},
+			"GWSAMPLE_BASIC.Product/MeasureUnit": {
+				"@com.sap.vocabularies.Common.v1.Label": "Qty. Unit"
+			},
+			"GWSAMPLE_BASIC.Product/Name": {
+				"@com.sap.vocabularies.Common.v1.Label": "Product Name"
+			},
+			"GWSAMPLE_BASIC.Product/NameLanguage": {
+				"@com.sap.vocabularies.Common.v1.Label": "Language"
+			},
+			"GWSAMPLE_BASIC.Product/Price": {
+				"@com.sap.vocabularies.Common.v1.Label": "Unit Price"
+			},
+			"GWSAMPLE_BASIC.Product/ProductID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Product ID"
+			},
+			"GWSAMPLE_BASIC.Product/SupplierID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. ID"
+			},
+			"GWSAMPLE_BASIC.Product/SupplierName": {
+				"@com.sap.vocabularies.Common.v1.Label": "Company Name"
+			},
+			"GWSAMPLE_BASIC.Product/TaxTarifCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Prod. Tax Code"
+			},
+			"GWSAMPLE_BASIC.Product/TypeCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Prod. Type Code"
+			},
+			"GWSAMPLE_BASIC.Product/WeightMeasure": {
+				"@com.sap.vocabularies.Common.v1.Label": "Wt. Measure"
+			},
+			"GWSAMPLE_BASIC.Product/WeightUnit": {
+				"@com.sap.vocabularies.Common.v1.Label": "Qty. Unit"
+			},
+			"GWSAMPLE_BASIC.Product/Width": {
+				"@com.sap.vocabularies.Common.v1.Label": "Dimensions"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/BillingStatus": {
+				"@com.sap.vocabularies.Common.v1.Label": "PO Confirmation"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/BillingStatusDescription": {
+				"@com.sap.vocabularies.Common.v1.Label": "Billing Description"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/ChangedAt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CreatedAt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CurrencyCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Currency"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CustomerID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. ID"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CustomerName": {
+				"@com.sap.vocabularies.Common.v1.Label": "Company Name"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/DeliveryStatus": {
+				"@com.sap.vocabularies.Common.v1.Label": "PO Ordering"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/DeliveryStatusDescription": {
+				"@com.sap.vocabularies.Common.v1.Label": "Delivery Description"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/GrossAmount": {
+				"@com.sap.vocabularies.Common.v1.Label": "Gross Amt."
+			},
+			"GWSAMPLE_BASIC.SalesOrder/LifecycleStatus": {
+				"@com.sap.vocabularies.Common.v1.Label": "PO Lifecycle"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/LifecycleStatusDescription": {
+				"@com.sap.vocabularies.Common.v1.Label": "Lifecycle Descript."
+			},
+			"GWSAMPLE_BASIC.SalesOrder/NetAmount": {
+				"@com.sap.vocabularies.Common.v1.Label": "Net Amt."
+			},
+			"GWSAMPLE_BASIC.SalesOrder/Note": {
+				"@com.sap.vocabularies.Common.v1.Label": "Description"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/NoteLanguage": {
+				"@com.sap.vocabularies.Common.v1.Label": "Language"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/SalesOrderID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Sa. Ord. ID"
+			},
+			"GWSAMPLE_BASIC.SalesOrder/TaxAmount": {
+				"@com.sap.vocabularies.Common.v1.Label": "Tax Amt."
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/CurrencyCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Currency"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/DeliveryDate": {
+				"@com.sap.vocabularies.Common.v1.Label": "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/GrossAmount": {
+				"@com.sap.vocabularies.Common.v1.Label": "Gross Amt."
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/ItemPosition": {
+				"@com.sap.vocabularies.Common.v1.Label": "PO Item Pos"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/NetAmount": {
+				"@com.sap.vocabularies.Common.v1.Label": "Net Amt."
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/Note": {
+				"@com.sap.vocabularies.Common.v1.Label": "Description"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/NoteLanguage": {
+				"@com.sap.vocabularies.Common.v1.Label": "Language"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/ProductID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Product ID"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/Quantity": {
+				"@com.sap.vocabularies.Common.v1.Label": "Quantity"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/QuantityUnit": {
+				"@com.sap.vocabularies.Common.v1.Label": "Qty. Unit"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/SalesOrderID": {
+				"@com.sap.vocabularies.Common.v1.Label": "Sa. Ord. ID"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/TaxAmount": {
+				"@com.sap.vocabularies.Common.v1.Label": "Tax Amt."
+			},
+			"GWSAMPLE_BASIC.VH_AddressType/AddressType": {
+				"@com.sap.vocabularies.Common.v1.Label": "Address Type"
+			},
+			"GWSAMPLE_BASIC.VH_AddressType/Shorttext": {
+				"@com.sap.vocabularies.Common.v1.Label": "Short Descript."
+			},
+			"GWSAMPLE_BASIC.VH_BPRole/BpRole": {
+				"@com.sap.vocabularies.Common.v1.Label": "Bus. Part. Role"
+			},
+			"GWSAMPLE_BASIC.VH_BPRole/Shorttext": {
+				"@com.sap.vocabularies.Common.v1.Label": "Short Descript."
+			},
+			"GWSAMPLE_BASIC.VH_Category/Category": {
+				"@com.sap.vocabularies.Common.v1.Label": "Prod. Cat."
+			},
+			"GWSAMPLE_BASIC.VH_Country/Land1": {
+				"@com.sap.vocabularies.Common.v1.Label": "Country"
+			},
+			"GWSAMPLE_BASIC.VH_Country/Landx": {
+				"@com.sap.vocabularies.Common.v1.Label": "Name"
+			},
+			"GWSAMPLE_BASIC.VH_Country/Natio": {
+				"@com.sap.vocabularies.Common.v1.Label": "Nationality"
+			},
+			"GWSAMPLE_BASIC.VH_Currency/Ltext": {
+				"@com.sap.vocabularies.Common.v1.Label": "Long Text"
+			},
+			"GWSAMPLE_BASIC.VH_Currency/Waers": {
+				"@com.sap.vocabularies.Common.v1.Label": "Currency"
+			},
+			"GWSAMPLE_BASIC.VH_Language/Spras": {
+				"@com.sap.vocabularies.Common.v1.Label": "Language"
+			},
+			"GWSAMPLE_BASIC.VH_Language/Sptxt": {
+				"@com.sap.vocabularies.Common.v1.Label": "Name"
+			},
+			"GWSAMPLE_BASIC.VH_ProductTypeCode/Shorttext": {
+				"@com.sap.vocabularies.Common.v1.Label": "Short Descript."
+			},
+			"GWSAMPLE_BASIC.VH_ProductTypeCode/TypeCode": {
+				"@com.sap.vocabularies.Common.v1.Label": "Prod. Type Code"
+			},
+			"GWSAMPLE_BASIC.VH_Sex/Sex": {
+				"@com.sap.vocabularies.Common.v1.Label": "Sex"
+			},
+			"GWSAMPLE_BASIC.VH_Sex/Shorttext": {
+				"@com.sap.vocabularies.Common.v1.Label": "Short Descript."
+			},
+			"GWSAMPLE_BASIC.VH_UnitLength/Msehi": {
+				"@com.sap.vocabularies.Common.v1.Label": "Int. meas. unit"
+			},
+			"GWSAMPLE_BASIC.VH_UnitLength/Msehl": {
+				"@com.sap.vocabularies.Common.v1.Label": "Unit text"
+			},
+			"GWSAMPLE_BASIC.VH_UnitQuantity/Msehi": {
+				"@com.sap.vocabularies.Common.v1.Label": "Int. meas. unit"
+			},
+			"GWSAMPLE_BASIC.VH_UnitQuantity/Msehl": {
+				"@com.sap.vocabularies.Common.v1.Label": "Unit text"
+			},
+			"GWSAMPLE_BASIC.VH_UnitWeight/Msehi": {
+				"@com.sap.vocabularies.Common.v1.Label": "Int. meas. unit"
+			},
+			"GWSAMPLE_BASIC.VH_UnitWeight/Msehl": {
+				"@com.sap.vocabularies.Common.v1.Label": "Unit text"
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ContactSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ProductSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrderLineItemSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrderSet": {
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_AddressTypeSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_BPRoleSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CategorySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CountrySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CurrencySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_LanguageSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_ProductTypeCodeSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitLengthSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitQuantitySet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitWeightSet": {
+				"@Org.OData.Capabilities.V1.DeleteRestrictions": {
+					"Deletable": false
+				},
+				"@Org.OData.Capabilities.V1.InsertRestrictions": {
+					"Insertable": false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions": {
+					"Searchable": false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported": false,
+				"@Org.OData.Capabilities.V1.TopSupported": false,
+				"@Org.OData.Capabilities.V1.UpdateRestrictions": {
+					"Updatable": false
+				}
+			}
+		}
 	},
 	"GWSAMPLE_BASIC.BusinessPartner": {
 		"$Key": [
@@ -215,6 +770,97 @@
 			"$kind": "NavigationProperty"
 		}
 	},
+	"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities": {
+		"$kind": "EntityContainer",
+		"BusinessPartnerSet": {
+			"$NavigationPropertyBinding": {
+				"ToContacts": "ContactSet",
+				"ToProducts": "ProductSet",
+				"ToSalesOrders": "SalesOrderSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.BusinessPartner",
+			"$kind": "EntitySet"
+		},
+		"ContactSet": {
+			"$NavigationPropertyBinding": {
+				"ToBusinessPartner": "BusinessPartnerSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.Contact",
+			"$kind": "EntitySet"
+		},
+		"ProductSet": {
+			"$NavigationPropertyBinding": {
+				"ToSalesOrderLineItems": "SalesOrderLineItemSet",
+				"ToSupplier": "BusinessPartnerSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.Product",
+			"$kind": "EntitySet"
+		},
+		"RegenerateAllData": {
+			"$Action": "GWSAMPLE_BASIC.RegenerateAllData",
+			"$kind": "ActionImport"
+		},
+		"SalesOrderLineItemSet": {
+			"$NavigationPropertyBinding": {
+				"ToHeader": "SalesOrderSet",
+				"ToProduct": "ProductSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$kind": "EntitySet"
+		},
+		"SalesOrderSet": {
+			"$NavigationPropertyBinding": {
+				"ToBusinessPartner": "BusinessPartnerSet",
+				"ToLineItems": "SalesOrderLineItemSet"
+			},
+			"$Type": "GWSAMPLE_BASIC.SalesOrder",
+			"$kind": "EntitySet"
+		},
+		"VH_AddressTypeSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_AddressType",
+			"$kind": "EntitySet"
+		},
+		"VH_BPRoleSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_BPRole",
+			"$kind": "EntitySet"
+		},
+		"VH_CategorySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Category",
+			"$kind": "EntitySet"
+		},
+		"VH_CountrySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Country",
+			"$kind": "EntitySet"
+		},
+		"VH_CurrencySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Currency",
+			"$kind": "EntitySet"
+		},
+		"VH_LanguageSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Language",
+			"$kind": "EntitySet"
+		},
+		"VH_ProductTypeCodeSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_ProductTypeCode",
+			"$kind": "EntitySet"
+		},
+		"VH_SexSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_Sex",
+			"$kind": "EntitySet"
+		},
+		"VH_UnitLengthSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_UnitLength",
+			"$kind": "EntitySet"
+		},
+		"VH_UnitQuantitySet": {
+			"$Type": "GWSAMPLE_BASIC.VH_UnitQuantity",
+			"$kind": "EntitySet"
+		},
+		"VH_UnitWeightSet": {
+			"$Type": "GWSAMPLE_BASIC.VH_UnitWeight",
+			"$kind": "EntitySet"
+		}
+	},
 	"GWSAMPLE_BASIC.Product": {
 		"$Key": [
 			"ProductID"
@@ -344,6 +990,20 @@
 			"$kind": "Property"
 		}
 	},
+	"GWSAMPLE_BASIC.RegenerateAllData": [
+		{
+			"$Parameter": [
+				{
+					"$Name": "NoOfSalesOrders",
+					"$Type": "Edm.Int32"
+				}
+			],
+			"$ReturnType": {
+				"$Type": "GWSAMPLE_BASIC.CT_String"
+			},
+			"$kind": "Action"
+		}
+	],
 	"GWSAMPLE_BASIC.SalesOrder": {
 		"$Key": [
 			"SalesOrderID"
@@ -464,7 +1124,6 @@
 			"$kind": "Property"
 		},
 		"DeliveryDate": {
-			"$Precision": 7,
 			"$Type": "Edm.Date",
 			"$kind": "Property"
 		},

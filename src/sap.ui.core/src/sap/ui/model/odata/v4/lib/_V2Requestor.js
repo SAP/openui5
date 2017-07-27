@@ -3,9 +3,27 @@
  */
 //Provides mixin sap.ui.model.odata.v4.lib._V2Requestor
 sap.ui.define([
+	"sap/ui/core/format/DateFormat",
 	"./_Helper"
-], function (_Helper) {
+], function (DateFormat, _Helper) {
 	"use strict";
+
+	var // Example: "/Date(1395705600000)/", matching group: ticks in milliseconds
+		rDate = /^\/Date\((\d+)\)\/$/,
+		oDateFormatter = DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC : true}),
+		// Example "/Date(1420529121547+0530)/", the offset ("+0530") is optional
+		// matches: 1 = ticks in milliseconds, 2 = offset sign, 3 = offset hours, 4 = offset minutes
+		rDateTimeOffset = /^\/Date\((\d+)(?:([-+])(\d\d)(\d\d))?\)\/$/,
+		oDateTimeOffsetFormatter =
+			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss", UTC : true}),
+		oDateTimeOffsetMSFormatter =
+			DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSS", UTC : true}),
+		rPlus = /\+/g,
+		rSlash = /\//g,
+		// Example: "PT11H33M55S",
+		// PT followed by optional hours, optional minutes, optional seconds with optional fractions
+		rTime = /^PT(?:(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(\.\d+)?S)?)$/i,
+		oTimeFormatter = DateFormat.getTimeInstance({pattern: "HH:mm:ss", UTC : true});
 
 	/**
 	 * A mixin for a requestor using an OData V2 service.
@@ -40,7 +58,84 @@ sap.ui.define([
 	};
 
 	/**
-	 * Converts an OData V4 value of type Edm.Double, Edm.Float or Edm.Single to the corresponding
+	 * Converts an OData V2 value {@link https://tools.ietf.org/html/rfc3548#section-3} of type
+	 * Edm.Binary to the corresponding OData V4 value
+	 * {@link https://tools.ietf.org/html/rfc4648#section-5}.
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 */
+	_V2Requestor.prototype.convertBinary = function (sV2Value) {
+		return sV2Value.replace(rPlus, "-").replace(rSlash, "_");
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.DateTime with <code>sap:display-format="Date"</code>
+	 * to the corresponding OData V4 Edm.Date value
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 */
+	_V2Requestor.prototype.convertDate = function (sV2Value) {
+		var oDate,
+			aMatches = rDate.exec(sV2Value);
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.DateTime value '" + sV2Value + "'");
+		}
+		oDate = new Date(parseInt(aMatches[1], 10));
+		if (Number(aMatches[1] % (24 * 60 * 60 * 1000)) !== 0) {
+			throw new Error("Cannot convert Edm.DateTime value '" + sV2Value
+				+ "' to Edm.Date because it contains a time of day");
+		}
+		return oDateFormatter.format(oDate);
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.DateTimeOffset or Edm.DateTime without
+	 * <code>sap:display-format="Date"</code> to the corresponding OData V4 Edm.DateTimeOffset value
+	 *
+	 * @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 */
+	_V2Requestor.prototype.convertDateTimeOffset = function (sV2Value) {
+		var aMatches = rDateTimeOffset.exec(sV2Value),
+			oFormatter,
+			sOffset,
+			iOffsetHours,
+			iOffsetMinutes,
+			iOffsetSign,
+			iTicks;
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.DateTimeOffset value '" + sV2Value + "'");
+		}
+		iTicks = parseInt(aMatches[1], 10);
+		iOffsetHours = parseInt(aMatches[3], 10);
+		iOffsetMinutes = parseInt(aMatches[4], 10);
+		if (!aMatches[2] || iOffsetHours === 0 && iOffsetMinutes === 0) {
+			sOffset = "Z";
+		} else {
+			iOffsetSign = aMatches[2] === "-" ? -1 : 1;
+			iTicks += iOffsetSign * (iOffsetHours * 60 * 60 * 1000 + iOffsetMinutes * 60 * 1000);
+			sOffset = aMatches[2] + aMatches[3] + ":"  + aMatches[4];
+		}
+		oFormatter = iTicks % 1000 ? oDateTimeOffsetMSFormatter : oDateTimeOffsetFormatter;
+		return oFormatter.format(new Date(iTicks)) + sOffset;
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.Double or Edm.Single (Edm.Float) to the corresponding
 	 * OData V4 value.
 	 *
 	 * @param {string} sV2Value
@@ -48,7 +143,7 @@ sap.ui.define([
 	 * @returns {any}
 	 *   The corresponding OData V4 value
 	 */
-	_V2Requestor.prototype.convertDoubleFloatSingle = function (sV2Value) {
+	_V2Requestor.prototype.convertDoubleSingle = function (sV2Value) {
 		switch (sV2Value) {
 			case "NaN":
 			case "INF":
@@ -57,6 +152,30 @@ sap.ui.define([
 			default:
 				return parseFloat(sV2Value);
 		}
+	};
+
+	/**
+	 * Converts an OData V2 value of type Edm.Time to the corresponding OData V4 Edm.TimeOfDay value
+	 *
+	 *  @param {string} sV2Value
+	 *   The OData V2 value
+	 * @returns {string}
+	 *   The corresponding OData V4 value
+	 * @throws {Error}
+	 *   If the V2 value is not convertible
+	 */
+	_V2Requestor.prototype.convertTimeOfDay = function (sV2Value) {
+		var oDate,
+			aMatches = rTime.exec(sV2Value),
+			iTicks;
+
+		if (!aMatches) {
+			throw new Error("Not a valid Edm.Time value '" + sV2Value + "'");
+		}
+
+		iTicks = Date.UTC(1970, 0, 1, aMatches[1] || 0, aMatches[2] || 0, aMatches[3] || 0);
+		oDate = new Date(iTicks);
+		return oTimeFormatter.format(oDate) + (aMatches[4] || "");
 	};
 
 	/**
@@ -101,7 +220,11 @@ sap.ui.define([
 				continue;
 			}
 			if (typeof vValue === "object") { // non-primitive property value
-				this.convertNonPrimitive(vValue, mTypeByName);
+				if (vValue.__deferred) {
+					delete vObject[sPropertyName];
+				} else {
+					this.convertNonPrimitive(vValue, mTypeByName);
+				}
 				continue;
 			}
 			sPropertyType = oType[sPropertyName] && oType[sPropertyName].$Type;
@@ -131,18 +254,27 @@ sap.ui.define([
 	_V2Requestor.prototype.convertPrimitive = function (vValue, sPropertyType, sTypeName,
 			sPropertyName) {
 		switch (sPropertyType) {
-			case "Edm.Binary": // no conversion
+			case "Edm.Binary":
+				return this.convertBinary(vValue);
+			case "Edm.Date":
+				return this.convertDate(vValue);
+			case "Edm.DateTimeOffset":
+				return this.convertDateTimeOffset(vValue);
 			case "Edm.Boolean":
 			case "Edm.Byte":
+			case "Edm.Decimal":
 			case "Edm.Guid":
 			case "Edm.Int16":
 			case "Edm.Int32":
+			case "Edm.Int64":
 			case "Edm.SByte":
 			case "Edm.String":
 				return vValue;
 			case "Edm.Double":
 			case "Edm.Single":
-				return this.convertDoubleFloatSingle(vValue);
+				return this.convertDoubleSingle(vValue);
+			case "Edm.TimeOfDay":
+				return this.convertTimeOfDay(vValue);
 			default:
 				throw new Error("Type '" + sPropertyType + "' of property '" + sPropertyName
 					+ "' in type '" + sTypeName + "' is unknown; cannot convert value: " + vValue);
@@ -159,14 +291,23 @@ sap.ui.define([
 	 *   the V2 response cannot be converted
 	 */
 	_V2Requestor.prototype.doFetchV4Response = function (oResponsePayload) {
+		// d.results may be an array of entities in case of a collection request or the property
+		// 'results' of a single request.
 		var bIsCollection = oResponsePayload.d.results && !oResponsePayload.d.__metadata,
 			oPayload = bIsCollection
 				? {value : oResponsePayload.d.results}
 				: oResponsePayload.d,
 			that = this;
 
-		return this.fnFetchEntityContainer().then(function (mTypeByName) {
-			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mTypeByName);
+		if (oResponsePayload.d.__count) {
+			oPayload["@odata.count"] = oResponsePayload.d.__count;
+		}
+		if (oResponsePayload.d.__next) {
+			oPayload["@odata.nextLink"] = oResponsePayload.d.__next;
+		}
+
+		return this.fnFetchEntityContainer().then(function (mScope) {
+			that.convertNonPrimitive(bIsCollection ? oPayload.value : oPayload, mScope);
 			return oPayload;
 		});
 	};
@@ -256,6 +397,8 @@ sap.ui.define([
 				case "$expand":
 					vValue = convertExpand([], vValue, "");
 					vValue = (bSortExpandSelect ? vValue.sort() : vValue).join(",");
+					break;
+				case "$orderby":
 					break;
 				case "$select":
 					aSelects.push.apply(aSelects,

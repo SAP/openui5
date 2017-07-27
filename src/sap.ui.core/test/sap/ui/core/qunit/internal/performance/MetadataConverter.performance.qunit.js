@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/lib/_MetadataConverter",
+	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
+	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (ODataModelV2, ODataModelV4, MetadataConverter, TestUtils) {
+], function (ODataModelV2, ODataModelV4, V2MetadataConverter, V4MetadataConverter, TestUtils) {
 	/*global QUnit */
 	"use strict";
 
@@ -51,8 +52,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{file: "v4vh/$metadata", desc: "with value help"},
-		{file: "v4/$metadata", desc: "without value help"}
+		{file: "v4vh/$metadata", converter: V4MetadataConverter, desc: "V4 with value help"},
+		{file: "v4/$metadata", converter: V4MetadataConverter, desc: "V4 without value help"},
+		{file: "v2/$metadata", converter: V2MetadataConverter, desc: "V4 loading V2 document"}
 	].forEach(function (oFixture) {
 		QUnit.test(oFixture.desc, function (assert) {
 			var sUrl = "/testsuite/test-resources/sap/ui/core/qunit/odata/v4/lib/data/"
@@ -70,7 +72,7 @@ sap.ui.require([
 							iReceived = Date.now();
 							oXML = this.responseXML;
 							iXml = Date.now();
-							MetadataConverter.convertXMLMetadata(oXML);
+							oFixture.converter.convertXMLMetadata(oXML, sUrl);
 							fnResolve({
 								received: iReceived - iStart,
 								xml: iXml - iReceived,

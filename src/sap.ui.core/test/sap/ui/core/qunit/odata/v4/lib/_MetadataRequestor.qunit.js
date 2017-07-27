@@ -5,9 +5,11 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
 	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (jQuery, _Helper, _MetadataRequestor, _V4MetadataConverter, TestUtils) {
+], function (jQuery, _Helper, _MetadataRequestor, _V2MetadataConverter, _V4MetadataConverter,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -86,45 +88,57 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: success", function (assert) {
-		var oExpectedJson = {},
-			oExpectedXml = "xml",
-			oJQueryMock = this.mock(jQuery),
-			mHeaders = {},
-			mQueryParams = {
-				"sap-client" :"300"
-			},
-			oMetadataRequestor,
-			sUrl = "/~/";
+	["4.0", "2.0"].forEach(function (sODataVersion) {
+		QUnit.test("read: success, sODataVersion=" + sODataVersion, function (assert) {
+			var oExpectedJson = {},
+				oExpectedXml = "xml",
+				oJQueryMock = this.mock(jQuery),
+				mHeaders = {},
+				mQueryParams = {
+					"sap-client" :"300"
+				},
+				oMetadataRequestor,
+				sUrl = "/~/";
 
-		this.mock(_Helper).expects("buildQuery")
-			.withExactArgs(sinon.match.same(mQueryParams))
-			.returns("?...");
-
-		oJQueryMock.expects("ajax")
-			.withExactArgs(sUrl + "?...", {
-				headers : sinon.match.same(mHeaders),
-				method : "GET"
-			}).returns(createMock(oExpectedXml));
-
-		this.mock(_V4MetadataConverter).expects("convertXMLMetadata").twice()
-			.withExactArgs(sinon.match.same(oExpectedXml))
-			.returns(oExpectedJson);
-
-		oMetadataRequestor = _MetadataRequestor.create(mHeaders, mQueryParams);
-		assert.strictEqual(typeof oMetadataRequestor, "object");
-
-		return oMetadataRequestor.read(sUrl).then(function (oResult) {
-			assert.strictEqual(oResult, oExpectedJson);
+			this.mock(_Helper).expects("buildQuery")
+				.withExactArgs(sinon.match.same(mQueryParams))
+				.returns("?...");
 
 			oJQueryMock.expects("ajax")
-				.withExactArgs(sUrl, {
+				.withExactArgs(sUrl + "?...", {
 					headers : sinon.match.same(mHeaders),
 					method : "GET"
 				}).returns(createMock(oExpectedXml));
 
-			// code under test
-			return oMetadataRequestor.read(sUrl, true); //no query string
+			if (sODataVersion === "4.0") {
+				this.mock(_V4MetadataConverter).expects("convertXMLMetadata").twice()
+					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+					.returns(oExpectedJson);
+				this.mock(_V2MetadataConverter).expects("convertXMLMetadata").never();
+			} else {
+				this.mock(_V2MetadataConverter).expects("convertXMLMetadata")
+					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+					.returns(oExpectedJson);
+				this.mock(_V4MetadataConverter).expects("convertXMLMetadata")
+					.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
+					.returns(oExpectedJson);
+			}
+
+			oMetadataRequestor = _MetadataRequestor.create(mHeaders, sODataVersion, mQueryParams);
+			assert.strictEqual(typeof oMetadataRequestor, "object");
+
+			return oMetadataRequestor.read(sUrl).then(function (oResult) {
+				assert.strictEqual(oResult, oExpectedJson);
+
+				oJQueryMock.expects("ajax")
+					.withExactArgs(sUrl, {
+						headers : sinon.match.same(mHeaders),
+						method : "GET"
+					}).returns(createMock(oExpectedXml));
+
+				// code under test
+				return oMetadataRequestor.read(sUrl, true); //no query string
+			});
 		});
 	});
 
@@ -144,7 +158,7 @@ sap.ui.require([
 				oJQueryMock = this.mock(jQuery),
 				mHeaders = {},
 				sLastModified = bHasLastModified ? "Fri, 07 Apr 2017 11:21:50 GMT" : null,
-				oMetadataRequestor = _MetadataRequestor.create(mHeaders),
+				oMetadataRequestor = _MetadataRequestor.create(mHeaders, "4.0"),
 				sUrl = "/~/";
 
 			oJQueryMock.expects("ajax")
@@ -153,7 +167,7 @@ sap.ui.require([
 					method : "GET"
 				}).returns(createMock(oExpectedXml, false, sDate, sLastModified));
 			this.mock(_V4MetadataConverter).expects("convertXMLMetadata")
-				.withExactArgs(sinon.match.same(oExpectedXml))
+				.withExactArgs(sinon.match.same(oExpectedXml), sUrl)
 				.returns(oExpectedJson);
 
 			// code under test
@@ -171,7 +185,7 @@ sap.ui.require([
 	QUnit.test("read: failure", function (assert) {
 		var jqXHR = {},
 			oExpectedError = new Error("404 Not Found"),
-			oMetadataRequestor = _MetadataRequestor.create(),
+			oMetadataRequestor = _MetadataRequestor.create({}, "4.0"),
 			sUrl = "/foo/$metadata";
 
 		this.mock(jQuery).expects("ajax")
@@ -183,7 +197,7 @@ sap.ui.require([
 			.withExactArgs("GET " + sUrl, oExpectedError.message,
 				"sap.ui.model.odata.v4.lib._MetadataRequestor");
 
-		return oMetadataRequestor.read(sUrl).then(function (oResult) {
+		return oMetadataRequestor.read(sUrl).then(function () {
 			assert.ok(false);
 		}, function (oError) {
 			assert.strictEqual(oError, oExpectedError);
@@ -192,7 +206,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("read: test service", function (assert) {
-		var oMetadataRequestor = _MetadataRequestor.create();
+		var oMetadataRequestor = _MetadataRequestor.create({}, "4.0");
 
 		return Promise.all([
 			oMetadataRequestor.read(

@@ -3014,9 +3014,6 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		message : "Unsupported OData version: 4.01",
-		scope : {"$Version" : "4.01"}
-	}, {
 		message : "Unsupported IncludeAnnotations",
 		scope : {
 			"$Version" : "4.0",

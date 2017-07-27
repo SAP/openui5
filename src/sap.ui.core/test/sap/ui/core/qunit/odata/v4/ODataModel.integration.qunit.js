@@ -34,7 +34,7 @@ sap.ui.require([
 		var mDefaultParameters = {
 				groupId : "$direct",
 				operationMode : OperationMode.Server,
-				serviceUrl : TestUtils.proxy(sServiceUrl),
+				serviceUrl : sServiceUrl,
 				synchronizationMode : "None"
 			};
 
@@ -120,15 +120,18 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataModel.integration", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			TestUtils.setupODataV4Server(this.oSandbox, {
+			// These metadata files are _always_ faked, the query option "realOData" is ignored
+			TestUtils.useFakeServer(this.oSandbox, "/sap/ui/core/qunit", {
 				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata"
-					: {source : "GWSAMPLE_BASIC_toBeReplaced.xml"}, // TODO replace with V2 metadata
+					: {source : "model/GWSAMPLE_BASIC.metadata.xml"},
+				"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+					: {source : "model/GWSAMPLE_BASIC.annotations.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/$metadata"
-					: {source : "metadata.xml"},
+					: {source : "odata/v4/data/metadata.xml"},
 				"/sap/opu/odata4/IWBEP/TEA/default/iwbep/tea_busi_product/0001/$metadata"
-					: {source : "metadata_tea_busi_product.xml"},
+					: {source : "odata/v4/data/metadata_tea_busi_product.xml"},
 				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/$metadata"
-					: {source : "metadata_zui5_epm_sample.xml"}
+					: {source : "odata/v4/data/metadata_zui5_epm_sample.xml"}
 			});
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
@@ -147,12 +150,6 @@ sap.ui.require([
 			this.mListChanges = {};
 			// A list of expected requests with the properties method, url, headers, response
 			this.aRequests = [];
-
-			if (bCheckLogin) {
-				bCheckLogin = false;
-				// The tests only wait for 1 second, so we log in to the server before running them.
-				return jQuery.ajax(TestUtils.proxy(sTeaBusi));
-			}
 		},
 
 		afterEach : function () {
@@ -2637,6 +2634,9 @@ sap.ui.require([
 		</items>\
 	</Table>\
 </FlexBox>',
+			oModel = createModelForV2SalesOrderService({
+				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+			}),
 			that = this;
 
 		this.expectRequest("SalesOrderSet('0500000001')?$expand=ToLineItems" +
@@ -2652,8 +2652,65 @@ sap.ui.require([
 			.expectChange("id", "0500000001")
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			that.oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+						+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
+
 		// code under test
-		return this.createView(assert, sView, createModelForV2SalesOrderService());
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.deepEqual(
+				oModel.getMetaModel().getObject(
+					"/SalesOrderSet/NetAmount@Org.OData.Measures.V1.ISOCurrency"),
+				{"$Path" : "CurrencyCode"});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: test conversion of $orderby for V2 Adapter
+	// Usage of service: sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.test("V2 Adapter: $orderby", function (assert) {
+		var sView = '\
+<Table id="table" items="{path :\'/SalesOrderSet\',\
+		parameters : {\
+			$select : \'SalesOrderID\',\
+			$orderby : \'SalesOrderID\'\
+		}}">\
+	<items>\
+		<ColumnListItem>\
+			<cells>\
+				<Text id="id" text="{SalesOrderID}" />\
+			</cells>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			oModel = createModelForV2SalesOrderService({
+				annotationURI : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/annotations.xml"
+			}),
+			that = this;
+
+		this.expectRequest("SalesOrderSet?$orderby=SalesOrderID&$select=SalesOrderID" +
+				"&$skip=0&$top=100",
+			{
+				"value" : [
+					{"SalesOrderID" : "0500000001"},
+					{"SalesOrderID" : "0500000002"},
+					{"SalesOrderID" : "0500000003"}
+				]
+			})
+			.expectChange("id", ["0500000001", "0500000002", "0500000003"]);
+
+		["Confirm", "Cancel", "InvoiceCreated", "GoodsIssueCreated"].forEach(function (sName) {
+			that.oLogMock.expects("warning")
+				.withExactArgs("Unsupported 'sap:action-for' at FunctionImport 'SalesOrder_" + sName
+						+ "', removing this FunctionImport", undefined,
+					"sap.ui.model.odata.v4.lib._V2MetadataConverter");
+		});
+
+		// code under test
+		return this.createView(assert, sView, oModel);
 	});
 });
 //TODO test bound action

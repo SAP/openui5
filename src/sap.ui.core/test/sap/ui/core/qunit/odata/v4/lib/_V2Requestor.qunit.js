@@ -64,10 +64,14 @@ sap.ui.require([
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
+				"__count": "3",
+				"__next": "...?$skiptoken=12",
 				"results" : [{"String" : "foo"}, {"Boolean" : true}]
 			}
 		},
 		oExpectedResult : {
+			"@odata.count" : "3", // Note: v4.ODataModel uses IEEE754Compatible=true
+			"@odata.nextLink" : "...?$skiptoken=12",
 			"value" : [{"String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
@@ -178,6 +182,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convertNonPrimitive, __deferred (& 'for' loop & recursion)", function (assert) {
+		var fnConvertNonPrimitive,
+			oObject = {
+				__metadata : {type : "TypeQName"},
+				complex : {},
+				missing : null,
+				Products : {
+					__deferred: {}
+				},
+				property : "42"
+			},
+			oRequestor = {},
+			mTypeByName = {"TypeQName" : {property : {$Type : "Edm.Double"}}};
+
+		asV2Requestor(oRequestor);
+		// remember original function, do not call mock as "code under test" ;-)
+		fnConvertNonPrimitive = oRequestor.convertNonPrimitive.bind(oRequestor);
+
+		this.mock(oRequestor).expects("convertNonPrimitive")
+			.withExactArgs(oObject.complex, mTypeByName);
+		this.mock(oRequestor).expects("convertPrimitive")
+			.withExactArgs(oObject.property, "Edm.Double", "TypeQName", "property")
+			.returns(42);
+
+		// code under test
+		fnConvertNonPrimitive(oObject, mTypeByName);
+
+		assert.deepEqual(oObject, {
+			complex : {},
+			missing : null,
+			property : 42
+		}, "__deferred navigation property deleted");
+	});
+
+	//*********************************************************************************************
 	[{}, undefined].forEach(function (oInlineMetadata, i) {
 		QUnit.test("convertNonPrimitive, __metadata.type missing, " + i, function (assert) {
 			var oObject = {
@@ -198,16 +237,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
+		{sType : "Edm.Binary", sConvertMethod : "convertBinary"},
 		{sType : "Edm.Boolean"},
-		{sType : "Edm.Binary"},
 		{sType : "Edm.Byte"},
-		{sType : "Edm.Double", sConvertMethod : "convertDoubleFloatSingle"},
+		{sType : "Edm.Date", sConvertMethod : "convertDate"},
+		{sType : "Edm.Decimal"},
+		{sType : "Edm.Double", sConvertMethod : "convertDoubleSingle"},
 		{sType : "Edm.Guid"},
 		{sType : "Edm.Int16"},
 		{sType : "Edm.Int32"},
+		{sType : "Edm.Int64"},
 		{sType : "Edm.SByte"},
-		{sType : "Edm.Single", sConvertMethod : "convertDoubleFloatSingle"},
-		{sType : "Edm.String"}
+		{sType : "Edm.Single", sConvertMethod : "convertDoubleSingle"},
+		{sType : "Edm.String"},
+		{sType : "Edm.TimeOfDay", sConvertMethod : "convertTimeOfDay"}
 	].forEach(function (oFixture) {
 		QUnit.test("convertPrimitive, " + oFixture.sType, function (assert) {
 			var oRequestor = {},
@@ -244,6 +287,111 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		input : "A+A+",
+		output : "A-A-"
+	}, {
+		input : "A/A/",
+		output :"A_A_"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertBinary, " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			// code under test
+			assert.strictEqual(oRequestor.convertBinary(oFixture.input), oFixture.output);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convertDate, success", function (assert) {
+		var oRequestor = {};
+
+		asV2Requestor(oRequestor);
+
+		// code under test
+		assert.strictEqual(oRequestor.convertDate("\/Date(1395705600000)\/"), "2014-03-25");
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "/Date(1395705600001)/",
+		expectedError : "Cannot convert Edm.DateTime value '/Date(1395705600001)/' to Edm.Date" +
+			" because it contains a time of day"
+	}, {
+		input : "a/Date(0000000000000)/",
+		expectedError : "Not a valid Edm.DateTime value 'a/Date(0000000000000)/'"
+	}, {
+		input : "/Date(0000000000000)/e",
+		expectedError : "Not a valid Edm.DateTime value '/Date(0000000000000)/e'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertDate, error " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			assert.throws(function () {
+				// code under test
+				return oRequestor.convertDate(oFixture.input);
+			}, new Error(oFixture.expectedError));
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "/Date(1420529121547+0000)/",
+		output : "2015-01-06T07:25:21.547Z"
+	}, {
+		input : "/Date(1420529121547+0500)/",
+		output : "2015-01-06T12:25:21.547+05:00"
+	}, {
+		input : "/Date(1420529121547+1500)/",
+		output : "2015-01-06T22:25:21.547+15:00"
+	}, {
+		input : "/Date(1420529121547+0530)/",
+		output : "2015-01-06T12:55:21.547+05:30"
+	}, {
+		input : "/Date(1420529121547+0030)/",
+		output : "2015-01-06T07:55:21.547+00:30"
+	}, {
+		input : "/Date(1420529121547-0530)/",
+		output : "2015-01-06T01:55:21.547-05:30"
+	}, {
+		input : "/Date(1395752399000)/", // DateTime in V2
+		output : "2014-03-25T12:59:59Z"  // must be interpreted as UTC
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertDateTimeOffset, success " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			// code under test
+			assert.strictEqual(oRequestor.convertDateTimeOffset(oFixture.input), oFixture.output);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "a/Date(0000000000000+0000)/",
+		expectedError : "Not a valid Edm.DateTimeOffset value 'a/Date(0000000000000+0000)/'"
+	}, {
+		input : "/Date(0000000000000+0000)/e",
+		expectedError : "Not a valid Edm.DateTimeOffset value '/Date(0000000000000+0000)/e'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertDateTimeOffset, error " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			assert.throws(function () {
+				// code under test
+				return oRequestor.convertDateTimeOffset(oFixture.input);
+			}, new Error(oFixture.expectedError));
+		});
+	});
+
+	//*********************************************************************************************
+	[{
 		input : "1.0000000000000001E63",
 		output : 1.0000000000000001E63
 	}, {
@@ -259,26 +407,78 @@ sap.ui.require([
 		input : 42,
 		output : 42
 	}].forEach(function (oFixture, i) {
-		QUnit.test("convertDoubleFloatSingle, " + i, function (assert) {
+		QUnit.test("convertDoubleSingle, " + i, function (assert) {
 			var oRequestor = {};
 
 			asV2Requestor(oRequestor);
 
 			// code under test
-			assert.strictEqual(oRequestor.convertDoubleFloatSingle(oFixture.input),
+			assert.strictEqual(oRequestor.convertDoubleSingle(oFixture.input),
 				oFixture.output);
 		});
 	});
 
-	//*****************************************************************************************
+	//*********************************************************************************************
+	[{
+		input : "PT11H33M55S",
+		output : "11:33:55"
+	}, {
+		input : "PT11H",
+		output : "11:00:00"
+	}, {
+		input : "PT33M",
+		output : "00:33:00"
+	}, {
+		input : "PT55S",
+		output : "00:00:55"
+	}, {
+		input : "PT11H33M55.1234567S",
+		output : "11:33:55.1234567"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertTimeOfDay, success " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			// code under test
+			assert.strictEqual(oRequestor.convertTimeOfDay(oFixture.input), oFixture.output);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		input : "APT11H33M55S",
+		expectedError : "Not a valid Edm.Time value 'APT11H33M55S'"
+	}, {
+		input : "PT11H33M55S123",
+		expectedError : "Not a valid Edm.Time value 'PT11H33M55S123'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("convertTimeOfDay, error " + i, function (assert) {
+			var oRequestor = {};
+
+			asV2Requestor(oRequestor);
+
+			assert.throws(function () {
+				// code under test
+				return oRequestor.convertTimeOfDay(oFixture.input);
+			}, new Error(oFixture.expectedError));
+		});
+	});
+
+	//*********************************************************************************************
 	[{ // test dropSystemQueryOptions
 		dropSystemQueryOptions : true,
 		expectedResultHandlerCalls : [{key : "foo", value : "bar"}],
 		queryOptions : {
 			"$expand" : {"baz" : true, "nested" : {"$expand" : "xyz", "$select" : "uvw"}},
 			"$select" : "abc",
+			"$orderby" : "abc",
 			"foo" : "bar"
 		}
+	}, { // simple tests for $orderby
+		expectedResultHandlerCalls : [{key : "$orderby", value : "foo,bar"}],
+		expectedResultHandlerCallsSorted : [{key : "$orderby", value : "foo,bar"}],
+		queryOptions : {"$orderby" : "foo,bar"}
 	}, { // simple tests for $select
 		expectedResultHandlerCalls : [{key : "$select", value : "foo,bar"}],
 		expectedResultHandlerCallsSorted : [{key : "$select", value : "bar,foo"}],
@@ -351,10 +551,12 @@ sap.ui.require([
 	}, { // test nested $expand structure
 		expectedResultHandlerCalls : [
 			{key : "$expand", value : "foo,foo/bar,baz"},
+			{key : "$orderby", value : "foo,bar"},
 			{key : "$select", value : "foo/xyz,foo/bar/*,baz/*,abc"}
 		],
 		expectedResultHandlerCallsSorted : [
 			{key : "$expand", value : "baz,foo,foo/bar"},
+			{key : "$orderby", value : "foo,bar"},
 			{key : "$select", value : "abc,baz/*,foo/bar/*,foo/xyz"}
 		],
 		queryOptions : {
@@ -367,7 +569,8 @@ sap.ui.require([
 				},
 				"baz" : true
 			},
-			"$select" : "abc"
+			"$select" : "abc",
+			"$orderby" : "foo,bar"
 		}
 	}].forEach(function (oFixture, i) {
 		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
@@ -412,7 +615,7 @@ sap.ui.require([
 		}
 	});
 
-	//*****************************************************************************************
+	//*********************************************************************************************
 	["foo", undefined, null].forEach(function (vExpandOption) {
 		var sTitle = "doConvertSystemQueryOptions (V2): wrong $expand : " + vExpandOption;
 
@@ -428,10 +631,19 @@ sap.ui.require([
 		});
 	});
 
-	//*****************************************************************************************
+	//*********************************************************************************************
 	[{
 		queryOptions : {"$foo" : "bar"},
 		error : "Unsupported system query option: $foo"
+	}, {
+		queryOptions : {
+			"$expand" : {
+				"foo" : {
+					"$orderby" : "bar"
+				}
+			}
+		},
+		error : "Unsupported query option in $expand: $orderby"
 	}, {
 		queryOptions : {
 			"$expand" : {
