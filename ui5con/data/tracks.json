@@ -7,7 +7,8 @@
 			"duration": 20,
 			"abstract":"",
 			"material": {
-				"Slides": "https://de.slideshare.net/frdrcbrg/ui5con-opening"
+				"Slides": "https://de.slideshare.net/frdrcbrg/ui5con-opening",
+				"Recording": "https://youtu.be/AX1y8S8U4FI?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -17,7 +18,8 @@
 			"duration": 40,
 			"abstract":"<p>SAPUI5 is evolving and thus best practices or recommended controls change over time. In this session, you'll get an update on the new supportability tool, the new DemoKit, new and updated controls, news in the framework like our plans towards OData V4 and improved Smart Controls. Finally we'll share some insights into more radical renovation activities that will come early in 2018.</p>",
 			"material": {
-				"Slides": "https://www.slideshare.net/StefanBeck13/news-about-ui5-that-you-absolutely-have-to-know-ui5con-2017"
+				"Slides": "https://www.slideshare.net/StefanBeck13/news-about-ui5-that-you-absolutely-have-to-know-ui5con-2017",
+				"Recording": "https://youtu.be/lsLgPwQmOGw?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -32,7 +34,9 @@
 			"duration": 40,
 			"abstract":"<p>This session will provide an overview about the UI5 evolution topic. UI5 evolution is thought as the innovation project of OpenUI5/SAPUI5 which focuses on improving the performance, fixing architectural gaps and embracing Open Source technologies. Our challenge will be to do this innovation in a compatible way so that also existing applications will partially benefit.</p>",
 			"material": {
-				"Slides":"https://de.slideshare.net/PeterMuessig1/ui5-evolution-77465160"
+				"Slides":"https://de.slideshare.net/PeterMuessig1/ui5-evolution-77465160",
+				"Recording": "https://youtu.be/vZfxBXu6_Lc?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
+
 			}
 		},
 		{
@@ -62,7 +66,8 @@
 			"duration": 40,
 			"abstract":"<p>Why is there the new OData Version 4.0 and how does UI5 support for it differ from OData V2 support? Learn about the architecture principles of the UI5 OData V4 model, its feature set and the current implementation status.</p>",
 			"material": {
-				"Slides":"https://www.slideshare.net/PatricKsinsik/ui5con-presentation-on-ui5-odata-v4-model"
+				"Slides":"https://www.slideshare.net/PatricKsinsik/ui5con-presentation-on-ui5-odata-v4-model",
+				"Recording": "https://youtu.be/J5L7KpBydSc?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -75,7 +80,10 @@
 			"speaker": "Meredith Hassett",
 			"type": "Lecture",
 			"duration": 20,
-			"abstract": "<p>New to SAPUI5? Looking to learn more about integrations inside and out of SAP? In my session, we’ll take a look at how to integrate APIs, Business Services, and OData services with UI5. You’ll see how easy it is and be on your way to building an integrated application. We’ll use SAP technologies like Web IDE, Cloud Platform, and API Business Hub to show how easy it is to integrate your SAP world. You’ll come out with an understanding of Destinations, OData, AJAX, and REST APIs and be on your way to creating an application with UI5 using external data. 20 minutes is all you need to get started integrating with SAPUI5!</p>"
+			"abstract": "<p>New to SAPUI5? Looking to learn more about integrations inside and out of SAP? In my session, we’ll take a look at how to integrate APIs, Business Services, and OData services with UI5. You’ll see how easy it is and be on your way to building an integrated application. We’ll use SAP technologies like Web IDE, Cloud Platform, and API Business Hub to show how easy it is to integrate your SAP world. You’ll come out with an understanding of Destinations, OData, AJAX, and REST APIs and be on your way to creating an application with UI5 using external data. 20 minutes is all you need to get started integrating with SAPUI5!</p>",
+			"material": {
+				"Recording": "https://youtu.be/rO8gKAwRLDA?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
+			}
 		},
 		{
 			"type": "break",
@@ -92,7 +100,8 @@
 				"Slides": "https://de.slideshare.net/michadelic/ui5consap-2017-slides-for-session-collaborators-wanted-for-ui5lab-a-custom-ui5-repo",
 				"GitHub": "https://github.com/UI5Lab/UI5Lab-central",
 				"Blog": "https://medium.com/@stermi/custom-control-101-sapui5-openui5-tipoftheday-customcontrol-fd51a85bbed3",
-				"Demo": "https://github.com/michadelic/ui5lab-ui5con-demo"
+				"Demo": "https://github.com/michadelic/ui5lab-ui5con-demo",
+				"Recording": "https://youtu.be/AxyY13y_78g?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -107,7 +116,8 @@
 			"duration": 20,
 			"abstract":"<p>WebVR is an open standard that makes it possible to experience Virtual Reality in the browser.</p><p>In this session I will show an example of OpenUI5 component for VR and a little extension with Mixed Reality.</p>",
 			"material": {
-				"Slides":"https://www.slideshare.net/DmitriyBuslov/mixed-reality-with-openui5"
+				"Slides":"https://www.slideshare.net/DmitriyBuslov/mixed-reality-with-openui5",
+				"Recording": "https://youtu.be/1I24q7uXzWA?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -122,7 +132,8 @@
 			"duration": 20,
 			"abstract":"Movement from native Android to UI5 in order to show the way over hybrid application with Cordova using native business logic. Problems, learnings and outlook to move it to JS.",
 			"material": {
-				"Slides": "https://owncloud.gk-software.com/owncloud/index.php/s/seZrruVRFrUbRkG"
+				"Slides": "https://owncloud.gk-software.com/owncloud/index.php/s/seZrruVRFrUbRkG",
+				"Recording": "https://youtu.be/wAKunjUtYqw?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -135,7 +146,10 @@
 			"speaker": "Mateusz Skadorwa, Tomasz Wilk",
 			"type": "Lecture",
 			"duration": 40,
-			"abstract":"<p>IoT is the future, and SAP HANA is already future compatible. Is SAPUI5 the door for the users, to enter?</p><p>IoT scenario will be presented, using such elements as Arduino, SAP HANA and SAPUI5.</p><p>Temperature data are put in the HANA database, they are displayed in UI5 application in a chart, update in real time.</p><p>The strong point of this presentation is the full stack development of IoT scenario, SAP makes it happen.</p>"
+			"abstract":"<p>IoT is the future, and SAP HANA is already future compatible. Is SAPUI5 the door for the users, to enter?</p><p>IoT scenario will be presented, using such elements as Arduino, SAP HANA and SAPUI5.</p><p>Temperature data are put in the HANA database, they are displayed in UI5 application in a chart, update in real time.</p><p>The strong point of this presentation is the full stack development of IoT scenario, SAP makes it happen.</p>",
+			"material": {
+				"Recording": "https://youtu.be/JmqUB3bOdGs?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
+			}
 		},
 		{
 			"type": "break",
@@ -150,8 +164,8 @@
 			"abstract":"<p>Learn how to continuously develop, build and test UI5 Apps using Open Source Node.js based tools.</p><p>You will see how to apply dependency loading, bundling, minification und automated testing in your UI5</p>",
 			"material": {
 				"Slides": "https://github.com/RandomByte/talks/blob/master/UI5con_at_SAP_2017/UI5con_CI_Lecture.pdf",
-				"GitHub": "https://github.com/SAP/openui5-sample-app"
-
+				"GitHub": "https://github.com/SAP/openui5-sample-app",
+				"Recording": "https://youtu.be/TceM3zf8VSk?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
@@ -166,7 +180,8 @@
 			"duration": 40,
 			"abstract":"<p>It all started with a Proof-of-Concept of a UI5 hybrid application for discrete object recognition on mobile devices. In the course of the PoC, research led to several experiments around the key words in the session title: from real-time Image manipulation via visual object recognition up to Augmented Reality flavors, all of that within the UI5 framework. I'd like to show the results of the experiments and evaluate their sustainability and production readiness.</p>",
 			"material": {
-				"Slides":"https://www.metalodge.com/ui5con2017_SAP/"
+				"Slides":"https://www.metalodge.com/ui5con2017_SAP/",
+				"Recording": "https://youtu.be/7jGqjoDJUqs?list=PLHUs_FUbq4dUb-YahNSkUJgIKOQR4EfIO"
 			}
 		},
 		{
