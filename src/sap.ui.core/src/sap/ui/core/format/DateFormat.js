@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		},
 		aRelativeScales: ["year", "month", "week", "day"],
 		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-		aIntervalCompareFields: ["FullYear", "Month", "Date"]
+		aIntervalCompareFields: ["FullYear", "Quarter", "Month", "Week" ,"Date"]
 	};
 
 	DateFormat.oDateTimeInfo = {
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		},
 		aRelativeScales: ["year", "month", "week", "day", "hour", "minute", "second"],
 		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-		aIntervalCompareFields: ["FullYear", "Month", "Date", "Hours", "Minutes", "Seconds"]
+		aIntervalCompareFields: ["FullYear", "Quarter", "Month", "Week", "Date", "DayPeriod", "Hours", "Minutes", "Seconds"]
 	};
 
 	DateFormat.oTimeInfo = {
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		},
 		aRelativeScales: ["hour", "minute", "second"],
 		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"],
-		aIntervalCompareFields: ["Hours", "Minutes", "Seconds"]
+		aIntervalCompareFields: ["DayPeriod", "Hours", "Minutes", "Seconds"]
 	};
 
 
@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 
 			if (oFormat.oFormatOptions.format) {
 				// when 'format' option is set, generate the pattern based on the greatest difference
-				oFormat.intervalPatterns = oFormat.oLocaleData.getCustomIntervalPattern(oFormat.oFormatOptions.format, "", oFormat.oFormatOptions.calendarType);
+				oFormat.intervalPatterns = oFormat.oLocaleData.getCustomIntervalPattern(oFormat.oFormatOptions.format, null/*=no diff*/, oFormat.oFormatOptions.calendarType);
 
 				// In case oFormat.intervalPatterns is a string, put the single string into array
 				if (typeof oFormat.intervalPatterns === "string") {
@@ -858,8 +858,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		"Q": {
 			name: "quarter",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth();
-				var iQuarter = Math.floor(iMonth / 3);
+				var iQuarter = bUTC ? oDate.getUTCQuarter() : oDate.getQuarter();
 				if (oField.digits == 3) {
 					return oFormat.aQuartersAbbrev[iQuarter];
 				} else if (oField.digits == 4) {
@@ -907,8 +906,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		"q": {
 			name: "quarterStandalone",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth();
-				var iQuarter = Math.floor(iMonth / 3);
+				var iQuarter = bUTC ? oDate.getUTCQuarter() : oDate.getQuarter();
 				if (oField.digits == 3) {
 					return oFormat.aQuartersAbbrevSt[iQuarter];
 				} else if (oField.digits == 4) {
@@ -1045,8 +1043,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		"a": {
 			name: "amPmMarker",
 			format: function(oField, oDate, bUTC, oFormat) {
-				var iHours = bUTC ? oDate.getUTCHours() : oDate.getHours();
-				var iDayPeriod = iHours < 12 ? 0 : 1;
+				var iDayPeriod = bUTC ? oDate.getUTCDayPeriod() : oDate.getDayPeriod();
 
 				return oFormat.aDayPeriods[iDayPeriod];
 			},
@@ -1481,15 +1478,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		var aBuffer = [];
 		var sPattern;
 
-		var sDiffField = this._getGreatestDiffField(aJSDates, bUTC);
+		var oDiffField = this._getGreatestDiffField([oFromDate, oToDate], bUTC);
 
-		if (!sDiffField) {
+		if (!oDiffField) {
 			return this._format(aJSDates[0], bUTC);
 		}
 
 		if (this.oFormatOptions.format) {
 			// when 'format' option is set, generate the pattern based on the greatest difference
-			sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, sDiffField, sCalendarType);
+			sPattern = this.oLocaleData.getCustomIntervalPattern(this.oFormatOptions.format, oDiffField, sCalendarType);
 
 		} else {
 			sPattern = this.oLocaleData.getCombinedIntervalPattern(this.oFormatOptions.pattern, sCalendarType);
@@ -1513,59 +1510,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	};
 
 	var mFieldToGroup = {
-		"FullYear": {
-			group: "Year"
-		},
-		"Month": {
-			group: "Month"
-		},
-		"Date": {
-			group: "Day"
-		},
-		"Hours": {
-			group: "Hour"
-		},
-		"Minutes": {
-			group: "Minute"
-		},
-		"Seconds": {
-			group: "Second"
-		}
+		FullYear: "Year",
+		Quarter: "Quarter",
+		Month: "Month",
+		Week: "Week",
+		Date: "Day",
+		DayPeriod: "DayPeriod",
+		Hours: "Hour",
+		Minutes: "Minute",
+		Seconds: "Second"
 	};
 
-	DateFormat.prototype._getGreatestDiffField = function(aJSDates, bUTC) {
-		var vFromValue;
-		var vToValue;
-		var sField;
-		var sFieldGroup;
+	DateFormat.prototype._getGreatestDiffField = function(aDates, bUTC) {
+		var bDiffFound = false,
+			mDiff = {};
 
-		var bDiffFound = this.aIntervalCompareFields.some(function(sCompareField, index) {
-			var sMethodName = "get" + (bUTC ? "UTC" : "") + sCompareField;
-			vFromValue = aJSDates[0][sMethodName].apply(aJSDates[0]);
-			vToValue = aJSDates[1][sMethodName].apply(aJSDates[1]);
+		this.aIntervalCompareFields.forEach(function(sField) {
+			var sGetterPrefix = "get" + (bUTC ? "UTC" : ""),
+				sMethodName = sGetterPrefix + sField,
+				sFieldGroup = mFieldToGroup[sField],
+				vFromValue = aDates[0][sMethodName].apply(aDates[0]),
+				vToValue = aDates[1][sMethodName].apply(aDates[1]);
 
-			if (vFromValue !== vToValue) {
-				sField = sCompareField;
-				return true;
+			if (!jQuery.sap.equal(vFromValue, vToValue)) {
+				bDiffFound = true;
+				mDiff[sFieldGroup] = true;
 			}
 		});
 
 		if (bDiffFound) {
-			sFieldGroup = mFieldToGroup[sField].group;
-
-			if (sFieldGroup === "Hour") {
-				// If the two 'Hour' values differ on the dayperiod level,
-				// set field group to 'a'
-				if ((vFromValue < 12 && vToValue >= 12) || (vToValue < 12 && vFromValue >= 12)) {
-					// Dayperiod
-					sFieldGroup = "a";
-				}
-			}
-
-			return sFieldGroup;
-		} else {
-			return null;
+			return mDiff;
 		}
+
+		return null;
 	};
 
 	DateFormat.prototype._parse = function(sValue, aFormatArray, bUTC, bStrict) {
