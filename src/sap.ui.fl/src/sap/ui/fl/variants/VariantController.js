@@ -66,8 +66,32 @@ sap.ui.define([
 	 */
 	VariantController.prototype.getVariants = function (sVariantManagementId) {
 		var aVariants = [];
+
+		function compareVariants(variant1, variant2) {
+			if (variant1.title < variant2.title) {
+				return -1;
+			} else if (variant1.title > variant2.title) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+
 		if (this._mVariantManagement[sVariantManagementId]) {
-			aVariants = this._mVariantManagement[sVariantManagementId].variants;
+			aVariants = this._mVariantManagement[sVariantManagementId].variants.sort(compareVariants);
+
+			var iIndex = -1;
+			aVariants.some(function(oVariant, index) {
+				if (oVariant.content.fileName === sVariantManagementId) {
+					iIndex = index;
+					return true;
+				}
+				return false;
+			});
+			if (iIndex > -1) {
+				var oStandardVariant = aVariants.splice(iIndex, 1)[0];
+				aVariants.splice(0, 0, oStandardVariant);
+			}
 		}
 
 		return aVariants;
@@ -88,7 +112,7 @@ sap.ui.define([
 			return aVariants;
 		} else {
 			var aFiltered = aVariants.filter(function(oVariant) {
-				if (oVariant.fileName === sVarId) {
+				if (oVariant.content.fileName === sVarId) {
 					return true;
 				}
 			});
@@ -122,18 +146,33 @@ sap.ui.define([
 	 * @param {String} sVariantManagementId The variant management id
 	 * @param {String} sCurrentVariant The id of the currently used variant
 	 * @param {String} sNewVariant The id of the newly selected variant
+	 * @param {Object} mChanges The changes inside the current changes map
 	 * @returns {Object} The map containing all changes to be reverted and all new changes
 	 * @public
 	 */
-	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
-		var aCurrentChanges = this.getVariantChanges(sVariantManagementId, sCurrentVariant).map(function(oChangeContent) {
-			return new Change(oChangeContent);
+	VariantController.prototype.getChangesForVariantSwitch = function(sVariantManagementId, sCurrentVariant, sNewVariant, mChanges) {
+		var aCurrentChangeKeys = this.getVariantChanges(sVariantManagementId, sCurrentVariant).map(function(oChangeContent) {
+			return new Change(oChangeContent).getKey();
 		});
+
+		var aCurrentVariantChanges = Object.keys(mChanges).reduce(function(aChanges, sControlId) {
+
+			var aCurrentFilteredChanges = [];
+			mChanges[sControlId].forEach(function(oChange) {
+				var iChangeIndex = aCurrentChangeKeys.indexOf(oChange.getKey());
+				if (iChangeIndex !== -1) {
+					aCurrentFilteredChanges.push(oChange);
+				}
+			});
+			return aChanges.concat(aCurrentFilteredChanges);
+
+		}, []);
+
 		var aNewChanges = this.getVariantChanges(sVariantManagementId, sNewVariant).map(function(oChangeContent) {
 			return new Change(oChangeContent);
 		});
-		var aRevertChanges = aCurrentChanges.slice();
-		aCurrentChanges.some(function(oChange) {
+		var aRevertChanges = aCurrentVariantChanges.slice();
+		aCurrentVariantChanges.some(function(oChange) {
 			if (oChange.getKey() === aNewChanges[0].getKey()) {
 				aNewChanges.shift();
 				aRevertChanges.shift();
@@ -148,6 +187,33 @@ sap.ui.define([
 		};
 
 		return mSwitches;
+	};
+
+	/**
+	 * Creates the data for the variant model
+	 *
+	 * @returns {Object} oVariantData The JSON object for the Variant Model
+	 * @private
+	 */
+	VariantController.prototype._fillVariantModel = function() {
+		var oVariantData = {};
+		Object.keys(this._mVariantManagement).forEach(function(sKey) {
+			oVariantData[sKey] = {
+				defaultVariant : this._mVariantManagement[sKey].defaultVariant,
+				variants : []
+			};
+			this.getVariants(sKey).forEach(function(oVariant, index) {
+				oVariantData[sKey].variants[index] = {
+					key : oVariant.content.fileName,
+					title : oVariant.content.title,
+					author : oVariant.content.support.user,
+					layer : oVariant.content.layer,
+					readOnly : oVariant.content.fileName === sKey
+				};
+			});
+		}.bind(this));
+
+		return oVariantData;
 	};
 
 	return VariantController;

@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	/**
 	 * Gets the first legend item that is of a given type.
-	 * @param {string} sType
+	 * @param {string|sap.ui.unified.CalendarDayType} sType The type of the wanted legend item
 	 * @returns {sap.ui.unified.CalendarLegendItem} A legend item
 	 * @private
 	 */

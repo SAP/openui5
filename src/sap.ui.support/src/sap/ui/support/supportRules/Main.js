@@ -72,7 +72,24 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 						return oMain.analyze(oExecutionScope, aRuleDescriptors);
 					},
 					/**
-					 * Gets history with current issues.
+					 * Gets last analysis history.
+					 * @public
+					 * @method
+					 * @name sap.ui.support.Main.getLastAnalysisHistory
+					 * @memberof sap.ui.support.Main
+					 * @returns {Object} Last analysis history.
+					 */
+					getLastAnalysisHistory: function () {
+						var aHistory = this.getAnalysisHistory();
+
+						if (jQuery.isArray(aHistory) && aHistory.length > 0) {
+							return aHistory[aHistory.length - 1];
+						} else {
+							return null;
+						}
+					},
+					/**
+					 * Gets history.
 					 * @public
 					 * @method
 					 * @name sap.ui.support.Main.getAnalysisHistory
@@ -87,12 +104,12 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 						return IssueManager.getHistory();
 					},
 					/**
-					 * Gets formatted current history.
+					 * Gets formatted history.
 					 * @public
 					 * @method
 					 * @name sap.ui.support.Main.getFormattedAnalysisHistory
 					 * @memberof sap.ui.support.Main
-					 * @returns {Promise} Analyzed and formatted history
+					 * @returns {Promise} Analyzed and formatted history as string
 					 */
 					getFormattedAnalysisHistory: function () {
 						if (that._oAnalyzer.running()) {
@@ -210,6 +227,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._oCoreFacade = null;
 				that._oDataCollector = null;
 				that._oExecutionScope = null;
+				that._rulesCreated = false;
+				that._mRuleSets = null;
 			}
 		});
 	};
@@ -631,7 +650,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @private
 	 * @static
 	 * @method
-	 * @param {object[]} aRuleDescriptors An array with rules against which the analysis will be run
+	 * @param {object[]|object} aRuleDescriptors An array with rules against which the analysis will be run
 	 * @returns {Promise} Notifies the finished state by starting the Analyzer
 	 */
 	Main.prototype.analyze = function (oExecutionScope, aRuleDescriptors) {
@@ -662,11 +681,16 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 
 		this.setExecutionScope(oExecutionScope);
 
-		if (Array.isArray(oExecutionScope)) {
+		if (Array.isArray(aRuleDescriptors)) {
 			// If there are 0 rules don't add tasks.
-			if (oExecutionScope.length > 0) {
-				this._addTasksForSelectedRules(oExecutionScope);
+			if (aRuleDescriptors.length > 0) {
+				this._addTasksForSelectedRules(aRuleDescriptors);
 			}
+		} else if (aRuleDescriptors
+			&& typeof aRuleDescriptors === "object"
+			&& aRuleDescriptors.ruleId
+			&& aRuleDescriptors.libName) {
+			this._addTasksForSelectedRules([aRuleDescriptors]);
 		} else {
 			this._addTasksForAllRules();
 		}
@@ -713,6 +737,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	Main.prototype._addTasksForAllRules = function () {
 		var that = this;
 
+		this._oSelectedRulesIds = {};
+
 		Object.keys(that._mRuleSets).map(function (libName) {
 			var rulesetRules = that._mRuleSets[libName].ruleset.getRules();
 
@@ -721,6 +747,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 				that._oAnalyzer.addTask([rule.title], function (oObject) {
 					that._analyzeSupportRule(oObject);
 				}, [rule]);
+
+				that._oSelectedRulesIds[ruleId] = true;
 			});
 
 		});
@@ -793,6 +821,8 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 			elementTree: aElementTree,
 			elapsedTime: this._oAnalyzer.getElapsedTimeString()
 		});
+
+		IssueManager.saveHistory();
 
 		this._oAnalyzer.resolve();
 	};

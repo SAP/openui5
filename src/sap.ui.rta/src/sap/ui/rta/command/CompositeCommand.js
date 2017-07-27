@@ -47,7 +47,7 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 		this._forEachCommand(function(oCommand){
 			aPromises.push(oCommand.execute.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSerialized(aPromises);
+		return flUtils.execPromiseQueueSequentially(aPromises);
 	};
 
 	CompositeCommand.prototype.undo = function() {
@@ -55,7 +55,7 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 		this._forEachCommandInReverseOrder(function(oCommand){
 			aPromises.push(oCommand.undo.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSerialized(aPromises);
+		return flUtils.execPromiseQueueSequentially(aPromises);
 	};
 
 	CompositeCommand.prototype._forEachCommand = function(fnDo) {

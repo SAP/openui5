@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
-               './Calendar', './calendar/Header', './calendar/Month', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate', './library'],
-               function(jQuery, Control, LocaleData, Date1, CalendarUtils, Calendar, Header, Month, DatesRow, MonthPicker, YearPicker, CalendarDate, library) {
+		'./Calendar', './calendar/Header', './calendar/Month', './calendar/DatesRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate', './library'],
+	function(jQuery, Control, LocaleData, Date1, CalendarUtils, Calendar, Header, Month, DatesRow, MonthPicker, YearPicker, CalendarDate, library) {
 	"use strict";
 
 	/*
@@ -81,8 +81,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	* If more than this number of days are displayed, start and end month are displayed on the button
-	* @returns {number}
+	* If more than this number of days are displayed, start and end month are displayed on the button.
+	* @returns {int} The number of days to determine how the start and end of month are displayed
 	* @protected
 	*/
    CalendarDateInterval.prototype._getDaysLarge = function() {
@@ -271,7 +271,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * Property <code>months</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
 	 *
 	 * @protected
-	 * @param {int} [iMonths] months
+	 * @param {int} iMonths How many months to be displayed
+	 * @returns {sap.ui.unified.CalendarDateInterval} <code>this</code> to allow method chaining
 	 * @name sap.ui.unified.CalendarDateInterval#setMonths
 	 * @function
 	 */
@@ -291,7 +292,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.CalendarDateInterval</code> control.
 	 *
 	 * @protected
-	 * @param {int} [iFirstDayOfWeek] first day of the week
+	 * @param {int} [iFirstDayOfWeek] First day of the week
+	 * @returns {sap.ui.unified.CalendarDateInterval} <code>this</code> to allow method chaining
 	 * @name sap.ui.unified.CalendarDateInterval#setFirstDayOfWeek
 	 * @function
 	 */
@@ -357,6 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @override
 	 * @private
 	*/
 	CalendarDateInterval.prototype._setMinMaxDateExtend = function(oDate){
@@ -404,8 +407,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
-	* @param {boolean} bCheckMonth
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The currently focused date
+	* @param {boolean} bCheckMonth Whether the month must be checked
+	* @override
 	* @private
 	*/
 	CalendarDateInterval.prototype._togglePrevNext = function(oDate, bCheckMonth){
@@ -584,8 +588,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	*
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
-	* @returns {int[]} the displayed months
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate A date to determine the first of the displayed months
+	* @returns {int[]} The displayed months rendered for a given date
+	* @override
 	* @private
 	*/
 	CalendarDateInterval.prototype._getDisplayedMonths = function(oDate){

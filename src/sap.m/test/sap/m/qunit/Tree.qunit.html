@@ -121,6 +121,15 @@ oTree.bindItems("/", oTreeItem);
 //oTree.expandToLevel(6);
 oTree.placeAt("content");
 
+function assertToggleOpenStateParameters(assert, iIndex, bExpanded, mActualParameters) {
+	assert.deepEqual(mActualParameters, {
+		id: oTree.getId(),
+		itemIndex: iIndex,
+		itemContext: oTree.getItems()[iIndex].getBindingContext(oTree.getBindingInfo("items").model),
+		expanded: bExpanded
+	}, "The toggleOpenState event was called with the correct parameters");
+}
+
 /*
 // ================================================================================
 // qunit checks
@@ -223,28 +232,56 @@ QUnit.test("Multi selection", function(assert){
 QUnit.module("Expand/Collapse");
 
 QUnit.test("Expand", function(assert){
+	var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
+
 	//initial state
-	assert.ok(oTree.getItems(), 2, "two nodes displayed before tree expanding");
+	assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed before tree expanding");
 
 	oTree.focus();
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 
-	assert.ok(oTree.getItems(), 4, "four nodes displayed after tree expanding");
+	assert.strictEqual(oTree.getItems().length, 4, "four nodes displayed after tree expanding");
 
 	assert.equal(oTree.getItems()[0].getLevel(), 0, "first level node is in level 0");
 	assert.equal(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
+
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
+	assertToggleOpenStateParameters(assert, 0, true, oToggleOpenStateEventSpy._mEventParameters);
+
+	oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "Clicked a leaf: The toggleOpenState event was not called");
+
+	oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 });
 
 QUnit.test("Collapse", function(assert){
+	var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
+
+	var oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	assert.ok(oToggleOpenStateEventSpy.notCalled, "Clicked a leaf: The toggleOpenState event was not called");
+
 	//back to initial state
-	assert.ok(oTree.getItems(), 4, "four nodes before tree expanding");
+	assert.strictEqual(oTree.getItems().length, 4, "four nodes before tree expanding");
 
 	oTree.focus();
-	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 	oArrowDomRef.trigger("click");
 
-	assert.ok(oTree.getItems(), 2, "two nodes displayed after tree collapsing");
+	assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed after tree collapsing");
+
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
+	assertToggleOpenStateParameters(assert, 0, false, oToggleOpenStateEventSpy._mEventParameters);
+
+	oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 });
 
 QUnit.test("Expand to level", function(assert){
@@ -290,6 +327,11 @@ QUnit.test("Expanded", function(assert){
 QUnit.module("Keyboard Handling");
 
 QUnit.test("Right + Left key", function(assert){
+	var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
+
 	assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 	oTree.focus();
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
@@ -297,11 +339,19 @@ QUnit.test("Right + Left key", function(assert){
 	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT);
 	this.clock.tick(1);
 	assert.ok(oTree.getItems()[0].getExpanded(), "first node is expanded");
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
+	assertToggleOpenStateParameters(assert, 0, true, oToggleOpenStateEventSpy._mEventParameters);
+
+	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT);
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was not called as the node already was expanded");
 
 	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
 	this.clock.tick(1);
 	assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
+	assert.ok(oToggleOpenStateEventSpy.calledTwice, "The toggleOpenState event was called twice");
+	assertToggleOpenStateParameters(assert, 0, false, oToggleOpenStateEventSpy._mEventParameters);
 
+	oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 });
 
 QUnit.module("Icon");

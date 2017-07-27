@@ -216,7 +216,11 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 					}
 					return aChildren;
 				}
-			}
+			},
+
+			getBindingTemplate: function (oControl, sAggregationName) {},
+
+			updateAggregation: function (oControl, sAggregationName) {}
 		};
 
 		return jQuery.sap.extend(

@@ -1,7 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject'
+], function(
+	ManagedObject
+) {
 	"use strict";
 
 	/**
@@ -29,12 +33,20 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 				}
 			},
 			events : {
-				modified : {}
+				modified : {},
+				commandExecuted : {
+					parameters: {
+						command : {type: "object"},
+						undo: {type: "boolean"}
+					}
+				}
+
 			}
 		}
 	});
 
 	Stack.prototype._toBeExecuted = -1;
+	Stack.prototype._oLastCommand = Promise.resolve();
 
 	Stack.prototype._getCommandToBeExecuted = function() {
 		return this.getCommands()[this._toBeExecuted];
@@ -94,22 +106,30 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	};
 
 	Stack.prototype.execute = function() {
-		var oCommand = this._getCommandToBeExecuted();
-		if (oCommand) {
-			return oCommand.execute()
+		this._oLastCommand = this._oLastCommand.catch(function(){
+			//continue also if previous command failed
+		}).then(function(){
+			var oCommand = this._getCommandToBeExecuted();
+			if (oCommand) {
+				return oCommand.execute()
 
-			.then(function(){
-				this._toBeExecuted--;
-				this.fireModified();
-			}.bind(this))
+				.then(function(){
+					this._toBeExecuted--;
+					this.fireCommandExecuted({
+						command: oCommand,
+						undo: false
+					});
+					this.fireModified();
+				}.bind(this))
 
-			.catch(function(oError) {
-				this.pop(); // remove failing command
-				return Promise.reject(oError);
-			}.bind(this));
-		} else {
-			return Promise.resolve();
-		}
+				.catch(function(oError) {
+					this.pop(); // remove failing command
+					return Promise.reject(oError);
+				}.bind(this));
+			}
+		}.bind(this));
+		return this._oLastCommand;
+
 	};
 
 	Stack.prototype._unExecute = function() {
@@ -121,6 +141,10 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 				return oCommand.undo()
 
 				.then(function() {
+					this.fireCommandExecuted({
+						command: oCommand,
+						undo: true
+					});
 					this.fireModified();
 				}.bind(this));
 			} else {
@@ -162,7 +186,7 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 		var aAllExecutedCommands = [];
 		var aCommands = this.getCommands();
 		for (var i = aCommands.length - 1; i > this._toBeExecuted; i--) {
-			var aSubCommands = this._getSubCommands(aCommands[i]);
+			var aSubCommands = this.getSubCommands(aCommands[i]);
 			aAllExecutedCommands = aAllExecutedCommands.concat(aSubCommands);
 		}
 		return aAllExecutedCommands;
@@ -175,11 +199,11 @@ sap.ui.define(['sap/ui/base/ManagedObject'], function(ManagedObject) {
 	 * @returns {object} aCommands - list of sub commands
 	 * @private
 	 */
-	Stack.prototype._getSubCommands = function(oCommand) {
+	Stack.prototype.getSubCommands = function(oCommand) {
 		var aCommands = [];
 		if (oCommand.getCommands) {
 			oCommand.getCommands().forEach(function(oSubCommand) {
-				var aSubCommands = this._getSubCommands(oSubCommand);
+				var aSubCommands = this.getSubCommands(oSubCommand);
 				aCommands = aCommands.concat(aSubCommands);
 			}, this);
 		} else {

@@ -9,17 +9,17 @@
 
 	-webkit-flex-shrink: 0;
 	flex-shrink: 0;
-
+	box-sizing: border-box;
 	background: @sapUiObjectHeaderBackground;
 }
 
 .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
-	padding: 0 3rem 1rem 3rem;
+	padding: 1rem 3rem;
 	box-shadow: @sapUiShadowHeader;
 }
 
 .sapFDynamicPageHeader.sapFDynamicPageHeaderPinnable {
-	min-height: 3rem;
+	min-height: 2rem;
 }
 
 .sapFDynamicPageHeader:focus {
@@ -32,18 +32,22 @@
 
 .sapFDynamicPage-Std-Tablet {
 	.sapFDynamicPageHeaderWithContent {
-		padding: 0 2rem 1rem 2rem;
+		padding: 1rem 2rem;
+	}
+
+	.sapFDynamicPageHeader.sapFDynamicPageHeaderPinnable {
+		min-height: 3rem;
 	}
 }
 
 .sapFDynamicPage-Std-Phone {
 	.sapFDynamicPageHeaderWithContent {
-		padding: 0 1rem 1rem 1rem;
+		padding: 0.5rem 1rem;
 	}
 }
 
 .sapFDynamicPageHeaderPinButtonArea {
 	position: absolute;
 	right: 0;
-	bottom: 1rem;
+	bottom: 0;
 }

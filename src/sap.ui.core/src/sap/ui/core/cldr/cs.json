@@ -26,7 +26,7 @@
 		"ar": "arabština",
 		"ar_001": "arabština (moderní standardní)",
 		"arc": "aramejština",
-		"arn": "araukánština",
+		"arn": "mapudungun",
 		"aro": "araonština",
 		"arp": "arapažština",
 		"arq": "arabština (alžírská)",
@@ -107,6 +107,7 @@
 		"cps": "kapiznonština",
 		"cr": "kríjština",
 		"crh": "turečtina (krymská)",
+		"crs": "kreolština (seychelská)",
 		"cs": "čeština",
 		"csb": "kašubština",
 		"cu": "staroslověnština",
@@ -180,7 +181,7 @@
 		"frr": "fríština (severní)",
 		"frs": "fríština (východní)",
 		"fur": "furlanština",
-		"fy": "fríština",
+		"fy": "fríština (západní)",
 		"ga": "irština",
 		"gaa": "gaština",
 		"gag": "gagauzština",
@@ -343,7 +344,6 @@
 		"mas": "masajština",
 		"mde": "maba",
 		"mdf": "mokšanština",
-		"mdh": "mdh",
 		"mdr": "mandar",
 		"men": "mende",
 		"mer": "meru",
@@ -356,7 +356,6 @@
 		"mi": "maorština",
 		"mic": "micmac",
 		"min": "minangkabau",
-		"mis": "mis",
 		"mk": "makedonština",
 		"ml": "malajálamština",
 		"mn": "mongolština",
@@ -426,6 +425,7 @@
 		"pap": "papiamento",
 		"pau": "palauština",
 		"pcd": "picardština",
+		"pcm": "nigerijský pidžin",
 		"pdc": "němčina (pensylvánská)",
 		"pdt": "němčina (plautdietsch)",
 		"peo": "staroperština",
@@ -490,7 +490,7 @@
 		"sga": "irština (stará)",
 		"sgs": "žemaitština",
 		"sh": "srbochorvatština",
-		"shi": "tachelhit",
+		"shi": "tašelhit",
 		"shn": "šanština",
 		"shu": "arabština (čadská)",
 		"si": "sinhálština",
@@ -667,7 +667,7 @@
 		"Grek": "řecké",
 		"Gujr": "gudžarátí",
 		"Guru": "gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "hanb",
 		"Hang": "hangul",
 		"Hani": "han",
 		"Hano": "hanunóo",
@@ -684,7 +684,7 @@
 		"Hung": "staromaďarské",
 		"Inds": "harappské",
 		"Ital": "etruské",
-		"Jamo": "Jamo",
+		"Jamo": "jamo",
 		"Java": "javánské",
 		"Jpan": "japonské",
 		"Jurc": "džürčenské",
@@ -748,55 +748,6 @@
 		"Phnx": "fénické",
 		"Plrd": "Pollardova fonetická abeceda",
 		"Prti": "parthské klínové",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "redžanské",
 		"Roro": "rongorongo",
 		"Runr": "runové",
@@ -842,7 +793,7 @@
 		"Yiii": "yi",
 		"Zinh": "Zinh",
 		"Zmth": "matematický zápis",
-		"Zsye": "Zsye",
+		"Zsye": "emodži",
 		"Zsym": "symboly",
 		"Zxxx": "bez zápisu",
 		"Zyyy": "obecné",
@@ -939,7 +890,8 @@
 		"CW": "Curaçao",
 		"CX": "Vánoční ostrov",
 		"CY": "Kypr",
-		"CZ": "Česká republika",
+		"CZ": "Česko",
+		"CZ-alt-variant": "Česká republika",
 		"DE": "Německo",
 		"DG": "Diego García",
 		"DJ": "Džibutsko",
@@ -956,6 +908,7 @@
 		"ES": "Španělsko",
 		"ET": "Etiopie",
 		"EU": "Evropská unie",
+		"EZ": "EZ",
 		"FI": "Finsko",
 		"FJ": "Fidži",
 		"FK": "Falklandské ostrovy",
@@ -964,8 +917,8 @@
 		"FO": "Faerské ostrovy",
 		"FR": "Francie",
 		"GA": "Gabon",
-		"GB": "Velká Británie",
-		"GB-alt-short": "VB",
+		"GB": "Spojené království",
+		"GB-alt-short": "GB",
 		"GD": "Grenada",
 		"GE": "Gruzie",
 		"GF": "Francouzská Guyana",
@@ -1129,6 +1082,8 @@
 		"UA": "Ukrajina",
 		"UG": "Uganda",
 		"UM": "Menší odlehlé ostrovy USA",
+		"UN": "OSN",
+		"UN-alt-short": "OSN",
 		"US": "Spojené státy",
 		"US-alt-short": "USA",
 		"UY": "Uruguay",
@@ -1213,7 +1168,9 @@
 				"yMMMMd": "d. MMMM y",
 				"yMMMMEd": "E d. MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "W. 'týden' MMMM",
+				"yw": "w. 'týden' 'roku' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2864,7 +2821,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} rokem",
 				"relativeTimePattern-count-few": "před {0} lety",
-				"relativeTimePattern-count-many": "před {0} rokem",
+				"relativeTimePattern-count-many": "před {0} roku",
 				"relativeTimePattern-count-other": "před {0} lety"
 			}
 		},
@@ -2918,7 +2875,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} čtvrtletím",
 				"relativeTimePattern-count-few": "před {0} čtvrtletími",
-				"relativeTimePattern-count-many": "před {0} čtvrtletím",
+				"relativeTimePattern-count-many": "před {0} čtvrtletí",
 				"relativeTimePattern-count-other": "před {0} čtvrtletími"
 			}
 		},
@@ -2972,7 +2929,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} měsícem",
 				"relativeTimePattern-count-few": "před {0} měsíci",
-				"relativeTimePattern-count-many": "před {0} měsícem",
+				"relativeTimePattern-count-many": "před {0} měsíce",
 				"relativeTimePattern-count-other": "před {0} měsíci"
 			}
 		},
@@ -3026,9 +2983,10 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} týdnem",
 				"relativeTimePattern-count-few": "před {0} týdny",
-				"relativeTimePattern-count-many": "před {0} týdnem",
+				"relativeTimePattern-count-many": "před {0} týdne",
 				"relativeTimePattern-count-other": "před {0} týdny"
-			}
+			},
+			"relativePeriod": "v týdnu {0}"
 		},
 		"week-short": {
 			"displayName": "týd.",
@@ -3046,7 +3004,8 @@
 				"relativeTimePattern-count-few": "před {0} týd.",
 				"relativeTimePattern-count-many": "před {0} týd.",
 				"relativeTimePattern-count-other": "před {0} týd."
-			}
+			},
+			"relativePeriod": "v týd. {0}"
 		},
 		"week-narrow": {
 			"displayName": "týd.",
@@ -3064,7 +3023,8 @@
 				"relativeTimePattern-count-few": "před {0} týd.",
 				"relativeTimePattern-count-many": "před {0} týd.",
 				"relativeTimePattern-count-other": "před {0} týd."
-			}
+			},
+			"relativePeriod": "v týd. {0}"
 		},
 		"day-wide": {
 			"displayName": "den",
@@ -3082,7 +3042,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} dnem",
 				"relativeTimePattern-count-few": "před {0} dny",
-				"relativeTimePattern-count-many": "před {0} dnem",
+				"relativeTimePattern-count-many": "před {0} dne",
 				"relativeTimePattern-count-other": "před {0} dny"
 			}
 		},
@@ -3102,7 +3062,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} dnem",
 				"relativeTimePattern-count-few": "před {0} dny",
-				"relativeTimePattern-count-many": "před {0} dnem",
+				"relativeTimePattern-count-many": "před {0} dne",
 				"relativeTimePattern-count-other": "před {0} dny"
 			}
 		},
@@ -3122,7 +3082,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} dnem",
 				"relativeTimePattern-count-few": "před {0} dny",
-				"relativeTimePattern-count-many": "před {0} dnem",
+				"relativeTimePattern-count-many": "před {0} dne",
 				"relativeTimePattern-count-other": "před {0} dny"
 			}
 		},
@@ -3131,6 +3091,7 @@
 		},
 		"hour-wide": {
 			"displayName": "hodina",
+			"relative-type-0": "tuto hodinu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} hodinu",
 				"relativeTimePattern-count-few": "za {0} hodiny",
@@ -3140,12 +3101,13 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} hodinou",
 				"relativeTimePattern-count-few": "před {0} hodinami",
-				"relativeTimePattern-count-many": "před {0} hodinou",
+				"relativeTimePattern-count-many": "před {0} hodiny",
 				"relativeTimePattern-count-other": "před {0} hodinami"
 			}
 		},
 		"hour-short": {
 			"displayName": "h",
+			"relative-type-0": "tuto hodinu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} h",
 				"relativeTimePattern-count-few": "za {0} h",
@@ -3161,6 +3123,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "h",
+			"relative-type-0": "tuto hodinu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} h",
 				"relativeTimePattern-count-few": "za {0} h",
@@ -3176,6 +3139,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minuta",
+			"relative-type-0": "tuto minutu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} minutu",
 				"relativeTimePattern-count-few": "za {0} minuty",
@@ -3185,12 +3149,13 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} minutou",
 				"relativeTimePattern-count-few": "před {0} minutami",
-				"relativeTimePattern-count-many": "před {0} minutou",
+				"relativeTimePattern-count-many": "před {0} minuty",
 				"relativeTimePattern-count-other": "před {0} minutami"
 			}
 		},
 		"minute-short": {
 			"displayName": "min",
+			"relative-type-0": "tuto minutu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} min",
 				"relativeTimePattern-count-few": "za {0} min",
@@ -3206,6 +3171,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "min",
+			"relative-type-0": "tuto minutu",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "za {0} min",
 				"relativeTimePattern-count-few": "za {0} min",
@@ -3231,7 +3197,7 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "před {0} sekundou",
 				"relativeTimePattern-count-few": "před {0} sekundami",
-				"relativeTimePattern-count-many": "před {0} sekundou",
+				"relativeTimePattern-count-many": "před {0} sekundy",
 				"relativeTimePattern-count-other": "před {0} sekundami"
 			}
 		},
@@ -3437,6 +3403,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

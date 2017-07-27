@@ -7,16 +7,25 @@
 	<Page
 		id="page"
 		showHeader="true"
+		title="{i18n>welcomeHeadline}"
 		class="customBackground">
 		<customHeader>
-			<Toolbar>
-				<Button
-					icon="sap-icon://menu2"
-					press="onShowCategories"
-					visible="{device>/system/phone}"/>
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://customer"/>
-			</Toolbar>
+			<Bar>
+				<contentLeft>
+					<Button
+						icon="sap-icon://menu2"
+						press="onShowCategories"
+						visible="{device>/system/phone}"/>
+				</contentLeft>
+				<contentMiddle>
+					<Title
+						tooltip="{i18n>welcomeDescription}"
+						text="{i18n>welcomeHeadline}"/>
+				</contentMiddle>
+				<contentRight>
+					<Button icon="sap-icon://customer"/>
+				</contentRight>
+			</Bar>
 		</customHeader>
 		<content>
 			<l:BlockLayout background="Light">
@@ -82,10 +91,6 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-			<Title
-				tooltip="{i18n>welcomeDescription}"
-				text="{i18n>welcomeHeadline}"
-				class="welcomeText"/>
 			<Title
 				text="{i18n>promotedTitle}"
 				titleStyle="H2"
@@ -237,7 +242,7 @@
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
 			<Title
-				text="{i18n>favoritTitle}"
+				text="{i18n>favoriteTitle}"
 				titleStyle="H2"
 				class="sapUiSmallMargin"/>
 			<l:BlockLayout background="Dashboard">

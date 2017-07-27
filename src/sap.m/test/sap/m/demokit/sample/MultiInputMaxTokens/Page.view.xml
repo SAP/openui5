@@ -1,10 +1,14 @@
-<mvc:View height="100%"
-		controllerName="sap.m.sample.MultiInputMaxTokens.Page"
-		xmlns:core="sap.ui.core"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
-
-<Label text="No more than 2 products can be added"	width="100%" labelFor="multiInput1"/>
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiInputMaxTokens.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+<l:VerticalLayout
+	class="sapUiContentPadding"
+	width="100%">
+	<Label text="No more than 2 products can be added"	width="100%" labelFor="multiInput1"/>
 	<MultiInput
 		id="multiInput1"
 		width="500px"
@@ -16,5 +20,5 @@
 		showValueHelp="false">
 		<core:Item key="{ProductId}" text="{Name}" />
 	</MultiInput>
-
+</l:VerticalLayout>
 </mvc:View>

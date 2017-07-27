@@ -278,7 +278,7 @@ sap.ui.require([
 							iPhantomJSRowHeight = 39;
 							break;
 						case "sap.m.HBox[sap.m.Link,sap.m.Text]":
-							iPhantomJSRowHeight = 41;
+							iPhantomJSRowHeight = 44;
 							break;
 						case "sap.m.ProgressIndicator":
 						case "sap.m.HBox[sap.m.Button,sap.m.Button]":

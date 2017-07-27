@@ -99,6 +99,20 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 		return bStable;
 	};
 
+	BasePlugin.prototype.getVariantManagementKey = function (oOverlay, oElement, sChangeType) {
+		var sVariantManagementKey;
+		if (oOverlay.getVariantManagement && this._hasVariantChangeHandler(sChangeType, oElement)) {
+			sVariantManagementKey = oOverlay.getVariantManagement();
+		}
+		return sVariantManagementKey;
+	};
+
+	BasePlugin.prototype._hasVariantChangeHandler = function (sChangeType, oElement){
+		var oChangeHandler = this._getChangeHandler(sChangeType, oElement);
+		oChangeHandler.revertChange = true;
+		return (oChangeHandler && oChangeHandler.revertChange);
+	};
+
 	/**
 	 * Checks the Aggregations on the Overlay for a specific Action
 	 * @name sap.ui.rta.plugin.Plugin.prototype.checkAggregationsOnSelf
@@ -139,7 +153,10 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 	};
 
 	BasePlugin.prototype.hasChangeHandler = function(sChangeType, oElement) {
-		var bHasChangeHandler = false;
+		return !!this._getChangeHandler(sChangeType, oElement);
+	};
+
+	BasePlugin.prototype._getChangeHandler = function(sChangeType, oElement) {
 		var sControlType = oElement.getMetadata().getName();
 		var oResult = ChangeRegistry.getInstance().getRegistryItems({
 			controlType : sControlType,
@@ -148,10 +165,9 @@ function(Plugin, FlexUtils, ChangeRegistry) {
 		});
 		if (oResult && oResult[sControlType] && oResult[sControlType][sChangeType]) {
 			var oRegItem = oResult[sControlType][sChangeType];
-			bHasChangeHandler = !!oRegItem.getChangeTypeMetadata().getChangeHandler();
+			return oRegItem.getChangeTypeMetadata().getChangeHandler();
 		}
-
-		return bHasChangeHandler;
+		return undefined;
 	};
 
 	return BasePlugin;

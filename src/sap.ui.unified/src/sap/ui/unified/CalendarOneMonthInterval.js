@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		/**
 		* Handles focusing on a certain date.
 		* Special handling is needed if the navigation refers to date that is outside the visible area.
-		* @param oEvent
+		* @param {Object} oEvent The fired event
 		* @private
 		*/
 		CalendarOneMonthInterval.prototype._handleFocus = function (oEvent) {
@@ -179,9 +179,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		};
 
 		/**
-		 *
-		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate
-		 * @param {int} iMonth
+		 * Overrides the Calendar#_adjustFocusedDateUponMonthChange function.
+		 * @override
+		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate The focused date to be adjusted
+		 * @param {int} iMonth The month(0-based) the end user has chosen from the picker
 		 * @private
 		 */
 		CalendarOneMonthInterval.prototype._adjustFocusedDateUponMonthChange = function(oFocusedDate, iMonth) {
@@ -195,10 +196,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		};
 
 		/**
-		 *
-		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate
-		 * @param {int} iYear
-		 * @return {sap.ui.unified.calendar.CalendarDate}
+		 * Overrides the Calendar#_adjustFocusedDateUponYearChange function.
+		 * @override
+		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate The focused date to be adjusted
+		 * @param {int} iYear The year the user has chosen
+		 * @return {sap.ui.unified.calendar.CalendarDate} The new focused date
 		 * @private
 		 */
 		CalendarOneMonthInterval.prototype._adjustFocusedDateUponYearChange = function(oFocusedDate, iYear) {
@@ -233,7 +235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		/**
 		 * Sets the selection.
-		 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+		 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be selected
 		 * @private
 		 */
 		CalendarOneMonthInterval.prototype._selectDate = function(oDate) {
@@ -246,9 +248,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		};
 
 		/**
-		 * Called by PlanningCalendar to check if the given datetime matches visible the dates
-		 * @param {Date} oDateTime
-		 * @return {boolean}
+		 * Called by PlanningCalendar to check if the given datetime matches the visible dates.
+		 * @param {Date} oDateTime The JavaScript date to be checked
+		 * @return {boolean} Whether the given datetime is one of the visible dates
 		 * @private
 		 */
 		CalendarOneMonthInterval.prototype._dateMatchesVisibleRange = function (oDateTime) {

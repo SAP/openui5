@@ -1,12 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
-				'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory',
-				'sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory'],
-	function(AppDescriptorCommand,
-		DescriptorInlineChangeFactory,
-		DescriptorChangeFactory) {
+sap.ui.define([
+	'sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
+	'sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory'
+], function(
+		AppDescriptorCommand,
+		DescriptorInlineChangeFactory
+) {
 	"use strict";
 
 	/**
@@ -67,22 +68,11 @@ sap.ui.define(['sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 		return Promise.all(aPromises);
 	};
 
-	/**
-	 * Create and submit the change for the app descriptor
-	 * @return {Promise} resolving after all changes have been submitted
-	 */
-	AddLibrary.prototype.submit = function(){
+	AddLibrary.prototype._create = function(){
 		var mParameters = {};
 		mParameters.libraries = this.getRequiredLibraries();
 
-		return DescriptorInlineChangeFactory.create_ui5_addLibraries(mParameters)
-			.then(function(oAddLibraryInlineChange){
-				return new DescriptorChangeFactory().createNew(this.getReference(),
-					oAddLibraryInlineChange, this.getLayer());
-			}.bind(this))
-			.then(function(oCreatedChange){
-				oCreatedChange.submit();
-			});
+		return DescriptorInlineChangeFactory.create_ui5_addLibraries(mParameters);
 	};
 
 	return AddLibrary;

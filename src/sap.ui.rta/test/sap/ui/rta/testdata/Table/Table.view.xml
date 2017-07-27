@@ -1,0 +1,84 @@
+<mvc:View
+	controllerName="sap.m.sample.Table.Table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page>
+		<headerContent>
+			<Button text="Adapt UI" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+		</headerContent>
+		<content>
+			<Table id="idProductsTable"
+				growing="true"
+				growingScrollToLoad="true"
+				items="{
+					path: '/ProductCollection',
+					sorter: {
+						path: 'Name'
+					}
+				}">
+				<columns>
+					<Column
+						id="ColumnProduct"
+						width="12em">
+						<Text text="Product" />
+					</Column>
+					<Column
+						id="ColumnSupplier"
+						minScreenWidth="Tablet"
+						demandPopin="true">
+						<Text text="Supplier" />
+					</Column>
+					<Column
+						id="ColumnDimensions"
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="End">
+						<Text text="Dimensions" />
+					</Column>
+					<Column
+						id="ColumnWeight"
+						minScreenWidth="Tablet"
+						demandPopin="true"
+						hAlign="Center">
+						<Text text="Weight" />
+					</Column>
+					<Column
+						id="ColumnPrice"
+						hAlign="End">
+						<Text text="Price" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"
+								text="{ProductId}"/>
+							<Text
+								text="{SupplierName}" />
+							<Text
+								text="{Width} x {Depth} x {Height} {DimUnit}" />
+							<ObjectNumber
+								number="{WeightMeasure}"
+								unit="{WeightUnit}"
+								state="{
+									parts: [
+										{path: 'WeightMeasure'},
+										{path: 'WeightUnit'}
+									],
+									formatter: 'sap.m.sample.Table.Formatter.weightState'
+								}" />
+							<ObjectNumber
+									number="{
+										parts:[{path:'Price'},{path:'CurrencyCode'}],
+										type: 'sap.ui.model.type.Currency',
+										formatOptions: {showMeasure: false}
+									}"
+									unit="{CurrencyCode}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+	</Page>
+</mvc:View>

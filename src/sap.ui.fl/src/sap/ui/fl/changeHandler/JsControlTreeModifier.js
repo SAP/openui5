@@ -232,6 +232,27 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier", "sap/ui/fl/Utils"], f
 						}
 					}
 				}
+			},
+
+			getBindingTemplate: function (oControl, sAggregationName) {
+				var oBinding = oControl.getBindingInfo(sAggregationName);
+				return oBinding && oBinding.template;
+			},
+
+			updateAggregation: function (oControl, sAggregationName) {
+				if (oControl) {
+					if (oControl.getMetadata) {
+						var oMetadata = oControl.getMetadata();
+						var oAggregations = oMetadata.getAllAggregations();
+						if (oAggregations) {
+							var oAggregation = oAggregations[sAggregationName];
+							if (oAggregation) {
+								oControl[oAggregation._sDestructor]();
+								oControl.updateAggregation(sAggregationName);
+							}
+						}
+					}
+				}
 			}
 		};
 

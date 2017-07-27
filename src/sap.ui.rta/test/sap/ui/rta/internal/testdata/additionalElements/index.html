@@ -4,13 +4,15 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
 
-		<script src="../../../../../../resources/sap-ui-core.js"
-				id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.m, sap.ui.comp, sap.ui.layout, sap.uxap, sap.ui.rta"
-				data-sap-ui-bindingSyntax="complex"
-				data-sap-ui-resourceroots='{"sap.ui.rta.test.additionalElements": "./"}'
-				data-sap-ui-theme="sap_belize">
+		<script src="../../../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = 'sap.m, sap.ui.comp, sap.ui.layout, sap.uxap, sap.ui.rta';
+			window['sap-ui-config'].resourceroots = {
+				'sap.ui.rta.test.additionalElements': './'
+			};
+			window['sap-ui-config'].bindingSyntax = 'complex';
+			window['sap-ui-config'].noConflict = 'true';
+			document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
 		<script>

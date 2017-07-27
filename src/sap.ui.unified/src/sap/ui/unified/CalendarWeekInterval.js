@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		/**
 		 * Handles focusing on a certain date.
 		 * Special handling is needed if the navigation refers to date that is outside the visible area.
-		 * @param oEvent
+		 * @param {Object} oEvent The fired event
 		 * @private
 		 */
 		CalendarWeekInterval.prototype._handleFocus = function (oEvent) {

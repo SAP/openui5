@@ -51,24 +51,29 @@
 
 					this.oColumn = new sap.ui.table.Column({
 						label: new sap.m.Label({text: "Last Name"}),
-						width: "200px"
+						width: "200px",
+						template: "dummy"
 					});
 
 					this.oTable.addColumn(this.oColumn);
 					this.oTable.addColumn(new sap.ui.table.Column({
 						label: new sap.m.Label({text: "First Name"}),
-						width: "100px"
+						width: "100px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
 						label: new sap.m.Label({text: "Checked"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
-						label: new sap.m.Label({text: "Web Site"})
+						label: new sap.m.Label({text: "Web Site"}),
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
 						label: new sap.m.Label({text: "Image"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
 
 					this.oTable.placeAt("content");
@@ -129,24 +134,29 @@
 
 					this.oColumn = new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "Last Name"}),
-						width: "200px"
+						width: "200px",
+						template: "dummy"
 					});
 
 					this.oTable.addColumn(this.oColumn);
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "First Name"}),
-						width: "100px"
+						width: "100px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "Checked"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
-						label: new sap.m.Label({text: "Web Site"})
+						label: new sap.m.Label({text: "Web Site"}),
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "Image"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
 
 					this.oTable.placeAt("content");

@@ -103,11 +103,38 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.ok(oInstance.getContent());
 	});
 
+	QUnit.test("Change.setState with an incorrect value", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState("anInvalidState");
+		assert.equal(oInstance.getPendingAction(), "NEW");
+	});
+
+	QUnit.test("Change.setState to DIRTY when current state is NEW", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+	});
+
+	QUnit.test("Change.setState to DIRTY when current state is PERSISTED", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
+		oInstance.setState(Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "UPDATE");
+	});
+
 	QUnit.test("Change.setContent", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPendingAction(), "NEW");
 		oInstance.setContent({something: "nix"});
 		assert.deepEqual(oInstance.getContent(), {something: "nix"});
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
+		oInstance.setContent({something: "updated"});
+		assert.deepEqual(oInstance.getContent(), {something: "updated"});
+		assert.equal(oInstance.getPendingAction(), "UPDATE");
 	});
 
 	QUnit.test("Change.getContext", function(assert) {
@@ -124,7 +151,10 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.setText('variantName', 'newText');
 		assert.equal(oInstance.getText('variantName'), 'newText');
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
 		oInstance.setText('variantName', 'myVariantName');
+		assert.equal(oInstance.getState(), Change.states.DIRTY);
 	});
 
 	QUnit.test("Change._isReadOnlyDueToLayer", function(assert) {
@@ -142,16 +172,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.markForDeletion();
 		assert.equal(oInstance.getPendingAction(), "DELETE");
-	});
-
-	QUnit.test("Change._isDirty", function(assert) {
-		var oInstance = new Change(this.oChangeDef);
-		assert.equal(oInstance._isDirty(), false);
-		oInstance.setText('addText', 'changed');
-		var oContent = oInstance.getContent();
-		oContent.fields = {first: "addedField"};
-
-		assert.equal(oInstance._isDirty(), true);
 	});
 
 	QUnit.test("Change.set/get-Request", function(assert) {
@@ -180,13 +200,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 	QUnit.test("Change.getPendingChanges", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
-		assert.equal(oInstance.getPendingAction(), "NEW");
+		assert.equal(oInstance.getPendingAction(), Change.states.NEW);
+		oInstance.setState(Change.states.PERSISTED);
 
 		oInstance.setContent({});
-		assert.equal(oInstance.getPendingAction(), "NEW");
+		assert.equal(oInstance.getPendingAction(), Change.states.DIRTY);
 
 		oInstance.markForDeletion();
-		assert.equal(oInstance.getPendingAction(), "DELETE");
+		assert.equal(oInstance.getPendingAction(), Change.states.DELETED);
 	});
 
 	QUnit.test("Change.getDefinition", function(assert) {
@@ -283,14 +304,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 		var oChange = new Change(this.oChangeDef);
 		assert.ok(!oChange._oDefinition.creation);
-		assert.equal(oChange._isDirty(), false);
+		assert.equal(oChange.getState(), Change.states.NEW);
 
 		//Act
 		oChange.setResponse(sampleResponse);
 
 		//Assert
 		assert.ok(oChange._oDefinition.creation, "2014-10-30T13:52:40.4754350Z");
-		assert.equal(oChange._isDirty(), false);
+		assert.equal(oChange.getState(), Change.states.PERSISTED);
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall be true if the original language is initial", function(assert) {

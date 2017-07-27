@@ -21,10 +21,10 @@
 						<Text text="This is a subheading"/>
 					</f:snappedContent>
 					<f:actions>
-						<ToolbarSpacer/>
 						<Button
 								text="Edit"
-								type="Emphasized"/>
+								type="Emphasized"
+								press="toggleAreaPriority"/>
 						<Button
 								text="Delete"
 								type="Transparent"/>

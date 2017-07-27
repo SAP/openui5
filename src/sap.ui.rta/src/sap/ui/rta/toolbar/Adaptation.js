@@ -47,7 +47,8 @@ function(
 				"exit": {},
 				"restore": {},
 				"transport": {},
-				"modeChange": {}
+				"modeChange": {},
+				"manageApps": {}
 			},
 			properties: {
 				/** Determines whether publish button is visible */
@@ -60,6 +61,12 @@ function(
 				"modeSwitcher": {
 					type: "string",
 					defaultValue: "adaptation"
+				},
+
+				/** Determines whether Message information icon button is visible */
+				"manageAppsVisible": {
+					"type": "boolean",
+					"defaultValue": false
 				}
 			}
 		}
@@ -129,6 +136,13 @@ function(
 				tooltip: this.getTextResources().getText("BTN_REDO"),
 				press: this.eventHandler.bind(this, 'Redo')
 			}).data('name', 'redo'),
+			new Button({
+				type:"Transparent",
+				icon: "sap-icon://message-information",
+				visible: this.getManageAppsVisible(),
+				tooltip: this.getTextResources().getText("BTN_MANAGE_APPS"),
+				press: this.eventHandler.bind(this, 'ManageApps')
+			}).data('name', 'manageApps'),
 			new Button({
 				type: "Transparent",
 				text: this.getTextResources().getText("BTN_RESTORE"),

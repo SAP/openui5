@@ -123,6 +123,11 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	cursor: default;
 }
 
+.sapMRIDisplayOnly {
+	outline: none;
+	cursor: default;
+}
+
 .sapMRI .sapUiIcon,
 .sapMRI .sapMImg {
 	padding-right: 0.25rem;
@@ -181,5 +186,15 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRI.sapUiRatingIndicatorL {
 	.sapUiIcon:last-child, .sapMImg:last-child {
 		padding-right: 0;
+	}
+}
+
+.sapMRI.sapMRIDisplayOnly {
+	.sapMRIIconSel {
+		color: @sapUiBaseText;
+	}
+
+	.sapMRIIconUnsel {
+		color: darken(@sapUiContentForegroundColor, 30);
 	}
 }

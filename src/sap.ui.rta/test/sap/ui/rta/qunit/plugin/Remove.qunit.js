@@ -41,7 +41,8 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 					}
 				}
 			};
-		}
+		},
+		getModel: function () {}
 	};
 	sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 

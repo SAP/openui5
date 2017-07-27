@@ -1,15 +1,40 @@
-<mvc:View
-	height="100%"
+<mvc:View height="100%"
 	controllerName="sap.ui.fl.sample.variantmanagement.VariantManagement"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
-	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns:m="sap.m"
 	xmlns="sap.ui.fl.variants">
 	<l:VerticalLayout>
-	<m:HBox fitContainer="true">
-		<m:Button id="idMarkAsChangedBtn" text="Mark as Changed" press="onMarkAsChanged" />
-	</m:HBox>
-		<m:Label text="Variants"/>
-		<VariantManagement id="idVariantManagementCtrl" variantMgmtId="M0" select="onSelect" save="onSave"  manage="onManage" showExecuteOnSelection="true" showShare="true" showFavorites="true" />
+		<m:VBox fitContainer="true">
+			<m:HBox fitContainer="true">
+
+				<m:Button id="idModelChangeBtn" text="Toggle Context"
+					press="onVMIdChange" />
+				<m:Button id="idCallManageDialogBtn" text="open manage dialog"
+					press="onOpenMamageDialogBtn" />
+			</m:HBox>
+			<m:HBox fitContainer="true">
+				<m:Button id="idDestroyBtn" text="destroy VM" press="onDestroyVMBtn" />
+				<m:Button id="idMarkAsChangedBtn" text="Mark as Changed"
+					press="onMarkAsChanged" />
+			</m:HBox>
+			<m:HBox fitContainer="true">
+				<m:Button id="idToggleManageBtn" text="toggle show Manage"
+					press="onToggleManageBtn" />
+				<m:Button id="idToggleSaveBtn" text="toggle Save" press="onToggleSaveBtn" />
+				<m:Button id="idToggleSaveAsBtn" text="toggle SaveAs"
+					press="onToggleSaveAsBtn" />
+				<m:Button id="idToggleFavoritesBtn" text="toggle show Favorites"
+					press="onToggleFavoritesBtn" />
+				<m:Button id="idToggleShowAsDefaultBtn" text="toggle show Default"
+					press="onToggleShowAsDefaultBtn" />	
+				<m:Button id="idToggleShowExeSelBtn" text="toggle show ExeSel"
+					press="onToggleShowExeOnSeltBtn" />
+				<m:Button id="idToggleShowShareBtn" text="toggle show Share"
+					press="onToggleShowShareBtn" />	
+			</m:HBox>
+		</m:VBox>
+		<m:Label text="Variants" />
+		<VariantManagement id="idVariantManagementCtrl"
+			variantManagementKey="M0" save="onSave" manage="onManage"
+			showExecuteOnSelection="true" showShare="true" showFavorites="true" />
 	</l:VerticalLayout>
 </mvc:View>

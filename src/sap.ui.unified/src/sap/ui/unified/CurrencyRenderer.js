@@ -23,9 +23,9 @@ sap.ui.define(['jquery.sap.global'],
 	 * {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager}
-	 *            oRenderManager The RenderManager that can be used for writing to the render-output-buffer.
+	 *            oRm The RenderManager that can be used for writing to the render-output-buffer.
 	 * @param {sap.ui.core.Control}
-	 *            oMenu An object representation of the control that should be rendered
+	 *            oCurrency An object representation of the control that should be rendered
 	 */
 	CurrencyRenderer.render = function(oRm,oCurrency) {
 		var sTooltip = oCurrency.getTooltip_AsString();

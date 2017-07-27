@@ -1,0 +1,30 @@
+<core:FragmentDefinition 
+    xmlns:m="sap.m" 
+    xmlns:core="sap.ui.core">
+    <m:VBox>
+        <m:Text text="Example in which XMLComposite control property is of type float"/>
+        <m:HBox>
+            <m:Input value="{$this>valueFloat}" width="10rem" />
+            <m:Input value="{$this>valueFloat}" width="10rem" />
+            <m:Slider value="{$this>valueFloat}" width="10rem" />
+        </m:HBox>
+        <m:Text text="Example in which XMLComposite control property is of type string"/>
+        <m:HBox>
+            <m:Input value="{$this>valueString}" width="10rem" />
+            <m:Input value="{$this>valueString}" width="10rem" />
+            <m:Slider value="{$this>valueString}" width="10rem" />
+        </m:HBox>
+        <m:Text text="Example in which XMLComposite control property is of type float + type definitions for Input contol"/>
+        <m:HBox>
+            <m:Input value="{path: '$this>valueFloat', type:'sap.ui.model.type.Float'}" width="10rem" />
+            <m:Input value="{path: '$this>valueFloat', type:'sap.ui.model.type.Float'}" width="10rem" />
+            <m:Slider value="{$this>valueFloat}" width="10rem" />
+        </m:HBox>
+        <m:Text text="Example in which XMLComposite control property is of type string + type definitions for Slider control"/>
+        <m:HBox>
+            <m:Input value="{path: '$this>valueString'}" width="10rem" />
+            <m:Input value="{path: '$this>valueString'}" width="10rem" />
+            <m:Slider value="{path: '$this>valueString', type: 'sap.ui.model.type.String'}" width="10rem" />
+        </m:HBox>
+    </m:VBox>
+</core:FragmentDefinition>

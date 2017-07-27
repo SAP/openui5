@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				 */
 				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display },
 				/**
-				 * Additional description for aria-label.
+				 * Additional description for aria-label. The aria-label is rendered before the standard aria-label.
 				 * @since 1.50.0
 				 */
 				"ariaLabel": { type: "string", group: "Accessibility", defaultValue: null }
@@ -947,7 +947,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
 		}
 		if (sAriaLabel) {
-			sAriaText += " " + sAriaLabel;
+			sAriaText = sAriaLabel + " " + sAriaText;
 		}
 		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};

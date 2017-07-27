@@ -594,7 +594,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		var firstChange = this.oPersistence.addChangeFile(Change.createInitialFileContent(mParameters));
 		var secondChange = this.oPersistence.addChangeFile(Change.createInitialFileContent(mParameters2));
 
-		secondChange.getDefinition().creation = new Date().toISOString();
+		secondChange.setState(Change.states.PERSISTED);
 		assert.ok(this.oPersistence._oChanges[firstChange.getId()], 'Change is in _oChanges');
 
 		this.oPersistence.removeChangeFromPersistence(firstChange);

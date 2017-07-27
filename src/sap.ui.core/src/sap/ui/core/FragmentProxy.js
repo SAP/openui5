@@ -171,10 +171,11 @@ sap.ui.define([
 		/* @lends sap.ui.core.FragmentProxy.prototype */
 		{
 			constructor: function (sId, mSettings) {
-				if (!mSettings) {
+				if (!mSettings && sId && typeof sId === "object") {
 					mSettings = sId;
 					sId = ManagedObject.getMetadata().uid();
 				}
+				mSettings = mSettings || {};
 				if (mSettings.ref) {
 					return new SingleFragmentProxy(sId, { ref: mSettings.ref });
 				} else {

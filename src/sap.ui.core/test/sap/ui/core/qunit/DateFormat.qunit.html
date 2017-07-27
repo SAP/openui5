@@ -763,20 +763,20 @@
 			}, {
 				scale: "hour",
 				data: [
-					{unit: "second", diff: 0, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now --> 0 hours ago"},
-					{unit: "second", diff: 1, results: ["in 0 hours", "in 0 hours", "in 0 hr.", "in 0 hr."], description: "Now + 1 Second --> in 0 hours", parseDiff: 1000},
-					{unit: "second", diff: -1, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now - 1 Second --> 0 hours ago", parseDiff: -1000},
-					{unit: "minute", diff: 30, results: ["in 0 hours", "in 0 hours", "in 0 hr.", "in 0 hr."], description: "Now + 30 Minutes --> in 0 hours", parseDiff: 30*60*1000},
-					{unit: "minute", diff: -30, results: ["0 hours ago", "0 hours ago", "0 hr. ago", "0 hr. ago"], description: "Now - 30 Minutes --> 0 hours ago", parseDiff: -30*60*1000},
+					{unit: "second", diff: 0, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now --> 0 hours ago"},
+					{unit: "second", diff: 1, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now + 1 Second --> in 0 hours", parseDiff: 1000},
+					{unit: "second", diff: -1, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now - 1 Second --> 0 hours ago", parseDiff: -1000},
+					{unit: "minute", diff: 30, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now + 30 Minutes --> in 0 hours", parseDiff: 30*60*1000},
+					{unit: "minute", diff: -30, results: ["this hour", "this hour", "this hour", "this hour"], description: "Now - 30 Minutes --> 0 hours ago", parseDiff: -30*60*1000},
 					{unit: "hour", diff: 4, results: ["in 4 hours", "in 4 hours", "in 4 hr.", "in 4 hr."], description: "Now + 4 Hours --> in 4 hours"},
 					{unit: "hour", diff: -10, results: ["10 hours ago", "10 hours ago", "10 hr. ago", "10 hr. ago"], description: "Now - 10 Hours --> 10 hours ago"}
 				]
 			}, {
 				scale: "minute",
 				data: [
-					{unit: "second", diff: 0, results: ["0 minutes ago", "0 minutes ago", "0 min. ago", "0 min. ago"], description: "Now --> 0 minutes ago"},
-					{unit: "second", diff: 1, results: ["in 0 minutes", "in 0 minutes", "in 0 min.", "in 0 min."], description: "Now + 1 Second --> in 0 minutes", parseDiff: 1000},
-					{unit: "second", diff: -1, results: ["0 minutes ago", "0 minutes ago", "0 min. ago", "0 min. ago"], description: "Now - 1 Second --> 0 minutes ago", parseDiff: -1000},
+					{unit: "second", diff: 0, results: ["this minute", "this minute", "this minute", "this minute"], description: "Now --> 0 minutes ago"},
+					{unit: "second", diff: 1, results: ["this minute", "this minute", "this minute", "this minute"], description: "Now + 1 Second --> in 0 minutes", parseDiff: 1000},
+					{unit: "second", diff: -1, results: ["this minute", "this minute", "this minute", "this minute"], description: "Now - 1 Second --> 0 minutes ago", parseDiff: -1000},
 					{unit: "minute", diff: 30, results: ["in 30 minutes", "in 30 minutes", "in 30 min.", "in 30 min."], description: "Now + 30 Minutes --> in 30 minutes"},
 					{unit: "minute", diff: -30, results: ["30 minutes ago", "30 minutes ago", "30 min. ago", "30 min. ago"], description: "Now - 30 Minutes --> 30 minutes ago"},
 					{unit: "hour", diff: 1, results: ["in 60 minutes", "in 60 minutes", "in 60 min.", "in 60 min."], description: "Now + 4 Hours --> in 60 minutes"}
@@ -1075,7 +1075,7 @@
 				calendarType: sap.ui.core.CalendarType.Persian
 			}, new sap.ui.core.Locale("fa_IR"));
 
-		assert.equal(oDateFormat.format(oDate), "13 تیر 1380 ه‍.ش.", "Date is formatted in Persian calendar");
+		assert.equal(oDateFormat.format(oDate).toString(), "13 تیر 1380", "Date is formatted in Persian calendar");
 	});
 
 	QUnit.test("format date to Persian type with relative", function(assert) {
@@ -1089,7 +1089,7 @@
 				calendarType: sap.ui.core.CalendarType.Persian
 			}, new sap.ui.core.Locale("fa_IR"));
 
-		var oDate = oDateFormat.parse("13 تیر 1380 ه‍.ش.");
+		var oDate = oDateFormat.parse("13 تیر 1380");
 		assert.ok(oDate instanceof Date, "Parsed date is always an instance of Javascript Date");
 		assert.equal(oDate.getFullYear(), 2001, "Year 2011");
 		assert.equal(oDate.getMonth(), 6, "Month July");

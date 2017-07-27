@@ -4,8 +4,8 @@
 /**
  * Adds support rules of the sap.ui.table library to the support infrastructure.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./TableHelper.support"],
-	function(jQuery, SupportLib, Ruleset, SupportHelper) {
+sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/supportRules/RuleSet", "./TableHelper.support", 'sap/ui/Device'],
+	function(jQuery, SupportLib, Ruleset, SupportHelper, Device) {
 	"use strict";
 
 	// shortcuts
@@ -21,7 +21,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	var oRuleset = new Ruleset(oLib);
 
 	function createRule(oRuleDef) {
-		oRuleDef.id = "GRIDTABLE_" + oRuleDef.id;
+		oRuleDef.id = "gridTable" + oRuleDef.id;
 		SupportHelper.addRuleToRuleset(oRuleDef, oRuleset);
 	}
 
@@ -64,11 +64,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	 * Checks whether content densities are used correctly.
 	 */
 	createRule({
-		id : "CONTENT_DENSITY",
+		id : "ContentDensity",
+		categories: [Categories.Usage],
 		title : "Content Density Usage",
 		description : "Checks whether the content densities 'Cozy', 'Compact' and 'Condensed' are used correctly.",
 		resolution : "Ensure that either only the 'Cozy' or 'Compact' content density is used or the 'Condensed' and 'Compact' content densities in combination are used.",
-		resolutionurls : [SupportHelper.createDocuRef("How to use Content Densities", "#docs/guide/e54f729da8e3405fae5e4fe8ae7784c1.html")],
+		resolutionurls : [SupportHelper.createDocuRef("Documentation: Content Densities", "#docs/guide/e54f729da8e3405fae5e4fe8ae7784c1.html")],
 		check : function(oIssueManager, oCoreFacade, oScope) {
 			var $Document = jQuery("html");
 			var $Cozy = $Document.find(".sapUiSizeCozy");
@@ -107,7 +108,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	 * Validates whether title or aria-labelledby is correctly set
 	 */
 	createRule({
-		id : "VALIDATE_ACC_TITLE",
+		id : "AccessibleLabel",
 		categories: [Categories.Accessibility],
 		title : "Accessible Label",
 		description : "Checks whether 'sap.ui.table.Table' controls have an accessible label.",
@@ -127,7 +128,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	 * Validates sap.ui.core.Icon column templates.
 	 */
 	createRule({
-		id : "VALIDATE_COLUMN_TEMPLATE_ICON",
+		id : "ColumnTemplateIcon",
 		categories: [Categories.Accessibility],
 		title : "Column template validation - 'sap.ui.core.Icon'",
 		description : "The 'decorative' property of control 'sap.ui.core.Icon' is set to 'true' although the control is used as column template.",
@@ -147,7 +148,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	 * Validates sap.m.Text column templates.
 	 */
 	createRule({
-		id : "VALIDATE_COLUMN_TEMPLATE_M_TEXT",
+		id : "ColumnTemplateTextWrapping",
+		categories: [Categories.Usage],
 		title : "Column template validation - 'sap.m.Text'",
 		description : "The 'wrapping' property of the control 'sap.m.Text' is set to 'true' although the control is used as a column template.",
 		resolution : "Set the 'wrapping' property of the control 'sap.m.Text' to 'false' if the control is used as a column template.",
@@ -166,7 +168,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 	 * Checks for No Deviating units issue in AnalyticalBinding
 	 */
 	createRule({
-		id : "ANALYTICS_NO_DEVIATING_UNITS",
+		id : "AnalyticsNoDeviatingUnits",
 		categories: [Categories.Bindings],
 		title : "Analytical Binding reports 'No deviating units found...'",
 		description : "The analytical service returns duplicate IDs. This could also lead to many requests because the analytical binding " +
@@ -204,6 +206,64 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 		}
 	});
 
+	/*
+	 * Checks whether the currently visible rows have the expected height.
+	 */
+	createRule({
+		id : "RowHeights",
+		categories: [Categories.Usage],
+		title : "Row heights",
+		description : "Checks whether the currently visible rows have the expected height.",
+		resolution : "Check whether content densities are correctly used, and only the supported controls are used as column templates, with their"
+					 + " wrapping property set to \"false\"",
+		resolutionurls: [
+			SupportHelper.createDocuRef("Documentation: Content Densities", "#docs/guide/e54f729da8e3405fae5e4fe8ae7784c1.html"),
+			SupportHelper.createDocuRef("Documentation: Supported controls", "#docs/guide/148892ff9aea4a18b912829791e38f3e.html"),
+			{text: "SAP Fiori Design Guidelines: Grid Table", href: "https://experience.sap.com/fiori-design-web/grid-table/"}/*,
+			SupportHelper.createDocuRef("API Reference: Column #setTemplate", "#docs/api/symbols/sap.ui.table.Column.html#setTemplate")*/
+		],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			var aTables = SupportHelper.find(oScope, true, "sap/ui/table/Table");
+			var aVisibleRows;
+			var fActualRowHeight;
+			var iExpectedRowHeight;
+			var oRowElement;
+			var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
+			var bUnexpectedRowHeightDetected = false;
+
+			for (var i = 0; i < aTables.length; i++) {
+				aVisibleRows = aTables[i].getRows();
+				iExpectedRowHeight = aTables[i]._getDefaultRowHeight();
+
+				for (var j = 0; j < aVisibleRows.length; j++) {
+					oRowElement = aVisibleRows[j].getDomRef();
+
+					if (oRowElement != null) {
+						fActualRowHeight = oRowElement.getBoundingClientRect().height;
+
+						if (bIsZoomedInChrome) {
+							var nHeightDeviation = Math.abs(iExpectedRowHeight - fActualRowHeight);
+							if (nHeightDeviation > 1) {
+								// If zoomed in Chrome, the actual height may deviate from the expected height by less than 1 pixel. Any higher
+								// deviation shall be considered as defective.
+								bUnexpectedRowHeightDetected = true;
+							}
+						} else if (fActualRowHeight !== iExpectedRowHeight) {
+							bUnexpectedRowHeightDetected = true;
+						}
+
+						if (bUnexpectedRowHeightDetected) {
+							SupportHelper.reportIssue(oIssueManager,
+								"The row height was expected to be " + iExpectedRowHeight + "px, but was " + fActualRowHeight + "px instead."
+								+ " This causes issues with vertical scrolling.",
+								Severity.High, aVisibleRows[j].getId());
+							break;
+						}
+					}
+				}
+			}
+		}
+	});
 
 	return {lib: oLib, ruleset: oRuleset};
 

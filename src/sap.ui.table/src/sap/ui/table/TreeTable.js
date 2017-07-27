@@ -78,23 +78,23 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 		events : {
 
 			/**
-			 * fired when a node has been expanded or collapsed (only available in hierachical mode)
+			 * Fired when a row has been expanded or collapsed by user interaction. Only available in hierarchical mode.
 			 */
 			toggleOpenState : {
 				parameters : {
 
 					/**
-					 * index of the expanded/collapsed row
+					 * Index of the expanded/collapsed row
 					 */
 					rowIndex : {type : "int"},
 
 					/**
-					 * binding context of the selected row
+					 * Binding context of the expanded/collapsed row
 					 */
 					rowContext : {type : "object"},
 
 					/**
-					 * flag whether the node has been expanded or collapsed
+					 * Flag that indicates whether the row has been expanded or collapsed
 					 */
 					expanded : {type : "boolean"}
 				}

@@ -18,21 +18,14 @@ sap.ui.define([
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
-				var oVersionInfo = sap.ui.getVersionInfo(),
-					sVersion = oVersionInfo.version,
-					oViewModel = new JSONModel({
-						busy : false,
-						delay : 0,
-						bPhoneSize: false,
-						bLandscape: Device.orientation.landscape,
-						bHasMaster: false,
-						bSearchMode: false,
-						version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
-						fullVersion: sap.ui.version,
-						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav),
-						isSnapshotVersion: oVersionInfo && oVersionInfo.gav && /snapshot/i.test(oVersionInfo.gav),
-						isDevVersion: sVersion.indexOf("SNAPSHOT") > -1 || (sVersion.split(".").length > 1 && parseInt(sVersion.split(".")[1], 10) % 2 === 1)
-					});
+				var oViewModel = new JSONModel({
+					busy : false,
+					delay : 0,
+					bPhoneSize: false,
+					bLandscape: Device.orientation.landscape,
+					bHasMaster: false,
+					bSearchMode: false
+				});
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
 					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
@@ -406,10 +399,13 @@ sap.ui.define([
 						});
 					};
 					this._oFeedbackDialog.updateContextData = function() {
+						var sVersion = that._getUI5Version(),
+							sUI5Distribution = that._getUI5Distribution();
+
 						if (this.contextCheckBox.getSelected()) {
-							this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+							this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + sUI5Distribution + " Version: " + sVersion);
 						} else {
-							this.contextData.setValue(that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+							this.contextData.setValue(sUI5Distribution + " Version: " + sVersion);
 						}
 					};
 
@@ -619,10 +615,18 @@ sap.ui.define([
 				});
 			},
 
+			_getUI5Version: function () {
+				return this.getModel("versionData").getProperty("/version");
+			},
+
+			_getUI5VersionGav: function () {
+				return this.getModel("versionData").getProperty("/versionGav");
+			},
+
 			_getUI5Distribution: function () {
-				var oVersionInfo = sap.ui.getVersionInfo();
+				var sVersionGav = this._getUI5VersionGav();
 				var sUI5Distribution = "SAPUI5";
-				if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)) {
+				if (sVersionGav && /openui5/i.test(sVersionGav)) {
 					sUI5Distribution = "OpenUI5";
 				}
 				return sUI5Distribution;

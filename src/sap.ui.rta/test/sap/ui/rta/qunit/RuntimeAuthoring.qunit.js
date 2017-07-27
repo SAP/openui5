@@ -288,6 +288,7 @@ sap.ui.require([
 
 		this.oRta.attachStart(function() {
 			assert.equal(this.oRta._oToolsMenu.getControl('restore').getEnabled(), false, "then the Restore Button is disabled");
+			assert.equal(this.oRta._oToolsMenu.getControl('manageApps').getVisible(), false, "then the 'Manage Information' Icon Button is not visible");
 			done();
 		}.bind(this));
 
@@ -1133,6 +1134,63 @@ sap.ui.require([
 	QUnit.test("and FL settings return rejected promise", function(assert) {
 		assert.equal(this.oRta._oToolsMenu.getControl('restore').getVisible(), true, "then the Reset Button is still visible");
 		assert.equal(this.oRta._oToolsMenu.getControl('publish').getVisible(), false, "then the Publish Button is invisible");
+	});
+
+	QUnit.module("Given that changeSpecificData is given with changes for two controls...", {
+		beforeEach : function(assert) {
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+			});
+
+			this.oFlexController = this.oRta._getFlexController();
+			this.aChangeSpecificData = [
+				{ selector : { id : "Comp1---idMain1--GeneralLedgerDocument.Name" } },
+				{ selector : { id : "Comp1---idMain1--GeneralLedgerDocument.CompanyCode" } }
+			];
+			this.oCheckTargetAndApplyChangeStub = sandbox.stub(this.oFlexController, "createAndApplyChange");
+			this.oSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+			this.oUtilsLogStub = sandbox.stub(Utils.log, "error");
+			this.oShowMessageStub = sandbox.stub(this.oRta, "_showMessage").returns(Promise.resolve());
+		},
+		afterEach : function(assert) {
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when _createAndApplyChanges function is called and all promises are resolved", function(assert) {
+		var done = assert.async();
+		this.oCheckTargetAndApplyChangeStub.returns(Promise.resolve());
+		this.oSaveAllStub.returns(Promise.resolve());
+
+		var oPromiseReturn = this.oRta._createAndApplyChanges(this.aChangeSpecificData);
+
+		assert.ok(oPromiseReturn instanceof Promise, "then promise is returned");
+
+		oPromiseReturn.then(function() {
+			assert.strictEqual(this.oCheckTargetAndApplyChangeStub.callCount, 2, "then both changes are processed");
+			assert.strictEqual(this.oUtilsLogStub.callCount, 0, "then no errors occurred");
+			assert.ok(this.oSaveAllStub.calledOnce, "then process was finished");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when _createAndApplyChanges function is called with rejected promises", function(assert) {
+		var done = assert.async();
+		this.oCheckTargetAndApplyChangeStub.onCall(0).returns(Promise.resolve());
+		this.oCheckTargetAndApplyChangeStub.onCall(1).returns(Promise.reject());
+		this.oSaveAllStub.returns(Promise.reject());
+
+		var oPromiseReturn = this.oRta._createAndApplyChanges(this.aChangeSpecificData);
+
+		assert.ok(oPromiseReturn instanceof Promise, "then promise is returned");
+
+		oPromiseReturn.then(function() {
+			assert.strictEqual(this.oCheckTargetAndApplyChangeStub.callCount, 2, "then both changes are processed");
+			assert.strictEqual(this.oUtilsLogStub.callCount, 2, "then rejected errors are handled");
+			assert.ok(this.oSaveAllStub.calledOnce, "then process was finished");
+			assert.ok(this.oShowMessageStub.calledOnce, "then save error MessageToast called");
+			done();
+		}.bind(this));
 	});
 
 	QUnit.done(function( details ) {

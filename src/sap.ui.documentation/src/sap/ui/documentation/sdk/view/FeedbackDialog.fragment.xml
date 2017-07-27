@@ -60,9 +60,9 @@
 
 			<FormattedText class="sapMLabel sapUiFeedbackDialogNoteLabel sapUiTinyMarginBottom"
 						   htmlText="&lt;strong&gt;Note:&lt;/strong&gt; If you want to report a bug,
-			{= ${appView>/isOpenUI5} ?
+			{= ${versionData>/isOpenUI5} ?
 			' you can open a GitHub issue &lt;a href=&quot;https://github.com/SAP/openui5/issues/new&quot;&gt;here.&lt;/a&gt;' :
-			${appView>/isSnapshotVersion} ?
+			${versionData>/isSnapshotVersion} ?
 			' please open a BCP ticket.' :
 			' you can report an Incident &lt;a href=&quot;https://launchpad.support.sap.com/#incident/solution&quot;&gt;here.&lt;/a&gt;'
 			}

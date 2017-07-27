@@ -25,7 +25,10 @@ sap.ui.define([],
 			},
 			aggregations: {
 				headerContent: {
-					domRef: ":sap-domref > .sapMPageHeader > .sapMBarRight"
+					domRef: ":sap-domref > .sapMPageHeader > .sapMBarRight",
+					actions: {
+						move: "moveControls"
+					}
 				},
 				subHeader: {
 					domRef: ":sap-domref > .sapMPageSubHeader"

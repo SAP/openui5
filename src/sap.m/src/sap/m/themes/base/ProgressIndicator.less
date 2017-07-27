@@ -60,6 +60,12 @@
 	opacity: 0.5;
 }
 
+.sapMPI.sapMPIDisplayOnly {
+	height: 1rem;
+	min-width: 4rem;
+	margin: 0;
+}
+
 .sapMPIText {
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontSmallSize;
@@ -68,6 +74,11 @@
 	overflow: hidden;
 	white-space: nowrap;
 	color: @sapUiContentForegroundTextColor;
+}
+
+.sapMPIDisplayOnly .sapMPIText {
+	color: @sapUiBaseText;
+	font-size: 0.6875rem;
 }
 
 .sapMPITextLeft {
@@ -143,13 +154,13 @@
 }
 
 /* Compact */
-.sapUiSizeCompact .sapMPI {
+.sapUiSizeCompact .sapMPI:not(.sapMPIDisplayOnly) {
 	height: 1.125rem;
 	margin: 0.4375rem 0;
 }
 
 /* Condensed */
-.sapUiSizeCondensed .sapUiTableCell .sapMPI {
+.sapUiSizeCondensed .sapUiTableCell .sapMPI:not(.sapMPIDisplayOnly) {
 	height: 1.125rem;
 	margin: 0;
 }

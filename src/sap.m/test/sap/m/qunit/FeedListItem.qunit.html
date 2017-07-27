@@ -161,7 +161,7 @@
 				timestamp : "{timestamp}",
 				maxCharacters : "{maxCharacters}",
 				senderPress : fnOpenPopup,
-				iconPress : fnOpenPopup,
+				iconPress : fnOpenPopup
 			});
 
 			function bindFeedListData(data, itemTemplate, list) {
@@ -186,7 +186,7 @@
 						iconActive: true,
 						timestamp: "March 03, 2013",
 						info: "Approved",
-						maxCharacters: 5000,
+						maxCharacters: 5000
 					}, {
 						icon: sURI,
 						text: "This FeedListItem displays an ImagePool image. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
@@ -194,7 +194,7 @@
 						senderActive: true,
 						iconActive: true,
 						timestamp: "Dec 04, 2012",
-						info: "Rejected",
+						info: "Rejected"
 					}, {
 						icon: "../images/female.jpg",
 						text: "This FeedListItem comes with senderActive = false and iconActive = false. In hac habitasse platea dictumst. Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante.",
@@ -202,7 +202,7 @@
 						senderActive: false,
 						iconActive: false,
 						timestamp: "Dec 02, 2012",
-						info: "Waiting for Approval",
+						info: "Waiting for Approval"
 					}, {
 						text: "This FeedListItem comes without an image and has a very long info text",
 						sender: "Christine Noah",
@@ -215,20 +215,20 @@
 						sender: "Frank Black",
 						senderActive: true,
 						iconActive: true,
-						info: "New",
+						info: "New"
 					}, {
 						text: "And this one does without info",
 						sender: "Kurt Nistroy",
 						senderActive: true,
 						iconActive: true,
-						timestamp: "Nov 01, 2012",
+						timestamp: "Nov 01, 2012"
 					}, {
 						text: "This one has no sender but active/inactve icons (check out the icon's color, when you press this item)",
 						icon: "../images/action.png",
 						activeIcon: "../images/action_pressed.png",
 						senderActive: true,
 						iconActive: true,
-						timestamp: "Nov 01, 2012",
+						timestamp: "Nov 01, 2012"
 					}, {
 						sender: "Frank Black",
 						text: "This FeedListItem has an image but showIcon is set to false so it should not be displayed",
@@ -236,23 +236,23 @@
 						showIcon: false,
 						senderActive: true,
 						iconActive: true,
-						timestamp: "Nov 01, 2012",
+						timestamp: "Nov 01, 2012"
 					}, {
 						sender: "Mrs Smith",
 						text: "This is a very long long long long long long long long long long long long long long long text realy soooo long that it exceeds the this._nMaxCollapsedLength of 500 characters which is valid for a desktop so that we can test the collapse/expand function on this FeedListItem; so this text should be longer than 500 charecters, let's see and count, oh, it is still under 500 characters, let's write something else so that we can reach and actually exceed the 500 character threshold, let's count again. That is still not enough that is why our QUnits tests are still red so we have to write and write and write and write in the hope that we at some time or another reach finally the threshold and the QUnit will not be shown red any longer",
-						timestamp:"Jul 02, 2014",
+						timestamp:"Jul 02, 2014"
 					}, {
 						sender: "Jack Jones",
 						text: "This is a very long long long long long long long long long long long long long long long text realy soooo long that it exceeds the this._nMaxCollapsedLength of 500 characters which is valid for a desktop so that we can test the collapse/expand function on this FeedListItem; so this text should be longer than 500 charecters, let's see and count, oh, it is still under 500 characters, let's write something else so that we can reach and actually exceed the 500 character threshold, let's count again. That is still not enough that is why our QUnits tests are still red so we have to write and write and write and write in the hope that we at some time or another reach finally the threshold and the QUnit will not be shown red any longer",
 						icon: "../images/male.jpg",
 						showIcon: false,
 						senderActive: true,
-						timestamp: "Aug 06, 2014",
+						timestamp: "Aug 06, 2014"
 					}, {
 						sender: "Mrs Smith",
 						text: "Thisisaerynnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongvvaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylongaverylong",
 						timestamp:"Jul 02, 2014",
-						maxCharacters: 20,
+						maxCharacters: 20
 					}]
 				};
 
@@ -649,6 +649,37 @@
 				var sFullText = this.oFeedListItem._sFullText;
 				//Assert
 				assert.equal(sFullText, "Test<br> with a <br> <br> newline<br>", "The \\n has been replaced with <br> tag");
+			});
+
+			QUnit.module("Special characters", {
+				beforeEach: function() {
+					var oData,
+						oModel;
+
+					this.oFeedListItem = new sap.m.FeedListItem({
+						sender: "{/sender}",
+						senderActive: "{/senderActive}",
+						text: "{/text}"
+					});
+
+					oData = {
+						"text": "Some Text",
+						"sender": "Al{exandra",
+						"senderActive": true
+					};
+					oModel = new sap.ui.model.json.JSONModel();
+					oModel.setData(oData);
+					this.oFeedListItem.setModel(oModel);
+					this.oFeedListItem.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("Special characters in the sender property do not lead to an exception", function(assert) {
+				assert.ok(true, "No exception occurred");
 			});
 		</script>
 	</head>

@@ -100,20 +100,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @returns {void}
 			 */
 			clearIssues: function () {
-				// Return if no issues
-				if (!_aIssues.length) {
-					return;
-				}
+				_aIssues = [];
+			},
 
-				// Add to history. Using object for future compatibility
+			/**
+			 * Saves a new history object with the current issues.
+			 * @public
+			 * @method
+			 * @name sap.ui.support.IssueManager.saveHistory
+			 * @returns {void}
+			 */
+			saveHistory: function () {
 				_aHistory.push({
-					// Copy array
 					issues: _aIssues.slice()
 				});
-
-				// Reset issues array
-				_aIssues = [];
-
 			},
 
 			/**
@@ -124,7 +124,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
 			 * @returns {object[]} Current history in the IssueManager.
 			 */
 			getHistory: function () {
-				this.clearIssues();
 				// Copy and return history
 				return _aHistory.slice();
 			},

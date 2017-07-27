@@ -164,6 +164,22 @@
 		assert.equal(this.oUploadCollection.getFileType().toString(), aFileTypesExpected, "FileType should not be overwritten at runtime if instantUpload is false.");
 	});
 
+	QUnit.test("Return type of overridden setter for fileType", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setFileType([]), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Test for method setMaximumFilenameLength", function(assert) {
 		this.createUploadCollection({
 			instantUpload: false,
@@ -174,6 +190,22 @@
 		assert.equal(this.oUploadCollection.getMaximumFilenameLength(), 10, "MaximumFilenameLength property should not be overwritten at runtime if instantUpload is false.");
 	});
 
+	QUnit.test("Return type of overridden setter for maximumFilenameLength", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setMaximumFilenameLength(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Test for method setMaximumFileSize", function(assert) {
 		this.createUploadCollection({
 			instantUpload: false,
@@ -182,6 +214,22 @@
 		assert.equal(this.oUploadCollection.getMaximumFileSize(), 50, "Initial maximFileSize value is set correctly for instantUpload : false");
 		this.oUploadCollection.setMaximumFileSize(20);
 		assert.equal(this.oUploadCollection.getMaximumFileSize(), 50, "MaximumFileSize property should not be overwritten at runtime if instantUpload is false.");
+	});
+
+	QUnit.test("Return type of overridden setter for maximumFileSize", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setMaximumFileSize(20), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setMimeType", function(assert) {
@@ -196,6 +244,22 @@
 		assert.equal(this.oUploadCollection.getMimeType().toString(), aMimeTypesExpected, "MimeType property should not be overwritten at runtime if instantUpload is false.");
 	});
 
+	QUnit.test("Return type of overridden setter for mimeType", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setMimeType(20), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Test for method setMultiple", function(assert) {
 		this.createUploadCollection({
 			instantUpload: false,
@@ -204,6 +268,22 @@
 		assert.equal(this.oUploadCollection.getMultiple(), true, "Initial multiple value (true) is set correctly for instantUpload : false");
 		this.oUploadCollection.setMultiple(false);
 		assert.equal(this.oUploadCollection.getMultiple(), true, "Multiple property should not be overwritten at runtime if instantUpload is false.");
+	});
+
+	QUnit.test("Return type of overridden setter for property 'multiple'", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setMultiple(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
 	});
 
 	QUnit.test("Test for method setUploadEnabled", function(assert) {
@@ -217,6 +297,22 @@
 		assert.equal(this.oUploadCollection.getUploadEnabled(), bUploadEnabled, "UploadEnabled property should not be overwritten at runtime if instantUpload is false.");
 	});
 
+	QUnit.test("Return type of overridden setter for property 'uploadEnabled'", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setUploadEnabled(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Test for method setUploadUrl", function(assert) {
 		var sUploadUrl = "my/upload/url";
 		this.createUploadCollection({
@@ -228,6 +324,22 @@
 		assert.equal(this.oUploadCollection.getUploadUrl(), sUploadUrl, "UploadUrl property should not be overwritten at runtime if instantUpload is false.");
 	});
 
+	QUnit.test("Return type of overridden setter for property 'uploadUrl'", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setUploadUrl(), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
+	});
+
 	QUnit.test("Test for MultiSelect in pending upload (not supported)", function(assert) {
 		//Act
 		this.createUploadCollection({
@@ -236,6 +348,22 @@
 		});
 		//Assert
 		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'MultiSelect' in pending upload is 'None'");
+	});
+
+	QUnit.test("Return type of overridden setter for property 'mode'", function(assert) {
+		//Arrange
+		this.createUploadCollection({
+			instantUpload: false
+		});
+		var oSpy = sinon.spy(jQuery.sap.log, "info");
+
+		//Act
+		//Assert
+		assert.equal(this.oUploadCollection.setUploadUrl(sap.m.ListMode.MultiSelect), this.oUploadCollection, "Correctly returned reference to UploadCollection.");
+		assert.equal(oSpy.callCount, 1, "An error log has been written.");
+
+		//Cleanup
+		oSpy.restore();
 	});
 
 	QUnit.module("Rendering of UploadCollection with instantUpload = false ", {

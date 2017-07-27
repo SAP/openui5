@@ -81,27 +81,22 @@ sap.ui.define(['jquery.sap.global'],
 
 		}
 
-		function getAllLibraryInfos() {
-			var aLibraries = sap.ui.getVersionInfo().libraries;
-
-			aLibraries = aLibraries.filter(function (oLibrary) {
-				var bIsBlacklisted = LIBRARIES_BLACK_LIST.indexOf(oLibrary.name) !== -1;
-				var bStartsWithBlacklistedPrefix = LIBRARY_PREFIXES_BLACK_LIST.some(function (sPrefix) {
-					return oLibrary.name.indexOf(sPrefix) === 0;
-				});
-
-				return !bIsBlacklisted && !bStartsWithBlacklistedPrefix;
+		function isLibraryAllowed(oLibrary) {
+			var bIsBlacklisted = LIBRARIES_BLACK_LIST.indexOf(oLibrary.name) !== -1;
+			var bStartsWithBlacklistedPrefix = LIBRARY_PREFIXES_BLACK_LIST.some(function (sPrefix) {
+				return oLibrary.name.indexOf(sPrefix) === 0;
 			});
 
-			return aLibraries;
+			return !bIsBlacklisted && !bStartsWithBlacklistedPrefix;
 		}
 
-		function getAllLibrariesElementsJSONPromise() {
+		function getAllLibrariesElementsJSONPromise(aLibraries) {
 			if (oAllLibrariesPromise) {
 				return oAllLibrariesPromise;
 			}
 
-			var aLibraries = getAllLibraryInfos();
+			aLibraries = aLibraries || sap.ui.getVersionInfo().libraries || [];
+			aLibraries = aLibraries.filter(isLibraryAllowed);
 
 			// Get a list of promises for each library (these never reject, but can resolve with an empty array)
 			var aPromises = aLibraries.map(function (oLibrary) {

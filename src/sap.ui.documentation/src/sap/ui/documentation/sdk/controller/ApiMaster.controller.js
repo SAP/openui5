@@ -18,9 +18,13 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit : function () {
-				this.getOwnerComponent().fetchAPIInfoAndBindModels().then(function () {
-					this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
-				}.bind(this));
+				var oComponent = this.getOwnerComponent();
+
+				oComponent.fetchVersionInfo()
+					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
+					.then(function () {
+						this._expandTreeToNode(this._topicId, this.getOwnerComponent().getModel("treeData"));
+					}.bind(this));
 
 				this._initTreeUtil("name", "nodes");
 

@@ -39,6 +39,18 @@
 				class="sapUiSmallMarginBottom"
 				press="handleSuccessMessageBoxPress"
 				width="250px"/>
+			<Text
+				text="More Actions"/>
+			<Button
+				text="Error with custom action"
+				class="sapUiSmallMarginBottom"
+				press="handleError2MessageBoxPress"
+				width="250px"/>
+			<Button
+				text="Warning with two actions"
+				class="sapUiSmallMarginBottom"
+				press="handleWarning2MessageBoxPress"
+				width="250px"/>
 			</l:content>
 	</l:VerticalLayout>
 </mvc:View>

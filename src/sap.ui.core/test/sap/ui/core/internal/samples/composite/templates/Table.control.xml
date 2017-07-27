@@ -2,16 +2,16 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	xmlns:m="sap.m" xmlns:core="sap.ui.core" xmlns:mdcc="sap.ui.mdc" xmlns:mdcexp="sap.ui.mdc.experimental"
 	xmlns:mdct="sap.ui.mdc.sample.templates">
-	<template:if test="{= ${path:'controlroot>list', formatter:'sap.ui.core.FragmentControl.helper.runtimeListBinding'}}">
+	<template:if test="{= ${path:'controlroot>list', formatter:'sap.ui.core.XMLComposite.helper.runtimeListBinding'}}">
 		<template:then>
 			<template:with path="controlroot>list" var="list"
-				helper="sap.ui.core.FragmentControl.helper.listMetaContext">
+				helper="sap.ui.core.XMLComposite.helper.listMetaContext">
 				<template:if test="{= ${controlroot>type} === 'ResponsiveTable'}">
 					<template:then>
 						<m:Table
-							items="{path: 'controlroot>list', formatter:'sap.ui.core.FragmentControl.helper.runtimeListBinding'}"
+							items="{path: 'controlroot>list', formatter:'sap.ui.core.XMLComposite.helper.runtimeListBinding'}"
 							id="-innerTable"
-							headerText="{path:'controlroot>header', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
+							headerText="{path:'controlroot>header', formatter:'sap.ui.core.XMLComposite.helper.runtimeProperty'}"
 							mode="SingleSelectLeft" selectionChange="selectionChangeHandler">
 							<template:with path="list>com.sap.vocabularies.UI.v1.LineItem"
 								var="lineitems">
@@ -39,7 +39,7 @@
 									<m:ColumnListItem>
 										<m:cells>
 											<template:repeat list="{lineitems>}" var="dataField">
-												<mdcexp:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
+												<mdcexp:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.XMLComposite.helper.runtimeProperty'}"
 													value="{path:'dataField>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
 												</mdcexp:Field>
 											</template:repeat>
@@ -52,10 +52,10 @@
 					<template:elseif test="{= ${controlroot>type} === 'GridTable'}">
 						<m:VBox>
 							<m:Text
-								text="{path:'controlroot>header', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}" />
+								text="{path:'controlroot>header', formatter:'sap.ui.core.XMLComposite.helper.runtimeProperty'}" />
 							<table:Table xmlns:table="sap.ui.table"
 								id="-innerTable"
-								rows="{path: 'controlroot>list', formatter:'sap.ui.core.FragmentControl.helper.runtimeListBinding'}"
+								rows="{path: 'controlroot>list', formatter:'sap.ui.core.XMLComposite.helper.runtimeListBinding'}"
 								rowSelectionChange="selectionChangeHandler">
 								<template:with path="list>com.sap.vocabularies.UI.v1.LineItem"
 									var="lineitems">
@@ -80,7 +80,7 @@
 													</template:if>
 												</table:label>
 												<table:template>
-													<mdcexp:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.FragmentControl.helper.runtimeProperty'}"
+													<mdcexp:Field editable="{path:'controlroot>editable', formatter:'sap.ui.core.XMLComposite.helper.runtimeProperty'}"
 														value="{path:'dataField>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
 													</mdcexp:Field>
 												</table:template>

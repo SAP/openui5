@@ -1,7 +1,6 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
-	xmlns:commons="sap.ui.commons"
 	xmlns:core="sap.ui.core">
 	<Popover
 		title="{/executionScopeTitle}"
@@ -11,23 +10,23 @@
 		placement="Bottom">
 		<content>
 			<VBox>
-				<RadioButton groupName="analyzeContext" text="{/executionScopes/global/displayName}" select="onContextSelect"
-							 selected="{= ${/analyzeContext/key} === 'global'}">
+				<RadioButton groupName="analyzeContext"
+							 text="{/executionScopes/global/displayName}"
+							 select="onContextSelect"
+							 selected="{= ${/analyzeContext/key} === 'global'}"
+							 tooltip="{/executionScopes/global/description}">
 					<customData>
 						<core:CustomData key="analyzeContext" value="global" />
 					</customData>
-					<tooltip>
-						<commons:RichTooltip text="{/executionScopes/global/description}" atPosition="right top" />
-					</tooltip>
 				</RadioButton>
-				<RadioButton groupName="analyzeContext" text="{/executionScopes/subtree/displayName}" select="onContextSelect"
-							 selected="{= ${/analyzeContext/key} === 'subtree'}">
+				<RadioButton groupName="analyzeContext"
+							 text="{/executionScopes/subtree/displayName}"
+							 select="onContextSelect"
+							 selected="{= ${/analyzeContext/key} === 'subtree'}"
+							 tooltip="{/executionScopes/subtree/description}">
 					<customData>
 						<core:CustomData key="analyzeContext" value="subtree" />
 					</customData>
-					<tooltip>
-						<commons:RichTooltip text="{/executionScopes/subtree/description}" atPosition="right top" />
-					</tooltip>
 				</RadioButton>
 				<l:VerticalLayout
 					class="sapUiSupportToolSettingsPopoverPadding">
@@ -38,14 +37,14 @@
 						width="300px"
 						liveChange="onExecutionContextChange"/>
 				</l:VerticalLayout>
-				<RadioButton groupName="analyzeContext" text="{/executionScopes/components/displayName}" select="onContextSelect"
-							 selected="{= ${/analyzeContext/key} === 'components'}">
+				<RadioButton groupName="analyzeContext"
+							 text="{/executionScopes/components/displayName}"
+							 select="onContextSelect"
+							 selected="{= ${/analyzeContext/key} === 'components'}"
+							 tooltip="{/executionScopes/components/description}">
 					<customData>
 						<core:CustomData key="analyzeContext" value="components" />
 					</customData>
-					<tooltip>
-						<commons:RichTooltip text="{/executionScopes/components/description}" atPosition="right top" />
-					</tooltip>
 				</RadioButton>
 				<l:VerticalLayout
 					id="componentsSelectionContainer"

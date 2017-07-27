@@ -46,8 +46,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * number of months displayed
-			 * on phones always only one month is displayed
+			 * Determines the number of months displayed.
+			 *
+			 * As of version 1.50, the duplicated dates are not displayed if there are
+			 * multiple months.
+			 *
+			 * <b>Note:</b> On phones, only one month is displayed.
 			 * @since 1.28.0
 			 */
 			months : {type : "int", group : "Appearance", defaultValue : 1},
@@ -486,7 +490,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A date to be focused
 	 * @private
 	 */
 	Calendar.prototype._setFocusedDate = function(oDate){
@@ -788,7 +792,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Provides default behavior for setting min & max date.
 	 * It is also a hook for the sap.ui.unified.CalendarDateInterval.
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A date
 	 * @private
 	 */
 	Calendar.prototype._setMinMaxDateExtend = function(oDate){
@@ -1091,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A date to be used for the header buttons
 	 * @private
 	 */
 	Calendar.prototype._updateHeader = function(oDate){
@@ -1102,8 +1106,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * @param {boolean} bCheckMonth
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The currently focused date
+	 * @param {boolean} bCheckMonth Whether the month must be checked
 	 * @private
 	 */
 	Calendar.prototype._togglePrevNext = function(oDate, bCheckMonth){
@@ -1272,8 +1276,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * returns the displayed months rendered for a start date
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A date to determine the first of the displayed months
+	 * @returns {array} The displayed months rendered for a given date
 	 */
 	Calendar.prototype._getDisplayedMonths = function(oDate){
 
@@ -1658,9 +1662,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 *
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * @param {boolean{ bOtherMonth
-	 * @param {boolean} bNoEvent
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be focused
+	 * @param {boolean} bOtherMonth Whether the date to be focused is outside the visible date range
+	 * @param {boolean} bNoEvent Whether startDateChange event should be fired
 	 * @private
 	 */
 	Calendar.prototype._focusDate = function (oDate, bOtherMonth, bNoEvent){
@@ -1672,10 +1676,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		if (oDate.isBefore(this._oMinDate)) {
 			oFocusedDate = this._oMinDate;
 			bChanged = true;
-		}else if (oDate.isAfter(this._oMaxDate)){
+		} else if (oDate.isAfter(this._oMaxDate)){
 			oFocusedDate = this._oMaxDate;
 			bChanged = true;
-		}else {
+		} else {
 			oFocusedDate = oDate;
 		}
 
@@ -1725,7 +1729,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A date to be used for the header buttons
 	 * @private
 	 */
 	function _setHeaderText (oDate){
@@ -1800,8 +1804,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * @param {boolean} bNoFocus
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be displayed
+	 * @param {boolean} bNoFocus Whether the date is focused
 	 * @private
 	 */
 	function _displayDate (oDate, bNoFocus){
@@ -2044,7 +2048,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 	/**
-	 * @return {sap.ui.unified.calendar.CalendarDate} the focused date.
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date, which first date of month will be determined
+	 * @returns {sap.ui.unified.calendar.CalendarDate} The first date of the month
 	 * @private
 	 */
 	function _determineFirstMonthDate(oDate){

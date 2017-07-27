@@ -86,7 +86,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Defines how float values are visualized: Full, Half (see enumeration RatingIndicatorVisualMode)
 			 */
-			visualMode : {type : "sap.m.RatingIndicatorVisualMode", group : "Behavior", defaultValue : sap.m.RatingIndicatorVisualMode.Half}
+			visualMode : {type : "sap.m.RatingIndicatorVisualMode", group : "Behavior", defaultValue : sap.m.RatingIndicatorVisualMode.Half},
+
+			/**
+			 * The RatingIndicator in displayOnly mode is not interactive, not editable, not focusable, and not in the tab chain. This setting is used for forms in review mode.
+			 * @since 1.50.0
+			 */
+			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		associations : {
 			/**
@@ -199,7 +205,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the icon size value. The method is automatically updating the UI components if the control has been rendered before.
+	 * Sets the icon size value. The method automatically updates the UI components if the control has been rendered before.
 	 *
 	 * @param {sap.ui.core.CSSSize} sIconSize
 	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
@@ -215,6 +221,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// then update the property and rerender since updating all widths would be too complex here
 		this.setProperty("iconSize", sIconSize, false);
+		return this;
+	};
+
+
+	/**
+	 * Sets the displayOnly mode.
+	 *
+	 * @param {boolean} bDisplayOnly
+	 * @returns {sap.m.RatingIndicator} Returns <code>this</code> to facilitate method chaining.
+	 * @override
+	 * @public
+	 */
+	RatingIndicator.prototype.setDisplayOnly = function (bDisplayOnly) {
+		this.toggleStyleClass("sapMRIDisplayOnly", bDisplayOnly);
+		this.setProperty("displayOnly", bDisplayOnly, true);
 		return this;
 	};
 
@@ -250,9 +271,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sIconSizeLessParameter = "sapUiRIIconPadding" + this._getIconSizeLabel(this._iPxIconSize);
 			this._iPxPaddingSize = this._toPx(Parameters.get(sIconSizeLessParameter));
 		} else {
-			var sDensityMode = this._getDensityMode();
-			this._iPxIconSize = this._toPx(Parameters.get("sapUiRIIconSize" + sDensityMode));
-			this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding" + sDensityMode));
+			if (this.getDisplayOnly()) {
+				this._iPxIconSize = this._toPx(Parameters.get("sapUiRIIconSizeDisplayOnly"));
+				this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPaddingDisplayOnly"));
+			} else {
+				var sDensityMode = this._getDensityMode();
+				this._iPxIconSize = this._toPx(Parameters.get("sapUiRIIconSize" + sDensityMode));
+				this._iPxPaddingSize = this._toPx(Parameters.get("sapUiRIIconPadding" + sDensityMode));
+			}
 		}
 	};
 
@@ -585,7 +611,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype.ontouchstart = function (oEvent) {
-		if (oEvent.which == 2 || oEvent.which == 3 || !this.getEnabled()) {
+		if (oEvent.which == 2 || oEvent.which == 3 || !this.getEnabled() || this.getDisplayOnly()) {
 			return;
 		}
 
@@ -760,7 +786,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	RatingIndicator.prototype.onkeyup = function(oEvent) {
 		var iMaxValue = this.getMaxValue();
 
-		if (!this.getEnabled()) {
+		if (!this.getEnabled() || this.getDisplayOnly()) {
 			return false;
 		}
 
@@ -816,7 +842,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	RatingIndicator.prototype._handleKeyboardValueChange = function (oEvent, fValue) {
-		if (!this.getEnabled()) {
+		if (!this.getEnabled() || this.getDisplayOnly()) {
 			return;
 		}
 
@@ -847,7 +873,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			role: "slider",
 			type: oBundle.getText("ACC_CTR_TYPE_RATING"),
 			description: oBundle.getText("ACC_CTR_STATE_RATING", [this.getValue(), this.getMaxValue()]),
-			focusable: this.getEnabled(),
+			focusable: this.getEnabled() && !this.getDisplayOnly(),
 			enabled: this.getEnabled()
 		};
 	};

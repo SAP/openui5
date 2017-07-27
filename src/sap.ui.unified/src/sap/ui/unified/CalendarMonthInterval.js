@@ -4,8 +4,8 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils',
-               './calendar/Header', './calendar/MonthsRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate', './library'],
-               function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, MonthsRow, MonthPicker, YearPicker, CalendarDate, library) {
+		'./calendar/Header', './calendar/MonthsRow', './calendar/MonthPicker', './calendar/YearPicker', 'sap/ui/unified/calendar/CalendarDate', './library'],
+	function(jQuery, Control, LocaleData, Date1, CalendarUtils, Header, MonthsRow, MonthPicker, YearPicker, CalendarDate, library) {
 	"use strict";
 
 	/*
@@ -223,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	 * Sets a start date.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date} oStartDate A JavaScript date
 	 * @return {sap.ui.unified.CalendarMonthInterval} <code>this</code> for method chaining
 	*/
 	CalendarMonthInterval.prototype.setStartDate = function(oStartDate){
@@ -354,8 +354,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	* Sets the focused date
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
+	* Sets the focused date.
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date which will be set in focus
 	* @private
 	*/
 	CalendarMonthInterval.prototype._setFocusedDate = function(oDate){
@@ -817,12 +817,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	*
-	* @param {sap.ui.unified.calendar.CalendarDate} oStartDate
-	* @param {boolean} bSetFocusDate
-	* @param {boolean} bNoEvent
+	* @param {sap.ui.unified.calendar.CalendarDate} oStartDate The date to be set to start date
+	* @param {boolean} bSetFocusDate Whether the date will be focused
+	* @param {boolean} bSkipEvent Whether startDateChange event should be skipped
 	* @private
 	*/
-	function _setStartDate(oStartDate, bSetFocusDate, bNoEvent){
+	function _setStartDate(oStartDate, bSetFocusDate, bSkipEvent){
 
 		var oMaxDate = new CalendarDate(this._oMaxDate);
 		oMaxDate.setDate(1);
@@ -859,7 +859,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
-		if (!bNoEvent) {
+		if (!bSkipEvent) {
 			this.fireStartDateChange();
 		}
 
@@ -1058,8 +1058,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	*
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
-	* @param {boolean} bNotVisible
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be focused
+	* @param {boolean} bNotVisible Whether the date is not visible
 	* @private
 	*/
 	function _focusDate(oDate, bNotVisible){
@@ -1088,11 +1088,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
-	* @param {boolean} bNoFocus
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be displayed
+	* @param {boolean} bSkipFocus Whether the date should be skipped
 	* @private
 	*/
-	function _displayDate(oDate, bNoFocus){
+	function _displayDate(oDate, bSkipFocus){
 
 		if (oDate && (!this._oFocusedDate || !this._oFocusedDate.isSame(oDate))) {
 
@@ -1106,7 +1106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._setFocusedDate(oDate);
 
 			if (this.getDomRef() && this._iMode == 0) {
-				_renderMonthsRow.call(this, bNoFocus);
+				_renderMonthsRow.call(this, bSkipFocus);
 			}
 		}
 
@@ -1171,7 +1171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	*
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date which will be set to start date
 	* @private
 	*/
 	function _setStartDateForFocus(oDate) {

@@ -8,16 +8,13 @@
 		"ada": "адангме",
 		"ady": "адиге",
 		"ae": "авестски",
-		"aeb": "aeb",
 		"af": "африкаанс",
 		"afh": "африхили",
 		"agq": "агем",
 		"ain": "айну",
 		"ak": "акан",
 		"akk": "акадски",
-		"akz": "akz",
 		"ale": "алеутски",
-		"aln": "aln",
 		"alt": "южноалтайски",
 		"am": "амхарски",
 		"an": "арагонски",
@@ -27,66 +24,44 @@
 		"ar_001": "съвременен стандартен арабски",
 		"arc": "арамейски",
 		"arn": "мапуче",
-		"aro": "aro",
 		"arp": "арапахо",
-		"arq": "arq",
 		"arw": "аравак",
-		"ary": "ary",
-		"arz": "arz",
 		"as": "асамски",
 		"asa": "асу",
-		"ase": "ase",
 		"ast": "астурски",
 		"av": "аварски",
-		"avk": "avk",
 		"awa": "авади",
 		"ay": "аймара",
 		"az": "азербайджански",
 		"az_alt-short": "азерски",
 		"ba": "башкирски",
 		"bal": "балучи",
-		"ban": "балинейски",
-		"bar": "bar",
+		"ban": "балийски",
 		"bas": "баса",
-		"bax": "bax",
-		"bbc": "bbc",
-		"bbj": "bbj",
 		"be": "беларуски",
 		"bej": "бея",
 		"bem": "бемба",
-		"bew": "bew",
 		"bez": "бена",
-		"bfd": "bfd",
-		"bfq": "bfq",
 		"bg": "български",
 		"bgn": "западен балочи",
 		"bho": "божпури",
 		"bi": "бислама",
 		"bik": "биколски",
 		"bin": "бини",
-		"bjn": "bjn",
-		"bkm": "bkm",
 		"bla": "сиксика",
 		"bm": "бамбара",
 		"bn": "бенгалски",
 		"bo": "тибетски",
-		"bpy": "bpy",
-		"bqi": "bqi",
 		"br": "бретонски",
 		"bra": "брадж",
-		"brh": "brh",
 		"brx": "бодо",
 		"bs": "босненски",
-		"bss": "bss",
 		"bua": "бурятски",
 		"bug": "бугински",
-		"bum": "bum",
 		"byn": "биленски",
-		"byv": "byv",
 		"ca": "каталонски",
 		"cad": "каддо",
 		"car": "карибски",
-		"cay": "cay",
 		"cch": "атсам",
 		"ce": "чеченски",
 		"ceb": "себуано",
@@ -104,12 +79,12 @@
 		"ckb": "кюрдски (централен)",
 		"co": "корсикански",
 		"cop": "коптски",
-		"cps": "cps",
 		"cr": "крии",
 		"crh": "кримскотатарски",
+		"crs": "сеселва, креолски френски",
 		"cs": "чешки",
 		"csb": "кашубски",
-		"cu": "църковно славянски",
+		"cu": "църковнославянски",
 		"cv": "чувашки",
 		"cy": "уелски",
 		"da": "датски",
@@ -123,22 +98,20 @@
 		"den": "слейви",
 		"dgr": "догриб",
 		"din": "динка",
-		"dje": "джерма",
+		"dje": "зарма",
 		"doi": "догри",
-		"dsb": "долнолужишки",
-		"dtp": "dtp",
+		"dsb": "долносръбски",
 		"dua": "дуала",
 		"dum": "средновековен холандски",
 		"dv": "дивехи",
 		"dyo": "диола",
 		"dyu": "диула",
 		"dz": "дзонха",
-		"dzg": "dzg",
+		"dzg": "дазага",
 		"ebu": "ембу",
 		"ee": "еве",
 		"efi": "ефик",
-		"egl": "egl",
-		"egy": "египетски",
+		"egy": "древноегипетски",
 		"eka": "екажук",
 		"el": "гръцки",
 		"elx": "еламитски",
@@ -155,30 +128,25 @@
 		"es_419": "испански (Латинска Америка)",
 		"es_ES": "испански (Испания)",
 		"es_MX": "испански (Мексико)",
-		"esu": "esu",
 		"et": "естонски",
 		"eu": "баски",
 		"ewo": "евондо",
-		"ext": "ext",
 		"fa": "персийски",
 		"fan": "фанг",
 		"fat": "фанти",
 		"ff": "фула",
 		"fi": "фински",
 		"fil": "филипински",
-		"fit": "fit",
 		"fj": "фиджийски",
 		"fo": "фарьорски",
 		"fon": "фон",
 		"fr": "френски",
 		"fr_CA": "френски (Канада)",
 		"fr_CH": "френски (Швейцария)",
-		"frc": "frc",
 		"frm": "средновековен френски",
 		"fro": "старофренски",
-		"frp": "frp",
 		"frr": "северен фризски",
-		"frs": "източен фризски",
+		"frs": "източнофризийски",
 		"fur": "фриулиански",
 		"fy": "фризийски",
 		"ga": "ирландски",
@@ -187,16 +155,13 @@
 		"gan": "gan",
 		"gay": "гайо",
 		"gba": "гбая",
-		"gbz": "gbz",
 		"gd": "шотландски галски",
 		"gez": "гииз",
 		"gil": "гилбертски",
 		"gl": "галисийски",
-		"glk": "glk",
-		"gmh": "средновековен немски",
+		"gmh": "средновисоконемски",
 		"gn": "гуарани",
 		"goh": "старовисоконемски",
-		"gom": "gom",
 		"gon": "гонди",
 		"gor": "горонтало",
 		"got": "готически",
@@ -204,8 +169,6 @@
 		"grc": "древногръцки",
 		"gsw": "швейцарски немски",
 		"gu": "гуджарати",
-		"guc": "guc",
-		"gur": "gur",
 		"guz": "гусии",
 		"gv": "манкски",
 		"gwi": "гвичин",
@@ -215,7 +178,6 @@
 		"haw": "хавайски",
 		"he": "иврит",
 		"hi": "хинди",
-		"hif": "hif",
 		"hil": "хилигайнон",
 		"hit": "хитски",
 		"hmn": "хмонг",
@@ -223,14 +185,14 @@
 		"hr": "хърватски",
 		"hsb": "горнолужишки",
 		"hsn": "hsn",
-		"ht": "хаитянски",
+		"ht": "хаитянски креолски",
 		"hu": "унгарски",
 		"hup": "хупа",
 		"hy": "арменски",
 		"hz": "хереро",
 		"ia": "интерлингва",
 		"iba": "ибан",
-		"ibb": "ibb",
+		"ibb": "ибибио",
 		"id": "индонезийски",
 		"ie": "оксидентал",
 		"ig": "игбо",
@@ -242,65 +204,55 @@
 		"is": "исландски",
 		"it": "италиански",
 		"iu": "инуктитут",
-		"izh": "izh",
 		"ja": "японски",
-		"jam": "jam",
-		"jbo": "лоджбан",
+		"jbo": "ложбан",
 		"jgo": "нгомба",
 		"jmc": "мачаме",
-		"jpr": "еврейско-персийски",
-		"jrb": "еврейско-арабски",
-		"jut": "jut",
+		"jpr": "юдео-персийски",
+		"jrb": "юдео-арабски",
 		"jv": "явански",
 		"ka": "грузински",
 		"kaa": "каракалпашки",
 		"kab": "кабилски",
 		"kac": "качински",
-		"kaj": "жжи",
+		"kaj": "жжу",
 		"kam": "камба",
 		"kaw": "кави",
 		"kbd": "кабардиан",
-		"kbl": "kbl",
 		"kcg": "туап",
 		"kde": "маконде",
 		"kea": "кабовердиански",
-		"ken": "ken",
 		"kfo": "коро",
 		"kg": "конгоански",
-		"kgp": "kgp",
 		"kha": "кхаси",
 		"kho": "котски",
 		"khq": "койра чиини",
-		"khw": "khw",
 		"ki": "кикую",
-		"kiu": "kiu",
 		"kj": "кваняма",
 		"kk": "казахски",
-		"kkj": "kkj",
+		"kkj": "како",
 		"kl": "гренландски",
 		"kln": "календжин",
 		"km": "кхмерски",
 		"kmb": "кимбунду",
 		"kn": "каннада",
 		"ko": "корейски",
-		"koi": "коми-пермяцки",
+		"koi": "коми-пермякски",
 		"kok": "конкани",
 		"kos": "косраен",
 		"kpe": "кпеле",
 		"kr": "канури",
 		"krc": "карачай-балкарски",
-		"kri": "kri",
-		"krj": "krj",
 		"krl": "карелски",
 		"kru": "курук",
 		"ks": "кашмирски",
 		"ksb": "шамбала",
 		"ksf": "бафия",
-		"ksh": "ksh",
+		"ksh": "кьолнски",
 		"ku": "кюрдски",
 		"kum": "кумикски",
 		"kut": "кутенай",
-		"kv": "Коми",
+		"kv": "коми",
 		"kw": "корнуолски",
 		"ky": "киргизки",
 		"la": "латински",
@@ -310,40 +262,30 @@
 		"lam": "ламба",
 		"lb": "люксембургски",
 		"lez": "лезгински",
-		"lfn": "lfn",
 		"lg": "ганда",
 		"li": "лимбургски",
-		"lij": "lij",
-		"liv": "liv",
 		"lkt": "лакота",
-		"lmo": "lmo",
 		"ln": "лингала",
 		"lo": "лаоски",
 		"lol": "монго",
 		"loz": "лози",
 		"lrc": "северен лури",
 		"lt": "литовски",
-		"ltg": "ltg",
 		"lu": "луба катанга",
 		"lua": "луба-лулуа",
 		"lui": "луисеньо",
 		"lun": "лунда",
 		"luo": "луо",
-		"lus": "лушаи",
+		"lus": "мизо",
 		"luy": "луя",
 		"lv": "латвийски",
-		"lzh": "lzh",
-		"lzz": "lzz",
 		"mad": "мадурски",
-		"maf": "maf",
 		"mag": "магахи",
 		"mai": "майтхили",
 		"mak": "макасар",
 		"man": "мандинго",
 		"mas": "масайски",
-		"mde": "mde",
 		"mdf": "мокша",
-		"mdh": "mdh",
 		"mdr": "мандар",
 		"men": "менде",
 		"mer": "меру",
@@ -355,17 +297,15 @@
 		"mh": "маршалезе",
 		"mi": "маорски",
 		"mic": "микмак",
-		"min": "минангбау",
-		"mis": "mis",
+		"min": "минангкабау",
 		"mk": "македонски",
 		"ml": "малаялам",
 		"mn": "монголски",
-		"mnc": "манчжурски",
+		"mnc": "манджурски",
 		"mni": "манипури",
 		"moh": "мохоук",
 		"mos": "моси",
 		"mr": "марати",
-		"mrj": "mrj",
 		"ms": "малайски",
 		"mt": "малтийски",
 		"mua": "мунданг",
@@ -373,11 +313,9 @@
 		"mus": "крик",
 		"mwl": "мирандийски",
 		"mwr": "марвари",
-		"mwv": "mwv",
 		"my": "бирмански",
-		"mye": "mye",
 		"myv": "ерзиа",
-		"mzn": "мазандаран",
+		"mzn": "мазандари",
 		"na": "науру",
 		"nan": "nan",
 		"nap": "неаполитански",
@@ -391,23 +329,21 @@
 		"ng": "ндонга",
 		"nia": "ниас",
 		"niu": "ниуеан",
-		"njo": "njo",
 		"nl": "нидерландски",
 		"nl_BE": "фламандски",
 		"nmg": "квасио",
 		"nn": "норвежки (нюношк)",
-		"nnh": "nnh",
+		"nnh": "нгиембун",
 		"no": "норвежки",
 		"nog": "ногаи",
-		"non": "старонорвежски",
-		"nov": "nov",
+		"non": "старонорвежки",
 		"nqo": "нко",
 		"nr": "южен ндебеле",
 		"nso": "северен сото",
 		"nus": "нуер",
 		"nv": "навахо",
 		"nwc": "класически невари",
-		"ny": "чинянджа",
+		"ny": "нянджа",
 		"nym": "ниамвези",
 		"nyn": "нианколе",
 		"nyo": "нуоро",
@@ -417,27 +353,22 @@
 		"om": "оромо",
 		"or": "ория",
 		"os": "осетски",
-		"osa": "оседжи",
+		"osa": "осейджи",
 		"ota": "отомански турски",
 		"pa": "пенджабски",
 		"pag": "пангасинан",
-		"pal": "пехлевийски",
+		"pal": "пахлави",
 		"pam": "пампанга",
-		"pap": "папиаменту",
+		"pap": "папиаменто",
 		"pau": "палауан",
-		"pcd": "pcd",
-		"pdc": "pdc",
-		"pdt": "pdt",
+		"pcm": "нигерийски пиджин",
 		"peo": "староперсийски",
-		"pfl": "pfl",
 		"phn": "финикийски",
 		"pi": "пали",
 		"pl": "полски",
-		"pms": "pms",
-		"pnt": "pnt",
-		"pon": "похнпеиан",
-		"prg": "prg",
-		"pro": "провансалски",
+		"pon": "понапеан",
+		"prg": "пруски",
+		"pro": "старопровансалски",
 		"ps": "пущу",
 		"ps_alt-variant": "пущунски",
 		"pt": "португалски",
@@ -445,61 +376,47 @@
 		"pt_PT": "португалски (Португалия)",
 		"qu": "кечуа",
 		"quc": "киче",
-		"qug": "qug",
 		"raj": "раджастански",
 		"rap": "рапа нуи",
-		"rar": "рапотонган",
-		"rgn": "rgn",
-		"rif": "rif",
+		"rar": "раротонга",
 		"rm": "реторомански",
 		"rn": "рунди",
 		"ro": "румънски",
 		"ro_MD": "молдовски",
 		"rof": "ромбо",
-		"rom": "цигански език",
+		"rom": "ромски",
 		"root": "роот",
-		"rtm": "rtm",
 		"ru": "руски",
-		"rue": "rue",
-		"rug": "rug",
 		"rup": "арумънски",
 		"rw": "киняруанда",
 		"rwk": "рва",
-		"sa": "санкскритски",
-		"sad": "сандве",
+		"sa": "санскрит",
+		"sad": "сандаве",
 		"sah": "якутски",
 		"sam": "самаритански арамейски",
 		"saq": "самбуру",
 		"sas": "сасак",
 		"sat": "сантали",
-		"saz": "saz",
-		"sba": "sba",
+		"sba": "нгамбай",
 		"sbp": "сангу",
 		"sc": "сардински",
 		"scn": "сицилиански",
 		"sco": "шотландски",
 		"sd": "синдхи",
-		"sdc": "sdc",
 		"sdh": "южнокюрдски",
 		"se": "северносаамски",
-		"see": "see",
 		"seh": "сена",
-		"sei": "sei",
 		"sel": "селкуп",
 		"ses": "койраборо сени",
 		"sg": "санго",
 		"sga": "староирландски",
-		"sgs": "sgs",
 		"sh": "сърбохърватски",
 		"shi": "ташелхит",
 		"shn": "шан",
-		"shu": "shu",
 		"si": "синхалски",
 		"sid": "сидамо",
 		"sk": "словашки",
 		"sl": "словенски",
-		"sli": "sli",
-		"sly": "sly",
 		"sm": "самоански",
 		"sma": "южносаамски",
 		"smj": "луле-саамски",
@@ -513,10 +430,9 @@
 		"sr": "сръбски",
 		"srn": "сранан тонго",
 		"srr": "серер",
-		"ss": "суази",
-		"ssy": "ssy",
-		"st": "сесуто",
-		"stq": "stq",
+		"ss": "свати",
+		"ssy": "сахо",
+		"st": "сесото",
 		"su": "сундански",
 		"suk": "сукума",
 		"sus": "сусу",
@@ -527,9 +443,7 @@
 		"swb": "коморски",
 		"syc": "класически сирийски",
 		"syr": "сирийски",
-		"szl": "szl",
 		"ta": "тамилски",
-		"tcy": "tcy",
 		"te": "телугу",
 		"tem": "темне",
 		"teo": "тесо",
@@ -542,24 +456,19 @@
 		"tiv": "тив",
 		"tk": "туркменски",
 		"tkl": "токелайски",
-		"tkr": "tkr",
 		"tl": "тагалог",
-		"tlh": "клингон",
+		"tlh": "клингонски",
 		"tli": "тлингит",
-		"tly": "tly",
 		"tmh": "тамашек",
 		"tn": "тсвана",
 		"to": "тонга",
 		"tog": "нианса тонга",
 		"tpi": "ток писин",
 		"tr": "турски",
-		"tru": "tru",
-		"trv": "trv",
-		"ts": "тсонга",
-		"tsd": "tsd",
+		"trv": "тароко",
+		"ts": "цонга",
 		"tsi": "цимшиански",
 		"tt": "татарски",
-		"ttt": "ttt",
 		"tum": "тумбука",
 		"tvl": "тувалуански",
 		"tw": "туи",
@@ -577,17 +486,12 @@
 		"uz": "узбекски",
 		"vai": "ваи",
 		"ve": "венда",
-		"vec": "vec",
-		"vep": "vep",
 		"vi": "виетнамски",
-		"vls": "vls",
-		"vmf": "vmf",
 		"vo": "волапюк",
 		"vot": "вотик",
-		"vro": "vro",
 		"vun": "вунджо",
 		"wa": "валонски",
-		"wae": "wae",
+		"wae": "валзерски немски",
 		"wal": "валамо",
 		"war": "варай",
 		"was": "уашо",
@@ -596,20 +500,17 @@
 		"wuu": "wuu",
 		"xal": "калмик",
 		"xh": "ксоса",
-		"xmf": "xmf",
 		"xog": "сога",
 		"yao": "яо",
 		"yap": "япезе",
-		"yav": "yav",
-		"ybb": "ybb",
+		"yav": "янгбен",
+		"ybb": "йемба",
 		"yi": "идиш",
 		"yo": "йоруба",
-		"yrl": "yrl",
 		"yue": "кантонски",
 		"za": "зуанг",
 		"zap": "запотек",
 		"zbl": "блис символи",
-		"zea": "zea",
 		"zen": "зенага",
 		"zgh": "стандартен марокански тамазигт",
 		"zh": "китайски",
@@ -666,11 +567,11 @@
 		"Grek": "гръцка",
 		"Gujr": "гуджарати",
 		"Guru": "гурмукхи",
-		"Hanb": "Hanb",
+		"Hanb": "ханб",
 		"Hang": "хангъл",
 		"Hani": "китайска",
 		"Hano": "Хануну",
-		"Hans": "опростен",
+		"Hans": "опростена",
 		"Hans-alt-stand-alone": "опростен китайски",
 		"Hant": "традиционен",
 		"Hant-alt-stand-alone": "традиционен китайски",
@@ -679,11 +580,11 @@
 		"Hira": "хирагана",
 		"Hluw": "Hluw",
 		"Hmng": "Пахау хмонг",
-		"Hrkt": "Катакана или Хирагана",
+		"Hrkt": "японска сричкова",
 		"Hung": "Староунгарска",
 		"Inds": "Харапска",
 		"Ital": "Древно италийска",
-		"Jamo": "Jamo",
+		"Jamo": "джамо",
 		"Java": "Яванска",
 		"Jpan": "японска",
 		"Kali": "Кая Ли",
@@ -742,55 +643,6 @@
 		"Phnx": "Финикийска",
 		"Plrd": "Писменост Полард",
 		"Prti": "Prti",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Rjng",
 		"Roro": "Ронго-ронго",
 		"Runr": "Руническа",
@@ -834,7 +686,7 @@
 		"Yiii": "Йи",
 		"Zinh": "Zinh",
 		"Zmth": "Математически символи",
-		"Zsye": "Zsye",
+		"Zsye": "емотикони",
 		"Zsym": "символи",
 		"Zxxx": "без писменост",
 		"Zyyy": "обща",
@@ -931,7 +783,8 @@
 		"CW": "Кюрасао",
 		"CX": "остров Рождество",
 		"CY": "Кипър",
-		"CZ": "Чешка република",
+		"CZ": "Чехия",
+		"CZ-alt-variant": "Чешка република",
 		"DE": "Германия",
 		"DG": "Диего Гарсия",
 		"DJ": "Джибути",
@@ -948,6 +801,7 @@
 		"ES": "Испания",
 		"ET": "Етиопия",
 		"EU": "Европейски съюз",
+		"EZ": "EZ",
 		"FI": "Финландия",
 		"FJ": "Фиджи",
 		"FK": "Фолклендски острови",
@@ -1121,6 +975,7 @@
 		"UA": "Украйна",
 		"UG": "Уганда",
 		"UM": "Отдалечени острови на САЩ",
+		"UN": "Организация на обединените нации",
 		"US": "Съединени щати",
 		"US-alt-short": "САЩ",
 		"UY": "Уругвай",
@@ -1198,7 +1053,7 @@
 				"MMMMEd": "E, d MMMM",
 				"ms": "m:ss",
 				"y": "y 'г'.",
-				"yM": "M.y 'г'.",
+				"yM": "MM.y 'г'.",
 				"yMd": "d.MM.y 'г'.",
 				"yMEd": "E, d.MM.y 'г'.",
 				"yMMM": "MM.y 'г'.",
@@ -1208,7 +1063,9 @@
 				"yMMMMd": "d MMMM y 'г'.",
 				"yMMMMEd": "E, d MMMM y 'г'.",
 				"yQQQ": "QQQ y 'г'.",
-				"yQQQQ": "QQQQ y 'г'."
+				"yQQQQ": "QQQQ y 'г'.",
+				"MMMMW": "'седмица' W 'от' MMM",
+				"yw": "'седмица' w 'от' y 'г'."
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1553,12 +1410,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
 					"пр.об.",
@@ -1567,16 +1424,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				]
 			}
 		},
@@ -1999,12 +1856,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
 					"пр.об.",
@@ -2013,16 +1870,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				]
 			}
 		},
@@ -2442,12 +2299,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
 					"пр.об.",
@@ -2456,16 +2313,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				]
 			}
 		},
@@ -2894,12 +2751,12 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
 					"пр.об.",
@@ -2908,16 +2765,16 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"narrow": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				],
 				"wide": [
-					"пр.об.",
-					"сл.об."
+					"am",
+					"pm"
 				]
 			}
 		},
@@ -2955,12 +2812,12 @@
 			"relative-type-0": "т. г.",
 			"relative-type-1": "следв. г.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "сл. {0} г.",
-				"relativeTimePattern-count-other": "сл. {0} г."
+				"relativeTimePattern-count-one": "след {0} г.",
+				"relativeTimePattern-count-other": "след {0} г."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "пр. {0} г.",
-				"relativeTimePattern-count-other": "пр. {0} г."
+				"relativeTimePattern-count-one": "преди {0} г.",
+				"relativeTimePattern-count-other": "преди {0} г."
 			}
 		},
 		"year-narrow": {
@@ -2979,9 +2836,9 @@
 		},
 		"quarter-wide": {
 			"displayName": "тримесечие",
-			"relative-type--1": "миналото тримесечие",
+			"relative-type--1": "предходно тримесечие",
 			"relative-type-0": "това тримесечие",
-			"relative-type-1": "следващото тримесечие",
+			"relative-type-1": "следващо тримесечие",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} тримесечие",
 				"relativeTimePattern-count-other": "след {0} тримесечия"
@@ -3021,9 +2878,9 @@
 		},
 		"month-wide": {
 			"displayName": "месец",
-			"relative-type--1": "миналият месец",
+			"relative-type--1": "предходен месец",
 			"relative-type-0": "този месец",
-			"relative-type-1": "следващият месец",
+			"relative-type-1": "следващ месец",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} месец",
 				"relativeTimePattern-count-other": "след {0} месеца"
@@ -3039,12 +2896,12 @@
 			"relative-type-0": "този мес.",
 			"relative-type-1": "следв. мес.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "сл. {0} м.",
-				"relativeTimePattern-count-other": "сл. {0} м."
+				"relativeTimePattern-count-one": "след {0} м.",
+				"relativeTimePattern-count-other": "след {0} м."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "пр. {0} м.",
-				"relativeTimePattern-count-other": "пр. {0} м."
+				"relativeTimePattern-count-one": "преди {0} м.",
+				"relativeTimePattern-count-other": "преди {0} м."
 			}
 		},
 		"month-narrow": {
@@ -3063,7 +2920,7 @@
 		},
 		"week-wide": {
 			"displayName": "седмица",
-			"relative-type--1": "миналата седмица",
+			"relative-type--1": "предходната седмица",
 			"relative-type-0": "тази седмица",
 			"relative-type-1": "следващата седмица",
 			"relativeTime-type-future": {
@@ -3073,7 +2930,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "преди {0} седмица",
 				"relativeTimePattern-count-other": "преди {0} седмици"
-			}
+			},
+			"relativePeriod": "седмицата от {0}"
 		},
 		"week-short": {
 			"displayName": "седм.",
@@ -3087,7 +2945,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "преди {0} седм.",
 				"relativeTimePattern-count-other": "преди {0} седм."
-			}
+			},
+			"relativePeriod": "седмицата от {0}"
 		},
 		"week-narrow": {
 			"displayName": "седм.",
@@ -3101,7 +2960,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "пр. {0} седм.",
 				"relativeTimePattern-count-other": "пр. {0} седм."
-			}
+			},
+			"relativePeriod": "седмицата от {0}"
 		},
 		"day-wide": {
 			"displayName": "ден",
@@ -3127,12 +2987,12 @@
 			"relative-type-1": "утре",
 			"relative-type-2": "вдругиден",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "след {0} д",
-				"relativeTimePattern-count-other": "след {0} д"
+				"relativeTimePattern-count-one": "след {0} ден",
+				"relativeTimePattern-count-other": "след {0} дни"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "преди {0} д",
-				"relativeTimePattern-count-other": "преди {0} д"
+				"relativeTimePattern-count-one": "преди {0} ден",
+				"relativeTimePattern-count-other": "преди {0} дни"
 			}
 		},
 		"day-narrow": {
@@ -3156,6 +3016,7 @@
 		},
 		"hour-wide": {
 			"displayName": "час",
+			"relative-type-0": "в този час",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} час",
 				"relativeTimePattern-count-other": "след {0} часа"
@@ -3167,6 +3028,7 @@
 		},
 		"hour-short": {
 			"displayName": "ч",
+			"relative-type-0": "в този час",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} ч",
 				"relativeTimePattern-count-other": "след {0} ч"
@@ -3178,6 +3040,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "ч",
+			"relative-type-0": "в този час",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "сл. {0} ч",
 				"relativeTimePattern-count-other": "сл. {0} ч"
@@ -3189,6 +3052,7 @@
 		},
 		"minute-wide": {
 			"displayName": "минута",
+			"relative-type-0": "в тази минута",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} минута",
 				"relativeTimePattern-count-other": "след {0} минути"
@@ -3200,6 +3064,7 @@
 		},
 		"minute-short": {
 			"displayName": "мин",
+			"relative-type-0": "в тази минута",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "след {0} мин",
 				"relativeTimePattern-count-other": "след {0} мин"
@@ -3211,6 +3076,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "мин",
+			"relative-type-0": "в тази минута",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "сл. {0} мин",
 				"relativeTimePattern-count-other": "сл. {0} мин"
@@ -3236,24 +3102,24 @@
 			"displayName": "с",
 			"relative-type-0": "сега",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "след {0} с",
-				"relativeTimePattern-count-other": "след {0} с"
+				"relativeTimePattern-count-one": "след {0} сек",
+				"relativeTimePattern-count-other": "след {0} сек"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "преди {0} с",
-				"relativeTimePattern-count-other": "преди {0} с"
+				"relativeTimePattern-count-one": "преди {0} сек",
+				"relativeTimePattern-count-other": "преди {0} сек"
 			}
 		},
 		"second-narrow": {
 			"displayName": "с",
 			"relative-type-0": "сега",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "сл. {0} с",
-				"relativeTimePattern-count-other": "сл. {0} с"
+				"relativeTimePattern-count-one": "сл. {0} сек",
+				"relativeTimePattern-count-other": "сл. {0} сек"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "пр. {0} с",
-				"relativeTimePattern-count-other": "пр. {0} с"
+				"relativeTimePattern-count-one": "пр. {0} сек",
+				"relativeTimePattern-count-other": "пр. {0} сек"
 			}
 		},
 		"zone": {
@@ -3264,7 +3130,7 @@
 		"standard": "#,##0.###"
 	},
 	"decimalFormat-long": {
-		"1000-one": "0 хиляда",
+		"1000-one": "0 хил'.'",
 		"1000-other": "0 хиляди",
 		"10000-one": "00 хиляди",
 		"10000-other": "00 хиляди",
@@ -3322,8 +3188,8 @@
 		"standard": "#,##0%"
 	},
 	"currencyFormat": {
-		"standard": "#,##0.00 ¤",
-		"accounting": "#,##0.00 ¤;(#,##0.00 ¤)",
+		"standard": "0.00 ¤",
+		"accounting": "0.00 ¤;(0.00 ¤)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[:^S:]",
@@ -3344,7 +3210,7 @@
 	"symbols-latn-plusSign": "+",
 	"symbols-latn-minusSign": "-",
 	"symbols-latn-exponential": "E",
-	"symbols-latn-superscriptingExponent": ".",
+	"symbols-latn-superscriptingExponent": "·",
 	"symbols-latn-perMille": "‰",
 	"symbols-latn-infinity": "∞",
 	"symbols-latn-nan": "NaN",
@@ -3364,6 +3230,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

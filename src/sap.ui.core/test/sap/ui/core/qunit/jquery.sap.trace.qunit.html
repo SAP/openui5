@@ -360,28 +360,29 @@
 			});
 
 			// Check if global busy indicator measurement works with delay
-			QUnit.test("Busy indicator with delay", function(assert) {
-				sap.ui.core.BusyIndicator.show(1);
-				var done = assert.async();
-				assert.expect(2);
-				var fnSpy = this.spy;
-				setTimeout(function() {
-					sap.ui.core.BusyIndicator.hide();
-					jQuery.sap.interaction.notifyStepEnd();
-					jQuery.sap.interaction.notifyStepStart(null, true);
-					var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-					assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
-					var oReq = new XMLHttpRequest();
-					var spy = fnSpy(oReq, "setRequestHeader");
-					oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
-					oReq.send();
-					var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
-					assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration,
-						"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
-					spy.restore();
-					done();
-				}, 100);
-			});
+			// Remove this test due to instability
+			// QUnit.test("Busy indicator with delay", function(assert) {
+			// 	sap.ui.core.BusyIndicator.show(1);
+			// 	var done = assert.async();
+			// 	assert.expect(2);
+			// 	var fnSpy = this.spy;
+			// 	setTimeout(function() {
+			// 		sap.ui.core.BusyIndicator.hide();
+			// 		jQuery.sap.interaction.notifyStepEnd();
+			// 		jQuery.sap.interaction.notifyStepStart(null, true);
+			// 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+			// 		assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
+			// 		var oReq = new XMLHttpRequest();
+			// 		var spy = fnSpy(oReq, "setRequestHeader");
+			// 		oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now());
+			// 		oReq.send();
+			// 		var iBusyDurationRequest = parseInt(getHeaderContent(spy.args, "SAP-Perf-FESRec-opt").split(",")[14]);
+			// 		assert.ok(iBusyDurationRequest+1 >= oMeasurement.busyDuration && iBusyDurationRequest-1 <= oMeasurement.busyDuration,
+			// 			"Header is filled; FESR entry: " + iBusyDurationRequest + "; Measurement: " + oMeasurement.busyDuration);
+			// 		spy.restore();
+			// 		done();
+			// 	}, 100);
+			// });
 
 			QUnit.module("component integration", {
 				beforeEach: function() {

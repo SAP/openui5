@@ -30,6 +30,7 @@
 		"aro": "Araona",
 		"arp": "Arapaho",
 		"arq": "Algerian Arabic",
+		"ars": "Najdi Arabic",
 		"arw": "Arawak",
 		"ary": "Moroccan Arabic",
 		"arz": "Egyptian Arabic",
@@ -68,7 +69,7 @@
 		"bkm": "Kom",
 		"bla": "Siksika",
 		"bm": "Bambara",
-		"bn": "Bengali",
+		"bn": "Bangla",
 		"bo": "Tibetan",
 		"bpy": "Bishnupriya",
 		"bqi": "Bakhtiari",
@@ -107,6 +108,7 @@
 		"cps": "Capiznon",
 		"cr": "Cree",
 		"crh": "Crimean Turkish",
+		"crs": "Seselwa Creole French",
 		"cs": "Czech",
 		"csb": "Kashubian",
 		"cu": "Church Slavic",
@@ -345,7 +347,6 @@
 		"mas": "Masai",
 		"mde": "Maba",
 		"mdf": "Moksha",
-		"mdh": "mdh",
 		"mdr": "Mandar",
 		"men": "Mende",
 		"mer": "Meru",
@@ -356,9 +357,8 @@
 		"mgo": "Metaʼ",
 		"mh": "Marshallese",
 		"mi": "Maori",
-		"mic": "Micmac",
+		"mic": "Mi'kmaq",
 		"min": "Minangkabau",
-		"mis": "mis",
 		"mk": "Macedonian",
 		"ml": "Malayalam",
 		"mn": "Mongolian",
@@ -371,7 +371,7 @@
 		"ms": "Malay",
 		"mt": "Maltese",
 		"mua": "Mundang",
-		"mul": "Multiple Languages",
+		"mul": "Multiple languages",
 		"mus": "Creek",
 		"mwl": "Mirandese",
 		"mwr": "Marwari",
@@ -418,7 +418,7 @@
 		"oc": "Occitan",
 		"oj": "Ojibwa",
 		"om": "Oromo",
-		"or": "Oriya",
+		"or": "Odia",
 		"os": "Ossetic",
 		"osa": "Osage",
 		"ota": "Ottoman Turkish",
@@ -429,6 +429,7 @@
 		"pap": "Papiamento",
 		"pau": "Palauan",
 		"pcd": "Picard",
+		"pcm": "Nigerian Pidgin",
 		"pdc": "Pennsylvania German",
 		"pdt": "Plautdietsch",
 		"peo": "Old Persian",
@@ -576,7 +577,7 @@
 		"uga": "Ugaritic",
 		"uk": "Ukrainian",
 		"umb": "Umbundu",
-		"und": "Unknown Language",
+		"und": "Unknown language",
 		"ur": "Urdu",
 		"uz": "Uzbek",
 		"vai": "Vai",
@@ -617,6 +618,7 @@
 		"zen": "Zenaga",
 		"zgh": "Standard Moroccan Tamazight",
 		"zh": "Chinese",
+		"zh_alt-long": "Mandarin Chinese",
 		"zh_Hans": "Simplified Chinese",
 		"zh_Hant": "Traditional Chinese",
 		"zu": "Zulu",
@@ -625,7 +627,7 @@
 		"zza": "Zaza"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
+		"Adlm": "Adlam",
 		"Afak": "Afaka",
 		"Aghb": "Caucasian Albanian",
 		"Ahom": "Ahom",
@@ -638,8 +640,8 @@
 		"Bamu": "Bamum",
 		"Bass": "Bassa Vah",
 		"Batk": "Batak",
-		"Beng": "Bengali",
-		"Bhks": "Bhks",
+		"Beng": "Bangla",
+		"Bhks": "Bhaiksuki",
 		"Blis": "Blissymbols",
 		"Bopo": "Bopomofo",
 		"Brah": "Brahmi",
@@ -673,7 +675,7 @@
 		"Grek": "Greek",
 		"Gujr": "Gujarati",
 		"Guru": "Gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "Han with Bopomofo",
 		"Hang": "Hangul",
 		"Hani": "Han",
 		"Hano": "Hanunoo",
@@ -719,7 +721,7 @@
 		"Mahj": "Mahajani",
 		"Mand": "Mandaean",
 		"Mani": "Manichaean",
-		"Marc": "Marc",
+		"Marc": "Marchen",
 		"Maya": "Mayan hieroglyphs",
 		"Mend": "Mende",
 		"Merc": "Meroitic Cursive",
@@ -741,8 +743,8 @@
 		"Ogam": "Ogham",
 		"Olck": "Ol Chiki",
 		"Orkh": "Orkhon",
-		"Orya": "Oriya",
-		"Osge": "Osge",
+		"Orya": "Odia",
+		"Osge": "Osage",
 		"Osma": "Osmanya",
 		"Palm": "Palmyrene",
 		"Pauc": "Pau Cin Hau",
@@ -754,55 +756,6 @@
 		"Phnx": "Phoenician",
 		"Plrd": "Pollard Phonetic",
 		"Prti": "Inscriptional Parthian",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Rejang",
 		"Roro": "Rongorongo",
 		"Runr": "Runic",
@@ -947,7 +900,8 @@
 		"CW": "Curaçao",
 		"CX": "Christmas Island",
 		"CY": "Cyprus",
-		"CZ": "Czech Republic",
+		"CZ": "Czechia",
+		"CZ-alt-variant": "Czech Republic",
 		"DE": "Germany",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -964,6 +918,7 @@
 		"ES": "Spain",
 		"ET": "Ethiopia",
 		"EU": "European Union",
+		"EZ": "Eurozone",
 		"FI": "Finland",
 		"FJ": "Fiji",
 		"FK": "Falkland Islands",
@@ -1138,6 +1093,8 @@
 		"UA": "Ukraine",
 		"UG": "Uganda",
 		"UM": "U.S. Outlying Islands",
+		"UN": "United Nations",
+		"UN-alt-short": "UN",
 		"US": "United States",
 		"US-alt-short": "US",
 		"UY": "Uruguay",
@@ -1217,7 +1174,9 @@
 				"yMMMEd": "E, MMM d, y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "'week' W 'of' MMMM",
+				"yw": "'week' w 'of' y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2915,11 +2874,11 @@
 			"relative-type-0": "this qtr.",
 			"relative-type-1": "next qtr.",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} qtrs.",
+				"relativeTimePattern-count-one": "in {0} qtr.",
 				"relativeTimePattern-count-other": "in {0} qtrs."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} qtrs. ago",
+				"relativeTimePattern-count-one": "{0} qtr. ago",
 				"relativeTimePattern-count-other": "{0} qtrs. ago"
 			}
 		},
@@ -2977,7 +2936,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} week ago",
 				"relativeTimePattern-count-other": "{0} weeks ago"
-			}
+			},
+			"relativePeriod": "the week of {0}"
 		},
 		"week-short": {
 			"displayName": "wk.",
@@ -2991,7 +2951,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} wk. ago",
 				"relativeTimePattern-count-other": "{0} wk. ago"
-			}
+			},
+			"relativePeriod": "the week of {0}"
 		},
 		"week-narrow": {
 			"displayName": "wk.",
@@ -3005,7 +2966,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} wk. ago",
 				"relativeTimePattern-count-other": "{0} wk. ago"
-			}
+			},
+			"relativePeriod": "the week of {0}"
 		},
 		"day-wide": {
 			"displayName": "day",
@@ -3041,11 +3003,11 @@
 			"relative-type-0": "today",
 			"relative-type-1": "tomorrow",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "in {0} days",
+				"relativeTimePattern-count-one": "in {0} day",
 				"relativeTimePattern-count-other": "in {0} days"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} days ago",
+				"relativeTimePattern-count-one": "{0} day ago",
 				"relativeTimePattern-count-other": "{0} days ago"
 			}
 		},
@@ -3054,6 +3016,7 @@
 		},
 		"hour-wide": {
 			"displayName": "hour",
+			"relative-type-0": "this hour",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} hour",
 				"relativeTimePattern-count-other": "in {0} hours"
@@ -3065,6 +3028,7 @@
 		},
 		"hour-short": {
 			"displayName": "hr.",
+			"relative-type-0": "this hour",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} hr.",
 				"relativeTimePattern-count-other": "in {0} hr."
@@ -3076,6 +3040,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "hr.",
+			"relative-type-0": "this hour",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} hr.",
 				"relativeTimePattern-count-other": "in {0} hr."
@@ -3087,6 +3052,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minute",
+			"relative-type-0": "this minute",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} minute",
 				"relativeTimePattern-count-other": "in {0} minutes"
@@ -3098,6 +3064,7 @@
 		},
 		"minute-short": {
 			"displayName": "min.",
+			"relative-type-0": "this minute",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} min.",
 				"relativeTimePattern-count-other": "in {0} min."
@@ -3109,6 +3076,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "min.",
+			"relative-type-0": "this minute",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "in {0} min.",
 				"relativeTimePattern-count-other": "in {0} min."
@@ -3276,6 +3244,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

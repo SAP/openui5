@@ -154,13 +154,13 @@
 		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
-	QUnit.module("Breadcrumb links API", {
+	QUnit.module("Breadcrumbs API", {
 		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
 		}
 	});
 
-	QUnit.test("The Breadcrumb trail of links in the ObjectPageHeader should dynamically update", function (assert) {
+	QUnit.test("Legacy breadCrumbsLinks: Trail of links in the ObjectPageHeader should dynamically update", function (assert) {
 		var iInitialLinksCount = this._oHeader.getBreadCrumbsLinks().length,
 			oNewLink = oFactory.getLink();
 
@@ -264,6 +264,61 @@
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(oButton._getInternalVisible(), true, "The button is visible");
+	});
+
+	QUnit.module("Breadcrumbs rendering", {
+		beforeEach: function () {
+			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+			this._oHeader.destroyBreadCrumbsLinks();
+			this._oHeader.destroyBreadcrumbs();
+			core.applyChanges();
+		}
+	});
+
+	QUnit.test("There should be no BreadCrumbs rendered", function (assert) {
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 0, "There are No instances of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+	});
+
+	QUnit.test("After inserting a link in Legacy breadCrumnsLinks aggregation, the Legacy breadCrumbsLinks aggregation should be rendered", function (assert) {
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
+	});
+
+	QUnit.test("After setting the New breadcrumbs aggregation, the New breadcrumbs aggregation should be rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
+	});
+
+	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks, the New breadcrumbs aggregation should be rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
+		assert.strictEqual(this._oHeader.getBreadCrumbsLinks()[0].$().length, 0, "Legacy breadCrumbsLinks is Not rendered");
+	});
+
+	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks. After destroying the New breadcrumbs, Legacy breadCrumbsLinks should be rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		this._oHeader.destroyBreadcrumbs();
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
+	});
+
+	QUnit.test("Having the New breadcrumbs aggregation. After adding the Legacy breadCrumbsLinks, New  breadcrumbs should remain rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		core.applyChanges();
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation should be rendered");
 	});
 
 }(jQuery, QUnit));

@@ -80,7 +80,7 @@ function(
 		var oAddLibraryCommand;
 
 		var oMockDescriptorChange = {
-			submit : function() {
+			store : function() {
 				assert.ok(true, "the descriptor change was submitted");
 				oAddLibraryCommand.execute().then(function() {
 					assert.ok(sap.uxap, "upon execution, 'sap.uxap' library is loaded");
@@ -115,7 +115,7 @@ function(
 		}, {}, {"layer" : this.sLayer});
 
 		assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
-		oAddLibraryCommand.submit();
+		oAddLibraryCommand.createAndStore();
 	});
 
 	QUnit.test("when calling execute for AddLibrary ...", function(assert) {

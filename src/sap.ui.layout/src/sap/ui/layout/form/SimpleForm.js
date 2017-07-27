@@ -820,11 +820,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				var iElementIndex = oFormContainer.indexOfFormElement(oFormElement);
 				if (iElementIndex == 0) {
 					// its the first Element of the container -> just remove label
-					if (oFormElement.getFields().lenght == 0) {
+					if (oFormElement.getFields().length == 0) {
 						// FormElement has no fields -> just delete
 						oFormContainer.removeFormElement(oFormElement);
 						oFormElement.destroy();
-						if (oFormContainer.getFormElements().length == 0) {
+						if (oFormContainer.getFormElements().length == 0 && !oFormContainer.getTitle() && !oFormContainer.getToolbar()) {
 							oForm.removeFormContainer(oFormContainer);
 							oFormContainer.destroy();
 						}
@@ -842,7 +842,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 					_markFormElementForUpdate(this._changedFormElements, oPrevFormElement);
 					oFormContainer.removeFormElement(oFormElement);
 					oFormElement.destroy();
-					if (oFormContainer.getFormElements().length == 0) {
+					if (oFormContainer.getFormElements().length == 0 && !oFormContainer.getTitle() && !oFormContainer.getToolbar()) {
 						oForm.removeFormContainer(oFormContainer);
 						oFormContainer.destroy();
 					}
@@ -855,7 +855,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 					oFormContainer = oFormElement.getParent();
 					oFormContainer.removeFormElement(oFormElement);
 					oFormElement.destroy();
-					if (oFormContainer.getFormElements().length == 0) {
+					if (oFormContainer.getFormElements().length == 0  && !oFormContainer.getTitle() && !oFormContainer.getToolbar()) {
 						oForm.removeFormContainer(oFormContainer);
 						oFormContainer.destroy();
 					}

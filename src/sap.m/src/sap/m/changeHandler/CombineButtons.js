@@ -74,7 +74,7 @@ sap.ui.define(["sap/ui/fl/Utils"],
 				oModifier.setProperty(oIdToSave, "key", "originalButtonId");
 				oModifier.setProperty(oIdToSave, "value", oModifier.getId(oButton));
 
-				oModifier.removeAggregation(oControl, sBarAggregation, oButton);
+				oModifier.removeAggregation(oParent, sBarAggregation, oButton);
 				// adding each button control to the menuItem's dependents aggregation
 				// this way we can save all relevant information it my have
 				oModifier.insertAggregation(oMenuItem, "dependents", oButton);
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/fl/Utils"],
 			oModifier.setProperty(oMenuButton, "text", aMenuButtonName.join("/"));
 			oModifier.insertAggregation(oMenuButton, "menu", oMenu, 0);
 
-			oModifier.insertAggregation(oControl, sBarAggregation, oMenuButton, iAggregationIndex);
+			oModifier.insertAggregation(oParent, sBarAggregation, oMenuButton, iAggregationIndex);
 
 		};
 

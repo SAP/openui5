@@ -26,7 +26,7 @@
 		"ar": "アラビア語",
 		"ar_001": "現代標準アラビア語",
 		"arc": "アラム語",
-		"arn": "アラウカン語",
+		"arn": "マプチェ語",
 		"aro": "アラオナ語",
 		"arp": "アラパホー語",
 		"arq": "アルジェリア・アラビア語",
@@ -107,6 +107,7 @@
 		"cps": "カピス語",
 		"cr": "クリー語",
 		"crh": "クリミア・タタール語",
+		"crs": "セーシェル・クレオール語",
 		"cs": "チェコ語",
 		"csb": "カシューブ語",
 		"cu": "教会スラブ語",
@@ -125,7 +126,7 @@
 		"din": "ディンカ語",
 		"dje": "ザルマ語",
 		"doi": "ドーグリー語",
-		"dsb": "低ソルビア語",
+		"dsb": "低地ソルブ語",
 		"dtp": "中央ドゥスン語",
 		"dua": "ドゥアラ語",
 		"dum": "中世オランダ語",
@@ -163,7 +164,7 @@
 		"fa": "ペルシア語",
 		"fan": "ファング語",
 		"fat": "ファンティー語",
-		"ff": "フラニ語",
+		"ff": "フラ語",
 		"fi": "フィンランド語",
 		"fil": "フィリピノ語",
 		"fit": "トルネダール・フィンランド語",
@@ -221,11 +222,11 @@
 		"hmn": "フモン語",
 		"ho": "ヒリモツ語",
 		"hr": "クロアチア語",
-		"hsb": "上ソルビア語",
+		"hsb": "高地ソルブ語",
 		"hsn": "湘語",
 		"ht": "ハイチ語",
 		"hu": "ハンガリー語",
-		"hup": "アタパスカ語",
+		"hup": "フパ語",
 		"hy": "アルメニア語",
 		"hz": "ヘレロ語",
 		"ia": "インターリングア",
@@ -288,7 +289,7 @@
 		"kos": "コスラエ語",
 		"kpe": "クペレ語",
 		"kr": "カヌリ語",
-		"krc": "カラチャイ語",
+		"krc": "カラチャイ・バルカル語",
 		"kri": "クリオ語",
 		"krj": "キナライア語",
 		"krl": "カレリア語",
@@ -343,7 +344,6 @@
 		"mas": "マサイ語",
 		"mde": "マバ語",
 		"mdf": "モクシャ語",
-		"mdh": "mdh",
 		"mdr": "マンダル語",
 		"men": "メンデ語",
 		"mer": "メル語",
@@ -356,7 +356,6 @@
 		"mi": "マオリ語",
 		"mic": "ミクマク語",
 		"min": "ミナンカバウ語",
-		"mis": "mis",
 		"mk": "マケドニア語",
 		"ml": "マラヤーラム語",
 		"mn": "モンゴル語",
@@ -374,7 +373,7 @@
 		"mwl": "ミランダ語",
 		"mwr": "マールワーリー語",
 		"mwv": "メンタワイ語",
-		"my": "ビルマ語",
+		"my": "ミャンマー語",
 		"mye": "ミエネ語",
 		"myv": "エルジャ語",
 		"mzn": "マーザンダラーン語",
@@ -426,6 +425,7 @@
 		"pap": "パピアメント語",
 		"pau": "パラオ語",
 		"pcd": "ピカルディ語",
+		"pcm": "ナイジェリア・ピジン語",
 		"pdc": "ペンシルベニア・ドイツ語",
 		"pdt": "メノナイト低地ドイツ語",
 		"peo": "古代ペルシア語",
@@ -463,11 +463,11 @@
 		"rue": "ルシン語",
 		"rug": "ロヴィアナ語",
 		"rup": "アルーマニア語",
-		"rw": "ルワンダ語",
+		"rw": "キニアルワンダ語",
 		"rwk": "ルワ語",
 		"sa": "サンスクリット語",
 		"sad": "サンダウェ語",
-		"sah": "ヤクート語",
+		"sah": "サハ語",
 		"sam": "サマリア・アラム語",
 		"saq": "サンブル語",
 		"sas": "ササク語",
@@ -488,8 +488,8 @@
 		"sel": "セリクプ語",
 		"ses": "コイラボロ・センニ語",
 		"sg": "サンゴ語",
-		"sga": "古期アイルランド語",
-		"sgs": "サモギティア語)",
+		"sga": "古アイルランド語",
+		"sgs": "サモギティア語",
 		"sh": "セルボ・クロアチア語",
 		"shi": "タシルハイト語",
 		"shn": "シャン語",
@@ -612,7 +612,7 @@
 		"zbl": "ブリスシンボル",
 		"zea": "ゼーラント語",
 		"zen": "ゼナガ語",
-		"zgh": "タマージク語(モロッコ公用語)",
+		"zgh": "標準モロッコ タマジクト語",
 		"zh": "中国語",
 		"zh_Hans": "簡体中国語",
 		"zh_Hant": "繁体中国語",
@@ -669,7 +669,7 @@
 		"Grek": "ギリシャ文字",
 		"Gujr": "グジャラート文字",
 		"Guru": "グルムキー文字",
-		"Hanb": "Hanb",
+		"Hanb": "漢語注音字母",
 		"Hang": "ハングル",
 		"Hani": "漢字",
 		"Hano": "ハヌノオ文字",
@@ -686,7 +686,7 @@
 		"Hung": "古代ハンガリー文字",
 		"Inds": "インダス文字",
 		"Ital": "古イタリア文字",
-		"Jamo": "Jamo",
+		"Jamo": "字母",
 		"Java": "ジャワ文字",
 		"Jpan": "日本語の文字",
 		"Jurc": "女真文字",
@@ -750,55 +750,6 @@
 		"Phnx": "フェニキア文字",
 		"Plrd": "ポラード音声記号",
 		"Prti": "碑文パルティア文字",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "ルジャン文字",
 		"Roro": "ロンゴロンゴ文字",
 		"Runr": "ルーン文字",
@@ -844,7 +795,7 @@
 		"Yiii": "イ文字",
 		"Zinh": "基底文字の種別を継承する結合文字",
 		"Zmth": "数学記号",
-		"Zsye": "Zsye",
+		"Zsye": "絵文字",
 		"Zsym": "記号文字",
 		"Zxxx": "非表記",
 		"Zyyy": "共通文字",
@@ -941,7 +892,8 @@
 		"CW": "キュラソー",
 		"CX": "クリスマス島",
 		"CY": "キプロス",
-		"CZ": "チェコ共和国",
+		"CZ": "チェコ",
+		"CZ-alt-variant": "チェコ共和国",
 		"DE": "ドイツ",
 		"DG": "ディエゴガルシア島",
 		"DJ": "ジブチ",
@@ -958,10 +910,11 @@
 		"ES": "スペイン",
 		"ET": "エチオピア",
 		"EU": "欧州連合",
+		"EZ": "EZ",
 		"FI": "フィンランド",
 		"FJ": "フィジー",
 		"FK": "フォークランド諸島",
-		"FK-alt-variant": "フォークランド諸島(マルビナス諸島)",
+		"FK-alt-variant": "フォークランド諸島 (マルビーナス諸島)",
 		"FM": "ミクロネシア連邦",
 		"FO": "フェロー諸島",
 		"FR": "フランス",
@@ -1012,7 +965,7 @@
 		"KH": "カンボジア",
 		"KI": "キリバス",
 		"KM": "コモロ",
-		"KN": "セントクリストファー・ネイビス",
+		"KN": "セントクリストファー・ネーヴィス",
 		"KP": "朝鮮民主主義人民共和国",
 		"KR": "大韓民国",
 		"KW": "クウェート",
@@ -1026,7 +979,7 @@
 		"LR": "リベリア",
 		"LS": "レソト",
 		"LT": "リトアニア",
-		"LU": "ルクセンブルグ",
+		"LU": "ルクセンブルク",
 		"LV": "ラトビア",
 		"LY": "リビア",
 		"MA": "モロッコ",
@@ -1064,7 +1017,7 @@
 		"NO": "ノルウェー",
 		"NP": "ネパール",
 		"NR": "ナウル",
-		"NU": "ニウエ島",
+		"NU": "ニウエ",
 		"NZ": "ニュージーランド",
 		"OM": "オマーン",
 		"PA": "パナマ",
@@ -1077,7 +1030,7 @@
 		"PM": "サンピエール島・ミクロン島",
 		"PN": "ピトケアン諸島",
 		"PR": "プエルトリコ",
-		"PS": "パレスチナ",
+		"PS": "パレスチナ自治区",
 		"PS-alt-short": "パレスチナ",
 		"PT": "ポルトガル",
 		"PW": "パラオ",
@@ -1130,13 +1083,15 @@
 		"TZ": "タンザニア",
 		"UA": "ウクライナ",
 		"UG": "ウガンダ",
-		"UM": "米領太平洋諸島",
+		"UM": "合衆国領有小離島",
+		"UN": "こくさいれんごう",
+		"UN-alt-short": "こくれん",
 		"US": "アメリカ合衆国",
 		"US-alt-short": "アメリカ",
 		"UY": "ウルグアイ",
 		"UZ": "ウズベキスタン",
 		"VA": "バチカン市国",
-		"VC": "セントビンセント・グレナディーン諸島",
+		"VC": "セントビンセント及びグレナディーン諸島",
 		"VE": "ベネズエラ",
 		"VG": "英領ヴァージン諸島",
 		"VI": "米領ヴァージン諸島",
@@ -1217,7 +1172,9 @@
 				"yMMMEEEEd": "y年M月d日EEEE",
 				"yMMMM": "y年M月",
 				"yQQQ": "y/QQQ",
-				"yQQQQ": "yQQQQ"
+				"yQQQQ": "y年QQQQ",
+				"MMMMW": "M月第W週",
+				"yw": "y年第w週"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1606,7 +1563,7 @@
 				"d": "d日",
 				"E": "ccc",
 				"Ed": "d日(E)",
-				"EEEEd": "d日EEEE",
+				"EEEEd": "d日(EEEE)",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
 				"Ehms": "E h:mm:ss a",
@@ -1615,7 +1572,7 @@
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日(E)",
-				"GyMMMEEEEd": "Gy年M月d日EEEE",
+				"GyMMMEEEEd": "Gy年M月d日(EEEE)",
 				"h": "aK時",
 				"H": "H時",
 				"hm": "aK:mm",
@@ -1625,11 +1582,11 @@
 				"M": "M月",
 				"Md": "M/d",
 				"MEd": "M/d(E)",
-				"MEEEEd": "M/dEEEE",
+				"MEEEEd": "M/d(EEEE)",
 				"MMM": "M月",
 				"MMMd": "M月d日",
 				"MMMEd": "M月d日(E)",
-				"MMMEEEEd": "M月d日EEEE",
+				"MMMEEEEd": "M月d日(EEEE)",
 				"MMMMd": "M月d日",
 				"ms": "mm:ss",
 				"y": "Gy年",
@@ -1637,14 +1594,14 @@
 				"yyyyM": "Gy/M",
 				"yyyyMd": "Gy/M/d",
 				"yyyyMEd": "Gy/M/d(E)",
-				"yyyyMEEEEd": "Gy/M/dEEEE",
+				"yyyyMEEEEd": "Gy/M/d(EEEE)",
 				"yyyyMMM": "Gy年M月",
 				"yyyyMMMd": "Gy年M月d日",
 				"yyyyMMMEd": "Gy年M月d日(E)",
-				"yyyyMMMEEEEd": "Gy年M月d日EEEE",
+				"yyyyMMMEEEEd": "Gy年M月d日(EEEE)",
 				"yyyyMMMM": "Gy年M月",
 				"yyyyQQQ": "Gy/QQQ",
-				"yyyyQQQQ": "GyQQQQ"
+				"yyyyQQQQ": "Gy年QQQQ"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2069,7 +2026,7 @@
 				"yyyyMMMEEEEd": "Gy年M月d日EEEE",
 				"yyyyMMMM": "Gy年M月",
 				"yyyyQQQ": "Gy/QQQ",
-				"yyyyQQQQ": "GyQQQQ"
+				"yyyyQQQQ": "Gy年QQQQ"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2444,7 +2401,7 @@
 	},
 	"ca-persian": {
 		"dateFormats": {
-			"full": "Gy年M月d日EEEE",
+			"full": "Gy年M月d日(EEEE)",
 			"long": "Gy年M月d日",
 			"medium": "Gy/MM/dd",
 			"short": "Gy/M/d"
@@ -2464,7 +2421,7 @@
 				"d": "d日",
 				"E": "ccc",
 				"Ed": "d日(E)",
-				"EEEEd": "d日EEEE",
+				"EEEEd": "d日(EEEE)",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
 				"Ehms": "E h:mm:ss a",
@@ -2473,7 +2430,7 @@
 				"GyMMM": "Gy年M月",
 				"GyMMMd": "Gy年M月d日",
 				"GyMMMEd": "Gy年M月d日(E)",
-				"GyMMMEEEEd": "Gy年M月d日EEEE",
+				"GyMMMEEEEd": "Gy年M月d日(EEEE)",
 				"h": "aK時",
 				"H": "H時",
 				"hm": "aK:mm",
@@ -2483,11 +2440,11 @@
 				"M": "M月",
 				"Md": "M/d",
 				"MEd": "M/d(E)",
-				"MEEEEd": "M/dEEEE",
+				"MEEEEd": "M/d(EEEE)",
 				"MMM": "M月",
 				"MMMd": "M月d日",
 				"MMMEd": "M月d日(E)",
-				"MMMEEEEd": "M月d日EEEE",
+				"MMMEEEEd": "M月d日(EEEE)",
 				"MMMMd": "M月d日",
 				"ms": "mm:ss",
 				"y": "Gy年",
@@ -2495,14 +2452,14 @@
 				"yyyyM": "Gy/M",
 				"yyyyMd": "Gy/M/d",
 				"yyyyMEd": "Gy/M/d(E)",
-				"yyyyMEEEEd": "Gy/M/dEEEE",
+				"yyyyMEEEEd": "Gy/M/d(EEEE)",
 				"yyyyMMM": "Gy年M月",
 				"yyyyMMMd": "Gy年M月d日",
 				"yyyyMMMEd": "Gy年M月d日(E)",
-				"yyyyMMMEEEEd": "Gy年M月d日EEEE",
+				"yyyyMMMEEEEd": "Gy年M月d日(EEEE)",
 				"yyyyMMMM": "Gy年M月",
 				"yyyyQQQ": "Gy/QQQ",
-				"yyyyQQQQ": "GyQQQQ"
+				"yyyyQQQQ": "Gy年QQQQ"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -2900,17 +2857,17 @@
 			"relative-type-0": "今年",
 			"relative-type-1": "翌年",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 年後"
+				"relativeTimePattern-count-other": "{0}年後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 年前"
+				"relativeTimePattern-count-other": "{0}年前"
 			}
 		},
 		"quarter-wide": {
 			"displayName": "四半期",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "前四半期",
+			"relative-type-0": "今四半期",
+			"relative-type-1": "翌四半期",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 四半期後"
 			},
@@ -2920,9 +2877,9 @@
 		},
 		"quarter-short": {
 			"displayName": "四半期",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "前四半期",
+			"relative-type-0": "今四半期",
+			"relative-type-1": "翌四半期",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 四半期後"
 			},
@@ -2932,14 +2889,14 @@
 		},
 		"quarter-narrow": {
 			"displayName": "四半期",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "前四半期",
+			"relative-type-0": "今四半期",
+			"relative-type-1": "翌四半期",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 四半期後"
+				"relativeTimePattern-count-other": "{0}四半期後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 四半期前"
+				"relativeTimePattern-count-other": "{0}四半期前"
 			}
 		},
 		"month-wide": {
@@ -2972,10 +2929,10 @@
 			"relative-type-0": "今月",
 			"relative-type-1": "翌月",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} か月後"
+				"relativeTimePattern-count-other": "{0}か月後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} か月前"
+				"relativeTimePattern-count-other": "{0}か月前"
 			}
 		},
 		"week-wide": {
@@ -2988,7 +2945,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} 週間前"
-			}
+			},
+			"relativePeriod": "{0} 日の週"
 		},
 		"week-short": {
 			"displayName": "週",
@@ -3000,7 +2958,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} 週間前"
-			}
+			},
+			"relativePeriod": "{0} 日の週"
 		},
 		"week-narrow": {
 			"displayName": "週",
@@ -3008,11 +2967,12 @@
 			"relative-type-0": "今週",
 			"relative-type-1": "翌週",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 週間後"
+				"relativeTimePattern-count-other": "{0}週間後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 週間前"
-			}
+				"relativeTimePattern-count-other": "{0}週間前"
+			},
+			"relativePeriod": "{0}日の週"
 		},
 		"day-wide": {
 			"displayName": "日",
@@ -3050,10 +3010,10 @@
 			"relative-type-1": "明日",
 			"relative-type-2": "明後日",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 日後"
+				"relativeTimePattern-count-other": "{0}日後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 日前"
+				"relativeTimePattern-count-other": "{0}日前"
 			}
 		},
 		"weekday": {
@@ -3061,6 +3021,7 @@
 		},
 		"hour-wide": {
 			"displayName": "時",
+			"relative-type-0": "1 時間以内",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 時間後"
 			},
@@ -3070,6 +3031,7 @@
 		},
 		"hour-short": {
 			"displayName": "時",
+			"relative-type-0": "1 時間以内",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 時間後"
 			},
@@ -3079,15 +3041,17 @@
 		},
 		"hour-narrow": {
 			"displayName": "時",
+			"relative-type-0": "1 時間以内",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 時間後"
+				"relativeTimePattern-count-other": "{0}時間後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 時間前"
+				"relativeTimePattern-count-other": "{0}時間前"
 			}
 		},
 		"minute-wide": {
 			"displayName": "分",
+			"relative-type-0": "1 分以内",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分後"
 			},
@@ -3097,6 +3061,7 @@
 		},
 		"minute-short": {
 			"displayName": "分",
+			"relative-type-0": "1 分以内",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分後"
 			},
@@ -3106,16 +3071,17 @@
 		},
 		"minute-narrow": {
 			"displayName": "分",
+			"relative-type-0": "1 分以内",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 分後"
+				"relativeTimePattern-count-other": "{0}分後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 分前"
+				"relativeTimePattern-count-other": "{0}分前"
 			}
 		},
 		"second-wide": {
 			"displayName": "秒",
-			"relative-type-0": "今すぐ",
+			"relative-type-0": "今",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 秒後"
 			},
@@ -3125,7 +3091,7 @@
 		},
 		"second-short": {
 			"displayName": "秒",
-			"relative-type-0": "今すぐ",
+			"relative-type-0": "今",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 秒後"
 			},
@@ -3135,12 +3101,12 @@
 		},
 		"second-narrow": {
 			"displayName": "秒",
-			"relative-type-0": "今すぐ",
+			"relative-type-0": "今",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-other": "{0} 秒後"
+				"relativeTimePattern-count-other": "{0}秒後"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-other": "{0} 秒前"
+				"relativeTimePattern-count-other": "{0}秒前"
 			}
 		},
 		"zone": {
@@ -3213,7 +3179,7 @@
 	"symbols-latn-nan": "NaN",
 	"symbols-latn-timeSeparator": ":",
 	"currencySymbols": {
-		"AUD": "AU$",
+		"AUD": "A$",
 		"BRL": "R$",
 		"CAD": "CA$",
 		"CNY": "元",
@@ -3226,7 +3192,6 @@
 		"KRW": "₩",
 		"MXN": "MX$",
 		"NZD": "NZ$",
-		"THB": "฿",
 		"TWD": "NT$",
 		"USD": "$",
 		"VND": "₫",
@@ -3242,6 +3207,7 @@
 		"AMD": 0,
 		"BHD": 3,
 		"BIF": 0,
+		"BYN": 2,
 		"BYR": 0,
 		"CAD": 2,
 		"CHF": 2,

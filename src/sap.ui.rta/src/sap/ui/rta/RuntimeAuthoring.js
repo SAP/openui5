@@ -43,7 +43,8 @@ sap.ui.define([
 		"sap/ui/rta/util/PopupManager",
 		"sap/ui/core/BusyIndicator",
 		"sap/ui/dt/DOMUtil",
-		"sap/ui/rta/util/StylesLoader"
+		"sap/ui/rta/util/StylesLoader",
+		"sap/ui/rta/appVariant/ManageAppsLoader"
 	],
 	function(
 		jQuery,
@@ -85,7 +86,8 @@ sap.ui.define([
 		PopupManager,
 		BusyIndicator,
 		DOMUtil,
-		StylesLoader
+		StylesLoader,
+		ManageAppsLoader
 	) {
 	"use strict";
 
@@ -298,9 +300,11 @@ sap.ui.define([
 			});
 
 			// Context Menu
-			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin();
+			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
+				styleClass: Utils.getRtaStyleClassName()
+			});
 
-			// TabHandling
+			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
 		}
 
@@ -392,6 +396,7 @@ sap.ui.define([
 			mFlexSettings.layer = aUriLayer[0];
 		}
 
+		Utils.setRtaStyleClassName(mFlexSettings.layer);
 		this.setProperty("flexSettings", jQuery.extend(this.getFlexSettings(), mFlexSettings));
 	};
 
@@ -449,6 +454,8 @@ sap.ui.define([
 
 					this._buildContextMenu();
 
+					this._oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
+
 					// Create design time
 					var aKeys = Object.keys(this.getPlugins());
 					var aPlugins = aKeys.map(function(sKey) {
@@ -498,17 +505,19 @@ sap.ui.define([
 				return Promise.resolve(bReloadTriggered);
 			}.bind(this))
 			.then(function (bReloadTriggered) {
+				var bIsAppVariantSupported;
 				if (this.getShowToolbars() && !bReloadTriggered) {
 					// Create ToolsMenu
 					return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl))
 						.then(function(oSettings) {
+							bIsAppVariantSupported = ManageAppsLoader.hasAppVariantsSupport(this.getLayer(), oSettings.isAtoEnabled() && oSettings.isAtoAvailable());
 							return !oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured();
-						})
+						}.bind(this))
 						.catch(function(oError) {
 							return false;
 						})
 						.then(function (bShowPublish) {
-							this._createToolsMenu(bShowPublish);
+							this._createToolsMenu(bShowPublish, bIsAppVariantSupported);
 							return this._oToolsMenu.show();
 						}.bind(this))
 						.then(function() {
@@ -544,7 +553,9 @@ sap.ui.define([
 		jQuery.sap.log.error("Failed to transfer runtime adaptation changes to layered repository", sErrorMessage);
 		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
 				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
-		MessageBox.error(sMsg);
+		MessageBox.error(sMsg, {
+			styleClass: Utils.getRtaStyleClassName()
+		});
 	};
 
 	RuntimeAuthoring.prototype._onAppClosed = function() {
@@ -717,8 +728,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._serializeToLrep = function() {
-		var oSerializer = new LREPSerializer({commandStack : this.getCommandStack(), rootControl : this.getRootControl()});
-		return oSerializer.saveCommands();
+		return this._oSerializer.saveCommands();
 	};
 
 	RuntimeAuthoring.prototype._onUndo = function() {
@@ -731,7 +741,7 @@ sap.ui.define([
 		return this.getCommandStack().redo();
 	};
 
-	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable) {
+	RuntimeAuthoring.prototype._createToolsMenu = function(bPublishAvailable, bIsAppVariantSupported) {
 		if (!this._oToolsMenu) {
 			var fnConstructor;
 
@@ -755,13 +765,15 @@ sap.ui.define([
 					modeSwitcher: this.getMode(),
 					publishVisible: bPublishAvailable,
 					textResources: this._getTextResources(),
+					manageAppsVisible: bIsAppVariantSupported,
 					//events
 					exit: this.stop.bind(this, false, false),
 					transport: this._onTransport.bind(this),
 					restore: this._onRestore.bind(this),
 					undo: this._onUndo.bind(this),
 					redo: this._onRedo.bind(this),
-					modeChange: this._onModeChange.bind(this)
+					modeChange: this._onModeChange.bind(this),
+					manageApps: ManageAppsLoader.load.bind(null, this.getRootControl())
 				});
 			}
 
@@ -860,7 +872,7 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype._openSelection = function () {
-	   return new TransportSelection().openTransportSelection(null, this._oRootControl);
+	   return new TransportSelection().openTransportSelection(null, this._oRootControl, Utils.getRtaStyleClassName());
 	};
 
 	/**
@@ -875,26 +887,34 @@ sap.ui.define([
 	 * @returns {Promise} promise that resolves with no parameters
 	 */
 	RuntimeAuthoring.prototype._createAndApplyChanges = function(aChangeSpecificData) {
-		return Promise.resolve().then(function() {
+		var aPromises = [];
+		return Promise.resolve()
 
+		.then(function() {
 			function fnValidChanges(oChangeSpecificData) {
 				return oChangeSpecificData && oChangeSpecificData.selector && oChangeSpecificData.selector.id;
 			}
-
 			aChangeSpecificData.filter(fnValidChanges).forEach(function(oChangeSpecificData) {
 				var oControl = sap.ui.getCore().byId(oChangeSpecificData.selector.id);
-				this._getFlexController().createAndApplyChange(oChangeSpecificData, oControl);
-			});
-		})['catch'](function(oError) {
+				aPromises.push(this._getFlexController().createAndApplyChange.bind(this, oChangeSpecificData, oControl));
+			}.bind(this));
+			return FlexUtils.execPromiseQueueSequentially(aPromises);
+		}.bind(this))
+
+		.catch(function(oError) {
 			FlexUtils.log.error("Create and apply error: " + oError);
 			return oError;
-		}).then(function(oError) {
+		})
+
+		.then(function(oError) {
 			return this._getFlexController().saveAll().then(function() {
 				if (oError) {
 					throw oError;
 				}
 			});
-		}.bind(this))['catch'](function(oError) {
+		}.bind(this))
+
+		.catch(function(oError) {
 			FlexUtils.log.error("Create and apply and/or save error: " + oError);
 			return this._showMessage(MessageBox.Icon.ERROR, "HEADER_TRANSPORT_APPLYSAVE_ERROR", "MSG_TRANSPORT_APPLYSAVE_ERROR", oError);
 		}.bind(this));
@@ -936,7 +956,8 @@ sap.ui.define([
 			MessageBox.show(sMessage, {
 				icon: oMessageType,
 				title: sTitle,
-				onClose: resolve
+				onClose: resolve,
+				styleClass: Utils.getRtaStyleClassName()
 			});
 		});
 	};
@@ -1015,7 +1036,8 @@ sap.ui.define([
 		MessageBox.confirm(sMessage, {
 			icon: MessageBox.Icon.WARNING,
 			title : sTitle,
-			onClose : fnConfirmDiscardAllChanges
+			onClose : fnConfirmDiscardAllChanges,
+			styleClass: Utils.getRtaStyleClassName()
 		});
 	};
 
@@ -1085,8 +1107,8 @@ sap.ui.define([
 	/**
 	 * Function to handle modification of an element
 	 *
-	 * @param {sap.ui.base.Event}
-	 *          oEvent event object
+	 * @param {sap.ui.base.Event} oEvent Event object
+	 * @returns {promise} Returns promise that resolves after command was executed sucessfully
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
@@ -1094,8 +1116,9 @@ sap.ui.define([
 
 		var oCommand = oEvent.getParameter("command");
 		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			this.getCommandStack().pushAndExecute(oCommand);
+			return this.getCommandStack().pushAndExecute(oCommand);
 		}
+		return Promise.resolve();
 	};
 
 	/**
@@ -1582,7 +1605,8 @@ sap.ui.define([
 				icon: MessageBox.Icon.QUESTION,
 				title : sTitle,
 				actions : [sConfirmButtonText, sCancelButtonText],
-				onClose : fnCallback
+				onClose : fnCallback,
+				styleClass: Utils.getRtaStyleClassName()
 			});
 		}.bind(this));
 	};

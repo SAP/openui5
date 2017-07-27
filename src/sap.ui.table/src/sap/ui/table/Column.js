@@ -234,9 +234,12 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 			/**
 			 * Template (cell renderer) of this column. A template is decoupled from the column. Each time
 			 * the template's properties or aggregations have been changed, the template has to be applied again via
-			 * <code>setTemplate</code> for the changes to take effect. The default template depends on the libraries loaded.
+			 * <code>setTemplate</code> for the changes to take effect.
+			 * If a string is defined, a default text control will be created with its text property bound to the value of the string. The default
+			 * template depends on the libraries loaded.
+			 * If there is no template, the column will not be rendered in the table.
 			 */
-			template : {type : "sap.ui.core.Control", multiple : false},
+			template : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
 			/**
 			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
@@ -880,12 +883,12 @@ function(jQuery, Element, coreLibrary, Popup, RenderManager, Filter, FilterOpera
 	};
 
 	/**
-	 * Returns whether the column should be rendered or not.
-	 * @return {boolean} true, if the column should be rendered
+	 * Returns whether the column should be rendered.
+	 * @return {boolean} Returns <code>true</code>, if the column should be rendered
 	 * @protected
 	 */
 	Column.prototype.shouldRender = function() {
-		return this.getVisible() && !this.getGrouped();
+		return this.getVisible() && !this.getGrouped() && this.getTemplate() != null;
 	};
 
 	Column.PROPERTIES_FOR_ROW_INVALIDATION = {visible: true, flexible: true, headerSpan: true};

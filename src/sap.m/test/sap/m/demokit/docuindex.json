@@ -436,7 +436,8 @@
 			"sap.m.sample.UploadCollection",
 			"sap.m.sample.UploadCollectionForPendingUpload",
 			"sap.m.sample.UploadCollectionVersioning",
-			"sap.m.sample.UploadCollectionSortingFiltering"
+			"sap.m.sample.UploadCollectionSortingFiltering",
+			"sap.m.sample.UploadCollectionFolderHierarchy"
 		  ]
 		},
 		{
@@ -1195,7 +1196,8 @@
 			"sap.m.sample.TreeSelection",
 			"sap.m.sample.TreeInitialExpandState",
 			"sap.m.sample.TreeCollapseAll",
-			"sap.m.sample.TreeOData"
+			"sap.m.sample.TreeOData",
+			"sap.m.sample.TreeJSONLazyLoading"
 		  ]
 		},
 		{
@@ -2041,6 +2043,11 @@
 		  "name": "Tree - OData",
 		  "description": "This example shows tree with odata service."
 		},
+        {
+          "id": "sap.m.sample.TreeJSONLazyLoading",
+          "name": "Tree - Lazy loading with a JSON model",
+          "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
+        },
 		{
 			"id": "sap.m.sample.RangeSlider",
 			"name": "RangeSlider",
@@ -2559,6 +2566,11 @@
 		  "id": "sap.m.sample.UploadCollectionSortingFiltering",
 		  "name": "With Grouping, Sorting and Filtering Feature",
 		  "description": "Shows the UploadCollection with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
+		},
+		{
+		  "id": "sap.m.sample.UploadCollectionFolderHierarchy",
+		  "name": "Upload Collection with Folder Hierarchy",
+		  "description": "Shows the UploadCollection with a navigable folder structure."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",

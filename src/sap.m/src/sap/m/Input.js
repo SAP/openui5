@@ -651,7 +651,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._oPopupInput._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
-			this._$input.val(this._getInputValue(sNewValue));
+			this.setDOMValue(this._getInputValue(sNewValue));
 			this.onChange();
 		}
 
@@ -825,7 +825,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			this._oPopupInput._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
-			this._$input.val(this._getInputValue(sNewValue));
+			this.setDOMValue(this._getInputValue(sNewValue));
 			this.onChange();
 		}
 		this._iPopupListSelectedIndex = -1;
@@ -1216,7 +1216,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		// setValue isn't used because here is too early to modify the lastValue of input
-		this._$input.val(sNewValue);
+		this.setDOMValue(sNewValue);
 
 		// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 		this._sSelectedSuggViaKeyboard = sNewValue;
@@ -1326,7 +1326,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			} else {
 				// When the input still has the value of the last jQuery.val call, a change event has to be
 				// fired manually because browser doesn't fire an input event in this case.
-				if (this._$input.val() === this._sSelectedSuggViaKeyboard) {
+				if (this.getDOMValue() === this._sSelectedSuggViaKeyboard) {
 					this._sSelectedSuggViaKeyboard = null;
 				}
 			}
@@ -1416,7 +1416,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 			// when compose a non ASCII character, in Chrome the value is updated in the next browser tick cycle
 			jQuery.sap.delayedCall(0, this, function () {
-				var sNewValue = this._$input.val() || '';
+				var sNewValue = this.getDOMValue() || '';
 				if (sNewValue < this.getStartSuggestion()) {
 					this._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();
@@ -1520,7 +1520,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				return;
 			}
 
-			var value = this._$input.val();
+			var value = this.getDOMValue();
 
 			if (this.getValueLiveUpdate()) {
 				this.setProperty("value",value, true);
@@ -1541,7 +1541,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		};
 
 		Input.prototype.getValue = function(){
-			return this.getDomRef("inner") && this._$input ? this._$input.val() : this.getProperty("value");
+			return this.getDomRef("inner") && this._$input ? this.getDOMValue() : this.getProperty("value");
 		};
 
 		Input.prototype._refreshItemsDelayed = function() {
@@ -1684,7 +1684,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					liveChange : function(oEvent) {
 						var sValue = oEvent.getParameter("newValue");
 						// call _getInputValue to apply the maxLength to the typed value
-						oInput._$input.val(oInput
+						oInput.setDOMValue(oInput
 								._getInputValue(oInput._oPopupInput
 										.getValue()));
 
@@ -1749,7 +1749,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					oInput._oPopupInput.setMaxLength(oInput.getMaxLength());
 				}).attachBeforeClose(function(){
 					// call _getInputValue to apply the maxLength to the typed value
-					oInput._$input.val(oInput
+					oInput.setDOMValue(oInput
 							._getInputValue(oInput._oPopupInput
 									.getValue()));
 					oInput.onChange();
@@ -1909,7 +1909,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			var oItem,
 				aItems = oInput.getSuggestionItems(),
 				aTabularRows = oInput.getSuggestionRows(),
-				sTypedChars = oInput._$input.val() || "",
+				sTypedChars = oInput.getDOMValue() || "",
 				oList = oInput._oList,
 				bFilter = oInput.getFilterSuggests(),
 				aHitItems = [],
@@ -2348,6 +2348,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		InputBase.prototype.setValue.call(this, sValue);
 		this._onValueUpdated(sValue);
 		return this;
+	};
+
+	/**
+	 * Sets the inner input DOM value.
+	 *
+	 * @protected
+	 */
+	Input.prototype.setDOMValue = function(value) {
+		this._$input.val(value);
+	};
+
+	/**
+	 * Gets the inner input DOM value.
+	 *
+	 * @protected
+	 */
+	Input.prototype.getDOMValue = function() {
+		return this._$input.val();
 	};
 
 	/**
