@@ -95,9 +95,11 @@ h2 {
 #header_wrap h2, #header_wrap h2 a {
   text-shadow: 0 0 2px white;
 }
+
 img {
   max-width: 100%
 }
+
 h3 {
   font-size: 26px;
   margin: 32px 0 0px 0;
@@ -671,3 +673,5 @@ Simple Syntax Highlighter
 .sh-js-keyword{
   color: #c26230;
 }
+
+
