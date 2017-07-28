@@ -675,18 +675,18 @@ code {
 }
 
 .sapUiDocumentationHeaderNavLinks .sapMLnk {
-	line-height: 1.5rem;
+	line-height: 1.25rem;
 	margin-left: 0.25rem;
 }
 
 .sapUiDocumentationHeaderNavLinks .sapMText {
-	line-height: 1.5rem;
+	line-height: 1.25rem;
 	margin-left: 0.25rem;
 	color: #666666;
 }
 
 .sapUiDocumentationHeaderNavLinks .sapMLabel {
-	line-height: 1.5rem;
+	line-height: 1.25rem;
 }
 
 .sapUiDocumentationHeaderNavLinks .sapMFlexItem:nth-child(2) {
@@ -1529,3 +1529,54 @@ html.sapUiTheme-sap_belize_hcb .sapUiDocumentationTopicsIframe {
 html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	font-size: 0.8rem;
 }
+
+/*
+ * API Detail page specific CSS improving readability
+ * Note: Keep in mind this is applicable only for the sap_belize and sap_belize_plus themes
+ */
+.sapUiTheme-sap_belize .sapUiSizeCompact .apiDetailPage .sapUxAPBlockContainerDesktop,
+.sapUiTheme-sap_belize_plus .sapUiSizeCompact .apiDetailPage .sapUxAPBlockContainerDesktop {
+	padding-top: 0;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapUxAPObjectPageContainer,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapUxAPObjectPageContainer {
+	background-color: #f7f7f7;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapMListTbl,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMListTbl {
+	border: 1px solid #e5e5e5;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapMListTbl th,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMListTbl th {
+	background: #e5e5e5;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapMListTbl .sapMListTblCell,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMListTbl .sapMListTblCell {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapMListTbl .sapMObjStatus,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMListTbl .sapMObjStatus {
+	min-width: 100px;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapCEd .ace_editor,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapCEd .ace_editor {
+	font-size: 14px;
+	line-height: 28px;
+	border: 1px solid #e5e5e5;
+	box-sizing: border-box;
+}
+
+.sapUiTheme-sap_belize .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent,
+.sapUiTheme-sap_belize_plus .apiDetailPage .sapMPanel.borrowedMethodsPanel .sapMPanelContent {
+	padding: 0;
+}
+/*
+ * End of API Detail specific CSS
+ */
