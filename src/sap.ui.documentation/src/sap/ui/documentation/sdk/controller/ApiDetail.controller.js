@@ -587,6 +587,7 @@ sap.ui.define([
 				};
 
 				// Get all method names
+				aMethods = aMethods || [];
 				aMethodNames = aMethods.map(function (oMethod) {
 					return oMethod.name;
 				});
