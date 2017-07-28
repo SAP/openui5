@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+	<title>InfoButton - sap.ui.core</title>
+	<base href="../../../../../../../../..">
+	<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-bindingSyntax="complex"
+	 src="resources/sap-ui-core.js" data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/xmlcomposite/misc/xml"}'>
+
+	</script>
+
+	<style type="text/css">
+		.heigth100percent {
+			height: 100%;
+		}
+	</style>
+
+	<script>
+		jQuery.sap.require("sap.ui.core.XMLComposite");
+
+		var Layout = sap.ui.core.XMLComposite.extend("Layout", {
+			constructor: function (sId, mSettings) {
+				sap.ui.core.XMLComposite.apply(this, arguments);
+			},
+			fragment: "xml.layout",
+			renderer: "sap.ui.core.XMLCompositeRenderer"
+		});
+		var oLayout = new Layout("infoButton");
+		//	oLayout.addStyleClass("heigth100percent");
+		oLayout.setHeight("100%");
+		oLayout.placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" style='height: 500px'>
+</body>
+
+</html>
