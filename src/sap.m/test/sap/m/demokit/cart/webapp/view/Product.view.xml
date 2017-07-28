@@ -15,7 +15,10 @@
 				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress" />
 			<ToolbarSpacer/>
-			<Button icon="sap-icon://customer"/>
+			<Button
+				icon="sap-icon://customer"
+				press="onAvatarButtonPress"
+				tooltip="{i18n>avatarButtonTooltip}"/>
 		</headerContent>
 		<footer>
 			<Toolbar>
