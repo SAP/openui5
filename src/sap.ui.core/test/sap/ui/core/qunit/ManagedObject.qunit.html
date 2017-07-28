@@ -56,6 +56,13 @@
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
 						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
 					},
+					specialSettings: {
+						metadataContexts: {
+							type: "object",
+							defaultValue: "{}",
+							myprop:"test"
+						}
+					},
 					defaultAggregation : "singleAggr",
 					defaultProperty: "value"
 				},
@@ -1852,6 +1859,20 @@
 
 				assert.ok(this.obj2._getContextualSettings() === sap.ui.base.ManagedObject._defaultContextualSettings, "Child now has the default contextual settings");
 
+			});
+			
+			QUnit.test("SpecialSettings default values", function(assert) {
+				var oControl = new sap.ui.core.TestManagedObject(),
+					mSpecial = oControl.getMetadata()._mAllSpecialSettings;
+				assert.ok(mSpecial["metadataContexts"].defaultValue, "Metadata context default value is set");
+				assert.ok(mSpecial["metadataContexts"].type == "object", "Metadata context of type object");
+				assert.ok(mSpecial["metadataContexts"].appData.myprop == "test", "Metadata context has appdata applied");
+				
+				oControl = new sap.test.TestManagedObject();
+				mSpecial = oControl.getMetadata()._mAllSpecialSettings;
+				assert.ok(mSpecial["metadataContexts"].defaultValue === undefined, "Metadata context default value is not set");
+				assert.ok(mSpecial["metadataContexts"].type === "object", "Metadata context of type not set");
+				assert.ok(mSpecial["metadataContexts"].appData === null, "Metadata context has no appdata applied");
 			});
 		</script>
 	</head>
