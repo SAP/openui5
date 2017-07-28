@@ -20,6 +20,8 @@ sap.ui.define([
 		 * @public
 		 */
 		onInit: function () {
+			BaseController.prototype.onInit.call(this);
+
 			// manually call the handler once at startup as device API won't do this for us
 			this._onOrientationChange({
 				landscape: Device.orientation.landscape
