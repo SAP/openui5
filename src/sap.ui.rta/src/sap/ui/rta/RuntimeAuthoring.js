@@ -896,7 +896,12 @@ sap.ui.define([
 			}
 			aChangeSpecificData.filter(fnValidChanges).forEach(function(oChangeSpecificData) {
 				var oControl = sap.ui.getCore().byId(oChangeSpecificData.selector.id);
-				aPromises.push(this._getFlexController().createAndApplyChange.bind(this, oChangeSpecificData, oControl));
+				aPromises.push(function() {
+					return Promise.resolve()
+					.then(function() {
+						return this._getFlexController().createAndApplyChange(oChangeSpecificData, oControl);
+					}.bind(this));
+				}.bind(this));
 			}.bind(this));
 			return FlexUtils.execPromiseQueueSequentially(aPromises);
 		}.bind(this))
