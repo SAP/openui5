@@ -20,13 +20,22 @@
 
 .sapUiUnifiedLegendDescription {
 	display: inline-block;
-	line-height: 16px;
-	margin-top: 4px;
-	margin-bottom: 4px;
+	line-height: 1rem;
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
 	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
 	(the square in front of the legend description) */
 	width: calc(100% - 28px);
 	cursor: default;
+}
+
+.sapMDialog-CTX, .sapMPopup-CTX {
+	.sapUiUnifiedLegendDescription, .sapUiUfdCalLegendHeader {
+		font-size: @sapMFontMediumSize;
+	}
+	.sapUiUnifiedLegendDescription {
+		margin-bottom: 0.5rem;
+	}
 }
 
 .sapUiUnifiedLegendSquare {
