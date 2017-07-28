@@ -71,7 +71,7 @@
 		}
 	],
 	"variantSection" : {
-		"variantManagementOrdersTable" : {
+		"idMain1--variantManagementOrdersTable" : {
 			"defaultVariant" : "variant0",
 			"variants" : [
 				{
@@ -79,7 +79,7 @@
 						"fileName":"variant0",
 						"title":"variant A",
 						"fileType":"variant",
-						"variantMgmtRef":"variantManagementOrdersTable",
+						"variantMgmtRef": "idMain1--variantManagementOrdersTable",
 						"component":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
@@ -149,10 +149,10 @@
 				},
 				{
 					"content": {
-						"fileName":"variantManagementOrdersTable",
+						"fileName":"idMain1--variantManagementOrdersTable",
 						"title":"Standard",
 						"fileType":"variant",
-						"variantMgmtRef":"variantManagementOrdersTable",
+						"variantMgmtRef":"idMain1--variantManagementOrdersTable",
 						"component":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},
@@ -173,7 +173,7 @@
 					},
 					"changes" : [
 						{
-							"variantRef":"variantManagementOrdersTable",
+							"variantRef":"idMain1--variantManagementOrdersTable",
 							"fileName":"id_1445501120486_41",
 							"fileType":"change",
 							"changeType":"hideControl",
@@ -196,7 +196,7 @@
 							}
 						},
 						{
-							"variantRef":"variantManagementOrdersTable",
+							"variantRef":"idMain1--variantManagementOrdersTable",
 							"fileName":"id_1445501120486_43",
 							"fileType":"change",
 							"changeType":"hideControl",
@@ -225,7 +225,7 @@
 						"fileName":"variant2",
 						"title":"variant AA",
 						"fileType":"variant",
-						"variantMgmtRef":"variantManagementOrdersTable",
+						"variantMgmtRef":"idMain1--variantManagementOrdersTable",
 						"component":"sap.ui.rta.test.Demo.md.Component",
 						"packageName":"$TMP",
 						"content":{},

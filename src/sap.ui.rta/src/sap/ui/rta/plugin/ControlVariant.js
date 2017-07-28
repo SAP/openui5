@@ -6,8 +6,13 @@
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
 	'sap/ui/rta/Utils',
-	'sap/ui/dt/ElementOverlay'
-], function(Plugin, Utils, ElementOverlay) {
+	'sap/ui/dt/ElementOverlay',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/OverlayUtil',
+	'sap/ui/fl/changeHandler/BaseTreeModifier',
+	'sap/ui/fl/Utils',
+	'sap/ui/base/ManagedObject'
+], function(Plugin, Utils, ElementOverlay, OverlayRegistry, OverlayUtil, BaseTreeModifier, flUtils, ManagedObject) {
 	"use strict";
 
 	/**
@@ -52,19 +57,45 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
-			var oControl = oOverlay.getElementInstance();
-			var sVarMgtKey;
-			//True for ObjectPageLayout
-			if (oControl.getVariantManagement) {
-				sVarMgtKey = oControl.getVariantManagement();
-			} else if (oOverlay.getParentElementOverlay()) {
-				sVarMgtKey = oOverlay.getParentElementOverlay().getVariantManagement();
-			}
 
-			if (!sVarMgtKey) {
-				return;
-			}
-			oOverlay.setVariantManagement(sVarMgtKey);
+		if (oOverlay.getElementInstance().getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
+			var oControl = oOverlay.getElementInstance();
+			var vAssociationElement = oControl.getAssociation("for");
+
+			var aVariantManagementTargetElements = !jQuery.isArray(vAssociationElement) ? [vAssociationElement] : vAssociationElement;
+
+			aVariantManagementTargetElements.forEach( function(sVariantManagementTargetElement) {
+				var oVariantManagementTargetElement = sVariantManagementTargetElement instanceof ManagedObject ? sVariantManagementTargetElement : sap.ui.getCore().byId(sVariantManagementTargetElement);
+				var oVariantManagementTargetOverlay = OverlayRegistry.getOverlay(oVariantManagementTargetElement);
+				var sVariantManagement = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
+				this._propagateVariantManagement(oVariantManagementTargetOverlay , sVariantManagement);
+			}.bind(this));
+		}
+
+			//var sVarMgtKey;
+			////True for ObjectPageLayout
+			//if (oControl.getVariantManagement) {
+			//	sVarMgtKey = oControl.getVariantManagement();
+			//} else if (oOverlay.getParentElementOverlay()) {
+			//	sVarMgtKey = oOverlay.getParentElementOverlay().getVariantManagement();
+			//}
+			//
+			//if (!sVarMgtKey) {
+			//	return;
+			//}
+			//oOverlay.setVariantManagement(sVarMgtKey);
+	};
+
+	ControlVariant.prototype._propagateVariantManagement = function(oParentElementOverlay, sVariantManagement) {
+		var aElementOverlaysRendered = [];
+		oParentElementOverlay.setVariantManagement(sVariantManagement);
+		aElementOverlaysRendered = OverlayUtil.getAllChildOverlays(oParentElementOverlay);
+
+		aElementOverlaysRendered.forEach( function(oElementOverlay) {
+			aElementOverlaysRendered = aElementOverlaysRendered.concat(this._propagateVariantManagement(oElementOverlay, sVariantManagement));
+		}.bind(this));
+
+		return aElementOverlaysRendered;
 	};
 
 	/**
