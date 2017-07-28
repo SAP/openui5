@@ -38,13 +38,18 @@ sap.ui.define([
 	 * Selects the text of an input element.
 	 *
 	 * @param {HTMLInputElement} oInputElement The input element whose text will be selected.
+	 * @param {boolean} [bSelect=true] If set to <code>true/code>, the text will be selected, otherwise the text selection will be cleared.
 	 */
-	function selectText(oInputElement) {
+	function toggleTextSelection(oInputElement, bSelect) {
 		if (!(oInputElement instanceof window.HTMLInputElement)) {
 			return;
 		}
 
-		oInputElement.select();
+		if (bSelect === false) {
+			oInputElement.setSelectionRange(0, 0);
+		} else {
+			oInputElement.select();
+		}
 	}
 
 	/**
@@ -560,8 +565,9 @@ sap.ui.define([
 			// Target is a data cell with interactive elements inside. Focus the first interactive element in the data cell.
 			oKeyboardExtension._suspendItemNavigation();
 			oActiveElement.tabIndex = -1;
+			toggleTextSelection(oActiveElement, false);
 			oKeyboardExtension._setSilentFocus($InteractiveElements[0]);
-			selectText($InteractiveElements[0]);
+			toggleTextSelection($InteractiveElements[0]);
 			return true;
 
 		} else if ($ParentCell !== null) {
@@ -586,6 +592,7 @@ sap.ui.define([
 		var $ParentDataCell = TableUtils.getParentDataCell(this, oActiveElement);
 		var $ParentCell = $ParentDataCell || TableUtils.getParentRowActionCell(this, oActiveElement);
 		if ($ParentCell !== null) {
+			toggleTextSelection(oActiveElement, false);
 			oKeyboardExtension._setSilentFocus($ParentCell);
 		} else {
 			oActiveElement.blur();
@@ -878,8 +885,9 @@ sap.ui.define([
 								TableKeyboardDelegate._focusRowSelector(this, iRowIndex);
 							} else {
 								$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
+								toggleTextSelection(document.activeElement, false);
 								$InteractiveElement.focus();
-								selectText($InteractiveElement[0]);
+								toggleTextSelection($InteractiveElement[0]);
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -895,22 +903,25 @@ sap.ui.define([
 						TableKeyboardDelegate._focusRowSelector(this, iNextRowIndex);
 					} else {
 						$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oNextRow);
+						toggleTextSelection(document.activeElement, false);
 						$InteractiveElement.focus();
-						selectText($InteractiveElement[0]);
+						toggleTextSelection($InteractiveElement[0]);
 					}
 				}
 
 			} else if (bIsRowHeaderCell) {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getFirstInteractiveElement(oRow);
+				toggleTextSelection(document.activeElement, false);
 				$InteractiveElement.focus();
-				selectText($InteractiveElement[0]);
+				toggleTextSelection($InteractiveElement[0]);
 
 			} else {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getNextInteractiveElement(this, oEvent.target);
+				toggleTextSelection(document.activeElement, false);
 				$InteractiveElement.focus();
-				selectText($InteractiveElement[0]);
+				toggleTextSelection($InteractiveElement[0]);
 			}
 
 		} else if (oCellInfo.type === CellType.COLUMNHEADER ||
@@ -1007,8 +1018,9 @@ sap.ui.define([
 								TableKeyboardDelegate._focusRowSelector(this, iRowIndex);
 							} else {
 								$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oRow);
+								toggleTextSelection(document.activeElement, false);
 								$InteractiveElement.focus();
-								selectText($InteractiveElement[0]);
+								toggleTextSelection($InteractiveElement[0]);
 							}
 						}.bind(this), 0);
 					}.bind(this));
@@ -1024,16 +1036,18 @@ sap.ui.define([
 						TableKeyboardDelegate._focusRowSelector(this, iPreviousRowIndex);
 					} else {
 						$InteractiveElement = TableKeyboardDelegate._getLastInteractiveElement(oPreviousRow);
+						toggleTextSelection(document.activeElement, false);
 						$InteractiveElement.focus();
-						selectText($InteractiveElement[0]);
+						toggleTextSelection($InteractiveElement[0]);
 					}
 				}
 
 			} else {
 				oEvent.preventDefault();
 				$InteractiveElement = TableKeyboardDelegate._getPreviousInteractiveElement(this, oEvent.target);
+				toggleTextSelection(document.activeElement, false);
 				$InteractiveElement.focus();
-				selectText($InteractiveElement[0]);
+				toggleTextSelection($InteractiveElement[0]);
 			}
 
 		} else if (oCellInfo.type === CellType.DATACELL ||
@@ -1111,8 +1125,9 @@ sap.ui.define([
 				var keyboardExtension = oTable._getKeyboardExtension();
 				// skip additional focus handling in KeyboardExtension:
 				keyboardExtension._actionMode = !!interactiveElement;
+				toggleTextSelection(document.activeElement, false);
 				keyboardExtension._setSilentFocus(interactiveElement || cell);
-				selectText(interactiveElement);
+				toggleTextSelection(interactiveElement);
 			}
 		}
 		if (sCellType === CellType.ROWHEADER) {
@@ -1144,11 +1159,17 @@ sap.ui.define([
 		var oTable = this;
 
 		// go into the action mode if the Ctrl key is pressed or if action mode is active
-		var bFocusActive = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bInActionMode;
+		var bCtrlKeyPressed = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL);
+		var bFocusActive = bCtrlKeyPressed || bInActionMode;
 
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
 			oCellInfo.type === CellType.ROWACTION) {
+
+			// If only the up or down key was pressed in text input elements, navigation should not be performed.
+			if (!bCtrlKeyPressed && (oEvent.target instanceof window.HTMLInputElement || oEvent.target instanceof window.HTMLTextAreaElement)) {
+				return;
+			}
 
 			preventItemNavigation(oEvent);
 
@@ -1287,11 +1308,17 @@ sap.ui.define([
 		var oTable = this;
 
 		// go into the action mode if the Ctrl key is pressed or if action mode is active
-		var bFocusActive = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL) || bInActionMode;
+		var bCtrlKeyPressed = TableKeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL);
+		var bFocusActive = bCtrlKeyPressed || bInActionMode;
 
 		if (oCellInfo.type === CellType.DATACELL ||
 			oCellInfo.type === CellType.ROWHEADER ||
 			oCellInfo.type === CellType.ROWACTION) {
+
+			// If only the up or down key was pressed in text input elements, navigation should not be performed.
+			if (!bCtrlKeyPressed && (oEvent.target instanceof window.HTMLInputElement || oEvent.target instanceof window.HTMLTextAreaElement)) {
+				return;
+			}
 
 			preventItemNavigation(oEvent); // default action, see one exception below
 
