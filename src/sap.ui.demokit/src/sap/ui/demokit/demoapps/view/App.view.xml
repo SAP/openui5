@@ -25,12 +25,6 @@
 										titleStyle="H1"
 										text="{i18n>pageTitle}"
 										class="sapUiMediumMarginBottom"/>
-									<Text
-										text="{i18n>introText1}"
-										class="sapUiSmallMarginBottom"/>
-									<Text
-										text="{i18n>introText2}"
-										class="sapUiMediumMarginBottom"/>
 									<Button
 										id="download"
 										text="{i18n>downloadButtonText}"
@@ -38,6 +32,9 @@
 										press="onDownloadButtonPress"
 										icon="sap-icon://download">
 									</Button>
+									<Link
+											text="{i18n>linkText}"
+											class="sapUiSmallMarginTop sapUiLink" />
 								</l:VerticalLayout>
 								<Image
 									src="resources/sap/ui/demokit/demoapps/img/demoAppsTeaser.png"
