@@ -91,10 +91,7 @@ sap.ui.require([
 		oExpectedResult : {"__metadata" : {}, "results" : "foo"}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("doFetchV4Response, " + i, function (assert) {
-			var oObject  = oFixture.bIsCollection
-					? oFixture.oResponsePayload.d.results
-					: oFixture.oResponsePayload.d,
-				oRequestor = {fnFetchEntityContainer : function () {}},
+			var oRequestor = {fnFetchEntityContainer : function () {}},
 				oRequestorMock = this.mock(oRequestor),
 				mTypeByName = {};
 
@@ -103,7 +100,11 @@ sap.ui.require([
 			oRequestorMock.expects("fnFetchEntityContainer").withExactArgs()
 				.returns(_SyncPromise.resolve(mTypeByName));
 			oRequestorMock.expects("convertNonPrimitive")
-				.withExactArgs(sinon.match.same(oObject), sinon.match.same(mTypeByName));
+				.withExactArgs(sinon.match.same(oFixture.oResponsePayload.d),
+					sinon.match.same(mTypeByName))
+				.returns(oFixture.bIsCollection
+					? oFixture.oResponsePayload.d.results
+					: oFixture.oResponsePayload.d);
 
 			// code under test
 			return oRequestor.doFetchV4Response(oFixture.oResponsePayload)
@@ -131,13 +132,13 @@ sap.ui.require([
 		// code under test
 		oRequestor.convertNonPrimitive(oObject, mTypeByName);
 
-		assert.strictEqual(oObject.__metadata, undefined, "V2 inline metadata deleted");
-		assert.strictEqual(oObject.complex.property, 42);
+		assert.deepEqual(oObject, {"complex" : {"property" : 42}});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("convertNonPrimitive, value null", function (assert) {
-		var oObject = {
+		var oConvertedObject,
+			oObject = {
 				__metadata : {type : "TypeQName"},
 				complex : null
 			},
@@ -146,20 +147,23 @@ sap.ui.require([
 		asV2Requestor(oRequestor);
 
 		// code under test
-		oRequestor.convertNonPrimitive(oObject, {} /*mTypeByName not accessed by code under test*/);
+		oConvertedObject = oRequestor.convertNonPrimitive(oObject,
+			{} /*mTypeByName not accessed by code under test*/);
 
-		assert.strictEqual(oObject.__metadata, undefined, "V2 inline metadata deleted");
-		assert.strictEqual(oObject.complex, null);
+		assert.deepEqual(oConvertedObject, {complex : null});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("convertNonPrimitive, collection of complex values", function (assert) {
-		var oObject = {
+		var oConvertedObject,
+			oObject = {
 				__metadata : {type : "TypeQName"},
-				complexCollection : [
-					{__metadata : {type : "TypeQName"}, property : "42"},
-					{__metadata : {type : "TypeQName"}, property : "77"}
-				]
+				complexCollection : {
+					results : [
+						{__metadata : {type : "TypeQName"}, property : "42"},
+						{__metadata : {type : "TypeQName"}, property : "77"}
+					]
+				}
 			},
 			oRequestor = {},
 			oRequestorMock = this.mock(oRequestor),
@@ -174,11 +178,14 @@ sap.ui.require([
 			.returns(77);
 
 		// code under test
-		oRequestor.convertNonPrimitive(oObject, mTypeByName);
+		oConvertedObject = oRequestor.convertNonPrimitive(oObject, mTypeByName);
 
-		assert.strictEqual(oObject.__metadata, undefined, "V2 inline metadata deleted");
-		assert.strictEqual(oObject.complexCollection[0].property, 42);
-		assert.strictEqual(oObject.complexCollection[1].property, 77);
+		assert.deepEqual(oConvertedObject, {
+			"complexCollection" : [
+				{"property" : 42},
+				{"property" : 77}
+			]
+		});
 	});
 
 	//*********************************************************************************************
@@ -201,7 +208,8 @@ sap.ui.require([
 		fnConvertNonPrimitive = oRequestor.convertNonPrimitive.bind(oRequestor);
 
 		this.mock(oRequestor).expects("convertNonPrimitive")
-			.withExactArgs(oObject.complex, mTypeByName);
+			.withExactArgs(oObject.complex, mTypeByName)
+			.returns(oObject.complex);
 		this.mock(oRequestor).expects("convertPrimitive")
 			.withExactArgs(oObject.property, "Edm.Double", "TypeQName", "property")
 			.returns(42);
