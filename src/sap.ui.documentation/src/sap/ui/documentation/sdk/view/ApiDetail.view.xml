@@ -122,7 +122,7 @@
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiSmallMarginBottom">
+											class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 										</m:MessageStrip>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
