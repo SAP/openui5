@@ -317,6 +317,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 				actionBar: oActionsBar,
 				hasActions: aActions.length > 0,
 				content: aContent,
+				hasContent: aContent.length > 0,
 				heading: oHeading,
 				snappedContent: aSnapContent,
 				expandedContent: aExpandContent,
