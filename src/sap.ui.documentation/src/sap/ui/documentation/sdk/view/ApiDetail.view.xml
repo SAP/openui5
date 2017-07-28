@@ -117,7 +117,8 @@
 									<layout:VerticalLayout width="100%">
 										<m:MessageStrip
 											visible="{=${topics>/deprecated} !== undefined}"
-											text="Deprecated since version {topics>/deprecated/since}. {topics>/deprecated/text}"
+											text="{parts: [{path: 'topics>/deprecated/since'}, {path: 'topics>/deprecated/text'}],
+												formatter: '.formatDeprecated'}"
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
@@ -359,7 +360,8 @@
 
 										<m:MessageStrip
 											visible="{=${events>deprecated} !== undefined}"
-											text="Deprecated since version {events>deprecated/since}. {events>deprecated/text}"
+											text="{parts: [{path: 'events>deprecated/since'}, {path: 'events>deprecated/text'}],
+												formatter: '.formatEventDeprecated'}"
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
@@ -434,7 +436,8 @@
 
 										<m:MessageStrip
 											visible="{=${methods>deprecated} !== undefined}"
-											text="Deprecated since version {methods>deprecated/since}. {methods>deprecated/text}"
+											text="{parts: [{path: 'methods>deprecated/since'}, {path: 'methods>deprecated/text'}],
+												formatter: '.formatMethodDeprecated'}"
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
