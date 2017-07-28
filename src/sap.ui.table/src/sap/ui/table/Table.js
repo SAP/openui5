@@ -866,7 +866,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * scrollable column areas is returned.
 	 *
 	 * @param {boolean} bHeader If set to <code>true</code>, only the heights of the rows in the column header will be returned
-	 * @return {int[]} The row heights
+	 * @returns {int[]} The row heights
 	 * @private
 	 */
 	Table.prototype._collectRowHeights = function(bHeader) {
@@ -953,7 +953,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Determines the space available for the rows.
 	 *
-	 * @return {int} The available space in pixels.
+	 * @returns {int} The available space in pixels.
 	 * @private
 	 */
 	Table.prototype._determineAvailableSpace = function() {
@@ -1520,7 +1520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Sets the selection mode. The current selection is lost.
 	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @public
-	 * @return a reference on the table for chaining
+	 * @returns a reference on the table for chaining
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
 		this.clearSelection();
@@ -1674,7 +1674,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Converts old binding configuration APIs to the new API.
 	 *
 	 * @param {...*} [args] Binding configuration arguments.
-	 * @return {Object|null} The binding info object or null.
+	 * @returns {Object|null} The binding info object or null.
 	 * @static
 	 * @private
 	 */
@@ -1734,7 +1734,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Initialises a new selection model for the Table instance.
 	 * @param {sap.ui.model.SelectionModel.MULTI_SELECTION|sap.ui.model.SelectionModel.SINGLE_SELECTION} sSelectionMode the selection mode of the
 	 *     selection model
-	 * @return {sap.ui.table.Table} the table instance for chaining
+	 * @returns {sap.ui.table.Table} the table instance for chaining
 	 * @private
 	 */
 	Table.prototype._initSelectionModel = function (sSelectionMode) {
@@ -2857,7 +2857,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * should be openend.
 	 * @param {function} fnFire function to fire the event
 	 * @param {jQuery.Event} oEvent event object
-	 * @return {boolean} cancelled or not
+	 * @returns {boolean} cancelled or not
 	 * @private
 	 */
 	Table.prototype._findAndfireCellEvent = function(fnFire, oEvent, fnContextMenu) {
@@ -2959,7 +2959,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @see sap.ui.table.Table#sort
 	 * @see sap.ui.table.Column#sort
 	 *
-	 * @return Array of sorted columns
+	 * @returns Array of sorted columns
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3167,7 +3167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * be available at the client yet. Calling getContextByIndex might not return a result but trigger a roundtrip
 	 * to request this single entity.
 	 *
-	 * @return sap.ui.table.Table
+	 * @returns sap.ui.table.Table
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3191,7 +3191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
 	 *
-	 * @return int[]
+	 * @returns int[]
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3491,7 +3491,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Checks whether the event is a touch event.
 	 *
 	 * @param {jQuery.Event} oEvent The event to check
-	 * @return {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
+	 * @returns {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
 	 * @private
 	 */
 	Table.prototype._isTouchEvent = function(oEvent) {
@@ -3546,7 +3546,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param {int} iNumberOfRows The number of rows to be updated.
 	 * @param {sap.ui.table.TableUtils.RowsUpdateReason|undefined} [sReason=undefined] The reason for updating the rows.
 	 * @param {boolean} [bUpdateUI=true] Whether the contexts and the cells should be updated.
-	 * @return {boolean} Returns <code>true</code>, if the UI was updated.
+	 * @returns {boolean} Returns <code>true</code>, if the UI was updated.
 	 * @private
 	 */
 	Table.prototype._updateRows = function(iNumberOfRows, sReason, bUpdateUI) {
@@ -3636,7 +3636,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @param {sap.ui.table.TableUtils.RowsUpdateReason|undefined} [sReason=undefined] The reason why the rows need to be rendered.
 	 * @param {boolean} [bFireRowsUpdated=false] Whether the <code>_rowsUpdated</code> event should be fired after the HTML has been written.
-	 * @return {boolean} Returns <code>true</code>, if rendering and writing to the DOM was performed.
+	 * @returns {boolean} Returns <code>true</code>, if rendering and writing to the DOM was performed.
 	 * @private
 	 */
 	Table.prototype._renderRows = function(sReason, bFireRowsUpdated) {
@@ -3823,7 +3823,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Please use only the standard methods 'then' and 'catch'!</b></p>
 	 *
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
-	 * @return {Promise} Promise object
+	 * @returns {Promise} Promise object
 	 *
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
 	 * @public
@@ -4139,7 +4139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *     <code>bVisibleColumnIndex</code>
 	 * @param {boolean} bVisibleColumnIndex If set to <code>true</code>, the given column index is interpreted as index in the list of visible
 	 *     columns, otherwise as index in the <code>columns</code> aggregation
-	 * @return {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
+	 * @returns {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
 	 * @protected
 	 */
 	Table.prototype.getCellControl = function(iRowIndex, iColumnIndex, bVisibleColumnIndex) {

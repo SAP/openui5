@@ -182,7 +182,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
 	 * @param {sap.ui.table.TableExtension} ExtensionClass The class of the extension to instantiate.
 	 * @param {Object} mSettings Additional settings used during initialization of the extension.
-	 * @return {sap.ui.table.TableExtension} Returns the created extension instance.
+	 * @returns {sap.ui.table.TableExtension} Returns the created extension instance.
 	 * @public
 	 * @static
 	 */
