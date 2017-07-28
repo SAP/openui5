@@ -59,6 +59,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 */
 			pickerPopup : {type : "boolean", group : "Appearance", defaultValue : false}
 
+		},
+		aggregations : {
+			/**
+			 * Hidden, for internal use only.
+			 */
+			calendar : {type : "sap.ui.unified.Calendar", multiple : false, visibility : "hidden"}
+
 		}
 	}});
 
@@ -80,14 +87,175 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	CalendarDateInterval.prototype.onBeforeRendering = function(){
+		if (this.getPickerPopup()) {
+			var oHeader = this.getAggregation("header");
+			oHeader.setVisibleButton2(false);
+			this._setHeaderText(this._getFocusedDate(true));
+		}
+	};
+
+	/**
+	 * Lazily initializes the <code>Calendar</code> aggregation.
+	 * @private
+	 * @returns {sap.ui.unified.Calendar} The newly created control
+	 */
+	CalendarDateInterval.prototype._getCalendar = function (){
+		var oCalendar = this.getAggregation("calendar");
+
+		if (!oCalendar) {
+			oCalendar = new sap.ui.unified.Calendar(this.getId() + "--Cal", {});
+			oCalendar.setPopupMode(true);
+			oCalendar.attachEvent("select", _handleCalendarDateSelect, this);
+			this.setAggregation("calendar", oCalendar);
+		}
+		return oCalendar;
+	};
+
+	CalendarDateInterval.prototype._handleButton1 = function(oEvent){
+		if (this.getPickerPopup()) {
+			this._showCalendarPicker();
+		} else {
+			if (this._iMode != 1) {
+				this._showMonthPicker();
+			} else {
+				this._hideMonthPicker();
+			}
+		}
+	};
+
+	CalendarDateInterval.prototype._setHeaderText = function(oDate){
+
+		// sets the text for the month and the year button to the header
+
+		var oHeader = this.getAggregation("header");
+		var oLocaleData = this._getLocaleData();
+		var aMonthNames = [];
+		var aMonthNamesWide = [];
+		var aMonthNamesSecondary = [];
+		var sAriaLabel;
+		var bShort = false;
+		var sMonth;
+		var sYear;
+		var sText;
+		var sPattern;
+		var sPrimaryCalendarType = this.getPrimaryCalendarType();
+		var sSecondaryCalendarType = this._getSecondaryCalendarType();
+
+
+		if (this._bLongMonth || !this._bNamesLengthChecked) {
+			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sPrimaryCalendarType);
+		} else {
+			bShort = true;
+			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated", sPrimaryCalendarType);
+			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sPrimaryCalendarType);
+		}
+
+		if (sSecondaryCalendarType) {
+			// always use short month names because in most cases 2 months are displayed
+			aMonthNamesSecondary = oLocaleData.getMonthsStandAlone("abbreviated", sSecondaryCalendarType);
+
+			var oSecondaryMonths = this._getDisplayedSecondaryMonths(sPrimaryCalendarType, sSecondaryCalendarType);
+			if (oSecondaryMonths.start == oSecondaryMonths.end) {
+				sMonth = aMonthNamesSecondary[oSecondaryMonths.start];
+			} else {
+				sPattern = oLocaleData.getIntervalPattern();
+				sMonth = sPattern.replace(/\{0\}/, aMonthNamesSecondary[oSecondaryMonths.start]).replace(/\{1\}/, aMonthNamesSecondary[oSecondaryMonths.end]);
+			}
+		}
+		if (!this.getPickerPopup()) {
+			oHeader.setAdditionalTextButton1(sMonth);
+		}
+
+		var aMonths = this._getDisplayedMonths(oDate);
+		if (aMonths.length > 1 && !this._bShowOneMonth) {
+			if (!sPattern) {
+				sPattern = oLocaleData.getIntervalPattern();
+			}
+			sMonth = sPattern.replace(/\{0\}/, aMonthNames[aMonths[0]]).replace(/\{1\}/, aMonthNames[aMonths[aMonths.length - 1]]);
+			if (bShort) {
+				sAriaLabel = sPattern.replace(/\{0\}/, aMonthNamesWide[aMonths[0]]).replace(/\{1\}/, aMonthNamesWide[aMonths[aMonths.length - 1]]);
+			}
+		}else {
+			sMonth = aMonthNames[aMonths[0]];
+			if (bShort) {
+				sAriaLabel = aMonthNamesWide[aMonths[0]];
+			}
+		}
+
+		var oFirstDate = new CalendarDate(oDate, sPrimaryCalendarType);
+		oFirstDate.setDate(1); // always use the first of the month to have stable year in Japanese calendar
+		sYear = this._oYearFormat.format(oFirstDate.toUTCJSDate(), true);
+
+		if (!this.getPickerPopup()) {
+			oHeader.setTextButton1(sMonth);
+			if (bShort) {
+				oHeader.setAriaLabelButton1(sAriaLabel);
+			}
+			oHeader.setTextButton2(sYear);
+
+			if (sSecondaryCalendarType) {
+				oFirstDate = new CalendarDate(oFirstDate, sSecondaryCalendarType);
+				oHeader.setAdditionalTextButton2(this._oYearFormatSecondary.format(oFirstDate.toUTCJSDate(), true));
+			} else {
+				oHeader.setAdditionalTextButton2();
+			}
+		} else {
+			if (oLocaleData.oLocale.sLanguage.toLowerCase() === "ja" || oLocaleData.oLocale.sLanguage.toLowerCase() === "zh") {
+				sText = sYear + " " + sMonth;
+				sAriaLabel = sYear + sAriaLabel;
+			} else {
+				sText = sMonth + " " + sYear;
+				sAriaLabel = sAriaLabel + sYear;
+			}
+			oHeader.setTextButton1(sText, true);
+			if (bShort) {
+				oHeader.setAriaLabelButton1(sAriaLabel);
+			}
+		}
+	};
+
+	CalendarDateInterval.prototype._showCalendarPicker = function() {
+		var oDate = this._getFocusedDate(true).toLocalJSDate();
+		var oCalendar = this._getCalendar();
+		var oSelectedRange = new sap.ui.unified.DateRange();
+		var oEndDate = this._getFocusedDate(true).toLocalJSDate();
+
+		oEndDate.setDate(oEndDate.getDate() + this._getDays() - 1);
+		oSelectedRange.setStartDate(oDate);
+		oSelectedRange.setEndDate(oEndDate);
+
+		oCalendar.displayDate(oDate, false);
+		oCalendar.removeAllSelectedDates();
+		oCalendar.addSelectedDate(oSelectedRange);
+
+		this._openPickerPopup(oCalendar);
+		this.$("contentOver").css("display", "");
+	};
+
+	function _handleCalendarDateSelect(oEvent) {
+		var oCalendar = this._getCalendar();
+		this._focusDateExtend.call(this, oCalendar._getFocusedDate(), true);
+		this.fireStartDateChange();
+
+		_closeCalendarPicker.call(this);
+	}
+
+	function _closeCalendarPicker() {
+		if (this._oPopup && this._oPopup.isOpen()) {
+			this._oPopup.close();
+		}
+		this.$("contentOver").css("display", "none");
+	}
+
 	/**
 	* If more than this number of days are displayed, start and end month are displayed on the button.
 	* @returns {int} The number of days to determine how the start and end of month are displayed
 	* @protected
 	*/
-   CalendarDateInterval.prototype._getDaysLarge = function() {
-	   return 10;
-   };
+	CalendarDateInterval.prototype._getDaysLarge = function() {
+		return 10;
+	};
 
 	CalendarDateInterval.prototype._createMonth = function(sId){
 
@@ -260,7 +428,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 		}
 
-
 		return this._oFocusedDate;
 
 	};
@@ -322,6 +489,89 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		Calendar.prototype.focusDate.apply(this, arguments);
 
 		return this;
+
+	};
+
+	CalendarDateInterval.prototype.onsaptabnext = function(oEvent){
+
+		// if tab was pressed on a day it should jump to the month and then to the year button
+		var oHeader = this.getAggregation("header");
+
+		if (jQuery.sap.containsOrEquals(this.getDomRef("content"), oEvent.target)) {
+			jQuery.sap.focus(oHeader.getDomRef("B1"));
+
+			if (!this._bPoupupMode) {
+				// remove Tabindex from day, month, year - to break cycle
+				var aMonths = this.getAggregation("month");
+				var oMonthPicker = this.getAggregation("monthPicker");
+				var oYearPicker = this.getAggregation("yearPicker");
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+				if (oMonthPicker.getDomRef()) {
+					jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+				if (oYearPicker.getDomRef()) {
+					jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+			}
+
+			oEvent.preventDefault();
+		} else if (!this.getPickerPopup() && oEvent.target.id == oHeader.getId() + "-B1") {
+			jQuery.sap.focus(oHeader.getDomRef("B2"));
+
+			oEvent.preventDefault();
+		}
+
+	};
+
+	Calendar.prototype.onfocusin = function(oEvent){
+
+		if (oEvent.target.id == this.getId() + "-end") {
+			// focus via tab+shift (otherwise not possible to go to this element)
+			var oHeader = this.getAggregation("header");
+			var aMonths = this.getAggregation("month");
+			var oMonthPicker = this.getAggregation("monthPicker");
+			var oYearPicker = this.getAggregation("yearPicker");
+
+			if (this.getPickerPopup()){
+				jQuery.sap.focus(oHeader.getDomRef("B1"));
+			} else {
+				jQuery.sap.focus(oHeader.getDomRef("B2"));
+			}
+
+			if (!this._bPoupupMode) {
+				// remove Tabindex from day, month, year - to break cycle
+				for (var i = 0; i < aMonths.length; i++) {
+					var oMonth = aMonths[i];
+					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+				if (oMonthPicker.getDomRef()) {
+					jQuery(oMonthPicker._oItemNavigation.getItemDomRefs()[oMonthPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+				if (oYearPicker.getDomRef()) {
+					jQuery(oYearPicker._oItemNavigation.getItemDomRefs()[oYearPicker._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
+				}
+			}
+		}
+
+		// remove tabindex of dummy element if focus is inside calendar
+		this.$("end").attr("tabindex", "-1");
+
+	};
+
+	CalendarDateInterval.prototype.onsapescape = function(oEvent){
+
+		if (this.getPickerPopup()) {
+			_closeCalendarPicker.call(this);
+		} else {
+			if (this._iMode == 0) {
+				this.fireCancel();
+			}
+
+			this._closedPickers();
+		}
 
 	};
 
@@ -432,7 +682,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var iMonth;
 		var iDate;
 
-
 		if (this._iMode == 1 && !bCheckMonth) {
 			// in line month picker don't disable buttons
 			var oMonthPicker = this.getAggregation("monthPicker");
@@ -493,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-  /**
+	/**
 	* Shifts <code>startDate</code> and focusedDate according to given amount of time.
 	*
 	* @param {sap.ui.unified.calendar.CalendarDate} oStartDate start date
@@ -649,7 +898,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		var oHeader = this.getAggregation("header");
 		var eDock = sap.ui.core.Popup.Dock;
-		this._oPopup.open(0, eDock.CenterTop, eDock.CenterBottom, oHeader, null, "flipfit", true);
+		this._oPopup.open(0, eDock.CenterTop, eDock.CenterTop, oHeader, null, "flipfit", true);
 
 	};
 
@@ -725,7 +974,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _handlePopupClosed(oEvent) {
 
-		this._closedPickers();
+		_closeCalendarPicker.call(this);
 
 	}
 
