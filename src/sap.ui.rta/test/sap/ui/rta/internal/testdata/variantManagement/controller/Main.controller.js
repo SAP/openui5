@@ -22,7 +22,7 @@ sap.ui.define([
 
 			var sAppComponentName = flUtils.getComponentName(oAppComponent);
 			var sAppVersion = flUtils.getAppVersionFromManifest(oManifest);
-			FakeLrepConnector.enableFakeConnector("/testsuite/test-resources/sap/ui/fl/qunit/testResources/FakeVariantLrepResponse.json", sAppComponentName, sAppVersion);
+			FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/FakeVariantLrepResponse.json", sAppComponentName, sAppVersion);
 
 			var sURL, oModel, oView;
 
