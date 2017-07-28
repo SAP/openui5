@@ -205,6 +205,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the namespace.
+	 *
+	 * @param {string} sNamespace Namespace of the change document
+	 *
+	 * @public
+	 */
+	Change.prototype.setNamespace = function (sNamespace) {
+		this._oDefinition.namespace = sNamespace;
+	};
+
+	/**
 	 * Returns the id of the change
 	 * @returns {string} Id of the change document
 	 *
@@ -456,6 +467,17 @@ sap.ui.define([
 	 */
 	Change.prototype.getComponent = function () {
 		return this._oDefinition.reference;
+	};
+
+	/**
+	 * Sets the component.
+	 *
+	 * @param {string} sComponent ID of the app or app variant
+	 *
+	 * @public
+	 */
+	Change.prototype.setComponent = function (sComponent) {
+		this._oDefinition.reference = sComponent;
 	};
 
 	/**

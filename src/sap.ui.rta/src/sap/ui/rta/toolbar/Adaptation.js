@@ -48,7 +48,8 @@ function(
 				"restore": {},
 				"transport": {},
 				"modeChange": {},
-				"manageApps": {}
+				"manageApps": {},
+				"saveAs": {}
 			},
 			properties: {
 				/** Determines whether publish button is visible */
@@ -63,8 +64,8 @@ function(
 					defaultValue: "adaptation"
 				},
 
-				/** Determines whether Message information icon button is visible */
-				"manageAppsVisible": {
+				/** Determines whether Message information icon button and 'Save As' button are visible */
+				"appVariantFeaturesSupported": {
 					"type": "boolean",
 					"defaultValue": false
 				}
@@ -139,7 +140,7 @@ function(
 			new Button({
 				type:"Transparent",
 				icon: "sap-icon://message-information",
-				visible: this.getManageAppsVisible(),
+				visible: this.getAppVariantFeaturesSupported(),
 				tooltip: this.getTextResources().getText("BTN_MANAGE_APPS"),
 				press: this.eventHandler.bind(this, 'ManageApps')
 			}).data('name', 'manageApps'),
@@ -159,6 +160,13 @@ function(
 				tooltip: this.getTextResources().getText("BTN_PUBLISH"),
 				press: this.eventHandler.bind(this, 'Transport') // Fixme: rename event
 			}).data('name', 'publish'),
+			new Button({
+				type: "Transparent",
+				text: this.getTextResources().getText("BTN_SAVE_AS"),
+				visible: this.getAppVariantFeaturesSupported(),
+				tooltip: this.getTextResources().getText("TOOLTIP_SAVE_AS"),
+				press: this.eventHandler.bind(this, 'SaveAs')
+			}).data('name', 'saveAs'),
 			new Button({
 				type:"Transparent",
 				text: this.getTextResources().getText("BTN_EXIT"),

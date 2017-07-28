@@ -6,7 +6,7 @@ sap.ui.require(["sap/ui/rta/appVariant/Utils"], function(ManageAppsUtils) {
 	var sandbox = sinon.sandbox.create();
 	QUnit.start();
 
-	QUnit.module("Given an AppVariantUtils is instantiated", {
+	QUnit.module("Given an ManageAppsUtils is instantiated", {
 		beforeEach: function () {},
 		afterEach: function () {
 			sandbox.restore();

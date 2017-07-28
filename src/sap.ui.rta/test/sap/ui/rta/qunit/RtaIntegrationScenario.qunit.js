@@ -35,6 +35,8 @@ sap.ui.require([
 	var sandbox = sinon.sandbox.create();
 	var oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
 
+	FakeLrepConnectorLocalStorage.enableFakeConnector();
+
 	QUnit.module("Given RTA is started...", {
 		beforeEach : function(assert) {
 			FakeLrepLocalStorage.deleteChanges();

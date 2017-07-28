@@ -48,6 +48,7 @@ function(
 
 	var sandbox;
 	var oView, oApp;
+	FakeLrepConnectorLocalStorage.enableFakeConnector();
 	var oMockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: 	{
@@ -59,7 +60,6 @@ function(
 			}
 		},
 		createContent : function() {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			oApp = new sap.m.App(this.createId("mockapp"));
 			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
 			oView = sap.ui.xmlview({

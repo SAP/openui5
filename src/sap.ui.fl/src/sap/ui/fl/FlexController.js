@@ -266,6 +266,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Saves all changes of a persistence instance for a new app or app variant.
+	 * @param {string} sReferenceForChange - the ID of the new app variant
+	 * @returns {Promise} Returns a resolved promise with an array of responses or rejecting with the first error
+	 * @public
+	 */
+	FlexController.prototype.saveAs = function(sReferenceForChange) {
+		return this._oChangePersistence.saveAsDirtyChanges(sReferenceForChange);
+	};
+
+	/**
 	 * Loads and applies all changes for the specified xml tree view
 	 *
 	 * @param {object} oView - the view to process as XML tree

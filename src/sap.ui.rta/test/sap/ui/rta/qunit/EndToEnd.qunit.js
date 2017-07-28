@@ -24,7 +24,7 @@ sap.ui.require([
 
 	QUnit.start();
 
-
+	FakeLrepConnectorLocalStorage.enableFakeConnector();
 	QUnit.module("Given RTA is started...", {
 		beforeEach : function(assert) {
 			this._oCompCont = RtaQunitUtils.renderTestAppAt("test-view");
