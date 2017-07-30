@@ -74,7 +74,7 @@ sap.ui.define([
 		// overwriting _getPropertiesToPropagate to filter out specifics from oNewParent
 		oForwardedControl._getPropertiesToPropagate = function () {
 
-			var oProps = sap.ui.base.ManagedObject.prototype._getPropertiesToPropagate.apply(this, arguments);
+			var oProps = ManagedObject.prototype._getPropertiesToPropagate.apply(this, arguments);
 
 			// Since oNewParent is intrinsic to the XMLComposite we
 			// do not wish to propagate anything which is exclusive
