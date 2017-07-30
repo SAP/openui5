@@ -904,8 +904,8 @@ sap.ui.define([
 		 * @param {sap.ui.table.TableAccExtension.ELEMENTTYPES} sType The type of the table area to get the aria attributes for.
 		 * @param {Object} mParams Accessibility parameters.
 		 * @returns {Object} The aria attributes.
-		 * @protected
 		 * @see ExtensionHelper.getAriaAttributesFor
+		 * @protected
 		 */
 		getAriaAttributesFor: function(sType, mParams) {
 			return ExtensionHelper.getAriaAttributesFor(this, sType, mParams);
@@ -960,8 +960,8 @@ sap.ui.define([
 	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
 	 *     ROWHEADER_COL: string, TH: string, ROWHEADER_TD: string, TR: string, TREEICON: string, ROWACTIONHEADER: string, NODATA: string, OVERLAY:
 	 *     string}|*}
-	 * @public
 	 * @see TableAccRenderExtension.writeAriaAttributesFor
+	 * @public
 	 */
 	TableAccExtension.ELEMENTTYPES = {
 		DATACELL: "DATACELL",					// Standard data cell (standard, group or sum)

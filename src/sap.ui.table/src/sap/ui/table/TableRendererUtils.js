@@ -165,11 +165,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control'],
 		 * @param {sap.ui.core.RenderManager} rm Instance of the rendermanager
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {object} oConfig the configuration of the start tag
-		 *
+		 * @returns TableRendererUtils to allow method chaining
 		 * @see TableRendererUtils#startElement
 		 * @see TableRendererUtils#endElement
-		 *
-		 * @returns TableRendererUtils to allow method chaining
 		 * @private
 		 */
 		renderElement : function(rm, oTable, oConfig) {

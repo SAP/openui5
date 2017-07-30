@@ -207,8 +207,8 @@ sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/MenuItem'],
 
 	/**
 	 * Informs the parent RowAction control about changes of this item.
-	 * @see sap.ui.table.RowAction#_updateIcons
 	 * @param {boolean} bForce Whether the list of visible items needs to be determined or cache can be used.
+	 * @see sap.ui.table.RowAction#_updateIcons
 	 * @private
 	 */
 	Item.prototype._updateRowAction = function(bForce) {

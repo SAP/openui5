@@ -719,7 +719,6 @@ sap.ui.define([
 	 * Hook which is called by the keyboard extension when the table should enter the action mode.
 	 *
 	 * @returns {boolean} Returns <code>true</code>, if the {@link sap.ui.table.TableKeyboardExtension} should enter the action mode.
-	 *
 	 * @see TableKeyboardExtension#setActionMode
 	 */
 	TableKeyboardDelegate.prototype.enterActionMode = function() {

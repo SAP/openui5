@@ -239,8 +239,8 @@ function(jQuery, Control, TableUtils, library, Icon, Menu, Popup, RowActionItem)
 	/**
 	 * Enables or disables the fixed column layout.
 	 * If enabled, the control tries to keep the position of the icons stable.
-	 * @see #_updateIcons
 	 * @param {boolean} bFixed Whether fixed column layout should be applied.
+	 * @see #_updateIcons
 	 * @private
 	 */
 	RowAction.prototype._setFixedLayout = function(bFixed) {
