@@ -954,6 +954,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap
 			createSimulatedEvent("touchmove", ["mousemove", "dragstart"], fnMouseToTouchHandler);
 		}
 
+		// polyfill for iOS context menu event (mapped to taphold)
+		if (Device.os.ios) {
+			//map the taphold event to contextmenu event
+			var fnSimulatedFunction = function(oEvent, oConfig) {
+				var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
+				oNewEvent.type = oConfig.sapEventName;
+
+				// The original handler is called only when there's no text selected
+				if (!window.getSelection || !window.getSelection() || window.getSelection().toString() === "") {
+					oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
+				}
+			};
+			createSimulatedEvent("contextmenu", ["taphold"], fnSimulatedFunction);
+		}
+
 		// Simulate mouse events on touch devices
 		if (Device.support.touch && bEmulationNeeded) {
 			var bFingerIsMoved = false,
