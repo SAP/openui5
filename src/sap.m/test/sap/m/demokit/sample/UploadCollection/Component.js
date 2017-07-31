@@ -15,6 +15,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"Page.view.xml",
 						"Page.controller.js",
+						"AppSettings.fragment.xml",
 						"uploadCollection.json",
 						"LinkedDocuments/Business Plan Agenda.doc",
 						"LinkedDocuments/Business Plan Topics.xls",

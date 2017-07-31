@@ -1,0 +1,59 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<Dialog
+		title="Settings"
+		class="sapUiPopupWithPadding"
+		contentWidth="350px"
+		id="uploadCollectionSettings">
+		<content>
+			<VBox class="sapUiTinyMarginTop">
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Upload button visible:" design="Standard" labelFor="uploadButtonVisibleSwitch" />
+					<Switch id="uploadButtonVisibleSwitch" state="{settings>/uploadButtonVisible}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Upload enabled:" design="Standard" labelFor="uploadEnabledSwitch" />
+					<Switch id="uploadEnabledSwitch" state="{settings>/uploadEnabled}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Edit buttons visible:" design="Standard" labelFor="editButtonsVisibleSwitch" />
+					<Switch id="editButtonsVisibleSwitch" state="{settings>/visibleEdit}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Edit buttons enabled:" design="Standard" labelFor="editButtonsEnabledSwitch" />
+					<Switch id="editButtonsEnabledSwitch" state="{settings>/enableEdit}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Delete buttons visible:" design="Standard" labelFor="deleteButtonsVisibleSwitch" />
+					<Switch id="deleteButtonsVisibleSwitch" state="{settings>/visibleDelete}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Delete buttons enabled:" design="Standard" labelFor="deleteButtonsEnabledSwitch" />
+					<Switch id="deleteButtonsEnabledSwitch" state="{settings>/enableDelete}" />
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="List Select Mode:" design="Standard" labelFor="listModeSelect" />
+					<Select id="listModeSelectSelect"
+						items="{settings>/listModeItems}"
+						selectedKey="{settings>/mode}"
+						change="onModeChange">
+						<core:Item key="{settings>key}" text="{settings>text}" />
+					</Select>
+				</HBox>
+				<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+					<Label text="Show list separators:" design="Standard" labelFor="listSeparatorsSelect" />
+					<Select id="listSeparatorsSelect"
+						items="{settings>/listSeparatorItems}"
+						selectedKey="{settings>/showSeparators}">
+						<core:Item key="{settings>key}" text="{settings>text}" />
+					</Select>
+				</HBox>
+			</VBox>
+		</content>
+		<endButton>
+			<Button text="Close" press="onDialogCloseButton" />
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>
