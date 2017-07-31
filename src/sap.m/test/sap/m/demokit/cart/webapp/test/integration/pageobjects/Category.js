@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/test/matchers/AggregationFilled',
 	'sap/ui/test/matchers/BindingPath',
+    'sap/ui/test/matchers/Properties',
 	'sap/ui/test/actions/Press'
-], function (Opa5, PropertyStrictEquals, AggregationFilled, BindingPath, Press) {
+], function (Opa5, PropertyStrictEquals, AggregationFilled, BindingPath, Properties,Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -38,6 +39,16 @@ sap.ui.define([
 						errorMessage: "The filter button was not found and could not be pressed"
 					});
 				},
+
+                iPressOnTheProductBlasterExtreme: function () {
+                    this.waitFor({
+                        controlType: "sap.m.ObjectListItem",
+                        matchers: new Properties({title : "Blaster Extreme"}),
+                        actions: new Press(),
+                        errorMessage: "The product Blaster Extreme was not found and could not be pressed"
+                    });
+                },
+
 				iSelectTheAvailabilityFilteringOption: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -46,6 +57,7 @@ sap.ui.define([
 						errorMessage: "The Availability filtering option was not found and could not be pressed"
 					});
 				},
+
 				iSelectTheAvailableFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -54,6 +66,7 @@ sap.ui.define([
 						errorMessage: "The available check box was not found and could not be selected"
 					});
 				},
+
 				iSelectTheDiscontinuedFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -62,6 +75,7 @@ sap.ui.define([
 						errorMessage: "The discontinued check box was not found and could not be selected"
 					});
 				},
+
 				iSelectTheOutOfStockFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -70,6 +84,7 @@ sap.ui.define([
 						errorMessage: "The out of stock check box was not found and could not be selected"
 					});
 				},
+
 				iDeselectTheAvailableFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -78,6 +93,7 @@ sap.ui.define([
 						errorMessage: "The available check box was not found and could not be deselected"
 					});
 				},
+
 				iDeselectTheDiscontinuedFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -86,6 +102,7 @@ sap.ui.define([
 						errorMessage: "The discontinued check box was not found and could not be deselected"
 					});
 				},
+
 				iDeselectThePriceFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -94,6 +111,7 @@ sap.ui.define([
 						errorMessage: "The 'more than 500 EUR' check box was not found and could not be deselected"
 					});
 				},
+
 				iPressOkButton: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
@@ -102,6 +120,17 @@ sap.ui.define([
 						errorMessage: "The ok button in the dialog was not found and could not be pressed"
 					});
 				},
+
+                iPressTheBackButton: function () {
+                    this.waitFor({
+                        controlType: "sap.m.Button",
+                        matchers: new Properties({type: "Back"}),
+                        actions: new Press(),
+                        errorMessage: "The back button was not found and could not be pressed"
+                    });
+                },
+
+                //Back Button in filter dialog
 				iPressTheBackButtonInDialog: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
@@ -110,6 +139,7 @@ sap.ui.define([
 						errorMessage: "The back button in the dialog was not found and could not be pressed"
 					});
 				},
+
 				iSelectThePriceFilteringOption: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -118,6 +148,7 @@ sap.ui.define([
 						errorMessage: "The price filtering option was not found and could not be pressed"
 					});
 				},
+
 				iSelectTheMoreThanFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -126,6 +157,7 @@ sap.ui.define([
 						errorMessage: "The more than 500 EUR check box was not found and could not be selected"
 					});
 				},
+
 				iSelectTheLessThanFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -134,6 +166,7 @@ sap.ui.define([
 						errorMessage: "The less than 500 EUR check box was not found and could not be selected"
 					});
 				},
+
 				iFilterOnAvailability: function () {
 					this.iPressTheFilterButton();
 					this.iSelectTheAvailabilityFilteringOption();
@@ -141,6 +174,7 @@ sap.ui.define([
 					this.iSelectTheDiscontinuedFilter();
 					this.iPressOkButton();
 				},
+
 				iFilterOnAvailabilityAndPrice: function () {
 					this.iPressTheFilterButton();
 					this.iPressTheBackButtonInDialog();
@@ -151,6 +185,7 @@ sap.ui.define([
 					this.iSelectTheLessThanFilter();
 					this.iPressOkButton();
 				},
+
 				iFilterOnPrice: function () {
 					this.iPressTheFilterButton();
 					this.iPressTheBackButtonInDialog();
@@ -158,12 +193,14 @@ sap.ui.define([
 					this.iSelectTheMoreThanFilter();
 					this.iPressOkButton();
 				},
+
 				iRemoveTheAvailabilityFilters: function () {
 					this.iPressTheFilterButton();
 					this.iDeselectTheAvailableFilter();
 					this.iDeselectTheDiscontinuedFilter();
 					this.iPressOkButton();
 				},
+
 				iRemoveThePriceFilter: function () {
 					this.iPressTheFilterButton();
 					this.iDeselectThePriceFilter();
@@ -172,7 +209,8 @@ sap.ui.define([
 			},
 
 			assertions: {
-				iShouldSeeTheProductList: function () {
+
+			    iShouldSeeTheProductList: function () {
 					return this.waitFor({
 						id: "productList",
 						success: function (oList) {
@@ -185,21 +223,35 @@ sap.ui.define([
 					});
 				},
 
-				iShouldBeTakenToTheSecondCategory: function () {
+				iShouldBeTakenToTheFlatScreensCategory: function () {
 					return this.waitFor({
 						controlType: "sap.m.Page",
 						matchers: new PropertyStrictEquals({name: "title", value: "Flat Screens"}),
 						success: function (aPage) {
 							Opa5.assert.ok(
 								aPage,
-								"The category page was found"
+								"The flat screens category page was found"
 							);
 						},
-						errorMessage: "The category page was not found"
+						errorMessage: "The flat screens category page was not found"
 					});
 				},
 
-				theProductListShouldHaveSomeEntries: function () {
+                iShouldBeTakenToTheSpeakerCategory: function () {
+                    return this.waitFor({
+                        controlType: "sap.m.Page",
+                        matchers: new PropertyStrictEquals({name: "title", value: "Speakers"}),
+                        success: function (aPage) {
+                            Opa5.assert.ok(
+                                aPage,
+                                "The speaker category page was found"
+                            );
+                        },
+                        errorMessage: "The speaker category page was not found"
+                    });
+                },
+
+				iShouldSeeSomeEntriesInTheProductList: function () {
 					this.waitFor({
 						id: "productList",
 						matchers: new AggregationFilled({name: "items"}),
@@ -240,6 +292,7 @@ sap.ui.define([
 						errorMessage: "The product list was not filtered"
 					});
 				},
+
 				iShouldSeeAFilterButton: function () {
 					this.waitFor({
 						id: "masterListFilterButton",
@@ -249,6 +302,7 @@ sap.ui.define([
 						errorMessage: "The Master list page has no filter button"
 					});
 				},
+
 				iShouldOnlySeeTheAvailableAndDiscontinuedProducts: function () {
 					this.waitFor({
 						id: "productList",
@@ -258,6 +312,7 @@ sap.ui.define([
 						errorMessage: "The category list shows products other than available or discontinued"
 					});
 				},
+
 				iShouldSeeAllProducts: function () {
 					this.waitFor({
 						id: "productList",
@@ -267,6 +322,7 @@ sap.ui.define([
 						errorMessage: "The category list did not show all products"
 					});
 				},
+
 				iShouldOnlySeeExpensiveProducts: function () {
 					this.waitFor({
 						id: "productList",
@@ -276,6 +332,7 @@ sap.ui.define([
 						errorMessage: "The category list did not show prices more than 500 EUR"
 					});
 				},
+
 				iShouldOnlySeeOutOfStockAndCheapProducts: function () {
 					this.waitFor({
 						id: "productList",
@@ -285,6 +342,7 @@ sap.ui.define([
 						errorMessage: "The category list did not show cheap and out of stock products"
 					});
 				},
+
 				iShouldSeeAnAvailabilityInfoToolbar: function () {
 					this.waitFor({
 						id: "categoryInfoToolbarTitle",
@@ -295,6 +353,7 @@ sap.ui.define([
 						errorMessage: "The info toolbar of the category list was not found"
 					});
 				},
+
 				iShouldSeeAnPriceInfoToolbar: function () {
 					this.waitFor({
 						id: "categoryInfoToolbarTitle",
@@ -305,6 +364,7 @@ sap.ui.define([
 						errorMessage: "The info toolbar of the category list was not found"
 					});
 				},
+
 				iShouldSeeAnAvailabilityAndPriceInfoToolbar: function () {
 					this.waitFor({
 						id: "categoryInfoToolbarTitle",
@@ -315,6 +375,7 @@ sap.ui.define([
 						errorMessage: "The info toolbar of the category list was not found"
 					});
 				},
+
 				iShouldNotSeeAnInfoToolbar: function () {
 					this.waitFor({
 						id: "productList",
@@ -328,18 +389,22 @@ sap.ui.define([
 						errorMessage: "The category list has an info toolbar"
 					});
 				},
+
 				iShouldOnlySeeAvailableAndDiscontinuedProductsWithInfoToolbar: function () {
 					this.iShouldOnlySeeTheAvailableAndDiscontinuedProducts();
 					this.iShouldSeeAnAvailabilityInfoToolbar();
 				},
+
 				iShouldOnlySeeExpensiveProductsAndAnInfoToolbar: function () {
 					this.iShouldOnlySeeExpensiveProducts();
 					this.iShouldSeeAnPriceInfoToolbar();
 				},
+
 				iShouldOnlySeeOutOfStockAndCheapProductsWithInfoToolbar: function () {
 					this.iShouldOnlySeeOutOfStockAndCheapProducts();
 					this.iShouldSeeAnAvailabilityAndPriceInfoToolbar();
 				},
+
 				iShouldSeeAllProductsAndNoInfoToolbar: function () {
 					this.iShouldSeeAllProducts();
 					this.iShouldNotSeeAnInfoToolbar();

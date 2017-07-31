@@ -17,12 +17,12 @@ sap.ui.define([
 		Given.iStartMyApp();
 
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 
 		// Assertions
-		Then.onTheCategory.iShouldBeTakenToTheSecondCategory().
+		Then.onTheCategory.iShouldBeTakenToTheFlatScreensCategory().
 			and.iShouldSeeTheProductList().
-			and.theProductListShouldHaveSomeEntries();
+			and.iShouldSeeSomeEntriesInTheProductList();
 	});
 
 	opaTest("Should add a product to the cart and enable the edit button", function (Given, When, Then) {

@@ -17,18 +17,18 @@ sap.ui.define([
 
 		// Assertions
 		Then.onHome.iShouldSeeTheCategoryList().
-			and.theCategoryListShouldHaveSomeEntries();
+			and.iShouldSeeSomeEntriesInTheCategoryList();
 	});
 
 	//We are still on the second category
 	opaTest("Should see the product list", function (Given, When, Then) {
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 
 		// Assertions
-		Then.onTheCategory.iShouldBeTakenToTheSecondCategory().
+		Then.onTheCategory.iShouldBeTakenToTheFlatScreensCategory().
 			and.iShouldSeeTheProductList().
-			and.theProductListShouldHaveSomeEntries();
+			and.iShouldSeeSomeEntriesInTheProductList();
 	});
 
 	opaTest("Should add a product to the cart and see an avatar button", function (Given, When, Then) {
@@ -45,7 +45,7 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartMyApp();
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
@@ -68,7 +68,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onHome.iShouldSeeTheCategoryList().
-		and.theCategoryListShouldHaveSomeEntries();
+		and.iShouldSeeSomeEntriesInTheCategoryList();
 	});
 
 

@@ -32,7 +32,7 @@ sap.ui.define([
 
 	opaTest("Should press cart button and see the product in the cart", function (Given, When, Then) {
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheWelcomePage.iPressOnTheCartButton();
 		When.onTheCategory.iGoToTheCartPage();
 		// Assertions

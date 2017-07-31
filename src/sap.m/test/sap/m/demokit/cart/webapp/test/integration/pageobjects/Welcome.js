@@ -57,6 +57,15 @@ sap.ui.define([
 					});
 				},
 
+                iPressOnTheProductSmartphoneAlphaTitle: function () {
+                    this.waitFor({
+                        controlType: "sap.m.ObjectIdentifier",
+                        matchers: new Properties({title : "Smartphone Alpha"}),
+                        actions: new Press(),
+                        errorMessage: "The product Smartphone Alpha was not found and could not be pressed"
+                    });
+                },
+
 				iPressTheProductImage: function () {
 					return this.waitFor({
 						controlType: "sap.m.Image",

@@ -11,7 +11,7 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartMyApp();
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 		// Assertions
 		Then.onTheCategory.iShouldSeeAFilterButton();
 	});
