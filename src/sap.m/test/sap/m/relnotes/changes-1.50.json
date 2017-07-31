@@ -1105,6 +1105,54 @@
         "type": "FIX",
         "text": " sap.ui.fl changeHandler needs to store dependencies",
         "references": []
+      },
+      {
+        "id": "79be4989963acc4599034e02829e62af0ea87990",
+        "type": "FEATURE",
+        "text": " sap.m.Label: Property displayOnly added",
+        "references": []
+      },
+      {
+        "id": "a4c3cc4ae71efc87a376456a010d96501e840f90",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Direct navigation to a date",
+        "references": []
+      },
+      {
+        "id": "ea224f143075e16818999fe41a3c42975083289a",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendarLegend: New control with two lists of items implemented.",
+        "references": []
+      },
+      {
+        "id": "0ca7fc698f531bb100689e6219d7c9023a4276f3",
+        "type": "FIX",
+        "text": " sap.m.Button: centered icon and text",
+        "references": []
+      },
+      {
+        "id": "8e3408a60277741fe21c0aac86b0199e77cc7bdf",
+        "type": "FIX",
+        "text": " sap.m.Button: revert centered icon and text fix",
+        "references": []
+      },
+      {
+        "id": "fe84e8bcea77c011184b0350661008d2b6142d6c",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Line height when an unformatted text is used is now fixed",
+        "references": []
+      },
+      {
+        "id": "b4966807f8c0517e2851718ac607085771010d1d",
+        "type": "FIX",
+        "text": " sap.m.NotificationListItem: Header text is visualized correctly",
+        "references": []
+      },
+      {
+        "id": "c3fa417693675cc33cc06e8236508ed63fb640be",
+        "type": "FIX",
+        "text": " sap.m.SlideTile: Unnecessary CSS selector removed",
+        "references": []
       }
     ]
   }

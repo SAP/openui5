@@ -187,6 +187,18 @@
         "type": "FIX",
         "text": "sap.ui.core.Scrollbar: fix scrollbar for Belize hcb and hcw themes.",
         "references": []
+      },
+      {
+        "id": "79be4989963acc4599034e02829e62af0ea87990",
+        "type": "FEATURE",
+        "text": " sap.m.Label: Property displayOnly added",
+        "references": []
+      },
+      {
+        "id": "ea224f143075e16818999fe41a3c42975083289a",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendarLegend: New control with two lists of items implemented.",
+        "references": []
       }
     ]
   }
