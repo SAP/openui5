@@ -40,6 +40,7 @@ describe("sap.m.RatingIndicator", function() {
 	});
 
 	it('Should show Rating List', function() {
+		element(by.id('ratingList')).click();
 		expect(takeScreenshot(element(by.id('ratingList')))).toLookAs('ratingList');
 	});
 
