@@ -256,6 +256,16 @@ sap.ui.require([
 				DateFormat.getDateTimeInstance().format(oDateTime),
 				"adjusted to changed language");
 		});
+
+		//*****************************************************************************************
+		QUnit.test("format option UTC", function (assert) {
+			var oType = createInstance(sTypeName, {UTC : true}),
+				oDateTime = new Date(Date.UTC(2014, 10, 27, 13, 47, 26)),
+				sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
+
+			assert.strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime);
+			assert.deepEqual(oType.parseValue(sFormattedDateTime, "string"), oDateTime);
+		});
 	}
 
 	//*********************************************************************************************
@@ -292,7 +302,8 @@ sap.ui.require([
 	[
 		{oFormatOptions : {},  oExpected : {strictParsing : true}},
 		{oFormatOptions : undefined, oExpected : {strictParsing : true}},
-		{oFormatOptions : {strictParsing : false, UTC : true}, oExpected : {strictParsing : false}},
+		{oFormatOptions : {strictParsing : false, UTC : true},
+			oExpected : {strictParsing : false, UTC : true}},
 		{oFormatOptions : {foo : "bar"}, oExpected : {strictParsing : true, foo : "bar"}},
 		{oFormatOptions : {style : "medium"}, oExpected : {strictParsing : true, style : "medium"}},
 		// with displayFormat = Date
@@ -533,5 +544,15 @@ sap.ui.require([
 		].forEach(function (sValue) {
 			throws(oDateTimeOffset12, sValue);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("V4: format option UTC", function (assert) {
+		var oType = new DateTimeOffset({UTC : true}, {V4 : true}),
+			sDateTime = "2014-11-27T13:47:26Z",
+			sFormattedDateTime = "Nov 27, 2014, 1:47:26 PM";
+
+		assert.strictEqual(oType.formatValue(sDateTime, "string"), sFormattedDateTime);
+		assert.strictEqual(oType.parseValue(sFormattedDateTime, "string"), sDateTime);
 	});
 });
