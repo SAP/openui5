@@ -11,6 +11,7 @@
 				<items>
 					<ViewSettingsItem text="{i18n>availableProductsText}" key="Available" />
 					<ViewSettingsItem text="{i18n>outOfStockProductsText}" key="OutOfStock" />
+					<ViewSettingsItem text="{i18n>discontinuedProductsText}" key="Discontinued" />
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsFilterItem

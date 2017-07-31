@@ -7,9 +7,9 @@ Feature: Products filters
 
 	When on home: I press on the second category
 	Then on the category: I should see a filter button
-	When on the category: I filter on available Products
-	Then on the category: I should only see available products and an info toolbar
-	When on the category: I remove the available products filter
+	When on the category: I filter on availability
+	Then on the category: I should only see available and discontinued products with info toolbar
+	When on the category: I remove the availability filters
 	Then on the category: I should see all products and no info toolbar
 	When on the category: I filter on Price
 	Then on the category: I should only see expensive products and an info toolbar

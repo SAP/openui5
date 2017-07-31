@@ -51,7 +51,15 @@ sap.ui.define([
 						controlType: "sap.m.StandardListItem",
 						matchers: new PropertyStrictEquals({name: "title", value: "Available"}),
 						actions: new Press(),
-						errorMessage: "The availabile check box was not found and could not be selected"
+						errorMessage: "The available check box was not found and could not be selected"
+					});
+				},
+				iSelectTheDiscontinuedFilter: function () {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name: "title", value: "Discontinued"}),
+						actions: new Press(),
+						errorMessage: "The discontinued check box was not found and could not be selected"
 					});
 				},
 				iSelectTheOutOfStockFilter: function () {
@@ -68,6 +76,14 @@ sap.ui.define([
 						matchers: new PropertyStrictEquals({name: "title", value: "Available"}),
 						actions: new Press(),
 						errorMessage: "The available check box was not found and could not be deselected"
+					});
+				},
+				iDeselectTheDiscontinuedFilter: function () {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name: "title", value: "Discontinued"}),
+						actions: new Press(),
+						errorMessage: "The discontinued check box was not found and could not be deselected"
 					});
 				},
 				iDeselectThePriceFilter: function () {
@@ -118,10 +134,11 @@ sap.ui.define([
 						errorMessage: "The less than 500 EUR check box was not found and could not be selected"
 					});
 				},
-				iFilterOnAvailableProducts: function () {
+				iFilterOnAvailability: function () {
 					this.iPressTheFilterButton();
 					this.iSelectTheAvailabilityFilteringOption();
 					this.iSelectTheAvailableFilter();
+					this.iSelectTheDiscontinuedFilter();
 					this.iPressOkButton();
 				},
 				iFilterOnAvailabilityAndPrice: function () {
@@ -141,9 +158,10 @@ sap.ui.define([
 					this.iSelectTheMoreThanFilter();
 					this.iPressOkButton();
 				},
-				iRemoveTheAvailableProductsFilter: function () {
+				iRemoveTheAvailabilityFilters: function () {
 					this.iPressTheFilterButton();
 					this.iDeselectTheAvailableFilter();
+					this.iDeselectTheDiscontinuedFilter();
 					this.iPressOkButton();
 				},
 				iRemoveThePriceFilter: function () {
@@ -231,13 +249,13 @@ sap.ui.define([
 						errorMessage: "The Master list page has no filter button"
 					});
 				},
-				iShouldOnlySeeTheAvailableProducts: function () {
+				iShouldOnlySeeTheAvailableAndDiscontinuedProducts: function () {
 					this.waitFor({
 						id: "productList",
 						success: function (oList) {
-							Opa5.assert.ok(oList.getAggregation("items").length === 2, "The category list shows just the available products");
+							Opa5.assert.ok(oList.getAggregation("items").length === 2, "The category list shows just the available and discontinued products");
 						},
-						errorMessage: "The category list shows unavailable products"
+						errorMessage: "The category list shows products other than available or discontinued"
 					});
 				},
 				iShouldSeeAllProducts: function () {
@@ -310,8 +328,8 @@ sap.ui.define([
 						errorMessage: "The category list has an info toolbar"
 					});
 				},
-				iShouldOnlySeeAvailableProductsAndAnInfoToolbar: function () {
-					this.iShouldOnlySeeTheAvailableProducts();
+				iShouldOnlySeeAvailableAndDiscontinuedProductsWithInfoToolbar: function () {
+					this.iShouldOnlySeeTheAvailableAndDiscontinuedProducts();
 					this.iShouldSeeAnAvailabilityInfoToolbar();
 				},
 				iShouldOnlySeeExpensiveProductsAndAnInfoToolbar: function () {
