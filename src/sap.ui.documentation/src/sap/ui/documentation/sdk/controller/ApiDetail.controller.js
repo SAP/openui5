@@ -314,7 +314,9 @@ sap.ui.define([
 					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
 					oConstructorParamsModel = {parameters: []},
-					oMethodsModel = {methods: []},
+					oBorrowedMethodsModel,
+					oMethodsModelData = {methods: []},
+					oMethodsModel,
 					oEventsModel = {events: []},
 					oUi5Metadata;
 
@@ -398,7 +400,7 @@ sap.ui.define([
 				}
 
 				if (oControlData.hasMethods) {
-					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
+					oMethodsModelData.methods = this.buildMethodsModel(oControlData.methods);
 				}
 
 				if (oControlData.hasEvents) {
@@ -429,14 +431,22 @@ sap.ui.define([
 				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
 
+				oMethodsModel = this.getModel("methods");
+				oBorrowedMethodsModel = this.getModel("borrowedMethods");
+
+				// BPC: 1780339157 - There are cases where we have more than 100 method entries so we need to increase
+				// the default model size limit for the methods and the borrowed methods model.
+				oMethodsModel.setSizeLimit(1000);
+				oBorrowedMethodsModel.setSizeLimit(1000);
+
 				this.getModel("topics").setSizeLimit(1000);
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
-				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
-				this.getModel('methods').setDefaultBindingMode("OneWay");
+				oMethodsModel.setData(oMethodsModelData, false /* no merge with previous data */);
+				oMethodsModel.setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
 				this.getModel('events').setDefaultBindingMode("OneWay");
-				this.getModel('borrowedMethods').setData(oControlData.borrowed.methods, false);
+				oBorrowedMethodsModel.setData(oControlData.borrowed.methods, false);
 				this.getModel('borrowedEvents').setData(oControlData.borrowed.events, false);
 
 				if (this.extHookbindData) {
