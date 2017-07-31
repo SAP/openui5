@@ -314,5 +314,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.25": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "a4ed9d3c5a43ae9b24fd0f38759941053320573d",
+        "type": "FIX",
+        "text": " SimpleForm removing Label creates empty container",
+        "references": []
+      }
+    ]
   }
 }
