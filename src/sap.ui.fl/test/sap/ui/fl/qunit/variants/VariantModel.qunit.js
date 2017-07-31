@@ -89,10 +89,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'switchToVariant'", function(assert) {
-		this.oModel._switchToVariant("variantMgmtId1", "variant1");
-		assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
-		assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
-		assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+		return this.oModel._switchToVariant("variantMgmtId1", "variant1")
+
+		.then(function() {
+			assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
+			assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
+			assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+		}.bind(this));
 	});
 
 	QUnit.test("when calling '_copyVariant'", function(assert) {
