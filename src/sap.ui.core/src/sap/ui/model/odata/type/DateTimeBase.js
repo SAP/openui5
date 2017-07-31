@@ -55,7 +55,6 @@ sap.ui.define([
 				oFormatOptions.UTC = true;
 				oType.oFormat = DateFormat.getDateInstance(oFormatOptions);
 			} else {
-				delete oFormatOptions.UTC;
 				oType.oFormat = DateFormat.getDateTimeInstance(oFormatOptions);
 			}
 		}
