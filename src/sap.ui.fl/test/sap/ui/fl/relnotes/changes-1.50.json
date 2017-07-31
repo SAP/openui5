@@ -43,6 +43,12 @@
         "type": "FIX",
         "text": ": RTA - moving controls in ObjectHeader",
         "references": []
+      },
+      {
+        "id": "d5b7d8532e33d8b6910200326e7a1046730c5b5f",
+        "type": "FIX",
+        "text": " sap.ui.fl: fixed Promised when applying a change",
+        "references": []
       }
     ]
   }

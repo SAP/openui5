@@ -463,6 +463,30 @@
         "type": "FIX",
         "text": " v2.ODataTreeBinding: Handle group IDs",
         "references": []
+      },
+      {
+        "id": "f2f6ddef22b1b8a2f4be390bbc1131e8d890f96b",
+        "type": "FEATURE",
+        "text": " ComponentContainer: introduce event for component creation",
+        "references": []
+      },
+      {
+        "id": "7666c69d9487dd0b70a1129bcf38bcb59273f5a4",
+        "type": "FEATURE",
+        "text": " Configuration: Technical switch for multiple animation modes",
+        "references": []
+      },
+      {
+        "id": "83a95226bcf59f7d3bf310d30dd6fcf0a3fd4c31",
+        "type": "FEATURE",
+        "text": " Support for defaultValue and appData in special settings",
+        "references": []
+      },
+      {
+        "id": "aebe165a56dfc906a5f6b192a00a5de105fcd3f0",
+        "type": "FIX",
+        "text": " core.DateFormat: Handling of Quarter and WeekNumber in Interval Formatting",
+        "references": []
       }
     ]
   }

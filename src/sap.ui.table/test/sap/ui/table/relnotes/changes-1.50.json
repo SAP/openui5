@@ -121,6 +121,12 @@
         "type": "FIX",
         "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
         "references": []
+      },
+      {
+        "id": "3eca5dcd91fe11964d2b5a00d3234fa594f950bf",
+        "type": "FIX",
+        "text": " Table: Text will be properly deselected in edit mode navigation",
+        "references": []
       }
     ]
   }

@@ -127,6 +127,18 @@
         "type": "FIX",
         "text": " simpleform getIndex",
         "references": []
+      },
+      {
+        "id": "c42b2524038ac9b0ef07049668ded27b2007f6e3",
+        "type": "FIX",
+        "text": " SimpleForm: Removing last field and label of container",
+        "references": []
+      },
+      {
+        "id": "d356c9a2fe6c5e208dfad7658bf593f9a9fdf8e4",
+        "type": "FIX",
+        "text": " sap.ui.layout.FixFlex: Layout is now correct on MS Edge browser",
+        "references": []
       }
     ]
   }
