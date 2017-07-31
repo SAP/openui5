@@ -43,5 +43,16 @@
         "references": []
       }
     ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "03ef8c913f9bead85bc78760f6c1dd0d4eafea5e",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
+      }
+    ]
   }
 }

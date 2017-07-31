@@ -703,5 +703,28 @@
         "references": []
       }
     ]
+  },
+  "1.46.12": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "e86a6a6b5ef747b52414f55f2cbac18e168016b8",
+        "type": "FIX",
+        "text": " sap.m.TileContent: Semantic color of footer corrected",
+        "references": []
+      },
+      {
+        "id": "1de443485e9758d708fc3e38d3368fb0fea90171",
+        "type": "FIX",
+        "text": " sap.ui.commons.Checkbox: the check is visible in belize plus now",
+        "references": []
+      },
+      {
+        "id": "c6bec33773b516ae36df648de5399d223bd0ec56",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Add missing sapContrast for Light background",
+        "references": []
+      }
+    ]
   }
 }
