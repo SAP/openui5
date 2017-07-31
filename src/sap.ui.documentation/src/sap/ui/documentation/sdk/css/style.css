@@ -1580,3 +1580,8 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 /*
  * End of API Detail specific CSS
  */
+
+/* Global search specific CSS to allow full entry title to be visible on phone */
+.sap-phone .sapMList .sapMFeedListItemTextName .sapMLnk {
+	white-space: pre-line;
+}
