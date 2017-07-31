@@ -52,15 +52,6 @@ sap.ui.define([
 				this.getRouter().navTo("apiId", {id: sEntityName}, false);
 			},
 
-			onIntroLinkPress: function (oEvt) {
-				// remove explored.html from URL
-				var aParts = document.location.pathname.split("/"),
-					sBaseLink = document.location.origin + aParts.splice(0, aParts.length - 1).join("/") + "/";
-
-				// open a relative documentation window
-				window.open(sBaseLink + this.getView().getModel().getProperty("/docuLink"), "_blank");
-			},
-
 			onTabSelect: function (oEvt) {
 				// update URL without updating history
 				var sTab = oEvt.getParameter("key");
@@ -200,7 +191,9 @@ sap.ui.define([
 					// make intro text active if a documentation link is set
 					if (oEntity.docuLink) {
 						oData.show.introLink = true;
-						oData.docuLink = oEntity.docuLink;
+						oData.docuLink = oEntity.docuLink.replace("docs/guide", "topic").replace(/\.html$/, "");
+					} else {
+						oData.show.introLink = false;
 					}
 
 					bShouldShowSamplesSection = oEntity.samples.length > 0;
