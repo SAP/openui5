@@ -2672,5 +2672,16 @@
         "references": []
       }
     ]
+  },
+  "1.28.47": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "973f680afe31e2d368e6b58c4be296e99e65be3b",
+        "type": "FIX",
+        "text": " sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
+        "references": []
+      }
+    ]
   }
 }
