@@ -1057,31 +1057,35 @@
 
 	QUnit.module("PendingUpload uploadProgress Event", {
 		beforeEach: function() {
-			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
-				instantUpload: false
-			});
-			this.oUploadCollection2 = new sap.m.UploadCollection("pendingUploads2", {
-				instantUpload: true
-			});
+			this.oUploadCollection = new sap.m.UploadCollection("pendingUploads");
+			sinon.spy(this.oUploadCollection, "_onUploadProgress");
+
 			this.oUploadCollection.placeAt("qunit-fixture");
-			this.oUploadCollection2.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
 			this.oUploadCollection.destroy();
 			this.oUploadCollection = null;
-			this.oUploadCollection2.destroy();
-			this.oUploadCollection2 = null;
 		}
 	});
 
-	QUnit.test("Check onUploadProgress", function(assert) {
-		var spy = sinon.spy(this.oUploadCollection, "_onUploadProgress");
-		this.oUploadCollection._oFileUploader.fireUploadProgress();
-		assert.strictEqual(spy.callCount, 0);
+	QUnit.test("onUploadProgress with instantUpload=false", function(assert) {
+		//Arrange
+		sinon.stub(this.oUploadCollection, "getInstantUpload").returns(false);
 
-		var spy2 = sinon.spy(this.oUploadCollection2, "_onUploadProgress");
-		this.oUploadCollection2._oFileUploader.fireUploadProgress();
-		assert.strictEqual(spy2.callCount, 1);
+		//Act
+		this.oUploadCollection._oFileUploader.fireUploadProgress();
+
+		//Assert
+		assert.strictEqual(this.oUploadCollection._onUploadProgress.callCount, 1, "Method _onUploadProgress has been called.");
+	});
+
+	QUnit.test("onUploadProgress with instantUpload=true", function(assert) {
+		//Arrange
+		//Act
+		this.oUploadCollection._oFileUploader.fireUploadProgress();
+
+		//Assert
+		assert.strictEqual(this.oUploadCollection._onUploadProgress.callCount, 1, "Method _onUploadProgress has been called.");
 	});
 }());
