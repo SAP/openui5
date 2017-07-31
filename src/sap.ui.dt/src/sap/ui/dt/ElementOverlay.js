@@ -972,14 +972,17 @@ function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetad
 
 	/**
 	 * Returns the relevant container element for this overlay. As default the overlay parent element is returned
+	 * @param {boolean} bForParent if true, the relevant container overlay is the overlay itself, if no relevant container is propagated in the designtime
 	 * @return {sap.ui.core.Element} Relevant container element
 	 * @public
 	 */
-	ElementOverlay.prototype.getRelevantContainer = function() {
+	ElementOverlay.prototype.getRelevantContainer = function(bForParent) {
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
 		if (oDesignTimeMetadata &&
 			oDesignTimeMetadata.getData().relevantContainer) {
 			return oDesignTimeMetadata.getData().relevantContainer;
+		} else if (bForParent) {
+			return this.getElementInstance();
 		}
 		// setting the default value to direct parent
 		var oParentOverlay = this.getParentElementOverlay();

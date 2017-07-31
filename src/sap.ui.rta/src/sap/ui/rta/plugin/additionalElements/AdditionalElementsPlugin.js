@@ -16,7 +16,7 @@ sap.ui.define([
 
 	function _getParents(bSibling, oOverlay) {
 		var oParentOverlay,
-			oRelevantContainer = oOverlay.getRelevantContainer(),
+			oRelevantContainer = oOverlay.getRelevantContainer(!bSibling),
 			oRelevantContainerOverlay = OverlayRegistry.getOverlay(oRelevantContainer);
 		if (bSibling) {
 			oParentOverlay = oOverlay.getParentElementOverlay();
@@ -189,7 +189,7 @@ sap.ui.define([
 
 		_getTypes: function(mReveal, mParents, bSibling, oOverlay) {
 			var aParents = [mParents.parentOverlay];
-			var oRelevantContainer = oOverlay.getRelevantContainer();
+			var oRelevantContainer = oOverlay.getRelevantContainer(!bSibling);
 			if (oRelevantContainer !== mParents.parent){
 				aParents = ElementUtil.findAllSiblingsInContainer(mParents.parent, oRelevantContainer).map(function(oParent){
 					return OverlayRegistry.getOverlay(oParent);
@@ -327,7 +327,7 @@ sap.ui.define([
 					aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
 			}
 			if (mActions.addODataProperty){
-				mActions.addODataProperty.relevantContainer = oOverlay.getRelevantContainer();
+				mActions.addODataProperty.relevantContainer = oOverlay.getRelevantContainer(!bOverlayIsSibling);
 				aPromises.push(this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty));
 			}
 			if (mActions.aggregation || sControlName) {

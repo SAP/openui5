@@ -573,7 +573,7 @@ sap.ui.require([
 				"then the addLibrary command is created first");
 			assert.equal(oCompositeCommand.getCommands()[1].getName(), "addODataProperty",
 				"then the addODataProperty command is created second");
-			assert.ok(oCompositeCommand.getCommands()[1].getNewControlId().indexOf("pseudo") > -1,
+			assert.ok(oCompositeCommand.getCommands()[1].getNewControlId().indexOf("bar") > -1,
 				"then the pseudo parent (relevant container) is used to create the new control ID");
 			assert.equal(oCompositeCommand.getCommands()[0].getReference(), "applicationId",
 				"then the addLibrary command is created with the proper reference");
