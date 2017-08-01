@@ -326,7 +326,7 @@ sap.ui.define([
 			if (mActions.reveal) {
 					aPromises.push(this.getAnalyzer().enhanceInvisibleElements(mParents.parent, mActions));
 			}
-			if (mActions.addODataProperty){
+			if (mActions.addODataProperty) {
 				mActions.addODataProperty.relevantContainer = oOverlay.getRelevantContainer(!bOverlayIsSibling);
 				aPromises.push(this.getAnalyzer().getUnboundODataProperties(mParents.parent, mActions.addODataProperty));
 			}

@@ -80,9 +80,6 @@
 					});
 				})
 			);
-
-			oView.byId("NavPropertyForm").bindElement({path: "to_EntityType01Nav"});
-			oView.byId("NavForm.EntityType01.Prop1").bindElement({path: "/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')"});
 		},
 
 		_getUrlParameter: function (sParam) {
