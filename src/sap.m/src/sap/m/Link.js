@@ -196,6 +196,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Handle when enter is pressed.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	Link.prototype.onsapenter = Link.prototype._handlePress;
+
 	if (sap.ui.Device.support.touch) {
 		Link.prototype.ontap = Link.prototype._handlePress;
 	} else {
