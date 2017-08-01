@@ -1377,6 +1377,7 @@ function (
 			this.oChangeHandlerApplyChangeStub = sandbox.stub();
 			this.oChangeHandlerRevertChangeStub = sandbox.stub();
 			this.oAddChangeAndUpdateDependenciesSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_addChangeAndUpdateDependencies");
+			this.oApplyChangesOnControlSpy = sandbox.spy(this.oFlexController, "applyChangesOnControl");
 			this.oDeleteChangeInMapSpy = sandbox.spy(this.oFlexController._oChangePersistence, "_deleteChangeInMap");
 
 			sandbox.stub(this.oFlexController, "_getChangeHandler").returns({
@@ -1417,6 +1418,8 @@ function (
 
 	QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function (assert) {
 		this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent);
+		assert.ok(this.oApplyChangesOnControlSpy.firstCall.calledAfter(this.oAddChangeAndUpdateDependenciesSpy.secondCall), "then applyChangesOnControl after all dependencies have been udpated");
+		assert.ok(this.oFlexController._oChangePersistence.getChangesMapForComponent().mChanges["abc123"].length, 2, "then 2 changes added to map");
 		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
 		assert.ok(this.oAddChangeAndUpdateDependenciesSpy.calledTwice, "both changes were added to the map and dependencies were updated");
 	});
