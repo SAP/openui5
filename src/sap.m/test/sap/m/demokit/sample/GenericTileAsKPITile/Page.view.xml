@@ -1,24 +1,14 @@
 <mvc:View controllerName="sap.m.sample.GenericTileAsKPITile.Page"
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Country-Specific Profit Margin" subheader="Expenses" press="press">
-		<tileContent>
-			<TileContent unit="EUR" footer="Current Quarter">
-				<content>
-					<NumericContent scale="M" value="1.96"
-						valueColor="Error" indicator="Up" />
-				</content>
-			</TileContent>
-		</tileContent>
+		<TileContent unit="EUR" footer="Current Quarter">
+			<NumericContent scale="M" value="1.96" valueColor="Error" indicator="Up" />
+		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="US Profit Margin" press="press">
-		<tileContent>
-			<TileContent unit="Unit">
-				<content>
-					<NumericContent scale="%" value="12"
-						valueColor="Critical" indicator="Up"/>
-				</content>
-			</TileContent>
-		</tileContent>
+		<TileContent unit="Unit">
+			<NumericContent scale="%" value="12" valueColor="Critical" indicator="Up" />
+		</TileContent>
 	</GenericTile>
 </mvc:View>
