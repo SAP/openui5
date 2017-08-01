@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TimePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', './TimePickerSliders'],
-	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimePickerSliders) {
+sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRule', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', './TimePickerSliders', 'sap/ui/core/InvisibleText'],
+	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimePickerSliders, InvisibleText) {
 		"use strict";
 
 		/**
@@ -578,6 +578,80 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			return this;
 
+		};
+
+		/**
+		 * Sets tooltip of the control.
+		 *
+		 * @public
+		 * @override
+		 * @param {string|sap.ui.core.TooltipBase} vTooltip
+		 * @returns {sap.m.TimePicker} A reference to <code>this</code> instance to allow method chaining.
+		 */
+		TimePicker.prototype.setTooltip = function(vTooltip) {
+			/*
+			 * We need this override the default setter from <code>sap.m.Input</code> because the super class method
+			 * doesn't respect the custom role id of the TimePicker which we add in 'aria-describedby' internally.
+			 */
+			var oDomRef = this.getDomRef(),
+				sTooltip;
+
+			this._refreshTooltipBaseDelegate(vTooltip);
+			this.setAggregation("tooltip", vTooltip, true);
+
+			if (!oDomRef) {
+				return this;
+			}
+
+			sTooltip = this.getTooltip_AsString();
+
+			if (sTooltip) {
+				oDomRef.setAttribute("title", sTooltip);
+			} else {
+				oDomRef.removeAttribute("title");
+			}
+
+			this._handleTooltipHiddenTextLifecycle();
+
+			return this;
+		};
+
+		/**
+		 * Handles the addition/removal of the hidden span element (used as an hidden aria description) and its correct
+		 * reference with the TP inner input. This method requires <code>TimePicker</code> to be rendered in the DOM.
+		 * @private
+		 * @returns {void}
+		 */
+		TimePicker.prototype._handleTooltipHiddenTextLifecycle = function () {
+			var oRenderer,
+				sDescribedByReferences,
+				sAnnouncement,
+				sHiddenTextIdPattern,
+				bCreateHiddenText,
+				oHiddenAriaTooltipElement;
+
+			if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
+				return;
+			}
+
+			oRenderer = this.getRenderer();
+			sDescribedByReferences = oRenderer.getAriaDescribedBy(this);
+			sAnnouncement = oRenderer.getDescribedByAnnouncement(this);
+			sHiddenTextIdPattern = this.getId() + "-describedby";
+			bCreateHiddenText = sDescribedByReferences.indexOf(sHiddenTextIdPattern) > -1;
+			oHiddenAriaTooltipElement = this.getDomRef("describedby");
+
+			if (bCreateHiddenText) {
+				oHiddenAriaTooltipElement = document.createElement("span");
+				oHiddenAriaTooltipElement.id = sHiddenTextIdPattern;
+				oHiddenAriaTooltipElement.setAttribute("aria-hidden", "true");
+				oHiddenAriaTooltipElement.className = "sapUiInvisibleText";
+				oHiddenAriaTooltipElement.textContent = sAnnouncement;
+				this.getDomRef().appendChild(oHiddenAriaTooltipElement);
+			} else {
+				this.getDomRef().removeChild(oHiddenAriaTooltipElement);
+			}
+			this._$input.attr("aria-describedby", sDescribedByReferences);
 		};
 
 		/**
@@ -1495,7 +1569,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {
 			var oRenderer = this.getRenderer();
-			var oInfo = MaskInput.prototype.getAccessibilityInfo.apply(this, arguments);
+			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
 			if (this._bValid) {
 				var oDate = this.getDateValue();
@@ -1503,9 +1577,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					sValue = this._formatValue(oDate);
 				}
 			}
-			oInfo.role = "combobox";
-			oInfo.type = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT");
-			oInfo.description = [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim();
+
+			jQuery.extend(true, oInfo, {
+				role: oRenderer.getAriaRole(this),
+				type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"),
+				description: [sValue, oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this)].join(" ").trim(),
+				multiline: false,
+				autocomplete: "none",
+				expanded: false,
+				haspopup: true,
+				owns: this.getId() + "-sliders"
+			});
+
 			return oInfo;
 		};
 
