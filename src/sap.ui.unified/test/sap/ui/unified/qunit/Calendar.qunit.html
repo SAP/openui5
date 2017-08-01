@@ -31,6 +31,9 @@
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
 
+			// set language to en-US, since we have specific language strings tested
+			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+
 			var bSelectFired = false;
 			var oSelectedDate = undefined;
 			var iStartDateChangeFired = 0;
