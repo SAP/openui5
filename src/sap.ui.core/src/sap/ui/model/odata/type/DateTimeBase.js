@@ -70,23 +70,16 @@ sap.ui.define([
 	 *   Constraints, see {@link #constructor}
 	 */
 	function setConstraints(oType, oConstraints) {
-		var iPrecision;
+		var vNullable,
+			iPrecision;
 
 		oType.oConstraints = undefined;
 		if (oConstraints) {
-			switch (oConstraints.nullable) {
-			case undefined:
-			case true:
-			case "true":
-				break;
-			case false:
-			case "false":
-				oType.oConstraints = oType.oConstraints || {};
-				oType.oConstraints.nullable = false;
-				break;
-			default:
-				jQuery.sap.log.warning("Illegal nullable: " + oConstraints.nullable, null,
-					oType.getName());
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
 			}
 
 			if (oConstraints.isDateOnly === true) {

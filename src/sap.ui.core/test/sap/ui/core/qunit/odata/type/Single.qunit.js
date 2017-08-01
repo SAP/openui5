@@ -42,8 +42,18 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Single", "type name");
 		assert.strictEqual(oType.oFormatOptions, undefined, "default format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new Single(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************

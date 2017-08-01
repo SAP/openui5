@@ -62,7 +62,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is a ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date", "type name");
 		assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.deepEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new DateType(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************

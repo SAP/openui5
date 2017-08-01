@@ -32,6 +32,7 @@ sap.ui.require([
 		}
 	});
 
+	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
 		var oType = new BooleanType();
 
@@ -39,7 +40,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
 		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "no constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new BooleanType(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
