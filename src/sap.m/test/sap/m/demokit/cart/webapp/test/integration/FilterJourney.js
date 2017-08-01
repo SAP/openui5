@@ -69,6 +69,21 @@ sap.ui.define([
 		//Assertions
 		Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
 
+		opaTest("Should filter the products on supplier", function (Given, When, Then) {
+			// Actions
+			When.onTheCategory.iFilterOnSupplier();
+			//Assertions
+			Then.onTheCategory.iShouldOnlySeeTechnoComProductsAndAnInfoToolbar();
+		});
+
+		opaTest("Should remove the supplier filter", function (Given, When, Then) {
+			// Actions
+			When.onTheCategory.iRemoveTheSupplierFilter();
+			//Assertions
+			Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
+			Then.onTheCategory.iTeardownMyApp();
+		});
+
 	});
 
 });

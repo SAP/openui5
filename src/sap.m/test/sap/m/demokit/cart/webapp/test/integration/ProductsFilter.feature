@@ -31,4 +31,10 @@ Feature: Products filters
 	When on the category: I press ok button
 
 	Then on the category: I should see all products and no info toolbar
+
+	When on the category: I filter on supplier
+	Then on the category: I should only see techno Com products and an info toolbar
+
+	When on the category: I remove the supplier filter
+	Then on the category: I should see all products and no info toolbar
 	Then on the category: I teardown my app
