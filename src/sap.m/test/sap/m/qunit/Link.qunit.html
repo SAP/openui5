@@ -58,6 +58,16 @@
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
 
+		QUnit.test("Enter event", function (assert) {
+			assert.expect(1); // verifies the event handler was executed
+			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		});
+
+		QUnit.test("Enter event handler is attached", function (assert) {
+			assert.ok(oLink1.onsapenter === oLink1._handlePress,
+				"onsapenter method is a reference to _handlePress method");
+		});
+
 		QUnit.test("Disabled", function(assert) {
 			assert.expect(0); // verifies the event handler was NOT executed
 			oLink1.setEnabled(false);

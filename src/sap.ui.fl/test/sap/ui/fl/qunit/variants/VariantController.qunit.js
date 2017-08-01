@@ -68,10 +68,10 @@ sap.ui.require([
 	QUnit.test("when calling 'getVariants' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpectedVariants = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants;
-		var aVariants = oVariantController.getVariants("variantManagementOrdersTable");
+		var aExpectedVariants = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants;
+		var aVariants = oVariantController.getVariants("idMain1--variantManagementOrdersTable");
 		assert.deepEqual(aExpectedVariants, aVariants, "then the variants of a given variantManagmentId are returned");
-		assert.equal(aVariants[0].content.fileName, "variantManagementOrdersTable", "and ordered with standard variant first");
+		assert.equal(aVariants[0].content.fileName, "idMain1--variantManagementOrdersTable", "and ordered with standard variant first");
 	});
 
 
@@ -85,10 +85,10 @@ sap.ui.require([
 	QUnit.test("when calling 'getVariantChanges' of the VariantController", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpectedDefChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
-		var aExpectedChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[2].changes;
-		var aDefChanges = oVariantController.getVariantChanges("variantManagementOrdersTable");
-		var aChanges = oVariantController.getVariantChanges("variantManagementOrdersTable", "variant2");
+		var aExpectedDefChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes;
+		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[2].changes;
+		var aDefChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable");
+		var aChanges = oVariantController.getVariantChanges("idMain1--variantManagementOrdersTable", "variant2");
 		assert.deepEqual(aExpectedDefChanges, aDefChanges, "then the changes of the default variant are returned");
 		assert.deepEqual(aExpectedChanges, aChanges, "then the changes of the given variant are returned");
 	});
@@ -96,7 +96,7 @@ sap.ui.require([
 	QUnit.test("when calling 'loadVariantChanges' of the VariantController without changes in variant", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var oVariantController = new VariantController("MyComponent", "1.2.3", this.oResponse);
-		var aExpChanges1 = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
+		var aExpChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes;
 		var aExpChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
 		var aExpectedChanges = aExpChanges1.concat(aExpChanges2);
 		var aChanges = oVariantController.loadDefaultChanges();
@@ -107,7 +107,7 @@ sap.ui.require([
 		var done = assert.async();
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
 		var aExpectedChanges0 = this.oResponse.changes.changes;
-		var aExpectedChanges1 = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes;
+		var aExpectedChanges1 = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes;
 		var aExpectedChanges2 = this.oResponse.changes.variantSection["variantManagementOrdersObjectPage"].variants[0].changes;
 		var aExpectedChanges = aExpectedChanges0.concat(aExpectedChanges1).concat(aExpectedChanges2).map(function(oChangeContent){
 			return new Change(oChangeContent);
@@ -179,12 +179,12 @@ sap.ui.require([
 
 	QUnit.test("when calling 'loadChangesMapForComponent' and afterwards 'loadSwitchChangesMapForComponent' of the ChangePersistence", function(assert) {
 		sandbox.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(this.oResponse));
-		var aExistingChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes.map(function (oChange) {
+		var aExistingChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes.map(function (oChange) {
 			return new Change(oChange);
 		});
-		//var oRevertedChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes[1]);
+		//var oRevertedChange = new Change(this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes[1]);
 
-		var oNewChange = new Change(this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes[1]);
+		var oNewChange = new Change(this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].changes[1]);
 
 		var aExpectedNew = [oNewChange];
 		var aExpectedRevert = [aExistingChanges[1]];
@@ -199,7 +199,7 @@ sap.ui.require([
 		this.oChangePersistence._oVariantController._mVariantManagement = this.oResponse.changes.variantSection;
 
 		this.mPropertyBag = {viewId: "view1--view2"};
-		var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("variantManagementOrdersTable", "variant0", "variantManagementOrdersTable");
+		var mSwitches = this.oChangePersistence.loadSwitchChangesMapForComponent("idMain1--variantManagementOrdersTable", "variant0", "idMain1--variantManagementOrdersTable");
 		mSwitches.aNew.forEach(function (oChange, i) {
 			assert.deepEqual(oChange._oDefinition, aExpectedNew[i]._oDefinition, "the change content returns correctly");
 		});
@@ -338,14 +338,14 @@ sap.ui.require([
 
 		this.oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 
-		var aRevertedChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[0].changes
+		var aRevertedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[0].changes
 			.map(function(oChangeContent) {
 				var oChange =  new Change(oChangeContent);
 				oChange._aDependentIdList = [];
 				return oChange;
 			});
 
-		var aExpectedChanges = this.oResponse.changes.variantSection["variantManagementOrdersTable"].variants[1].changes
+		var aExpectedChanges = this.oResponse.changes.variantSection["idMain1--variantManagementOrdersTable"].variants[1].changes
 			.map(function(oChangeContent) {
 				var oChange =  new Change(oChangeContent);
 				oChange._aDependentIdList = [];
@@ -364,15 +364,15 @@ sap.ui.require([
 				oData = this.oFlexController.getVariantModelData();
 				oModel = new VariantModel(oData, this.oFlexController, oComponent);
 
-				sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
+				sCurrentVariant = oModel.getCurrentVariantRef("idMain1--variantManagementOrdersTable");
 				assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
-				oModel._updateCurrentVariant("variantManagementOrdersTable", "variantManagementOrdersTable")
+				oModel._updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable")
 				.then(function() {
 					assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
 					fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
-					sCurrentVariant = oModel.getCurrentVariantRef("variantManagementOrdersTable");
-					assert.equal(sCurrentVariant, "variantManagementOrdersTable", "the current variant key after switch is correct");
+					sCurrentVariant = oModel.getCurrentVariantRef("idMain1--variantManagementOrdersTable");
+					assert.equal(sCurrentVariant, "idMain1--variantManagementOrdersTable", "the current variant key after switch is correct");
 
 					done();
 				}.bind(this));

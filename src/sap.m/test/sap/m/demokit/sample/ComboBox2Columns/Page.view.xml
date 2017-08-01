@@ -9,10 +9,10 @@
 			<ComboBox
 				showSecondaryValues= "true"
 				items="{
-					path: '/ProductCollection',
-					sorter: { path: 'Name' }
+					path: '/CountriesCollection',
+					sorter: { path: 'text' }
 				}">
-				<core:ListItem key="{ProductId}" text="{Name}" additionalText = "{Price} {CurrencyCode}"/>
+				<core:ListItem key="{key}" text="{text}" additionalText = "{key}"/>
 			</ComboBox>
 		</content>
 	</Page>

@@ -324,38 +324,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
 		 *
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
-		 * @param {string} sGreatestDiff the symbol matching the greatest difference in the two dates to format
+		 * @param {object|string} vGreatestDiff is either a string which represents the symbol matching the greatest difference in the two dates to format or an object which contains key-value pairs.
+		 *  The value is always true. The key is one of the date field symbol groups whose value are different between the two dates. The key can only be set with 'Year', 'Quarter', 'Month', 'Week',
+		 *  'Day', 'DayPeriod', 'Hour', 'Minute', or 'Second'.
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string|string[]} the best matching interval pattern if interval difference is given otherwise an array with all possible interval patterns which match the given skeleton format
 		 * @since 1.46
 		 * @public
 		 */
-		getCustomIntervalPattern : function(sSkeleton, sGreatestDiff, sCalendarType) {
+		getCustomIntervalPattern : function(sSkeleton, vGreatestDiff, sCalendarType) {
 			var oAvailableFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats");
-			return this._getFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sGreatestDiff);
+			return this._getFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, vGreatestDiff);
 		},
 
 		/* Helper functions for skeleton pattern processing */
-		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
-			var sPattern, oIntervalFormats, aPatterns;
-			if (sIntervalDiff) {
-				if (sIntervalDiff == "j" || sIntervalDiff == "J") {
-					sIntervalDiff = this.getPreferredHourSymbol();
+		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
+			var vPattern, aPatterns, oIntervalFormats;
+
+			if (!vDiff) {
+				// the call is from getCustomDateTimePattern
+				vPattern = oAvailableFormats[sSkeleton];
+			} else if (typeof vDiff === "string") {
+				// vDiff is given as a symbol
+				if (vDiff == "j" || vDiff == "J") {
+					vDiff = this.getPreferredHourSymbol();
 				}
 				oIntervalFormats = oAvailableFormats[sSkeleton];
-				sPattern = oIntervalFormats && oIntervalFormats[sIntervalDiff];
-			} else {
-				sPattern = oAvailableFormats[sSkeleton];
+				vPattern = oIntervalFormats && oIntervalFormats[vDiff];
 			}
 
-			if (!sPattern) {
-				aPatterns = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff);
-			} else if (typeof sPattern === "object") {
-				aPatterns = Object.keys(sPattern).map(function(sKey) {
-					return sPattern[sKey];
-				});
-			} else {
-				return sPattern;
+			if (vPattern) {
+				if (typeof vPattern === "object") {
+					aPatterns = Object.keys(vPattern).map(function(sKey) {
+						return vPattern[sKey];
+					});
+				} else {
+					return vPattern;
+				}
+			}
+
+			if (!aPatterns) {
+				aPatterns = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, vDiff);
 			}
 
 			if (aPatterns && aPatterns.length === 1) {
@@ -365,82 +374,65 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return aPatterns;
 		},
 
-		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
-			var aTokens = this._parseSkeletonFormat(sSkeleton),
+		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
+			var aTokens = this._parseSkeletonFormat(sSkeleton), aPatterns,
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
-				sPattern, sSinglePattern,
-				oAvailableDateTimeFormats,
-				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
-			var bSymbolFound;
+				oToken, oAvailableDateTimeFormats,
+				sPattern, sSinglePattern, sDiffSymbol, sDiffGroup,
+				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
+				bSingleDate,
+				i;
 
-			var sDiffGroup = sIntervalDiff;
-			var oGroup;
-			if (sDiffGroup) {
-				if (sDiffGroup === "a") {
-					sDiffGroup = "Hour";
-				}
 
-				if (sDiffGroup.length === 1) {
-					sDiffGroup = mCLDRSymbols[sDiffGroup] ? mCLDRSymbols[sDiffGroup].group : "";
-				}
-
-				if (sDiffGroup) {
-					oGroup = mCLDRSymbolGroups[sDiffGroup];
-					if (oGroup.index > aTokens[aTokens.length - 1].index) {
-						// if the index of interval diff is greater than the index of the last field
-						// in the sSkeleton, which means the diff unit is smaller than all units in
-						// the skeleton, return a single date pattern which is generated using the
-						// given skeleton
-						return [this.getCustomDateTimePattern(sSkeleton, sCalendarType)];
+			if (vDiff) {
+				if (typeof vDiff === "string") {
+					sDiffGroup = mCLDRSymbols[vDiff] ? mCLDRSymbols[vDiff].group : "";
+					if (sDiffGroup) {
+							// if the index of interval diff is greater than the index of the last field
+							// in the sSkeleton, which means the diff unit is smaller than all units in
+							// the skeleton, return a single date pattern which is generated using the
+							// given skeleton
+							bSingleDate = mCLDRSymbolGroups[sDiffGroup].index > aTokens[aTokens.length - 1].index;
 					}
-				}
-			}
+					sDiffSymbol = vDiff;
+				} else {
+					bSingleDate = true;
+					// Check if at least one token's group appears in the interval diff
+					// If not, a single date pattern is returned
+					for (i = aTokens.length - 1; i >= 0; i--){
+						oToken = aTokens[i];
 
-			var aPatterns;
-
-			if (sIntervalDiff) {
-				// FieldGroup
-				if (sIntervalDiff.length > 1) {
-					// Find out the symbol of the given group
-					// and set the interval diff
-					bSymbolFound = aTokens.some(function(oToken) {
-						if (oToken.group === sIntervalDiff) {
-							sIntervalDiff = oToken.symbol;
-							return true;
+						if (vDiff[oToken.group]) {
+							bSingleDate = false;
+							break;
 						}
-					});
+					}
 
-					// When no symbol is found
-					// an empty interval diff will be set
-					if (!bSymbolFound) {
-						sIntervalDiff = "";
+					// select the greatest diff symbol
+					for (i = 0; i < aTokens.length; i++){
+						oToken = aTokens[i];
+
+						if (vDiff[oToken.group]) {
+							sDiffSymbol = oToken.symbol;
+							break;
+						}
+					}
+					// Special handling of "a" (Dayperiod)
+					// Find out whether dayperiod is different between the dates
+					// If yes, set the  diff symbol with 'a' Dayperiod symbol
+					if ((sDiffSymbol == "h" || sDiffSymbol == "K") && vDiff.DayPeriod) {
+						sDiffSymbol = "a";
 					}
 				}
 
-				// Special handling of "a" (Dayperiod)
-				if (sIntervalDiff === "a") {
-					// Find out whether dayperiod is needed
-					// If not, set the internal diff with the actual 'Hour' symbol
-					bSymbolFound = aTokens.some(function(oToken) {
-						if (oToken.group === "Hour") {
-							if (oToken.symbol !== "h" && oToken.symbol !== "K") {
-								sIntervalDiff = oToken.symbol;
-							}
-							return true;
-						}
-					});
-
-					// When no symbol is found
-					// an empty interval diff will be set
-					if (!bSymbolFound) {
-						sIntervalDiff = "";
-					}
+				if (bSingleDate) {
+					return [this.getCustomDateTimePattern(sSkeleton, sCalendarType)];
 				}
 
 				// Only use best match, if there are no missing tokens, as there is no possibility
 				// to append items on interval formats
 				if (oBestMatch && oBestMatch.missingTokens.length === 0) {
-					sPattern = oBestMatch.pattern[sIntervalDiff];
+					sPattern = oBestMatch.pattern[sDiffSymbol];
 					// if there is no exact match, we need to do further processing
 					if (sPattern && oBestMatch.distance > 0) {
 						sPattern = this._expandFields(sPattern, oBestMatch.patternTokens, aTokens);
@@ -451,8 +443,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				if (!sPattern) {
 					oAvailableDateTimeFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "availableFormats");
 					// If it is a mixed skeleton and the greatest interval on time, create a mixed pattern
-					if (rMixedSkeleton.test(sSkeleton) && "ahHkKjJms".indexOf(sIntervalDiff) >= 0) {
-						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType, sIntervalDiff);
+					if (rMixedSkeleton.test(sSkeleton) && "ahHkKjJms".indexOf(sDiffSymbol) >= 0) {
+						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType, vDiff);
 					} else {
 						sSinglePattern = this._getFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType);
 						sPattern = this.getCombinedIntervalPattern(sSinglePattern, sCalendarType);
@@ -522,7 +514,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				oSymbol = mCLDRSymbols[sSymbol];
 				oGroup = mCLDRSymbolGroups[oSymbol.group];
 				// if group is other, the symbol is not allowed in skeleton tokens
-				if (oSymbol.group == "Other") {
+				if (oSymbol.group == "Other" || oGroup.diffOnly) {
 					throw new Error("Symbol '" + sSymbol + "' is not allowed in skeleton format '" + sSkeleton + "'");
 				}
 				// if group index the same or lower, format is invalid
@@ -750,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			return aPatterns;
 		},
 
-		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
+		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
 			var rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				rWideMonth = /MMMM|LLLL/,
 				rAbbrevMonth = /MMM|LLL/,
@@ -764,8 +756,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			sTimeSkeleton = oResult[2];
 			// Get patterns for date and time separately
 			sDatePattern = this._getFormatPattern(sDateSkeleton, oAvailableFormats, sCalendarType);
-			if (sIntervalDiff) {
-				sTimePattern = this.getCustomIntervalPattern(sTimeSkeleton, sIntervalDiff, sCalendarType);
+			if (vDiff) {
+				sTimePattern = this.getCustomIntervalPattern(sTimeSkeleton, vDiff, sCalendarType);
 			} else {
 				sTimePattern = this._getFormatPattern(sTimeSkeleton, oAvailableFormats, sCalendarType);
 			}
@@ -1561,10 +1553,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		"Week": { field: "week", index: 4 },
 		"Day-Of-Week": { field: "weekday", index: 5 },
 		"Day": { field: "day", index: 6 },
-		"Hour": { field: "hour", index: 7 },
-		"Minute": { field: "minute", index: 8 },
-		"Second": { field: "second", index: 9 },
-		"Timezone": { field: "zone", index: 10 }
+		"DayPeriod": { field: "hour", index: 7, diffOnly: true },
+		"Hour": { field: "hour", index: 8 },
+		"Minute": { field: "minute", index: 9 },
+		"Second": { field: "second", index: 10 },
+		"Timezone": { field: "zone", index: 11 }
 	};
 
 	var mCLDRSymbols = {
@@ -1601,7 +1594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		"r": { group: "Other", numericCeiling: 100},
 		"F": { group: "Other", numericCeiling: 100},
 		"g": { group: "Other", numericCeiling: 100},
-		"a": { group: "Other", numericCeiling: 1},
+		"a": { group: "DayPeriod", numericCeiling: 1},
 		"b": { group: "Other", numericCeiling: 1},
 		"B": { group: "Other", numericCeiling: 1},
 		"A": { group: "Other", numericCeiling: 100}

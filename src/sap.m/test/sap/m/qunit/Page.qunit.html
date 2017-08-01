@@ -124,12 +124,6 @@
 				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
 				oPage.setBackgroundDesign("Transparent");
 				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "Page content should be transparent");
-
-				var transparentCssString = (sap.ui.Device.browser.firefox ||
-								sap.ui.Device.browser.internet_explorer ||
-								sap.ui.Device.browser.edge) ? "transparent" : "rgba(0, 0, 0, 0)"
-				assert.equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "Page content should be transparent");
-
 				assert.equal(oPage.$("cont").hasClass("sapMPageEnableScrolling"), false, "In a page with scrolling disabled, no scroll-related class should be added")
 			});
 

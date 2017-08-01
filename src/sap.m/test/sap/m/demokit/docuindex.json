@@ -865,7 +865,8 @@
 			"sap.m.sample.PlanningCalendarViews",
 			"sap.m.sample.PlanningCalendarOneLine",
 			"sap.m.sample.PlanningCalendarMinMax",
-			"sap.m.sample.PlanningCalendarModifyAppointments"]
+			"sap.m.sample.PlanningCalendarModifyAppointments",
+			"sap.m.sample.PlanningCalendarWithLegend"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -2786,6 +2787,11 @@
 		  "id": "sap.m.sample.PlanningCalendarModifyAppointments",
 		  "name": "Planning Calendar - with appointments modification",
 		  "description": "PlanningCalendar containing sap.m.Popover with information for the appointments and sap.m.Dialog for creating a new appointment. Note: Illustrates how the PlanningCalendar can be used in combination with the sap.m.Popover and sap.m.Dialog controls for details/create. These features are NOT part of the control."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarWithLegend",
+		  "name": "Planning Calendar - with legend",
+		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections."
 		},
 		{
 		  "id": "sap.m.sample.ImageContent",

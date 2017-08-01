@@ -44,6 +44,7 @@
 			<l:BlockLayoutRow visible="{versionData>/isInternal}">
 				<l:BlockLayoutCell>
 					<MessageStrip
+						showIcon="true"
 						text="This is the internal version of the documentation. It contains topics that are still under construction, as well as SAP-internal information that should not be passed on to anybody outside SAP."/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>

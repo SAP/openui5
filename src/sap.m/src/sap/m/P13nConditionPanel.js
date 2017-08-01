@@ -2197,6 +2197,13 @@ sap.ui.define([
 			}
 		}
 
+		// in case of a BT and a Date type try to set the minDate for the To value datepicker
+		if (sOperation === "BT" && oConditionGrid.value1.setMinDate) {
+			if (oConditionGrid.value2 && oConditionGrid.value2.setMinDate) {
+				oConditionGrid.value2.setMinDate(oValue1 instanceof Date ? oValue1 : null);
+			}
+		}
+
 		// update Value2 field control
 		var sValue2 = this._getValueTextFromField(oConditionGrid.value2, oConditionGrid.oFormatter);
 		var oValue2 = sValue2;

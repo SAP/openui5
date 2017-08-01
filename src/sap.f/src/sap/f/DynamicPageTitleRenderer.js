@@ -25,6 +25,9 @@ sap.ui.define([], function () {
 		oRm.writeControlData(oDynamicPageTitle);
 		oRm.writeAccessibilityState({role: "heading", level: 2});
 		oRm.addClass("sapFDynamicPageTitle");
+		if (!oDynamicPageTitleState.hasContent) {
+			oRm.addClass("sapFDynamicPageTitleWithoutContent");
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 		this._renderLeftArea(oRm, oDynamicPageTitleState);

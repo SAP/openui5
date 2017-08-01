@@ -47,6 +47,7 @@
 			assert.equal(toLower(oCfg.language), toLower((navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage), "language");
 			assert.equal(oCfg.accessibility, true, "accessibility");
 			assert.equal(oCfg.animation, true, "animation");
+			assert.equal(oCfg.animationMode, sap.ui.core.Configuration.AnimationMode.full, "animationMode");
 			assert.equal(oCfg.getRTL(), false, "rtl");
 			assert.equal(oCfg.debug, false, "debug");
 			assert.equal(oCfg.noConflict, false, "noConflict");

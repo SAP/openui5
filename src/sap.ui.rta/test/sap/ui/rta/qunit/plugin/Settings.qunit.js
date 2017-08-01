@@ -316,5 +316,4 @@ jQuery.sap.require("sap.ui.rta.command.Stack");
 			}.bind(this));
 		}.bind(this));
 	});
-
 })();

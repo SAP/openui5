@@ -113,11 +113,8 @@ function (
 		this.stub(JsControlTreeModifier, "getControlType").returns(oControlType);
 		this.stub(this.oFlexController, "addChange").returns(oChange);
 
-		return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
-
-		.then(function() {
-			assert.ok(oUtilsLogStub.calledOnce, "a warning was logged");
-		});
+		this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl);
+		assert.ok(oUtilsLogStub.calledOnce, "a warning was logged");
 	});
 
 	QUnit.test('_resolveGetChangesForView does not crash, if change can be created and applied', function (assert) {
@@ -150,26 +147,19 @@ function (
 			modifier: JsControlTreeModifier
 		};
 
-		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [this.oChange])
-
-		.then(function() {
-			sinon.assert.called(changeHandlerApplyChangeStub);
-		});
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [this.oChange]);
+		sinon.assert.called(changeHandlerApplyChangeStub);
 	});
 
 	QUnit.test("_resolveGetChangesForView does not crash and logs an error if no changes were passed", function (assert) {
 		var mPropertyBagStub = {
 			unmergedChangesOnly: true
 		};
-
 		var oUtilsLogStub = this.stub(Utils.log, "error");
-		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, "thisIsNoArray")
 
-		.then(function(aResolveArray) {
-			assert.ok(oUtilsLogStub.calledOnce, "a error was logged");
-			assert.equal(aResolveArray.length, 0, "an empty array was returned");
-		});
-
+		var aResolveArray = this.oFlexController._resolveGetChangesForView(mPropertyBagStub, "thisIsNoArray");
+		assert.ok(oUtilsLogStub.calledOnce, "a error was logged");
+		assert.equal(aResolveArray.length, 0, "an empty array was returned");
 	});
 
 	QUnit.test('_resolveGetChangesForView applies changes with locale id', function (assert) {
@@ -209,11 +199,8 @@ function (
 			appComponent: oAppComponent
 		};
 
-		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [this.oChange])
-
-		.then(function() {
-			sinon.assert.called(changeHandlerApplyChangeStub);
-		});
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [this.oChange]);
+		sinon.assert.called(changeHandlerApplyChangeStub);
 	});
 
 	QUnit.test("_getChangeRegistryItem shall return the change registry item", function (assert) {
@@ -265,11 +252,8 @@ function (
 		};
 
 		// CUT
-		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange])
-
-		.then(function() {
-			assert.strictEqual(oLoggerStub.callCount, 0, "Applied change was not logged");
-		});
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange]);
+		assert.strictEqual(oLoggerStub.callCount, 0, "Applied change was not logged");
 	});
 
 	QUnit.test("_resolveGetChangesForView continues the processing if an error occurs", function (assert) {
@@ -284,12 +268,9 @@ function (
 		var oLoggingStub = sandbox.stub(jQuery.sap.log, "warning");
 		var oGetTargetControlStub = sandbox.stub(this.oFlexController, "_getSelectorOfChange").returns(undefined);
 
-		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange])
-
-		.then(function() {
-			assert.strictEqual(oGetTargetControlStub.callCount, 2, "all changes  were processed");
-			assert.ok(oLoggingStub.calledTwice, "the issues were logged");
-		});
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange]);
+		assert.strictEqual(oGetTargetControlStub.callCount, 2, "all changes  were processed");
+		assert.ok(oLoggingStub.calledTwice, "the issues were logged");
 	});
 
 	QUnit.test("_resolveGetChangesForView process the applyChange promises in the correct order", function (assert) {
@@ -321,12 +302,9 @@ function (
 		};
 
 		// CUT
-		return this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange, oChange])
-
-		.then(function() {
-			sinon.assert.callOrder(changeHandlerApplyChangeStub0, changeHandlerApplyChangeStub1, changeHandlerApplyChangeStub2);
-			assert.strictEqual(oLoggerStub.callCount, 0, "Applied change was not logged");
-		});
+		this.oFlexController._resolveGetChangesForView(mPropertyBagStub, [oChange, oChange, oChange]);
+		sinon.assert.callOrder(changeHandlerApplyChangeStub0, changeHandlerApplyChangeStub1, changeHandlerApplyChangeStub2);
+		assert.strictEqual(oLoggerStub.callCount, 0, "Applied change was not logged");
 	});
 
 	QUnit.test("applyChange shall call the Change Handler", function (assert) {
@@ -686,16 +664,14 @@ function (
 			changeType: "hideControl"
 		};
 
-		this.stub(this.oFlexController, "checkTargetAndApplyChange").returns(Promise.reject());
+		this.stub(this.oFlexController, "checkTargetAndApplyChange").throws(new Error());
 		this.stub(this.oFlexController, "_getChangeHandler").returns(HideControl);
 		this.stub(this.oFlexController, "createChange").returns(new Change(oChangeSpecificData));
 
-		return this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl)
-
-		.catch(function() {
-			assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, 'Change persistence should have no dirty changes');
+		assert.throws(function() {
+			this.oFlexController.createAndApplyChange(oChangeSpecificData, oControl);
 		}.bind(this));
-
+		assert.strictEqual(this.oFlexController._oChangePersistence.getDirtyChanges().length, 0, 'Change persistence should have no dirty changes');
 	});
 
 	QUnit.test("throws an error of a change should be created but no control was passed", function (assert) {
@@ -877,11 +853,8 @@ function (
 		};
 		var oAppComponent = {};
 
-		return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
-
-		.then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
 	});
 
 	QUnit.test("applyChangesOnControl processes only those changes that belong to the control", function (assert) {
@@ -923,21 +896,16 @@ function (
 		};
 		var oAppComponent = {};
 
-		return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
-
-		.then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 4, "all four changes for the control were processed");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange3, "the fourth change was processed fourth");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 4, "all four changes for the control were processed");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange3, "the fourth change was processed fourth");
 
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 1", function (assert) {
-		var aPromises = [];
-
 		var oControlForm1 = new sap.ui.core.Control("form1-1");
 		var oControlGroup1 = new sap.ui.core.Control("group1-1");
 
@@ -992,15 +960,12 @@ function (
 		};
 		var oAppComponent = {};
 
-		aPromises.push(this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1));
-		aPromises.push(this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1));
-
-		return Promise.all(aPromises).then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1);
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was processed second");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the third change was processed third");
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 2", function (assert) {
@@ -1057,22 +1022,12 @@ function (
 		};
 		var oAppComponent = {};
 
-		return Promise.resolve()
-
-		.then(function() {
-			return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1);
-		}.bind(this))
-
-		.then(function() {
-			return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
-		}.bind(this))
-
-		.then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlGroup1);
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 3", function (assert) {
@@ -1156,29 +1111,15 @@ function (
 			};
 		};
 		var oAppComponent = {};
-
-		return Promise.resolve()
-
-		.then(function() {
-			return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField2);
-		}.bind(this))
-
-		.then(function() {
-			return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
-		}.bind(this))
-
-		.then(function() {
-			return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
-		}.bind(this))
-
-		.then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 5, "all five changes for the control were processed");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange4, "the fourth change was processed third");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(4).args[0], oChange5, "the fifth change was processed third");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField2);
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 5, "all five changes for the control were processed");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange3, "the third change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the first change was processed second");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange2, "the second change was processed third");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(3).args[0], oChange4, "the fourth change was processed third");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(4).args[0], oChange5, "the fifth change was processed third");
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 4", function (assert) {
@@ -1225,13 +1166,10 @@ function (
 		};
 		var oAppComponent = {};
 
-		return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1)
-
-		.then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all two changes for the control were processed");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all two changes for the control were processed");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
 	});
 
 	QUnit.test("applyChangesOnControl dependency test 5", function (assert) {
@@ -1299,17 +1237,13 @@ function (
 				this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlField1);
 			}
 			iStubCalls++;
-			return Promise.resolve();
 		}.bind(this));
 
-		return this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1)
-
-		.then(function() {
-			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
-			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange3, "the third change was processed third");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(fnGetChangesMap, oAppComponent, oControlForm1);
+		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 3, "all three changes for the control were processed");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange1, "the first change was processed first");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange2, "the second change was processed second");
+		assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(2).args[0], oChange3, "the third change was processed third");
 	});
 
 	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with one change for a label", {
@@ -1342,14 +1276,11 @@ function (
 	});
 
 	QUnit.test("adds custom data on the first change applied on a control", function (assert) {
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function () {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
 	});
 
 	QUnit.test("deletes the changeId from custom data after reverting the change", function (assert) {
@@ -1358,26 +1289,20 @@ function (
 			value: this.oChange.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
-			assert.equal(this.oControl.getCustomData().length, 1, "the CustomData is still there");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), "", "the changeId got deleted from the customData");
-		}.bind(this));
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
+		assert.equal(this.oControl.getCustomData().length, 1, "the CustomData is still there");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), "", "the changeId got deleted from the customData");
 	});
 
 	QUnit.test("does not add custom data if an exception was raised during applyChanges", function (assert) {
 		this.oChangeHandlerApplyChangeStub.throws();
 		var mergeErrorStub = sandbox.stub(this.oFlexController, "_setMergeError");
 
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
-			assert.equal(this.oControl.getCustomData().length, 0, "no custom data was set");
-			assert.ok(mergeErrorStub.calledOnce, "set merge error was called");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "apply change functionality was called");
+		assert.equal(this.oControl.getCustomData().length, 0, "no custom data was set");
+		assert.ok(mergeErrorStub.calledOnce, "set merge error was called");
 	});
 
 	QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
@@ -1388,15 +1313,12 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
-			assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedFlexCustomDataValue, "the change id is the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedFlexCustomDataValue, "the change id is the value");
 	});
 
 	QUnit.test("delete only reverted changeId from custom data", function (assert) {
@@ -1408,14 +1330,11 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
-			assert.equal(this.oControl.getCustomData()[0].getValue(),
-				"id_123_anAlreadyAppliedChange,id_456_anAlreadyAppliedChange",
-				"only the changeId was deleted from the custom data");
-		}.bind(this));
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "the changeHandler was called");
+		assert.equal(this.oControl.getCustomData()[0].getValue(),
+			"id_123_anAlreadyAppliedChange,id_456_anAlreadyAppliedChange",
+			"only the changeId was deleted from the custom data");
 	});
 
 	QUnit.test("does not call the change handler if the change was already applied", function (assert) {
@@ -1425,23 +1344,17 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change was NOT applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData is still set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change was NOT applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData is still set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "the change id is the value");
 	});
 
 	QUnit.test("does not call the change handler if the change wasn't applied", function(assert) {
-		return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
-			assert.equal(this.oControl.getCustomData().length, 0, "the customData was not created yet");
-		}.bind(this));
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
+		assert.equal(this.oControl.getCustomData().length, 0, "the customData was not created yet");
 	});
 
 	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with two changes for a label", {
@@ -1494,24 +1407,18 @@ function (
 	});
 
 	QUnit.test("calls the change handler twice for two unapplied changes and concatenate the custom data correct", function (assert) {
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function () {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-			assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
 	});
 
 	QUnit.test("when applyVariantChanges is called with 2 unapplied changes", function (assert) {
-		return this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent)
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
-			assert.ok(this.oAddChangeAndUpdateDependenciesSpy.calledTwice, "both changes were added to the map and dependencies were updated");
-		}.bind(this));
+		this.oFlexController.applyVariantChanges([this.oChange, this.oChange2], this.oComponent);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledTwice, "both changes were applied");
+		assert.ok(this.oAddChangeAndUpdateDependenciesSpy.calledTwice, "both changes were added to the map and dependencies were updated");
 	});
 
 	QUnit.test("calls the change handler twice and delete the ids from the custom data", function (assert) {
@@ -1520,13 +1427,10 @@ function (
 			value: this.oChange.getId() + "," + this.oChange2.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		return this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2], this.oControl)
-
-		.then(function() {
-			assert.ok(this.oDeleteChangeInMapSpy.calledTwice, "both changes were deleted from the map");
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), "", "then both changeIds got deleted");
-		}.bind(this));
+		this.oFlexController.revertChangesOnControl([this.oChange, this.oChange2], this.oControl);
+		assert.ok(this.oDeleteChangeInMapSpy.calledTwice, "both changes were deleted from the map");
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), "", "then both changeIds got deleted");
 	});
 
 	QUnit.test("calls the change handler twice and delete the ids from the custom data separately", function (assert) {
@@ -1535,21 +1439,12 @@ function (
 			value: this.oChange.getId() + "," + this.oChange2.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		return this.oFlexController.revertChangesOnControl([this.oChange], this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "first change was reverted");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange2.getId(), "then only the first changeId got deleted");
-		}.bind(this))
-
-		.then(function() {
-			return this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl);
-		}.bind(this))
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), "", "then both changeIds got deleted");
-		}.bind(this));
+		this.oFlexController.revertChangesOnControl([this.oChange], this.oControl);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 1, "first change was reverted");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange2.getId(), "then only the first changeId got deleted");
+		this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 2, "both changes were reverted");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), "", "then both changeIds got deleted");
 	});
 
 	QUnit.test("concatenate custom data on the later changes (first already applied) applied on a control", function (assert) {
@@ -1558,16 +1453,13 @@ function (
 			value: this.oChange.getId()
 		});
 		this.oControl.addCustomData(oFlexCustomData);
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function () {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange2, "the second change was applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
-			assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange2, "the second change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedValue = this.oChange.getId() + "," + this.oChange2.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
 	});
 
 	QUnit.test("concatenate custom data on the later changes (second already applied) applied on a control", function (assert) {
@@ -1577,16 +1469,13 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange, "the first change was applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			var sExpectedValue = this.oChange2.getId() + "," + this.oChange.getId();
-			assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		assert.equal(this.oChangeHandlerApplyChangeStub.getCall(0).args[0], this.oChange, "the first change was applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedValue = this.oChange2.getId() + "," + this.oChange.getId();
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sExpectedValue, "the concatenated change ids are the value");
 	});
 
 	QUnit.test("calls NO the change handler for two applied changes", function (assert) {
@@ -1597,14 +1486,11 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		return this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "no changes were applied");
-			assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
-			assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), sFlexCustomDataValue, "the concatenated change ids are the value");
-		}.bind(this));
+		this.oFlexController.applyChangesOnControl(this.fnGetChangesMap, {}, this.oControl);
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "no changes were applied");
+		assert.ok(this.oControl.getCustomData()[0], "CustomData was set");
+		assert.equal(this.oControl.getCustomData()[0].getKey(), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), sFlexCustomDataValue, "the concatenated change ids are the value");
 	});
 
 	QUnit.test("does not call the change handler if the change wasn't applied, with already existing customData", function(assert) {
@@ -1614,12 +1500,9 @@ function (
 		});
 		this.oControl.addCustomData(oFlexCustomData);
 
-		return this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
-			assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "then the custom data is still the same");
-		}.bind(this));
+		this.oFlexController.revertChangesOnControl([this.oChange2], this.oControl);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changeHandler was not called");
+		assert.equal(this.oControl.getCustomData()[0].getValue(), this.oChange.getId(), "then the custom data is still the same");
 	});
 
 	QUnit.module("[XML] checkTargetAndApplyChange with one change for a label", {
@@ -1649,16 +1532,13 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
-			assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
-			var oCustomData = oCustomDataAggregationNode.childNodes[0];
-			assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
-		}.bind(this));
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
 	 });
 
 	QUnit.test("reverts add custom data on the first change applied on a control", function (assert) {
@@ -1671,14 +1551,10 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
-			var oCustomData = this.oControl.getElementsByTagName("customData")[0].childNodes[0];
-			assert.equal(oCustomData.getAttribute("value"), "", "the change id got deleted");
-		}.bind(this));
-
+		this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
+		assert.ok(this.oChangeHandlerRevertChangeStub.calledOnce, "the change was reverted");
+		var oCustomData = this.oControl.getElementsByTagName("customData")[0].childNodes[0];
+		assert.equal(oCustomData.getAttribute("value"), "", "the change id got deleted");
 	});
 
 	QUnit.test("concatenate custom data on the later changes applied on a control", function (assert) {
@@ -1693,17 +1569,14 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
-			assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
-			var oCustomData = oCustomDataAggregationNode.childNodes[0];
-			assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
-			assert.equal(oCustomData.getAttribute("value"), sExpectedFlexCustomDataValue, "the change id is the value");
-		}.bind(this));
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		var sExpectedFlexCustomDataValue = sAlreadyAppliedChangeId + "," + this.oChange.getId();
+		assert.equal(oCustomData.getAttribute("value"), sExpectedFlexCustomDataValue, "the change id is the value");
 	});
 
 	QUnit.test("does not call the change handler if the change was already applied", function (assert) {
@@ -1716,16 +1589,13 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
-			var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
-			assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData is still present");
-			var oCustomData = oCustomDataAggregationNode.childNodes[0];
-			assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
-		}.bind(this));
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the change handler was not called again");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData is still present");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
 	});
 
 	QUnit.test("does not call the change handler if the change was not applied before", function(assert) {
@@ -1737,12 +1607,9 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true)
-
-		.then(function() {
-			assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");
-			assert.equal(this.oControl.getElementsByTagName("customData").length, 0, "no customData is available");
-		}.bind(this));
+		this.oFlexController._removeFromAppliedChangesAndMaybeRevert(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView}, true);
+		assert.equal(this.oChangeHandlerRevertChangeStub.callCount, 0, "the changehandler wasn't called");
+		assert.equal(this.oControl.getElementsByTagName("customData").length, 0, "no customData is available");
 	});
 
 
@@ -1853,16 +1720,13 @@ function (
 		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml");
 		this.oControl = this.oView.childNodes[0].childNodes[0];
 
-		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
-
-		.then(function() {
-			assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
-			var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
-			assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
-			var oCustomData = oCustomDataAggregationNode.childNodes[0];
-			assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
-			assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
-		}.bind(this));
+		this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView});
+		assert.ok(this.oChangeHandlerApplyChangeStub.calledOnce, "the change was applied");
+		var oCustomDataAggregationNode = this.oControl.getElementsByTagName("customData")[0];
+		assert.equal(oCustomDataAggregationNode.childElementCount, 1, "CustomData was set");
+		var oCustomData = oCustomDataAggregationNode.childNodes[0];
+		assert.equal(oCustomData.getAttribute("key"), FlexController.appliedChangesCustomDataKey, "the key of the custom data is correct");
+		assert.equal(oCustomData.getAttribute("value"), this.oChange.getId(), "the change id is the value");
 	 });
 
 });

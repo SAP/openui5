@@ -70,7 +70,9 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				return convertToLocaleOrNull( (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage ) || new Locale("en");
 			}
 
-			// definition of supported settings
+			// Definition of supported settings
+			// Valid property types are: string, boolean, string[], code, object, function.
+			// Objects as an enumeration list of valid values can also be provided (e.g. Configuration.AnimationMode).
 			var M_SETTINGS = {
 					"theme"                 : { type : "string",   defaultValue : "base" },
 					"language"              : { type : "Locale",   defaultValue : detectLanguage() },
@@ -79,7 +81,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					// "timezone"              : "UTC",
 					"accessibility"         : { type : "boolean",  defaultValue : true },
 					"autoAriaBodyRole"      : { type : "boolean",  defaultValue : true,      noUrl:true }, //whether the framework automatically adds automatically the ARIA role 'application' to the html body
-					"animation"             : { type : "boolean",  defaultValue : true },
+					"animation"             : { type : "boolean",  defaultValue : true }, // deprecated, please use animationMode
+					"animationMode"         : { type : Configuration.AnimationMode, defaultValue : undefined }, // If no value is provided, animationMode will be set on instantiation depending on the animation setting.
 					"rtl"                   : { type : "boolean",  defaultValue : null },
 					"debug"                 : { type : "boolean",  defaultValue : false },
 					"inspect"               : { type : "boolean",  defaultValue : false },
@@ -205,7 +208,14 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					}
 					break;
 				default:
-					throw new Error("illegal state");
+					// When the type is none of the above types, check if an object as enum is provided to validate the value.
+					var vType = M_SETTINGS[sName].type;
+					if (typeof vType === "object") {
+						checkEnum(vType, sValue, sName);
+						config[sName] = sValue;
+					} else {
+						throw new Error("illegal state");
+					}
 				}
 			}
 
@@ -461,6 +471,20 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				if ( config[n] !== M_SETTINGS[n].defaultValue ) {
 					jQuery.sap.log.info("  " + n + " = " + config[n]);
 				}
+			}
+
+
+			// Setup animation mode. If no animation mode is provided
+			// the value is set depending on the animation setting.
+			if (this.getAnimationMode() === undefined) {
+				if (this.animation) {
+					this.setAnimationMode(Configuration.AnimationMode.full);
+				} else {
+					this.setAnimationMode(Configuration.AnimationMode.minimal);
+				}
+			} else {
+				// Validate and set the provided value for the animation mode
+				this.setAnimationMode(this.getAnimationMode());
 			}
 		},
 
@@ -909,15 +933,54 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * Returns whether the animations are globally used.
 		 * @return {boolean} whether the animations are globally used
 		 * @public
+		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
 		 */
 		getAnimation : function () {
 			return this.animation;
 		},
 
 		/**
+		 * Returns the current animation mode.
+		 *
+		 * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
+		 * @since 1.50.0
+		 * @public
+		 */
+		getAnimationMode : function () {
+			return this.animationMode;
+		},
+
+		/**
+		 * Sets the current animation mode.
+		 *
+		 * Expects an animation mode as string and validates it. If a wrong animation mode was set, an error is
+		 * thrown. If the mode is valid it is set, then the attributes <code>data-sap-ui-animation</code> and
+		 * <code>data-sap-ui-animation-mode</code> of the HTML document root element are also updated.
+		 * If the <code>animationMode</code> is <code>Configuration.AnimationMode.none</code> the old
+		 * <code>animation</code> property is set to <code>false</code>, otherwise it is set to <code>true</code>.
+		 *
+		 * @param {sap.ui.core.Configuration.AnimationMode} sAnimationMode A valid animation mode
+		 * @throws {Error} If the provided <code>sAnimationMode</code> does not exist, an error is thrown
+		 * @since 1.50.0
+		 * @public
+		 */
+		setAnimationMode : function(sAnimationMode) {
+			checkEnum(Configuration.AnimationMode, sAnimationMode, "animationMode");
+
+			// Set the animation to on or off depending on the animation mode to ensure backward compatibility.
+			this.animation = (sAnimationMode !== Configuration.AnimationMode.minimal && sAnimationMode !== Configuration.AnimationMode.none);
+
+			// Set the animation mode and update html attributes.
+			this.animationMode = sAnimationMode;
+			if (this._oCore && this._oCore._setupAnimation) {
+				this._oCore._setupAnimation();
+			}
+		},
+
+		/**
 		 * Returns whether the page uses the RTL text direction.
 		 *
-		 * If no mode has been explicitly set (neither true nor false),
+		 * If no mode has been explicitly set (neither <code>true</code> nor <code>false</code>),
 		 * the mode is derived from the current language setting.
 		 *
 		 * @return {boolean} whether the page uses the RTL text direction
@@ -1344,6 +1407,42 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 
 	});
 
+	/**
+	 * Enumerable list with available animation modes.
+	 *
+	 * This enumerable is used to validate the animation mode. Animation modes allow to specify different animation scenarios or levels.
+	 * The implementation of the Control (JavaScript or CSS) has to be done differently for each animation mode.
+	 *
+	 * @enum {string}
+	 * @since 1.50.0
+	 * @public
+	 */
+	Configuration.AnimationMode = {
+		/**
+		 * <code>full</code> represents a mode with unrestricted animation capabilities.
+		 * @public
+		 */
+		full : "full",
+
+		/**
+		 * <code>basic</code> can be used for a reduced, more light-weight set of animations.
+		 * @public
+		 */
+		basic : "basic",
+
+		/**
+		 * <code>minimal</code> includes animations of fundamental functionality.
+		 * @public
+		 */
+		minimal : "minimal",
+
+		/**
+		 * <code>none</code> deactivates the animation completely.
+		 * @public
+		 */
+		none : "none"
+	};
+
 	/*
 	 * Helper that creates a Locale object from the given language
 	 * or, if that fails, returns null.
@@ -1409,6 +1508,27 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		if ( !bCondition ) {
 			throw new Error(sMessage);
 		}
+	}
+
+	/**
+	 * Checks if a value exists within an enumerable list.
+	 *
+	 * @param {object} oEnum Enumeration object with values for validation
+	 * @param {string} sValue Value to check against enumerable list
+	 * @param {string} sPropertyName Name of the property which is checked
+	 * @throws {Error} If the value could not be found, an error is thrown
+	 */
+	function checkEnum(oEnum, sValue, sPropertyName) {
+		var aValidValues = [];
+		for (var sKey in oEnum) {
+			if (oEnum.hasOwnProperty(sKey)) {
+				if (oEnum[sKey] === sValue) {
+					return;
+				}
+				aValidValues.push(oEnum[sKey]);
+			}
+		}
+		throw new Error("Unsupported Enumeration value for " + sPropertyName + ", valid values are: " + aValidValues.join(", "));
 	}
 
 	/**

@@ -47,7 +47,7 @@
 
 
 			</layout:VerticalLayout>
-			<uxap:ObjectPageLayout id="ObjectPageLayout" variantManagement="variantManagementOrdersTable">
+			<uxap:ObjectPageLayout id="ObjectPageLayout">
 				<uxap:headerTitle>
 					<uxap:ObjectPageHeader
 							id="obheader0"
@@ -57,7 +57,7 @@
 						<uxap:navigationBar>
 							<Bar>
 								<contentRight>
-									<vm:VariantManagement id="varMgmtID" variantManagementKey="variantManagementOrdersTable"></vm:VariantManagement>
+									<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout"></vm:VariantManagement>
 								</contentRight>
 							</Bar>
 						</uxap:navigationBar>

@@ -5,7 +5,6 @@
 	<l:VerticalLayout>
 		<m:VBox fitContainer="true">
 			<m:HBox fitContainer="true">
-
 				<m:Button id="idModelChangeBtn" text="Toggle Context"
 					press="onVMIdChange" />
 				<m:Button id="idCallManageDialogBtn" text="open manage dialog"
@@ -34,7 +33,7 @@
 		</m:VBox>
 		<m:Label text="Variants" />
 		<VariantManagement id="idVariantManagementCtrl"
-			variantManagementKey="M0" save="onSave" manage="onManage"
+			for="idModelChangeBtn" save="onSave" manage="onManage"
 			showExecuteOnSelection="true" showShare="true" showFavorites="true" />
 	</l:VerticalLayout>
 </mvc:View>

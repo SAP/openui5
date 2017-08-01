@@ -100,6 +100,21 @@
 		}
 	}
 
+	/**
+	 * Checks whether the complete text in an text input element is selected.
+	 *
+	 * @param {HTMLElement} oTextInputElement The input or textarea element to check for text selection.
+	 * @return {boolean} Returns <code>true</code>, if the complete text is selected.
+	 */
+	function isTextSelected(oTextInputElement) {
+		var iFirstSelectedIndex = oTextInputElement.selectionStart ? oTextInputElement.selectionStart : 0;
+		var iLastSelectedIndex = oTextInputElement.selectionEnd ? oTextInputElement.selectionEnd : 0;
+		var iSelectedCharacterCount = iLastSelectedIndex - iFirstSelectedIndex;
+		var iTotalCharacterCount = oTextInputElement.value.length;
+
+		return iSelectedCharacterCount > 0 && iSelectedCharacterCount === iTotalCharacterCount;
+	}
+
 	function setupTest() {
 		createTables(true, true);
 		var oFocus = new sap.ui.table.test.TestControl("Focus1", {text: "Focus1", tabbable: true});
@@ -5433,38 +5448,36 @@
 		 */
 		testOnDataCellWithInteractiveControls: function (assert, key, sKeyName, bShift, bAlt, bCtrl, fEventTriggerer) {
 			var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
-			var oElem, $Element;
-
-			function isTextSelected(oInputElement) {
-				return oInputElement.selectionStart === 0 && oInputElement.selectionEnd === oInputElement.value.length;
-			}
+			var oElement, $Element, oPreviousElement;
 
 			// Focus cell with a focusable & tabbable element inside.
-			oElem = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
+			oElement = checkFocus(getCell(0, iNumberOfCols - 2, true), assert);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(),
 				"Focus cell with a focusable and tabbable input element: Table is in Navigation Mode");
 
 			// Enter action mode.
-			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
-			$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
-			oElem = $Element[0];
-			assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
+			fEventTriggerer(oElement, key, bShift, bAlt, bCtrl);
+			$Element = TableKeyboardDelegate2._getInteractiveElements(oElement);
+			oElement = $Element[0];
+			oPreviousElement = oElement;
+			assert.strictEqual(document.activeElement, oElement, sKeyCombination + ": First interactive element in the cell is focused");
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			assert.ok(isTextSelected(oElem), "The text in the input element is selected");
+			assert.ok(isTextSelected(oElement), "The text in the input element is selected");
 
 			// Focus cell with a focusable & non-tabbable element inside.
 			oTable._getKeyboardExtension().setActionMode(false);
-			oElem = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
+			oElement = checkFocus(getCell(0, iNumberOfCols - 1, true), assert);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(),
 				"Focus cell with a focusable and non-tabbable input element: Table is in Navigation Mode");
+			assert.ok(!isTextSelected(oPreviousElement), "The text in the previously focused input element is no longer selected");
 
 			// Enter action mode.
-			fEventTriggerer(oElem, key, bShift, bAlt, bCtrl);
-			$Element = TableKeyboardDelegate2._getInteractiveElements(oElem);
-			oElem = $Element[0];
-			assert.strictEqual(document.activeElement, oElem, sKeyCombination + ": First interactive element in the cell is focused");
+			fEventTriggerer(oElement, key, bShift, bAlt, bCtrl);
+			$Element = TableKeyboardDelegate2._getInteractiveElements(oElement);
+			oElement = $Element[0];
+			assert.strictEqual(document.activeElement, oElement, sKeyCombination + ": First interactive element in the cell is focused");
 			assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-			assert.ok(isTextSelected(oElem), "The text in the input element is selected");
+			assert.ok(isTextSelected(oElement), "The text in the input element is selected");
 
 			return $Element[0];
 		},
@@ -5563,12 +5576,15 @@
 	});
 
 	QUnit.test("F2 - On a Data Cell", function (assert) {
-		var oElem = this.testOnDataCellWithInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
+		var oElement = this.testOnDataCellWithInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
+		var oPreviousElement = oElement;
 
 		// Leave action mode.
-		qutils.triggerKeydown(oElem, Key.F2, false, false, false);
+		qutils.triggerKeydown(oElement, Key.F2, false, false, false);
 		checkFocus(getCell(0, iNumberOfCols - 1), assert);
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		var bTextSelected = oPreviousElement.selectionStart === 0 && oPreviousElement.selectionEnd === oPreviousElement.value.length;
+		assert.ok(!bTextSelected, "The text in the previously selected element is no longer selected");
 
 		this.testOnDataCellWithoutInteractiveControls(assert, Key.F2, "F2", false, false, false, qutils.triggerKeydown);
 	});
@@ -6455,7 +6471,7 @@
 		this.testActionModeUpDownNavigation(assert, -2, false);
 	});
 
-	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate interchanging interactive and non-interactive cells", function (assert) {
+	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate between interchanging interactive and non-interactive cells", function (assert) {
 		var oElem;
 
 		getCell(1, 1).find("span").attr("tabindex", "-1"); // Prepare the cell in the second row to not have interactive elements.
@@ -6482,5 +6498,101 @@
 		oElem = TableKeyboardDelegate2._getInteractiveElements(getCell(0, 1)).first();
 		checkFocus(oElem, assert); // The cells interactive element should be focused.
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+	});
+
+	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate between text input elements", function (assert) {
+		oTable.setVisibleRowCount(4);
+		sap.ui.getCore().applyChanges();
+
+		var oInputElement = document.createElement("input");
+		oInputElement.setAttribute("id", oTable.getRows()[1].getCells()[1].getId());
+		oInputElement.value = "test";
+		getCell(1, 1).empty().append(oInputElement);
+
+		var oTextAreaElement = document.createElement("textarea");
+		oTextAreaElement.setAttribute("id", oTable.getRows()[2].getCells()[1].getId());
+		oTextAreaElement.value = "test";
+		getCell(2, 1).empty().append(oTextAreaElement);
+
+		getCell(0, 1, true, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, true);
+		checkFocus(oInputElement, assert);
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(isTextSelected(oInputElement), "The text in the input is selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, true);
+		checkFocus(oTextAreaElement, assert);
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(!isTextSelected(oTextAreaElement), "The text in the textarea is not selected");
+		assert.ok(!isTextSelected(oInputElement), "The text in the input is not selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, true);
+		// The interactive element in the cell under the textarea cell should be focused.
+		checkFocus(TableKeyboardDelegate2._getInteractiveElements(getCell(3, 1)).first(), assert);
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, true);
+		checkFocus(oTextAreaElement, assert);
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(!isTextSelected(oTextAreaElement), "The text in the textarea is not selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, true);
+		checkFocus(oInputElement, assert);
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(isTextSelected(oInputElement), "The text in the input is selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, true);
+		// The interactive element in the cell above the input cell should be focused.
+		checkFocus(TableKeyboardDelegate2._getInteractiveElements(getCell(0, 1)).first(), assert);
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		assert.ok(!isTextSelected(oInputElement), "The text in the input is not selected");
+	});
+
+	QUnit.test("Up & Down - Navigate between text input elements", function (assert) {
+		oTable.setVisibleRowCount(4);
+		sap.ui.getCore().applyChanges();
+
+		var oInputElement = document.createElement("input");
+		var oTextAreaElement = document.createElement("textarea");
+		var oCellWithInput = getCell(1, 1).empty().append(oInputElement);
+		var oCellWithTextArea = getCell(2, 1).empty().append(oTextAreaElement);
+
+		oInputElement.setAttribute("id", oTable.getRows()[1].getCells()[1].getId());
+		oInputElement.value = "test";
+		oTextAreaElement.setAttribute("id", oTable.getRows()[2].getCells()[1].getId());
+		oTextAreaElement.value = "test";
+
+		getCell(0, 1, true, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		checkFocus(oCellWithInput, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		assert.ok(!isTextSelected(oInputElement), "The text in the input is not selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		checkFocus(oCellWithTextArea, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		assert.ok(!isTextSelected(oTextAreaElement), "The text in the textarea is not selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
+		checkFocus(getCell(3, 1), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		checkFocus(oCellWithTextArea, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		assert.ok(!isTextSelected(oTextAreaElement), "The text in the textarea is not selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		checkFocus(oCellWithInput, assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		assert.ok(!isTextSelected(oInputElement), "The text in the input is not selected");
+
+		qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
+		checkFocus(getCell(0, 1), assert);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 }());

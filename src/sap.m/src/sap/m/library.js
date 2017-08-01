@@ -166,6 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.NotificationListItem",
 			"sap.m.NotificationListGroup",
 			"sap.m.PagingButton",
+			"sap.m.PlanningCalendarLegend",
 			"sap.m.ObjectAttribute",
 			"sap.m.ObjectHeader",
 			"sap.m.ObjectIdentifier",
@@ -1560,6 +1561,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 */
 		Error : "Error"
 
+	};
+
+	/**
+	 * MultiEditField types. These values directly influence which type of control is rendered by the MultiEditField.
+	 * @private
+	 * @enum {string}
+	 * @experimental since 1.52
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.MultiEditFieldType = {
+		/**
+		 * Property of type Select
+		 * @private
+		 */
+		Select: "Select"
 	};
 
 	/**

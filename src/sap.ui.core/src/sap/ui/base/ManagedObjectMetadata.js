@@ -131,6 +131,8 @@ sap.ui.define(['jquery.sap.global', './DataType', './Metadata'],
 		this.name = name;
 		this.type = info.type || 'any';
 		this.visibility = info.visibility || 'public';
+		this.defaultValue = info.defaultValue;
+		this.appData = remainder(this, info);
 		this._oParent = oClass;
 		this._sUID = "special:" + name;
 		this._iKind = Kind.SPECIAL_SETTING;

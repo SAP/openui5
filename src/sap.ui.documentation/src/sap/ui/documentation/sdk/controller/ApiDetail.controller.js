@@ -105,9 +105,15 @@ sap.ui.define([
 				var sRoute = "apiId",
 					oComponent = this.getOwnerComponent(),
 					aLibsData = oComponent.getModel("libsData").getData(),
-					sTarget = oEvent.target.getAttribute("data-sap-ui-target"),
+					oTarget = oEvent.target,
+					sTarget = oTarget.getAttribute("data-sap-ui-target"),
 					sMethodName = "",
 					aNavInfo;
+
+				// Handle link to method|event from a MessageStrip for which we can't use data-sap-ui-target
+				if (!sTarget && oTarget.getAttribute("href") === "#") {
+					sTarget = oTarget.getAttribute("target");
+				}
 
 				if (!sTarget) {
 					return;
@@ -162,7 +168,7 @@ sap.ui.define([
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
 
-				oComponent.fetchVersionInfo()
+				oComponent.loadVersionInfo()
 					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
 					.then(function () {
 						oApiDetailObjectPage._suppressLayoutCalculations();
@@ -308,7 +314,9 @@ sap.ui.define([
 					aControlChildren = this._getControlChildren(aTreeData, sTopicId),
 					oModel,
 					oConstructorParamsModel = {parameters: []},
-					oMethodsModel = {methods: []},
+					oBorrowedMethodsModel,
+					oMethodsModelData = {methods: []},
+					oMethodsModel,
 					oEventsModel = {events: []},
 					oUi5Metadata;
 
@@ -392,14 +400,14 @@ sap.ui.define([
 				}
 
 				if (oControlData.hasMethods) {
-					oMethodsModel.methods = this.buildMethodsModel(oControlData.methods);
+					oMethodsModelData.methods = this.buildMethodsModel(oControlData.methods);
 				}
 
 				if (oControlData.hasEvents) {
 					oEventsModel.events = this.buildEventsModel(oControlData.events);
 				}
 
-				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData);
+				oControlData.borrowed = this.buildBorrowedModel(sTopicId, aLibsData, oControlData.methods);
 
 				if (oControlData.implements && oControlData.implements.length) {
 					oControlData.implementsParsed = oControlData.implements.map(function (item, idx, array) {
@@ -423,14 +431,22 @@ sap.ui.define([
 				oControlData.module = oControlData.module || this.NOT_AVAILABLE;
 
 
+				oMethodsModel = this.getModel("methods");
+				oBorrowedMethodsModel = this.getModel("borrowedMethods");
+
+				// BPC: 1780339157 - There are cases where we have more than 100 method entries so we need to increase
+				// the default model size limit for the methods and the borrowed methods model.
+				oMethodsModel.setSizeLimit(1000);
+				oBorrowedMethodsModel.setSizeLimit(1000);
+
 				this.getModel("topics").setSizeLimit(1000);
 				this.getModel("topics").setData(oControlData, false /* no merge with previous data */);
 				this.getModel("constructorParams").setData(oConstructorParamsModel, false /* no merge with previous data */);
-				this.getModel('methods').setData(oMethodsModel, false /* no merge with previous data */);
-				this.getModel('methods').setDefaultBindingMode("OneWay");
+				oMethodsModel.setData(oMethodsModelData, false /* no merge with previous data */);
+				oMethodsModel.setDefaultBindingMode("OneWay");
 				this.getModel('events').setData(oEventsModel, false /* no merge with previous data */);
 				this.getModel('events').setDefaultBindingMode("OneWay");
-				this.getModel('borrowedMethods').setData(oControlData.borrowed.methods, false);
+				oBorrowedMethodsModel.setData(oControlData.borrowed.methods, false);
 				this.getModel('borrowedEvents').setData(oControlData.borrowed.events, false);
 
 				if (this.extHookbindData) {
@@ -562,12 +578,13 @@ sap.ui.define([
 				return result;
 			},
 
-			buildBorrowedModel: function (sTopicId, aLibsData) {
+			buildBorrowedModel: function (sTopicId, aLibsData, aMethods) {
 				var aBaseClassMethods,
 					aBaseClassEvents,
 					sBaseClass,
 					aBorrowChain,
-					oBaseClass;
+					oBaseClass,
+					aMethodNames;
 
 				aBorrowChain = {
 					methods: [],
@@ -577,6 +594,18 @@ sap.ui.define([
 
 				var fnVisibilityFilter = function (item) {
 					return item.visibility === "public";
+				};
+
+				// Get all method names
+				aMethods = aMethods || [];
+				aMethodNames = aMethods.map(function (oMethod) {
+					return oMethod.name;
+				});
+
+				// Filter all borrowed methods and if some of them are overridden by the class
+				// we should exclude them from the borrowed methods list. BCP: 1780319087
+				var fnOverrideMethodFilter = function (item) {
+					return aMethodNames.indexOf(item.name) === -1;
 				};
 
 				var fnMethodsMapper = function (item) {
@@ -599,7 +628,9 @@ sap.ui.define([
 						break;
 					}
 
-					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter).map(fnMethodsMapper);
+					aBaseClassMethods = (oBaseClass.methods || []).filter(fnVisibilityFilter)
+						.filter(fnOverrideMethodFilter).map(fnMethodsMapper);
+
 					if (aBaseClassMethods.length) {
 						aBorrowChain.methods.push({
 							name: sBaseClass,
@@ -820,6 +851,80 @@ sap.ui.define([
 			 */
 			formatEntityName: function (sName, sClassName, bStatic) {
 				return (bStatic === true) ? sClassName + "." + sName : sName;
+			},
+
+			/**
+			 * Formats the entity deprecation message and pre-process jsDoc link and code blocks
+			 * @param {string} sSince since text
+			 * @param {string} sDescription deprecation description text
+			 * @param {string} sEntityType string representation of entity type
+			 * @returns {string} formatted deprecation message
+			 */
+			formatDeprecated: function (sSince, sDescription, sEntityType) {
+				var aResult;
+				// Evaluate links and code blocks in the deprecation description
+
+				if (sDescription) {
+					// Handle {@link ...}, {@link ... ...}, {@link #...} and <code>...</code> patterns
+					sDescription = sDescription.replace(/{@link\s+([^}\s]+)(?:\s+([^}]*))?}|<code>(\S+)<\/code>/gi,
+						function (sMatch, sEntity, sName, sCodeEntity) {
+							var sTarget;
+
+							if (sCodeEntity) {
+								// Handle code block pattern
+								return ['<em>', sCodeEntity, '</em>'].join("");
+							} else {
+								// Handle link patterns
+
+								// Build Target
+								if (sEntityType) {
+									// Handle hash pattern - used for methods and events on some occasions
+									sEntity = sEntity[0] === "#" ? sEntity.substring(1, sEntity.length) : sEntity;
+									sTarget = [this._sTopicid, "/", sEntityType, "/", sEntity].join("");
+								} else {
+									// Direct link to entity
+									sTarget = sEntity;
+								}
+
+								// link attributes should follow the pattern {href="#" target="entity|method|event"}
+								// so they could be handled by onJSDocLinkClick listener
+								return ['<a target="', sTarget, '" href="#">', (sName ? sName : sEntity), '</a>'].join("");
+							}
+
+						}.bind(this));
+				}
+
+				// Build deprecation message
+				// Note: there may be no since or no description text available
+				aResult = ["Deprecated"];
+				if (sSince) {
+					aResult.push(" since " + sSince);
+				}
+				if (sDescription) {
+					aResult.push(". " + sDescription);
+				}
+
+				return aResult.join("");
+			},
+
+			/**
+			 * Formats method deprecation message and pre-process jsDoc link and code blocks
+			 * @param {string} sSince since text
+			 * @param {string} sDescription deprecation description text
+			 * @returns {string} formatted deprecation message
+			 */
+			formatMethodDeprecated: function (sSince, sDescription) {
+				return this.formatDeprecated(sSince, sDescription, "methods");
+			},
+
+			/**
+			 * Formats event deprecation message and pre-process jsDoc link and code blocks
+			 * @param {string} sSince since text
+			 * @param {string} sDescription deprecation description text
+			 * @returns {string} formatted deprecation message
+			 */
+			formatEventDeprecated: function (sSince, sDescription) {
+				return this.formatDeprecated(sSince, sDescription, "events");
 			},
 
 			/**

@@ -88,13 +88,13 @@
 
 	QUnit.test("Standard categories", function(assert) {
 		var $Leg1 = sap.ui.getCore().byId("Leg1").$();
-		var aLegendItems = $Leg1.children(".sapUiUnifiedLegendItem");
+		var aLegendItems = $Leg1.find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
 	});
 
 	QUnit.test("Custom categories", function(assert) {
 		var $Leg2 = sap.ui.getCore().byId("Leg2").$();
-		var aLegendItems = $Leg2.children(".sapUiUnifiedLegendItem");
+		var aLegendItems = $Leg2.find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
 
 		oLeg2 = sap.ui.getCore().byId("Leg2");
@@ -111,7 +111,7 @@
 		sap.ui.getCore().applyChanges();
 
 		$Leg2 = oLeg2.$();
-		var aLegendItems = $Leg2.children(".sapUiUnifiedLegendItem");
+		var aLegendItems = $Leg2.find(".sapUiUnifiedLegendItems").children();
 		assert.equal(aLegendItems.length, 14, "14 categories rendered");
 
 		assert.ok(jQuery("#L2-I0").hasClass("sapUiCalLegDayType01"), "Legend2: 1. item has type 01");
@@ -152,7 +152,7 @@
 
 		sap.ui.getCore().applyChanges();
 
-		var $Leg = oLeg3.$().children();
+		var $Leg = oLeg3.$().find(".sapUiUnifiedLegendItems").children();
 		var specialDatesLeg = oLeg3.getItems();
 
 		for (var i = 1; i < 9; i++) {
@@ -199,9 +199,9 @@
 	QUnit.test("_getItemType", function(assert) {
 		var aLegendItems = this.oLegend.getItems();
 
-		assert.equal(this.oLegend._getItemType(aLegendItems[0]), "Type04", 'item has the correct type');
-		assert.equal(this.oLegend._getItemType(aLegendItems[1]), "Type06", 'item has the correct type');
-		assert.equal(this.oLegend._getItemType(aLegendItems[2]), "Type11", 'item has the correct type');
+		assert.equal(this.oLegend._getItemType(aLegendItems[0], aLegendItems), "Type04", 'item has the correct type');
+		assert.equal(this.oLegend._getItemType(aLegendItems[1], aLegendItems), "Type06", 'item has the correct type');
+		assert.equal(this.oLegend._getItemType(aLegendItems[2], aLegendItems), "Type11", 'item has the correct type');
 	});
 
 	QUnit.test("_getItemByType", function(assert) {
@@ -213,8 +213,8 @@
 	});
 
 	QUnit.test("_getUnusedItemTypes", function(assert) {
-		assert.equal(this.oLegend._getUnusedItemTypes()[0], "Type04", "unused item types are correct");
-		assert.equal(this.oLegend._getUnusedItemTypes()[1], "Type06", "unused item types are correct");
+		assert.equal(this.oLegend._getUnusedItemTypes(this.oLegend.getItems())[0], "Type04", "unused item types are correct");
+		assert.equal(this.oLegend._getUnusedItemTypes(this.oLegend.getItems())[1], "Type06", "unused item types are correct");
 	});
 
 	QUnit.test("getTypeAriaText", function(assert) {

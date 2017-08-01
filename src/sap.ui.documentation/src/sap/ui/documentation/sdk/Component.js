@@ -65,7 +65,7 @@ sap.ui.define([
 
 				if (Device.system.desktop) {
 					// Preload API Info on desktop for faster startup
-					this.fetchVersionInfo().then(this.fetchAPIInfoAndBindModels.bind(this));
+					this.loadVersionInfo().then(this.fetchAPIInfoAndBindModels.bind(this));
 				}
 
 				// Prevents inappropriate focus change which causes ObjectPage to scroll,
@@ -98,12 +98,9 @@ sap.ui.define([
 					// check whether FLP has already set the content density class; do nothing in this case
 					if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
 						this._sContentDensityClass = "";
-					} else if (!Device.support.touch) { // apply "compact" mode if touch is not supported
-						this._sContentDensityClass = "sapUiSizeCompact";
-					} else {
-						// "cozy" in case of touch support; default for most sap.m controls, but needed for desktop-first controls like sap.ui.table.Table
-						this._sContentDensityClass = "sapUiSizeCozy";
 					}
+					// The default density class for the sap.ui.documentation project will be compact
+					this._sContentDensityClass = "sapUiSizeCompact";
 				}
 				return this._sContentDensityClass;
 			},
@@ -117,7 +114,7 @@ sap.ui.define([
 
 			// MODELS
 
-			fetchVersionInfo: function () {
+			loadVersionInfo: function () {
 				if (!this._oVersionInfoPromise) {
 					this._oVersionInfoPromise = sap.ui.getVersionInfo({async: true})
 						.then(this._bindVersionModel.bind(this));

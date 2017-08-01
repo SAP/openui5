@@ -8,12 +8,12 @@
 		<content>
 			<ComboBox
 				items="{
-					path: '/ProductCollection',
-					sorter: { path: 'Name' },
+					path: '/CountriesCollection',
+					sorter: { path: 'text' },
 					suspended: true
 				}"
 				loadItems="handleLoadItems">
-				<core:ListItem key="{ProductId}" text="{Name}"/>
+				<core:ListItem key="{key}" text="{text}"/>
 			</ComboBox>
 		</content>
 	</Page>

@@ -121,8 +121,12 @@ sap.ui.define([
 	Settings.prototype.handleSettings = function(aSelectedOverlays) {
 		var oSettingsCommand;
 		var oElement = aSelectedOverlays[0].getElementInstance();
+		var mPropertyBag = {
+			getUnsavedChanges: this._getUnsavedChanges.bind(this),
+			styleClass: Utils.getRtaStyleClassName()
+		};
 
-		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, this._getUnsavedChanges.bind(this)).then(function(aChanges) {
+		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, this._getUnsavedChanges.bind(this), mPropertyBag).then(function(aChanges) {
 			aChanges.forEach(function(mChange) {
 				oSettingsCommand = this.getCommandFactory().getCommandFor(mChange.selectorControl, "settings", mChange.changeSpecificData);
 				this.fireElementModified({

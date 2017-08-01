@@ -55,7 +55,7 @@ sap.ui.define([
 
 				this._hasMatched = true;
 
-				oComponent.fetchVersionInfo()
+				oComponent.loadVersionInfo()
 					.then(oComponent.fetchAPIInfoAndBindModels.bind(oComponent))
 					.then(function () {
 						var aLibsData = oComponent.getModel("libsData").getData();

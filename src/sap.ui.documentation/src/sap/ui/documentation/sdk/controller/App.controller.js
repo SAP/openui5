@@ -18,6 +18,8 @@ sap.ui.define([
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
+				BaseController.prototype.onInit.call(this);
+
 				var oViewModel = new JSONModel({
 					busy : false,
 					delay : 0,

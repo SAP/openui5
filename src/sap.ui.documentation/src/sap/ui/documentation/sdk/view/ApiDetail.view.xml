@@ -14,7 +14,8 @@
 			showSubHeader="false"
 			showFooter="false"
 			busy="true"
-			busyIndicatorDelay="0">
+			busyIndicatorDelay="0"
+			class="apiDetailPage">
 
 		<m:content>
 			<ObjectPageLayout id="apiDetailObjectPage"
@@ -110,19 +111,20 @@
 				</headerContent>
 
 				<sections>
-					<ObjectPageSection id="overview" title="Overview">
+					<ObjectPageSection id="overview" title="Overview" titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
 									<layout:VerticalLayout width="100%">
 										<m:MessageStrip
 											visible="{=${topics>/deprecated} !== undefined}"
-											text="Deprecated since version {topics>/deprecated/since}. {topics>/deprecated/text}"
+											text="{parts: [{path: 'topics>/deprecated/since'}, {path: 'topics>/deprecated/text'}],
+												formatter: '.formatDeprecated'}"
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiMediumMarginBottom">
+											class="sapUiSmallMarginBottom sapUiSmallMarginTop">
 										</m:MessageStrip>
 										<core:HTML content="{parts: [{path: 'topics>/description'}],
 																	  formatter: '.formatDescription'}"/>
@@ -144,7 +146,7 @@
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiMediumMarginBottom">
+											class="sapUiSmallMarginBottom">
 										</m:MessageStrip>
 
 										<m:Table visible="{topics>/hasChildren}"
@@ -153,7 +155,7 @@
 												 fixedLayout="false">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Namespaces &amp; Classes"/></m:Column>
-												<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
+												<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader">
 													<m:Label text="Description"/>
 												</m:Column>
 											</m:columns>
@@ -177,7 +179,8 @@
 
 					<ObjectPageSection id="properties"
 									   title="Fields"
-									   visible="{topics>/hasProperties}">
+									   visible="{topics>/hasProperties}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
@@ -187,7 +190,7 @@
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
@@ -218,7 +221,8 @@
 
 					<ObjectPageSection id="constructor"
 									   title="Constructor"
-									   visible="{topics>/hasConstructor}">
+									   visible="{topics>/hasConstructor}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
@@ -242,7 +246,7 @@
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
@@ -279,20 +283,21 @@
 
 					<ObjectPageSection id="controlProperties"
 									   title="Properties"
-									   visible="{topics>/hasControlProperties}">
+									   visible="{topics>/hasControlProperties}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/properties'}"
 											 showSeparators="Inner"
-											 fixedLayout="true">
+											 fixedLayout="false"
+											 class="sapUiSmallMarginTop">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Default Value"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top" width="10%"><m:Label text="Visibility"/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="Block"></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
@@ -307,11 +312,12 @@
 													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
-													<m:ObjectStatus text="{topics>visibility}" state="{= ${topics>visibility} === 'public' ? 'Success' : 'Warning'}" />
 
 													<m:VBox>
 														<core:HTML content="{parts: [{path: 'topics>description'}, {path: 'topics>since'}],
 																					  formatter: '.formatDescriptionSince'}"/>
+
+														<m:ObjectStatus text="Visibility: {topics>visibility}" state="{= ${topics>visibility} === 'public' ? 'Success' : 'Warning'}"/>
 
 														<m:MessageStrip
 															visible="{=${topics>deprecated} !== undefined}"
@@ -320,7 +326,7 @@
 															showIcon="true"
 															showCloseButton="false"
 															enableFormattedText="true"
-															class="sapUiMediumMarginBottom">
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 														</m:MessageStrip>
 														<m:MessageStrip
 															visible="{=${topics>experimental} !== undefined}"
@@ -329,7 +335,7 @@
 															showIcon="true"
 															showCloseButton="false"
 															enableFormattedText="true"
-															class="sapUiMediumMarginBottom">
+															class="sapUiTinyMarginBottom sapUiTinyMarginTop">
 														</m:MessageStrip>
 													</m:VBox>
 
@@ -345,7 +351,8 @@
 					<ObjectPageSection id="events"
 									   title="Events"
 									   visible="{topics>/hasEvents}"
-									   subSections="{ path : 'events>/events'}" >
+									   subSections="{ path : 'events>/events'}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection title="{ parts: [{path: 'events>'}],
 																	formatter: '.formatEventsName'}">
@@ -359,12 +366,13 @@
 
 										<m:MessageStrip
 											visible="{=${events>deprecated} !== undefined}"
-											text="Deprecated since version {events>deprecated/since}. {events>deprecated/text}"
+											text="{parts: [{path: 'events>deprecated/since'}, {path: 'events>deprecated/text'}],
+												formatter: '.formatEventDeprecated'}"
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiMediumMarginBottom">
+											class="sapUiSmallMarginBottom">
 										</m:MessageStrip>
 										<m:MessageStrip
 											visible="{=${events>experimental} !== undefined}"
@@ -373,7 +381,7 @@
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiMediumMarginBottom">
+											class="sapUiSmallMarginBottom">
 										</m:MessageStrip>
 
 										<m:Table items="{ path : 'events>parameters', templateShareable: 'false'}"
@@ -382,7 +390,7 @@
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
@@ -415,7 +423,8 @@
 					<ObjectPageSection id="methods"
 									   title="Methods"
 									   visible="{topics>/hasMethods}"
-									   subSections="{ path : 'methods>/methods'}" >
+									   subSections="{ path : 'methods>/methods'}"
+									   titleUppercase="false">
 						<subSections>
 
 							<ObjectPageSubSection title="{parts: [
@@ -427,19 +436,22 @@
 
 									<layout:VerticalLayout width="100%">
 
-										<core:HTML content="{parts: [{path: 'methods>description'}, {path: 'methods>since'}],
-																			 formatter: '.formatDescriptionSince'}"/>
+										<core:HTML content="{parts: [{path: 'methods>description'}],
+																			 formatter: '.formatDescription'}"/>
 
-										<m:ObjectStatus text="Visibility: {methods>visibility}" state="{= ${methods>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiSmallMarginBottom"/>
-
+										<layout:HorizontalLayout class="sapUiTinyMarginBottom">
+											<m:ObjectStatus text="Visibility: {methods>visibility}" state="{= ${methods>visibility} === 'public' ? 'Success' : 'Warning'}" class="sapUiTinyMarginEnd"/>
+											<m:ObjectStatus visible="{=${methods>since} !== undefined}" text="Since: {methods>since}" />
+										</layout:HorizontalLayout>
 										<m:MessageStrip
 											visible="{=${methods>deprecated} !== undefined}"
-											text="Deprecated since version {methods>deprecated/since}. {methods>deprecated/text}"
+											text="{parts: [{path: 'methods>deprecated/since'}, {path: 'methods>deprecated/text'}],
+												formatter: '.formatMethodDeprecated'}"
 											type="Error"
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiMediumMarginBottom">
+											class="sapUiSmallMarginBottom">
 										</m:MessageStrip>
 										<m:MessageStrip
 											visible="{=${methods>experimental} !== undefined}"
@@ -448,7 +460,7 @@
 											showIcon="true"
 											showCloseButton="false"
 											enableFormattedText="true"
-											class="sapUiMediumMarginBottom">
+											class="sapUiSmallMarginBottom">
 										</m:MessageStrip>
 
 										<ce:CodeEditor height="auto" maxLines="20" width="100%" editable="false" lineNumbers="true"
@@ -466,7 +478,7 @@
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Param"/></m:Column>
 												<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
@@ -506,7 +518,7 @@
 												 visible="{= ${methods>returnValue} !== undefined}">
 											<m:columns>
 												<m:Column vAlign="Top"><m:Label text="Returns"/></m:Column>
-												<m:Column minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
+												<m:Column vAlign="Top" minScreenWidth="Desktop" demandPopin="true" popinDisplay="WithoutHeader" width="50%"><m:Label text="Description"/></m:Column>
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem>
@@ -540,33 +552,33 @@
 
 					<ObjectPageSection id="aggregations"
 									   title="Aggregations"
-									   visible="{topics>/hasAggregations}">
+									   visible="{topics>/hasAggregations}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/aggregations'}"
 											 showSeparators="Inner"
-											 fixedLayout="true">
+											 fixedLayout="false"
+											 class="sapUiSmallMarginTop">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem visible="{= ${topics>visibility} === 'public'}">
 												<m:cells>
-													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+													<m:VBox>
+														<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+														<m:ObjectStatus visible="{= ${topics>deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</m:VBox>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																      formatter: '.formatLinkEnabled'}"
 															press="onTypeLinkPress"/>
-
-													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
-														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</layout:VerticalLayout>
 
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																				 {path: 'topics>deprecated/text'},
@@ -583,33 +595,34 @@
 
 					<ObjectPageSection id="associations"
 									   title="Associations"
-									   visible="{topics>/hasAssociations}">
+									   visible="{topics>/hasAssociations}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/associations'}"
 											 showSeparators="Inner"
-											 fixedLayout="true">
+											 fixedLayout="false"
+											 class="sapUiSmallMarginTop">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Cardinality"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader" vAlign="Top"><m:Label text=""/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem visible="{topics>visibility === 'public'}">
 												<m:cells>
-													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+													<m:VBox>
+														<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
+														<m:ObjectStatus visible="{= ${topics>deprecated} !== undefined }" icon="sap-icon://message-error" state="Error" text="Deprecated"/>
+													</m:VBox>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
 																	  formatter: '.formatLinkEnabled'}"
 															press="onTypeLinkPress"/>
-
-													<layout:VerticalLayout visible="{= ${topics>deprecated} !== undefined }">
-														<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated"/>
-													</layout:VerticalLayout>
 
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																				 {path: 'topics>deprecated/text'},
@@ -626,17 +639,19 @@
 
 					<ObjectPageSection id="specialSettings"
 									   title="Special Settings"
-									   visible="{topics>/hasSpecialSettings}">
+									   visible="{topics>/hasSpecialSettings}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection>
 								<blocks>
 									<m:Table items="{ path : 'topics>/ui5-metadata/specialSettings'}"
 											 showSeparators="Inner"
-											 fixedLayout="true">
+											 fixedLayout="false"
+											 class="sapUiSmallMarginTop">
 										<m:columns>
 											<m:Column vAlign="Top"><m:Label text="Name"/></m:Column>
 											<m:Column minScreenWidth="Tablet" demandPopin="true" vAlign="Top"><m:Label text="Type"/></m:Column>
-											<m:Column minScreenWidth="10000px" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description"/></m:Column>
+											<m:Column vAlign="Top" minScreenWidth="Tablet" demandPopin="true"><m:Label text="Description"/></m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem>
@@ -662,7 +677,8 @@
 					<ObjectPageSection id="annotations"
 									   title="Annotations"
 									   visible="{topics>/hasAnnotations}"
-									   subSections="{ path : 'topics>/ui5-metadata/annotations'}" >
+									   subSections="{ path : 'topics>/ui5-metadata/annotations'}"
+									   titleUppercase="false">
 						<subSections>
 							<ObjectPageSubSection title="{= ${topics>annotation} !== 'undefined' ? ${topics>annotation} : '(' + ${topics>namespace} + ')' }">
 								<blocks>

@@ -87,7 +87,8 @@
 					],
 					expandedContent: [
 						this.getLabel("Expanded Content")
-					]
+					],
+					content: [this.getLabel("Content1"), this.getLabel("Content2")]
 				});
 			},
 			getDynamicPageHeader: function (aContent) {
@@ -583,7 +584,7 @@
 	});
 
 
-	QUnit.module("DynamicPage - Rendering - Title Expanded/Snapped Content", {
+	QUnit.module("DynamicPage - Rendering - Title", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithExpandSnapContent();
 			oUtil.renderObject(this.oDynamicPage);
@@ -594,13 +595,30 @@
 		}
 	});
 
-	QUnit.test("DynamicPage Title Expanded/Snapped Content initial visibility", function (assert) {
+	QUnit.test("DynamicPage Title - Expanded/Snapped Content initial visibility", function (assert) {
 		var $titleSnap = this.oDynamicPage.getTitle().$("snapped-wrapper"),
 			$titleExpand = this.oDynamicPage.getTitle().$("expand-wrapper");
 
 		assert.equal($titleSnap.hasClass("sapUiHidden"), true, "Snapped Content is not visible initially");
 		assert.equal($titleExpand.hasClass("sapUiHidden"), false, "Expanded Content is visible initially");
 	});
+
+	QUnit.test("DynamicPage Title - Content", function (assert) {
+		var oTitle = this.oDynamicPage.getTitle();
+
+		// Assert: DynamicPageTitle content aggregation is not empty
+		assert.equal(oTitle.$().hasClass("sapFDynamicPageTitleWithoutContent"), false,
+			"The css class hasn`t been added as the content aggregation is not empty");
+
+		// Act: remove the content
+		oTitle.removeAllContent();
+		core.applyChanges();
+
+		// Assert: DynamicPageTitle content aggregation is empty
+		assert.equal(oTitle.$().hasClass("sapFDynamicPageTitleWithoutContent"), true,
+			"The css class has been added as the content aggregation is empty");
+	});
+
 
 	QUnit.module("DynamicPage - Rendering - Footer Visibility", {
 		beforeEach: function () {

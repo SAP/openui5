@@ -10,7 +10,7 @@ sap.ui.define([
 		onInit: function () {
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/countriesCollection.json"));
 			this.getView().setModel(oModel);
 		}
 	});

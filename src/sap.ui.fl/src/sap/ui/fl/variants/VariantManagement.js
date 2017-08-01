@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.fl.variants.VariantManagement.
 sap.ui.define([
-	'jquery.sap.global', '../transport/TransportSelection', 'sap/ui/model/Context', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/TextAlign', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/ValueState', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ScreenSize', 'sap/m/PopinDisplay', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/PlacementType', 'sap/m/ButtonType', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarPriority', 'sap/m/OverflowToolbarLayoutData'
-], function(jQuery, TransportSelection, Context, JSONModel, Filter, Device, TextAlign, InvisibleText, Control, ValueState, HorizontalLayout, Grid, SearchField, RadioButton, ScreenSize, PopinDisplay, ColumnListItem, Column, Text, Bar, Table, Page, PlacementType, ButtonType, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarPriority, OverflowToolbarLayoutData) {
+	'jquery.sap.global', '../transport/TransportSelection', 'sap/ui/model/Context', 'sap/ui/model/json/JSONModel', 'sap/ui/model/Filter', 'sap/ui/Device', 'sap/ui/core/TextAlign', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control', 'sap/ui/core/ValueState', 'sap/ui/layout/HorizontalLayout', 'sap/ui/layout/Grid', 'sap/m/SearchField', 'sap/m/RadioButton', 'sap/m/ScreenSize', 'sap/m/PopinDisplay', 'sap/m/ColumnListItem', 'sap/m/Column', 'sap/m/Text', 'sap/m/Bar', 'sap/m/Table', 'sap/m/Page', 'sap/m/PlacementType', 'sap/m/ButtonType', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/CheckBox', 'sap/m/Dialog', 'sap/m/Input', 'sap/m/Label', 'sap/m/ResponsivePopover', 'sap/m/SelectList', 'sap/m/ObjectIdentifier', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarPriority', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/fl/Utils', '../changeHandler/BaseTreeModifier'
+], function(jQuery, TransportSelection, Context, JSONModel, Filter, Device, TextAlign, InvisibleText, Control, ValueState, HorizontalLayout, Grid, SearchField, RadioButton, ScreenSize, PopinDisplay, ColumnListItem, Column, Text, Bar, Table, Page, PlacementType, ButtonType, Toolbar, ToolbarSpacer, Button, CheckBox, Dialog, Input, Label, ResponsivePopover, SelectList, ObjectIdentifier, OverflowToolbar, OverflowToolbarPriority, OverflowToolbarLayoutData, flUtils, BaseTreeModifier) {
 	"use strict";
 
 	/**
@@ -66,15 +66,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the logical id of the variant management.
-				 */
-				variantManagementKey: {
-					type: "string",
-					group: "Misc",
-					defaultValue: null
-				},
-
-				/**
 				 * If set to<code>true</code>, the scenario is an industry-specific solution.<br>
 				 * <b>Node:</b>This flag is only used internally in the app variant scenarios.
 				 */
@@ -129,6 +120,16 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: true
+				}
+			},
+			associations: {
+
+				/**
+				 * Contains the controls, for which the variant management is responsible.
+				 */
+				"for": {
+					type: "sap.ui.core.Control",
+					multiple: true
 				}
 			},
 			events: {
@@ -389,7 +390,8 @@ sap.ui.define([
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			// oModel.setProperty(this.oContext + "/currentVariant", sKey);
-			oModel._updateCurrentVariant(this.getVariantManagementKey(), sKey);
+			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
+			oModel._updateCurrentVariant(sLocalId, sKey);
 		}
 
 		return null;
@@ -465,9 +467,10 @@ sap.ui.define([
 
 		if (!this.oContext) {
 			oModel = this.getModel(VariantManagement.MODEL_NAME);
-			sVariantKey = this.getVariantManagementKey();
+			sVariantKey = this.getId();
+			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
 			if (oModel && sVariantKey) {
-				this.oContext = new Context(oModel, "/" + sVariantKey);
+				this.oContext = new Context(oModel, "/" + sLocalId);
 
 				this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
 			}
@@ -478,14 +481,7 @@ sap.ui.define([
 		this._setBindingContext();
 	};
 
-	VariantManagement.prototype.setVariantManagementKey = function(sValue) {
-		this.oContext = null;
-		this.setProperty("variantManagementKey", sValue);
-		this._setBindingContext();
-	};
-
 // VARIANT LIST
-
 	VariantManagement.prototype._createVariantList = function() {
 
 		if (!this.oContext || this.oVariantPopOver) { // create only if context is available
@@ -556,9 +552,9 @@ sap.ui.define([
 					}
 				}
 				if (sSelectionKey) {
+					// this.setModified(false);
 					this.setSelectedVariantKey(sSelectionKey);
 					this.oVariantPopOver.close();
-					this.setModified(false);
 				}
 			}.bind(this)
 		});
