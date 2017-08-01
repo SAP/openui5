@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	var sViewName1 = "MasterSettings";
-	var sViewName2 = "DetailSettings1";
+	var sViewName2 = "DetailSettings";
 	Opa5.createPageObjects({
 		baseClass: Common,
 		onTheSettingsPage: {
