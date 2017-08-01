@@ -126,7 +126,7 @@ sap.ui.define([
 			styleClass: Utils.getRtaStyleClassName()
 		};
 
-		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, this._getUnsavedChanges.bind(this), mPropertyBag).then(function(aChanges) {
+		return aSelectedOverlays[0].getDesignTimeMetadata().getAction("settings").handler(oElement, mPropertyBag).then(function(aChanges) {
 			aChanges.forEach(function(mChange) {
 				oSettingsCommand = this.getCommandFactory().getCommandFor(mChange.selectorControl, "settings", mChange.changeSpecificData);
 				this.fireElementModified({
