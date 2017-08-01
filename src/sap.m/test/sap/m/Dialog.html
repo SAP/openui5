@@ -276,13 +276,7 @@
 				})
 			});
 
-			var oButton3 = new sap.m.Button("textareaDialogButton", {
-				text: "Textarea in Dialog",
-				width: _buttonWidth,
-				press: function () {
-					oTextAreaDialog.open();
-				}
-			});
+
 
 			var oButton4 = new sap.m.Button({
 				text: "SearchField in Dialog",
@@ -1288,6 +1282,55 @@
 							oDialogSimple.open();
 						}
 					}),
+                    new sap.m.Button('dialogNoHeaderButton', {
+                        text: "Dialog No Header",
+                        width: _buttonWidth,
+                        press: function () {
+                            oDialogNoHeader.open();
+                        }
+                    }),
+                    new sap.m.Button('dialogWithSubheaderButton', {
+                        text: "With SubHeader",
+                        width: _buttonWidth,
+                        press: function () {
+                            oDialogWithSubheader.open();
+                        }
+                    }),
+                    new sap.m.Button('stretchedDialogButton', {
+                        text: "Stretched",
+                        width: _buttonWidth,
+                        press: function () {
+                            oDialogStretched.open();
+                        }
+                    }),
+                    new sap.m.Button("textareaDialogButton", {
+                        text: "Textarea in Dialog",
+                        width: _buttonWidth,
+                        press: function () {
+                            oTextAreaDialog.open();
+                        }
+                    }),
+                    new sap.m.Button('resizeDialogButton', {
+                        text: "Resize Enabled",
+                        width: _buttonWidth,
+                        press: function () {
+                            oDialogResize.open();
+                        }
+                    }),
+                    new sap.m.Button('dialogWithFixedSizeContentButton', {
+                        text : "Dialog with fixed size content",
+                        width: _buttonWidth,
+                        press: function() {
+                            dialogWithFixedSizeContent.open();
+                        }
+                    }),
+                    new sap.m.Button('dialogWithCustomHeadersButton', {
+                        text : "Dialog with 3 custom headers",
+                        width: _buttonWidth,
+                        press: function() {
+                            dialogWithCustomHeaders.open();
+                        }
+                    }),
 					new sap.m.Button({
 						text: "Message Dialog",
 						width: _buttonWidth,
@@ -1310,13 +1353,6 @@
 						width: _buttonWidth,
 						press: function () {
 							oDialogNoFooter.open();
-						}
-					}),
-					new sap.m.Button('dialogNoHeaderButton', {
-						text: "Dialog No Header",
-						width: _buttonWidth,
-						press: function () {
-							oDialogNoHeader.open();
 						}
 					}),
 					new sap.m.Button({
@@ -1388,13 +1424,6 @@
 
 					new sap.ui.core.HTML({content: "<br>"}),
 
-					new sap.m.Button('dialogWithSubheaderButton', {
-						text: "With SubHeader",
-						width: _buttonWidth,
-						press: function () {
-							oDialogWithSubheader.open();
-						}
-					}),
 					new sap.m.Button({
 						text: "With Custom Header",
 						width: _buttonWidth,
@@ -1411,15 +1440,6 @@
 					}),
 
 					new sap.ui.core.HTML({content: "<br>"}),
-
-
-					new sap.m.Button('stretchedDialogButton', {
-						text: "Stretched",
-						width: _buttonWidth,
-						press: function () {
-							oDialogStretched.open();
-						}
-					}),
 					new sap.m.Button({
 						text: "Stretched on Mobile (depricated)",
 						width: _buttonWidth,
@@ -1429,7 +1449,6 @@
 					}),
 					oButton6,
 					new sap.ui.core.HTML({content: "<br>"}),
-					oButton3,
 					new sap.m.Button({
 						text: "Full-screen Form in Dialog",
 						width: _buttonWidth,
@@ -1467,13 +1486,6 @@
 						width: _buttonWidth,
 						press: function () {
 							oDialogDrag.open();
-						}
-					}),
-					new sap.m.Button('resizeDialogButton', {
-						text: "Resize Enabled",
-						width: _buttonWidth,
-						press: function () {
-							oDialogResize.open();
 						}
 					}),
 					new sap.m.Button({
@@ -1635,22 +1647,6 @@
 							dialogWithTable.open();
 						}
 					}),
-
-					new sap.m.Button('dialogWithFixedSizeContentButton', {
-						text : "Dialog with fixed size content",
-						width: _buttonWidth,
-						press: function() {
-							dialogWithFixedSizeContent.open();
-						}
-					}),
-
-					new sap.m.Button('dialogWithCustomHeadersButton', {
-						text : "Dialog with 3 custom headers",
-						width: _buttonWidth,
-						press: function() {
-							dialogWithCustomHeaders.open();
-						}
-					})
 				]
 			});
 			app.addPage(page1).placeAt("content");
