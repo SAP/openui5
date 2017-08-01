@@ -775,25 +775,31 @@ sap.ui.define([
 	 */
 	FlexController.prototype.applyVariantChanges = function(aChanges, oComponent) {
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		var aApplyChanges = [];
 		aChanges.forEach(function(oChange) {
 			var mChangesMap = this._oChangePersistence.getChangesMapForComponent().mChanges;
-			var aAllChanges = Object.keys(mChangesMap).reduce(function(aChanges, sControlId) {
+			var aAllChanges = Object.keys(mChangesMap).reduce(function (aChanges, sControlId) {
 				return aChanges.concat(mChangesMap[sControlId]);
 			}, []);
 			this._oChangePersistence._addChangeAndUpdateDependencies(oComponent, oChange, aAllChanges.length, aAllChanges);
 
-			var mPropertyBag = {
-				modifier: JsControlTreeModifier,
-				appComponent: oAppComponent
-			};
-			var oSelector = this._getSelectorOfChange(oChange);
-			var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
-			if (!oControl) {
-				Utils.log.error("A flexibility change tries to change a nonexistent control.");
-				return;
-			}
-			this.applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
+			aApplyChanges.push( function () {
+				var mPropertyBag = {
+					modifier: JsControlTreeModifier,
+					appComponent: oAppComponent
+				};
+				var oSelector = this._getSelectorOfChange(oChange);
+				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
+				if (!oControl) {
+					Utils.log.error("A flexibility change tries to change a nonexistent control.");
+					return;
+				}
+				this.applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
+			}.bind(this));
 		}.bind(this));
+		aApplyChanges.forEach(function (fnApplyChange) {
+			fnApplyChange();
+		});
 	};
 
 	/**
