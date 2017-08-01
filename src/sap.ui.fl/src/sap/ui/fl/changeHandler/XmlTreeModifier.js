@@ -218,7 +218,13 @@ sap.ui.define(["sap/ui/fl/changeHandler/BaseTreeModifier"], function (BaseTreeMo
 				}
 			},
 
-			getBindingTemplate: function (oControl, sAggregationName) {},
+			getBindingTemplate: function (oControl, sAggregationName, oView) {
+				var oAggregationNode = this._findAggregationNode(oControl, sAggregationName, oView);
+				if (oAggregationNode && oAggregationNode.childNodes.length === 1) {
+					return oAggregationNode.childNodes[0];
+				}
+
+			},
 
 			updateAggregation: function (oControl, sAggregationName) {}
 		};

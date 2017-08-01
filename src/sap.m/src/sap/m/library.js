@@ -402,6 +402,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 				},
 				"sap.m.StandardListItem":"sap/m/flexibility/StandardListItem",
 				"sap.m.Table": "sap/m/flexibility/Table",
+				"sap.m.Column": {
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.m.Text": "sap/m/flexibility/Text",
 				"sap.m.Title": "sap/m/flexibility/Title",
 				"sap.m.Toolbar": "sap/m/flexibility/Toolbar",
