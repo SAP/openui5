@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>MultiEditField - sap.m</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.m.MultiEditField");
+
+		var oPage = new sap.m.Page({
+			title: "sap.m.MultiEditField",
+			content: [
+				new sap.m.MultiEditField({
+					unit: new sap.m.MultiEditField(),
+					items: [
+						new sap.ui.core.Item({
+							key: "key",
+							text: "sample text"
+						})
+					]
+				})
+			]
+		});
+		var oApp = new sap.m.App();
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>
