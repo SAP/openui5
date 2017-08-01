@@ -88,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	 * function considers the scroll position of the table and also takes fixed rows and
 	 * fixed bottom rows into account.
 	 *
-	 * @return {int} index of the row (considers scroll position and fixed rows)
+	 * @returns {int} index of the row (considers scroll position and fixed rows)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
