@@ -13,8 +13,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * The protected control provides a popover that displays the details of the items selected in the chart. This control should only be used in the suite.ui.commons.ChartContainer toolbar and sap.ui.comp.smartchart.SmartChart controls. Initially, the control is rendered as a button that opens the popup after clicking on it.
-	 * <b><i>Note:</i></b>It is protected and should ony be used within the framework itself.
+	 * The protected control provides a popover that displays the details of the items selected in the chart. This control should only be used in the toolbars of sap.suite.ui.commons.ChartContainer and sap.ui.comp.smartchart.SmartChart controls. Initially, the control is rendered as a button that opens the popup after clicking on it.
+	 * <b><i>Note:</i></b>It is protected and should only be used within the framework itself.
 	 *
 	 * @author SAP SE
 	 * @version ${version}
