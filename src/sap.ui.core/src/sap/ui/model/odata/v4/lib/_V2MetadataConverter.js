@@ -75,6 +75,18 @@ sap.ui.define([
 				Path : "adr",
 				TermName : "Contact"
 			},
+			"email" : {
+				Path : "address",
+				TermName : "Contact",
+				V4Attribute: "uri",
+				typeMapping : {
+					"home" : "home",
+					"pref" : "preferred",
+					"work" : "work"
+				},
+				v4EnumType : "com.sap.vocabularies.Communication.v1.ContactInformationType",
+				v4PropertyAnnotation : "@com.sap.vocabularies.Communication.v1.IsEmailAddress"
+			},
 			"familyname" : {
 				Path : "n",
 				TermName : "Contact",
@@ -134,6 +146,22 @@ sap.ui.define([
 			"suffix" : {
 				Path : "n",
 				TermName : "Contact"
+			},
+			"tel" : {
+				Path : "tel",
+				TermName : "Contact",
+				V4Attribute: "uri",
+				typeMapping : {
+					"cell" : "cell",
+					"fax" : "fax",
+					"home" : "home",
+					"pref" : "preferred",
+					"video" : "video",
+					"voice" : "voice",
+					"work" : "work"
+				},
+				v4EnumType : "com.sap.vocabularies.Communication.v1.PhoneType",
+				v4PropertyAnnotation : "@com.sap.vocabularies.Communication.v1.IsPhoneNumber"
 			},
 			"title" : {
 				TermName : "Contact"
@@ -297,7 +325,7 @@ sap.ui.define([
 			oAttribute,
 			aAttributes = oElement.attributes,
 			sParentPath = oAggregate.annotatable.parent.path,
-			mSemanticAnnotations = oAggregate.convertedV2Annotations[sParentPath] || {},
+			mParentAnnotations = oAggregate.convertedV2Annotations[sParentPath] || {},
 			i,
 			n = aAttributes.length;
 
@@ -312,7 +340,8 @@ sap.ui.define([
 				if (sKind === "EntitySet") {
 					convertEntitySetAnnotation(oElement, oAttribute, mAnnotations, oAggregate);
 				} else if (sKind === "Property" && oAttribute.localName === "semantics") {
-					convertPropertySemanticAnnotations(oAttribute, mSemanticAnnotations);
+					convertPropertySemanticAnnotations(oAttribute, mParentAnnotations,
+						mAnnotations);
 				} else if (sKind === "Property") {
 					convertPropertyAnnotations(oAttribute, mAnnotations);
 				}
@@ -328,8 +357,8 @@ sap.ui.define([
 		if (Object.keys(mAnnotations).length > 0) {
 			oAggregate.convertedV2Annotations[sElementPath] = mAnnotations;
 		}
-		if (Object.keys(mSemanticAnnotations).length > 0) {
-			oAggregate.convertedV2Annotations[sParentPath] = mSemanticAnnotations;
+		if (Object.keys(mParentAnnotations).length > 0) {
+			oAggregate.convertedV2Annotations[sParentPath] = mParentAnnotations;
 		}
 	}
 
@@ -447,27 +476,57 @@ sap.ui.define([
 	 * an EntityType and puts the annotation into the given map of V4 annotations.
 	 *
 	 * @param {Attr} oAttribute The attribute
-	 * @param {object} mSemanticAnnotations Map of V4 annotations
+	 * @param {object} mTypeAnnotations Map of V4 annotations at EntityType/ComplexType level
+	 * @param {object} mPropertyAnnotations Map of V4 annotations at Property level
 	 */
-	function convertPropertySemanticAnnotations(oAttribute, mSemanticAnnotations) {
+	function convertPropertySemanticAnnotations(oAttribute, mTypeAnnotations,
+		mPropertyAnnotations) {
 		var oAnnotations,
 			oPath,
+			aResult = [],
 			oSemantics,
-			sValue = oAttribute.value;
+			aValue = oAttribute.value.split(";"),
+			sValue = aValue[0],
+			oV2toV4Semantic = mV2toV4Semantics[sValue];
 
-		if (mV2toV4Semantics[sValue]) {
+		if (oV2toV4Semantic) {
 			oPath = {
 				"$Path" : oAttribute.ownerElement.getAttribute("Name")
 			};
-			oAnnotations = V2MetadataConverter.getOrCreateObject(mSemanticAnnotations,
-				"@com.sap.vocabularies.Communication.v1." + mV2toV4Semantics[sValue].TermName);
-			if (mV2toV4Semantics[sValue].Path) {
+			oAnnotations = V2MetadataConverter.getOrCreateObject(mTypeAnnotations,
+				"@com.sap.vocabularies.Communication.v1." + oV2toV4Semantic.TermName);
+			if (oV2toV4Semantic.Path) {
 				oSemantics = V2MetadataConverter.getOrCreateObject(oAnnotations,
-					mV2toV4Semantics[sValue].Path);
-				oSemantics[mV2toV4Semantics[sValue].V4Attribute || sValue] = oPath;
-				oAnnotations[mV2toV4Semantics[sValue].Path] = oSemantics;
+					oV2toV4Semantic.Path);
+				oSemantics[oV2toV4Semantic.V4Attribute || sValue] = oPath;
+
+				if (oV2toV4Semantic.v4PropertyAnnotation) {
+					mPropertyAnnotations[oV2toV4Semantic.v4PropertyAnnotation]
+						= true;
+
+					//Determination of space separated list of V4 annotations enumeration value for
+					//given sap:semantics "tel" and "email"
+					if (aValue[1]) {
+						var sEnum = aValue[1].split("=")[1];
+						sEnum.split(",").forEach(function (sType) {
+							var sTargetType = oV2toV4Semantic.typeMapping[sType];
+							if (sTargetType) {
+								aResult.push(oV2toV4Semantic.v4EnumType + "/" + sTargetType);
+							} else {
+								jQuery.sap.log.warning("Unsupported semantic type: "
+										+ sType, undefined, sModuleName);
+							}
+						});
+						if (aResult.length > 0) {
+							oSemantics.type = {"EnumMember" : aResult.join(" ")};
+						}
+					}
+					oAnnotations[oV2toV4Semantic.Path] = [oSemantics];
+				} else {
+					oAnnotations[oV2toV4Semantic.Path] = oSemantics;
+				}
 			} else {
-				oAnnotations[mV2toV4Semantics[sValue].V4Attribute || sValue] = oPath;
+				oAnnotations[oV2toV4Semantic.V4Attribute || sValue] = oPath;
 			}
 		}
 	}

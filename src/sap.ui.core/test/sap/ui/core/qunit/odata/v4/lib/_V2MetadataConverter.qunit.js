@@ -868,6 +868,148 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=tel, email to Contact", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="tel"/>\
+					<Property Name="P02" Type="Edm.String" sap:semantics="email"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"tel" : [{
+							uri : {"$Path" : "P01"}
+						}],
+						"address" : [{
+							uri : { "$Path" : "P02" }
+						}]
+					}
+				},
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Communication.v1.IsPhoneNumber" : true
+				},
+				"GWSAMPLE_BASIC.Foo/P02" : {
+					"@com.sap.vocabularies.Communication.v1.IsEmailAddress" : true
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=tel with type to Contact", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="tel;type=cell,work"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"tel" : [{
+							"type" : {
+								"EnumMember":
+									"com.sap.vocabularies.Communication.v1.PhoneType/cell "
+									+ "com.sap.vocabularies.Communication.v1.PhoneType/work"
+							},
+							uri : {"$Path" : "P01"}
+						}],
+					}
+				},
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Communication.v1.IsPhoneNumber" : true
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=email with type to Contact", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="email;type=work,pref,home"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"address" : [{
+							"type" : {
+								"EnumMember":
+									"com.sap.vocabularies.Communication.v1.ContactInformationType/work "
+									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/preferred "
+									+ "com.sap.vocabularies.Communication.v1.ContactInformationType/home"
+							},
+							uri : {"$Path" : "P01"}
+						}],
+					}
+				},
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Communication.v1.IsEmailAddress" : true
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=email with unsupported type", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="email;type=foo"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"address" : [{
+							uri : {"$Path" : "P01"}
+						}],
+					}
+				},
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Communication.v1.IsEmailAddress" : true
+				}
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("convert sap:semantics=email with un/supported type", function (assert) {
+		// there are no $annotations yet at the schema so mergeAnnotations is not called
+		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Unsupported semantic type: foo", undefined, sModuleName);
+
+		testAnnotationConversion(assert, '\
+				<EntityType Name="Foo">\
+					<Property Name="P01" Type="Edm.String" sap:semantics="email;type=foo,work"/>\
+				</EntityType>',
+			{
+				"GWSAMPLE_BASIC.Foo" : {
+					"@com.sap.vocabularies.Communication.v1.Contact" : {
+						"address" : [{
+							uri : {"$Path" : "P01"},
+							"type": {
+								"EnumMember": "com.sap.vocabularies.Communication.v1.ContactInformationType/work"
+							},
+						}],
+					}
+				},
+				"GWSAMPLE_BASIC.Foo/P01" : {
+					"@com.sap.vocabularies.Communication.v1.IsEmailAddress" : true
+				}
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("convert sap:semantics=* to Event", function (assert) {
 		// there are no $annotations yet at the schema so mergeAnnotations is not called
 		this.mock(_V2MetadataConverter).expects("mergeAnnotations").never();
