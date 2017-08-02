@@ -87,7 +87,8 @@ sap.ui.define([
 			}
 			oType.oModelFormat = DateFormat.getDateInstance({
 				pattern : sPattern + "X",
-				strictParsing : true
+				strictParsing : true,
+				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
 			});
 		}
 		return oType.oModelFormat;
