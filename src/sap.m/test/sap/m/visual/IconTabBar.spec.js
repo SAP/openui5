@@ -24,6 +24,8 @@ describe("sap.m.IconTabBar", function() {
 		expect(takeScreenshot(itb1)).toLookAs("1_expandable_false");
 	});
 
+	var page2 = element(by.id('sample2'));
+	page2.click();
 	var itb2 = element(by.id('itb2'));
 	// check property selectedKey
 	it("key with key:'key13' must be selected", function() {
@@ -43,14 +45,6 @@ describe("sap.m.IconTabBar", function() {
 		expect(takeScreenshot(itb3)).toLookAs("3_tabs_with_labels_and_invisible_tabs");
 	});
 
-	var itb4 = element(by.id('itb4'));
-	// tabs with no icons, only labels in upperCase
-	it("should contain tabs without icons in upperCase", function() {
-		//next line is to move the view in the window
-		element(by.id("itb4")).click();
-		expect(takeScreenshot(itb4)).toLookAs("4_tabs_without_icons_upperCase");
-	});
-
 	var itb4a = element(by.id('itb4a'));
 	// check property applyContentPadding: false
 	it("should not have padding of the content", function() {
@@ -58,6 +52,9 @@ describe("sap.m.IconTabBar", function() {
 		element(by.id("itb4a")).click();
 		expect(takeScreenshot(itb4a)).toLookAs("5_applyContentPadding_false");
 	});
+
+	var page3 = element(by.id('page3'));
+	page3.click();
 
 	var itb5 = element(by.id('itb5'));
 	// tabs with no icons, only labels in upperCase, semantic colours, transparent background design
@@ -82,6 +79,9 @@ describe("sap.m.IconTabBar", function() {
 		element(by.id("itb9")).click();
 		expect(takeScreenshot(itb9)).toLookAs("8_horizontal_layout");
 	});
+
+	var page4 = element(by.id('page4'));
+	page4.click();
 
 	var itb10 = element(by.id('itb10'));
 	//  no parameters and no items
