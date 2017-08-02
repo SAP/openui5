@@ -1,0 +1,43 @@
+{
+	"_version": "1.1.0",
+	"sap.app": {
+		"_version": "1.2.0",
+		"id": "sap.ui.fl.qunit.integration.testComponentReuse",
+		"type": "component",
+		"title": "fl lib test component",
+		"description": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "",
+		"crossNavigation": {
+			"inbounds": {}
+		}
+	},
+	"sap.ui": {
+		"_version": "1.1.0",
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": ["sap_belize"]
+	},
+	"sap.ui5": {
+		"_version": "1.1.0",
+		"rootView": "sap.ui.fl.qunit.integration.testComponentReuse.View",
+		"dependencies": {
+			"minUI5Version": "1.46",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"resourceBundle": {}
+		},
+		"models": {},
+		"routing": {},
+		"contentDensities": {}
+	}
+}

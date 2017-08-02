@@ -4073,8 +4073,9 @@ sap.ui.define([
 	 * get propagation listeners
 	 * @returns {array} aPropagationListeners Returns registered propagationListeners
 	 * @private
+	 * @sap-restricted sap.ui.fl
 	 */
-	ManagedObject.prototype._getPropagationListeners = function() {
+	ManagedObject.prototype.getPropagationListeners = function() {
 		return this.oPropagatedProperties.aPropagationListeners.concat(this.aPropagationListeners);
 	};
 
@@ -4091,7 +4092,7 @@ sap.ui.define([
 		if (listener) {
 			listener(this);
 		} else {
-			aListeners = this._getPropagationListeners();
+			aListeners = this.getPropagationListeners();
 			for (var i = 0; i < aListeners.length; i++) {
 				listener = aListeners[i];
 				listener(this);
