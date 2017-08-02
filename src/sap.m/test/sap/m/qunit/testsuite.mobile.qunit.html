@@ -18,6 +18,9 @@
 			var suite = new parent.jsUnitTestSuite(),
 				contextPath = "/" + window.location.pathname.split("/")[1];
 
+			// load all explored samples
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ExploredSamples.qunit.html");
+
 			// Apps and samples
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuites/testsuite.demokit.qunit.html");
 
@@ -98,9 +101,6 @@
 
 			// DisplayListItem
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DisplayListItem.qunit.html");
-
-			// load all explored samples
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ExploredSamples.qunit.html");
 
 			// FacetFilter
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/FacetFilter.qunit.html");
