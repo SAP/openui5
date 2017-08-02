@@ -62,9 +62,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 *
 	 * @name sap.ui.model.Binding#dataRequested
 	 * @event
-	 * @param {sap.ui.base.Event} oEvent
-	 * @param {sap.ui.base.EventProvider} oEvent.getSource
-	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.base.Event} oEvent The event object
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource The object on which the Event initially occurred
+ 	 * @param {object} oEvent.getParameters Object containing all event parameters
 
 	 * @public
 	 */
@@ -76,9 +76,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
  	 *
  	 * @name sap.ui.model.Binding#dataReceived
  	 * @event
- 	 * @param {sap.ui.base.Event} oEvent
- 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
- 	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.base.Event} oEvent The event object
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource The object on which the Event initially occurred
+ 	 * @param {object} oEvent.getParameters Object containing all event parameters
 
  	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
  	 * @public
@@ -91,12 +91,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
  	 *
  	 * @name sap.ui.model.Binding#change
  	 * @event
- 	 * @param {sap.ui.base.Event} oEvent
- 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
- 	 * @param {object} oEvent.getParameters
+ 	 * @param {sap.ui.base.Event} oEvent The event object
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource The object on which the Event initially occurred
+ 	 * @param {object} oEvent.getParameters Object containing all event parameters
 
  	 * @param {string} [oEvent.getParameters.reason] A string stating the reason for the data change. Can be any string and new values can be added in the future.
  	 * @public
+ 	 */
+
+	 /**
+ 	 * The 'datastateChange' event is fired, when the DataState of the Binding has changed.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#datastateChange
+ 	 * @event
+ 	 * @param {sap.ui.base.Event} oEvent The event object
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource The object on which the Event initially occurred
+ 	 * @param {object} oEvent.getParameters Object containing all event parameters
+
+ 	 * @param {sap.ui.model.DatatState} [oEvent.getParameters.dataState] The DataState object of the binding.
+ 	 * @protected
+ 	 */
+
+	 /**
+ 	 * The 'aggregatedDataStateChange' event is fired asynchronously when all 'datastateChanges' within the actual stack are done.
+ 	 *
+ 	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+ 	 *
+ 	 * @name sap.ui.model.Binding#aggregatedDataStateChange
+ 	 * @event
+	 * @param {sap.ui.base.Event} oEvent The event object
+ 	 * @param {sap.ui.base.EventProvider} oEvent.getSource The object on which the Event initially occurred
+ 	 * @param {object} oEvent.getParameters Object containing all event parameters
+
+ 	 * @param {sap.ui.model.DatatState} [oEvent.getParameters.dataState] The DataState object of the binding.
+ 	 * @protected
  	 */
 
 	// Getter
