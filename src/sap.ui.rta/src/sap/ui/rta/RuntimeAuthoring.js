@@ -935,7 +935,16 @@ sap.ui.define([
 		var oTransportSelection = new TransportSelection();
 		var sCurrentLayer = this.getLayer();
 
+		// all new changes, that are only in our stack and not yet in the LREP, filtered by them having a change
+		var aUnsavedChanges = this.getCommandStack().getAllExecutedCommands().reduce(function(aChanges, oCommand) {
+			if (oCommand.getPreparedChange) {
+				aChanges.push(oCommand.getPreparedChange());
+			}
+			return aChanges;
+		}, []);
+
 		this._getFlexController().getComponentChanges({currentLayer: sCurrentLayer}).then(function(aChanges) {
+			aChanges = aChanges.concat(aUnsavedChanges);
 			return FlexSettings.getInstance(FlexUtils.getComponentClassName(this._oRootControl)).then(function(oSettings) {
 				if (!oSettings.isProductiveSystem() && !oSettings.hasMergeErrorOccured()) {
 					return oTransportSelection.setTransports(aChanges, this._oRootControl);
@@ -1030,9 +1039,9 @@ sap.ui.define([
 
 		var fnConfirmDiscardAllChanges = function (sAction) {
 			if (sAction === "OK") {
-				this.getCommandStack().removeAllCommands();
-				RuntimeAuthoring.enableRestart(this.getLayer());
 				this._deleteChanges();
+				RuntimeAuthoring.enableRestart(this.getLayer());
+				this.getCommandStack().removeAllCommands();
 			}
 		}.bind(this);
 
