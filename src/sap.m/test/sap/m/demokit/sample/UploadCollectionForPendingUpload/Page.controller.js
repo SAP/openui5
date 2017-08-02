@@ -38,20 +38,21 @@ sap.ui.define([
 			var oUploadCollection = this.getView().byId("UploadCollection");
 			var oTextArea = this.getView().byId("TextArea");
 			var cFiles = oUploadCollection.getItems().length;
-			var uploadInfo = "";
+			var uploadInfo = cFiles + " file(s)";
 
-			oUploadCollection.upload();
+			if (cFiles > 0) {
+				oUploadCollection.upload();
 
-			uploadInfo = cFiles + " file(s)";
-			if (oTextArea.getValue().length === 0) {
-				uploadInfo = uploadInfo + " without notes";
-			} else {
-				uploadInfo = uploadInfo + " with notes";
+				if (oTextArea.getValue().length === 0) {
+					uploadInfo = uploadInfo + " without notes";
+				} else {
+					uploadInfo = uploadInfo + " with notes";
+				}
+
+				MessageToast.show("Method Upload is called (" + uploadInfo + ")");
+				sap.m.MessageBox.information("Uploaded " + uploadInfo);
+				oTextArea.setValue("");
 			}
-
-			MessageToast.show("Method Upload is called (" + uploadInfo + ")");
-			sap.m.MessageBox.information("Uploaded " + uploadInfo);
-			oTextArea.setValue("");
 		},
 
 		onBeforeUploadStarts : function(oEvent) {
