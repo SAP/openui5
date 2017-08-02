@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 * @class
 	 * The framework generates an input field and a button with text "Browse ...". The API supports features such as on change uploads (the upload starts immediately after a file has been selected), file uploads with explicit calls, adjustable control sizes, text display after uploads, or tooltips containing complete file paths.
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.unified.IProcessableBlobs
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 */
 	var FileUploader = Control.extend("sap.ui.unified.FileUploader", /** @lends sap.ui.unified.FileUploader.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
+		interfaces : ["sap.ui.core.IFormContent", "sap.ui.unified.IProcessableBlobs"],
 		library : "sap.ui.unified",
 		properties : {
 
@@ -1038,8 +1038,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			this._bUploading = true;
 			if (this.getSendXHR() && window.File) {
 				var aFiles = this.FUEl.files;
-
-				this._sendFilesWithXHR(aFiles);
+				this._sendProcessedFilesWithXHR(aFiles);
 			} else if (uploadForm) {
 				uploadForm.submit();
 				this._resetValueAfterUploadStart();
@@ -1321,7 +1320,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				var formData = new window.FormData();
 				var name = this.FUEl.name;
 				for (var l = 0; l < aFiles.length; l++) {
-					formData.append(name, aFiles[l]);
+					formData.append(name, aFiles[l], aFiles[l].name);
 				}
 				formData.append("_charset_", "UTF-8");
 				var data = this.FUDataEl.name;
@@ -1348,6 +1347,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			this._resetValueAfterUploadStart();
 		}
 
+		return this;
+	};
+
+	/*
+	* Processes the passed files and sends them afterwards via XHR request.
+	* @param {array} [aFiles] list of files from type window.File
+	* @returns this
+	* @private
+	*/
+	FileUploader.prototype._sendProcessedFilesWithXHR = function (aFiles) {
+		this.getProcessedBlobsFromArray(aFiles).then(function(aBlobs){
+			this._sendFilesWithXHR(aBlobs);
+		}.bind(this)).catch(function(oResult){
+			jQuery.sap.log.error("File upload failed: " + oResult && oResult.message ? oResult.message : "no details available");
+		});
 		return this;
 	};
 
@@ -1440,9 +1454,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	*/
 	FileUploader.prototype._sendFilesFromDragAndDrop = function (aFiles) {
 		if (this._areFilesAllowed(aFiles)) {
-			this._sendFilesWithXHR(aFiles);
+			this._sendProcessedFilesWithXHR(aFiles);
 		}
-
 		return this;
 	};
 
@@ -1633,6 +1646,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				this.ontap(); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
 			}.bind(this));
 		}
+	};
+
+	/**
+	 * Allows to process Blobs before they get uploaded. This API can be used to create custom Blobs
+	 * and upload these custom Blobs instead of the received/initials Blobs in the parameter <code>aBlobs</code>.
+	 * One use case could be to create and upload zip archives based on the passed Blobs.
+	 * The default implementation of this API should simply resolve with the received Blobs (parameter <code>aBlobs</code>).
+	 *
+	 * This API is only supported in case <code>sendXHR</code> is <code>true</code>. This means only IE10+ is supported, while IE9 and below is not.
+	 *
+	 * This is a default implementation of the interface <code>sap.ui.unified.IProcessableBlobs</code>.
+	 *
+         * @public
+         * @since 1.52
+	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine/calculate a new array of Blobs for further processing.
+	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
+	 */
+	FileUploader.prototype.getProcessedBlobsFromArray = function (aBlobs){
+		return new Promise(function(resolve){
+			resolve(aBlobs);
+		});
 	};
 
 
