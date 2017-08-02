@@ -69,6 +69,11 @@ sap.ui.define([
 			var oResult;
 			sPath = this.resolve(sPath, oContext);
 			sPath = sPath.substring(1);
+
+			if (sPath && sPath.startsWith && sPath.startsWith("metadataContexts")) {
+				return this._navInMetadataContexts(sPath);//note as metadataContexts is an object the path can be deep
+			}
+
 			if (mProperties.hasOwnProperty(sPath)) {
 				// get a property
 				var oProperty = mProperties[sPath];
@@ -96,16 +101,54 @@ sap.ui.define([
 				}
 				return oElement.getAttribute(sPath);
 			} else if (mSpecialSettings.hasOwnProperty(sPath)) {
+				var oSpecialSetting = mSpecialSettings[sPath];
+
 				if (!oElement.hasAttribute(sPath)) {
-					return null;
+					return oSpecialSetting.defaultValue || null;
 				}
+
 				oResult = oVisitor.getResult(oElement.getAttribute(sPath));
+
+				if (oSpecialSetting.type) {
+					var oScalar = parseScalarType(oSpecialSetting.type, oResult, sPath);
+					if (typeof oScalar === "object" && oScalar.path) {
+						return oResult;
+					}
+					return oScalar;
+				}
+
 				if (oResult) {
 					return oResult;
 				}
 				return oElement.getAttribute(sPath);
 			}
 		};
+
+		oAttributesModel._navInMetadataContexts = function(sPath) {
+			var sRemainPath = sPath.replace("metadataContexts/","");
+			var sInnerPath,aPath = sRemainPath.split("/");
+
+			var oResult,vNode = mContexts["metadataContexts"].getObject();
+
+			while (aPath.length > 0 && vNode) {
+
+				if (vNode.getObject) {
+					//try to nav deep
+					oResult = vNode.getObject(aPath.join("/"));
+				}
+
+				if (!oResult) {
+					sInnerPath = aPath.shift();
+					vNode = vNode[sInnerPath];
+				} else {
+					return oResult;
+				}
+			}
+
+			return vNode;
+
+		};
+
 		oAttributesModel.getContextName = function () {
 			return sName;
 		};
@@ -653,13 +696,56 @@ sap.ui.define([
 	XMLComposite.initialTemplating = function (oElement, oVisitor, sFragment) {
 		var oImpl = initXMLComposite(sFragment),
 			mContexts = {},
-			oFragment = oImpl.getMetadata().getFragment();
+			oMetadata = oImpl.getMetadata(),
+			oFragment = oMetadata.getFragment(),
+			oErrorModel = new JSONModel({});
+
 		if (!oFragment) {
 			throw new Error("Fragment " + sFragment + " not found");
 		}
+		var sMetadataContexts = oElement.getAttribute("metadataContexts");
+
+		if (!sMetadataContexts && oMetadata._mSpecialSettings.metadataContexts) {
+			sMetadataContexts = oMetadata._mSpecialSettings.metadataContexts.defaultValue;
+		}
+
+		//extend the contexts from metadataContexts
+		if (sMetadataContexts) {
+			var sKey,oCtx,oMetadataContexts = ManagedObject.bindingParser(sMetadataContexts);
+
+			if (!oMetadataContexts.parts) {
+				oCtx = oMetadataContexts;
+
+				oMetadataContexts = { parts: [oCtx]};
+			}
+
+			for (var j = 0; j < oMetadataContexts.parts.length; j++) {
+				oCtx = oMetadataContexts.parts[j];
+
+				if (!oCtx.model) {
+					oCtx.model = oImpl.prototype.defaultMetaModel;
+				}
+
+				sKey = oCtx.name || oCtx.model || undefined;
+				try {
+					mContexts[sKey] = oVisitor.getContext(oCtx.model + ">" + oCtx.path);//add the context to the visitor
+					oMetadataContexts[sKey] = mContexts[sKey];//make it available inside metadataContexts JSON object
+				} catch (ex) {
+					//ignore the context as this can only be the case if the model is not ready, i.e. not a preprocessing model but maybe a model for providing afterwards
+					mContexts["_$error"] = mContexts["_$error"] || oErrorModel.getContext("/");
+					mContexts["_$error"].oModel.setProperty("/" + sKey,ex);
+				}
+			}
+
+			var oMdCModel = new JSONModel(oMetadataContexts);
+
+			//make metadataContext accessible
+			mContexts["metadataContexts"] = oMdCModel.getContext("/");
+		}
+
 		addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
-		var oContextVisitor = oVisitor["with"](mContexts, true),
-			mMetadata = oImpl.getMetadata();
+		var oContextVisitor = oVisitor["with"](mContexts, true);
+		var	mMetadata = oImpl.getMetadata();
 		// resolve templating
 		oContextVisitor.visitChildNodes(oFragment);
 		var oNode = oFragment.ownerDocument.createElementNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.xmlcomposite/1", mMetadata.getCompositeAggregationName());
