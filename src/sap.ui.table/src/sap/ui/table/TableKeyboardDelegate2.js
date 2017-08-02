@@ -1001,7 +1001,7 @@ sap.ui.define([
 			if (bIsLastInteractiveElementInRow) {
 				var iAbsoluteRowIndex = oRow.getIndex();
 				var bIsLastScrollableRow = TableUtils.isLastScrollableRow(this, $Cell);
-				var bIsAbsoluteLastRow = this._getRowCount() - 1 === iAbsoluteRowIndex;
+				var bIsAbsoluteLastRow = this._getTotalRowCount() - 1 === iAbsoluteRowIndex;
 				var bTableHasRowSelectors = TableUtils.isRowSelectorSelectionAllowed(this);
 				var bScrolled = false;
 
@@ -1235,7 +1235,7 @@ sap.ui.define([
 				var iDataRowIndex = this.getRows()[iFocusedRowIndex].getIndex();
 
 				// If we are in the last data row of the table we don't need to do anything.
-				if (iDataRowIndex === this._getRowCount() - 1) {
+				if (iDataRowIndex === this._getTotalRowCount() - 1) {
 					return;
 				}
 
@@ -1849,7 +1849,7 @@ sap.ui.define([
 				/* Scrollable area - Last row */
 				} else if (iFocusedRow === iHeaderRowCount + iNonEmptyVisibleRowCount - iFixedBottomRowCount - 1) {
 					var iPageSize = TableUtils.getNonEmptyVisibleRowCount(this) - iFixedTopRowCount - iFixedBottomRowCount;
-					var iRowsToBeScrolled = this._getRowCount() - iFixedBottomRowCount - this.getFirstVisibleRow() - iPageSize * 2;
+					var iRowsToBeScrolled = this._getTotalRowCount() - iFixedBottomRowCount - this.getFirstVisibleRow() - iPageSize * 2;
 
 					this._getScrollExtension().scroll(true, true, true); // Scroll down one page
 

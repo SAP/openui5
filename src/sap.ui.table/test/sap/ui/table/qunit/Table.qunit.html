@@ -166,7 +166,7 @@
 		assert.equal(oTable.getSelectedIndex(), -1, "Selected Index is -1!");
 		assert.equal(jQuery(".sapUiTableCtrl tr.sapUiTableTr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
 		assert.equal(jQuery(".sapUiTableRowHdr").length, oTable.getVisibleRowCount(), "Visible Row Count correct!");
-		assert.equal(5, oTable.getFirstVisibleRow(), "First Visible Row correct!");
+		assert.equal(oTable.getFirstVisibleRow(), 5, "First Visible Row correct!");
 	});
 
 	QUnit.test("Filter", function(assert) {
@@ -1007,7 +1007,7 @@
 			oVsb.scrollTop = 1000000;
 			setTimeout(function() {
 				assert.equal(oTable.getFirstVisibleRow(), 29, "FirstVisibleRow is correct");
-				var iScrollRange = oTable._getRowCount() * oTable._getDefaultRowHeight();
+				var iScrollRange = oTable._getTotalRowCount() * oTable._getDefaultRowHeight();
 				assert.equal(oVsb.scrollTop, iScrollRange - oVsb.clientHeight, "ScrollTop is at maximum and correct");
 				assert.equal(jQuery(".sapUiTableCCnt").scrollTop(), iRowHeightsDelta, "Table Correction is equal to RowHeightsDelta");
 				done();
@@ -2377,13 +2377,13 @@
 		assert.equal(oTable._getFixedBottomRowContexts().length, 0, "FixedBottomRowContexts returned an empty array");
 		oTable.setFixedBottomRowCount(3);
 		assert.equal(oTable.getFixedBottomRowCount(), 3, "FixedBottomRowCount is set to 3");
-		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._updateBindingLength()).length, 3, "fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
+		assert.equal(oTable._getFixedBottomRowContexts(oTable.getFixedBottomRowCount(), oTable._updateTotalRowCount()).length, 3, "fixedBottomRowContexts returned non empty array when fixedBottomRowCount and bindingLength is set");
 		oTable._updateFixedBottomRows();
 		assert.equal(oTable.getFirstVisibleRow(), 0, "_updateFixedBottomRows() called with the updated fixedBottomRowCount");
 		oTable.setVisibleRowCount(250);
 		sap.ui.getCore().applyChanges();
 		oTable._updateFixedBottomRows();
-		assert.ok(oTable._iBindingLength < oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
+		assert.ok(oTable._getTotalRowCount() < oTable.getVisibleRowCount(), "_updateFixedBottomRows() called where bindingLength < visibleRowCount");
 		oTable.setVisibleRowCount(7);
 		assert.equal(oTable.getVisibleRowCount(), 7, "resetting visibleRowCount to 7");
 		oTable.setFixedBottomRowCount(-1);
@@ -2416,15 +2416,6 @@
 	QUnit.test("Check for table focus", function(assert) {
 		assert.strictEqual(oTable.getFocusInfo().id, "table", "Table has focus");
 		assert.ok(oTable.applyFocusInfo(oTable.getFocusInfo()), "Focus is applied on the table");
-	});
-
-	QUnit.test("test _adjustTablePosition function", function(assert) {
-		oTable._bIsVariableRowHeightEnabled = true;
-		oTable._adjustTablePosition();
-		assert.ok(oTable._iBindingLength > oTable.getVisibleRowCount(), "transformation applied for condition _iBindingLength > visibleRowCount");
-		oTable.setVisibleRowCount(250);
-		oTable._adjustTablePosition();
-		assert.ok(oTable._iBindingLength < oTable.getVisibleRowCount(), "transformation applied for condition _iBindingLength < visibleRowCount");
 	});
 
 	QUnit.test("Test for refreshRows with binding", function(assert) {
@@ -2623,73 +2614,74 @@
 
 	QUnit.test("NoData handling", function(assert) {
 		var sNoDataClassOfTable = "sapUiTableEmpty";
-		var oEvent = {};
 		var oBinding = oTable.getBinding("rows");
 		var oGetBindingLength = this.stub(oBinding, "getLength");
 		var oIsInstanceOf = this.stub(sap.ui.table.TableUtils, "isInstanceOf");
 		var oClock = sinon.useFakeTimers();
 
-		oEvent.getSource = function() {
-			return oBinding;
-		};
+		function testDataReceivedListener(bNoDataVisible, sTestTitle) {
+			var oEvent = {
+				getSource: function() {
+					return oBinding;
+				},
+				getParameter: function() {
+					return false;
+				}
+			};
 
-		oEvent.getParameter = function() {
-			return false;
-		};
-
-		function testDataReceivedListener(bNoDataVisible) {
 			oTable._onBindingDataReceivedListener.call(oTable, oEvent);
 			oClock.tick(1);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
-				"Test: The table has the NoData class assigned: " + bNoDataVisible);
+					sTestTitle + " - The table has the NoData class assigned: " + bNoDataVisible);
 
-			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible, "Test: NoData is visible: " + bNoDataVisible);
+			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible,
+					sTestTitle + " - NoData is visible: " + bNoDataVisible);
 		}
 
-		function testUpdateBindingLength(bNoDataVisible) {
-			oTable._updateBindingLength.call(oTable);
+		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
+			oTable._updateTotalRowCount(true);
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
-				"Test: The table has the NoData class assigned: " + bNoDataVisible);
+					sTestTitle + " - The table has the NoData class assigned: " + bNoDataVisible);
 
 			assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), bNoDataVisible,
-				"Test: NoData is visible: " + bNoDataVisible);
+					sTestTitle + " - NoData is visible: " + bNoDataVisible);
 		}
 
 		oTable.setShowNoData(true);
 
 		// Data available: NoData area is not visible.
 		assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), false,
-			"Test: The table has the NoData class assigned: false");
-		assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), false, "Test: NoData is visible: false");
+			"Data available - The table has the NoData class assigned: false");
+		assert.strictEqual(sap.ui.table.TableUtils.isNoDataVisible(oTable), false, "Data available - NoData is visible: false");
 
 		// No data received: NoData area becomes visible.
 		oGetBindingLength.returns(0);
-		testDataReceivedListener(true);
+		testDataReceivedListener(true, "No data received");
 
 		// Data received: NoData area will be hidden.
 		oGetBindingLength.returns(1);
-		testDataReceivedListener(false);
+		testDataReceivedListener(false, "Data received");
 
-		// Client Binding without data: NoData area becomes visible.
+		// Client binding without data: NoData area becomes visible.
 		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientListBinding").returns(true);
 		oGetBindingLength.returns(0);
-		testUpdateBindingLength(true);
+		testUpdateTotalRowCount(true, "Client binding without data");
 
-		// Client Binding with data: NoData area will be hidden.
+		// Client binding with data: NoData area will be hidden.
 		sap.ui.table.TableUtils.isInstanceOf.restore();
 		oIsInstanceOf.restore();
 		oIsInstanceOf.withArgs(oBinding, "sap/ui/model/ClientTreeBinding").returns(true);
 		oGetBindingLength.returns(1);
-		testUpdateBindingLength(false);
+		testUpdateTotalRowCount(false, "Client binding with data");
 
 		// Binding removed: NoData area becomes visible.
 		oIsInstanceOf.restore();
 		oTable.unbindRows();
-		testUpdateBindingLength(true);
+		testUpdateTotalRowCount(true, "Binding removed");
 
 		// Cleanup
 		oClock.restore();

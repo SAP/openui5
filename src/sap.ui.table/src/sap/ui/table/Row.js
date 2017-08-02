@@ -108,9 +108,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			var iNumberOfFixedBottomRows = oTable.getFixedBottomRowCount();
 			var iVisibleRowCount = oTable.getVisibleRowCount();
 			if (iNumberOfFixedBottomRows > 0 && iRowIndex >= iVisibleRowCount - iNumberOfFixedBottomRows) {
-				var oBinding = oTable.getBinding("rows");
-				if (oBinding && oBinding.getLength() >= iVisibleRowCount) {
-					return oBinding.getLength() - (iVisibleRowCount - iRowIndex);
+				var iTotalRowCount = oTable._getTotalRowCount();
+				if (iTotalRowCount >= iVisibleRowCount) {
+					return iTotalRowCount - (iVisibleRowCount - iRowIndex);
 				} else {
 					return iRowIndex;
 				}

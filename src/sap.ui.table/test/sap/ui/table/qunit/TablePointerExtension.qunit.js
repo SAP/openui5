@@ -551,7 +551,7 @@
 		var oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
+		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
@@ -560,7 +560,7 @@
 
 		var fnHandler = function() {
 			sap.ui.getCore().applyChanges();
-			assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
+			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 			oExtension._ExtensionHelper.__handleClickSelection = null;
@@ -585,12 +585,12 @@
 			assert.ok(false, "_doSelect should not be called");
 		};
 
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
+		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
 		var fnHandler = function() {
 			sap.ui.getCore().applyChanges();
-			assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
+			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 			oExtension._ExtensionHelper.__handleClickSelection = null;

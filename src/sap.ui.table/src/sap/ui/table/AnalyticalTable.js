@@ -447,8 +447,8 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		var oBindingInfo = this.getBindingInfo("rows");
 
 		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
-			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && oBinding.getLength() > iCount,
-				iRowIndex = bIsFixedRow ? (oBinding.getLength() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
+			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && this._getTotalRowCount() > iCount,
+				iRowIndex = bIsFixedRow ? (this._getTotalRowCount() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
 				oRow = aRows[iRow],
 				$row = oRow.$(),
 				$rowHdr = this.$().find("div[data-sap-ui-rowindex=" + $row.attr("data-sap-ui-rowindex") + "]");
@@ -1086,10 +1086,13 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 */
 	AnalyticalTable.prototype._getSelectableRowCount = function() {
 		var oBinding = this.getBinding("rows");
-		if (oBinding) {
-			var oRootNode = oBinding.getGrandTotalContextInfo();
-			return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
+
+		if (oBinding == null) {
+			return 0;
 		}
+
+		var oRootNode = oBinding.getGrandTotalContextInfo();
+		return oRootNode == null ? 0 : oRootNode.totalNumberOfLeafs;
 	};
 
 	/**

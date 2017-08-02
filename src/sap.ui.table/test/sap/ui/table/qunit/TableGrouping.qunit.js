@@ -334,17 +334,20 @@
 
 	QUnit.test("Tree Mode", function (assert) {
 		var done = assert.async();
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
-
 		var bSecondPass = false;
 
+		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
+		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+
 		var fnHandler = function () {
-			sap.ui.getCore().applyChanges();
 			var iCount = iNumberOfRows + 1;
+
 			if (bSecondPass) {
 				iCount++;
+				assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+				assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			}
+
 			for (var i = 0; i < iCount; i++) {
 				var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i + "-col0").find(".sapUiTableTreeIcon");
 				var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
@@ -372,7 +375,6 @@
 
 			if (bSecondPass) {
 				var fnUnbindHandler = function () {
-					sap.ui.getCore().applyChanges();
 					for (var i = 0; i < 12; i++) {
 						var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i + "-col0").find(".sapUiTableTreeIcon");
 						var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
@@ -395,26 +397,24 @@
 		bSecondPass = true;
 		oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
 		Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon"), true);
-		assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 	});
 
 	QUnit.test("Group Mode", function (assert) {
 		var done = assert.async();
-		oTreeTable.setUseGroupMode(true);
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
-		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
-
 		var bSecondPass = false;
 
+		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
+		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+
 		var fnHandler = function () {
-			sap.ui.getCore().applyChanges();
 			var iCount = iNumberOfRows + 1;
+
 			if (bSecondPass) {
 				iCount++;
+				assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+				assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			}
+
 			for (var i = 0; i < iCount; i++) {
 				var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
 				var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel" + i);
@@ -446,7 +446,6 @@
 
 			if (bSecondPass) {
 				var fnUnbindHandler = function () {
-					sap.ui.getCore().applyChanges();
 					for (var i = 0; i < 12; i++) {
 						var $Row = jQuery.sap.byId(oTreeTable.getId() + "-rows-row" + i);
 						assert.ok(!$Row.hasClass("sapUiTableGroupHeader"), "No group headers any more after unbind");
@@ -461,13 +460,14 @@
 			}
 		};
 
+		oTreeTable.setUseGroupMode(true);
+		sap.ui.getCore().applyChanges();
+
 		fnHandler();
 
 		bSecondPass = true;
 		oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
 		Grouping.toggleGroupHeaderByRef(oTreeTable, jQuery.sap.byId(oTreeTable.getId() + "-rowsel0"), true);
-		assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
 	});
 
 	QUnit.test("GroupMenuButton", function (assert) {
@@ -517,10 +517,10 @@
 	QUnit.test("Activate Grouping", function (assert) {
 		var done = assert.async();
 		var oBinding = oTable.getBinding("rows");
+
 		assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
 
 		var fnHandler = function () {
-			sap.ui.getCore().applyChanges();
 			for (var i = 0; i < iNumberOfRows + 2; i++) {
 				if (i == 0 || i == 5) {
 					assert.ok(getRowHeader(i).hasClass("sapUiTableGroupHeader"), "Row " + i + " is group header");
@@ -528,6 +528,8 @@
 					assert.ok(!getRowHeader(i).hasClass("sapUiTableGroupHeader"), "Row " + i + " is no group header");
 				}
 			}
+
+			assert.equal(oTable._getTotalRowCount(), 10, "Row count after Grouping");
 			done();
 		};
 
@@ -538,47 +540,78 @@
 		oTable.attachEventOnce("_rowsUpdated", fnHandlerProxy);
 
 		oTable.setGroupBy(oTable.getColumns()[0]);
-		oBinding = oTable.getBinding("rows");
-		assert.equal(oBinding.getLength(), 10, "Row count after Grouping");
 	});
 
 	QUnit.test("Collapse / Expand", function (assert) {
 		var oBinding = oTable.getBinding("rows");
-		assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
+		var oClock = sinon.useFakeTimers();
+
+		assert.equal(oTable._getTotalRowCount(), 8, "Row count before Grouping");
 
 		oTable.setGroupBy(oTable.getColumns()[0]);
-		oBinding = oTable.getBinding("rows");
-		assert.equal(oBinding.getLength(), 10, "Row count after Grouping");
-
-		sap.ui.getCore().applyChanges();
+		oClock.tick(50);
+		assert.equal(oTable._getTotalRowCount(), 10, "Row count after Grouping");
 
 		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), false);
-		assert.equal(oBinding.getLength(), 6, "Row count after Collapse");
+		oClock.tick(50);
+		assert.equal(oTable._getTotalRowCount(), 6, "Row count after Collapse");
 		assert.ok(!oBinding.isExpanded(0), "!Expanded");
+
 		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0), true);
-		assert.equal(oBinding.getLength(), 10, "Row count after Expand");
+		oClock.tick(50);
+		assert.equal(oTable._getTotalRowCount(), 10, "Row count after Expand");
 		assert.ok(oBinding.isExpanded(0), "Expanded");
+
 		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
-		assert.equal(oBinding.getLength(), 6, "Row count after Toggle");
+		oClock.tick(50);
+		assert.equal(oTable._getTotalRowCount(), 6, "Row count after Toggle");
 		assert.ok(!oBinding.isExpanded(0), "!Expanded");
+
 		Grouping.toggleGroupHeaderByRef(oTable, getRowHeader(0));
-		assert.equal(oBinding.getLength(), 10, "Row count after Toggle");
+		oClock.tick(50);
+		assert.equal(oTable._getTotalRowCount(), 10, "Row count after Toggle");
 		assert.ok(oBinding.isExpanded(0), "Expanded");
+
+		oClock.restore();
 	});
 
 	QUnit.test("Reset Grouping", function (assert) {
-		assert.expect(3);
-		var oBinding = oTable.getBinding("rows");
-		assert.equal(oBinding.getLength(), 8, "Row count before Grouping");
+		var done = assert.async();
 
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		oBinding = oTable.getBinding("rows");
-		assert.equal(oBinding.getLength(), 10, "Row count after Grouping");
+		assert.equal(oTable._getTotalRowCount(), 8, "Row count before grouping");
 
-		oTable.setEnableGrouping(false);
+		function testAsync(mTestConfig) {
+			var fnPromiseResolver;
+			var oPromise = new Promise(function(resolve) {
+				fnPromiseResolver = resolve;
+			});
 
-		oBinding = oTable.getBinding("rows");
-		assert.equal(oBinding.getLength(), 8, "Row count after rest Grouping");
+			oTable.attachEventOnce("_rowsUpdated", function() {
+				mTestConfig.test();
+				fnPromiseResolver();
+			});
+
+			mTestConfig.act();
+
+			return oPromise;
+		}
+
+		testAsync({
+			act: function() {
+				oTable.setGroupBy(oTable.getColumns()[0]);
+			},
+			test: function() {
+				assert.equal(oTable._getTotalRowCount(), 10, "Row count after grouping");
+			}
+		}).then(function() {
+			return testAsync({
+				act: function() {
+					oTable.setEnableGrouping(false);
+				},
+				test: function() {
+					assert.equal(oTable._getTotalRowCount(), 8, "Row count after reset grouping");
+				}
+			});
+		}).then(done);
 	});
-
 }());

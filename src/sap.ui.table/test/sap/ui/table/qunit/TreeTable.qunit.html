@@ -108,131 +108,94 @@
 		}
 	});
 
-	QUnit.test("InitialOk", function(assert) {
-		assert.expect(1);
-		assert.equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
+	QUnit.test("Initial", function(assert) {
+		assert.equal(this.table._getTotalRowCount(), 3,	"Initial row count is correct");
 	});
 
-	QUnit.test("ExpandFirstLevelOk", function(assert) {
-		assert.expect(2);
-		// check the behavior of the expand first level property (only used intially)
+	QUnit.test("ExpandFirstLevel", function(assert) {
+		// check the behavior of the expand first level property (only used initially)
 		this.table.setExpandFirstLevel(true);
 		this.table.unbindRows().bindRows("/root");
-		assert.equal(this.table.getBinding("rows").getLength(), 6,	"Row count is correct!");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 6,	"ExpandFirstLevel=true: Row count is correct");
+
 		this.table.setExpandFirstLevel(false);
 		this.table.unbindRows().bindRows("/root");
-		assert.equal(this.table.getBinding("rows").getLength(), 3,	"Row count is correct!");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 3,	"ExpandFirstLevel=false: Row count is correct");
 	});
 
-	QUnit.test("ExpandRow", function(assert) {
-		assert.expect(2);
+	QUnit.test("Expand and collapse a row", function(assert) {
 		this.table.expand(0);
-		assert.equal(this.table.getBinding("rows").getLength(), 5, "Row count is correct!");
-		assert.equal(this.table.isExpanded(0), true, "Expanded state is correct!");
-	});
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 5, "Expanded: Row count is correct");
+		assert.equal(this.table.isExpanded(0), true, "Expanded state is correct");
 
-	QUnit.test("CollapseRow", function(assert) {
-		assert.expect(2);
 		this.table.collapse(0);
-		assert.equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
-		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct!");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 3, "Collapsed: Row count is correct");
+		assert.equal(this.table.isExpanded(0), false, "Expanded state is correct");
 	});
 
-	QUnit.test("InsertRow", function(assert) {
-		assert.expect(1);
+	QUnit.test("Insert and remove a row", function(assert) {
 		var oData = this.table.getModel().getData();
-		jQuery.extend(oData.root, {
-			3: {
-				name: "new item",
-    			description: "new item description"
-			}
-		});
+
+		oData.root[3] = {
+			name: "new item",
+			description: "new item description"
+		};
 		this.table.getModel().setData(oData);
-		assert.equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
-	});
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 4, "Row inserted: Row count is correct");
 
-	QUnit.test("RemoveRow", function(assert) {
-		assert.expect(1);
-		var oData = this.table.getModel().getData();
 		delete oData.root[3];
 		this.table.getModel().setData(oData);
-		assert.equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 3, "Row removed: Row count is correct");
 	});
 
-	QUnit.test("InsertChildRow", function(assert) {
-		assert.expect(3);
+	QUnit.test("Insert a child row", function(assert) {
 		var oData = this.table.getModel().getData();
-		jQuery.extend(oData.root[2], {
+
+		oData.root[2] = {
 			0: {
 				name: "new child item",
-    			description: "new child item description"
+				description: "new child item description"
 			}
-		});
+		};
 		this.table.getModel().setData(oData);
-		assert.equal(this.table.getBinding("rows").getLength(), 3, "Row count is correct!");
 		this.table.expand(2);
-		assert.equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 4, "Child row inserted and parent row expanded: Row count is correct");
 		assert.equal(this.table.isExpanded(2), true, "Expanded state is correct!");
 	});
 
-	QUnit.test("ApplyFilter", function(assert) {
-		assert.expect(1);
-		var oData = this.table.getModel().getData();
-		jQuery.extend(oData.root[2], {
-			0: {
-				name: "new child item",
-				description: "new child item description"
-			}
-		});
-		this.table.getModel().setData(oData);
-		this.table.expand(2);
+	QUnit.test("Add and remove a filter", function(assert) {
+		this.table.filter(this.table.getColumns()[0], "subitem1-1");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 1, "Filter added: Row count is correct");
 
-		this.table.filter(this.table.getColumns()[0], "new");
-		assert.equal(this.table.getBinding("rows").getLength(), 2, "Row count is correct!");
-	});
-
-	QUnit.test("RemoveFilter", function(assert) {
-		assert.expect(1);
-		var oData = this.table.getModel().getData();
-		jQuery.extend(oData.root[2], {
-			0: {
-				name: "new child item",
-				description: "new child item description"
-			}
-		});
-		this.table.getModel().setData(oData);
-		this.table.expand(2);
-
-		this.table.filter(this.table.getColumns()[0], "new");
 		this.table.filter(this.table.getColumns()[0], "");
-
-		assert.equal(this.table.getBinding("rows").getLength(), 4, "Row count is correct!");
-	});
-
-	QUnit.test("FilterSaveExpandedState", function(assert) {
-		assert.expect(3);
-		var oData = this.table.getModel().getData();
-		jQuery.extend(oData.root[2], {
-			0: {
-				name: "new child item",
-				description: "new child item description"
-			}
-		});
-		this.table.getModel().setData(oData);
-		this.table.expand(2);
-
-		this.table.filter(this.table.getColumns()[0], "new");
-		this.table.filter(this.table.getColumns()[0], "");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 3, "Filter removed: Row count is correct");
 
 		this.table.expand(0);
-		assert.equal(this.table.getBinding("rows").getLength(), 6, "Row count is correct!");
-		this.table.filter(this.table.getColumns()[0], "new");
-		assert.equal(this.table.getBinding("rows").getLength(), 2, "Row count is correct!");
+		this.table.expand(1);
+		this.table.filter(this.table.getColumns()[0], "subsubitem1-1-1");
 		this.table.filter(this.table.getColumns()[0], "");
-		assert.equal(this.table.getBinding("rows").getLength(), 6, "Row count is correct!");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 7, "Expanded first node and its first child node: Row count is correct");
+
+		this.table.filter(this.table.getColumns()[0], "subsubitem1-1-1");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 3, "Filter added: Row count is correct");
+
+		this.table.filter(this.table.getColumns()[0], "");
+		this.clock.tick(50);
+		assert.equal(this.table._getTotalRowCount(), 7, "Filter removed: Row count is correct");
 	});
 
-	QUnit.test("BindRows", function(assert) {
+	QUnit.test("Bind rows", function(assert) {
 		var spy = this.spy(sap.ui.table.TreeTable.prototype, "bindRows");
 		new sap.ui.table.TreeTable({
 			rows: {path: "/modelData"},
@@ -265,7 +228,7 @@
 		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
 	});
 
-	QUnit.test("FlatMode", function(assert) {
+	QUnit.test("Flat mode", function(assert) {
 		assert.ok(this.table.$().find(".sapUiTableTreeIcon").length > 0, "Tree Icons available in TreeMode");
 		assert.ok(!this.table._bFlatMode, "Flat Mode not set");
 

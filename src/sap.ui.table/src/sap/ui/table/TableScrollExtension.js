@@ -606,7 +606,7 @@ sap.ui.define([
 
 		var oTable = this.getTable();
 		var bScrolled = false;
-		var iRowCount = oTable._getRowCount();
+		var iRowCount = oTable._getTotalRowCount();
 		var iVisibleRowCount = oTable.getVisibleRowCount();
 		var iScrollableRowCount = iVisibleRowCount - oTable.getFixedRowCount() - oTable.getFixedBottomRowCount();
 		var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
@@ -650,7 +650,7 @@ sap.ui.define([
 		var iFirstVisibleScrollableRow = oTable.getFirstVisibleRow();
 
 		if (bDown) {
-			var iFirstVisibleRow = oTable._getRowCount() - TableUtils.getNonEmptyVisibleRowCount(oTable);
+			var iFirstVisibleRow = oTable._getTotalRowCount() - TableUtils.getNonEmptyVisibleRowCount(oTable);
 			if (iFirstVisibleScrollableRow < iFirstVisibleRow) {
 				oTable.setFirstVisibleRow(iFirstVisibleRow);
 				bScrolled = true;

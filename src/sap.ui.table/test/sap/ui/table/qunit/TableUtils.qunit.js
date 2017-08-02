@@ -421,7 +421,7 @@ QUnit.test("getCellInfo", function(assert) {
 			getVisibleRowCount: function() {
 				return 10;
 			},
-			_getRowCount: function() {
+			_getTotalRowCount: function() {
 				return 5;
 			}
 		};
@@ -429,7 +429,7 @@ QUnit.test("getCellInfo", function(assert) {
 			getVisibleRowCount: function() {
 				return 10;
 			},
-			_getRowCount: function() {
+			_getTotalRowCount: function() {
 				return 15;
 			}
 		};
@@ -437,11 +437,11 @@ QUnit.test("getCellInfo", function(assert) {
 			getVisibleRowCount: function() {
 				return 10;
 			},
-			_getRowCount: function() {
+			_getTotalRowCount: function() {
 				return 10;
 			}
 		};
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getRowCount(), "Number of data rows (#data < #visiblerows)");
+		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getTotalRowCount(), "Number of data rows (#data < #visiblerows)");
 		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2.getVisibleRowCount(), "Number of visible rows (#data > #visiblerows)");
 		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3.getVisibleRowCount(), "Number of visible and data rows (#data = #visiblerows)");
 	});
@@ -523,9 +523,9 @@ QUnit.test("getCellInfo", function(assert) {
 		assert.ok(!TableUtils.toggleRowSelection(oTable, -1), "Row index out of bound: No selection was performed"); // Toggle
 		assert.ok(!TableUtils.toggleRowSelection(oTable, -1, true), "Row index out of bound: No selection was performed"); // Select
 		assert.ok(!TableUtils.toggleRowSelection(oTable, -1, false), "Row index out of bound: No selection was performed"); // Deselect
-		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount()), "Row index out of bound: No selection was performed"); // Toggle
-		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount(), true), "Row index out of bound: No selection was performed"); // Select
-		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount(), false), "Row index out of bound: No selection was performed"); // Deselect
+		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getTotalRowCount()), "Row index out of bound: No selection was performed"); // Toggle
+		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getTotalRowCount(), true), "Row index out of bound: No selection was performed"); // Select
+		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getTotalRowCount(), false), "Row index out of bound: No selection was performed"); // Deselect
 
 		// Selection is not possible when the table has no row binding.
 		oTable.unbindAggregation("rows");
@@ -676,7 +676,7 @@ QUnit.test("getCellInfo", function(assert) {
 				getShowNoData: function() {
 					return bShowNoData;
 				},
-				_getRowCount: function() {
+				_getTotalRowCount: function() {
 					return iBindingLength;
 				},
 				getBinding: function() {

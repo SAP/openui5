@@ -268,7 +268,7 @@ sap.ui.define([
 		 */
 		hasData : function(oTable) {
 			var oBinding = oTable.getBinding("rows"),
-			iBindingLength = oTable._getRowCount(),
+			iBindingLength = oTable._getTotalRowCount(),
 			bHasData = oBinding ? !!iBindingLength : false;
 
 			if (oBinding && oBinding.providesGrandTotal) { // Analytical Binding
@@ -374,7 +374,7 @@ sap.ui.define([
 
 			// Variable oRowIndicator is a row index value.
 			if (typeof oRowIndicator === "number") {
-				if (oRowIndicator < 0 || oRowIndicator >= oTable._getRowCount()) {
+				if (oRowIndicator < 0 || oRowIndicator >= oTable._getTotalRowCount()) {
 					return false;
 				}
 				return setSelectionState(oRowIndicator);
@@ -505,7 +505,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getTotalRowCount : function(oTable, bIncludeEmptyRows) {
-			var iRowCount = oTable._getRowCount();
+			var iRowCount = oTable._getTotalRowCount();
 			if (bIncludeEmptyRows) {
 				iRowCount = Math.max(iRowCount, oTable.getVisibleRowCount());
 			}
@@ -521,7 +521,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getNonEmptyVisibleRowCount : function(oTable) {
-			return Math.min(oTable.getVisibleRowCount(), oTable._getRowCount());
+			return Math.min(oTable.getVisibleRowCount(), oTable._getTotalRowCount());
 		},
 
 		/**
@@ -1058,12 +1058,13 @@ sap.ui.define([
 			if (oBinding && iFixedBottomRowCount > 0) {
 				var iVisibleRowCount = oTable.getVisibleRowCount();
 				var iFirstVisibleRow = oTable.getFirstVisibleRow();
+				var iTotalRowCount = oTable._getTotalRowCount();
 
-				if (oTable._iBindingLength >= iVisibleRowCount) {
+				if (iTotalRowCount >= iVisibleRowCount) {
 					iFirstFixedButtomIndex = iVisibleRowCount - iFixedBottomRowCount;
 				} else {
-					var iIdx = oTable._iBindingLength - iFixedBottomRowCount - iFirstVisibleRow;
-					if (iIdx >= 0 && (iFirstVisibleRow + iIdx) < oTable._iBindingLength) {
+					var iIdx = iTotalRowCount - iFixedBottomRowCount - iFirstVisibleRow;
+					if (iIdx >= 0 && (iFirstVisibleRow + iIdx) < iTotalRowCount) {
 						iFirstFixedButtomIndex = iIdx;
 					}
 				}
