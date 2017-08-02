@@ -69,8 +69,8 @@ jQuery.sap.require("sap.ui.fl.ChangePersistence");
 		oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 
 		assert.ok(oChangePersistence, "ChangePersistence shall be created");
-		assert.equal(sComponentName, oChangePersistence._oComponent.name, "with correct component name");
-		assert.ok(sAppVersion, oChangePersistence._oComponent.appVersion, "and correct application version");
+		assert.equal(sComponentName, oChangePersistence._mComponent.name, "with correct component name");
+		assert.ok(sAppVersion, oChangePersistence._mComponent.appVersion, "and correct application version");
 	});
 
 	QUnit.test("shall return the same cached instance, if it exists", function(assert) {
