@@ -39,14 +39,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the index of a table column.
-				 */
-				index: {
-					type: "int",
-					defaultValue: -1
-				},
-
-				/**
 				 * Defines whether the <code>P13nSelectionItem</code> is selected.
 				 */
 				selected: {
