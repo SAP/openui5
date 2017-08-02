@@ -164,31 +164,100 @@
 			assert.ok(oContainer2.getTitle() instanceof sap.ui.core.Title, "getTitle(): Title as control entered must return control");
 
 			assert.equal(oContainer1.getRenderedDomRef().id, oContainer1.getId(), "DOM for FormContainer rendered");
+
+			// check function don't break if Element or container not assigned or rendered
+			var oMyForm = new sap.ui.layout.form.Form();
+			var oMyLayout = new sap.ui.layout.form.FormLayout();
+			var oMyContainer = new sap.ui.layout.form.FormContainer();
+			assert.notOk(oMyContainer.getRenderedDomRef(), "getRenderedDomRef for unasigned container");
+			oMyForm.addFormContainer(oMyContainer);
+			assert.notOk(oMyContainer.getRenderedDomRef(), "getRenderedDomRef for container on Form without Layout");
+			oMyForm.setLayout(oMyLayout);
+			assert.notOk(oMyContainer.getRenderedDomRef(), "getRenderedDomRef for container on unrendered Form");
+			oMyForm.placeAt("uiArea3");
+			sap.ui.getCore().applyChanges();
+			assert.ok(oMyContainer.getRenderedDomRef(), "getRenderedDomRef for container on rendered Form");
+			oMyForm.destroy();
 		});
 
 		QUnit.test("Element", function(assert) {
-			var oElement = sap.ui.getCore().byId("C1E1");
-			//label must return text if text entered, control if control enterd
+			var oElement = new sap.ui.layout.form.FormElement({
+				label: "Label1",
+				fields: [new sap.m.Input("Test1"), new sap.m.Input("Test2",{required: true})]
+				});
+			var oLabel = oElement.getLabelControl();
+			var sLabelId = oLabel ? oLabel.getId() : "";
+			//label must return text if text entered, control if control entered
 			assert.equal(oElement.getLabel(), "Label1", "getLabel(): Label as text endered must return text");
 			assert.ok(!(oElement.getAggregation("label") instanceof sap.m.Label), "Label as text entered must not be an control in aggregation");
-			assert.ok(oElement.getLabelControl() instanceof sap.m.Label, "Label as text endeted must be an control in getLabelControl");
+			assert.ok(oLabel instanceof sap.m.Label, "Label as text endeted must be an control in getLabelControl");
+			assert.equal(oLabel.getText(), "Label1", "Label contains text");
+			assert.equal(oLabel.getLabelFor(), "Test1", "Label points to first field");
+			assert.ok(oLabel.isRequired(), "Label is required");
+
+			oElement.setLabel("Label2");
+			assert.equal(oElement.getLabel(), "Label2", "getLabel(): Label as text endered must return text");
+			oLabel = oElement.getLabelControl();
+			assert.equal(oLabel.getId(), sLabelId, "Label reused, only text changed");
+			assert.equal(oLabel.getText(), "Label2", "Label contains text");
+
 			oElement.destroyLabel();
 			assert.notOk(oElement.getLabel(), "getLabel(): no Label");
 			assert.notOk(!!oElement.getLabelControl(), "no Label in getLabelControl");
+			assert.notOk(sap.ui.getCore().byId(sLabelId), "Label destroyed");
+
 			oElement.setLabel("Label1");
+			oLabel = oElement.getLabelControl();
+			sLabelId = oLabel ? oLabel.getId() : "";
+			assert.equal(oLabel.getText(), "Label1", "Label contains text");
+			oMyLabel = new sap.m.Label("MyLabel", {text: "Label3"});
+			oElement.setLabel(oMyLabel);
+			assert.notOk(sap.ui.getCore().byId(sLabelId), "internal Label destroyed");
+			assert.equal(oElement.getLabelControl().getId(), "MyLabel", "External Label used");
+			assert.ok(oMyLabel.isRequired(), "Label is required");
 
-			oElement = sap.ui.getCore().byId("C1E2");
-			assert.ok(oElement.getLabel() instanceof sap.m.Label, "getLabel(): Label as control entered must return control");
-			assert.equal(oElement.getLabel(), oElement.getLabelControl(), "getLabel(): Label as control entered must be the same in getLabelControl");
+			oNewLabel = new sap.m.Label("NewLabel", {text: "Label4"});
+			oElement.setLabel(oNewLabel);
+			assert.notOk(oMyLabel.getParent(), "old label not longer assigned to element");
+			assert.notOk(oMyLabel.isRequired(), "old label is not longer required");
+			assert.equal(oElement.getLabelControl().getId(), "NewLabel", "External Label used");
+			assert.ok(oNewLabel.isRequired(), "new Label is required");
+			sap.ui.getCore().byId("Test2").setRequired(false);
+			assert.notOk(oNewLabel.isRequired(), "new Label is not longer required");
+			oNewLabel.setRequired(true);
+			assert.ok(oNewLabel.isRequired(), "new Label is required");
+			oMyLabel.destroy();
 
 			oElement.destroyLabel();
 			assert.notOk(oElement.getLabel(), "getLabel(): no Label");
 			assert.notOk(!!oElement.getLabelControl(), "no Label in getLabelControl");
-			oElement.setLabel(new sap.m.Label("L1",{text:"Label2"}));
+			assert.notOk(sap.ui.getCore().byId("NewLabel"), "new Label destroyed");
 
-			sap.ui.getCore().applyChanges();
+			oElement.setLabel("Label1");
+			oLabel = oElement.getLabelControl();
+			sLabelId = oLabel ? oLabel.getId() : "";
+			oElement.destroy();
+			assert.notOk(sap.ui.getCore().byId(sLabelId), "internal Label destroyed");
 
+			var oElement = sap.ui.getCore().byId("C1E1");
 			assert.equal(oElement.getRenderedDomRef().id, oElement.getId(), "DOM for FormElement rendered");
+
+			// check function don't break if Element or container not assigned or rendered
+			var oMyForm = new sap.ui.layout.form.Form();
+			var oMyLayout = new sap.ui.layout.form.FormLayout();
+			var oMyContainer = new sap.ui.layout.form.FormContainer();
+			var oMyElement = new sap.ui.layout.form.FormElement();
+			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef on unasigned Element");
+			oMyContainer.addFormElement(oMyElement);
+			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef for Element on unasigned container");
+			oMyForm.addFormContainer(oMyContainer);
+			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef for element on Form without Layout");
+			oMyForm.setLayout(oMyLayout);
+			assert.notOk(oMyElement.getRenderedDomRef(), "getRenderedDomRef for element on unrendered Form");
+			oMyForm.placeAt("uiArea3");
+			sap.ui.getCore().applyChanges();
+			assert.ok(oMyElement.getRenderedDomRef(), "getRenderedDomRef for element on rendered Form");
+			oMyForm.destroy();
 		});
 
 		QUnit.module("Rendering");
@@ -197,11 +266,13 @@
 			assert.ok(jQuery.sap.domById("F1"), "Form is rendered");
 			assert.ok(jQuery.sap.domById("Layout1"), "Layout is rendered");
 			assert.equal(jQuery("#F1").attr("title"), "Form tooltip", "Form tooltip rendered");
+			assert.ok(jQuery("#F1").hasClass("sapUiFormEdit"), "Form editable rendered");
 			assert.ok(jQuery.sap.domById("F1T"), "Form title is rendered");
 			assert.ok(jQuery("#F1T").is("h4"), "Form title is rendered as H4 as default");
 			assert.ok(jQuery.sap.domById("F1T-ico"), "Form title image is rendered");
 			assert.ok(!jQuery("#F1T").hasClass("sapUiFormTitleEmph"), "Form title rendered not emphasized");
 			assert.equal(jQuery("#F2").width(), 300, "Form2 rendered width 300px");
+			assert.notOk(jQuery("#F2").hasClass("sapUiFormEdit"), "Form2 editable not rendered");
 			assert.equal(jQuery("#F2T").width(), jQuery("#F2").children().first().innerWidth(), "Form2 title rendered as large as the Layout");
 			assert.ok(jQuery("#F2T").hasClass("sapUiFormTitleEmph"), "Form2 title rendered emphasized");
 			assert.ok(jQuery("#F2T").is("h1"), "Form2 title is rendered as H1 as set on control");
@@ -259,6 +330,15 @@
 
 		QUnit.module("Interaction");
 
+		QUnit.test("Form", function(assert) {
+			oForm.setEditable(false);
+			assert.notOk(jQuery("#F1").hasClass("sapUiFormEdit"), "Form editable not rendered");
+			assert.ok(jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly set");
+			oForm.setEditable(true);
+			assert.ok(jQuery("#F1").hasClass("sapUiFormEdit"), "Form editable rendered");
+			assert.notOk(jQuery("#F1").attr("aria-readonly"), "Form1: aria-readonly not set");
+		});
+
 		QUnit.test("Container", function(assert) {
 			//expander function
 			var oContainer = sap.ui.getCore().byId("C3");
@@ -281,6 +361,15 @@
 			qutils.triggerKeydown(jQuery("#C3--Exp").get(0), jQuery.sap.KeyCodes.NUMPAD_PLUS, false, false, false);
 			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible after NumpadPlus on expander");
 			assert.equal(oContainer.getExpanded(), true, "Container3 getExpanded()")
+
+			oContainer.setExpandable(false);
+			sap.ui.getCore().applyChanges();
+			assert.notOk(jQuery.sap.domById("C3--Exp"), "Container3 expander is not rendered");
+			oContainer.setExpanded(false);
+			oContainer.setExpandable(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+			assert.notOk(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is not visible");
 
 			// container navigation
 			jQuery("#I1").focus();

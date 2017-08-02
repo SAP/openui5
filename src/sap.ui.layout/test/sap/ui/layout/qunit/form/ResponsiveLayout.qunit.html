@@ -50,11 +50,12 @@
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F2C1",{
 						title: "Title as text",
+						tooltip: "my Tooltip",
 						formElements: [
 							new sap.ui.layout.form.FormElement("F2C1E1",{
 									label: "Label",
-									fields: [new sap.m.Input("F2C1E1_T1",{value: "Text"}),
-									         new sap.m.Input("F2C1E1_T2",{value: "Text"})]
+									fields: [new sap.m.Text("F2C1E1_T1",{text: "Text"}),
+									         new sap.m.Text("F2C1E1_T2",{text: "Text"})]
 								})
 							]
 					})
@@ -268,6 +269,7 @@
 
 			// panel
 			assert.ok(jQuery.sap.domById("F2C1--Panel"), "Form2: Container1 Panel rendered (because title)");
+			assert.equal(jQuery("#F2C1--Panel").attr("title"), "my Tooltip", "Form2: Container1 Panel tooltip rendered");
 			assert.ok(jQuery.sap.domById("F2C1--RFLayout"), "Form2: Container1 ResponsiveFlowLayout rendered");
 			// title as text
 			var oContainer = sap.ui.getCore().byId("F2C1");
@@ -302,8 +304,10 @@
 			assert.ok(jQuery.sap.domById("F1C1E1_T1"), "Input1 rendered");
 
 			assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F2C1E1").getLabelControl().getId()), "Form2: Label rendered");
-			assert.ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: Input1 rendered");
-			assert.ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: Input2 rendered");
+			assert.ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: Text1 rendered");
+			assert.ok(jQuery("#F2C1E1_T1").attr("style").indexOf("100%") > 0, "Form2: Text1 width set to 100%");
+			assert.ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: Text2 rendered");
+			assert.ok(jQuery("#F2C1E1_T2").attr("style").indexOf("100%") > 0, "Form2: Text2 width set to 100%");
 
 			assert.ok(!jQuery.sap.domById("F3C2E3_T1"), "Form3: invisible Element - Input not rendered");
 			assert.ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - Input not rendered");
@@ -332,6 +336,15 @@
 		});
 
 		QUnit.module("Interaction");
+
+		QUnit.test("expander", function(assert) {
+			var oContainer = sap.ui.getCore().byId("F3C2");
+			oContainer.setExpanded(false);
+			assert.ok(jQuery("#F3C2--Panel").hasClass("sapUiRLContainerColl"), "Form3: Container2 collapsed");
+
+			oContainer.setExpanded(true);
+			assert.notOk(jQuery("#F3C2--Panel").hasClass("sapUiRLContainerColl"), "Form3: Container2 not collapsed");
+		});
 
 		QUnit.test("add container", function(assert) {
 			oForm3.addFormContainer(
