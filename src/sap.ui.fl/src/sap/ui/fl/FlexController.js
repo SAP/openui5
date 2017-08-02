@@ -714,9 +714,9 @@ sap.ui.define([
 	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
 	 * @param {object} oAppComponent Component instance that is currently loading
 	 * @param {object} oControl Control instance that is being created
-	 * @public
+	 * @private
 	 */
-	FlexController.prototype.applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
+	FlexController.prototype._applyChangesOnControl = function (fnGetChangesMap, oAppComponent, oControl) {
 		var mChangesMap = fnGetChangesMap();
 		var mChanges = mChangesMap.mChanges;
 		var mDependencies = mChangesMap.mDependencies;
@@ -740,6 +740,21 @@ sap.ui.define([
 		}.bind(this));
 
 		this._processDependentQueue(mDependencies, mDependentChangesOnMe);
+	};
+
+	/**
+	 * Get <code>_applyChangesOnControl</code> function bound to the <code>FlexController</code> instance;
+	 * this function must be used within the <code>addPropagationListener</code> function to ensure  proper
+	 * identification of the bound function (identity check is not possible due to the wrapping of the <code>.bind</code>).
+	 *
+	 * @param {function} fnGetChangesMap Getter to retrieve the mapped changes belonging to the app component
+	 * @param {object} oAppComponent Component instance that is currently loading
+	 * @public
+	 */
+	FlexController.prototype.getBoundApplyChangesOnControl = function (fnGetChangesMap, oComponent) {
+		var fnBoundApplyChangesOnControl = this._applyChangesOnControl.bind(this, fnGetChangesMap, oComponent);
+		fnBoundApplyChangesOnControl._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+		return fnBoundApplyChangesOnControl;
 	};
 
 	/**
@@ -794,7 +809,7 @@ sap.ui.define([
 					Utils.log.error("A flexibility change tries to change a nonexistent control.");
 					return;
 				}
-				this.applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
+				this._applyChangesOnControl(this._oChangePersistence.getChangesMapForComponent.bind(this._oChangePersistence), oAppComponent, oControl);
 			}.bind(this));
 		}.bind(this));
 		aApplyChanges.forEach(function (fnApplyChange) {

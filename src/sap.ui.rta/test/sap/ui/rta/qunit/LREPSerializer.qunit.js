@@ -42,6 +42,12 @@ sap.ui.require([
 		getLocalId: function () {
 			return undefined;
 		},
+		addPropagationListener: function () {
+
+		},
+		getPropagationListeners: function () {
+			return [];
+		},
 		getManifestEntry: function () {
 			return {};
 		},

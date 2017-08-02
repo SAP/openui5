@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
-], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings, VariantController) {
+	"sap/ui/fl/Change", "sap/ui/fl/Utils", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings", "sap/ui/fl/variants/VariantController"
+], function(Change, Utils, LRepConnector, Cache, ContextManager, Settings, VariantController) {
 	"use strict";
 
 	/**
@@ -14,12 +14,12 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version 1.37.0-SNAPSHOT
 	 * @experimental Since 1.25.0
-	 * @param {object} oComponent - Component data to initiate <code>ChangePersistence</code> instance
-	 * @param {string} oComponent.name - Name of the component this instance is responsible for
-	 * @param {string} oComponent.appVersion - Version of application
+	 * @param {object} mComponent - Component data to initiate <code>ChangePersistence</code> instance
+	 * @param {string} mComponent.name - Name of the component this instance is responsible for
+	 * @param {string} mComponent.appVersion - Version of application
 	 */
-	var ChangePersistence = function(oComponent) {
-		this._oComponent = oComponent;
+	var ChangePersistence = function(mComponent) {
+		this._mComponent = mComponent;
 		//_mChanges contains:
 		// - mChanges: map of changes (selector id)
 		// - mDependencies: map of changes (change key) that need to be applied before any change. Used to check if a change can be applied. Format:
@@ -44,12 +44,12 @@ sap.ui.define([
 			mDependentChangesOnMe: {}
 		};
 
-		if (!this._oComponent || !this._oComponent.name) {
+		if (!this._mComponent || !this._mComponent.name) {
 			Utils.log.error("The Control does not belong to an SAPUI5 component. Personalization and changes for this control might not work as expected.");
 			throw new Error("Missing component name.");
 		}
 
-		this._oVariantController = new VariantController(this._oComponent.name, this._oComponent.appVersion, {});
+		this._oVariantController = new VariantController(this._mComponent.name, this._mComponent.appVersion, {});
 		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
 	};
@@ -64,7 +64,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getComponentName = function() {
-		return this._oComponent.name;
+		return this._mComponent.name;
 	};
 
 	/**
@@ -79,7 +79,7 @@ sap.ui.define([
 
 
 	ChangePersistence.prototype.getCacheKey = function() {
-		return Cache.getChangesFillingCache(this._oConnector, this._oComponent).then(function(oWrappedChangeFileContent) {
+		return Cache.getChangesFillingCache(this._oConnector, this._mComponent).then(function(oWrappedChangeFileContent) {
 			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
 				return oWrappedChangeFileContent.etag;
 			}
@@ -147,7 +147,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
-		return Cache.getChangesFillingCache(this._oConnector, this._oComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
+		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			this._bHasLoadedChangesFromBackEnd = true;
 
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
@@ -399,8 +399,34 @@ sap.ui.define([
 		}
 		this._aDirtyChanges.push(oNewChange);
 		this._addChangeIntoMap(oComponent, oNewChange);
+		this._addPropagationListener(oComponent);
+
 
 		return oNewChange;
+	};
+
+	/**
+	 * If the first changes were created, the <code>propagationListener</code> of <code>sap.ui.fl</code> might not yet
+	 * be attached to the application component and must be added then.
+	 *
+	 * @param {sap.ui.core.UiComponent} oComponent Application component that might not have a propagation listener yet
+	 * @private
+	 */
+	ChangePersistence.prototype._addPropagationListener = function (oComponent) {
+		if (oComponent) {
+			var fnCheckIsNotFlPropagationListener = function (fnPropagationListener) {
+				return !fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+			};
+			var bNoFlPropagationListenerAttached = oComponent.getPropagationListeners().every(fnCheckIsNotFlPropagationListener);
+
+			if (bNoFlPropagationListenerAttached) {
+				var oManifest = oComponent.getManifest();
+				var sVersion = Utils.getAppVersionFromManifest(oManifest);
+				var oFlexController = sap.ui.fl.FlexControllerFactory.create(this.getComponentName(), sVersion);
+				var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(this.getChangesMapForComponent.bind(this), oComponent);
+				oComponent.addPropagationListener(fnPropagationListener);
+			}
+		}
 	};
 
 	/**
@@ -452,11 +478,11 @@ sap.ui.define([
 
 		return function() {
 			if (oDirtyChange.getPendingAction() === "NEW") {
-				Cache.addChange(that._oComponent, oDirtyChange.getDefinition());
+				Cache.addChange(that._mComponent, oDirtyChange.getDefinition());
 			}
 
 			if (oDirtyChange.getPendingAction() === "DELETE") {
-				Cache.deleteChange(that._oComponent, oDirtyChange.getDefinition());
+				Cache.deleteChange(that._mComponent, oDirtyChange.getDefinition());
 			}
 
 			var iIndex = aDirtyChanges.indexOf(oDirtyChange);
