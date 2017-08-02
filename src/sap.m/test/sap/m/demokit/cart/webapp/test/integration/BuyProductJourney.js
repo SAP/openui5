@@ -31,18 +31,26 @@ sap.ui.define([
 			and.iShouldSeeSomeEntriesInTheProductList();
 	});
 
-	opaTest("Should add a product to the cart and see an avatar button", function (Given, When, Then) {
+	opaTest("Should see an avatar button on the product page", function (Given, When, Then) {
 		// Actions
 		When.onTheCategory.iPressOnTheFirstProduct();
-		When.onTheProduct.iAddTheDisplayedProductToTheCart()
-			.and.iShouldSeeAnAvatarButton();
-		When.onTheCategory.iGoToTheCartPage();
+		// Assertions
+		Then.onTheProduct.iShouldSeeAnAvatarButton();
+
+	});
+
+	opaTest("Should add a product to the cart", function (Given, When, Then) {
+		// Actions
+
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
+
+		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
 			.and.iShouldSeeTheTotalPriceUpdated().and.iTeardownMyApp();
 	});
+
 
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
 		// Arrangements
