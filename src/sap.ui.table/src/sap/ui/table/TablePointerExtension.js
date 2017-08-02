@@ -680,7 +680,8 @@ sap.ui.define([
 		},
 
 		/*
-		 * Positions the reorder marker on the column (given by the position information (@see findColumnForPosition)).
+		 * Positions the reorder marker on the column (given by the position information).
+		 * @see findColumnForPosition
 		 */
 		adaptReorderMarkerPosition: function(oTable, oPos, bShow) {
 			if (!oPos || !oTable._$ReorderIndicator) {

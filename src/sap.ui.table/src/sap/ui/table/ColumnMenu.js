@@ -86,10 +86,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * its old parent.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oParent the object that becomes this object's new parent
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @see {sap.ui.base.ManagedObject}
-	 *
-	 * @returns {sap.ui.base.ManagedObject}
-	 *            Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ColumnMenu.prototype.setParent = function(oParent) {

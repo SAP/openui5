@@ -652,8 +652,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	 *
 	 * @deprecated Since version 1.28.
 	 * To get a group-like visualization the <code>useGroupMode</code> property can be used.
-	 * @see {@link sap.ui.table.TreeTable#setUseGroupMode}
 	 * @returns {sap.ui.table.TreeTable} Reference to this in order to allow method chaining
+	 * @see {@link sap.ui.table.TreeTable#setUseGroupMode}
 	 * @public
 	 */
 	TreeTable.prototype.setEnableGrouping = function() {

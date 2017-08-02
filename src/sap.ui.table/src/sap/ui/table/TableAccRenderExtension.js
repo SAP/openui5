@@ -133,8 +133,8 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {sap.ui.table.TableAccExtension.ELEMENTTYPES} sType The type of the table area to write the aria attributes for.
 		 * @param {Object} mParams Accessibility parameters.
-		 * @public
 		 * @see sap.ui.table.TableAccExtension#getAriaAttributesFor
+		 * @public
 		 */
 		writeAriaAttributesFor: function(oRm, oTable, sType, mParams) {
 			var oExtension = oTable._getAccExtension();
@@ -164,8 +164,8 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {sap.ui.table.Row} oRow Instance of the row.
 		 * @param {int} iRowIndex The index of the row.
-		 * @public
 		 * @see sap.ui.table.TableRenderer.writeRowSelectorContent
+		 * @public
 		 */
 		writeAccRowSelectorText: function(oRm, oTable, oRow, iRowIndex) {
 			if (!oTable._getAccExtension().getAccMode()) {
@@ -186,8 +186,8 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @param {sap.ui.table.Row} oRow Instance of the row.
 		 * @param {int} iRowIndex The index of the row.
-		 * @public
 		 * @see sap.ui.table.TableRenderer#writeRowHighlightContent
+		 * @public
 		 */
 		writeAccRowHighlightText: function(oRm, oTable, oRow, iRowIndex) {
 			if (!oTable._getAccExtension().getAccMode()) {
