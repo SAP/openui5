@@ -16,16 +16,16 @@ sap.ui.define([
 		Then.onTheCategory.iShouldSeeAFilterButton();
 	});
 
-	opaTest("Should filter the products on availablility", function (Given, When, Then) {
+	opaTest("Should filter the products on availability", function (Given, When, Then) {
 		// Actions
-		When.onTheCategory.iFilterOnAvailableProducts();
+		When.onTheCategory.iFilterOnAvailability();
 		//Assertions
-		Then.onTheCategory.iShouldOnlySeeAvailableProductsAndAnInfoToolbar();
+		Then.onTheCategory.iShouldOnlySeeAvailableAndDiscontinuedProductsWithInfoToolbar();
 	});
 
-	opaTest("Should remove the availablility filter", function (Given, When, Then) {
+	opaTest("Should remove the availability filters", function (Given, When, Then) {
 		// Actions
-		When.onTheCategory.iRemoveTheAvailableProductsFilter();
+		When.onTheCategory.iRemoveTheAvailabilityFilters();
 		//Assertions
 		Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
 	});

@@ -127,6 +127,11 @@ sap.ui.define([
 						aAvailableFilters.push(oFilter);
 						break;
 
+					case "Discontinued":
+						oFilter = new Filter("Status", FilterOperator.EQ, "D");
+						aAvailableFilters.push(oFilter);
+						break;
+
 					case "More":
 						oFilter = new Filter("Price", FilterOperator.GE, 500);
 						aPriceFilters.push(oFilter);
