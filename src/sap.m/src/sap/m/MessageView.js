@@ -102,19 +102,24 @@ sap.ui.define([
 				/**
 				 * Defines whether the MessageItems are grouped or not
 				 */
-				groupItems: { type: "boolean", group: "Behavior", defaultValue: false }
+				groupItems: { type: "boolean", group: "Behavior", defaultValue: false },
+
+				/**
+				 * Defines whether the header of details page will be shown
+				 */
+				showDetailsHeader: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
 			defaultAggregation: "items",
 			aggregations: {
 				/**
 				 * A list with message items
 				 */
-				items: {type: "sap.m.MessageItem", multiple: true, singularName: "item"},
+				items: { type: "sap.m.MessageItem", multiple: true, singularName: "item" },
 
 				/**
 				 * A custom header button
 				 */
-				headerButton: {type: "sap.m.Button", multiple: false}
+				headerButton: { type: "sap.m.Button", multiple: false }
 			},
 			events: {
 				/**
@@ -247,6 +252,7 @@ sap.ui.define([
 		var oGroupedItems, aItems = this.getItems();
 
 		this._clearLists();
+		this._detailsPage.setShowHeader(this.getShowDetailsHeader());
 
 		if (this.getGroupItems()) {
 			oGroupedItems = this._groupItems(aItems);
@@ -410,7 +416,7 @@ sap.ui.define([
 	 */
 	MessageView.prototype._onkeypress = function (oEvent) {
 		if (oEvent.shiftKey && oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
-			this._fnHandleBackPress();
+			this.navigateBack();
 		}
 	};
 
@@ -484,7 +490,7 @@ sap.ui.define([
 
 		this._oBackButton = new Button({
 			icon: ICONS["back"],
-			press: this._fnHandleBackPress.bind(this),
+			press: this.navigateBack.bind(this),
 			ariaLabelledBy: oBackBtnARIAHiddenDescr,
 			tooltip: sBackBtnTooltipDescr
 		}).addStyleClass(CSS_CLASS + "BackBtn");
@@ -1050,11 +1056,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles click of the BackButton
+	 * Navigates back to the list page
 	 *
-	 * @private
+	 * @public
 	 */
-	MessageView.prototype._fnHandleBackPress = function () {
+	MessageView.prototype.navigateBack = function () {
 		this._listPage.$().removeAttr("aria-hidden");
 		this._navContainer.back();
 	};

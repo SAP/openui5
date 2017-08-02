@@ -358,6 +358,16 @@
 				customButton.destroy();
 			});
 
+			QUnit.test("showDetailsHeader property", function(assert) {
+				this.oMessageView.setShowDetailsHeader(false);
+				sap.ui.getCore().applyChanges();
+
+				this.oDialog.open();
+				this.clock.tick(500);
+
+				assert.notOk(this.oMessageView._detailsPage.getShowHeader(), "Header show not be shown");
+			});
+
 			QUnit.module("Core integration", {
 				beforeEach: function () {
 					var that = this;
