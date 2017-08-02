@@ -86,6 +86,10 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 					multiple: true,
 					singularName: "associatedObj"
 				}
+			},
+			events: {
+				testEvent1: {},
+				testEvent2:{}
 			}
 		},
 
@@ -235,6 +239,26 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		}
 	});
 
+	// -------------------------------------------------------
+	// Destroying
+	// -------------------------------------------------------
+	QUnit.test("ManagedObjectObserver listening to control destruction", function(assert) {
+		var bDestroyed = false;
+
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			bDestroyed = true;
+		});
+
+		oObserver.observe(this.obj, {
+			destroy: true
+		});
+
+		this.obj.destroy();
+
+		assert.equal(bDestroyed,true,"The object was destroyed");
+
+		oObserver.disconnect();
+	});
 
 	// -------------------------------------------------------
 	// Property handling
@@ -847,6 +871,587 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 		oObserver.disconnect();
 
 	});
+
+	// -------------------------------------------------------
+	// Event handling
+	// -------------------------------------------------------
+	QUnit.test("ManagedObjectObserver listening to all event changes", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+		oObserver.observe(this.obj, {
+			events: true
+		});
+
+		assert.equal(true, true, "Observation of all events started");
+
+		var fnHandler = function(){
+		};
+
+		//attaching a listener
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent1",
+			mutation: "insert",
+			listener: undefined,
+			func: fnHandler,
+			data: undefined
+		});
+		this.obj.attachEvent("testEvent1", fnHandler);
+		this.checkExpected("Listener attached to testEvent1. Observer called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent2",
+			mutation: "insert",
+			listener: undefined,
+			func: fnHandler,
+			data: undefined
+		});
+		this.obj.attachEvent("testEvent2", fnHandler);
+		this.checkExpected("Listener attached to testEvent2. Observer called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent2",
+			mutation: "remove",
+			listener: undefined,
+			func: fnHandler,
+			data: undefined
+		});
+		this.obj.detachEvent("testEvent2", fnHandler);
+		this.checkExpected("Listener detached to testEvent2. Observer called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent2",
+			mutation: "insert",
+			listener: undefined,
+			func: "__ignore",
+			data: undefined
+		});
+		this.obj.attachEventOnce("testEvent2", fnHandler);
+		this.checkExpected("Listener attached to testEvent2. Observer called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent2",
+			mutation: "remove",
+			listener: undefined,
+			func: "__ignore",
+			data: undefined
+		});
+		this.obj.fireEvent("testEvent2");
+		this.checkExpected("Listener detached after firing once. Observer called successful");
+
+		oObserver.disconnect();
+	});
+
+	QUnit.test("ManagedObjectObserver listening to one event change", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+		oObserver.observe(this.obj, {
+			events: ["testEvent1"]
+		});
+
+		equal(true, true, "Observation of one events started");
+
+		var oData = {
+		 			firstName: "Peter",
+		 			lastName: "Parker"
+		 		};
+
+		var fnHandler = function(oEvent){
+		};
+
+		var fnDataHandler = function(oEvent, data){
+			assert.deepEqual(data,oData,"Data is transfered correctly");
+		};
+
+		// attaching a listener
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent1",
+			mutation: "insert",
+			listener: undefined,
+			func: fnHandler,
+			data: undefined
+		});
+
+		this.obj.attachEvent("testEvent1", fnHandler);
+		this.checkExpected("Listener attached to testEvent1. Observer called successful");
+
+		setExpected();
+		this.obj.attachEvent("testEvent2", fnHandler);
+		this.checkExpected("Listener attached to testEvent2, not observed. Observer not called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent1",
+			mutation: "remove",
+			listener: undefined,
+			func: fnHandler,
+			data: undefined
+		});
+		this.obj.detachEvent("testEvent1", fnHandler);
+		this.checkExpected("Listener detached to testEvent2. Observer called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent1",
+			mutation: "insert",
+			listener: undefined,
+			func: fnDataHandler,
+			data: oData
+		});
+
+		this.obj.attachEventOnce("testEvent1", oData, fnDataHandler);
+		this.checkExpected("Listener attached to testEvent1. Observer called successful");
+
+		setExpected({
+			object: this.obj,
+			type:"event",
+			name:"testEvent1",
+			mutation: "remove",
+			listener: undefined,
+			func: fnDataHandler,
+			data: oData
+		});
+		this.obj.fireEvent("testEvent1",oData);
+		this.checkExpected("Listener detached after firing once. Observer called successful");
+
+		oObserver.disconnect();
+
+	});
+
+	// -------------------------------------------------------
+	// Binding handling
+	// -------------------------------------------------------
+	QUnit.test("ManagedObjectObserver listening to all binding changes - testing property binding", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+		oObserver.observe(this.obj, {
+			bindings: true
+		});
+
+		assert.equal(true, true, "Observation of all bindings started");
+
+		//bind a property, no model set yet
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+
+		this.obj.bindProperty("value", {path:'/value'});
+
+		this.checkExpected("Binding on value prepared. Observer called successful");
+
+		//setting the model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.setModel(oDataModel);
+		this.checkExpected("Binding on value bound. Observer called successful");
+
+		//removing model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.setModel(null, undefined);
+		this.checkExpected("Binding on value unbound bacause model is not available. Observer called successful");
+
+		//unbind property
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.unbindProperty("value");
+		this.checkExpected("Binding on value removed. Observer called successful");
+
+		//set the model first and then bind property
+		this.obj.setModel(oDataModel);
+		setExpected([{
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		},
+		{
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		}]);
+
+		this.obj.bindProperty("value", {path:'/value'});
+		this.checkExpected("Binding on value prepared and bound. Observer called successful");
+
+		//unbind property
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.unbindProperty("value");
+		this.checkExpected("Binding on value removed. Observer called successful");
+
+		oObserver.disconnect();
+
+	});
+	QUnit.test("ManagedObjectObserver listening to specific property binding changes - testing property binding", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+		oObserver.observe(this.obj, {
+			bindings: ["value"]
+		});
+
+		assert.equal(true, true, "Observation of property binding for 'value' started");
+
+		//bind a property, no model set yet
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+
+		this.obj.bindProperty("value", {path:'/value'});
+		this.checkExpected("Binding on value prepared. Observer called successful");
+
+		//setting the model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.setModel(oDataModel);
+		this.checkExpected("Binding on value bound. Observer called successful");
+
+		//removing model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.setModel(null, undefined);
+		this.checkExpected("Binding on value unbound bacause model is not available. Observer called successful");
+
+		//unbind property
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.unbindProperty("value");
+		this.checkExpected("Binding on value removed. Observer called successful");
+
+		//set the model first and then bind property
+		this.obj.setModel(oDataModel);
+		setExpected([{
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		},
+		{
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		}]);
+
+		this.obj.bindProperty("value", {path:'/value'});
+		this.checkExpected("Binding on value prepared and bound. Observer called successful");
+
+		//unbind property
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"value",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "property"
+		});
+		this.obj.unbindProperty("value");
+		this.checkExpected("Binding on value removed. Observer called successful");
+
+		//bind/unbind a property that is not observed
+		setExpected();
+		this.obj.bindProperty("stringValue",{path: '/value'});
+		this.checkExpected("Bind not observed property, Observer not called");
+		setExpected();
+		this.obj.unbindProperty("stringValue");
+		this.checkExpected("Unbind not observed property, Observer not called");
+
+		oObserver.disconnect();
+
+	});
+
+	QUnit.test("ManagedObjectObserver listening to all binding changes - testing a single aggregation binding", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+		oObserver.observe(this.obj, {
+			bindings: ['multiAggr']
+		});
+
+		assert.equal(true, true, "Observation of aggregation bindings for 'multiAggr' started");
+
+		//bind a aggregation, no model set yet
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+
+		this.obj.bindAggregation("multiAggr", {path:'/list', template: new sap.ui.test.TestElement()});
+		this.checkExpected("Binding on multiAggr prepared. Observer called successful");
+
+		//setting the model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.setModel(oDataModel);
+		this.checkExpected("Binding on multiAggr bound. Observer called successful");
+
+		//removing model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.setModel(null, undefined);
+		this.checkExpected("Binding on multiAggr unbound bacause model is not available. Observer called successful");
+
+		//unbind aggregation
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.unbindAggregation("multiAggr");
+		this.checkExpected("Binding on multiAggr removed. Observer called successful");
+
+		//set the model first and then bind aggregation
+		this.obj.setModel(oDataModel);
+		setExpected([{
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		},
+		{
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		}]);
+
+		this.obj.bindAggregation("multiAggr", {path:'/list', template: new sap.ui.test.TestElement()});
+		this.checkExpected("Binding on multiAggr prepared and bound. Observer called successful");
+
+		//unbind aggregation
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.unbindAggregation("multiAggr");
+		this.checkExpected("Binding on multiAggr removed. Observer called successful");
+
+		oObserver.disconnect();
+
+	});
+
+	QUnit.test("ManagedObjectObserver listening to specific aggregation binding changes - testing aggregation binding", function(assert) {
+
+		//listen to all changes
+		var oObserver = new ManagedObjectObserver(function(oChanges) {
+			setActual(oChanges);
+		});
+		oObserver.observe(this.obj, {
+			bindings: ["multiAggr"]
+		});
+
+		assert.equal(true, true, "Observation of all bindings started");
+
+		//bind a aggregation, no model set yet
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+
+		this.obj.bindAggregation("multiAggr", {path:'/list', template: new sap.ui.test.TestElement()});
+		this.checkExpected("Binding on multiAggr prepared. Observer called successful");
+
+		//setting the model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.setModel(oDataModel);
+		this.checkExpected("Binding on multiAggr bound. Observer called successful");
+
+		//removing model
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.setModel(null, undefined);
+		this.checkExpected("Binding on multiAggr unbound bacause model is not available. Observer called successful");
+
+		//unbind aggregation
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.unbindAggregation("multiAggr");
+		this.checkExpected("Binding on multiAggr removed. Observer called successful");
+
+		//set the model first and then bind aggregation
+		this.obj.setModel(oDataModel);
+		setExpected([{
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "prepare",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		},
+		{
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "ready",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		}]);
+
+		this.obj.bindAggregation("multiAggr", {path:'/list', template: new sap.ui.test.TestElement()});
+		this.checkExpected("Binding on multiAggr prepared and bound. Observer called successful");
+
+		//unbind aggregation
+		setExpected({
+			object: this.obj,
+			type:"binding",
+			name:"multiAggr",
+			mutation: "remove",
+			bindingInfo: "__ignore",
+			memberType: "aggregation"
+		});
+		this.obj.unbindAggregation("multiAggr");
+		this.checkExpected("Binding on multiAggr removed. Observer called successful");
+
+		//bind/unbind a property that is not observed
+		setExpected();
+		this.obj.bindAggregation("anotherMulti",{path: '/list', template: new sap.ui.test.TestElement()});
+		this.checkExpected("Bind not observed aggregation, Observer not called");
+		setExpected();
+		this.obj.unbindProperty("anotherMulti");
+		this.checkExpected("Unbind not observed aggregation, Observer not called");
+
+		oObserver.disconnect();
+
+	});
+
 
 	// -------------------------------------------------------
 	// Edge cases
