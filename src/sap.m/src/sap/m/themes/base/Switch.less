@@ -84,8 +84,18 @@
 	display: block;
 	white-space: nowrap;
 	text-decoration: none;
-	text-overflow: ellipsis;
 	overflow: hidden;
+}
+
+.sapMSwt.sapMSwtDefault {
+	&.sapMSwtOff .sapMSwtTextOn,
+	&.sapMSwtOn .sapMSwtTextOff {
+		.sapMSwtLabel {
+			// Special case - the currently invisible label should be smaller
+			// so the text won't get in the visible part of the control
+			width: 1.6rem;
+		}
+	}
 }
 
 /* ------------------------------ */
