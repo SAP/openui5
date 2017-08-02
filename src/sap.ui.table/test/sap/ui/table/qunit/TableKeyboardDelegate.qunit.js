@@ -2176,7 +2176,7 @@
 		// *END* -> Last row
 		qutils.triggerKeydown(oElem, Key.END, false, false, true);
 		oElem = checkFocus(getRowHeader(iNonEmptyVisibleRowCount - 1), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *END* -> Last row
 		qutils.triggerKeydown(oElem, Key.END, false, false, true);
@@ -2190,7 +2190,7 @@
 
 		// Empty area - Last row
 		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *HOME* -> First row
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2219,7 +2219,7 @@
 
 		// Empty area -> Last row
 		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *HOME* -> First row
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2236,7 +2236,7 @@
 		// *END* -> Last row
 		qutils.triggerKeydown(oElem, Key.END, false, false, true);
 		oElem = checkFocus(getRowAction(iNonEmptyVisibleRowCount - 1), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *END* -> Last row
 		qutils.triggerKeydown(oElem, Key.END, false, false, true);
@@ -2250,7 +2250,7 @@
 
 		// Empty area - Last row
 		oElem = checkFocus(getRowAction(oTable.getVisibleRowCount() - 1, true), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *HOME* -> First row
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2304,7 +2304,7 @@
 
 		// Empty area - Last row
 		oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *HOME* -> Scrollable area - First row
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2349,7 +2349,7 @@
 
 		// Empty area -> Last row
 		oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *HOME* -> Scrollable area - First row
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2392,7 +2392,7 @@
 
 		// Empty area - Last row
 		oElem = checkFocus(getRowAction(oTable.getVisibleRowCount() - 1, true), assert);
-		assert.equal(oTable.getRows()[oTable._getRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
+		assert.equal(oTable.getRows()[oTable._getTotalRowCount() - 1].getIndex(), iNumberOfRows - 1, "Row index correct");
 
 		// *HOME* -> Scrollable area - First row
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, true);
@@ -2762,13 +2762,13 @@
 				assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Scrolled to top: Row index correct");
 			}
 
-			if (oTable._getRowCount() < oTable.getVisibleRowCount()) {
+			if (oTable._getTotalRowCount() < oTable.getVisibleRowCount()) {
 				// Empty area - Last row
 				oElem = checkFocus(getRowHeader(oTable.getVisibleRowCount() - 1, true), assert);
 
 				// *PAGE_UP* -> Scrollable area - Last row
 				qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
-				checkFocus(getRowHeader(oTable._getRowCount() - 1, 0), assert);
+				checkFocus(getRowHeader(oTable._getTotalRowCount() - 1, 0), assert);
 			}
 
 			/* Test on first content column */
@@ -2856,13 +2856,13 @@
 				assert.equal(oTable.getRows()[oTable.getFixedRowCount()].getIndex(), oTable.getFixedRowCount(), "Scrolled to top: Row index correct");
 			}
 
-			if (oTable._getRowCount() < oTable.getVisibleRowCount()) {
+			if (oTable._getTotalRowCount() < oTable.getVisibleRowCount()) {
 				// Empty area -> Last row
 				oElem = checkFocus(getCell(oTable.getVisibleRowCount() - 1, 0, true), assert);
 
 				// *PAGE_UP* -> Scrollable area - Last row
 				qutils.triggerKeydown(oElem, Key.Page.UP, false, false, false);
-				checkFocus(getCell(oTable._getRowCount() - 1, 0), assert);
+				checkFocus(getCell(oTable._getTotalRowCount() - 1, 0), assert);
 			}
 
 			/* Test on row actions */
@@ -5854,7 +5854,7 @@
 				return oColumn.getVisible() || oColumn.getGrouped();
 			}).length;
 			var iLastColumnIndex = iColumnCount + Math.max(0, iActionItemCount - 1); // Action items are treated as columns in this test.
-			var iRowCount = oTable._getRowCount();
+			var iRowCount = oTable._getTotalRowCount();
 			var iDelayAfterInRowTabbing = sap.ui.Device.browser.msie ? 50 : 0;
 			var iDelayAfterScrollTabbing = sap.ui.Device.browser.msie ? 300 : 100;
 			var oElem, i, j;

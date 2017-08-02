@@ -534,7 +534,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			oBinding.sort(new Sorter(sPropertyName));
 
 			// fetch the contexts from the original binding
-			var iLength = oBinding.getLength(),
+			var iLength = oTable._getTotalRowCount(),
 				aContexts = oBinding.getContexts(0, iLength);
 
 			// add the context information for the group headers which are later on
