@@ -119,17 +119,22 @@ function(
 		assert.ok(oCommand, "then command without flex settings is available");
 		assert.strictEqual(oCommand.getNewValue(), false, "and its settings are merged correctly");
 
-		var oFlexSettings = {
+		oCommandFactory.setFlexSettings({
 			layer: "VENDOR",
 			developerMode: true
-		};
+		});
 		var oCommand2 = oCommandFactory.getCommandFor(this.oButton, "property", {
 			propertyName : "visible",
 			oldValue : this.oButton.getVisible(),
 			newValue : false
-		}, undefined, oFlexSettings);
+		});
 		assert.ok(oCommand2, "then command with flex settings is available");
 		assert.strictEqual(oCommand2.getNewValue(), false, "and its settings are merged correctly");
+
+		oCommandFactory.setFlexSettings({
+			layer: "VENDOR",
+			developerMode: false
+		});
 	});
 
 	QUnit.module("Given a flex command", {

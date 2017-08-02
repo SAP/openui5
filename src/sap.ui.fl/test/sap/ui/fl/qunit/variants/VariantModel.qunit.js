@@ -71,12 +71,47 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'getData'", function(assert) {
-		var done = assert.async();
 		var sExpectedJSON = "{\"variantMgmtId1\":{" + "\"modified\":false," + "\"defaultVariant\":\"variant1\"," + "\"variants\":[{" + "\"author\":\"SAP\"," + "\"key\":\"variantMgmtId1\"," + "\"layer\":\"VENDOR\"," + "\"originalTitle\":\"Standard\"," + "\"readOnly\":true," + "\"title\":\"Standard\"," + "\"toBeDeleted\":false" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant0\"," + "\"layer\":\"CUSTOMER\"," + "\"originalTitle\":\"variant A\"," + "\"readOnly\":false," + "\"title\":\"variant A\"," + "\"toBeDeleted\":false" + "}," + "{" + "\"author\":\"Me\"," + "\"key\":\"variant1\"," + "\"layer\":\"CUSTOMER\"," + "\"originalTitle\":\"variant B\"," + "\"readOnly\":false," + "\"title\":\"variant B\"," + "\"toBeDeleted\":false" + "}]," + "\"currentVariant\":\"variant1\"" + "}" + "}";
 		var sCurrentVariant = this.oModel.getCurrentVariantRef("variantMgmtId1");
 		assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 		assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
-		done();
 	});
 
+	QUnit.module("Given an instance of FakeLrepConnector with no Variants in the LREP response", {
+		beforeEach : function(assert) {
+			this.oData = {};
+
+			var oManifestObj = {
+				"sap.app": {
+					id: "MyComponent",
+					"applicationVersion": {
+						"version": "1.2.3"
+					}
+				}
+			};
+			var oManifest = new sap.ui.core.Manifest(oManifestObj);
+			var oComponent = {
+				name: "MyComponent",
+				appVersion: "1.2.3",
+				getId: function() {
+					return "RTADemoAppMD";
+				},
+				getManifestObject: function() {
+					return oManifest;
+				}
+			};
+
+			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
+
+			this.oModel = new VariantModel(this.oData, oFlexController, oComponent);
+		},
+		afterEach : function(assert) {
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when calling 'ensureStandardEntryExists'", function(assert) {
+		this.oModel.ensureStandardEntryExists("variant0");
+		assert.equal(this.oModel.getCurrentVariantRef("variant0"), "Standard", "then the Current Variant is set");
+	});
 });

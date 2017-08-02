@@ -470,6 +470,7 @@ sap.ui.define([
 			sVariantKey = this.getId();
 			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
 			if (oModel && sVariantKey) {
+				oModel.ensureStandardEntryExists(sLocalId);
 				this.oContext = new Context(oModel, "/" + sLocalId);
 
 				this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
