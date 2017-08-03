@@ -144,7 +144,7 @@
 				var oFormContainerOverlay = OverlayRegistry.getOverlay(oFirstFormContainer);
 				var fnRemove = oFormContainerOverlay.getDesignTimeMetadata().getData().actions.remove;
 				this.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
-				assert.equal(fnRemove(oFirstFormContainer).isEnabled, true, "then the rename should not be enabled");
+				assert.equal(fnRemove(oFirstFormContainer).isEnabled, false, "then the remove should not be enabled");
 			});
 
 			</script>
