@@ -46,16 +46,17 @@
 		});
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
 			title: "Form2",
-			editable: true,
+			editable: false,
 			layout: oLayout2,
 			formContainers: [
 				new sap.ui.layout.form.FormContainer("F2C1",{
 						title: "Title as text",
+						tooltip: "my Tooltip",
 						formElements: [
 							new sap.ui.layout.form.FormElement("F2C1E1",{
 									label: "Label",
-									fields: [new sap.m.Input("F2C1E1_T1",{value: "Text"}),
-									         new sap.m.Input("F2C1E1_T2",{value: "Text"})]
+									fields: [new sap.m.Text("F2C1E1_T1",{text: "Text"}),
+									         new sap.m.Text("F2C1E1_T2",{text: "Text"})]
 								})
 							]
 					})
@@ -63,6 +64,9 @@
 			}).placeAt("uiArea2");
 
 		var oLayout3 = new sap.ui.layout.form.ResponsiveGridLayout("Layout3", {
+			columnsXL: 3,
+			columnsL: 2,
+			columnsM: 2,
 			backgroundDesign: sap.ui.layout.BackgroundDesign.Solid
 		});
 		var oForm3 = new sap.ui.layout.form.Form("F3",{
@@ -322,6 +326,11 @@
 			var oElement = sap.ui.getCore().byId("F1C1E1");
 			var oLabel = oElement.getLabelControl();
 			var oGrid = sap.ui.getCore().byId("F1C1--Grid");
+			var oLayoutData = oGrid.getLayoutData();
+			assert.equal(oLayoutData.getId(), "F1C1--Grid--LD", "Form1: Grid1 must use calculated LayoutData");
+			assert.equal(oLayoutData.getLinebreakL(), true, "Form1: Grid1 calculated LayoutData linebreakL correct");
+			assert.equal(oLayoutData.getLinebreakL(), true, "Form1: Grid1 calculated LayoutData linebreakL correct");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakXL"), "Form1: Grid1 no LinebreakXL set");
 			oLayoutData = oGrid._getLayoutDataForControl(oLabel);
 			assert.equal(oLayoutData.getId(), "Layout1--Dummy", "Form1: Label1 must use calculated LayoutData");
 			assert.equal(oLayoutData.getSpan(), "XL2 L2 M2 S12", "Form1: Label1 calculated LayoutData span correct");
@@ -334,9 +343,32 @@
 			assert.equal(oLayoutData.getLinebreak(), false, "Form1: Field1 calculated LayoutData linebreak correct");
 
 			var oPanel = sap.ui.getCore().byId("F3C1---Panel");
-			var oLayoutData = oPanel.getLayoutData();
+			oLayoutData = oPanel.getLayoutData();
 			assert.equal(oLayoutData.getId(), "F3C1---Panel--LD", "Form3: Panel1 must use calculated LayoutData");
-			assert.equal(oLayoutData.getLinebreakL(), true, "Form3: Panel1 calculated LayoutData linebreakL correct");
+			assert.ok(oLayoutData.getLinebreakXL(), "Form3: Panel1 calculated LayoutData linebreakXL correct");
+			assert.ok(oLayoutData.getLinebreakL(), "Form3: Panel1 calculated LayoutData linebreakL correct");
+			assert.ok(oLayoutData.getLinebreakM(), "Form3: Panel1 calculated LayoutData linebreakM correct");
+
+			oPanel = sap.ui.getCore().byId("F3C2---Panel");
+			oLayoutData = oPanel.getLayoutData();
+			assert.equal(oLayoutData.getId(), "F3C2LD", "Form3: Panel2 must use given LayoutData");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakXL"), "Form3: Panel2 no LinebreakXL set");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakL"), "Form3: Panel2 no LinebreakL set");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakM"), "Form3: Panel2 no LinebreakM set");
+
+			oPanel = sap.ui.getCore().byId("F3C3---Panel");
+			oLayoutData = oPanel.getLayoutData();
+			assert.equal(oLayoutData.getId(), "F3C3LD", "Form3: Panel3 must use given LayoutData");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakXL"), "Form3: Panel3 no LinebreakXL set");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakL"), "Form3: Panel3 no LinebreakL set");
+			assert.ok(oLayoutData.isPropertyInitial("linebreakM"), "Form3: Panel3 no LinebreakM set");
+
+			oGrid = sap.ui.getCore().byId("F3C6--Grid");
+			oLayoutData = oGrid.getLayoutData();
+			assert.equal(oLayoutData.getId(), "F3C6--Grid--LD", "Form3: Grid6 must use calculated LayoutData");
+			assert.ok(oLayoutData.getLinebreakXL(), "Form3: Grid6 calculated LayoutData linebreakXL correct");
+			assert.notOk(oLayoutData.getLinebreakL(), "Form3: Grid6 calculated LayoutData linebreakL correct");
+			assert.notOk(oLayoutData.getLinebreakM(), "Form3: Grid6 calculated LayoutData linebreakM correct");
 
 			oElement = sap.ui.getCore().byId("F3C1E1");
 			oLabel = oElement.getLabelControl();
@@ -373,6 +405,17 @@
 			assert.equal(oLayoutData.getId(), "Layout3--Dummy", "Form3: Field4 must use calculated LayoutData");
 			assert.equal(oLayoutData.getSpan(), "XL4 L4 M4 S12", "Form3: Field4 calculated LayoutData span correct");
 			assert.equal(oLayoutData.getLinebreak(), false, "Form3: Field4 calculated LayoutData linebreak correct");
+
+			// change LayoutData must change calculated ones
+			oLayoutData = oGrid._getLayoutDataForControl(oLabel);
+			oLayoutData.setSpan("L2 M2 S12");
+			oField = sap.ui.getCore().byId("F3C1E2_T1");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			assert.equal(oLayoutData.getSpan(), "XL5 L5 M5 S12", "Form3: Field3 calculated LayoutData span correct");
+
+			oField = sap.ui.getCore().byId("F3C1E2_T2");
+			oLayoutData = oGrid._getLayoutDataForControl(oField);
+			assert.equal(oLayoutData.getSpan(), "XL5 L5 M5 S12", "Form3: Field4 calculated LayoutData span correct");
 
 			oField = sap.ui.getCore().byId("F3C2E1_T1");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
@@ -482,6 +525,7 @@
 			// panel
 			assert.ok(jQuery.sap.domById("F2--Grid"), "Form2: Main-Grid rendered as singleContainerFullSize disabled");
 			assert.ok(jQuery.sap.domById("F2C1---Panel"), "Form2: Container1 Panel rendered (because title)");
+			assert.equal(jQuery("#F2C1---Panel").attr("title"), "my Tooltip", "Form2: Container1 Panel tooltip rendered");
 			assert.ok(jQuery.sap.domById("F2C1--Grid"), "Form2: Container1 Grid rendered");
 			// title as text
 			var oContainer = sap.ui.getCore().byId("F2C1");
@@ -495,6 +539,7 @@
 			// expander
 			assert.ok(!jQuery.sap.domById("F3C1--Exp"), "Form3: Container1 no expander rendered");
 			assert.ok(jQuery.sap.domById("F3C2--Exp"), "Form3: Container2 expander rendered");
+			assert.ok(jQuery("#F3C3---Panel").hasClass("sapUiRGLContainerColl"), "Form3: Container3 collapsed");
 
 			assert.ok(!jQuery.sap.domById("F3C5---Panel"), "Form3: invisible Container5 - Panel not rendered");
 			assert.ok(!jQuery.sap.domById("F3C5--Grid"), "Form3: invisible Container5 - Grid not rendered");
@@ -511,8 +556,10 @@
 			assert.ok(jQuery.sap.domById("F1C1E1_T1"), "Input1 rendered");
 
 			assert.ok(jQuery.sap.domById(sap.ui.getCore().byId("F2C1E1").getLabelControl().getId()), "Form2: Label rendered");
-			assert.ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: Input1 rendered");
-			assert.ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: Input2 rendered");
+			assert.ok(jQuery.sap.domById("F2C1E1_T1"), "Form2: Text1 rendered");
+			assert.ok(jQuery("#F2C1E1_T1").attr("style").indexOf("100%") > 0, "Form2: Text1 width set to 100%");
+			assert.ok(jQuery.sap.domById("F2C1E1_T2"), "Form2: Text2 rendered");
+			assert.ok(jQuery("#F2C1E1_T2").attr("style").indexOf("100%") > 0, "Form2: Text2 width set to 100%");
 
 			assert.ok(!jQuery.sap.domById("F3C2E3_T1"), "Form3: invisible Element - Input not rendered");
 			assert.ok(!jQuery.sap.domById("F3C5E1_T1"), "Form3: invisible Container - Input not rendered");
@@ -541,6 +588,15 @@
 		});
 
 		QUnit.module("Interaction");
+
+		QUnit.test("expander", function(assert) {
+			var oContainer = sap.ui.getCore().byId("F3C2");
+			oContainer.setExpanded(false);
+			assert.ok(jQuery("#F3C2---Panel").hasClass("sapUiRGLContainerColl"), "Form3: Container2 collapsed");
+
+			oContainer.setExpanded(true);
+			assert.notOk(jQuery("#F3C2---Panel").hasClass("sapUiRGLContainerColl"), "Form3: Container2 not collapsed");
+		});
 
 		QUnit.test("add container", function(assert) {
 			oForm3.addFormContainer(
@@ -579,8 +635,19 @@
 			var oElement = sap.ui.getCore().byId("F3C4E2");
 			oElement.addField(new sap.m.Input("F3C4E2_T2",{value: "Text"}));
 			sap.ui.getCore().applyChanges();
-			assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: new still Input1 rendered");
+			assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 still rendered");
 			assert.ok(jQuery.sap.domById("F3C4E2_T2"), "Form3: new Input2 rendered");
+		});
+
+		QUnit.test("insert field", function(assert) {
+			var oElement = sap.ui.getCore().byId("F3C4E2");
+			oElement.insertField(new sap.m.Input("F3C4E2_T3",{value: "Text"}), 0);
+			sap.ui.getCore().applyChanges();
+			assert.ok(jQuery.sap.domById("F3C4E2_T3"), "Form3: new Input3 rendered");
+			assert.ok(jQuery.sap.domById("F3C4E2_T1"), "Form3: Input1 still rendered");
+			assert.ok(jQuery.sap.domById("F3C4E2_T2"), "Form3: Input3 still rendered");
+			var oLabel = oElement.getLabelControl();
+			assert.equal(oLabel.$().attr("for"), "F3C4E2_T3-inner", "Label points to new input");
 		});
 
 		QUnit.test("make Element invisible", function(assert) {
@@ -655,10 +722,34 @@
 
 		QUnit.test("remove field", function(assert) {
 			var oElement = sap.ui.getCore().byId("F3C4E2");
-			oElement.removeField("F3C4E2_T1");
+			oElement.addField(new sap.m.Input("F3C4E2_T2",{value: "Text"}));
+			var oRemoved = oElement.removeField("F3C4E2_T1");
 			sap.ui.getCore().applyChanges();
 			assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
+			var oLabel = oElement.getLabelControl();
+			assert.equal(oLabel.$().attr("for"), "F3C4E2_T2-inner", "Label points to new input");
+			oElement.addField(oRemoved);
 		});
+
+		QUnit.test("remove all fields", function(assert) {
+			var oElement = sap.ui.getCore().byId("F3C4E2");
+			var aRemoved = oElement.removeAllFields();
+			sap.ui.getCore().applyChanges();
+			assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
+			assert.ok(!jQuery.sap.domById("F3C4E2_T2"), "Form4: new Input2 not longer rendered");
+			oElement.addField(aRemoved[0]);
+			oElement.addField(aRemoved[1]);
+		});
+
+		QUnit.test("destroy fields", function(assert) {
+			var oElement = sap.ui.getCore().byId("F3C4E2");
+			oElement.destroyFields();
+			sap.ui.getCore().applyChanges();
+			assert.ok(!jQuery.sap.domById("F3C4E2_T1"), "Form4: new Input1 not longer rendered");
+			assert.ok(!jQuery.sap.domById("F3C4E2_T2"), "Form4: new Input2 not longer rendered");
+			oElement.addField(new sap.m.Input("F3C4E2_T1",{value: "Text"}));
+		});
+
 
 		QUnit.test("remove element", function(assert) {
 			var oContainer = sap.ui.getCore().byId("F3C4");
