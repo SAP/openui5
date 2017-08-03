@@ -23,6 +23,10 @@ sap.ui.require([
 	'sap/ui/rta/command/Stack',
 	'sap/ui/rta/command/CommandFactory',
 	'sap/ui/rta/plugin/Remove',
+	'sap/ui/rta/plugin/CreateContainer',
+	'sap/ui/rta/plugin/Rename',
+	'sap/ui/base/Event',
+	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	// should be last
 	'sap/ui/thirdparty/sinon',
@@ -48,6 +52,10 @@ sap.ui.require([
 	Stack,
 	CommandFactory,
 	Remove,
+	CreateContainerPlugin,
+	RenamePlugin,
+	Event,
+	RTABaseCommand,
 	RtaQunitUtils,
 	sinon) {
 	"use strict";
@@ -415,11 +423,11 @@ sap.ui.require([
 		},
 
 		afterEach : function(assert) {
+			sandbox.restore();
 			this.oRemoveCommand1.destroy();
 			this.oRta.destroy();
 			this.oCommandStack.destroy();
 			FakeLrepLocalStorage.deleteChanges();
-			sandbox.restore();
 		}
 	});
 
@@ -470,6 +478,34 @@ sap.ui.require([
 		var oTitle = sap.ui.getCore().byId("Comp1---idMain1--Title1");
 		var oTitleOverlay = OverlayRegistry.getOverlay(oTitle.getId());
 		assert.strictEqual(oTitleOverlay.getEditable(), false, "then the title is not editable.");
+	});
+
+	QUnit.test("when _handleElementModified is called if a create container command was executed", function(assert){
+		var done = assert.async();
+
+		// An existing Form is used for the test so we don't need to create a new overlay from scratch
+		var oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
+		var oDummyOverlay = OverlayRegistry.getOverlay(oForm.getId());
+		var oDummyCommand = new RTABaseCommand();
+		sandbox.stub(this.oRta.getPlugins()["createContainer"], "getCreatedContainerOverlay").returns(oDummyOverlay);
+		sandbox.stub(this.oRta, "getCommandStack").returns({
+			pushAndExecute : function(oCommand){
+				return Promise.resolve();
+			}
+		});
+
+		sandbox.stub(this.oRta.getPlugins()["rename"], "startEdit", function(oNewContainerOverlay){
+			assert.equal(oNewContainerOverlay.getId(), oDummyOverlay.getId(), "then the new container starts the edit for rename");
+			done();
+		});
+
+		var oEvent = new Event("dummyEvent", oForm, {
+			command : oDummyCommand,
+			action : "dummyDesignTimeAction",
+			newControlId : oForm.getId()
+		});
+
+		this.oRta._handleElementModified(oEvent);
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
