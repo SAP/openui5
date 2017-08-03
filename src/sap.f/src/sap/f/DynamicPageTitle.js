@@ -307,7 +307,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/m/O
 			aSnapContent = this.getSnappedContent(),
 			aExpandContent = this.getExpandedContent(),
 			bHasExpandedContent = aExpandContent.length > 0,
-			bHasSnappedContent = aExpandContent.length > 0,
+			bHasSnappedContent = aSnapContent.length > 0,
 			bShowSnapContent = this._getShowSnapContent(),
 			sAriaText = this._oRB.getText("TOGGLE_HEADER"),
 			sPrimaryArea = this.getPrimaryArea();
