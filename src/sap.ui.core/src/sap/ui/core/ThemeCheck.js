@@ -260,7 +260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		First selector is to apply it to the <link> elements,
 		the second one for the Safari workaround (see below).
 		*/
-		var content = window.getComputedStyle(cssFile, ':after').getPropertyValue('content');
+		var style = window.getComputedStyle(cssFile, ':after');
+		var content = style ? style.getPropertyValue('content') : null;
 
 		if (!content && Device.browser.safari) {
 
