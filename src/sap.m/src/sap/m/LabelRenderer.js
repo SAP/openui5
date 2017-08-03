@@ -29,10 +29,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			sWidth = oLabel.getWidth(),
 			sLabelText = oLabel.getText(),
 			sTooltip = oLabel.getTooltip_AsString(),
+			labelForRendering = oLabel.getLabelForRendering(),
+			htmlTagToRender = labelForRendering ? "label" : "span",
 			bDisplayOnly = oLabel.isDisplayOnly();
 
-		// write the HTML into the render managerr
-		rm.write("<label");
+		// write the HTML into the render manager
+		// for accessibility reasons when a label doesn't have a "for" attribute, pointing at a HTML element it is rendered as span
+		rm.write("<" + htmlTagToRender);
 		rm.writeControlData(oLabel);
 
 		// styles
@@ -52,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			rm.addClass("sapMLabelRequired");
 		}
 
-		if (oLabel.getLabelForRendering()) {
+		if (labelForRendering) {
 			sap.ui.core.LabelEnablement.writeLabelForAttribute(rm, oLabel);
 		} else if (oLabel.getParent() instanceof sap.m.Toolbar) {
 			rm.addClass("sapMLabelTBHeader");
@@ -99,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		if (sLabelText) {
 			rm.writeEscaped(sLabelText);
 		}
-		rm.write("</label>");
+		rm.write("</" + htmlTagToRender + ">");
 	};
 
 	/**
