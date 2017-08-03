@@ -2072,7 +2072,10 @@ if ( eventCaptureSupported ) {
 					.bind( "vmouseup", checkAndClearTapHandlers );
 
 				timer = setTimeout( function() {
-					triggerCustomEvent( thisObject, "taphold", $.Event( "taphold", { target: origTarget } ) );
+					// SAP MODIFICATION: create the custom taphold event from the original event in order to preserve the properties
+					var oTapholdEvent = $.event.fix(origEvent);
+					oTapholdEvent.type = "taphold";
+					triggerCustomEvent( thisObject, "taphold", oTapholdEvent );
 				}, $.event.special.tap.tapholdThreshold );
 			});
 		}
