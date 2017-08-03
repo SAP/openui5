@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			},
 			events : {
 				/**
-				 * The event is fired when the user chooses the tile.
+				 * The event is fired when the user presses the tile.
 				 */
 				"press" : {
 					parameters: {
@@ -122,8 +122,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 						"action": { type: "string" },
 
 						/**
-						 * The Element's DOM Element. Points to GenericTile instance DOM Element in Display scope.
-						 * In Actions scope the domRef points to the DOM Element of the remove button (if pressed) or the more icon.
+						 * The pressed DOM Element pointing to the GenericTile's DOM Element in Display scope.
+						 * In Actions scope it points to the more icon, when the tile is pressed, or to the DOM Element of the remove button, when the remove button is pressed.
 						 * @since 1.46.0
 						 */
 						"domRef" : { type: "any" }
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		Remove : "Remove"
 	};
 
-	GenericTile.LINEMODE_SIBILING_PROPERTIES = [ "state", "subheader", "header", "scope" ];
+	GenericTile.LINEMODE_SIBLING_PROPERTIES = [ "state", "subheader", "header", "scope" ];
 
 	/* --- Lifecycle Handling --- */
 
@@ -666,9 +666,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/* --- Event Handling --- */
-	/**
-	 * Handler for touchstart event
-	 */
 	GenericTile.prototype.ontouchstart = function() {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
@@ -681,18 +678,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for touchcancel event
-	 */
 	GenericTile.prototype.ontouchcancel = function() {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
 	};
 
-	/**
-	 * Handler for touchend event
-	 */
 	GenericTile.prototype.ontouchend = function() {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
@@ -705,11 +696,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for tap event
-	 *
-	 * @param {sap.ui.base.Event} event Event which was fired
-	 */
 	GenericTile.prototype.ontap = function(event) {
 		var oParams;
 		if (this._bTilePress && this.getState() !== library.LoadState.Disabled) {
@@ -720,11 +706,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for keydown event
-	 *
-	 * @param {sap.ui.base.Event} event Event which was fired
-	 */
 	GenericTile.prototype.onkeydown = function(event) {
 		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
@@ -734,11 +715,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for keyup event
-	 *
-	 * @param {sap.ui.base.Event} event Event which was fired
-	 */
 	GenericTile.prototype.onkeyup = function(event) {
 		var oParams,
 			bFirePress = false,
@@ -771,8 +747,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.setProperty = function(sPropertyName) {
 		sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
 
-		//If properties in GenericTile.LINEMODE_SIBILING_PROPERTIES are being changed, update all sibling controls that are GenericTiles in LineMode
-		if (this.getMode() === library.GenericTileMode.LineMode && GenericTile.LINEMODE_SIBILING_PROPERTIES.indexOf(sPropertyName) !== -1) {
+		//If properties in GenericTile.LINEMODE_SIBLING_PROPERTIES are being changed, update all sibling controls that are GenericTiles in LineMode
+		if (this.getMode() === library.GenericTileMode.LineMode && GenericTile.LINEMODE_SIBLING_PROPERTIES.indexOf(sPropertyName) !== -1) {
 			this._bUpdateLineTileSiblings = true;
 		}
 		return this;
