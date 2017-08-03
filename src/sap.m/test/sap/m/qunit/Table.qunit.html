@@ -91,12 +91,14 @@
 		});
 
 		QUnit.test("Column Display", function(assert) {
-			var sut = createSUT('idColumnDisplayTable', true);
+			var sut = createSUT('idColumnDisplayTable', true),
+				labelFilter = 'th>.sapMLabel',
+				aLabels;
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			//Check table columns (should be three)
-			var aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
 			assert.ok(aLabels.length === 3, "Table has three columns rendered");
 			assert.ok(aLabels[0].textContent == "Name", "First column named 'Name'");
 			assert.ok(aLabels[1].textContent == "Color", "First column named 'Color'");
@@ -107,7 +109,8 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check table columns (should be two)
-			aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
+
 			assert.ok(aLabels.length === 2, "Table has three columns" );
 
 			//Insert column again
@@ -115,7 +118,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check table columns and their positions
-			aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
 			assert.ok(aLabels.length === 3, "Table has three columns rendered");
 			assert.ok(aLabels[1].textContent == "Name", "First column named 'Name'");
 			assert.ok(aLabels[0].textContent == "Color", "First column named 'Color'");
@@ -124,7 +127,7 @@
 			//remove all columns
 			sut.removeAllColumns();
 			sap.ui.getCore().applyChanges();
-			aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
 			assert.ok(aLabels.length === 0, "Table has no more columns rendered");
 
 			//clean up
