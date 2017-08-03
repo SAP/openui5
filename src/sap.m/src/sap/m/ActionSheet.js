@@ -212,11 +212,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 
 	/**
-	 * Calling this method will make the ActionSheet visible on the screen.
+	 * Calling this method will make the ActionSheet visible on the screen. The control parameter is the object to which the ActionSheet will be placed.
+	 * It can be not only a UI5 control, but also an existing DOM reference. The side of the placement depends on the <code>placement</code> property set in the Popover (on tablet and desktop).
+	 * On other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
 	 *
-	 * @param {object} oControl
-	 *         The ActionSheet behaves as an sap.m.Popover in iPad and the control parameter is the object to which the popover will be placed. It can be not only a UI5 control, but also an existing dom reference. The side of the placement depends on the placement property set in the popover. In other platforms, ActionSheet behaves as a standard dialog and this parameter is ignored because dialog is aligned to the screen.
-	 * @type void
+	 * @param {object} oControl The control to which the ActionSheet is opened
+	 *
+	 * @returns void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -359,7 +361,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	/**
 	 * Calling this method will make the ActionSheet disappear from the screen.
 	 *
-	 * @type void
+	 * @returns void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -372,7 +374,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	/**
 	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
 	 *
-	 * @type boolean
+	 * @returns boolean Whether the ActionSheet is open.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -561,7 +563,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * A hook for controls that extend action sheet to determine how the buttons array is formed
-	 * @returns {sap.m.Button[]}
+	 * @returns {sap.m.Button[]} An array of all ActionSheet buttons
 	 * @private
 	 */
 	ActionSheet.prototype._getAllButtons = function() {
@@ -570,7 +572,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Gets the ID of the hidden label
-	 * @returns {string} Id of hidden text
+	 * @returns {string} ID of hidden text
 	 * @protected
 	 */
 	ActionSheet.prototype.getPopupHiddenLabelId = function() {
