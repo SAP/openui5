@@ -14,7 +14,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Label control is used in a UI5 mobile application to provide label text for other controls. Design such as bold, and text alignment can be specified.
+	 * Provides a textual label for other controls. Label appearance can be manipulated by using the properties: <code>labelAligment<code> and <code>design</code>.
+	 *
+	 * Labels for required fields are marked with an asterisk.
+	 * <h3>Overview</h3>
+	 * Labels are used as titles for single controls or groups of controls.
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>Always use a label in form controls.</li>
+	 * <li>Use title case for labels</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>Do not use bold labels.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Label,sap.ui.core.IShrinkable
 	 *
