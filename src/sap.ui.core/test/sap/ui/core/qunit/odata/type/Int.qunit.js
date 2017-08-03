@@ -267,6 +267,18 @@ sap.ui.require([
 				sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 			});
 		});
+
+		QUnit.test("format: bad input type", function (assert) {
+			var oBadModelValue = new Date(),
+				oType = createType();
+
+			["string", "int", "float"].forEach(function (sTargetType) {
+				assert.throws(function () {
+					oType.formatValue(oBadModelValue, sTargetType);
+				}, new FormatException("Illegal " + sName + " value: " + oBadModelValue));
+			});
+			assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
+		});
 	}
 
 	anyInt("sap.ui.model.odata.type.Int16", -32768, 32767);
