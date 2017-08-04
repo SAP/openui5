@@ -3,6 +3,7 @@ sap.ui.define([
 	'sap/ui/test/matchers/AggregationFilled',
 	'sap/ui/test/matchers/AggregationEmpty',
 	'sap/ui/test/matchers/Properties',
+	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/test/matchers/AggregationContainsPropertyEqual',
 	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/BindingPath',
@@ -12,6 +13,7 @@ sap.ui.define([
 			 AggregationFilled,
 			 AggregationEmpty,
 			 Properties,
+			 PropertyStrictEquals,
 			 AggregationContainsPropertyEqual,
 			 AggregationLengthEquals,
 			 BindingPath,
@@ -232,6 +234,16 @@ sap.ui.define([
 						success : function (oList) {
 							Opa5.assert.strictEqual(oList.getItems().length, 1, "Product saved for later");
 						}
+					});
+				},
+				iShouldSeeTheTotalPriceUpdated: function () {
+					return this.waitFor({
+						id: "totalPriceText",
+						matchers: new PropertyStrictEquals({name: "text", value: "Total: 1.099,00 EUR"}),
+						success: function () {
+							Opa5.assert.ok(true, "Total price is updated correctly");
+						},
+						errorMessage: "Total price is not updated correctly (If you have trouble running this test, delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
 					});
 				}
 			}

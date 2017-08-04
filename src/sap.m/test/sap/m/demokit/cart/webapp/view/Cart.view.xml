@@ -24,6 +24,7 @@
 		<footer>
 			<Toolbar>
 				<Text
+					id="totalPriceText"
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'

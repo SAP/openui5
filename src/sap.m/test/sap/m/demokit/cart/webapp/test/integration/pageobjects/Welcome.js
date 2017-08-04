@@ -50,7 +50,7 @@ sap.ui.define([
 						viewName: sViewName,
 						matchers: new BindingPath({
 							modelName: "view",
-							path: "/Promoted/0"
+							path: "/Viewed/0"
 						}),
 						actions: new Press(),
 						errorMessage: "The cart button was not displayed"
