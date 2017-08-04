@@ -3,7 +3,6 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:tnt="sap.tnt">
-
 	<tnt:ToolPage
 		id="app"
 		class="sapUiDemoToolPage">
@@ -13,7 +12,8 @@
 					id="sideNavigationToggleButton"
 					icon="sap-icon://menu2"
 					type="Transparent"
-					press="onSideNavButtonPress">
+					press="onSideNavButtonPress"
+					tooltip="{i18n>navigationToggleButtonTooltip}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow"/>
 					</layoutData>
@@ -24,10 +24,10 @@
 				<Button
 					id="errorButton"
 					icon="sap-icon://message-popup"
-					text="{= ${alerts>/alerts/errors}.length }"
 					visible="{= ${alerts>/alerts/errors}.length === 0 ? false : true }"
 					type="Transparent"
-					press="onMessagePopoverPress">
+					press="onMessagePopoverPress"
+					tooltip="{i18n>errorButtonTooltip}">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
@@ -35,10 +35,10 @@
 				<Button
 					id="notificationButton"
 					icon="sap-icon://ui-notifications"
-					text="{= ${alerts>/alerts/notifications}.length }"
 					visible="{= ${alerts>/alerts/notifications}.length === 0 ? false : true }"
 					type="Transparent"
-					press="onNotificationPress">
+					press="onNotificationPress"
+					tooltip="{i18n>notificationButtonTooltip}">
 					<layoutData>
 						<OverflowToolbarLayoutData closeOverflowOnInteraction="false"/>
 					</layoutData>
@@ -59,12 +59,18 @@
 				expanded="true"
 				itemSelect="onItemSelect">
 				<tnt:NavigationList
-					items="{path: 'side>/navigation', templateShareable: false}">
+					items="{
+						path: 'side>/navigation',
+						templateShareable: false
+					}">
 					<tnt:NavigationListItem
 						text="{side>title}"
 						icon="{side>icon}"
-						expanded="{side>/expanded}"
-						items="{path: 'side>items', templateShareable: false}"
+						expanded="{side>expanded}"
+						items="{
+							path: 'side>items',
+							templateShareable: false
+						}"
 						key="{side>key}">
 						<tnt:NavigationListItem
 							text="{side>title}"
@@ -75,7 +81,10 @@
 				</tnt:NavigationList>
 				<tnt:fixedItem>
 					<tnt:NavigationList
-						items="{path: 'side>/fixedNavigation', templateShareable: false}">
+						items="{
+							path: 'side>fixedNavigation',
+							templateShareable: false
+						}">
 						<tnt:NavigationListItem
 							text="{side>title}"
 							icon="{side>icon}"
@@ -89,5 +98,4 @@
 			<App id="mainContents"/>
 		</tnt:mainContents>
 	</tnt:ToolPage>
-
 </mvc:View>

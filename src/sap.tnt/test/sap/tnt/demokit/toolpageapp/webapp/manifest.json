@@ -82,7 +82,7 @@
 		{
 		  "pattern": "SystemSettings",
 		  "name": "systemSettings",
-		  "target": ["masterSettings", "detailSettings1"]
+		  "target": ["masterSettings", "detailSettings"]
 		},
 		  {
 		  "pattern": "Statistics",
@@ -104,8 +104,8 @@
 			"controlAggregation": "masterPages",
 			"parent": "appSettings"
 		},
-		  "detailSettings1": {
-			  "viewName": "settings.DetailSettings1",
+		  "detailSettings": {
+			  "viewName": "settings.DetailSettings",
 			  "controlId": "appSettings",
 			  "controlAggregation": "detailPages",
 			  "parent": "appSettings"
