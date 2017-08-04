@@ -1738,20 +1738,27 @@
 				var bIsFormatType = oSlider.getLabel() === this.oRB.getText("TIMEPICKER_LBL_AMPM"),
 						iIterations = 3,
 						iNonZeroIndex = iIndex + 1,
+						oTP = sap.ui.getCore().byId(oSlider.getParent().getInvokedBy()),
+						sLocaleId = oTP.getLocaleId(),
+						oLocale = new sap.ui.core.Locale(sLocaleId),
 						sCurrentSelectionValue,
 						sExpectedSelectionValue,
+						sNewSelectedValue,
 						$Target = oSlider.$("valDescription");
 
 				for (var iLoopIndex = 1; iLoopIndex <= iIterations; iLoopIndex++) {
 					//arrange
 					sCurrentSelectionValue = oSlider.getSelectedValue();
 					if (!bIsFormatType) {
-						sExpectedSelectionValue = parseInt(sCurrentSelectionValue, 10) + iLoopIndex + "";
+						sNewSelectedValue = sExpectedSelectionValue = parseInt(sCurrentSelectionValue, 10) + iLoopIndex + "";
 					} else {
-						//TODO: oSlider.getSelectedValue() output is hardcoded to "am" "pm" and doesn't correspond to its localization value (showed in the UI)
-						sExpectedSelectionValue = sCurrentSelectionValue === "am" ? "pm" : "am";
+						sNewSelectedValue = sCurrentSelectionValue === "am" ? "pm" : "am";
+						if (sLocaleId) {
+							var oAPPMFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "a"}, oLocale);
+							sExpectedSelectionValue = oAPPMFormatter.format(sNewSelectedValue === "am" ? new Date(2017, 0, 1, 1) : new Date(2017, 0, 1, 13));
+						}
 					}
-					oSlider.setSelectedValue(sExpectedSelectionValue);
+					oSlider.setSelectedValue(sNewSelectedValue);
 
 					this.clock.tick(2000);
 					//assert
@@ -1915,6 +1922,29 @@
 					this.fnAriaSelectionChangeTest(oColumn, iIndex);
 				}, this);
 			}
+			this.clock.restore();
+		});
+
+
+		QUnit.test("AM/PM values when TimePicker localeId is different than English ", function (assert) {
+			this.clock = sinon.useFakeTimers();
+			//arrange
+			var oSliders, aColumns;
+			this.oTP.setValue("13:15");
+			this.oTP.setDisplayFormat("hh:mm:ss aa");
+
+			//Act
+			this.oTP.setLocaleId("de_DE");
+			sap.ui.getCore().applyChanges();
+			this.oTP._openPicker();
+			this.clock.tick(2000);
+			oSliders = this.oTP._getSliders(),
+			oAPPMColumn = oSliders.getAggregation("_columns")[3];
+
+			//assert
+			this.fnAriaSelectionChangeTest(oAPPMColumn, 3);
+
+			//Cleanup
 			this.clock.restore();
 		});
 
