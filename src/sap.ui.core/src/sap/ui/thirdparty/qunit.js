@@ -303,6 +303,10 @@ Test.prototype = {
 // `QUnit` initialized at top of scope
 QUnit = {
 
+	// ##### BEGIN: MODIFIED BY SAP
+	version: "1.10.0",
+	// ##### END: MODIFIED BY SAP
+
 	// call on start of module test to prepend name to all tests
 	module: function( name, testEnvironment ) {
 		config.currentModule = name;
