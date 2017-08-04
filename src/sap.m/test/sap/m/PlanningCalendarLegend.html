@@ -17,59 +17,30 @@
 		var oPCLegendAll = new sap.m.PlanningCalendarLegend({
 			standardItems: [sap.ui.unified.StandardCalendarLegendItem.WorkingDay, sap.ui.unified.StandardCalendarLegendItem.NonWorkingDay],
 			items: [
-				new sap.ui.unified.CalendarLegendItem("T21", {
-					type: sap.ui.unified.CalendarDayType.Type01,
-					text: "Typ 1: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T22", {
-					type: sap.ui.unified.CalendarDayType.Type02,
-					text: "Typ 2: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T23", {
-					type: sap.ui.unified.CalendarDayType.Type03,
-					text: "Typ 3: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T24", {
-					type: sap.ui.unified.CalendarDayType.Type04,
-					text: "Typ 4: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T25", {
-					type: sap.ui.unified.CalendarDayType.Type05,
-					text: "Typ 5: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T26", {
-					type: sap.ui.unified.CalendarDayType.Type06,
-					text: "Typ 6: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T27", {
-					type: sap.ui.unified.CalendarDayType.Type07,
-					text: "Typ 7: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T28", {
-					type: sap.ui.unified.CalendarDayType.Type08,
-					text: "Typ 8: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T29", {
-					type: sap.ui.unified.CalendarDayType.Type09,
-					text: "Typ 9: calendar date related"
-				}),
-				new sap.ui.unified.CalendarLegendItem("T30", {
-					type: sap.ui.unified.CalendarDayType.Type20,
-					text: "Typ 20: calendar date related"
-				})
+				(function () { //creates items for all 20 values in CalendarDayType
+					var aAllItems = [], iMax = 20, sType = "";
+					for (var i = 1; i<=iMax; i++) {
+						sType = "Type" + (i < 10 ? "0" + i : i);
+						aAllItems.push(new sap.ui.unified.CalendarLegendItem({
+							type: sap.ui.unified.CalendarDayType[sType],
+							text: sType + ": calendar date related"
+						}));
+					}
+					return aAllItems;
+				})()
 			],
 			appointmentItems: [
 				new sap.ui.unified.CalendarLegendItem("T31", {
 					type: sap.ui.unified.CalendarDayType.Type01,
-					text: "Typ 1: calendar appointment related"
+					text: "Type 1: calendar appointment related"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T32", {
 					type: sap.ui.unified.CalendarDayType.Type02,
-					text: "Typ 2: calendar appointment related"
+					text: "Type 2: calendar appointment related"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T33", {
 					type: sap.ui.unified.CalendarDayType.Type12,
-					text: "Typ 12: calendar appointment related"
+					text: "Type 12: calendar appointment related"
 				})
 			]
 		});
@@ -86,39 +57,39 @@
 				}),
 				new sap.ui.unified.CalendarLegendItem("T2", {
 					type: sap.ui.unified.CalendarDayType.Type02,
-					text: "Typ 2 app developers can set the text to whatever they want"
+					text: "Type 2 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T3", {
 					type: sap.ui.unified.CalendarDayType.Type03,
-					text: "Typ 3 app developers can set the text to whatever they want"
+					text: "Type 3 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T4", {
 					type: sap.ui.unified.CalendarDayType.Type04,
-					text: "Typ 4 app developers can set the text to whatever they want"
+					text: "Type 4 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T5", {
 					type: sap.ui.unified.CalendarDayType.Type05,
-					text: "Typ 5 app developers can set the text to whatever they want"
+					text: "Type 5 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T6", {
 					type: sap.ui.unified.CalendarDayType.Type06,
-					text: "Typ 6 app developers can set the text to whatever they want"
+					text: "Type 6 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T7", {
 					type: sap.ui.unified.CalendarDayType.Type07,
-					text: "Typ 7 app developers can set the text to whatever they want"
+					text: "Type 7 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T8", {
 					type: sap.ui.unified.CalendarDayType.Type08,
-					text: "Typ 8 app developers can set the text to whatever they want"
+					text: "Type 8 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T9", {
 					type: sap.ui.unified.CalendarDayType.Type09,
-					text: "Typ 9 app developers can set the text to whatever they want"
+					text: "Type 9 app developers can set the text to whatever they want"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T10", {
 					type: sap.ui.unified.CalendarDayType.Type20,
-					text: "Typ 20 app developers can set the text to whatever they want"
+					text: "Type 20 app developers can set the text to whatever they want"
 				})
 			]
 		});
@@ -128,43 +99,43 @@
 			items: [
 				new sap.ui.unified.CalendarLegendItem("T11", {
 					type: sap.ui.unified.CalendarDayType.Type01,
-					text: "Typ 1"
+					text: "Type 1"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T12", {
 					type: sap.ui.unified.CalendarDayType.Type02,
-					text: "Typ 2"
+					text: "Type 2"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T13", {
 					type: sap.ui.unified.CalendarDayType.Type03,
-					text: "Typ 3"
+					text: "Type 3"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T14", {
 					type: sap.ui.unified.CalendarDayType.Type04,
-					text: "Typ 4"
+					text: "Type 4"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T15", {
 					type: sap.ui.unified.CalendarDayType.Type05,
-					text: "Typ 5"
+					text: "Type 5"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T16", {
 					type: sap.ui.unified.CalendarDayType.Type06,
-					text: "Typ 6"
+					text: "Type 6"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T17", {
 					type: sap.ui.unified.CalendarDayType.Type07,
-					text: "Typ 7"
+					text: "Type 7"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T18", {
 					type: sap.ui.unified.CalendarDayType.Type08,
-					text: "Typ 8"
+					text: "Type 8"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T19", {
 					type: sap.ui.unified.CalendarDayType.Type09,
-					text: "Typ 9"
+					text: "Type 9"
 				}),
 				new sap.ui.unified.CalendarLegendItem("T20", {
 					type: sap.ui.unified.CalendarDayType.Type20,
-					text: "Typ 20"
+					text: "Type 20"
 				})
 			]
 		});
@@ -204,6 +175,10 @@
 							content: [createChangeWidthInput(oPCLegendAll), oPCLegendAll]
 						}),
 						new sap.m.Panel({
+							headerText: "PlanningCalendarLegend in compact mode",
+							content: [createChangeWidthInput(oPCLCompact = oPCLegendAll.clone().addStyleClass("sapUiSizeCompact")), oPCLCompact]
+						}),
+						new sap.m.Panel({
 							headerText: "PlanningCalendarLegend with default standard items & custom items",
 							content: [createChangeWidthInput(oPCLegendDefaultStandardItemsAndCustomItems), oPCLegendDefaultStandardItemsAndCustomItems]
 						})
@@ -221,10 +196,43 @@
 						}),
 					]
 				}),
-				new sap.m.Panel({
-					headerText: "PlanningCalendarLegend with custom standard items & custom items",
-					content: [createChangeWidthInput(oPCLegendCustomStandardItemsAndCustomItems), oPCLegendCustomStandardItemsAndCustomItems]
-				})
+				new sap.m.HBox({
+					items: [
+						new sap.m.Panel({
+							headerText: "PlanningCalendarLegend with custom standard items & custom items",
+							content: [createChangeWidthInput(oPCLegendCustomStandardItemsAndCustomItems), oPCLegendCustomStandardItemsAndCustomItems]
+						}),
+						new sap.m.Panel({
+							headerText: "PlanningCalendarLegend in Dialog and Popover",
+							content: [
+								new sap.m.Button({text: "Open Legend in Dialog", press: function() {
+								if (!this._oDialog) {
+									this._oDialog = new sap.m.Dialog({
+										title: "PlanningCalendar Legend in sap.m.Dialog",
+										content: [oPCLegendDefaultStandardItemsAndCustomItems.clone()],
+										endButton: new sap.m.Button({
+											text: "Close",
+											press: function() {
+												this.getParent().close();
+											}
+										})
+									});
+								}
+								this._oDialog.open();
+							}}),
+								new sap.m.Button({text: "Open Legend as Popover", press: function() {
+									if (!this._oPopover) {
+										this._oPopover = new sap.m.Popover({
+											content: [oPCLegendDefaultStandardItemsAndCustomItems.clone()],
+											showHeader: false
+										});
+									}
+									this._oPopover.openBy(this);
+								}}),
+							]
+						}),
+					]
+				}),
 			],
 			footer: new sap.m.Bar({contentMiddle: [oEventLabel]})
 		});
