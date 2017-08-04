@@ -56,7 +56,8 @@
 									<FlexBox
 										width="auto"
 										class="sapUiSmallMargin sapUiNoMarginBottom"
-										alignItems="Stretch">
+										alignItems="Stretch"
+										renderType="Bare">
 										<items>
 											<SearchField
 												id="searchField"
@@ -75,15 +76,16 @@
 												tooltip="{i18n>overviewSelectCategoryTooltip}"
 												change="onSelectCategory"
 												visible="{= ${device>/system/phone} ? false : true}"
-												width="100%">
+												width="auto">
 												<layoutData>
 													<FlexItemData growFactor="1"/>
 												</layoutData>
-												<core:Item key="{name}" text="{text}"/>
+												<core:Item
+													key="{name}"
+													text="{text}"/>
 											</Select>
 										</items>
 									</FlexBox>
-
 									<OverflowToolbar
 										id="tagSelection"
 										visible="{= ${view>/iconFilterCount} !== 0 &amp;&amp; (${device>/system/phone} ? false : true)}"
@@ -96,7 +98,6 @@
 										}"
 										tooltip="{i18n>overviewSelectTagsTooltip}">
 									</OverflowToolbar>
-
 								</ScrollContainer>
 							</l:SplitPane>
 							<l:SplitPane requiredParentWidth="800">
@@ -104,7 +105,9 @@
 									<layoutData><l:SplitterLayoutData size="350px"/></layoutData>
 									<l:VerticalLayout width="100%" class="sapUiContentPadding">
 										<Panel id="previewCopy" headerText="{i18n>previewCopyTitle}" class="previewCopy">
-											<l:FixFlex fixFirst="false" vertical="false">
+											<l:FixFlex
+												fixFirst="false"
+												vertical="false">
 												<l:flexContent>
 													<Input
 														id="previewCopyCode"
@@ -171,24 +174,54 @@
 												id="useCaseLayout"
 												class="centeredBlockCells"
 												background="Accent">
-											<l:BlockLayoutRow>
+												<l:BlockLayoutRow>
 												<l:BlockLayoutCell>
-													<Button icon="sap-icon://{name}" text="Button" class="sapUiTinyMarginEnd"/>
-													<Button icon="sap-icon://{name}" text="Button" type="Accept" class="sapUiTinyMarginEnd"/>
-													<Button icon="sap-icon://{name}" text="Button" type="Reject" class="sapUiTinyMarginEnd"/>
-													<Button icon="sap-icon://{name}" text="Button" type="Emphasized" class="sapUiTinyMarginEnd"/>
+													<!-- Preview for only icon buttons -->
+													<Button
+														icon="sap-icon://{name}"
+														class="sapUiTinyMarginEnd"
+														tooltip="{i18n>previewIconButton}"/>
+													<Button
+														icon="sap-icon://{name}"
+														type="Accept"
+														class="sapUiTinyMarginEnd"
+														tooltip="{i18n>previewIconButton}"/>
+													<Button
+														icon="sap-icon://{name}"
+														type="Reject"
+														class="sapUiTinyMarginEnd"
+														tooltip="{i18n>previewIconButton}"/>
+													<Button
+														icon="sap-icon://{name}"
+														type="Emphasized"
+														class="sapUiTinyMarginEnd"
+														tooltip="{i18n>previewIconButton}"/>
 												</l:BlockLayoutCell>
 												<l:BlockLayoutCell>
+													<!-- Preview for only icon buttons in Toolbar -->
 													<OverflowToolbar
 														id="previewToolbar"
 														design="Solid"
 														class="sapContrast sapContrastPlus">
-														<Label text="Toolbar" class="sapUiTinyMarginBegin"/>
+														<Label
+															text="Toolbar"
+															class="sapUiTinyMarginBegin"/>
 														<ToolbarSpacer/>
-														<Button icon="sap-icon://{name}"/>
-														<Button icon="sap-icon://{name}" type="Accept"/>
-														<Button icon="sap-icon://{name}" type="Reject"/>
-														<Button icon="sap-icon://{name}" type="Emphasized"/>
+														<Button
+															icon="sap-icon://{name}"
+															tooltip="{i18n>previewIconButton}"/>
+														<Button
+															icon="sap-icon://{name}"
+															type="Accept"
+															tooltip="{i18n>previewIconButton}"/>
+														<Button
+															icon="sap-icon://{name}"
+															type="Reject"
+															tooltip="{i18n>previewIconButton}"/>
+														<Button
+															icon="sap-icon://{name}"
+															type="Emphasized"
+															tooltip="{i18n>previewIconButton}"/>
 													</OverflowToolbar>
 												</l:BlockLayoutCell>
 											</l:BlockLayoutRow>
@@ -211,13 +244,27 @@
 														selectedKey="1"
 														class="sapUiNoContentPadding semiTransparentITB">
 														<items>
-															<IconTabFilter icon="sap-icon://{name}" key="1" class=""/>
-															<IconTabFilter icon="sap-icon://{name}" key="1" iconColor="Positive"/>
-															<IconTabFilter icon="sap-icon://{name}" key="1" iconColor="Critical"/>
-															<IconTabFilter icon="sap-icon://{name}" key="1" iconColor="Negative"/>
+															<IconTabFilter
+																icon="sap-icon://{name}"
+																key="1"
+																class=""/>
+															<IconTabFilter
+																icon="sap-icon://{name}"
+																key="1"
+																iconColor="Positive"/>
+															<IconTabFilter
+																icon="sap-icon://{name}"
+																key="1"
+																iconColor="Critical"/>
+															<IconTabFilter
+																icon="sap-icon://{name}"
+																key="1"
+																iconColor="Negative"/>
 														</items>
 														<content>
-															<Label text="IconTabBar" class="sapUiTinyMargin"/>
+															<Label
+																text="IconTabBar"
+																class="sapUiTinyMargin"/>
 														</content>
 													</IconTabBar>
 												</l:BlockLayoutCell>
@@ -233,12 +280,12 @@
 															<TileContent footer="Footer">
 																<content>
 																	<NumericContent
-																			value="42"
-																			scale="EUR"
-																			valueColor="Neutral"
-																			indicator="Up"
-																			state="Loaded"
-																			icon="sap-icon://{name}"/>
+																		value="42"
+																		scale="EUR"
+																		valueColor="Neutral"
+																		indicator="Up"
+																		state="Loaded"
+																		icon="sap-icon://{name}"/>
 																</content>
 															</TileContent>
 														</tileContent>
@@ -254,10 +301,20 @@
 											</l:BlockLayoutRow>
 										</l:BlockLayout>
 									</Panel>
-									<Panel id="previewInfo" headerText="{i18n>previewInfoTitle}">
-										<ObjectAttribute id="unicodeInfo" title="{i18n>previewInfoUnicode}" text="?"/>
-										<ObjectAttribute title="{i18n>previewInfoCSSClass}" text="icon-{name}"/>
-										<ObjectAttribute id="categoryInfo" title="{i18n>previewInfoCategory}" text="?"/>
+									<Panel
+										id="previewInfo"
+										headerText="{i18n>previewInfoTitle}">
+										<ObjectAttribute
+											id="unicodeInfo"
+											title="{i18n>previewInfoUnicode}"
+											text="?"/>
+										<ObjectAttribute
+											title="{i18n>previewInfoCSSClass}"
+											text="icon-{name}"/>
+										<ObjectAttribute
+											id="categoryInfo"
+											title="{i18n>previewInfoCategory}"
+											text="?"/>
 										<ObjectAttribute title="{i18n>previewInfoTag}"/>
 										<Tokenizer
 											width="100%"
@@ -270,7 +327,6 @@
 											<Token text="{name}" press="onTagSelect"/>
 										</Tokenizer>
 									</Panel>
-
 									</l:VerticalLayout>
 							</ScrollContainer>
 						</l:SplitPane>
