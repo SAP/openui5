@@ -2,10 +2,11 @@ sap.ui.define([
 	'sap/ui/test/Opa5',
 	'sap/ui/test/matchers/PropertyStrictEquals',
 	'sap/ui/test/matchers/AggregationFilled',
+	'sap/ui/test/matchers/AggregationLengthEquals',
 	'sap/ui/test/matchers/BindingPath',
-    'sap/ui/test/matchers/Properties',
+	'sap/ui/test/matchers/Properties',
 	'sap/ui/test/actions/Press'
-], function (Opa5, PropertyStrictEquals, AggregationFilled, BindingPath, Properties,Press) {
+], function (Opa5, PropertyStrictEquals, AggregationFilled, AggregationLengthEquals, BindingPath, Properties,Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -40,14 +41,14 @@ sap.ui.define([
 					});
 				},
 
-                iPressOnTheProductBlasterExtreme: function () {
-                    this.waitFor({
-                        controlType: "sap.m.ObjectListItem",
-                        matchers: new Properties({title : "Blaster Extreme"}),
-                        actions: new Press(),
-                        errorMessage: "The product Blaster Extreme was not found and could not be pressed"
-                    });
-                },
+				iPressOnTheProductBlasterExtreme: function () {
+					this.waitFor({
+						controlType: "sap.m.ObjectListItem",
+						matchers: new Properties({title : "Blaster Extreme"}),
+						actions: new Press(),
+						errorMessage: "The product Blaster Extreme was not found and could not be pressed"
+					});
+				},
 
 				iSelectTheAvailabilityFilteringOption: function () {
 					this.waitFor({
@@ -102,16 +103,6 @@ sap.ui.define([
 						errorMessage: "The discontinued check box was not found and could not be deselected"
 					});
 				},
-
-				iDeselectThePriceFilter: function () {
-					this.waitFor({
-						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "More than 500 EUR"}),
-						actions: new Press(),
-						errorMessage: "The 'more than 500 EUR' check box was not found and could not be deselected"
-					});
-				},
-
 				iPressOkButton: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
@@ -120,17 +111,23 @@ sap.ui.define([
 						errorMessage: "The ok button in the dialog was not found and could not be pressed"
 					});
 				},
-
-                iPressTheBackButton: function () {
-                    this.waitFor({
-                        controlType: "sap.m.Button",
-                        matchers: new Properties({type: "Back"}),
-                        actions: new Press(),
-                        errorMessage: "The back button was not found and could not be pressed"
-                    });
-                },
-
-                //Back Button in filter dialog
+				iPressCancelButton: function () {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "text", value: "Cancel"}),
+						actions: new Press(),
+						errorMessage: "The cancel button in the dialog was not found and could not be pressed"
+					});
+				},
+				iPressTheBackButton: function () {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new Properties({type: "Back"}),
+						actions: new Press(),
+						errorMessage: "The back button was not found and could not be pressed"
+					});
+				},
+				//Back Button in filter dialog
 				iPressTheBackButtonInDialog: function () {
 					this.waitFor({
 						controlType: "sap.m.Button",
@@ -139,7 +136,14 @@ sap.ui.define([
 						errorMessage: "The back button in the dialog was not found and could not be pressed"
 					});
 				},
-
+				iPressResetButton: function () {
+					this.waitFor({
+						controlType: "sap.m.Button",
+						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://clear-filter"}),
+						actions: new Press(),
+						errorMessage: "The reset button in the dialog was not found and could not be pressed"
+					});
+				},
 				iSelectThePriceFilteringOption: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -148,22 +152,40 @@ sap.ui.define([
 						errorMessage: "The price filtering option was not found and could not be pressed"
 					});
 				},
-
-				iSelectTheMoreThanFilter: function () {
+				iSetPriceFilterValues: function () {
 					this.waitFor({
-						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "More than 500 EUR"}),
-						actions: new Press(),
-						errorMessage: "The more than 500 EUR check box was not found and could not be selected"
+						controlType: "sap.m.RangeSlider",
+						matchers: new PropertyStrictEquals({name: "value2", value: 5000}),
+						success: function (oSlider) {
+							oSlider[0].setValue(200).setValue2(500);
+						},
+						errorMessage: "The range slider control was not displayed and could not be scrolled"
+
 					});
 				},
 
-				iSelectTheLessThanFilter: function () {
+				iChangeThePriceFilterValues: function () {
 					this.waitFor({
-						controlType: "sap.m.StandardListItem",
-						matchers: new PropertyStrictEquals({name: "title", value: "Less than 500 EUR"}),
-						actions: new Press(),
-						errorMessage: "The less than 500 EUR check box was not found and could not be selected"
+						controlType: "sap.m.RangeSlider",
+						matchers: new PropertyStrictEquals({name: "value2", value: 500}),
+						success: function (oSlider) {
+							oSlider[0].setValue(500).setValue2(1000);
+						},
+						errorMessage: "The range slider control was not displayed and could not be scrolled"
+
+					});
+				},
+				iChangeToTheDefaultPriceFilterValues: function () {
+					this.waitFor({
+						controlType: "sap.m.RangeSlider",
+						matchers: new PropertyStrictEquals({name: "value2", value: 500}),
+						success: function (oSlider) {
+							oSlider[0].setValue(0).setValue2(5000);
+							// the slider change event is not fired automatically and need to be manually fired
+							oSlider[0].fireEvent("change", {range: oSlider[0].getRange()});
+						},
+						errorMessage: "The range slider control was not displayed and could not be scrolled"
+
 					});
 				},
 
@@ -177,40 +199,33 @@ sap.ui.define([
 
 				iFilterOnAvailabilityAndPrice: function () {
 					this.iPressTheFilterButton();
-					this.iPressTheBackButtonInDialog();
-					this.iSelectTheAvailabilityFilteringOption();
 					this.iSelectTheOutOfStockFilter();
 					this.iPressTheBackButtonInDialog();
 					this.iSelectThePriceFilteringOption();
-					this.iSelectTheLessThanFilter();
+					this.iSetPriceFilterValues();
 					this.iPressOkButton();
 				},
-
-				iFilterOnPrice: function () {
+				iCancelAPriceFilterChange: function () {
 					this.iPressTheFilterButton();
-					this.iPressTheBackButtonInDialog();
+					this.iChangeThePriceFilterValues();
+					this.iPressCancelButton();
+				},
+				iChangeToTheDefaultFilterPriceValues: function () {
 					this.iSelectThePriceFilteringOption();
-					this.iSelectTheMoreThanFilter();
+					this.iChangeToTheDefaultPriceFilterValues();
 					this.iPressOkButton();
 				},
-
 				iRemoveTheAvailabilityFilters: function () {
 					this.iPressTheFilterButton();
 					this.iDeselectTheAvailableFilter();
 					this.iDeselectTheDiscontinuedFilter();
-					this.iPressOkButton();
-				},
-
-				iRemoveThePriceFilter: function () {
-					this.iPressTheFilterButton();
-					this.iDeselectThePriceFilter();
 					this.iPressOkButton();
 				}
 			},
 
 			assertions: {
 
-			    iShouldSeeTheProductList: function () {
+				iShouldSeeTheProductList: function () {
 					return this.waitFor({
 						id: "productList",
 						success: function (oList) {
@@ -237,19 +252,19 @@ sap.ui.define([
 					});
 				},
 
-                iShouldBeTakenToTheSpeakerCategory: function () {
-                    return this.waitFor({
-                        controlType: "sap.m.Page",
-                        matchers: new PropertyStrictEquals({name: "title", value: "Speakers"}),
-                        success: function (aPage) {
-                            Opa5.assert.ok(
-                                aPage,
-                                "The speaker category page was found"
-                            );
-                        },
-                        errorMessage: "The speaker category page was not found"
-                    });
-                },
+				iShouldBeTakenToTheSpeakerCategory: function () {
+					return this.waitFor({
+						controlType: "sap.m.Page",
+						matchers: new PropertyStrictEquals({name: "title", value: "Speakers"}),
+						success: function (aPage) {
+							Opa5.assert.ok(
+								aPage,
+								"The speaker category page was found"
+							);
+						},
+						errorMessage: "The speaker category page was not found"
+					});
+				},
 
 				iShouldSeeSomeEntriesInTheProductList: function () {
 					this.waitFor({
@@ -264,21 +279,6 @@ sap.ui.define([
 						errorMessage: "The product list does not contain any entries"
 					});
 				},
-
-				iShouldOnlySeeAvailableProducts: function () {
-					this.waitFor({
-						id: "productList",
-						matchers: new AggregationFilled({name: "items"}),
-						success: function (oList) {
-							Opa5.assert.ok(
-								oList.getItems().length === 2,
-								"The product list has been filtered"
-							);
-						},
-						errorMessage: "The product list was not filtered"
-					});
-				},
-
 				iShouldSeeAllProductsOfTheCategory: function () {
 					this.waitFor({
 						id: "productList",
@@ -306,38 +306,29 @@ sap.ui.define([
 				iShouldOnlySeeTheAvailableAndDiscontinuedProducts: function () {
 					this.waitFor({
 						id: "productList",
+						matchers: new AggregationLengthEquals({name: "items", length: 2}),
 						success: function (oList) {
-							Opa5.assert.ok(oList.getAggregation("items").length === 2, "The category list shows just the available and discontinued products");
+							Opa5.assert.ok(oList, "The category list shows just the available and discontinued products");
 						},
 						errorMessage: "The category list shows products other than available or discontinued"
 					});
 				},
-
-				iShouldSeeAllProducts: function () {
+				iShouldOnlySeeTheOutOfStockProducts: function () {
 					this.waitFor({
 						id: "productList",
+						matchers: new AggregationLengthEquals({name: "items", length: 1}),
 						success: function (oList) {
-							Opa5.assert.ok(oList.getAggregation("items").length === 3, "The category list shows all products");
+							Opa5.assert.ok(oList, "The category list shows just the out of stock products");
 						},
-						errorMessage: "The category list did not show all products"
+						errorMessage: "The category list shows products other than out of stock"
 					});
 				},
-
-				iShouldOnlySeeExpensiveProducts: function () {
-					this.waitFor({
-						id: "productList",
-						success: function (oList) {
-							Opa5.assert.ok(oList.getAggregation("items").length === 1, "The category list shows only products with a price over 500 EUR");
-						},
-						errorMessage: "The category list did not show prices more than 500 EUR"
-					});
-				},
-
 				iShouldOnlySeeOutOfStockAndCheapProducts: function () {
 					this.waitFor({
 						id: "productList",
+						matchers: new AggregationLengthEquals({name: "items", length: 1}),
 						success: function (oList) {
-							Opa5.assert.ok(oList.getAggregation("items").length === 1, "The category list shows only cheap and out of stock products");
+							Opa5.assert.ok(oList, "The category list shows only cheap and out of stock products");
 						},
 						errorMessage: "The category list did not show cheap and out of stock products"
 					});
@@ -353,22 +344,10 @@ sap.ui.define([
 						errorMessage: "The info toolbar of the category list was not found"
 					});
 				},
-
-				iShouldSeeAnPriceInfoToolbar: function () {
-					this.waitFor({
-						id: "categoryInfoToolbarTitle",
-						matchers: new PropertyStrictEquals({name: "text", value: "Filtered by Price"}),
-						success: function () {
-							Opa5.assert.ok(true, "The category list has info toolbar");
-						},
-						errorMessage: "The info toolbar of the category list was not found"
-					});
-				},
-
 				iShouldSeeAnAvailabilityAndPriceInfoToolbar: function () {
 					this.waitFor({
 						id: "categoryInfoToolbarTitle",
-						matchers: new PropertyStrictEquals({name: "text", value: "Filtered by Availability, Price"}),
+						matchers: new PropertyStrictEquals({name: "text", value: "Filtered by Availability, Price (200 - 500 EUR)"}),
 						success: function () {
 							Opa5.assert.ok(true, "The category list has info toolbar");
 						},
@@ -389,15 +368,26 @@ sap.ui.define([
 						errorMessage: "The category list has an info toolbar"
 					});
 				},
+				iShouldTestTheFilterCount: function (iCountNumber) {
+					var sSuccessMessage = "The price filter count is correctly set up";
+					var sErrorMessage = "The price filter count doesn't correctly set up";
 
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name: "title", value: "Price"}),
+						success: function(oItem) {
+							Opa5.assert.ok(oItem[0].getCounter() === iCountNumber, sSuccessMessage);
+						},
+						errorMessage: sErrorMessage
+					});
+				},
 				iShouldOnlySeeAvailableAndDiscontinuedProductsWithInfoToolbar: function () {
 					this.iShouldOnlySeeTheAvailableAndDiscontinuedProducts();
 					this.iShouldSeeAnAvailabilityInfoToolbar();
 				},
-
-				iShouldOnlySeeExpensiveProductsAndAnInfoToolbar: function () {
-					this.iShouldOnlySeeExpensiveProducts();
-					this.iShouldSeeAnPriceInfoToolbar();
+				iShouldOnlySeeOutOfStockProductsAndAnInfoToolbar: function () {
+					this.iShouldOnlySeeTheOutOfStockProducts();
+					this.iShouldSeeAnAvailabilityInfoToolbar();
 				},
 
 				iShouldOnlySeeOutOfStockAndCheapProductsWithInfoToolbar: function () {
@@ -406,7 +396,7 @@ sap.ui.define([
 				},
 
 				iShouldSeeAllProductsAndNoInfoToolbar: function () {
-					this.iShouldSeeAllProducts();
+					this.iShouldSeeAllProductsOfTheCategory();
 					this.iShouldNotSeeAnInfoToolbar();
 				}
 			}
