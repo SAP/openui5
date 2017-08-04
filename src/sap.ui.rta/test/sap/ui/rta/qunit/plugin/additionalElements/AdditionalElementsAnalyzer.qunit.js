@@ -1,37 +1,41 @@
 /*global QUnit*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
 QUnit.config.autostart = false;
+
 sap.ui.require([
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/dt/ElementUtil",
-	"sap/ui/model/json/JSONModel"],
-
-	function(AdditionalElementsAnalyzer, ElementUtil, JSONModel){
+	"sap/ui/model/json/JSONModel"
+],
+function(
+	AdditionalElementsAnalyzer,
+	ElementUtil,
+	JSONModel
+) {
 	"use strict";
 
-	QUnit.module("Given a test view", {
-		beforeEach : function(assert) {
-			this.oView = renderComplexView(assert);
-			var oGroup = this.oView.byId("GroupEntityType01");
-			return Promise.all([
-				this.oView.getController().isDataReady(),
-				ElementUtil.loadDesignTimeMetadata(oGroup).then(function(oDesignTime) {
-					this.mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
-					this.mRevealPropertyAction = oDesignTime.aggregations.formElements.actions.reveal;
-				}.bind(this))
-			]);
-		},
-		afterEach : function(assert) {
-			this.oView.destroy();
-		}
+	var oView = renderComplexView();
+	var oGroup;
+	var mAddODataPropertyAction;
+	oView.getController().isDataReady().then(function () {
+		oGroup = oView.byId("GroupEntityType01");
+		return ElementUtil.loadDesignTimeMetadata(oGroup).then(function(oDesignTime) {
+			mAddODataPropertyAction = oDesignTime.aggregations.formElements.actions.addODataProperty;
+			QUnit.start();
+		});
 	});
 
+	QUnit.done(function () {
+		oGroup.destroy();
+		oView.destroy();
+	});
+
+	QUnit.module("Given a test view");
+
 	QUnit.test("checks if navigation and absolute binding works", function(assert) {
-		var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
-		var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
-		var oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
+		var oGroupElement1 = oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
+		var oGroupElement2 = oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
+		var oGroupElement3 = oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
 		sap.ui.getCore().applyChanges();
 
 		var oActionsObject = {
@@ -66,15 +70,15 @@ sap.ui.require([
 	});
 
 	QUnit.test("when asking for the invisible sections of an object page layout", function(assert) {
-		var oObjectPageLayout = this.oView.byId("ObjectPageLayout");
+		var oObjectPageLayout = oView.byId("ObjectPageLayout");
 
 		var oActionsObject = {
 			aggregation: "sections",
 			reveal : {
 				elements : [
-					this.oView.byId("idMain1--ObjectPageSectionInvisible"),
-					this.oView.byId("idMain1--ObjectPageSectionStashed1"),
-					this.oView.byId("idMain1--ObjectPageSectionStashed2")
+					oView.byId("idMain1--ObjectPageSectionInvisible"),
+					oView.byId("idMain1--ObjectPageSectionStashed1"),
+					oView.byId("idMain1--ObjectPageSectionStashed2")
 				],
 				types : {
 					"sap.ui.core._StashedControl" :{
@@ -120,13 +124,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting unbound elements for EntityType01 Group,", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType01");
+		var oGroup = oView.byId("GroupEntityType01");
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel
+				getLabel: mAddODataPropertyAction.getLabel
 			},
-			relevantContainer: this.mAddODataPropertyAction.relevantContainer
+			relevantContainer: mAddODataPropertyAction.relevantContainer
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
@@ -171,13 +175,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting unbound elements for EntityType01 Group with a filter function,", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType01");
-		var oSmartForm = this.oView.byId("MainForm");
+		var oGroup = oView.byId("GroupEntityType01");
+		var oSmartForm = oView.byId("MainForm");
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel,
-				filter: this.mAddODataPropertyAction.filter
+				getLabel: mAddODataPropertyAction.getLabel,
+				filter: mAddODataPropertyAction.filter
 			},
 			relevantContainer: oSmartForm
 		};
@@ -200,11 +204,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting unbound elements for EntityType01 Group without a relevant container,", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType01");
+		var oGroup = oView.byId("GroupEntityType01");
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel
+				getLabel: mAddODataPropertyAction.getLabel
 			}
 		};
 
@@ -238,13 +242,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting unbound elements for EntityType02 with complex properties and field control properties", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType02");
+		var oGroup = oView.byId("GroupEntityType02");
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel
+				getLabel: mAddODataPropertyAction.getLabel
 			},
-			relevantContainer: this.mAddODataPropertyAction.relevantContainer
+			relevantContainer: mAddODataPropertyAction.relevantContainer
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
@@ -301,13 +305,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting unbound elements for EntityTypeNav (which doesn't contain navigation properties)", function(assert) {
-		var oGroup = this.oView.byId("NavPropertyForm");
+		var oGroup = oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 		var oActionObject = {
 			action: {
 				aggregation: "formContainers",
-				getLabel: this.mAddODataPropertyAction.getLabel
+				getLabel: mAddODataPropertyAction.getLabel
 			},
-			relevantContainer: this.mAddODataPropertyAction.relevantContainer
+			relevantContainer: mAddODataPropertyAction.relevantContainer
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements){
@@ -316,11 +320,11 @@ sap.ui.require([
 	});
 
 	QUnit.test("when checking group elements to find original label in add dialog, after renaming custom label and removing group elements", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType02");
-		var oGroupElement1 = this.oView.byId("ComplexBindingCase");
+		var oGroup = oView.byId("GroupEntityType02");
+		var oGroupElement1 = oView.byId("ComplexBindingCase");
 		oGroupElement1.setLabel("Renamed Label");
 		oGroupElement1.setVisible(false);
-		var oGroupElement2 = this.oView.byId("EntityType02.CompProp1");
+		var oGroupElement2 = oView.byId("EntityType02.CompProp1");
 		oGroupElement2.setVisible(false);
 		sap.ui.getCore().applyChanges();
 
@@ -354,7 +358,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when renaming a smart element", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType02");
+		var oGroup = oView.byId("GroupEntityType02");
 		var oGroupElement1 = oGroup.getGroupElements()[3];
 		oGroupElement1.setVisible(false);
 		oGroupElement1.setLabel("RenamedLabel");
@@ -391,7 +395,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when asking for the invisible fields of a simpleForm", function(assert) {
-		var oSimpleForm = this.oView.byId("SimpleForm");
+		var oSimpleForm = oView.byId("SimpleForm");
 		var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer){
 			return aAllFormElements.concat(oFormContainer.getFormElements());
 		},[]).filter(function(oFormElement){
@@ -431,13 +435,13 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getting unbound elements for EntityType01 Group with a function to filter ignored SmartForm Fields", function(assert) {
-		var oGroup = this.oView.byId("GroupEntityType01");
-		var oSmartForm = this.oView.byId("MainForm");
+		var oGroup = oView.byId("GroupEntityType01");
+		var oSmartForm = oView.byId("MainForm");
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel,
-				filter: this.mAddODataPropertyAction.filter
+				getLabel: mAddODataPropertyAction.getLabel,
+				filter: mAddODataPropertyAction.filter
 			},
 			relevantContainer: oSmartForm
 		};
@@ -452,52 +456,14 @@ sap.ui.require([
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel,
-				filter: this.mAddODataPropertyAction.filter
+				getLabel: mAddODataPropertyAction.getLabel,
+				filter: mAddODataPropertyAction.filter
 			},
-			relevantContainer: this.mAddODataPropertyAction.relevantContainer
+			relevantContainer: mAddODataPropertyAction.relevantContainer
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
 			assert.equal(aAdditionalElements.length, 0, "then there are no ODataProperties");
-		});
-	});
-
-	QUnit.test("when getting invisible elements with an element without model", function(assert) {
-		var oSimpleFormWithoutModel = new sap.ui.layout.form.SimpleForm();
-		var oSimpleForm = this.oView.byId("SimpleForm");
-		var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer){
-			return aAllFormElements.concat(oFormContainer.getFormElements());
-		},[]).filter(function(oFormElement){
-			return oFormElement.getVisible() === false;
-		});
-
-		var oActionsObject = {
-			aggregation: "formElements",
-			reveal : {
-				elements : aFormElements,
-				types : {
-					"sap.ui.layout.form.FormElement" : {
-						action : {
-							//nothing relevant for the analyzer
-						}
-					}
-				}
-			}
-		};
-
-		return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSimpleFormWithoutModel, oActionsObject).then(function(aAdditionalElements) {
-			assert.equal(aAdditionalElements.length, 5, "then there are 5 invisible Elements that are not enhanced with oDataProperty properties");
-			assert.equal(aAdditionalElements[0].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[1].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[2].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[3].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[4].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[0].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[1].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[2].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[3].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[4].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
 		});
 	});
 
@@ -507,10 +473,10 @@ sap.ui.require([
 		var oActionObject = {
 			action: {
 				aggregation: "formElements",
-				getLabel: this.mAddODataPropertyAction.getLabel,
-				filter: this.mAddODataPropertyAction.filter
+				getLabel: mAddODataPropertyAction.getLabel,
+				filter: mAddODataPropertyAction.filter
 			},
-			relevantContainer: this.mAddODataPropertyAction.relevantContainer
+			relevantContainer: mAddODataPropertyAction.relevantContainer
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oGroup, oActionObject).then(function(aAdditionalElements) {
@@ -518,57 +484,54 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when getting invisible elements with an element with a json model", function(assert) {
-		var oSimpleFormWithJSONModel = new sap.ui.layout.form.SimpleForm();
-		var oSimpleForm = this.oView.byId("SimpleForm");
-		var aFormElements = oSimpleForm.getAggregation("form").getFormContainers().reduce(function(aAllFormElements, oFormContainer){
-			return aAllFormElements.concat(oFormContainer.getFormElements());
-		},[]).filter(function(oFormElement){
-			return oFormElement.getVisible() === false;
-		});
-		oSimpleFormWithJSONModel.setModel(new JSONModel({elements: "foo"}));
-
-		var oActionsObject = {
-			aggregation: "formElements",
-			reveal : {
-				elements : aFormElements,
-				types : {
-					"sap.ui.layout.form.FormElement" : {
-						action : {
-							//nothing relevant for the analyzer
-						}
-					}
-				}
-			}
-		};
-
-		return AdditionalElementsAnalyzer.enhanceInvisibleElements(oSimpleFormWithJSONModel, oActionsObject).then(function(aAdditionalElements) {
-			assert.equal(aAdditionalElements.length, 5, "then there are 5 invisible Elements that are not enhanced with oDataProperty properties");
-			assert.equal(aAdditionalElements[0].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[1].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[2].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[3].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[4].originalLabel, "", "then the originalLabel is not set");
-			assert.equal(aAdditionalElements[0].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[1].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[2].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[3].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-			assert.equal(aAdditionalElements[4].referencedComplexPropertyName, "", "then the referencedComplexPropertyName is not set");
-		});
-	});
-
 	QUnit.test("when asking for the unbound elements of a simpleForm", function(assert) {
-		var oSimpleForm = this.oView.byId("SimpleForm");
+		var oSimpleForm = oView.byId("SimpleForm");
 
 		var oActionObject = {
 			action : {
 				aggregation: "form",
-				oRelevantContainer: this.mAddODataPropertyAction.relevantContainer
+				oRelevantContainer: mAddODataPropertyAction.relevantContainer
 			}
 		};
 
 		return AdditionalElementsAnalyzer.getUnboundODataProperties(oSimpleForm, oActionObject).then(function(aAdditionalElements) {
 			assert.equal(aAdditionalElements.length, 4, "then 4 unbound elements are available");
+		});
+	});
+
+	QUnit.module("Given a test view with bound Table", {
+		beforeEach : function() {
+			this.oTable = oView.byId("table");
+			this.oColumn = this.oTable.getColumns()[0];
+		}
+	});
+
+	QUnit.test("when getting unbound elements for table", function(assert) {
+		var oActionObject = {
+			action : {},
+			relevantContainer: this.oTable
+		};
+
+		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+			assert.equal(aAdditionalElements.length, 3, "then the correct amount of ODataProperties has been returned");
+		});
+	});
+
+	QUnit.module("Given a test view with bound Empty Table", {
+		beforeEach : function(assert) {
+			this.oTable = oView.byId("emptyTable");
+			this.oColumn = this.oTable.getColumns()[0];
+		}
+	});
+
+	QUnit.test("when getting unbound elements for table", function(assert) {
+		var oActionObject = {
+			action : {},
+			relevantContainer: this.oTable
+		};
+
+		return AdditionalElementsAnalyzer.getUnboundODataProperties(this.oTable, oActionObject).then(function(aAdditionalElements) {
+			assert.equal(aAdditionalElements.length, 4, "then the correct amount of ODataProperties has been returned");
 		});
 	});
 
@@ -587,6 +550,4 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		return oView;
 	}
-
-	QUnit.start();
 });

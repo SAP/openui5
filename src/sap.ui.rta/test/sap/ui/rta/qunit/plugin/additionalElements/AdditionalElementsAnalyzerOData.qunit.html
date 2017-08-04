@@ -2,17 +2,9 @@
 <html>
 	<head>
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-		<title>Test Page for BindingsExtractor</title>
-		<script src="../shared-config.js"></script>
+		<title>Test Page for checking available elements with OData action</title>
+		<script src="../../../shared-config.js"></script>
 		<style>
-		html, body, #qunit-tests {
-			height: 100%;
-		}
-
-		.sapUiView {
-			height: 100%;
-		}
-
 		#test-view {
 			border: 1px solid grey;
 			position: fixed;
@@ -23,10 +15,10 @@
 		}
 		</style>
 		<script>
-			window['sap-ui-config'].libs = 'sap.m,sap.ui.layout';
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.ui.comp';
 			window['sap-ui-config'].bindingSyntax = 'complex';
 			window['sap-ui-config'].resourceroots = {
-				"sap.ui.rta.test.additionalElements": "../internal/testdata/additionalElements/"
+				"sap.ui.rta.test.additionalElements": "../../../internal/testdata/additionalElements/"
 			};
 			document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
@@ -40,7 +32,7 @@
 			// code coverage report only for sap.ui.rta namespace
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
 
-			jQuery.sap.includeScript('./BindingsExtractor.qunit.js');
+			jQuery.sap.includeScript('./AdditionalElementsAnalyzerOData.qunit.js');
 		</script>
 	</head>
 	<body>
