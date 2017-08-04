@@ -541,7 +541,7 @@ sap.ui.define([
 				sClassName, oError);
 		}
 
-		if (typeof vValue === "function" || typeof vValue === "object") {
+		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw new Error("Not a primitive value");
 		}
 		this.oModel.checkGroupId(sGroupId);

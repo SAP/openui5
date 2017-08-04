@@ -1218,12 +1218,12 @@ sap.ui.require([
 				entityPath : "/BusinessPartnerList/0", // not realistic, but different to editUrl
 				propertyPath : "Address/City"
 			}));
-		oParentBindingMock.expects("updateValue").withExactArgs("up", "Address/City", "bar",
+		oParentBindingMock.expects("updateValue").withExactArgs("up", "Address/City", null,
 				sinon.match.func, "/BusinessPartnerList('0100000000')", "/BusinessPartnerList/0")
 			.returns(Promise.resolve());
 
 		// code under test
-		oControl.getBinding("text").setValue("bar", "up");
+		oControl.getBinding("text").setValue(null, "up");
 	});
 
 	//*********************************************************************************************
