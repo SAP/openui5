@@ -6,65 +6,15 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/plugin/ControlVariant",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/FakeLrepConnector",
 	"sap/uxap/ObjectPageLayout"
-], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, ControlVariantPlugin, flUtils, FakeLrepConnector, ObjectPageLayout) {
+], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, ControlVariantPlugin, ObjectPageLayout) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.variantManagement.controller.Main", {
 		_data: [],
 
 		onInit: function () {
-
-			var oAppComponent = flUtils.getAppComponentForControl(this.getView());
-			var oManifest = oAppComponent.getManifest();
-
-			var sAppComponentName = flUtils.getComponentName(oAppComponent);
-			var sAppVersion = flUtils.getAppVersionFromManifest(oManifest);
-			FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.ui.fl.qunit.testResources").replace('resources', 'test-resources') + "/FakeVariantLrepResponse.json", sAppComponentName, sAppVersion);
-
-			var sURL, oModel, oView;
-
-			sURL = "/destinations/E91/sap/opu/odata/SAP/VariantManagementTest/";
-
-			var oMockServer = new MockServer({
-				rootUri: sURL
-			});
-			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/variantManagement");
-
-			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
-
-			oMockServer.start();
-
-			oModel = new ODataModel(sURL, {
-				json: true,
-				loadMetadataAsync: true
-			});
-
-			oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-			this._oModel = oModel;
-
-
-			oView = this.getView();
-			oView.setModel(oModel);
-
-			var i18nModel = new ResourceModel({
-				bundleName: "sap.ui.rta.test.variantManagement.i18n.i18n"
-			});
-			oView.setModel(i18nModel, "i18n");
-
-			var data = {
-				readonly: false,
-				mandatory: false,
-				visible: true,
-				enabled: true
-			};
-
-			var oStateModel = new JSONModel();
-			oStateModel.setData(data);
-			oView.setModel(oStateModel, "state");
-
+			var oView = this.getView();
 			this._data.push(
 				new Promise(function (resolve, reject) {
 					oView.bindElement({
@@ -91,15 +41,22 @@ sap.ui.define([
 				})
 			);
 
-			/**
-			 * Specifies the key of the Variant Management control.<br>
-			 * For more information about SAPUI5 flexibility, refer to the Developer Guide.
-			 * @since 1.50.0
-			 variantManagement: {type: "string", group: "Misc"}, */
+			var fnOriginalRtaStart = RuntimeAuthoring.prototype.start;
 
-			ObjectPageLayout.prototype.variantManagement = "variantManagementOrdersTable";
-			ObjectPageLayout.prototype.getVariantManagement = function () { return this.variantManagement; };
-			ObjectPageLayout.prototype.setVariantManagement = function (sVarMgmt) { this.variantManagement = sVarMgmt; };
+			// Control Variant
+			RuntimeAuthoring.prototype.start = function () {
+				var mPlugins = this.getDefaultPlugins();
+				mPlugins["controlVariant"] = new ControlVariantPlugin();
+				this.setPlugins(mPlugins);
+				return fnOriginalRtaStart.apply(this, arguments);
+			};
+
+			//TO scroll to Vertical Layout - Causes Flicker
+			//var oView = this.getView()
+			//jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY + 1, this, function() {
+			//	oView.byId("page").scrollToElement(oView.byId("OutsideObjectPageForm"));
+			//	oView.byId("page").setEnableScrolling(false);
+			//});
 		},
 
 		_getUrlParameter: function (sParam) {
@@ -117,20 +74,17 @@ sap.ui.define([
 
 		switchToAdaptionMode: function () {
 
-			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			var oRta = new RuntimeAuthoring({
-				rootControl: this.getOwnerComponent().getAggregation("rootControl"),
-				flexSettings: {
-					developerMode: false
-				}
-			});
-			var mPlugins = oRta.getDefaultPlugins();
+			if (this.getView().getModel("app").getProperty("/showAdaptButton"))	{
 
-			// Control Variant
-			mPlugins["controlVariant"] = new ControlVariantPlugin();
-			oRta.setPlugins(mPlugins);
-
-			oRta.start();
+				jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+				var oRta = new RuntimeAuthoring({
+					rootControl: this.getOwnerComponent().getAggregation("rootControl"),
+					flexSettings: {
+						developerMode: false
+					}
+				});
+				oRta.start();
+			}
 		},
 
 		isDataReady: function () {
