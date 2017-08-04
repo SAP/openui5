@@ -20,8 +20,9 @@ sap.ui.define([],
 			},
 			footer : {
 				domRef : ":sap-domref .sapFDynamicPageActualFooterControl"
-			},
-			scrollContainers : [{
+			}
+		},
+		scrollContainers : [{
 				domRef : "> .sapFDynamicPageContentWrapper",
 				aggregations : ["header", "content"]
 			},
@@ -30,8 +31,6 @@ sap.ui.define([],
 					return oElement.$("vertSB-sb").get(0);
 				}
 			}]
-		}
-
 	};
 
 }, /* bExport= */ false);
