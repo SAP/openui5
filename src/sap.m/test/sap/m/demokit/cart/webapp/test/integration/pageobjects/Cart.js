@@ -68,16 +68,26 @@ sap.ui.define([
 						actions : new Press()
 					});
 				},
+
 				iPressOnAddBackToBasketForTheFirstProduct : function () {
 					return this.waitFor({
 						controlType : "sap.m.ObjectAttribute",
 						matchers : new BindingPath({path : "/savedForLaterEntries/HT-1254", modelName: "cartProducts"}),
 						actions : new Press()
 					});
-				}
+				},
+
+                iPressTheBackButton: function () {
+                    this.waitFor({
+                        controlType: "sap.m.Button",
+                        matchers: new Properties({type: "Back"}),
+                        actions: new Press(),
+                        errorMessage: "The back button was not found and could not be pressed"
+                    });
+                }
 			},
 
-			assertions : {
+            assertions : {
 
 				iShouldSeeTheProductInMyCart : function () {
 					return this.waitFor({
@@ -89,6 +99,16 @@ sap.ui.define([
 						errorMessage : "The cart does not contain any entries"
 					});
 				},
+
+                iShouldSeeTheCart: function () {
+                    return this.waitFor({
+                        viewName: "Cart",
+                        success: function () {
+                            Opa5.assert.ok(true, "The cart was successfully displayed");
+                        },
+                        errorMessage: "The cart was not displayed"
+                    });
+                },
 
 				iShouldNotSeeASaveForLaterFooter : function () {
 					return this.waitFor({

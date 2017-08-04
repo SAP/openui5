@@ -87,11 +87,31 @@ sap.ui.define([
 					return this.waitFor({
 						viewName: sViewName,
 						success: function () {
-							Opa5.assert.ok(true, "The product Page was successfully displayed");
+							Opa5.assert.ok(true, "The product page was successfully displayed");
 						},
 						errorMessage: "The product page was not displayed"
 					});
-				}
+				},
+
+                iShouldSeeTheBlasterExtremeDetailPage: function () {
+                    return this.waitFor({
+                        viewName: sViewName,
+                        success: function () {
+                            Opa5.assert.ok(true, "The Blaster Extreme page was successfully displayed");
+                        },
+                        errorMessage: "The Blaster Extreme page was not displayed"
+                    });
+                },
+
+                iShouldSeeTheSmartphoneAlphaDetailPage: function () {
+                    return this.waitFor({
+                        viewName: sViewName,
+                        success: function () {
+                            Opa5.assert.ok(true, "The Smartphone Alpha page was successfully displayed");
+                        },
+                        errorMessage: "The Smartphone Alpha page was not displayed"
+                    });
+                }
 			}
 		}
 	});

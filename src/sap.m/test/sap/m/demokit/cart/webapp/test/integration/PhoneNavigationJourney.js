@@ -33,10 +33,10 @@ sap.ui.define([
 
 	opaTest("Should see the product list", function (Given, When, Then) {
 		// Actions
-		When.onHome.iPressOnTheSecondCategory();
+		When.onHome.iPressOnTheFlatScreensCategory();
 		// Assertions
-		Then.onTheCategory.iShouldBeTakenToTheSecondCategory().
+		Then.onTheCategory.iShouldBeTakenToTheFlatScreensCategory().
 		and.iShouldSeeTheProductList().
-		and.theProductListShouldHaveSomeEntries();
+		and.iShouldSeeSomeEntriesInTheProductList();
 	});
 });

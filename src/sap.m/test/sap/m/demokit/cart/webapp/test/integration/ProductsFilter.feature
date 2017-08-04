@@ -5,7 +5,7 @@ Feature: Products filters
 
   Scenario: Set and remove products filter
 
-	When on home: I press on the second category
+	When on home: I press on the Flat Screens category
 	Then on the category: I should see a filter button
 	When on the category: I filter on availability
 	Then on the category: I should only see available and discontinued products with info toolbar
