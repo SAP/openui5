@@ -53,7 +53,7 @@
 
 							<m:HBox class="sapUiDocumentationHeaderNavLinks sapUiTinyMarginBottom" visible="{=${topics>/isClass}}">
 								<m:Label text="Extends:"/>
-								<m:Link text="{topics>/extendsText}" visible="{=${topics>/isDerived}}" press="onTypeLinkPress"/>
+								<m:Link text="{topics>/extendsText}" href="#/api/{topics>/extendsText}" visible="{=${topics>/isDerived}}"/>
 								<m:Text text="{topics>/extendsText}" visible="{=!${topics>/isDerived}}"/>
 							</m:HBox>
 
@@ -261,9 +261,9 @@
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{constructorParams>value}"
+																			href="#/api/{constructorParams>value}"
 																			enabled="{parts: [{path: 'constructorParams>value'}],
-																				  formatter: '.formatLinkEnabled'}"
-																			press="onTypeLinkPress"/>
+																				  formatter: '.formatLinkEnabled'}"/>
 																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${constructorParams>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
@@ -306,9 +306,9 @@
 													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 
 													<m:Link text="{topics>type}"
+															href="#/api/{= ${topics>type}.replace('[]', '') }"
 															enabled="{parts: [{path: 'topics>type'}],
-																		  formatter: '.formatLinkEnabled'}"
-															press="onTypeLinkPress"/>
+																		  formatter: '.formatLinkEnabled'}"/>
 													<m:Text text="{parts: [{path: 'topics>defaultValue'}],
 																	   formatter: '.formatDefaultValue'}"
 															wrapping="false"/>
@@ -402,9 +402,9 @@
 																		  text="{= ${appView>/bPhoneSize} &amp;&amp; ${events>phoneName} ? ${events>phoneName} : ${events>name} }"
 																wrapping="false"/>
 														<m:Link text="{events>type}"
+																href="#/api/{events>type}"
 																enabled="{parts: [{path: 'events>type'}],
-																		  formatter: '.formatLinkEnabled'}"
-																press="onTypeLinkPress"/>
+																		  formatter: '.formatLinkEnabled'}"/>
 														<core:HTML content="{parts: [{path: 'events>description'},
 																					 {path: 'events>deprecated/text'},
 																					 {path: 'events>deprecated/since'}],
@@ -495,9 +495,9 @@
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{methods>value}"
+																			href="#/api/{= ${methods>value}.replace('[]', '') }"
 																			enabled="{parts: [{path: 'methods>value'}],
-																				  formatter: '.formatLinkEnabled'}"
-																			press="onTypeLinkPress"/>
+																				  formatter: '.formatLinkEnabled'}"/>
 																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
@@ -528,9 +528,9 @@
 															<m:HBox>
 																<m:items>
 																	<m:Link text="{methods>value}"
+																			href="#/api/{= ${methods>value}.replace('[]', '') }"
 																			enabled="{parts: [{path: 'methods>value'}],
-																				  formatter: '.formatLinkEnabled'}"
-																			press="onTypeLinkPress"/>
+																				  formatter: '.formatLinkEnabled'}"/>
 																	<m:Text class="sapUiDocumentationOrText" text="or" visible="{= ${methods>isLast} === false}" wrapping="false"/>
 																</m:items>
 															</m:HBox>
@@ -576,9 +576,9 @@
 													</m:VBox>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
+															href="#/api/{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
-																      formatter: '.formatLinkEnabled'}"
-															press="onTypeLinkPress"/>
+																      formatter: '.formatLinkEnabled'}"/>
 
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																				 {path: 'topics>deprecated/text'},
@@ -620,9 +620,9 @@
 													</m:VBox>
 													<m:Text text="{topics>cardinality}" wrapping="false"/>
 													<m:Link text="{topics>type}"
+															href="#/api/{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
-																	  formatter: '.formatLinkEnabled'}"
-															press="onTypeLinkPress"/>
+																	  formatter: '.formatLinkEnabled'}"/>
 
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																				 {path: 'topics>deprecated/text'},
@@ -658,9 +658,9 @@
 												<m:cells>
 													<m:Text class="sapUiDocumentationParamBold" text="{topics>name}" wrapping="false"/>
 													<m:Link text="{topics>type}"
+															href="#/api/{topics>type}"
 															enabled="{parts: [{path: 'topics>type'}],
-																		  formatter: '.formatLinkEnabled'}"
-															press="onTypeLinkPress"/>
+																		  formatter: '.formatLinkEnabled'}"/>
 													<core:HTML content="{parts: [{path: 'topics>description'},
 																					 {path: 'topics>deprecated/text'},
 																					 {path: 'topics>deprecated/since'}],

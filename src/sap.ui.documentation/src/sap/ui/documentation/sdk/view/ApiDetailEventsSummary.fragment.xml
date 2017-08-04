@@ -17,7 +17,7 @@
 				<m:ColumnListItem visible="{= !!${events>name} }">
 					<m:cells>
 						<layout:VerticalLayout>
-							<m:Link text="{events>name}" press="scrollToEvent" wrapping="false" />
+							<m:Link text="{events>name}" href="#/api/{topics>/name}/events/{events>name}" press="scrollToEvent" wrapping="false" />
 							<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated" visible="{= ${events>deprecated} !== undefined }"/>
 						</layout:VerticalLayout>
 						<core:HTML content="{parts: [{path: 'events>description'}], formatter: '.formatDescription'}"/>
