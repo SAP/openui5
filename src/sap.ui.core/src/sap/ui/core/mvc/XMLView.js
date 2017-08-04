@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @experimental
 		 * @since 1.44
 		 */
-		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache();
+		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache() && Cache._isSupportedEnvironment();
 
 		function validatexContent(xContent) {
 			if (xContent.parseError.errorCode !== 0) {
