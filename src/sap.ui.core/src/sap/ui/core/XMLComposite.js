@@ -155,6 +155,55 @@ sap.ui.define([
 		mContexts[sName] = oAttributesModel.getContext("/");
 	}
 
+	function addSingleContext(mContexts,oVisitor, oCtx,oMetadataContexts,sDefaultMetaModel) {
+		oCtx.model = oCtx.model || sDefaultMetaModel;
+
+		var sKey = oCtx.name || oCtx.model || undefined;
+
+		if (oMetadataContexts[sKey]) {
+			return; // do not add twice
+		}
+		try {
+			mContexts[sKey] = oVisitor.getContext(oCtx.model + ">" + oCtx.path);// add the context to the visitor
+			oMetadataContexts[sKey] = mContexts[sKey];// make it available inside metadataContexts JSON object
+		} catch (ex) {
+			// ignore the context as this can only be the case if the model is not ready, i.e. not a preprocessing model but maybe a model for
+			// providing afterwards
+			mContexts["_$error"].oModel.setProperty("/" + sKey,ex);
+		}
+	}
+
+	function addMetadataContexts(mContexts,oVisitor,sMetadataContexts,sDefaultMetadataContexts,sDefaultMetaModel) {
+		if (!sMetadataContexts && !sDefaultMetadataContexts) {
+			return;
+		}
+
+		var oMetadataContexts = sMetadataContexts ? ManagedObject.bindingParser(sMetadataContexts) : { parts: []};
+		var oDefaultMetadataContexts = sDefaultMetadataContexts ? ManagedObject.bindingParser(sDefaultMetadataContexts) : { parts: []};
+
+		if (!oDefaultMetadataContexts.parts) {
+			oDefaultMetadataContexts = { parts: [oDefaultMetadataContexts] };
+		}
+
+		if (!oMetadataContexts.parts) {
+			oMetadataContexts = {parts: [oMetadataContexts]};
+		}
+
+		// merge the arrays
+		jQuery.merge(oMetadataContexts.parts, oDefaultMetadataContexts.parts);
+
+		// extend the contexts from metadataContexts
+		for (var j = 0; j < oMetadataContexts.parts.length; j++) {
+			addSingleContext(mContexts,oVisitor, oMetadataContexts.parts[j],oMetadataContexts,sDefaultMetaModel);
+		}
+
+		var oMdCModel = new JSONModel(oMetadataContexts);
+
+		// make metadataContext accessible
+		mContexts["metadataContexts"] = oMdCModel.getContext("/");
+
+	}
+
 	// TODO: be more specific about what is returned; at the moment we would return
 	// also e.g. models which are not specifically defined on the composite control
 	// but are propagated from outside of it. Ideally, we would only return
@@ -695,54 +744,17 @@ sap.ui.define([
 	 */
 	XMLComposite.initialTemplating = function (oElement, oVisitor, sFragment) {
 		var oImpl = initXMLComposite(sFragment),
-			mContexts = {},
+			oErrorModel = new JSONModel({}),
+			mContexts = { "_$error": oErrorModel.getContext("/")},
 			oMetadata = oImpl.getMetadata(),
 			oFragment = oMetadata.getFragment(),
-			oErrorModel = new JSONModel({});
+			sDefaultMetadataContexts = oMetadata._mSpecialSettings.metadataContexts ? oMetadata._mSpecialSettings.metadataContexts.defaultValue : "";
 
 		if (!oFragment) {
 			throw new Error("Fragment " + sFragment + " not found");
 		}
-		var sMetadataContexts = oElement.getAttribute("metadataContexts");
 
-		if (!sMetadataContexts && oMetadata._mSpecialSettings.metadataContexts) {
-			sMetadataContexts = oMetadata._mSpecialSettings.metadataContexts.defaultValue;
-		}
-
-		//extend the contexts from metadataContexts
-		if (sMetadataContexts) {
-			var sKey,oCtx,oMetadataContexts = ManagedObject.bindingParser(sMetadataContexts);
-
-			if (!oMetadataContexts.parts) {
-				oCtx = oMetadataContexts;
-
-				oMetadataContexts = { parts: [oCtx]};
-			}
-
-			for (var j = 0; j < oMetadataContexts.parts.length; j++) {
-				oCtx = oMetadataContexts.parts[j];
-
-				if (!oCtx.model) {
-					oCtx.model = oImpl.prototype.defaultMetaModel;
-				}
-
-				sKey = oCtx.name || oCtx.model || undefined;
-				try {
-					mContexts[sKey] = oVisitor.getContext(oCtx.model + ">" + oCtx.path);//add the context to the visitor
-					oMetadataContexts[sKey] = mContexts[sKey];//make it available inside metadataContexts JSON object
-				} catch (ex) {
-					//ignore the context as this can only be the case if the model is not ready, i.e. not a preprocessing model but maybe a model for providing afterwards
-					mContexts["_$error"] = mContexts["_$error"] || oErrorModel.getContext("/");
-					mContexts["_$error"].oModel.setProperty("/" + sKey,ex);
-				}
-			}
-
-			var oMdCModel = new JSONModel(oMetadataContexts);
-
-			//make metadataContext accessible
-			mContexts["metadataContexts"] = oMdCModel.getContext("/");
-		}
-
+		addMetadataContexts(mContexts,oVisitor,oElement.getAttribute("metadataContexts"),sDefaultMetadataContexts,oImpl.prototype.defaultMetaModel);
 		addAttributesContext(mContexts, oImpl.prototype.alias, oElement, oImpl, oVisitor);
 		var oContextVisitor = oVisitor["with"](mContexts, true);
 		var	mMetadata = oImpl.getMetadata();
