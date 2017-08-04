@@ -90,7 +90,9 @@
 				first : {lastName : "Dente", name : "Al", checked : true, linkText : "www.sap.com", href : "http://www.sap.com", rating : 4},
 				second : {lastName : "Friese", name : "Andy", checked : true, linkText : "www.spiegel.de", href : "http://www.spiegel.de", rating : 2},
 				third : {lastName : "Mann", name : "Anita", checked : false, linkText : "www.kicker.de", href : "http://www.kicker.de", rating : 3}
-			}
+			},
+			changeTestProperty: "SAPUI5",
+			changingArray: [1, 2, "hi", "b"]
 		};
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
@@ -958,6 +960,7 @@
 		}
 	});
 
+
 	QUnit.test("with map, not array", function(assert) {
 		var aKeysInMap = ["first", "second", "third"];
 		createListBinding("/map");
@@ -1089,6 +1092,31 @@
 			]
 		};
 		listBinding.getModel().setData(newData, false);
+	});
+
+	QUnit.test("No wrong 'Change' event after unrelated property change", function (assert) {
+		createListBinding("/unknown", "");
+
+		var oListBinding = bindings[0];
+		oListBinding.attachChange(function () {
+			throw new Error("wrongfully called fired change event");
+		});
+
+		// Changing an unrelated property on the model should not trigger the
+		// ListBinding to fire a change event.
+		oModel.setProperty("/changeTestProperty", "OpenUI5");
+		assert.ok(true, "no 'change' event was fired for unrelated property change");
+	});
+
+	QUnit.test("'Change' event is fired if list content changes, but length does not", function (assert) {
+		createListBinding("/changingArray", "");
+
+		var oListBinding = bindings[0];
+		oListBinding.attachChange(function () {
+			assert.ok(true, "'change' event was fired after list content change (no length change)");
+		});
+
+		oModel.setProperty("/changingArray", [1, 2, 3, 4]);
 	});
 
 	QUnit.module("Listbinding diff calculation", {
