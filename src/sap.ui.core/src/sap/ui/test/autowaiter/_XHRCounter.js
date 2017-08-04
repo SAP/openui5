@@ -4,13 +4,12 @@
 
 /*global XMLHttpRequest */
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/test/_LogCollector"
-], function ($, sinon, _LogCollector) {
+	"sap/ui/test/_OpaLogger",
+	"sap/ui/thirdparty/sinon"
+], function (_OpaLogger, sinon) {
 	"use strict";
 
-	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._XHRCounter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._XHRCounter");
 	var aXHRs = [];
 	var aFakeXHRs = [];
 	var fnUseFakeOriginal = sinon.useFakeXMLHttpRequest;

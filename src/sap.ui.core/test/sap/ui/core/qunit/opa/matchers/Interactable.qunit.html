@@ -9,7 +9,10 @@
 		<script src="../../../shared-config.js"></script>
 		<script
 			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+				"unitTests" : "../"
+			}'>
 		</script>
 		<script src="../../_includeQUnit.js"></script>
 
@@ -39,7 +42,8 @@
 					'sap/ui/test/Opa5',
 					'sap/ui/test/launchers/iFrameLauncher',
 					'sap/ui/test/_LogCollector',
-					'sap/ui/test/autowaiter/_timeoutCounter'
+					'sap/ui/test/autowaiter/_timeoutCounter',
+					'unitTests/utils/customQUnitAssertions'
 				], function (Interactable,
 							 $,
 							 Button,
@@ -127,8 +131,8 @@
 
 						QUnit.test("Should not match a Button while its navContainer is navigating", function (assert) {
 							// Arrange
-							var oLogCollector = _LogCollector.getInstance();
 							var fnStart = assert.async();
+							var oLogCollector = _LogCollector.getInstance();
 
 							oLogCollector.getAndClearLog();
 							this.oNavContainer.to(this.oSecondPage);
@@ -145,7 +149,7 @@
 								assert.ok(!bInitialPageButtonResultAfterNavigationFinished, "Control is matching");
 								assert.ok(bSecondPageButtonResultAfterNavigationFinished, "Control is matching");
 
-								assert.strictEqual(sLogs, "The NavContainer " + this.oNavContainer + " is currently navigating -  sap.ui.test.autowaiter._autoWaiter");
+								QUnit.assert.contains(sLogs, "The NavContainer " + this.oNavContainer + " is currently navigating -  sap.ui.test.autowaiter._autoWaiter");
 								fnStart();
 							}, this);
 						});
@@ -322,7 +326,7 @@
 							setTimeout(function () {});
 							var bMatching = new Interactable().isMatching(this.oButton);
 							assert.ok(!bMatching, "is not matching");
-							assert.strictEqual(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test.autowaiter._timeoutCounter");
+							QUnit.assert.contains(oLogCollector.getAndClearLog(), "There are '1' open blocking Timeouts. And 0 non blocking timeouts -  sap.ui.test.autowaiter._timeoutCounter");
 							fnDone();
 						}.bind(this), 500);
 					});

@@ -525,6 +525,8 @@ sap.ui.define([
 
 		var iTestIndex = 0;
 		// In this module a site full of errors is launched and the error messages are checked
+		// for each test, a full module of the tested site is loaded
+		// test sequence here should correspond to the sequence of tests in the erronous site's test module
 		QUnit.module("Tests with errors");
 
 		function createMatcherForTestMessage (oOptions) {
@@ -737,6 +739,23 @@ sap.ui.define([
 					QUnit.assert.contains(sOpaMessage, "The control Element sap.m.Button#__xmlview0--myButton is busy so it is filtered out -  sap.ui.test.matchers.Interactable");
 					QUnit.assert.contains(sOpaMessage, "all results were filtered out by the matchers - skipping the check -  sap.ui.test.pipelines.MatcherPipeline");
 					QUnit.assert.doesNotContain(sOpaMessage, "Should not happen");
+				}
+			});
+
+			oOpa.iTeardownMyApp();
+		});
+
+		opaTest("Should write trace logs when max log level is trace", function (oOpa) {
+			var qunitversion = parseInt(QUnit.version, 10) || 1;
+			startApp(oOpa, "../testdata/failingOpaTest.html?opaLogLevel=TRACE&sap-ui-qunitversion=" + qunitversion + "&sap-ui-qunittimeout=8000&module=IFrame");
+
+			oOpa.waitFor({
+				matchers: createMatcherForTestMessage({
+					passed: false
+				}),
+				success: function (aMessages) {
+					var sOpaMessage = aMessages.eq(0).text();
+					QUnit.assert.contains(sOpaMessage, "TraceLog -  sap.ui.test.TestComponent");
 				}
 			});
 

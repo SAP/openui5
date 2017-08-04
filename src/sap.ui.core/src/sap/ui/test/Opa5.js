@@ -19,6 +19,7 @@ sap.ui.define([
 		'./pipelines/ActionPipeline',
 		'./_ParameterValidator',
 		'./_LogCollector',
+		'./_OpaLogger',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/base/EventProvider'
 	],
@@ -38,11 +39,12 @@ sap.ui.define([
 			 ActionPipeline,
 			 _ParameterValidator,
 			 _LogCollector,
+			 _OpaLogger,
 			 URI,
 			 EventProvider) {
 		"use strict";
 
-		var oLogger = $.sap.log.getLogger("sap.ui.test.Opa5", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS),
+		var oLogger = _OpaLogger.getLogger("sap.ui.test.Opa5"),
 			oPlugin = new OpaPlugin(iFrameLauncher._sLogPrefix),
 			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
@@ -1036,7 +1038,8 @@ sap.ui.define([
 
 			return iFrameLauncher.launch({
 				frameId: sFrameId,
-				source: sSource
+				source: sSource,
+				opaLogLevel: Opa.config.logLevel
 			});
 
 		}

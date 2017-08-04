@@ -4,14 +4,14 @@
 
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/ui/test/_LogCollector",
+	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/_opaCorePlugin",
 	"sap/ui/test/autowaiter/_XHRCounter",
 	"sap/ui/test/autowaiter/_timeoutCounter"
-], function ($, _LogCollector, _opaCorePlugin, _XHRCounter, _timeoutCounter) {
+], function ($, _OpaLogger, _opaCorePlugin, _XHRCounter, _timeoutCounter) {
 	"use strict";
 
-	var oLogger = $.sap.log.getLogger("sap.ui.test.autowaiter._autoWaiter", _LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS);
+	var oLogger = _OpaLogger.getLogger("sap.ui.test.autowaiter._autoWaiter");
 
 	function hasNavigatingNavContainers () {
 		var sControlType = "sap.m.NavContainer";

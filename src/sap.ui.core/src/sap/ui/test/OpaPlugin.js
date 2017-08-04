@@ -24,8 +24,11 @@ sap.ui.define(['jquery.sap.global',
 				'./matchers/Visible',
 				'./pipelines/MatcherPipeline',
 				'./autowaiter/_autoWaiter',
-				'sap/ui/test/_opaCorePlugin'],
-	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline, _autoWaiter, _opaCorePlugin) {
+				'sap/ui/test/_opaCorePlugin',
+				'sap/ui/test/_OpaLogger'],
+	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible,
+			MatcherPipeline, _autoWaiter, _opaCorePlugin, _OpaLogger) {
+
 		var oMatcherPipeline = new MatcherPipeline(),
 			oInteractableMatcher = new Interactable(),
 			oVisibleMatcher = new Visible(),
@@ -48,7 +51,7 @@ sap.ui.define(['jquery.sap.global',
 
 			constructor : function(sLogPrefix) {
 				sLogPrefix = sLogPrefix || "sap.ui.test.OpaPlugin";
-				this._oLogger = $.sap.log.getLogger(sLogPrefix);
+				this._oLogger = _OpaLogger.getLogger(sLogPrefix);
 			},
 
 			/**

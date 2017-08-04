@@ -22,7 +22,8 @@ sap.ui.define([
 		bRegisteredToUI5Init = false,
 		bUi5Loaded = false,
 		oAutoWaiter = null,
-		FrameHashChanger = null;
+		FrameHashChanger = null,
+		sOpaLogLevel;
 
 	/*
 	 * INTERNALS
@@ -234,6 +235,7 @@ sap.ui.define([
 		oFrameWindow.sap.ui.require([
 			"sap/ui/test/OpaPlugin",
 			"sap/ui/test/autowaiter/_autoWaiter",
+			"sap/ui/test/_OpaLogger",
 			"sap/ui/qunit/QUnitUtils",
 			"sap/ui/thirdparty/hasher",
 			"sap/ui/core/routing/History",
@@ -241,11 +243,13 @@ sap.ui.define([
 		], function (
 			OpaPlugin,
 			_autoWaiter,
+			_OpaLogger,
 			QUnitUtils,
 			hasher,
 			History,
 			HashChanger
 		) {
+			_OpaLogger.setLevel(sOpaLogLevel);
 			oFramePlugin = new OpaPlugin(sLogPrefix);
 			oAutoWaiter = _autoWaiter;
 			oFrameUtils = QUnitUtils;
@@ -316,7 +320,7 @@ sap.ui.define([
 			} else {
 				$Frame.on("load", handleFrameLoad);
 			}
-
+			sOpaLogLevel = options.opaLogLevel;
 			return checkForUI5ScriptLoaded();
 		},
 		getHashChanger: function () {

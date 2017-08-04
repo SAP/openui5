@@ -23,12 +23,13 @@
 		sap.ui.require([
 					"sap/ui/test/Opa5",
 					"sap/ui/test/Opa",
+					"sap/ui/test/_OpaLogger",
 					"sap/ui/test/opaQunit",
 					"sap/ui/test/matchers/PropertyStrictEquals",
 					"sap/ui/qunit/qunit-junit",
 					"sap/ui/qunit/qunit-coverage"
 				],
-				function (Opa5, Opa, opaTest, PropertyStrictEquals) {
+				function (Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals) {
 					"use strict";
 
 					QUnit.module("Timeouts");
@@ -217,6 +218,19 @@
 								assert.ok(false, "Should not happen");
 							}
 						})
+					});
+
+					opaTest("Should show trace logs if log level is set to TRACE", function (oOpa) {
+						// iFrame content should be loaded with opaLogLevel=trace
+						oOpa.waitFor({
+							check: function () {
+								// the trace message would be cleared before check
+								// throw exception here so that there will be no more polling
+								var o = _OpaLogger.getLogger("sap.ui.test.TestComponent");
+								o.trace("TraceLog");
+								throw new Error("Test exception");
+							}
+						});
 					});
 
 					QUnit.start();
