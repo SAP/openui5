@@ -18,7 +18,10 @@ sap.ui.define([],
 				rename: function () {
 					return {
 						changeType: "rename",
-						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle"
+						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
+						isEnabled : function (oElement) {
+							return oElement.$("headerTitle").get(0) != undefined;
+						}
 					};
 				}
 			},
