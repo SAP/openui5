@@ -935,7 +935,7 @@ sap.ui.define([
 		var oTransportSelection = new TransportSelection();
 		var sCurrentLayer = this.getLayer();
 
-		// all new changes, that are only in our stack and not yet in the LREP, filtered by them having a change
+		// all new changes from commands that are only in our stack and not yet in the LREP, filtered by them having a change
 		var aUnsavedChanges = this.getCommandStack().getAllExecutedCommands().reduce(function(aChanges, oCommand) {
 			if (oCommand.getPreparedChange) {
 				aChanges.push(oCommand.getPreparedChange());
@@ -1039,8 +1039,8 @@ sap.ui.define([
 
 		var fnConfirmDiscardAllChanges = function (sAction) {
 			if (sAction === "OK") {
-				this._deleteChanges();
 				RuntimeAuthoring.enableRestart(this.getLayer());
+				this._deleteChanges();
 				this.getCommandStack().removeAllCommands();
 			}
 		}.bind(this);
