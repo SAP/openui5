@@ -244,16 +244,16 @@ sap.ui.define([
 	};
 
 	MessageView.prototype.onBeforeRendering = function () {
-		var oGroupedItems;
+		var oGroupedItems, aItems = this.getItems();
 
 		this._clearLists();
 
 		if (this.getGroupItems()) {
-			oGroupedItems = this._groupItems(this.getItems());
+			oGroupedItems = this._groupItems(aItems);
 
 			this._fillGroupedLists(oGroupedItems);
 		} else {
-			this._fillLists(this.getItems());
+			this._fillLists(aItems);
 		}
 
 		this._clearSegmentedButton();
@@ -266,8 +266,16 @@ sap.ui.define([
 			this._oListHeader.insertContent(headerButton, 2);
 		}
 
+		if (aItems.length === 1) {
+
+			this._fnHandleForwardNavigation(this._oLists.all.getItems()[0], "show");
+
+			// TODO: adopt this to NavContainer's public API once a parameter for back navigation transition name is available
+			this._navContainer._pageStack[this._navContainer._pageStack.length - 1].transition = "slide";
+		}
+
 		// Bind automatically to the MessageModel if no items are bound
-		if (!this.getBindingInfo("items") && !this.getItems().length) {
+		if (!this.getBindingInfo("items") && !aItems.length) {
 			this._makeAutomaticBinding();
 		}
 	};
@@ -944,29 +952,16 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handles click of the ListItems
+	 * Handles click on a list item
 	 *
-	 * @param {jQuery.Event} oEvent ListItem click event object
+	 * @param {sap.m.StandardListItem} oListItem ListItem that is pressed
+	 * @param {String} sTransiotionName name of transition could be slide, show, flip or fade
 	 * @private
 	 */
-	MessageView.prototype._fnHandleItemPress = function (oEvent) {
-		var oListItem = oEvent.getParameter("listItem"),
-			oMessageItem = oListItem._oMessageItem,
-			aDetailsPageContent = this._detailsPage.getContent() || [];
-
-		var asyncDescHandler = this.getAsyncDescriptionHandler();
-
-		var loadAndNavigateToDetailsPage = function (suppressNavigate) {
-			this._setTitle(oMessageItem);
-			this._sanitizeDescription(oMessageItem);
-			this._setIcon(oMessageItem, oListItem);
-			this._detailsPage.rerender();
-			this.fireLongtextLoaded();
-
-			if (!suppressNavigate) {
-				this._navContainer.to(this._detailsPage);
-			}
-		}.bind(this);
+	MessageView.prototype._fnHandleForwardNavigation = function (oListItem, sTransiotionName) {
+		var oMessageItem = oListItem._oMessageItem,
+			aDetailsPageContent = this._detailsPage.getContent() || [],
+			asyncDescHandler = this.getAsyncDescriptionHandler();
 
 		this._previousIconTypeClass = this._previousIconTypeClass || "";
 
@@ -975,15 +970,7 @@ sap.ui.define([
 			messageTypeFilter: this._getCurrentMessageTypeFilter()
 		});
 
-		aDetailsPageContent.forEach(function (oControl) {
-			if (oControl instanceof Link) {
-				// Move the Link back to the MessageItem
-				this._oLastSelectedItem.setLink(oControl);
-				oControl.removeAllAriaLabelledBy();
-			} else {
-				oControl.destroy();
-			}
-		}, this);
+		this._clearDetailsPage.call(this, aDetailsPageContent);
 
 		if (typeof asyncDescHandler === "function" && !!oMessageItem.getLongtextUrl()) {
 			// Set markupDescription to true as markup description should be processed as markup
@@ -998,7 +985,7 @@ sap.ui.define([
 
 			var proceed = function () {
 				this._detailsPage.setBusy(false);
-				loadAndNavigateToDetailsPage(true);
+				this._navigateToDetails.call(this, oMessageItem, oListItem, sTransiotionName, true);
 			}.bind(this);
 
 			oPromise
@@ -1017,10 +1004,49 @@ sap.ui.define([
 				item: oMessageItem
 			});
 		} else {
-			loadAndNavigateToDetailsPage();
+			this._navigateToDetails.call(this, oMessageItem, oListItem, sTransiotionName, false);
 		}
 
 		this._listPage.$().attr("aria-hidden", "true");
+	};
+
+	/**
+	 * Handles click of the ListItems
+	 *
+	 * @param {jQuery.Event} oEvent ListItem click event object
+	 * @private
+	 */
+	MessageView.prototype._fnHandleItemPress = function (oEvent) {
+		this._fnHandleForwardNavigation(oEvent.getParameter("listItem"), "slide");
+	};
+
+	MessageView.prototype._navigateToDetails = function(oMessageItem, oListItem, sTransiotionName, bSuppressNavigate) {
+		this._setTitle(oMessageItem);
+		this._sanitizeDescription(oMessageItem);
+		this._setIcon(oMessageItem, oListItem);
+		this._detailsPage.rerender();
+		this.fireLongtextLoaded();
+
+		if (!bSuppressNavigate) {
+			this._navContainer.to(this._detailsPage, sTransiotionName);
+		}
+	};
+
+	/**
+	 * Destroys the content of details page
+	 *
+	 * @private
+	 */
+	MessageView.prototype._clearDetailsPage = function (aDetailsPageContent) {
+		aDetailsPageContent.forEach(function (oControl) {
+			if (oControl instanceof Link) {
+				// Move the Link back to the MessageItem
+				this._oLastSelectedItem.setLink(oControl);
+				oControl.removeAllAriaLabelledBy();
+			} else {
+				oControl.destroy();
+			}
+		}, this);
 	};
 
 	/**
