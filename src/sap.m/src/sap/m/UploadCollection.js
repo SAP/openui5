@@ -3020,22 +3020,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		 */
 		UploadCollection.prototype._setFocusAfterDeletion = function() {
 			var iLength = this.aItems.length;
-			var sLineId ;
+			var sLineId;
 
-			if (iLength === 0){
+			if (iLength === 0) {
 				this._oFileUploader.focus();
 			} else {
 				var iLineNumber = this.sDeletedItemId.split("-").pop();
-				//Deleted item is not the last one of the list
-				if ((iLength - 1) >= iLineNumber) {
+				// If the bottommost item has been deleted, its predecessor receives focus.
+				// If any other item has been deleted, its successor receives focus.
+				if (iLineNumber <= iLength - 1)  {
 					sLineId = this.sDeletedItemId + "-cli";
 				} else {
-					sLineId = this.aItems.pop().sId + "-cli";
+					sLineId = this.aItems[this.aItems.length - 1].sId + "-cli";
 				}
 				this._setFocusToLineItem(sLineId);
-				}this.sDeletedItemId = null;
 			}
-		;
+
+			this.sDeletedItemId = null;
+		};
 
 		/**
 		 *  Set the focus to the list item.
