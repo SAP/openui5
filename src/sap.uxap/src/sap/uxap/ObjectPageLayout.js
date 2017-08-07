@@ -1738,6 +1738,11 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onUpdateScreenSize = function (oEvent) {
 
+		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
+			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
+			return;
+		}
+
 		if (!this._bDomReady) {
 			jQuery.sap.log.info("ObjectPageLayout :: cannot _onUpdateScreenSize before dom is ready");
 			return;
