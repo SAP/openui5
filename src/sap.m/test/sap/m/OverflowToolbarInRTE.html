@@ -16,7 +16,7 @@
 		var oCore = sap.ui.getCore();
 
 		oCore.attachInit(function () {
-			function _buildLayout(App, Page, oContent) {
+			function _buildLayout(App, Page, aContent) {
 				var oApp = new App("myApp", {
 					initialPage: "myPage"
 				});
@@ -25,7 +25,7 @@
 					title: "OverflowToolbar in RichTextEditor",
 					showNavButton: true,
 					contentOnlyBusy: true,
-					content: [oContent]
+					content: aContent
 				});
 
 				oApp.addPage(oPage).placeAt("content");
@@ -55,8 +55,10 @@
 								new Button({id: "my-custom-button", text: "Custom Button", icon: "sap-icon://crm-sales", type: "Transparent"})
 							]
 						});
+						var oButton1 = new Button({id: "myRTE__wrapper0-CancelInsertImageButton", text: "Close Image", type: "Transparent"});
+						var oButton2 = new Button({id: "myRTE__wrapper0-CancelInsertLinkButton", text: "Close Link", type: "Transparent"});
 
-						_buildLayout(App, Page, oToolbar);
+						_buildLayout(App, Page, [oToolbar, oButton2, oButton1]);
 					});
 			}
 
@@ -92,7 +94,7 @@
 						}
 					});
 
-					_buildLayout(App, Page, oRichTextEditor);
+					_buildLayout(App, Page, [oRichTextEditor]);
 				});
 		});
 	</script>
