@@ -128,6 +128,91 @@ sap.ui.define([
 				}
 			}
 			oPage.setBusy(false);
+		},
+
+		/**
+		 * Navigates to Edit mode of content.
+		 * @public
+		 */
+		onEditClicked: function () {
+			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var oContentData = oSelectedContentModel.getData();
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+			oRouter.navTo("ContentDetailsEdit", {
+				"layer": oContentData.layer,
+				"namespace": HtmlEscapeUtils.escapeSlashes(oContentData.namespace),
+				"fileName": oContentData.fileName,
+				"fileType": oContentData.fileType
+			});
+		},
+
+		/**
+		 * Handles the deletion button;
+		 * The function displays a confirmation dialog. On confirmation, the deletion of the displayed content is triggered.
+		 * @public
+		 */
+		onDeleteClicked: function () {
+			var that = this;
+
+			var oDialog = new Dialog({
+				title: "{i18n>confirmDeletionTitle}",
+				type: "Message",
+				content: new Text({text: "{i18n>questionFileDeletion}"}),
+				beginButton: new Button({
+					text: "{i18n>confirm}",
+					type: sap.m.ButtonType.Reject,
+					press: function () {
+						that._deleteFile();
+						oDialog.close();
+					}
+				}),
+				endButton: new Button({
+					text: "{i18n>cancel}",
+					press: function () {
+						oDialog.close();
+					}
+				}),
+				afterClose: function () {
+					oDialog.destroy();
+				}
+			});
+
+			this.getView().addDependent(oDialog);
+
+			oDialog.open();
+		},
+
+		/**
+		 * Handler if a deletion was confirmed.
+		 * @returns {Promise} - <code>LRepConnector<code> "deleteFile" promise
+		 * @private
+		 */
+		_deleteFile: function () {
+			var oSelectedContentModel = this.getView().getModel("selectedContent");
+			var oContentData = oSelectedContentModel.getData();
+			var sSelectedLayer = oContentData.layer;
+			var sContentLayer = "";
+
+			oContentData.metadata.some(function (mMetadata) {
+				if (mMetadata.name === "layer") {
+					sContentLayer = mMetadata.value;
+					return true;
+				}
+			});
+
+			var sNamespace = oContentData.namespace;
+			var sFileName = oContentData.fileName;
+			var sFileType = oContentData.fileType;
+
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+
+			return LRepConnector.deleteFile(sContentLayer, sNamespace, sFileName, sFileType).then(function () {
+				oRouter.navTo("LayerContentMaster", {
+					"layer": sSelectedLayer,
+					"namespace": HtmlEscapeUtils.escapeSlashes(sNamespace)
+				});
+			});
 		}
 	});
 });
