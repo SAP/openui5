@@ -414,15 +414,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 								mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
 							}
 						} else if (sName === 'metadataContexts') {
-							var oMetaContextsInfo;
+							var mMetaContextsInfo = null;
 
-							if (XMLTemplateProcessor._preprocessMetadataContexts) {
-								oMetaContextsInfo =  XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(),node,oView._oContainingView.oController);
+							try {
+								mMetaContextsInfo = XMLTemplateProcessor._calculatedModelMapping(sValue,oView._oContainingView.oController,true);
+							} catch (e) {
+								jQuery.sap.log.error(oView + ":" + e.message);
 							}
 
-							if (oMetaContextsInfo) {
-								mSettings.metadataContexts = mSettings.metadataContexts || {};
-								mSettings.metadataContexts[oMetaContextsInfo.model || undefined] = oMetaContextsInfo;
+							if (mMetaContextsInfo) {
+								mSettings.metadataContexts = mMetaContextsInfo;
+
+								if (XMLTemplateProcessor._preprocessMetadataContexts) {
+									XMLTemplateProcessor._preprocessMetadataContexts(oClass.getMetadata().getName(), mSettings, oView._oContainingView.oController);
+								}
 							}
 						} else if (sName.indexOf(":") > -1) {  // namespace-prefixed attribute found
 							if (attr.namespaceURI === "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1") {  // CustomData attribute found
@@ -658,11 +663,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 		 * Needs to be re-implemented.
 		 *
 		 * @param {string} sClassName - The class of the control to be created
-		 * @param {object} oNode - The XML node
+		 * @param {object} oNode - The the settings
 		 * @param {object} oContext - The current context of the control
 		 * @private
 		 */
 		XMLTemplateProcessor._preprocessMetadataContexts = null;
+
+		/**
+		 * Create a named map for models and binding
+		 *
+		 * @param{string} The string value of a complex binding containing one or more models
+		 * @param {object} oContext - The current context
+		 *
+		 * @return{object} a named map keyed by model name
+		 */
+		XMLTemplateProcessor._calculatedModelMapping = function(sBinding,oContext,bAllowMultipleBindings) {
+			var oCtx,
+				mBinding = {},
+				oBinding = ManagedObject.bindingParser(sBinding, oContext);
+
+			function checkFormatter(aFragments) {
+				// the pattern must be /d,/d,/d
+				// => aFragments.length is even
+				if (aFragments.length % 2 === 0) {
+					throw new Error("The last entry is no binding");
+				}
+
+				// must start with a number
+				for (var i = 1; i <= aFragments.length; i = i + 2) {
+					if (typeof aFragments[i - 1] == 'string') {
+						throw new Error("Binding expected not a string");
+					}
+
+					if (aFragments[i]) {
+						if ((typeof aFragments[i] != 'string') || (aFragments[i] != ",")) {
+							throw new Error("Missing delimiter ','");
+						}
+					}
+				}
+			}
+
+			// check the formatter
+
+			if (oBinding) {
+				if (!oBinding.formatter) {
+					oCtx = oBinding;
+					oBinding = {parts: [oCtx]};
+				} else {
+					//check the text Arrangments
+					checkFormatter(oBinding.formatter.textFragments);
+					//only allow a number at the binding
+				}
+
+				for (var i = 0; i < oBinding.parts.length; i++) {
+					oCtx = oBinding.parts[i];
+					mBinding[oCtx.model] = mBinding[oCtx.model] || (bAllowMultipleBindings ? [] : null);
+
+					if (Array.isArray(mBinding[oCtx.model])) {
+						mBinding[oCtx.model].push(oCtx);
+					} else {
+						// error when two contexts of overrule???
+						mBinding[oCtx.model] = oCtx;
+					}
+				}
+			}
+
+			return mBinding;
+		};
 
 	return XMLTemplateProcessor;
 
