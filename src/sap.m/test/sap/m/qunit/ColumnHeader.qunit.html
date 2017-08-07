@@ -16,6 +16,7 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/m/ColumnHeader"></script>
 
 		<script>
 			function createSUT() {
@@ -92,16 +93,53 @@
 
 			QUnit.test("Basic properties and DOM checks", function(assert) {
 				var sut = createSUT();
+				var oCustomTableAdapter = {
+					interactive: false,
+					rowAggregation: "items",
+					name: "CustomTableAdapter"
+				};
 				sut.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				var oColumnHeader = sut.getColumns()[0].getHeader();
+				var $oColumnHeader = oColumnHeader.$();
 
 				assert.ok(oColumnHeader instanceof sap.m.ColumnHeader, "ColumnHeader object created");
 				assert.ok(oColumnHeader.getDomRef(), "ColumnHeader is in DOM tree");
 				assert.ok(oColumnHeader.$().hasClass("sapMColumnHeader"), "ColumnHeader style class is set correctly");
 				assert.equal(oColumnHeader.getText(), "Name", "ColumnHeader text set correctly");
-				assert.ok(oColumnHeader.getTableAdapter().tabbable, "ColumnHeader is tabbable as parent control is sap.m.Table");
+				assert.ok(oColumnHeader.getTableAdapter().interactive, "ColumnHeader is interactive as configured by the table adapter");
+				assert.equal($oColumnHeader.attr("tabindex"), "0", "ColumnHeader is interactive, hence it is added to tab chain");
 				assert.ok(oColumnHeader.getViewSettingsPopover() instanceof sap.m.ViewSettingsPopover, "ViewSettingsPopover aggregration found");
+
+				oColumnHeader.setTableAdapter(oCustomTableAdapter);
+				assert.equal(oColumnHeader.getTableAdapter().name, "CustomTableAdapter", "Table adapter was set correctly");
+				assert.ok(!oColumnHeader.getAccessibilityInfo().role, "interactive=false hence no role as assigned to the control");
+
+				sut.destroy();
+			});
+
+			QUnit.test("ColumnHeader behaviour when sorted and filtered is set explicitly during configuration", function(assert) {
+				var oColumn = new sap.m.Column({
+					header: new sap.m.ColumnHeader({
+						text: "Test",
+						sortOrder: "Ascending",
+						sorted: true,
+						filtered: true
+					}),
+					demandPopin: true,
+					minScreenWidth : "Tablet",
+					popinDisplay: "Inline"
+				});
+				var oItem = new sap.m.ColumnListItem({});
+				var sut = new sap.m.Table({
+					columns: oColumn,
+					items: oItem
+				});
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oColumn.getHeader().getAggregation("_sortIcon").getSrc(), "sap-icon://sort-ascending", "Ascending sort icon added correctly.");
+				assert.equal(oColumn.getHeader().getAggregation("_filterIcon").getSrc(), "sap-icon://filter", "Filter icon is set correctly");
 
 				sut.destroy();
 			});
@@ -152,6 +190,10 @@
 				assert.ok(!oColumnHeader.getAggregation("_filterIcon"), "Filter icon not renderered");
 				assert.ok(!oColumnHeader.getFiltered(), "Initial value of filtered = false");
 
+				oColumnHeader.setFiltered(false);
+				assert.ok(!oColumnHeader.getFiltered(), "filtered property set to false");
+				assert.ok(!oColumnHeader.getAggregation("_filterIcon"), "Filter icon aggregation was not affected when setFiltered(false) is called");
+
 				qutils.triggerEvent("click", oColumnHeader);
 
 				oViewSettingsPopover._segmentedButton.getItems().forEach(function(button) {
@@ -172,6 +214,27 @@
 				assert.ok(oColumnHeader.getAggregation("_filterIcon") instanceof sap.ui.core.Icon, "Filter icon aggregation found");
 				assert.equal(oColumnHeader.getAggregation("_filterIcon").getSrc(), "sap-icon://filter", "Filter icon is set correctly");
 
+				oColumnHeader.setFiltered(true);
+				assert.ok(oColumnHeader.getAggregation("_filterIcon").getVisible(), "Filter icon is visible when setFiltered(true) is called");
+
+				oColumnHeader.setFiltered(false);
+				assert.ok(!oColumnHeader.getAggregation("_filterIcon").getVisible(), "Filter icon is not visible when setFiltered(false) is called");
+
+				sut.destroy();
+			});
+
+			QUnit.test("ColumnHeader text alignment", function(assert) {
+				var sut = createSUT();
+				sut.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oColumn = sut.getColumns()[0];
+				var oColumnHeader = oColumn.getHeader();
+				oColumn.setHAlign(sap.ui.core.TextAlign.End);
+				sap.ui.getCore().applyChanges();
+				var $columnHeader = oColumnHeader.$();
+
+				assert.equal($columnHeader.css("text-align"), "right", "ColumnHeader text is right aligned as specified by the Column settings");
+
 				sut.destroy();
 			});
 
@@ -185,7 +248,7 @@
 					popinDisplay: "Inline"
 				});
 				var oItem = new sap.m.ColumnListItem({});
-				sut = new sap.m.Table({
+				var sut = new sap.m.Table({
 					columns: oColumn,
 					items: oItem
 				});
@@ -198,6 +261,7 @@
 				assert.ok(sut.getColumns()[0].isPopin(), "Column rendered as popin");
 				assert.ok(oClonedHeader instanceof sap.m.Label, "ColumnHeader is rendered as sap.m.Label in popin");
 				assert.equal(oColumnHeader.getText(), oClonedHeader.getText(), "ColumnHeader text is correctly set to sap.m.Label");
+
 				sut.destroy();
 			});
 
@@ -215,7 +279,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
 		<div id="qunit-fixture"></div>
+		<div id="content"></div>
 	</body>
 </html>

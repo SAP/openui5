@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @since 1.50
+	 * @since 1.52
 	 * @private
 	 * @alias sap.m.ColumnHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -162,7 +162,7 @@ sap.ui.define([
 	 */
 	ColumnHeader.prototype.getTableAdapter = function() {
 		return this._oAdapter || {
-			tabbable: true,
+			interactive: true,
 			rowAggregation: "items"
 		};
 	};
@@ -173,7 +173,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ColumnHeader.prototype.onclick = function(oEvent) {
-		this._openViewSettingsPopover();
+		if (this.getTableAdapter().interactive) {
+			this._openColumnActions();
+		}
 	};
 
 	ColumnHeader.prototype.onsapselect = ColumnHeader.prototype.onclick;
@@ -182,16 +184,12 @@ sap.ui.define([
 	 * Handler for opening the ViewSettingsPopover.
 	 * @private
 	 */
-	ColumnHeader.prototype._openViewSettingsPopover = function() {
+	ColumnHeader.prototype._openColumnActions = function() {
 		var oViewSettingsPopover = this.getViewSettingsPopover();
 		if (oViewSettingsPopover != null) {
 			var $this = this.$();
 			oViewSettingsPopover.openBy(this);
-			// TBD: ViewSettingsPopover calculates the positioning of the popover in _getPopover()
-			// this causes exception in IE
-			// $().outerHeight() can be using in ViewSettingsPopover or parsing $().height() to integer value
-			// for resolving the issue in IE
-			oViewSettingsPopover._getPopover(this).setContentWidth($this.width() + "px");
+			// overwrite the popover position to open over the Column
 			oViewSettingsPopover._getPopover(this).setOffsetY(-$this.outerHeight());
 		}
 	};
@@ -246,6 +244,35 @@ sap.ui.define([
 		// this is also needed so that the application can react on it and clear the filtering on the table
 		// should be discussed with ViewSettingsPopover colleagues
 		this.setFiltered(true);
+	};
+
+	ColumnHeader.prototype.getAccessibilityInfo = function() {
+		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			sAnnouncement = this.getText() + " ";
+
+		if (this.getTableAdapter().interactive) {
+			if (this.getSortOrder()) {
+				sAnnouncement += oBundle.getText("COLUMNHEADER_SORTED") + " ";
+				sAnnouncement += (this.getSortOrder() === "Ascending" ? oBundle.getText("COLUMNHEADER_SORTED_ASCENDING") : oBundle.getText("COLUMNHEADER_SORTED_DESCENDING")) + " ";
+			}
+
+			if (this.getFiltered()) {
+				sAnnouncement += oBundle.getText("COLUMNHEADER_FILTERED") + " ";
+			}
+
+			sAnnouncement += oBundle.getText("COLUMNHEADER_ACCESS_COLUMN_ACTIONS");
+
+			return {
+				role: "button",
+				focusable: true,
+				description: sAnnouncement
+			};
+		}
+
+		return {
+			focusable: false,
+			description: sAnnouncement
+		};
 	};
 
 	ColumnHeader.prototype.exit = function() {
