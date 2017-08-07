@@ -147,5 +147,97 @@ sap.ui.require([
 		}.bind(this));
 	});
 
+	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			FakeLrepLocalStorage.deleteChanges();
+			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+
+			this.fnUndoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onUndo");
+			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "_onRedo");
+
+			// Start RTA
+			var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars : true,
+				flexSettings: {
+					developerMode: false
+				}
+			});
+
+			this.oRta.attachStart(function() {
+				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
+				this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
+				done();
+			}.bind(this));
+
+			this.oRta.start();
+		},
+
+		afterEach : function(assert) {
+			sandbox.restore();
+			this.oRta.destroy();
+			FakeLrepLocalStorage.deleteChanges();
+		}
+	});
+
+	QUnit.test("with focus on an overlay", function(assert) {
+		this.oElementOverlay.getDomRef().focus();
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
+		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
+		assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
+	});
+
+	QUnit.test("with focus on the toolbar", function(assert) {
+		this.oRta._oToolsMenu.getDomRef().focus();
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
+		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
+		assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
+	});
+
+	QUnit.test("with focus on an open dialog", function(assert) {
+		var done = assert.async();
+
+		this.oElementOverlay.focus();
+		sap.ui.test.qunit.triggerKeydown(this.oElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
+		oContextMenuItem.getDomRef().click();
+		sap.ui.getCore().applyChanges();
+
+		var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
+		oDialog.attachOpened(function() {
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
+			assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
+			assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+			sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
+			sap.ui.getCore().applyChanges();
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("during rename", function(assert) {
+		this.oElementOverlay.focus();
+		sap.ui.test.qunit.triggerKeydown(this.oElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[0];
+		oContextMenuItem.getDomRef().click();
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
+		assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+
+		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
+		assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+	});
+
 	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested();
 });
