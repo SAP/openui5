@@ -112,7 +112,9 @@ sap.ui.define([
 			oEvent.stopPropagation();
 		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.V) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
 			// CTRL+V
-			this.paste(oOverlay);
+			if (this.getElementMover().getMovedOverlay()) {
+				this.paste(oOverlay);
+			}
 			oEvent.stopPropagation();
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ESCAPE) {
 			// ESC
