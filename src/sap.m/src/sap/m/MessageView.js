@@ -755,6 +755,16 @@ sap.ui.define([
 			}
 		}, this);
 
+		// If there is only the always-present 'all' button and a single group button
+		// no need for a segmented button
+		var bSegmentedButtonVisible = this._oSegmentedButton.getButtons().length > 2;
+		this._oSegmentedButton.setVisible(bSegmentedButtonVisible);
+
+		// If SegmentedButton shoud not be visible,
+		// and there is no custom button - hide the initial page's header
+		var bListPageHeaderVisible = bSegmentedButtonVisible || !!this.getHeaderButton();
+		this._listPage.setShowHeader(bListPageHeaderVisible);
+
 		return this;
 	};
 
