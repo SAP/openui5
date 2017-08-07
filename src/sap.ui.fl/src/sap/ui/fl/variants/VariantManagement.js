@@ -387,10 +387,10 @@ sap.ui.define([
 	};
 
 	VariantManagement.prototype.setSelectedVariantKey = function(sKey) {
-		var oModel = this.getModel(VariantManagement.MODEL_NAME);
+		var sLocalId, oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			// oModel.setProperty(this.oContext + "/currentVariant", sKey);
-			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
+			sLocalId = this._getLocalId();
 			oModel._updateCurrentVariant(sLocalId, sKey);
 		}
 
@@ -463,19 +463,24 @@ sap.ui.define([
 
 	VariantManagement.prototype._setBindingContext = function() {
 
-		var oModel, sVariantKey;
+		var oModel, sLocalId;
 
 		if (!this.oContext) {
 			oModel = this.getModel(VariantManagement.MODEL_NAME);
-			sVariantKey = this.getId();
-			var sLocalId = BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
-			if (oModel && sVariantKey) {
-				oModel.ensureStandardEntryExists(sLocalId);
-				this.oContext = new Context(oModel, "/" + sLocalId);
+			if (oModel) {
+				sLocalId = this._getLocalId();
+				if (sLocalId) {
+					oModel.ensureStandardEntryExists(sLocalId);
+					this.oContext = new Context(oModel, "/" + sLocalId);
 
-				this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+					this.setBindingContext(this.oContext, VariantManagement.MODEL_NAME);
+				}
 			}
 		}
+	};
+
+	VariantManagement.prototype._getLocalId = function() {
+		return BaseTreeModifier.getSelector(this, flUtils.getComponentForControl(this)).id;
 	};
 
 	VariantManagement.prototype._setModel = function() {
