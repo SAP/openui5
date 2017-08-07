@@ -193,28 +193,28 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 
 	/**
 	 * Handles tap/click
-	 * @type void
+	 * @returns void
 	 * @private
 	 */
 	MessageStrip.prototype.ontap = MSUtils.handleMSCloseButtonInteraction;
 
 	/**
 	 * Handles enter key
-	 * @type void
+	 * @returns void
 	 * @private
 	 */
 	MessageStrip.prototype.onsapenter = MSUtils.handleMSCloseButtonInteraction;
 
 	/**
 	 * Handles space key
-	 * @type void
+	 * @returns void
 	 * @private
 	 */
 	MessageStrip.prototype.onsapspace = MSUtils.handleMSCloseButtonInteraction;
 
 	/**
 	 * Handles mobile touch events
-	 * @type void
+	 * @returns void
 	 * @private
 	 */
 	MessageStrip.prototype.ontouchmove = function (oEvent) {
@@ -226,7 +226,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * Closes the MessageStrip.
 	 * This method sets the visible property of the MessageStrip to false.
 	 * The MessageStrip can be shown again by setting the visible property to true.
-	 * @type void
+	 * @returns void
 	 * @public
 	 */
 	MessageStrip.prototype.close = function () {

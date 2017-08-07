@@ -244,8 +244,8 @@ sap.ui.define([ "jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolb
 		 * @static
 		 * @protected
 		 * @param {object} mDefaultHandlers An object setting default callbacks
-		 * @param {function} mDefaultHandlers.asyncDescriptionHandler
-		 * @param {function} mDefaultHandlers.asyncURLHandler
+		 * @param {function} mDefaultHandlers.asyncDescriptionHandler The description handler
+		 * @param {function} mDefaultHandlers.asyncURLHandler The URL handler
 		 */
 		MessagePopover.setDefaultHandlers = function (mDefaultHandlers) {
 			ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
