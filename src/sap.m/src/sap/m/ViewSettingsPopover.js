@@ -1575,7 +1575,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			if (oOpener  && oOpener.$()) {
-				this._popover.setOffsetY(-oOpener.$().height());
+				this._popover.setOffsetY(-oOpener.$().outerHeight());
 			}
 			return this._popover;
 		};
