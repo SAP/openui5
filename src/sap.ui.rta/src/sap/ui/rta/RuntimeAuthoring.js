@@ -703,18 +703,26 @@ sap.ui.define([
 	// ---- backward compatibility API
 
 	RuntimeAuthoring.prototype._onKeyDown = function(oEvent) {
-		// on macintosh os cmd-key is used instead of ctrl-key
-		var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
-		if ((oEvent.keyCode === jQuery.sap.KeyCodes.Z) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
-			// CTRL+Z
-			this._onUndo()
+		// if for example the addField Dialog/transport/reset Popup is open, we don't want the user to be able to undo/redo
+		var bFocusInsideOverlayContainer = Overlay.getOverlayContainer().contains(document.activeElement);
+		var bFocusInsideRtaToolbar = this._oToolsMenu.getDomRef().contains(document.activeElement);
+		var bFocusOnBody = document.body === document.activeElement;
+		var bFocusInsideRenameField = jQuery(".sapUiRtaEditableField").get(0) ? jQuery(".sapUiRtaEditableField").get(0).contains(document.activeElement) : false;
 
-			.then(oEvent.stopPropagation.bind(oEvent));
-		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.Y) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
-			// CTRL+Y
-			this._onRedo()
+		if ((bFocusInsideOverlayContainer || bFocusInsideRtaToolbar || bFocusOnBody) && !bFocusInsideRenameField) {
+			// on macintosh os cmd-key is used instead of ctrl-key
+			var bCtrlKey = sap.ui.Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+			if ((oEvent.keyCode === jQuery.sap.KeyCodes.Z) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
+				// CTRL+Z
+				this._onUndo()
 
-			.then(oEvent.stopPropagation.bind(oEvent));
+				.then(oEvent.stopPropagation.bind(oEvent));
+			} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.Y) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (bCtrlKey === true)) {
+				// CTRL+Y
+				this._onRedo()
+
+				.then(oEvent.stopPropagation.bind(oEvent));
+			}
 		}
 	};
 
