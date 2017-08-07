@@ -114,9 +114,10 @@ sap.ui.define([
 			var oContentData = oSelectedContentModel.getData();
 			var sLayer;
 
-			oContentData.metadata.forEach(function (oMetadata) {
+			oContentData.metadata.some(function (oMetadata) {
 				if (oMetadata.name === "layer") {
 					sLayer = oMetadata.value;
+					return true;
 				}
 			});
 
