@@ -107,7 +107,7 @@ sap.ui.define([
 				/**
 				 * Defines whether the header of details page will be shown
 				 */
-				showDetailsHeader: { type: "boolean", group: "Behavior", defaultValue: true }
+				showDetailsPageHeader: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -252,7 +252,7 @@ sap.ui.define([
 		var oGroupedItems, aItems = this.getItems();
 
 		this._clearLists();
-		this._detailsPage.setShowHeader(this.getShowDetailsHeader());
+		this._detailsPage.setShowHeader(this.getShowDetailsPageHeader());
 
 		if (this.getGroupItems()) {
 			oGroupedItems = this._groupItems(aItems);

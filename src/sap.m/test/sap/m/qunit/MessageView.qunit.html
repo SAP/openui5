@@ -358,8 +358,8 @@
 				customButton.destroy();
 			});
 
-			QUnit.test("showDetailsHeader property", function(assert) {
-				this.oMessageView.setShowDetailsHeader(false);
+			QUnit.test("showDetailsPageHeader property", function(assert) {
+				this.oMessageView.setShowDetailsPageHeader(false);
 				sap.ui.getCore().applyChanges();
 
 				this.oDialog.open();
