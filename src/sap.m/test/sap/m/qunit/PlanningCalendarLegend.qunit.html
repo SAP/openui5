@@ -246,9 +246,9 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert --section header
-			assert.equal(oPCLegend.$().find(".sapUiUfdCalLegendHeader").length, 2, "Two header sections should be rendered");
-			assert.equal(oPCLegend.$().find(".sapUiUfdCalLegendHeader").get(0).innerText, "MyItemsHeader", "The calendar section should be available");
-			assert.equal(oPCLegend.$().find(".sapUiUfdCalLegendHeader").get(1).innerText, "MyAppointmentItemsHeader", "The Appointments section should be available");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 2, "Two header sections should be rendered");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(0).innerText, "MyItemsHeader", "The calendar section should be available");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").get(1).innerText, "MyAppointmentItemsHeader", "The Appointments section should be available");
 
 			//Assert -- Types
 			assert.equal(oPCLegend.$().find(".sapUiUnifiedLegendItems")[0].childElementCount, 5, 'Calendar section should contain exact amount of elements');
@@ -267,8 +267,8 @@
 			sap.ui.getCore().applyChanges();
 
 			//Assert
-			assert.equal(oPCLegend.$().find(".sapUiUfdCalLegendHeader").length, 1, "One header sections should rendered");
-			assert.equal(oPCLegend.$().find(".sapUiUfdCalLegendHeader").text(), "Calendar", "Only the calendar section should be available");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").length, 1, "One header sections should rendered");
+			assert.equal(oPCLegend.$().find(".sapMPlanCalLegendHeader").text(), "Calendar", "Only the calendar section should be available");
 
 			//Cleanup
 			oPCLegend.destroy();
