@@ -523,7 +523,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (vTypes === "") {
 				return [];
 			} else {
-				return vTypes.split(",");
+				return vTypes.split(",").map(function (sType) {
+					return sType.trim();
+				});
 			}
 		}
 		return vTypes;
