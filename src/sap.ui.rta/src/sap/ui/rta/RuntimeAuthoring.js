@@ -1110,6 +1110,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * Function to automatically start the rename plugin on a container when it gets created
+	 * @param {object} vAction       The create action from designtime metadata
+	 * @param {string} sNewControlID The id of the newly created container
+	 */
+	RuntimeAuthoring.prototype._setRenameOnCreatedContainer = function(vAction, sNewControlID) {
+		var oNewContainerOverlay = this.getPlugins()["createContainer"].getCreatedContainerOverlay(vAction, sNewControlID);
+		if (oNewContainerOverlay) {
+			oNewContainerOverlay.setSelected(true);
+
+			if (this.getPlugins()["rename"]) {
+				var oDelegate = {
+					"onAfterRendering" : function() {
+						// TODO : remove timeout
+						setTimeout(function() {
+							this.getPlugins()["rename"].startEdit(oNewContainerOverlay);
+						}.bind(this), 0);
+						oNewContainerOverlay.removeEventDelegate(oDelegate);
+					}.bind(this)
+				};
+
+				oNewContainerOverlay.addEventDelegate(oDelegate);
+			}
+		}
+	};
+
+	/**
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
@@ -1119,9 +1145,16 @@ sap.ui.define([
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {
 		this._handleStopCutPaste();
 
+		var vAction = oEvent.getParameter("action");
+		var sNewControlID = oEvent.getParameter("newControlId");
+
 		var oCommand = oEvent.getParameter("command");
 		if (oCommand instanceof sap.ui.rta.command.BaseCommand) {
-			return this.getCommandStack().pushAndExecute(oCommand);
+			return this.getCommandStack().pushAndExecute(oCommand).then(function(){
+				if (vAction && sNewControlID){
+					this._setRenameOnCreatedContainer(vAction, sNewControlID);
+				}
+			}.bind(this));
 		}
 		return Promise.resolve();
 	};
@@ -1343,23 +1376,7 @@ sap.ui.define([
 		this._handleStopCutPaste();
 
 		var oOverlay = aOverlays[0];
-		var oNewContainerOverlay = this.getPlugins()["createContainer"].handleCreate(bSibling, oOverlay);
-
-		if (this.getPlugins()["rename"]) {
-
-			var oDelegate = {
-				"onAfterRendering" : function() {
-					// TODO : remove timeout
-					setTimeout(function() {
-						this.getPlugins()["rename"].startEdit(oNewContainerOverlay);
-					}.bind(this), 0);
-					oNewContainerOverlay.removeEventDelegate(oDelegate);
-				}.bind(this)
-			};
-
-			oNewContainerOverlay.addEventDelegate(oDelegate);
-		}
-
+		this.getPlugins()["createContainer"].handleCreate(bSibling, oOverlay);
 	};
 
 	/**
