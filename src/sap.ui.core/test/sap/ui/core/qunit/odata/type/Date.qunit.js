@@ -230,6 +230,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getModelFormat()", function (assert) {
+		var oType = new DateType(),
+			sModelValue = "2015-11-27",
+			oFormat = oType.getModelFormat(),
+			oParsedDate = oFormat.parse(sModelValue);
+
+		assert.ok(oParsedDate instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedDate.getTime(), Date.UTC(2015, 10, 27), "parse value");
+		assert.strictEqual(oFormat.format(oParsedDate), sModelValue, "format");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("localization change", function (assert) {
 		var oControl = new sap.ui.core.Control(),
 			oType = new DateType();
