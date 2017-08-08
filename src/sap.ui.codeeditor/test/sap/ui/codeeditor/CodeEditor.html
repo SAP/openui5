@@ -71,8 +71,14 @@
 </script>
 
 <script>
-
+	var codeEditor;
 	sap.ui.getCore().attachInit(function() {
+		codeEditor = new sap.ui.codeeditor.CodeEditor({
+			type: "html",
+			value: jQuery("#code").html().trim().replace(/&sol;/g, "/"), // Handling escaped closing script tag sol
+			height: "auto",
+			maxLines: 70
+		});
 
 		new sap.m.App({
 			pages: [
@@ -80,12 +86,7 @@
 					title: "Code Editor",
 					content: [
 						new sap.m.Label({text: "Hello World App"}),
-						new sap.ui.codeeditor.CodeEditor({
-							type: "html",
-							value: jQuery("#code").html().trim().replace(/&sol;/g, "/"), // Handling escaped closing script tag sol
-							height: "auto",
-							maxLines: 70
-						}),
+						codeEditor,
 						new sap.m.Button({text: "Save"})
 					]
 				})
