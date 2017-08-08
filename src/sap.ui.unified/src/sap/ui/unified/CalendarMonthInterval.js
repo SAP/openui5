@@ -1298,8 +1298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			.css("color", "inherit")
 			.css("cursor", "inherit")
 			.css("pointer-events", "none");
-
-		this._showYearPicker();
 	};
 
 	CustomYearPicker.prototype._selectYear = function () {
