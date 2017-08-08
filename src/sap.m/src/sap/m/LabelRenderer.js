@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			// render bdi tag only if the browser is different from IE and Edge since it is not supported there
 			bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge,
 			bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge,
-			bDisplayOnly = oLabel.getDisplayOnly();
+			bDisplayOnly = oLabel.isDisplayOnly();
 
 		// write the HTML into the render managerr
 		rm.write("<label");
@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		}
 
 		if (bDisplayOnly) {
-		    rm.addClass("sapMLabelDisplayOnly");
+			rm.addClass("sapMLabelDisplayOnly");
 		}
 
 		rm.writeStyles();

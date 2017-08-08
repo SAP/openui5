@@ -253,6 +253,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 
 	};
 
+	/**
+	 * Labels inside of a Form must be invalidated if "editable" changed on Form
+	 * @private
+	 */
+	FormContainer.prototype.invalidateLabels = function(){
+
+		var aFormElements = this.getFormElements();
+
+		for (var i = 0; i < aFormElements.length; i++) {
+			var oFormElement = aFormElements[i];
+			oFormElement.invalidateLabels();
+		}
+
+	};
+
 	function _setExpanderIcon(oContainer){
 
 		if (!oContainer._oExpandButton) {
