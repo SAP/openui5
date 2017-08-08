@@ -46,7 +46,7 @@ sap.ui.define([
 		var oChangeDefinition = oChange.getDefinition();
 		var oTargetContainerHeader = oChange.getDependentControl("targetContainerHeader", mPropertyBag);
 		var mChangeHandlerSettings = ChangeHandlerMediator.getChangeHandlerSettings({
-			"scenario" : "addODataField",
+			"scenario" : "addODataFieldWithLabel",
 			"oDataServiceVersion" : oChangeDefinition.content && oChangeDefinition.content.oDataServiceVersion
 		});
 

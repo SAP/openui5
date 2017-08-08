@@ -36,8 +36,9 @@ function (
 
 	// Register an entry on the Change Handler Mediator (e.g. from SmartField)
 	ChangeHandlerMediator.addChangeHandlerSettings({
-		"scenario" : "addODataField",
-		"oDataServiceVersion" : "2.0"}, {
+		"scenario" : "addODataFieldWithLabel",
+		"oDataServiceVersion" : "2.0"
+	}, {
 		"requiredLibraries" : {
 			"sap.ui.comp": {
 				"minVersion": "1.48",
