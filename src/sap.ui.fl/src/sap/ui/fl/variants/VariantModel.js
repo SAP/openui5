@@ -71,9 +71,10 @@ sap.ui.define([
 	 * @param {String} sNewVariantRef The newly selected variant Ref
 	 * @private
 	 */
-	VariantModel.prototype._updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
-		this.switchToVariant(sVariantMgmtRef, sNewVariantRef);
+	VariantModel.prototype.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
+		this._switchToVariant(sVariantMgmtRef, sNewVariantRef);
 		this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
+		this.refresh(true);
 	};
 
 	/**
@@ -93,14 +94,13 @@ sap.ui.define([
 	 * @returns {promise} Returns promise that resolves after reverting of old variants and applying of new variants is completed
 	 * @public
 	 */
-	VariantModel.prototype.switchToVariant = function(sVariantMgmtRef, sNewVariantRef) {
+	VariantModel.prototype._switchToVariant = function(sVariantMgmtRef, sNewVariantRef) {
 		var sCurrentVariantRef = this.oData[sVariantMgmtRef].currentVariant;
 		var mChangesToBeSwitched = this.oFlexController._oChangePersistence.loadSwitchChangesMapForComponent(sVariantMgmtRef, sCurrentVariantRef, sNewVariantRef);
 
 		var oAppComponent = Utils.getAppComponentForControl(this.oComponent);
 
 		this.oFlexController.revertChangesOnControl(mChangesToBeSwitched.aRevert, oAppComponent);
-
 		this.oFlexController.applyVariantChanges(mChangesToBeSwitched.aNew, this.oComponent);
 	};
 

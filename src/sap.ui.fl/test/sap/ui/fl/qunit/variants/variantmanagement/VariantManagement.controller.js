@@ -192,7 +192,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oModel._updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
+			this.oModel.updateCurrentVariant = function(sVariantMgmtRef, sNewVariantRef) {
 				this.oData[sVariantMgmtRef].currentVariant = sNewVariantRef;
 			}; // overrule default
 

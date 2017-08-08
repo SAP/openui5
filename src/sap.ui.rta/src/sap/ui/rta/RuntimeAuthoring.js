@@ -29,6 +29,7 @@ sap.ui.define([
 		"sap/ui/rta/plugin/Split",
 		"sap/ui/rta/plugin/Selection",
 		"sap/ui/rta/plugin/Settings",
+		"sap/ui/rta/plugin/ControlVariant",
 		"sap/ui/dt/plugin/ContextMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
@@ -72,6 +73,7 @@ sap.ui.define([
 		SplitPlugin,
 		SelectionPlugin,
 		SettingsPlugin,
+		ControlVariantPlugin,
 		ContextMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
@@ -306,6 +308,11 @@ sap.ui.define([
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();
+
+			// Control Variant
+			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
+				commandFactory: oCommandFactory
+			});
 		}
 
 		return jQuery.extend({}, this._mDefaultPlugins);
@@ -1183,8 +1190,7 @@ sap.ui.define([
 	/**
 	 * Function to handle hiding an element by the context menu
 	 *
-	 * @param {object}
-	 *          oOverlay object
+	 * @param {array} aOverlays list of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleRemoveElement = function(aOverlays) {
@@ -1255,6 +1261,38 @@ sap.ui.define([
 		return this.getPlugins()["split"].isSplitEnabled(oOverlay);
 	};
 
+	var fnIsVariantSwitchAvailable = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantSwitchAvailable(oOverlay);
+	};
+
+	var fnIsVariantSwitchEnabled = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantSwitchEnabled(oOverlay);
+	};
+
+	var fnIsVariantRenameAvailable = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantRenameAvailable(oOverlay);
+	};
+
+	var fnIsVariantRenameEnabled = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantRenameEnabled(oOverlay);
+	};
+
+	var fnIsVariantDuplicateAvailable = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantDuplicateAvailable(oOverlay);
+	};
+
+	var fnIsVariantDuplicateEnabled = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantDuplicateEnabled(oOverlay);
+	};
+
+	var fnIsVariantConfigureAvailable = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantConfigureAvailable(oOverlay);
+	};
+
+	var fnIsVariantConfigureEnabled = function(oOverlay) {
+		return this.getPlugins()["controlVariant"].isVariantConfigureEnabled(oOverlay);
+	};
+
 	RuntimeAuthoring.prototype._buildContextMenu = function() {
 		// Return if plugin missing
 		var oContextMenuPlugin = this.getPlugins()["contextMenu"];
@@ -1262,8 +1300,9 @@ sap.ui.define([
 			return;
 		}
 
-		var oAdditionalElementsPlugin = this.getPlugins()["additionalElements"];
-		var oCreateContainerPlugin = this.getPlugins()["createContainer"];
+		var oAdditionalElementsPlugin = this.getPlugins()["additionalElements"],
+			oCreateContainerPlugin = this.getPlugins()["createContainer"],
+			oControlVariantPlugin = this.getPlugins()["controlVariant"];
 
 		if (this.getPlugins()["rename"]) {
 
@@ -1282,7 +1321,7 @@ sap.ui.define([
 			oContextMenuPlugin.addMenuItem({
 				id : "CTX_ADD_ELEMENTS_AS_SIBLING",
 				text : oAdditionalElementsPlugin.getContextMenuTitle.bind(oAdditionalElementsPlugin, true),
-				handler : oAdditionalElementsPlugin.showAvailableElements.bind(oAdditionalElementsPlugin, true),
+				handler : this._handleAdditionalElements.bind(this, true),
 				available : oAdditionalElementsPlugin.isAvailable.bind(oAdditionalElementsPlugin, true),
 				enabled : function(oOverlay) {
 					return fnMultiSelectionInactive.call(this, oOverlay) && oAdditionalElementsPlugin.isEnabled(true, oOverlay);
@@ -1292,7 +1331,7 @@ sap.ui.define([
 			oContextMenuPlugin.addMenuItem({
 				id : "CTX_ADD_ELEMENTS_AS_CHILD",
 				text : oAdditionalElementsPlugin.getContextMenuTitle.bind(oAdditionalElementsPlugin, false),
-				handler : oAdditionalElementsPlugin.showAvailableElements.bind(oAdditionalElementsPlugin, false),
+				handler : this._handleAdditionalElements.bind(this, false),
 				available : oAdditionalElementsPlugin.isAvailable.bind(oAdditionalElementsPlugin, false),
 				enabled : function(oOverlay) {
 					return fnMultiSelectionInactive.call(this, oOverlay) && oAdditionalElementsPlugin.isEnabled(false, oOverlay);
@@ -1379,6 +1418,58 @@ sap.ui.define([
 				enabled : fnIsSettingsEnabled.bind(this)
 			});
 		}
+
+		if (oControlVariantPlugin) {
+			var VARIANT_MODEL_NAME = '$FlexVariants';
+
+			oContextMenuPlugin.addMenuItem({
+				id : "CTX_VARIANT_RENAME",
+				text : this._getTextResources().getText("CTX_RENAME"),
+				handler : this._handleVariantRename.bind(this),
+				available : fnIsVariantRenameAvailable.bind(this),
+				enabled : fnIsVariantRenameEnabled.bind(this)
+			});
+
+			oContextMenuPlugin.addMenuItem({
+				id : "CTX_VARIANT_DUPLICATE",
+				text : this._getTextResources().getText("CTX_VARIANT_DUPLICATE"),
+				handler : this._handleVariantDuplicate.bind(this),
+				available : fnIsVariantDuplicateAvailable.bind(this),
+				enabled : fnIsVariantDuplicateEnabled.bind(this)
+			});
+
+			oContextMenuPlugin.addMenuItem({
+				id : "CTX_VARIANT_CONFIGURE",
+				text : this._getTextResources().getText("CTX_VARIANT_CONFIGURE"),
+				handler : this._handleVariantConfigure.bind(this),
+				available : fnIsVariantConfigureAvailable.bind(this),
+				enabled : fnIsVariantConfigureEnabled.bind(this),
+				startSection : true
+			});
+
+			oContextMenuPlugin.addMenuItem({
+				id : "CTX_VARIANT_SWITCH_SUBMENU",
+				text : this._getTextResources().getText("CTX_VARIANT_SWITCH"),
+				/* handler for submenu items */
+				handler: this._handleSwitchVariant.bind(this),
+				available : fnIsVariantSwitchAvailable.bind(this),
+				enabled : fnIsVariantSwitchEnabled.bind(this),
+				submenu : {
+					id: "{" + VARIANT_MODEL_NAME + ">key}",
+					text: "{" + VARIANT_MODEL_NAME + ">title}",
+					model: VARIANT_MODEL_NAME,
+					current: function(oOverlay, oModel) {
+						var sManagementReferenceId = oOverlay.getVariantManagement();
+						return oModel.getData()[sManagementReferenceId].currentVariant;
+					},
+					items: function(oOverlay, oModel) {
+						var sManagementReferenceId = oOverlay.getVariantManagement();
+						return oModel.getData()[sManagementReferenceId].variants;
+					}
+				},
+				type: "subMenuWithBinding"
+			});
+		}
 	};
 
 	RuntimeAuthoring.prototype._createContainer = function(bSibling, aOverlays) {
@@ -1415,8 +1506,7 @@ sap.ui.define([
 	/**
 	 * Function to handle pasting an element
 	 *
-	 * @param {array}
-	 *          aOverlays list of selected overlays
+	 * @param {array} aOverlays list of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handlePasteElement = function(aOverlays) {
@@ -1460,10 +1550,63 @@ sap.ui.define([
 	/**
 	 * Function to handle settings
 	 *
+	 * @param {array} aOverlays list of selected overlays
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleSettings = function(aOverlays) {
 		this.getPlugins()["settings"].handleSettings(aOverlays);
+	};
+
+	/**
+	 * Function to handle variant rename
+	 *
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._handleVariantRename = function() {
+		this.getPlugins()["controlVariant"].renameVariant();
+	};
+
+	/**
+	 * Function to handle variant duplicate
+	 *
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._handleVariantDuplicate = function() {
+		this.getPlugins()["controlVariant"].duplicateVariant();
+	};
+
+	/**
+	 * Function to handle variant configure
+	 *
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._handleVariantConfigure = function() {
+		this.getPlugins()["controlVariant"].configureVariants();
+	};
+
+	/**
+	 * Function to handle variant switch
+	 *
+	 * @param {array} aOverlays Selected overlays
+	 * @param {object} oItem Pushed context menu item
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._handleSwitchVariant = function(aOverlays, oItem) {
+		var oData = oItem.data(),
+			oTargetOverlay = oData.targetOverlay,
+			sNewVariantKey = oData.key,
+			sCurrentVariantKey = oData.current;
+		this.getPlugins()["controlVariant"].switchVariant(oTargetOverlay, sNewVariantKey, sCurrentVariantKey);
+	};
+
+	/**
+	 * Function to handle additional elements
+	 *
+	 * @param {array} aOverlays Selected  overlays
+	 * @private
+	 */
+	RuntimeAuthoring.prototype._handleAdditionalElements = function(bOverlayIsSibling, aOverlays) {
+		this.getPlugins()["additionalElements"].showAvailableElements(bOverlayIsSibling, aOverlays);
 	};
 
 	/**

@@ -90,7 +90,6 @@ sap.ui.define([
 		isDataReady: function () {
 			return Promise.all(this._data);
 		}
-
 	});
 
 

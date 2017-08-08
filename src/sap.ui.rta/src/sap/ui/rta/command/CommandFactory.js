@@ -125,6 +125,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			clazz : 'sap.ui.rta.command.Split',
 			configure : fnConfigureSplitCommand
 		},
+		"switch" : {
+			clazz : 'sap.ui.rta.command.ControlVariantSwitch'
+		},
 		"settings" : {
 			clazz : 'sap.ui.rta.command.Settings'
 		},

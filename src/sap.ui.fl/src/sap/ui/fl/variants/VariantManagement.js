@@ -367,6 +367,7 @@ sap.ui.define([
 	VariantManagement.prototype.setInitialDefaultVariantKey = function(sKey) {
 		this._sInitialDefaultVariantKey = sKey;
 	};
+
 	VariantManagement.prototype.getInitialDefaultVariantKey = function() {
 		return this._sInitialDefaultVariantKey;
 	};
@@ -377,25 +378,24 @@ sap.ui.define([
 			oModel.setProperty(this.oContext + "/defaultVariant", sKey);
 		}
 	};
+
 	VariantManagement.prototype.getDefaultVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			return oModel.getProperty(this.oContext + "/defaultVariant");
 		}
-
 		return null;
 	};
 
 	VariantManagement.prototype.setSelectedVariantKey = function(sKey) {
 		var sLocalId, oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
-			// oModel.setProperty(this.oContext + "/currentVariant", sKey);
 			sLocalId = this._getLocalId();
-			oModel._updateCurrentVariant(sLocalId, sKey);
+			oModel.updateCurrentVariant(sLocalId, sKey);
 		}
-
 		return null;
 	};
+
 	VariantManagement.prototype.getSelectedVariantKey = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
@@ -411,12 +411,12 @@ sap.ui.define([
 			oModel.setProperty(this.oContext + "/modified", bFlag);
 		}
 	};
+
 	VariantManagement.prototype.getModified = function() {
 		var oModel = this.getModel(VariantManagement.MODEL_NAME);
 		if (oModel && this.oContext) {
 			return oModel.getProperty(this.oContext + "/modified");
 		}
-
 		return false;
 	};
 
@@ -487,7 +487,7 @@ sap.ui.define([
 		this._setBindingContext();
 	};
 
-// VARIANT LIST
+	// VARIANT LIST
 	VariantManagement.prototype._createVariantList = function() {
 
 		if (!this.oContext || this.oVariantPopOver) { // create only if context is available

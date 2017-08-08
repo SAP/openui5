@@ -4,12 +4,18 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/rta/command/Stack',
+	'sap/ui/rta/command/FlexCommand',
+	'sap/ui/rta/command/BaseCommand',
+	'sap/ui/rta/command/appDescriptor/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/ControlTreeModifier'
 ], function(
 	ManagedObject,
 	CommandStack,
+	FlexCommand,
+	BaseCommand,
+	AppDescriptorCommand,
 	FlexControllerFactory,
 	FlexUtils,
 	RtaControlTreeModifier
@@ -61,10 +67,15 @@ sap.ui.define([
 		if (oParams.undo) {
 			var oFlexController;
 			aCommands.forEach(function(oCommand) {
+				// for revertable changes which don't belong to lrep
+				// (e.g. variantSwitch)
+				if (!(oCommand instanceof FlexCommand)) {
+					return;
+				}
 				var oChange = oCommand.getPreparedChange();
 				var oAppComponent = oCommand.getAppComponent();
 				oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-				if (oCommand instanceof sap.ui.rta.command.FlexCommand){
+				if (oCommand instanceof FlexCommand){
 					var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 					oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
 				}
@@ -73,11 +84,11 @@ sap.ui.define([
 		} else {
 			var aDescriptorCreateAndAdd = [];
 			aCommands.forEach(function(oCommand) {
-				if (oCommand instanceof sap.ui.rta.command.FlexCommand){
+				if (oCommand instanceof FlexCommand){
 					var oAppComponent = oCommand.getAppComponent();
 					var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 					oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
-				} else if (oCommand instanceof sap.ui.rta.command.AppDescriptorCommand) {
+				} else if (oCommand instanceof AppDescriptorCommand) {
 					aDescriptorCreateAndAdd.push(oCommand.createAndStore());
 				}
 			});

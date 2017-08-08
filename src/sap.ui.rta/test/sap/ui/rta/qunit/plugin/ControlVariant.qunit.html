@@ -15,28 +15,33 @@
 
 	</style>
 
-	<script id="sap-ui-bootstrap"
-			type="text/javascript"
-			data-sap-ui-theme="sap_belize"
-			data-sap-ui-language="en"
-			data-sap-ui-noConflict="true"
-			data-sap-ui-xx-designMode="true"
-			data-sap-ui-xx-suppressDeactivationOfControllerCode="true"
-			data-sap-ui-xx-bindingSyntax="complex"
-			data-sap-ui-libs="sap.ui.rta,sap.ui.fl,sap.m,sap.ui.layout,sap.ui.dt"
-			src="../../../../../../resources/sap-ui-core.js">
+	<script src="../shared-config.js"></script>
+	<script>
+		document.write('\
+			<script \
+				id="sap-ui-bootstrap" \
+				data-sap-ui-theme="sap_belize" \
+				data-sap-ui-language="en" \
+				data-sap-ui-noConflict="true" \
+				data-sap-ui-xx-designMode="true" \
+				data-sap-ui-xx-suppressDeactivationOfControllerCode="true" \
+				data-sap-ui-xx-bindingSyntax="complex" \
+				data-sap-ui-libs="sap.m, sap.ui.dt, sap.ui.fl, sap.ui.rta, sap.ui.layout" \
+				src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+			><' + '/script>'
+		);
 	</script>
-	<link rel="stylesheet"
-		  href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
-		  type="text/css" media="screen" />
-	<script type="text/javascript"
-			src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript"
-			src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript"
-			src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
-	<script type="text/javascript" src="ControlVariant.qunit.js"></script>
+	<script>
+		jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+		jQuery.sap.require('sap.ui.thirdparty.qunit');
+		jQuery.sap.require('sap.ui.qunit.qunit-junit');
+		jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+		jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+		if (window.blanket){
+			window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+		}
+		jQuery.sap.includeScript('./ControlVariant.qunit.js');
+	</script>
 
 </head>
 <body>

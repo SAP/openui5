@@ -1,31 +1,31 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Test Page for sap.ui.dt Context Menu</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for ControlVariantSwitch Command</title>
 
 <style>
-#content {
-	position: absolute;
-	bottom: 0px;
-	z-index: 1000;
-	width: 700px;
-	height: 300px;
+html, body, #qunit-tests {
+	height: 100%;
 }
+
+.sapUiView {
+	height: 100%;
+}
+
 </style>
 
-<script src="../../shared-config.js"></script>
+<script src="../shared-config.js"></script>
 <script>
-	window['sap-ui-config'].libs = 'sap.m, sap.ui.dt, sap.ui.layout';
-	window['sap-ui-config'].resourceroots = {
-		'sap.ui.rta.test': 'testdata/designtime/'
-	};
 	document.write('\
 		<script \
 			id="sap-ui-bootstrap" \
 			data-sap-ui-theme="sap_belize" \
 			data-sap-ui-noConflict="true" \
-			data-sap-ui-libs="sap.m, sap.ui.dt, sap.ui.layout" \
+			data-sap-ui-xx-designMode="true" \
+			data-sap-ui-xx-suppressDeactivationOfControllerCode="true" \
+			data-sap-ui-xx-bindingSyntax="complex" \
+			data-sap-ui-libs="sap.ui.dt, sap.ui.fl, sap.ui.rta" \
 			src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
 		><' + '/script>'
 	);
@@ -39,16 +39,17 @@
 	if (window.blanket){
 		window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
 	}
-	jQuery.sap.includeScript('./ContextMenu.qunit.js');
+	jQuery.sap.includeScript('./ControlVariantSwitch.qunit.js');
 </script>
 
 </head>
 <body>
-	<h1 id="qunit-header">Test Page for sap.ui.dt context menu</h1>
+	<h1 id="qunit-header">QUnit page for ControlVariantSwitch Command</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 	<div id="content"></div>
 </body>
+
 </html>

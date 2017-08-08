@@ -366,7 +366,7 @@ sap.ui.require([
 
 				sCurrentVariant = oModel.getCurrentVariantRef("idMain1--variantManagementOrdersTable");
 				assert.equal(sCurrentVariant, "variant0", "the current variant key before switch is correct");
-				oModel._updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable");
+				oModel.updateCurrentVariant("idMain1--variantManagementOrdersTable", "idMain1--variantManagementOrdersTable");
 				assert.ok(this.oFlexController._oChangePersistence._mChanges.mDependencies[aExpectedChanges[1].getKey()] instanceof Object);
 				fnGetChanges.call(this, aExpectedChanges, "RTADemoAppMD---detail--GroupElementDatesShippingStatus", 7, assert);
 
