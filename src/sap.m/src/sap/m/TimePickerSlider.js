@@ -915,7 +915,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				return;
 			}
 
-			sAriaLabel = fnFindKeyByText.call(this, sSelectedItemText);
+			sAriaLabel = sSelectedItemText;
+			if (sAriaLabel && sAriaLabel.length > 1 && sAriaLabel.indexOf('0') === 0) {
+				//If the label contains digits (hours, minutes, seconds), we must remove any leading zeros because they
+				//are invalid in the context of what will be read out by the screen readers.
+				//Values like AM/PM are not changed.
+				sAriaLabel = sAriaLabel.substring(1);
+			}
 
 			$aItems.eq(this._iSelectedItemIndex).addClass("sapMTimePickerItemSelected");
 			//WAI-ARIA region
