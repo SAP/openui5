@@ -217,8 +217,8 @@ sap.ui.define([
 	 * @static
 	 * @protected
 	 * @param {object} mDefaultHandlers An object setting default callbacks
-	 * @param {function} mDefaultHandlers.asyncDescriptionHandler
-	 * @param {function} mDefaultHandlers.asyncURLHandler
+	 * @param {function} mDefaultHandlers.asyncDescriptionHandler The description handler
+	 * @param {function} mDefaultHandlers.asyncURLHandler The URL handler
 	 */
 	MessageView.setDefaultHandlers = function (mDefaultHandlers) {
 		ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
@@ -290,7 +290,7 @@ sap.ui.define([
 
 	/**
 	 * Fills grouped items in the lists
-	 *
+	 * @param {sap.m.MessageItem[]} oGroupedItems An array of items
 	 * @private
 	 */
 	MessageView.prototype._fillGroupedLists = function(oGroupedItems) {
@@ -387,7 +387,8 @@ sap.ui.define([
 
 	/**
 	 * Groups items in an object of keys and correspoding array of items
-	 *
+	 * @param {sap.m.MessageItem[]} aItems An array of items
+	 * @returns oGroups Item object
 	 * @private
 	 */
 	MessageView.prototype._groupItems = function (aItems) {
@@ -752,8 +753,8 @@ sap.ui.define([
 
 	/**
 	 * Sets icon in details page
-	 * @param {sap.m.MessageItem} oMessageItem
-	 * @param {sap.m.StandardListItem} oListItem
+	 * @param {sap.m.MessageItem} oMessageItem The message item
+	 * @param {sap.m.StandardListItem} oListItem The list item
 	 * @private
 	 */
 	MessageView.prototype._setIcon = function (oMessageItem, oListItem) {
@@ -769,7 +770,7 @@ sap.ui.define([
 
 	/**
 	 * Sets title part of details page
-	 * @param {sap.m.MessageItem} oMessageItem
+	 * @param {sap.m.MessageItem} oMessageItem The message item
 	 * @private
 	 */
 	MessageView.prototype._setTitle = function (oMessageItem) {
@@ -782,7 +783,7 @@ sap.ui.define([
 	/**
 	 * Sets description text part of details page
 	 * When markup description is used it is sanitized within it's container's setter method (MessageItem)
-	 * @param {sap.m.MessageItem} oMessageItem
+	 * @param {sap.m.MessageItem} oMessageItem The message item
 	 * @private
 	 */
 	MessageView.prototype._setDescription = function (oMessageItem) {
@@ -941,7 +942,6 @@ sap.ui.define([
 
 	/**
 	 * Perform description sanitization based on Caja HTML sanitizer
-	 * @param {sap.m.MessageItem} oMessageItem
 	 * @private
 	 */
 	MessageView.prototype._sanitizeDescription = function (oMessageItem) {
