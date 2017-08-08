@@ -82,6 +82,11 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 					 */
 					valueState: {type: "sap.ui.core.ValueState", group: "Data", defaultValue: sap.ui.core.ValueState.None},
 					/**
+					 * Defines the text that appears in the value state message pop-up.
+					 * @since 1.52
+					 */
+					valueStateText: { type: "string", group: "Misc", defaultValue: null },
+					/**
 					 * Defines whether the control can be modified by the user or not.
 					 * <b>Note:</b> A user can tab to the non-editable control, highlight it, and copy the text from it.
 					 */
@@ -896,6 +901,36 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			});
 
 			return this;
+		};
+
+		/**
+		 * Setter for property <code>valueStateText</code>.
+		 *
+		 * Default value is empty/<code>undefined</code>.
+		 *
+		 * @param {string} sText New value for property <code>valueStateText</code>.
+		 * @returns {sap.m.StepInput} <code>this</code> to allow method chaining
+		 * @public
+		 * @since 1.52
+		 */
+		StepInput.prototype.setValueStateText = function (sText) {
+			this._getInput().setValueStateText(sText);
+
+			return this;
+		};
+
+		/**
+		 * Getter for property <code>valueStateText</code>.
+		 * The text which is shown in the value state message popup.
+		 *
+		 * Default value is empty/<code>undefined</code>
+		 *
+		 * @returns {string} the value of property <code>valueStateText</code>
+		 * @public
+		 * @since 1.52
+		 */
+		StepInput.prototype.getValueStateText = function () {
+			return this._getInput().getValueStateText();
 		};
 
 		/**
