@@ -176,6 +176,10 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	ClientTreeBinding.prototype.getChildCount = function(oContext) {
 		//if oContext is null or empty -> root level count is requested
 		var sPath = oContext ? oContext.sPath : this.getPath();
+
+		if (this.oContext) {
+			sPath = this.oModel.resolve(sPath, this.oContext);
+		}
 		sPath = this._sanitizePath(sPath);
 
 		// if the length is not cached, call the get*Contexts functions to fill it
