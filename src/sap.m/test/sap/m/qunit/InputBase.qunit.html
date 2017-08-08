@@ -1888,13 +1888,16 @@
 			});
 
 			QUnit.test("Placeholder should be in labelledby", function(assert) {
+				var $HiddenLabel;
 				var sPlaceholder = "placeholder";
 				var oInput = new sap.m.InputBase({
 					placeholder: sPlaceholder
 				}).placeAt("content");
 				sap.ui.getCore().applyChanges();
+				$HiddenLabel = oInput.$("labelledby");
 
 				var $Input = jQuery(oInput.getFocusDomRef());
+				assert.ok($HiddenLabel.is("span"), "The hidden reference element is of a correct type");
 				var $Reference = jQuery.sap.byId($Input.attr("aria-labelledby"));
 				assert.strictEqual($Reference.text(), sPlaceholder, "Placeholder is added into aria-labelledby");
 
