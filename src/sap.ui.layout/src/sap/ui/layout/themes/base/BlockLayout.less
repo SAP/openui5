@@ -4,12 +4,12 @@
 /* ========================================== */
 .setCellsColorDoubles (@evenCell, @oddCell) {
 	// Match every even cell
-	.sapUiBlockLayoutCell:nth-child(2n) {
+	.sapUiBlockLayoutEvenCell {
 		background-color: @evenCell;
 	}
 
 	// Match every odd cell
-	.sapUiBlockLayoutCell:nth-child(2n+1) {
+	.sapUiBlockLayoutOddCell {
 		background-color: @oddCell;
 	}
 }
