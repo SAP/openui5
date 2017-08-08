@@ -772,7 +772,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxTextField
 	 * This event handler will be called before the control's picker popover is opened.
 	 *
 	 */
-	MultiComboBox.prototype._onBeforeOpenPopover = function() {
+	MultiComboBox.prototype._onBeforeOpenDropdown = function() {
 		var oPopover = this.getPicker(),
 			oDomRef = this.getDomRef(),
 			sWidth;
