@@ -2,11 +2,7 @@
 
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
-}
-
-sap.ui.define([
+sap.ui.require([
 	'sap/m/Button',
 	'sap/m/Input',
 	'sap/m/ObjectHeader',
@@ -88,21 +84,40 @@ function(
 
 	var ERROR_INTENTIONALLY = new Error("this command intentionally failed");
 
-	var oComponent = sap.ui.getCore().createComponent({
-		name : "sap.ui.rta.test.additionalElements",
-		id : "testcomponent",
-		settings : {
-			componentData : {
-				"showAdaptButton" : false
-			}
+	var oMockedAppComponent = {
+		getLocalId: function () {
+			return undefined;
+		},
+		getManifestEntry: function () {
+			return {};
+		},
+		getMetadata: function () {
+			return {
+				getName: function () {
+					return "someName";
+				}
+			};
+		},
+		getManifest: function () {
+			return {
+				"sap.app" : {
+					applicationVersion : {
+						version : "1.2.3"
+					}
+				}
+			};
+		},
+		getModel: function () {},
+		createId : function(sId) {
+			return 'testcomponent---' + sId;
 		}
-	});
+	};
 
 	QUnit.module("Given a command factory", {
 		beforeEach : function(assert) {
 			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
-			this.oButton = new Button(oComponent.createId("myButton"));
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
 		afterEach : function(assert) {
 			sandbox.restore();
@@ -134,7 +149,7 @@ function(
 
 	QUnit.module("Given a flex command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
 				element : new Button(),
@@ -159,7 +174,7 @@ function(
 	QUnit.module("Given a command stack", {
 		beforeEach : function(assert) {
 			this.stack = new Stack();
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.failingCommand = this.command.clone();
 			this.failingCommand.execute = function(oElement) {
@@ -304,11 +319,11 @@ function(
 	QUnit.module("Given a property command", {
 		beforeEach : function(assert) {
 			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 			this.OLD_VALUE = '2px';
 			this.NEW_VALUE = '5px';
-			this.oControl = new Column(oComponent.createId("control"), {
+			this.oControl = new Column(oMockedAppComponent.createId("control"), {
 				width : this.OLD_VALUE
 			});
 			this.oPropertyCommand = CommandFactory.getCommandFor(this.oControl, "Property", {
@@ -357,7 +372,7 @@ function(
 	QUnit.module("Given a bind property command", {
 		beforeEach : function(assert) {
 			sandbox.stub(FLUtils, "getCurrentLayer").returns("VENDOR");
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 			this.OLD_BOOLEAN_VALUE = false;
 			this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS = "{= ( ${/field1} === 'critical' ) &&  ( ${/field2} > 100 ) }";
@@ -366,7 +381,7 @@ function(
 			this.OLD_VALUE_BINDING = "{path:'/field1'}";
 			this.NEW_VALUE_BINDING = "{path:'namedModel>/numberAsString', type:'sap.ui.model.type.Integer'}";
 			this.NEW_VALUE = "20";
-			this.oInput = new Input(oComponent.createId("input"), {
+			this.oInput = new Input(oMockedAppComponent.createId("input"), {
 				showValueHelp: this.OLD_BOOLEAN_VALUE,
 				value: this.OLD_VALUE_BINDING
 			});
@@ -382,8 +397,7 @@ function(
 
 			this.oBindShowValueHelpCommand = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "showValueHelp",
-				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS,
-				oldValue : this.OLD_BOOLEAN_VALUE
+				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
 			});
 			this.oBindShowValueHelpCommandWithoutOldValueSet = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				element : this.oInput,
@@ -392,8 +406,7 @@ function(
 			});
 			this.oBindValuePropertyCommand = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "value",
-				newBinding : this.NEW_VALUE_BINDING,
-				oldBinding : this.OLD_VALUE_BINDING
+				newBinding : this.NEW_VALUE_BINDING
 			});
 			this.oBindValuePropertyCommandWithoutOldBindingSet = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "value",
@@ -456,8 +469,8 @@ function(
 
 	QUnit.module("Given remove command", {
 		beforeEach : function(assert) {
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
-			this.oButton = new Button(oComponent.createId("button"));
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oButton = new Button(oMockedAppComponent.createId("button"));
 			this.oCommand = CommandFactory.getCommandFor(this.oButton, "Remove", {
 				removedElement: this.oButton
 			}, new ElementDesignTimeMetadata({
@@ -482,7 +495,7 @@ function(
 	QUnit.test("when prepare() of remove command is called", function(assert) {
 		this.oCommand.prepare();
 		assert.deepEqual(this.oCommand.getSelector(), {
-			appComponent: oComponent,
+			appComponent: oMockedAppComponent,
 			controlType: "sap.m.Button",
 			id: "testcomponent---button"
 		}, "then selector is properly set for remove command");
@@ -491,7 +504,7 @@ function(
 
 	QUnit.module("Given a command stack with multiple already executed commands", {
 		beforeEach : function(assert) {
-			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.renamedButton = new Button();
 			this.stack = new Stack();
 			this.command = new BaseCommand();
@@ -627,7 +640,7 @@ function(
 	QUnit.module("Given an empty command stack and commands", {
 		beforeEach : function(assert) {
 			this.stack = new Stack();
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
 			this.compositeCommand = new CompositeCommand();
@@ -730,12 +743,12 @@ function(
 
 	QUnit.module("Given controls and designTimeMetadata", {
 		beforeEach : function(assert){
-			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oComponent);
-			this.oMovable = new ObjectAttribute(oComponent.createId("attribute"));
-			this.oSourceParent = new ObjectHeader(oComponent.createId("header"), {
+			sandbox.stub(FLUtils, "getAppComponentForControl").returns(oMockedAppComponent);
+			this.oMovable = new ObjectAttribute(oMockedAppComponent.createId("attribute"));
+			this.oSourceParent = new ObjectHeader(oMockedAppComponent.createId("header"), {
 				attributes : [this.oMovable]
 			});
-			this.oTargetParent = new ObjectHeader(oComponent.createId("targetHeader"));
+			this.oTargetParent = new ObjectHeader(oMockedAppComponent.createId("targetHeader"));
 
 			this.oRootElement = new VerticalLayout({
 				content : [this.oSourceParent, this.oTargetParent]

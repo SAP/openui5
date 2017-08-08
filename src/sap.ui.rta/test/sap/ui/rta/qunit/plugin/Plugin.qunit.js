@@ -1,37 +1,57 @@
 /*global QUnit sinon*/
 
-(function(){
+QUnit.config.autostart = false;
+
+sap.ui.require([
+	'sap/ui/dt/DesignTime',
+	'sap/ui/rta/plugin/Plugin',
+	'sap/ui/rta/plugin/Remove',
+	'sap/ui/rta/command/CommandFactory',
+	'sap/ui/fl/registry/ChangeRegistry',
+	'sap/m/Button',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/m/Label',
+	'sap/ui/core/Title',
+	'sap/m/Input',
+	'sap/ui/layout/form/Form',
+	'sap/ui/layout/form/FormContainer',
+	'sap/ui/layout/form/SimpleForm'
+],
+function(
+	DesignTime,
+	Plugin,
+	Remove,
+	CommandFactory,
+	ChangeRegistry,
+	Button,
+	VerticalLayout,
+	OverlayRegistry,
+	Label,
+	Title,
+	Input,
+	Form,
+	FormContainer,
+	SimpleForm
+) {
 	"use strict";
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-	if (window.blanket){
-		window.blanket.options("sap-ui-cover-only", "sap/ui/rta");
-	}
-
-	jQuery.sap.require("sap.ui.dt.DesignTime");
-	jQuery.sap.require("sap.ui.rta.plugin.Plugin");
-	jQuery.sap.require("sap.ui.rta.plugin.Remove");
-	jQuery.sap.require("sap.ui.rta.command.CommandFactory");
-	jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
+	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("Given that the Plugin is initialized", {
+	QUnit.module("Given this the Plugin is initialized", {
 		beforeEach : function(assert) {
 			var done = assert.async();
-			var that = this;
 
-			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
+			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout" : {
+				"VerticalLayout" : {
 					"moveControls": "default"
 				}
 			});
 
-			this.oButton = new sap.m.Button();
-			this.oLayout = new sap.ui.layout.VerticalLayout({
+			this.oButton = new Button();
+			this.oLayout = new VerticalLayout({
 				content : [
 					this.oButton
 				]
@@ -39,23 +59,23 @@
 
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout]
 			});
 
 			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new sap.ui.rta.command.CommandFactory()
+				commandFactory : new CommandFactory()
 			});
-			this.oRemovePlugin = new sap.ui.rta.plugin.Remove();
+			this.oRemovePlugin = new Remove();
 
 			sandbox.stub(this.oPlugin, "_isEditable").returns(true);
 			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(true);
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oLayout);
-				that.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oLayout);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				done();
-			});
+			}.bind(this));
 
 		},
 		afterEach : function() {
@@ -97,13 +117,12 @@
 		assert.strictEqual(this.oPlugin.hasStableId(this.oButtonOverlay), false, "then it returns false");
 	});
 
-	QUnit.module("Given that the Plugin is initialized", {
+	QUnit.module("Given this the Plugin is initialized", {
 		beforeEach : function(assert) {
 			var done = assert.async();
-			var that = this;
 
-			this.oButton = new sap.m.Button("button");
-			this.oLayout = new sap.ui.layout.VerticalLayout({
+			this.oButton = new Button("button");
+			this.oLayout = new VerticalLayout({
 				content : [
 					this.oButton
 				]
@@ -111,16 +130,16 @@
 
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oLayout]
 			});
 
 			this.oPlugin = new sap.ui.rta.plugin.Plugin();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				done();
-			});
+			}.bind(this));
 
 		},
 		afterEach : function() {
@@ -133,49 +152,44 @@
 		assert.ok(this.oPlugin.hasStableId(this.oButtonOverlay), "then it returns true");
 	});
 
-	QUnit.module("Given that the Plugin is initialized", {
+	QUnit.module("Given the Plugin is initialized", {
 		beforeEach : function(assert) {
 
-			this.oSmartGroup = new sap.ui.comp.smartform.Group("group");
-			this.oSmartForm = new sap.ui.comp.smartform.SmartForm("SmartForm", {
-				groups : [this.oSmartGroup]
-			});
-
-			this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
-				content : [this.oSmartForm]
+			this.oGroup = new FormContainer("group");
+			this.oForm = new Form("Form", {
+				formContainers : [this.oGroup]
 			}).placeAt("content");
+
 
 			sap.ui.getCore().applyChanges();
 
 			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new sap.ui.rta.command.CommandFactory()
+				commandFactory : new CommandFactory()
 			});
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements: [
-					this.oVerticalLayout
+					this.oForm
 				],
 				plugins: []
 			});
 
-			var that = this;
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oVerticalLayout);
-				that.oSmartFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSmartForm);
-				that.oGroupOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSmartGroup);
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
 				done();
-			});
+			}.bind(this));
 		},
 		afterEach : function(assert) {
-			this.oVerticalLayout.destroy();
+			this.oForm.destroy();
 			this.oDesignTime.destroy();
 		}
 	});
 
 	QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called", function(assert) {
-		this.oSmartFormOverlay.setDesignTimeMetadata({
+		this.oFormOverlay.setDesignTimeMetadata({
 			aggregations : {
-				groups : {
+				formContainers : {
 					actions : {
 						changeType: "addGroup"
 					}
@@ -183,29 +197,29 @@
 			}
 		});
 
-		assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oSmartFormOverlay, "changeType"), "then it returns true");
+		assert.ok(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, "changeType"), "then it returns true");
 	});
 
 	QUnit.test("when DesignTimeMetadata has actions and checkAggregations method is called without the action name", function(assert) {
-		this.oSmartFormOverlay.setDesignTimeMetadata({
+		this.oFormOverlay.setDesignTimeMetadata({
 			actions : {}
 		});
 
-		assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oSmartFormOverlay, undefined), "then it returns false");
+		assert.notOk(this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined), "then it returns false");
 	});
 
-	QUnit.module("Given that the Plugin is initialized.", {
+	QUnit.module("Given the Plugin is initialized.", {
 		beforeEach : function(assert) {
 
-			this.oTitle0 = new sap.ui.core.Title({id : "Title0"});
-			this.oLabel0 = new sap.m.Label({id : "Label0"});
-			this.oInput0 = new sap.m.Input({id : "Input0"});
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm("SimpleForm", {
+			this.oTitle0 = new Title({id : "Title0"});
+			this.oLabel0 = new Label({id : "Label0"});
+			this.oInput0 = new Input({id : "Input0"});
+			this.oSimpleForm = new SimpleForm("SimpleForm", {
 				title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
-			this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
+			this.oVerticalLayout = new VerticalLayout({
 				content : [this.oSimpleForm]
 			}).placeAt("content");
 
@@ -215,24 +229,23 @@
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 
 			this.oPlugin = new sap.ui.rta.plugin.Plugin({
-				commandFactory : new sap.ui.rta.command.CommandFactory()
+				commandFactory : new CommandFactory()
 			});
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements: [
 					this.oVerticalLayout
 				],
 				plugins: []
 			});
 
-			var that = this;
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oVerticalLayout);
-				that.oSimpleFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSimpleForm);
-				that.oFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oForm);
-				that.oFormContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oFormContainer);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
+				this.oFormOverlay = OverlayRegistry.getOverlay(this.oForm);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
 				done();
-			});
+			}.bind(this));
 		},
 		afterEach : function(assert) {
 			this.oVerticalLayout.destroy();
@@ -294,18 +307,18 @@
 		assert.ok(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns true");
 	});
 
-	QUnit.module("Given that the Plugin is initialized.", {
+	QUnit.module("Given this the Plugin is initialized.", {
 		beforeEach : function(assert) {
 
-			this.oTitle0 = new sap.ui.core.Title();
-			this.oLabel0 = new sap.m.Label();
-			this.oInput0 = new sap.m.Input();
-			this.oSimpleForm = new sap.ui.layout.form.SimpleForm("SimpleForm", {
+			this.oTitle0 = new Title();
+			this.oLabel0 = new Label();
+			this.oInput0 = new Input();
+			this.oSimpleForm = new SimpleForm("SimpleForm", {
 				title : "Simple Form",
 				content : [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
-			this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
+			this.oVerticalLayout = new VerticalLayout({
 				content : [this.oSimpleForm]
 			}).placeAt("content");
 
@@ -314,21 +327,20 @@
 			this.oFormContainer = this.oSimpleForm.getAggregation("form").getAggregation("formContainers")[0];
 
 			this.oPlugin = new sap.ui.rta.plugin.Plugin();
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements: [
 					this.oVerticalLayout
 				],
 				plugins: []
 			});
 
-			var that = this;
 			var done = assert.async();
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oVerticalLayout);
-				that.oSimpleFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSimpleForm);
-				that.oFormContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oFormContainer);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oSimpleFormOverlay = OverlayRegistry.getOverlay(this.oSimpleForm);
+				this.oFormContainerOverlay = OverlayRegistry.getOverlay(this.oFormContainer);
 				done();
-			});
+			}.bind(this));
 		},
 		afterEach : function(assert) {
 			this.oVerticalLayout.destroy();
@@ -384,4 +396,4 @@
 		assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns false");
 	});
 
-})();
+});

@@ -2,36 +2,34 @@
 
 QUnit.config.autostart = false;
 
-sap.ui.define([
+sap.ui.require([
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	// controls
-	"sap/ui/comp/smartform/SmartForm",
-	"sap/ui/comp/smartform/GroupElement",
-	"sap/ui/comp/smartform/Group",
+	'sap/ui/layout/form/Form',
+	'sap/ui/layout/form/FormContainer',
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout",
-	// should be last
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-ie",
-	"sap/ui/thirdparty/sinon-qunit",
-	"sap/ui/qunit/qunit-coverage"
+	"sap/ui/layout/VerticalLayout"
 ], function(
-	ElementMover, OverlayRegistry, DesignTime,
-	SmartForm, GroupElement, Group, Button, VerticalLayout,
-	sinon) {
-
+	ElementMover,
+	OverlayRegistry,
+	DesignTime,
+	Form,
+	FormContainer,
+	Button,
+	VerticalLayout
+) {
 	"use strict";
 
 	QUnit.start();
 
 	QUnit.module("Given smartform groups and groupElements", {
 		beforeEach : function(assert) {
-			this.oSmartForm1 = new SmartForm("form1", {
-				groups : [
-					new Group("group1"),
-					new Group("group2")
+			this.oForm1 = new Form("form1", {
+				formContainers : [
+					new FormContainer("group1"),
+					new FormContainer("group2")
 				]
 			});
 
@@ -39,12 +37,12 @@ sap.ui.define([
 			this.oGroup2 = sap.ui.getCore().byId("group2");
 			this.oElementMover = new ElementMover();
 
-			this.oSmartForm1.placeAt("test-view");
+			this.oForm1.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function(assert) {
 			this.oElementMover.destroy();
-			this.oSmartForm1.destroy();
+			this.oForm1.destroy();
 		}
 	});
 
@@ -142,7 +140,7 @@ sap.ui.define([
 					this.oButton2,
 					this.oButton3
 				]
-			}).placeAt("test-view");
+			}).placeAt('qunit-fixture');
 
 			sap.ui.getCore().applyChanges();
 
