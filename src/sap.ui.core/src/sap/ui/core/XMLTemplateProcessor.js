@@ -632,6 +632,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', 'sap/ui/base/Managed
 
 				if (bDesignMode) {
 					vNewControlInstance.forEach(function (oInstance) {
+						if (oMetadata.getCompositeAggregationName) {
+							var aNodes = node.getElementsByTagName(oInstance.getMetadata().getCompositeAggregationName());
+							for (var i = 0; i < aNodes.length; i++) {
+								node.removeChild(aNodes[0]);
+							}
+						}
 						oInstance._sapui_declarativeSourceInfo = {
 							xmlNode: node,
 							xmlRootNode: oView._sapui_declarativeSourceInfo.xmlRootNode,
