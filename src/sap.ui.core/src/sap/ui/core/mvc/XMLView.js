@@ -289,6 +289,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					});
 				}
 				return sTimestamp;
+			}).catch(function(error) {
+				// Do not populate the cache if the version info could not be retrieved.
+				jQuery.sap.log.warning("sap.ui.getVersionInfo could not be retrieved", "sap.ui.core.mvc.XMLView");
+				jQuery.sap.log.debug(error);
+				return "";
 			});
 		}
 
