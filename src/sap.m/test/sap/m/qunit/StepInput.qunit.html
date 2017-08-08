@@ -206,6 +206,18 @@
 			equal(oSpyVerifyValue.callCount, 1, "setMax always calls _verifyValue so the valueState is addressed");
 		});
 
+		QUnit.test("setValueState", function (assert) {
+			//prepare
+			var sValue = sap.ui.core.ValueState.Error;
+
+			//act
+			this.stepInput.setValueState(sValue);
+
+			//assert
+			equal(this.stepInput.getValueState(), sValue, "valueState is set to " + sValue);
+			equal(this.stepInput._getInput().getValueState(), sValue, "valueState is properly propagated to the input aggregation");
+		});
+
 		QUnit.test("setValueStateText", function (assert) {
 			ok(this.stepInput.setValueStateText, "method setValueStateText exists");
 
