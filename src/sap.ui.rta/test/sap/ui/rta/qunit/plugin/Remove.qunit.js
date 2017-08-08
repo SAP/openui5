@@ -6,17 +6,24 @@ jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-jQuery.sap.require("sap.m.Button");
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.dt.DesignTime");
-jQuery.sap.require("sap.ui.rta.command.CommandFactory");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
-
-jQuery.sap.require("sap.ui.rta.plugin.Remove");
-var RemovePlugin = sap.ui.rta.plugin.Remove;
-
-(function() {
+sap.ui.require([
+	"sap/ui/rta/plugin/Remove",
+	"sap/m/Button",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/fl/registry/ChangeRegistry"
+],
+function(
+	RemovePlugin,
+	Button,
+	VerticalLayout,
+	DesignTime,
+	CommandFactory,
+	OverlayRegistry,
+	ChangeRegistry
+) {
 	"use strict";
 
 	var oMockedAppComponent = {
@@ -48,7 +55,6 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
 		beforeEach : function(assert) {
-			var that = this;
 			var done = assert.async();
 
 			var oChangeRegistry = sap.ui.fl.registry.ChangeRegistry.getInstance();
@@ -62,27 +68,29 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 			});
 
 			this.oRemovePlugin = new RemovePlugin({
-				commandFactory : new sap.ui.rta.command.CommandFactory()
+				commandFactory : new CommandFactory()
 			});
 
-			this.oButton = new sap.m.Button("button", {text : "Button"});
-			this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
-				content : [this.oButton]
+			this.oButton = new Button("button", {text : "Button"});
+			this.oButton1 = new Button("button1", {text : "Button1"});
+			this.oVerticalLayout = new VerticalLayout({
+				content : [this.oButton, this.oButton1]
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			this.oDesignTime = new sap.ui.dt.DesignTime({
+			this.oDesignTime = new DesignTime({
 				rootElements : [this.oVerticalLayout],
 				plugins : [this.oRemovePlugin]
 			});
 
 
 			this.oDesignTime.attachEventOnce("synced", function() {
-				that.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oVerticalLayout);
-				that.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oButton);
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
 
 				done();
-			});
+			}.bind(this));
 
 		},
 		afterEach : function(assert) {
@@ -122,10 +130,14 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 			var oCompositeCommand = oEvent.getParameter("command");
 			assert.strictEqual(oCompositeCommand.getCommands().length, 1, "... command is created");
 			assert.strictEqual(oCompositeCommand.getCommands()[0].getMetadata().getName(), "sap.ui.rta.command.Remove", "and command is of the correct type");
-			done();
-		});
+			setTimeout(function() {
+				assert.ok(this.oButtonOverlay1.getSelected(), "and the second Button is selected");
+				done();
+			}.bind(this), 0);
+		}.bind(this));
 		assert.ok(true, "... when plugin removeElement is called with this overlay ...");
 
+		this.oButtonOverlay1.setSelectable(true);
 		this.oRemovePlugin.removeElement([this.oButtonOverlay]);
 	});
 
@@ -145,15 +157,21 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 		this.oRemovePlugin.deregisterElementOverlay(this.oButtonOverlay);
 		this.oRemovePlugin.registerElementOverlay(this.oButtonOverlay);
 
+		this.oLayoutOverlay.setSelectable(true);
 		this.oButtonOverlay.setSelectable(true);
 		this.oButtonOverlay.setSelected(true);
+		// hide second button so that the Layout will be selected afterwards
+		this.oButton1.setVisible(false);
 
 		this.oRemovePlugin.attachEventOnce("elementModified", function(oEvent) {
 			var oCompositeCommand = oEvent.getParameter("command");
 			assert.strictEqual(oCompositeCommand.getCommands().length, 1, "... command is created for selected overlay");
 			assert.strictEqual(oCompositeCommand.getCommands()[0].getMetadata().getName(), "sap.ui.rta.command.Remove", "and command is of the correct type");
-			done();
-		});
+			setTimeout(function() {
+				assert.ok(this.oLayoutOverlay.getSelected(), "and the Layout (relevant Container) is selected");
+				done();
+			}.bind(this), 0);
+		}.bind(this));
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 		assert.ok(true, "... when plugin removeElement is called ...");
 
@@ -198,7 +216,7 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 		assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), true, "then the overlay is editable");
 	});
 
-		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
+	QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
 		this.oButtonOverlay.setDesignTimeMetadata({
 			actions : {
 				remove : {
@@ -214,4 +232,69 @@ var RemovePlugin = sap.ui.rta.plugin.Remove;
 		assert.strictEqual(this.oRemovePlugin._isEditable(this.oButtonOverlay), false, "then the overlay is not editable");
 	});
 
-})();
+
+	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
+		beforeEach : function(assert) {
+			var done = assert.async();
+
+			var oChangeRegistry = ChangeRegistry.getInstance();
+			oChangeRegistry.registerControlsForChanges({
+				"sap.m.Button" : {
+					"hideControl" : "default"
+				},
+				"sap.ui.layout.VerticalLayout" : {
+					"hideControl" : "default"
+				}
+			});
+
+			this.oButton1 = new Button("button1", {text : "Button1"});
+			this.oButton2 = new Button("button2", {text : "Button2"});
+			this.oButton3 = new Button("button3", {text : "Button3"});
+			this.oVerticalLayout = new VerticalLayout({
+				content : [this.oButton1, this.oButton2, this.oButton3]
+			}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oVerticalLayout]
+			});
+
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oButtonOverlay1 = OverlayRegistry.getOverlay(this.oButton1);
+				this.oButtonOverlay2 = OverlayRegistry.getOverlay(this.oButton2);
+				this.oButtonOverlay3 = OverlayRegistry.getOverlay(this.oButton3);
+
+				done();
+			}.bind(this));
+
+		},
+		afterEach : function(assert) {
+			this.oVerticalLayout.destroy();
+			this.oDesignTime.destroy();
+		}
+	});
+
+	QUnit.test(" with the first button", function(assert) {
+		assert.equal(RemovePlugin._getElementToFocus([this.oButtonOverlay1]).getId(), this.oButtonOverlay2.getId(), "then the second button is returned");
+	});
+
+	QUnit.test(" with the second button", function(assert) {
+		assert.equal(RemovePlugin._getElementToFocus([this.oButtonOverlay2]).getId(), this.oButtonOverlay3.getId(), "then the second button is returned");
+	});
+
+	QUnit.test(" with the third button", function(assert) {
+		assert.equal(RemovePlugin._getElementToFocus([this.oButtonOverlay3]).getId(), this.oButtonOverlay2.getId(), "then the second button is returned");
+	});
+
+	QUnit.test(" with two buttons", function(assert) {
+		assert.equal(RemovePlugin._getElementToFocus([this.oButtonOverlay1, this.oButtonOverlay2]).getId(), this.oLayoutOverlay.getId(), "then the second button is returned");
+	});
+
+	QUnit.test(" with the second button and the third hidden", function(assert) {
+		this.oButton3.setVisible(false);
+		assert.equal(RemovePlugin._getElementToFocus([this.oButtonOverlay2]).getId(), this.oButtonOverlay1.getId(), "then the second button is returned");
+	});
+
+});
