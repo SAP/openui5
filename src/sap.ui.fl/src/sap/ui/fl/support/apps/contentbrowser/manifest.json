@@ -76,6 +76,11 @@
 							"pattern": "{layer}/{namespace}/{fileName}.{fileType}",
 							"name": "ContentDetails",
 							"target": "ContentDetails"
+						},
+						{
+							"pattern": "edit/{layer}/{namespace}/{fileName}.{fileType}",
+							"name": "ContentDetailsEdit",
+							"target": "ContentDetailsEdit"
 						}
 					]
 				}
@@ -102,6 +107,11 @@
 				},
 				"ContentDetailsFlip": {
 					"viewName": "ContentDetails",
+					"transition": "flip",
+					"controlAggregation": "detailPages"
+				},
+				"ContentDetailsEdit": {
+					"viewName": "ContentDetailsEdit",
 					"transition": "flip",
 					"controlAggregation": "detailPages"
 				}

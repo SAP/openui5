@@ -80,4 +80,72 @@ sap.ui.define([
 			}
 		);
 	});
+
+	QUnit.test("when Edit button clicked", function (assert) {
+		var oRouter = new Router();
+		this.stub(oController, "getView").returns({
+			getModel: function () {
+				return {
+					getData: function () {
+						return {
+							layer : "layer",
+							fileName : "fileName",
+							fileType : "fileType",
+							namespace : "namespace"
+						}
+					}
+				};
+			}
+		});
+		var oStubbedGetRouterFor = this.stub(UIComponent, "getRouterFor").returns(oRouter);
+		var oStubbedNavTo = this.stub(oRouter, "navTo");
+
+		oController.onEditClicked();
+
+		assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
+		assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
+		assert.equal(oStubbedNavTo.getCall(0).args[0], "ContentDetailsEdit", "with correct target");
+		assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "layer", "with correct layer");
+		assert.equal(oStubbedNavTo.getCall(0).args[1].namespace, "namespace", "with correct namespace");
+		assert.equal(oStubbedNavTo.getCall(0).args[1].fileName, "fileName", "with correct filename");
+		assert.equal(oStubbedNavTo.getCall(0).args[1].fileType, "fileType", "with correct filetype");
+	});
+
+	QUnit.test("when _deleteFile is called", function (assert) {
+		var oRouter = new Router();
+		this.stub(oController, "getView").returns({
+			getModel: function () {
+				return {
+					getData: function () {
+						return {
+							fileName : "fileName",
+							fileType : "fileType",
+							namespace : "namespace",
+							layer : 'All',
+							metadata : [{
+								name : "layer",
+								value : "VENDOR"
+							}]
+						}
+					}
+				};
+			}
+		});
+		var oStubbedGetRouterFor = this.stub(UIComponent, "getRouterFor").returns(oRouter);
+		var oStubbedNavTo = this.stub(oRouter, "navTo");
+		var oStubbedLrepConDeleteFile = this.stub(LRepConnector, "deleteFile").returns(Promise.resolve());
+
+		return oController._deleteFile().then(function(){
+			assert.ok(oStubbedGetRouterFor.calledOnce, "then call for get a router");
+			assert.ok(oStubbedLrepConDeleteFile.calledOnce, "then call Lrep connector for deleting file");
+			assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[0], "VENDOR", "with correct layer");
+			assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[1], "namespace", "with correct namespace");
+			assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[2], "fileName", "with correct fileName");
+			assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
+			assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
+			assert.equal(oStubbedNavTo.getCall(0).args[0], "LayerContentMaster", "with correct target");
+			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "All", "with correct layer");
+			assert.equal(oStubbedNavTo.getCall(0).args[1].namespace, "namespace", "with correct namespace");
+		});
+	});
 });
