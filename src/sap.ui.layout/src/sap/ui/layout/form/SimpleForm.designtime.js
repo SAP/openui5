@@ -132,7 +132,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 						changeType : "moveSimpleFormField"
 					},
 					addODataProperty : function (oFormContainer) {
-						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldSettings(oFormContainer);
+						var mChangeHandlerSettings = ChangeHandlerMediator.getAddODataFieldWithLabelSettings(oFormContainer);
 
 						if (mChangeHandlerSettings){
 							return {
