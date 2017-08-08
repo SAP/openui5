@@ -57,8 +57,17 @@ sap.ui.require([
 			assert.ok(oType instanceof ODataType, "is an ODataType");
 			assert.strictEqual(oType.getName(), sName, "is the right name");
 			assert.strictEqual(oType.oFormatOptions, undefined, "no formatting options");
+			assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 			assert.strictEqual(oType.oConstraints, undefined, "are the right constraints");
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
+		});
+
+		QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+			function (assert) {
+				var oType = createType(null, null);
+
+				assert.deepEqual(oType.oFormatOptions, null, "no format options");
+				assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 		});
 
 		QUnit.test("localization change", function (assert) {

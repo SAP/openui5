@@ -163,10 +163,20 @@ sap.ui.require([
 			assert.ok(oType instanceof ODataType, "is an ODataType");
 			assert.strictEqual(oType.getName(), sTypeName, "type name");
 			assert.strictEqual(oType.oFormatOptions, undefined, "format options ignored");
+			assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 			assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
 
 			createInstance(sTypeName, null, null); // null vs. undefined MUST not make a difference!
+		});
+
+		//*****************************************************************************************
+		QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+			function (assert) {
+				var oType = createInstance(sTypeName, null, null);
+
+				assert.deepEqual(oType.oFormatOptions, null, "no format options");
+				assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 		});
 
 		//*****************************************************************************************
