@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Popover
+		title="{ProductId}"
+		class="sapUiPopupWithPadding"
+		placement="Right"
+		initialFocus="action">
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button
+					id="action"
+					text="Action"
+					press="handleActionPress" />
+			</Toolbar>
+		</footer>
+		<VBox>
+		<Title text="{Name}" />
+		<Image src="{ProductPicUrl}" width="15em" densityAware="false" />
+		</VBox>
+	</Popover>
+</core:FragmentDefinition>

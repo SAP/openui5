@@ -875,7 +875,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.Popover",
-			"sap.m.sample.PopoverNavCon"
+			"sap.m.sample.PopoverNavCon",
+			"sap.m.sample.PopoverControllingCloseBehavior"
 		  ]
 		},
 		{
@@ -2462,6 +2463,11 @@
 		  "id": "sap.m.sample.PopoverNavCon",
 		  "name": "Popover With NavContainer",
 		  "description": "You can nest NavContainers in Popovers (and Dialogs) to navigate to further details in place."
+		},
+		{
+		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
+		  "name": "Popover - Cotrolling Closing Behavior",
+		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This is a sample demonstrating how this can be controlled. When the popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the popover is closed, remove it. "
 		},
 		{
 		  "id": "sap.m.sample.SelectDialog",
