@@ -36,7 +36,7 @@ sap.ui.define([
 		var that = this;
 
 		var oGetContentPromise = new Promise(function (fnResolve, fnReject) {
-			sContentSuffix = HtmlEscapeUtils.unescapeSlashes(sContentSuffix);
+			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = that._getLayerSuffix(sLayer);
 			var sContextSuffix = that._getContextSuffix(sLayerSuffix, bReadRuntimeContext, bReadContextMetadata);
 			var sUrl = LrepConnector.sContentPathPrefix + (sContentSuffix ? "" : "/") + sContentSuffix + sLayerSuffix + sContextSuffix;
@@ -138,7 +138,10 @@ sap.ui.define([
 	 * @private
 	 */
 	LrepConnector._getLayerSuffix = function (sLayer) {
-		return sLayer !== "All" ? "?sLayer=" + sLayer : "";
+		if (sLayer === "All"){
+			return "";
+		}
+		return "?layer=" + sLayer;
 	};
 
 	/**
@@ -236,6 +239,7 @@ sap.ui.define([
 		jQuery.ajax({
 			url: sUrl,
 			contentType: "text/plain",
+			dataType: "text",
 			data: oData,
 			beforeSend: function (oRequest) {
 				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);

@@ -44,5 +44,12 @@
 				</IconTabFilter>
 			</items>
 		</IconTabBar>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Button text="{i18n>edit}" press=".onEditClicked" />
+				<Button text="{i18n>delete}" press=".onDeleteClicked" />
+			</Toolbar>
+		</footer>
 	</Page>
 </core:View>
