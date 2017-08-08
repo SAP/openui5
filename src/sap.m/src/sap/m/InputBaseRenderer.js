@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		// enable self-made placeholder
 		if (oControl.bShowLabelAsPlaceholder) {
-			oRm.write("<label");
+			oRm.write("<span");
 			oRm.writeAttribute("id", oControl.getId() + "-placeholder");
 
 			if (sTextAlign) {
@@ -82,7 +82,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.writeEscaped(oControl._getPlaceholder());
-			oRm.write("</label>");
+			oRm.write("</span>");
 		}
 
 		oRm.write('<div ');
@@ -237,14 +237,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.renderAriaLabelledBy = function(oRm, oControl) {
 		var sAnnouncement = this.getLabelledByAnnouncement(oControl);
 		if (sAnnouncement) {
-			oRm.write("<label");
+			oRm.write("<span");
 			oRm.writeAttribute("id", oControl.getId() + "-labelledby");
 			oRm.writeAttribute("aria-hidden", "true");
 			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.writeEscaped(sAnnouncement.trim());
-			oRm.write("</label>");
+			oRm.write("</span>");
 		}
 	};
 
