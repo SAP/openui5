@@ -321,7 +321,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Panel.prototype._setContentHeight = function () {
-		var iAdjustedContentHeight,
+		var sAdjustedContentHeight,
 		thisDomRef = this.getDomRef(),
 		oPanelContent = thisDomRef && thisDomRef.querySelector(".sapMPanelContent");
 
@@ -331,8 +331,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// 'offsetTop' measures the vertical space occupied by siblings before this one
 		// Earlier each previous sibling's height was calculated separately and then all height values were summed up
-		iAdjustedContentHeight = thisDomRef.clientHeight - oPanelContent.offsetTop;
-		oPanelContent.style.height = iAdjustedContentHeight + 'px';
+		sAdjustedContentHeight =  'calc(' + this.getHeight() + ' - ' + oPanelContent.offsetTop + 'px)';
+		oPanelContent.style.height = sAdjustedContentHeight;
+
 	};
 
 	Panel.prototype._toggleExpandCollapse = function () {
