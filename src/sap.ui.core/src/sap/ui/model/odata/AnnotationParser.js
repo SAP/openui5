@@ -847,6 +847,19 @@ var AnnotationParser =  {
 		var oAnnotationNodes = xPath.selectNodes("./d:Annotation", oParentElement);
 		var oPropertyValueNodes = xPath.selectNodes("./d:PropertyValue", oParentElement);
 
+		function getAssertText(oParentElement, sWhat, sName) {
+			var	oAnnotationTarget,
+				oAnnotationTerm = oParentElement;
+
+			while (oAnnotationTerm.localName !== "Annotation") {
+				oAnnotationTerm = oAnnotationTerm.parentElement;
+			}
+			oAnnotationTarget = oAnnotationTerm.parentElement;
+
+			return (sWhat + " '" + sName + "' is defined twice; "
+				+ "Annotation Target = " + oAnnotationTarget.getAttribute("Target")
+				+ ", Term = " + oAnnotationTerm.getAttribute("Term"));
+		}
 
 		if (oAnnotationNodes.length === 0 && oPropertyValueNodes.length === 0) {
 			mProperties = AnnotationParser.getPropertyValue(oParentElement);
@@ -858,10 +871,7 @@ var AnnotationParser =  {
 				// The following function definition inside the loop will be removed in non-debug builds.
 				/* eslint-disable no-loop-func */
 				jQuery.sap.assert(!mProperties[sTerm], function () {
-					return (
-						"Record contains values that overwrite previous ones; this is not allowed." +
-						" Element: " + xPath.getPath(oParentElement)
-					);
+					return getAssertText(oParentElement, "Annotation", sTerm);
 				});
 				/* eslint-enable no-loop-func */
 
@@ -875,10 +885,7 @@ var AnnotationParser =  {
 				// The following function definition inside the loop will be removed in non-debug builds.
 				/* eslint-disable no-loop-func */
 				jQuery.sap.assert(!mProperties[sPropertyName], function () {
-					return (
-						"Record contains values that overwrite previous ones; this is not allowed." +
-						" Element: " + xPath.getPath(oParentElement)
-					);
+					return getAssertText(oParentElement, "Property", sPropertyName);
 				});
 				/* eslint-enable no-loop-func */
 
