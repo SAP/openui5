@@ -49,18 +49,6 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeAnAvatarButton: function () {
-					return this.waitFor({
-						controlType: "sap.m.Button",
-						viewName: sViewName,
-						matchers: new Properties({icon: "sap-icon://customer"}),
-						success: function () {
-							Opa5.assert.ok(true, "Avatar button is visible");
-						},
-						errorMessage: "There is no avatar button"
-					});
-				},
-
 				iPressTheBackButton: function () {
 					return this.waitFor({
 						id: "page",
@@ -80,6 +68,18 @@ sap.ui.define([
 						success : function () {
 							Opa5.assert.ok(true, "Light Box is visible");
 						}
+					});
+				},
+
+				iShouldSeeAnAvatarButton: function () {
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						viewName: sViewName,
+						matchers: new Properties({icon: "sap-icon://customer"}),
+						success: function () {
+							Opa5.assert.ok(true, "Avatar button is visible");
+						},
+						errorMessage: "There is no avatar button"
 					});
 				},
 

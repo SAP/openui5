@@ -47,7 +47,7 @@ sap.ui.define([
 					});
 				},
 
-				iPressOnTheAcceptButton : function () {
+				iPressOnTheSaveChangesButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
 						matchers : new Properties({ text : "Save Changes"}),
@@ -133,6 +133,37 @@ sap.ui.define([
 					});
 				},
 
+				theProceedHelper  : function (bIsEnabled) {
+					var sErrorMessage = "The proceed button is enabled";
+					var sSuccessMessage = "The proceed button is disabled";
+					if (bIsEnabled) {
+						sErrorMessage = "The proceed button is disabled";
+						sSuccessMessage = "The proceed button is enabled";
+					}
+					return this.waitFor({
+						controlType : "sap.m.Button",
+						autoWait: bIsEnabled,
+						matchers : new Properties({
+							type: "Accept"
+					}),
+						success : function (aButtons) {
+							Opa5.assert.strictEqual(
+								aButtons[0].getEnabled(), bIsEnabled, sSuccessMessage
+							);
+						},
+						errorMessage : sErrorMessage
+					});
+				},
+
+				iShouldSeeTheProceedButtonDisabled : function () {
+					return this.theProceedHelper(false);
+				},
+
+				iShouldSeeTheProceedButtonEnabled : function () {
+					return this.theProceedHelper(true);
+				},
+
+
 				theEditButtonHelper  : function (bIsEnabled) {
 					var sErrorMessage = "The edit button is enabled";
 					var sSuccessMessage = "The edit button is disabled";
@@ -156,11 +187,11 @@ sap.ui.define([
 					});
 				},
 
-				theEditButtonShouldBeDisabled : function () {
+	            iShouldSeeTheEditButtonDisabled : function () {
 					return this.theEditButtonHelper(false);
 				},
 
-				theEditButtonShouldBeEnabled : function () {
+				iShouldSeeTheEditButtonEnabled : function () {
 					return this.theEditButtonHelper(true);
 				},
 
@@ -228,6 +259,7 @@ sap.ui.define([
 						errorMessage : "The savelist still has entries"
 					});
 				},
+
 				iShouldSeeTheWelcomeScreen: function () {
 					return this.waitFor({
 						id : "saveForLaterList",
@@ -236,14 +268,28 @@ sap.ui.define([
 						}
 					});
 				},
+
+	            iShouldSeeTheTotalPriceEqualToZero : function () {
+		            return this.waitFor({
+			            id: "totalPriceText",
+			            matchers: new PropertyStrictEquals({name: "text", value: "Total: 0,00 EUR"}),
+			            success: function () {
+				            Opa5.assert.ok(true, "Total price is updated correctly");
+			            },
+			            errorMessage: "Total price is not updated correctly (If you have trouble running this test," +
+			            " delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
+		            });
+	            },
+
 				iShouldSeeTheTotalPriceUpdated: function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: new PropertyStrictEquals({name: "text", value: "Total: 1.099,00 EUR"}),
+						matchers: new PropertyStrictEquals({name: "text", value: "Total: 250,00 EUR"}),
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},
-						errorMessage: "Total price is not updated correctly (If you have trouble running this test, delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
+						errorMessage: "Total price is not updated correctly (If you have trouble running this test," +
+						" delete your browser cache. This test will fail, if the products in the cart do not exactly match this tests expectations.)"
 					});
 				}
 			}
