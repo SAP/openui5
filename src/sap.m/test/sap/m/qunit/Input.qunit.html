@@ -302,8 +302,8 @@
 
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
 		oInput.rerender();
-		oInput.$().find("label").css("display","block");
-		assert.strictEqual(oInput.$().find("label").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");
+		oInput.$().find("span").css("display","block");
+		assert.strictEqual(oInput.$().find("span").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");
 
 		// event check
 		oInput.getAggregation("_valueHelpIcon").firePress();
