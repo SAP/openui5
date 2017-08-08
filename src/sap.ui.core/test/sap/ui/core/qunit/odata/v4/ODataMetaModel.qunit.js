@@ -2078,8 +2078,6 @@ sap.ui.require([
 		QUnit.test("fetchCanonicalPath: " + oFixture.dataPath, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),
 				oContextMock = this.mock(oContext),
-				oEntityInstance = {},
-				oHelperMock = this.mock(_Helper),
 				oPromise;
 
 			this.oMetaModelMock.expects("getMetaPath").withExactArgs(oFixture.dataPath)
@@ -2089,13 +2087,11 @@ sap.ui.require([
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(_SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
+				var oEntityInstance = {"@$ui5.predicate" : oRequest.predicate};
+
 				oContextMock.expects("fetchValue")
 					.withExactArgs(oRequest.path || oFixture.dataPath)
 					.returns(_SyncPromise.resolve(oEntityInstance));
-				oHelperMock.expects("getKeyPredicate")
-					.withExactArgs(sinon.match.same(mScope[oRequest.entityType]),
-						sinon.match.same(oEntityInstance))
-					.returns(oRequest.predicate);
 			});
 
 			// code under test
@@ -2202,7 +2198,6 @@ sap.ui.require([
 				sPropertyPath = oFixture.path.slice(i + 1),
 				oContext = Context.create(this.oModel, undefined, sContextPath),
 				oContextMock = this.mock(oContext),
-				oHelperMock = this.mock(_Helper),
 				oPromise,
 				that = this;
 
@@ -2213,17 +2208,12 @@ sap.ui.require([
 					that.oMetaModelMock.expects("fetchEntityContainer")
 						.returns(_SyncPromise.resolve(mScope));
 					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, i) {
-						var oEntityInstance = {},
-							oEntityTypeName = oFixture.fetchPredicates[sPath];
+						var oEntityInstance = {"@$ui5.predicate" : "(~" + i + ")"};
 
 						// Note: the entity instance is delivered asynchronously
 						oContextMock.expects("fetchValue")
 							.withExactArgs(sPath)
 							.returns(_SyncPromise.resolve(Promise.resolve(oEntityInstance)));
-						oHelperMock.expects("getKeyPredicate")
-							.withExactArgs(sinon.match.same(mScope[oEntityTypeName]),
-								sinon.match.same(oEntityInstance))
-							.returns("(~" + i + ")");
 					});
 				}));
 
@@ -2300,7 +2290,7 @@ sap.ui.require([
 	}, {
 		dataPath : "/TEAMS/0/TEAM_2_CONTAINED_S",
 		instance : {},
-		message : "Missing value for key property 'Team_Id' at /TEAMS/0"
+		message : "No key predicate known at /TEAMS/0"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.message, function (assert) {
 			var oContext = Context.create(this.oModel, undefined, oFixture.dataPath),

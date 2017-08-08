@@ -1913,6 +1913,130 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("formatPropertyAsLiteral", function (assert) {
+		var sKeyPredicate = "(~)",
+			oProperty = {
+				$Type : "Edm.Foo"
+			},
+			oRequestor = _Requestor.create("/"),
+			sResult,
+			vValue = {};
+
+		this.mock(_Helper).expects("formatLiteral")
+			.withExactArgs(sinon.match.same(vValue), oProperty.$Type)
+			.returns(sKeyPredicate);
+
+		// code under test
+		sResult = oRequestor.formatPropertyAsLiteral(vValue, oProperty);
+
+		assert.strictEqual(sResult, sKeyPredicate);
+	});
+
+	//*********************************************************************************************
+	[{
+		sKeyPredicate : "('42')",
+		oEntityInstance : {"ID" : "42"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "('Walter%22s%20Win''s')",
+		oEntityInstance : {"ID" : "Walter\"s Win's"},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Sector='DevOps',ID='42')",
+		oEntityInstance : {"ID" : "42", "Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sKeyPredicate : "(Bar=42,Fo%3Do='Walter%22s%20Win''s')",
+		oEntityInstance : {
+			"Bar" : 42,
+			"Fo=o" : "Walter\"s Win's"
+		},
+		oEntityType : {
+			"$Key" : ["Bar", "Fo=o"],
+			"Bar" : {
+				"$Type" : "Edm.Int16"
+			},
+			"Fo=o" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
+			var sProperty,
+				oRequestor = _Requestor.create("/");
+
+			this.spy(oRequestor, "formatPropertyAsLiteral");
+
+			assert.strictEqual(
+				oRequestor.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				oFixture.sKeyPredicate);
+
+			// check that formatPropertyAsLiteral() is called for each property
+			for (sProperty in oFixture.oEntityType) {
+				if (sProperty[0] !== "$") {
+					assert.ok(
+						oRequestor.formatPropertyAsLiteral.calledWithExactly(
+							sinon.match.same(oFixture.oEntityInstance[sProperty]),
+							sinon.match.same(oFixture.oEntityType[sProperty])),
+						oRequestor.formatPropertyAsLiteral.printf(
+							"_Helper.formatLiteral('" + sProperty + "',...) %C"));
+				}
+			}
+		});
+	});
+	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	[{
+		sDescription : "one key property",
+		oEntityInstance : {},
+		oEntityType : {
+			"$Key" : ["ID"],
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}, {
+		sDescription : "multiple key properties",
+		oEntityInstance : {"Sector" : "DevOps"},
+		oEntityType : {
+			"$Key" : ["Sector", "ID"],
+			"Sector" : {
+				"$Type" : "Edm.String"
+			},
+			"ID" : {
+				"$Type" : "Edm.String"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
+			var oRequestor = _Requestor.create("/");
+
+			assert.strictEqual(
+				oRequestor.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				undefined);
+		});
+	});
+
+	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		QUnit.test("request(...)/submitBatch (realOData) success", function (assert) {
 			var oRequestor = _Requestor.create(TestUtils.proxy(sServiceUrl)),
