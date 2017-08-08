@@ -9,16 +9,16 @@
 		resetFilters="handleResetFilters">
 		<filterItems>
 			<ViewSettingsFilterItem
-				text="{i18n>availabilityText}"
+				text="{i18n>availabilityFilterTitle}"
 				key="availabilityKey">
 				<items>
-					<ViewSettingsItem text="{i18n>availableProductsText}" key="Available" />
-					<ViewSettingsItem text="{i18n>outOfStockProductsText}" key="OutOfStock" />
-					<ViewSettingsItem text="{i18n>discontinuedProductsText}" key="Discontinued" />
+					<ViewSettingsItem text="{i18n>availableFilterTitle}" key="Available" />
+					<ViewSettingsItem text="{i18n>outOfStockFilterTitle}" key="OutOfStock" />
+					<ViewSettingsItem text="{i18n>discontinuedFilterTitle}" key="Discontinued" />
 				</items>
 			</ViewSettingsFilterItem>
 			<ViewSettingsCustomItem
-				text="{i18n>priceText}"
+				text="{i18n>priceFilterTitle}"
 				key="Price">
 				<customControl>
 					<l:VerticalLayout
@@ -35,6 +35,14 @@
 					</l:VerticalLayout>
 				</customControl>
 			</ViewSettingsCustomItem>
+			<ViewSettingsFilterItem
+					text="{i18n>supplierFilterTitle}"
+					key="supplierKey"
+					items="{view>/Suppliers}">
+				<items>
+					<ViewSettingsItem text="{view>SupplierName}" key="{view>SupplierName}" />
+				</items>
+			</ViewSettingsFilterItem>
 		</filterItems>
 	</ViewSettingsDialog>
 </core:FragmentDefinition>

@@ -4,29 +4,37 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
+	'sap/m/MessageToast',
+	'sap/ui/model/json/JSONModel',
 	'jquery.sap.global'
 ], function (BaseController,
 			 formatter,
 			 Device,
 			 Filter,
 			 FilterOperator,
+			 MessageToast,
+			 JSONModel,
 			 $) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Category", {
 		formatter : formatter,
 		// Define filterPreviousValues as global variables because they need to be accessed from different functions
-		_filterPreviousValue: 0,
-		_filterPreviousValue2: 5000,
+		_iLowFilterPreviousValue: 0,
+		_iHighFilterPreviousValue: 5000,
 
 		onInit: function () {
+			var oViewModel = new JSONModel({
+				Suppliers: []
+			});
+			this.getView().setModel(oViewModel, "view");
 			var oComponent = this.getOwnerComponent();
 			this._router = oComponent.getRouter();
-			this._router.getRoute("category").attachMatched(this._loadCategory, this);
-			this._router.getRoute("product").attachMatched(this._loadCategory, this);
+			this._router.getRoute("category").attachMatched(this._loadCategories, this);
 		},
 
-		_loadCategory: function(oEvent) {
+		_loadCategories: function(oEvent) {
+			this._loadSuppliers();
 			var oProductList = this.getView().byId("productList");
 			this._changeNoDataTextToIndicateLoading(oProductList);
 			var oBinding = oProductList.getBinding("items");
@@ -40,7 +48,34 @@ sap.ui.define([
 					expand: "Products"
 				}
 			});
+		},
 
+		/**
+		 * Craete a unique array of suppliers to be used in the supplier flter option
+		 * @private
+		 */
+		_loadSuppliers: function () {
+			var oModel = this.getModel();
+			oModel.read("/Products", {
+				success: function (oData) {
+					var aProducts = oData.results,
+						aSuppliers = [];
+
+					aProducts.forEach(function (oProduct) {
+						aSuppliers.push(oProduct.SupplierName);
+					});
+					// remove duplications from the suppliers array and sort it
+					var aUniqueSuppliers = aSuppliers.filter(function (sName, iIndex, aUniqueSuppliers) {
+						return aUniqueSuppliers.indexOf(sName) === iIndex;
+					}).sort();
+
+					// create the unique suppliers array as array of of objects
+					aUniqueSuppliers.map(function (sSupplierName, iIndex, aUniqueSuppliers) {
+						aUniqueSuppliers[iIndex] = {SupplierName: sSupplierName};
+					});
+					this.getModel("view").setProperty("/Suppliers", aUniqueSuppliers);
+				}.bind(this)
+			});
 		},
 
 		_changeNoDataTextToIndicateLoading: function (oList) {
@@ -116,7 +151,8 @@ sap.ui.define([
 				oCustomKeys = {},
 				aFilters = [],
 				aAvailableFilters = [],
-				aPriceFilters = [];
+				aPriceFilters = [],
+				aSupplierFilters = [];
 
 			// Add the slider custom filter if the user selects some values
 			if (oCustomFilter.getCustomControl().getAggregation("content")[0].getValue() !== oCustomFilter.getCustomControl().getAggregation("content")[0].getMin() ||
@@ -150,6 +186,11 @@ sap.ui.define([
 						aPriceFilters.push(oFilter);
 						oCustomKeys["priceKey"] = {Price: true};
 						break;
+
+					default:
+						oFilter = new Filter("SupplierName", FilterOperator.EQ, sFilterKey);
+						aSupplierFilters.push(oFilter);
+
 				}
 			});
 			if (aAvailableFilters.length > 0) {
@@ -157,6 +198,9 @@ sap.ui.define([
 			}
 			if (aPriceFilters.length > 0) {
 				aFilters.push(new Filter({filters: aPriceFilters}));
+			}
+			if (aSupplierFilters.length > 0) {
+				aFilters.push(new Filter({filters: aSupplierFilters}));
 			}
 			oFilter = new Filter({filters: aFilters, and: true});
 			if (aFilters.length > 0) {
@@ -168,7 +212,7 @@ sap.ui.define([
 				var oKeys = $.extend(oFilterKey, oCustomKeys);
 				for (var key in oKeys) {
 					if (oKeys.hasOwnProperty(key)) {
-						sText = sText + sSeparator  + this.getResourceBundle().getText(key, [this._filterPreviousValue, this._filterPreviousValue2]);
+						sText = sText + sSeparator  + this.getResourceBundle().getText(key, [this._iLowFilterPreviousValue, this._iHighFilterPreviousValue]);
 						sSeparator = ", ";
 					}
 				}
@@ -206,8 +250,8 @@ sap.ui.define([
 		handleConfirm: function (oEvent) {
 			var oCustomFilter = this._getDialog().getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
-			this._filterPreviousValue = oSlider.getValue();
-			this._filterPreviousValue2 = oSlider.getValue2();
+			this._iLowFilterPreviousValue = oSlider.getValue();
+			this._iHighFilterPreviousValue = oSlider.getValue2();
 			this._applyFilter(oEvent);
 		},
 
@@ -218,8 +262,8 @@ sap.ui.define([
 		handleCancel: function () {
 			var oCustomFilter = this._oDialog.getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
-			oSlider.setValue(this._filterPreviousValue).setValue2(this._filterPreviousValue2);
-			if (this._filterPreviousValue > oSlider.getMin() || this._filterPreviousValue2 !== oSlider.getMax()) {
+			oSlider.setValue(this._iLowFilterPreviousValue).setValue2(this._iHighFilterPreviousValue);
+			if (this._iLowFilterPreviousValue > oSlider.getMin() || this._iHighFilterPreviousValue !== oSlider.getMax()) {
 				oCustomFilter.setFilterCount(1);
 			} else {
 				oCustomFilter.setFilterCount(0);

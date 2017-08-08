@@ -58,7 +58,14 @@ sap.ui.define([
 						errorMessage: "The Availability filtering option was not found and could not be pressed"
 					});
 				},
-
+				iSelectTheSupplierFilteringOption: function () {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name: "title", value: "Supplier"}),
+						actions: new Press(),
+						errorMessage: "The supplier filtering option was not found and could not be pressed"
+					});
+				},
 				iSelectTheAvailableFilter: function () {
 					this.waitFor({
 						controlType: "sap.m.StandardListItem",
@@ -74,6 +81,14 @@ sap.ui.define([
 						matchers: new PropertyStrictEquals({name: "title", value: "Discontinued"}),
 						actions: new Press(),
 						errorMessage: "The discontinued check box was not found and could not be selected"
+					});
+				},
+				iSelectTheTechnocomFilter: function () {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name: "title", value: "Technocom"}),
+						actions: new Press(),
+						errorMessage: "The Technocom check box was not found and could not be selected"
 					});
 				},
 
@@ -101,6 +116,14 @@ sap.ui.define([
 						matchers: new PropertyStrictEquals({name: "title", value: "Discontinued"}),
 						actions: new Press(),
 						errorMessage: "The discontinued check box was not found and could not be deselected"
+					});
+				},
+				iDeselectTheTechnoComFilter: function () {
+					this.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new PropertyStrictEquals({name: "title", value: "Technocom"}),
+						actions: new Press(),
+						errorMessage: "The Technocom check box was not found and could not be deselected"
 					});
 				},
 				iPressOkButton: function () {
@@ -196,7 +219,12 @@ sap.ui.define([
 					this.iSelectTheDiscontinuedFilter();
 					this.iPressOkButton();
 				},
-
+				iFilterOnSupplier: function () {
+					this.iPressTheFilterButton();
+					this.iSelectTheSupplierFilteringOption();
+					this.iSelectTheTechnocomFilter();
+					this.iPressOkButton();
+				},
 				iFilterOnAvailabilityAndPrice: function () {
 					this.iPressTheFilterButton();
 					this.iSelectTheOutOfStockFilter();
@@ -219,6 +247,11 @@ sap.ui.define([
 					this.iPressTheFilterButton();
 					this.iDeselectTheAvailableFilter();
 					this.iDeselectTheDiscontinuedFilter();
+					this.iPressOkButton();
+				},
+				iRemoveTheSupplierFilter: function () {
+					this.iPressTheFilterButton();
+					this.iDeselectTheTechnoComFilter();
 					this.iPressOkButton();
 				}
 			},
@@ -323,6 +356,16 @@ sap.ui.define([
 						errorMessage: "The category list shows products other than out of stock"
 					});
 				},
+				iShouldOnlySeeTheTechnoComProducts: function () {
+					this.waitFor({
+						id: "productList",
+						matchers: new AggregationLengthEquals({name: "items", length: 1}),
+						success: function (oList) {
+							Opa5.assert.ok(oList, "The category list shows just the TechnoCom products");
+						},
+						errorMessage: "The category list shows products from supplier other than TechnoCom "
+					});
+				},
 				iShouldOnlySeeOutOfStockAndCheapProducts: function () {
 					this.waitFor({
 						id: "productList",
@@ -354,7 +397,16 @@ sap.ui.define([
 						errorMessage: "The info toolbar of the category list was not found"
 					});
 				},
-
+				iShouldSeeASupplierInfoToolbar: function () {
+					this.waitFor({
+						id: "categoryInfoToolbarTitle",
+						matchers: new PropertyStrictEquals({name: "text", value: "Filtered by Supplier"}),
+						success: function () {
+							Opa5.assert.ok(true, "The category list has an info toolbar");
+						},
+						errorMessage: "The info toolbar of the category list was not found"
+					});
+				},
 				iShouldNotSeeAnInfoToolbar: function () {
 					this.waitFor({
 						id: "productList",
@@ -384,6 +436,10 @@ sap.ui.define([
 				iShouldOnlySeeAvailableAndDiscontinuedProductsWithInfoToolbar: function () {
 					this.iShouldOnlySeeTheAvailableAndDiscontinuedProducts();
 					this.iShouldSeeAnAvailabilityInfoToolbar();
+				},
+				iShouldOnlySeeTechnoComProductsAndAnInfoToolbar: function () {
+					this.iShouldOnlySeeTheTechnoComProducts();
+					this.iShouldSeeASupplierInfoToolbar();
 				},
 				iShouldOnlySeeOutOfStockProductsAndAnInfoToolbar: function () {
 					this.iShouldOnlySeeTheOutOfStockProducts();
