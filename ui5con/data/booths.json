@@ -23,7 +23,11 @@
 			"speaker": "Petya Begovska",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>The starting point for everyone working with UI5 is the Demo Kit Application. Here you can find all the needed information such as API Reference, Developer Guide, Samples and Demo apps.</p><p>Now, it is completely redesigned to showcase the innovative, responsive and multi theme capable UI5 framework!</p><p>Come and see the new Demo Kit app accessible on any device, with modern look and feel and easy to use. Provide your valuable feedback so we can make it even better!</p>"
+			"abstract": "<p>The starting point for everyone working with UI5 is the Demo Kit Application. Here you can find all the needed information such as API Reference, Developer Guide, Samples and Demo apps.</p><p>Now, it is completely redesigned to showcase the innovative, responsive and multi theme capable UI5 framework!</p><p>Come and see the new Demo Kit app accessible on any device, with modern look and feel and easy to use. Provide your valuable feedback so we can make it even better!</p>",
+			"material": {
+				"Slides": "https://www.slideshare.net/PetyaBegovska/new-demo-kit-your-way-to-ui5",
+				"Demo": "https://openui5nightly.hana.ondemand.com"
+			}
 		},
 		{
 			"type": "break",
@@ -121,7 +125,10 @@
 			"speaker": "András Kónya, Lóránt Guth",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>Imagine a world where development and business can understand each other without using lengthy code lines. Applying human-readable language you will have the possibility to enable everyone in your team, even your customers, to create business driven automated tests.</p><p>Our solution will lead your agile workflow towards acceptance testing using OPA5 and Cucumber over Fiori stack which provide basis for behavior driven development.</p><p>We are going to present a Cucumber and OPA5-based test automation framework where users write test scenarios adopting human-readable Gherkin language. Additionally, we will talk about the key test concepts of healthy test automation pyramids, appropriate placement of test levels, and misconcepts about TDD and BDD.</p>"
+			"abstract": "<p>Imagine a world where development and business can understand each other without using lengthy code lines. Applying human-readable language you will have the possibility to enable everyone in your team, even your customers, to create business driven automated tests.</p><p>Our solution will lead your agile workflow towards acceptance testing using OPA5 and Cucumber over Fiori stack which provide basis for behavior driven development.</p><p>We are going to present a Cucumber and OPA5-based test automation framework where users write test scenarios adopting human-readable Gherkin language. Additionally, we will talk about the key test concepts of healthy test automation pyramids, appropriate placement of test levels, and misconcepts about TDD and BDD.</p>",
+			"material": {
+				"Slides": "https://www.slideshare.net/secret/I8CXYMujuQnVjZ"
+			}
 		},
 		{
 			"type": "break",
@@ -171,7 +178,11 @@
 			"speaker": "Stephan Heyne",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "Custom SAP Fiori launchpad tiles can now be developed similar like SAPUI5 apps are created. This session is marked as a teaser as this is a new approach which is not yet available on all Fiori technology stacks."
+			"abstract": "Custom SAP Fiori launchpad tiles can now be developed similar like SAPUI5 apps are created. This session is marked as a teaser as this is a new approach which is not yet available on all Fiori technology stacks.",
+			"material": {
+				"Slides": "https://de.slideshare.net/StephanHeyne/implementing-custom-tiles-for-sap-fiori-launchpad/StephanHeyne/implementing-custom-tiles-for-sap-fiori-launchpad",
+				"GitHub": "https://github.com/heynest/fiori-launchpad-custom-tile"
+			}
 		},
 		{
 			"type": "break",
@@ -193,7 +204,10 @@
 			"speaker": "Ian Robert Taylor, Dirk Teufel",
 			"type": "Session",
 			"duration": 40,
-			"abstract": "<p>In this Demo Booth session we will explain the concepts of Drafts, which enable a concept for editing entities.</p><p>Two way binding provides a mechanism to maintain entities, but does not offer the feature to lock an entity during editing nor the option to control the visibility of a changed entity.</p><p>In this session we examine the features needed from OData and from Function Imports that provide the mechanism to enable Drafts in a Freestyle Fiori App according to the SAP Fiori UX Guidelines.</p>"
+			"abstract": "<p>In this Demo Booth session we will explain the concepts of Drafts, which enable a concept for editing entities.</p><p>Two way binding provides a mechanism to maintain entities, but does not offer the feature to lock an entity during editing nor the option to control the visibility of a changed entity.</p><p>In this session we examine the features needed from OData and from Function Imports that provide the mechanism to enable Drafts in a Freestyle Fiori App according to the SAP Fiori UX Guidelines.</p>",
+			"material": {
+				"Slides": "https://www.slideshare.net/secret/r2j7FMHv29Ck8f"
+			}
 		},
 		{
 			"type": "break",
