@@ -84,15 +84,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	}});
 
 	/**
-	 * Default line height value as a number when line-height is normal.
+	 * Default line height value as a number when line height is normal.
 	 *
-	 * This value is required during max-height calculation for the browsers that do not support line-clamping.
-	 * It is better to define line-height in CSS instead of "normal" to get consistent maxLines results since normal line-height
-	 * not only varies from browser to browser but they also vary from one font face to another and can also vary within a given face.
+	 * This value is required during max height calculation for the browsers that do not support line clamping.
+	 * It is better to define line height in CSS instead of "normal" to get consistent <code>maxLines</code> results since normal line height
+	 * not only varies from browser to browser but it also varies from one font face to another and can also vary within a given face.
 	 *
 	 * @since 1.22
 	 * @protected
-	 * @type {number}
+	 * @type {int}
 	 */
 	Text.prototype.normalLineHeight = 1.2;
 
@@ -119,14 +119,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	Text.prototype.ellipsis = '...';
 
 	/**
-	 * To prevent from the layout thrashing of the textContent call, this method
-	 * first tries to set the nodeValue of the first child if it exists.
+	 * To prevent from the layout thrashing of the <code>textContent</code> call, this method
+	 * first tries to set the <code>nodeValue</code> of the first child if it exists.
 	 *
+	 * @name sap.m.Text.setNodeValue
+	 * @method
+	 * @protected
+	 * @static
 	 * @param {HTMLElement} oDomRef DOM reference of the text node container.
 	 * @param {String} [sNodeValue] new Node value.
 	 * @since 1.30.3
-	 * @protected
-	 * @static
 	 */
 	Text.setNodeValue = function(oDomRef, sNodeValue) {
 		sNodeValue = sNodeValue || "";
@@ -138,8 +140,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 
-	// suppress invalidation of text property setter
+	/**
+	 * Sets the text.
+	 *
+	 * @name sap.m.Text.setText
+	 * @method
+	 * @public
+	 * @param {string} sText Text value.
+	 * @returns {sap.m.Text} this Text reference for chaining.
+	 */
 	Text.prototype.setText = function(sText) {
+		// suppress invalidation of text property setter
 		this.setProperty("text", sText , true);
 
 		// check text dom ref
@@ -162,8 +173,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
-	 // returns the text value and normalize line-ending character for rendering
+	/**
+	 * Gets the text.
+	 *
+	 * @name sap.m.Text.getText
+	 * @method
+	 * @public
+	 * @param {boolean} bNormalize Indication for normalized text.
+	 * @returns {string} Text value.
+	 */
 	Text.prototype.getText = function(bNormalize) {
+		// returns the text value and normalize line-ending character for rendering
 		var sText = this.getProperty("text");
 
 		// handle line ending characters for renderer
@@ -174,8 +194,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return sText;
 	};
 
-	// required adaptations after rendering
+	/**
+	 * Overwrites onAfterRendering
+	 *
+	 * @name sap.m.Text.onAfterRendering
+	 * @method
+	 * @public
+	 */
 	Text.prototype.onAfterRendering = function() {
+		// required adaptations after rendering
 		// check visible, max-lines and line-clamping support
 		if (this.getVisible() &&
 			this.hasMaxLines()) {
@@ -188,9 +215,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Determines whether max lines should be rendered or not.
 	 *
-	 * @since 1.22
+	 * @name sap.m.Text.hasMaxLines
+	 * @method
 	 * @protected
-	 * @returns {HTMLElement|null}
+	 * @returns {HTMLElement|null} Max lines of the text.
+	 * @since 1.22
 	 */
 	Text.prototype.hasMaxLines = function() {
 		return (this.getWrapping() && this.getMaxLines() > 1);
@@ -198,12 +227,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Returns the text node container's DOM reference.
+	 * This can be different from <code>getDomRef</code> when inner wrapper is needed.
 	 *
-	 * This can be different from getDomRef when inner wrapper is needed.
-	 *
-	 * @since 1.22
+	 * @name sap.m.Text.getTextDomRef
+	 * @method
 	 * @protected
-	 * @returns {HTMLElement|null}
+	 * @returns {HTMLElement|null} DOM reference of the text.
+	 * @since 1.22
 	 */
 	Text.prototype.getTextDomRef = function() {
 		if (!this.getVisible()) {
@@ -220,11 +250,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Caches and returns the computed line height of the text.
 	 *
-	 * @since 1.22
+	 * @name sap.m.Text.getLineHeight
+	 * @method
 	 * @protected
-	 * @see sap.m.Text#cacheLineHeight
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
-	 * @returns {Number} returns calculated line-height
+	 * @returns {int} returns calculated line height
+	 * @see sap.m.Text#cacheLineHeight
+	 * @since 1.22
 	 */
 	Text.prototype.getLineHeight = function(oDomRef) {
 		// return cached value if possible and available
@@ -272,13 +304,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Returns the max height according to max lines and line height calculation.
+	 * This is not calculated max height!
 	 *
-	 * This is not calculated max-height!
-	 *
-	 * @since 1.22
+	 * @name sap.m.Text.getClampHeight
+	 * @method
 	 * @protected
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
-	 * @returns {Number}
+	 * @returns {int} The clamp height of the text.
+	 * @since 1.22
 	 */
 	Text.prototype.getClampHeight = function(oDomRef) {
 		oDomRef = oDomRef || this.getTextDomRef();
@@ -286,12 +319,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Sets the max-height to support maxLines property.
+	 * Sets the max height to support <code>maxLines</code> property.
 	 *
-	 * @since 1.22
+	 * @name sap.m.Text.clampHeight
+	 * @method
 	 * @protected
 	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
-	 * @returns {Number} calculated max height value
+	 * @returns {int} Calculated max height value.
+	 * @since 1.22
 	 */
 	Text.prototype.clampHeight = function(oDomRef) {
 		oDomRef = oDomRef || this.getTextDomRef();
@@ -310,15 +345,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Clamps the wrapping text according to max lines and returns the found ellipsis position.
-	 *
 	 * Parameters can be used for better performance.
 	 *
-	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
-	 * @param {number} [iStartPos] Start point of the ellipsis search.
-	 * @param {number} [iEndPos] End point of the ellipsis search.
-	 * @returns {number|undefined} Returns found ellipsis position or undefined
-	 * @since 1.20
+	 * @name sap.m.Text.clampText
+	 * @method
 	 * @protected
+	 * @param {HTMLElement} [oDomRef] DOM reference of the text container.
+	 * @param {int} [iStartPos] Start point of the ellipsis search.
+	 * @param {int} [iEndPos] End point of the ellipsis search.
+	 * @returns {int|undefined} Returns found ellipsis position or undefined.
+	 * @since 1.20
 	 */
 	Text.prototype.clampText = function(oDomRef, iStartPos, iEndPos) {
 		// check DOM reference
@@ -384,8 +420,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * Gets the accessibility information for the text.
+	 *
+	 * @name sap.m.Text.getAccessibilityInfo
+	 * @method
 	 * @protected
+	 * @returns {object} Accessibility information for the text.
+	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */
 	Text.prototype.getAccessibilityInfo = function() {
 		return {description: this.getText()};
