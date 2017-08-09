@@ -255,6 +255,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	}});
 
 
+	/**
+	 * Clones the IconTabBar.
+	 *
+	 * @name sap.m.IconTabBar.clone
+	 * @method
+	 * @public
+	 * @returns {sap.m.IconTabBar} The cloned IconTabBar.
+	 */
 	IconTabBar.prototype.clone = function () {
 		var oClone = Control.prototype.clone.apply(this, arguments);
 
@@ -267,10 +275,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Sets the tab content as expanded.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setExpanded
+	 * @method
 	 * @public
-	 * @param {boolean} bExpanded new parameter value
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean} bExpanded New parameter value.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setExpanded = function (bExpanded) {
 		// set internal property
@@ -285,10 +296,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Sets the tabs as collapsible and expandable without re-rendering the control.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setExpandable
+	 * @method
 	 * @public
-	 * @param {boolean} bExpandable new parameter value
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean} bExpandable New parameter value.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setExpandable = function (bExpandable) {
 		// set internal property
@@ -298,10 +312,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Sets the header mode.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setHeaderMode
+	 * @method
 	 * @public
-	 * @param {sap.m.IconTabHeaderMode} mode new parameter value
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setHeaderMode = function (mode) {
 		// set internal property
@@ -315,10 +332,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Sets the header background design.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setHeaderBackgroundDesign
+	 * @method
 	 * @public
-	 * @param {sap.m.BackgroundDesign} headerBackgroundDesign New parameter value
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {sap.m.BackgroundDesign} headerBackgroundDesign New parameter value.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setHeaderBackgroundDesign = function (headerBackgroundDesign) {
 		// set internal property
@@ -331,10 +351,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Sets the showOverflowSelectList property.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setShowOverflowSelectList
+	 * @method
 	 * @public
-	 * @param {boolean} value New value for showOverflowSelectList
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean} value New value for showOverflowSelectList.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setShowOverflowSelectList = function (value) {
 		// set internal property
@@ -347,10 +370,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Sets the enableTabReordering property.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setEnableTabReordering
+	 * @method
 	 * @public
-	 * @param {boolean} value New value for enableTabReordering
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean} value New value for enableTabReordering.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setEnableTabReordering = function (value) {
 		// set internal property
@@ -363,6 +389,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Re-renders only the displayed content of the IconTabBar.
+	 *
+	 * @name sap.m.IconTabBar._rerenderContent
+	 * @method
 	 * @private
 	 * @param oContent Content, which should be rendered.
 	 */
@@ -379,11 +408,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Opens and closes the content Container.
+	 * Opens and closes the content container.
 	 *
-	 * @param {boolean|undefined} bExpanded the new state of the container. If not specified, it will use the property expanded.
+	 * @name sap.m.IconTabBar._toggleExpandCollapse
+	 * @method
 	 * @private
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean|undefined} bExpanded The new state of the container. If not specified, it will use the property expanded.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype._toggleExpandCollapse = function(bExpanded) {
 		var $content = this.$("content");
@@ -448,9 +479,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Function is executed when the expand/collapse animation is finished to adjust the UI.
 	 *
-	 * @param {boolean} bExpanded the new state of the container. Passed in
+	 * @name sap.m.IconTabBar.onTransitionEnded
+	 * @method
 	 * @private
-	 * @return {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean} bExpanded The new state of the container.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.onTransitionEnded = function(bExpanded) {
 		var $content = this.$("content"),
@@ -480,6 +513,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Lazy initializes the iconTabHeader aggregation.
+	 *
+	 * @name sap.m.IconTabBar._getIconTabHeader
+	 * @method
+	 * @private
+	 * @returns {sap.m.IconTabBar} Aggregation for the IconTabBar.
 	 */
 	IconTabBar.prototype._getIconTabHeader = function () {
 		var oControl = this.getAggregation("_header");
@@ -496,23 +534,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*           begin: reflectors for header properties           */
 	/* =========================================================== */
 
-	/*
+	/**
 	 * Reflector for the internal header's showSelection property.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setShowSelection
+	 * @method
 	 * @public
-	 * @param {boolean} bValue the new value
-	 * @returns {sap.m.IconTabBar} this pointer for chaining
+	 * @param {boolean} bValue the new value.
+	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setShowSelection = function (bValue) {
 		this._getIconTabHeader().setShowSelection(bValue);
 		return this;
 	};
 
-	/*
+	/**
 	 * Reflector for the internal header's showSelection property.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.getShowSelection
 	 * @public
-	 * @returns {boolean} The current property value
+	 * @returns {boolean} The current property value.
 	 */
 	IconTabBar.prototype.getShowSelection = function () {
 		return this._getIconTabHeader().getShowSelection();
@@ -520,10 +563,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Reflector for the internal header's selectedKey property.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setSelectedKey
 	 * @public
-	 * @param {string} sValue the new value
-	 * @returns {sap.m.IconTabBar} this pointer for chaining
+	 * @param {string} sValue The new value.
+	 * @returns {sap.m.IconTabBar} this Pointer for chaining.
 	 */
 	IconTabBar.prototype.setSelectedKey = function (sValue) {
 		this._getIconTabHeader().setSelectedKey(sValue);
@@ -532,9 +577,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Reflector for the internal header's selectedKey property.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.getSelectedKey
+	 * @method
 	 * @public
-	 * @returns {string} The current property value
+	 * @returns {string} The current property value.
 	 */
 	IconTabBar.prototype.getSelectedKey = function () {
 		return this._getIconTabHeader().getSelectedKey();
@@ -543,10 +591,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Reflector for the internal header's selectedItem.
 	 * Sets the selected item, updates the UI, and fires the select event.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.setSelectedItem
+	 * @method
 	 * @private
-	 * @param {sap.m.IconTabFilter} oItem the item to be selected
-	 * @return {sap.m.IconTabHeader} this pointer for chaining
+	 * @param {sap.m.IconTabFilter} oItem Item to be selected.
+	 * @return {sap.m.IconTabHeader} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setSelectedItem = function(oItem, bAPIchange) {
 		return this._getIconTabHeader().setSelectedItem(oItem, bAPIchange);
@@ -560,13 +611,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/*           begin: forward aggregation  methods to header     */
 	/* =========================================================== */
 
-	/*
+	/**
 	 * Forwards a function call to a managed object based on the aggregation name.
 	 * If the name is items, it will be forwarded to the list, otherwise called locally.
+	 *
+	 * @name sap.m.IconTabBar
+	 * @method
 	 * @private
-	 * @param {string} sFunctionName The name of the function to be called
-	 * @param {string} sAggregationName The name of the aggregation asociated
-	 * @returns {any} The return type of the called function
+	 * @param {string} sFunctionName The name of the function to be called.
+	 * @param {string} sAggregationName The name of the aggregation associated.
+	 * @returns {any} The return type of the called function.
 	 */
 	IconTabBar.prototype._callMethodInManagedObject = function (sFunctionName, sAggregationName) {
 		var aArgs = Array.prototype.slice.call(arguments),
@@ -584,11 +638,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Forwards aggregations with the name of items to the internal list.
+	 *
 	 * @overwrite
+	 * @name sap.m.IconTabBar.bindAggregation
+	 * @method
 	 * @public
-	 * @param {string} sAggregationName The name for the binding
-	 * @param {object} oBindingInfo The configuration parameters for the binding
-	 * @returns {sap.m.IconTabBar} this pointer for chaining
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oBindingInfo The configuration parameters for the binding.
+	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.bindAggregation = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -598,55 +655,189 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return this;
 	};
 
+	/**
+	 * Validates aggregations.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.validateAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oObject Object that must have its aggregation validated.
+	 * @param {boolean} bMultiple Indicator for multiple validation.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.validateAggregation = function (sAggregationName, oObject, bMultiple) {
 		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
 	};
 
+	/**
+	 * Sets aggregations.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.setAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oObject Object that must have its aggregation validated.
+	 * @param {boolean} bSuppressInvalidate Indicator for invalidate suppression.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.setAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		this._callMethodInManagedObject("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		return this;
 	};
 
+	/**
+	 * Gets aggregations.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.getAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oDefaultForCreation Object to get the aggregation from.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.getAggregation = function (sAggregationName, oDefaultForCreation) {
 		return this._callMethodInManagedObject("getAggregation", sAggregationName, oDefaultForCreation);
 	};
 
+	/**
+	 * Gets the index of aggregation.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.indexOfAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oObject Object to get the index of the aggregation.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.indexOfAggregation = function (sAggregationName, oObject) {
 		return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
 	};
 
+	/**
+	 * Inserts aggregation.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.insertAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oObject Object to get the index of the aggregation.
+	 * @param {int} iIndex Index of the aggregation.
+	 * @param {boolean} bSuppressInvalidate Indication for suppressing invalidation.
+	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 */
 	IconTabBar.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 		this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
 		return this;
 	};
 
+	/**
+	 * Adds aggregation.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.addAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oObject Object to get the index of the aggregation.
+	 * @param {boolean} bSuppressInvalidate Indication for suppressing invalidation.
+	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 */
 	IconTabBar.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		this._callMethodInManagedObject("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		return this;
 	};
 
+	/**
+	 * Removes aggregation.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.removeAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {object} oObject Object to get the aggregation from.
+	 * @param {boolean} bSuppressInvalidate Indication for suppressing invalidation.
+	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 */
 	IconTabBar.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
 	};
 
+	/**
+	 * Removes all aggregations.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.removeAllAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {boolean} bSuppressInvalidate Indication for suppressing invalidation.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
 	};
 
+	/**
+	 * Destroys aggregation.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.destroyAggregation
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @param {boolean} bSuppressInvalidate Indication for suppressing invalidation.
+	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 */
 	IconTabBar.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
 		this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
 		return this;
 	};
 
+	/**
+	 * Gets binding.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.getBinding
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.getBinding = function (sAggregationName) {
 		return this._callMethodInManagedObject("getBinding", sAggregationName);
 	};
 
-
+	/**
+	 * Gets binding information.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.getBindingInfo
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.getBindingInfo = function (sAggregationName) {
 		return this._callMethodInManagedObject("getBindingInfo", sAggregationName);
 	};
 
+	/**
+	 * Gets binding path.
+	 *
+	 * @overwrite
+	 * @name sap.m.IconTabBar.getBindingPath
+	 * @method
+	 * @public
+	 * @param {string} sAggregationName The name for the binding.
+	 * @returns {any} The return type of the called function.
+	 */
 	IconTabBar.prototype.getBindingPath = function (sAggregationName) {
 		return this._callMethodInManagedObject("getBindingPath", sAggregationName);
 	};
