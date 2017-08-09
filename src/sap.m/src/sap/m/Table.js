@@ -405,6 +405,23 @@ sap.ui.define(['jquery.sap.global', './ListBase', './ListItemBase', './library']
 		}
 	};
 
+	/**
+	 * This method is a hook for the RenderManager that gets called
+	 * during the rendering of child Controls. It allows to add,
+	 * remove and update existing accessibility attributes (ARIA) of
+	 * those controls.
+	 *
+	 * @param {sap.ui.core.Control} oElement - The Control that gets rendered by the RenderManager
+	 * @param {Object} mAriaProps - The mapping of "aria-" prefixed attributes
+	 * @protected
+	 */
+	Table.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
+		if (oElement == this._selectAllCheckBox) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			mAriaProps.label = oBundle.getText("TABLE_CHECKBOX_SELECT_ALL");
+		}
+	};
+
 	/*
 	 * Returns colspan for all columns except navigation
 	 * Because we render navigation always even it is empty
