@@ -132,17 +132,17 @@
 
 	var fnChange = function(oEvent) {
 		bChanged = true;
-		assert.ok(bDataRequested && !bDataReceived,"change fired");
+		assert.ok(bDataRequested && !bDataReceived, "change fired");
 	};
 
 	var fnDataRequested = function(oEvent) {
 		bDataRequested = true;
-		assert.ok(!bDataReceived && !bChanged,"dataRequested fired");
+		assert.ok(!bDataReceived && !bChanged, "dataRequested fired");
 	};
 
 	var fnDataReceived = function(oEvent) {
 		bDataReceived = true;
-		assert.ok(bChanged && bDataRequested,"dataRecieved fired");
+		assert.ok(bChanged && bDataRequested, "dataRecieved fired");
 	};
 
 	QUnit.test("check datajs AMD shim", function(assert) {
@@ -5104,7 +5104,7 @@
 				properties: {Name: 'test'},
 				success: fnSuccess
 			});
-			var oContextBinding = this.oModel.bindContext("/Suppliers(0)", oCreatedContext);
+			var oContextBinding = this.oModel.bindContext("/Categories(1)", oCreatedContext);
 			oContextBinding.attachChange(function(){
 				assert.ok(true, "ContextBinding change most be fired");
 			});
