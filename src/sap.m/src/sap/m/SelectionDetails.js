@@ -512,7 +512,10 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 		this.destroyAggregation("items", true);
 		for (var i = 0; i < aSelection.length; i++) {
 			oResult = fnFactory(aSelection[i].displayData, aSelection[i].data, aSelection[i].context, oData);
-			this.addAggregation("items", oResult, true);
+			if (oResult) {
+				oResult._sMarkerShapeString = aSelection[i].shapeString;
+				this.addAggregation("items", oResult, true);
+			}
 		}
 		this.fireEvent("afterUpdate", {
 			items: this.getItems()
