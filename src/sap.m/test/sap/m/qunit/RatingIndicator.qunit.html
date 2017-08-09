@@ -196,7 +196,6 @@
 			init(aRatings[i].getId());
 			if (oRating.getVisible()) {
 				assert.ok($RatingContainer.hasClass("sapMRI"), 'The rating root HTML Div element "must have" the CSS class "sapMRI" on ' + oRating);
-				assert.ok($SelectedDiv.hasClass("sapMRISel"), 'The rating selected HTML Div element "must have" the CSS class "sapMRISel" on ' + oRating);
 				assert.ok($UnselectedDiv.hasClass("sapMRIUnsel"), 'The rating unselectedHTML Div element "must have" the CSS class "sapMRIUnsel" on ' + oRating);
 				if (oRating.getEnabled()) {
 					assert.ok($SelectorDiv.hasClass("sapMRISelector"), 'The selector HTML DIV element "must have" the CSS class "sapMRISelector" on ' + oRating);
@@ -209,16 +208,19 @@
 		assert.strictEqual(oRating8.$().length, 0, 'The rating is not visible on' + oRating8);
 	});
 
-	QUnit.test("displayOnly add class", function(assert) {
+	QUnit.test("setting displayOnly", function(assert) {
 
 		// initial assertion
 		assert.strictEqual(oRating1.$().hasClass("sapMRIDisplayOnly"), false, 'Initially the control does not have class "sapMRIDisplayOnly" on ' + oRating);
+		assert.strictEqual($RatingContainer.attr('aria-disabled'), "false", "aria-disabled does not exist on " + oRating);
 
 		// act
 		oRating1.setDisplayOnly(true);
+		sap.ui.getCore().applyChanges();
 
 		// assertion
 		assert.strictEqual(oRating1.$().hasClass("sapMRIDisplayOnly"), true, 'The control have class "sapMRIDisplayOnly" on ' + oRating);
+		assert.ok($RatingContainer.attr('aria-disabled'), "aria-disabled is set on " + oRating);
 
 		//set to default
 		oRating1.setDisplayOnly(false);
