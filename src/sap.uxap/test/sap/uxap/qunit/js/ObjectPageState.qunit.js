@@ -259,11 +259,12 @@
 		QUnit.test("Hide lower section", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
-				oSection1 = oPage.getSections()[1],
-				oSection1Subsection1 = oSection1.getSubSections()[1],
+				oSecondSection = oPage.getSections()[1],
+				oSecondSection_secondSubsection = oSecondSection.getSubSections()[1],
 				done = assert.async(),
 				fnOnDomReady = function() {
-					oPage.scrollToSection(oSection1Subsection1.getId(), 0);
+					oPage.detachEvent("onAfterRenderingDOMReady", fnOnDomReady);
+					oPage.scrollToSection(oSecondSection_secondSubsection.getId(), 0);
 
 					setTimeout(function() {
 						sectionIsSelected(oPage, assert, {
@@ -272,10 +273,9 @@
 						});
 
 						// act
-						oSection1.setVisible(false); /* hide subsection */
-						sap.ui.getCore().applyChanges();
+						oSecondSection.setVisible(false); // hide the entire section
 
-						sectionIsSelected(oPage, assert, {
+						sectionIsSelected(oPage, assert, { //selection moved to the first visible section
 							bSnapped: true,
 							iAnchorBarSelectionIndex: 0
 						});
@@ -290,27 +290,34 @@
 		QUnit.test("Hide lower subSection", function (assert) {
 			//setup
 			var oPage = this.oObjectPage,
-				oSection1Subsection1 = oPage.getSections()[1].getSubSections()[1],
+				oSecondSection_secondSubsection = oPage.getSections()[1].getSubSections()[1],
+				bExpectedSnapped = true,
 				done = assert.async(),
 				fnOnDomReady = function() {
-					oPage.scrollToSection(oSection1Subsection1.getId(), 0);
+					oPage.detachEvent("onAfterRenderingDOMReady", fnOnDomReady);
+
+					oPage.scrollToSection(oSecondSection_secondSubsection.getId(), 0);
 
 					setTimeout(function() {
 
 						sectionIsSelected(oPage, assert, {
-							bSnapped: true,
+							bSnapped: bExpectedSnapped,
 							iAnchorBarSelectionIndex: 1
 						});
 
 						// act
-						oSection1Subsection1.setVisible(false); /* hide subsection */
-						sap.ui.getCore().applyChanges();
+						oSecondSection_secondSubsection.setVisible(false); // hide the current subsection
 
-						sectionIsSelected(oPage, assert, {
-							bSnapped: true,
-							iAnchorBarSelectionIndex: 1
-						});
-						done();
+						if (oPage.getUseIconTabBar()) {
+							bExpectedSnapped = false; /* only one subsection remained => we are on top of the section => in iconTabBar no need to snap */
+						}
+						setTimeout(function() {
+							sectionIsSelected(oPage, assert, {
+								bSnapped: bExpectedSnapped,
+								iAnchorBarSelectionIndex: 1
+							});
+							done();
+						}, 0);
 					}, 0); //scroll delay
 				};
 			oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
