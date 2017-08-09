@@ -1,0 +1,66 @@
+.sapUiDnDGhostContainer {
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+
+.sapUiDnDIndicator {
+	position: absolute;
+	pointer-events: none;
+	z-index: 9;
+
+	&[data-drop-position=between] {
+		background: @sapUiDragAndDropActiveBorderColor;
+
+		&:before,
+		&:after {
+			content: "";
+			position: absolute;
+			width: 0.5rem;
+			height: 0.5rem;
+			border-radius: 0.5rem;
+			border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
+			background: @sapUiWhiteBG;
+		}
+
+		&[data-drag-direction=horizontal] {
+			height: 0.125rem;
+
+			&:before,
+			&:after {
+				top: -0.3125rem;
+			}
+
+			&:before {
+				left: 0;
+			}
+
+			&:after {
+				right: 0;
+			}
+		}
+
+		&[data-drag-direction=vertical] {
+			width: 0.125rem;
+
+			&:before,
+			&:after {
+				left: -0.3125rem;
+			}
+
+			&:before {
+				top: 0;
+			}
+
+			&:after {
+				bottom: 0;
+			}
+		}
+	}
+
+	&[data-drop-position=on] {
+		background: @sapUiDragAndDropActiveBackground;
+		border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
+		box-sizing: border-box;
+	}
+}

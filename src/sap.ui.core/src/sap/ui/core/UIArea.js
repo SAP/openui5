@@ -688,6 +688,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	};
 
 	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap)$/;
+	var aPreprocessors = [], aPostprocessors = [];
+	var mVerboseEvents = {mousemove: 1, mouseover: 1, mouseout: 1, scroll: 1, dragover: 1, dragenter: 1, dragleave: 1};
+
+	/**
+	 * Adds an event handler that will be executed before the event is dispatched.
+	 * @param {Function} fnPreprocessor The event handler to add
+	 * @private
+	 */
+	UIArea.addEventPreprocessor = function(fnPreprocessor) {
+		aPreprocessors.push(fnPreprocessor);
+	};
+
+	/**
+	 * Gets the event handlers that will be executed before the event is dispatched.
+	 * @return {Function[]} The event preprocessors
+	 * @private
+	 */
+	UIArea.getEventPreprocessors = function() {
+		return aPreprocessors;
+	};
+
+	/**
+	 * Adds an event handler that will be executed after the event is dispatched.
+	 * @param {Function} fnPostprocessor The event handler to add
+	 * @private
+	 */
+	UIArea.addEventPostprocessor = function(fnPostprocessor) {
+		aPostprocessors.push(fnPostprocessor);
+	};
+
+	/**
+	 * Gets the event handlers that will be executed after the event is dispatched.
+	 * @return {Function[]} The event postprocessors
+	 * @private
+	 */
+	UIArea.getEventPostprocessors = function() {
+		return aPostprocessors;
+	};
 
 	/**
 	 * Handles all incoming DOM events centrally and dispatches the event to the
@@ -738,6 +776,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			jQuery.sap.log.info("Suppressed forwarding the contextmenu event as control event because CTRL+SHIFT+ALT is pressed!");
 			return;
 		}
+
+		aPreprocessors.forEach(function(fnPreprocessor){
+			fnPreprocessor(oEvent);
+		});
 
 		// forward the control event:
 		// if the control propagation has been stopped or the default should be
@@ -830,6 +872,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			}
 		}
 
+		aPostprocessors.forEach(function(fnPostprocessor){
+			fnPostprocessor(oEvent);
+		});
+
 		if (bInteractionRelevant) {
 			jQuery.sap.interaction.notifyEventEnd(oEvent);
 		}
@@ -847,15 +893,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			jQuery.sap.log.debug("'" + oEvent.type + "' propagation has been stopped");
 		}
 
-		// logging: prevent the logging of some events and for others do some
-		//          info logging into the console
-		var sName = oEvent.type;
-		if (sName != "mousemove" && sName != "mouseover" && sName != "scroll" && sName != "mouseout") {
+		// logging: prevent the logging of some events that are verbose and for others do some info logging into the console
+		var sEventName = oEvent.type;
+		if (!mVerboseEvents[sEventName]) {
 			var oElem = jQuery(oEvent.target).control(0);
 			if (oElem) {
-				jQuery.sap.log.debug("Event fired: '" + oEvent.type + "' on " + oElem, "", "sap.ui.core.UIArea");
+				jQuery.sap.log.debug("Event fired: '" + sEventName + "' on " + oElem, "", "sap.ui.core.UIArea");
 			} else {
-				jQuery.sap.log.debug("Event fired: '" + oEvent.type + "'", "", "sap.ui.core.UIArea");
+				jQuery.sap.log.debug("Event fired: '" + sEventName + "'", "", "sap.ui.core.UIArea");
 			}
 		}
 

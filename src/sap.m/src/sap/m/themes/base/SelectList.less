@@ -64,6 +64,11 @@ li.sapMSelectListItemBaseInvisible {
 	display: none;
 }
 
+/* elements inside the select effects the size of the browsers default dragging ghost element */
+.sapUiDnDDragging .sapMSelectListItemBase + .sapMSelectListItemBase {
+	display: none;
+}
+
 /* hover */
 .sapMSelectListItemBaseHoverable:hover {
 	background: @sapUiListHoverBackground;
