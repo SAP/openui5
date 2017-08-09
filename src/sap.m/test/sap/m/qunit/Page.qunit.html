@@ -95,21 +95,7 @@
 				ok(jQuery.sap.byId("myFirstPage-intHeader").hasClass("sapMHeader-CTX"), "header should contain header context");
 				ok(!jQuery.sap.byId("mySubHeader").hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
 				ok(jQuery.sap.byId("myFooter").hasClass("sapMFooter-CTX"), "footer should contain footer context");
-				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "page content should not have list gray background color");
-				page.setBackgroundDesign("List");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "page content should have list background color");
-				page.setBackgroundDesign("Standard");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgStandard"), "page content should have standard background color");
-				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "page content should not have list background color");
-				page.setBackgroundDesign("Solid");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "page content should have a solid background color");
-				page.setBackgroundDesign("Transparent");
-				ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "page content should be transparent");
-
-				var transparentCssString = (sap.ui.Device.browser.firefox ||
-                                    sap.ui.Device.browser.internet_explorer ||
-                                    sap.ui.Device.browser.edge) ? "transparent" : "rgba(0, 0, 0, 0)"
-				equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "Page content should be transparent");
+				ok(!jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgList"), "Page content should not have list gray background color");
 			});
 
 			test("Page 2 rendered", function() {
