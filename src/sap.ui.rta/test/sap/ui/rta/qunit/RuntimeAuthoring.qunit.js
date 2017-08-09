@@ -26,6 +26,7 @@ sap.ui.require([
 	'sap/ui/rta/plugin/CreateContainer',
 	'sap/ui/rta/plugin/Rename',
 	'sap/ui/base/Event',
+	'sap/ui/base/EventProvider',
 	'sap/ui/rta/command/BaseCommand',
 	'sap/ui/rta/qunit/RtaQunitUtils',
 	// should be last
@@ -55,6 +56,7 @@ sap.ui.require([
 	CreateContainerPlugin,
 	RenamePlugin,
 	Event,
+	EventProvider,
 	RTABaseCommand,
 	RtaQunitUtils,
 	sinon) {
@@ -346,6 +348,98 @@ sap.ui.require([
 		assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 0, "then Toolbar is not visible.");
 	});
 
+	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
+		beforeEach : function(assert) {
+			FakeLrepLocalStorage.deleteChanges();
+			assert.equal(FakeLrepLocalStorage.getNumChanges(), 0, "Local storage based LREP is empty");
+
+			this.bMacintoshOriginal = Device.os.macintosh;
+			Device.os.macintosh = false;
+
+			this.fnUndoSpy = sandbox.stub().returns(Promise.resolve());
+			this.fnRedoSpy = sandbox.stub().returns(Promise.resolve());
+
+			var oToolsMenuDom = jQuery('<input/>').appendTo('#qunit-fixture').get(0);
+			this.oToolsMenuDom = oToolsMenuDom;
+			this.oOverlayContainerDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+			this.oDialogDom = jQuery('<button/>').appendTo('#qunit-fixture').get(0);
+
+			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
+			this.oUndoEvent.keyCode = jQuery.sap.KeyCodes.Z;
+			this.oUndoEvent.ctrlKey = true;
+			this.oUndoEvent.shiftKey = false;
+			this.oUndoEvent.altKey = false;
+			this.oUndoEvent.stopPropagation = function() {};
+
+			this.oRedoEvent = new Event("dummyEvent", new EventProvider());
+			this.oRedoEvent.keyCode = jQuery.sap.KeyCodes.Y;
+			this.oRedoEvent.ctrlKey = true;
+			this.oRedoEvent.shiftKey = false;
+			this.oRedoEvent.altKey = false;
+			this.oRedoEvent.stopPropagation = function() {};
+
+			sandbox.stub(sap.ui.dt.Overlay, "getOverlayContainer").returns(this.oOverlayContainerDom);
+
+			this.mContext = {
+				_oToolsMenu: {
+					getDomRef: function() {
+						return oToolsMenuDom;
+					}
+				},
+				_onUndo: this.fnUndoSpy,
+				_onRedo: this.fnRedoSpy
+			};
+		},
+
+		afterEach : function(assert) {
+			sandbox.restore();
+			FakeLrepLocalStorage.deleteChanges();
+			Device.os.macintosh = this.bMacintoshOriginal;
+		}
+	});
+
+	QUnit.test("with focus on an overlay", function(assert) {
+		this.oOverlayContainerDom.focus();
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+		assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
+	});
+
+	QUnit.test("with focus on the toolbar", function(assert) {
+		this.oToolsMenuDom.focus();
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+		assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+		assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
+	});
+
+	QUnit.test("with focus on an open dialog", function(assert) {
+		this.oDialogDom.focus();
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+		assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+		assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+	});
+
+	QUnit.test("during rename", function(assert) {
+		jQuery('<div/>', {
+			"class": "sapUiRtaEditableField",
+			"tabIndex": 1
+		}).appendTo("#qunit-fixture").get(0).focus();
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
+		assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+
+		RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oRedoEvent);
+		assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+	});
+
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
 		beforeEach : function(assert) {
 			var done = assert.async();
@@ -438,14 +532,17 @@ sap.ui.require([
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
 			} else if (fnStackModifiedSpy.calledTwice) {
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+				Device.os.macintosh = bMacintoshOriginal;
 				done();
 			}
 		}.bind(this));
 		this.oCommandStack.attachModified(fnStackModifiedSpy);
+		var bMacintoshOriginal = Device.os.macintosh;
 		Device.os.macintosh = true;
 		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 commands is still in the stack");
 
 		//undo -> _unExecute -> fireModified
+		document.activeElement.blur(); // reset focus to body
 		fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, false, true);
 
 		//redo -> execute -> fireModified (inside promise)
@@ -460,14 +557,17 @@ sap.ui.require([
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CMD + Z the stack is empty");
 			} else if (fnStackModifiedSpy.calledTwice) {
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CMD + Y is again 1 command in the stack");
+				Device.os.macintosh = bMacintoshOriginal;
 				done();
 			}
 		}.bind(this));
 		this.oCommandStack.attachModified(fnStackModifiedSpy);
+		var bMacintoshOriginal = Device.os.macintosh;
 		Device.os.macintosh = false;
 		assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 commands is still in the stack");
 
 		//undo -> _unExecute -> fireModified
+		document.activeElement.blur(); // reset focus to body
 		fnTriggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, true, false);
 
 		//redo -> execute -> fireModified (inside promise)
@@ -1230,9 +1330,7 @@ sap.ui.require([
 	});
 
 	QUnit.done(function( details ) {
-		// If coverage is requested, remove the view to not overlap the coverage result
-		if (QUnit.config.coverage == true && details.failed === 0) {
-			jQuery("#test-view").hide();
-		}
+		oComp.destroy();
+		jQuery("#test-view").hide();
 	});
 });
