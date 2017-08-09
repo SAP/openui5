@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * Constructor for a new Calendar.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {Object} [mSettings] initial settings for the new control
 	 *
 	 * @class
 	 * Basic Calendar.
@@ -500,16 +500,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Sets the focused date of the calendar.
 	 *
-	 * @param {object} oDate
+	 * @param {Object} oDate
 	 *         JavaScript date object for focused date.
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	Calendar.prototype.focusDate = function(oDate){
-		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
+	Calendar.prototype.focusDate = function(oDate) {
 
-		_displayDate.call(this, oCalDate, false);
+		_displayDate.call(this, oDate, false);
 
 		return this;
 
@@ -518,7 +517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Displays a date in the calendar but don't set the focus.
 	 *
-	 * @param {object} oDate
+	 * @param {Object} oDate
 	 *         JavaScript date object for focused date.
 	 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 	 * @since 1.28.0
@@ -527,8 +526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 	Calendar.prototype.displayDate = function (oDate) {
 
-		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
-		_displayDate.call(this, oCalDate, true);
+		_displayDate.call(this, oDate, true);
 
 		return this;
 
@@ -539,7 +537,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * There might be some days of the previous month shown, but they can not be focused.
 	 *
-	 * @returns {object} JavaScript date object for start date.
+	 * @returns {Object} JavaScript date object for start date.
 	 * @since 1.34.1
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1354,7 +1352,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	* Handles focusing of a date by clicking on it or with keyboard navigation.
-	* @param {object} oEvent the event
+	* @param {Object} oEvent the event
 	* @private
 	*/
 	Calendar.prototype._handleFocus = function (oEvent) {
@@ -1803,26 +1801,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be displayed
+	 * @param {Object} oDate The date to be displayed
 	 * @param {boolean} bNoFocus Whether the date is focused
 	 * @private
 	 */
-	function _displayDate (oDate, bNoFocus){
+	function _displayDate(oDate, bNoFocus) {
 
-		if (oDate && (!this._oFocusedDate || !this._oFocusedDate.isSame(oDate))) {
+		if (!oDate) {
+			return;
+		}
 
-			var iYear = oDate.getYear();
-			CalendarUtils._checkYearInValidRange(iYear);
+		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
 
-			if (CalendarUtils._isOutside(oDate, this._oMinDate, this._oMaxDate)) {
-				throw new Error("Date must not be in valid range (minDate and maxDate); " + this);
-			}
+		if (this._oFocusedDate && this._oFocusedDate.isSame(oCalDate)) {
+			return;
+		}
 
-			this._setFocusedDate(oDate);
+		var iYear = oCalDate.getYear();
+		CalendarUtils._checkYearInValidRange(iYear);
 
-			if (this.getDomRef() && this._iMode == 0) {
-				_renderMonth.call(this, bNoFocus, false, true); // fire no startDateChange event on programmatical change
-			}
+		if (CalendarUtils._isOutside(oCalDate, this._oMinDate, this._oMaxDate)) {
+			throw new Error("Date must not be in valid range (minDate and maxDate); " + this);
+		}
+
+		this._setFocusedDate(oCalDate);
+
+		if (this.getDomRef() && this._iMode == 0) {
+			_renderMonth.call(this, bNoFocus, false, true); // fire no startDateChange event on programmatical change
 		}
 
 	}
