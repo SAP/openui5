@@ -214,7 +214,8 @@ sap.ui.define([
 						hierarchyNodeFor: sHierarchyNodeFor,
 						hierarchyDrillStateFor: sHierarchyDrillStateFor,
 						hierarchyNodeDescendantCountFor: sHierarchyDescendantCountFor
-					} : undefined
+					} : undefined,
+					restoreTreeStateAfterChange: true
 				}
 			});
 
@@ -536,10 +537,33 @@ sap.ui.define([
 				error: function (oEvent) {
 					this.showErrorDialogue("error");
 					oTable.setBusy(false);
-				}
+				}.bind(this)
 			});
 			// scroll to top after submitting
 			oTable.setFirstVisibleRow(0);
+		},
+
+		/**
+		 * Submit the changes on the model
+		 */
+		onRefreshAndRestore: function () {
+			MessageToast.show("Refreshing and restoring...");
+			var oBinding = oTable.getBinding();
+
+			oTable.setBusyIndicatorDelay(1);
+			oTable.setEnableBusyIndicator(true);
+			oTable.setBusy(true);
+
+			// send collected change data to the back-end
+			oBinding._restoreTreeState().then(
+				function () {
+					// remove busy state of table
+					oTable.setBusy(false);
+				},
+				function (oEvent) {
+					this.showErrorDialogue("error");
+					oTable.setBusy(false);
+				}.bind(this));
 		},
 
 		/**
