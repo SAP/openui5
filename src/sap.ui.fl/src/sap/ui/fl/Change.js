@@ -237,6 +237,28 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the variant reference of the change
+	 * @returns {string} variant reference of the change.
+	 *
+	 * @public
+	 */
+	Change.prototype.getVariantReference = function () {
+		return this._oDefinition.variantReference || "";
+	};
+
+	/**
+	 * Sets the variant reference of the change
+	 *
+	 * @param {object} sVariantReference The variant reference of the change.
+	 *
+	 * @public
+	 */
+	Change.prototype.setVariantReference = function (sVariantReference) {
+		this._oDefinition.variantReference = sVariantReference;
+		this.setState(Change.states.DIRTY);
+	};
+
+	/**
 	 * Returns the selector from the file content
 	 * @returns {object} selector in format selectorPropertyName:selectorPropertyValue
 	 *

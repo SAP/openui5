@@ -60,8 +60,9 @@ sap.ui.define([
 	 * @override
 	 */
 	ControlVariant.prototype.registerElementOverlay = function(oOverlay) {
+		var oControl = oOverlay.getElementInstance();
 
-		if (oOverlay.getElementInstance().getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
+		if (oControl.getMetadata().getName() === "sap.ui.fl.variants.VariantManagement") {
 			var oControl = oOverlay.getElementInstance();
 			var vAssociationElement = oControl.getAssociation("for");
 
@@ -73,10 +74,23 @@ sap.ui.define([
 				var sVariantManagement = BaseTreeModifier.getSelector(oControl, flUtils.getComponentForControl(oControl)).id;
 				this._propagateVariantManagement(oVariantManagementTargetOverlay , sVariantManagement);
 			}.bind(this));
+		} else if (!oOverlay.getVariantManagement()) {
+			var sVariantManagement = this._getVariantManagementFromParent(oOverlay);
+			if (sVariantManagement) {
+				oOverlay.setVariantManagement(sVariantManagement);
+			}
 		}
 		Plugin.prototype.registerElementOverlay.apply(this, arguments);
 	};
 
+	/**
+	 * Top-down approach for setting VariantManagement reference to all children overlays
+	 *
+	 * @param {sap.ui.dt.Overlay} oParentElementOverlay overlay object for which children overlays are computed
+	 * @param {string} sVariantManagement VariantManagement reference to be set
+	 * @returns {array} array of rendered ElementOverlays which have been set with passed VariantManagement reference
+	 * @private
+	 */
 	ControlVariant.prototype._propagateVariantManagement = function(oParentElementOverlay, sVariantManagement) {
 		var aElementOverlaysRendered = [];
 		oParentElementOverlay.setVariantManagement(sVariantManagement);
@@ -87,6 +101,21 @@ sap.ui.define([
 		}.bind(this));
 
 		return aElementOverlaysRendered;
+	};
+
+	/**
+	 * Bottom-up approach for setting VariantManagement reference from parent ElementOverlays
+	 *
+	 * @param {sap.ui.dt.Overlay} oOverlay overlay object for which VariantManagement reference is to be set
+	 * @returns {string} VariantManagement reference
+	 * @private
+	 */
+	ControlVariant.prototype._getVariantManagementFromParent = function(oOverlay) {
+		var sVariantManagement = oOverlay.getVariantManagement();
+		if (!sVariantManagement && oOverlay.getParentElementOverlay()) {
+			return this._getVariantManagementFromParent(oOverlay.getParentElementOverlay());
+		}
+		return sVariantManagement;
 	};
 
 	/**

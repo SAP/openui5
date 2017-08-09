@@ -1,7 +1,7 @@
 {
 	"changes" : [
 		{
-			"variantRef":"",
+			"variantReference":"",
 			"fileName":"id_1445501120486_25",
 			"fileType":"change",
 			"changeType":"hideControl",
@@ -24,7 +24,7 @@
 			}
 		},
 		{
-			"variantRef":"",
+			"variantReference":"",
 			"fileName":"id_1445501120486_26",
 			"fileType":"change",
 			"changeType":"hideControl",
@@ -47,7 +47,7 @@
 			}
 		},
 		{
-			"variantRef":"",
+			"variantReference":"",
 			"fileName":"id_1445501120486_27",
 			"fileType":"change",
 			"changeType":"hideControl",
