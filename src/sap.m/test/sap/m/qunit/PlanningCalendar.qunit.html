@@ -3330,6 +3330,35 @@
 
 		});
 
+		QUnit.module('Destroy', {
+			beforeEach: function () {
+				this.oPC = new sap.m.PlanningCalendar();
+				this.oPC.placeAt('uiArea1');
+			},
+			afterEach: function () {
+				this.oPC.destroy();
+				this.oPC = null;
+			}
+		});
+
+		QUnit.test("When the control is destroyed there's no need of custom invalidation logic", function (assert) {
+			//define
+			var oControlInvalidateSpy = this.spy(sap.ui.core.Control.prototype, "invalidate");
+
+			//act
+			this.oPC.addSpecialDate(new sap.ui.unified.DateTypeRange({startDate: new Date(), tooltip: "test"}));
+			this.oPC._bIsBeingDestroyed = true;
+			this.oPC.invalidate();
+
+			//assert
+			assert.strictEqual(oControlInvalidateSpy.callCount, 1,
+					"When _bIsBeingDestroyed is true only the Control's 'invalidate' is executed and not our extra logic");
+
+			//cleanup
+			oControlInvalidateSpy.restore();
+			this.oPC._bIsBeingDestroyed = false;
+		});
+
 	</script>
 
 </head>
