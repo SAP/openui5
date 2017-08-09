@@ -42,7 +42,7 @@ sap.ui.define([
 	 * A {@link sap.m.MessageView} is used to display a summarized list of different types of messages (errors, warnings, success and information).
 	 * It provides a handy and systemized way to navigate and explore details for every message.
 	 * It is meant to be embedded into container controls.
-	 * If the MessageView contains only one item, its details page will be displayed initially.
+	 * If the MessageView contains only one item, which has either description, markupDescription or longTextUrl, its details page will be displayed initially.
 	 * <br><br>
 	 * <strong>Notes:</strong>
 	 * <ul>
@@ -274,7 +274,7 @@ sap.ui.define([
 			this._oListHeader.insertContent(headerButton, 2);
 		}
 
-		if (aItems.length === 1) {
+		if (aItems.length === 1 && this._oLists.all.getItems()[0].getType()  === ListType.Navigation) {
 
 			this._fnHandleForwardNavigation(this._oLists.all.getItems()[0], "show");
 
