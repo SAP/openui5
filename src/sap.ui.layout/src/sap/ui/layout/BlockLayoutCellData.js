@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 	 * @version ${version}
 	 * @constructor
 	 * @public
-	 * @since 1.48.0
+	 * @since 1.50.0
 	 * @alias sap.ui.layout.BlockLayoutCellData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
@@ -27,41 +27,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 		library : "sap.ui.layout",
 		properties : {
 			/**
-			 * Sets the width of the cell for M size of the BlockLayout.
-			 * <b>Note:</b> The accepted values are only in percents!
+			 * Sets the width of the cell for S size of the BlockLayout.
 			 */
 			sSize: { type: "int", group: "Appearance", defaultValue: 1 },
 			/**
 			 * Sets the width of the cell for M size of the BlockLayout.
-			 * <b>Note:</b> The accepted values are only in percents!
 			 */
 			mSize: { type: "int", group: "Appearance", defaultValue: 1 },
 			/**
-			 * Sets the width of the cell for M size of the BlockLayout.
-			 * <b>Note:</b> The accepted values are only in percents!
+			 * Sets the width of the cell for L size of the BlockLayout.
 			 */
 			lSize: { type: "int", group: "Appearance", defaultValue: 1 },
 			/**
-			 * Sets the width of the cell for M size of the BlockLayout.
-			 * <b>Note:</b> The accepted values are only in percents!
+			 * Sets the width of the cell for XL size of the BlockLayout.
 			 */
 			xlSize: { type: "int", group: "Appearance", defaultValue: 1 }
 		}
 	}});
 
-	/***
-	 * These properties defines the default behaviour for moving current cell on new row in different sizes
+	/**
+	 * Defines the default behavior for moving current cell in S size on a new row
 	 * @private
 	 * @type {boolean}
 	 */
 	BlockLayoutCellData.prototype.breakRowOnSSize = true;
+
+	/**
+	 * Defines the default behavior for moving current cell in M size on a new row
+	 * @private
+	 * @type {boolean}
+	 */
 	BlockLayoutCellData.prototype.breakRowOnMSize = false;
+
+	/**
+	 * Defines the default behavior for moving current cell in L size on a new row
+	 * @private
+	 * @type {boolean}
+	 */
 	BlockLayoutCellData.prototype.breakRowOnLSize = false;
+
+	/**
+	 * Defines the default behavior for moving current cell in XL size on a new row
+	 * @private
+	 * @type {boolean}
+	 */
 	BlockLayoutCellData.prototype.breakRowOnXlSize = false;
 
-	/***
+	/**
 	 * Sets width of the cell to all sizes if the width is specified.
 	 * @param iValue
+	 * @public
 	 * @returns {sap.ui.layout.BlockLayoutCellData}
 	 */
 	BlockLayoutCellData.prototype.setSize = function (iValue) {
