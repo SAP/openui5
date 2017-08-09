@@ -4,8 +4,8 @@
 
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './PlanningCalendarRow',
-		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval', 'sap/ui/unified/CalendarOneMonthInterval'],
-		function(jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval) {
+		'./library', 'sap/ui/unified/library', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/DateRange', 'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarWeekInterval', 'sap/ui/unified/CalendarOneMonthInterval'],
+		function(jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary, CalendarUtils, DateRange, CalendarDateInterval, CalendarWeekInterval, CalendarOneMonthInterval) {
 	"use strict";
 
 	/**
@@ -1319,7 +1319,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	PlanningCalendar.prototype.invalidate = function(oOrigin) {
 
-		if (this._bDateRangeChanged || (oOrigin && oOrigin instanceof sap.ui.unified.DateRange)) {
+		var bOriginInstanceOfDateRange = oOrigin && oOrigin instanceof DateRange;
+		//The check for _bIsBeingDestroyed is because here there's no need of any actions when
+		//the control is destroyed. It's all handled in the Control's invalidate method.
+		if (!this._bIsBeingDestroyed && (this._bDateRangeChanged || bOriginInstanceOfDateRange)) {
 			// DateRange changed -> only invalidate calendar control
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
