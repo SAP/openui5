@@ -14,6 +14,8 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			jQuery.sap.require('sap.ui.thirdparty.sinon');
+			jQuery.sap.require('sap.ui.thirdparty.sinon-qunit')
 
 			// code coverage report only for sap.ui.rta namespace
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
@@ -25,6 +27,5 @@
 		<h2 id='qunit-banner'></h2>
 		<div id='qunit-testrunner-toolbar'></div>
 		<ol id='qunit-tests'></ol>
-		<div id="content"></div>
 	</body>
 </html>
