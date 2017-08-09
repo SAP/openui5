@@ -242,6 +242,7 @@
 		//section title binding updates anchor bar button
 		oModel.setProperty("/objectCount", 2);
 		oModel.refresh(true);
+		sap.ui.getCore().applyChanges();
 
 		// allow for re-render
 		this.clock.tick(iRenderingDelay);
