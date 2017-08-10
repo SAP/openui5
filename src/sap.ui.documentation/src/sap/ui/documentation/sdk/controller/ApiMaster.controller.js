@@ -111,10 +111,6 @@ sap.ui.define([
 				}
 
 				this.getRouter().navTo("apiId", {id : apiId}, false);
-			},
-
-			onTreeFilter: function (oEvent) {
-				MasterTreeBaseController.prototype.onTreeFilter.apply(this, [oEvent, "name"]);
 			}
 
 		});
