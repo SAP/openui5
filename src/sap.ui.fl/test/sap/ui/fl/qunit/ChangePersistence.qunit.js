@@ -526,9 +526,15 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group1": [oChange3]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace"],
+					"controlsDependencies": ["group2", "group1"]
 				},
 				"fileNameChange3USERnamespace": {
 					"changeObject": oChange3,
@@ -599,9 +605,15 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group1": [oChange0]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace", "fileNameChange0USERnamespace"],
+					"controlsDependencies": ["group2", "group1"]
 				}
 			},
 			mDependentChangesOnMe: {
@@ -653,6 +665,11 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 				"group2": [oChange2]
 			},
 			mDependencies: {
+				"fileNameChange1USERnamespace": {
+					"changeObject": oChange1,
+					"dependencies": [],
+					"controlsDependencies": ["group3", "group2"]
+				},
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
 					"dependencies": ["fileNameChange1USERnamespace"]
@@ -706,7 +723,8 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 			mDependencies: {
 				"fileNameChange2USERnamespace": {
 					"changeObject": oChange2,
-					"dependencies": ["fileNameChange1USERnamespace"]
+					"dependencies": ["fileNameChange1USERnamespace"],
+					"controlsDependencies": ["group3", "group2"]
 				}
 			},
 			mDependentChangesOnMe: {

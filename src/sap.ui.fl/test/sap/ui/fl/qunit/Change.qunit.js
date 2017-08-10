@@ -441,7 +441,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			new sap.ui.core.Control("control4Id"),
 			new sap.ui.core.Control("control5Id")
 		];
-		var aControlId = ["control6Id", "control7Id", "control1Id"]; //Control 1 duplicate. Should not be included.
+		var aControlId = ["control6Id", "control7Id", "undefined", "control1Id"]; //Control 1 duplicate. Should not be included.
 		var sId;
 
 		var oJsControlTreeModifierGetSelectorStub = this.stub(JsControlTreeModifier, "getSelector");
@@ -480,7 +480,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			idIsLocal: true
 		});
 
-		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({
+		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(8).returns({
 			id: "control1",
 			idIsLocal: true
 		});
@@ -508,6 +510,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		};
 		var aDependentIdList = oInstance.getDependentIdList(oAppComponent);
 		assert.equal(aDependentIdList.length, 10);
+		var aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
+		assert.equal(aDependentIdList.length, 9);
 	});
 
 	QUnit.test("Operations add and get dependent control do not break when working with old changes (without dependentSelector)", function(assert) {
@@ -521,7 +525,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			new sap.ui.core.Control("control4IdB"),
 			new sap.ui.core.Control("control5IdB")
 		];
-		var aControlId = ["control6IdB", "control7IdB"];
+		var aControlId = ["control6IdB", "undefined", "control7IdB"];
 		var sId;
 
 		var oJsControlTreeModifierGetSelectorStub = this.stub(JsControlTreeModifier, "getSelector");
@@ -555,7 +559,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			idIsLocal: true
 		});
 
-		oJsControlTreeModifierGetSelectorStub.onCall(6).returns({
+		oJsControlTreeModifierGetSelectorStub.onCall(6).returns({});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({
 			id: "control7",
 			idIsLocal: true
 		});
@@ -571,6 +577,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 		var aDependentIdList = oInstance.getDependentIdList({});
 		assert.equal(aDependentIdList.length, 1);
+		var aDependentIdList = oInstance.getDependentControlIdList({});
+		assert.equal(aDependentIdList.length, 0);
 
 		oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
 		oInstance.addDependentControl(oControl, "anotherSource", {modifier: JsControlTreeModifier});
@@ -589,6 +597,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		};
 		aDependentIdList = oInstance.getDependentIdList(oAppComponent);
 		assert.equal(aDependentIdList.length, 8);
+		aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
+		assert.equal(aDependentIdList.length, 7);
 	});
 
 }(sap.ui.fl.Change, sap.ui.fl.Utils, sap.ui.base.EventProvider, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.JsControlTreeModifier));
