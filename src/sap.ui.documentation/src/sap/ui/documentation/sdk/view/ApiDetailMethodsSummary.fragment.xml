@@ -21,7 +21,8 @@
 									{path: 'methods>name'},
 									{path: 'topics>/name'},
 									{path: 'methods>static'}
-									], formatter: '.formatEntityName'}" press="scrollToMethod" wrapping="false"/>
+									], formatter: '.formatEntityName'}"
+									href="#/api/{topics>/name}/methods/{methods>name}" press="scrollToMethod" wrapping="false"/>
 							<m:ObjectStatus icon="sap-icon://message-error" state="Error" text="Deprecated" visible="{= ${methods>deprecated} !== undefined }"/>
 						</layout:VerticalLayout>
 						<core:HTML content="{parts: [{path: 'methods>description'}], formatter: '.formatDescription'}"/>
